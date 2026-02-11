@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <!-- Performance optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Calculadora de sueldo líquido Chile 2026. Calcula tu sueldo neto después de AFP, Isapre e impuestos. Herramienta gratuita y actualizada según legislación chilena vigente.">
+    <meta name="keywords"
+        content="calculadora sueldo liquido chile, sueldo neto chile, calcular sueldo liquido, descuentos AFP, calculadora impuestos segunda categoria, sueldo bruto vs liquido">
+    <meta name="author" content="CalculadorasChile.cl">
+    <link rel="canonical" href="https://calculadoraschile.cl/calculadora-sueldo-liquido">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculadoraschile.cl/calculadora-sueldo-liquido">
+    <meta property="og:title" content="Calculadora de Sueldo Líquido Chile 2026 | CalculadorasChile.cl">
+    <meta property="og:description"
+        content="Calcula tu sueldo líquido en Chile después de descuentos legales: AFP, Isapre e impuestos. Herramienta gratis y actualizada 2026.">
+    <meta property="og:image" content="https://calculadoraschile.cl/images/og-sueldo-liquido.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://calculadoraschile.cl/calculadora-sueldo-liquido">
+    <meta property="twitter:title" content="Calculadora de Sueldo Líquido Chile 2026">
+    <meta property="twitter:description"
+        content="Calcula tu sueldo neto después de AFP, Isapre e impuestos. Gratis y actualizado.">
+    <meta property="twitter:image" content="https://calculadoraschile.cl/images/og-sueldo-liquido.jpg">
+
+    <!-- Schema.org markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Calculadora de Sueldo Líquido Chile",
+      "url": "https://calculadoraschile.cl/calculadora-sueldo-liquido",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "description": "Herramienta gratuita para calcular el sueldo líquido en Chile según descuentos legales vigentes 2026.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CLP"
+      },
+      "featureList": [
+        "Cálculo de AFP actualizado",
+        "Cálculo de Isapre/Fonasa",
+        "Impuesto Segunda Categoría",
+        "Descuentos adicionales opcionales",
+        "Exportación a PDF"
+      ]
+    }
+    </script>
+    <title>Calculadora de Sueldo Líquido - Chile</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0aa0eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101c22",
+                        "surface-dark": "#18262e",
+                        "surface-highlight": "#20303b"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Animación Sticky Result */
+        #sticky-result-container {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #sticky-result-container.scrolled {
+            background: rgba(16, 28, 34, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(10, 160, 235, 0.3);
+            box-shadow: 0 10px 40px rgba(10, 160, 235, 0.2);
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+
+        #sticky-result-container.scrolled .result-amount {
+            font-size: 2.5rem;
+            transition: font-size 0.3s ease;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading Spinner */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Tooltips */
+        [title] {
+            position: relative;
+        }
+
+        .cursor-help {
+            cursor: help;
+        }
+
+        .cursor-help:hover {
+            color: #0aa0eb;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            #sticky-result-container.scrolled {
+                padding: 0.75rem;
+            }
+
+            #sticky-result-container.scrolled .result-amount {
+                font-size: 2rem;
+            }
+
+            .glass-input {
+                font-size: 16px;
+                /* Previene zoom automático en iOS */
+                padding: 0.875rem;
+            }
+
+            button {
+                min-height: 44px;
+                /* Tamaño mínimo recomendado para touch */
+            }
+
+            .space-y-4>*+* {
+                margin-top: 1.25rem;
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            #sticky-result-container {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        /* Visual Feedback */
+        .glass-input:focus {
+            border-color: #0aa0eb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(10, 160, 235, 0.2);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+
+        .glass-input:hover:not(:focus) {
+            border-color: rgba(10, 160, 235, 0.5);
+        }
+
+        .glass-input:valid {
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .glass-input:invalid:not(:placeholder-shown) {
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .glass-input {
+            background: rgba(16, 28, 34, 0.9) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            pointer-events: auto;
+            position: relative;
+            z-index: 20;
+        }
+
+        .glass-input:focus {
+            border-color: #0aa0eb;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(10, 160, 235, 0.2);
+        }
+
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #101c22;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-display selection:bg-primary selection:text-white">
+    <!-- Navigation -->
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 transition-all duration-300 glass glass-panel border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                <!-- Logo -->
+                <!-- Logo -->
+                <a href="index.html"
+                    class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <span class="material-icons text-white text-sm">calculate</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white">Calculadoras<span
+                            class="text-blue-400">Chile</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex gap-8">
+                    <a href="index.html#herramientas"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Calculadoras</a>
+                    <a href="index.html#blog"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Blog</a>
+                    <a href="index.html#faq"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Preguntas</a>
+                    <a href="index.html#contacto"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center gap-4">
+                    <button id="mobile-menu-btn"
+                        class="md:hidden p-2 rounded-lg text-slate-300 hover:bg-white/5 transition-colors">
+                        <span class="material-icons">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu"
+            class="hidden md:hidden glass-panel border-t border-white/5 absolute w-full left-0 bg-slate-900/95">
+            <div class="px-4 py-4 space-y-2">
+                <a href="index.html#herramientas"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Calculadoras</a>
+                <a href="index.html#blog"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Blog</a>
+                <a href="index.html#faq"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Preguntas</a>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow pt-24 pb-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Main Calculator Section -->
+            <div class="lg:col-span-8 space-y-6">
+                <!-- Header Text -->
+                <div class="mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">Calculadora de Sueldo
+                        Líquido</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-lg">Ingresa tu sueldo bruto para obtener el
+                        detalle exacto de tus descuentos legales en Chile.</p>
+                </div>
+                <!-- Sticky Result Header -->
+                <div id="sticky-result-container" class="sticky top-20 z-40 mb-8 transition-all duration-300">
+                    <div
+                        class="glass-panel rounded-xl p-6 border border-emerald-500/30 bg-slate-900/90 backdrop-blur-md shadow-2xl shadow-emerald-500/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-center sm:text-left">
+                            <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Tu Sueldo
+                                Líquido Estimado</h3>
+                            <div class="flex items-baseline gap-2 justify-center sm:justify-start">
+                                <span id="headerNetSalary"
+                                    class="text-5xl sm:text-6xl font-black text-white tracking-tight">$0</span>
+                                <span id="headerPercentage" class="text-lg font-medium text-slate-400">0%</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">del sueldo bruto</p>
+                        </div>
+                        <div class="text-right hidden sm:block">
+                            <span class="text-xs text-slate-500 block">Total Descuentos</span>
+                            <span id="headerTotalDiscounts" class="text-lg font-semibold text-red-400">-$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Card -->
+                <div class="glass-panel rounded-lg p-8 relative overflow-hidden group">
+                    <!-- Decorational background glow -->
+                    <div
+                        class="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-700">
+                    </div>
+                    <div class="relative z-10 space-y-8">
+                        <!-- Section 1: Base Salary & Overtime -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="col-span-1 md:col-span-2">
+                                <label class="block text-sm font-medium text-slate-400 mb-2 ml-1" for="salary">Sueldo
+                                    Base Mensual</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <span class="text-slate-400 text-lg font-semibold">$</span>
+                                    </div>
+                                    <input
+                                        class="glass-input block w-full pl-10 pr-4 py-4 rounded-full text-2xl font-bold placeholder-slate-600 focus:ring-0 transition-all"
+                                        id="salary" name="salary" placeholder="539.000" type="text" value="539.000"
+                                        aria-label="Sueldo Base Mensual" />
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                        <span class="text-slate-500 text-sm font-medium">CLP</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Overtime (42 Hours) -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2 ml-1">Horas Extras
+                                    (50%)</label>
+                                <div class="relative">
+                                    <input
+                                        class="glass-input block w-full px-4 py-3 rounded-full text-white placeholder-slate-600 focus:ring-primary"
+                                        id="overtime" type="number" placeholder="0" min="0" aria-label="Horas Extras" />
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                        <span class="text-xs text-slate-500">Horas</span>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1 ml-2">Factor 0.00892 (42 Horas)</p>
+                            </div>
+
+                            <!-- Bonuses -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2 ml-1">Bonos /
+                                    Comisiones</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-slate-500 text-sm">$</span>
+                                    </div>
+                                    <input
+                                        class="glass-input block w-full pl-7 pr-4 py-3 rounded-full text-white placeholder-slate-600 focus:ring-primary"
+                                        id="bonuses" type="text" placeholder="0" aria-label="Bonos y Comisiones"
+                                        pattern="[0-9]*" />
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1 ml-2">Imponibles</p>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Gratification & Contract -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2 ml-1">Gratificación
+                                    Legal</label>
+                                <select id="gratificationType"
+                                    class="glass-input block w-full px-4 py-3 rounded-full appearance-none cursor-pointer text-sm text-white mb-2">
+                                    <option value="legal_tope">Tope Legal (25% / 4.75 IMM)</option>
+                                    <option value="manual">Monto Fijo Manual</option>
+                                    <option value="none">Sin Gratificación</option>
+                                </select>
+                                <!-- Manual Gratification Input (Hidden by default) -->
+                                <div id="manualGratInput" class="hidden relative animate-fade-in">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-slate-500 text-sm">$</span>
+                                    </div>
+                                    <input
+                                        class="glass-input block w-full pl-7 pr-4 py-2 rounded-full text-sm text-white focus:ring-primary"
+                                        id="gratificationManual" type="text" placeholder="Monto"
+                                        aria-label="Gratificación Manual" pattern="[0-9]*" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2 ml-1">Contrato</label>
+                                <div class="flex p-1 bg-surface-dark rounded-full border border-white/5">
+                                    <button id="btn-indefinido"
+                                        class="flex-1 py-2 px-4 rounded-full bg-primary text-white text-sm font-medium shadow-lg shadow-primary/25 transition-all">Indefinido</button>
+                                    <button id="btn-plazo"
+                                        class="flex-1 py-2 px-4 rounded-full text-slate-400 hover:text-white text-sm font-medium transition-colors">Plazo
+                                        Fijo</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Social Security (AFP/Health) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2 ml-1">AFP</label>
+                                <div class="relative">
+                                    <select id="afpSelect"
+                                        class="glass-input block w-full pl-4 pr-10 py-3 rounded-full appearance-none cursor-pointer text-sm text-white">
+                                        <option value="Capital">Capital (11,44%)</option>
+                                        <option value="Cuprum">Cuprum (11,44%)</option>
+                                        <option value="Habitat">Habitat (11,27%)</option>
+                                        <option value="Modelo" selected>Modelo (10,58%)</option>
+                                        <option value="Planvital">Planvital (11,16%)</option>
+                                        <option value="Provida">Provida (11,45%)</option>
+                                        <option value="Uno">Uno (10,69%)</option>
+                                    </select>
+                                    <div
+                                        class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                                        <span class="material-icons">expand_more</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2 ml-1">Salud</label>
+                                <div class="flex items-center gap-4 mb-3">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input
+                                            class="form-radio text-primary focus:ring-primary bg-transparent border-slate-600 h-5 w-5"
+                                            name="salud" type="radio" value="fonasa" checked />
+                                        <span class="ml-2 text-white">Fonasa (7%)</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input
+                                            class="form-radio text-primary focus:ring-primary bg-transparent border-slate-600 h-5 w-5"
+                                            name="salud" type="radio" value="isapre" />
+                                        <span class="ml-2 text-white">Isapre</span>
+                                    </label>
+                                </div>
+                                <div id="isapreInput" class="hidden relative mt-2 animate-fade-in">
+                                    <div
+                                        class="flex rounded-full bg-surface-dark border border-white/10 overflow-hidden focus-within:border-primary/50 transition-colors">
+                                        <input id="isapreValue"
+                                            class="bg-transparent border-none text-white w-full pl-4 py-2.5 focus:ring-0 placeholder-slate-600 text-sm"
+                                            placeholder="Valor plan (ej: 2.5)" type="text" />
+                                        <div
+                                            class="bg-surface-highlight border-l border-white/5 px-3 flex items-center justify-center">
+                                            <span class="text-xs font-bold text-slate-300">UF</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Non-Taxable Allowances -->
+                        <div class="pt-4 border-t border-white/5">
+                            <h4 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                                <span class="material-icons text-primary text-sm">payments</span>
+                                Haberes No Imponibles
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">Colación</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="colacion"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white"
+                                            type="text" placeholder="0" aria-label="Colación" pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">Movilización</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="movilizacion"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white"
+                                            type="text" placeholder="0" aria-label="Movilización" pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">Viáticos</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="viaticos"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white"
+                                            type="text" placeholder="0" aria-label="Viáticos" pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Section 5: Additional Discounts (Accordion) -->
+                    <details
+                        class="mt-6 p-1 bg-slate-800/30 rounded-xl border border-white/5 group-open:bg-slate-800/50 transition-colors">
+                        <summary
+                            class="cursor-pointer p-4 font-semibold text-slate-300 hover:text-white flex items-center justify-between transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons text-primary">playlist_add</span>
+                                Descuentos Adicionales (Opcional)
+                            </div>
+                            <span class="material-icons transition-transform group-open:rotate-180">expand_more</span>
+                        </summary>
+                        <div class="px-4 pb-4 pt-2 border-t border-white/5 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- IMPONIBLES -->
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">CCAF (Caja Compensación) <span
+                                            class="text-amber-500 text-[10px] ml-1">Imponible</span></label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="ccaf"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white border-amber-500/20 focus:border-amber-500/50"
+                                            type="text" placeholder="0" aria-label="Caja de Compensación"
+                                            pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">APV (Regimen B) <span
+                                            class="text-amber-500 text-[10px] ml-1">Imponible</span></label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="apv"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white border-amber-500/20 focus:border-amber-500/50"
+                                            type="text" placeholder="0" aria-label="Ahorro Previsional Voluntario"
+                                            pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <!-- NO IMPONIBLES -->
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">Préstamos Empresa</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="prestamos"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white"
+                                            type="text" placeholder="0" aria-label="Préstamos Empresa"
+                                            pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">Pensión Alimenticia</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="pension"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white"
+                                            type="text" placeholder="0" aria-label="Pensión Alimenticia"
+                                            pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">Cuota Sindical</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="sindicato"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white"
+                                            type="text" placeholder="0" aria-label="Cuota Sindical" pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-500 mb-1 ml-1">Otros Descuentos</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-600 text-xs">$</span>
+                                        <input id="otrosDescuentos"
+                                            class="glass-input w-full pl-6 py-2 rounded-lg text-sm text-white"
+                                            type="text" placeholder="0" aria-label="Otros Descuentos"
+                                            pattern="[0-9]*" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- P2: Advanced Toggle for CCAF/APV base -->
+                            <div class="mt-4 pt-4 border-t border-white/5">
+                                <label class="flex items-center gap-3 cursor-pointer group"
+                                    title="Modo avanzado. Por defecto, CCAF/APV afecta base de impuesto, no necesariamente la de cotizaciones.">
+                                    <input id="toggleReduceSS" type="checkbox"
+                                        class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-primary focus:ring-primary/50 cursor-pointer" />
+                                    <span
+                                        class="text-xs text-slate-500 group-hover:text-slate-300 transition-colors">CCAF/APV
+                                        reduce base de cotizaciones (AFP/Salud)</span>
+                                    <span class="material-icons text-slate-600 text-[12px] cursor-help"
+                                        title="Si activa, CCAF y APV reducen la base sobre la que se calculan AFP y Salud. Por defecto están desactivados (modo estándar).">help_outline</span>
+                                </label>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Buttons removed: calculation is real-time -->
+                </div>
+                <!-- Result Breakdown -->
+                <div class="space-y-6">
+                    <!-- 1. Descuentos Legales (Cards Grid) -->
+                    <div>
+                        <h4
+                            class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <span class="material-icons text-sm">gavel</span> Descuentos Legales
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- AFP -->
+                            <div class="glass-panel rounded-lg p-4 flex justify-between items-center bg-slate-800/40">
+                                <div>
+                                    <p class="text-xs text-slate-400 flex items-center gap-1">
+                                        AFP
+                                        <span class="material-icons text-[10px] text-slate-500 cursor-help"
+                                            title="Descuento obligatorio del 10% al 13% según AFP. Va al fondo de pensiones.">help_outline</span>
+                                    </p>
+                                    <p id="resultAFP" class="text-lg font-bold text-white">$0</p>
+                                </div>
+                                <span id="labelAFP"
+                                    class="text-[10px] bg-slate-700/50 px-2 py-1 rounded text-slate-300">Modelo</span>
+                            </div>
+                            <!-- Salud -->
+                            <div class="glass-panel rounded-lg p-4 flex justify-between items-center bg-slate-800/40">
+                                <div>
+                                    <p class="text-xs text-slate-400 flex items-center gap-1">
+                                        Salud
+                                        <span class="material-icons text-[10px] text-slate-500 cursor-help"
+                                            title="Fonasa: 7% fijo. Isapre: 7% mínimo + plan adicional.">help_outline</span>
+                                    </p>
+                                    <p id="resultHealth" class="text-lg font-bold text-white">$0</p>
+                                </div>
+                                <span id="labelHealth"
+                                    class="text-[10px] bg-slate-700/50 px-2 py-1 rounded text-slate-300">7%</span>
+                            </div>
+                            <!-- AFC -->
+                            <div class="glass-panel rounded-lg p-4 flex justify-between items-center bg-slate-800/40">
+                                <div>
+                                    <p class="text-xs text-slate-400">Seguro Cesantía</p>
+                                    <p id="resultAFC" class="text-lg font-bold text-white">$0</p>
+                                </div>
+                                <span class="text-[10px] bg-slate-700/50 px-2 py-1 rounded text-slate-300">0.6%</span>
+                            </div>
+                            <!-- Tax -->
+                            <div class="glass-panel rounded-lg p-4 flex justify-between items-center bg-slate-800/40">
+                                <div>
+                                    <p class="text-xs text-slate-400 flex items-center gap-1">
+                                        Impuesto Único
+                                        <span class="material-icons text-[10px] text-slate-500 cursor-help"
+                                            title="Impuesto progresivo sobre sueldos. Se aplica si ganas más de 13.5 UF mensuales.">help_outline</span>
+                                    </p>
+                                    <p id="resultTax" class="text-lg font-bold text-white">$0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Descuentos Imponibles -->
+                    <div id="section-imponibles" class="hidden transition-all duration-300">
+                        <h4
+                            class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <span class="material-icons text-sm">account_balance_wallet</span> Descuentos Imponibles
+                        </h4>
+                        <div class="glass-panel rounded-lg p-4 space-y-3 bg-slate-800/40">
+                            <div class="flex justify-between text-sm items-center border-b border-white/5 pb-2">
+                                <span class="text-slate-400">Caja Compensación (CCAF)</span>
+                                <span id="resultCCAF" class="text-white font-bold">$0</span>
+                            </div>
+                            <div class="flex justify-between text-sm items-center pt-1">
+                                <span class="text-slate-400">APV (Ahorro Previsional)</span>
+                                <span id="resultAPV" class="text-white font-bold">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Descuentos No Imponibles -->
+                    <div id="section-no-imponibles" class="hidden transition-all duration-300">
+                        <h4
+                            class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <span class="material-icons text-sm">money_off</span> Descuentos No Imponibles
+                        </h4>
+                        <div class="glass-panel rounded-lg p-4 space-y-3 bg-slate-800/40">
+                            <div class="flex justify-between text-sm items-center border-b border-white/5 pb-2">
+                                <span class="text-slate-400">Préstamos Empresa</span>
+                                <span id="resultPrestamos" class="text-white font-bold">$0</span>
+                            </div>
+                            <div class="flex justify-between text-sm items-center border-b border-white/5 pb-2 pt-1">
+                                <span class="text-slate-400">Pensión Alimenticia</span>
+                                <span id="resultPension" class="text-white font-bold">$0</span>
+                            </div>
+                            <div class="flex justify-between text-sm items-center border-b border-white/5 pb-2 pt-1">
+                                <span class="text-slate-400">Cuota Sindical</span>
+                                <span id="resultSindicato" class="text-white font-bold">$0</span>
+                            </div>
+                            <div class="flex justify-between text-sm items-center pt-1">
+                                <span class="text-slate-400">Otros Descuentos</span>
+                                <span id="resultOtros" class="text-white font-bold">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Grand Total Card Moved to Header -->
+            </div>
+            <!-- Sidebar -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Notifications Area -->
+                <div id="global-notifications" class="space-y-3 hidden">
+                    <!-- Dynamic Alerts will be injected here -->
+                </div>
+                <!-- Chart Visualization -->
+                <div class="glass-panel rounded-lg p-6">
+                    <h3
+                        class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <span class="material-icons text-primary text-base">pie_chart</span>
+                        Distribución
+                    </h3>
+                    <div class="flex justify-center mb-6 relative">
+                        <!-- Donut Chart Representation using conic-gradient CSS -->
+                        <div class="w-48 h-48 rounded-full relative"
+                            style="background: conic-gradient(#10b981 0% 81%, #3b82f6 81% 91%, #ef4444 91% 97%, #f97316 97% 98%, #a855f7 98% 100%);">
+                            <div
+                                class="absolute inset-2 bg-surface-dark rounded-full flex items-center justify-center flex-col">
+                                <span class="text-3xl font-bold text-white">81%</span>
+                                <span class="text-xs text-slate-400 font-medium">Líquido</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                                <span class="text-slate-300">Sueldo Líquido</span>
+                            </div>
+                            <span class="font-medium text-white">81.7%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                                <span class="text-slate-300">AFP</span>
+                            </div>
+                            <span class="font-medium text-white">10.6%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                                <span class="text-slate-300">Salud</span>
+                            </div>
+                            <span class="font-medium text-white">6.2%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
+                                <span class="text-slate-300">Impuesto</span>
+                            </div>
+                            <span class="font-medium text-white">0.9%</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Economic Indicators (Sticky) -->
+                <div class="sticky top-24">
+                    <div class="glass-panel rounded-lg p-6 border-l-4 border-l-primary/50">
+                        <h3
+                            class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <span class="material-icons text-primary text-base">trending_up</span>
+                            Indicadores Económicos
+                        </h3>
+                        <p id="indicadores-fecha" class="text-xs text-slate-500 mb-6">Valores actualizados al 24 Oct,
+                            2023</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between pb-4 border-b border-white/5">
+                                <div>
+                                    <p class="text-sm text-slate-400 font-medium">UF (Unidad de Fomento)</p>
+                                    <p class="text-xs text-slate-500 indicators-date">Valor diario</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-white tabular-nums uf-value">$39.683</p>
+                                    <span class="text-xs text-emerald-400 flex items-center justify-end">
+                                        +0.03% <span class="material-icons text-[10px]">north</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pb-4 border-b border-white/5">
+                                <div>
+                                    <p class="text-sm text-slate-400 font-medium">UTM (Mensual)</p>
+                                    <p class="text-xs text-slate-500">Febrero 2026</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-white tabular-nums utm-value">$69.611</p>
+                                    <span class="text-xs text-emerald-400 flex items-center justify-end">
+                                        +0.02% <span class="material-icons text-[10px]">north</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-slate-400 font-medium">Ingreso Mínimo (IMM)</p>
+                                    <p class="text-xs text-slate-500">Febrero 2026</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-white tabular-nums">$539.000</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-slate-400 font-medium">UTA (Anual)</p>
+                                    <p class="text-xs text-slate-500">2026</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-white tabular-nums">$835.332</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-white/5">
+                            <button id="btn-history"
+                                class="w-full py-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-medium transition-colors">
+                                Ver historial UF + UTM
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Promo/Export (feature latente: descomentar para reactivar PDF) -->
+                    <!--
+                    <div class="mt-6 glass-panel rounded-lg p-6 text-center">
+                        <span class="material-icons text-slate-400 text-4xl mb-2">print</span>
+                        <h4 class="text-white font-medium mb-1">¿Necesitas un reporte?</h4>
+                        <p class="text-slate-500 text-xs mb-4">Descarga el detalle del cálculo en formato PDF para tus
+                            registros.</p>
+                        <button
+                            class="w-full py-2.5 rounded-full bg-primary hover:bg-sky-500 text-white text-sm font-semibold shadow-lg shadow-primary/25 transition-all">
+                            Exportar PDF
+                        </button>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-slate-900 pt-16 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div
+                            class="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span class="material-icons text-white text-[10px]">calculate</span>
+                        </div>
+                        <span class="font-bold text-lg text-white">Calculadoras<span
+                                class="text-blue-400">Chile</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm">
+                        Herramientas financieras simples para decisiones complejas.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Plataforma</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                        <li><a href="finiquito_calculator.html"
+                                class="hover:text-blue-400 transition-colors">Calculadora Finiquito</a></li>
+                        <li><a href="sueldo_liquido.html" class="hover:text-blue-400 transition-colors">Calculadora
+                                Sueldo</a></li>
+                        <li><a href="index.html#blog" class="hover:text-blue-400 transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Términos de Uso</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Contacto</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Soporte</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Publicidad</a></li>
+                        <li class="flex gap-4 mt-4">
+                            <a href="#" class="text-slate-500 hover:text-white transition-colors"><span
+                                    class="material-icons">email</span></a>
+                            <a href="#" class="text-slate-500 hover:text-white transition-colors"><span
+                                    class="material-icons">share</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Disclaimer for Calculator Page -->
+            <div class="border-t border-white/5 pt-8 pb-4 text-center">
+                <p class="text-[10px] text-slate-500 leading-relaxed max-w-3xl mx-auto">
+                    ⚠️ <strong>Nota Legal:</strong> Esta calculadora es una herramienta de simulación referencial basada
+                    en el Código del Trabajo de Chile.
+                    Los resultados no constituyen asesoría legal oficial ni reemplazan el cálculo formal que debe
+                    realizar el empleador o un contador.
+                    CalculadorasChile.cl no se hace responsable por diferencias en los montos finales.
+                </p>
+            </div>
+
+            <div
+                class="border-t border-white/5 pt-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center">
+                <p class="text-slate-600 text-xs">
+                    © 2026 CalculadorasChile.cl. Todos los derechos reservados.
+                </p>
+                <p class="text-slate-800 text-[10px] mt-2 md:mt-0">
+                    Diseñado con ❤️ en Chile
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Sticky Result Bar -->
+    <div id="mobile-result-bar"
+        class="lg:hidden fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-xl border-t border-white/10 p-4 transform translate-y-full transition-transform duration-300 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Sueldo Líquido</p>
+                <div class="flex items-baseline gap-2">
+                    <span id="mobile-result-value" class="text-2xl font-black text-white">$0</span>
+                    <span id="mobile-result-percentage"
+                        class="text-xs text-emerald-400 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded">0%</span>
+                </div>
+            </div>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+                class="bg-surface-highlight hover:bg-white/10 text-primary p-2 rounded-full transition-colors border border-white/5">
+                <span class="material-icons">vertical_align_top</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+
+                <div
+                    class="relative transform overflow-hidden rounded-lg bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-white/10">
+
+                    <div class="bg-slate-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div
+                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/10 sm:mx-0 sm:h-10 sm:w-10">
+                                <span class="material-icons text-emerald-400">history</span>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                <h3 class="text-base font-semibold leading-6 text-white" id="modal-title">Historial de
+                                    Indicadores</h3>
+                                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- UF Column -->
+                                    <div class="space-y-3">
+                                        <h4
+                                            class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            UF (Últimos 30 días)
+                                        </h4>
+                                        <div
+                                            class="overflow-hidden rounded-lg border border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar bg-slate-900/20">
+                                            <table class="min-w-full divide-y divide-white/10">
+                                                <thead class="bg-slate-700/50 sticky top-0 z-10">
+                                                    <tr>
+                                                        <th scope="col"
+                                                            class="py-2 px-3 text-left text-[10px] font-medium text-slate-300 uppercase">
+                                                            Fecha</th>
+                                                        <th scope="col"
+                                                            class="py-2 px-3 text-right text-[10px] font-medium text-slate-300 uppercase">
+                                                            Valor</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="uf-history-body" class="divide-y divide-white/5">
+                                                    <!-- Dynamic Content -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- UTM Column -->
+                                    <div class="space-y-3">
+                                        <h4
+                                            class="text-[10px] font-bold text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                            UTM (Últimos 12 meses)
+                                        </h4>
+                                        <div
+                                            class="overflow-hidden rounded-lg border border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar bg-slate-900/20">
+                                            <table class="min-w-full divide-y divide-white/10">
+                                                <thead class="bg-slate-700/50 sticky top-0 z-10">
+                                                    <tr>
+                                                        <th scope="col"
+                                                            class="py-2 px-3 text-left text-[10px] font-medium text-slate-300 uppercase">
+                                                            Fecha</th>
+                                                        <th scope="col"
+                                                            class="py-2 px-3 text-right text-[10px] font-medium text-slate-300 uppercase">
+                                                            Valor</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="utm-history-body" class="divide-y divide-white/5">
+                                                    <!-- Dynamic Content -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-white/5">
+                        <button type="button" id="btn-close-history"
+                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-white/10 hover:bg-white/20 sm:mt-0 sm:w-auto">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        if (btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+    </script>
+    <!-- Logic Scripts -->
+    <script src="js/constants.js"></script>
+    <script src="js/indicators.js"></script>
+    <script src="js/salary_logic.js"></script>
+    <script src="js/salary_ui.js"></script>
+</body>
+
+</html>

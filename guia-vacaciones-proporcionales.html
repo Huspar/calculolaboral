@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Vacaciones proporcionales en Chile: cómo se calculan y cuándo corresponden</title>
+    <meta name="description"
+        content="Aprende cómo calcular las vacaciones proporcionales en Chile, cuándo corresponden en el finiquito y por qué a veces aparecen como $0. Guía clara y actualizada.">
+    <meta name="keywords"
+        content="vacaciones proporcionales chile, feriado proporcional, calculo vacaciones finiquito, dias habiles vacaciones chile">
+    <link rel="canonical" href="https://calculadoraschile.cl/guia-vacaciones-proporcionales">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Vacaciones proporcionales en Chile: cómo se calculan y cuándo corresponden">
+    <meta property="og:description"
+        content="Aprende cómo calcular las vacaciones proporcionales en Chile, cuándo corresponden en el finiquito y por qué a veces aparecen como $0. Guía clara y actualizada.">
+    <meta property="og:url" content="https://calculadoraschile.cl/guia-vacaciones-proporcionales">
+    <meta property="og:type" content="article">
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Cómo calcular las vacaciones proporcionales en Chile (guía completa y actualizada)",
+      "description": "Guía completa sobre vacaciones proporcionales en Chile: qué son, cuándo corresponden, cómo se calculan y por qué a veces dan $0 en el finiquito.",
+      "datePublished": "2026-02-10",
+      "dateModified": "2026-02-10",
+      "author": {
+        "@type": "Organization",
+        "name": "CalculadorasChile"
+      },
+      "image": "https://calculadoraschile.cl/assets/guia-vacaciones-proporcionales.png"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "¿Las vacaciones proporcionales siempre se pagan en el finiquito?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Solo se pagan cuando el trabajador no ha completado un nuevo año laboral y tiene días de vacaciones generados no usados."
+        }
+      }, {
+        "@type": "Question",
+        "name": "¿Pueden desaparecer las vacaciones proporcionales si trabajo un mes más?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí. Al completar un nuevo año laboral, las vacaciones dejan de ser proporcionales y pasan a considerarse vacaciones del período siguiente."
+        }
+      }, {
+        "@type": "Question",
+        "name": "¿Las vacaciones proporcionales pagan impuestos?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Generalmente forman parte del finiquito y pueden estar afectas a descuentos legales según el caso."
+        }
+      }]
+    }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { DEFAULT: "#3b82f6", dark: "#2563eb" },
+                        "background-dark": "#0f172a",
+                        "card-dark": "#1e293b",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0f172a;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .prose-dark h2 {
+            color: #f1f5f9;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prose-dark h3 {
+            color: #e2e8f0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .prose-dark p {
+            color: #94a3b8;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .prose-dark ul,
+        .prose-dark ol {
+            color: #94a3b8;
+            padding-left: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .prose-dark li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+
+        .prose-dark strong {
+            color: #e2e8f0;
+        }
+
+        .callout {
+            border-left: 3px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.08);
+            padding: 1rem 1.25rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1.5rem 0;
+        }
+
+        .callout-amber {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.08);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="glass fixed top-0 left-0 right-0 z-50 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <span class="material-icons text-white text-sm">calculate</span>
+                    </div>
+                    <span class="font-bold text-lg text-white">Calculadoras<span
+                            class="text-blue-400">Chile</span></span>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a href="index.html"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Inicio</a>
+                    <a href="finiquito_calculator.html"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Finiquito</a>
+                    <a href="sueldo_liquido.html"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Sueldo
+                        Líquido</a>
+                </nav>
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center gap-4">
+                    <button id="mobile-menu-btn"
+                        class="md:hidden p-2 rounded-lg text-slate-300 hover:bg-white/5 transition-colors">
+                        <span class="material-icons">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass border-t border-white/5 absolute w-full left-0">
+            <div class="px-4 py-4 space-y-2">
+                <a href="index.html"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Inicio</a>
+                <a href="finiquito_calculator.html"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Finiquito</a>
+                <a href="sueldo_liquido.html"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Sueldo
+                    Líquido</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <article class="max-w-3xl mx-auto">
+
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-xs text-slate-500 mb-8">
+                <a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a>
+                <span class="material-icons text-[12px]">chevron_right</span>
+                <a href="finiquito_calculator.html" class="hover:text-blue-400 transition-colors">Calculadora
+                    Finiquito</a>
+                <span class="material-icons text-[12px]">chevron_right</span>
+                <span class="text-slate-400">Vacaciones Proporcionales</span>
+            </nav>
+
+            <!-- Article Header -->
+            <header class="mb-12">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wider uppercase mb-4">
+                    <span class="material-icons text-[14px]">beach_access</span>
+                    Guía Laboral
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+                    Cómo calcular las vacaciones proporcionales en Chile
+                    <span class="text-slate-400 font-normal text-2xl sm:text-3xl block mt-1">(guía completa y
+                        actualizada)</span>
+                </h1>
+                <div class="flex items-center gap-4 text-xs text-slate-500">
+                    <span>Actualizado: Febrero 2026</span>
+                    <span>•</span>
+                    <span>8 min lectura</span>
+                </div>
+            </header>
+
+            <!-- Hero Image -->
+            <div class="mb-10 rounded-2xl overflow-hidden border border-white/5">
+                <img src="assets/guia-vacaciones-proporcionales.png"
+                    alt="Ilustración de calendario y documento laboral que representa el cálculo de vacaciones proporcionales en Chile"
+                    class="w-full max-h-[35vh] object-cover" />
+            </div>
+
+            <!-- Article Body -->
+            <div class="prose-dark text-sm sm:text-base">
+
+                <!-- Intro -->
+                <p>
+                    Si te han despedido o has renunciado a tu trabajo, probablemente te has preguntado
+                    <strong>cuánto te corresponde por vacaciones</strong>. Uno de los conceptos que más confusión genera
+                    es el de las <strong>vacaciones proporcionales</strong> (o feriado proporcional), especialmente
+                    cuando en tu simulación de finiquito aparecen como <strong>$0</strong>.
+                </p>
+                <p>
+                    En esta guía te explicamos de forma clara y sin lenguaje legal innecesario qué son, cuándo
+                    corresponden, cómo se calculan y por qué a veces el monto es cero.
+                </p>
+
+                <!-- Section 1 -->
+                <h2>¿Qué son las vacaciones proporcionales?</h2>
+                <p>
+                    Las vacaciones proporcionales son los <strong>días de descanso que un trabajador acumula</strong>
+                    pero que no alcanza a tomar antes de que termine su relación laboral. Se calculan en proporción al
+                    tiempo trabajado dentro del año laboral en curso.
+                </p>
+                <p>
+                    En Chile, todo trabajador con más de un año de servicio tiene derecho a <strong>15 días hábiles de
+                        vacaciones al año</strong> (Art. 67 del Código del Trabajo). Si no completas el año, te
+                    corresponde una fracción proporcional.
+                </p>
+
+                <!-- Section 2 -->
+                <h2>¿Cuándo corresponden las vacaciones proporcionales?</h2>
+                <p>Las vacaciones proporcionales se pagan en el finiquito cuando:</p>
+                <ul>
+                    <li>Te despiden <strong>antes de completar un año laboral</strong> (o en medio de un período
+                        anual).</li>
+                    <li>Renuncias voluntariamente y <strong>no has tomado las vacaciones</strong> del período en
+                        curso.</li>
+                    <li>Ha transcurrido <strong>una fracción de tu año laboral actual</strong> sin que hayas usado tus
+                        días.</li>
+                </ul>
+                <div class="callout">
+                    <p class="!mb-0"><strong>Ejemplo:</strong> Si entraste a trabajar el 1 de marzo de 2025 y te
+                        despiden el 1 de noviembre de 2025, llevas 8 meses del año laboral. Te corresponden 15 × (8/12)
+                        = <strong>10 días hábiles</strong> de vacaciones proporcionales.</p>
+                </div>
+
+                <!-- Section 3 -->
+                <h2>¿Cuándo NO corresponden las vacaciones proporcionales?</h2>
+                <p>
+                    No se generan vacaciones proporcionales cuando:
+                </p>
+                <ul>
+                    <li>El trabajador <strong>ya tomó todas sus vacaciones</strong> del período en curso.</li>
+                    <li>El contrato termina <strong>exactamente al cumplir un año laboral</strong> (aniversario). En
+                        este caso, las vacaciones del período anterior ya fueron ejercidas o pagadas, y las del nuevo
+                        período aún no han comenzado a acumularse.</li>
+                </ul>
+
+                <!-- Section 4: KEY -->
+                <h2>¿Por qué las vacaciones proporcionales pueden ser $0?</h2>
+                <p>
+                    Esta es la pregunta más frecuente. Hay dos escenarios principales:
+                </p>
+
+                <h3>1. Completas un año laboral exacto</h3>
+                <p>
+                    Si la fecha de término coincide con tu aniversario laboral (por ejemplo, entraste el 1 de marzo y
+                    te despiden un 1 de marzo posterior), <strong>no hay fracción de año que compensar</strong>.
+                    El resultado es legalmente correcto: tus vacaciones pasaron a ser del período siguiente, que recién
+                    empieza y tiene 0 días acumulados.
+                </p>
+                <div class="callout callout-amber">
+                    <p class="!mb-0">⚠️ <strong>Esto no significa que pierdas días.</strong> Si tenías vacaciones
+                        <strong>pendientes</strong> de años anteriores que no tomaste, esas se pagan por separado como
+                        "vacaciones pendientes" en tu finiquito.
+                    </p>
+                </div>
+
+                <h3>2. Ya usaste tus vacaciones</h3>
+                <p>
+                    Si tomaste los 15 días de vacaciones del período actual antes de que terminara tu contrato,
+                    no hay nada proporcional que compensar.
+                </p>
+
+                <!-- Section 5 -->
+                <h2>¿Cómo se calculan las vacaciones proporcionales en Chile?</h2>
+                <p>La fórmula es:</p>
+                <div class="bg-slate-800/50 rounded-xl p-5 border border-white/10 font-mono text-sm text-blue-300 my-6">
+                    <p class="!text-blue-300 !mb-2">Días proporcionales = 15 × (meses trabajados en el período / 12)
+                    </p>
+                    <p class="!text-blue-300 !mb-2">Monto = (Sueldo diario) × Días proporcionales</p>
+                    <p class="!text-slate-500 !mb-0 text-xs">Donde sueldo diario = Remuneración íntegra ÷ 30</p>
+                </div>
+
+                <p>La <strong>remuneración íntegra</strong> incluye el sueldo base, gratificación legal y, dependiendo
+                    del caso, asignaciones imponibles habituales. Puedes estimar tu pago usando nuestra
+                    <a href="finiquito_calculator.html"
+                        class="text-blue-400 hover:text-blue-300 underline transition-colors">Calculadora de
+                        Finiquito</a>.
+                </p>
+
+                <h3>Ejemplo práctico</h3>
+                <ul>
+                    <li><strong>Sueldo base:</strong> $800.000</li>
+                    <li><strong>Gratificación legal:</strong> $200.000</li>
+                    <li><strong>Remuneración íntegra:</strong> $1.000.000</li>
+                    <li><strong>Sueldo diario:</strong> $1.000.000 ÷ 30 = $33.333</li>
+                    <li><strong>Meses trabajados en el período:</strong> 7</li>
+                    <li><strong>Días proporcionales:</strong> 15 × (7/12) = 8,75 días hábiles</li>
+                    <li><strong>Se convierten a días corridos:</strong> 8,75 × 1,4 ≈ 12,25 días</li>
+                    <li><strong>Monto:</strong> $33.333 × 12,25 ≈ <strong>$408.333</strong></li>
+                </ul>
+
+                <!-- Section 6 -->
+                <h2>Diferencia entre vacaciones proporcionales y vacaciones pendientes</h2>
+                <div class="overflow-x-auto my-6">
+                    <table class="w-full text-sm border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 pr-4 text-slate-300 font-semibold">Concepto</th>
+                                <th class="text-left py-3 pr-4 text-slate-300 font-semibold">Proporcionales</th>
+                                <th class="text-left py-3 text-slate-300 font-semibold">Pendientes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-400">
+                            <tr class="border-b border-white/5">
+                                <td class="py-3 pr-4 font-medium text-slate-300">¿Qué son?</td>
+                                <td class="py-3 pr-4">Fracción del año en curso</td>
+                                <td class="py-3">Días completos de años anteriores no tomados</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-3 pr-4 font-medium text-slate-300">¿Cuándo se generan?</td>
+                                <td class="py-3 pr-4">Al no completar el año laboral</td>
+                                <td class="py-3">Al no usar los 15 días anuales</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-3 pr-4 font-medium text-slate-300">¿Pueden ser $0?</td>
+                                <td class="py-3 pr-4">Sí, en aniversario exacto</td>
+                                <td class="py-3">Solo si tomaste todos tus días</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 pr-4 font-medium text-slate-300">En la calculadora</td>
+                                <td class="py-3 pr-4">Fila "Vacaciones Proporcionales"</td>
+                                <td class="py-3">Fila "Vacaciones Pendientes"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Conclusion -->
+                <h2>Conclusión</h2>
+                <p>
+                    Las vacaciones proporcionales son un derecho del trabajador, pero su monto depende del tiempo
+                    transcurrido en el año laboral actual. Si el resultado en tu finiquito es $0, no necesariamente
+                    significa un error: puede ser que completaste un aniversario exacto o que ya ejerciste tus
+                    vacaciones.
+                </p>
+                <p>
+                    Lo importante es verificar que tus <strong>vacaciones pendientes</strong> (de años anteriores)
+                    también estén consideradas en el finiquito.
+                </p>
+
+                <!-- FAQ Section -->
+                <h2>Preguntas frecuentes sobre vacaciones proporcionales</h2>
+
+                <div class="space-y-5 mb-8">
+                    <div class="p-4 rounded-xl bg-slate-800/40 border border-white/5">
+                        <h3 class="!text-white !text-sm !font-bold !mt-0 !mb-2">¿Las vacaciones proporcionales siempre
+                            se pagan en el finiquito?</h3>
+                        <p class="!mb-0 !text-sm">Solo se pagan cuando el trabajador no ha completado un nuevo año
+                            laboral y tiene días de vacaciones generados no usados. Si ya tomaste tus vacaciones o tu
+                            contrato termina justo en tu aniversario laboral, el monto puede ser $0.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-800/40 border border-white/5">
+                        <h3 class="!text-white !text-sm !font-bold !mt-0 !mb-2">¿Pueden desaparecer las vacaciones
+                            proporcionales si trabajo un mes más?</h3>
+                        <p class="!mb-0 !text-sm">Sí. Al completar un nuevo año laboral, las vacaciones dejan de ser
+                            proporcionales y pasan a considerarse vacaciones del período siguiente. Por eso, al mover la
+                            fecha de término en la calculadora, este ítem puede bajar a $0.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-800/40 border border-white/5">
+                        <h3 class="!text-white !text-sm !font-bold !mt-0 !mb-2">¿Las vacaciones proporcionales pagan
+                            impuestos?</h3>
+                        <p class="!mb-0 !text-sm">Generalmente forman parte del finiquito y pueden estar afectas a
+                            descuentos legales según el caso. No se descuentan cotizaciones previsionales, pero sí puede
+                            aplicar impuesto único al trabajo dependiendo del monto total del finiquito.</p>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div
+                    class="mt-10 p-6 rounded-xl bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-500/20 text-center">
+                    <h3 class="!text-white !text-lg !font-bold !mb-2 !mt-0 !border-0 !pb-0">¿Quieres calcular tu
+                        finiquito?</h3>
+                    <p class="!text-slate-300 !text-sm !mb-4">Usa nuestra calculadora gratuita y obtén un estimado en
+                        segundos.</p>
+                    <a href="finiquito_calculator.html"
+                        class="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-105">
+                        Calcular mi finiquito
+                    </a>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="mt-8 p-4 rounded-lg bg-slate-800/30 border border-white/5">
+                    <p class="!text-xs !text-slate-500 !mb-0 !leading-relaxed">
+                        <strong>Aviso legal:</strong> Esta guía es informativa y no constituye asesoría legal. Los
+                        montos y condiciones pueden variar según las particularidades de cada contrato. Para casos
+                        específicos, consulta a un abogado laboralista o acude a la Inspección del Trabajo.
+                    </p>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-slate-900 py-8">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-slate-500 text-xs">
+                © 2026 CalculadorasChile.cl · Herramientas gratuitas para trabajadores en Chile
+            </p>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
