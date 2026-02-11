@@ -24,7 +24,7 @@ Este es un proyecto de sitio web estático. Para ejecutarlo localmente:
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/tu-usuario/calculadoras-chile.git
+   git clone https://github.com/Huspar/calculadoraschile.git
    ```
 2. Abre `index.html` en cualquier navegador moderno.
 
