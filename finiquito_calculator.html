@@ -1031,14 +1031,18 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Contacto</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Soporte</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Publicidad</a></li>
+                        <li><a href="mailto:soporte@calculolaboral.cl"
+                                class="hover:text-blue-400 transition-colors">Soporte</a></li>
+                        <li><a href="mailto:contacto@calculolaboral.cl?subject=Publicidad"
+                                class="hover:text-blue-400 transition-colors">Publicidad</a></li>
                         <li class="flex gap-4 mt-4">
                             <a href="mailto:contacto@calculolaboral.cl"
                                 class="text-slate-500 hover:text-white transition-colors"><span
                                     class="material-icons">email</span></a>
-                            <a href="#" class="text-slate-500 hover:text-white transition-colors"><span
-                                    class="material-icons">share</span></a>
+                            <button
+                                onclick="navigator.clipboard.writeText(window.location.href); alert('Enlace copiado al portapapeles');"
+                                class="text-slate-500 hover:text-white transition-colors"><span
+                                    class="material-icons">share</span></button>
                         </li>
                     </ul>
                 </div>
