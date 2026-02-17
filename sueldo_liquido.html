@@ -774,8 +774,7 @@
                             <span class="material-icons text-primary text-base">trending_up</span>
                             Indicadores Económicos
                         </h3>
-                        <p id="indicadores-fecha" class="text-xs text-slate-500 mb-6">Valores actualizados al 24 Oct,
-                            2023</p>
+                        <p id="indicadores-fecha" class="text-xs text-slate-500 mb-6">Cargando indicadores...</p>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between pb-4 border-b border-white/5">
                                 <div>
@@ -783,18 +782,41 @@
                                     <p class="text-xs text-slate-500 indicators-date">Valor diario</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-lg font-bold text-white tabular-nums uf-value">$39.683</p>
+                                    <p class="text-lg font-bold text-white tabular-nums uf-value" id="uf-value-display">
+                                        --</p>
                                     <p class="text-[10px] text-slate-500 mt-2 flex items-center gap-1">
                                         <span class="material-icons text-[10px]">update</span>
-                                        <span id="indicators-date-dynamic">Cargando fecha...</span>
+                                        <span id="indicators-date-dynamic">--</span>
                                     </p>
                                     <script>
                                         document.addEventListener('DOMContentLoaded', () => {
-                                            const el = document.getElementById('indicators-date-dynamic');
+                                            const fechaMain = document.getElementById('indicadores-fecha');
+                                            const fechaSmall = document.getElementById('indicators-date-dynamic');
+                                            const ufValue = document.getElementById('uf-value-display');
+
                                             const today = new Date();
-                                            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                                            // Default to today, will be overwritten by indicators.js if available
-                                            el.textContent = `Valores actualizados al ${today.toLocaleDateString('es-CL', options)}`;
+                                            const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+                                            const formattedDateCL = today.toLocaleDateString('es-CL', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                                            // Set initial "Updated" text to today as fallback/optimistic UI
+                                            if (fechaMain) fechaMain.textContent = `Valores actualizados: ${formattedDate}`;
+                                            if (fechaSmall) fechaSmall.textContent = formattedDateCL;
+
+                                            // Error handling / Data check
+                                            // We wait a moment for external scripts (indicators.js) to populate data.
+                                            // If they fail (value remains '--' or empty), we show error.
+                                            setTimeout(() => {
+                                                // Check if UF value is still default or empty
+                                                // Note: logic.js or indicators.js might update this class. 
+                                                // If we assume indicators.js targets .uf-value
+                                                const currentUF = document.querySelector('.uf-value').textContent.trim();
+
+                                                if (currentUF === '--' || currentUF === '' || currentUF === '$0') {
+                                                    if (fechaMain) fechaMain.textContent = "Indicadores no disponibles en este momento";
+                                                    if (ufValue) ufValue.textContent = "—";
+                                                    // Add visual cue for error if needed
+                                                }
+                                            }, 4000); // 4 seconds timeout
                                         });
                                     </script>
                                 </div>

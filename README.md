@@ -34,14 +34,13 @@ Para probar el proyecto en tu máquina:
      npx serve .
      ```
 
-## 🌐 Despliegue
+## 🌐 Despliegue en GitHub Pages
 
-Este proyecto está listo para desplegarse en **GitHub Pages**, Vercel o Netlify.
+Este proyecto está listo para desplegarse en **GitHub Pages**.
 
-### GitHub Pages
 1. Ve a `Settings` > `Pages` en tu repositorio.
 2. Selecciona la rama `main` y la carpeta `/` (root).
-3. Guarda. En segundos tu sitio estará online.
+3. Guarda. En segundos tu sitio estará online en `https://huspar.github.io/calculolaboral/` (o tu dominio personalizado).
 
 ## 📁 Estructura del Proyecto
 
@@ -50,16 +49,12 @@ Este proyecto está listo para desplegarse en **GitHub Pages**, Vercel o Netlify
 ├── index.html                  # Landing page
 ├── sueldo_liquido.html         # Calculadora de Sueldo
 ├── finiquito_calculator.html   # Calculadora de Finiquito
-├── costo_empleador.html        # Calculadora Costo Empresa
-├── assets/                     # Imágenes y recursos estáticos
-├── js/                         # Lógica de las calculadoras
-│   ├── logic.js
-│   ├── salary_logic.js
-│   ├── indicators.js
-│   └── ...
-└── robots.txt / sitemap.xml    # SEO
+├── costo_empleador.html        # Calculadora Costo Empleador
+├── assets/
+│   ├── js/                     # Lógica (logic.js, indicators.js, etc.)
+│   └── css/                    # Estilos adicionales
+└── ...
 ```
 
 ---
-Desarrollado para la comunidad.
-**[calculolaboral.cl](https://calculolaboral.cl)**
+© 2026 Cálculo Laboral. Código abierto bajo licencia MIT.
