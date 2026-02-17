@@ -4,33 +4,10 @@
  * VERSIÓN CORREGIDA - Encoding UTF-8 + Mejoras
  */
 
-const FINIQUITO_CONSTANTS = {
-    UF_VALOR: 39682.99, // 09 Feb 2026
-    IMM: 539000, // Ingreso Mínimo Mensual 2026
-    TOPE_INDEMNIZACION_UF: 90, // Art. 172 - Tope indemnización
-    TOPE_GRATIFICACION_MENSUAL: 213354, // (4.75 * IMM) / 12
-    FACTOR_VACACIONES_NORMAL: 1.25, // Days per month (15 días / 12 meses)
-    FACTOR_VACACIONES_EXTREMA: 1.67, // Days per month (20 días / 12 meses - Zonas Extremas)
-
-    // Feriados 2026 Chile (días inhábiles)
-    HOLIDAYS_2026: [
-        "2026-01-01", // Año Nuevo
-        "2026-04-03", // Viernes Santo
-        "2026-04-04", // Sábado Santo
-        "2026-05-01", // Día del Trabajo
-        "2026-05-21", // Día de las Glorias Navales
-        "2026-06-29", // San Pedro y San Pablo
-        "2026-07-16", // Día de la Virgen del Carmen
-        "2026-08-15", // Asunción de la Virgen
-        "2026-09-18", // Día de la Independencia
-        "2026-09-19", // Día de las Glorias del Ejército
-        "2026-10-12", // Día del Encuentro de Dos Mundos
-        "2026-10-31", // Día de las Iglesias Evangélicas
-        "2026-11-01", // Día de Todos los Santos
-        "2026-12-08", // Inmaculada Concepción
-        "2026-12-25"  // Navidad
-    ]
-};
+// Defensive check for global constants
+if (typeof CONSTANTS === 'undefined') {
+    console.error("CONSTANTS no definido. Asegúrese de cargar constants.js antes de logic.js");
+}
 
 class FiniquitoCalculator {
     constructor(data) {
@@ -50,7 +27,7 @@ class FiniquitoCalculator {
         this.enableIAS = data.enableIAS !== undefined ? data.enableIAS : true;
         this.enableNotice = data.enableNotice !== undefined ? data.enableNotice : true;
         this.simulateAFC = data.simulateAFC !== undefined ? data.simulateAFC : true;
-        this.holidays = Array.isArray(data.holidays) ? data.holidays : FINIQUITO_CONSTANTS.HOLIDAYS_2026;
+        this.holidays = Array.isArray(data.holidays) ? data.holidays : (typeof CONSTANTS !== 'undefined' ? CONSTANTS.HOLIDAYS_2026 : []);
 
         // Toggle: incluir asignaciones en cálculo de indemnización (IAS / Aviso)
         this.includeAssignmentsInIndemnity = data.includeAssignmentsInIndemnity !== undefined ?
@@ -73,12 +50,16 @@ class FiniquitoCalculator {
 
         this.vacationDaysPending = parseFloat(data.vacationDaysPending) || 0; // Días hábiles pendientes
         this.isExtremeZone = data.isExtremeZone || false; // Zona extrema (20 días vs 15 días)
-        this.ufValue = parseFloat(data.ufValue) || FINIQUITO_CONSTANTS.UF_VALOR;
+
+        // Use global constant for default UF if not provided
+        const defaultUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.UF : 0;
+        this.ufValue = parseFloat(data.ufValue) || defaultUF;
 
         // Factor de vacaciones según zona
-        this.vacationFactor = this.isExtremeZone ?
-            FINIQUITO_CONSTANTS.FACTOR_VACACIONES_EXTREMA :
-            FINIQUITO_CONSTANTS.FACTOR_VACACIONES_NORMAL;
+        const factorNormal = typeof CONSTANTS !== 'undefined' ? CONSTANTS.FACTOR_VACACIONES_NORMAL : 1.25;
+        const factorExtrema = typeof CONSTANTS !== 'undefined' ? CONSTANTS.FACTOR_VACACIONES_EXTREMA : 1.67;
+
+        this.vacationFactor = this.isExtremeZone ? factorExtrema : factorNormal;
     }
 
     /**
@@ -90,7 +71,8 @@ class FiniquitoCalculator {
         const serviceTime = this.calculateServiceTime();
 
         // 2. Calcular sueldo base con tope 90 UF
-        const salaryCap = this.ufValue * FINIQUITO_CONSTANTS.TOPE_INDEMNIZACION_UF;
+        const topeIndemnizacion = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_INDEMNIZACION : 90;
+        const salaryCap = this.ufValue * topeIndemnizacion;
         const cappedSalary = Math.min(this.taxableSalary, salaryCap);
         const isCapped = this.taxableSalary > salaryCap;
 
@@ -103,10 +85,17 @@ class FiniquitoCalculator {
         const pendingRemuneration = this.calculatePendingRemuneration();
 
         // 5. Calcular total
-        const total = yearsOfServiceAmount.total +
+        const afc = this.calculateAFCDeduction(serviceTime, cappedSalary);
+
+        let total = yearsOfServiceAmount.total +
             noticeAmount.total +
             vacationAmount.total +
             pendingRemuneration.total;
+
+        // Restar el aporte AFC si corresponde (Descuento al empleador)
+        if (afc.applied) {
+            total -= afc.total;
+        }
 
         const indemnities = {
             yearsOfService: yearsOfServiceAmount,
@@ -151,14 +140,15 @@ class FiniquitoCalculator {
 
         // Estimación: 0.6% de remuneración mensual por el tiempo trabajado
         // En la vida real depende del saldo exacto en la cuenta CIC
-        const estimatedContributionPerMonth = cappedSalary * 0.006;
+        const afcRate = typeof CONSTANTS !== 'undefined' ? CONSTANTS.AFC_INDEFINIDO_WORKER : 0.006;
+        const estimatedContributionPerMonth = cappedSalary * afcRate;
         const totalMonths = (serviceTime.years * 12) + serviceTime.months;
         const total = Math.round(estimatedContributionPerMonth * totalMonths);
 
         return {
             total,
             applied: true,
-            percentage: '0.6%',
+            percentage: `${(afcRate * 100).toFixed(1)}%`,
             reason: "Aporte empleador a cuenta individual (Estimado)"
         };
     }
@@ -216,9 +206,18 @@ class FiniquitoCalculator {
         }
 
         // Tope 11 años (Art. 163 - contratos post 1981)
-        // Nota: Contratos anteriores a 1981 no tienen tope, pero para simplicidad
-        // asumimos que todos tienen tope 11 años
-        const cappedIndemnityYears = Math.min(indemnityYears, 11);
+        // Fecha límite exacta: 14 de agosto de 1981
+        const TOPE_DATE = new Date("1981-08-14");
+
+        let cappedIndemnityYears;
+
+        if (this.startDate < TOPE_DATE) {
+            // Contratos anteriores al 14 de agosto de 1981 NO tienen tope
+            cappedIndemnityYears = indemnityYears;
+        } else {
+            // Aplica tope de 11 años
+            cappedIndemnityYears = Math.min(indemnityYears, 11);
+        }
 
         return {
             years,
@@ -248,7 +247,7 @@ class FiniquitoCalculator {
             };
         }
 
-        // Fórmula: 1 mes de sueldo por cada año trabajado (máx 11 años)
+        // Fórmula: 1 mes de sueldo por cada año trabajado (tope definido en calculateServiceTime)
         const total = serviceTime.cappedIndemnityYears * cappedSalary;
 
         return {
@@ -407,22 +406,10 @@ class FiniquitoCalculator {
 
 // Export for Node.js (backend testing)
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { FiniquitoCalculator, FINIQUITO_CONSTANTS };
+    // Note: This requires CONSTANTS to be available in global or passed in
+    module.exports = { FiniquitoCalculator };
 }
 // Export for Browser (frontend usage)
 else if (typeof window !== 'undefined') {
     window.FiniquitoCalculator = FiniquitoCalculator;
-    window.FINIQUITO_CONSTANTS = FINIQUITO_CONSTANTS;
 }
-/**
- * REGRESIÓN RÁPIDA (Manual Test Case)
- * 
- * Caso: base=850000, grat=212500, assignments=80000, variable=0
- * UF=39682.99 -> Tope 90UF = 3.571.469
- * 
- * taxableSalary esperado:
- * - toggle includeAssignmentsInIndemnity OFF: 850.000 + 212.500 + 0 = 1.062.500
- * - toggle includeAssignmentsInIndemnity ON: 850.000 + 212.500 + 80.000 = 1.142.500
- * 
- * cappedSalary debe aplicarse sobre esos valores (ambos están bajo el tope).
- */

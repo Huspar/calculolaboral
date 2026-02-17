@@ -169,7 +169,7 @@
     class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 min-h-screen flex flex-col selection:bg-primary selection:text-white">
     <!-- Header -->
     <header class="fixed w-full top-0 z-50 transition-all duration-300 glass border-b border-white/5">
-        <div class="max-w-7xl mx-auto px-8">
+        <div class="max-w-[1200px] mx-auto px-6">
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
                 <a href="index.html"
@@ -223,10 +223,10 @@
     </header>
     <!-- Main Content -->
     <main class="flex-grow pt-24 pb-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.25fr_0.75fr] gap-8 items-start">
 
             <!-- COLUMNA IZQUIERDA -->
-            <div class="lg:col-span-8 space-y-6">
+            <div class="space-y-6">
                 <!-- Intro Section -->
                 <div class="mb-8 text-center sm:text-left">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
@@ -580,6 +580,48 @@
                                 </button>
 
                                 <div id="advancedControls" class="hidden mt-4 space-y-4">
+                                    <!-- IAS Option -->
+                                    <label class="flex items-start gap-3 cursor-pointer group">
+                                        <div class="relative mt-0.5">
+                                            <input id="enableIAS" class="peer sr-only" type="checkbox" checked />
+                                            <div
+                                                class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary">
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">
+                                            Calcular Indemnización Años de Servicio (IAS)
+                                        </span>
+                                    </label>
+
+                                    <!-- Notice Option -->
+                                    <label class="flex items-start gap-3 cursor-pointer group">
+                                        <div class="relative mt-0.5">
+                                            <input id="enableNotice" class="peer sr-only" type="checkbox" checked />
+                                            <div
+                                                class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary">
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">
+                                            Calcular Aviso Previo
+                                        </span>
+                                    </label>
+
+                                    <!-- AFC Option -->
+                                    <label class="flex items-start gap-3 cursor-pointer group">
+                                        <div class="relative mt-0.5">
+                                            <input id="simulateAFC" class="peer sr-only" type="checkbox" checked />
+                                            <div
+                                                class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary">
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">
+                                            Simular Descuento Aporte AFC Empleador
+                                        </span>
+                                    </label>
+
                                     <label class="flex items-start gap-3 cursor-pointer group">
                                         <div class="relative mt-0.5">
                                             <input id="includeAssignmentsInIndemnity" class="peer sr-only"
@@ -606,7 +648,7 @@
 
 
             <!-- COLUMNA DERECHA -->
-            <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-[100px] self-start">
+            <div class="space-y-6 lg:sticky lg:top-24 lg:self-start">
                 <div id="results-panel"
                     class="w-full glass-panel rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
                     <!-- Card Header with Gradient -->
@@ -650,6 +692,11 @@
                                 class="flex justify-between items-center text-sm py-2 border-b border-white/5">
                                 <span class="text-slate-400">Años de Servicio</span>
                                 <span id="yearsServiceAmount" class="text-white font-medium">$4.500.000</span>
+                            </div>
+                            <div id="afcRow"
+                                class="flex justify-between items-center text-sm py-2 border-b border-white/5 hidden text-red-400">
+                                <span class="text-slate-400">Descuento AFC (Art. 13)</span>
+                                <span id="afcAmount" class="font-medium">- $0</span>
                             </div>
                             <div id="noticeRow"
                                 class="flex justify-between items-center text-sm py-2 border-b border-white/5">
@@ -727,7 +774,7 @@
             </div> <!-- Cierra Columna Derecha -->
         </div> <!-- Cierra Grid -->
 
-        <div class="max-w-7xl mx-auto px-8 mt-16 space-y-12">
+        <div class="max-w-[1200px] mx-auto px-6 mt-16 space-y-12">
 
             <!-- AdSense Block 2 (Responsive) -->
             <div
@@ -944,7 +991,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-white/10 bg-slate-900 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-8">
+        <div class="max-w-[1200px] mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
@@ -1033,8 +1080,20 @@
             });
         }
     </script>
+    </script>
+    <script src="js/constants.js"></script>
     <script src="js/logic.js"></script>
     <script src="js/ui.js"></script>
+
+    <!-- Integrity Check -->
+    <script>
+        window.addEventListener('load', function () {
+            if (typeof CONSTANTS === 'undefined' || typeof FiniquitoCalculator === 'undefined') {
+                console.error("Critical Dependencies Missing");
+                alert("Error crítico: No se pudieron cargar los archivos de configuración. Por favor, desactiva el bloqueador de anuncios o recarga la página.");
+            }
+        });
+    </script>
 </body>
 
 </html>

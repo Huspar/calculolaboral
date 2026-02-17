@@ -9,34 +9,7 @@
  * Refactored to use centralized constants.
  */
 
-// Fallback Constants (Inlined for robustness)
-const DEFAULT_CONSTANTS = {
-    UF: 39682.99,
-    UTM: 69611,
-    IMM: 539000,
-    TOPE_IMPONIBLE_AFP: 89.9,
-    TOPE_IMPONIBLE_CESANTIA: 135.1,
-    TOPE_INDEMNIZACION: 90,
-    TOPE_GRATIFICACION: 4.75,
-    SALUD_LEGAL: 0.07,
-    AFC_INDEFINIDO_WORKER: 0.006,
-    AFC_PLAZO_FIJO_WORKER: 0.0,
-    FACTOR_HORA_EXTRA_42H: 0.0089286,
-    TAX_BRACKETS: [
-        { limit: 939748.50, factor: 0, rebate: 0 },
-        { limit: 2088330.00, factor: 0.04, rebate: 37589.94 },
-        { limit: 3480550.00, factor: 0.08, rebate: 121123.14 },
-        { limit: 4872770.00, factor: 0.135, rebate: 312553.39 },
-        { limit: 6264990.00, factor: 0.23, rebate: 775466.54 },
-        { limit: 8353320.00, factor: 0.304, rebate: 1239075.80 },
-        { limit: 21579410.00, factor: 0.35, rebate: 1623328.52 },
-        { limit: Infinity, factor: 0.40, rebate: 2702299.02 }
-    ],
-    AFP_RATES: {
-        'Capital': 0.1144, 'Cuprum': 0.1144, 'Habitat': 0.1127,
-        'Modelo': 0.1058, 'Planvital': 0.1116, 'Provida': 0.1145, 'Uno': 0.1069
-    }
-};
+// Fallback Constants Removed to enforce Single Source of Truth via constants.js
 
 class ForensicSalaryCalculator {
     constructor(data) {
@@ -70,29 +43,31 @@ class ForensicSalaryCalculator {
     calculate() {
         try {
             // Robust Constants Logic: Window -> Global -> Default
-            let C = DEFAULT_CONSTANTS;
+            let C = null;
 
             // Potential source of constants
-            const candidateC = (typeof window !== 'undefined' && window.CONSTANTS) ? window.CONSTANTS :
-                ((typeof global !== 'undefined' && global.CONSTANTS) ? global.CONSTANTS :
-                    ((typeof CONSTANTS !== 'undefined') ? CONSTANTS : null));
+            if (typeof window !== 'undefined' && window.CONSTANTS) {
+                C = window.CONSTANTS;
+            } else if (typeof global !== 'undefined' && global.CONSTANTS) {
+                C = global.CONSTANTS;
+            } else if (typeof CONSTANTS !== 'undefined') {
+                C = CONSTANTS;
+            }
 
-            if (candidateC) {
-                // Paranoid Check: Only use candidate if it has valid numbers for critical indicators
-                // This prevents issues where API might set UF to undefined/null or NaN
-                const isValid = (val) => typeof val === 'number' && !isNaN(val) && val > 0;
+            if (!C) {
+                throw new Error("CRITICAL: Global CONSTANTS not found. Ensure constants.js is loaded.");
+            }
 
-                if (isValid(candidateC.UF) && isValid(candidateC.UTM) && isValid(candidateC.IMM)) {
-                    C = candidateC;
-                } else {
-                    console.warn('Detected corrupted/invalid Global Constants. Reverting to Defaults.', candidateC);
-                }
+            // Paranoid Check: Only use candidate if it has valid numbers for critical indicators
+            const isValid = (val) => typeof val === 'number' && !isNaN(val) && val > 0;
+
+            if (!isValid(C.UF) || !isValid(C.UTM) || !isValid(C.IMM)) {
+                throw new Error(`CRITICAL: Invalid Economic Indicators in CONSTANTS. UF=${C.UF}, UTM=${C.UTM}`);
             }
 
             // Final safety check for Brackets (API usually doesn't update these, but good to be safe)
             if (!C.TAX_BRACKETS || !Array.isArray(C.TAX_BRACKETS)) {
-                console.warn('Missing TAX_BRACKETS in Constants. Using Defaults.');
-                C.TAX_BRACKETS = DEFAULT_CONSTANTS.TAX_BRACKETS;
+                throw new Error("CRITICAL: Missing TAX_BRACKETS in CONSTANTS.");
             }
 
             // PASO 1: Calcular Sueldo Imponible Base

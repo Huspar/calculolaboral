@@ -248,7 +248,7 @@
     <!-- Navigation -->
     <!-- Header -->
     <header class="fixed w-full top-0 z-50 transition-all duration-300 glass glass-panel border-b border-white/5">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1200px] mx-auto px-6">
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
                 <!-- Logo -->
@@ -298,9 +298,9 @@
         </div>
     </header>
     <main class="flex-grow pt-24 pb-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.25fr_0.75fr] gap-8">
             <!-- Main Calculator Section -->
-            <div class="lg:col-span-8 space-y-6">
+            <div class="space-y-6">
                 <!-- Header Text -->
                 <div class="mb-8">
                     <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">Calculadora de Sueldo
@@ -309,7 +309,7 @@
                         detalle exacto de tus descuentos legales en Chile.</p>
                 </div>
                 <!-- Sticky Result Header -->
-                <div id="sticky-result-container" class="sticky top-20 z-40 mb-8 transition-all duration-300">
+                <div id="sticky-result-container" class="sticky top-24 z-40 mb-8 transition-all duration-300">
                     <div
                         class="glass-panel rounded-xl p-6 border border-emerald-500/30 bg-slate-900/90 backdrop-blur-md shadow-2xl shadow-emerald-500/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="text-center sm:text-left">
@@ -712,7 +712,7 @@
                 <!-- Grand Total Card Moved to Header -->
             </div>
             <!-- Sidebar -->
-            <div class="lg:col-span-4 space-y-6">
+            <div class="space-y-6">
                 <!-- Notifications Area -->
                 <div id="global-notifications" class="space-y-3 hidden">
                     <!-- Dynamic Alerts will be injected here -->
@@ -844,7 +844,7 @@
             </div>
         </div>
         <!-- Privacy & Legal Notes -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div class="max-w-[1200px] mx-auto px-6 pb-8">
             <div
                 class="mt-6 p-4 rounded-xl bg-slate-800/40 border border-white/5 text-xs text-slate-400 leading-relaxed">
                 <strong class="text-slate-300">Privacidad:</strong>
@@ -860,7 +860,7 @@
     <!-- Footer -->
     <!-- Footer -->
     <footer class="border-t border-white/10 bg-slate-900 pt-16 pb-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1200px] mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
@@ -1064,6 +1064,16 @@
     <script src="js/indicators.js"></script>
     <script src="js/salary_logic.js"></script>
     <script src="js/salary_ui.js"></script>
+
+    <!-- Integrity Check -->
+    <script>
+        window.addEventListener('load', function () {
+            if (typeof CONSTANTS === 'undefined' || typeof ForensicSalaryCalculator === 'undefined' || typeof IndicatorsService === 'undefined') {
+                console.error("Critical Dependencies Missing");
+                alert("Error crítico: No se pudieron cargar los componentes del sistema. Por favor, recarga la página.");
+            }
+        });
+    </script>
 </body>
 
 </html>

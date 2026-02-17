@@ -21,6 +21,29 @@ const CONSTANTS = {
     TOPE_INDEMNIZACION: 90,        // UF
     TOPE_GRATIFICACION: 4.75,      // IMM
 
+    // Vacation Factors
+    FACTOR_VACACIONES_NORMAL: 1.25, // Days per month (15 días / 12 meses)
+    FACTOR_VACACIONES_EXTREMA: 1.67, // Days per month (20 días / 12 meses - Zonas Extremas)
+
+    // Feriados 2026 Chile (días inhábiles)
+    HOLIDAYS_2026: [
+        "2026-01-01", // Año Nuevo
+        "2026-04-03", // Viernes Santo
+        "2026-04-04", // Sábado Santo
+        "2026-05-01", // Día del Trabajo
+        "2026-05-21", // Día de las Glorias Navales
+        "2026-06-29", // San Pedro y San Pablo
+        "2026-07-16", // Día de la Virgen del Carmen
+        "2026-08-15", // Asunción de la Virgen
+        "2026-09-18", // Día de la Independencia
+        "2026-09-19", // Día de las Glorias del Ejército
+        "2026-10-12", // Día del Encuentro de Dos Mundos
+        "2026-10-31", // Día de las Iglesias Evangélicas
+        "2026-11-01", // Día de Todos los Santos
+        "2026-12-08", // Inmaculada Concepción
+        "2026-12-25"  // Navidad
+    ],
+
     // Rates
     SALUD_LEGAL: 0.07,
     AFC_INDEFINIDO_WORKER: 0.006,

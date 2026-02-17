@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.totalAmount = document.getElementById('totalAmount');
     elements.totalAmountMobile = document.getElementById('totalAmountMobile');
     elements.yearsServiceAmount = document.getElementById('yearsServiceAmount');
+    elements.afcRow = document.getElementById('afcRow');
+    elements.afcAmount = document.getElementById('afcAmount');
     elements.noticeAmount = document.getElementById('noticeAmount');
     elements.vacationPropAmount = document.getElementById('vacationPropAmount');
     elements.vacationPendingAmount = document.getElementById('vacationPendingAmount');
@@ -47,7 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize UF Display and Dynamic Date
     if (elements.ufCapValue) {
-        elements.ufCapValue.textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(FINIQUITO_CONSTANTS.UF_VALOR * 90);
+        // UF Cap = TOPE_INDEMNIZACION * UF
+        const topeUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_INDEMNIZACION : 90;
+        const valorUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.UF : 0;
+        elements.ufCapValue.textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valorUF * topeUF);
     }
     if (elements.lastUpdateDate) {
         const now = new Date();
@@ -87,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.varMonth3 = document.getElementById('varMonth3');
     elements.variableAverageOutput = document.getElementById('variableAverageOutput');
 
-    // Fetch Holidays from JSON
+    // Fetch Holidays from JSON or Constants
     fetch('assets/holidays/holidays-2026.json')
         .then(response => response.json())
         .then(data => {
@@ -96,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
             console.warn('Could not load holidays JSON, using fallback from constants:', err);
-            window.HOLIDAYS_LIST = FINIQUITO_CONSTANTS.HOLIDAYS_2026;
+            window.HOLIDAYS_LIST = (typeof CONSTANTS !== 'undefined' ? CONSTANTS.HOLIDAYS_2026 : []);
         });
 
     // ============================================
@@ -151,6 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.endDate) attachListener(elements.endDate, 'change');
 
     // Advanced Toggles Listeners
+    elements.enableIAS = document.getElementById('enableIAS');
+    elements.enableNotice = document.getElementById('enableNotice');
+    elements.simulateAFC = document.getElementById('simulateAFC');
+
     if (elements.enableIAS) elements.enableIAS.addEventListener('change', updateCalculations);
     if (elements.enableNotice) elements.enableNotice.addEventListener('change', updateCalculations);
     if (elements.simulateAFC) elements.simulateAFC.addEventListener('change', updateCalculations);
@@ -163,8 +172,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Auto-calculate 25% capped when Base Salary changes
         elements.baseSalary.addEventListener('input', () => {
             const base = parseInt(elements.baseSalary.value.replace(/\D/g, '')) || 0;
-            const legalCap = FINIQUITO_CONSTANTS.TOPE_GRATIFICACION_MENSUAL; // 213354
-            // Formula: 25% of Base, capped at 4.75 IMM / 12
+
+            // Calculate Cap Dynamically: (TOPE_GRATIFICACION * IMM) / 12
+            const topeGrat = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_GRATIFICACION : 4.75;
+            const imm = typeof CONSTANTS !== 'undefined' ? CONSTANTS.IMM : 539000;
+            const legalCap = Math.round((topeGrat * imm) / 12);
+
+            // Formula: 25% of Base, capped
             const calculated = Math.min(Math.round(base * 0.25), legalCap);
 
             elements.gratification.value = new Intl.NumberFormat('es-CL').format(calculated);
@@ -174,7 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Enforce Hard Cap on Manual Input
         elements.gratification.addEventListener('input', (e) => {
             let val = parseInt(e.target.value.replace(/\D/g, '')) || 0;
-            const legalCap = FINIQUITO_CONSTANTS.TOPE_GRATIFICACION_MENSUAL;
+
+            // Calculate Cap Dynamically
+            const topeGrat = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_GRATIFICACION : 4.75;
+            const imm = typeof CONSTANTS !== 'undefined' ? CONSTANTS.IMM : 539000;
+            const legalCap = Math.round((topeGrat * imm) / 12);
 
             if (val > legalCap) {
                 val = legalCap;
@@ -371,12 +389,21 @@ function updateCalculations() {
         }
     }
 
+
     // ============================================
     // CALCULATE (with error handling)
     // ============================================
 
     try {
         // FiniquitoCalculator is available globally from logic.js
+        // If logic.js is not loaded, this will throw
+        if (typeof FiniquitoCalculator === 'undefined') {
+            throw new Error('FiniquitoCalculator logic is not loaded');
+        }
+
+        const rawCause = elements.cause?.value ?? '161';
+        const cause = rawCause.replace(/\D/g, '') || '161';
+
         const calculator = new FiniquitoCalculator({
             startDate: elements.startDate.value, // YYYY-MM-DD
             endDate: elements.endDate.value,     // YYYY-MM-DD
@@ -385,24 +412,35 @@ function updateCalculations() {
             assignments,
             variableAverage,
             vacationDaysPending: vacationDaysPending,
-            cause: elements.cause.value,
+            cause: cause,
             noticeGiven: elements.noticeGiven.checked,
             includeAssignmentsInVacation: elements.includeAssignmentsInVacation ?
                 elements.includeAssignmentsInVacation.checked : true,
             includeAssignmentsInIndemnity: elements.includeAssignmentsInIndemnity ?
                 elements.includeAssignmentsInIndemnity.checked : true,
+            enableIAS: readBool(elements.enableIAS, true),
+            enableNotice: readBool(elements.enableNotice, true),
+            simulateAFC: readBool(elements.simulateAFC, true),
             holidays: window.HOLIDAYS_LIST
         });
 
         const results = calculator.calculate();
 
-        // ============================================
-        // UPDATE UI WITH RESULTS
-        // ============================================
-
         if (elements.totalAmount) elements.totalAmount.textContent = format(results.total);
         if (elements.totalAmountMobile) elements.totalAmountMobile.textContent = format(results.total).replace(' CLP', '');
         if (elements.yearsServiceAmount) elements.yearsServiceAmount.textContent = format(results.indemnities.yearsOfService.total);
+
+        // AFC Deduction Row Update
+        if (elements.afcRow && elements.afcAmount) {
+            if (results.afc.applied && results.afc.total > 0) {
+                elements.afcRow.classList.remove('hidden');
+                elements.afcAmount.textContent = `- ${format(results.afc.total)}`;
+                elements.afcRow.title = results.afc.reason;
+            } else {
+                elements.afcRow.classList.add('hidden');
+            }
+        }
+
         if (elements.noticeAmount) elements.noticeAmount.textContent = format(results.indemnities.notice.total);
         if (elements.vacationPropAmount) elements.vacationPropAmount.textContent = format(results.indemnities.vacation.proportionalTotal);
         if (elements.vacationPendingAmount) elements.vacationPendingAmount.textContent = format(results.indemnities.vacation.pendingTotal);
@@ -576,6 +614,16 @@ function trackCalculation(results) {
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
+
+// Helper for Robust Boolean Reading
+function readBool(el, defaultValue = true) {
+    if (!el) return defaultValue;
+    const type = (el.getAttribute('type') || '').toLowerCase();
+    if (type === 'checkbox' || type === 'radio') return !!el.checked;
+    const v = (el.value ?? '').toString().toLowerCase().trim();
+    if (v === '') return defaultValue;
+    return (v === 'true' || v === '1' || v === 'yes' || v === 'on');
+}
 
 // Format number as Chilean Pesos
 function formatChileanPesos(amount) {
