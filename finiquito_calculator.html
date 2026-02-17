@@ -162,6 +162,15 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
+
+        /* Ad Slots configuration */
+        .ad-slot {
+            display: none;
+        }
+
+        .ad-slot.is-active {
+            display: block;
+        }
     </style>
 </head>
 
@@ -244,14 +253,8 @@
                     </p>
 
                     <!-- AdSense Block 1 -->
-                    <div
-                        class="mt-8 w-full min-h-[100px] bg-slate-50 dark:bg-white/5 rounded-2xl flex flex-col items-center justify-center border border-dashed border-slate-200 dark:border-white/10 group transition-all hover:border-indigo-300">
-                        <div class="flex flex-col items-center opacity-40 group-hover:opacity-60 transition-opacity">
-                            <span class="material-icons text-slate-400 text-xl mb-1">dashboard</span>
-                            <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Espacio
-                                Publicitario</span>
-                        </div>
-                    </div>
+                    <!-- AdSense Block 1 -->
+                    <section id="ad-slot-1" class="ad-slot" aria-label="Espacio publicitario"></section>
 
                     <!-- Trust Badges -->
                     <div class="flex flex-wrap gap-3 mt-4 justify-center sm:justify-start">
@@ -777,14 +780,8 @@
         <div class="max-w-[1200px] mx-auto px-6 mt-16 space-y-12">
 
             <!-- AdSense Block 2 (Responsive) -->
-            <div
-                class="w-full h-auto min-h-[250px] bg-slate-200 dark:bg-white/5 rounded-xl flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-white/10 relative overflow-hidden">
-                <span class="text-[10px] uppercase tracking-widest text-slate-400 font-medium mb-1">Publicidad
-                    (AdSense)</span>
-                <div
-                    class="w-full h-full absolute top-0 left-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 opacity-0 hover:animate-pulse">
-                </div>
-            </div>
+            <!-- AdSense Block 2 (Responsive) -->
+            <section id="ad-slot-2" class="ad-slot" aria-label="Espacio publicitario"></section>
 
             <!-- Educational Content -->
             <section class="prose dark:prose-invert max-w-none">
