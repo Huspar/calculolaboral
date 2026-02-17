@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-version" content="1.0.0">
+    <meta name="description"
+        content="Contáctanos para dudas sobre finiquitos, sueldo líquido y cálculos laborales en Chile. Respuestas claras y actualizadas.">
+    <title>Contacto | Cálculo Laboral Chile</title>
+    <link rel="canonical" href="https://calculolaboral.cl/contacto.html">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a', // Main Background
+                            950: '#020617',
+                        },
+                        primary: {
+                            DEFAULT: '#3b82f6', // blue-500
+                            hover: '#2563eb', // blue-600
+                            light: '#60a5fa', // blue-400
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0F172A;
+            color: #F8FAFC;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .glass-input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Background Glows */
+        .bg-glow-1 {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -100px;
+            left: -100px;
+            z-index: -1;
+            filter: blur(50px);
+        }
+
+        .bg-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            bottom: 0;
+            right: -100px;
+            z-index: -1;
+            filter: blur(60px);
+        }
+
+        /* Hide Scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0F172A;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="antialiased overflow-x-hidden relative flex flex-col min-h-screen">
+
+    <!-- Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="bg-glow-1 animate-blob"></div>
+        <div class="bg-glow-2 animate-blob animation-delay-2000"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 transition-all duration-300 glass border-b border-white/5">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                <!-- Logo -->
+                <a href="index.html"
+                    class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <span class="material-icons text-white text-sm">calculate</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white">Cálculo<span class="text-blue-400">
+                            Laboral</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex gap-8">
+                    <a href="index.html#herramientas"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Calculadoras</a>
+                    <a href="index.html#blog"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Blog</a>
+                    <a href="index.html#faq"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Preguntas</a>
+                    <a href="contacto.html" class="text-sm font-medium text-white transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center gap-4">
+                    <button id="mobile-menu-btn"
+                        class="md:hidden p-2 rounded-lg text-slate-300 hover:bg-white/5 transition-colors">
+                        <span class="material-icons">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu"
+            class="hidden md:hidden glass border-t border-white/5 absolute w-full left-0 bg-slate-900/95">
+            <div class="px-4 py-4 space-y-2">
+                <a href="index.html#herramientas"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Calculadoras</a>
+                <a href="index.html#blog"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Blog</a>
+                <a href="index.html#faq"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Preguntas</a>
+                <a href="contacto.html"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-white bg-white/10">Contacto</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-32 pb-20 px-6">
+        <div class="max-w-[800px] mx-auto">
+
+            <div class="text-center mb-12 animate-fade-in-up">
+                <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+                    Contacto
+                </h1>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                    Si tienes dudas sobre cálculos laborales en Chile, puedes escribirnos.
+                </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-8 md:p-12 mb-12">
+
+                <div class="flex flex-col items-center justify-center mb-8 pb-8 border-b border-white/5">
+                    <div class="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4">
+                        <span class="material-icons text-blue-400 text-3xl">email</span>
+                    </div>
+                    <a href="mailto:contacto@calculolaboral.cl"
+                        class="text-xl md:text-2xl font-bold text-white hover:text-blue-400 transition-colors">
+                        contacto@calculolaboral.cl
+                    </a>
+                    <p class="text-sm text-slate-500 mt-2">Respondemos dentro de 24-48 horas.</p>
+                </div>
+
+                <!-- Success Message (Hidden by default) -->
+                <div id="success-message"
+                    class="hidden flex flex-col items-center justify-center text-center py-10 animate-fade-in-up">
+                    <div class="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-6">
+                        <span class="material-icons text-green-400 text-5xl">check_circle</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">¡Mensaje Enviado!</h3>
+                    <p class="text-slate-400 max-w-md">
+                        Gracias por escribirnos. Hemos recibido tu mensaje y te responderemos a <span
+                            id="user-email-display" class="text-blue-400"></span> lo antes posible.
+                    </p>
+                    <button id="send-another-btn"
+                        class="mt-8 px-6 py-3 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition-colors text-sm font-medium">
+                        Enviar otro mensaje
+                    </button>
+                </div>
+
+                <!-- Contact Form -->
+                <form id="contact-form" action="https://formsubmit.co/ajax/contacto@calculolaboral.cl" method="POST"
+                    class="space-y-6">
+                    <!-- Formsubmit Configuration -->
+                    <input type="hidden" name="_subject" value="Nuevo mensaje desde CalculoLaboral.cl">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_captcha" value="true">
+
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-slate-300 mb-2">Nombre</label>
+                        <input type="text" id="name" name="name" required placeholder="Tu nombre"
+                            class="w-full px-4 py-3 rounded-xl glass-input placeholder-slate-500 focus:ring-2 focus:ring-blue-500/50 transition-all">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Correo
+                            Electrónico</label>
+                        <input type="email" id="email" name="email" required placeholder="tu@correo.com"
+                            class="w-full px-4 py-3 rounded-xl glass-input placeholder-slate-500 focus:ring-2 focus:ring-blue-500/50 transition-all">
+                    </div>
+
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-slate-300 mb-2">Mensaje</label>
+                        <textarea id="message" name="message" rows="5" required placeholder="¿En qué podemos ayudarte?"
+                            class="w-full px-4 py-3 rounded-xl glass-input placeholder-slate-500 focus:ring-2 focus:ring-blue-500/50 transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="submit-btn"
+                            class="w-full px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="btn-text">Enviar Mensaje</span>
+                            <span class="material-icons text-sm btn-icon">send</span>
+                            <!-- Loading Spinner (Hidden) -->
+                            <svg class="animate-spin h-5 w-5 text-white hidden loading-spinner"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <p class="text-xs text-slate-500 text-center mt-4">
+                        Tus datos están protegidos. No compartimos tu información con terceros.
+                    </p>
+                </form>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-slate-900 pt-16 pb-8 relative z-50 mt-auto">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div
+                            class="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span class="material-icons text-white text-[10px]">calculate</span>
+                        </div>
+                        <span class="font-bold text-lg text-white">Cálculo<span class="text-blue-400">
+                                Laboral</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm">
+                        Herramientas laborales gratuitas y calculadoras para Chile.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Calculadoras</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                        <li><a href="sueldo_liquido.html" class="hover:text-blue-400 transition-colors">Sueldo
+                                Líquido</a></li>
+                        <li><a href="finiquito_calculator.html"
+                                class="hover:text-blue-400 transition-colors">Calculadora Finiquito</a></li>
+                        <li><a href="guia-vacaciones-proporcionales.html"
+                                class="hover:text-blue-400 transition-colors">Guía Vacaciones</a></li>
+                        <li><a href="sobre-nosotros.html" class="hover:text-blue-400 transition-colors">Sobre
+                                Nosotros</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="privacidad.html" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
+                        <li><a href="terminos.html" class="hover:text-blue-400 transition-colors">Términos de Uso</a>
+                        </li>
+                        <li><a href="disclaimer.html" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Contacto</h4>
+                    <p class="text-sm text-slate-400 mb-2">Consultas y sugerencias:</p>
+                    <a href="mailto:contacto@calculolaboral.cl"
+                        class="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        <span class="material-icons text-base">email</span>
+                        contacto@calculolaboral.cl
+                    </a>
+                </div>
+            </div>
+
+            <div
+                class="border-t border-white/5 pt-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center">
+                <p class="text-slate-600 text-xs">
+                    © 2026 Cálculo Laboral – calculolaboral.cl. Todos los derechos reservados.
+                </p>
+                <p class="text-slate-800 text-[10px] mt-2 md:mt-0">
+                    Diseñado con ❤️ en Chile
+                </p>
+            </div>
+            <p class="text-xs text-slate-500 mt-4">Versión 1.0 — Febrero 2026</p>
+        </div>
+    </footer>
+
+    <!-- Simple JS for Interactions -->
+    <script>
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        if (btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+
+        // Contact Form Handling
+        const form = document.getElementById('contact-form');
+        const successMessage = document.getElementById('success-message');
+        const userEmailDisplay = document.getElementById('user-email-display');
+        const sendAnotherBtn = document.getElementById('send-another-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnIcon = submitBtn.querySelector('.btn-icon');
+        const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // UI Loading State
+                submitBtn.disabled = true;
+                btnText.textContent = 'Enviando...';
+                btnIcon.classList.add('hidden');
+                loadingSpinner.classList.remove('hidden');
+
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Success State
+                            form.classList.add('hidden');
+                            successMessage.classList.remove('hidden');
+                            userEmailDisplay.textContent = formData.get('email');
+                            form.reset();
+                        } else {
+                            // Error State
+                            alert("Hubo un error al enviar el mensaje. Por favor intenta nuevamente o escríbenos directamente a contacto@calculolaboral.cl");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Hubo un error de conexión. Por favor revisa tu internet e intenta nuevamente.");
+                    })
+                    .finally(() => {
+                        // Reset Button State
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'Enviar Mensaje';
+                        btnIcon.classList.remove('hidden');
+                        loadingSpinner.classList.add('hidden');
+                    });
+            });
+        }
+
+        if (sendAnotherBtn) {
+            sendAnotherBtn.addEventListener('click', () => {
+                successMessage.classList.add('hidden');
+                form.classList.remove('hidden');
+            });
+        }
+    </script>
+</body>
+
+</html>
