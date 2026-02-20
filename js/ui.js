@@ -309,28 +309,23 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateCalculations() {
     if (!elements.baseSalary) return;
 
-    // Helper for formatting currency
-    const format = (n) => {
-        if (isNaN(n)) return "$ — CLP";
-        return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(n);
-    };
+    const V = window.Validation;
 
-    // Parse Check (more robust)
-    const parseCurrency = (el) => {
-        if (!el || !el.value) return 0;
-        return parseInt(el.value.replace(/\D/g, '')) || 0;
-    };
+    // Helper for formatting currency (safe — never NaN)
+    const format = (n) => V.formatCLPSafe(n);
 
-    const parseFloatSafe = (el) => {
-        if (!el || !el.value) return 0;
-        return parseFloat(el.value) || 0;
-    };
+    // Safe parsers using Validation module
+    const parseCurrency = (el) => V.safeCurrency(el?.value);
+    const parseFloatSafe = (el) => V.safeNumber(el?.value);
 
     // ============================================
-    // EMPTY STATE HANDLING
+    // VALIDATION (Day 2)
     // ============================================
 
-    // If any essential field is empty, show "—" placeholders
+    V.clearAllErrors();
+    let validationFailed = false;
+
+    // If essential fields are empty, show placeholders (existing behavior)
     if (!elements.startDate.value || !elements.endDate.value || !elements.baseSalary.value) {
         // Set Empty States
         if (elements.totalAmount) elements.totalAmount.textContent = "$ — CLP";
@@ -348,7 +343,7 @@ function updateCalculations() {
         if (elements.antiquityOutput) elements.antiquityOutput.textContent = "— años, — meses";
         if (elements.totalVacationDaysOutput) elements.totalVacationDaysOutput.textContent = "— días corridos";
 
-        // Reset Styles (remove strikethrough/opacity if it was set)
+        // Reset Styles
         if (elements.yearsRow) {
             elements.yearsRow.classList.remove('opacity-50', 'line-through');
             elements.yearsRow.removeAttribute('title');
@@ -359,6 +354,31 @@ function updateCalculations() {
 
         return; // Stop here, do not attempt calculation
     }
+
+    // Validate salary > 0
+    if (elements.baseSalary.value.trim() !== '') {
+        const salVal = V.safeCurrency(elements.baseSalary.value);
+        if (salVal <= 0) {
+            V.showFieldError(elements.baseSalary, 'Ingresa un sueldo mayor a $0');
+            validationFailed = true;
+        }
+    }
+
+    // Validate date order
+    if (!V.requireDateOrder(elements.startDate, elements.endDate)) {
+        validationFailed = true;
+    }
+
+    // Validate vacation days: 0-90
+    if (elements.vacationPending && elements.vacationPending.value.trim() !== '') {
+        const vd = V.safeNumber(elements.vacationPending.value);
+        if (vd < 0 || vd > 90) {
+            V.showFieldError(elements.vacationPending, 'Máximo 90 días de vacaciones');
+            validationFailed = true;
+        }
+    }
+
+    if (validationFailed) return;
 
     // ============================================
     // PARSE INPUTS

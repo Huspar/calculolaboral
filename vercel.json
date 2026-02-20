@@ -1,0 +1,19 @@
+{
+    "redirects": [
+        {
+            "source": "/costo_empleador.html",
+            "destination": "/",
+            "permanent": true
+        },
+        {
+            "source": "/costo-empleador",
+            "destination": "/",
+            "permanent": true
+        },
+        {
+            "source": "/costo_empleador",
+            "destination": "/",
+            "permanent": true
+        }
+    ]
+}

@@ -69,6 +69,10 @@ const IndicatorsService = {
 
     // Fetch Daily Indicators
     async fetchDailyIndicators() {
+        // Dispatch loading state
+        document.dispatchEvent(new CustomEvent('indicatorsLoading'));
+        this._updateStatusDOM('loading');
+
         try {
             const response = await fetch(this.API_URL);
             if (!response.ok) throw new Error('Network response was not ok');
@@ -88,6 +92,8 @@ const IndicatorsService = {
 
             // Update DOM
             this.updateDOM(data);
+            this._updateStatusDOM('success');
+            document.dispatchEvent(new CustomEvent('indicatorsLoaded', { detail: { source: 'api' } }));
 
         } catch (error) {
             console.warn('API fetch failed, trying localStorage fallback:', error);
@@ -96,8 +102,14 @@ const IndicatorsService = {
             const cached = this._loadFromCache();
             if (cached) {
                 this._applyValues(cached.UF, cached.UTM, cached.IMM, 'localStorage');
+                const cachedDate = new Date(cached.timestamp);
+                this._updateStatusDOM('fallback', cachedDate);
+                document.dispatchEvent(new CustomEvent('indicatorsLoaded', { detail: { source: 'cache' } }));
+            } else {
+                // Fallback 2: hardcoded defaults already in CONSTANTS
+                this._updateStatusDOM('error');
+                document.dispatchEvent(new CustomEvent('indicatorsError'));
             }
-            // Fallback 2: hardcoded defaults already in CONSTANTS — no action needed
         }
     },
 
@@ -113,8 +125,50 @@ const IndicatorsService = {
         const dateEl = document.querySelector('.indicators-date');
         if (dateEl) {
             const date = new Date(data.uf.fecha);
-            dateEl.textContent = `Valores del día ${date.toLocaleDateString('es-CL')}`;
+            dateEl.textContent = `Valores al ${date.toLocaleDateString('es-CL')}`;
         }
+
+        // Update the small date display with actual API date
+        const dateSmall = document.getElementById('indicators-date-dynamic');
+        if (dateSmall && data.uf?.fecha) {
+            const apiDate = new Date(data.uf.fecha);
+            dateSmall.textContent = apiDate.toLocaleDateString('es-CL', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+    },
+
+    /** Update the indicator status element in the DOM */
+    _updateStatusDOM(state, fallbackDate) {
+        const statusEl = document.getElementById('indicators-status');
+        if (!statusEl) return;
+
+        const configs = {
+            loading: {
+                text: 'Cargando indicadores…',
+                icon: 'sync',
+                classes: 'text-slate-400 animate-pulse'
+            },
+            success: {
+                text: 'Indicadores actualizados ✓',
+                icon: 'check_circle',
+                classes: 'text-emerald-400'
+            },
+            fallback: {
+                text: `Usando valores de respaldo${fallbackDate ? ' del ' + fallbackDate.toLocaleDateString('es-CL') : ''}`,
+                icon: 'warning',
+                classes: 'text-amber-400'
+            },
+            error: {
+                text: 'No se pudieron cargar indicadores. Se usan valores por defecto.',
+                icon: 'error_outline',
+                classes: 'text-red-400'
+            }
+        };
+
+        const cfg = configs[state];
+        if (!cfg) return;
+
+        statusEl.className = `flex items-center gap-1 text-[10px] mt-2 transition-all duration-300 ${cfg.classes}`;
+        statusEl.innerHTML = `<span class="material-icons text-[12px]">${cfg.icon}</span> ${cfg.text}`;
     },
 
     // Fetch History for Modal

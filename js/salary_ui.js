@@ -88,16 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let contractType = 'indefinido';
 
-    // Helper: Format Currency
-    const formatCLP = (num) => {
-        return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(num);
-    };
+    // Use shared Validation module (loaded from validation.js)
+    const V = window.Validation;
 
-    // Helper: Format Input (Remove dots, return int)
-    const parseInput = (val) => {
-        if (!val) return 0;
-        return parseInt(val.replace(/\./g, '').replace(/[^0-9]/g, '')) || 0;
-    };
+    // Helper: Format Currency (safe — never NaN)
+    const formatCLP = (num) => V.formatCLPSafe(num);
+
+    // Helper: Parse input safely
+    const parseInput = (val) => V.safeCurrency(val);
 
     const formatInput = (input) => {
         let rawVal = input.value.replace(/\./g, '').replace(/[^0-9]/g, '');
@@ -243,21 +241,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ===== VALIDATION ===== //
+    const validateSalaryForm = () => {
+        V.clearAllErrors();
+        let valid = true;
+
+        // Salary > 0 (always required — empty or 0 blocks calculation)
+        if (inputs.salary) {
+            const sal = V.safeCurrency(inputs.salary.value);
+            if (sal <= 0) {
+                V.showFieldError(inputs.salary, 'Ingresa un sueldo mayor a $0');
+                valid = false;
+            }
+        }
+
+        // Overtime: 0-100 hours
+        if (inputs.overtime && inputs.overtime.value.trim() !== '') {
+            const ot = V.safeNumber(inputs.overtime.value);
+            if (ot < 0 || ot > 100) {
+                V.showFieldError(inputs.overtime, 'Máximo 100 horas extra');
+                valid = false;
+            }
+        }
+
+        // Isapre UF: 0-30 (only if isapre is selected)
+        const checkedHealth = Array.from(healthRadios).find(r => r.checked);
+        if (checkedHealth && checkedHealth.value === 'isapre' && inputs.isapreValue) {
+            const uf = V.safeNumber(inputs.isapreValue.value);
+            if (uf < 0 || uf > 30) {
+                V.showFieldError(inputs.isapreValue, 'Valor entre 0 y 30 UF');
+                valid = false;
+            }
+        }
+
+        return valid;
+    };
+
     const calculate = () => {
+        // Gate: validate first
+        if (!validateSalaryForm()) return;
+
         const getVal = (el) => el ? el.value : '0';
 
         const data = {
             baseSalary: parseInput(getVal(inputs.salary)),
             gratificationType: inputs.gratificationType ? inputs.gratificationType.value : 'legal_tope',
             gratificationManual: parseInput(getVal(inputs.gratificationManual)),
-            overtimeHours: parseFloat(getVal(inputs.overtime)) || 0,
+            overtimeHours: V.safeNumber(getVal(inputs.overtime)),
             bonusAmount: parseInput(getVal(inputs.bonuses)),
             colacion: parseInput(getVal(inputs.colacion)),
             movilizacion: parseInput(getVal(inputs.movilizacion)),
             viaticos: parseInput(getVal(inputs.viaticos)),
             afpName: inputs.afp ? inputs.afp.value.split(' ')[0] : 'Modelo',
             healthSystem: 'fonasa',
-            isapreUF: parseFloat(getVal(inputs.isapreValue)) || 0,
+            isapreUF: V.safeNumber(getVal(inputs.isapreValue)),
             contractType: contractType,
 
             // Phase 2 Data
@@ -275,16 +312,15 @@ document.addEventListener('DOMContentLoaded', () => {
             })()
         };
 
-        // Final NaN Check before sending to logic
+        // Final NaN safety net
         for (const key in data) {
             if (typeof data[key] === 'number' && isNaN(data[key])) {
-                console.warn(`Input ${key} is NaN. Resetting to 0.`);
                 data[key] = 0;
             }
         }
 
-        const checkedHealth = Array.from(healthRadios).find(r => r.checked);
-        if (checkedHealth) data.healthSystem = checkedHealth.value;
+        const checkedHealthRadio = Array.from(healthRadios).find(r => r.checked);
+        if (checkedHealthRadio) data.healthSystem = checkedHealthRadio.value;
 
         if (typeof ForensicSalaryCalculator !== 'undefined') {
             try {

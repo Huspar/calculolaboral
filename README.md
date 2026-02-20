@@ -6,7 +6,6 @@ Suite gratuita de herramientas y simuladores laborales para trabajadores y emple
 
 - **Calculadora de Sueldo Líquido**: Obtén el detalle exacto de "haberes" y "descuentos" (AFP, Salud, Impuesto Único) a partir de un sueldo bruto o viceversa.
 - **Calculadora de Finiquito**: Simulador completo de indemnizaciones por años de servicio, aviso previo y feriado proporcional.
-- **Costo Empleador**: Herramienta para empresas que permite proyectar el costo total de contratar a un trabajador (incluyendo SIS, Mutual, SC).
 - **Indicadores Económicos**: Actualización diaria de UF, UTM e IMM desde la API de mindicador.cl.
 
 ## 🛠️ Tecnologías
@@ -49,7 +48,6 @@ Este proyecto está listo para desplegarse en **GitHub Pages**.
 ├── index.html                  # Landing page
 ├── sueldo_liquido.html         # Calculadora de Sueldo
 ├── finiquito_calculator.html   # Calculadora de Finiquito
-├── costo_empleador.html        # Calculadora Costo Empleador
 ├── assets/
 │   ├── js/                     # Lógica (logic.js, indicators.js, etc.)
 │   └── css/                    # Estilos adicionales

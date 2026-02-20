@@ -287,6 +287,83 @@
                         </span>
                     </div>
                 </div>
+
+                <!-- Disclaimer Banner -->
+                <div class="rounded-xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm p-4 flex items-start gap-3 mt-4"
+                    role="alert">
+                    <span class="material-icons text-amber-400 text-xl mt-0.5 flex-shrink-0">gavel</span>
+                    <div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            <strong class="text-amber-400">Simulación referencial.</strong>
+                            Los resultados no constituyen asesoría legal oficial ni reemplazan el cálculo formal del
+                            empleador. El monto exacto depende de la causal de término, contrato colectivo y otros
+                            factores.
+                            <a href="disclaimer.html"
+                                class="text-amber-400 hover:text-amber-300 underline underline-offset-2 decoration-amber-400/30 transition-colors">Ver
+                                disclaimer completo</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Cómo Calculamos Accordion -->
+                <details
+                    class="group rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden transition-all open:border-primary/30 mt-2">
+                    <summary
+                        class="flex items-center justify-between p-4 cursor-pointer list-none select-none hover:bg-white/5 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-primary text-lg">science</span>
+                            <span class="text-sm font-semibold text-white">¿Cómo calculamos tu finiquito?</span>
+                        </div>
+                        <span
+                            class="material-icons text-slate-400 group-open:rotate-180 transition-transform duration-200">expand_more</span>
+                    </summary>
+                    <div class="px-4 pb-5 pt-1 border-t border-white/5 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Variables utilizadas
+                                </h4>
+                                <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Última remuneración mensual</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Fecha de inicio y término del contrato</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Causal de término (Art. 159-161 CT)</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span> Días
+                                        de vacaciones tomados</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Aviso previo (si aplica)</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Haberes pendientes del último mes</li>
+                                </ul>
+                            </div>
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Topes y
+                                    supuestos</h4>
+                                <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Indemnización tope: <strong class="text-white">90 UF/mes</strong></li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Máximo indemnizable: <strong class="text-white">11 años</strong></li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Factor vacaciones: 1,25 (L-V) / 1,67 (L-S)</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Feriados legales: 15 días hábiles/año</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Fracción > 6 meses = 1 año completo</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        No incluye deudas a cajas ni pensiones alimenticias</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed border-t border-white/5 pt-3">
+                            📖 Fuentes: <strong class="text-slate-400">Código del Trabajo</strong> (Art. 159-178),
+                            <strong class="text-slate-400">Dirección del Trabajo</strong> (dictámenes), <strong
+                                class="text-slate-400">mindicador.cl</strong> (valor UF para topes).
+                        </p>
+                    </div>
+                </details>
+
                 <!-- Mobile Sticky Summary (Removed sticky to avoid layout bugs as per request) -->
                 <div class="lg:hidden mb-6">
                     <div
@@ -1099,9 +1176,9 @@
             });
         }
     </script>
-    </script>
     <script src="js/constants.js"></script>
     <script src="js/logic.js"></script>
+    <script src="js/validation.js"></script>
     <script src="js/ui.js"></script>
 
     <!-- Integrity Check -->

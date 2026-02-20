@@ -323,6 +323,87 @@
                     <p class="text-slate-500 dark:text-slate-400 text-lg">Ingresa tu sueldo bruto para obtener el
                         detalle exacto de tus descuentos legales en Chile.</p>
                 </div>
+
+                <!-- Disclaimer Banner -->
+                <div class="rounded-xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm p-4 flex items-start gap-3"
+                    role="alert">
+                    <span class="material-icons text-amber-400 text-xl mt-0.5 flex-shrink-0">gavel</span>
+                    <div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            <strong class="text-amber-400">Simulación referencial.</strong>
+                            Los resultados no constituyen asesoría legal ni contable. El cálculo depende de tu contrato,
+                            AFP, régimen de salud y otros factores individuales.
+                            <a href="disclaimer.html"
+                                class="text-amber-400 hover:text-amber-300 underline underline-offset-2 decoration-amber-400/30 transition-colors">Ver
+                                disclaimer completo</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Cómo Calculamos Accordion -->
+                <details
+                    class="group rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden transition-all open:border-primary/30">
+                    <summary
+                        class="flex items-center justify-between p-4 cursor-pointer list-none select-none hover:bg-white/5 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-primary text-lg">science</span>
+                            <span class="text-sm font-semibold text-white">¿Cómo calculamos tu sueldo líquido?</span>
+                        </div>
+                        <span
+                            class="material-icons text-slate-400 group-open:rotate-180 transition-transform duration-200">expand_more</span>
+                    </summary>
+                    <div class="px-4 pb-5 pt-1 border-t border-white/5 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Variables utilizadas
+                                </h4>
+                                <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Sueldo base imponible</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Horas extra (50% recargo legal)</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Gratificación legal (Art. 50 CT)</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Bonos imponibles y no imponibles</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span> Tasa
+                                        AFP seleccionada</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span> Plan
+                                        de salud (Fonasa 7% o Isapre)</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Seguro de Cesantía (AFC)</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                        Impuesto Único de 2ª Categoría</li>
+                                </ul>
+                            </div>
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Topes y
+                                    supuestos</h4>
+                                <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Tope imponible AFP: 81,6 UF</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Tope imponible Cesantía: 126,6 UF</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Gratificación tope: 4,75 IMM</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        Tramos impuesto: tabla vigente 2026</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        UF y UTM: valores diarios vía mindicador.cl</li>
+                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                        No incluye APV, créditos ni ajustes especiales</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed border-t border-white/5 pt-3">
+                            📖 Fuentes: <strong class="text-slate-400">Código del Trabajo</strong>, <strong
+                                class="text-slate-400">SII</strong> (tabla impuesto 2ª categoría), <strong
+                                class="text-slate-400">Superintendencia de Pensiones</strong> (tasas AFP), <strong
+                                class="text-slate-400">mindicador.cl</strong> (UF/UTM).
+                        </p>
+                    </div>
+                </details>
+
                 <!-- Sticky Result Header -->
                 <div id="sticky-result-container" class="sticky top-24 z-40 mb-8 transition-all duration-300">
                     <div
@@ -804,37 +885,11 @@
                                         <span class="material-icons text-[10px]">update</span>
                                         <span id="indicators-date-dynamic">--</span>
                                     </p>
-                                    <script>
-                                        document.addEventListener('DOMContentLoaded', () => {
-                                            const fechaMain = document.getElementById('indicadores-fecha');
-                                            const fechaSmall = document.getElementById('indicators-date-dynamic');
-                                            const ufValue = document.getElementById('uf-value-display');
-
-                                            const today = new Date();
-                                            const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
-                                            const formattedDateCL = today.toLocaleDateString('es-CL', { year: 'numeric', month: 'short', day: 'numeric' });
-
-                                            // Set initial "Updated" text to today as fallback/optimistic UI
-                                            if (fechaMain) fechaMain.textContent = `Valores actualizados: ${formattedDate}`;
-                                            if (fechaSmall) fechaSmall.textContent = formattedDateCL;
-
-                                            // Error handling / Data check
-                                            // We wait a moment for external scripts (indicators.js) to populate data.
-                                            // If they fail (value remains '--' or empty), we show error.
-                                            setTimeout(() => {
-                                                // Check if UF value is still default or empty
-                                                // Note: logic.js or indicators.js might update this class. 
-                                                // If we assume indicators.js targets .uf-value
-                                                const currentUF = document.querySelector('.uf-value').textContent.trim();
-
-                                                if (currentUF === '--' || currentUF === '' || currentUF === '$0') {
-                                                    if (fechaMain) fechaMain.textContent = "Indicadores no disponibles en este momento";
-                                                    if (ufValue) ufValue.textContent = "—";
-                                                    // Add visual cue for error if needed
-                                                }
-                                            }, 4000); // 4 seconds timeout
-                                        });
-                                    </script>
+                                    <!-- Indicator status: populated by indicators.js -->
+                                    <div id="indicators-status"
+                                        class="flex items-center gap-1 text-[10px] mt-2 text-slate-400 animate-pulse">
+                                        <span class="material-icons text-[12px]">sync</span> Cargando indicadores…
+                                    </div>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between pb-4 border-b border-white/5">
@@ -1115,6 +1170,7 @@
     <script src="js/constants.js"></script>
     <script src="js/indicators.js"></script>
     <script src="js/salary_logic.js"></script>
+    <script src="js/validation.js"></script>
     <script src="js/salary_ui.js"></script>
 
     <!-- Integrity Check -->
