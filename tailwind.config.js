@@ -8,6 +8,7 @@ module.exports = {
                 primary: { DEFAULT: "#3b82f6", dark: "#2563eb" },
                 "background-dark": "#0f172a",
                 "card-dark": "#1e293b",
+                "input-dark": "#1e293b",
             },
             fontFamily: {
                 sans: ["Inter", "system-ui", "sans-serif"],
