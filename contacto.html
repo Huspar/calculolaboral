@@ -8,7 +8,7 @@
     <meta name="description"
         content="Contáctanos para dudas sobre finiquitos, sueldo líquido y cálculos laborales en Chile. Respuestas claras y actualizadas.">
     <title>Contacto | Cálculo Laboral Chile</title>
-    <link rel="canonical" href="https://calculolaboral.cl/contacto.html">
+    <link rel="canonical" href="https://calculolaboral.cl/contacto">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=3">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=3">
     <link rel="icon" href="/favicon.ico?v=3">
@@ -22,48 +22,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#1e293b',
-                            900: '#0f172a', // Main Background
-                            950: '#020617',
-                        },
-                        primary: {
-                            DEFAULT: '#3b82f6', // blue-500
-                            hover: '#2563eb', // blue-600
-                            light: '#60a5fa', // blue-400
-                        }
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
         body {
             background-color: #0F172A;
@@ -148,6 +106,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     <!-- End Google Analytics -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body class="antialiased overflow-x-hidden relative flex flex-col min-h-screen">
@@ -163,7 +122,7 @@
         <div class="max-w-[1200px] mx-auto px-6">
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
-                <a href="index.html"
+                <a href="/"
                     class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
                     <div
                         class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -181,7 +140,7 @@
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Blog</a>
                     <a href="index.html#faq"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Preguntas</a>
-                    <a href="contacto.html" class="text-sm font-medium text-white transition-colors">Contacto</a>
+                    <a href="/contacto" class="text-sm font-medium text-white transition-colors">Contacto</a>
                 </nav>
 
                 <!-- Mobile Menu Button -->
@@ -204,7 +163,7 @@
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Blog</a>
                 <a href="index.html#faq"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Preguntas</a>
-                <a href="contacto.html"
+                <a href="/contacto"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-white bg-white/10">Contacto</a>
             </div>
         </div>
@@ -328,14 +287,14 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Calculadoras</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
-                        <li><a href="sueldo_liquido.html" class="hover:text-blue-400 transition-colors">Sueldo
+                        <li><a href="/" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                        <li><a href="/sueldo_liquido" class="hover:text-blue-400 transition-colors">Sueldo
                                 Líquido</a></li>
-                        <li><a href="finiquito_calculator.html"
+                        <li><a href="/finiquito_calculator"
                                 class="hover:text-blue-400 transition-colors">Calculadora Finiquito</a></li>
-                        <li><a href="guia-vacaciones-proporcionales.html"
+                        <li><a href="/guia-vacaciones-proporcionales"
                                 class="hover:text-blue-400 transition-colors">Guía Vacaciones</a></li>
-                        <li><a href="sobre-nosotros.html" class="hover:text-blue-400 transition-colors">Sobre
+                        <li><a href="/sobre-nosotros" class="hover:text-blue-400 transition-colors">Sobre
                                 Nosotros</a></li>
                     </ul>
                 </div>
@@ -343,10 +302,10 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Legal</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="privacidad.html" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
-                        <li><a href="terminos.html" class="hover:text-blue-400 transition-colors">Términos de Uso</a>
+                        <li><a href="/privacidad" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
+                        <li><a href="/terminos" class="hover:text-blue-400 transition-colors">Términos de Uso</a>
                         </li>
-                        <li><a href="disclaimer.html" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
+                        <li><a href="/disclaimer" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
                     </ul>
                 </div>
 

@@ -22,48 +22,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#1e293b',
-                            900: '#0f172a', // Main Background
-                            950: '#020617',
-                        },
-                        primary: {
-                            DEFAULT: '#3b82f6', // blue-500
-                            hover: '#2563eb', // blue-600
-                            light: '#60a5fa', // blue-400
-                        }
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
         body {
             background-color: #0F172A;
@@ -178,6 +136,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     <!-- End Google Analytics -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body class="antialiased overflow-x-hidden relative">
@@ -210,7 +169,7 @@
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Blog</a>
                     <a href="#faq"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Preguntas</a>
-                    <a href="contacto.html"
+                    <a href="/contacto"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Contacto</a>
                 </nav>
 
@@ -233,7 +192,7 @@
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Blog</a>
                 <a href="#faq"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Preguntas</a>
-                <a href="contacto.html"
+                <a href="/contacto"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Contacto</a>
             </div>
         </div>
@@ -251,9 +210,14 @@
                     Para trabajadores en Chile
                 </div>
 
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-white">
-                    Entiende tu sueldo y tu finiquito en Chile, <span class="text-gradient">sin letras chicas.</span>
+                <h1
+                    class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-white mb-4">
+                    Calculadora de Finiquito y Sueldo Líquido en Chile
                 </h1>
+
+                <p class="text-xl sm:text-2xl text-gradient font-bold mb-6">
+                    Entiende tu sueldo y tu finiquito en Chile, sin letras chicas.
+                </p>
 
                 <p class="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                     Herramientas gratuitas para trabajadores en Chile. Calcula tu sueldo líquido y tu finiquito con
@@ -261,12 +225,12 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-                    <a href="sueldo_liquido.html"
+                    <a href="/sueldo_liquido"
                         class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-105 flex items-center justify-center gap-2 group">
                         Calcular mi sueldo
                         <span class="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </a>
-                    <a href="finiquito_calculator.html"
+                    <a href="/finiquito_calculator"
                         class="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-700 transition-all flex items-center justify-center gap-2">
                         <span class="material-icons text-sm">gavel</span>
                         Calcular finiquito
@@ -469,7 +433,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <!-- Card 1: Sueldo Líquido -->
-            <a href="sueldo_liquido.html" class="glass-card rounded-2xl p-8 relative group overflow-hidden block">
+            <a href="/sueldo_liquido" class="glass-card rounded-2xl p-8 relative group overflow-hidden block">
                 <div class="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
                     <span
                         class="material-icons text-slate-600 group-hover:text-green-500 text-6xl transform rotate-12 group-hover:scale-110 transition-transform">attach_money</span>
@@ -490,7 +454,7 @@
             </a>
 
             <!-- Card 2: Finiquito -->
-            <a href="finiquito_calculator.html" class="glass-card rounded-2xl p-8 relative group overflow-hidden block">
+            <a href="/finiquito_calculator" class="glass-card rounded-2xl p-8 relative group overflow-hidden block">
                 <div class="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
                     <span
                         class="material-icons text-slate-600 group-hover:text-blue-500 text-6xl transform rotate-12 group-hover:scale-110 transition-transform">calculate</span>
@@ -551,7 +515,7 @@
 
     <!-- Featured Guide -->
     <section class="max-w-[1200px] mx-auto px-6 mb-24">
-        <a href="guia-vacaciones-proporcionales.html"
+        <a href="/guia-vacaciones-proporcionales"
             class="group block rounded-2xl overflow-hidden bg-slate-800/40 border border-white/5 hover:border-blue-500/30 transition-all duration-300">
             <div class="flex flex-col md:flex-row">
                 <!-- Guide Image -->
@@ -591,7 +555,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <a href="guia-vacaciones-proporcionales.html" class="group block">
+            <a href="/guia-vacaciones-proporcionales" class="group block">
                 <article>
                     <div class="rounded-xl overflow-hidden aspect-video bg-slate-800 mb-4 relative">
                         <img src="assets/guia-vacaciones-proporcionales-cover.png"
@@ -610,7 +574,7 @@
                     <span class="text-xs text-slate-500">10 Feb 2026 • 8 min lectura</span>
                 </article>
             </a>
-            <a href="como-calcular-finiquito-chile.html" class="group block">
+            <a href="/como-calcular-finiquito-chile" class="group block">
                 <article>
                     <div class="rounded-xl overflow-hidden aspect-video bg-slate-800 mb-4 relative">
                         <img src="assets/guia-calculo-finiquito-chile-2026.png"
@@ -629,7 +593,7 @@
                     <span class="text-xs text-slate-500">21 Feb 2026 • 12 min lectura</span>
                 </article>
             </a>
-            <a href="despido-necesidades-empresa-articulo-161.html" class="group block">
+            <a href="/despido-necesidades-empresa-articulo-161" class="group block">
                 <article>
                     <div class="rounded-xl overflow-hidden aspect-video bg-slate-800 mb-4 relative">
                         <img src="assets/guia-despido-necesidades-empresa-161.png"
@@ -744,11 +708,11 @@
                 Descúbrelo en segundos. Gratis, sin registro y con el detalle de cada descuento.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-                <a href="sueldo_liquido.html"
+                <a href="/sueldo_liquido"
                     class="inline-block px-10 py-5 bg-white text-blue-900 font-bold text-lg rounded-xl shadow-xl hover:bg-blue-50 transition-colors transform hover:-translate-y-1">
                     Calcular mi sueldo
                 </a>
-                <a href="finiquito_calculator.html"
+                <a href="/finiquito_calculator"
                     class="inline-block px-10 py-5 bg-white/10 text-white font-bold text-lg rounded-xl border border-white/20 hover:bg-white/20 transition-colors transform hover:-translate-y-1">
                     Calcular finiquito
                 </a>
@@ -779,14 +743,14 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Calculadoras</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="index.html" class="hover:text-blue-400 transition-colors">Inicio</a></li>
-                        <li><a href="sueldo_liquido.html" class="hover:text-blue-400 transition-colors">Sueldo
+                        <li><a href="/" class="hover:text-blue-400 transition-colors">Inicio</a></li>
+                        <li><a href="/sueldo_liquido" class="hover:text-blue-400 transition-colors">Sueldo
                                 Líquido</a></li>
-                        <li><a href="finiquito_calculator.html"
-                                class="hover:text-blue-400 transition-colors">Calculadora Finiquito</a></li>
-                        <li><a href="guia-vacaciones-proporcionales.html"
-                                class="hover:text-blue-400 transition-colors">Guía Vacaciones</a></li>
-                        <li><a href="sobre-nosotros.html" class="hover:text-blue-400 transition-colors">Sobre
+                        <li><a href="/finiquito_calculator" class="hover:text-blue-400 transition-colors">Calculadora
+                                Finiquito</a></li>
+                        <li><a href="/guia-vacaciones-proporcionales" class="hover:text-blue-400 transition-colors">Guía
+                                Vacaciones</a></li>
+                        <li><a href="/sobre-nosotros" class="hover:text-blue-400 transition-colors">Sobre
                                 Nosotros</a></li>
                     </ul>
                 </div>
@@ -794,10 +758,10 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Legal</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="privacidad.html" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
-                        <li><a href="terminos.html" class="hover:text-blue-400 transition-colors">Términos de Uso</a>
+                        <li><a href="/privacidad" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
+                        <li><a href="/terminos" class="hover:text-blue-400 transition-colors">Términos de Uso</a>
                         </li>
-                        <li><a href="disclaimer.html" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
+                        <li><a href="/disclaimer" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
                     </ul>
                 </div>
 

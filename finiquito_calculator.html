@@ -10,7 +10,7 @@
         content="Calculadora de finiquito online gratuita para trabajadores de Chile. Calcula tu indemnización por años de servicio, vacaciones proporcionales y aviso previo según la ley chilena en calculolaboral.cl.">
     <meta name="keywords"
         content="finiquito, calculadora finiquito, cálculo laboral, leyes laborales chile, indemnización años de servicio, vacaciones proporcionales, calculolaboral.cl">
-    <link rel="canonical" href="https://calculolaboral.cl/finiquito_calculator.html">
+    <link rel="canonical" href="https://calculolaboral.cl/finiquito_calculator">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=3">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=3">
     <link rel="icon" href="/favicon.ico?v=3">
@@ -91,31 +91,6 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <!-- Tailwind Configuration -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#0aa0eb",
-                        "primary-dark": "#008acb",
-                        "background-light": "#f5f7f8",
-                        "background-dark": "#101c22",
-                        "card-dark": "#182830",
-                        "input-dark": "#203440",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: { "DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "3rem", "full": "9999px" },
-                    backdropBlur: {
-                        'xs': '2px',
-                    }
-                },
-            },
-        }
-    </script>
     <style>
         /* Custom scrollbar for dark theme */
         ::-webkit-scrollbar {
@@ -185,6 +160,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     <!-- End Google Analytics -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body
@@ -194,7 +170,7 @@
         <div class="max-w-[1200px] mx-auto px-6">
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
-                <a href="index.html"
+                <a href="/"
                     class="flex-shrink-0 flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity group">
                     <div
                         class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
@@ -216,7 +192,7 @@
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Blog</a>
                     <a href="index.html#faq"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Preguntas</a>
-                    <a href="contacto.html"
+                    <a href="/contacto"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Contacto</a>
                 </nav>
 
@@ -240,7 +216,7 @@
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Blog</a>
                 <a href="index.html#faq"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Preguntas</a>
-                <a href="contacto.html"
+                <a href="/contacto"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Contacto</a>
             </div>
         </div>
@@ -298,7 +274,7 @@
                             Los resultados no constituyen asesoría legal oficial ni reemplazan el cálculo formal del
                             empleador. El monto exacto depende de la causal de término, contrato colectivo y otros
                             factores.
-                            <a href="disclaimer.html"
+                            <a href="/disclaimer"
                                 class="text-amber-400 hover:text-amber-300 underline underline-offset-2 decoration-amber-400/30 transition-colors">Ver
                                 disclaimer completo</a>.
                         </p>
@@ -914,7 +890,7 @@
                             pagarse.
                             Para entender cómo se suman los días hábiles e inhábiles, consulta la
                             normativa vigente.
-                            <a href="guia-vacaciones-proporcionales.html"
+                            <a href="/guia-vacaciones-proporcionales"
                                 class="text-primary hover:text-primary-dark hover:underline decoration-primary/30 underline-offset-2 transition-colors">Lee
                                 nuestra guía completa sobre vacaciones proporcionales</a>.
                         </p>
@@ -1099,13 +1075,13 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Plataforma</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="index.html" class="hover:text-indigo-400 transition-colors">Inicio</a></li>
-                        <li><a href="finiquito_calculator.html"
+                        <li><a href="/" class="hover:text-indigo-400 transition-colors">Inicio</a></li>
+                        <li><a href="/finiquito_calculator"
                                 class="hover:text-indigo-400 transition-colors">Calculadora Finiquito</a></li>
-                        <li><a href="sueldo_liquido.html" class="hover:text-indigo-400 transition-colors">Calculadora
+                        <li><a href="/sueldo_liquido" class="hover:text-indigo-400 transition-colors">Calculadora
                                 Sueldo</a></li>
                         <li><a href="index.html#blog" class="hover:text-indigo-400 transition-colors">Blog</a></li>
-                        <li><a href="sobre-nosotros.html" class="hover:text-indigo-400 transition-colors">Sobre
+                        <li><a href="/sobre-nosotros" class="hover:text-indigo-400 transition-colors">Sobre
                                 Nosotros</a></li>
                     </ul>
                 </div>
@@ -1113,10 +1089,10 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Legal</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="privacidad.html" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
-                        <li><a href="terminos.html" class="hover:text-blue-400 transition-colors">Términos de Uso</a>
+                        <li><a href="/privacidad" class="hover:text-blue-400 transition-colors">Privacidad</a></li>
+                        <li><a href="/terminos" class="hover:text-blue-400 transition-colors">Términos de Uso</a>
                         </li>
-                        <li><a href="disclaimer.html" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
+                        <li><a href="/disclaimer" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
                     </ul>
                 </div>
 
