@@ -16,6 +16,16 @@
             "source": "/costo_empleador",
             "destination": "/",
             "permanent": true
+        },
+        {
+            "source": "/blog",
+            "destination": "/blog.html",
+            "permanent": true
+        },
+        {
+            "source": "/blog/",
+            "destination": "/blog.html",
+            "permanent": true
         }
     ]
 }
