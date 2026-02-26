@@ -222,7 +222,7 @@
         </div>
     </header>
     <!-- Main Content -->
-    <main class="flex-grow pt-24 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8">
+    <main class="flex-grow pt-24 pb-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.25fr_0.75fr] gap-8 items-start">
 
             <!-- COLUMNA IZQUIERDA -->
@@ -340,24 +340,24 @@
                     </div>
                 </details>
 
-                <!-- Mobile Sticky Summary (Fijado abajo en mobile) -->
-                <div class="lg:hidden sticky bottom-4 z-50 mb-6 transition-all duration-300">
+                <!-- Sticky Result Header -->
+                <div id="sticky-result-container" class="mb-8 transition-all duration-300">
                     <div
-                        class="glass-panel shadow-2xl ring-1 ring-primary/30 bg-slate-900/95 backdrop-blur-xl border-primary/30 rounded-2xl p-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">
-                                    Total
-                                    Estimado</p>
-                                <div class="flex items-baseline gap-1">
-                                    <span id="totalAmountMobile" class="text-2xl font-bold text-white tracking-tight">$
-                                        —</span>
-                                    <span class="text-[10px] text-slate-400">CLP</span>
-                                </div>
+                        class="glass-panel shadow-2xl ring-1 ring-primary/30 bg-slate-900/95 backdrop-blur-xl border-primary/30 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-center sm:text-left flex-1 min-w-0">
+                            <h3 class="text-xs font-bold text-primary uppercase tracking-widest mb-1 truncate">Total
+                                Estimado</h3>
+                            <div class="flex items-baseline gap-2 justify-center sm:justify-start">
+                                <span id="totalAmountMobile"
+                                    class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight break-all">$
+                                    —</span>
+                                <span class="text-xs sm:text-sm font-medium text-slate-400">CLP</span>
                             </div>
+                        </div>
+                        <div class="flex-shrink-0 mt-4 sm:mt-0">
                             <button
                                 onclick="document.getElementById('results-panel').scrollIntoView({behavior: 'smooth', block: 'start'})"
-                                class="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg transition-all border border-primary/20">
+                                class="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-bold rounded-lg transition-all border border-primary/20">
                                 <span class="material-icons text-sm">visibility</span>
                                 Ver detalle
                             </button>
@@ -1142,6 +1142,25 @@
             </div>
         </div>
     </footer>
+
+    <!-- Mobile Sticky Result Bar (replicado de sueldo_liquido) -->
+    <div id="mobile-result-bar"
+        class="lg:hidden fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-xl border-t border-white/10 p-4 transform translate-y-full transition-transform duration-300 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Total Estimado</p>
+                <div class="flex items-baseline gap-2">
+                    <span id="mobile-result-value" class="text-2xl font-black text-white">$0</span>
+                    <span class="text-xs text-primary font-medium bg-primary/10 px-1.5 py-0.5 rounded">CLP</span>
+                </div>
+            </div>
+            <button
+                onclick="document.getElementById('results-panel').scrollIntoView({behavior: 'smooth', block: 'start'})"
+                class="bg-surface-highlight hover:bg-white/10 text-primary p-2 rounded-full transition-colors border border-white/5">
+                <span class="material-icons text-sm">visibility</span>
+            </button>
+        </div>
+    </div>
 
     <!-- Mobile Menu Script -->
     <script>

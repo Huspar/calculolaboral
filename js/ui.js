@@ -35,10 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.noticeAmount = document.getElementById('noticeAmount');
     elements.vacationPropAmount = document.getElementById('vacationPropAmount');
     elements.vacationPendingAmount = document.getElementById('vacationPendingAmount');
-    elements.afcAmount = document.getElementById('afcAmount');
-    elements.afcRow = document.getElementById('afcRow');
     elements.antiquityOutput = document.getElementById('antiquityOutput');
     elements.totalVacationDaysOutput = document.getElementById('totalVacationDaysOutput');
+
+    // Mobile Result Bar elements
+    elements.mobileResultBar = document.getElementById('mobile-result-bar');
+    elements.mobileResultValue = document.getElementById('mobile-result-value');
 
     // Advanced UI Hooks
     elements.toggleAdvanced = document.getElementById('toggleAdvanced');
@@ -298,6 +300,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ============================================
+    // SCROLL LISTENER FOR MOBILE BAR
+    // ============================================
+    window.addEventListener('scroll', () => {
+        if (!elements.mobileResultBar) return;
+
+        // Show after 300px of scroll
+        if (window.scrollY > 300) {
+            elements.mobileResultBar.classList.remove('translate-y-full');
+        } else {
+            elements.mobileResultBar.classList.add('translate-y-full');
+        }
+    });
+
     // Initialize - Start Empty
     updateCalculations();
 });
@@ -448,6 +464,10 @@ function updateCalculations() {
 
         if (elements.totalAmount) elements.totalAmount.textContent = format(results.total);
         if (elements.totalAmountMobile) elements.totalAmountMobile.textContent = format(results.total).replace(' CLP', '');
+
+        // Update Mobile Bottom Bar if exists
+        if (elements.mobileResultValue) elements.mobileResultValue.textContent = format(results.total).replace(' CLP', '');
+
         if (elements.yearsServiceAmount) elements.yearsServiceAmount.textContent = format(results.indemnities.yearsOfService.total);
 
         // AFC Deduction Row Update
