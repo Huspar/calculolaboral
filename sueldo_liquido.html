@@ -340,69 +340,7 @@
                     </div>
                 </div>
 
-                <!-- Cómo Calculamos Accordion -->
-                <details
-                    class="group rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden transition-all open:border-primary/30">
-                    <summary
-                        class="flex items-center justify-between p-4 cursor-pointer list-none select-none hover:bg-white/5 transition-colors">
-                        <div class="flex items-center gap-2">
-                            <span class="material-icons text-primary text-lg">science</span>
-                            <span class="text-sm font-semibold text-white">¿Cómo calculamos tu sueldo líquido?</span>
-                        </div>
-                        <span
-                            class="material-icons text-slate-400 group-open:rotate-180 transition-transform duration-200">expand_more</span>
-                    </summary>
-                    <div class="px-4 pb-5 pt-1 border-t border-white/5 space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Variables utilizadas
-                                </h4>
-                                <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
-                                        Sueldo base imponible</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
-                                        Horas extra (50% recargo legal)</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
-                                        Gratificación legal (Art. 50 CT)</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
-                                        Bonos imponibles y no imponibles</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span> Tasa
-                                        AFP seleccionada</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span> Plan
-                                        de salud (Fonasa 7% o Isapre)</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
-                                        Seguro de Cesantía (AFC)</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
-                                        Impuesto Único de 2ª Categoría</li>
-                                </ul>
-                            </div>
-                            <div class="space-y-2">
-                                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Topes y
-                                    supuestos</h4>
-                                <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
-                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
-                                        Tope imponible AFP: 81,6 UF</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
-                                        Tope imponible Cesantía: 126,6 UF</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
-                                        Gratificación tope: 4,75 IMM</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
-                                        Tramos impuesto: tabla vigente 2026</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
-                                        UF y UTM: valores diarios vía mindicador.cl</li>
-                                    <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
-                                        No incluye APV, créditos ni ajustes especiales</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <p class="text-[11px] text-slate-500 leading-relaxed border-t border-white/5 pt-3">
-                            📖 Fuentes: <strong class="text-slate-400">Código del Trabajo</strong>, <strong
-                                class="text-slate-400">SII</strong> (tabla impuesto 2ª categoría), <strong
-                                class="text-slate-400">Superintendencia de Pensiones</strong> (tasas AFP), <strong
-                                class="text-slate-400">mindicador.cl</strong> (UF/UTM).
-                        </p>
-                    </div>
-                </details>
+                
 
                 <!-- Sticky Result Header -->
                 <div id="sticky-result-container" class="sticky top-24 z-40 mb-8 transition-all duration-300">
@@ -759,6 +697,77 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="mt-8 mb-6">
+                        <!-- Cómo Calculamos Accordion -->
+                                        <details
+                                            class="group rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden transition-all open:border-primary/30">
+                                            <summary
+                                                class="flex items-center justify-between p-4 cursor-pointer list-none select-none hover:bg-white/5 transition-colors">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="material-icons text-primary text-lg">science</span>
+                                                    <span class="text-sm font-semibold text-white">¿Cómo calculamos tu sueldo líquido?</span>
+                                                </div>
+                                                <span
+                                                    class="material-icons text-slate-400 group-open:rotate-180 transition-transform duration-200">expand_more</span>
+                                            </summary>
+                                            <div class="px-4 pb-5 pt-1 border-t border-white/5 space-y-4">
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    <div class="space-y-2">
+                                                        <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Variables utilizadas
+                                                        </h4>
+                                                        <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                                                Sueldo base imponible</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                                                Horas extra (50% recargo legal)</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                                                Gratificación legal (Art. 50 CT)</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                                                Bonos imponibles y no imponibles</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span> Tasa
+                                                                AFP seleccionada</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span> Plan
+                                                                de salud (Fonasa 7% o Isapre)</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                                                Seguro de Cesantía (AFC)</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-primary mt-0.5">•</span>
+                                                                Impuesto Único de 2ª Categoría</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="space-y-2">
+                                                        <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Topes y
+                                                            supuestos</h4>
+                                                        <ul class="text-xs text-slate-400 space-y-1.5 leading-relaxed">
+                                                            <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                                                Tope imponible AFP: 81,6 UF</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                                                Tope imponible Cesantía: 126,6 UF</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                                                Gratificación tope: 4,75 IMM</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                                                Tramos impuesto: tabla vigente 2026</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                                                UF y UTM: valores diarios vía mindicador.cl</li>
+                                                            <li class="flex items-start gap-1.5"><span class="text-emerald-400 mt-0.5">•</span>
+                                                                No incluye APV, créditos ni ajustes especiales</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="border-t border-white/5 pt-4 mt-2">
+                                                    <p class="text-[11px] text-slate-500 leading-relaxed mb-3">
+                                                        📖 Fuentes: <strong class="text-slate-400">Código del Trabajo</strong>, <strong
+                                                            class="text-slate-400">SII</strong>, <strong
+                                                            class="text-slate-400">Superintendencia de Pensiones</strong>.
+                                                    </p>
+                                                    <a href="/como-calcular-sueldo-liquido-paso-a-paso.html" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20 w-fit">
+                                                        <span class="material-icons text-sm">article</span>
+                                                        ¡Nueva Guía! Cómo calcular sueldo líquido paso a paso
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </details>
                     </div>
 
                     <!-- 2. Descuentos Imponibles -->
