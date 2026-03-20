@@ -1,0 +1,29 @@
+name: Release Scheduled Post (Horas Extras)
+
+on:
+  schedule:
+    # 11:00 UTC = 08:00 AM Chile time on March 25
+    - cron: '0 11 25 3 *'
+
+jobs:
+  merge-branch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+      - name: Fetch and Merge
+        run: |
+          git fetch origin feat/post-horas-extras
+          # Merge avoiding fast forward so it creates a merge commit showing the release
+          git merge origin/feat/post-horas-extras --no-ff -m "Autopublish: Scheduled content from feat/post-horas-extras"
+          git push origin main
