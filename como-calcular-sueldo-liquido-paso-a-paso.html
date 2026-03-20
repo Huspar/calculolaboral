@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="application-version" content="1.0.0">
+    <title>Cómo Calcular el Sueldo Líquido Paso a Paso en Chile</title>
+    <meta name="description"
+        content="Aprende cómo calcular tu sueldo líquido desde el sueldo bruto. Conoce los descuentos legales, el impuesto único, la fórmula matemática y usa nuestra calculadora.">
+
+    <link rel="canonical" href="https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=3">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=3">
+    <link rel="icon" href="/favicon.ico?v=3">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
+
+    <!-- Open Graph -->
+    <meta property="og:title"
+        content="Cómo Calcular el Sueldo Líquido Paso a Paso en Chile">
+    <meta property="og:description"
+        content="Guía completa para calcular tu sueldo líquido. Descubre qué descuentos (AFP, Salud) e impuestos aplican a tu sueldo bruto en Chile.">
+    <meta property="og:url" content="https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Cálculo Laboral">
+
+    <!-- Schema: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Cómo calcular sueldo líquido paso a paso",
+      "description": "Guía paso a paso para convertir sueldo bruto a líquido, entender la base imponible y aplicar los tramos del impuesto único en Chile.",
+      "datePublished": "2026-03-20",
+      "dateModified": "2026-03-20",
+      "author": {
+        "@type": "Organization",
+        "name": "Cálculo Laboral",
+        "url": "https://calculolaboral.cl"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Cálculo Laboral",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://calculolaboral.cl/favicon-32x32.png"
+        }
+      },
+      "mainEntityOfPage": "https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso.html"
+    }
+    </script>
+
+    <!-- Schema: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://calculolaboral.cl/blog.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Cómo calcular el sueldo líquido paso a paso"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!-- Style -->
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0f172a;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .prose-dark h2 {
+            color: #f1f5f9;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prose-dark h3 {
+            color: #e2e8f0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .prose-dark p {
+            color: #94a3b8;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .prose-dark ul,
+        .prose-dark ol {
+            color: #94a3b8;
+            padding-left: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .prose-dark li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+
+        .prose-dark strong {
+            color: #e2e8f0;
+        }
+
+        .prose-dark a {
+            color: #60a5fa;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .prose-dark a:hover {
+            color: #93bbfd;
+        }
+
+        .callout {
+            border-left: 3px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.08);
+            padding: 1rem 1.25rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1.5rem 0;
+        }
+
+        .callout-amber {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        .callout-green {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .formula-box {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-left: 4px solid #3b82f6;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            color: #f8fafc;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-9Y03F1WB8J');
+    </script>
+    <!-- End Google Analytics -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="glass fixed top-0 left-0 right-0 z-50 border-b border-white/5">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center gap-2">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <span class="material-icons text-white text-sm">calculate</span>
+                    </div>
+                    <span class="font-bold text-lg text-white">Cálculo<span class="text-blue-400"> Laboral</span></span>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a href="/" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Inicio</a>
+                    <a href="/finiquito_calculator"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Finiquito</a>
+                    <a href="/sueldo_liquido"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Sueldo
+                        Líquido</a>
+                    <a href="/contacto"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Contacto</a>
+                </nav>
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center gap-4">
+                    <button id="mobile-menu-btn"
+                        class="md:hidden p-2 rounded-lg text-slate-300 hover:bg-white/5 transition-colors">
+                        <span class="material-icons">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass border-t border-white/5 absolute w-full left-0">
+            <div class="px-4 py-4 space-y-2">
+                <a href="/"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Inicio</a>
+                <a href="/finiquito_calculator"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Finiquito</a>
+                <a href="/sueldo_liquido"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Sueldo
+                    Líquido</a>
+                <a href="/contacto"
+                    class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Contacto</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <article class="max-w-3xl mx-auto">
+
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-xs text-slate-500 mb-8">
+                <a href="/" class="hover:text-blue-400 transition-colors">Inicio</a>
+                <span class="material-icons text-[12px]">chevron_right</span>
+                <a href="/blog.html" class="hover:text-blue-400 transition-colors">Blog</a>
+                <span class="material-icons text-[12px]">chevron_right</span>
+                <span class="text-slate-400">Cómo calcular el sueldo líquido paso a paso</span>
+            </nav>
+
+            <!-- Article Header -->
+            <header class="mb-12">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold tracking-wider uppercase mb-4">
+                    <span class="material-icons text-[14px]">account_balance_wallet</span>
+                    Educación Financiera
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+                    Cómo calcular el sueldo líquido paso a paso
+                </h1>
+                <div class="flex items-center gap-4 text-xs text-slate-500 mb-6">
+                    <span>Actualizado: Marzo 2026</span>
+                    <span>•</span>
+                    <span>5 min lectura</span>
+                </div>
+
+                <!-- E-E-A-T Trust Badge -->
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-800/40 border border-white/10 mb-8 mt-2">
+                    <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <span class="material-icons text-blue-400">gavel</span>
+                    </div>
+                    <div>
+                        <p class="text-sm text-white font-semibold m-0">Basado en la normativa local</p>
+                        <p class="text-xs text-slate-400 m-0">Alineado a la legislación del SII y la Superintendencia de Pensiones en Chile.</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Article Body -->
+            <div class="prose-dark text-sm sm:text-base">
+
+                <p>
+                    ¿Sabes cuánto de tu sueldo bruto realmente llega a tu bolsillo? Hasta un 15% o más suele retenerse en cotizaciones y otros descuentos previsionales según tu AFP y si cotizas en Isapre o Fonasa. Si necesitas calcular el sueldo líquido, esta guía paso a paso te muestra cómo convertir sueldo bruto a líquido, qué rubros integran la base imponible, cómo afectan los tramos del impuesto único y cómo usar una calculadora con un desglose claro.
+                </p>
+                
+                <p>
+                    El sueldo bruto suma el sueldo base, las horas extras, las gratificaciones, las comisiones y otras bonificaciones. Algunos beneficios en especie pueden agregarse según el contrato o convenio. Esa suma forma la <strong>base imponible</strong> sobre la que se aplican las cotizaciones y los impuestos. 
+                </p>
+
+                <div class="callout">
+                    <p class="!mb-0"><strong>Ejemplo inicial:</strong> Si tu sueldo base es de $1.000.000 y recibes una gratificación de $200.000, entonces tu <strong>sueldo imponible es de $1.200.000</strong>.</p>
+                </div>
+
+                <h3>Resumen Rápido</h3>
+                <ul>
+                    <li>Identifica los haberes imponibles en la boleta antes de calcular el líquido.</li>
+                    <li>Calcula las cotizaciones: AFP (10% + comisión), Salud (Fonasa 7% o descuento Isapre) y Seguro de Cesantía.</li>
+                    <li>Resta las cotizaciones para obtener la Renta Líquida Imponible y aplica la tabla del SII para el Impuesto Único.</li>
+                    <li>Valida el cálculo con un ejemplo práctico para detectar rubros mal clasificados.</li>
+                    <li>Usa la <a href="/sueldo_liquido">calculadora de Cálculo Laboral</a> y obtén el desglose detallado como evidencia.</li>
+                </ul>
+
+                <h2>1. Qué incluye el sueldo bruto y cómo identificar haberes imponibles</h2>
+                <p>
+                    Entre los rubros habituales están el sueldo base, las gratificaciones, horas extras, comisiones y los bonos; según el contrato, algunos pagos en especie pueden sumarse al bruto.
+                </p>
+                <div class="formula-box">
+                    Sueldo Base ($1.000.000) + Gratificación ($200.000) + Comisiones ($50.000) = Total Imponible ($1.250.000)
+                </div>
+                <p>
+                    Determinar qué es imponible y qué no modifica los descuentos aplicables. Por ejemplo, la movilización y colación normalmente <strong>no son imponibles</strong>, mientras que la mayoría de los bonos y gratificaciones <strong>sí afectan</strong> a la base de cálculo. Comprender esta gran distinción te permite verificar si tu boleta está correctamente armada.
+                </p>
+                <p>
+                    Para revisar tu liquidación, localiza el total de haberes imponibles, identifica los descuentos previsionales (AFP, salud y seguro de cesantía) y suma por separado las asignaciones no imponibles. Si algo no cuadra, siempre solicita al empleador el detalle contable de la base legal. Es buena idea mantener una copia mensual de tu boleta y anotar los rubros que más varían, como las comisiones y horas extras, para comparar cómo fluyen mes a mes.
+                </p>
+
+                <h2>2. Cómo calcular cotizaciones: AFP, salud, seguro de cesantía y descuentos</h2>
+                <p>
+                    La cotización a la AFP incluye el 10% obligatorio por ley para tus fondos, más la comisión extra que cobra cada administradora por sus servicios. Las comisiones varían y suelen estar entre 0,58% y 1,44% dependiendo de la AFP:
+                </p>
+                
+                <div class="formula-box">
+                    Retención AFP = Base Imponible × (10% + % Comisión de tu AFP)
+                </div>
+
+                <p>
+                    Ten en cuenta que existe un tope imponible legal (por ejemplo, cercano a 84,3 UF o 90 UF según el año/seguro) que limita la base máxima sobre la cual se te pueden cobrar estas cotizaciones.
+                </p>
+
+                <p>
+                    La <strong>cotización de salud</strong> equivale siempre al 7% legal sobre la base imponible si cotizas en Fonasa. Si estás en una Isapre, el descuento total puede ser mayor porque dependerá estrictamente del valor del plan contratado en UF. Revisa el detalle del descuento en tu boleta para confirmar este monto.
+                </p>
+
+                <p>
+                    El <strong>seguro de cesantía</strong> y el Seguro de Invalidez y Sobrevivencia (SIS) también figuran en la liquidación. En contratos indefinidos, la parte descontada al trabajador por seguro de cesantía es aproximadamente equivalente al 0,6% directo de la base imponible. Además pueden aparecer pequeños aportes a la mutual u otros seguros laborales adicionales según la actividad.
+                </p>
+
+                <h2>3. Cómo aplicar el impuesto único: fórmula, tramos y conversión a UTM</h2>
+                <p>
+                    La base fundamental para calcular el temido Impuesto Único de Segunda Categoría es la denominada <strong>Renta Líquida Imponible</strong>: este es el resultado de tomar todos tus haberes imponibles <em>menos</em> todas las cotizaciones previsionales obligatorias de arriba.
+                </p>
+                <p>
+                    Sobre esa renta líquida se aplica la tabla de tramos de impuestos mensuales entregada por el Servicio de Impuestos Internos (SII). Cuando la tabla oficial del SII está expresada en Unidades Tributarias Mensuales (UTM), debes convertir tu renta mensual dividiéndola por el valor vigente de la UTM al mes de pago, porque los tramos legales son dinámicos e indican esa misma unidad.
+                </p>
+
+                <p>El SII aplica fórmulas de este tipo matemático para el cálculo exacto:</p>
+                <div class="formula-box">
+                    Impuesto = (Renta Líquida Imponible × Factor %) − Rebaja Fija
+                </div>
+
+                <p>
+                    Tanto el factor de multiplicación como el valor de rebaja fija dependerán del tramo en UTM en el que caiga tu renta mensual. Por ejemplo, supongamos que tu Renta Líquida Imponible quedó en $973.560.
+                    Con un valor UTM estimado referencial de $70.000:
+                </p>
+
+                <div class="formula-box">
+                    $973.560 / $70.000 ≈ 13,9 UTM<br><br>
+                    Si dicho tramo tuviese un factor de 4% y rebaja de $37.740:<br>
+                    Retención = ($973.560 × 0,04) − $37.740 ≈ $1.202
+                </div>
+
+                <p>
+                    En tu respectiva boleta, este monto aparece típicamente como "Impuesto Único" o "Imp. Renta Qta. Cat.". Si el monto reflejado es $0, significa derechamente que tu renta resultó estar en el tramo de ingresos "exentos" de acuerdo con la tabla vigente actual del SII. Siempre debes cotejar el tramo aplicado a tu base y compararlo con la tabla tributaria del mismo período.
+                </p>
+
+                <h2>4. Ejemplo práctico integrador: calcular sueldo líquido</h2>
+                <p>
+                    Tomemos un caso numérico claro y práctico: tienes unos <strong>haberes imponibles por $1.200.000</strong> (suma de sueldo base y alguna gratificación) y posees además haberes excluidos (no imponibles) por concepto de movilización y colación valorados en <strong>$50.000</strong> extra.
+                </p>
+                <p>
+                    Para este ejemplo usaremos "AFP Habitat" con una comisión de 1,27% y Salud en "Fonasa" (7% legal). Con esos datos estructuramos el cálculo del bruto hacia tu sueldo líquido transable:
+                </p>
+
+                <div class="bg-slate-800/50 rounded-xl p-5 border border-white/10 my-4 shadow-lg shadow-black/20">
+                    <ul class="!list-none !p-0">
+                        <li class="flex justify-between border-b border-white/5 pb-2 mb-2"><span class="text-slate-300">Haberes Imponibles base:</span> <strong class="text-white">$1.200.000</strong></li>
+                        <li class="flex justify-between border-b border-white/5 pb-2 mb-2 text-rose-300"><span>Cotización AFP (10% + 1,27% = 11,27%):</span> <strong>-$135.240</strong></li>
+                        <li class="flex justify-between border-b border-white/5 pb-2 mb-2 text-rose-300"><span>Salud Fonasa (7%):</span> <strong>-$84.000</strong></li>
+                        <li class="flex justify-between border-b border-white/5 pb-2 mb-2 text-rose-300"><span>Cesantía (0,6%):</span> <strong>-$7.200</strong></li>
+                        <li class="flex justify-between border-b border-white/5 pb-2 mb-2"><span class="text-yellow-100/80">Total Cotizaciones Excluidas:</span> <strong>$226.440</strong></li>
+                        <li class="flex justify-between font-bold text-white border-b border-white/5 pb-2 mb-2"><span>Renta Líquida Imponible:</span> <span>$973.560</span></li>
+                        <li class="flex justify-between border-b border-white/5 pb-2 mb-2 text-rose-300"><span>Impuesto Único retenido (según SII aproximado):</span> <strong>-$1.202</strong></li>
+                        <li class="flex justify-between border-b border-white/5 pb-2 mb-2 text-emerald-300"><span>Suma de Haberes No Imponibles (Colación/Movilización):</span> <strong>+$50.000</strong></li>
+                        <li class="flex justify-between text-lg font-bold text-blue-400 pt-2"><span class="text-white">SUELDO LÍQUIDO FINAL AL BOLSILLO:</span> <span>$1.022.358</span></li>
+                    </ul>
+                </div>
+
+                <p>
+                    La diferencia substancial entre un simple cálculo superficial "directamente calculando por porcentajes al dinero total" versus el resultado verificado acá, se explica debido a que las cotizaciones reducen o restringen firmemente la "base" para calcular el respectivo impuesto único. A la vez, de igual manera las partidas 'no imponibles' ni siquiera afectan a las cotizaciones formales.
+                </p>
+
+                <h2>5. ¿Cómo calcular el bruto necesario para un líquido objetivo?</h2>
+                <p>
+                    Muchos trabajadores se preguntan esto a la hora de entrevistas de trabajo. Para poder estimar fácilmente el pago *bruto* a partir del saldo líquido que tu deseas al mes, puedes partir con un factor multiplicador matemático genérico. A modo de guía rápida y fácil, aplica de forma directa un multiplicador *entre 1,25 y 1,35* directamente sobre el saldo líquido deseado:
+                </p>
+                <div class="callout callout-green">
+                    <p class="!mb-0">
+                        Los tramos con menor carga de impuesto y que asumen cotizaciones estándar en fonasa, tienden a pegarse al piso hacia el factor de <strong>1,25</strong>.<br>
+                        Para sueldos altos, donde caen tramos muy onerosos de impuestos e incluyes tal vez seguros extras, acércate directamente al factor de <strong>1,35</strong>.
+                    </p>
+                </div>
+                <p>Luego itera: propone un sueldo bruto basico, usa una calculadora inteligente y ajusta matemáticamente la cifra hasta poder alcanzar con exactitud tu gran objetivo financiero. Al negociar salario con la jefatura en nuevas contrataciones, solicita siempre al empleador recibir y revisar la oferta desglosada claramente en bruto, pidiendo incluso anticipar y pactar el "líquido estimado por escrito" junto con el desglose exacto de los haberes imponibles y los haberes no imponibles (ya que bonos grandes asignados como ingresos no-imponibles ayudarán mucho tu pago final). Siempre conserva responsablemente la boleta a fin de mes, e incluso también el comprobante detallado en cuenta de banco mensualmente como gran respaldo documental para validar las diferencias si es que existan serias discrepancias.</p>
+
+                <h2>6. Verifica tu liquidación y usa la herramienta</h2>
+                <p>Antes de comenzar comparativas de números, reúne disciplinadamente tus datos clave del mes para ejecutar comprobaciones viables. Anota tu base de salario, gratificaciones, montos extraordinarios, metas comisionables del respectivo ciclo y el listado de ingresos estipulados de antemano como "no imponibles" en el departamento de contratos y planillas. Define con claridad, exactitud y precisión si te hallas depositando mes a mes en isapre (monto uf) y cómo se denominan exactamente los seguros cobrados y comisiones afp. Exige siempre una respuesta si tus deducciones no fuesen correspondientes con el estándar de los parámetros legales en Chile actualizados a la ley vigente, solicitando corrección frente a recursos humanos y revisando copias actualizadas de todos los marcos reguladores de contratos suscritos que verdaderamente documentaron tu paso. Con esto en tus manos, nuestro equipo trae una poderosa plataforma digital web totalmente de cortesía general. 
+                </p>
+
+                <!-- CTA -->
+                <div class="mt-10 p-8 rounded-2xl bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-500/20 text-center">
+                    <h3 class="!text-white !text-xl !font-bold !mb-3 !mt-0 !border-0 !pb-0">
+                        ¿Quieres calcular rápidamente tu sueldo líquido?
+                    </h3>
+                    <p class="!text-slate-300 !text-sm !mb-5">
+                        Simplificamos todo este procedimiento legal con un simulador automático actualizado que puedes usar y donde observarás cada descuento y deducción previsional oficial de Chile explicados para ti bajo un panorama totalmente estructurado de ley aplicable a todos los cálculos.
+                    </p>
+                    <a href="/sueldo_liquido"
+                        class="inline-flex items-center gap-2 px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-105">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Ir a Calculadora Sueldo Líquido
+                    </a>
+                </div>
+
+                <!-- Aviso Legal -->
+                <div class="mt-8 p-4 rounded-lg bg-slate-800/30 border border-white/5">
+                    <p class="!text-xs !text-slate-500 !mb-0 !leading-relaxed">
+                        <strong>Aviso legal:</strong> Toda esta guía informativa y la herramienta provista en cálculos se distribuye bajo términos generales y está preparada en el marco general para ayudar con herramientas orientativas de gran utilidad, sin embargo este material se distribuye estrictamente desde visiones de carácter informativo gratuito general, por ende este resumen conceptual laboral legal general referenciado desde informaciones oficiales masivas bajo parámetros teóricos no sustituye directrices propias que deba de otorgar ni ser tomado literalmente obligatoriamente en reemplazo asesorías particulares en reclamos específicos laborales directos correspondientes y que por ende no asume responsabilidad frente a variaciones extraordinarias contractuales estipuladas explícita y singularmente. Para consultar formalidades contactar directamente a la oficial inspección del trabajo estatal.
+                    </p>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-slate-900 py-8">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-slate-500 text-xs">
+                © 2026 Cálculo Laboral · Herramientas laborales gratuitas y calculadoras para Chile
+            </p>
+            <div class="flex justify-center gap-4 mt-3 text-xs">
+                <a href="/privacidad" class="text-slate-500 hover:text-slate-300 transition-colors">Privacidad</a>
+                <a href="/terminos" class="text-slate-500 hover:text-slate-300 transition-colors">Términos</a>
+                <a href="/disclaimer" class="text-slate-500 hover:text-slate-300 transition-colors">Disclaimer</a>
+                <a href="/sobre-nosotros" class="text-slate-500 hover:text-slate-300 transition-colors">Sobre
+                    Nosotros</a>
+            </div>
+            <p class="text-xs text-slate-500 mt-4">Versión 1.0 — Febrero 2026</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
