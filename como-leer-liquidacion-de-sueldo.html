@@ -159,14 +159,37 @@
 
                 <p>En esta guía te explicamos cada rubro de tu liquidación, qué significa y cómo verificar que esté correcto.</p>
 
-                <!-- Infografía: Anatomía de una liquidación de sueldo -->
-                <figure class="my-8">
-                    <img src="/assets/infografia-anatomia-liquidacion-sueldo.png"
-                        alt="Infografía: Anatomía de una liquidación de sueldo en Chile - Secciones de haberes imponibles, no imponibles, descuentos y sueldo líquido"
-                        class="w-full max-w-lg mx-auto rounded-xl border border-white/10 shadow-lg"
-                        loading="lazy">
-                    <figcaption class="text-center text-xs text-slate-500 mt-3">Estructura de una liquidación de sueldo en Chile: haberes, descuentos y sueldo líquido</figcaption>
-                </figure>
+                <!-- Infografía HTML: Anatomía de liquidación de sueldo -->
+                <div class="my-8 p-6 rounded-2xl bg-gradient-to-b from-slate-800/60 to-slate-900/60 border border-white/10 shadow-xl">
+                    <p class="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-5">Anatomía de tu liquidación de sueldo</p>
+                    <div class="space-y-3 max-w-md mx-auto">
+                        <div class="rounded-lg border border-emerald-500/30 overflow-hidden">
+                            <div class="bg-emerald-500/20 px-3 py-1.5"><p class="!text-emerald-400 !text-xs !font-bold !mb-0 !uppercase !tracking-wider">Haberes</p></div>
+                            <div class="px-3 py-2 space-y-1">
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Sueldo Base</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">Imponible</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Gratificación</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">Imponible</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Horas Extra</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">Imponible</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Colación</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-semibold">No Imponible</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Movilización</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-semibold">No Imponible</span></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center"><span class="material-icons text-slate-600">arrow_downward</span></div>
+                        <div class="rounded-lg border border-red-500/30 overflow-hidden">
+                            <div class="bg-red-500/20 px-3 py-1.5"><p class="!text-red-400 !text-xs !font-bold !mb-0 !uppercase !tracking-wider">Descuentos</p></div>
+                            <div class="px-3 py-2 space-y-1">
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">AFP (10% + comisión)</span><span class="text-rose-400 text-xs font-semibold">−11,27%</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Salud (Fonasa/Isapre)</span><span class="text-rose-400 text-xs font-semibold">−7%</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Seguro de Cesantía</span><span class="text-rose-400 text-xs font-semibold">−0,6%</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Impuesto Único</span><span class="text-rose-400 text-xs font-semibold">Variable</span></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center"><span class="material-icons text-slate-600">arrow_downward</span></div>
+                        <div class="rounded-lg border border-blue-500/40 bg-blue-500/10 px-4 py-3 text-center">
+                            <p class="!text-blue-400 !text-sm !font-bold !mb-0">💰 SUELDO LÍQUIDO</p>
+                            <p class="!text-slate-400 !text-[10px] !mb-0">Lo que recibes en tu cuenta bancaria</p>
+                        </div>
+                    </div>
+                </div>
 
                 <h2>1. Sección de Haberes (lo que ganas)</h2>
 

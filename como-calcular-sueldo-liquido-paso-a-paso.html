@@ -292,14 +292,38 @@
                     <p class="!mb-0"><strong>Ejemplo inicial:</strong> Si tu sueldo base es de $1.000.000 y recibes una gratificación de $200.000, entonces tu <strong>sueldo imponible es de $1.200.000</strong>.</p>
                 </div>
 
-                <!-- Infografía: Flujo de cálculo sueldo líquido -->
-                <figure class="my-8">
-                    <img src="/assets/infografia-calculo-sueldo-liquido.png"
-                        alt="Infografía: Cómo se calcula el sueldo líquido en Chile - flujo desde sueldo bruto hasta líquido con descuentos de AFP, salud, cesantía e impuesto único"
-                        class="w-full max-w-lg mx-auto rounded-xl border border-white/10 shadow-lg"
-                        loading="lazy">
-                    <figcaption class="text-center text-xs text-slate-500 mt-3">Flujo de cálculo: Del sueldo bruto al sueldo líquido en Chile</figcaption>
-                </figure>
+                <!-- Infografía HTML: Flujo de cálculo sueldo líquido -->
+                <div class="my-8 p-6 rounded-2xl bg-gradient-to-b from-slate-800/60 to-slate-900/60 border border-white/10 shadow-xl">
+                    <p class="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-5">Del sueldo bruto al sueldo líquido</p>
+                    <div class="max-w-xs mx-auto space-y-2">
+                        <div class="rounded-lg bg-emerald-500/15 border border-emerald-500/30 px-4 py-3 text-center">
+                            <p class="!text-emerald-400 !text-xs !font-bold !mb-0 !uppercase">Sueldo Bruto</p>
+                            <p class="!text-white !text-lg !font-bold !mb-0">$1.200.000</p>
+                        </div>
+                        <div class="flex justify-center"><span class="material-icons text-slate-600 text-sm">arrow_downward</span></div>
+                        <div class="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-2 flex justify-between items-center">
+                            <span class="text-slate-300 text-xs">AFP (11,27%)</span>
+                            <span class="text-rose-400 text-xs font-bold">−$135.240</span>
+                        </div>
+                        <div class="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-2 flex justify-between items-center">
+                            <span class="text-slate-300 text-xs">Salud (7%)</span>
+                            <span class="text-rose-400 text-xs font-bold">−$84.000</span>
+                        </div>
+                        <div class="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-2 flex justify-between items-center">
+                            <span class="text-slate-300 text-xs">Cesantía (0,6%)</span>
+                            <span class="text-rose-400 text-xs font-bold">−$7.200</span>
+                        </div>
+                        <div class="rounded-lg bg-amber-500/10 border border-amber-500/20 px-4 py-2 flex justify-between items-center">
+                            <span class="text-slate-300 text-xs">Impuesto Único</span>
+                            <span class="text-amber-400 text-xs font-bold">−$0 (exento)</span>
+                        </div>
+                        <div class="flex justify-center"><span class="material-icons text-slate-600 text-sm">arrow_downward</span></div>
+                        <div class="rounded-lg bg-blue-500/15 border border-blue-500/40 px-4 py-3 text-center shadow-lg shadow-blue-500/10">
+                            <p class="!text-blue-400 !text-xs !font-bold !mb-0 !uppercase">Sueldo Líquido</p>
+                            <p class="!text-white !text-lg !font-bold !mb-0">$973.560</p>
+                        </div>
+                    </div>
+                </div>
 
                 <h3>Resumen Rápido</h3>
                 <ul>
