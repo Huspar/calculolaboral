@@ -21,7 +21,7 @@
     <meta property="og:description"
         content="Calcula tu finiquito de forma rápida y gratuita siguiendo la legislación laboral chilena.">
     <meta property="og:image" content="https://calculolaboral.cl/assets/guia-calculo-finiquito-chile-2026.png">
-    <meta property="og:url" content="https://calculolaboral.cl/finiquito_calculator.html">
+    <meta property="og:url" content="https://calculolaboral.cl/finiquito_calculator">
     <meta property="og:type" content="website">
 
     <!-- Schema.org for Google -->
@@ -30,7 +30,7 @@
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "Simulador de Finiquito en Chile (2026) | Calcula tu indemnización al instante",
-      "url": "https://calculolaboral.cl/finiquito_calculator.html",
+      "url": "https://calculolaboral.cl/finiquito_calculator",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript",
@@ -128,11 +128,13 @@
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
+            appearance: none;
             margin: 0;
         }
 
         input[type=number] {
             -moz-appearance: textfield;
+            appearance: textfield;
         }
 
         .glass {
@@ -186,11 +188,11 @@
 
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex gap-8">
-                    <a href="index.html#herramientas"
+                    <a href="/#herramientas"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Calculadoras</a>
-                    <a href="/blog.html"
+                    <a href="/blog"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Blog</a>
-                    <a href="index.html#faq"
+                    <a href="/#faq"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Preguntas</a>
                     <a href="/contacto"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Contacto</a>
@@ -210,11 +212,11 @@
         <div id="mobile-menu"
             class="hidden md:hidden glass border-t border-white/5 absolute w-full left-0 bg-slate-900/95">
             <div class="px-4 py-4 space-y-2">
-                <a href="index.html#herramientas"
+                <a href="/#herramientas"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Calculadoras</a>
-                <a href="/blog.html"
+                <a href="/blog"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Blog</a>
-                <a href="index.html#faq"
+                <a href="/#faq"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Preguntas</a>
                 <a href="/contacto"
                     class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Contacto</a>
@@ -867,78 +869,64 @@
             <section id="ad-slot-2" class="ad-slot" aria-label="Espacio publicitario"></section>
             -->
 
-            <!-- Educational Content -->
-            <section class="prose dark:prose-invert max-w-none">
-                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">¿Cómo se calcula
-                    el finiquito en
-                    Chile?</h2>
+<!-- Educational Content -->
+            <section class="prose dark:prose-invert max-w-none bg-slate-800/20 p-8 rounded-2xl border border-white/5">
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-6">Guía Completa: ¿Cómo utilizar esta calculadora de finiquito en Chile?</h2>
                 <p class="text-slate-600 dark:text-slate-400 mb-8 text-base leading-relaxed">
-                    El <strong>finiquito laboral</strong> es el documento legal que ratifica el
-                    término de la relación
-                    laboral entre empleador y trabajador. Este acto debe constar por escrito y ser
-                    firmado ante un
-                    ministro de fe. El cálculo del monto final puede incluir la
-                    <strong>indemnización por años de
-                        servicio</strong>, <strong>vacaciones proporcionales</strong> y otros
-                    haberes pendientes,
-                    dependiendo estrictamente de la causal de término aplicada según el
-                    <strong>Código del
-                        Trabajo</strong> chileno.
+                    Nuestra <strong>calculadora de finiquito online</strong> es un simulador exacto y actualizado para el año 2026. Al momento de terminar un contrato laboral en Chile, el finiquito es el documento legal clave que establece el pago por tus servicios. Usar este <strong>simulador de finiquito</strong> te permite verificar que los montos propuestos por tu empleador cumplan estrictamente con las leyes dictadas por la Dirección del Trabajo (DT).
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-primary">Indemnización por Años de
-                            Servicio</h3>
-                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            Corresponde a un mes de sueldo por cada año de servicio y fracción superior a seis meses.
-                            Aplica usualmente para la causal <strong>Necesidades de la Empresa (Art. 161 del Código del Trabajo)</strong>.
-                            Tiene un tope legal máximo de 11 años y la base de cálculo está topada a 90 UF vigentes al día del término.
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-icons text-primary">account_balance_wallet</span>
+                            <h3 class="text-xl font-bold text-white m-0">1. Indemnización por Años de Servicio</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Si eres despedido bajo el <strong>Artículo 161</strong> (Necesidades de la Empresa), nuestra calculadora sumará automáticamente un mes de tu última remuneración por cada año trabajado (y fracción superior a seis meses). El tope legal es de 11 años y el límite mensual aplicable es de 90 UF. Esta es habitualmente la indemnización más alta dentro de cualquier finiquito laboral.
                         </p>
                     </div>
+                    
                     <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-primary">Vacaciones Proporcionales
-                        </h3>
-                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            Si te despiden o renuncias y tienes vacaciones pendientes, estas deben
-                            pagarse.
-                            Para entender cómo se suman los días hábiles e inhábiles, consulta la
-                            normativa vigente.
-                            <a href="/guia-vacaciones-proporcionales"
-                                class="text-primary hover:text-primary-dark hover:underline decoration-primary/30 underline-offset-2 transition-colors">Lee
-                                nuestra guía completa sobre vacaciones proporcionales</a>.
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-icons text-primary">beach_access</span>
+                            <h3 class="text-xl font-bold text-white m-0">2. Vacaciones Proporcionales</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Todo contrato que termina te da derecho a recibir el pago del feriado legal (vacaciones) pendiente. Para calcular tu finiquito con exactitud, el simulador contabiliza tus días hábiles restantes sumando fines de semana, convirtiéndolos matemáticamente al valor diario de tu sueldo íntegro. <a href="/guia-vacaciones-proporcionales" class="text-primary hover:underline font-medium">Lee más sobre vacaciones proporcionales.</a>
                         </p>
                     </div>
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-primary">Aviso Previo</h3>
-                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            Si el empleador te despide por Necesidades de la Empresa (Art. 161) y no te avisa por carta con <strong>30 días de anticipación</strong>, está obligado por ley a pagarte una <strong>indemnización sustitutiva</strong> equivalente a la última remuneración mensual completa ganada.
-                        </p>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-primary">Otros Pagos</h3>
-                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            El finiquito también incluye remuneraciones pendientes, como días
-                            trabajados, colación y
-                            movilización proporcional.
 
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-icons text-primary">mark_email_read</span>
+                            <h3 class="text-xl font-bold text-white m-0">3. Mes de Aviso Previo</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Si te aplican la causal de Necesidades de la Empresa (Art. 161) y no te entregan o despachan una carta de despido con al menos <strong>30 días de anticipación</strong>, el simulador de finiquito añade automáticamente una compensación económica ("Mes de aviso") correspondiente a un sueldo líquido completo adicional.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-icons text-primary">rule</span>
+                            <h3 class="text-xl font-bold text-white m-0">4. Distintas Causales de Término</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Es crucial elegir bien la causal al momento de calcular tu indemnización. Si seleccionas <strong>Renuncia Voluntaria (Art. 159-2)</strong> o Despido Disciplinario (Art. 160), la plataforma eliminará las indemnizaciones por años de servicio y aviso, y el total a pagar consistirá estrictamente en el feriado proporcional de vacaciones y los días efectivamente trabajados antes del despido.
                         </p>
                     </div>
                 </div>
 
                 <!-- Blog CTA -->
-                <div
-                    class="mt-8 p-6 rounded-xl bg-slate-800/50 border border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="mt-8 p-6 rounded-xl bg-slate-900 border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-lg shadow-primary/5">
                     <div class="text-center sm:text-left">
-                        <h4 class="text-lg font-bold text-white mb-1">¿Quieres entender tu finiquito
-                            en detalle?</h4>
-                        <p class="text-slate-400 text-sm">Revisa nuestras guías laborales gratuitas
-                            y aprende cómo se
-                            calcula cada componente.</p>
+                        <h4 class="text-lg font-bold text-white mb-1">Aprende más sobre cálculos y leyes laborales</h4>
+                        <p class="text-slate-400 text-sm">Visita nuestra sección de artículos y ejemplos prácticos sobre indemnizaciones y finiquitos chilenos.</p>
                     </div>
-                    <a href="/blog.html"
-                        class="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap">
-                        Ver Guías Laborales
+                    <a href="/blog" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white text-sm font-bold rounded-xl transition-all shadow-md whitespace-nowrap flex items-center gap-2">
+                        <span class="material-icons text-sm">menu_book</span>
+                        Ver Guías Gratuitas
                     </a>
                 </div>
             </section>
@@ -1090,7 +1078,7 @@
                                 Finiquito</a></li>
                         <li><a href="/sueldo_liquido" class="hover:text-indigo-400 transition-colors">Calculadora
                                 Sueldo</a></li>
-                        <li><a href="/blog.html" class="hover:text-indigo-400 transition-colors">Blog</a></li>
+                        <li><a href="/blog" class="hover:text-indigo-400 transition-colors">Blog</a></li>
                         <li><a href="/sobre-nosotros" class="hover:text-indigo-400 transition-colors">Sobre
                                 Nosotros</a></li>
                     </ul>
