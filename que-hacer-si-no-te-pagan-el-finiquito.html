@@ -57,7 +57,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.5.0">
     <style>
         .prose-content h2 {
             font-size: 1.5rem;
@@ -712,6 +712,22 @@
                     </div>
                 </div>
 
+                <div class="p-5 rounded-2xl bg-amber-50/90 border border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-4 my-6 not-prose shadow-xs">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                            <span class="material-icons text-xl">gavel</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-amber-950 m-0">¿Tu empleador ya superó los 10 días o se niega a pagar?</h4>
+                            <p class="text-xs text-amber-900/80 m-0 mt-0.5">La ley contempla recargos del 30% al 50% e intereses. Un abogado laboralista aliado puede evaluar tu caso.</p>
+                        </div>
+                    </div>
+                    <a href="#lead-form-nopago" class="shrink-0 inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all active:scale-98 whitespace-nowrap cursor-pointer !no-underline" style="background-color: #d97706 !important; color: #ffffff !important;">
+                        <span>Evaluar mi Caso</span>
+                        <span class="material-icons text-xs" style="color: #ffffff !important;">arrow_downward</span>
+                    </a>
+                </div>
+
                 <h2>4. Documentos que necesitas para reclamar</h2>
 
                 <p>Antes de hacer cualquier reclamo, reúne toda esta documentación:</p>
@@ -745,6 +761,82 @@
                 <p>Si tu ex empleador entra en proceso de <strong>liquidación concursal</strong> (quiebra), tus créditos laborales tienen <strong>preferencia legal</strong> sobre otros acreedores. Esto significa que tus remuneraciones y finiquito se pagan antes que las deudas bancarias o comerciales de la empresa.</p>
 
                 <p>Además, existe el <strong>Fondo de Cesantía (AFC)</strong> que puede cubrir parte de las remuneraciones adeudadas en caso de insolvencia del empleador.</p>
+
+                <!-- FORMULARIO LEAD: NO TE PAGAN EL FINIQUITO -->
+                <div id="lead-form-nopago" class="my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-50 via-orange-50/40 to-white border-2 border-amber-300 shadow-sm relative overflow-hidden not-prose">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 mb-2">
+                                <span class="material-icons text-amber-700 text-sm">support_agent</span>
+                                Evaluación de Incumplimiento Laboral
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold text-slate-900 !mt-0 !mb-1">
+                                ¿No te pagaron el finiquito o te ofrecen menos de lo legal?
+                            </h3>
+                            <p class="text-xs sm:text-sm text-slate-600 !mb-0 leading-relaxed">
+                                Si pasaron más de 10 días hábiles o tu empleador no deposita, el Código del Trabajo te faculta para exigir judicialmente el pago con <strong>recargos legales del 30% al 50% e intereses</strong>. Solicita que un abogado laboralista aliado evalúe tus antecedentes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form id="lead-form-nopago-form" onsubmit="enviarLeadArticulo(event, 'lead-form-nopago-form', 'Guía: Qué hacer si no te pagan finiquito')" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nombre Completo *</label>
+                                <input type="text" name="nombre" placeholder="Ej: Marcela Soto" required
+                                    class="w-full px-3.5 py-2.5 text-xs bg-white border border-amber-300 rounded-xl outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Correo Electrónico *</label>
+                                <input type="email" name="correo" placeholder="tu@correo.com" required
+                                    class="w-full px-3.5 py-2.5 text-xs bg-white border border-amber-300 rounded-xl outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400 font-medium">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Teléfono / WhatsApp *</label>
+                                <input type="tel" name="telefono" placeholder="+56 9 1234 5678" required
+                                    class="w-full px-3.5 py-2.5 text-xs bg-white border border-amber-300 rounded-xl outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">¿Cuántos días llevan de retraso o qué ocurrió?</label>
+                                <input type="text" name="consulta" placeholder="Ej: Llevan 20 días y no responden correos"
+                                    class="w-full px-3.5 py-2.5 text-xs bg-white border border-amber-300 rounded-xl outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400 font-medium">
+                            </div>
+                        </div>
+
+                        <div class="pt-1">
+                            <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+                                <input type="checkbox" name="privacy_consent" checked required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer">
+                                <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo ser contactado confidencialmente por un abogado laboralista aliado.</span>
+                            </label>
+                        </div>
+
+                        <div class="pt-2 flex flex-col sm:flex-row items-center gap-4">
+                            <button type="submit"
+                                style="background-color: #d97706 !important; color: #ffffff !important; display: inline-flex !important;"
+                                class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all active:scale-98 cursor-pointer border border-amber-700">
+                                <span class="material-icons text-sm" style="color: #ffffff !important;">send</span>
+                                <span style="color: #ffffff !important; font-weight: 700;">Confirmar y Solicitar Evaluación</span>
+                            </button>
+                            <span class="text-xs text-slate-500 flex items-center gap-1 shrink-0 font-medium">
+                                <span class="material-icons text-emerald-600 text-xs">lock</span>
+                                100% Confidencial · Abogados Aliados
+                            </span>
+                        </div>
+                    </form>
+
+                    <div id="lead-form-nopago-form-confirmacion" class="hidden p-6 bg-white border border-emerald-300 rounded-2xl text-center space-y-2">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl">
+                            <span class="material-icons text-2xl">check_circle</span>
+                        </div>
+                        <h4 class="text-base font-bold text-slate-900">¡Solicitud recibida correctamente!</h4>
+                        <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+                            Un abogado laboralista aliado examinará los antecedentes de tu caso para evaluar las acciones legales y recargos que procedan. Te contactarán a la brevedad.
+                        </p>
+                    </div>
+                </div>
 
                 <!-- CTA -->
                 <div class="mt-10 p-8 rounded-2xl bg-gradient-to-r from-red-900/30 to-blue-900/50 border border-red-200 bg-red-50/40 p-5 shadow-sm my-6 text-center">
