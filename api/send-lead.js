@@ -22,7 +22,7 @@ const ALLOWED_ORIGINS = new Set([
     'http://localhost:5500'
 ]);
 
-const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'Consulta Legal', 'Otro']);
+const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Otro']);
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 const RATE_LIMIT_MAX = 10; // max requests per IP per window
@@ -291,6 +291,26 @@ module.exports = async (req, res) => {
                 <p style="margin: 16px 0 0; font-size: 13px; color: #64748b;">El link de descarga funciona en cualquier dispositivo. Puedes compartirla con quien quieras.</p>
             `;
             userHtml = buildEmailHtml({ title: 'Tu guía está lista 📘', intro: userIntro, body: userBody });
+            userText = buildEmailText({ intro: userIntro, body: userBody });
+        } else if (cleanTipo === 'Multa DT') {
+            userSubject = 'Evaluación de Multa DT (Art. 511) - Cálculo Laboral';
+            const userIntro = `Hola ${cleanName}, hemos recibido los antecedentes de la multa de tu empresa.`;
+            const userBody = `
+                <p style="margin: 0 0 12px;"><strong>Reconsideración Administrativa de Multa DT (Art. 511)</strong></p>
+                <p style="margin: 0 0 12px;">Considerando que el plazo legal ante la Dirección del Trabajo es perentorio (<strong>15 días hábiles</strong> desde la notificación), un especialista revisará la viabilidad de solicitar la rebaja de hasta el 80% o sustitución por capacitación.</p>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Te contactaremos a la mayor brevedad a tu correo (${cleanEmail}) o teléfono de contacto.</p>
+            `;
+            userHtml = buildEmailHtml({ title: 'Solicitud Recibida - Multa DT', intro: userIntro, body: userBody });
+            userText = buildEmailText({ intro: userIntro, body: userBody });
+        } else if (cleanTipo === 'Pyme' || cleanTipo === 'Kit Laboral') {
+            userSubject = 'Confirmación de Solicitud para Empresas - Cálculo Laboral';
+            const userIntro = `Hola ${cleanName}, hemos recibido tu consulta sobre soluciones laborales para tu empresa.`;
+            const userBody = `
+                <p style="margin: 0 0 12px;"><strong>Kit de Blindaje y Cumplimiento Laboral Pyme 2026</strong></p>
+                <p style="margin: 0 0 12px;">Tu solicitud ha sido registrada correctamente. Un ejecutivo de atención para empleadores revisará los requerimientos de tu rubro y te contactará a la brevedad.</p>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Cálculo Laboral · calculolaboral.cl</p>
+            `;
+            userHtml = buildEmailHtml({ title: 'Solicitud para Empresas Registrada', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else {
             // Other tipos: only the user gets a confirmation, no resource attached
