@@ -473,7 +473,7 @@
         const btnOriginalContent = btn ? btn.innerHTML : '';
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<span class="material-icons animate-spin text-sm">autorenew</span> <span>Enviando solicitud...</span>';
+            btn.innerHTML = '<span class="material-icons animate-spin text-sm" style="color: #ffffff !important;">autorenew</span> <span style="color: #ffffff !important; font-weight: 700;">Enviando solicitud...</span>';
         }
 
         fetch('/api/send-lead', {
