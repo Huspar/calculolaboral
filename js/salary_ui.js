@@ -94,22 +94,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let contractType = 'indefinido';
 
-    // Use shared Validation module (loaded from validation.js)
-    const V = window.Validation;
+    // Dynamic and safe reference to Validation module (loaded from validation.js)
+    const getV = () => (typeof window !== 'undefined' && window.Validation) ? window.Validation : (typeof Validation !== 'undefined' ? Validation : null);
+    const V = new Proxy({}, { get: (t, p) => (getV() ? getV()[p] : undefined) });
 
     // Helper: Format Currency (safe — never NaN)
-    const formatCLP = (num) => V.formatCLPSafe(num);
+    const formatCLP = (num) => {
+        const v = getV();
+        return (v && v.formatCLPSafe) ? v.formatCLPSafe(num) : '$' + Math.round(num || 0).toLocaleString('es-CL');
+    };
 
     // Helper: Parse input safely
-    const parseInput = (val) => V.safeCurrency(val);
+    const parseInput = (val) => {
+        const v = getV();
+        return (v && v.safeCurrency) ? v.safeCurrency(val) : (parseInt(String(val || '').replace(/\D/g, ''), 10) || 0);
+    };
 
     const formatInput = (input) => {
-        let rawVal = input.value.replace(/\./g, '').replace(/[^0-9]/g, '');
-        if (rawVal) {
-            let newVal = new Intl.NumberFormat('es-CL').format(parseInt(rawVal));
-            if (input.value !== newVal) input.value = newVal;
+        const v = getV();
+        if (v && v.maskCurrency) {
+            v.maskCurrency(input);
         } else {
-            if (input.value !== '') input.value = '';
+            let rawVal = input.value.replace(/\./g, '').replace(/[^0-9]/g, '');
+            if (rawVal) {
+                let newVal = '$ ' + new Intl.NumberFormat('es-CL').format(parseInt(rawVal, 10));
+                if (input.value !== newVal) input.value = newVal;
+            } else {
+                if (input.value !== '') input.value = '';
+            }
         }
     };
 
@@ -120,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const init = () => {
         console.log('Salary UI Initializing...');
 
-        // Set Economic Indicators
         // Set Economic Indicators
         let C = null;
         if (typeof window !== 'undefined' && window.CONSTANTS) {
@@ -135,12 +146,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // Note: indicators.js will overwrite this with real data if available
         }
 
+        // Attach fintech currency mask to all CLP monetary inputs
+        const monetaryKeys = ['salary', 'bonuses', 'gratificationManual', 'colacion', 'movilizacion', 'viaticos', 'ccaf', 'apv', 'prestamos', 'pension', 'sindicato', 'otrosDescuentos'];
+        const vMod = getV();
+        monetaryKeys.forEach(k => {
+            if (inputs[k] && vMod && vMod.attachCurrencyMask) {
+                vMod.attachCurrencyMask(inputs[k]);
+            }
+        });
+
         // Attach Events
         Object.keys(inputs).forEach(key => {
             const el = inputs[key];
             if (el && el.tagName === 'INPUT') {
                 el.addEventListener('input', (e) => {
-                    formTouched = true;
+                    if (e.isTrusted) formTouched = true;
                     if (key === 'isapreValue' || key === 'overtime') {
                         calculate();
                         return;
@@ -149,8 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     calculate();
                 });
             } else if (el && el.tagName === 'SELECT') {
-                el.addEventListener('change', () => {
-                    formTouched = true;
+                el.addEventListener('change', (e) => {
+                    if (e.isTrusted) formTouched = true;
                     if (key === 'gratificationType') toggleGratification();
                     calculate();
                 });
@@ -321,7 +341,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 const sal = V.safeCurrency(raw);
                 if (sal <= 0) {
-                    V.showFieldError(inputs.salary, 'Ingresa un sueldo mayor a $0');
+                    if (formTouched) {
+                        V.showFieldError(inputs.salary, 'Ingresa un sueldo mayor a $0');
+                    }
                     valid = false;
                 }
             }

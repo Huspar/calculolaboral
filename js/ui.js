@@ -10,7 +10,12 @@
 const elements = {};
 let _previousVacProp = null; // Track previous vacation proportional value for explanation message
 
+// Safe and dynamic reference to Validation module
+const getV = () => (typeof window !== 'undefined' && window.Validation) ? window.Validation : (typeof Validation !== 'undefined' ? Validation : null);
+const V = new Proxy({}, { get: (t, p) => (getV() ? getV()[p] : undefined) });
+
 document.addEventListener('DOMContentLoaded', () => {
+
     // Initialize Elements
     elements.startDate = document.getElementById('startDate');
     elements.endDate = document.getElementById('endDate');
@@ -177,16 +182,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Format money inputs
+                // Format money inputs with fintech live mask
                 if (e.target.dataset.type === 'currency') {
-                    let val = e.target.value.replace(/\D/g, '');
-                    if (val) e.target.value = new Intl.NumberFormat('es-CL').format(parseInt(val));
+                    const vMod = getV();
+                    if (vMod && vMod.maskCurrency) {
+                        vMod.maskCurrency(e.target);
+                    }
                 }
 
                 updateCalculations();
             });
         }
     };
+
+    // Attach fintech mask to all currency inputs in Finiquito
+    const vMod = getV();
+    if (vMod && vMod.attachCurrencyMask) {
+        document.querySelectorAll('input[data-type="currency"]').forEach(input => {
+            vMod.attachCurrencyMask(input);
+        });
+    }
 
     textInputs.forEach(el => attachListener(el, 'input'));
     selectInputs.forEach(el => attachListener(el, 'change'));
@@ -278,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Formula: 25% of Base, capped
             const calculated = Math.min(Math.round(base * 0.25), legalCap);
 
-            elements.gratification.value = new Intl.NumberFormat('es-CL').format(calculated);
+            elements.gratification.value = '$ ' + new Intl.NumberFormat('es-CL').format(calculated);
             // updateCalculations() is already called by the generic input listener
         });
 
@@ -294,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (val > legalCap) {
                 val = legalCap;
                 // Clamp visual value
-                e.target.value = new Intl.NumberFormat('es-CL').format(val);
+                e.target.value = '$ ' + new Intl.NumberFormat('es-CL').format(val);
             }
         });
     }
@@ -334,9 +349,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Realistic Chilean Data
             if (elements.startDate) elements.startDate.value = '2021-03-01';
             if (elements.endDate) elements.endDate.value = '2026-02-09';
-            if (elements.baseSalary) elements.baseSalary.value = '850.000'; // Formato visual
-            if (elements.gratification) elements.gratification.value = '212.500'; // Art 50 approx
-            if (elements.assignments) elements.assignments.value = '80.000';
+            if (elements.baseSalary) elements.baseSalary.value = '$ 850.000'; // Formato visual fintech
+            if (elements.gratification) elements.gratification.value = '$ 212.500'; // Art 50 approx
+            if (elements.assignments) elements.assignments.value = '$ 80.000';
             if (elements.vacationPending) elements.vacationPending.value = '15';
 
             // Optional/Standard defaults
@@ -405,7 +420,8 @@ function updateCalculations() {
     document.getElementById('lead-section')?.classList.add('hidden');
     document.getElementById('print-template-finiquito')?.classList.add('hidden');
 
-    const V = window.Validation;
+    const V = getV();
+    if (!V) return;
 
     // Helper for formatting currency (safe — never NaN)
     const format = (n) => V.formatCLPSafe(n);
@@ -550,6 +566,8 @@ function updateCalculations() {
         if (elements.mobileResultValue) elements.mobileResultValue.textContent = format(results.total).replace(' CLP', '');
         var mobileLabel = document.getElementById('mobile-result-label');
         if (mobileLabel) mobileLabel.textContent = 'Total Finiquito';
+        var mobilePercentage = document.getElementById('mobile-result-percentage');
+        if (mobilePercentage) mobilePercentage.textContent = '';
 
         if (elements.yearsServiceAmount) elements.yearsServiceAmount.textContent = format(results.indemnities.yearsOfService.total);
 

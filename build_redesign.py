@@ -631,7 +631,7 @@ HEADER_HTML = """
                     <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors active:scale-95 duration-100 cursor-pointer flex items-center" aria-label="Abrir menú de navegación">
                         <span class="material-icons">menu</span>
                     </summary>
-                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50">
+                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
                         <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-2">
                 <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Líquido</a>
                 <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
@@ -3826,10 +3826,7 @@ INDEX_CONTENT = """
             <div id="tabContent-ingresos" class="space-y-4 hidden">
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-slate-600 uppercase ml-1">Sueldo Base Mensual</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-3 text-slate-500 font-bold">$</span>
-                        <input id="baseSalary" data-type="currency" class="block w-full pl-8 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" placeholder="0">
-                    </div>
+                    <input id="baseSalary" data-type="currency" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 font-bold focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" placeholder="$ 0">
                 </div>
                 
                 <div class="pt-1">
@@ -3845,15 +3842,15 @@ INDEX_CONTENT = """
                     <div class="grid grid-cols-3 gap-2">
                         <div>
                             <label class="text-[9px] font-bold text-slate-500 ml-1">Mes 1</label>
-                            <input id="varMonth1" data-type="currency" class="block w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" placeholder="0">
+                            <input id="varMonth1" data-type="currency" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" placeholder="$ 0">
                         </div>
                         <div>
                             <label class="text-[9px] font-bold text-slate-500 ml-1">Mes 2</label>
-                            <input id="varMonth2" data-type="currency" class="block w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" placeholder="0">
+                            <input id="varMonth2" data-type="currency" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" placeholder="$ 0">
                         </div>
                         <div>
                             <label class="text-[9px] font-bold text-slate-500 ml-1">Mes 3</label>
-                            <input id="varMonth3" data-type="currency" class="block w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" placeholder="0">
+                            <input id="varMonth3" data-type="currency" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" placeholder="$ 0">
                         </div>
                     </div>
                     <div class="flex justify-between items-center pt-2 border-t border-slate-200">
@@ -3864,18 +3861,12 @@ INDEX_CONTENT = """
 
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-slate-600 uppercase ml-1">Gratificación Mensual</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-3 text-slate-500 font-bold">$</span>
-                        <input id="gratification" data-type="currency" class="block w-full pl-8 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" placeholder="0">
-                    </div>
+                    <input id="gratification" data-type="currency" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 font-bold focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" placeholder="$ 0">
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-slate-600 uppercase ml-1">Asignaciones Fijas (Colación/Mov)</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-3 text-slate-500 font-bold">$</span>
-                        <input id="assignments" data-type="currency" class="block w-full pl-8 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" placeholder="0">
-                    </div>
+                    <input id="assignments" data-type="currency" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 font-bold focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" placeholder="$ 0">
                     <div class="pt-1">
                         <label class="flex items-center gap-2 cursor-pointer select-none">
                             <input type="checkbox" id="includeAssignmentsInVacation" class="w-4.5 h-4.5 text-sky-500 border-slate-200 rounded focus:ring-sky-500" checked>
@@ -3961,7 +3952,7 @@ INDEX_CONTENT = """
         </div>
 
         <!-- Results Column (Right, Sticky) -->
-        <div class="flex-grow bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm lg:sticky lg:top-24 space-y-6">
+        <div id="resultados-finiquito" class="flex-grow bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm lg:sticky lg:top-24 space-y-6 scroll-mt-20">
             <div class="text-center sm:text-left border-b border-slate-100 pb-5">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Monto Total del Finiquito</h3>
                 <div class="flex items-baseline gap-2 justify-center sm:justify-start">
@@ -4150,11 +4141,11 @@ INDEX_CONTENT = """
             <!-- Base & Overtime -->
             <div class="space-y-4">
                 <div class="space-y-1">
-                    <label class="block text-xs font-bold text-slate-600 uppercase ml-1" for="salary">Sueldo Base Mensual</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-3 text-slate-500 font-bold">$</span>
-                        <input id="salary" name="salary" placeholder="553.553" type="text" class="block w-full pl-8 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 font-bold focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-right font-mono" />
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-slate-600 uppercase ml-1" for="salary">Sueldo Base Mensual</label>
+                        <button type="button" onclick="var s=document.getElementById('salary');if(s){s.value='$ 553.553';s.dispatchEvent(new Event('input',{bubbles:true}));}" class="text-[10px] font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 px-2.5 py-0.5 rounded-md transition-colors cursor-pointer active:scale-95 duration-100">Usar Mínimo ($553.553)</button>
                     </div>
+                    <input id="salary" name="salary" placeholder="$ 553.553" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 font-bold focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-right font-mono text-base" />
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -4164,10 +4155,7 @@ INDEX_CONTENT = """
                     </div>
                     <div class="space-y-1">
                         <label class="block text-xs font-bold text-slate-600 uppercase ml-1">Bonos / Comisiones</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500 font-bold text-xs">$</span>
-                            <input id="bonuses" type="text" placeholder="0" class="block w-full pl-7 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-semibold text-right font-mono" />
-                        </div>
+                        <input id="bonuses" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-semibold text-right font-mono" />
                     </div>
                 </div>
             </div>
@@ -4183,8 +4171,7 @@ INDEX_CONTENT = """
                     </select>
                     <!-- Manual input container (hidden on load) -->
                     <div id="manualGratInput" class="hidden relative pt-2">
-                        <span class="absolute left-4 top-5 text-slate-400 font-bold">$</span>
-                        <input id="gratificationManual" type="text" placeholder="Monto fijo" class="block w-full pl-8 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" />
+                        <input id="gratificationManual" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-mono text-right" />
                     </div>
                 </div>
 
@@ -4245,24 +4232,15 @@ INDEX_CONTENT = """
                 <div class="grid grid-cols-3 gap-2">
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 ml-1">Colación</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2.5 text-slate-500 text-xs">$</span>
-                            <input id="colacion" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="colacion" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 ml-1">Movilización</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2.5 text-slate-500 text-xs">$</span>
-                            <input id="movilizacion" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="movilizacion" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 ml-1">Viáticos</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2.5 text-slate-500 text-xs">$</span>
-                            <input id="viaticos" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="viaticos" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                 </div>
             </div>
@@ -4279,45 +4257,27 @@ INDEX_CONTENT = """
                 <div class="px-3 pb-3.5 pt-2 border-t border-slate-200 grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 uppercase ml-1">CCAF (Imponible)</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">$</span>
-                            <input id="ccaf" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="ccaf" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 uppercase ml-1">APV (Imponible)</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">$</span>
-                            <input id="apv" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="apv" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 uppercase ml-1">Préstamos</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">$</span>
-                            <input id="prestamos" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="prestamos" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 uppercase ml-1">Pensión Alimenticia</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">$</span>
-                            <input id="pension" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="pension" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 uppercase ml-1">Sindicato</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">$</span>
-                            <input id="sindicato" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="sindicato" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-slate-500 uppercase ml-1">Otros Descuentos</label>
-                        <div class="relative">
-                            <span class="absolute left-2.5 top-2 text-slate-500 text-xs">$</span>
-                            <input id="otrosDescuentos" type="text" placeholder="0" class="block w-full pl-5 pr-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right" />
-                        </div>
+                        <input id="otrosDescuentos" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-right font-semibold" />
                     </div>
                     <div class="col-span-2 pt-2 border-t border-slate-100 flex items-center">
                         <label class="flex items-center gap-2 cursor-pointer">
@@ -4330,7 +4290,7 @@ INDEX_CONTENT = """
         </div>
 
         <!-- Results Column (Right, Sticky) -->
-        <div class="flex-grow bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm lg:sticky lg:top-24 space-y-6">
+        <div id="resultados-sueldo" class="flex-grow bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm lg:sticky lg:top-24 space-y-6 scroll-mt-20">
             <div class="text-center sm:text-left border-b border-slate-100 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tu Sueldo Líquido Estimado</h3>
@@ -4948,11 +4908,11 @@ INDEX_CONTENT = """
 
 INDEX_SCRIPTS = """
     <!-- Calculator Scripts -->
+    <script src="/js/validation.js?v=2.0.5"></script>
     <script src="/js/salary_logic.js?v=2.0.3"></script>
-    <script src="/js/salary_ui.js?v=2.0.4"></script>
+    <script src="/js/salary_ui.js?v=2.0.6"></script>
     <script src="/js/logic.js?v=2.0.3"></script>
-    <script src="/js/ui.js?v=2.0.5"></script>
-    <script src="/js/validation.js?v=2.0.3"></script>
+    <script src="/js/ui.js?v=2.0.7"></script>
     <script>
         // High-end tab system switching between both calculators
         function switchCalculatorTab(tab) {
@@ -5127,8 +5087,7 @@ HORAS_EXTRAS_CONTENT = """
                         </button>
                     </div>
                     <div class="relative rounded-2xl shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-bold">$</div>
-                        <input type="text" id="he-sueldo-base" value="553.553" oninput="formatHEInput(this); calculateHorasExtras();" class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        <input type="text" id="he-sueldo-base" value="$ 553.553" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatHEInput(this); calculateHorasExtras();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
                     </div>
                     <p class="text-[11px] text-slate-400 mt-1">Sueldo fijo pactado en tu contrato de trabajo.</p>
                 </div>
@@ -5483,7 +5442,7 @@ HORAS_EXTRAS_SCRIPTS = """
     <script>
         function parseCleanNumber(val) {
             if (!val) return 0;
-            return parseFloat(val.toString().replace(/\\./g, '').replace(/,/g, '.')) || 0;
+            return parseInt(val.toString().replace(/[^0-9]/g, ''), 10) || 0;
         }
 
         function formatCurrency(num) {
@@ -5491,14 +5450,32 @@ HORAS_EXTRAS_SCRIPTS = """
         }
 
         function formatHEInput(input) {
-            var val = input.value.replace(/\\D/g, '');
-            if (!val) { input.value = '0'; return; }
-            input.value = parseInt(val, 10).toLocaleString('es-CL');
+            var raw = input.value || '';
+            var oldSel = input.selectionStart || 0;
+            var digitsBefore = 0;
+            for (var i = 0; i < oldSel; i++) {
+                if (/\\d/.test(raw[i])) digitsBefore++;
+            }
+            var digits = raw.replace(/\\D/g, '');
+            if (!digits) { input.value = ''; return; }
+            var cleanDigits = digits.slice(0, 11);
+            var formatted = '$ ' + parseInt(cleanDigits, 10).toLocaleString('es-CL');
+            input.value = formatted;
+            var newPos = formatted.length;
+            var counted = 0;
+            for (var j = 0; j < formatted.length; j++) {
+                if (/\\d/.test(formatted[j])) {
+                    counted++;
+                    if (counted === digitsBefore) { newPos = j + 1; break; }
+                }
+            }
+            if (digitsBefore === 0) newPos = 2;
+            try { input.setSelectionRange(newPos, newPos); } catch (e) {}
         }
 
         function setHEMinimo() {
             var input = document.getElementById('he-sueldo-base');
-            input.value = '553.553';
+            input.value = '$ 553.553';
             calculateHorasExtras();
         }
 
@@ -5645,8 +5622,7 @@ PART_TIME_CONTENT = """
                         </button>
                     </div>
                     <div class="relative rounded-2xl shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-bold">$</div>
-                        <input type="text" id="pt-sueldo-base" value="395.395" oninput="formatPTInput(this); calculatePartTime();" class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        <input type="text" id="pt-sueldo-base" value="$ 395.395" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatPTInput(this); calculatePartTime();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
                     </div>
                     <p class="text-[11px] text-slate-400 mt-1" id="pt-legal-hint">Mínimo legal proporcional para 30 horas: <strong>$395.395</strong>.</p>
                 </div>
@@ -5660,8 +5636,7 @@ PART_TIME_CONTENT = """
                         <span class="text-[10px] text-slate-400 font-medium">Opcional</span>
                     </div>
                     <div class="relative rounded-xl shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold">$</div>
-                        <input type="text" id="pt-comisiones" value="0" oninput="formatPTInput(this); calculatePartTime();" placeholder="0" class="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <input type="text" id="pt-comisiones" value="$ 0" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatPTInput(this); calculatePartTime();" placeholder="$ 0" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:outline-none focus:ring-2 focus:ring-sky-500">
                     </div>
                     
                     <label class="flex items-center gap-2 cursor-pointer pt-1">
@@ -5909,7 +5884,7 @@ PART_TIME_SCRIPTS = """
 
         function parseCleanNumber(val) {
             if (!val) return 0;
-            return parseFloat(val.toString().replace(/\\./g, '').replace(/,/g, '.')) || 0;
+            return parseInt(val.toString().replace(/[^0-9]/g, ''), 10) || 0;
         }
 
         function formatCurrency(num) {
@@ -5917,9 +5892,27 @@ PART_TIME_SCRIPTS = """
         }
 
         function formatPTInput(input) {
-            var val = input.value.replace(/\\D/g, '');
-            if (!val) { input.value = '0'; return; }
-            input.value = parseInt(val, 10).toLocaleString('es-CL');
+            var raw = input.value || '';
+            var oldSel = input.selectionStart || 0;
+            var digitsBefore = 0;
+            for (var i = 0; i < oldSel; i++) {
+                if (/\\d/.test(raw[i])) digitsBefore++;
+            }
+            var digits = raw.replace(/\\D/g, '');
+            if (!digits) { input.value = ''; return; }
+            var cleanDigits = digits.slice(0, 11);
+            var formatted = '$ ' + parseInt(cleanDigits, 10).toLocaleString('es-CL');
+            input.value = formatted;
+            var newPos = formatted.length;
+            var counted = 0;
+            for (var j = 0; j < formatted.length; j++) {
+                if (/\\d/.test(formatted[j])) {
+                    counted++;
+                    if (counted === digitsBefore) { newPos = j + 1; break; }
+                }
+            }
+            if (digitsBefore === 0) newPos = 2;
+            try { input.setSelectionRange(newPos, newPos); } catch (e) {}
         }
 
         function getSelectedJornada() {
@@ -5943,7 +5936,7 @@ PART_TIME_SCRIPTS = """
             // Auto-update base if it was set to old minimum
             var currentBase = parseCleanNumber(document.getElementById('pt-sueldo-base').value);
             if (currentBase === 395395 || currentBase === 263596 || currentBase === 197697 || currentBase === 0) {
-                document.getElementById('pt-sueldo-base').value = minProp.toLocaleString('es-CL');
+                document.getElementById('pt-sueldo-base').value = '$ ' + minProp.toLocaleString('es-CL');
             }
 
             calculatePartTime();
@@ -5952,7 +5945,7 @@ PART_TIME_SCRIPTS = """
         function setPTMinimoLegal() {
             var horas = getSelectedJornada();
             var minProp = getMinimoProporcional(horas);
-            document.getElementById('pt-sueldo-base').value = minProp.toLocaleString('es-CL');
+            document.getElementById('pt-sueldo-base').value = '$ ' + minProp.toLocaleString('es-CL');
             calculatePartTime();
         }
 

@@ -30,6 +30,105 @@ const Validation = {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(safe);
     },
 
+    /**
+     * Fintech-grade live currency mask for input fields.
+     * Transforms raw typing like '1500000' into '$ 1.500.000' in real-time,
+     * maintaining exact cursor position without jumping to the end.
+     */
+    maskCurrency(input) {
+        if (!input) return;
+        const raw = input.value || '';
+        const oldSel = input.selectionStart || 0;
+
+        // Count numeric digits before current cursor position
+        let digitsBefore = 0;
+        for (let i = 0; i < oldSel; i++) {
+            if (/\d/.test(raw[i])) digitsBefore++;
+        }
+
+        // Extract only digits
+        const digits = raw.replace(/\D/g, '');
+
+        // If field was cleared completely
+        if (!digits) {
+            if (input.value !== '') input.value = '';
+            return;
+        }
+
+        // Cap to 11 digits (up to $99.999.999.999 CLP)
+        const cleanDigits = digits.slice(0, 11);
+        const intVal = parseInt(cleanDigits, 10);
+
+        const formattedNum = new Intl.NumberFormat('es-CL').format(intVal);
+        const formatted = '$ ' + formattedNum;
+
+        if (input.value !== formatted) {
+            input.value = formatted;
+        }
+
+        // Calculate new cursor position preserving digit offset
+        let newPos = formatted.length;
+        let counted = 0;
+        for (let i = 0; i < formatted.length; i++) {
+            if (/\d/.test(formatted[i])) {
+                counted++;
+                if (counted === digitsBefore) {
+                    newPos = i + 1;
+                    break;
+                }
+            }
+        }
+        if (digitsBefore === 0) newPos = 2; // Right after '$ '
+
+        try {
+            input.setSelectionRange(newPos, newPos);
+        } catch (e) {}
+    },
+
+    /**
+     * Attaches live mask listeners and mobile numeric keypad attributes to an input
+     */
+    attachCurrencyMask(input) {
+        if (!input || input._hasCurrencyMask) return;
+        input._hasCurrencyMask = true;
+
+        // Ensure proper mobile keypad
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('pattern', '[0-9]*');
+        input.setAttribute('autocomplete', 'off');
+        input.setAttribute('autocorrect', 'off');
+        input.setAttribute('spellcheck', 'false');
+
+        // Real-time live mask on input event
+        input.addEventListener('input', () => {
+            this.maskCurrency(input);
+        });
+
+        // Intelligent backspace over dots / space
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace') {
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                if (start === end && start > 0) {
+                    const charBefore = input.value[start - 1];
+                    if (charBefore === '.' || charBefore === ' ') {
+                        e.preventDefault();
+                        const before = input.value.slice(0, start - 2);
+                        const after = input.value.slice(start);
+                        input.value = before + after;
+                        input.setSelectionRange(start - 2, start - 2);
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }
+            }
+        });
+
+        // If it already has an initial numeric value without '$ ', format it immediately
+        if (input.value && !input.value.startsWith('$')) {
+            this.maskCurrency(input);
+        }
+    },
+
     // =============================================
     // INLINE ERROR MESSAGES
     // =============================================
@@ -137,6 +236,10 @@ const Validation = {
 
 // Make globally available
 window.Validation = Validation;
+window.formatCurrencyInput = function(input) {
+    Validation.attachCurrencyMask(input);
+    Validation.maskCurrency(input);
+};
 
 // =============================================
 // QA MODE (dev only — ?qa=1)

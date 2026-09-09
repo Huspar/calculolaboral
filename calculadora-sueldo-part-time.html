@@ -474,7 +474,7 @@
                     <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors active:scale-95 duration-100 cursor-pointer flex items-center" aria-label="Abrir menú de navegación">
                         <span class="material-icons">menu</span>
                     </summary>
-                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50">
+                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
                         <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-2">
                 <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Líquido</a>
                 <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
@@ -616,8 +616,7 @@
                         </button>
                     </div>
                     <div class="relative rounded-2xl shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-bold">$</div>
-                        <input type="text" id="pt-sueldo-base" value="395.395" oninput="formatPTInput(this); calculatePartTime();" class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        <input type="text" id="pt-sueldo-base" value="$ 395.395" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatPTInput(this); calculatePartTime();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
                     </div>
                     <p class="text-[11px] text-slate-400 mt-1" id="pt-legal-hint">Mínimo legal proporcional para 30 horas: <strong>$395.395</strong>.</p>
                 </div>
@@ -631,8 +630,7 @@
                         <span class="text-[10px] text-slate-400 font-medium">Opcional</span>
                     </div>
                     <div class="relative rounded-xl shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold">$</div>
-                        <input type="text" id="pt-comisiones" value="0" oninput="formatPTInput(this); calculatePartTime();" placeholder="0" class="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <input type="text" id="pt-comisiones" value="$ 0" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatPTInput(this); calculatePartTime();" placeholder="$ 0" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:outline-none focus:ring-2 focus:ring-sky-500">
                     </div>
                     
                     <label class="flex items-center gap-2 cursor-pointer pt-1">
@@ -1217,7 +1215,7 @@
 
         function parseCleanNumber(val) {
             if (!val) return 0;
-            return parseFloat(val.toString().replace(/\./g, '').replace(/,/g, '.')) || 0;
+            return parseInt(val.toString().replace(/[^0-9]/g, ''), 10) || 0;
         }
 
         function formatCurrency(num) {
@@ -1225,9 +1223,27 @@
         }
 
         function formatPTInput(input) {
-            var val = input.value.replace(/\D/g, '');
-            if (!val) { input.value = '0'; return; }
-            input.value = parseInt(val, 10).toLocaleString('es-CL');
+            var raw = input.value || '';
+            var oldSel = input.selectionStart || 0;
+            var digitsBefore = 0;
+            for (var i = 0; i < oldSel; i++) {
+                if (/\d/.test(raw[i])) digitsBefore++;
+            }
+            var digits = raw.replace(/\D/g, '');
+            if (!digits) { input.value = ''; return; }
+            var cleanDigits = digits.slice(0, 11);
+            var formatted = '$ ' + parseInt(cleanDigits, 10).toLocaleString('es-CL');
+            input.value = formatted;
+            var newPos = formatted.length;
+            var counted = 0;
+            for (var j = 0; j < formatted.length; j++) {
+                if (/\d/.test(formatted[j])) {
+                    counted++;
+                    if (counted === digitsBefore) { newPos = j + 1; break; }
+                }
+            }
+            if (digitsBefore === 0) newPos = 2;
+            try { input.setSelectionRange(newPos, newPos); } catch (e) {}
         }
 
         function getSelectedJornada() {
@@ -1251,7 +1267,7 @@
             // Auto-update base if it was set to old minimum
             var currentBase = parseCleanNumber(document.getElementById('pt-sueldo-base').value);
             if (currentBase === 395395 || currentBase === 263596 || currentBase === 197697 || currentBase === 0) {
-                document.getElementById('pt-sueldo-base').value = minProp.toLocaleString('es-CL');
+                document.getElementById('pt-sueldo-base').value = '$ ' + minProp.toLocaleString('es-CL');
             }
 
             calculatePartTime();
@@ -1260,7 +1276,7 @@
         function setPTMinimoLegal() {
             var horas = getSelectedJornada();
             var minProp = getMinimoProporcional(horas);
-            document.getElementById('pt-sueldo-base').value = minProp.toLocaleString('es-CL');
+            document.getElementById('pt-sueldo-base').value = '$ ' + minProp.toLocaleString('es-CL');
             calculatePartTime();
         }
 
