@@ -406,6 +406,29 @@
         const hasBreach = (elements.checkCotizaciones?.checked || elements.checkKarin?.checked || elements.checkContrato?.checked);
         if (elements.autodespidoAlert) {
             if (hasBreach) {
+                // Populate selected reasons
+                const reasons = [];
+                if (elements.checkCotizaciones?.checked) {
+                    reasons.push('Deuda de cotizaciones previsionales (Ley Bustos)');
+                }
+                if (elements.checkKarin?.checked) {
+                    reasons.push('Acoso laboral / violencia (Ley Karin)');
+                }
+                if (elements.checkContrato?.checked) {
+                    reasons.push('Incumplimiento de contrato o remuneraciones');
+                }
+
+                const motivoInput = document.getElementById('lead-autodespido-motivo');
+                if (motivoInput) {
+                    motivoInput.value = reasons.join(' + ');
+                }
+
+                // Pre-fill worker name if not edited yet
+                const leadNameInput = document.getElementById('lead-autodespido-nombre');
+                if (leadNameInput && !leadNameInput.dataset.manual && elements.workerName?.value) {
+                    leadNameInput.value = elements.workerName.value.trim();
+                }
+
                 elements.autodespidoAlert.classList.remove('hidden');
                 elements.autodespidoAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } else {
@@ -414,9 +437,94 @@
         }
     }
 
+    // Lead submission handler for Autodespido
+    window.enviarLeadAutodespido = function(event) {
+        if (event) event.preventDefault();
+
+        const form = document.getElementById('lead-autodespido-form');
+        const btn = document.getElementById('btn-submit-autodespido');
+        const confirmBox = document.getElementById('lead-autodespido-confirmacion');
+
+        const nombre = document.getElementById('lead-autodespido-nombre')?.value.trim();
+        const correo = document.getElementById('lead-autodespido-correo')?.value.trim();
+        const telefono = document.getElementById('lead-autodespido-telefono')?.value.trim();
+        const motivo = document.getElementById('lead-autodespido-motivo')?.value.trim() || 'Evaluación de incumplimientos graves';
+        const honeypot = document.getElementById('lead-autodespido-website')?.value;
+
+        // Anti-bot silent abort if honeypot was populated
+        if (honeypot && honeypot.length > 0) {
+            if (form) form.classList.add('hidden');
+            if (confirmBox) confirmBox.classList.remove('hidden');
+            return;
+        }
+
+        if (!nombre || !correo || !telefono) {
+            alert('Por favor completa todos los campos obligatorios para enviar tu solicitud.');
+            return;
+        }
+
+        const cargo = elements.jobTitle?.value.trim() || '';
+        const empresa = elements.companyName?.value.trim() || '';
+        let detalle = `Motivo(s) autodespido: ${motivo}.`;
+        if (cargo || empresa) {
+            detalle += ` Cargo: ${cargo || 'No especificado'} en ${empresa || 'Empresa no indicada'}.`;
+        }
+
+        const btnOriginalContent = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-icons animate-spin text-sm">autorenew</span> <span>Enviando solicitud...</span>';
+        }
+
+        fetch('/api/send-lead', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre: nombre,
+                correo: correo,
+                telefono: telefono,
+                tipo: 'Despido',
+                fuente: 'Asistente Carta de Renuncia - Alerta Autodespido',
+                detalle: detalle,
+                monto_calculado: '0'
+            })
+        }).then(function (response) {
+            if (response.ok) {
+                if (form) form.classList.add('hidden');
+                if (confirmBox) confirmBox.classList.remove('hidden');
+
+                if (typeof gtag === 'function') {
+                    gtag('event', 'lead_autodespido_renuncia', {
+                        event_category: 'lead',
+                        event_label: motivo
+                    });
+                }
+            } else {
+                throw new Error('Error al procesar la solicitud');
+            }
+        }).catch(function (err) {
+            console.error('Error enviando solicitud de autodespido:', err);
+            alert('Hubo un problema al enviar tus datos. Por favor inténtalo nuevamente.');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = btnOriginalContent;
+            }
+        });
+    };
+
     // Event listeners binding
     document.addEventListener('DOMContentLoaded', () => {
         initDefaultDates();
+
+        // Track manual edits on lead name
+        const leadNameInput = document.getElementById('lead-autodespido-nombre');
+        if (leadNameInput) {
+            leadNameInput.addEventListener('input', () => {
+                leadNameInput.dataset.manual = 'true';
+            });
+        }
 
         // Format RUT on input
         if (elements.workerRut) {
@@ -437,7 +545,13 @@
         inputs.forEach(el => {
             if (!el) return;
             const evt = (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'date') ? 'change' : 'input';
-            el.addEventListener(evt, updatePreview);
+            el.addEventListener(evt, () => {
+                updatePreview();
+                // If workerName changed and lead name hasn't been manually edited, sync it
+                if (el === elements.workerName && leadNameInput && !leadNameInput.dataset.manual) {
+                    leadNameInput.value = elements.workerName.value.trim();
+                }
+            });
         });
 
         // Copy and print buttons
@@ -456,6 +570,17 @@
                 if (elements.reasonSelect) elements.reasonSelect.value = 'personal';
                 if (elements.includeGratitude) elements.includeGratitude.checked = true;
                 if (elements.includeFiniquitoTerm) elements.includeFiniquitoTerm.checked = true;
+                
+                // Reset autodespido checkboxes and alert box
+                if (elements.checkCotizaciones) elements.checkCotizaciones.checked = false;
+                if (elements.checkKarin) elements.checkKarin.checked = false;
+                if (elements.checkContrato) elements.checkContrato.checked = false;
+                if (elements.autodespidoAlert) elements.autodespidoAlert.classList.add('hidden');
+                if (leadNameInput) {
+                    leadNameInput.value = '';
+                    delete leadNameInput.dataset.manual;
+                }
+
                 updatePreview();
             });
         }
