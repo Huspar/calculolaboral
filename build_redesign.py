@@ -1171,6 +1171,19 @@ HTML_LAYOUT = """<!DOCTYPE html>
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }}
+            .print-table {{
+                width: 100% !important;
+                border-collapse: collapse !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }}
+            .print-table th, .print-table td {{
+                border: 1px solid #e2e8f0 !important;
+            }}
+            .print-section-title {{
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }}
         }}
     </style>
     {custom_head}
