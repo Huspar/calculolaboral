@@ -18,7 +18,12 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         canonical_url = f"https://calculolaboral.cl/{filename.replace(".html", "")}"
         
     # 2. Open Graph Tags
-    og_img = "https://calculolaboral.cl/assets/guia-fondos-generacionales-afp-cover.png" if filename == "fondos-generacionales-afp-chile.html" else "https://calculolaboral.cl/assets/og-image.png"
+    if filename == "fondos-generacionales-afp-chile.html":
+        og_img = "https://calculolaboral.cl/assets/guia-fondos-generacionales-afp-cover.png"
+    elif filename == "propuesta-indemnizacion-a-todo-evento-chile.html":
+        og_img = "https://calculolaboral.cl/assets/guia-indemnizacion-todo-evento-chile.jpg"
+    else:
+        og_img = "https://calculolaboral.cl/assets/og-image.png"
     og_tags_list = [
         f'<meta property="og:title" content="{title}">',
         f'<meta property="og:description" content="{description}">',
@@ -241,6 +246,49 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         }
     ]
 
+    faqs_indemnizacion_todo_evento = [
+        {
+            "@type": "Question",
+            "name": "¿La indemnización a todo evento ya está aprobada y es ley vigente?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Actualmente es una propuesta técnica en fase de estudio y diseño pre-legislativo dentro del Ministerio del Trabajo, sobre la base de las recomendaciones de la Mesa de Reactivación Laboral. No ha sido aprobada por el Congreso ni promulgada como ley."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Si renuncio a mi trabajo hoy en 2026, tengo derecho a indemnización por años de servicio?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Conforme al artículo 159 Nº2 del Código del Trabajo vigente, la renuncia voluntaria no da derecho a indemnización por años de servicio ni sustitutiva del aviso previo. En tu finiquito actual solo te corresponde el pago de los días trabajados en el mes y las vacaciones proporcionales y pendientes."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Qué pasará con mis años de servicio acumulados si se llega a aprobar esta reforma?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "El Gobierno y las autoridades laborales han reiterado que la reforma no sería retroactiva. Cualquier modificación legal regiría exclusivamente para los nuevos contratos que se firmen a futuro, manteniendo intactos los derechos adquiridos y el sistema de un mes por año de los contratos vigentes."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Cómo funcionaría el esquema del 1,8% en estudio?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "La propuesta plantea que el empleador cotice mensualmente un porcentaje cercano al 1,8% de la remuneración en una cuenta individual vinculada al Seguro de Cesantía. Ese fondo se acumularía mes a mes y el trabajador podría retirarlo al terminar su relación laboral por cualquier causa, incluida la renuncia."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Es posible pactar una indemnización a todo evento con las leyes actuales de Chile?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí, pero bajo reglas muy restringidas: el artículo 164 del Código del Trabajo permite pactar indemnización a todo evento únicamente a contar del inicio del séptimo año de relación laboral, con acuerdo mutuo y mediante un depósito mensual del empleador no inferior al 4,11% de la remuneración en la AFP."
+            }
+        }
+    ]
+
     if filename == "index.html":
         json_ld_data = {
             "@context": "https://schema.org",
@@ -418,6 +466,48 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                 }
             ]
         }
+    elif filename == "propuesta-indemnizacion-a-todo-evento-chile.html":
+        json_ld_data = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Article",
+                    "headline": title.split("|")[0].strip(),
+                    "description": description,
+                    "author": { "@type": "Organization", "name": "Cálculo Laboral" },
+                    "datePublished": "2026-09-09",
+                    "dateModified": "2026-09-09",
+                    "image": og_img
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Inicio",
+                            "item": "https://calculolaboral.cl/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Blog",
+                            "item": "https://calculolaboral.cl/blog"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Indemnización a Todo Evento",
+                            "item": "https://calculolaboral.cl/propuesta-indemnizacion-a-todo-evento-chile"
+                        }
+                    ]
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": faqs_indemnizacion_todo_evento
+                }
+            ]
+        }
     elif page_type == "article":
         json_ld_data = {
             "@context": "https://schema.org",
@@ -515,6 +605,7 @@ HEADER_HTML = """
                         </button>
                         <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
                             <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                                <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Indemnización a Todo Evento (Propuesta)</a>
                                 <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Fondos Generacionales AFP</a>
                                 <a href="como-calcular-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Finiquito</a>
                                 <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Sueldo Líquido</a>
@@ -548,6 +639,7 @@ HEADER_HTML = """
                 <a href="calculadora-sueldo-part-time" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Part-Time</a>
                 <div class="border-t border-slate-100 my-2"></div>
                 <p class="px-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Guías</p>
+                <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 font-bold">Indemnización a Todo Evento (Propuesta)</a>
                 <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Fondos Generacionales AFP</a>
                 <a href="como-calcular-finiquito-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Calcular Finiquito</a>
                 <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Calcular Sueldo Líquido</a>
@@ -624,6 +716,7 @@ FOOTER_HTML = """
             <div class="space-y-4">
                 <h4 class="text-sm font-bold text-slate-900 uppercase tracking-widest">Guías Populares</h4>
                 <ul class="space-y-2">
+                    <li><a href="propuesta-indemnizacion-a-todo-evento-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Indemnización Todo Evento</a></li>
                     <li><a href="fondos-generacionales-afp-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Fondos Generacionales AFP</a></li>
                     <li><a href="como-calcular-finiquito-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Cómo Calcular Finiquito</a></li>
                     <li><a href="como-calcular-sueldo-liquido-paso-a-paso" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Cómo Calcular Sueldo Líquido</a></li>
@@ -1465,6 +1558,9 @@ def extract_article_info(file_path):
     elif filename == "fondos-generacionales-afp-chile.html":
         title = "Fondos Generacionales AFP Chile: Qué son, Tabla por Edad y Fin de Multifondos"
         description = "Guía completa sobre los Fondos Generacionales de las AFP en Chile: qué son, tabla por año de nacimiento, qué pasará con los multifondos A, B, C, D, E y fechas clave."
+    elif filename == "propuesta-indemnizacion-a-todo-evento-chile.html":
+        title = "Indemnización a Todo Evento en Chile: Qué es la Propuesta, Cómo Funcionaría y Estado Actual"
+        description = "Análisis informativo sobre la propuesta de indemnización a todo evento y 19 medidas laborales en Chile. Conoce qué cambiaría, el aporte de 1,8% y qué dice la ley vigente."
     
     ld_scripts = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL)
     custom_head = ""
@@ -2787,7 +2883,8 @@ articles = [
     "reclamar-despido-injustificado-chile.html",
     "finiquito-por-renuncia-voluntaria.html",
     "carta-de-despido-chile.html",
-    "fondos-generacionales-afp-chile.html"
+    "fondos-generacionales-afp-chile.html",
+    "propuesta-indemnizacion-a-todo-evento-chile.html"
 ]
 
 def get_lead_card_for_article(filename):
@@ -3214,6 +3311,22 @@ blog_content = """
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 00. Indemnización a Todo Evento (Propuesta) -->
+        <a href="propuesta-indemnizacion-a-todo-evento-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+            <div class="aspect-video bg-slate-100 overflow-hidden relative border-b border-slate-100">
+                <img src="assets/guia-indemnizacion-todo-evento-chile.jpg" alt="Indemnización a Todo Evento Chile" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <span class="absolute top-4 left-4 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">Actualidad y Reformas</span>
+            </div>
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2">Indemnización a Todo Evento en Chile: Qué es la propuesta y cómo funcionaría</h3>
+                <p class="text-slate-500 text-xs leading-relaxed mb-4">Análisis informativo sobre las 19 medidas laborales en estudio técnico: indemnización por renuncia, cotización patronal del 1,8% y qué dice la ley actual.</p>
+                <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                    <span>Septiembre 2026</span>
+                    <span>6 min lectura</span>
+                </div>
+            </div>
+        </a>
+
         <!-- 0. Fondos Generacionales AFP -->
         <a href="fondos-generacionales-afp-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
             <div class="aspect-video bg-slate-100 overflow-hidden relative border-b border-slate-100">
