@@ -143,7 +143,7 @@
         @media print {
             @page {
                 size: letter portrait;
-                margin: 25mm 25mm 25mm 25mm;
+                margin: 20mm 20mm 20mm 20mm;
             }
             body > *:not(#print-letter-section) {
                 display: none !important;
@@ -154,7 +154,12 @@
                 color: #0f172a !important;
                 font-family: 'Newsreader', Georgia, 'Times New Roman', serif !important;
                 font-size: 11pt !important;
-                line-height: 1.6 !important;
+                line-height: 1.65 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
             }
         }
     </style>
@@ -482,7 +487,7 @@
                         <p class="pt-3">Saluda atentamente a ustedes,</p>
 
                         <!-- Signature Block -->
-                        <div class="pt-12 pb-4 text-center sm:text-left max-w-xs font-sans">
+                        <div class="pt-16 pb-2 text-center sm:text-left max-w-xs font-sans">
                             <div class="border-t border-slate-400 pt-3 space-y-1">
                                 <p class="font-bold text-slate-900 text-sm uppercase tracking-wide" id="prev-firma-nombre">[Nombre Completo del Trabajador]</p>
                                 <p class="text-xs text-slate-600 font-mono font-medium" id="prev-firma-rut">RUT: [RUT]</p>
@@ -490,8 +495,31 @@
                             </div>
                         </div>
 
-                        <!-- Legal Footer Note -->
-                        <div class="pt-4 border-t border-dashed border-slate-200 text-[11px] text-slate-500 font-sans leading-normal">
+                        <!-- Formal Chilean Legal Boxes Preview -->
+                        <div class="pt-4 border-t border-dashed border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3 font-sans text-xs text-slate-500">
+                            <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/70 space-y-1.5">
+                                <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider border-b border-slate-200 pb-1 flex items-center gap-1">
+                                    <span class="material-icons text-xs text-slate-400">business</span> Recepción Empleador
+                                </div>
+                                <div class="text-[10px] text-slate-600 space-y-0.5">
+                                    <p>Fecha: _____ / _____ / 202___</p>
+                                    <p>Nombre: _________________</p>
+                                    <p>Firma/Timbre: ____________</p>
+                                </div>
+                            </div>
+                            <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/70 space-y-1.5">
+                                <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider border-b border-slate-200 pb-1 flex items-center gap-1">
+                                    <span class="material-icons text-xs text-slate-400">gavel</span> Ministro de Fe (Art. 177)
+                                </div>
+                                <div class="text-[10px] text-slate-600 space-y-0.5">
+                                    <p>Ratificación C.I. y firma</p>
+                                    <p class="pt-1 text-slate-400">Timbre Notaría / Insp. DT</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legal Footer Note (Web Only) -->
+                        <div class="pt-3 text-[11px] text-slate-500 font-sans leading-normal no-print">
                             📌 <strong>Nota de validez legal:</strong> Si presentas esta carta impresa en papel, debe ser ratificada ante un Notario Público o Inspector del Trabajo conforme al Art. 177 del Código del Trabajo. Si realizas tu renuncia de forma digital en el portal <a href="#tutorial-midt" class="text-sky-600 font-semibold underline">Mi DT con ClaveÚnica</a>, no requieres Notaría.
                         </div>
 

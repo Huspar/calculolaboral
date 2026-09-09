@@ -277,17 +277,127 @@
         }
     }
 
+    // Build clean, professional legal document HTML for print (1-page standard A4/Carta)
+    function getPrintLetterHTML() {
+        const city = (elements.city?.value.trim() || 'Santiago');
+        const notifyDate = elements.notifyDate?.value ? formatReadableDate(elements.notifyDate.value) : 'Fecha actual';
+        const company = elements.companyName?.value.trim() || '[Nombre o Razón Social del Empleador]';
+        const job = elements.jobTitle?.value.trim() || '[Cargo desempeñado]';
+        const lastDay = elements.lastDayDate?.value ? formatReadableDate(elements.lastDayDate.value) : '[Fecha de término]';
+        const workerName = elements.workerName?.value.trim() || '[Nombre del Trabajador]';
+        const workerRut = elements.workerRut?.value.trim() || '[RUT]';
+
+        const reasonKey = elements.reasonSelect?.value || 'personal';
+        let reasonText = 'por motivos de índole estrictamente personal.';
+        if (reasonKey === 'oportunidad') {
+            reasonText = 'con el fin de emprender nuevos desafíos y oportunidades de crecimiento profesional.';
+        } else if (reasonKey === 'estudios') {
+            reasonText = 'debido a compromisos académicos y de perfeccionamiento personal incompatibles con la jornada laboral.';
+        } else if (reasonKey === 'mutuo') {
+            reasonText = 'en conformidad y común acuerdo respecto a la conclusión de mi ciclo de servicios.';
+        } else if (reasonKey === 'sin_motivo') {
+            reasonText = 'en ejercicio de mi libre facultad de poner término a la relación laboral.';
+        }
+
+        const showGratitude = elements.includeGratitude ? elements.includeGratitude.checked : true;
+        const showFiniquito = elements.includeFiniquitoTerm ? elements.includeFiniquitoTerm.checked : true;
+
+        return `
+            <div style="font-family: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif; color: #0f172a; font-size: 11pt; line-height: 1.65; max-width: 100%; margin: 0 auto;">
+                
+                <!-- Ciudad y Fecha alineada a la derecha -->
+                <div style="text-align: right; margin-bottom: 2rem; font-family: system-ui, -apple-system, sans-serif; font-size: 10pt; color: #334155;">
+                    ${city}, ${notifyDate}
+                </div>
+
+                <!-- Destinatario -->
+                <div style="margin-bottom: 1.75rem; font-family: system-ui, -apple-system, sans-serif; font-size: 11pt; line-height: 1.45;">
+                    <div style="font-weight: 700; color: #0f172a;">Señores</div>
+                    <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.02em;">${company}</div>
+                    <div style="color: #475569;">Presente</div>
+                </div>
+
+                <!-- Saludo inicial -->
+                <div style="margin-bottom: 1.25rem; font-weight: 600; color: #1e293b;">
+                    De mi consideración:
+                </div>
+
+                <!-- Cuerpo principal -->
+                <p style="text-align: justify; margin-bottom: 1.25rem;">
+                    Por medio de la presente carta, vengo en comunicar formalmente a ustedes mi <strong>RENUNCIA VOLUNTARIA</strong> al cargo de <strong>${job}</strong> que he venido ejerciendo en vuestra empresa, ${reasonText}
+                </p>
+
+                <!-- Párrafo de aviso legal -->
+                <p style="text-align: justify; margin-bottom: 1.25rem;">
+                    En conformidad con lo dispuesto en el <strong>artículo 159 Nº 2 del Código del Trabajo</strong> de la República de Chile, cumplo con señalar que mi último día de jornada laboral y término definitivo de funciones será el <strong>${lastDay}</strong>.
+                </p>
+
+                ${showGratitude ? `
+                <p style="text-align: justify; margin-bottom: 1.25rem;">
+                    Agradezco sinceramente la confianza depositada en mi persona, las oportunidades de perfeccionamiento brindadas durante mi permanencia en la empresa y el grato ambiente de colaboración compartido junto a mis compañeros y jefaturas.
+                </p>` : ''}
+
+                ${showFiniquito ? `
+                <p style="text-align: justify; margin-bottom: 1.25rem;">
+                    Ruego a ustedes disponer la oportuna confección y pago de mi finiquito legal dentro del plazo legal perentorio de <strong>10 días hábiles</strong> contemplado en el artículo 177 del Código del Trabajo, incluyendo la liquidación de las remuneraciones adeudadas a la fecha y la debida compensación del feriado legal y proporcional que me corresponda.
+                </p>` : ''}
+
+                <!-- Despedida y Firma -->
+                <div style="margin-top: 1.75rem; margin-bottom: 0.5rem;">
+                    <p style="margin-bottom: 4.5rem;">Saluda atentamente a ustedes,</p>
+                    
+                    <div style="max-width: 300px; font-family: system-ui, -apple-system, sans-serif;">
+                        <div style="border-top: 1px solid #334155; padding-top: 6px;">
+                            <div style="font-weight: 700; font-size: 10pt; color: #0f172a; text-transform: uppercase;">${workerName}</div>
+                            <div style="font-size: 9pt; color: #334155; font-family: monospace; font-weight: 600;">RUT: ${workerRut}</div>
+                            <div style="font-size: 8pt; color: #64748b; font-style: italic;">Firma del Trabajador</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Casilleros de Formalidades Legales: Recepción y Ministro de Fe -->
+                <div style="margin-top: 2.25rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: system-ui, -apple-system, sans-serif; font-size: 8.5pt; color: #475569;">
+                    <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #fafafa;">
+                        <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; font-size: 8pt; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
+                            Constancia de Recepción Empleador
+                        </div>
+                        <div style="margin-bottom: 14px;">Fecha de Recepción: _____ / _____ / 202___</div>
+                        <div style="margin-bottom: 14px;">Nombre Receptor: ___________________________</div>
+                        <div style="margin-bottom: 6px;">Firma y Timbre: ____________________________</div>
+                        <div style="font-size: 7pt; color: #94a3b8; font-style: italic;">(Copia para el trabajador acreditando entrega de aviso previo)</div>
+                    </div>
+
+                    <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #fafafa;">
+                        <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; font-size: 8pt; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
+                            Ratificación Ministro de Fe (Art. 177)
+                        </div>
+                        <div style="font-size: 7.5pt; line-height: 1.35; color: #64748b; margin-bottom: 8px;">
+                            Ratificada ante mí por el trabajador individualizado, previa comprobación de identidad con su cédula de identidad.
+                        </div>
+                        <div style="margin-top: 20px; border-top: 1px solid #94a3b8; padding-top: 4px; text-align: center; font-size: 7.5pt; color: #64748b;">
+                            Firma y Timbre Notario Público / Inspector DT
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Legal -->
+                <div style="margin-top: 1rem; text-align: center; font-family: system-ui, -apple-system, sans-serif; font-size: 7.5pt; color: #94a3b8;">
+                    Documento extendido conforme a los Artículos 159 Nº 2 y 177 del Código del Trabajo de Chile · calculolaboral.cl
+                </div>
+
+            </div>
+        `;
+    }
+
     // Print / PDF Handler
     function handlePrint() {
         const printContainer = document.getElementById('print-letter-content');
-        const previewElement = document.getElementById('letter-preview-sheet');
-
-        if (!printContainer || !previewElement) {
+        if (!printContainer) {
             window.print();
             return;
         }
 
-        printContainer.innerHTML = previewElement.innerHTML;
+        printContainer.innerHTML = getPrintLetterHTML();
         window.print();
     }
 
