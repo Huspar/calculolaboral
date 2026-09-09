@@ -964,6 +964,12 @@
                   <input type="tel" id="lead-telefono" placeholder="Teléfono / WhatsApp (ej: +56 9...)"
                     class="w-full px-3 py-2 text-xs border border-amber-300 rounded-xl bg-white outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-400 text-slate-800 placeholder-slate-400 font-medium">
                 </div>
+                <div class="pt-0.5">
+                  <label class="flex items-start gap-2 text-[11px] text-slate-600 cursor-pointer">
+                    <input type="checkbox" id="lead-privacy" required class="w-3.5 h-3.5 mt-0.5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer">
+                    <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo el tratamiento de mis datos para la evaluación legal.</span>
+                  </label>
+                </div>
                 <button type="submit"
                   class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5">
                   <span class="material-icons text-sm">outgoing_mail</span>
@@ -1909,6 +1915,12 @@
             var monto = window.resultadoActualMonto || '0';
             var detalle = window.resultadoDesgloseLead || '';
 
+            var privacyCheck = document.getElementById('lead-privacy');
+            if (privacyCheck && !privacyCheck.checked) {
+                alert('Debes aceptar la Política de Privacidad para continuar.');
+                return;
+            }
+
             if (!nombre || !correo) {
                 alert('Por favor completa nombre y correo.');
                 return;
@@ -1964,6 +1976,12 @@
             var telefono = form.querySelector('[name="telefono"]').value.trim();
             var detalleInput = form.querySelector('[name="consulta"]');
             var detalle = detalleInput ? detalleInput.value.trim() : '';
+
+            var privacyCheck = form.querySelector('[name="privacy_consent"]');
+            if (privacyCheck && !privacyCheck.checked) {
+                alert('Debes aceptar la Política de Privacidad para continuar.');
+                return;
+            }
 
             if (!nombre || !correo) {
                 alert('Por favor ingresa tu nombre y correo electrónico.');

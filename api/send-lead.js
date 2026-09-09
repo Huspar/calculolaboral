@@ -74,6 +74,63 @@ function isValidEmail(email) {
         && /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(email);
 }
 
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+    'mailinator.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org',
+    'guerrillamail.com', 'guerrillamail.net', 'guerrillamail.org', 'sharklasers.com',
+    'yopmail.com', 'yopmail.fr', 'yopmail.net', 'trashmail.com', 'trashmail.net',
+    'getnada.com', 'dispostable.com', 'fakeinbox.com', 'generator.email',
+    'throwawaymail.com', 'maildrop.cc', 'inboxkitten.com', 'mytemp.email',
+    'mohmal.com', 'fakemailgenerator.com', 'crazymailing.com', 'tempail.com',
+    'emailondeck.com', 'burnermail.io', 'minuteinbox.com', 'tempmailo.com',
+    'guerrillamailblock.com', 'pokemail.net', 'spam4.me', 'grr.la', 'discard.email',
+    'harakirimail.com', 'mailcatch.com', 'tempr.email', 'dropmail.me'
+]);
+
+function isDisposableEmail(email) {
+    if (typeof email !== 'string') return false;
+    const parts = email.toLowerCase().split('@');
+    if (parts.length !== 2) return false;
+    const domain = parts[1].trim();
+    return DISPOSABLE_EMAIL_DOMAINS.has(domain);
+}
+
+async function verifyTurnstile(token, ip) {
+    const secret = process.env.TURNSTILE_SECRET_KEY;
+    if (!secret) {
+        // Not configured in environment variables: allow pass-through without breaking
+        return { success: true, bypassed: true };
+    }
+    if (!token || typeof token !== 'string') {
+        return { success: false, reason: 'missing-token' };
+    }
+    try {
+        const formData = new URLSearchParams();
+        formData.append('secret', secret);
+        formData.append('response', token);
+        if (ip && ip !== 'unknown') formData.append('remoteip', ip);
+
+        const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        const data = await res.json();
+        return { success: !!data.success, data };
+    } catch (e) {
+        console.error('Turnstile verification request error');
+        return { success: false, reason: 'network-error' };
+    }
+}
+
+function maskEmail(email) {
+    if (typeof email !== 'string') return '***';
+    const parts = email.split('@');
+    if (parts.length !== 2) return '***';
+    const user = parts[0];
+    const maskedUser = user.length <= 2 ? user[0] + '***' : user[0] + '***' + user.slice(-1);
+    return `${maskedUser}@${parts[1]}`;
+}
+
 function sanitizeName(value) {
     if (typeof value !== 'string') return '';
     return value.trim().slice(0, 80);
@@ -155,6 +212,15 @@ module.exports = async (req, res) => {
             form_rendered_at
         } = body;
 
+        // 1. Cloudflare Turnstile Verification (if configured in env)
+        const turnstileToken = body['cf-turnstile-response'] || body.turnstile_token;
+        if (process.env.TURNSTILE_SECRET_KEY) {
+            const turnstileResult = await verifyTurnstile(turnstileToken, ip);
+            if (!turnstileResult.success) {
+                return res.status(403).json({ error: 'Verificación de seguridad fallida. Por favor recarga e intenta nuevamente.' });
+            }
+        }
+
         if (typeof website === 'string' && website.trim().length > 0) {
             // Silently accept to look like a success without sending anything.
             return res.status(200).json({ success: true });
@@ -172,6 +238,9 @@ module.exports = async (req, res) => {
         }
         if (!isValidEmail(cleanEmail)) {
             return res.status(400).json({ error: 'Correo no válido.' });
+        }
+        if (isDisposableEmail(cleanEmail)) {
+            return res.status(400).json({ error: 'Por favor ingresa un correo electrónico corporativo o personal válido.' });
         }
 
         const cleanPhone = sanitizePhone(telefono);
@@ -286,8 +355,7 @@ module.exports = async (req, res) => {
             cleanEmail // Reply-To set to user's email so Jhon can click "Reply" directly!
         );
         if (!jhonResp.ok) {
-            const errText = await jhonResp.text();
-            console.error('Resend error (jhon email):', errText);
+            console.error('Resend error (jhon email): status', jhonResp.status);
             return res.status(500).json({ error: 'No se pudo registrar la solicitud en el servidor.' });
         }
 
@@ -301,11 +369,10 @@ module.exports = async (req, res) => {
                 NOTIFY_JHON
             );
             if (!userResp.ok) {
-                const errUser = await userResp.text();
-                console.warn('Resend notice: user auto-responder email failed (lead was securely delivered to admin):', errUser);
+                console.warn(`Resend notice: user auto-responder email failed for ${maskEmail(cleanEmail)} (status ${userResp.status})`);
             }
         } catch (eUser) {
-            console.warn('Exception during user email (ignored to preserve lead):', eUser);
+            console.warn(`Exception during user email for ${maskEmail(cleanEmail)} (ignored to preserve lead)`);
         }
 
         return res.status(200).json({ success: true });

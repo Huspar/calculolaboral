@@ -1201,6 +1201,12 @@ HTML_LAYOUT = """<!DOCTYPE html>
             var monto = window.resultadoActualMonto || '0';
             var detalle = window.resultadoDesgloseLead || '';
 
+            var privacyCheck = document.getElementById('lead-privacy');
+            if (privacyCheck && !privacyCheck.checked) {{
+                alert('Debes aceptar la Política de Privacidad para continuar.');
+                return;
+            }}
+
             if (!nombre || !correo) {{
                 alert('Por favor completa nombre y correo.');
                 return;
@@ -1256,6 +1262,12 @@ HTML_LAYOUT = """<!DOCTYPE html>
             var telefono = form.querySelector('[name="telefono"]').value.trim();
             var detalleInput = form.querySelector('[name="consulta"]');
             var detalle = detalleInput ? detalleInput.value.trim() : '';
+
+            var privacyCheck = form.querySelector('[name="privacy_consent"]');
+            if (privacyCheck && !privacyCheck.checked) {{
+                alert('Debes aceptar la Política de Privacidad para continuar.');
+                return;
+            }}
 
             if (!nombre || !correo) {{
                 alert('Por favor ingresa tu nombre y correo electrónico.');
@@ -2960,6 +2972,13 @@ def get_lead_card_for_article(filename):
                     </div>
                 </div>
 
+                <div class="pt-1">
+                    <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+                        <input type="checkbox" name="privacy_consent" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500 cursor-pointer">
+                        <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo el tratamiento de mis datos para la revisión legal.</span>
+                    </label>
+                </div>
+
                 <div class="pt-2 flex flex-col sm:flex-row items-center gap-4">
                     <button type="submit"
                         class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer">
@@ -3028,6 +3047,13 @@ def get_lead_card_for_article(filename):
                         <input type="text" name="consulta" placeholder="Ej: Art. 161 sin justificación real / Art. 160"
                             class="w-full px-4 py-2.5 text-sm bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400">
                     </div>
+                </div>
+
+                <div class="pt-1">
+                    <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+                        <input type="checkbox" name="privacy_consent" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500 cursor-pointer">
+                        <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo el tratamiento de mis datos para la orientación legal.</span>
+                    </label>
                 </div>
 
                 <div class="pt-2 flex flex-col sm:flex-row items-center gap-4">
@@ -3100,6 +3126,13 @@ def get_lead_card_for_article(filename):
                     </div>
                 </div>
 
+                <div class="pt-1">
+                    <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+                        <input type="checkbox" name="privacy_consent" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500 cursor-pointer">
+                        <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo el tratamiento de mis datos para la revisión legal.</span>
+                    </label>
+                </div>
+
                 <div class="pt-2 flex flex-col sm:flex-row items-center gap-4">
                     <button type="submit"
                         class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer">
@@ -3168,6 +3201,13 @@ def get_lead_card_for_article(filename):
                         <input type="text" name="consulta" placeholder="Ej: No pagan cotizaciones / Hostigamiento / Presión"
                             class="w-full px-4 py-2.5 text-sm bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400">
                     </div>
+                </div>
+
+                <div class="pt-1">
+                    <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+                        <input type="checkbox" name="privacy_consent" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500 cursor-pointer">
+                        <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo el tratamiento de mis datos para la evaluación legal.</span>
+                    </label>
                 </div>
 
                 <div class="pt-2 flex flex-col sm:flex-row items-center gap-4">
@@ -3576,6 +3616,13 @@ contact_content = """
             <div class="space-y-1">
                 <label for="message" class="block text-xs font-bold text-slate-600 uppercase ml-1">Mensaje o Consulta</label>
                 <textarea id="message" name="message" rows="5" required placeholder="Escribe aquí tu consulta en detalle (menciona tu tipo de contrato, sueldo base u otros datos relevantes si deseas una ayuda más precisa)." class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm font-medium resize-none"></textarea>
+            </div>
+
+            <div class="pt-1">
+                <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+                    <input type="checkbox" id="contact-privacy" name="privacy_consent" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-sky-500 focus:ring-sky-500 cursor-pointer">
+                    <span>He leído y acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-sky-600">Política de Privacidad</a> y autorizo el tratamiento de mis datos personales para responder mi consulta.</span>
+                </label>
             </div>
 
             <div class="pt-2">
@@ -4107,6 +4154,12 @@ INDEX_CONTENT = """
                     class="w-full px-3 py-2 text-xs border border-amber-300 rounded-xl bg-white outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-400 text-slate-800 placeholder-slate-400 font-medium">
                   <input type="tel" id="lead-telefono" placeholder="Teléfono / WhatsApp (ej: +56 9...)"
                     class="w-full px-3 py-2 text-xs border border-amber-300 rounded-xl bg-white outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-400 text-slate-800 placeholder-slate-400 font-medium">
+                </div>
+                <div class="pt-0.5">
+                  <label class="flex items-start gap-2 text-[11px] text-slate-600 cursor-pointer">
+                    <input type="checkbox" id="lead-privacy" required class="w-3.5 h-3.5 mt-0.5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer">
+                    <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo el tratamiento de mis datos para la evaluación legal.</span>
+                  </label>
                 </div>
                 <button type="submit"
                   class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5">
@@ -6114,10 +6167,47 @@ vercel_json_content = """{
   "redirects": [
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/:page.html", "destination": "/:page", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()" },
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://challenges.cloudflare.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://mindicador.cl https://www.google-analytics.com https://*.analytics.google.com https://formsubmit.co https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; frame-ancestors 'none'; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
   ]
 }"""
 
 with open(os.path.join(DEST_DIR, "vercel.json"), "w", encoding="utf-8") as f:
+    f.write(vercel_json_content)
+with open(os.path.join(SOURCE_DIR, "vercel.json"), "w", encoding="utf-8") as f:
     f.write(vercel_json_content)
 
 # Copy Articulos, js, and assets folders to DEST_DIR

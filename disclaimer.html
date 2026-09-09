@@ -750,6 +750,12 @@
             var monto = window.resultadoActualMonto || '0';
             var detalle = window.resultadoDesgloseLead || '';
 
+            var privacyCheck = document.getElementById('lead-privacy');
+            if (privacyCheck && !privacyCheck.checked) {
+                alert('Debes aceptar la Política de Privacidad para continuar.');
+                return;
+            }
+
             if (!nombre || !correo) {
                 alert('Por favor completa nombre y correo.');
                 return;
@@ -805,6 +811,12 @@
             var telefono = form.querySelector('[name="telefono"]').value.trim();
             var detalleInput = form.querySelector('[name="consulta"]');
             var detalle = detalleInput ? detalleInput.value.trim() : '';
+
+            var privacyCheck = form.querySelector('[name="privacy_consent"]');
+            if (privacyCheck && !privacyCheck.checked) {
+                alert('Debes aceptar la Política de Privacidad para continuar.');
+                return;
+            }
 
             if (!nombre || !correo) {
                 alert('Por favor ingresa tu nombre y correo electrónico.');
