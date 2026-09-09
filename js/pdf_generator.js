@@ -439,15 +439,24 @@
                 </p>
             </div>
 
-            <!-- Formal Signature Lines -->
-            <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-bottom: 5px; gap: 20px;">
-                <div style="flex: 1; border-top: 1px dashed #94a3b8; text-align: center; padding-top: 3px;">
-                    <span style="font-size: 6.2pt; color: #64748b; font-weight: 700; text-transform: uppercase;">Firma / Huella del Trabajador</span><br>
-                    <span style="font-size: 5.6pt; color: #94a3b8;">(Con Reserva de Derechos si corresponde)</span>
+            <!-- Guía de Cotejo para el Trabajador (Sin firmas para evitar confusión) -->
+            <div style="background-color: #f8fafc !important; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 6px 10px; margin-top: 6px; margin-bottom: 5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;">
+                    <strong style="color: #0f172a; font-size: 6.6pt; text-transform: uppercase; letter-spacing: 0.3px;">
+                        📋 GUÍA DE COTEJO PERSONAL · DOCUMENTO INFORMATIVO (NO REQUIERE FIRMAS)
+                    </strong>
+                    <span style="font-size: 5.8pt; color: #64748b; font-weight: 600;">Uso exclusivo de consulta</span>
                 </div>
-                <div style="flex: 1; border-top: 1px dashed #94a3b8; text-align: center; padding-top: 3px;">
-                    <span style="font-size: 6.2pt; color: #64748b; font-weight: 700; text-transform: uppercase;">Ministro de Fe / Inspección del Trabajo / Notaría</span><br>
-                    <span style="font-size: 5.6pt; color: #94a3b8;">(Ratificación conforme Art. 177 CT)</span>
+                <div style="display: flex; gap: 12px; font-size: 6.1pt; color: #475569; line-height: 1.35;">
+                    <div style="flex: 1;">
+                        <strong>1. Compara cada concepto:</strong> Revisa que los montos ofrecidos por tu empleador no sean inferiores a los calculados en este informe.
+                    </div>
+                    <div style="flex: 1;">
+                        <strong>2. Solicita aclaraciones:</strong> Si existen discrepancias en sueldo base, años o feriados, exige la planilla oficial antes de firmar.
+                    </div>
+                    <div style="flex: 1;">
+                        <strong>3. Firma el finiquito de la empresa:</strong> Este informe es tu respaldo de cálculo. El documento legal vinculante es extendido por el empleador ante ministro de fe.
+                    </div>
                 </div>
             </div>
 

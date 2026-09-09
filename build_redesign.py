@@ -1209,7 +1209,7 @@ HTML_LAYOUT = """<!DOCTYPE html>
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.1.0"></script>
+    <script src="/js/pdf_generator.js?v=2.1.1"></script>
     <script>
         function enviarLead(fuenteCustom) {{
             var nombre = document.getElementById('lead-nombre').value.trim();
