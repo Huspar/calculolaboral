@@ -309,6 +309,10 @@
             border-color: #10b981 !important;
         }
 
+        #print-section {
+            display: none;
+        }
+
         @media print {
             @page {
                 size: A4 portrait;
@@ -754,7 +758,7 @@
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.0.3"></script>
+    <script src="/js/pdf_generator.js?v=2.1.0"></script>
     <script>
         function enviarLead(fuenteCustom) {
             var nombre = document.getElementById('lead-nombre').value.trim();

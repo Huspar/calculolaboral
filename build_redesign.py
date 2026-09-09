@@ -1135,6 +1135,10 @@ HTML_LAYOUT = """<!DOCTYPE html>
             border-color: #10b981 !important;
         }}
 
+        #print-section {{
+            display: none;
+        }}
+
         @media print {{
             @page {{
                 size: A4 portrait;
@@ -1205,7 +1209,7 @@ HTML_LAYOUT = """<!DOCTYPE html>
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.0.3"></script>
+    <script src="/js/pdf_generator.js?v=2.1.0"></script>
     <script>
         function enviarLead(fuenteCustom) {{
             var nombre = document.getElementById('lead-nombre').value.trim();
@@ -4506,7 +4510,7 @@ INDEX_CONTENT = """
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button id="mobile-pdf-btn" onclick="var fini=document.getElementById('finiquito-calc-container');if(fini&&!fini.classList.contains('hidden')){var b=document.getElementById('download-pdf-btn');if(b)b.click();}else{var s=document.getElementById('download-pdf-btn-sueldo');if(s)s.click();}" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 transition-all">
+            <button id="mobile-pdf-btn" onclick="var fini=document.getElementById('finiquito-calc-container');if(fini&&!fini.classList.contains('hidden')){var b=document.getElementById('download-pdf-btn');if(b)b.click();}else{var s=document.getElementById('download-pdf-btn-sueldo');if(s)s.click();}" class="px-3 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-sm flex items-center gap-1 cursor-pointer active:scale-95 transition-all">
                 <span class="material-icons text-sm">picture_as_pdf</span> PDF
             </button>
                             <button onclick="var fini=document.getElementById('finiquito-calc-container');var target=fini&&!fini.classList.contains('hidden')?document.getElementById('resultados-finiquito'):document.getElementById('resultados-sueldo');if(target)target.scrollIntoView({behavior:'smooth',block:'start'})" class="px-3 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md shadow-sky-500/10 cursor-pointer active:scale-95 transition-all">Ver desglose</button>
@@ -6212,7 +6216,7 @@ vercel_json_content = """{
     {
       "source": "/js/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     }
   ]
