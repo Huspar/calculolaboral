@@ -4809,7 +4809,7 @@ INDEX_CONTENT = """
 INDEX_SCRIPTS = """
     <!-- Calculator Scripts -->
     <script src="/js/salary_logic.js?v=2.0.3"></script>
-    <script src="/js/salary_ui.js?v=2.0.3"></script>
+    <script src="/js/salary_ui.js?v=2.0.4"></script>
     <script src="/js/logic.js?v=2.0.3"></script>
     <script src="/js/ui.js?v=2.0.3"></script>
     <script src="/js/validation.js?v=2.0.3"></script>

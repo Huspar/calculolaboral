@@ -140,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = inputs[key];
             if (el && el.tagName === 'INPUT') {
                 el.addEventListener('input', (e) => {
+                    formTouched = true;
                     if (key === 'isapreValue' || key === 'overtime') {
                         calculate();
                         return;
@@ -149,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             } else if (el && el.tagName === 'SELECT') {
                 el.addEventListener('change', () => {
+                    formTouched = true;
                     if (key === 'gratificationType') toggleGratification();
                     calculate();
                 });
@@ -239,17 +241,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ===== VALIDATION ===== //
+    // ===== VALIDATION & UI RESET ===== //
+    let formTouched = false;
+
+    const resetUI = () => {
+        const setText = (el, text) => { if (el) el.textContent = text; };
+
+        // 1. Sticky Header
+        setText(display.netSalary, '$0');
+        setText(display.percentage, '0%');
+        setText(display.totalDiscounts, '$0');
+
+        // Mobile Sticky Bar
+        if (display.mobileResultBar) {
+            setText(display.mobileResultValue, '$0');
+            setText(display.mobileResultPercentage, '0%');
+            display.mobileResultBar.classList.add('translate-y-full');
+        }
+
+        // 2. Legal Breakdown
+        setText(display.afpAmount, '$0');
+        setText(display.healthAmount, '$0');
+        setText(display.afcAmount, '$0');
+        setText(display.taxAmount, '$0');
+
+        // 3. Imponibles Breakdown
+        if (display.sectionImponibles) {
+            display.sectionImponibles.classList.add('hidden');
+            display.sectionImponibles.classList.remove('block');
+            setText(display.ccafResult, '$0');
+            setText(display.apvResult, '$0');
+        }
+
+        // 4. No Imponibles Breakdown
+        if (display.sectionNoImponibles) {
+            display.sectionNoImponibles.classList.add('hidden');
+            display.sectionNoImponibles.classList.remove('block');
+            setText(display.prestamosResult, '$0');
+            setText(display.pensionResult, '$0');
+            setText(display.sindicatoResult, '$0');
+            setText(display.otrosResult, '$0');
+        }
+
+        // 5. Notifications
+        if (display.notifications) {
+            display.notifications.innerHTML = '';
+            display.notifications.classList.add('hidden');
+        }
+
+        // 6. Chart & Dynamic Legend
+        if (display.chart) {
+            display.chart.style.background = '#e2e8f0';
+            if (display.chartLabel) display.chartLabel.textContent = '0%';
+            if (display.legendLiquido) display.legendLiquido.textContent = '0%';
+            if (display.legendAFP) display.legendAFP.textContent = '0%';
+            if (display.legendHealth) display.legendHealth.textContent = '0%';
+            if (display.legendTax) display.legendTax.textContent = '0%';
+            if (display.legendOtrosContainer) display.legendOtrosContainer.classList.add('hidden');
+            if (display.legendOtrosPercent) display.legendOtrosPercent.textContent = '0%';
+        }
+
+        // 7. PDF section
+        document.querySelector('#sueldo-calc-container #pdf-section')?.classList.add('hidden');
+        document.getElementById('print-template-sueldo')?.classList.add('hidden');
+    };
+
     const validateSalaryForm = () => {
         V.clearAllErrors();
         let valid = true;
 
         // Salary > 0 (always required — empty or 0 blocks calculation)
         if (inputs.salary) {
-            const sal = V.safeCurrency(inputs.salary.value);
-            if (sal <= 0) {
-                V.showFieldError(inputs.salary, 'Ingresa un sueldo mayor a $0');
+            const raw = inputs.salary.value ? inputs.salary.value.trim() : '';
+            if (!raw) {
+                if (formTouched) {
+                    V.showFieldError(inputs.salary, 'Ingresa un sueldo mayor a $0');
+                }
                 valid = false;
+            } else {
+                const sal = V.safeCurrency(raw);
+                if (sal <= 0) {
+                    V.showFieldError(inputs.salary, 'Ingresa un sueldo mayor a $0');
+                    valid = false;
+                }
             }
         }
 
@@ -281,7 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('print-template-sueldo')?.classList.add('hidden');
 
         // Gate: validate first
-        if (!validateSalaryForm()) return;
+        if (!validateSalaryForm()) {
+            resetUI();
+            return;
+        }
 
         const getVal = (el) => el ? el.value : '0';
 
@@ -421,12 +498,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const createAlert = (bgClass, borderClass, iconColor, icon, textColor, message) => {
                 const div = document.createElement('div');
-                div.className = `${bgClass} ${borderClass} rounded-lg p-3 flex gap-3 items-center`;
+                div.className = `${bgClass} ${borderClass} rounded-xl p-3.5 flex gap-3 items-center shadow-xs`;
                 const span = document.createElement('span');
-                span.className = `material-icons ${iconColor} text-sm`;
+                span.className = `material-icons ${iconColor} text-base shrink-0`;
                 span.textContent = icon;
                 const p = document.createElement('p');
-                p.className = `text-xs ${textColor}`;
+                p.className = `text-xs leading-snug ${textColor}`;
                 p.textContent = message;
                 div.appendChild(span);
                 div.appendChild(p);
@@ -438,21 +515,21 @@ document.addEventListener('DOMContentLoaded', () => {
             if (d.baseSalary < immVal && d.baseSalary > 0) {
                 const formattedImm = formatCLP(immVal);
                 display.notifications.appendChild(
-                    createAlert('bg-yellow-500/10', 'border border-yellow-500/20', 'text-yellow-500', 'warning', 'text-yellow-200', `Sueldo base menor al mínimo legal (${formattedImm})`)
+                    createAlert('bg-amber-50', 'border border-amber-300', 'text-amber-600', 'warning', 'text-amber-950 font-bold', `Sueldo base menor al mínimo legal (${formattedImm})`)
                 );
             }
 
             // CCAF Info
             if (d.ccafAmount > 0) {
                 display.notifications.appendChild(
-                    createAlert('bg-blue-500/10', 'border border-blue-500/20', 'text-blue-400', 'info', 'text-blue-200', 'CCAF reduce tu base imponible')
+                    createAlert('bg-sky-50', 'border border-sky-200', 'text-sky-600', 'info', 'text-sky-950 font-semibold', 'CCAF reduce tu base imponible')
                 );
             }
 
             // APV Tip
             if (d.apvAmount > 0) {
                 display.notifications.appendChild(
-                    createAlert('bg-emerald-500/10', 'border border-emerald-500/20', 'text-emerald-400', 'lightbulb', 'text-emerald-200', 'APV reduce tu impuesto y te da beneficio tributario')
+                    createAlert('bg-emerald-50', 'border border-emerald-200', 'text-emerald-600', 'lightbulb', 'text-emerald-950 font-semibold', 'APV reduce tu impuesto y te da beneficio tributario')
                 );
             }
 
