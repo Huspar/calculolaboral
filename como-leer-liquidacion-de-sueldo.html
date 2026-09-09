@@ -567,33 +567,85 @@
                 <p>En esta guía te explicamos cada rubro de tu liquidación, qué significa y cómo verificar que esté correcto.</p>
 
                 <!-- Infografía HTML: Anatomía de liquidación de sueldo -->
-                <div class="my-8 p-6 rounded-2xl bg-gradient-to-b from-slate-800/60 to-slate-900/60 border border-slate-200 shadow-xl">
-                    <p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-5">Anatomía de tu liquidación de sueldo</p>
-                    <div class="space-y-3 max-w-md mx-auto">
-                        <div class="rounded-lg border border-emerald-500/30 overflow-hidden">
-                            <div class="bg-emerald-100 text-emerald-700 px-3 py-1.5"><p class="!text-emerald-600 !text-xs !font-bold !mb-0 !uppercase !tracking-wider">Haberes</p></div>
-                            <div class="px-3 py-2 space-y-1">
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Sueldo Base</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-100/60 text-sky-600 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Gratificación</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-100/60 text-sky-600 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Horas Extra</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-100/60 text-sky-600 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Colación</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100/60 text-emerald-600 font-semibold">No Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Movilización</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100/60 text-emerald-600 font-semibold">No Imponible</span></div>
+                <div class="my-8 p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200 shadow-sm not-prose">
+                    <p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Anatomía de tu liquidación de sueldo</p>
+                    <div class="space-y-4 max-w-md mx-auto">
+                        <!-- Haberes -->
+                        <div class="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-xs">
+                            <div class="bg-emerald-50 border-b border-emerald-100 px-4 py-2.5 flex justify-between items-center">
+                                <span class="text-emerald-800 text-xs font-bold uppercase tracking-wider">Haberes (Ingresos)</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">+ Suman</span>
+                            </div>
+                            <div class="p-4 space-y-2.5">
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Sueldo Base</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200/60 font-bold">Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Gratificación</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200/60 font-bold">Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Horas Extra</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200/60 font-bold">Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Colación</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold">No Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Movilización</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold">No Imponible</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex justify-center"><span class="material-icons text-slate-600">arrow_downward</span></div>
-                        <div class="rounded-lg border border-red-500/30 overflow-hidden">
-                            <div class="bg-red-100 text-red-700 px-3 py-1.5"><p class="!text-red-600 !text-xs !font-bold !mb-0 !uppercase !tracking-wider">Descuentos</p></div>
-                            <div class="px-3 py-2 space-y-1">
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">AFP (10% + comisión)</span><span class="text-rose-400 text-xs font-semibold">−11,27%</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Salud (Fonasa/Isapre)</span><span class="text-rose-400 text-xs font-semibold">−7%</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Seguro de Cesantía</span><span class="text-rose-400 text-xs font-semibold">−0,6%</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-600 text-xs">Impuesto Único</span><span class="text-rose-400 text-xs font-semibold">Variable</span></div>
+
+                        <!-- Conector Flecha -->
+                        <div class="flex justify-center my-0.5">
+                            <div class="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-sky-500 shadow-2xs">
+                                <span class="material-icons text-base">arrow_downward</span>
                             </div>
                         </div>
-                        <div class="flex justify-center"><span class="material-icons text-slate-600">arrow_downward</span></div>
-                        <div class="rounded-lg border border-blue-500/40 bg-sky-50 text-sky-600 px-4 py-3 text-center">
-                            <p class="!text-sky-600 !text-sm !font-bold !mb-0">💰 SUELDO LÍQUIDO</p>
-                            <p class="!text-slate-500 !text-[10px] !mb-0">Lo que recibes en tu cuenta bancaria</p>
+
+                        <!-- Descuentos -->
+                        <div class="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-xs">
+                            <div class="bg-rose-50 border-b border-rose-100 px-4 py-2.5 flex justify-between items-center">
+                                <span class="text-rose-800 text-xs font-bold uppercase tracking-wider">Descuentos Legales</span>
+                                <span class="text-[10px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">− Restan</span>
+                            </div>
+                            <div class="p-4 space-y-2.5">
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>AFP (10% + comisión)</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">−11,27%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Salud (Fonasa/Isapre)</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">−7%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Seguro de Cesantía</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">−0,6%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Impuesto Único</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">Variable</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Conector Flecha -->
+                        <div class="flex justify-center my-0.5">
+                            <div class="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-sky-500 shadow-2xs">
+                                <span class="material-icons text-base">arrow_downward</span>
+                            </div>
+                        </div>
+
+                        <!-- Sueldo Líquido -->
+                        <div class="rounded-2xl border-2 border-sky-300 bg-gradient-to-br from-sky-50 via-white to-blue-50/60 p-5 text-center shadow-xs">
+                            <p class="text-sky-600 text-base font-extrabold tracking-tight mb-1 flex items-center justify-center gap-1.5">
+                                <span class="material-icons text-sky-600 text-base">payments</span> SUELDO LÍQUIDO
+                            </p>
+                            <p class="text-slate-500 text-xs font-medium mb-0">Lo que recibes directamente en tu cuenta bancaria</p>
                         </div>
                     </div>
                 </div>

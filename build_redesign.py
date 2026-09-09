@@ -1714,71 +1714,96 @@ def clean_article_body(body, filename):
     # 1. File-specific manual replacements for unreadable dark infographics, tables, or boxes
     
     if filename == "como-leer-liquidacion-de-sueldo.html":
-        # Dark infographic anatomy
-        old_infographic = """<!-- Infografía HTML: Anatomía de liquidación de sueldo -->
-                <div class="my-8 p-6 rounded-2xl bg-gradient-to-b from-slate-800/60 to-slate-900/60 border border-white/10 shadow-xl">
-                    <p class="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-5">Anatomía de tu liquidación de sueldo</p>
-                    <div class="space-y-3 max-w-md mx-auto">
-                        <div class="rounded-lg border border-emerald-500/30 overflow-hidden">
-                            <div class="bg-emerald-500/20 px-3 py-1.5"><p class="!text-emerald-400 !text-xs !font-bold !mb-0 !uppercase !tracking-wider">Haberes</p></div>
-                            <div class="px-3 py-2 space-y-1">
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Sueldo Base</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Gratificación</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Horas Extra</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Colación</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-semibold">No Imponible</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Movilización</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-semibold">No Imponible</span></div>
-                            </div>
-                        </div>
-                        <div class="flex justify-center"><span class="material-icons text-slate-600">arrow_downward</span></div>
-                        <div class="rounded-lg border border-red-500/30 overflow-hidden">
-                            <div class="bg-red-500/20 px-3 py-1.5"><p class="!text-red-400 !text-xs !font-bold !mb-0 !uppercase !tracking-wider">Descuentos</p></div>
-                            <div class="px-3 py-2 space-y-1">
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">AFP (10% + comisión)</span><span class="text-rose-400 text-xs font-semibold">−11,27%</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Salud (Fonasa/Isapre)</span><span class="text-rose-400 text-xs font-semibold">−7%</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Seguro de Cesantía</span><span class="text-rose-400 text-xs font-semibold">−0,6%</span></div>
-                                <div class="flex justify-between items-center"><span class="text-slate-300 text-xs">Impuesto Único</span><span class="text-rose-400 text-xs font-semibold">Variable</span></div>
-                            </div>
-                        </div>
-                        <div class="flex justify-center"><span class="material-icons text-slate-600">arrow_downward</span></div>
-                        <div class="rounded-lg border border-blue-500/40 bg-blue-500/10 px-4 py-3 text-center">
-                            <p class="!text-blue-400 !text-sm !font-bold !mb-0">&#128176; SUELDO LÍQUIDO</p>
-                            <p class="!text-slate-400 !text-[10px] !mb-0">Lo que recibes en tu cuenta bancaria</p>
-                        </div>
-                    </div>
-                </div>"""
-                
+        # Polished Light Infographic for Anatomy of Payslip
         new_infographic = """<!-- Infografía HTML: Anatomía de liquidación de sueldo -->
-                <div class="my-8 p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
-                    <p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-5">Anatomía de tu liquidación de sueldo</p>
+                <div class="my-8 p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200 shadow-sm not-prose">
+                    <p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Anatomía de tu liquidación de sueldo</p>
                     <div class="space-y-4 max-w-md mx-auto">
-                        <div class="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
-                            <div class="bg-emerald-50 border-b border-emerald-100 px-4 py-2 flex justify-between items-center"><p class="text-emerald-800 text-xs font-bold mb-0 uppercase tracking-wider font-semibold">Haberes</p></div>
-                            <div class="px-4 py-3 space-y-2">
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Sueldo Base</span><span class="text-[10px] px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-100/50 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Gratificación</span><span class="text-[10px] px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-100/50 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Horas Extra</span><span class="text-[10px] px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-100/50 font-semibold">Imponible</span></div>
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Colación</span><span class="text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100/50 font-semibold">No Imponible</span></div>
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Movilización</span><span class="text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100/50 font-semibold">No Imponible</span></div>
+                        <!-- Haberes -->
+                        <div class="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-xs">
+                            <div class="bg-emerald-50 border-b border-emerald-100 px-4 py-2.5 flex justify-between items-center">
+                                <span class="text-emerald-800 text-xs font-bold uppercase tracking-wider">Haberes (Ingresos)</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">+ Suman</span>
+                            </div>
+                            <div class="p-4 space-y-2.5">
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Sueldo Base</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200/60 font-bold">Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Gratificación</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200/60 font-bold">Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Horas Extra</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200/60 font-bold">Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Colación</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold">No Imponible</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Movilización</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold">No Imponible</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex justify-center"><span class="material-icons text-sky-500 font-bold">arrow_downward</span></div>
-                        <div class="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
-                            <div class="bg-rose-50 border-b border-rose-100 px-4 py-2 flex justify-between items-center"><p class="text-rose-800 text-xs font-bold mb-0 uppercase tracking-wider font-semibold">Descuentos</p></div>
-                            <div class="px-4 py-3 space-y-2">
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>AFP (10% + comisión)</span><span class="text-rose-600 font-bold">−11,27%</span></div>
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Salud (Fonasa/Isapre)</span><span class="text-rose-600 font-bold">−7%</span></div>
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Seguro de Cesantía</span><span class="text-rose-600 font-bold">−0,6%</span></div>
-                                <div class="flex justify-between items-center text-slate-700 text-sm font-medium"><span>Impuesto Único</span><span class="text-rose-600 font-bold">Variable</span></div>
+
+                        <!-- Conector Flecha -->
+                        <div class="flex justify-center my-0.5">
+                            <div class="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-sky-500 shadow-2xs">
+                                <span class="material-icons text-base">arrow_downward</span>
                             </div>
                         </div>
-                        <div class="flex justify-center"><span class="material-icons text-sky-500 font-bold">arrow_downward</span></div>
-                        <div class="rounded-xl border border-sky-200 bg-gradient-to-r from-sky-50 to-blue-50 px-4 py-3 text-center shadow-sm">
-                            <p class="text-sky-600 text-sm font-bold mb-0">&#128176; SUELDO LÍQUIDO</p>
-                            <p class="text-slate-650 text-[10px] mb-0 font-medium">Lo que recibes en tu cuenta bancaria</p>
+
+                        <!-- Descuentos -->
+                        <div class="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-xs">
+                            <div class="bg-rose-50 border-b border-rose-100 px-4 py-2.5 flex justify-between items-center">
+                                <span class="text-rose-800 text-xs font-bold uppercase tracking-wider">Descuentos Legales</span>
+                                <span class="text-[10px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">− Restan</span>
+                            </div>
+                            <div class="p-4 space-y-2.5">
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>AFP (10% + comisión)</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">−11,27%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Salud (Fonasa/Isapre)</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">−7%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Seguro de Cesantía</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">−0,6%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-800 text-sm font-medium">
+                                    <span>Impuesto Único</span>
+                                    <span class="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">Variable</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Conector Flecha -->
+                        <div class="flex justify-center my-0.5">
+                            <div class="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-sky-500 shadow-2xs">
+                                <span class="material-icons text-base">arrow_downward</span>
+                            </div>
+                        </div>
+
+                        <!-- Sueldo Líquido -->
+                        <div class="rounded-2xl border-2 border-sky-300 bg-gradient-to-br from-sky-50 via-white to-blue-50/60 p-5 text-center shadow-xs">
+                            <p class="text-sky-600 text-base font-extrabold tracking-tight mb-1 flex items-center justify-center gap-1.5">
+                                <span class="material-icons text-sky-600 text-base">payments</span> SUELDO LÍQUIDO
+                            </p>
+                            <p class="text-slate-500 text-xs font-medium mb-0">Lo que recibes directamente en tu cuenta bancaria</p>
                         </div>
                     </div>
                 </div>"""
-        body = flexible_replace(body, old_infographic, new_infographic)
+        infographic_pattern = re.compile(
+            r'<!-- Infografía HTML: Anatomía de liquidación de sueldo -->[\s\S]*?(?:Lo que recibes (?:directamente )?en tu cuenta bancaria</p>\s*</div>\s*</div>\s*</div>)',
+            re.IGNORECASE
+        )
+        if infographic_pattern.search(body):
+            body = infographic_pattern.sub(new_infographic, body)
         
         # Also clean up the CTA card
         old_cta = """<!-- CTA -->
