@@ -56,23 +56,8 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Geist', 'sans-serif'],
-                        mono: ['Geist Mono', 'monospace'],
-                    },
-                    colors: {
-                        primary: '#0ea5e9',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Precompiled Tailwind CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         .prose-content h2 {
             font-size: 1.5rem;
@@ -794,6 +779,14 @@
         
 
 
+        
+        
+
+
+        
+        
+
+
         <!-- FORMULARIO_LEAD_START -->
         <!-- Formulario Lead: Despido Injustificado -->
         <div id="lead-form-injustificado" class="my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-400/50 shadow-sm relative overflow-hidden not-prose">
@@ -1059,6 +1052,9 @@
                 btn.innerText = 'Enviando solicitud...';
             }
 
+            var causeSelect = document.getElementById('cause');
+            var fuenteDefault = (causeSelect && causeSelect.value === '161') ? 'Calculadora Finiquito - Art. 161' : 'Calculadora de Finiquito';
+
             fetch('/api/send-lead', {
                 method: 'POST',
                 headers: {
@@ -1070,7 +1066,7 @@
                     telefono: telefono,
                     monto_calculado: monto,
                     tipo: 'Finiquito',
-                    fuente: fuenteCustom || 'Calculadora de Finiquito',
+                    fuente: fuenteCustom || fuenteDefault,
                     detalle: detalle
                 })
             }).then(function(response) {

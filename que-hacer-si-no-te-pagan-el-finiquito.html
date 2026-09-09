@@ -56,23 +56,8 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Geist', 'sans-serif'],
-                        mono: ['Geist Mono', 'monospace'],
-                    },
-                    colors: {
-                        primary: '#0ea5e9',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Precompiled Tailwind CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         .prose-content h2 {
             font-size: 1.5rem;
@@ -934,6 +919,9 @@
                 btn.innerText = 'Enviando solicitud...';
             }
 
+            var causeSelect = document.getElementById('cause');
+            var fuenteDefault = (causeSelect && causeSelect.value === '161') ? 'Calculadora Finiquito - Art. 161' : 'Calculadora de Finiquito';
+
             fetch('/api/send-lead', {
                 method: 'POST',
                 headers: {
@@ -945,7 +933,7 @@
                     telefono: telefono,
                     monto_calculado: monto,
                     tipo: 'Finiquito',
-                    fuente: fuenteCustom || 'Calculadora de Finiquito',
+                    fuente: fuenteCustom || fuenteDefault,
                     detalle: detalle
                 })
             }).then(function(response) {

@@ -8,3 +8,9 @@ rediseño-premium/
 __pycache__/
 .vercel
 .env*
+*.bak
+*.bak*
+*.tmp
+audit_results*.txt
+git_log*.txt
+temp_*

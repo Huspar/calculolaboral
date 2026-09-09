@@ -198,6 +198,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.startDate) attachListener(elements.startDate, 'change');
     if (elements.endDate) attachListener(elements.endDate, 'change');
 
+    // ============================================
+    // CRO: Alerta Contextual Inteligente Art. 161
+    // ============================================
+    function updateArt161Context() {
+        const is161 = elements.cause && elements.cause.value === '161';
+        const alertEl = document.getElementById('art161Alert');
+        if (alertEl) {
+            alertEl.classList.toggle('hidden', !is161);
+        }
+
+        const leadTitle = document.getElementById('lead-title');
+        const leadDesc = document.getElementById('lead-desc');
+        const leadBtnText = document.getElementById('lead-btn-text');
+
+        if (is161) {
+            if (leadTitle) leadTitle.textContent = '¿Despido por Necesidades de la Empresa (Art. 161)?';
+            if (leadDesc) leadDesc.innerHTML = 'Revisa tu carta con un abogado aliado. Si la causal no está debidamente acreditada, puedes exigir el <strong>recargo legal del 30%</strong> y evitar el descuento indebido de tu seguro de cesantía (AFC).';
+            if (leadBtnText) leadBtnText.textContent = 'Evaluar Mi Despido (Recargo 30%)';
+        } else {
+            if (leadTitle) leadTitle.textContent = '¿Dudas sobre el cálculo o causal de tu despido?';
+            if (leadDesc) leadDesc.innerHTML = 'Revisa con un especialista si tu causal califica para <strong>recargo legal del 30% al 100%</strong> y devolución de descuento AFC.';
+            if (leadBtnText) leadBtnText.textContent = 'Solicitar Revisión Legal';
+        }
+    }
+
+    if (elements.cause) {
+        elements.cause.addEventListener('change', updateArt161Context);
+    }
+    updateArt161Context();
+
+    window.activarLeadArt161 = function(e) {
+        if (e) e.preventDefault();
+        const leadSec = document.getElementById('lead-section');
+        if (leadSec) {
+            leadSec.classList.remove('hidden');
+            leadSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const nameInput = document.getElementById('lead-nombre');
+            if (nameInput) setTimeout(() => nameInput.focus(), 400);
+        }
+    };
+
     // Advanced Toggles Listeners
     elements.enableIAS = document.getElementById('enableIAS');
     elements.enableNotice = document.getElementById('enableNotice');

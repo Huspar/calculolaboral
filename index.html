@@ -97,23 +97,8 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Geist', 'sans-serif'],
-                        mono: ['Geist Mono', 'monospace'],
-                    },
-                    colors: {
-                        primary: '#0ea5e9',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Precompiled Tailwind CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         .prose-content h2 {
             font-size: 1.5rem;
@@ -674,6 +659,23 @@
                         <option value="160">Art. 160 - Despido Disciplinario (Sin derecho a indemnización)</option>
                     </select>
                 </div>
+
+                <!-- Alerta Contextual CRO Art. 161 -->
+                <div id="art161Alert" class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-slate-700 text-xs leading-relaxed flex items-start gap-2.5 transition-all">
+                    <span class="material-icons text-amber-500 text-base shrink-0 mt-0.5">gavel</span>
+                    <div class="space-y-1">
+                        <p class="font-bold text-slate-900 flex items-center gap-1.5">
+                            ¿Despido por Necesidades de la Empresa?
+                        </p>
+                        <p class="text-[11px] text-slate-600 leading-normal">
+                            Más del 70% de las cartas bajo el Art. 161 carecen de justificación técnica válida según la DT. Si es improcedente, tienes derecho al <strong>recargo legal del 30%</strong> sobre tus años de servicio y a la devolución del descuento de tu seguro de cesantía (AFC).
+                        </p>
+                        <a href="#lead-section" onclick="activarLeadArt161(event)" class="inline-flex items-center gap-1 font-bold text-sky-600 hover:text-sky-700 text-[11px] mt-1 group">
+                            <span>Solicitar revisión legal de mi carta</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
                 <div class="pt-2 flex items-center justify-between">
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <input id="noticeGiven" class="w-4 h-4 rounded border-slate-300 text-sky-500 focus:ring-sky-500/35 cursor-pointer" type="checkbox">
@@ -936,14 +938,14 @@
                 <span class="text-[11px] text-amber-700 font-medium">Abogados Laborales Aliados</span>
               </div>
               <div>
-                <h4 class="text-sm font-bold text-slate-900 leading-snug">
+                <h4 id="lead-title" class="text-sm font-bold text-slate-900 leading-snug">
                   ¿Dudas sobre el cálculo o causal de tu despido?
                 </h4>
-                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                <p id="lead-desc" class="text-xs text-slate-600 mt-1 leading-relaxed">
                   Revisa con un especialista si tu causal califica para <strong>recargo legal del 30% al 100%</strong> y devolución de descuento AFC.
                 </p>
               </div>
-              <form id="lead-form" class="space-y-2 pt-1" onsubmit="event.preventDefault(); enviarLead('Calculadora de Finiquito');">
+              <form id="lead-form" class="space-y-2 pt-1" onsubmit="event.preventDefault(); enviarLead();">
                 <div class="space-y-1.5">
                   <input type="text" id="lead-nombre" placeholder="Tu nombre y apellido" required
                     class="w-full px-3 py-2 text-xs border border-amber-300 rounded-xl bg-white outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-400 text-slate-800 placeholder-slate-400 font-medium">
@@ -955,7 +957,7 @@
                 <button type="submit"
                   class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5">
                   <span class="material-icons text-sm">outgoing_mail</span>
-                  Solicitar Revisión Legal
+                  <span id="lead-btn-text">Solicitar Revisión Legal</span>
                 </button>
               </form>
               <div id="lead-confirmacion" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
@@ -1939,6 +1941,9 @@
                 btn.innerText = 'Enviando solicitud...';
             }
 
+            var causeSelect = document.getElementById('cause');
+            var fuenteDefault = (causeSelect && causeSelect.value === '161') ? 'Calculadora Finiquito - Art. 161' : 'Calculadora de Finiquito';
+
             fetch('/api/send-lead', {
                 method: 'POST',
                 headers: {
@@ -1950,7 +1955,7 @@
                     telefono: telefono,
                     monto_calculado: monto,
                     tipo: 'Finiquito',
-                    fuente: fuenteCustom || 'Calculadora de Finiquito',
+                    fuente: fuenteCustom || fuenteDefault,
                     detalle: detalle
                 })
             }).then(function(response) {
