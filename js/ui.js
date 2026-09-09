@@ -199,13 +199,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.endDate) attachListener(elements.endDate, 'change');
 
     // ============================================
-    // CRO: Alerta Contextual Inteligente Art. 161
+    // CRO: Alerta Contextual Inteligente Art. 161 (En Resultados)
     // ============================================
     function updateArt161Context() {
         const is161 = elements.cause && elements.cause.value === '161';
-        const alertEl = document.getElementById('art161Alert');
-        if (alertEl) {
-            alertEl.classList.toggle('hidden', !is161);
+        const leadSec = document.getElementById('lead-section');
+        const resultAlert = document.getElementById('art161ResultAlert');
+        
+        // Mostrar alerta en resultados si la causal es 161 y el finiquito fue calculado (lead-section visible)
+        const isLeadVisible = leadSec && !leadSec.classList.contains('hidden');
+        if (resultAlert) {
+            resultAlert.classList.toggle('hidden', !is161 || !isLeadVisible);
         }
 
         const leadTitle = document.getElementById('lead-title');
@@ -675,6 +679,23 @@ function updateCalculations() {
         window.resultadoDesgloseLead = 'Causal: ' + causeText + (antiqText ? ' | Antiguedad: ' + antiqText : '') + ' | Estimacion: ' + format(results.total);
         document.querySelector('#finiquito-calc-container #pdf-section')?.classList.remove('hidden');
         document.getElementById('lead-section')?.classList.remove('hidden');
+
+        // Art 161 Recargo Calculation & Display in Results
+        const is161 = causeSelect && causeSelect.value === '161';
+        const resultAlert = document.getElementById('art161ResultAlert');
+        const recargoEl = document.getElementById('art161RecargoAmount');
+        if (is161) {
+            if (resultAlert) resultAlert.classList.remove('hidden');
+            const ias = (results.indemnities && results.indemnities.yearsOfService) ? results.indemnities.yearsOfService.total : 0;
+            if (ias > 0 && recargoEl) {
+                const recargo = Math.round(ias * 0.3);
+                recargoEl.textContent = '+' + format(recargo);
+            } else if (recargoEl) {
+                recargoEl.textContent = 'Aplica sobre años de servicio';
+            }
+        } else {
+            if (resultAlert) resultAlert.classList.add('hidden');
+        }
 
         // Populate print template
         const printDate = new Date().toLocaleDateString('es-CL');

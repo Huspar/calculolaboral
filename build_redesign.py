@@ -3676,23 +3676,6 @@ INDEX_CONTENT = """
                         <option value="160">Art. 160 - Despido Disciplinario (Sin derecho a indemnización)</option>
                     </select>
                 </div>
-
-                <!-- Alerta Contextual CRO Art. 161 -->
-                <div id="art161Alert" class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-slate-700 text-xs leading-relaxed flex items-start gap-2.5 transition-all">
-                    <span class="material-icons text-amber-500 text-base shrink-0 mt-0.5">gavel</span>
-                    <div class="space-y-1">
-                        <p class="font-bold text-slate-900 flex items-center gap-1.5">
-                            ¿Despido por Necesidades de la Empresa?
-                        </p>
-                        <p class="text-[11px] text-slate-600 leading-normal">
-                            Más del 70% de las cartas bajo el Art. 161 carecen de justificación técnica válida según la DT. Si es improcedente, tienes derecho al <strong>recargo legal del 30%</strong> sobre tus años de servicio y a la devolución del descuento de tu seguro de cesantía (AFC).
-                        </p>
-                        <a href="#lead-section" onclick="activarLeadArt161(event)" class="inline-flex items-center gap-1 font-bold text-sky-600 hover:text-sky-700 text-[11px] mt-1 group">
-                            <span>Solicitar revisión legal de mi carta</span>
-                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
                 <div class="pt-2 flex items-center justify-between">
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <input id="noticeGiven" class="w-4 h-4 rounded border-slate-300 text-sky-500 focus:ring-sky-500/35 cursor-pointer" type="checkbox">
@@ -3944,6 +3927,29 @@ INDEX_CONTENT = """
                 </button>
               </div>
               <p class="text-[11px] text-slate-400">Descarga instantánea o comparte con tu empleador/abogado.</p>
+            </div>
+
+            <!-- Alerta Inteligente de Recargo Art. 161 (Solo en resultados de despido Art. 161) -->
+            <div id="art161ResultAlert" class="mt-4 p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-400/50 text-slate-800 space-y-2 hidden no-print shadow-sm transition-all">
+              <div class="flex items-start gap-2.5">
+                <span class="material-icons text-amber-600 text-lg shrink-0 mt-0.5">gavel</span>
+                <div class="space-y-1.5 w-full">
+                  <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <span class="text-xs font-bold text-amber-950 uppercase tracking-wide">Despido Art. 161 (Necesidades de la Empresa)</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">Recargo Legal 30%</span>
+                  </div>
+                  <p class="text-xs text-slate-700 leading-relaxed">
+                    Si los motivos económicos o de modernización no están respaldados con balances o hechos objetivos en tu carta, el despido califica como improcedente en tribunales.
+                  </p>
+                  <div class="pt-2 pb-1.5 px-3 bg-white/90 rounded-xl border border-amber-300/60 flex items-center justify-between text-xs">
+                    <span class="font-semibold text-slate-700">Recargo adicional del 30% estimable:</span>
+                    <span id="art161RecargoAmount" class="font-bold text-emerald-600 font-mono text-sm">+$0</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 pt-0.5">
+                    💡 Además, al impugnar el despido, el empleador <strong>no puede descontarte el aporte AFC</strong> de tu finiquito.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <!-- Lead Capture Section (SOLO EN FINIQUITO) -->
