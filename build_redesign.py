@@ -4068,23 +4068,25 @@ INDEX_CONTENT = """
             </div>
 
             <!-- Alerta Inteligente de Recargo Art. 161 (Solo en resultados de despido Art. 161) -->
-            <div id="art161ResultAlert" class="mt-4 p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-400/50 text-slate-800 space-y-2 hidden no-print shadow-sm transition-all">
-              <div class="flex items-start gap-2.5">
-                <span class="material-icons text-amber-600 text-lg shrink-0 mt-0.5">gavel</span>
+            <div id="art161ResultAlert" class="mt-4 p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-slate-800 space-y-2 hidden no-print shadow-sm transition-all">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0 mt-0.5 text-amber-800">
+                  <span class="material-icons text-base">gavel</span>
+                </div>
                 <div class="space-y-1.5 w-full">
                   <div class="flex items-center justify-between gap-2 flex-wrap">
-                    <span class="text-xs font-bold text-amber-950 uppercase tracking-wide">Despido Art. 161 (Necesidades de la Empresa)</span>
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">Recargo Legal 30%</span>
+                    <span class="text-xs font-extrabold text-amber-950 uppercase tracking-wide">Despido Art. 161 (Necesidades de la Empresa)</span>
+                    <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-950 border border-amber-400/80">Recargo Legal 30%</span>
                   </div>
-                  <p class="text-xs text-slate-700 leading-relaxed">
-                    Si los motivos económicos o de modernización no están respaldados con balances o hechos objetivos en tu carta, el despido califica como improcedente en tribunales.
+                  <p class="text-xs text-amber-950 leading-relaxed font-normal">
+                    Si los motivos económicos o de modernización no están debidamente respaldados en tu carta de despido, califica como improcedente y puedes demandar judicialmente.
                   </p>
-                  <div class="pt-2 pb-1.5 px-3 bg-white/90 rounded-xl border border-amber-300/60 flex items-center justify-between text-xs">
+                  <div class="py-2 px-3.5 bg-white rounded-xl border border-amber-200 shadow-2xs flex items-center justify-between text-xs my-1">
                     <span class="font-semibold text-slate-700">Recargo adicional del 30% estimable:</span>
                     <span id="art161RecargoAmount" class="font-bold text-emerald-600 font-mono text-sm">+$0</span>
                   </div>
-                  <p class="text-[11px] text-slate-500 pt-0.5">
-                    💡 Además, al impugnar el despido, el empleador <strong>no puede descontarte el aporte AFC</strong> de tu finiquito.
+                  <p class="text-[11px] text-amber-900 pt-0.5 font-medium">
+                    💡 Además, al impugnar judicialmente el despido, el empleador <strong>no puede descontarte el aporte patronal de AFC</strong>.
                   </p>
                 </div>
               </div>
@@ -4949,7 +4951,7 @@ INDEX_SCRIPTS = """
     <script src="/js/salary_logic.js?v=2.0.3"></script>
     <script src="/js/salary_ui.js?v=2.0.4"></script>
     <script src="/js/logic.js?v=2.0.3"></script>
-    <script src="/js/ui.js?v=2.0.3"></script>
+    <script src="/js/ui.js?v=2.0.5"></script>
     <script src="/js/validation.js?v=2.0.3"></script>
     <script>
         // High-end tab system switching between both calculators

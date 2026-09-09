@@ -201,8 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================
     // CRO: Alerta Contextual Inteligente Art. 161 (En Resultados)
     // ============================================
-    function updateArt161Context() {
-        const is161 = elements.cause && elements.cause.value === '161';
+    window.updateArt161Context = function() {
+        const causeEl = elements.cause || document.getElementById('cause');
+        const is161 = causeEl && String(causeEl.value).startsWith('161');
         const leadSec = document.getElementById('lead-section');
         const resultAlert = document.getElementById('art161ResultAlert');
         
@@ -224,6 +225,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (leadTitle) leadTitle.textContent = '¿Dudas sobre el cálculo o causal de tu despido?';
             if (leadDesc) leadDesc.innerHTML = 'Revisa con un especialista si tu causal califica para <strong>recargo legal del 30% al 100%</strong> y devolución de descuento AFC.';
             if (leadBtnText) leadBtnText.textContent = 'Solicitar Revisión Legal';
+        }
+    };
+
+    function updateArt161Context() {
+        if (typeof window.updateArt161Context === 'function') {
+            window.updateArt161Context();
         }
     }
 
@@ -631,19 +638,19 @@ function updateCalculations() {
             if (!existingMsg) {
                 existingMsg = document.createElement('div');
                 existingMsg.id = vacMsgId;
-                existingMsg.className = 'mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-start gap-2';
+                existingMsg.className = 'mt-3 p-3 rounded-xl bg-amber-50 border border-amber-300 flex items-start gap-2.5 text-slate-800 shadow-2xs';
 
                 const icon = document.createElement('span');
                 icon.textContent = '⚠️';
-                icon.className = 'flex-shrink-0 text-sm mt-0.5';
+                icon.className = 'flex-shrink-0 text-sm mt-0.5 text-amber-600';
 
                 const text = document.createElement('p');
-                text.className = 'text-xs text-amber-300/90 leading-relaxed';
+                text.className = 'text-xs text-amber-950 leading-relaxed font-normal m-0';
                 text.textContent = 'Al completar un nuevo año laboral, las vacaciones dejan de ser proporcionales y pasan a considerarse vacaciones del período siguiente. Por eso este ítem puede desaparecer del cálculo. ';
 
                 const guideLink = document.createElement('a');
                 guideLink.href = 'guia-vacaciones-proporcionales.html';
-                guideLink.className = 'underline text-amber-200 hover:text-white transition-colors';
+                guideLink.className = 'underline font-bold text-amber-900 hover:text-amber-950 transition-colors ml-1';
                 guideLink.textContent = 'Ver guía completa';
                 text.appendChild(guideLink);
 
@@ -681,7 +688,7 @@ function updateCalculations() {
         document.getElementById('lead-section')?.classList.remove('hidden');
 
         // Art 161 Recargo Calculation & Display in Results
-        const is161 = causeSelect && causeSelect.value === '161';
+        const is161 = (causeSelect && String(causeSelect.value).startsWith('161')) || (elements.cause && String(elements.cause.value).startsWith('161'));
         const resultAlert = document.getElementById('art161ResultAlert');
         const recargoEl = document.getElementById('art161RecargoAmount');
         if (is161) {
@@ -695,6 +702,10 @@ function updateCalculations() {
             }
         } else {
             if (resultAlert) resultAlert.classList.add('hidden');
+        }
+
+        if (typeof window.updateArt161Context === 'function') {
+            window.updateArt161Context();
         }
 
         // Populate print template
