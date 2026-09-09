@@ -357,7 +357,7 @@
 
                 <!-- Casilleros de Formalidades Legales: Recepción y Ministro de Fe -->
                 <div style="margin-top: 2.25rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: system-ui, -apple-system, sans-serif; font-size: 8.5pt; color: #475569;">
-                    <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #fafafa;">
+                    <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #ffffff;">
                         <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; font-size: 8pt; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
                             Constancia de Recepción Empleador
                         </div>
@@ -367,7 +367,7 @@
                         <div style="font-size: 7pt; color: #94a3b8; font-style: italic;">(Copia para el trabajador acreditando entrega de aviso previo)</div>
                     </div>
 
-                    <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #fafafa;">
+                    <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #ffffff;">
                         <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; font-size: 8pt; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
                             Ratificación Ministro de Fe (Art. 177)
                         </div>
