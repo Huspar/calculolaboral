@@ -173,10 +173,85 @@
             <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
                 La suite documental definitiva para que tu empresa supere cualquier fiscalización de la Dirección del Trabajo. <strong>Editables en Word (.docx) y listos para imprimir en PDF</strong>, adaptados con cláusulas reales para tu rubro.
             </p>
+
+            <!-- Hero Action Buttons (Above the Fold) -->
+            <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <a href="#comprar-kit" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm transition-all shadow-sm flex items-center justify-center gap-2 active:scale-[0.99]">
+                    <span>Comprar Kit Pyme 2026 ($19.990)</span>
+                    <span class="material-icons text-base">arrow_forward</span>
+                </a>
+                <a href="#modulos" class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 font-medium text-sm transition-all flex items-center justify-center gap-1.5">
+                    <span>Ver los 19 documentos</span>
+                    <span class="material-icons text-base text-slate-400">expand_more</span>
+                </a>
+            </div>
+
+            <!-- Value / Trust Badges -->
+            <div class="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-500">
+                <span class="flex items-center gap-1.5">
+                    <span class="material-icons text-xs text-emerald-600">check_circle</span>
+                    Despacho inmediato a tu correo
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="material-icons text-xs text-sky-500">description</span>
+                    Word (.docx) 100% editable
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="material-icons text-xs text-slate-400">lock</span>
+                    Pago único sin suscripción
+                </span>
+            </div>
         </div>
 
-        <!-- What the Kit Includes: The 4 Pillars -->
+        <!-- Section: Pains by Industry (Pre-Modules) -->
         <section class="mb-16">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                    Diseñado para los 3 Sectores Más Fiscalizados en Chile
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                    No arriesgues multas de hasta 60 UTM por usar plantillas genéricas no adaptadas a tu giro.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Retail / Gastronomia -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200/80 text-slate-700 flex items-center justify-center">
+                        <span class="material-icons text-lg">storefront</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-900">Comercio y Gastronomía</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Evita sanciones por retención indebida de propinas (Art. 64), organiza turnos 6x1 respetando los 7 domingos obligatorios y protégete ante violencia de clientes con la Ley Karin.
+                    </p>
+                </div>
+
+                <!-- Oficinas / Servicios -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200/80 text-slate-700 flex items-center justify-center">
+                        <span class="material-icons text-lg">computer</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-900">Oficinas y Servicios</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Implementa la reducción 5x2 (salida anticipada los viernes), readecua cargos que ya no pueden usar Art. 22 y pacta formalmente el teletrabajo con asignación de internet y desconexión de 12 horas.
+                    </p>
+                </div>
+
+                <!-- Logistica / Terreno -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200/80 text-slate-700 flex items-center justify-center">
+                        <span class="material-icons text-lg">local_shipping</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-900">Logística y Faenas</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Valida el control de asistencia móvil georreferenciado para choferes y técnicos en ruta (Dictamen DT) y resguarda los viáticos como gastos compensatorios no imponibles (Art. 41).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- What the Kit Includes: The 4 Pillars -->
+        <section id="modulos" class="mb-16 scroll-mt-20">
             <div class="border-b border-slate-200 pb-4 mb-8">
                 <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                     Estructura Modular del Kit: ¿Qué Recibes?
@@ -304,19 +379,19 @@
         </section>
 
         <!-- Pricing & Acquisition Section -->
-        <section class="max-w-4xl mx-auto bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-10 shadow-xs mb-16">
+        <section id="comprar-kit" class="max-w-4xl mx-auto bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-10 shadow-xs mb-16 scroll-mt-20">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                 
                 <!-- Pricing Left Column (6 cols) -->
                 <div class="md:col-span-6 space-y-4">
                     <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium">
-                        <span>Edición 2026</span>
+                        <span>Edición 2026 · Licencia Perpetua</span>
                     </div>
                     <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                         Adquiere el Kit de Blindaje Pyme Completo
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        Descarga inmediata en tu correo de todos los archivos en Word (.docx) editables y PDF imprimibles, incluyendo el Módulo Base y las 3 ramas sectoriales.
+                        Acceso inmediato a los 19 documentos en Word (.docx) editables y la Guía Maestra de Implementación DT, adaptados con las cláusulas para tu rubro.
                     </p>
 
                     <div class="pt-2 flex items-baseline gap-3">
@@ -324,7 +399,22 @@
                         <span class="text-base text-slate-400 font-normal line-through">$29.990 CLP</span>
                         <span class="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-md">Ahorras 33%</span>
                     </div>
-                    <p class="text-xs text-slate-500">Pago único, sin suscripciones recurrentes ni costos ocultos.</p>
+                    <p class="text-xs text-slate-500">Pago único para tu empresa. Sin mensualidades, cobros recurrentes ni costos de renovación.</p>
+
+                    <ul class="space-y-1.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
+                        <li class="flex items-center gap-2">
+                            <span class="material-icons text-emerald-600 text-xs">check_circle</span>
+                            <span>Archivos Word (.docx) 100% editables y listos para firmar</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="material-icons text-emerald-600 text-xs">check_circle</span>
+                            <span>Ajustado a Ley Karin (DS 44) y Ley 40 Horas (Hito 42h)</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="material-icons text-emerald-600 text-xs">check_circle</span>
+                            <span>Despacho digital directo a tu correo tras el pago</span>
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Pricing Right Column: Form (6 cols) -->
@@ -399,14 +489,77 @@
             </div>
         </section>
 
+        <!-- FAQ Section -->
+        <section class="max-w-3xl mx-auto mb-16">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Preguntas Frecuentes sobre el Kit Pyme</h2>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1">Resolvemos las dudas más habituales de empleadores y contadores.</p>
+            </div>
+
+            <div class="space-y-3">
+                <details class="group bg-white border border-slate-200/90 rounded-2xl p-4 transition-all">
+                    <summary class="list-none flex items-center justify-between cursor-pointer font-semibold text-sm text-slate-900">
+                        <span>¿En qué formato se entregan los documentos del kit?</span>
+                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                        Se entregan en archivos <strong>Microsoft Word (.docx) 100% editables</strong> y minutas listas para imprimir en PDF. Todos los modelos vienen con campos resaltados entre corchetes (ej: <code>[RAZÓN SOCIAL]</code>, <code>[RUT]</code>, <code>[NOMBRE TRABAJADOR]</code>) para que solo debas ingresar los datos de tu empresa.
+                    </p>
+                </details>
+
+                <details class="group bg-white border border-slate-200/90 rounded-2xl p-4 transition-all">
+                    <summary class="list-none flex items-center justify-between cursor-pointer font-semibold text-sm text-slate-900">
+                        <span>¿Sirve si mi empresa tiene solo 1, 2 o 3 trabajadores?</span>
+                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                        Sí, absolutamente. La Ley Karin (Ley 21.643 y DS 44) y la Ley de 40 Horas (Ley 21.561) son obligatorias para el 100% de las empresas en Chile <strong>desde el primer trabajador contratado</strong>, sin importar su tamaño ni dotación.
+                    </p>
+                </details>
+
+                <details class="group bg-white border border-slate-200/90 rounded-2xl p-4 transition-all">
+                    <summary class="list-none flex items-center justify-between cursor-pointer font-semibold text-sm text-slate-900">
+                        <span>¿Cómo y cuándo recibo los documentos tras realizar el pago?</span>
+                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                        El despacho es digital e inmediato. Una vez confirmado tu pago de $19.990 en Flow (Webpay Plus, Débito, Crédito o Mach), el paquete comprimido (.zip) con los 19 documentos se despacha a la casilla de correo electrónico que registres en el formulario de compra.
+                    </p>
+                </details>
+
+                <details class="group bg-white border border-slate-200/90 rounded-2xl p-4 transition-all">
+                    <summary class="list-none flex items-center justify-between cursor-pointer font-semibold text-sm text-slate-900">
+                        <span>¿Qué validez legal tienen estos formatos frente a un fiscalizador de la DT?</span>
+                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                        Todas las minutas han sido estructuradas siguiendo textualmente los artículos del Código del Trabajo chileno, el Decreto Supremo N° 44 del Mintrab y las circulares oficiales de la Dirección del Trabajo y la SUSESO vigentes en 2026.
+                    </p>
+                </details>
+
+                <details class="group bg-white border border-slate-200/90 rounded-2xl p-4 transition-all">
+                    <summary class="list-none flex items-center justify-between cursor-pointer font-semibold text-sm text-slate-900">
+                        <span>¿El pago de $19.990 es único o tendré que pagar mensualidades?</span>
+                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                        Es un <strong>pago único de $19.990 CLP</strong>. No hay suscripciones mensuales, cobros recurrentes ni cargos sorpresa. La licencia de uso de los modelos es perpetua para tu empresa para la normativa vigente 2026.
+                    </p>
+                </details>
+            </div>
+        </section>
+
         <!-- COT Compliance Box -->
         <section class="mb-12 p-6 rounded-2xl bg-slate-100 border border-slate-200 text-xs text-slate-600 leading-relaxed space-y-2">
             <div class="font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
                 <span class="material-icons text-sm text-slate-500">verified_user</span>
-                <span>Validez Jurídica y Garantía de Legalidad (Art. 528 C.O.T.)</span>
+                <span>Validez Jurídica, Alcance y Delimitación de Responsabilidad (Art. 528 C.O.T.)</span>
             </div>
             <p>
-                Los formatos y protocolos incluidos en este kit corresponden a minutas estandarizadas y modelos tipo basados estrictamente en las circulares oficiales de la Dirección del Trabajo y la Superintendencia de Seguridad Social (SUSESO). La entrega de dichos modelos no constituye asesoría letrada particular ni sustituye el patrocinio judicial reservado a abogados colegiados conforme al artículo 528 del Código Orgánico de Tribunales de Chile.
+                Los formatos, protocolos y minutas contractuales incluidos en este kit corresponden a modelos tipo estandarizados de carácter referencial, elaborados en estricta conformidad con las leyes vigentes, decretos supremos y circulares públicas de la Dirección del Trabajo y la Superintendencia de Seguridad Social (SUSESO). La personalización, llenado, firma y adopción efectiva de estos documentos es de exclusiva responsabilidad de la administración de cada empresa empleadora.
+            </p>
+            <p>
+                La adquisición de este material documental no constituye patrocinio letrado en juicio ni asesoría jurídica personalizada, servicios que se encuentran legalmente reservados a abogados colegiados y habilitados conforme al artículo 528 del Código Orgánico de Tribunales de Chile.
             </p>
         </section>
 
