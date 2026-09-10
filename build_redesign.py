@@ -7323,12 +7323,12 @@ DESPIDO_ART160_CONTENT = """
                     </div>
                 </div>
 
-                <!-- CARD 3: Formulario de Evaluación Gratuita de Carta de Despido -->
+                <!-- CARD 3: Formulario de Evaluación de Carta de Despido -->
                 <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-400/50 shadow-sm relative overflow-hidden">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="material-icons text-amber-600 text-lg">gavel</span>
                         <h4 class="text-base sm:text-lg font-bold text-slate-900">
-                            ¿Quieres que un abogado laboralista revise tu carta de despido gratis?
+                            ¿Quieres que un abogado laboralista revise tu carta de despido?
                         </h4>
                     </div>
                     <p class="text-xs text-slate-600 mb-4 leading-relaxed">
@@ -7366,10 +7366,13 @@ DESPIDO_ART160_CONTENT = """
                         </div>
 
                         <div class="pt-1 flex flex-col sm:flex-row items-center gap-3">
-                            <button type="submit" id="art160-lead-btn" class="w-full sm:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
-                                <span class="material-icons text-sm">send</span> Solicitar Revisión Gratuita de Carta
+                            <button type="submit" id="art160-lead-btn"
+                                style="background-color: #d97706 !important; color: #ffffff !important; display: inline-flex !important; box-shadow: 0 4px 14px 0 rgba(217, 119, 6, 0.35) !important;"
+                                class="w-full sm:w-auto px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 border border-amber-700">
+                                <span class="material-icons text-sm" style="color: #ffffff !important;">send</span>
+                                <span style="color: #ffffff !important; font-weight: 700;">Solicitar Revisión de Carta</span>
                             </button>
-                            <span class="text-[11px] text-slate-500">Sin costo • Respuesta en menos de 24 hrs hábiles</span>
+                            <span class="text-[11px] text-slate-500">Evaluación confidencial • Respuesta en menos de 24 hrs hábiles</span>
                         </div>
                     </form>
 
@@ -7684,7 +7687,7 @@ DESPIDO_ART160_SCRIPTS = """
                 alert('Hubo un inconveniente al enviar tu solicitud. Por favor intenta nuevamente o escríbenos a contacto@calculolaboral.cl');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="material-icons text-sm">send</span> Solicitar Revisión Gratuita de Carta';
+                    btn.innerHTML = '<span class="material-icons text-sm" style="color: #ffffff !important;">send</span> <span style="color: #ffffff !important; font-weight: 700;">Solicitar Revisión de Carta</span>';
                 }
             });
         }
