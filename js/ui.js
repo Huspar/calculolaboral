@@ -112,44 +112,111 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     // ============================================
-    // TAB NAVIGATION HANDLING
+    // UNIFIED FORM & ADVANCED ACCORDION CONTROLS
     // ============================================
+    
+    // 1. Advanced Options Accordion Toggle
+    const btnToggleAdvanced = document.getElementById('btnToggleAdvanced');
+    const containerAdvanced = document.getElementById('containerAdvancedOptions');
+    const iconToggleAdvanced = document.getElementById('iconToggleAdvanced');
+    if (btnToggleAdvanced && containerAdvanced) {
+        btnToggleAdvanced.addEventListener('click', () => {
+            const isHidden = containerAdvanced.classList.toggle('hidden');
+            if (iconToggleAdvanced) {
+                iconToggleAdvanced.textContent = isHidden ? 'expand_more' : 'expand_less';
+            }
+        });
+    }
+
+    // 2. Minimum Salary Chip ($553.553 oficial 2026)
+    const btnMinSalary = document.getElementById('btnMinSalary');
+    if (btnMinSalary && elements.baseSalary) {
+        btnMinSalary.addEventListener('click', () => {
+            elements.baseSalary.value = '$ 553.553';
+            elements.baseSalary.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+    }
+
+    // 3. Quick Date Helper: Set End Date to Today
+    const btnDateToday = document.getElementById('btnDateToday');
+    if (btnDateToday && elements.endDate) {
+        btnDateToday.addEventListener('click', () => {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            elements.endDate.value = `${yyyy}-${mm}-${dd}`;
+            elements.endDate.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }
+
+    // 4. Seniority Preset Chips (1 touch: 1, 2, 3, 5 years)
+    const presetYearButtons = document.querySelectorAll('.btn-preset-year');
+    presetYearButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const years = parseInt(btn.dataset.years, 10) || 1;
+            
+            // Determine end date (use existing or fallback to today)
+            let end = elements.endDate && elements.endDate.value ? new Date(elements.endDate.value + 'T00:00:00') : new Date();
+            if (isNaN(end.getTime())) end = new Date();
+
+            const endY = end.getFullYear();
+            const endM = String(end.getMonth() + 1).padStart(2, '0');
+            const endD = String(end.getDate()).padStart(2, '0');
+            if (elements.endDate) elements.endDate.value = `${endY}-${endM}-${endD}`;
+
+            // Calculate start date by subtracting years
+            const start = new Date(end);
+            start.setFullYear(start.getFullYear() - years);
+            const startY = start.getFullYear();
+            const startM = String(start.getMonth() + 1).padStart(2, '0');
+            const startD = String(start.getDate()).padStart(2, '0');
+            if (elements.startDate) elements.startDate.value = `${startY}-${startM}-${startD}`;
+
+            // Trigger updates
+            if (elements.startDate) elements.startDate.dispatchEvent(new Event('change', { bubbles: true }));
+            if (elements.endDate) elements.endDate.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // Visual feedback: highlight active chip
+            presetYearButtons.forEach(b => {
+                b.classList.remove('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+                b.classList.add('bg-white', 'text-slate-700');
+            });
+            btn.classList.remove('bg-white', 'text-slate-700');
+            btn.classList.add('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+        });
+    });
+
+    // 5. Mobile Smooth Scroll to Results
+    const btnScrollToResults = document.getElementById('btnScrollToResults');
+    if (btnScrollToResults) {
+        btnScrollToResults.addEventListener('click', () => {
+            const res = document.getElementById('resultados-finiquito');
+            if (res) {
+                res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    // Backwards-compatibility for tabButtons if loaded in older layouts
     const tabButtons = {
         contrato: document.getElementById('tabBtn-contrato'),
         ingresos: document.getElementById('tabBtn-ingresos'),
         avanzado: document.getElementById('tabBtn-avanzado')
     };
-
     const tabContents = {
         contrato: document.getElementById('tabContent-contrato'),
         ingresos: document.getElementById('tabContent-ingresos'),
         avanzado: document.getElementById('tabContent-avanzado')
     };
-
     const switchTab = (activeKey) => {
         Object.keys(tabContents).forEach(key => {
-            if (tabContents[key]) {
-                tabContents[key].classList.toggle('hidden', key !== activeKey);
-            }
-        });
-
-        Object.keys(tabButtons).forEach(key => {
-            const btn = tabButtons[key];
-            if (btn) {
-                if (key === activeKey) {
-                    btn.className = "flex-1 py-3 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-white bg-primary shadow-lg shadow-primary/20";
-                } else {
-                    btn.className = "flex-1 py-3 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-slate-400 hover:text-white hover:bg-white/5";
-                }
-            }
+            if (tabContents[key]) tabContents[key].classList.toggle('hidden', key !== activeKey);
         });
     };
-
     Object.keys(tabButtons).forEach(key => {
         const btn = tabButtons[key];
-        if (btn) {
-            btn.addEventListener('click', () => switchTab(key));
-        }
+        if (btn) btn.addEventListener('click', () => switchTab(key));
     });
 
     // ============================================
@@ -344,22 +411,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // ACTION BUTTONS
     // ============================================
 
+    // Helper to load realistic representative Chilean example (Buk.cl model)
+    function loadPreloadedExample() {
+        const today = new Date();
+        const endY = today.getFullYear();
+        const endM = String(today.getMonth() + 1).padStart(2, '0');
+        const endD = String(today.getDate()).padStart(2, '0');
+        
+        // 2 years of seniority as standard representative Chilean case
+        const startY = endY - 2;
+        
+        if (elements.startDate) elements.startDate.value = `${startY}-${endM}-${endD}`;
+        if (elements.endDate) elements.endDate.value = `${endY}-${endM}-${endD}`;
+        if (elements.baseSalary) elements.baseSalary.value = '$ 850.000';
+        if (elements.gratification) elements.gratification.value = '$ 212.500';
+        if (elements.assignments) elements.assignments.value = '$ 0';
+        if (elements.vacationPending) elements.vacationPending.value = '5';
+        if (elements.cause) elements.cause.value = '161';
+        if (elements.noticeGiven) elements.noticeGiven.checked = false;
+
+        // Highlight the 2-year preset chip
+        document.querySelectorAll('.btn-preset-year').forEach(b => {
+            if (b.dataset.years === '2') {
+                b.classList.remove('bg-white', 'text-slate-700');
+                b.classList.add('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+            } else {
+                b.classList.remove('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+                b.classList.add('bg-white', 'text-slate-700');
+            }
+        });
+
+        updateCalculations();
+    }
+
     if (elements.btnLoadExample) {
         elements.btnLoadExample.addEventListener('click', () => {
-            // Realistic Chilean Data
-            if (elements.startDate) elements.startDate.value = '2021-03-01';
-            if (elements.endDate) elements.endDate.value = '2026-02-09';
-            if (elements.baseSalary) elements.baseSalary.value = '$ 850.000'; // Formato visual fintech
-            if (elements.gratification) elements.gratification.value = '$ 212.500'; // Art 50 approx
-            if (elements.assignments) elements.assignments.value = '$ 80.000';
-            if (elements.vacationPending) elements.vacationPending.value = '15';
-
-            // Optional/Standard defaults
-            if (elements.cause) elements.cause.value = '161'; // Nec. Empresa
-            if (elements.noticeGiven) elements.noticeGiven.checked = false;
-
-            // Trigger calculation immediately
-            updateCalculations();
+            loadPreloadedExample();
         });
     }
 
@@ -380,10 +467,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elements.noticeGiven) elements.noticeGiven.checked = false;
             if (elements.hasVariableSalary) {
                 elements.hasVariableSalary.checked = false;
-                elements.variableSalaryContainer.classList.add('hidden');
+                if (elements.variableSalaryContainer) {
+                    elements.variableSalaryContainer.classList.add('hidden');
+                }
             }
             // Reset Cause
             if (elements.cause) elements.cause.value = '161';
+
+            // Reset preset chips
+            document.querySelectorAll('.btn-preset-year').forEach(b => {
+                b.classList.remove('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+                b.classList.add('bg-white', 'text-slate-700');
+            });
 
             // Trigger update to clear results
             updateCalculations();
@@ -404,8 +499,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initialize - Start Empty
-    updateCalculations();
+    // Initialize - Preload realistic editable example (Buk.cl model)
+    const hasExistingData = (elements.startDate && elements.startDate.value) || (elements.baseSalary && elements.baseSalary.value);
+    if (!hasExistingData) {
+        loadPreloadedExample();
+    } else {
+        updateCalculations();
+    }
 });
 
 // ============================================
