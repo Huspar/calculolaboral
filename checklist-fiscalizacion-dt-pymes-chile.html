@@ -20,7 +20,7 @@
     <meta property="og:description" content="Guía oficial y checklist 2026 de los 10 documentos obligatorios que exige la Dirección del Trabajo (DT) a micro y pequeñas empresas. Evita multas de hasta 60 UTM.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile">
-    <meta property="og:image" content="https://calculolaboral.cl/assets/og-image.png">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/guia-fiscalizacion-dt-pymes-cover.png">
     <meta property="og:locale" content="es_CL">
     <meta property="og:site_name" content="Cálculo Laboral">
     
@@ -33,6 +33,7 @@
                 "@type": "Article",
                 "headline": "Checklist Fiscalización DT 2026: Qué Documentos Pide la Inspección del Trabajo a las Pymes",
                 "description": "Guía práctica con el listado oficial de documentos laborales exigidos en inspecciones de la DT, tabla de multas por tamaño de empresa y protocolos de prevención.",
+                "image": "https://calculolaboral.cl/assets/guia-fiscalizacion-dt-pymes-cover.png",
                 "author": {
                     "@type": "Organization",
                     "name": "Cálculo Laboral Chile",
@@ -88,7 +89,7 @@
                         "name": "¿A cuánto ascienden las multas de la DT para una Pyme?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "Conforme al Art. 506 del Código del Trabajo, para microempresas (1-9 trabajadores) las multas oscilan entre 1 y 10 UTM ($69.000 a $696.000 CLP por infracción). Para pequeñas empresas (10-49 trabajadores), van de 2 a 40 UTM. En materias gravísimas como Ley Karin o seguridad, la multa puede alcanzar hasta 60 UTM ($4.170.000 CLP)."
+                            "text": "Conforme al Art. 506 del Código del Trabajo, para microempresas (1-9 trabajadores) las multas oscilan entre 1 y 10 UTM ($69.600 a $696.000 CLP por infracción). Para pequeñas empresas (10-49 trabajadores), van de 2 a 40 UTM. En materias gravísimas como Ley Karin o seguridad, la multa puede alcanzar hasta 60 UTM ($4.170.000 CLP)."
                         }
                     },
                     {
@@ -131,7 +132,7 @@
     <!-- Precompiled Tailwind CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
-        .prose-content h2 {
+        .prose-content > h2, .prose-content h2:not(.not-prose *) {
             font-size: 1.5rem;
             font-weight: 700;
             color: #0f172a;
@@ -139,7 +140,7 @@
             margin-bottom: 1rem;
             letter-spacing: -0.02em;
         }
-        .prose-content h3 {
+        .prose-content > h3, .prose-content h3:not(.not-prose *) {
             font-size: 1.2rem;
             font-weight: 600;
             color: #1e293b;
@@ -147,32 +148,34 @@
             margin-bottom: 0.75rem;
             letter-spacing: -0.01em;
         }
-        .prose-content p {
+        .prose-content > p, .prose-content p:not(.not-prose *) {
             margin-bottom: 1.25rem;
             line-height: 1.75;
         }
-        .prose-content ul, .prose-content ol {
+        .prose-content > ul, .prose-content ul:not(.not-prose *),
+        .prose-content > ol, .prose-content ol:not(.not-prose *) {
             margin-bottom: 1.25rem;
             padding-left: 1.5rem;
         }
-        .prose-content li {
+        .prose-content li:not(.not-prose *) {
             margin-bottom: 0.5rem;
         }
         .checklist-card {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            padding: 1.25rem;
+            border-radius: 1.25rem;
+            padding: 1.35rem;
             transition: all 0.2s ease;
         }
         .checklist-card:hover {
             border-color: #cbd5e1;
-            box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.05);
+            box-shadow: 0 4px 14px -2px rgb(0 0 0 / 0.06);
         }
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; font-size: 10pt !important; }
+            body { background: white !important; font-size: 10pt !important; color: black !important; }
             .prose-content { color: black !important; }
+            article { border: none !important; shadow: none !important; padding: 0 !important; }
         }
     </style>
 </head>
@@ -203,6 +206,7 @@
 
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex gap-6 items-center">
+                    <!-- Dropdown Calculadoras -->
                     <div class="relative group">
                         <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
                             Calculadoras
@@ -216,6 +220,33 @@
                                 <a href="calculadora-sueldo-part-time" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Part-Time</a>
                                 <a href="calculadora-vacaciones-proporcionales" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Vacaciones Proporcionales</a>
                                 <a href="calculadora-despido-articulo-160" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Art. 160</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Guías -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                            Guías
+                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                            <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">📋 Checklist Fiscalización DT (Pymes)</a>
+                                <a href="carta-de-renuncia-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Carta de Renuncia (Asistente)</a>
+                                <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Indemnización a Todo Evento (Propuesta)</a>
+                                <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Fondos Generacionales AFP</a>
+                                <a href="como-calcular-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Finiquito</a>
+                                <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Sueldo Líquido</a>
+                                <a href="como-leer-liquidacion-de-sueldo" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Leer Liquidación</a>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Art. 161 Necesidades Empresa</a>
+                                <a href="ley-40-horas-chile-2026" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Ley 40 Horas 2026</a>
+                                <a href="guia-vacaciones-proporcionales" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Vacaciones Proporcionales</a>
+                                <a href="seguro-de-cesantia-chile-como-cobrar" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cobrar Seguro Cesantía</a>
+                                <a href="que-hacer-si-no-te-pagan-el-finiquito" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Si no te Pagan el Finiquito</a>
+                                <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Injustificado</a>
+                                <a href="finiquito-por-renuncia-voluntaria" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito Renuncia Voluntaria</a>
+                                <a href="carta-de-despido-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Carta de Despido Ejemplo</a>
                             </div>
                         </div>
                     </div>
@@ -234,12 +265,18 @@
                     <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer flex items-center" aria-label="Abrir menú">
                         <span class="material-icons">menu</span>
                     </summary>
-                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 p-6 space-y-2">
+                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 p-6 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
                         <a href="para-empleadores" class="block px-3 py-2 rounded-lg text-sm font-bold text-slate-900 bg-slate-100">Portal Para Empleadores</a>
                         <a href="kit-cumplimiento-laboral-pymes" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-600 bg-sky-50">Kit Blindaje Pyme ($19.990)</a>
-                        <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Calculadora Finiquito</a>
+                        <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-sky-600 bg-sky-50/50">📋 Checklist Fiscalización DT</a>
+                        <div class="border-t border-slate-100 my-2"></div>
+                        <p class="px-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Calculadoras</p>
                         <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Sueldo Líquido</a>
+                        <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Calculadora Finiquito</a>
+                        <a href="calculadora-horas-extras" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Horas Extras</a>
+                        <div class="border-t border-slate-100 my-2"></div>
                         <a href="blog" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Blog</a>
+                        <a href="contacto" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Contacto</a>
                     </div>
                 </details>
             </div>
@@ -273,41 +310,57 @@
                 <span class="text-slate-600 font-semibold">Checklist Fiscalización DT Pymes</span>
             </nav>
 
-            <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
-                <div class="prose-content max-w-none">
+            <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 sm:p-10 md:p-12 mb-8 relative overflow-hidden">
+                <!-- Article Header -->
+                <header class="mb-8 border-b border-slate-100 pb-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold tracking-wider uppercase mb-4">
+                        <span class="material-icons text-[14px]">fact_check</span>
+                        Guía Oficial de Fiscalización Pyme
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-4 tracking-tight">
+                        Checklist Fiscalización DT 2026: Qué Documentos Pide la Inspección del Trabajo a las Pymes
+                    </h1>
+                    <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
+                        Más del 67% de las sanciones impuestas por la Dirección del Trabajo (DT) a micro y pequeñas empresas se originan por <strong>omisiones puramente documentales y falta de carpetas actualizadas</strong>. Revisa la lista oficial de los 10 documentos obligatorios y audita el estado de tu empresa antes de una inspección.
+                    </p>
                     
-                    <!-- Article Header -->
-                    <header class="mb-10">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold tracking-wider uppercase mb-4">
-                            <span class="material-icons text-[14px]">fact_check</span>
-                            Guía Oficial de Fiscalización Pyme
-                        </div>
-                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-4 tracking-tight">
-                            Checklist Fiscalización DT 2026: Qué Documentos Pide la Inspección del Trabajo a las Pymes
-                        </h1>
-                        <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
-                            Más del 67% de las sanciones impuestas por la Dirección del Trabajo (DT) a micro y pequeñas empresas se originan por <strong>omisiones puramente documentales y falta de carpetas actualizadas</strong>. Revisa la lista oficial de los 10 documentos obligatorios y audita el estado de tu empresa antes de una inspección.
-                        </p>
-                        
-                        <div class="flex items-center gap-4 text-xs text-slate-500 mt-6 pt-4 border-t border-slate-100">
-                            <span>Actualizado: Septiembre 2026</span>
-                            <span>•</span>
-                            <span>8 min lectura</span>
-                            <span>•</span>
-                            <span class="text-emerald-700 font-medium">Validado conforme a Dictámenes DT y DS 44</span>
-                        </div>
+                    <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-500 mt-5 pt-4 border-t border-slate-100">
+                        <span>Actualizado: Septiembre 2026</span>
+                        <span>•</span>
+                        <span>8 min lectura</span>
+                        <span>•</span>
+                        <span class="text-emerald-700 font-semibold flex items-center gap-1">
+                            <span class="material-icons text-xs">verified</span> Dictámenes DT y DS 44
+                        </span>
+                    </div>
 
-                        <!-- E-E-A-T Trust Badge -->
-                        <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 mt-6">
-                            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span class="material-icons text-xl">gavel</span>
-                            </div>
-                            <div class="text-xs text-slate-600 leading-relaxed">
-                                <strong class="text-slate-900 block text-sm mb-0.5">Marco Normativo 2026 Auditado</strong>
-                                Guía técnica basada en las pautas vigentes del Código del Trabajo (Art. 9, 10, 11, 32, 54 bis, 153, 506 y 511), el Decreto Supremo N° 44 (Protocolo Ley Karin) y la Ley N° 21.561 (Reducción de Jornada a 42 horas en 2026).
-                            </div>
+                    <!-- E-E-A-T Trust Badge -->
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 mt-6">
+                        <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span class="material-icons text-xl">gavel</span>
                         </div>
-                    </header>
+                        <div class="text-xs text-slate-600 leading-relaxed">
+                            <strong class="text-slate-900 block text-sm mb-0.5">Marco Normativo 2026 Auditado</strong>
+                            Guía técnica basada en las pautas vigentes del Código del Trabajo (Art. 9, 10, 11, 32, 54 bis, 153, 506 y 511), el Decreto Supremo N° 44 (Protocolo Ley Karin) y la Ley N° 21.561 (Reducción de Jornada a 42 horas en 2026).
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Hero Cover Image -->
+                <figure class="mb-10 max-w-[900px] mx-auto">
+                    <div class="rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
+                        <img src="/assets/guia-fiscalizacion-dt-pymes-cover.png"
+                            alt="Checklist de Fiscalización Dirección del Trabajo Pymes Chile 2026"
+                            title="Checklist Fiscalización DT 2026: Los 10 documentos obligatorios para micro y pequeñas empresas"
+                            class="w-full h-auto max-h-[460px] object-cover"
+                            loading="eager" width="1280" height="720" />
+                    </div>
+                    <figcaption class="text-xs text-slate-500 text-center mt-3 leading-relaxed">
+                        Inspección laboral preventiva: Los 10 documentos obligatorios que exige la Dirección del Trabajo (DT) para no cursar multas a las Pymes.
+                    </figcaption>
+                </figure>
+
+                <div class="prose-content max-w-none text-slate-700 leading-relaxed text-sm sm:text-base">
 
                     <!-- Sección 1: La Realidad de la Fiscalización en Chile -->
                     <h2>1. ¿Cómo fiscaliza la Dirección del Trabajo a las Pymes en 2026?</h2>
@@ -315,7 +368,7 @@
                         En Chile, una fiscalización de la DT puede ocurrir por dos vías principales:
                     </p>
                     <ul>
-                        <li><strong>Fiscalización Programada o de Oficio:</strong> Campañas preventivas por rubro (comercio, gastronomía, construcción, agricultura, transporte) donde los inspectores acuden presencialmente a fiscalizar faenas o establecimientos comerciales.</li>
+                        <li><strong>Fiscalización Programada o de Oficio:</strong> Campañas preventivas por rubro (comercio, gastronomía, construcción, agricultura, transporte) donde los inspectores acuden presencialmente a fiscalizar faenas o locales comerciales.</li>
                         <li><strong>Fiscalización por Denuncia (Presencial o Electrónica):</strong> Activada cuando un trabajador activo o extrabajador ingresa un reclamo en la DT. En estos casos, la DT emite una <strong>Resolución de Requerimiento de Documentación</strong> a través del portal <em>Mi DT</em> otorgando un plazo perentorio para exhibir las carpetas de personal.</li>
                     </ul>
 
@@ -326,41 +379,47 @@
                     <!-- Sección 2: Tabla de Multas por Tamaño de Pyme -->
                     <h2>2. Tabla Oficial de Multas DT según Dotación (Art. 506 Código del Trabajo)</h2>
                     <p>
-                        El valor de las multas depende de la gravedad de la falta (Leve, Grave, Gravísima) y del tamaño de la empresa según el número de trabajadores contratados:
+                        El valor de las sanciones pecuniarias se clasifica según la gravedad de la falta y el número de dependientes que tenga contratados la empresa:
                     </p>
 
-                    <div class="overflow-x-auto my-6">
-                        <table class="w-full text-xs text-left border-collapse border border-slate-200 rounded-xl overflow-hidden">
-                            <thead class="bg-slate-100 text-slate-900 font-bold uppercase">
+                    <div class="overflow-x-auto my-6 not-prose">
+                        <table class="w-full text-xs text-left border-collapse border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                            <thead class="bg-slate-100/90 text-slate-900 font-bold uppercase tracking-wider text-[11px]">
                                 <tr>
-                                    <th class="p-3 border border-slate-200">Tipo de Empresa</th>
-                                    <th class="p-3 border border-slate-200">Dotación</th>
-                                    <th class="p-3 border border-slate-200">Multa Leve</th>
-                                    <th class="p-3 border border-slate-200">Multa Grave</th>
-                                    <th class="p-3 border border-slate-200">Multa Gravísima (Karin / Jornada)</th>
+                                    <th class="p-3.5 border-b border-slate-200">Tipo de Empresa</th>
+                                    <th class="p-3.5 border-b border-slate-200">Dotación</th>
+                                    <th class="p-3.5 border-b border-slate-200">Multa Leve</th>
+                                    <th class="p-3.5 border-b border-slate-200">Multa Grave</th>
+                                    <th class="p-3.5 border-b border-slate-200 text-rose-700 bg-rose-50/60">Multa Gravísima</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-200">
-                                <tr class="bg-white">
-                                    <td class="p-3 font-semibold text-slate-900">Microempresa</td>
-                                    <td class="p-3">1 a 9 trabajadores</td>
-                                    <td class="p-3">1 a 2 UTM<br><span class="text-slate-600 font-mono">($69.611 - $139.222)</span></td>
-                                    <td class="p-3">3 a 6 UTM<br><span class="text-slate-600 font-mono">($208.833 - $417.666)</span></td>
-                                    <td class="p-3 font-bold text-rose-700">7 a 10 UTM<br><span class="font-mono">($487.277 - $696.110)</span></td>
+                            <tbody class="divide-y divide-slate-200 bg-white">
+                                <tr>
+                                    <td class="p-3.5 font-bold text-slate-900">
+                                        <span class="inline-block px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-semibold">Microempresa</span>
+                                    </td>
+                                    <td class="p-3.5 text-slate-600 font-medium">1 a 9 trabajadores</td>
+                                    <td class="p-3.5 text-slate-700">1 a 2 UTM<br><span class="text-slate-500 font-mono text-[11px]">($69.611 - $139.222)</span></td>
+                                    <td class="p-3.5 text-amber-700 font-semibold">3 a 6 UTM<br><span class="text-slate-500 font-mono text-[11px]">($208.833 - $417.666)</span></td>
+                                    <td class="p-3.5 font-bold text-rose-700 bg-rose-50/30">7 a 10 UTM<br><span class="font-mono text-[11px] text-rose-600">($487.277 - $696.110)</span></td>
                                 </tr>
-                                <tr class="bg-slate-50/60">
-                                    <td class="p-3 font-semibold text-slate-900">Pequeña Empresa</td>
-                                    <td class="p-3">10 a 49 trabajadores</td>
-                                    <td class="p-3">2 a 5 UTM<br><span class="text-slate-600 font-mono">($139.222 - $348.055)</span></td>
-                                    <td class="p-3">6 a 15 UTM<br><span class="text-slate-600 font-mono">($417.666 - $1.044.165)</span></td>
-                                    <td class="p-3 font-bold text-rose-700">16 a 40 UTM<br><span class="font-mono">($1.113.776 - $2.784.440)</span></td>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-3.5 font-bold text-slate-900">
+                                        <span class="inline-block px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold">Pequeña Empresa</span>
+                                    </td>
+                                    <td class="p-3.5 text-slate-600 font-medium">10 a 49 trabajadores</td>
+                                    <td class="p-3.5 text-slate-700">2 a 5 UTM<br><span class="text-slate-500 font-mono text-[11px]">($139.222 - $348.055)</span></td>
+                                    <td class="p-3.5 text-amber-700 font-semibold">6 a 15 UTM<br><span class="text-slate-500 font-mono text-[11px]">($417.666 - $1.044.165)</span></td>
+                                    <td class="p-3.5 font-bold text-rose-700 bg-rose-50/30">16 a 40 UTM<br><span class="font-mono text-[11px] text-rose-600">($1.113.776 - $2.784.440)</span></td>
                                 </tr>
-                                <tr class="bg-white">
-                                    <td class="p-3 font-semibold text-slate-900">Mediana Empresa</td>
-                                    <td class="p-3">50 a 199 trabajadores</td>
-                                    <td class="p-3">5 a 10 UTM</td>
-                                    <td class="p-3">11 a 30 UTM</td>
-                                    <td class="p-3 font-bold text-rose-700">31 a 60 UTM<br><span class="font-mono">(hasta $4.176.660)</span></td>
+                                <tr>
+                                    <td class="p-3.5 font-bold text-slate-900">
+                                        <span class="inline-block px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-semibold">Mediana Empresa</span>
+                                    </td>
+                                    <td class="p-3.5 text-slate-600 font-medium">50 a 199 trabajadores</td>
+                                    <td class="p-3.5 text-slate-700">5 a 10 UTM</td>
+                                    <td class="p-3.5 text-amber-700 font-semibold">11 a 30 UTM</td>
+                                    <td class="p-3.5 font-bold text-rose-700 bg-rose-50/30">31 a 60 UTM<br><span class="font-mono text-[11px] text-rose-600">(hasta $4.176.660)</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -374,15 +433,15 @@
                                     <span class="material-icons text-xs">shield</span>
                                     Solución Llave en Mano
                                 </div>
-                                <h3 class="text-xl font-bold text-white tracking-tight !mt-0 !mb-0">
+                                <h3 class="text-xl font-bold !text-white tracking-tight !mt-0 !mb-0">
                                     Blindaje Laboral Pyme 2026: 21 Documentos Oficiales en Word
                                 </h3>
                                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed !mb-0">
-                                    No redactes desde cero ni contrates asesorías de $1.000.000. Descarga el kit completo con anexos 40h, protocolo Ley Karin adaptado a tu rubro, contratos, pacto de horas extras y guía anti-multas por solo <strong>$19.990</strong>.
+                                    No redactes desde cero ni pagues asesorías caras. Descarga el kit completo con anexos 40h (42h en 2026), protocolo Ley Karin adaptado por rubro, contratos, pacto de horas extras y guía anti-multas por solo <strong>$19.990</strong>.
                                 </p>
                             </div>
                             <div class="flex-shrink-0 w-full md:w-auto">
-                                <a href="kit-cumplimiento-laboral-pymes" class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] active:scale-95 text-center !no-underline cursor-pointer">
+                                <a href="kit-cumplimiento-laboral-pymes" class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 hover:bg-sky-400 !text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] active:scale-95 text-center !no-underline cursor-pointer">
                                     <span>Comprar Kit por $19.990</span>
                                     <span class="material-icons text-sm">arrow_forward</span>
                                 </a>
@@ -400,41 +459,50 @@
                         
                         <!-- Doc 1 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Contrato de Trabajo Individual Escriturado y Firmado</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Contrato de Trabajo Individual Escriturado y Firmado</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Contratación</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Artículos 9 y 10 del Código del Trabajo.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> Que se haya firmado dentro de los primeros 15 días (o 5 días en contratos por obra/menores a 30 días) y que contenga las 7 cláusulas mínimas obligatorias, especificando lugar de prestación de servicios y jornada real.
+                                        <strong>Qué revisa el fiscalizador:</strong> Que se haya firmado dentro de los primeros 15 días (o 5 días en contratos por obra o menores a 30 días) y que contenga las 7 cláusulas mínimas obligatorias, especificando lugar exacto de faena y funciones reales.
                                     </p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Doc 2 -->
-                        <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Anexo de Modificación de Jornada Ley 40 Horas (42h en 2026)</h4>
-                                    <p class="text-xs text-slate-600 leading-relaxed">
+                        <div class="checklist-card border-amber-200/80 bg-amber-50/20">
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 border border-amber-300 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Anexo de Modificación de Jornada Ley 40 Horas (42h en 2026)</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-wider">Hito 2026</span>
+                                    </div>
+                                    <p class="text-xs text-slate-700 leading-relaxed">
                                         <strong>Base legal:</strong> Ley N° 21.561 y Artículo 11 del Código del Trabajo.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> Que la reducción a 42 horas semanales esté escriturada mediante anexo firmado por el trabajador sin reducción de sueldo, y debidamente registrada en el portal Mi DT.
+                                        <strong>Qué revisa el fiscalizador:</strong> Que la reducción a 42 horas semanales esté debidamente escriturada mediante anexo firmado sin reducción de sueldo, y registrada en el portal Mi DT dentro de los 15 días hábiles siguientes.
                                     </p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Doc 3 -->
-                        <div class="checklist-card border-rose-200 bg-rose-50/20">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-800 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-rose-950">Protocolo de Prevención Ley Karin (Acoso Sexual, Laboral y Violencia)</h4>
+                        <div class="checklist-card border-rose-300 bg-rose-50/30">
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-800 border border-rose-300 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-rose-950">Protocolo de Prevención Ley Karin (Acoso Sexual, Laboral y Violencia)</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[10px] font-bold uppercase tracking-wider">Gravísima</span>
+                                    </div>
                                     <p class="text-xs text-slate-700 leading-relaxed">
                                         <strong>Base legal:</strong> Ley N° 21.643, Decreto Supremo N° 44 del Mintrab y Circular 3.813 de la SUSESO.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> Obligatorio para <strong>todas las empresas sin importar su dotación (incluso con 1 solo trabajador)</strong>. Debe contener matriz de riesgos psicosociales, medidas tempranas de resguardo y procedimiento interno. Infracción catalogada como <em>gravísima</em>.
+                                        <strong>Qué revisa el fiscalizador:</strong> Obligatorio para <strong>todas las empresas sin importar dotación (incluso con 1 solo trabajador)</strong>. Debe contener matriz de riesgos psicosociales, medidas tempranas de resguardo y procedimiento interno de denuncia. Multa de hasta 60 UTM.
                                     </p>
                                 </div>
                             </div>
@@ -442,13 +510,16 @@
 
                         <!-- Doc 4 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Acta de Designación del Canal y Encargado de Denuncias</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Acta de Designación del Canal y Encargado de Denuncias</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Canal Karin</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Art. 211-B Código del Trabajo.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> La existencia de un buzón físico, correo formal o canal específico para denuncias con la designación escrita de la persona responsable de recibirlas y derivarlas en un plazo no mayor a 3 días hábiles.
+                                        <strong>Qué revisa el fiscalizador:</strong> Existencia formal de un correo o buzón de denuncias con la designación por escrito de la persona responsable de recibirlas y derivarlas a la DT o mutualidad en un plazo no mayor a 3 días hábiles.
                                     </p>
                                 </div>
                             </div>
@@ -456,13 +527,16 @@
 
                         <!-- Doc 5 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">5</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Acta de Difusión y Capacitación Ley Karin Firmada</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">5</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Acta de Difusión y Capacitación Ley Karin Firmada</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Capacitación</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Dictamen DT N° 362/19 de 2024.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> No basta con tener el protocolo en un cajón. La empresa debe acreditar con lista de asistencia física firmada por cada trabajador que el documento fue entregado, explicado y difundido a todo el personal.
+                                        <strong>Qué revisa el fiscalizador:</strong> No basta con tener el protocolo guardado. La empresa debe acreditar con lista física firmada por cada trabajador que el protocolo fue efectivamente entregado y capacitado.
                                     </p>
                                 </div>
                             </div>
@@ -470,13 +544,16 @@
 
                         <!-- Doc 6 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">6</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Libro o Sistema de Control de Asistencia y Determinación de Jornada</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">6</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Libro o Sistema de Control de Asistencia Diario</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Jornada</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Artículo 33 del Código del Trabajo.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> Que los trabajadores registren hora de entrada y salida diariamente (incluyendo colación). Si es libro físico, no debe tener enmiendas ni firmas adelantadas; si es digital, debe contar con certificación vigente de la DT.
+                                        <strong>Qué revisa el fiscalizador:</strong> Registro diario de hora de entrada y salida (incluyendo descanso de colación). Si es libro físico, no debe presentar enmiendas ni firmas en blanco; si es digital, debe contar con resolución de certificación DT.
                                     </p>
                                 </div>
                             </div>
@@ -484,13 +561,16 @@
 
                         <!-- Doc 7 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">7</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Pacto de Horas Extraordinarias por Escrito (Vigencia máx. 90 días)</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">7</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Pacto de Horas Extraordinarias por Escrito (Máx. 90 días)</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Sobretiempo</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Artículo 32 del Código del Trabajo.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> Si algún trabajador registra sobretiempo en el libro de asistencia, la empresa debe exhibir el pacto individual firmado con fecha vigente (máximo 3 meses) que justifique la necesidad transitoria de la empresa.
+                                        <strong>Qué revisa el fiscalizador:</strong> Si algún dependiente registra horas extras en el libro, debe existir pacto individual firmado con vigencia no superior a 3 meses que acredite la necesidad transitoria de la empresa.
                                     </p>
                                 </div>
                             </div>
@@ -498,13 +578,16 @@
 
                         <!-- Doc 8 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">8</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Liquidaciones de Sueldo con Detalle de Haberes y Descuentos</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">8</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Liquidaciones de Sueldo con Detalle y Comprobante Previred</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Remuneraciones</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Artículo 54 bis del Código del Trabajo.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> Copia firmada de la liquidación del mes anterior con desglose de haberes imponibles, no imponibles (colación/movilización) y comprobante de pago de cotizaciones (Planilla Previred al día).
+                                        <strong>Qué revisa el fiscalizador:</strong> Copia firmada de la liquidación del mes anterior con desglose de haberes imponibles y no imponibles, más certificado F30/Previred de cotizaciones al día.
                                     </p>
                                 </div>
                             </div>
@@ -512,13 +595,16 @@
 
                         <!-- Doc 9 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">9</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Comprobante de Entrega de EPP y Reglamento Interno (RIOHS)</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">9</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Comprobante de Entrega de EPP y Reglamento Interno (RIOHS)</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Higiene y Seguridad</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Artículos 153, 156 y 184 del Código del Trabajo y Ley 16.744.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> En empresas de 10 o más trabajadores, acuse de recibo del RIOHS con al menos 30 días de vigencia. En faenas de riesgo, comprobante de entrega gratuita y oportuna de Elementos de Protección Personal (EPP).
+                                        <strong>Qué revisa el fiscalizador:</strong> En empresas de 10 o más trabajadores, acuse de recibo del RIOHS con 30 días de vigencia. En tareas operativas, registro firmado de entrega gratuita de Elementos de Protección Personal.
                                     </p>
                                 </div>
                             </div>
@@ -526,13 +612,16 @@
 
                         <!-- Doc 10 -->
                         <div class="checklist-card">
-                            <div class="flex items-start gap-3">
-                                <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">10</span>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-900">Anexo de Teletrabajo o Regulación de Artículo 22</h4>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">10</span>
+                                <div class="space-y-1.5 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h4 class="text-sm font-bold text-slate-900">Anexo de Teletrabajo o Regulación Restringida Art. 22 Inciso 2°</h4>
+                                        <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Modalidad Especial</span>
+                                    </div>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         <strong>Base legal:</strong> Ley N° 21.220 y nuevo Art. 22 inciso 2° restringido por Ley 21.561.<br>
-                                        <strong>Qué revisa el fiscalizador:</strong> Si algún dependiente trabaja desde su hogar, debe existir anexo con derecho a desconexión digital de 12 horas continuas y asignación de gastos. Si está con Art. 22, solo se admite para gerentes y personal con facultades de administración sin fiscalización superior inmediata.
+                                        <strong>Qué revisa el fiscalizador:</strong> Si el dependiente trabaja a distancia, debe constar anexo con derecho a desconexión digital de 12 horas. Si está con Art. 22, solo se admite para gerentes sin fiscalización superior inmediata.
                                     </p>
                                 </div>
                             </div>
@@ -543,71 +632,96 @@
                     <!-- Sección 4: Widget Interactivo de Autodiagnóstico -->
                     <h2>4. Autodiagnóstico Interactivo: ¿Tu empresa pasa una fiscalización hoy?</h2>
                     <p>
-                        Marca los documentos con los que tu empresa <strong>ya cuenta hoy impresos y firmados</strong>:
+                        Marca en el casillero interactivo los documentos con los que tu empresa <strong>ya cuenta hoy impresos y firmados</strong>:
                     </p>
 
-                    <div class="my-6 p-6 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-md not-prose" id="widget-autodiagnostico">
-                        <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
+                    <div class="my-8 p-6 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-xl not-prose border border-slate-800" id="widget-autodiagnostico">
+                        
+                        <!-- Widget Header -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-800 mb-6">
                             <div>
-                                <h3 class="text-lg font-bold text-white">Simulador de Riesgo de Fiscalización DT</h3>
-                                <p class="text-xs text-slate-400">Selecciona los documentos que tienes en regla</p>
+                                <h3 class="text-lg sm:text-xl font-bold !text-white tracking-tight flex items-center gap-2 m-0">
+                                    <span class="material-icons text-sky-400">speed</span>
+                                    <span>Simulador de Riesgo de Fiscalización DT</span>
+                                </h3>
+                                <p class="text-xs text-slate-300 mt-1 mb-0">Selecciona los documentos vigentes en tus carpetas laborales</p>
                             </div>
-                            <div id="risk-score-badge" class="px-3.5 py-1.5 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold text-xs text-center">
-                                Riesgo Crítico (0/10)
+                            <div id="risk-score-badge" class="px-4 py-2 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 font-extrabold text-xs text-center shadow-xs">
+                                0 / 10 Cumplidos (0%)
                             </div>
                         </div>
 
+                        <!-- Progress Bar -->
+                        <div class="mb-6 space-y-1.5">
+                            <div class="flex justify-between text-xs font-semibold text-slate-300">
+                                <span>Nivel de Blindaje Documental</span>
+                                <span id="risk-progress-text" class="text-rose-400 font-bold">Riesgo Crítico</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700/80 p-0.5">
+                                <div id="risk-progress-bar" class="bg-rose-500 h-full rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Checkbox Grid -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="checklist-interactive">
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>1. Contrato individual firmado</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">1. Contrato individual firmado</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>2. Anexo Ley 40 Horas (42h en 2026)</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">2. Anexo Ley 40 Horas (42h en 2026)</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>3. Protocolo Prevención Ley Karin</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">3. Protocolo Prevención Ley Karin</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>4. Canal y receptor de denuncias</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">4. Canal formal de denuncias</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>5. Acta difusión y capacitación Karin</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">5. Acta capacitación y difusión Karin</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>6. Libro o control de asistencia al día</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">6. Control de asistencia diario</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>7. Pacto escrito de horas extras</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">7. Pacto escrito de horas extras</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>8. Liquidaciones firmadas y Previred</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">8. Liquidaciones firmadas y Previred</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>9. Entrega de EPP / RIOHS</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">9. Entrega de EPP / RIOHS</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-800 cursor-pointer text-xs">
-                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500" onchange="calcularRiesgo()">
-                                <span>10. Anexos Art. 22 / Teletrabajo</span>
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 cursor-pointer text-xs transition-colors select-none">
+                                <input type="checkbox" class="doc-check w-4 h-4 rounded text-sky-500 bg-slate-700 border-slate-600 focus:ring-0 cursor-pointer accent-sky-500" onchange="calcularRiesgo()">
+                                <span class="text-slate-100 font-medium">10. Anexos Art. 22 / Teletrabajo</span>
                             </label>
                         </div>
 
-                        <div id="risk-result-box" class="p-4 rounded-2xl bg-slate-800/90 border border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div>
-                                <p id="risk-result-title" class="text-sm font-bold text-rose-400">Riesgo Financiero Alto</p>
-                                <p id="risk-result-desc" class="text-xs text-slate-300 mt-0.5">Te faltan 10 documentos. Te expones a multas acumuladas de hasta $4.000.000 CLP ante una inspección.</p>
+                        <!-- Verdict Card & CTAs -->
+                        <div id="risk-result-box" class="p-5 rounded-2xl bg-slate-800/90 border border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div class="space-y-1 text-center md:text-left">
+                                <p id="risk-result-title" class="text-sm font-bold text-rose-400 m-0">Riesgo Financiero Alto</p>
+                                <p id="risk-result-desc" class="text-xs text-slate-300 leading-relaxed m-0">Te faltan 10 documentos esenciales. Te expones a multas acumuladas de hasta $4.000.000 CLP ante una inspección de la DT.</p>
                             </div>
-                            <a href="kit-cumplimiento-laboral-pymes" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs text-center shrink-0">
-                                Regularizar con Kit ($19.990)
-                            </a>
+                            <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto shrink-0">
+                                <button onclick="window.print()" type="button" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 !text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer border-0">
+                                    <span class="material-icons text-xs">print</span>
+                                    <span>Imprimir</span>
+                                </button>
+                                <a href="kit-cumplimiento-laboral-pymes" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 !text-white font-extrabold text-xs text-center flex items-center justify-center gap-1.5 shadow-md shadow-sky-500/25 transition-all !no-underline">
+                                    <span>Regularizar con Kit ($19.990)</span>
+                                    <span class="material-icons text-xs">arrow_forward</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -644,19 +758,19 @@
                             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold uppercase tracking-wider">
                                 <span class="material-icons text-xs">verified</span> Descarga Inmediata en Word
                             </div>
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                            <h3 class="text-2xl sm:text-3xl font-extrabold !text-white tracking-tight m-0">
                                 Blinda tu Pyme Hoy Mismo con los 21 Documentos Oficiales
                             </h3>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
                                 Ahorra cientos de miles de pesos en multas y honorarios jurídicos. Recibe en tu correo el paquete completo en formato Word 100% editable con instrucciones de completado en 15 minutos.
                             </p>
                             <div class="pt-2">
-                                <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-sky-500 hover:bg-sky-400 text-white font-extrabold text-sm rounded-2xl shadow-xl shadow-sky-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                                <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-sky-500 hover:bg-sky-400 !text-white font-extrabold text-sm rounded-2xl shadow-xl shadow-sky-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer !no-underline">
                                     <span>Obtener Kit Blindaje Pyme por $19.990</span>
                                     <span class="material-icons text-base">arrow_forward</span>
                                 </a>
                             </div>
-                            <p class="text-[11px] text-slate-400">
+                            <p class="text-[11px] text-slate-400 m-0">
                                 Pago único vía Webpay / Flow • Descarga instantánea + envío automático a tu correo • Actualizado normativa 2026
                             </p>
                         </div>
@@ -794,27 +908,40 @@
                 if (c.checked) checkedCount++;
             });
 
+            const percent = (checkedCount / 10) * 100;
             const badge = document.getElementById('risk-score-badge');
+            const pBar = document.getElementById('risk-progress-bar');
+            const pText = document.getElementById('risk-progress-text');
             const title = document.getElementById('risk-result-title');
             const desc = document.getElementById('risk-result-desc');
 
-            badge.innerText = checkedCount + '/10 Cumplidos';
+            badge.innerText = checkedCount + ' / 10 Cumplidos (' + Math.round(percent) + '%)';
+            pBar.style.width = percent + '%';
 
             if (checkedCount <= 4) {
-                badge.className = 'px-3.5 py-1.5 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold text-xs text-center';
+                badge.className = 'px-4 py-2 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 font-extrabold text-xs text-center shadow-xs';
+                pBar.className = 'bg-rose-500 h-full transition-all duration-300 ease-out';
+                pText.innerText = 'Riesgo Crítico de Multa';
+                pText.className = 'text-rose-400 font-semibold';
                 title.innerText = 'Riesgo Financiero Alto';
                 title.className = 'text-sm font-bold text-rose-400';
                 desc.innerText = 'Te faltan ' + (10 - checkedCount) + ' documentos esenciales. Te expones a multas acumuladas de hasta $4.000.000 CLP ante una inspección de la DT.';
             } else if (checkedCount <= 8) {
-                badge.className = 'px-3.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-xs text-center';
+                badge.className = 'px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 font-extrabold text-xs text-center shadow-xs';
+                pBar.className = 'bg-amber-500 h-full transition-all duration-300 ease-out';
+                pText.innerText = 'Riesgo Moderado (Brechas Activas)';
+                pText.className = 'text-amber-400 font-semibold';
                 title.innerText = 'Riesgo Moderado de Sanción';
                 title.className = 'text-sm font-bold text-amber-400';
                 desc.innerText = 'Tienes base, pero te faltan ' + (10 - checkedCount) + ' documentos clave (como anexos 40h o protocolo Karin). Multas probables de 5 a 20 UTM.';
             } else {
-                badge.className = 'px-3.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold text-xs text-center';
-                title.innerText = '¡Empresa con Buen Nivel de Cumplimiento!';
+                badge.className = 'px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-extrabold text-xs text-center shadow-xs';
+                pBar.className = 'bg-emerald-500 h-full transition-all duration-300 ease-out';
+                pText.innerText = 'Blindaje Laboral Óptimo';
+                pText.className = 'text-emerald-400 font-semibold';
+                title.innerText = '¡Excelente Nivel de Cumplimiento!';
                 title.className = 'text-sm font-bold text-emerald-400';
-                desc.innerText = 'Cuentas con la mayoría de las carpetas. Asegúrate de mantener vigentes las actas de capacitación y la renovación trimestral de horas extras.';
+                desc.innerText = 'Cuentas con la mayoría de las carpetas obligatorias. Recuerda mantener vigentes las actas de capacitación y renovar los pactos de horas extras cada 90 días.';
             }
         }
     </script>
