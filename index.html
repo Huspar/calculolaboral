@@ -2238,9 +2238,9 @@
     <!-- Calculator Scripts -->
     <script src="/js/validation.js?v=2.0.5"></script>
     <script src="/js/salary_logic.js?v=2.0.3"></script>
-    <script src="/js/salary_ui.js?v=2.0.6"></script>
+    <script src="/js/salary_ui.js?v=2.0.7"></script>
     <script src="/js/logic.js?v=2.0.3"></script>
-    <script src="/js/ui.js?v=2.0.8"></script>
+    <script src="/js/ui.js?v=2.0.9"></script>
     <script>
         // High-end tab system switching between both calculators
         function switchCalculatorTab(tab) {
@@ -2248,6 +2248,9 @@
             const btnSueldo = document.getElementById('tab-btn-sueldo');
             const containerFiniquito = document.getElementById('finiquito-calc-container');
             const containerSueldo = document.getElementById('sueldo-calc-container');
+            const mobileBar = document.getElementById('mobile-result-bar');
+            const mobilePercentage = document.getElementById('mobile-result-percentage');
+            const mobileLabel = document.getElementById('mobile-result-label');
 
             if (tab === 'finiquito') {
                 if (containerFiniquito) containerFiniquito.classList.remove('hidden');
@@ -2255,9 +2258,11 @@
                 if (btnFiniquito) btnFiniquito.className = "py-3 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-white bg-sky-500 shadow-md shadow-sky-500/20 active:scale-[0.98] duration-100 flex flex-col items-center justify-center text-center gap-0.5";
                 if (btnSueldo) btnSueldo.className = "py-3 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-slate-600 hover:text-slate-900 hover:bg-white active:scale-[0.98] duration-100 flex flex-col items-center justify-center text-center gap-0.5";
                 
-                // Hide sueldo mobile bar and trigger calculations for finiquito
-                var mobileBar = document.getElementById('mobile-result-bar');
-                if (mobileBar) mobileBar.classList.add('translate-y-full');
+                if (mobileLabel) mobileLabel.textContent = 'Total Finiquito';
+                if (mobilePercentage) {
+                    mobilePercentage.textContent = '';
+                    mobilePercentage.classList.add('hidden');
+                }
                 if (typeof updateCalculations === 'function') updateCalculations();
             } else {
                 if (containerFiniquito) containerFiniquito.classList.add('hidden');
@@ -2265,6 +2270,10 @@
                 if (btnSueldo) btnSueldo.className = "py-3 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-white bg-sky-500 shadow-md shadow-sky-500/20 active:scale-[0.98] duration-100 flex flex-col items-center justify-center text-center gap-0.5";
                 if (btnFiniquito) btnFiniquito.className = "py-3 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-slate-600 hover:text-slate-900 hover:bg-white active:scale-[0.98] duration-100 flex flex-col items-center justify-center text-center gap-0.5";
                 
+                if (mobileLabel) mobileLabel.textContent = 'Líquido a pago';
+                if (mobilePercentage) {
+                    mobilePercentage.classList.remove('hidden');
+                }
                 // Trigger sueldo calculations
                 const salaryInput = document.getElementById('salary');
                 if (salaryInput) salaryInput.dispatchEvent(new Event('input', { bubbles: true }));

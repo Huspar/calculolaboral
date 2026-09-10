@@ -94,6 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let contractType = 'indefinido';
 
+    const isSueldoActive = () => {
+        const sueldoContainer = document.getElementById('sueldo-calc-container');
+        if (!sueldoContainer) return true; // standalone sueldo page without tabs
+        return !sueldoContainer.classList.contains('hidden');
+    };
+
     // Dynamic and safe reference to Validation module (loaded from validation.js)
     const getV = () => (typeof window !== 'undefined' && window.Validation) ? window.Validation : (typeof Validation !== 'undefined' ? Validation : null);
     const V = new Proxy({}, { get: (t, p) => (getV() ? getV()[p] : undefined) });
@@ -220,10 +226,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (display.ufVal) display.ufVal.textContent = formatCLP(CONSTANTS.UF);
                 if (display.utmVal) display.utmVal.textContent = formatCLP(CONSTANTS.UTM);
             }
-            calculate();
+            if (isSueldoActive()) {
+                calculate();
+            }
         });
 
-        calculate();
+        if (isSueldoActive()) {
+            calculate();
+        }
     };
 
     const toggleIsapre = () => {
@@ -272,8 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setText(display.percentage, '0%');
         setText(display.totalDiscounts, '$0');
 
-        // Mobile Sticky Bar
-        if (display.mobileResultBar) {
+        // Mobile Sticky Bar (only reset if Sueldo calculator is active)
+        if (display.mobileResultBar && isSueldoActive()) {
             setText(display.mobileResultValue, '$0');
             setText(display.mobileResultPercentage, '0%');
             display.mobileResultBar.classList.add('translate-y-full');
@@ -449,16 +459,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const perc = grossTotal > 0 ? (d.netSalary / grossTotal) * 100 : 0;
         setText(display.percentage, `${perc.toFixed(1)}%`);
 
-        // Update Mobile Bar
-        if (display.mobileResultBar) {
+        // Update Mobile Bar (only if Sueldo is active)
+        if (display.mobileResultBar && isSueldoActive()) {
             setText(display.mobileResultValue, formatCLP(d.netSalary));
             setText(display.mobileResultPercentage, `${perc.toFixed(1)}%`);
+            if (display.mobileResultPercentage) display.mobileResultPercentage.classList.remove('hidden');
             var mobileLabel = document.getElementById('mobile-result-label');
             if (mobileLabel) mobileLabel.textContent = 'Líquido a pago';
 
-            if (d.netSalary > 0) {
+            if (d.netSalary > 0 && window.scrollY > 200) {
                 display.mobileResultBar.classList.remove('translate-y-full');
-            } else {
+            } else if (d.netSalary <= 0) {
                 display.mobileResultBar.classList.add('translate-y-full');
             }
         }

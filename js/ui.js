@@ -10,6 +10,12 @@
 const elements = {};
 let _previousVacProp = null; // Track previous vacation proportional value for explanation message
 
+function isFiniquitoActive() {
+    const finiquitoContainer = document.getElementById('finiquito-calc-container');
+    if (!finiquitoContainer) return true; // standalone page
+    return !finiquitoContainer.classList.contains('hidden');
+}
+
 // Safe and dynamic reference to Validation module
 const getV = () => (typeof window !== 'undefined' && window.Validation) ? window.Validation : (typeof Validation !== 'undefined' ? Validation : null);
 const V = new Proxy({}, { get: (t, p) => (getV() ? getV()[p] : undefined) });
@@ -489,13 +495,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // SCROLL LISTENER FOR MOBILE BAR
     // ============================================
     window.addEventListener('scroll', () => {
-        if (!elements.mobileResultBar) return;
+        const mobileBar = elements.mobileResultBar || document.getElementById('mobile-result-bar');
+        if (!mobileBar) return;
 
-        // Show after 300px of scroll
-        if (window.scrollY > 300) {
-            elements.mobileResultBar.classList.remove('translate-y-full');
+        let hasValidResult = false;
+        if (isFiniquitoActive()) {
+            const mobileVal = elements.mobileResultValue || document.getElementById('mobile-result-value');
+            const txt = mobileVal ? mobileVal.textContent.trim() : '';
+            hasValidResult = txt && txt !== '$0' && txt !== '$ —' && txt !== '$ — CLP';
         } else {
-            elements.mobileResultBar.classList.add('translate-y-full');
+            const sueldoNetEl = document.getElementById('headerNetSalary');
+            const txt = sueldoNetEl ? sueldoNetEl.textContent.trim() : '';
+            hasValidResult = txt && txt !== '$0';
+        }
+
+        // Show after 200px of scroll if there is an active calculated result
+        if (window.scrollY > 200 && hasValidResult) {
+            mobileBar.classList.remove('translate-y-full');
+        } else {
+            mobileBar.classList.add('translate-y-full');
         }
     });
 
@@ -554,6 +572,14 @@ function updateCalculations() {
         // Totals Panel
         if (elements.antiquityOutput) elements.antiquityOutput.textContent = "— años, — meses";
         if (elements.totalVacationDaysOutput) elements.totalVacationDaysOutput.textContent = "— días corridos";
+
+        // Mobile Sticky Bar reset if finiquito active
+        if (isFiniquitoActive()) {
+            const mobileVal = elements.mobileResultValue || document.getElementById('mobile-result-value');
+            if (mobileVal) mobileVal.textContent = "$0";
+            const mobileBar = elements.mobileResultBar || document.getElementById('mobile-result-bar');
+            if (mobileBar) mobileBar.classList.add('translate-y-full');
+        }
 
         // Reset Styles
         if (elements.yearsRow) {
@@ -662,12 +688,26 @@ function updateCalculations() {
         if (elements.totalAmount) elements.totalAmount.textContent = format(results.total);
         if (elements.totalAmountMobile) elements.totalAmountMobile.textContent = format(results.total).replace(' CLP', '');
 
-        // Update Mobile Bottom Bar if exists
-        if (elements.mobileResultValue) elements.mobileResultValue.textContent = format(results.total).replace(' CLP', '');
-        var mobileLabel = document.getElementById('mobile-result-label');
-        if (mobileLabel) mobileLabel.textContent = 'Total Finiquito';
-        var mobilePercentage = document.getElementById('mobile-result-percentage');
-        if (mobilePercentage) mobilePercentage.textContent = '';
+        // Update Mobile Bottom Bar if exists and finiquito is active
+        if (isFiniquitoActive()) {
+            const mobileVal = elements.mobileResultValue || document.getElementById('mobile-result-value');
+            if (mobileVal) {
+                mobileVal.textContent = format(results.total).replace(' CLP', '');
+            }
+            const mobileLabel = document.getElementById('mobile-result-label');
+            if (mobileLabel) {
+                mobileLabel.textContent = 'Total Finiquito';
+            }
+            const mobilePercentage = document.getElementById('mobile-result-percentage');
+            if (mobilePercentage) {
+                mobilePercentage.textContent = '';
+                mobilePercentage.classList.add('hidden');
+            }
+            const mobileBar = elements.mobileResultBar || document.getElementById('mobile-result-bar');
+            if (mobileBar && window.scrollY > 200 && results.total > 0) {
+                mobileBar.classList.remove('translate-y-full');
+            }
+        }
 
         if (elements.yearsServiceAmount) elements.yearsServiceAmount.textContent = format(results.indemnities.yearsOfService.total);
 
@@ -968,7 +1008,7 @@ function showNotification(message, type = 'info') {
 
 // Recalcular finiquito cuando los indicadores económicos se actualizan
 document.addEventListener('indicatorsUpdated', () => {
-    if (typeof updateCalculations === 'function') {
+    if (isFiniquitoActive() && typeof updateCalculations === 'function') {
         updateCalculations();
     }
 });
