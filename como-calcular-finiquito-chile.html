@@ -162,6 +162,18 @@
     <!-- Precompiled Tailwind CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
+        @media (min-width: 1024px) {
+            [class*="lg:w-[480px]"], .lg-w-480 {
+                width: 480px !important;
+                flex-shrink: 0 !important;
+            }
+            [class*="lg:w-7/12"], .lg-col-7 {
+                width: 58.333333% !important;
+            }
+            [class*="lg:w-5/12"], .lg-col-5 {
+                width: 41.666667% !important;
+            }
+        }
         .prose-content h2 {
             font-size: 1.5rem;
             font-weight: 700;
