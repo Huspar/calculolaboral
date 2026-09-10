@@ -280,9 +280,8 @@ ${sched.text}
             await navigator.clipboard.writeText(text);
             if (elements.copyBtn) {
                 const originalHTML = elements.copyBtn.innerHTML;
-                elements.copyBtn.innerHTML = '<span class="material-icons text-sm">check_circle</span> <span>¡Anexo Copiado!</span>';
-                elements.copyBtn.classList.remove('bg-sky-500', 'hover:bg-sky-600');
-                elements.copyBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                elements.copyBtn.innerHTML = '<span class="material-icons text-base text-emerald-600">check_circle</span> <span class="text-emerald-700 font-medium">¡Texto copiado!</span>';
+                elements.copyBtn.classList.add('border-emerald-300', 'bg-emerald-50/50');
 
                 if (typeof gtag === 'function') {
                     gtag('event', 'copy_anexo_40h', {
@@ -293,8 +292,7 @@ ${sched.text}
 
                 setTimeout(() => {
                     elements.copyBtn.innerHTML = originalHTML;
-                    elements.copyBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
-                    elements.copyBtn.classList.add('bg-sky-500', 'hover:bg-sky-600');
+                    elements.copyBtn.classList.remove('border-emerald-300', 'bg-emerald-50/50');
                 }, 2500);
             }
         } catch (err) {
