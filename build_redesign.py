@@ -22,6 +22,8 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         og_img = "https://calculolaboral.cl/assets/guia-fondos-generacionales-afp-cover.png"
     elif filename == "propuesta-indemnizacion-a-todo-evento-chile.html":
         og_img = "https://calculolaboral.cl/assets/guia-indemnizacion-todo-evento-chile.jpg"
+    elif filename == "checklist-fiscalizacion-dt-pymes-chile.html":
+        og_img = "https://calculolaboral.cl/assets/guia-fiscalizacion-dt-pymes-cover.png"
     else:
         og_img = "https://calculolaboral.cl/assets/og-image.png"
     og_tags_list = [
@@ -359,6 +361,41 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         }
     ]
 
+    faqs_checklist_dt = [
+        {
+            "@type": "Question",
+            "name": "¿Cuáles son los documentos más fiscalizados por la Dirección del Trabajo a Pymes?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Los 4 documentos prioritarios en 2026 son: 1) Contratos de trabajo firmados con funciones actualizadas, 2) Anexos de reducción a 42 horas (Ley 40 Horas), 3) Protocolo de Prevención de Ley Karin con canal de denuncias (DS 44), y 4) Registro fidedigno y diario de asistencia."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿A cuánto ascienden las multas de la DT para micro y pequeñas empresas?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Conforme al Art. 506 del Código del Trabajo, para microempresas (1-9 trabajadores) las multas oscilan entre 1 y 10 UTM por infracción. Para pequeñas empresas (10-49 trabajadores), van de 2 a 40 UTM. En materias gravísimas como seguridad o Ley Karin, alcanzan hasta 60 UTM."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Qué plazo tiene la empresa para exhibir documentos no disponibles en el local?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Si los documentos no se encuentran físicamente en el local durante la visita, el fiscalizador otorga habitualmente entre 2 y 5 días hábiles para exhibirlos en la oficina de la Inspección o cargarlos en el portal Mi DT."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Se puede apelar o rebajar una multa impuesta por la DT?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí. Mediante el recurso de reconsideración administrativa del Art. 511 del Código del Trabajo, las micro y pequeñas empresas pueden solicitar una rebaja de hasta el 80% o sustitución por capacitación dentro de los 15 días hábiles siguientes a la notificación si acreditan haber corregido la infracción."
+            }
+        }
+    ]
+
     howto_sueldo = {
         "@type": "HowTo",
         "name": "Cómo Calcular el Sueldo Líquido en Chile (Fórmula 2026)",
@@ -455,7 +492,6 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/sueldo_liquido",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
                     "aggregateRating": {
                         "@type": "AggregateRating",
                         "ratingValue": "4.9",
@@ -488,7 +524,6 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/finiquito_calculator",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
                     "aggregateRating": {
                         "@type": "AggregateRating",
                         "ratingValue": "4.9",
@@ -521,7 +556,6 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/calculadora-horas-extras",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
                     "aggregateRating": {
                         "@type": "AggregateRating",
                         "ratingValue": "4.9",
@@ -561,9 +595,22 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "@type": "SoftwareApplication",
                     "name": "Calculadora de Sueldo Part-Time Chile 2026",
                     "applicationCategory": "FinanceApplication",
-                    "operatingSystem": "Web",
+                    "operatingSystem": "All",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" }
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": "4.9",
+                        "reviewCount": "215",
+                        "bestRating": "5",
+                        "worstRating": "1"
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Calculadora Sueldo Part-Time", "item": "https://calculolaboral.cl/calculadora-sueldo-part-time" }
+                    ]
                 },
                 {
                     "@type": "FAQPage",
@@ -582,7 +629,6 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/calculadora-vacaciones-proporcionales",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
                     "aggregateRating": {
                         "@type": "AggregateRating",
                         "ratingValue": "4.9",
@@ -615,7 +661,6 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/calculadora-despido-articulo-160",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
                     "aggregateRating": {
                         "@type": "AggregateRating",
                         "ratingValue": "4.9",
@@ -634,6 +679,33 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                 {
                     "@type": "FAQPage",
                     "mainEntity": faqs_despido_art160
+                }
+            ]
+        }
+    elif filename == "checklist-fiscalizacion-dt-pymes-chile.html":
+        json_ld_data = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Article",
+                    "headline": title.split("|")[0].strip(),
+                    "description": description,
+                    "image": "https://calculolaboral.cl/assets/guia-fiscalizacion-dt-pymes-cover.png",
+                    "author": { "@type": "Organization", "name": "Cálculo Laboral" },
+                    "datePublished": "2026-09-10",
+                    "dateModified": "2026-09-10"
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Para Empleadores", "item": "https://calculolaboral.cl/para-empleadores" },
+                        { "@type": "ListItem", "position": 3, "name": "Checklist Fiscalización DT (Pymes)", "item": "https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile" }
+                    ]
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": faqs_checklist_dt
                 }
             ]
         }
@@ -922,6 +994,7 @@ HEADER_HTML = """
                         <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
                             <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
                                 <a href="carta-de-renuncia-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Carta de Renuncia (Asistente)</a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">📋 Checklist Fiscalización DT (Pymes)</a>
                                 <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Indemnización a Todo Evento (Propuesta)</a>
                                 <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Fondos Generacionales AFP</a>
                                 <a href="como-calcular-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Finiquito</a>
@@ -960,6 +1033,7 @@ HEADER_HTML = """
                     <span>Portal Para Empleadores</span>
                 </a>
                 <a href="carta-de-renuncia-chile" class="block px-3 py-2 rounded-lg text-base font-semibold text-sky-600 bg-sky-50 font-bold">Carta de Renuncia (Asistente)</a>
+                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 rounded-lg text-base font-semibold text-amber-600 bg-amber-50 font-bold">📋 Checklist Fiscalización DT (Pymes)</a>
                 <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Líquido</a>
                 <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
                 <a href="calculadora-horas-extras" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Horas Extras</a>
@@ -1048,6 +1122,7 @@ FOOTER_HTML = """
                 <h4 class="text-sm font-bold text-slate-900 uppercase tracking-widest">Guías Populares</h4>
                 <ul class="space-y-2">
                     <li><a href="carta-de-renuncia-chile" class="text-sm text-sky-600 hover:text-sky-700 transition-colors font-bold">Carta de Renuncia (Asistente)</a></li>
+                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-sm text-amber-600 hover:text-amber-700 transition-colors font-bold">📋 Checklist Fiscalización DT (Pymes)</a></li>
                     <li><a href="propuesta-indemnizacion-a-todo-evento-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Indemnización Todo Evento</a></li>
                     <li><a href="fondos-generacionales-afp-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Fondos Generacionales AFP</a></li>
                     <li><a href="como-calcular-finiquito-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Cómo Calcular Finiquito</a></li>
@@ -3747,6 +3822,22 @@ blog_content = """
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 000. Checklist Fiscalización DT (Pymes) -->
+        <a href="checklist-fiscalizacion-dt-pymes-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+            <div class="aspect-video bg-slate-100 overflow-hidden relative border-b border-slate-100">
+                <img src="assets/guia-fiscalizacion-dt-pymes-cover.png" alt="Checklist Fiscalización DT Pymes Chile 2026" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <span class="absolute top-4 left-4 bg-amber-500 text-slate-950 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-xs">Guía Pymes & DT</span>
+            </div>
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2">Checklist Fiscalización DT 2026: 10 Documentos que Pide la Inspección a Pymes</h3>
+                <p class="text-slate-500 text-xs leading-relaxed mb-4">Guía oficial con los 10 documentos obligatorios, tabla de multas por tamaño de empresa (hasta 60 UTM) y cómo evitar sanciones.</p>
+                <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                    <span>Septiembre 2026</span>
+                    <span>8 min lectura</span>
+                </div>
+            </div>
+        </a>
+
         <!-- 00. Indemnización a Todo Evento (Propuesta) -->
         <a href="propuesta-indemnizacion-a-todo-evento-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
             <div class="aspect-video bg-slate-100 overflow-hidden relative border-b border-slate-100">
