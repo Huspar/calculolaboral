@@ -14,3 +14,8 @@ __pycache__/
 audit_results*.txt
 git_log*.txt
 temp_*
+
+# Digital Product Files (Paid - do not expose)
+Kit_Blindaje_Laboral_Pyme_2026/
+*.zip
+assets/downloads/
