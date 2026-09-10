@@ -316,23 +316,50 @@
     </header>
 
     <!-- Indicators Grid / Mobile Carousel (4 Cards) -->
-    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 mt-3 sm:mt-4 mb-4 sm:mb-6 no-print">
-        <div class="flex overflow-x-auto sm:grid sm:grid-cols-4 gap-2.5 sm:gap-3.5 pb-1 sm:pb-0 snap-x snap-mandatory scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 shadow-xs sm:shadow-2xs">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 truncate">UF</span>
-                <span class="uf-value text-sm sm:text-base font-extrabold text-slate-900 font-mono tracking-tight">$39.682,99</span>
+    <style>
+        @media (max-width: 639px) {
+            .indicators-carousel {
+                display: flex !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            .indicator-card {
+                min-width: 148px !important;
+                max-width: 148px !important;
+                width: 148px !important;
+                flex-shrink: 0 !important;
+                scroll-snap-align: start !important;
+            }
+        }
+        @media (min-width: 640px) {
+            .indicators-carousel {
+                display: grid !important;
+            }
+            .indicator-card {
+                width: auto !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+    </style>
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-3 sm:mt-4 mb-4 sm:mb-6 no-print overflow-hidden sm:overflow-visible">
+        <div class="indicators-carousel sm:grid-cols-4 gap-3 sm:gap-3.5 pb-2 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-3.5 shadow-xs sm:shadow-2xs hover:border-slate-300 transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Valor UF</span>
+                <span class="uf-value text-[15px] sm:text-base font-black text-slate-900 font-mono tracking-tight">$39.682,99</span>
             </div>
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 shadow-xs sm:shadow-2xs">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 truncate">UTM</span>
-                <span class="utm-value text-sm sm:text-base font-extrabold text-slate-900 font-mono tracking-tight">$69.611</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-3.5 shadow-xs sm:shadow-2xs hover:border-slate-300 transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">UTM Mensual</span>
+                <span class="utm-value text-[15px] sm:text-base font-black text-slate-900 font-mono tracking-tight">$69.611</span>
             </div>
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 shadow-xs sm:shadow-2xs">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 truncate">Sueldo Mínimo</span>
-                <span class="imm-value text-sm sm:text-base font-extrabold text-slate-900 font-mono tracking-tight">$553.553</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-3.5 shadow-xs sm:shadow-2xs hover:border-slate-300 transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Sueldo Mínimo</span>
+                <span class="imm-value text-[15px] sm:text-base font-black text-slate-900 font-mono tracking-tight">$553.553</span>
             </div>
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 shadow-xs sm:shadow-2xs">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 truncate">Tope AFP</span>
-                <span class="text-sm sm:text-base font-extrabold text-slate-900 font-mono tracking-tight">89,9 UF</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-3.5 shadow-xs sm:shadow-2xs hover:border-slate-300 transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tope AFP</span>
+                <span class="text-[15px] sm:text-base font-black text-slate-900 font-mono tracking-tight">89,9 UF</span>
             </div>
         </div>
     </div>

@@ -629,41 +629,68 @@
 
     
     <!-- Indicators Carousel (Mobile) / Grid (Desktop) -->
-    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 mt-3 sm:mt-4 mb-4 sm:mb-8 no-print">
-        <div class="flex overflow-x-auto sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 pb-1.5 sm:pb-0 snap-x snap-mandatory scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+    <style>
+        @media (max-width: 639px) {
+            .indicators-carousel {
+                display: flex !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            .indicator-card {
+                min-width: 148px !important;
+                max-width: 148px !important;
+                width: 148px !important;
+                flex-shrink: 0 !important;
+                scroll-snap-align: start !important;
+            }
+        }
+        @media (min-width: 640px) {
+            .indicators-carousel {
+                display: grid !important;
+            }
+            .indicator-card {
+                width: auto !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+    </style>
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-3 sm:mt-4 mb-4 sm:mb-8 no-print overflow-hidden sm:overflow-visible">
+        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 pb-2 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
             <!-- UF Card -->
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200/90 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5 sm:mb-1 truncate">UF (Unidad Fomento)</span>
-                <span class="uf-value text-sm sm:text-lg font-extrabold text-slate-900 font-mono tracking-tight">$39.682,99</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Valor UF</span>
+                <span class="uf-value text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">$39.682,99</span>
             </div>
             <!-- UTM Card -->
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200/90 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5 sm:mb-1 truncate">UTM Mensual</span>
-                <span class="utm-value text-sm sm:text-lg font-extrabold text-slate-900 font-mono tracking-tight">$69.611</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">UTM Mensual</span>
+                <span class="utm-value text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">$69.611</span>
             </div>
             <!-- Sueldo Mínimo Card -->
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200/90 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5 sm:mb-1 truncate">Sueldo Mínimo</span>
-                <span class="text-sm sm:text-lg font-extrabold text-slate-900 font-mono tracking-tight">$553.553</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Sueldo Mínimo</span>
+                <span class="text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">$553.553</span>
             </div>
             <!-- Tope AFP Card -->
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200/90 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5 sm:mb-1 truncate">Tope Imponible AFP</span>
-                <span class="text-sm sm:text-lg font-extrabold text-slate-900 font-mono tracking-tight">89.9 UF</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tope AFP</span>
+                <span class="text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">89.9 UF</span>
             </div>
             <!-- Tope Finiquito Card -->
-            <div class="shrink-0 w-[138px] sm:w-auto snap-start bg-white border border-slate-200/90 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5 sm:mb-1 truncate">Tope Finiquito</span>
-                <span class="text-sm sm:text-lg font-extrabold text-slate-900 font-mono tracking-tight">90 UF</span>
+            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
+                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tope Finiquito</span>
+                <span class="text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">90 UF</span>
             </div>
         </div>
-        <div class="flex justify-between items-center mt-1.5 sm:mt-2.5 px-0.5 text-[10px] text-slate-500 font-medium">
-            <div id="indicators-status" class="flex items-center gap-1 sm:gap-1.5 text-slate-500 text-[9px] sm:text-[10px]">
-                <span class="material-icons text-[12px] sm:text-[13px] text-emerald-500">check_circle</span>
-                <span>Valores oficiales (Banco Central de Chile)</span>
+        <div class="flex justify-between items-center mt-2 sm:mt-2.5 px-0.5 text-[10px] text-slate-500 font-medium">
+            <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500 text-[10px]">
+                <span class="material-icons text-[13px] text-emerald-500">check_circle</span>
+                <span>Valores oficiales vigentes (Banco Central de Chile)</span>
             </div>
-            <a href="#" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[9px] sm:text-[10px]">
-                <span class="material-icons text-[11px] sm:text-[12px]">history</span>
+            <a href="#" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px]">
+                <span class="material-icons text-[12px]">history</span>
                 <span>Historial</span>
             </a>
         </div>
