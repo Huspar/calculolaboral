@@ -6274,6 +6274,1208 @@ PART_TIME_SCRIPTS = """
     </script>
 """
 
+
+VACACIONES_PROPORCIONALES_CONTENT = """
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+            <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
+            <span class="material-icons text-xs">chevron_right</span>
+            <span class="text-slate-600 font-semibold">Calculadora de Vacaciones Proporcionales</span>
+        </nav>
+
+        <!-- Hero Header Section -->
+        <div class="text-center my-8 max-w-2xl mx-auto no-print">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-200 mb-3">
+                <span class="material-icons text-xs text-sky-600">beach_access</span> Art. 67 y 73 Código del Trabajo • Fórmulas Oficiales DT
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+                Calculadora de Vacaciones Proporcionales Chile 2026
+            </h1>
+            <p class="text-slate-500 text-sm mt-1">
+                Calcula gratis tus <strong>días hábiles acumulados</strong>, la <strong>proyección obligatoria de días inhábiles</strong> (sábados, domingos y festivos) y el monto total en dinero a liquidar en tu finiquito según la Dirección del Trabajo.
+            </p>
+        </div>
+
+        <!-- Two Column Interactive Layout (440px Inputs Left, Flexible Results Right) -->
+        <div class="flex flex-col lg:flex-row gap-8 items-start mb-16">
+            
+            <!-- Left Column: Form Controls (440px Fixed) -->
+            <div class="w-full lg:w-[440px] shrink-0 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span class="material-icons text-sky-500">tune</span> Datos para el cálculo
+                    </h2>
+                    <span class="text-[11px] font-mono text-slate-400 font-semibold">Dictamen DT N° 4535/209</span>
+                </div>
+
+                <!-- 1. Fechas de Contrato -->
+                <div class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="vac-fecha-inicio" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                Fecha de Inicio
+                            </label>
+                            <input type="date" id="vac-fecha-inicio" onchange="calculateVacaciones()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        </div>
+                        <div>
+                            <label for="vac-fecha-termino" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                Fecha de Término
+                            </label>
+                            <input type="date" id="vac-fecha-termino" onchange="calculateVacaciones()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        </div>
+                    </div>
+                    <!-- Presets rápidos -->
+                    <div class="flex items-center gap-1.5 pt-1">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-1">Rango rápido:</span>
+                        <button type="button" onclick="setVacRangeMonths(6)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">6 Meses</button>
+                        <button type="button" onclick="setVacRangeMonths(12)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">1 Año</button>
+                        <button type="button" onclick="setVacRangeMonths(24)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">2 Años</button>
+                    </div>
+                </div>
+
+                <!-- 2. Sueldo Base Mensual + Fijos -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label for="vac-sueldo-base" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            Sueldo Base Mensual
+                        </label>
+                        <button type="button" onclick="setVacSueldoMinimo()" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg transition-colors cursor-pointer active:scale-95">
+                            Usar Mínimo ($553.553)
+                        </button>
+                    </div>
+                    <div class="relative rounded-2xl shadow-sm">
+                        <input type="text" id="vac-sueldo-base" value="$ 553.553" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatVacInput(this); calculateVacaciones();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Remuneración fija mensual para el cálculo diario (Sueldo / 30 según Art. 71 CT).</p>
+                </div>
+
+                <!-- 3. Días ya Tomados / Anticipados -->
+                <div>
+                    <label for="vac-dias-tomados" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Días Hábiles ya Disfrutados / Tomados
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <input type="number" id="vac-dias-tomados" value="0" min="0" max="60" step="0.5" oninput="calculateVacaciones()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
+                        <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">días hábiles</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Días de vacaciones que ya te tomaste durante este contrato.</p>
+                </div>
+
+                <!-- 4. Régimen de Vacaciones (General vs Zona Extrema) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                        Régimen Geográfico
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="vac-regimen" value="general" checked onchange="calculateVacaciones()" class="peer sr-only">
+                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
+                                Régimen General <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">15 días/año (1.25/mes)</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="vac-regimen" value="extrema" onchange="calculateVacaciones()" class="peer sr-only">
+                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
+                                Zona Extrema <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">20 días/año (1.67/mes)</span>
+                            </div>
+                        </label>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Zona extrema aplica a Regiones de Aysén, Magallanes y Provincia de Palena (Art. 67 CT).</p>
+                </div>
+
+                <!-- 5. Distribución de Jornada (5 o 6 días) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                        Jornada Semanal de Trabajo
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="vac-jornada" value="5" checked onchange="calculateVacaciones()" class="peer sr-only">
+                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
+                                Lunes a Viernes <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Sábado inhábil (DT)</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="vac-jornada" value="6" onchange="calculateVacaciones()" class="peer sr-only">
+                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
+                                Lunes a Sábado <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Sábado hábil laboral</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 6. Feriado Progresivo Adicional (Opcional) -->
+                <div class="pt-2 border-t border-slate-100">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label for="vac-dias-progresivos" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            Feriado Progresivo (Opcional)
+                        </label>
+                        <span class="text-[10px] font-mono text-slate-400">+1 día c/3 años tras 10 años</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="number" id="vac-dias-progresivos" value="0" min="0" max="15" step="1" oninput="calculateVacaciones()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
+                        <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">días hábiles extras</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Interactive Results (Flexible) -->
+            <div class="flex-1 w-full bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                
+                <!-- Primary Hero Result Card -->
+                <div class="p-6 bg-gradient-to-br from-sky-500/10 via-sky-500/5 to-transparent border-2 border-sky-400/40 rounded-2xl relative overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                        <span class="text-xs font-bold text-sky-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="material-icons text-sm">payments</span> Total Feriado Proporcional a Pagar
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                            Monto Bruto en Finiquito
+                        </span>
+                    </div>
+                    <div class="mt-2 mb-3">
+                        <span id="vac-monto-total" class="text-3xl sm:text-5xl font-extrabold text-slate-900 font-mono tracking-tight">$ 0</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Este monto corresponde a la compensación íntegra en dinero del feriado legal y proporcional pendiente. <strong>No está afecto a cotizaciones previsionales de AFP ni Salud</strong> (Dictamen DT N° 2399/112).
+                    </p>
+                </div>
+
+                <!-- 3 Stat KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center sm:text-left">
+                        <span class="text-slate-500 block text-[10px] font-bold uppercase tracking-wider mb-1">Días Hábiles Netos</span>
+                        <div class="flex items-baseline justify-center sm:justify-start gap-1">
+                            <span class="font-mono font-bold text-xl text-slate-900" id="vac-habiles-netos">0.00</span>
+                            <span class="text-xs text-slate-500 font-semibold">días</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 block mt-1">Devengados menos tomados</span>
+                    </div>
+                    <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 text-center sm:text-left">
+                        <span class="text-amber-800 block text-[10px] font-bold uppercase tracking-wider mb-1">Inhábiles Proyectados</span>
+                        <div class="flex items-baseline justify-center sm:justify-start gap-1">
+                            <span class="font-mono font-bold text-xl text-amber-700" id="vac-inhabiles-proyectados">+0.00</span>
+                            <span class="text-xs text-amber-800 font-semibold">días</span>
+                        </div>
+                        <span class="text-[10px] text-amber-700/80 block mt-1">Fines de semana y festivos DT</span>
+                    </div>
+                    <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 text-center sm:text-left">
+                        <span class="text-emerald-800 block text-[10px] font-bold uppercase tracking-wider mb-1">Total Días a Liquidar</span>
+                        <div class="flex items-baseline justify-center sm:justify-start gap-1">
+                            <span class="font-mono font-bold text-xl text-emerald-700" id="vac-total-dias">0.00</span>
+                            <span class="text-xs text-emerald-800 font-semibold">días corridos</span>
+                        </div>
+                        <span class="text-[10px] text-emerald-700/80 block mt-1">Multiplicados por sueldo diario</span>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown List -->
+                <div class="space-y-3 pt-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Desglose Técnico de la Liquidación</h4>
+                    <div class="space-y-2 text-xs divide-y divide-slate-100">
+                        <div class="flex justify-between items-center pt-1">
+                            <span class="text-slate-600">Tiempo trabajado computable:</span>
+                            <span class="font-semibold text-slate-800" id="vac-tiempo-computable">0 meses y 0 días</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-600">Días hábiles acumulados brutos:</span>
+                            <span class="font-mono font-semibold text-slate-800" id="vac-habiles-devengados">0.00 días</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-600">Días hábiles ya disfrutados (descuento):</span>
+                            <span class="font-mono font-semibold text-slate-800" id="vac-dias-tomados-res">-0.00 días</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-600">Remuneración diaria íntegra (Sueldo / 30):</span>
+                            <span class="font-mono font-semibold text-slate-800" id="vac-sueldo-diario">$ 18.452 / día</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-600">Proyección DT en calendario corrido:</span>
+                            <span class="font-semibold text-slate-800 text-right" id="vac-proyeccion-detalle">Calculando proyección...</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 font-bold text-sm">
+                            <span class="text-slate-900">Total Indemnización Feriado Proporcional:</span>
+                            <span class="font-mono text-sky-600 text-base" id="vac-breakdown-total">$ 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-4 flex flex-col sm:flex-row gap-3 border-t border-slate-100">
+                    <button type="button" onclick="copyVacResults()" id="vac-copy-btn" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                        <span class="material-icons text-sm">content_copy</span> <span id="vac-copy-text">Copiar Resumen</span>
+                    </button>
+                    <button type="button" onclick="shareVacWhatsApp()" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 active:scale-95 cursor-pointer">
+                        <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.586 1.761.882 2.796.883 3.18 0 5.767-2.586 5.768-5.766.001-3.18-2.585-5.77-5.768-5.77zm3.394 8.204c-.146.415-.85.766-1.177.812-.328.047-.751.066-2.197-.533-1.848-.767-3.04-2.646-3.133-2.769-.092-.122-.743-.99-.743-1.89 0-.899.469-1.343.636-1.527.167-.184.364-.23.486-.23.121 0 .243.002.348.007.111.005.259-.042.404.307.149.358.508 1.238.552 1.329.045.091.076.197.015.318-.061.122-.091.198-.182.304-.091.106-.192.237-.274.318-.091.091-.186.19-.08.373.106.182.471.777 1.01 1.258.694.619 1.28.81 1.462.901.182.091.289.076.395-.046.106-.122.456-.532.577-.714.122-.182.243-.152.408-.091.167.061 1.062.5 1.244.591.182.091.304.137.348.213.045.076.045.441-.101.856zM12 2C6.477 2 2 6.477 2 12c0 1.891.526 3.662 1.442 5.176L2 22l4.98-1.306A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+                        Compartir en WhatsApp
+                    </button>
+                    <a href="finiquito_calculator" class="flex-1 py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center shadow-md shadow-sky-500/10 active:scale-95">
+                        <span class="material-icons text-sm">calculate</span> Finiquito Completo
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Explanatory SEO Content Section -->
+        <article class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
+            
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">¿Cómo se calculan las vacaciones proporcionales en Chile en 2026?</h2>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+                    En la legislación laboral chilena, el derecho al descanso anual es irrenunciable. Conforme al <strong>artículo 67 del Código del Trabajo</strong>, todo trabajador con más de un año de servicio tiene derecho a un feriado anual de <strong>15 días hábiles</strong> con remuneración íntegra (20 días en la zona extrema del país).
+                </p>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+                    Cuando el contrato de trabajo termina antes de cumplir la anualidad, o si existen días de descanso acumulados que no alcanzaron a tomarse, el <strong>artículo 73 del Código del Trabajo</strong> establece la obligación patronal de indemnizar dichos días en dinero dentro del finiquito.
+                </p>
+                
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6">
+                    <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
+                        <span class="material-icons text-sky-500 text-base">functions</span> Regla Oficial de la Dirección del Trabajo (DT)
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-600 font-mono bg-white p-3 rounded-xl border border-slate-200 mb-3">
+                        Días Hábiles = (Meses Trabajados × 1,25) + (Días de Fracción × 0,04167)
+                    </p>
+                    <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                        <li><strong>Factor Régimen General:</strong> 1,25 días hábiles por mes corrido completo (15 días / 12 meses).</li>
+                        <li><strong>Factor Fracción Diaria:</strong> 0,04167 días hábiles por cada día adicional de contrato (1,25 / 30).</li>
+                        <li><strong>Zona Extrema (Aysén, Magallanes y Palena):</strong> Factor mensual de <strong>1,67 días hábiles</strong> (20 días / 12 meses).</li>
+                        <li><strong>Sueldo Diario:</strong> Sueldo Base mensual dividido por 30 (Art. 71 CT).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Por qué se pagan los fines de semana (Inhábiles) -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">¿Por qué se suman los días sábados y domingos al finiquito?</h3>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+                    Uno de los errores más comunes cometidos por empleadores al liquidar finiquitos es pagar únicamente los días hábiles acumulados. La Dirección del Trabajo, mediante reiterados dictámenes (como el <strong>Dictamen N° 4535/209 y N° 581/15</strong>), ha establecido la <em>regla de la proyección del feriado en días corridos</em>.
+                </p>
+                <div class="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 text-amber-950 text-xs sm:text-sm leading-relaxed space-y-2">
+                    <p class="font-bold flex items-center gap-1.5 text-amber-900">
+                        <span class="material-icons text-amber-600 text-base">gavel</span> Criterio Vinculante de la Dirección del Trabajo:
+                    </p>
+                    <p>
+                        Para pagar el feriado proporcional, se debe situar al trabajador en el día siguiente hábil al término de su contrato de trabajo y computar correlativamente los días hábiles de vacaciones que le corresponden. <strong>Todos los días inhábiles (sábados, domingos y festivos) que queden comprendidos dentro de ese período ficticio de descanso deben sumarse y pagarse en el finiquito.</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Table: Quick Reference by Months -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Tabla de Referencia Rápida de Vacaciones Proporcionales (Régimen General)</h3>
+                <p class="text-xs sm:text-sm text-slate-500 mb-4">Estimación basada en jornada de lunes a viernes con sueldo mínimo ($553.553 CLP - $18.452 diario):</p>
+                <div class="overflow-x-auto border border-slate-200 rounded-2xl mb-6">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                <th class="p-3.5">Tiempo Trabajado</th>
+                                <th class="p-3.5 text-slate-800">Días Hábiles</th>
+                                <th class="p-3.5 text-amber-700">Inhábiles Aprox.</th>
+                                <th class="p-3.5 text-sky-600">Total Días Corridos</th>
+                                <th class="p-3.5 text-emerald-600">Monto Aprox. (Mínimo)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-mono">
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-800 font-sans">1 Mes</td>
+                                <td class="p-3.5 text-slate-700">1,25 días</td>
+                                <td class="p-3.5 text-amber-700">+0 días</td>
+                                <td class="p-3.5 text-sky-600 font-bold">1,25 días</td>
+                                <td class="p-3.5 text-emerald-600 font-bold">$23.065</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-800 font-sans">3 Meses</td>
+                                <td class="p-3.5 text-slate-700">3,75 días</td>
+                                <td class="p-3.5 text-amber-700">+1 día</td>
+                                <td class="p-3.5 text-sky-600 font-bold">4,75 días</td>
+                                <td class="p-3.5 text-emerald-600 font-bold">$87.647</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-800 font-sans">6 Meses</td>
+                                <td class="p-3.5 text-slate-700">7,50 días</td>
+                                <td class="p-3.5 text-amber-700">+3 días</td>
+                                <td class="p-3.5 text-sky-600 font-bold">10,50 días</td>
+                                <td class="p-3.5 text-emerald-600 font-bold">$193.746</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-800 font-sans">9 Meses</td>
+                                <td class="p-3.5 text-slate-700">11,25 días</td>
+                                <td class="p-3.5 text-amber-700">+4 días</td>
+                                <td class="p-3.5 text-sky-600 font-bold">15,25 días</td>
+                                <td class="p-3.5 text-emerald-600 font-bold">$281.393</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-800 font-sans">12 Meses (1 Año)</td>
+                                <td class="p-3.5 text-slate-700">15,00 días</td>
+                                <td class="p-3.5 text-amber-700">+6 días</td>
+                                <td class="p-3.5 text-sky-600 font-bold">21,00 días</td>
+                                <td class="p-3.5 text-emerald-600 font-bold">$387.492</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Preguntas Frecuentes Didácticas -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-900">Preguntas Frecuentes sobre Vacaciones Proporcionales</h3>
+                
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
+                    <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <span class="material-icons text-sky-500 text-base">help_outline</span> ¿Las vacaciones proporcionales descuentan AFP y Fonasa?
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-600">
+                        No. La indemnización por feriado proporcional tiene carácter indemnizatorio e indemniza el descanso no gozado. El <strong>Dictamen DT N° 2399/112</strong> y la Superintendencia de Pensiones ratifican que no constituye remuneración imponible, por lo que <strong>no se le descuenta AFP, Salud ni AFC</strong>. Solo está afecta al Impuesto Único de Segunda Categoría si sobrepasa los tramos exentos en conjunto con la liquidación del mes.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
+                    <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <span class="material-icons text-sky-500 text-base">help_outline</span> ¿Me pagan las vacaciones si renuncio voluntariamente?
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-600">
+                        Sí, de manera obligatoria. El feriado proporcional es un derecho adquirido e irrenunciable. Independientemente de si la relación laboral terminó por renuncia voluntaria, despido disciplinario (Art. 160), despido por necesidades de la empresa (Art. 161) o mutuo acuerdo, el empleador debe pagar la totalidad de los días devengados.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
+                    <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <span class="material-icons text-sky-500 text-base">help_outline</span> ¿Prescriben las vacaciones acumuladas si no me las tomé?
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-600">
+                        El Código del Trabajo permite acumular un máximo de 2 períodos consecutivos antes de que el empleador esté obligado a otorgar el descanso. Al momento del finiquito, los tribunales y la Dirección del Trabajo exigen el pago de todos los períodos adeudados pendientes dentro del plazo de prescripción laboral general (2 años desde que se hicieron exigibles según el Art. 510 CT).
+                    </p>
+                </div>
+            </div>
+
+        </article>
+"""
+
+VACACIONES_PROPORCIONALES_SCRIPTS = """
+    <script>
+        const CHILE_HOLIDAYS = [
+            '2025-01-01', '2025-04-18', '2025-04-19', '2025-05-01', '2025-05-21', '2025-06-20', '2025-06-29', '2025-07-16', '2025-08-15', '2025-09-18', '2025-09-19', '2025-10-12', '2025-10-31', '2025-11-01', '2025-12-08', '2025-12-25',
+            '2026-01-01', '2026-04-03', '2026-04-04', '2026-05-01', '2026-05-21', '2026-06-21', '2026-06-29', '2026-07-16', '2026-08-15', '2026-09-18', '2026-09-19', '2026-10-12', '2026-10-31', '2026-11-01', '2026-12-08', '2026-12-25',
+            '2027-01-01', '2027-03-26', '2027-03-27', '2027-05-01', '2027-05-21', '2027-06-21', '2027-06-29', '2027-07-16', '2027-08-15', '2027-09-18', '2027-09-19', '2027-10-12', '2027-10-31', '2027-11-01', '2027-12-08', '2027-12-25'
+        ];
+
+        function formatVacCurrency(amount) {
+            return '$ ' + Math.round(amount).toLocaleString('es-CL');
+        }
+
+        function parseVacCurrency(str) {
+            if (!str) return 0;
+            return parseInt(str.replace(/[^0-9]/g, ''), 10) || 0;
+        }
+
+        function formatVacInput(input) {
+            let val = parseVacCurrency(input.value);
+            input.value = formatVacCurrency(val);
+        }
+
+        function setVacSueldoMinimo() {
+            var el = document.getElementById('vac-sueldo-base');
+            if (el) {
+                el.value = '$ 553.553';
+                calculateVacaciones();
+            }
+        }
+
+        function setVacRangeMonths(months) {
+            var end = new Date();
+            var start = new Date();
+            start.setMonth(start.getMonth() - months);
+
+            var endStr = end.toISOString().split('T')[0];
+            var startStr = start.toISOString().split('T')[0];
+
+            var inStart = document.getElementById('vac-fecha-inicio');
+            var inEnd = document.getElementById('vac-fecha-termino');
+            if (inStart && inEnd) {
+                inStart.value = startStr;
+                inEnd.value = endStr;
+                calculateVacaciones();
+            }
+        }
+
+        function calculateVacaciones() {
+            var inStart = document.getElementById('vac-fecha-inicio');
+            var inEnd = document.getElementById('vac-fecha-termino');
+            if (!inStart || !inEnd) return;
+
+            var startStr = inStart.value;
+            var endStr = inEnd.value;
+            if (!startStr || !endStr) return;
+
+            var partsS = startStr.split('-').map(Number);
+            var partsE = endStr.split('-').map(Number);
+            var startDate = new Date(partsS[0], partsS[1] - 1, partsS[2]);
+            var endDate = new Date(partsE[0], partsE[1] - 1, partsE[2]);
+
+            var sueldoBase = parseVacCurrency(document.getElementById('vac-sueldo-base').value) || 0;
+            var diasTomados = parseFloat(document.getElementById('vac-dias-tomados').value) || 0;
+            var diasProgresivos = parseFloat(document.getElementById('vac-dias-progresivos')?.value || 0) || 0;
+            var regimen = document.querySelector('input[name="vac-regimen"]:checked')?.value || 'general';
+            var jornada = document.querySelector('input[name="vac-jornada"]:checked')?.value || '5';
+
+            if (endDate <= startDate) {
+                document.getElementById('vac-monto-total').textContent = '$ 0';
+                document.getElementById('vac-habiles-netos').textContent = '0.00';
+                document.getElementById('vac-inhabiles-proyectados').textContent = '+0.00';
+                document.getElementById('vac-total-dias').textContent = '0.00';
+                document.getElementById('vac-tiempo-computable').textContent = 'La fecha de término debe ser posterior a la de inicio';
+                document.getElementById('vac-breakdown-total').textContent = '$ 0';
+                return;
+            }
+
+            // Days difference inclusive
+            var diffDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            var monthsWorked = Math.floor(diffDays / 30);
+            var remDaysWorked = diffDays % 30;
+
+            var factorMensual = (regimen === 'extrema') ? (20.0 / 12.0) : 1.25;
+            var factorDiario = factorMensual / 30.0;
+
+            var habilesBrutos = (monthsWorked * factorMensual) + (remDaysWorked * factorDiario) + diasProgresivos;
+            var habilesNetos = Math.max(0, habilesBrutos - diasTomados);
+
+            // DT Projection: project habilesNetos forward from the day following termination
+            var inhabilesCount = 0;
+            var habilesRemaining = habilesNetos;
+            var curr = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+            curr.setDate(curr.getDate() + 1);
+
+            var iterations = 0;
+            while (habilesRemaining > 0 && iterations < 180) {
+                iterations++;
+                var dayOfWeek = curr.getDay(); // 0 = Sun, 6 = Sat
+                var isSat = (dayOfWeek === 6);
+                var isSun = (dayOfWeek === 0);
+                
+                var mm = String(curr.getMonth() + 1).padStart(2, '0');
+                var dd = String(curr.getDate()).padStart(2, '0');
+                var dateKey = curr.getFullYear() + '-' + mm + '-' + dd;
+                var isHoliday = CHILE_HOLIDAYS.includes(dateKey);
+
+                var isWorkDay = true;
+                if (jornada === '5') {
+                    if (isSat || isSun || isHoliday) isWorkDay = false;
+                } else {
+                    if (isSun || isHoliday) isWorkDay = false;
+                }
+
+                if (isWorkDay) {
+                    if (habilesRemaining >= 1.0) {
+                        habilesRemaining -= 1.0;
+                    } else {
+                        // fraction
+                        habilesRemaining = 0;
+                    }
+                } else {
+                    inhabilesCount += 1.0;
+                }
+                curr.setDate(curr.getDate() + 1);
+            }
+
+            var totalDiasLiquidables = habilesNetos + inhabilesCount;
+            var sueldoDiario = sueldoBase / 30.0;
+            var totalMonto = Math.round(totalDiasLiquidables * sueldoDiario);
+
+            // Update DOM
+            document.getElementById('vac-monto-total').textContent = formatVacCurrency(totalMonto);
+            document.getElementById('vac-habiles-netos').textContent = habilesNetos.toFixed(2);
+            document.getElementById('vac-inhabiles-proyectados').textContent = '+' + inhabilesCount.toFixed(2);
+            document.getElementById('vac-total-dias').textContent = totalDiasLiquidables.toFixed(2);
+
+            document.getElementById('vac-tiempo-computable').textContent = monthsWorked + ' meses y ' + remDaysWorked + ' días';
+            document.getElementById('vac-habiles-devengados').textContent = habilesBrutos.toFixed(2) + ' días';
+            document.getElementById('vac-dias-tomados-res').textContent = '-' + diasTomados.toFixed(1) + ' días';
+            document.getElementById('vac-sueldo-diario').textContent = formatVacCurrency(sueldoDiario) + ' / día';
+            document.getElementById('vac-proyeccion-detalle').textContent = inhabilesCount.toFixed(0) + ' días inhábiles proyectados (DT)';
+            document.getElementById('vac-breakdown-total').textContent = formatVacCurrency(totalMonto);
+        }
+
+        function copyVacResults() {
+            var total = document.getElementById('vac-monto-total').textContent;
+            var netos = document.getElementById('vac-habiles-netos').textContent;
+            var inhab = document.getElementById('vac-inhabiles-proyectados').textContent;
+            var dias = document.getElementById('vac-total-dias').textContent;
+            var tiempo = document.getElementById('vac-tiempo-computable').textContent;
+
+            var lines = [
+                "RESUMEN DE VACACIONES PROPORCIONALES (calculolaboral.cl)",
+                "Tiempo computable: " + tiempo,
+                "Días hábiles netos: " + netos + " días",
+                "Inhábiles proyectados (DT): " + inhab + " días",
+                "Total días corridos a pagar: " + dias + " días",
+                "TOTAL A PAGAR EN FINIQUITO: " + total,
+                "Calculado gratis según normativa DT en https://calculolaboral.cl/calculadora-vacaciones-proporcionales"
+            ];
+            var txt = lines.join(String.fromCharCode(10));
+
+            navigator.clipboard.writeText(txt).then(function() {
+                var btnText = document.getElementById('vac-copy-text');
+                if (btnText) {
+                    btnText.textContent = '¡Copiado!';
+                    setTimeout(function() { btnText.textContent = 'Copiar Resumen'; }, 2000);
+                }
+            });
+        }
+
+        function shareVacWhatsApp() {
+            var total = document.getElementById('vac-monto-total').textContent;
+            var dias = document.getElementById('vac-total-dias').textContent;
+            var lines = [
+                "Calculé mis Vacaciones Proporcionales en Cálculo Laboral:",
+                "Total a pagar en finiquito: " + total + " (" + dias + " días corridos según DT).",
+                "Revisa el tuyo gratis aquí: https://calculolaboral.cl/calculadora-vacaciones-proporcionales"
+            ];
+            var msg = encodeURIComponent(lines.join(String.fromCharCode(10)));
+            window.open("https://api.whatsapp.com/send?text=" + msg, "_blank");
+        }
+
+        function initVacaciones() {
+            var now = new Date();
+            var past = new Date();
+            past.setFullYear(now.getFullYear() - 1);
+
+            var inStart = document.getElementById('vac-fecha-inicio');
+            var inEnd = document.getElementById('vac-fecha-termino');
+            if (inStart && inEnd) {
+                if (!inStart.value) inStart.value = past.toISOString().split('T')[0];
+                if (!inEnd.value) inEnd.value = now.toISOString().split('T')[0];
+            }
+            calculateVacaciones();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initVacaciones);
+        } else {
+            initVacaciones();
+        }
+    </script>
+"""
+
+DESPIDO_ART160_CONTENT = """
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+            <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
+            <span class="material-icons text-xs">chevron_right</span>
+            <span class="text-slate-600 font-semibold">Calculadora Despido Art. 160</span>
+        </nav>
+
+        <!-- Hero Header Section -->
+        <div class="text-center my-8 max-w-2xl mx-auto no-print">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-300 mb-3">
+                <span class="material-icons text-xs text-amber-700">gavel</span> Art. 160 & 168 letra c • Código del Trabajo
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+                Calculadora de Finiquito por Despido Art. 160 y Demanda Laboral
+            </h1>
+            <p class="text-slate-500 text-sm mt-1">
+                ¿Te despidieron por el Artículo 160? Tus <strong>días trabajados y vacaciones son irrenunciables</strong> (a pagar en 10 días). Además, si la causal es infundada, simula cuánto puedes ganar en tribunales con el <strong>recargo legal del 50% al 100%</strong>.
+            </p>
+        </div>
+
+        <!-- Two Column Interactive Layout (440px Inputs Left, Flexible Results Right) -->
+        <div class="flex flex-col lg:flex-row gap-8 items-start mb-16">
+            
+            <!-- Left Column: Form Controls (440px Fixed) -->
+            <div class="w-full lg:w-[440px] shrink-0 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span class="material-icons text-amber-600">assignment_late</span> Datos de tu despido
+                    </h2>
+                    <span class="text-[11px] font-mono text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">Plazo Pago: 10 Días</span>
+                </div>
+
+                <!-- 1. Causal Invocada del Art. 160 -->
+                <div>
+                    <label for="art160-causal" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Causal Invocada en la Carta de Despido
+                    </label>
+                    <select id="art160-causal" onchange="updateCausalAdvice(); calculateArt160();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all">
+                        <option value="7" selected>Art. 160 N° 7: Incumplimiento grave de las obligaciones</option>
+                        <option value="1">Art. 160 N° 1: Falta de probidad, acoso o conductas inmorales</option>
+                        <option value="3">Art. 160 N° 3: No concurrencia al trabajo (inasistencias)</option>
+                        <option value="4">Art. 160 N° 4: Abandono del trabajo o negativa a laborar</option>
+                        <option value="5">Art. 160 N° 5: Actos u omisiones temerarias que afecten seguridad</option>
+                        <option value="6">Art. 160 N° 6: Daño material intencional a maquinarias/bienes</option>
+                        <option value="2">Art. 160 N° 2: Negociaciones incompatibles con el giro</option>
+                    </select>
+                    
+                    <!-- Contextual Legal Badge / Advice -->
+                    <div id="art160-causal-alert" class="mt-2 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs leading-relaxed">
+                        <span class="font-bold block mb-0.5">⚠️ Sobre el Art. 160 N° 7 (Incumplimiento Grave):</span>
+                        Es la causal más utilizada y la que con mayor frecuencia declaran injustificada los tribunales chilenos. El empleador debe probar la gravedad extrema del hecho; de lo contrario, debe pagar todas las indemnizaciones con recargo judicial.
+                    </div>
+                </div>
+
+                <!-- 2. Fechas de Contrato (Antigüedad) -->
+                <div class="space-y-3 pt-2 border-t border-slate-100">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="art160-fecha-inicio" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                Fecha de Ingreso
+                            </label>
+                            <input type="date" id="art160-fecha-inicio" onchange="calculateArt160()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all">
+                        </div>
+                        <div>
+                            <label for="art160-fecha-termino" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                Fecha de Despido
+                            </label>
+                            <input type="date" id="art160-fecha-termino" onchange="calculateArt160()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Última Remuneración Mensual Devengada -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label for="art160-sueldo" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            Última Remuneración Mensual Devengada
+                        </label>
+                        <button type="button" onclick="setArt160Minimo()" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg transition-colors cursor-pointer active:scale-95">
+                            Usar Mínimo ($553.553)
+                        </button>
+                    </div>
+                    <div class="relative rounded-2xl shadow-sm">
+                        <input type="text" id="art160-sueldo" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatArt160Input(this); calculateArt160();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all">
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Sueldo base + gratificación + comisiones promedio (tope legal 90 UF: ~$3.680.000).</p>
+                </div>
+
+                <!-- 4. Días trabajados del mes y Días de Vacaciones Pendientes -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                    <div>
+                        <label for="art160-dias-mes" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                            Días trabajados del mes
+                        </label>
+                        <input type="number" id="art160-dias-mes" value="15" min="1" max="30" oninput="calculateArt160()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                        <span class="text-[10px] text-slate-400 mt-1 block">Días del mes de término</span>
+                    </div>
+                    <div>
+                        <label for="art160-dias-vac" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                            Vacaciones Pendientes
+                        </label>
+                        <input type="number" id="art160-dias-vac" value="8" min="0" step="0.5" oninput="calculateArt160()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                        <span class="text-[10px] text-slate-400 mt-1 block">Días hábiles acumulados</span>
+                    </div>
+                </div>
+
+                <!-- 5. Recargo Judicial por Demanda (Art. 168 letra c) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                        Recargo Judicial Estimado (Art. 168 c)
+                    </label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="art160-recargo" value="50" onchange="calculateArt160()" class="peer sr-only">
+                            <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-800 font-bold text-xs hover:bg-slate-50 transition-all">
+                                50% <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-amber-700">Mínimo legal</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="art160-recargo" value="80" checked onchange="calculateArt160()" class="peer sr-only">
+                            <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-800 font-bold text-xs hover:bg-slate-50 transition-all">
+                                80% <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-amber-700">Promedio DT</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="art160-recargo" value="100" onchange="calculateArt160()" class="peer sr-only">
+                            <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-800 font-bold text-xs hover:bg-slate-50 transition-all">
+                                100% <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-amber-700">Máximo legal</span>
+                            </div>
+                        </label>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">El recargo legal para despidos Art. 160 injustificados va del 50% al 100% según el juez.</p>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Results & Lawsuit Simulator (Flexible) -->
+            <div class="flex-1 w-full space-y-6">
+                
+                <!-- CARD 1: Pago Obligatorio Inmediato (Derechos Irrenunciables) -->
+                <div class="bg-white border-2 border-emerald-500/40 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">1</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">
+                                Finiquito Obligatorio Inmediato (Derechos Irrenunciables)
+                            </h3>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            Plazo Legal: 10 Días Hábiles
+                        </span>
+                    </div>
+
+                    <div class="my-4 p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200">
+                        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block mb-1">Total Mínimo a Cobrar Sí o Sí</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="art160-monto-inmediato" class="text-3xl sm:text-4xl font-extrabold text-emerald-700 font-mono tracking-tight">$ 0</span>
+                        </div>
+                        <p class="text-xs text-emerald-900/80 mt-2 leading-relaxed">
+                            <strong>Aunque te despidan por el Art. 160, el empleador NO puede quitarte este dinero.</strong> Son remuneraciones ya devengadas y descanso acumulado que deben pagarse ante notario o en Mi DT (Art. 177).
+                        </p>
+                    </div>
+
+                    <!-- Desglose de derechos inmediatos -->
+                    <div class="space-y-2 text-xs divide-y divide-slate-100">
+                        <div class="flex justify-between items-center pt-1">
+                            <span class="text-slate-600">Días trabajados del mes (<span id="art160-lbl-dias-mes">15</span> días):</span>
+                            <span class="font-mono font-bold text-slate-800" id="art160-subtotal-mes">$ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-600">Vacaciones proporcionales y pendientes (<span id="art160-lbl-dias-vac">8</span> días):</span>
+                            <span class="font-mono font-bold text-slate-800" id="art160-subtotal-vac">$ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 text-slate-400">
+                            <span>Indemnización por Años de Servicio:</span>
+                            <span class="font-mono">$ 0 (Sin derecho por Art. 160)</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 text-slate-400">
+                            <span>Indemnización Sustitutiva de Aviso Previo:</span>
+                            <span class="font-mono">$ 0 (Sin derecho por Art. 160)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: Simulador de Demanda Judicial con Recargo (Art. 168 c) -->
+                <div class="bg-white border-2 border-sky-500/40 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-sm">2</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">
+                                Si demandas por Despido Injustificado (Art. 168 letra c)
+                            </h3>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 border border-sky-300">
+                            Tribunales del Trabajo
+                        </span>
+                    </div>
+
+                    <div class="my-4 p-5 rounded-2xl bg-sky-50/70 border border-sky-200">
+                        <span class="text-xs font-bold text-sky-800 uppercase tracking-wider block mb-1">Monto Adicional Recuperable en Juicio</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="art160-monto-demanda" class="text-3xl sm:text-4xl font-extrabold text-sky-700 font-mono tracking-tight">$ 0</span>
+                        </div>
+                        <p class="text-xs text-sky-950/80 mt-2 leading-relaxed">
+                            Si el empleador no prueba fehacientemente la gravedad de la falta ante el juez, el despido se declara <strong>injustificado o improcedente</strong>, obligándolo a pagar tus años de servicio y aviso previo con un <strong>recargo especial del 50% al 100%</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Desglose de demanda -->
+                    <div class="space-y-2 text-xs divide-y divide-slate-100">
+                        <div class="flex justify-between items-center pt-1">
+                            <span class="text-slate-600">Años de servicio computables (<span id="art160-lbl-anios">0</span> años):</span>
+                            <span class="font-mono font-bold text-slate-800" id="art160-subtotal-ias">$ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-600">Aviso previo (1 mes de remuneración):</span>
+                            <span class="font-mono font-bold text-slate-800" id="art160-subtotal-aviso">$ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-600">Recargo legal judicial (<span id="art160-lbl-recargo-pct">80%</span> sobre Años de Servicio):</span>
+                            <span class="font-mono font-bold text-amber-600 text-sm" id="art160-subtotal-recargo">$ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 font-bold text-sm bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="text-slate-900">Total Potencial Acumulado (Inmediato + Demanda):</span>
+                            <span class="font-mono text-sky-600 text-base" id="art160-gran-total">$ 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: Formulario de Evaluación Gratuita de Carta de Despido -->
+                <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-400/50 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-icons text-amber-600 text-lg">gavel</span>
+                        <h4 class="text-base sm:text-lg font-bold text-slate-900">
+                            ¿Quieres que un abogado laboralista revise tu carta de despido gratis?
+                        </h4>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                        En despidos por el Art. 160, la redacción de la carta de despido es decisiva. Si el empleador fue vago o no detalló los hechos con fecha y hora exactas, el juicio se gana prácticamente de inmediato.
+                    </p>
+
+                    <form id="art160-lead-form" onsubmit="enviarLeadArt160(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Nombre y Apellido *</label>
+                                <input type="text" id="art160-lead-nombre" name="nombre" required placeholder="Ej: Roberto Muñoz" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico *</label>
+                                <input type="email" id="art160-lead-correo" name="correo" required placeholder="roberto@correo.com" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-slate-800">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">WhatsApp / Teléfono *</label>
+                                <input type="tel" id="art160-lead-telefono" name="telefono" required placeholder="+56 9 8765 4321" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Fecha de la carta o finiquito</label>
+                                <input type="text" id="art160-lead-detalle" name="detalle" placeholder="Ej: Recibí la carta ayer, aún no firmo" class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-slate-800">
+                            </div>
+                        </div>
+
+                        <div class="pt-1">
+                            <label class="flex items-start gap-2 text-[11px] text-slate-600 cursor-pointer">
+                                <input type="checkbox" id="art160-lead-consent" name="privacy_consent" required class="w-3.5 h-3.5 mt-0.5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer">
+                                <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo expresamente el tratamiento de mis antecedentes y su remisión a abogados laborales colaboradores para la evaluación de mi caso.</span>
+                            </label>
+                        </div>
+
+                        <div class="pt-1 flex flex-col sm:flex-row items-center gap-3">
+                            <button type="submit" id="art160-lead-btn" class="w-full sm:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                                <span class="material-icons text-sm">send</span> Solicitar Revisión Gratuita de Carta
+                            </button>
+                            <span class="text-[11px] text-slate-500">Sin costo • Respuesta en menos de 24 hrs hábiles</span>
+                        </div>
+                    </form>
+
+                    <div id="art160-lead-success" class="hidden p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs">
+                        <div class="flex items-center gap-2 font-bold text-emerald-800 mb-1">
+                            <span class="material-icons text-emerald-600 text-base">check_circle</span> Solicitud enviada exitosamente
+                        </div>
+                        <p>Tus antecedentes han sido remitidos de forma segura a nuestro equipo de abogados laborales colaboradores. Te contactaremos a la brevedad por WhatsApp o correo.</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                    <button type="button" onclick="copyArt160Results()" id="art160-copy-btn" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                        <span class="material-icons text-sm">content_copy</span> <span id="art160-copy-text">Copiar Resumen Completo</span>
+                    </button>
+                    <button type="button" onclick="shareArt160WhatsApp()" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 active:scale-95 cursor-pointer">
+                        <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.586 1.761.882 2.796.883 3.18 0 5.767-2.586 5.768-5.766.001-3.18-2.585-5.77-5.768-5.77zm3.394 8.204c-.146.415-.85.766-1.177.812-.328.047-.751.066-2.197-.533-1.848-.767-3.04-2.646-3.133-2.769-.092-.122-.743-.99-.743-1.89 0-.899.469-1.343.636-1.527.167-.184.364-.23.486-.23.121 0 .243.002.348.007.111.005.259-.042.404.307.149.358.508 1.238.552 1.329.045.091.076.197.015.318-.061.122-.091.198-.182.304-.091.106-.192.237-.274.318-.091.091-.186.19-.08.373.106.182.471.777 1.01 1.258.694.619 1.28.81 1.462.901.182.091.289.076.395-.046.106-.122.456-.532.577-.714.122-.182.243-.152.408-.091.167.061 1.062.5 1.244.591.182.091.304.137.348.213.045.076.045.441-.101.856zM12 2C6.477 2 2 6.477 2 12c0 1.891.526 3.662 1.442 5.176L2 22l4.98-1.306A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+                        Compartir en WhatsApp
+                    </button>
+                    <a href="despido-necesidades-empresa-articulo-161" class="flex-1 py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center shadow-md shadow-sky-500/10 active:scale-95">
+                        <span class="material-icons text-sm">help_outline</span> Ver Art. 161
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Explanatory SEO Content Section -->
+        <article class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
+            
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-4">¿Qué es el despido por el Artículo 160 del Código del Trabajo?</h2>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+                    El <strong>Artículo 160 del Código del Trabajo</strong> agrupa las causales de despido disciplinario o imputables a la conducta del trabajador. Cuando un empleador invoca esta causal, pretende dar término al contrato <strong>sin derecho a indemnización por años de servicio ni a indemnización sustitutiva del aviso previo</strong>.
+                </p>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+                    Sin embargo, en Chile el legislador laboral protegió de forma estricta los derechos de los trabajadores mediante dos salvaguardas esenciales:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+                    <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+                        <h4 class="font-bold text-emerald-900 text-sm mb-1 flex items-center gap-1.5">
+                            <span class="material-icons text-emerald-600 text-base">check_circle</span> Derechos Irrenunciables
+                        </h4>
+                        <p class="text-xs text-slate-600">
+                            Los días trabajados del mes en curso y las vacaciones proporcionales y acumuladas son propiedad del trabajador. El empleador está obligado por ley a pagarlos en un plazo fatal de 10 días hábiles (Art. 177 CT).
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-sky-200 bg-sky-50/50">
+                        <h4 class="font-bold text-sky-900 text-sm mb-1 flex items-center gap-1.5">
+                            <span class="material-icons text-sky-600 text-base">gavel</span> La Carga de la Prueba
+                        </h4>
+                        <p class="text-xs text-slate-600">
+                            En tribunales laborales, el empleador está obligado a probar con pruebas contundentes y testigos cada hecho de la carta. No bastan sospechas ni acusaciones genéricas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Las 7 Causales del Art. 160 Explicadas -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-4">Las 7 Causales de Despido del Artículo 160</h3>
+                <div class="space-y-3 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">N° 1. Conductas indebidas graves y debidamente comprobadas</h4>
+                        <p class="text-slate-600">Incluye falta de probidad en el desempeño de funciones, conductas de acoso sexual, acoso laboral o agresiones verbales y físicas contra el empleador o compañeros de trabajo.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">N° 2. Negociaciones que ejecute el trabajador dentro del giro</h4>
+                        <p class="text-slate-600">Aplica únicamente si las negociaciones fueron expresamente prohibidas por escrito en el contrato de trabajo individual.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">N° 3. No concurrencia del trabajador a sus labores sin causa justificada</h4>
+                        <p class="text-slate-600">Exige faltar dos días seguidos, dos lunes en el mes o tres días en total durante el mes calendario. Si tenías licencia médica o causa de fuerza mayor debidamente comunicada, el despido es injustificado.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">N° 4. Abandono del trabajo</h4>
+                        <p class="text-slate-600">Salida intempestiva e injustificada del sitio de la faena durante las horas de trabajo o la negativa a trabajar en las faenas convenidas sin causa legal.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">N° 5. Actos, omisiones o imprudencias temerarias</h4>
+                        <p class="text-slate-600">Que afecten a la seguridad o al funcionamiento del establecimiento, o a la salud de los trabajadores.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">N° 6. El perjuicio material causado intencionalmente</h4>
+                        <p class="text-slate-600">En las instalaciones, maquinarias, herramientas, útiles de trabajo, productos o mercaderías.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">N° 7. Incumplimiento grave de las obligaciones del contrato</h4>
+                        <p class="text-slate-600">La causal más invocada en Chile. Los jueces laborales exigen una <em>gravedad calificada</em> que haga insostenible la mantención de la relación laboral. Las faltas menores o amonestaciones previas no bastan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cómo poner la Reserva de Derechos -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">¿Cómo firmar el finiquito para no perder el derecho a demandar?</h3>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
+                    Conforme al <strong>artículo 177 del Código del Trabajo</strong> (modificado por la Ley N° 21.361), tienes el derecho legal de estampar una <strong>reserva de derechos</strong> de tu puño y letra antes de firmar ante notario o al ratificar en el portal de la Dirección del Trabajo (Mi DT).
+                </p>
+                <div class="p-4 rounded-xl bg-slate-900 text-white font-mono text-xs sm:text-sm leading-relaxed mb-3">
+                    "Me reservo el derecho a demandar despido injustificado e improcedente conforme al Art. 168 del Código del Trabajo, recargos legales, restitución de prestaciones y cobro de indemnizaciones adeudadas."
+                </div>
+                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    <strong>Importante:</strong> El notario o ministro de fe no puede negarse a registrar la reserva, y el empleador está legalmente forzado a pagar de inmediato los montos de vacaciones y días trabajados reconocidos.
+                </p>
+            </div>
+
+            <!-- Plazos Legales -->
+            <div class="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 text-amber-950 text-xs sm:text-sm leading-relaxed space-y-2">
+                <h4 class="font-bold flex items-center gap-1.5 text-amber-900">
+                    <span class="material-icons text-amber-600 text-base">alarm</span> Plazos fatales para demandar:
+                </h4>
+                <p>
+                    Tienes un plazo de <strong>60 días hábiles judiciales</strong> desde la separación para interponer la demanda por despido injustificado. Si antes ingresas un reclamo administrativo ante la Inspección del Trabajo, el plazo se suspende, con un tope máximo total de <strong>90 días hábiles</strong>.
+                </p>
+            </div>
+
+        </article>
+"""
+
+DESPIDO_ART160_SCRIPTS = """
+    <script>
+        function formatArt160Currency(amount) {
+            return '$ ' + Math.round(amount).toLocaleString('es-CL');
+        }
+
+        function parseArt160Currency(str) {
+            if (!str) return 0;
+            return parseInt(str.replace(/[^0-9]/g, ''), 10) || 0;
+        }
+
+        function formatArt160Input(input) {
+            let val = parseArt160Currency(input.value);
+            input.value = formatArt160Currency(val);
+        }
+
+        function setArt160Minimo() {
+            var el = document.getElementById('art160-sueldo');
+            if (el) {
+                el.value = '$ 553.553';
+                calculateArt160();
+            }
+        }
+
+        function updateCausalAdvice() {
+            var causal = document.getElementById('art160-causal').value;
+            var box = document.getElementById('art160-causal-alert');
+            if (!box) return;
+
+            if (causal === '7') {
+                box.innerHTML = '<span class="font-bold block mb-0.5">⚠️ Sobre el Art. 160 N° 7 (Incumplimiento Grave):</span>' +
+                                'Es la causal más utilizada en Chile y la que con mayor frecuencia declaran injustificada los tribunales. El empleador debe probar la gravedad extrema del hecho; de lo contrario, el despido es calificado como improcedente con recargo legal.';
+            } else if (causal === '3') {
+                box.innerHTML = '<span class="font-bold block mb-0.5">⚠️ Sobre el Art. 160 N° 3 (Inasistencias):</span>' +
+                                'El empleador debe acreditar que las ausencias fueron sin causa justificada. Si tenías reposo médico, fuerza mayor o diste aviso oportuno, la demanda por despido injustificado se gana con alta probabilidad.';
+            } else if (causal === '1') {
+                box.innerHTML = '<span class="font-bold block mb-0.5">⚠️ Sobre el Art. 160 N° 1 (Falta de Probidad / Acoso):</span>' +
+                                'Es una acusación gravísima que daña tu honra. La ley exige que el hecho esté debidamente comprobado con una investigación formal y pruebas irrefutables. Si no las tienen, puedes demandar indemnizaciones y tutela laboral.';
+            } else {
+                box.innerHTML = '<span class="font-bold block mb-0.5">⚠️ Carga de la prueba en Art. 160:</span>' +
+                                'Cualquiera sea la causal invocada, el empleador tiene la obligación legal de probar los hechos ante el tribunal. Si la carta es ambigua o no tiene sustento probatorio, tienes derecho al cobro total con recargo.';
+            }
+        }
+
+        function calculateArt160() {
+            var inStart = document.getElementById('art160-fecha-inicio');
+            var inEnd = document.getElementById('art160-fecha-termino');
+            if (!inStart || !inEnd) return;
+
+            var startStr = inStart.value;
+            var endStr = inEnd.value;
+            if (!startStr || !endStr) return;
+
+            var partsS = startStr.split('-').map(Number);
+            var partsE = endStr.split('-').map(Number);
+            var startDate = new Date(partsS[0], partsS[1] - 1, partsS[2]);
+            var endDate = new Date(partsE[0], partsE[1] - 1, partsE[2]);
+
+            var sueldoMensual = parseArt160Currency(document.getElementById('art160-sueldo').value) || 0;
+            var diasMes = parseInt(document.getElementById('art160-dias-mes').value, 10) || 0;
+            var diasVac = parseFloat(document.getElementById('art160-dias-vac').value) || 0;
+            var recargoPct = parseInt(document.querySelector('input[name="art160-recargo"]:checked')?.value || '80', 10);
+
+            var sueldoDiario = sueldoMensual / 30.0;
+
+            // 1. Inmediato Obligatorio
+            var subtotalMes = Math.round(diasMes * sueldoDiario);
+            var subtotalVac = Math.round(diasVac * sueldoDiario);
+            var totalInmediato = subtotalMes + subtotalVac;
+
+            // 2. Demanda Judicial (Art. 168 c)
+            // Años de servicio: 1 mes por año y fracción superior a 6 meses, tope 11 años
+            var totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+            var rawYears = Math.floor(totalDays / 365);
+            var remDays = totalDays % 365;
+
+            var computedYears = rawYears;
+            if (remDays > 182) {
+                computedYears += 1;
+            }
+            if (computedYears > 11) computedYears = 11;
+            if (computedYears < 0) computedYears = 0;
+
+            // Base para IAS tiene tope de 90 UF (aprox $3.680.000)
+            var topeUF90 = 3680000;
+            var baseIAS = Math.min(sueldoMensual, topeUF90);
+
+            var subtotalIAS = (computedYears >= 1) ? Math.round(computedYears * baseIAS) : 0;
+            var subtotalAviso = Math.round(baseIAS);
+            var subtotalRecargo = Math.round(subtotalIAS * (recargoPct / 100.0));
+            var totalDemanda = subtotalIAS + subtotalAviso + subtotalRecargo;
+
+            var granTotal = totalInmediato + totalDemanda;
+
+            // Update DOM
+            document.getElementById('art160-monto-inmediato').textContent = formatArt160Currency(totalInmediato);
+            document.getElementById('art160-lbl-dias-mes').textContent = diasMes;
+            document.getElementById('art160-subtotal-mes').textContent = formatArt160Currency(subtotalMes);
+            document.getElementById('art160-lbl-dias-vac').textContent = diasVac;
+            document.getElementById('art160-subtotal-vac').textContent = formatArt160Currency(subtotalVac);
+
+            document.getElementById('art160-monto-demanda').textContent = formatArt160Currency(totalDemanda);
+            document.getElementById('art160-lbl-anios').textContent = computedYears;
+            document.getElementById('art160-subtotal-ias').textContent = formatArt160Currency(subtotalIAS);
+            document.getElementById('art160-subtotal-aviso').textContent = formatArt160Currency(subtotalAviso);
+            document.getElementById('art160-lbl-recargo-pct').textContent = recargoPct + '%';
+            document.getElementById('art160-subtotal-recargo').textContent = formatArt160Currency(subtotalRecargo);
+            document.getElementById('art160-gran-total').textContent = formatArt160Currency(granTotal);
+        }
+
+        function copyArt160Results() {
+            var inmediato = document.getElementById('art160-monto-inmediato').textContent;
+            var demanda = document.getElementById('art160-monto-demanda').textContent;
+            var total = document.getElementById('art160-gran-total').textContent;
+
+            var lines = [
+                "RESUMEN DESPIDO ART. 160 (calculolaboral.cl)",
+                "1. Finiquito Obligatorio Inmediato (10 días): " + inmediato,
+                "2. Demanda por Despido Injustificado (Art. 168 c): " + demanda,
+                "POTENCIAL TOTAL RECUPERABLE: " + total,
+                "Calcula tu caso gratis en: https://calculolaboral.cl/calculadora-despido-articulo-160"
+            ];
+            var txt = lines.join(String.fromCharCode(10));
+
+            navigator.clipboard.writeText(txt).then(function() {
+                var btn = document.getElementById('art160-copy-text');
+                if (btn) {
+                    btn.textContent = '¡Copiado!';
+                    setTimeout(function() { btn.textContent = 'Copiar Resumen Completo'; }, 2000);
+                }
+            });
+        }
+
+        function shareArt160WhatsApp() {
+            var inmediato = document.getElementById('art160-monto-inmediato').textContent;
+            var demanda = document.getElementById('art160-monto-demanda').textContent;
+            var lines = [
+                "Simulé mi despido por el Art. 160 en Cálculo Laboral:",
+                "- Finiquito obligatorio inmediato: " + inmediato,
+                "- Monto recuperable en demanda con recargo: " + demanda,
+                "Calcula el tuyo gratis aquí: https://calculolaboral.cl/calculadora-despido-articulo-160"
+            ];
+            var msg = encodeURIComponent(lines.join(String.fromCharCode(10)));
+            window.open("https://api.whatsapp.com/send?text=" + msg, "_blank");
+        }
+
+        function enviarLeadArt160(event) {
+            event.preventDefault();
+            var form = document.getElementById('art160-lead-form');
+            var btn = document.getElementById('art160-lead-btn');
+            var success = document.getElementById('art160-lead-success');
+
+            var nombre = document.getElementById('art160-lead-nombre').value.trim();
+            var correo = document.getElementById('art160-lead-correo').value.trim();
+            var telefono = document.getElementById('art160-lead-telefono').value.trim();
+            var detalle = document.getElementById('art160-lead-detalle').value.trim();
+            var consent = document.getElementById('art160-lead-consent').checked;
+
+            if (!consent) {
+                alert('Debes aceptar la Política de Privacidad para continuar.');
+                return;
+            }
+
+            var causalText = document.getElementById('art160-causal').options[document.getElementById('art160-causal').selectedIndex].text;
+            var infoCompleta = "Causal: " + causalText + " | Detalle: " + detalle;
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-icons text-sm animate-spin">autorenew</span> Enviando...';
+            }
+
+            fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    correo: correo,
+                    telefono: telefono,
+                    tipo: 'Despido Art. 160',
+                    fuente: 'Calculadora Despido Art. 160',
+                    detalle: infoCompleta
+                })
+            }).then(function(res) {
+                if (res.ok) {
+                    form.classList.add('hidden');
+                    success.classList.remove('hidden');
+                } else {
+                    throw new Error('Error en el servidor');
+                }
+            }).catch(function() {
+                alert('Hubo un inconveniente al enviar tu solicitud. Por favor intenta nuevamente o escríbenos a contacto@calculolaboral.cl');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span class="material-icons text-sm">send</span> Solicitar Revisión Gratuita de Carta';
+                }
+            });
+        }
+
+        function initArt160() {
+            var now = new Date();
+            var past = new Date();
+            past.setFullYear(now.getFullYear() - 2);
+
+            var inStart = document.getElementById('art160-fecha-inicio');
+            var inEnd = document.getElementById('art160-fecha-termino');
+            if (inStart && inEnd) {
+                if (!inStart.value) inStart.value = past.toISOString().split('T')[0];
+                if (!inEnd.value) inEnd.value = now.toISOString().split('T')[0];
+            }
+            updateCausalAdvice();
+            calculateArt160();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initArt160);
+        } else {
+            initArt160();
+        }
+    </script>
+"""
+
 # Generate standalone custom calculators (Horas Extras & Part-Time)
 def build_custom_calculator(filename, title, description, content_html, scripts_html):
     print(f"Generating: {filename}...")
@@ -6318,6 +7520,23 @@ build_custom_calculator(
     PART_TIME_CONTENT,
     PART_TIME_SCRIPTS
 )
+
+build_custom_calculator(
+    "calculadora-vacaciones-proporcionales.html",
+    "Calculadora de Vacaciones Proporcionales Chile 2026: Días Hábiles y Pago DT",
+    "Calcula gratis tus vacaciones proporcionales y días de feriado legal pendiente en Chile conforme al Art. 73 del Código del Trabajo y dictámenes DT. Conoce cuántos días hábiles, inhábiles y monto en dinero te corresponden.",
+    VACACIONES_PROPORCIONALES_CONTENT,
+    VACACIONES_PROPORCIONALES_SCRIPTS
+)
+
+build_custom_calculator(
+    "calculadora-despido-articulo-160.html",
+    "Calculadora de Finiquito por Despido Art. 160 Chile 2026: Derechos y Demanda",
+    "Calcula cuánto te deben pagar en el finiquito por despido con Artículo 160. Derechos irrenunciables garantizados y simulador de demanda por despido injustificado con recargo legal del 50% al 100% (Art. 168 letra c).",
+    DESPIDO_ART160_CONTENT,
+    DESPIDO_ART160_SCRIPTS
+)
+
 
 # Generate vercel.json in DEST_DIR and in root directory
 print("Generating: vercel.json...")

@@ -57,7 +57,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.5.0">
+    <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         .prose-content h2 {
             font-size: 1.5rem;
@@ -419,6 +419,8 @@
                                 <a href="finiquito_calculator" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito</a>
                                 <a href="calculadora-horas-extras" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Horas Extras</a>
                                 <a href="calculadora-sueldo-part-time" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Part-Time</a>
+                                <a href="calculadora-vacaciones-proporcionales" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Vacaciones Proporcionales</a>
+                                <a href="calculadora-despido-articulo-160" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Art. 160</a>
                             </div>
                         </div>
                     </div>
@@ -463,6 +465,8 @@
                 <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
                 <a href="calculadora-horas-extras" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Horas Extras</a>
                 <a href="calculadora-sueldo-part-time" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Part-Time</a>
+                <a href="calculadora-vacaciones-proporcionales" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Vacaciones Proporcionales</a>
+                <a href="calculadora-despido-articulo-160" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Despido Art. 160</a>
                 <div class="border-t border-slate-100 my-2"></div>
                 <p class="px-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Guías</p>
                 <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 font-bold">Indemnización a Todo Evento (Propuesta)</a>
@@ -519,8 +523,8 @@
             </div>
         </div>
         <div class="flex justify-between items-center mt-2.5 px-1 text-[10px] text-slate-500 font-medium">
-            <div id="indicators-status" class="flex items-center gap-1">
-                <span class="material-icons text-[12px] animate-spin">sync</span> Cargando indicadores del Banco Central...
+            <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500">
+                <span class="material-icons text-[13px] text-emerald-500">check_circle</span> Valores oficiales vigentes (Banco Central de Chile)
             </div>
             <a href="#" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5">
                 <span class="material-icons text-[12px]">history</span> Historial de Valores
@@ -1017,6 +1021,22 @@
         
 
 
+        
+        
+
+
+        
+        
+
+
+        
+        
+
+
+        
+        
+
+
         <!-- FORMULARIO_LEAD_START -->
         <!-- Formulario Lead: Necesidades de la Empresa -->
         <div id="lead-form-art161" class="my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-400/50 shadow-sm relative overflow-hidden not-prose">
@@ -1051,9 +1071,9 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Teléfono / WhatsApp *</label>
-                        <input type="tel" name="telefono" placeholder="+56 9 1234 5678" required
-                            class="w-full px-4 py-2.5 text-sm bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400 font-medium">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Teléfono / WhatsApp (Opcional)</label>
+                        <input type="tel" name="telefono" placeholder="+56 9 1234 5678"
+                            class="w-full px-4 py-2.5 text-sm bg-white border border-slate-300 rounded-xl outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-slate-800 placeholder-slate-400">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">¿Cuándo te despidieron o fecha finiquito?</label>
@@ -1064,21 +1084,20 @@
 
                 <div class="pt-1">
                     <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
-                        <input type="checkbox" name="privacy_consent" checked required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500 cursor-pointer">
-                        <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo ser contactado confidencialmente por un abogado laboralista aliado.</span>
+                        <input type="checkbox" name="privacy_consent" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500 cursor-pointer">
+                        <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo expresamente el tratamiento de mis antecedentes y su remisión a abogados laborales colaboradores para la evaluación de mi caso.</span>
                     </label>
                 </div>
 
                 <div class="pt-2 flex flex-col sm:flex-row items-center gap-4">
                     <button type="submit"
-                        style="background-color: #d97706 !important; color: #ffffff !important; display: inline-flex !important;"
-                        class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all active:scale-98 cursor-pointer border border-amber-700">
-                        <span class="material-icons text-sm" style="color: #ffffff !important;">send</span>
-                        <span style="color: #ffffff !important; font-weight: 700;">Confirmar y Solicitar Evaluación</span>
+                        class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer">
+                        <span class="material-icons text-base">outgoing_mail</span>
+                        Solicitar Revisión de mi Caso
                     </button>
-                    <span class="text-xs text-slate-500 flex items-center gap-1 shrink-0 font-medium">
+                    <span class="text-xs text-slate-500 flex items-center gap-1 shrink-0">
                         <span class="material-icons text-emerald-600 text-xs">lock</span>
-                        100% Confidencial · Abogados Aliados
+                        100% Confidencial · Sin cobros ocultos
                     </span>
                 </div>
             </form>
@@ -1187,6 +1206,8 @@
                     <li><a href="finiquito_calculator" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Finiquito</a></li>
                     <li><a href="calculadora-horas-extras" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Horas Extras</a></li>
                     <li><a href="calculadora-sueldo-part-time" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Sueldo Part-Time</a></li>
+                    <li><a href="calculadora-vacaciones-proporcionales" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Vacaciones Proporcionales</a></li>
+                    <li><a href="calculadora-despido-articulo-160" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Despido Art. 160</a></li>
                     <li><a href="./" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium font-semibold">Simulador Integrado</a></li>
                 </ul>
             </div>
