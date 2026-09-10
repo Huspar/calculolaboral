@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -46,79 +46,243 @@
     <!-- Main Content -->
     <main class="max-w-2xl mx-auto px-6 py-12 md:py-16 flex-1 text-center">
 
-        <!-- Success Badge -->
-        <div class="w-16 h-16 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto mb-6 shadow-sm">
-            <span class="material-icons text-3xl">check</span>
-        </div>
-
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            ¡Pago Confirmado con Éxito!
-        </h1>
-        <p class="mt-2 text-slate-600 text-sm sm:text-base leading-relaxed">
-            Hemos recibido correctamente tu pago de <strong>$19.990 CLP</strong> vía Webpay / Flow.
-        </p>
-
-        <!-- Delivery Status Card -->
-        <div class="mt-8 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs text-left space-y-6">
-            
-            <div class="flex items-start gap-4 border-b border-slate-100 pb-5">
-                <div class="w-11 h-11 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
-                    <span class="material-icons text-2xl">mark_email_read</span>
-                </div>
-                <div class="space-y-1">
-                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Despacho Inmediato en Proceso
-                    </div>
-                    <h2 class="text-base sm:text-lg font-bold text-slate-900">
-                        El Kit ha sido enviado a tu correo electrónico
-                    </h2>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Te hemos despachado el paquete completo con los <strong>19 documentos Word (.docx) editables y la Guía de Implementación DT</strong> directamente a la casilla de correo registrada en el formulario.
-                    </p>
-                </div>
+        <!-- Case: No Active Purchase Session -->
+        <div id="no-session-view" class="hidden bg-white border border-slate-200 rounded-3xl p-8 shadow-xs text-center space-y-4">
+            <div class="w-14 h-14 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
+                <span class="material-icons text-2xl">info</span>
             </div>
-
-            <!-- Practical Steps -->
-            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 sm:p-5 space-y-3 text-xs text-slate-700">
-                <h3 class="font-bold text-slate-900 flex items-center gap-1.5 text-xs sm:text-sm">
-                    <span class="material-icons text-sm text-sky-500">schedule</span>
-                    Instrucciones de Recepción:
-                </h3>
-                <ul class="space-y-2 text-slate-600">
-                    <li class="flex items-start gap-2">
-                        <span class="material-icons text-emerald-600 text-xs mt-0.5">check_circle</span>
-                        <span><strong>Revisa tu Bandeja de Entrada:</strong> El correo proviene de <code>contacto@calculolaboral.cl</code> con el archivo adjunto <code>Kit_Blindaje_Laboral_Pyme_2026.zip</code>.</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="material-icons text-amber-500 text-xs mt-0.5">info</span>
-                        <span><strong>Revisa tu carpeta de Spam / Correo No Deseado:</strong> Dependiendo del filtro de seguridad de tu correo corporativo, podría tardar 1 a 3 minutos en aparecer.</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-500 text-xs mt-0.5">arrow_forward</span>
-                        <span><strong>Cómo empezar:</strong> Al abrir la carpeta, revisa primero el archivo <code>00_INSTRUCCIONES_Y_GUIA_DE_IMPLEMENTACION_PYME.docx</code> para seguir la ruta de aplicación.</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Direct Support Helpdesk -->
-            <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                <span class="text-slate-500 text-center sm:text-left">¿No encuentras el correo o necesitas factura con RUT?</span>
-                <a href="mailto:contacto@calculolaboral.cl?subject=Soporte%20Compra%20Kit%20Pyme" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition-all shadow-2xs">
-                    <span class="material-icons text-xs">email</span>
-                    <span>Escribir a Soporte</span>
+            <h2 class="text-xl font-bold text-slate-900">No se detectó una compra activa</h2>
+            <p class="text-sm text-slate-600 max-w-md mx-auto">
+                Esta página confirma las transacciones realizadas a través de Flow. Si ya compraste tu kit y necesitas soporte, contáctanos a <strong>contacto@calculolaboral.cl</strong>.
+            </p>
+            <div class="pt-2">
+                <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-xs transition-all">
+                    <span>Ver Kit de Blindaje Laboral Pyme ($19.990)</span>
+                    <span class="material-icons text-xs">arrow_forward</span>
                 </a>
             </div>
-
         </div>
 
-        <div class="mt-8">
-            <a href="./" class="text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
-                ← Volver al portal principal de Cálculo Laboral
-            </a>
+        <!-- Case: Active Purchase Confirmed -->
+        <div id="active-session-view">
+            <!-- Success Badge -->
+            <div class="w-16 h-16 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto mb-6 shadow-sm">
+                <span class="material-icons text-3xl">check</span>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                ¡Pago Confirmado con Éxito!
+            </h1>
+            <p class="mt-2 text-slate-600 text-sm sm:text-base leading-relaxed">
+                Hemos recibido correctamente tu pago de <strong>$19.990 CLP</strong> vía Webpay / Flow.
+            </p>
+
+            <!-- Delivery Status Card -->
+            <div class="mt-8 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs text-left space-y-6">
+                
+                <div class="flex items-start gap-4 border-b border-slate-100 pb-5">
+                    <div class="w-11 h-11 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                        <span class="material-icons text-2xl">mark_email_read</span>
+                    </div>
+                    <div class="space-y-1.5 flex-1">
+                        <div id="delivery-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200 text-[11px] font-semibold">
+                            <span class="material-icons text-xs animate-spin">sync</span>
+                            <span>Despachando kit a tu correo...</span>
+                        </div>
+                        <h2 id="delivery-heading" class="text-base sm:text-lg font-bold text-slate-900">
+                            El Kit ha sido enviado a tu correo electrónico
+                        </h2>
+                        <p id="delivery-description" class="text-xs text-slate-600 leading-relaxed">
+                            Te hemos despachado el paquete completo con los <strong>21 documentos Word (.docx) editables y la Guía de Implementación DT</strong> directamente a tu casilla.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Instant Direct Download Button (Triggered via In-Memory Package) -->
+                <div id="direct-download-box" class="hidden bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 sm:p-5 text-center space-y-3">
+                    <div class="flex items-center justify-center gap-2 text-emerald-800 font-bold text-xs sm:text-sm">
+                        <span class="material-icons text-emerald-600 text-base">cloud_download</span>
+                        <span>Descarga Inmediata Habilitada</span>
+                    </div>
+                    <p class="text-xs text-emerald-900/80">
+                        Para tu comodidad, también puedes descargar el archivo comprimido directamente en este equipo ahora mismo:
+                    </p>
+                    <button id="btn-download-zip" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 mx-auto active:scale-[0.99] cursor-pointer">
+                        <span class="material-icons text-base">download</span>
+                        <span>Descargar Kit_Blindaje_Laboral_Pyme_2026.zip (723 KB)</span>
+                    </button>
+                    <p class="text-[11px] text-emerald-700 font-mono">21 archivos .docx · Word 100% editable · Guía DT incluida</p>
+                </div>
+
+                <!-- Practical Steps -->
+                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 sm:p-5 space-y-3 text-xs text-slate-700">
+                    <h3 class="font-bold text-slate-900 flex items-center gap-1.5 text-xs sm:text-sm">
+                        <span class="material-icons text-sm text-sky-500">schedule</span>
+                        Instrucciones de Recepción y Uso:
+                    </h3>
+                    <ul class="space-y-2.5 text-slate-600">
+                        <li class="flex items-start gap-2">
+                            <span class="material-icons text-emerald-600 text-xs mt-0.5">check_circle</span>
+                            <span><strong>Bandeja de Entrada:</strong> Busca el correo remitido por <code>contacto@calculolaboral.cl</code> con el asunto <em>"Tu Kit de Blindaje y Cumplimiento Laboral Pyme 2026"</em>.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="material-icons text-amber-500 text-xs mt-0.5">info</span>
+                            <span><strong>Revisa Spam / No Deseado:</strong> Dependiendo del filtro corporativo de tu empresa, podría tardar 1 a 2 minutos en reflejarse.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="material-icons text-sky-500 text-xs mt-0.5">arrow_forward</span>
+                            <span><strong>Por dónde partir:</strong> Abre primero el archivo <code>00_INSTRUCCIONES_Y_GUIA_DE_IMPLEMENTACION_PYME.docx</code>. En la <strong>página 2</strong> encontrarás el <em>Árbol de Decisión Rápido</em> para activar solo los anexos de tu rubro sin perder tiempo.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Direct Support Helpdesk -->
+                <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <span class="text-slate-500 text-center sm:text-left">¿Tienes dudas o necesitas asistencia con tu compra?</span>
+                    <a href="mailto:contacto@calculolaboral.cl?subject=Soporte%20Compra%20Kit%20Pyme" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition-all shadow-2xs">
+                        <span class="material-icons text-xs">email</span>
+                        <span>Escribir a Soporte</span>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="mt-8">
+                <a href="./" class="text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
+                    ← Volver al portal principal de Cálculo Laboral
+                </a>
+            </div>
         </div>
 
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var token = urlParams.get('token') || urlParams.get('order') || '';
+            
+            var storedDataRaw = null;
+            try {
+                storedDataRaw = sessionStorage.getItem('kit_checkout_pending') || localStorage.getItem('kit_checkout_pending');
+            } catch (e) {}
+
+            var buyerData = null;
+            if (storedDataRaw) {
+                try {
+                    buyerData = JSON.parse(storedDataRaw);
+                } catch (e) {}
+            }
+
+            var noSessionView = document.getElementById('no-session-view');
+            var activeView = document.getElementById('active-session-view');
+            var statusBadge = document.getElementById('delivery-status-badge');
+            var heading = document.getElementById('delivery-heading');
+            var desc = document.getElementById('delivery-description');
+            var directDownloadBox = document.getElementById('direct-download-box');
+            var btnDownloadZip = document.getElementById('btn-download-zip');
+
+            // Helper to trigger base64 file download in browser
+            function downloadBase64Zip(b64Data, filename) {
+                try {
+                    var byteCharacters = atob(b64Data);
+                    var byteNumbers = new Array(byteCharacters.length);
+                    for (var i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    var byteArray = new Uint8Array(byteNumbers);
+                    var blob = new Blob([byteArray], { type: 'application/zip' });
+                    var link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (err) {
+                    console.error('Error triggering blob download:', err);
+                }
+            }
+
+            // If completely empty (no token and no session in browser)
+            if (!token && !buyerData) {
+                // Show polite no-session notice
+                if (noSessionView && activeView) {
+                    noSessionView.classList.remove('hidden');
+                    activeView.classList.add('hidden');
+                }
+                return;
+            }
+
+            // Build payload for automated serverless dispatch
+            var payload = {
+                email: buyerData && buyerData.email ? buyerData.email : '',
+                nombre: buyerData && buyerData.nombre ? buyerData.nombre : 'Cliente',
+                empresa: buyerData && buyerData.empresa ? buyerData.empresa : 'Empresa',
+                telefono: buyerData && buyerData.telefono ? buyerData.telefono : '',
+                rubro: buyerData && buyerData.rubro ? buyerData.rubro : 'General',
+                token: token || 'Webpay-Confirmado'
+            };
+
+            // If we have an email, dispatch automatically via Resend API
+            if (payload.email) {
+                if (statusBadge) {
+                    statusBadge.innerHTML = '<span class="material-icons text-xs animate-spin">sync</span> <span>Despachando a ' + payload.email + '...</span>';
+                }
+
+                fetch('/api/send-kit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        if (statusBadge) {
+                            statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold';
+                            statusBadge.innerHTML = '<span class="material-icons text-xs">check_circle</span> <span>Despacho Confirmado por Correo</span>';
+                        }
+                        if (heading) {
+                            heading.innerText = '¡Kit enviado a ' + payload.email + '!';
+                        }
+                        if (desc) {
+                            desc.innerHTML = 'Hemos enviado el archivo adjunto <strong>Kit_Blindaje_Laboral_Pyme_2026.zip</strong> a tu correo <strong>' + payload.email + '</strong>. Revisa tu bandeja de entrada.';
+                        }
+
+                        // Enable in-memory instant download button
+                        if (data.fileBase64 && directDownloadBox && btnDownloadZip) {
+                            directDownloadBox.classList.remove('hidden');
+                            btnDownloadZip.onclick = function() {
+                                downloadBase64Zip(data.fileBase64, 'Kit_Blindaje_Laboral_Pyme_2026.zip');
+                            };
+                        }
+
+                        // Clear temporary storage to prevent duplicate sends on refresh
+                        try {
+                            sessionStorage.removeItem('kit_checkout_pending');
+                            localStorage.removeItem('kit_checkout_pending');
+                        } catch (e) {}
+                    } else {
+                        throw new Error(data.error || 'Error al despachar');
+                    }
+                })
+                .catch(function(err) {
+                    console.warn('Advertencia en despacho automático:', err);
+                    if (statusBadge) {
+                        statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold';
+                        statusBadge.innerHTML = '<span class="material-icons text-xs">verified</span> <span>Pago Aprobado</span>';
+                    }
+                    if (desc) {
+                        desc.innerHTML = 'Tu pago está confirmado. Si no ves el correo en los próximos 3 minutos, escríbenos directamente a <strong>contacto@calculolaboral.cl</strong> y te reenviaremos el paquete de inmediato.';
+                    }
+                });
+            } else {
+                // If only token is present from Flow without prior session
+                if (statusBadge) {
+                    statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold';
+                    statusBadge.innerHTML = '<span class="material-icons text-xs">check_circle</span> <span>Transacción Aprobada</span>';
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>

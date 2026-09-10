@@ -724,8 +724,22 @@
                 var rubro = document.getElementById('kit-rubro').value;
 
                 var detalleCompleto = 'Solicitud de Compra Kit Pyme ($19.990) | Empresa: ' + empresa + ' | Rubro: ' + rubro;
-
                 var flowUrl = 'https://www.flow.cl/uri/Ctn685YSf';
+
+                // Guardar datos del comprador para despacho automático al retornar de Flow
+                var buyerSession = {
+                    nombre: nombre,
+                    empresa: empresa,
+                    correo: correo,
+                    email: correo,
+                    telefono: telefono,
+                    rubro: rubro,
+                    timestamp: Date.now()
+                };
+                try {
+                    sessionStorage.setItem('kit_checkout_pending', JSON.stringify(buyerSession));
+                    localStorage.setItem('kit_checkout_pending', JSON.stringify(buyerSession));
+                } catch (e) {}
 
                 if (btn) {
                     btn.disabled = true;

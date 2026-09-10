@@ -18,4 +18,5 @@ temp_*
 # Digital Product Files (Paid - do not expose)
 Kit_Blindaje_Laboral_Pyme_2026/
 *.zip
+!api/assets/*.zip
 assets/downloads/
