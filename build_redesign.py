@@ -685,7 +685,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
 # 1. Base Layout Components
 HEADER_HTML = """
     <!-- Header -->
-    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm transition-all duration-300">
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm transition-all duration-300 no-print">
         <div class="max-w-[1200px] mx-auto px-6">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
@@ -816,7 +816,7 @@ HEADER_HTML = """
 
 FOOTER_HTML = """
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-auto">
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-auto no-print">
         <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <!-- Brand Column -->
             <div class="space-y-4">
