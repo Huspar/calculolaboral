@@ -432,44 +432,150 @@
                         El valor de las sanciones pecuniarias se clasifica según la gravedad de la falta y el número de dependientes que tenga contratados la empresa:
                     </p>
 
-                    <div class="overflow-x-auto my-6 not-prose">
-                        <table class="w-full text-xs text-left border-collapse border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-                            <thead class="bg-slate-100/90 text-slate-900 font-bold uppercase tracking-wider text-[11px]">
+                    <!-- Mobile Cards View (sm:hidden) -->
+                    <div class="sm:hidden space-y-3.5 my-6 not-prose">
+                        <!-- Microempresa Card -->
+                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+                            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-3">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200/80 font-bold text-xs whitespace-nowrap shrink-0">Microempresa</span>
+                                <span class="text-xs font-semibold text-slate-500 whitespace-nowrap text-right">1 a 9 trabajadores</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-100">
+                                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
+                                    <span class="block text-xs font-bold text-slate-800">1-2 UTM</span>
+                                    <span class="block text-[10px] text-slate-500 font-mono mt-0.5">Hasta $143k</span>
+                                </div>
+                                <div class="bg-amber-50/60 rounded-xl p-2.5 border border-amber-200/60">
+                                    <span class="block text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
+                                    <span class="block text-xs font-bold text-amber-800">3-6 UTM</span>
+                                    <span class="block text-[10px] text-amber-600 font-mono mt-0.5">Hasta $430k</span>
+                                </div>
+                                <div class="bg-rose-50/70 rounded-xl p-2.5 border border-rose-200/70">
+                                    <span class="block text-[10px] font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
+                                    <span class="block text-xs font-black text-rose-800">7-10 UTM</span>
+                                    <span class="block text-[10px] text-rose-600 font-mono mt-0.5">Hasta $717k</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pequeña Empresa Card -->
+                        <div class="bg-white border border-indigo-100 rounded-2xl p-4 shadow-xs">
+                            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-3">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-bold text-xs whitespace-nowrap shrink-0">Pequeña Empresa</span>
+                                <span class="text-xs font-semibold text-slate-500 whitespace-nowrap text-right">10 a 49 trabajadores</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-100">
+                                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
+                                    <span class="block text-xs font-bold text-slate-800">2-5 UTM</span>
+                                    <span class="block text-[10px] text-slate-500 font-mono mt-0.5">Hasta $358k</span>
+                                </div>
+                                <div class="bg-amber-50/60 rounded-xl p-2.5 border border-amber-200/60">
+                                    <span class="block text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
+                                    <span class="block text-xs font-bold text-amber-800">6-15 UTM</span>
+                                    <span class="block text-[10px] text-amber-600 font-mono mt-0.5">Hasta $1.07M</span>
+                                </div>
+                                <div class="bg-rose-50/70 rounded-xl p-2.5 border border-rose-200/70">
+                                    <span class="block text-[10px] font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
+                                    <span class="block text-xs font-black text-rose-800">16-40 UTM</span>
+                                    <span class="block text-[10px] text-rose-600 font-mono mt-0.5">Hasta $2.86M</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mediana Empresa Card -->
+                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+                            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-3">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-bold text-xs whitespace-nowrap shrink-0">Mediana Empresa</span>
+                                <span class="text-xs font-semibold text-slate-500 whitespace-nowrap text-right">50 a 199 trabajadores</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-100">
+                                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
+                                    <span class="block text-xs font-bold text-slate-800">5-10 UTM</span>
+                                    <span class="block text-[10px] text-slate-500 font-mono mt-0.5">Hasta $717k</span>
+                                </div>
+                                <div class="bg-amber-50/60 rounded-xl p-2.5 border border-amber-200/60">
+                                    <span class="block text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
+                                    <span class="block text-xs font-bold text-amber-800">11-30 UTM</span>
+                                    <span class="block text-[10px] text-amber-600 font-mono mt-0.5">Hasta $2.15M</span>
+                                </div>
+                                <div class="bg-rose-50/70 rounded-xl p-2.5 border border-rose-200/70">
+                                    <span class="block text-[10px] font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
+                                    <span class="block text-xs font-black text-rose-800">31-60 UTM</span>
+                                    <span class="block text-[10px] text-rose-600 font-mono mt-0.5">Hasta $4.30M</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desktop / Tablet Table View (hidden sm:block) -->
+                    <div class="hidden sm:block overflow-x-auto my-6 not-prose border border-slate-200 rounded-2xl shadow-xs bg-white">
+                        <table class="w-full text-xs text-left border-collapse table-auto">
+                            <thead class="bg-slate-50 text-slate-800 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
                                 <tr>
-                                    <th class="p-3.5 border-b border-slate-200">Tipo de Empresa</th>
-                                    <th class="p-3.5 border-b border-slate-200">Dotación</th>
-                                    <th class="p-3.5 border-b border-slate-200">Multa Leve</th>
-                                    <th class="p-3.5 border-b border-slate-200">Multa Grave</th>
-                                    <th class="p-3.5 border-b border-slate-200 text-rose-700 bg-rose-50/60">Multa Gravísima</th>
+                                    <th class="py-3 px-2.5 whitespace-nowrap">Tipo de Empresa</th>
+                                    <th class="py-3 px-2.5 whitespace-nowrap">Dotación</th>
+                                    <th class="py-3 px-2.5 whitespace-nowrap">Multa Leve</th>
+                                    <th class="py-3 px-2.5 whitespace-nowrap">Multa Grave</th>
+                                    <th class="py-3 px-2.5 whitespace-nowrap text-rose-700 bg-rose-50/50">Multa Gravísima</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-200 bg-white">
-                                <tr>
-                                    <td class="p-3.5 font-bold text-slate-900">
-                                        <span class="inline-block px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-semibold">Microempresa</span>
+                            <tbody class="divide-y divide-slate-100 bg-white">
+                                <tr class="hover:bg-slate-50/70 transition-colors">
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200/80 font-bold text-xs whitespace-nowrap">Microempresa</span>
                                     </td>
-                                    <td class="p-3.5 text-slate-600 font-medium">1 a 9 trabajadores</td>
-                                    <td class="p-3.5 text-slate-700">1 a 2 UTM<br><span class="text-slate-500 font-mono text-[11px]">($69.611 - $139.222)</span></td>
-                                    <td class="p-3.5 text-amber-700 font-semibold">3 a 6 UTM<br><span class="text-slate-500 font-mono text-[11px]">($208.833 - $417.666)</span></td>
-                                    <td class="p-3.5 font-bold text-rose-700 bg-rose-50/30">7 a 10 UTM<br><span class="font-mono text-[11px] text-rose-600">($487.277 - $696.110)</span></td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap text-slate-600 font-medium">1 a 9 trabajadores</td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="font-bold text-slate-800">1 a 2 UTM</span>
+                                        <span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($71.721 - $143.442)</span>
+                                    </td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="font-bold text-amber-700">3 a 6 UTM</span>
+                                        <span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($215.163 - $430.326)</span>
+                                    </td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap bg-rose-50/20">
+                                        <span class="font-black text-rose-700">7 a 10 UTM</span>
+                                        <span class="block font-mono text-[10px] tracking-tight text-rose-600 mt-0.5">($502.047 - $717.210)</span>
+                                    </td>
                                 </tr>
-                                <tr class="bg-slate-50/50">
-                                    <td class="p-3.5 font-bold text-slate-900">
-                                        <span class="inline-block px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold">Pequeña Empresa</span>
+                                <tr class="bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-bold text-xs whitespace-nowrap">Pequeña Empresa</span>
                                     </td>
-                                    <td class="p-3.5 text-slate-600 font-medium">10 a 49 trabajadores</td>
-                                    <td class="p-3.5 text-slate-700">2 a 5 UTM<br><span class="text-slate-500 font-mono text-[11px]">($139.222 - $348.055)</span></td>
-                                    <td class="p-3.5 text-amber-700 font-semibold">6 a 15 UTM<br><span class="text-slate-500 font-mono text-[11px]">($417.666 - $1.044.165)</span></td>
-                                    <td class="p-3.5 font-bold text-rose-700 bg-rose-50/30">16 a 40 UTM<br><span class="font-mono text-[11px] text-rose-600">($1.113.776 - $2.784.440)</span></td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap text-slate-600 font-medium">10 a 49 trabajadores</td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="font-bold text-slate-800">2 a 5 UTM</span>
+                                        <span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($143.442 - $358.605)</span>
+                                    </td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="font-bold text-amber-700">6 a 15 UTM</span>
+                                        <span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($430.326 - $1.075.815)</span>
+                                    </td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap bg-rose-50/20">
+                                        <span class="font-black text-rose-700">16 a 40 UTM</span>
+                                        <span class="block font-mono text-[10px] tracking-tight text-rose-600 mt-0.5">($1.147.536 - $2.868.840)</span>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td class="p-3.5 font-bold text-slate-900">
-                                        <span class="inline-block px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-semibold">Mediana Empresa</span>
+                                <tr class="hover:bg-slate-50/70 transition-colors">
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-bold text-xs whitespace-nowrap">Mediana Empresa</span>
                                     </td>
-                                    <td class="p-3.5 text-slate-600 font-medium">50 a 199 trabajadores</td>
-                                    <td class="p-3.5 text-slate-700">5 a 10 UTM</td>
-                                    <td class="p-3.5 text-amber-700 font-semibold">11 a 30 UTM</td>
-                                    <td class="p-3.5 font-bold text-rose-700 bg-rose-50/30">31 a 60 UTM<br><span class="font-mono text-[11px] text-rose-600">(hasta $4.176.660)</span></td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap text-slate-600 font-medium">50 a 199 trabajadores</td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="font-bold text-slate-800">5 a 10 UTM</span>
+                                        <span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($358.605 - $717.210)</span>
+                                    </td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap">
+                                        <span class="font-bold text-amber-700">11 a 30 UTM</span>
+                                        <span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($788.931 - $2.151.630)</span>
+                                    </td>
+                                    <td class="py-3.5 px-2.5 whitespace-nowrap bg-rose-50/20">
+                                        <span class="font-black text-rose-700">31 a 60 UTM</span>
+                                        <span class="block font-mono text-[10px] tracking-tight text-rose-600 mt-0.5">($2.223.351 - $4.303.260)</span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
