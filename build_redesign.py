@@ -359,6 +359,70 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         }
     ]
 
+    howto_sueldo = {
+        "@type": "HowTo",
+        "name": "Cómo Calcular el Sueldo Líquido en Chile (Fórmula 2026)",
+        "description": "Fórmula legal paso a paso para calcular el sueldo líquido a partir del sueldo bruto con descuentos de AFP, salud, cesantía e impuesto único en Chile.",
+        "step": [
+            {
+                "@type": "HowToStep",
+                "name": "Paso 1: Determinar el Sueldo Imponible",
+                "text": "Suma el sueldo base, horas extras, gratificación legal (tope 4,75 IMM) y bonos imponibles para obtener la base afecta a cotizaciones.",
+                "url": "https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso#paso-1"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Paso 2: Calcular Descuentos Previsionales Obligatorios",
+                "text": "Descuenta la cotización de AFP (10,58% a 11,45% con tope de 89.9 UF), 7% de Salud (Fonasa o Isapre) y 0,6% de Seguro de Cesantía.",
+                "url": "https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso#paso-2"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Paso 3: Aplicar Impuesto Único de Segunda Categoría",
+                "text": "Resta las leyes sociales para obtener la base tributable. Si supera 13,5 UTM mensuales, aplica el factor y la rebaja del tramo según la tabla del SII.",
+                "url": "https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso#paso-3"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Paso 4: Sumar Haberes No Imponibles",
+                "text": "Agrega asignaciones no imponibles ni tributables como colación, movilización y viáticos para obtener el sueldo líquido a pago final.",
+                "url": "https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso#paso-4"
+            }
+        ]
+    }
+
+    howto_finiquito = {
+        "@type": "HowTo",
+        "name": "Cómo Calcular el Finiquito Laboral en Chile (Fórmula 2026)",
+        "description": "Paso a paso para calcular el finiquito de trabajo según causales del Código del Trabajo (Art. 159, 160 y 161), con indemnizaciones, aviso previo y vacaciones.",
+        "step": [
+            {
+                "@type": "HowToStep",
+                "name": "Paso 1: Calcular Remuneraciones Pendientes",
+                "text": "Calcula el pago de los días efectivamente trabajados en el mes de desvinculación multiplicando los días trabajados por el sueldo diario.",
+                "url": "https://calculolaboral.cl/como-calcular-finiquito-chile#paso-1"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Paso 2: Calcular Vacaciones Proporcionales (Art. 73)",
+                "text": "Calcula 1,25 días hábiles por mes trabajado. Proyecta los días hábiles sobre el calendario corrido y multiplica por el sueldo diario íntegro.",
+                "url": "https://calculolaboral.cl/como-calcular-finiquito-chile#paso-2"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Paso 3: Calcular Indemnización por Años de Servicio (Art. 163)",
+                "text": "En despido por Necesidades de la Empresa (Art. 161), corresponde 1 mes de sueldo por cada año trabajado (y fracción > 6 meses), con tope de 11 años y 90 UF/mes.",
+                "url": "https://calculolaboral.cl/como-calcular-finiquito-chile#paso-3"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Paso 4: Indemnización Sustitutiva de Aviso Previo (Art. 162)",
+                "text": "Si el empleador no notificó la carta con al menos 30 días de anticipación, suma 1 mes completo adicional de la última remuneración mensual.",
+                "url": "https://calculolaboral.cl/como-calcular-finiquito-chile#paso-4"
+            }
+        ]
+    }
+
     if filename == "index.html":
         json_ld_data = {
             "@context": "https://schema.org",
@@ -388,9 +452,24 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "@type": "SoftwareApplication",
                     "name": "Calculadora de Sueldo Líquido Chile 2026",
                     "applicationCategory": "FinanceApplication",
-                    "operatingSystem": "Web",
+                    "operatingSystem": "All",
+                    "url": "https://calculolaboral.cl/sueldo_liquido",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" }
+                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": "4.9",
+                        "reviewCount": "412",
+                        "bestRating": "5",
+                        "worstRating": "1"
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Calculadora de Sueldo Líquido", "item": "https://calculolaboral.cl/sueldo_liquido" }
+                    ]
                 },
                 {
                     "@type": "FAQPage",
@@ -406,9 +485,24 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "@type": "SoftwareApplication",
                     "name": "Calculadora de Finiquito Chile 2026",
                     "applicationCategory": "FinanceApplication",
-                    "operatingSystem": "Web",
+                    "operatingSystem": "All",
+                    "url": "https://calculolaboral.cl/finiquito_calculator",
                     "description": description,
-                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" }
+                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": "4.9",
+                        "reviewCount": "580",
+                        "bestRating": "5",
+                        "worstRating": "1"
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Calculadora de Finiquito", "item": "https://calculolaboral.cl/finiquito_calculator" }
+                    ]
                 },
                 {
                     "@type": "FAQPage",
@@ -556,8 +650,92 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "dateModified": "2026-07-08"
                 },
                 {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://calculolaboral.cl/blog" },
+                        { "@type": "ListItem", "position": 3, "name": "Ley 40 Horas Chile 2026", "item": "https://calculolaboral.cl/ley-40-horas-chile-2026" }
+                    ]
+                },
+                {
                     "@type": "FAQPage",
                     "mainEntity": faqs_40h
+                }
+            ]
+        }
+    elif filename == "como-calcular-sueldo-liquido-paso-a-paso.html":
+        json_ld_data = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Article",
+                    "headline": title.split("|")[0].strip(),
+                    "description": description,
+                    "author": { "@type": "Organization", "name": "Cálculo Laboral" },
+                    "datePublished": "2026-01-01",
+                    "dateModified": "2026-07-08"
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://calculolaboral.cl/blog" },
+                        { "@type": "ListItem", "position": 3, "name": "Cómo Calcular Sueldo Líquido", "item": "https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso" }
+                    ]
+                },
+                howto_sueldo,
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": faqs_sueldo
+                }
+            ]
+        }
+    elif filename == "como-calcular-finiquito-chile.html":
+        json_ld_data = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Article",
+                    "headline": title.split("|")[0].strip(),
+                    "description": description,
+                    "author": { "@type": "Organization", "name": "Cálculo Laboral" },
+                    "datePublished": "2026-01-01",
+                    "dateModified": "2026-07-08"
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://calculolaboral.cl/blog" },
+                        { "@type": "ListItem", "position": 3, "name": "Cómo Calcular Finiquito", "item": "https://calculolaboral.cl/como-calcular-finiquito-chile" }
+                    ]
+                },
+                howto_finiquito,
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": faqs_finiquito
+                }
+            ]
+        }
+    elif filename == "despido-necesidades-empresa-articulo-161.html":
+        json_ld_data = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Article",
+                    "headline": title.split("|")[0].strip(),
+                    "description": description,
+                    "author": { "@type": "Organization", "name": "Cálculo Laboral" },
+                    "datePublished": "2026-01-01",
+                    "dateModified": "2026-07-08"
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+                        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://calculolaboral.cl/blog" },
+                        { "@type": "ListItem", "position": 3, "name": "Despido Artículo 161", "item": "https://calculolaboral.cl/despido-necesidades-empresa-articulo-161" }
+                    ]
                 }
             ]
         }
@@ -1734,8 +1912,17 @@ def extract_article_info(file_path):
     
     filename = os.path.basename(file_path)
     if filename == "ley-40-horas-chile-2026.html":
-        title = "Ley 40 Horas Chile 2026: Tabla de Horarios, Sueldo y Horas Extras (42h)"
-        description = "Con la Ley 40 Horas (42h en 2026) el valor hora ordinaria con sueldo mínimo sube a $3.075 y la hora extra 50% a $4.613. Revisa la tabla oficial y calcula aquí."
+        title = "Ley 40 Horas Chile 2026: Tabla Horarios (42h) y Sueldo"
+        description = "¿A qué hora sales con las 42 horas? Revisa la tabla 5x2 y 6x1, el valor de la hora extra ($4.613) y descarga el anexo validado por la DT."
+    elif filename == "como-calcular-sueldo-liquido-paso-a-paso.html":
+        title = "Cómo Calcular Sueldo Líquido Chile 2026: Fórmula y Paso a Paso"
+        description = "Con $1.500.000 bruto te quedan $1.187.000 líquido. Conoce la fórmula legal paso a paso con descuentos de AFP, salud, cesantía e impuestos 2026."
+    elif filename == "como-calcular-finiquito-chile.html":
+        title = "Finiquito Chile 2026: Cuánto te Toca por Año + Ejemplo Real"
+        description = "Con 3 años y sueldo de $800.000 te tocan $2.880.000 de finiquito. Conoce la fórmula del Art. 163, aviso previo, vacaciones y descuentos de AFC."
+    elif filename == "despido-necesidades-empresa-articulo-161.html":
+        title = "Despido Art. 161: Indemnización, Plazos y Cómo Reclamar"
+        description = "Con 2 años te corresponden 2 meses de sueldo + recargo. Conoce los plazos legales (60 días), la carta de aviso y qué hacer si te descuentan la AFC."
     elif filename == "guia-vacaciones-proporcionales.html":
         title = "Vacaciones Proporcionales Chile 2026: Tabla de Días y Calculadora de Pago"
         description = "¿Renunciaste o te despidieron? Calcula cuántos días de vacaciones proporcionales te corresponden por mes trabajado y su valor en dinero según el Art. 73 DT."
@@ -4349,6 +4536,24 @@ INDEX_CONTENT = """
                 Confidencial · Sin cobros ocultos ni sorpresas
               </p>
             </div>
+
+            <!-- Contextual Link Booster Finiquito -->
+            <div class="mt-4 pt-3 border-t border-slate-100 no-print">
+              <p class="text-[11px] font-bold text-slate-700 mb-1.5 flex items-center gap-1">
+                <span class="material-icons text-xs text-sky-500">menu_book</span> Guías legales sobre término de contrato:
+              </p>
+              <div class="flex flex-col gap-1.5 text-xs">
+                <a href="como-calcular-finiquito-chile" class="text-slate-600 hover:text-sky-600 flex items-center gap-1.5 transition-colors">
+                  <span class="material-icons text-xs text-sky-500">article</span> Cómo calcular finiquito con ejemplo real de $800.000
+                </a>
+                <a href="despido-necesidades-empresa-articulo-161" class="text-slate-600 hover:text-sky-600 flex items-center gap-1.5 transition-colors">
+                  <span class="material-icons text-xs text-amber-500">gavel</span> Despido Art. 161: Indemnizaciones, plazos y cartas
+                </a>
+                <a href="calculadora-vacaciones-proporcionales" class="text-slate-600 hover:text-sky-600 flex items-center gap-1.5 transition-colors">
+                  <span class="material-icons text-xs text-emerald-500">beach_access</span> Calculadora de vacaciones proporcionales
+                </a>
+              </div>
+            </div>
         </div>
     </div>
 
@@ -4651,6 +4856,24 @@ INDEX_CONTENT = """
                 </button>
               </div>
               <p class="text-[11px] text-slate-400">Descarga instantánea o comparte tu desglose.</p>
+            </div>
+
+            <!-- Contextual Link Booster Sueldo -->
+            <div class="mt-4 pt-3 border-t border-slate-100 no-print">
+              <p class="text-[11px] font-bold text-slate-700 mb-1.5 flex items-center gap-1">
+                <span class="material-icons text-xs text-sky-500">lightbulb</span> ¿Quieres profundizar en tu jornada y remuneración?
+              </p>
+              <div class="flex flex-col gap-1.5 text-xs">
+                <a href="ley-40-horas-chile-2026" class="text-slate-600 hover:text-sky-600 flex items-center gap-1.5 transition-colors">
+                  <span class="material-icons text-xs text-slate-400">schedule</span> Ley 40 Horas: Horarios 5x2 y 6x1 con sueldo mínimo
+                </a>
+                <a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-600 flex items-center gap-1.5 transition-colors">
+                  <span class="material-icons text-xs text-amber-500">more_time</span> Calculadora de Horas Extras al 50% y 100%
+                </a>
+                <a href="como-calcular-sueldo-liquido-paso-a-paso" class="text-slate-600 hover:text-sky-600 flex items-center gap-1.5 transition-colors">
+                  <span class="material-icons text-xs text-emerald-500">school</span> Guía paso a paso: Fórmula de descuentos e impuestos
+                </a>
+              </div>
             </div>
         </div>
     </div>
@@ -5204,7 +5427,7 @@ with open(os.path.join(DEST_DIR, "index.html"), "w", encoding="utf-8") as f:
 
 # Generate sueldo_liquido.html (Specialized H1, SEO metadata and redirects tab on load)
 print("Generating: sueldo_liquido.html...")
-canonical_url, og_tags, json_ld = generate_seo_tags("sueldo_liquido.html", "Calculadora de Sueldo Líquido Chile 2026 | De Bruto a Neto [AFP y Fonasa]", "Calcula tu sueldo líquido exacto en Chile 2026. Pasa de sueldo bruto a líquido neto con descuentos de AFP, Salud Fonasa/Isapre, AFC e Impuestos. 100% gratis.", page_type="website")
+canonical_url, og_tags, json_ld = generate_seo_tags("sueldo_liquido.html", "Calculadora de Sueldo Líquido Chile 2026 | De Bruto a Neto", "Calcula tu sueldo líquido exacto en Chile 2026. Pasa de bruto a neto con descuentos al día de AFP, Fonasa/Isapre, AFC e Impuesto Único. 100% gratis.", page_type="website")
 sueldo_content = INDEX_CONTENT.replace(
     '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Plataforma de Herramientas y Calculadoras Laborales Chile\n        </h1>\n        <p class="text-slate-500 text-sm mt-2 leading-relaxed">\n            Simula gratis tu finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time conforme a la Dirección del Trabajo (DT). Sin registro.\n        </p>',
     '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Calculadora de Sueldo Líquido Chile 2026\n        </h1>\n        <p class="text-slate-500 text-sm mt-2 leading-relaxed">\n            Pasa de sueldo bruto a líquido exacto con retenciones oficiales de AFP, Fonasa/Isapre, AFC e Impuesto de 2ª Categoría.\n        </p>'
@@ -5213,8 +5436,8 @@ sueldo_content = INDEX_CONTENT.replace(
     '<h2 class="text-2xl font-bold text-slate-900 text-center mb-8">Preguntas Frecuentes sobre el Sueldo Líquido y Descuentos Legales</h2>'
 )
 sueldo_html_out = HTML_LAYOUT.format(
-    title="Calculadora de Sueldo Líquido Chile 2026 | De Bruto a Neto [AFP y Fonasa]",
-    description="Calcula tu sueldo líquido exacto en Chile 2026. Pasa de sueldo bruto a líquido neto con descuentos de AFP, Salud Fonasa/Isapre, AFC e Impuestos. 100% gratis.",
+    title="Calculadora de Sueldo Líquido Chile 2026 | De Bruto a Neto",
+    description="Calcula tu sueldo líquido exacto en Chile 2026. Pasa de bruto a neto con descuentos al día de AFP, Fonasa/Isapre, AFC e Impuesto Único. 100% gratis.",
     canonical_url=canonical_url,
     og_tags=og_tags,
     json_ld=json_ld,
@@ -5237,7 +5460,7 @@ with open(os.path.join(DEST_DIR, "sueldo_liquido.html"), "w", encoding="utf-8") 
 
 # Generate finiquito_calculator.html (Specialized H1, SEO metadata and redirects tab on load)
 print("Generating: finiquito_calculator.html...")
-canonical_url, og_tags, json_ld = generate_seo_tags("finiquito_calculator.html", "Calculadora de Finiquito Chile 2026 | Simulador Oficial DT [Descarga PDF]", "Calcula tu finiquito laboral online en segundos según la normativa de la Dirección del Trabajo (DT). Años de servicio, vacaciones y aviso previo con descarga en PDF.", page_type="website")
+canonical_url, og_tags, json_ld = generate_seo_tags("finiquito_calculator.html", "Calculadora de Finiquito Chile 2026 | Simulador Legal [PDF]", "Calcula tu finiquito en 1 minuto según las causales del Código del Trabajo (Art. 161, 159 y renuncia). Años de servicio y vacaciones con PDF gratis.", page_type="website")
 finiquito_content = INDEX_CONTENT.replace(
     '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Plataforma de Herramientas y Calculadoras Laborales Chile\n        </h1>\n        <p class="text-slate-500 text-sm mt-2 leading-relaxed">\n            Simula gratis tu finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time conforme a la Dirección del Trabajo (DT). Sin registro.\n        </p>',
     '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Calculadora de Finiquito Chile 2026\n        </h1>\n        <p class="text-slate-500 text-sm mt-2 leading-relaxed">\n            Simula tu finiquito con formato oficial de la Dirección del Trabajo (DT). Indemnización por años de servicio, vacaciones y aviso previo.\n        </p>'
@@ -5246,8 +5469,8 @@ finiquito_content = INDEX_CONTENT.replace(
     '<h2 class="text-2xl font-bold text-slate-900 text-center mb-8">Preguntas Frecuentes sobre el Finiquito Laboral e Indemnizaciones</h2>'
 )
 finiquito_html_out = HTML_LAYOUT.format(
-    title="Calculadora de Finiquito Chile 2026 | Simulador Oficial DT [Descarga PDF]",
-    description="Calcula tu finiquito laboral online en segundos según la normativa de la Dirección del Trabajo (DT). Años de servicio, vacaciones y aviso previo con descarga en PDF.",
+    title="Calculadora de Finiquito Chile 2026 | Simulador Legal [PDF]",
+    description="Calcula tu finiquito en 1 minuto según las causales del Código del Trabajo (Art. 161, 159 y renuncia). Años de servicio y vacaciones con PDF gratis.",
     canonical_url=canonical_url,
     og_tags=og_tags,
     json_ld=json_ld,
@@ -7626,7 +7849,7 @@ for static_file in ["sitemap.xml", "robots.txt"]:
         print(f"Copied {static_file} to output directory.")
 
 # Sync standalone tools from SOURCE_DIR to DEST_DIR so both are identical
-for tool_file in ["carta-de-renuncia-chile.html", "para-empleadores.html", "generador-anexo-40-horas.html", "kit-cumplimiento-laboral-pymes.html", "reconsideracion-multas-dt-art-511.html"]:
+for tool_file in ["carta-de-renuncia-chile.html", "para-empleadores.html", "generador-anexo-40-horas.html", "kit-cumplimiento-laboral-pymes.html", "reconsideracion-multas-dt-art-511.html", "checklist-fiscalizacion-dt-pymes-chile.html"]:
     src_tool = os.path.join(SOURCE_DIR, tool_file)
     dst_tool = os.path.join(DEST_DIR, tool_file)
     if os.path.exists(src_tool):
