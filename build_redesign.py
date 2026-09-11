@@ -468,7 +468,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "@type": "WebSite",
                     "name": "Cálculo Laboral Chile",
                     "url": "https://calculolaboral.cl/",
-                    "description": "Calcula gratis finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time en Chile conforme a la Dirección del Trabajo.",
+                    "description": "Simula tu finiquito legal, sueldo líquido y horas extras con normativa DT 2026. Cálculos exactos, gratuitos y con informe oficial en PDF sin registro.",
                     "potentialAction": {
                         "@type": "SearchAction",
                         "target": "https://calculolaboral.cl/?q={search_term_string}",
@@ -1149,11 +1149,11 @@ FOOTER_HTML = """
         <!-- Bottom Footer -->
         <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
             <p class="text-xs text-slate-500">
-                &copy; 2026 Cálculo Laboral Chile. Todos los derechos reservados. Todos los cálculos son estimativos y de carácter ilustrativo.
+                &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Código del Trabajo (BCN)</a> y dictámenes oficiales de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Dirección del Trabajo</a>.
             </p>
             <div class="flex items-center gap-4">
                 <span class="text-xs text-slate-500 flex items-center gap-1">
-                    <span class="material-icons text-xs text-emerald-500">verified</span>
+                    <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
                     DT Chile Conforme
                 </span>
             </div>
@@ -1220,11 +1220,11 @@ INDICATOR_BAR_HTML = """
         </div>
         <div class="flex justify-between items-center mt-2 sm:mt-2.5 px-0.5 text-[10px] text-slate-500 font-medium">
             <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500 text-[10px]">
-                <span class="material-icons text-[13px] text-emerald-500">check_circle</span>
-                <span>Valores oficiales vigentes (Banco Central de Chile)</span>
+                <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
+                <span>Valores oficiales vigentes (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT Chile</a>)</span>
             </div>
             <a href="#" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px]">
-                <span class="material-icons text-[12px]">history</span>
+                <span class="material-icons text-[12px]" aria-hidden="true">history</span>
                 <span>Historial</span>
             </a>
         </div>
@@ -4256,29 +4256,27 @@ print("Contact page complete.")
 INDEX_CONTENT = """
 <div class="max-w-[1200px] mx-auto px-6">
     <!-- Trending Notice Banner -->
-    <div class="max-w-3xl mx-auto mt-3 mb-2 no-print">
-        <a href="fondos-generacionales-afp-chile" class="group flex items-center justify-between gap-3 p-2.5 px-4 rounded-2xl bg-amber-50/90 hover:bg-amber-100/80 border border-amber-200/90 text-amber-950 transition-all shadow-sm">
-            <div class="flex items-center gap-2.5 min-w-0">
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[10px] font-extrabold uppercase tracking-wider shrink-0">
-                    <span class="material-icons text-xs">campaign</span> Novedad 2026
-                </span>
-                <span class="text-xs font-semibold truncate text-slate-800 group-hover:text-amber-950 transition-colors">
-                    Reforma Previsional: Conoce los nuevos Fondos Generacionales AFP y en cuál quedarás según tu edad
-                </span>
-            </div>
-            <span class="inline-flex items-center text-xs font-bold text-amber-800 group-hover:translate-x-0.5 transition-transform shrink-0">
-                Ver Guía <span class="material-icons text-xs ml-0.5">arrow_forward</span>
+    <div class="max-w-3xl mx-auto mt-3 mb-2 no-print relative group flex items-center justify-between gap-3 p-2.5 px-4 rounded-2xl bg-amber-50/90 hover:bg-amber-100/80 border border-amber-200/90 text-amber-950 transition-all shadow-sm">
+        <div class="flex items-center gap-2.5 min-w-0">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[10px] font-extrabold uppercase tracking-wider shrink-0">
+                <span class="material-icons text-xs" aria-hidden="true">campaign</span> Novedad 2026
             </span>
-        </a>
+            <span class="text-xs font-semibold truncate text-slate-800 group-hover:text-amber-950 transition-colors">
+                <a href="fondos-generacionales-afp-chile" class="hover:underline after:absolute after:inset-0">Reforma Previsional: Conoce los nuevos Fondos Generacionales AFP</a>
+            </span>
+        </div>
+        <span class="inline-flex items-center text-xs font-bold text-amber-800 group-hover:translate-x-0.5 transition-transform shrink-0">
+            Ver Guía <span class="material-icons text-xs ml-0.5" aria-hidden="true">arrow_forward</span>
+        </span>
     </div>
 
     <!-- H1 Header Section for SEO -->
     <div class="text-center my-4 max-w-2xl mx-auto no-print">
         <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200/70 text-[10px] font-bold uppercase tracking-wider mb-2 shadow-xs">
-            <span class="material-icons text-xs text-sky-500">verified</span> Suite Gratuita • Normativa DT 2026
+            <span class="material-icons text-xs text-sky-500" aria-hidden="true">verified</span> Suite Gratuita • Normativa DT 2026
         </div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
-            Plataforma de Herramientas y Calculadoras Laborales Chile
+            Calculadoras Laborales Chile 2026: Finiquito, Sueldo Líquido y Horas Extras
         </h1>
         <p class="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">
             Simula gratis tu finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time conforme a la Dirección del Trabajo (DT). Sin registro.
@@ -4670,7 +4668,7 @@ INDEX_CONTENT = """
                 <!-- Columna Derecha: Formulario de Contacto -->
                 <div class="w-full lg:w-5/12 bg-white p-5 sm:p-6 rounded-2xl border border-amber-200 shadow-sm">
                     <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                        <span class="material-icons text-sm text-amber-500">contact_mail</span> Consulta Confidencial
+                        <span class="material-icons text-sm text-amber-500" aria-hidden="true">contact_mail</span> Consulta Confidencial
                     </h4>
                     <form id="lead-form" class="space-y-2.5" onsubmit="event.preventDefault(); enviarLead();">
                         <div>
@@ -4834,7 +4832,7 @@ INDEX_CONTENT = """
             <!-- Non-Taxable Incomes -->
             <div class="space-y-4 pt-4 border-t border-slate-100">
                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                    <span class="material-icons text-sm text-sky-500">payments</span>
+                    <span class="material-icons text-sm text-sky-500" aria-hidden="true">payments</span>
                     Haberes No Imponibles
                 </h4>
                 <div class="grid grid-cols-3 gap-2">
@@ -5190,67 +5188,79 @@ INDEX_CONTENT = """
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Card 1: Fondos Generacionales AFP -->
-            <a href="fondos-generacionales-afp-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
+            <div class="relative group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
                 <div class="aspect-video bg-slate-100 overflow-hidden relative">
                     <img src="assets/guia-fondos-generacionales-afp-cover.png" alt="Fondos Generacionales AFP Chile" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <span class="absolute top-3 left-3 bg-amber-500 text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-xs">Reforma Previsional</span>
                 </div>
                 <div class="p-5">
-                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">Fondos Generacionales AFP Chile: Qué son y tabla por edad</h3>
+                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">
+                        <a href="fondos-generacionales-afp-chile" class="hover:text-sky-500 after:absolute after:inset-0">Fondos Generacionales AFP Chile: Qué son y tabla por edad</a>
+                    </h3>
                     <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-2">El fin de los multifondos A, B, C, D, E. Conoce cómo funcionan los fondos por ciclo de vida y en cuál quedarás según tu año de nacimiento.</p>
                 </div>
-            </a>
+            </div>
             <!-- Card 2: Ley 40 Horas -->
-            <a href="ley-40-horas-chile-2026" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
+            <div class="relative group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
                 <div class="aspect-video bg-slate-100 overflow-hidden relative">
                     <img src="assets/guia-ley-40-horas-chile-cover.png" alt="Ley 40 Horas" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <span class="absolute top-3 left-3 bg-sky-500 text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-xs">Laboral 2026</span>
                 </div>
                 <div class="p-5">
-                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">Implementación de la Ley de 40 Horas (42h)</h3>
+                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">
+                        <a href="ley-40-horas-chile-2026" class="hover:text-sky-500 after:absolute after:inset-0">Implementación de la Ley de 40 Horas (42h)</a>
+                    </h3>
                     <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-2">Infografía detallada y cronograma legal sobre la reducción paulatina de la jornada ordinaria en Chile y su valor hora extra.</p>
                 </div>
-            </a>
+            </div>
             <!-- Card 3: Sueldo Líquido -->
-            <a href="como-calcular-sueldo-liquido-paso-a-paso" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
+            <div class="relative group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
                 <div class="aspect-video bg-slate-100 overflow-hidden relative">
                     <img src="assets/guia-sueldo-liquido-cover.png" alt="Calcular sueldo líquido" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-5">
-                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">Cómo Calcular Sueldo Líquido Paso a Paso</h3>
+                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">
+                        <a href="como-calcular-sueldo-liquido-paso-a-paso" class="hover:text-sky-500 after:absolute after:inset-0">Cómo Calcular Sueldo Líquido Paso a Paso</a>
+                    </h3>
                     <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-2">Entiende al detalle cómo pasar tu renta bruta mensual a líquida restando las retenciones obligatorias de AFP, Fonasa o Isapre.</p>
                 </div>
-            </a>
+            </div>
             <!-- Card 4: Finiquito -->
-            <a href="como-calcular-finiquito-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
+            <div class="relative group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
                 <div class="aspect-video bg-slate-100 overflow-hidden relative">
                     <img src="assets/guia-calculo-finiquito-chile-2026.png" alt="Cálculo de Finiquito" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-5">
-                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">Cómo Calcular tu Finiquito en Chile</h3>
+                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">
+                        <a href="como-calcular-finiquito-chile" class="hover:text-sky-500 after:absolute after:inset-0">Cómo Calcular tu Finiquito en Chile</a>
+                    </h3>
                     <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-2">Guía didáctica completa con fórmulas, indemnización por años de servicio, aviso previo y un ejemplo práctico resuelto.</p>
                 </div>
-            </a>
+            </div>
             <!-- Card 5: Vacaciones Proporcionales -->
-            <a href="guia-vacaciones-proporcionales" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
+            <div class="relative group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
                 <div class="aspect-video bg-slate-100 overflow-hidden relative">
                     <img src="assets/guia-vacaciones-proporcionales-cover.png" alt="Vacaciones Proporcionales" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-5">
-                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">Cálculo de Vacaciones Proporcionales</h3>
+                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">
+                        <a href="guia-vacaciones-proporcionales" class="hover:text-sky-500 after:absolute after:inset-0">Cálculo de Vacaciones Proporcionales</a>
+                    </h3>
                     <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-2">Aprende la fórmula del feriado proporcional y comprende por qué a veces aparece valorizado en $0 en tu liquidación de término.</p>
                 </div>
-            </a>
+            </div>
             <!-- Card 6: Despido Art 161 -->
-            <a href="despido-necesidades-empresa-articulo-161" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
+            <div class="relative group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] transition-all duration-300">
                 <div class="aspect-video bg-slate-100 overflow-hidden relative">
                     <img src="assets/guia-despido-necesidades-empresa-161.png" alt="Artículo 161" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-5">
-                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">Despido por Necesidades de la Empresa</h3>
+                    <h3 class="font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2 text-sm">
+                        <a href="despido-necesidades-empresa-articulo-161" class="hover:text-sky-500 after:absolute after:inset-0">Despido por Necesidades de la Empresa</a>
+                    </h3>
                     <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-2">Conoce qué causales se consideran válidas en el Artículo 161 y qué hacer si consideras que tu despido es injustificado.</p>
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 
@@ -5594,10 +5604,10 @@ INDEX_SCRIPTS = """
 
 # Generate index.html
 print("Generating: index.html...")
-canonical_url, og_tags, json_ld = generate_seo_tags("index.html", "Plataforma y Calculadoras Laborales Chile 2026 | Finiquito, Sueldo y Horas Extras", "Calcula gratis finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time en Chile. Simuladores oficiales 2026 conformes a la Dirección del Trabajo (DT). Sin registro.", page_type="website")
+canonical_url, og_tags, json_ld = generate_seo_tags("index.html", "Calculadora Laboral Chile 2026 | Finiquito y Sueldo Líquido", "Simula tu finiquito legal, sueldo líquido y horas extras con normativa DT 2026. Cálculos exactos, gratuitos y con informe oficial en PDF sin registro.", page_type="website")
 index_html_out = HTML_LAYOUT.format(
-    title="Plataforma y Calculadoras Laborales Chile 2026 | Finiquito, Sueldo y Horas Extras",
-    description="Calcula gratis finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time en Chile. Simuladores oficiales 2026 conformes a la Dirección del Trabajo (DT). Sin registro.",
+    title="Calculadora Laboral Chile 2026 | Finiquito y Sueldo Líquido",
+    description="Simula tu finiquito legal, sueldo líquido y horas extras con normativa DT 2026. Cálculos exactos, gratuitos y con informe oficial en PDF sin registro.",
     canonical_url=canonical_url,
     og_tags=og_tags,
     json_ld=json_ld,
@@ -5616,7 +5626,7 @@ with open(os.path.join(DEST_DIR, "index.html"), "w", encoding="utf-8") as f:
 print("Generating: sueldo_liquido.html...")
 canonical_url, og_tags, json_ld = generate_seo_tags("sueldo_liquido.html", "Calculadora de Sueldo Líquido Chile 2026 | De Bruto a Neto", "Calcula tu sueldo líquido exacto en Chile 2026. Pasa de bruto a neto con descuentos al día de AFP, Fonasa/Isapre, AFC e Impuesto Único. 100% gratis.", page_type="website")
 sueldo_content = INDEX_CONTENT.replace(
-    '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Plataforma de Herramientas y Calculadoras Laborales Chile\n        </h1>\n        <p class="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">\n            Simula gratis tu finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time conforme a la Dirección del Trabajo (DT). Sin registro.\n        </p>',
+    '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Calculadoras Laborales Chile 2026: Finiquito, Sueldo Líquido y Horas Extras\n        </h1>\n        <p class="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">\n            Simula gratis tu finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time conforme a la Dirección del Trabajo (DT). Sin registro.\n        </p>',
     '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Calculadora de Sueldo Líquido Chile 2026\n        </h1>\n        <p class="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">\n            Pasa de sueldo bruto a líquido exacto con retenciones oficiales de AFP, Fonasa/Isapre, AFC e Impuesto de 2ª Categoría.\n        </p>'
 ).replace(
     '<h2 class="text-2xl font-bold text-slate-900 text-center mb-8">Información y Preguntas Frecuentes</h2>',
@@ -5649,7 +5659,7 @@ with open(os.path.join(DEST_DIR, "sueldo_liquido.html"), "w", encoding="utf-8") 
 print("Generating: finiquito_calculator.html...")
 canonical_url, og_tags, json_ld = generate_seo_tags("finiquito_calculator.html", "Calculadora de Finiquito Chile 2026 | Simulador Legal [PDF]", "Calcula tu finiquito en 1 minuto según las causales del Código del Trabajo (Art. 161, 159 y renuncia). Años de servicio y vacaciones con PDF gratis.", page_type="website")
 finiquito_content = INDEX_CONTENT.replace(
-    '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Plataforma de Herramientas y Calculadoras Laborales Chile\n        </h1>\n        <p class="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">\n            Simula gratis tu finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time conforme a la Dirección del Trabajo (DT). Sin registro.\n        </p>',
+    '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Calculadoras Laborales Chile 2026: Finiquito, Sueldo Líquido y Horas Extras\n        </h1>\n        <p class="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">\n            Simula gratis tu finiquito legal, sueldo líquido, horas extras con Ley 40 Horas y contratos part-time conforme a la Dirección del Trabajo (DT). Sin registro.\n        </p>',
     '<h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">\n            Calculadora de Finiquito Chile 2026\n        </h1>\n        <p class="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">\n            Simula tu finiquito con formato oficial de la Dirección del Trabajo (DT). Indemnización por años de servicio, vacaciones y aviso previo.\n        </p>'
 ).replace(
     '<h2 class="text-2xl font-bold text-slate-900 text-center mb-8">Información y Preguntas Frecuentes</h2>',
