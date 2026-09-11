@@ -2,6 +2,8 @@
   "cleanUrls": true,
   "redirects": [
     { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/sueldo-liquido", "destination": "/sueldo_liquido", "permanent": true },
+    { "source": "/calculadora-finiquito", "destination": "/finiquito_calculator", "permanent": true },
     { "source": "/:page.html", "destination": "/:page", "permanent": true }
   ],
   "headers": [

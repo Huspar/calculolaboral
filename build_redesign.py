@@ -33,7 +33,11 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         f'<meta property="og:url" content="{canonical_url}">',
         f'<meta property="og:image" content="{og_img}">',
         '<meta property="og:locale" content="es_CL">',
-        '<meta property="og:site_name" content="Cálculo Laboral">'
+        '<meta property="og:site_name" content="Cálculo Laboral">',
+        '<meta name="twitter:card" content="summary_large_image">',
+        f'<meta name="twitter:title" content="{title}">',
+        f'<meta name="twitter:description" content="{description}">',
+        f'<meta name="twitter:image" content="{og_img}">'
     ]
     og_tags = "\n    ".join(og_tags_list)
     
@@ -474,6 +478,14 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                         "target": "https://calculolaboral.cl/?q={search_term_string}",
                         "query-input": "required name=search_term_string"
                     }
+                },
+                {
+                    "@type": "Organization",
+                    "name": "Cálculo Laboral Chile",
+                    "url": "https://calculolaboral.cl/",
+                    "logo": "https://calculolaboral.cl/assets/og-image.png",
+                    "description": "Plataforma gratuita de calculadoras y herramientas laborales oficiales de Chile conforme al Código del Trabajo y la Dirección del Trabajo (DT).",
+                    "areaServed": "CL"
                 },
                 {
                     "@type": "FAQPage",
@@ -1223,10 +1235,10 @@ INDICATOR_BAR_HTML = """
                 <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
                 <span>Valores oficiales vigentes (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT Chile</a>)</span>
             </div>
-            <a href="#" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px]">
+            <button type="button" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px] cursor-pointer bg-transparent border-0 p-0">
                 <span class="material-icons text-[12px]" aria-hidden="true">history</span>
                 <span>Historial</span>
-            </a>
+            </button>
         </div>
     </div>
 """
@@ -7980,6 +7992,8 @@ vercel_json_content = """{
   "cleanUrls": true,
   "redirects": [
     { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/sueldo-liquido", "destination": "/sueldo_liquido", "permanent": true },
+    { "source": "/calculadora-finiquito", "destination": "/finiquito_calculator", "permanent": true },
     { "source": "/:page.html", "destination": "/:page", "permanent": true }
   ],
   "headers": [
@@ -8040,8 +8054,8 @@ copy_dir_clean("Articulos")
 copy_dir_clean("js")
 copy_dir_clean("assets")
 
-# Copy sitemap.xml and robots.txt
-for static_file in ["sitemap.xml", "robots.txt"]:
+# Copy sitemap.xml, robots.txt, and llms.txt
+for static_file in ["sitemap.xml", "robots.txt", "llms.txt"]:
     src_f = os.path.join(SOURCE_DIR, static_file)
     dst_f = os.path.join(DEST_DIR, static_file)
     if os.path.exists(src_f):

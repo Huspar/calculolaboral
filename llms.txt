@@ -1,0 +1,32 @@
+# Cálculo Laboral Chile
+
+> Plataforma gratuita y líder de simuladores y herramientas laborales en Chile conforme a la legislación vigente de 2026 de la Dirección del Trabajo (DT) y el Código del Trabajo.
+
+Calculadoras oficiales, actualizadas y con generación de informe PDF gratuito sin requerir registro ni datos sensibles para trabajadores y empresas en Chile.
+
+## Calculadoras Laborales Principales
+
+- [Calculadora de Finiquito](https://calculolaboral.cl/finiquito_calculator): Simula el monto total de liquidación de término laboral por causales legales (Art. 161, 159 y renuncia voluntaria). Incluye indemnización por años de servicio, indemnización sustitutiva de aviso previo, feriado legal proporcional y cálculo automático del 30% de recargo legal por despido injustificado.
+- [Calculadora de Sueldo Líquido](https://calculolaboral.cl/sueldo_liquido): Conversor exacto de remuneración bruta mensual a líquida. Aplica las retenciones legales vigentes 2026 de cotizaciones previsionales de AFP (Modelo, Uno, Habitat, Capital, Cuprum, Provida, Planvital), Salud Fonasa (7%) o Isapre en UF, Seguro de Cesantía (AFC) e Impuesto Único de Segunda Categoría en base a tramos de UTM.
+- [Calculadora de Horas Extras Ley 40 Horas](https://calculolaboral.cl/calculadora-horas-extras): Calcula el recargo legal del 50% y el valor hora conforme a la reducción paulatina de la jornada ordinaria laboral (44h y 42h) según la Ley N° 21.561.
+- [Calculadora de Sueldo Part-Time](https://calculolaboral.cl/calculadora-sueldo-part-time): Simulación salarial y proporcionalidad de cotizaciones para contratos de jornada parcial de 30 y 20 horas semanales (Art. 40 bis del Código del Trabajo).
+- [Calculadora de Vacaciones Proporcionales](https://calculolaboral.cl/calculadora-vacaciones-proporcionales): Fórmulas de cálculo del feriado proporcional para trabajadores con menos de un año de servicio o fracciones pendientes conforme a los Arts. 67 y 73.
+- [Calculadora de Despido Art. 160](https://calculolaboral.cl/calculadora-despido-articulo-160): Liquidación legal ante despido disciplinario sin derecho a indemnizaciones, contemplando únicamente haberes adeudados y feriado proporcional.
+
+## Herramientas para Empleadores y Pymes
+
+- [Portal Para Empleadores](https://calculolaboral.cl/para-empleadores): Suite preventiva de gestión laboral y mitigación de riesgos de multas de la Dirección del Trabajo para micro, pequeñas y medianas empresas.
+- [Checklist Fiscalización DT Pymes](https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile): Guía interactiva y descargable para auditoría preventiva de las 22 materias más multadas por la DT en Chile, con escala de sanciones en UTM y pesos chilenos por tramo de dotación (1 a 9, 10 a 49 y 50 a 199 trabajadores).
+- [Generador de Anexo Ley 40 Horas](https://calculolaboral.cl/generador-anexo-40-horas): Asistente de redacción automatizada del pacto modificatorio de jornada de trabajo conforme al dictamen oficial de la DT.
+- [Asistente Carta de Renuncia Voluntaria](https://calculolaboral.cl/carta-de-renuncia-chile): Redacción asistida de carta de renuncia con las formalidades del Art. 159 N° 1 y recomendaciones sobre ratificación ante notario público o Inspección del Trabajo.
+- [Solicitud Reconsideración de Multas DT (Art. 511)](https://calculolaboral.cl/reconsideracion-multas-dt-art-511): Asistente para la interposición del recurso administrativo de reconsideración o rebaja de multas laborales ante la DT.
+
+## Guías Educativas y Legislación Laboral Chilena
+
+- [Guía de Fondos Generacionales AFP](https://calculolaboral.cl/fondos-generacionales-afp-chile): Explicación técnica sobre la reforma previsional, sustitución de multifondos (A, B, C, D, E) y asignación por ciclo de vida según año de nacimiento.
+- [Guía Ley 40 Horas Chile 2026](https://calculolaboral.cl/ley-40-horas-chile-2026): Calendario de vigencia legal (44h en 2024, 42h en 2026, 40h en 2028), distribución de jornadas 5x2 y 6x1, y efectos en la remuneración.
+- [Cómo Calcular Finiquito Paso a Paso](https://calculolaboral.cl/como-calcular-finiquito-chile): Fórmulas legales del Código del Trabajo, base de cálculo de última remuneración mensual y ejemplos resueltos.
+- [Cómo Calcular Sueldo Líquido en Chile](https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso): Manual didáctico sobre haberes imponibles, asignaciones no imponibles (colación, movilización) y descuentos obligatorios.
+- [Despido por Necesidades de la Empresa (Art. 161)](https://calculolaboral.cl/despido-necesidades-empresa-articulo-161): Causales válidas, plazo de preaviso de 30 días, carta formal y efecto de la nulidad del despido (Ley Bustos).
+- [Seguro de Cesantía Chile (AFC)](https://calculolaboral.cl/seguro-de-cesantia-chile-como-cobrar): Requisitos de cotizaciones mínimas, cuenta individual (CIC) y fondo de cesantía solidario (FCS).
+- [Reclamar Despido Injustificado en Chile](https://calculolaboral.cl/reclamar-despido-injustificado-chile): Plazos legales de 60 y 90 días hábiles, audiencia de conciliación ante la DT y demanda en juzgados de letras del trabajo con recargos del 30% al 100%.
