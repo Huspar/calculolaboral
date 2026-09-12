@@ -1135,6 +1135,8 @@ FOOTER_HTML = """
                 <ul class="space-y-2">
                     <li><a href="carta-de-renuncia-chile" class="text-sm text-sky-600 hover:text-sky-700 transition-colors font-bold">Carta de Renuncia (Asistente)</a></li>
                     <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-sm text-amber-600 hover:text-amber-700 transition-colors font-bold">Checklist Fiscalización DT (Pymes)</a></li>
+                    <li><a href="que-conductas-no-son-ley-karin-dt-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Qué conductas NO son Ley Karin</a></li>
+                    <li><a href="aguinaldo-fiestas-patrias-chile-2026" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Aguinaldo Fiestas Patrias</a></li>
                     <li><a href="propuesta-indemnizacion-a-todo-evento-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Indemnización Todo Evento</a></li>
                     <li><a href="fondos-generacionales-afp-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Fondos Generacionales AFP</a></li>
                     <li><a href="como-calcular-finiquito-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Cómo Calcular Finiquito</a></li>
@@ -3870,6 +3872,38 @@ blog_content = """
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 00000. Qué conductas NO son Ley Karin DT Chile -->
+        <a href="que-conductas-no-son-ley-karin-dt-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+            <div class="aspect-video bg-slate-100 overflow-hidden relative border-b border-slate-100">
+                <img src="assets/que-conductas-no-son-ley-karin-cover.jpg" alt="Qué conductas NO son Ley Karin según la DT Chile" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                <span class="absolute top-4 left-4 bg-sky-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-xs">Ley Karin & Pymes</span>
+            </div>
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2">Qué conductas NO son Ley Karin según la DT: El 52% de denuncias descartadas</h3>
+                <p class="text-slate-500 text-xs leading-relaxed mb-4">Metas de trabajo, amonestaciones y discrepancias laborales no constituyen acoso. Conoce los criterios de admisibilidad de la DT y cómo blindar a tu empresa.</p>
+                <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                    <span>12 Septiembre 2026</span>
+                    <span>7 min lectura</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- 0000. Aguinaldo Fiestas Patrias 2026 Chile -->
+        <a href="aguinaldo-fiestas-patrias-chile-2026" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+            <div class="aspect-video bg-slate-100 overflow-hidden relative border-b border-slate-100">
+                <img src="assets/guia-aguinaldo-fiestas-patrias-cover.jpg" alt="Aguinaldo Fiestas Patrias 2026 Chile" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                <span class="absolute top-4 left-4 bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-xs">Actualidad 2026</span>
+            </div>
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-slate-900 group-hover:text-sky-500 transition-colors mb-2">Aguinaldo Fiestas Patrias 2026: ¿Es Obligatorio? Montos, Impuestos y Derecho Adquirido</h3>
+                <p class="text-slate-500 text-xs leading-relaxed mb-4">Conoce el promedio de $121.000 en el sector privado, cuándo se vuelve obligatorio por cláusula tácita y cómo se descuenta en tu sueldo líquido.</p>
+                <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                    <span>11 Septiembre 2026</span>
+                    <span>6 min lectura</span>
+                </div>
+            </div>
+        </a>
+
         <!-- 000. Checklist Fiscalización DT (Pymes) -->
         <a href="checklist-fiscalizacion-dt-pymes-chile" class="group block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
             <div class="aspect-video bg-slate-100 overflow-hidden relative border-b border-slate-100">
@@ -5086,6 +5120,26 @@ INDEX_CONTENT = """
                   <span class="material-icons text-xs text-emerald-500">school</span> Guía paso a paso: Fórmula de descuentos e impuestos
                 </a>
               </div>
+            </div>
+
+            <!-- Banner Patrocinado Abakos -->
+            <div class="mt-5 p-3.5 bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/90 rounded-2xl shadow-xs no-print text-center">
+              <div class="flex items-center justify-between mb-2 px-1 max-w-[300px] mx-auto">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Publicidad Patrocinada
+                </span>
+                <span class="text-[10px] text-slate-400 font-medium">Abakos Chile</span>
+              </div>
+              <a href="https://ad.soicos.com/1154772" target="_blank" rel="sponsored nofollow noopener" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-sky-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
+                <img src="/assets/banners/abakos-300x250.jpg" alt="Abakos - Préstamos online sin pagos adelantados en Chile" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
+              </a>
+              <div class="mt-2 flex items-center justify-between px-1 max-w-[300px] mx-auto text-xs">
+                <span class="text-slate-500 font-medium text-[11px]">¿Te faltan lucas a fin de mes?</span>
+                <a href="https://ad.soicos.com/1154772" target="_blank" rel="sponsored nofollow noopener" class="font-bold text-sky-600 hover:text-sky-700 flex items-center gap-0.5 text-xs">
+                  Simular Préstamo <span class="material-icons text-xs">arrow_forward</span>
+                </a>
+              </div>
+              <img src="https://ad.soicos.com/srv.php?impid=1154772&pieceid=29393&ts=raw" width="1" height="1" style="display:none;" alt="" loading="lazy" />
             </div>
         </div>
     </div>
