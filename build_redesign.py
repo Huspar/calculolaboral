@@ -4724,22 +4724,46 @@ INDEX_CONTENT = """
         </div>
 
         <!-- 3. Contextual Link Booster Finiquito (Full-Width abajo) -->
-        <div class="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl no-print">
-            <p class="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
-                <span class="material-icons text-sm text-sky-500">menu_book</span> Guías legales sobre término de contrato:
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                <a href="como-calcular-finiquito-chile" class="p-2.5 bg-white border border-slate-200/60 rounded-xl text-slate-700 hover:text-sky-600 hover:border-sky-300 flex items-center gap-2 transition-all shadow-2xs group">
-                    <span class="material-icons text-xs text-sky-500 group-hover:scale-110 transition-transform">article</span>
-                    <span>Cómo calcular finiquito ($800k)</span>
+        <div class="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm no-print">
+            <div class="flex items-center justify-between mb-3.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-sky-50 text-sky-600 flex items-center justify-center">
+                        <span class="material-icons text-sm">menu_book</span>
+                    </span>
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Guías Recomendadas sobre Finiquito y Término de Contrato</h4>
+                </div>
+                <span class="hidden sm:inline text-[11px] text-slate-400 font-medium">Lectura: 4-6 min</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <a href="como-calcular-finiquito-chile" class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-sky-400 hover:shadow-xs transition-all group flex flex-col justify-between">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="material-icons text-sky-500 text-lg">description</span>
+                            <span class="material-icons text-xs text-slate-300 group-hover:text-sky-500 group-hover:translate-x-0.5 transition-all">arrow_forward</span>
+                        </div>
+                        <h5 class="text-xs font-bold text-slate-800 group-hover:text-sky-600 transition-colors">Cómo Calcular Finiquito</h5>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Paso a paso para calcular años de servicio, mes de aviso y descuentos legales.</p>
+                    </div>
                 </a>
-                <a href="despido-necesidades-empresa-articulo-161" class="p-2.5 bg-white border border-slate-200/60 rounded-xl text-slate-700 hover:text-amber-600 hover:border-amber-300 flex items-center gap-2 transition-all shadow-2xs group">
-                    <span class="material-icons text-xs text-amber-500 group-hover:scale-110 transition-transform">gavel</span>
-                    <span>Despido Art. 161 y plazos DT</span>
+                <a href="despido-necesidades-empresa-articulo-161" class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-amber-400 hover:shadow-xs transition-all group flex flex-col justify-between">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="material-icons text-amber-500 text-lg">gavel</span>
+                            <span class="material-icons text-xs text-slate-300 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all">arrow_forward</span>
+                        </div>
+                        <h5 class="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition-colors">Despido Art. 161 (Necesidades)</h5>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Requisitos de la carta de despido, plazo fatal de 60 días y recargo del 30%.</p>
+                    </div>
                 </a>
-                <a href="calculadora-vacaciones-proporcionales" class="p-2.5 bg-white border border-slate-200/60 rounded-xl text-slate-700 hover:text-emerald-600 hover:border-emerald-300 flex items-center gap-2 transition-all shadow-2xs group">
-                    <span class="material-icons text-xs text-emerald-500 group-hover:scale-110 transition-transform">beach_access</span>
-                    <span>Vacaciones proporcionales</span>
+                <a href="calculadora-vacaciones-proporcionales" class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-emerald-400 hover:shadow-xs transition-all group flex flex-col justify-between">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="material-icons text-emerald-500 text-lg">event_available</span>
+                            <span class="material-icons text-xs text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-0.5 transition-all">arrow_forward</span>
+                        </div>
+                        <h5 class="text-xs font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">Vacaciones Proporcionales</h5>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Fórmula oficial de la DT: cálculo de 1,25 días por mes y días inhábiles.</p>
+                    </div>
                 </a>
             </div>
         </div>
