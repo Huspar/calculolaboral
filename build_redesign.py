@@ -24,6 +24,12 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         og_img = "https://calculolaboral.cl/assets/guia-indemnizacion-todo-evento-chile.jpg"
     elif filename == "checklist-fiscalizacion-dt-pymes-chile.html":
         og_img = "https://calculolaboral.cl/assets/guia-fiscalizacion-dt-pymes-cover.png"
+    elif filename == "sala-cuna-universal-articulo-203-codigo-del-trabajo-chile.html":
+        og_img = "https://calculolaboral.cl/assets/guia-sala-cuna-universal-art-203-cover.jpg"
+    elif filename == "que-conductas-no-son-ley-karin-dt-chile.html":
+        og_img = "https://calculolaboral.cl/assets/que-conductas-no-son-ley-karin-cover.jpg"
+    elif filename == "aguinaldo-fiestas-patrias-chile-2026.html":
+        og_img = "https://calculolaboral.cl/assets/guia-aguinaldo-fiestas-patrias-cover.jpg"
     else:
         og_img = "https://calculolaboral.cl/assets/og-image.png"
     og_tags_list = [
@@ -8160,8 +8166,19 @@ for static_file in ["sitemap.xml", "robots.txt", "llms.txt"]:
         shutil.copy2(src_f, dst_f)
         print(f"Copied {static_file} to output directory.")
 
-# Sync standalone tools from SOURCE_DIR to DEST_DIR so both are identical
-for tool_file in ["carta-de-renuncia-chile.html", "para-empleadores.html", "generador-anexo-40-horas.html", "kit-cumplimiento-laboral-pymes.html", "reconsideracion-multas-dt-art-511.html", "checklist-fiscalizacion-dt-pymes-chile.html"]:
+# Sync standalone tools and editorial articles from SOURCE_DIR to DEST_DIR so both are identical
+for tool_file in [
+    "carta-de-renuncia-chile.html",
+    "para-empleadores.html",
+    "generador-anexo-40-horas.html",
+    "kit-cumplimiento-laboral-pymes.html",
+    "reconsideracion-multas-dt-art-511.html",
+    "checklist-fiscalizacion-dt-pymes-chile.html",
+    "blog.html",
+    "aguinaldo-fiestas-patrias-chile-2026.html",
+    "que-conductas-no-son-ley-karin-dt-chile.html",
+    "sala-cuna-universal-articulo-203-codigo-del-trabajo-chile.html"
+]:
     src_tool = os.path.join(SOURCE_DIR, tool_file)
     dst_tool = os.path.join(DEST_DIR, tool_file)
     if os.path.exists(src_tool):
