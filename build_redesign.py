@@ -24,6 +24,8 @@ def generate_seo_tags(filename, title, description, page_type="website"):
         og_img = "https://calculolaboral.cl/assets/guia-indemnizacion-todo-evento-chile.jpg"
     elif filename == "checklist-fiscalizacion-dt-pymes-chile.html":
         og_img = "https://calculolaboral.cl/assets/guia-fiscalizacion-dt-pymes-cover.png"
+    elif filename == "ley-equidad-genero-brecha-salarial-chile-2026.html":
+        og_img = "https://calculolaboral.cl/assets/guia-equidad-genero-brecha-salarial-cover.jpg"
     elif filename == "sala-cuna-universal-articulo-203-codigo-del-trabajo-chile.html":
         og_img = "https://calculolaboral.cl/assets/guia-sala-cuna-universal-art-203-cover.jpg"
     elif filename == "que-conductas-no-son-ley-karin-dt-chile.html":
@@ -8177,7 +8179,8 @@ for tool_file in [
     "blog.html",
     "aguinaldo-fiestas-patrias-chile-2026.html",
     "que-conductas-no-son-ley-karin-dt-chile.html",
-    "sala-cuna-universal-articulo-203-codigo-del-trabajo-chile.html"
+    "sala-cuna-universal-articulo-203-codigo-del-trabajo-chile.html",
+    "ley-equidad-genero-brecha-salarial-chile-2026.html"
 ]:
     src_tool = os.path.join(SOURCE_DIR, tool_file)
     dst_tool = os.path.join(DEST_DIR, tool_file)
