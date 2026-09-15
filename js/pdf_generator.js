@@ -556,19 +556,19 @@
                         <tbody>
                             <tr>
                                 <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">AFP (${labelAFP})</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-${afp}</td>
+                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${afp.startsWith('-') ? afp : '-' + afp}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Salud (${labelHealth})</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-${health}</td>
+                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${health.startsWith('-') ? health : '-' + health}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Seguro de Cesantía AFC</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-${afc}</td>
+                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${afc.startsWith('-') ? afc : '-' + afc}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Impuesto 2ª Categoría (SII)</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-${tax}</td>
+                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${tax.startsWith('-') ? tax : '-' + tax}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -605,6 +605,25 @@
                 <div style="text-align: right;">
                     <span style="font-size: 18pt; font-weight: 900; color: #0369a1; font-family: monospace; letter-spacing: -0.5px;">${netSalary}</span>
                     <span style="font-size: 10pt; font-weight: 800; color: #0284c7; margin-left: 2px;">CLP</span>
+                </div>
+            </div>
+
+            <!-- Franja Consejo Financiero Patrocinado Itaú (Diseño Sobrio y Profesional para Impresión/PDF) -->
+            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #ea580c; border-radius: 6px; padding: 6px 10px; margin-top: 6px; margin-bottom: 6px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1; padding-right: 10px;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #ea580c; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
+                        <strong style="color: #9a3412; font-size: 6.8pt;">¿Dónde recibir tu remuneración mensual?</strong>
+                    </div>
+                    <p style="font-size: 6.3pt; color: #7c2d12; margin: 0; line-height: 1.3;">
+                        Recibe tu sueldo líquido en tu <strong>Cuenta Corriente Banco Itaú con $0 costo de mantención</strong>. Apertura 100% online en 5 minutos, transferencias ilimitadas a costo $0 y tarjeta de débito digital sin cobros ocultos.
+                    </p>
+                </div>
+                <div style="text-align: right; flex-shrink: 0;">
+                    <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #ea580c !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
+                        Abrir Online →
+                    </a>
+                    <div style="font-size: 5.5pt; color: #9a3412; margin-top: 2px; font-family: monospace;">calculolaboral.cl/itau</div>
                 </div>
             </div>
 
