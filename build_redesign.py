@@ -5151,21 +5151,45 @@ INDEX_CONTENT = """
             </div>
 
             <!-- Banner Patrocinado Itaú -->
-            <div class="mt-5 p-3.5 bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/90 rounded-2xl shadow-xs no-print text-center">
-              <div class="flex items-center justify-between mb-2 px-1 max-w-[300px] mx-auto">
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Publicidad Patrocinada
+            <div class="mt-5 p-3.5 bg-gradient-to-br from-slate-50 to-orange-50/20 border border-slate-200/90 rounded-2xl shadow-xs no-print text-center">
+              <div class="flex items-center justify-between mb-2.5 px-1 max-w-[300px] mx-auto">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-100/70 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span> Recomendado
                 </span>
-                <span class="text-[10px] text-slate-400 font-medium">Banco Itaú Chile</span>
+                <span class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">$0 Mantención</span>
               </div>
               <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
                 <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
               </a>
-              <div class="mt-2 flex items-center justify-between px-1 max-w-[300px] mx-auto text-xs">
-                <span class="text-slate-500 font-medium text-[11px]">¿Dónde recibir tu sueldo?</span>
-                <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" class="font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 text-xs">
-                  Abrir Cuenta <span class="material-icons text-xs">arrow_forward</span>
+              <div class="mt-3 px-1 max-w-[300px] mx-auto text-left">
+                <p class="font-bold text-slate-900 text-xs leading-tight mb-1.5 flex items-center justify-between">
+                  <span>¿Dónde recibirás tu sueldo?</span>
+                  <span class="text-[10px] text-slate-400 font-medium">Banco Itaú</span>
+                </p>
+                <div class="space-y-1 text-[11px] text-slate-600 font-medium mb-3">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-emerald-600 text-xs font-bold">✓</span>
+                    <span><strong>$0 costo de mantención</strong> abonando sueldo</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-emerald-600 text-xs font-bold">✓</span>
+                    <span>Apertura en <strong>5 min solo con carnet</strong></span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-emerald-600 text-xs font-bold">✓</span>
+                    <span>Transferencias a costo $0 y tarjeta digital</span>
+                  </div>
+                </div>
+                <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]">
+                  <span>Abrir Cuenta Online Gratis</span>
+                  <span class="material-icons text-sm">arrow_forward</span>
                 </a>
+                <div class="mt-2 text-center">
+                  <a href="mejores-cuentas-para-recibir-sueldo-chile-2026" class="text-[10.5px] text-slate-400 hover:text-orange-600 transition-colors font-medium inline-flex items-center gap-0.5">
+                    <span>Comparativa de cuentas sueldo 2026</span>
+                    <span class="material-icons text-[12px]">chevron_right</span>
+                  </a>
+                </div>
               </div>
               <img src="https://ad.soicos.com/srv.php?impid=1163773&pieceid=65826&ts=raw" width="1" height="1" style="display:none;" alt="" loading="lazy" />
             </div>
