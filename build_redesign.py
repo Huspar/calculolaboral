@@ -5159,7 +5159,7 @@ INDEX_CONTENT = """
                 <span class="text-[10px] text-slate-400 font-medium">Banco Itaú Chile</span>
               </div>
               <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
-                <img src="/assets/banners/itau-300x250.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
+                <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
               </a>
               <div class="mt-2 flex items-center justify-between px-1 max-w-[300px] mx-auto text-xs">
                 <span class="text-slate-500 font-medium text-[11px]">¿Dónde recibir tu sueldo?</span>
