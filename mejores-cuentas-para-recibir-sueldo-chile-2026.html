@@ -170,6 +170,51 @@
         .comparison-table tbody tr:hover { background: #f8fafc; }
         .comparison-table tr.highlight-itau { background: #fffaf5; border: 2px solid #ea580c; }
         .comparison-table tr.highlight-itau:hover { background: #fff5eb; }
+
+        .copy-box {
+            position: relative;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #1e293b;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 1.25rem 0;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            background: #0ea5e9;
+            color: #ffffff;
+            border-color: #0ea5e9;
+            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
+        }
+        .copy-btn.copied {
+            background: #10b981 !important;
+            color: #ffffff !important;
+            border-color: #10b981 !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-sky-500/20 selection:text-slate-900">
@@ -182,43 +227,132 @@
                 <a href="./" class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity">
                     <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
                         <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Pedestal Base -->
                             <path d="M30 84h40M38 79h24"></path>
+                            <!-- Vertical Pillar -->
                             <path d="M50 22v57"></path>
+                            <!-- Center pointer tip -->
                             <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <!-- Balance Beam -->
                             <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <!-- Left Pan strings and dish -->
                             <path d="M18 36l-8 18h16Z"></path>
                             <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Right Pan strings and dish -->
                             <path d="M82 36l-8 18h16Z"></path>
                             <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Monogram C wrapping left side -->
                             <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <!-- Monogram L wrapping right side -->
                             <path d="M58 43.5v20h10"></path>
                         </svg>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
                 </a>
 
-                <!-- Desktop Nav -->
-                <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    <a href="./" class="text-slate-600 hover:text-sky-600 transition-colors">Calculadora Finiquito</a>
-                    <a href="sueldo_liquido" class="text-slate-600 hover:text-sky-600 transition-colors">Sueldo Líquido</a>
-                    <a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-600 transition-colors">Horas Extras</a>
-                    <a href="para-empleadores" class="text-slate-600 hover:text-sky-600 transition-colors">Para Empleadores</a>
-                    <a href="blog" class="text-sky-600 font-semibold transition-colors">Blog y Guías</a>
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex gap-6 items-center">
+                    <!-- Dropdown Calculadoras -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                            Calculadoras
+                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-48 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                            <div class="p-2 space-y-1">
+                                <a href="sueldo_liquido" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Líquido</a>
+                                <a href="finiquito_calculator" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito</a>
+                                <a href="calculadora-horas-extras" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Horas Extras</a>
+                                <a href="calculadora-sueldo-part-time" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Part-Time</a>
+                                <a href="calculadora-vacaciones-proporcionales" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Vacaciones Proporcionales</a>
+                                <a href="calculadora-despido-articulo-160" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Art. 160</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Guías -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                            Guías
+                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                            <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                                <a href="carta-de-renuncia-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Carta de Renuncia (Asistente)</a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Checklist Fiscalización DT (Pymes)</a>
+                                <a href="mejores-cuentas-para-recibir-sueldo-chile-2026" class="block px-3 py-2 text-xs font-semibold text-orange-600 hover:text-orange-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Cuentas Sueldo 2026</a>
+                                <a href="que-conductas-no-son-ley-karin-dt-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Qué conductas NO son Ley Karin</a>
+                                <a href="aguinaldo-fiestas-patrias-chile-2026" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Aguinaldo Fiestas Patrias</a>
+                                <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Indemnización a Todo Evento (Propuesta)</a>
+                                <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Fondos Generacionales AFP</a>
+                                <a href="como-calcular-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Finiquito</a>
+                                <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Sueldo Líquido</a>
+                                <a href="como-leer-liquidacion-de-sueldo" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Leer Liquidación</a>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Art. 161 Necesidades Empresa</a>
+                                <a href="ley-40-horas-chile-2026" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Ley 40 Horas 2026</a>
+                                <a href="guia-vacaciones-proporcionales" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Vacaciones Proporcionales</a>
+                                <a href="seguro-de-cesantia-chile-como-cobrar" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cobrar Seguro Cesantía</a>
+                                <a href="que-hacer-si-no-te-pagan-el-finiquito" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Si no te Pagan el Finiquito</a>
+                                <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Injustificado</a>
+                                <a href="finiquito-por-renuncia-voluntaria" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito Renuncia Voluntaria</a>
+                                <a href="carta-de-despido-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Carta de Despido Ejemplo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="para-empleadores" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 transition-colors">
+                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                        <span>Para Empleadores</span>
+                    </a>
+
+                    <a href="blog" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Blog</a>
+                    <a href="contacto" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Contacto</a>
                 </nav>
 
-                <!-- Mobile Menu Button -->
-                <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none">
-                    <span class="material-icons">menu</span>
-                </button>
+                <!-- Mobile Menu -->
+                <details class="md:hidden">
+                    <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors active:scale-95 duration-100 cursor-pointer flex items-center" aria-label="Abrir menú de navegación">
+                        <span class="material-icons">menu</span>
+                    </summary>
+                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
+                        <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-2">
+                            <a href="para-empleadores" class="flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/80">
+                                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                                <span>Portal Para Empleadores</span>
+                            </a>
+                            <a href="carta-de-renuncia-chile" class="block px-3 py-2 rounded-lg text-base font-semibold text-sky-600 bg-sky-50 font-bold">Carta de Renuncia (Asistente)</a>
+                            <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 rounded-lg text-base font-semibold text-amber-600 bg-amber-50 font-bold">Checklist Fiscalización DT (Pymes)</a>
+                            <a href="mejores-cuentas-para-recibir-sueldo-chile-2026" class="block px-3 py-2 rounded-lg text-base font-semibold text-orange-600 bg-orange-50 font-bold">Cuentas Sueldo 2026</a>
+                            <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Líquido</a>
+                            <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
+                            <a href="calculadora-horas-extras" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Horas Extras</a>
+                            <a href="calculadora-sueldo-part-time" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Part-Time</a>
+                            <a href="calculadora-vacaciones-proporcionales" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Vacaciones Proporcionales</a>
+                            <a href="calculadora-despido-articulo-160" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Despido Art. 160</a>
+                            <div class="border-t border-slate-100 my-2"></div>
+                            <p class="px-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Guías</p>
+                            <a href="que-conductas-no-son-ley-karin-dt-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Qué conductas NO son Ley Karin</a>
+                            <a href="aguinaldo-fiestas-patrias-chile-2026" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Aguinaldo Fiestas Patrias</a>
+                            <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Indemnización a Todo Evento (Propuesta)</a>
+                            <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Fondos Generacionales AFP</a>
+                            <a href="como-calcular-finiquito-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Calcular Finiquito</a>
+                            <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Calcular Sueldo Líquido</a>
+                            <a href="como-leer-liquidacion-de-sueldo" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Leer Liquidación</a>
+                            <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Art. 161 Necesidades Empresa</a>
+                            <a href="ley-40-horas-chile-2026" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Ley 40 Horas 2026</a>
+                            <a href="guia-vacaciones-proporcionales" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Vacaciones Proporcionales</a>
+                            <a href="seguro-de-cesantia-chile-como-cobrar" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cobrar Seguro Cesantía</a>
+                            <a href="que-hacer-si-no-te-pagan-el-finiquito" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Si no te Pagan el Finiquito</a>
+                            <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Despido Injustificado</a>
+                            <a href="finiquito-por-renuncia-voluntaria" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito Renuncia Voluntaria</a>
+                            <a href="carta-de-despido-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Carta de Despido Ejemplo</a>
+                            <div class="border-t border-slate-100 my-2"></div>
+                            <a href="blog" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Blog</a>
+                            <a href="contacto" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Contacto</a>
+                        </div>
+                    </div>
+                </details>
             </div>
-        </div>
-        <!-- Mobile Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
-            <a href="./" class="block text-sm font-medium text-slate-600 hover:text-sky-600">Calculadora Finiquito</a>
-            <a href="sueldo_liquido" class="block text-sm font-medium text-slate-600 hover:text-sky-600">Sueldo Líquido</a>
-            <a href="calculadora-horas-extras" class="block text-sm font-medium text-slate-600 hover:text-sky-600">Horas Extras</a>
-            <a href="para-empleadores" class="block text-sm font-medium text-slate-600 hover:text-sky-600">Para Empleadores</a>
-            <a href="blog" class="block text-sm font-semibold text-sky-600">Blog y Guías</a>
         </div>
     </header>
 
@@ -477,7 +611,10 @@
                     Una vez que tengas tu número de cuenta corriente, solo debes informar formalmente a tu empleador para que el próximo depósito de sueldo se realice en tu nueva cuenta. Puedes copiar este correo o mensaje modelo:
                 </p>
 
-                <div class="p-4 bg-slate-100 rounded-xl border border-slate-300 font-mono text-xs text-slate-800 leading-relaxed my-4 select-all">
+                <div class="copy-box">
+                    <button type="button" class="copy-btn" onclick="copiarTexto(this)">
+                        <span class="material-icons text-xs" style="vertical-align:middle;font-size:14px;">content_copy</span> Copiar
+                    </button>
                     <strong>Asunto:</strong> Solicitud de actualización de datos de pago de remuneraciones - [Tu Nombre Completo]<br><br>
                     Estimado equipo de Recursos Humanos / Remuneraciones,<br><br>
                     Junto con saludar, en conformidad al artículo 54 del Código del Trabajo, solicito que a contar de la próxima liquidación de sueldo mensual mis remuneraciones sean depositadas en mi nueva cuenta bancaria:<br><br>
@@ -654,54 +791,145 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-12 py-10 text-xs text-slate-500 no-print">
-        <div class="max-w-[1200px] mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                <div>
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-6 h-6 rounded bg-sky-500 flex items-center justify-center">
-                            <span class="text-white text-xs font-bold">CL</span>
-                        </div>
-                        <span class="font-bold text-slate-900 text-sm">CálculoLaboral</span>
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-auto no-print">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <!-- Brand Column -->
+            <div class="space-y-4">
+                <a href="./" class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Pedestal Base -->
+                            <path d="M30 84h40M38 79h24"></path>
+                            <!-- Vertical Pillar -->
+                            <path d="M50 22v57"></path>
+                            <!-- Center pointer tip -->
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <!-- Balance Beam -->
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <!-- Left Pan strings and dish -->
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Right Pan strings and dish -->
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Monogram C wrapping left side -->
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <!-- Monogram L wrapping right side -->
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
                     </div>
-                    <p class="text-slate-400 leading-relaxed text-[11px]">
-                        Plataforma digital independiente de orientación legal y herramientas de simulación laboral y financiera para Chile.
-                    </p>
-                </div>
-                <div>
-                    <strong class="text-slate-900 block mb-2.5 text-xs uppercase tracking-wider">Simuladores</strong>
-                    <ul class="space-y-1.5">
-                        <li><a href="./" class="hover:text-sky-600">Calculadora de Finiquito</a></li>
-                        <li><a href="sueldo_liquido" class="hover:text-sky-600">Calculadora Sueldo Líquido</a></li>
-                        <li><a href="calculadora-horas-extras" class="hover:text-sky-600">Horas Extras 50% y 100%</a></li>
-                        <li><a href="calculadora-vacaciones-proporcionales" class="hover:text-sky-600">Vacaciones Proporcionales</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <strong class="text-slate-900 block mb-2.5 text-xs uppercase tracking-wider">Guías Destacadas</strong>
-                    <ul class="space-y-1.5">
-                        <li><a href="mejores-cuentas-para-recibir-sueldo-chile-2026" class="hover:text-sky-600 font-semibold text-slate-700">Cuentas Sueldo $0 Mantención</a></li>
-                        <li><a href="ley-40-horas-chile-2026" class="hover:text-sky-600">Ley 40 Horas Chile</a></li>
-                        <li><a href="como-calcular-sueldo-liquido-paso-a-paso" class="hover:text-sky-600">Fórmula de Sueldo Líquido</a></li>
-                        <li><a href="como-leer-liquidacion-de-sueldo" class="hover:text-sky-600">Leer Liquidación de Sueldo</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <strong class="text-slate-900 block mb-2.5 text-xs uppercase tracking-wider">Legal & Contacto</strong>
-                    <ul class="space-y-1.5">
-                        <li><a href="terminos" class="hover:text-sky-600">Términos y Condiciones</a></li>
-                        <li><a href="privacidad" class="hover:text-sky-600">Política de Privacidad</a></li>
-                        <li><a href="disclaimer" class="hover:text-sky-600">Descargo de Responsabilidad</a></li>
-                        <li><a href="contacto" class="hover:text-sky-600">Contacto</a></li>
-                    </ul>
-                </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                </a>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Herramientas y simuladores gratuitos y actualizados conforme a la legislación laboral chilena vigente en 2026.
+                </p>
+                <p class="text-xs text-slate-500 font-mono">Versión 2.0.0 (2026)</p>
             </div>
-            <div class="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
-                <span>© 2026 calculolaboral.cl — Todos los derechos reservados.</span>
-                <span>Actualizado según legislación chilena vigente.</span>
+
+            <!-- Calculadoras Column -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-widest">Calculadoras</h4>
+                <ul class="space-y-2">
+                    <li><a href="sueldo_liquido" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Sueldo Líquido</a></li>
+                    <li><a href="finiquito_calculator" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Finiquito</a></li>
+                    <li><a href="calculadora-horas-extras" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Horas Extras</a></li>
+                    <li><a href="calculadora-sueldo-part-time" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Sueldo Part-Time</a></li>
+                    <li><a href="calculadora-vacaciones-proporcionales" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Vacaciones Proporcionales</a></li>
+                    <li><a href="calculadora-despido-articulo-160" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Despido Art. 160</a></li>
+                    <li><a href="./" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium font-semibold">Simulador Integrado</a></li>
+                </ul>
+            </div>
+
+            <!-- Guías Populares Column -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-widest">Guías Populares</h4>
+                <ul class="space-y-2">
+                    <li><a href="mejores-cuentas-para-recibir-sueldo-chile-2026" class="text-sm text-orange-600 hover:text-orange-700 transition-colors font-bold">Cuentas Sueldo 2026 ($0 Mantención)</a></li>
+                    <li><a href="carta-de-renuncia-chile" class="text-sm text-sky-600 hover:text-sky-700 transition-colors font-bold">Carta de Renuncia (Asistente)</a></li>
+                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-sm text-amber-600 hover:text-amber-700 transition-colors font-bold">Checklist Fiscalización DT (Pymes)</a></li>
+                    <li><a href="que-conductas-no-son-ley-karin-dt-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Qué conductas NO son Ley Karin</a></li>
+                    <li><a href="aguinaldo-fiestas-patrias-chile-2026" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Aguinaldo Fiestas Patrias</a></li>
+                    <li><a href="propuesta-indemnizacion-a-todo-evento-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Indemnización Todo Evento</a></li>
+                    <li><a href="fondos-generacionales-afp-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Fondos Generacionales AFP</a></li>
+                    <li><a href="como-calcular-finiquito-chile" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Cómo Calcular Finiquito</a></li>
+                    <li><a href="como-calcular-sueldo-liquido-paso-a-paso" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Cómo Calcular Sueldo Líquido</a></li>
+                    <li><a href="ley-40-horas-chile-2026" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Ley de 40 Horas (2026)</a></li>
+                </ul>
+            </div>
+
+            <!-- Legal Column -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-widest">Sobre el Sitio</h4>
+                <ul class="space-y-2">
+                    <li><a href="para-empleadores" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Para Empleadores (Pymes)</a></li>
+                    <li><a href="sobre-nosotros" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Sobre Nosotros</a></li>
+                    <li><a href="contacto" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Contacto</a></li>
+                    <li><a href="terminos" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Términos de Servicio</a></li>
+                    <li><a href="privacidad" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Política de Privacidad</a></li>
+                    <li><a href="disclaimer" class="text-sm text-slate-600 hover:text-sky-500 transition-colors font-medium">Disclaimer Legal</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <p class="text-xs text-slate-500">
+                &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Código del Trabajo (BCN)</a> y dictámenes oficiales de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Dirección del Trabajo</a>.
+            </p>
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-slate-500 flex items-center gap-1">
+                    <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
+                    DT Chile Conforme
+                </span>
             </div>
         </div>
     </footer>
+
+    <script>
+        function copiarTexto(btn) {
+            var box = btn.closest('.copy-box');
+            if (!box) return;
+            var clone = box.cloneNode(true);
+            var btnInClone = clone.querySelector('.copy-btn');
+            if (btnInClone) btnInClone.remove();
+            var text = (clone.innerText || clone.textContent || '').trim();
+
+            function onSuccess() {
+                var originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span class="material-icons text-xs" style="vertical-align:middle;font-size:14px;">check</span> ¡Copiado!';
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('copied');
+                }, 2500);
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(onSuccess).catch(function() {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+
+            function fallbackCopy(str) {
+                var ta = document.createElement('textarea');
+                ta.value = str;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    onSuccess();
+                } catch (e) {
+                    console.error('Fallback copy failed', e);
+                }
+                document.body.removeChild(ta);
+            }
+        }
+    </script>
 
 </body>
 </html>
