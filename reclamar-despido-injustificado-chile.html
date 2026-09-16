@@ -601,7 +601,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
-    <div class="max-w-4xl mx-auto px-6 pt-6">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
         <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
@@ -612,7 +612,7 @@
     </nav>
     
         
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
             <div class="prose-content max-w-none">
                 <!-- Article Header -->
                 <header class="mb-12">
@@ -766,33 +766,38 @@
                     Si el Tribunal del Trabajo determina que tu despido fue efectivamente injustificado o improcedente, el empleador será condenado a pagarte las indemnizaciones legales con un **recargo porcentual** sobre la indemnización por años de servicio:
                 </p>
 
-                <div class="table-wrap">
-                    <table class="w-full text-xs text-left border border-slate-200">
-                        <thead>
-                            <tr class="bg-slate-100 border-b border-slate-200 text-slate-600 font-bold">
-                                <th class="py-2.5 px-4">Causal Invocada Originalmente</th>
-                                <th class="py-2.5 px-4 text-center">Recargo Legal Aplicado</th>
-                                <th class="py-2.5 px-4">Efecto Legal en Indemnizaciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-700">
-                            <tr>
-                                <td class="py-3 px-4 font-semibold">Art. 161 (Necesidades de la empresa)</td>
-                                <td class="py-3 px-4 text-center font-bold text-sky-600 font-mono">+30%</td>
-                                <td class="py-3 px-4">Se calcula el 30% extra sobre el total de la indemnización por años de servicio.</td>
-                            </tr>
-                            <tr>
-                                <td class="py-3 px-4 font-semibold">Art. 159 (Sin causal o vencimiento de contrato)</td>
-                                <td class="py-3 px-4 text-center font-bold text-amber-600 font-mono">+50%</td>
-                                <td class="py-3 px-4">Se ordena pagar la indemnización por años de servicio completa con un 50% de recargo.</td>
-                            </tr>
-                            <tr>
-                                <td class="py-3 px-4 font-semibold">Art. 160 (Conductas imputables del trabajador)</td>
-                                <td class="py-3 px-4 text-center font-bold text-red-600 font-mono">+80% a +100%</td>
-                                <td class="py-3 px-4">Se restituye el derecho a indemnización por años de servicio y aviso previo, aplicando un recargo del 80% (o 100% si es infundada).</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[500px] text-xs text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                                    <th class="py-2.5 px-3 sm:px-4">Causal Invocada Originalmente</th>
+                                    <th class="py-2.5 px-3 sm:px-4 text-center">Recargo Legal</th>
+                                    <th class="py-2.5 px-3 sm:px-4">Efecto Legal en Indemnizaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-900">Art. 161 (Necesidades de la empresa)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 text-center font-bold text-sky-600 font-mono text-xs sm:text-sm whitespace-nowrap">+30%</td>
+                                    <td class="py-2.5 px-3 sm:px-4">Se calcula el 30% extra sobre el total de la indemnización por años de servicio.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-900">Art. 159 (Sin causal o vencimiento de contrato)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 text-center font-bold text-amber-600 font-mono text-xs sm:text-sm whitespace-nowrap">+50%</td>
+                                    <td class="py-2.5 px-3 sm:px-4">Se ordena pagar la indemnización por años de servicio completa con un 50% de recargo.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-900">Art. 160 (Conductas imputables del trabajador)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 text-center font-bold text-red-600 font-mono text-xs sm:text-sm whitespace-nowrap">+80% a +100%</td>
+                                    <td class="py-2.5 px-3 sm:px-4">Se restituye el derecho a indemnización por años de servicio y aviso previo, aplicando un recargo del 80% (o 100% si es infundada).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
+                    </div>
                 </div>
 
                 <h3>La Devolución del Descuento del Aporte Patronal AFC</h3>

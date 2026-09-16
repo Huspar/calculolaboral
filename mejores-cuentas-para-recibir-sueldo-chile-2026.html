@@ -444,94 +444,99 @@
                     Analizamos las principales opciones bancarias y digitales disponibles hoy en el mercado chileno para recibir tu remuneración:
                 </p>
 
-                <div class="overflow-x-auto my-6 rounded-xl border border-slate-200 shadow-xs">
-                    <table class="comparison-table text-xs">
-                        <thead>
-                            <tr>
-                                <th>Institución y Plan</th>
-                                <th>Costo de Mantención</th>
-                                <th>Condición de Gratuidad</th>
-                                <th>Transferencias</th>
-                                <th>Límite de Saldo</th>
-                                <th>Tipo de Cuenta</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Itaú Destacado -->
-                            <tr class="highlight-itau">
-                                <td class="font-bold text-slate-900 flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-                                    <div>
-                                        <div class="text-orange-700 font-extrabold text-[13px]">Banco Itaú</div>
-                                        <div class="text-[10px] text-slate-500">Plan Cuenta Corriente</div>
-                                    </div>
-                                </td>
-                                <td class="font-black text-emerald-600 text-sm">$0 CLP</td>
-                                <td class="text-slate-700">Abonando tu sueldo o ingresos recurrentes</td>
-                                <td class="text-emerald-700 font-semibold">Ilimitadas a costo $0</td>
-                                <td class="text-slate-700 font-medium">Sin tope de saldo</td>
-                                <td>
-                                    <span class="bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded text-[10px]">Cuenta Corriente Real</span>
-                                </td>
-                            </tr>
-                            <!-- Cuenta RUT -->
-                            <tr>
-                                <td class="font-semibold text-slate-800">
-                                    <strong>BancoEstado</strong>
-                                    <div class="text-[10px] text-slate-400">Cuenta RUT</div>
-                                </td>
-                                <td>$0 fijo (cobra $300 por giro ajeno)</td>
-                                <td class="text-slate-500">Universal</td>
-                                <td class="text-slate-600">Costo $0 en app</td>
-                                <td class="text-rose-600 font-semibold">$5.000.000 máximo</td>
-                                <td>
-                                    <span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-[10px]">Cuenta Vista</span>
-                                </td>
-                            </tr>
-                            <!-- Santander -->
-                            <tr>
-                                <td class="font-semibold text-slate-800">
-                                    <strong>Banco Santander</strong>
-                                    <div class="text-[10px] text-slate-400">Plan Life / Más Lucas</div>
-                                </td>
-                                <td>Desde 0,08 a 0,20 UF/mes si no cumple</td>
-                                <td class="text-slate-500">Uso recurrente o abono de sueldo alto</td>
-                                <td class="text-slate-600">Ilimitadas costo $0</td>
-                                <td class="text-slate-600">Sin tope</td>
-                                <td>
-                                    <span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-[10px]">Cta. Corriente / Vista</span>
-                                </td>
-                            </tr>
-                            <!-- Banco de Chile -->
-                            <tr>
-                                <td class="font-semibold text-slate-800">
-                                    <strong>Banco de Chile</strong>
-                                    <div class="text-[10px] text-slate-400">Cuenta Corriente Digital</div>
-                                </td>
-                                <td>Hasta 0,15 UF/mes según saldo</td>
-                                <td class="text-slate-500">Abono de sueldo calificado</td>
-                                <td class="text-slate-600">Ilimitadas costo $0</td>
-                                <td class="text-slate-600">Sin tope</td>
-                                <td>
-                                    <span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-[10px]">Cuenta Corriente</span>
-                                </td>
-                            </tr>
-                            <!-- Tenpo / Billeteras -->
-                            <tr>
-                                <td class="font-semibold text-slate-800">
-                                    <strong>Tenpo / MACH</strong>
-                                    <div class="text-[10px] text-slate-400">Cuentas Digitales Prepago</div>
-                                </td>
-                                <td class="text-emerald-600 font-semibold">$0 CLP</td>
-                                <td class="text-slate-500">Sin cobro de mantención</td>
-                                <td class="text-slate-600">Ilimitadas en línea</td>
-                                <td class="text-slate-600">Variables según perfil</td>
-                                <td>
-                                    <span class="bg-slate-100 text-slate-500 font-medium px-2 py-0.5 rounded text-[10px]">Prepago / Vista</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 rounded-2xl border border-slate-200 shadow-xs bg-white overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="comparison-table w-full min-w-[580px] text-xs">
+                            <thead>
+                                <tr>
+                                    <th>Institución y Plan</th>
+                                    <th>Costo de Mantención</th>
+                                    <th>Condición de Gratuidad</th>
+                                    <th>Transferencias</th>
+                                    <th>Límite de Saldo</th>
+                                    <th>Tipo de Cuenta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Itaú Destacado -->
+                                <tr class="highlight-itau">
+                                    <td class="font-bold text-slate-900 flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
+                                        <div>
+                                            <div class="text-orange-700 font-extrabold text-[13px]">Banco Itaú</div>
+                                            <div class="text-[10px] text-slate-500">Plan Cuenta Corriente</div>
+                                        </div>
+                                    </td>
+                                    <td class="font-black text-emerald-600 text-sm whitespace-nowrap">$0 CLP</td>
+                                    <td class="text-slate-700">Abonando tu sueldo o ingresos recurrentes</td>
+                                    <td class="text-emerald-700 font-semibold">Ilimitadas a costo $0</td>
+                                    <td class="text-slate-700 font-medium">Sin tope de saldo</td>
+                                    <td>
+                                        <span class="bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Cuenta Corriente Real</span>
+                                    </td>
+                                </tr>
+                                <!-- Cuenta RUT -->
+                                <tr>
+                                    <td class="font-semibold text-slate-800">
+                                        <strong>BancoEstado</strong>
+                                        <div class="text-[10px] text-slate-400">Cuenta RUT</div>
+                                    </td>
+                                    <td>$0 fijo (cobra $300 por giro ajeno)</td>
+                                    <td class="text-slate-500">Universal</td>
+                                    <td class="text-slate-600">Costo $0 en app</td>
+                                    <td class="text-rose-600 font-semibold whitespace-nowrap">$5.000.000 máximo</td>
+                                    <td>
+                                        <span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Cuenta Vista</span>
+                                    </td>
+                                </tr>
+                                <!-- Santander -->
+                                <tr>
+                                    <td class="font-semibold text-slate-800">
+                                        <strong>Banco Santander</strong>
+                                        <div class="text-[10px] text-slate-400">Plan Life / Más Lucas</div>
+                                    </td>
+                                    <td>Desde 0,08 a 0,20 UF/mes si no cumple</td>
+                                    <td class="text-slate-500">Uso recurrente o abono de sueldo alto</td>
+                                    <td class="text-slate-600">Ilimitadas costo $0</td>
+                                    <td class="text-slate-600">Sin tope</td>
+                                    <td>
+                                        <span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Cta. Corriente / Vista</span>
+                                    </td>
+                                </tr>
+                                <!-- Banco de Chile -->
+                                <tr>
+                                    <td class="font-semibold text-slate-800">
+                                        <strong>Banco de Chile</strong>
+                                        <div class="text-[10px] text-slate-400">Cuenta Corriente Digital</div>
+                                    </td>
+                                    <td>Hasta 0,15 UF/mes según saldo</td>
+                                    <td class="text-slate-500">Abono de sueldo calificado</td>
+                                    <td class="text-slate-600">Ilimitadas costo $0</td>
+                                    <td class="text-slate-600">Sin tope</td>
+                                    <td>
+                                        <span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Cuenta Corriente</span>
+                                    </td>
+                                </tr>
+                                <!-- Tenpo / Billeteras -->
+                                <tr>
+                                    <td class="font-semibold text-slate-800">
+                                        <strong>Tenpo / MACH</strong>
+                                        <div class="text-[10px] text-slate-400">Cuentas Digitales Prepago</div>
+                                    </td>
+                                    <td class="text-emerald-600 font-semibold whitespace-nowrap">$0 CLP</td>
+                                    <td class="text-slate-500">Sin cobro de mantención</td>
+                                    <td class="text-slate-600">Ilimitadas en línea</td>
+                                    <td class="text-slate-600">Variables según perfil</td>
+                                    <td>
+                                        <span class="bg-slate-100 text-slate-500 font-medium px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Prepago / Vista</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
+                    </div>
                 </div>
 
                 <h2>4. ¿Por qué conviene tener una Cuenta Corriente bancaria real y no solo una billetera prepago?</h2>

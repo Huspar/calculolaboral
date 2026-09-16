@@ -674,7 +674,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
-    <div class="max-w-4xl mx-auto px-6 pt-6">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
         <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
@@ -685,7 +685,7 @@
     </nav>
     
         
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
             <div class="prose-content max-w-none">
                 <!-- Header de Noticia / Guía -->
                 <div class="mb-8 border-b border-slate-100 pb-8">
@@ -771,48 +771,53 @@
 
                 <!-- Tabla Comparativa Destacada -->
                 <h2>3. Comparativa: Ley Vigente vs. Propuesta en Estudio</h2>
-                <div class="my-6 overflow-x-auto">
-                    <table class="w-full text-left border-collapse bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs text-xs sm:text-sm">
-                        <thead>
-                            <tr class="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold">
-                                <th class="p-3 sm:p-4">Situación o Causal</th>
-                                <th class="p-3 sm:p-4 bg-sky-50/50 text-sky-950">Sistema Actual (Ley Vigente)</th>
-                                <th class="p-3 sm:p-4 bg-indigo-50/50 text-indigo-950">Propuesta en Estudio (Anteproyecto)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-650">
-                            <tr>
-                                <td class="p-3 sm:p-4 font-semibold text-slate-800">Despido por Necesidades de la Empresa (Art. 161)</td>
-                                <td class="p-3 sm:p-4 bg-sky-50/20 font-medium text-slate-900">1 mes de sueldo por año de servicio (tope legal 11 años y 90 UF).</td>
-                                <td class="p-3 sm:p-4 bg-indigo-50/20">Se retira el fondo acumulado (se evalúa equivalente a ~medio mes por año).</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 sm:p-4 font-semibold text-slate-800">Renuncia Voluntaria (Art. 159 Nº2)</td>
-                                <td class="p-3 sm:p-4 bg-sky-50/20 font-bold text-red-600">$0 pesos de indemnización por años de servicio.</td>
-                                <td class="p-3 sm:p-4 bg-indigo-50/20 font-bold text-emerald-700">El trabajador retira el 100% de su fondo acumulado.</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 sm:p-4 font-semibold text-slate-800">Mutuo Acuerdo (Art. 159 Nº1)</td>
-                                <td class="p-3 sm:p-4 bg-sky-50/20">$0 por ley (salvo pacto voluntario entre partes).</td>
-                                <td class="p-3 sm:p-4 bg-indigo-50/20 font-medium text-emerald-700">El trabajador retira el fondo acumulado a todo evento.</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 sm:p-4 font-semibold text-slate-800">Financiamiento</td>
-                                <td class="p-3 sm:p-4 bg-sky-50/20">Pago directo de la empresa al momento del despido.</td>
-                                <td class="p-3 sm:p-4 bg-indigo-50/20">Cotización mensual patronal continua (~1,8% imponible).</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 sm:p-4 font-semibold text-slate-800">¿A quiénes aplicaría?</td>
-                                <td class="p-3 sm:p-4 bg-sky-50/20 font-semibold text-slate-900">A todos los contratos de trabajo vigentes hoy.</td>
-                                <td class="p-3 sm:p-4 bg-indigo-50/20 font-semibold text-indigo-900">Exclusivamente a contratos nuevos que se firmen a futuro.</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 sm:p-4 font-semibold text-slate-800">Estado Legal</td>
-                                <td class="p-3 sm:p-4 bg-sky-50/20 font-bold text-emerald-600">100% Vigente y obligatorio.</td>
-                                <td class="p-3 sm:p-4 bg-indigo-50/20 font-bold text-amber-700">Propuesta en estudio (No aprobada).</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[540px] text-left border-collapse text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold">
+                                    <th class="py-2.5 px-3 sm:px-4">Situación o Causal</th>
+                                    <th class="py-2.5 px-3 sm:px-4 bg-sky-50/50 text-sky-950">Sistema Actual (Ley Vigente)</th>
+                                    <th class="py-2.5 px-3 sm:px-4 bg-indigo-50/50 text-indigo-950">Propuesta en Estudio (Anteproyecto)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-650">
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-800">Despido por Necesidades de la Empresa (Art. 161)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-sky-50/20 font-medium text-slate-900">1 mes de sueldo por año de servicio (tope legal 11 años y 90 UF).</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-indigo-50/20">Se retira el fondo acumulado (se evalúa equivalente a ~medio mes por año).</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-800">Renuncia Voluntaria (Art. 159 Nº2)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-sky-50/20 font-bold text-red-600">$0 pesos de indemnización por años de servicio.</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-indigo-50/20 font-bold text-emerald-700">El trabajador retira el 100% de su fondo acumulado.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-800">Mutuo Acuerdo (Art. 159 Nº1)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-sky-50/20">$0 por ley (salvo pacto voluntario entre partes).</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-indigo-50/20 font-medium text-emerald-700">El trabajador retira el fondo acumulado a todo evento.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-800">Financiamiento</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-sky-50/20">Pago directo de la empresa al momento del despido.</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-indigo-50/20">Cotización mensual patronal continua (~1,8% imponible).</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-800">¿A quiénes aplicaría?</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-sky-50/20 font-semibold text-slate-900">A todos los contratos de trabajo vigentes hoy.</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-indigo-50/20 font-semibold text-indigo-900">Exclusivamente a contratos nuevos que se firmen a futuro.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-4 font-semibold text-slate-800">Estado Legal</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-sky-50/20 font-bold text-emerald-600">100% Vigente y obligatorio.</td>
+                                    <td class="py-2.5 px-3 sm:px-4 bg-indigo-50/20 font-bold text-amber-700">Propuesta en estudio (No aprobada).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
+                    </div>
                 </div>
 
                 <h2>4. El Debate Técnico y Político: Argumentos a favor y en contra</h2>

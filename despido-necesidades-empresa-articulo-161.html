@@ -628,7 +628,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
-    <div class="max-w-4xl mx-auto px-6 pt-6">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
         <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
@@ -639,7 +639,7 @@
     </nav>
     
         
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
             <div class="prose-content max-w-none">
                 <!-- Article Header -->
             <header class="mb-12">
@@ -862,36 +862,35 @@
                     continuos que te deben liquidar a unos $33.333 el día. <br>
                     Cálculo estimado: <strong>~$350.000</strong>.</p>
 
-                <div class="overflow-x-auto my-6">
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-200">
-                                <th class="text-left py-3 pr-4 text-slate-600 font-semibold">Concepto Articulo 161</th>
-                                <th class="text-right py-3 text-slate-600 font-semibold">Estimación del Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-500">
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Indemnización por años de servicio</td>
-                                <td class="py-3 text-right font-mono">$4.000.000</td>
-                            </tr>
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Aviso previo (sustitutivo)</td>
-                                <td class="py-3 text-right font-mono">$1.000.000</td>
-                            </tr>
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Vacaciones proporcionales (~10.5 d)
-                                </td>
-                                <td class="py-3 text-right font-mono">$350.000</td>
-                            </tr>
-                            <tr class="border-t border-slate-200">
-                                <td class="py-4 pr-4 font-bold text-slate-800 text-base">Total Finiquito Art. 161
-                                    referencial:</td>
-                                <td class="py-4 text-right font-bold text-emerald-600 text-base font-mono">$5.350.000
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 bg-slate-50/80">
+                                    <th class="text-left py-2.5 px-3 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-[11px]">Concepto Artículo 161</th>
+                                    <th class="text-right py-2.5 px-3 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-[11px]">Estimación del Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-600 divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-3 sm:px-4 font-medium text-slate-800">Indemnización por años de servicio</td>
+                                    <td class="py-2.5 px-3 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$4.000.000</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-3 sm:px-4 font-medium text-slate-800">Aviso previo (sustitutivo)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$1.000.000</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-3 sm:px-4 font-medium text-slate-800">Vacaciones proporcionales (~10.5 d)</td>
+                                    <td class="py-2.5 px-3 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$350.000</td>
+                                </tr>
+                                <tr class="border-t-2 border-slate-200 bg-slate-50/80">
+                                    <td class="py-3 px-3 sm:px-4 font-bold text-slate-900 text-xs sm:text-base">Total Finiquito Art. 161 referencial:</td>
+                                    <td class="py-3 px-3 sm:px-4 text-right font-bold text-emerald-600 text-xs sm:text-base font-mono whitespace-nowrap">$5.350.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- =============== 5. DIFERENCIA ENTRE ART 161 Y ART 160 =============== -->
@@ -899,33 +898,38 @@
                 <p>Puede sonar confuso si uno lee la "desvinculación y el finiquito", así que la principal clave se
                     reduce a saber la causa. Te dejamos esta tabla para diferenciarlos de inmediato:</p>
 
-<div class="overflow-x-auto my-6 border border-slate-200 rounded-xl shadow-sm">
-                    <table class="w-full text-sm border-collapse bg-white">
-                        <thead class="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                                <th class="text-left p-4 text-slate-800 font-semibold">Aspecto</th>
-                                <th class="text-center p-4 text-emerald-700 font-semibold border-l border-slate-200">Artículo 161 (Necesidades de la empresa)</th>
-                                <th class="text-center p-4 text-rose-700 font-semibold border-l border-slate-200">Artículo 160 (Causales y faltas graves)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-600 text-center">
-                            <tr class="border-b border-slate-100">
-                                <td class="p-4 text-left font-medium text-slate-700">¿Hay indemnización años servicio?</td>
-                                <td class="p-4 border-l border-slate-100">Sí, siempre que pase de un año.</td>
-                                <td class="p-4 border-l border-slate-100">No, bajo ninguna circunstancia inicial.</td>
-                            </tr>
-                            <tr class="border-b border-slate-100">
-                                <td class="p-4 text-left font-medium text-slate-700">¿Hay aviso previo?</td>
-                                <td class="p-4 border-l border-slate-100">Sí, 30 días o el pago sustitutivo a un sueldo.</td>
-                                <td class="p-4 border-l border-slate-100">No requiere aviso ni mes compensador.</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 text-left font-medium text-slate-700">¿Puede impugnarse?</td>
-                                <td class="p-4 border-l border-slate-100">Sí, pidiendo recargos por despido injustificado (30%).</td>
-                                <td class="p-4 border-l border-slate-100">Sí, pero peleando despido indebido para revertirlo a Art. 161.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[500px] text-xs sm:text-sm border-collapse bg-white">
+                            <thead class="bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th class="text-left py-3 px-3 sm:px-4 text-slate-800 font-bold uppercase tracking-wider text-[11px]">Aspecto</th>
+                                    <th class="text-center py-3 px-3 sm:px-4 text-emerald-700 font-bold uppercase tracking-wider text-[11px] border-l border-slate-200">Artículo 161 (Necesidades)</th>
+                                    <th class="text-center py-3 px-3 sm:px-4 text-rose-700 font-bold uppercase tracking-wider text-[11px] border-l border-slate-200">Artículo 160 (Faltas graves)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-600 text-center divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-3 px-3 sm:px-4 text-left font-medium text-slate-800">¿Hay indemnización años servicio?</td>
+                                    <td class="py-3 px-3 sm:px-4 border-l border-slate-100 text-emerald-700 font-medium">Sí, siempre que supere 1 año.</td>
+                                    <td class="py-3 px-3 sm:px-4 border-l border-slate-100 text-rose-700 font-medium">No, bajo ninguna circunstancia.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-3 px-3 sm:px-4 text-left font-medium text-slate-800">¿Hay aviso previo?</td>
+                                    <td class="py-3 px-3 sm:px-4 border-l border-slate-100 text-slate-700">Sí, 30 días o pago sustitutivo.</td>
+                                    <td class="py-3 px-3 sm:px-4 border-l border-slate-100 text-slate-500">No requiere aviso ni mes compensador.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-3 px-3 sm:px-4 text-left font-medium text-slate-800">¿Puede impugnarse?</td>
+                                    <td class="py-3 px-3 sm:px-4 border-l border-slate-100 text-slate-700">Sí, pidiendo recargo legal (30%).</td>
+                                    <td class="py-3 px-3 sm:px-4 border-l border-slate-100 text-slate-700">Sí, demandando despido indebido.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para comparar ambas causales
+                    </div>
                 </div>
 
                 <!-- =============== 6. ¿SE PUEDE RECLAMAR? =============== -->

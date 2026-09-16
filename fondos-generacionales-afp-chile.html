@@ -673,7 +673,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
-    <div class="max-w-4xl mx-auto px-6 pt-6">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
         <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
@@ -684,7 +684,7 @@
     </nav>
     
         
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
             <div class="prose-content max-w-none">
                 <!-- Article Header -->
             <header class="mb-12">
@@ -779,55 +779,60 @@
                 </p>
 
                 <!-- Tabla de Cohortes por Edad -->
-                <div class="overflow-x-auto border border-slate-200 rounded-2xl my-6">
-                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
-                        <thead>
-                            <tr class="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200">
-                                <th class="p-3.5">Fondo Generacional</th>
-                                <th class="p-3.5">Año de Nacimiento</th>
-                                <th class="p-3.5 text-sky-700">Estrategia de Inversión</th>
-                                <th class="p-3.5 text-slate-700">Equivalencia Anterior</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr class="hover:bg-slate-50/60 transition-colors">
-                                <td class="p-3.5 font-bold text-slate-900">Fondo Generación 2000+</td>
-                                <td class="p-3.5 text-slate-600">Nacidos desde 2000 (Menores de 26 años)</td>
-                                <td class="p-3.5 text-sky-700 font-semibold font-mono">85% - 90% Renta Variable (Acciones)</td>
-                                <td class="p-3.5 text-slate-600">Superior al Fondo A</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/60 transition-colors">
-                                <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1990 - 1999</td>
-                                <td class="p-3.5 text-slate-600">Nacidos entre 1990 y 1999 (27 a 36 años)</td>
-                                <td class="p-3.5 text-sky-700 font-semibold font-mono">75% - 85% Renta Variable</td>
-                                <td class="p-3.5 text-slate-600">Fondo A</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/60 transition-colors">
-                                <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1980 - 1989</td>
-                                <td class="p-3.5 text-slate-600">Nacidos entre 1980 y 1989 (37 a 46 años)</td>
-                                <td class="p-3.5 text-sky-700 font-semibold font-mono">55% - 70% Renta Variable / Renta Fija</td>
-                                <td class="p-3.5 text-slate-600">Fondo B / C</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/60 transition-colors">
-                                <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1970 - 1979</td>
-                                <td class="p-3.5 text-slate-600">Nacidos entre 1970 y 1979 (47 a 56 años)</td>
-                                <td class="p-3.5 text-sky-700 font-semibold font-mono">35% - 50% Renta Variable (Transición)</td>
-                                <td class="p-3.5 text-slate-600">Fondo C / D</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/60 transition-colors">
-                                <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1960 - 1969</td>
-                                <td class="p-3.5 text-slate-600">Nacidos entre 1960 y 1969 (57 a 66 años)</td>
-                                <td class="p-3.5 text-sky-700 font-semibold font-mono">15% - 30% Renta Variable / 70%+ Renta Fija</td>
-                                <td class="p-3.5 text-slate-600">Fondo D / E</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/60 transition-colors bg-emerald-50/30">
-                                <td class="p-3.5 font-bold text-slate-900">Fondo Retiro / Jubilados</td>
-                                <td class="p-3.5 text-slate-600">Nacidos hasta 1959 (67+ años o pensionados)</td>
-                                <td class="p-3.5 text-emerald-800 font-bold font-mono">85% - 95% Renta Fija (Blindaje Total)</td>
-                                <td class="p-3.5 text-slate-600">Fondo E Ultra Seguro</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[560px] text-left border-collapse text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200">
+                                    <th class="p-3.5">Fondo Generacional</th>
+                                    <th class="p-3.5">Año de Nacimiento</th>
+                                    <th class="p-3.5 text-sky-700">Estrategia de Inversión</th>
+                                    <th class="p-3.5 text-slate-700">Equivalencia Anterior</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50/60 transition-colors">
+                                    <td class="p-3.5 font-bold text-slate-900">Fondo Generación 2000+</td>
+                                    <td class="p-3.5 text-slate-600">Nacidos desde 2000 (Menores de 26 años)</td>
+                                    <td class="p-3.5 text-sky-700 font-semibold font-mono">85% - 90% Renta Variable (Acciones)</td>
+                                    <td class="p-3.5 text-slate-600">Superior al Fondo A</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/60 transition-colors">
+                                    <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1990 - 1999</td>
+                                    <td class="p-3.5 text-slate-600">Nacidos entre 1990 y 1999 (27 a 36 años)</td>
+                                    <td class="p-3.5 text-sky-700 font-semibold font-mono">75% - 85% Renta Variable</td>
+                                    <td class="p-3.5 text-slate-600">Fondo A</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/60 transition-colors">
+                                    <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1980 - 1989</td>
+                                    <td class="p-3.5 text-slate-600">Nacidos entre 1980 y 1989 (37 a 46 años)</td>
+                                    <td class="p-3.5 text-sky-700 font-semibold font-mono">55% - 70% Renta Variable / Renta Fija</td>
+                                    <td class="p-3.5 text-slate-600">Fondo B / C</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/60 transition-colors">
+                                    <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1970 - 1979</td>
+                                    <td class="p-3.5 text-slate-600">Nacidos entre 1970 y 1979 (47 a 56 años)</td>
+                                    <td class="p-3.5 text-sky-700 font-semibold font-mono">35% - 50% Renta Variable (Transición)</td>
+                                    <td class="p-3.5 text-slate-600">Fondo C / D</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/60 transition-colors">
+                                    <td class="p-3.5 font-bold text-slate-900">Fondo Generación 1960 - 1969</td>
+                                    <td class="p-3.5 text-slate-600">Nacidos entre 1960 y 1969 (57 a 66 años)</td>
+                                    <td class="p-3.5 text-sky-700 font-semibold font-mono">15% - 30% Renta Variable / 70%+ Renta Fija</td>
+                                    <td class="p-3.5 text-slate-600">Fondo D / E</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/60 transition-colors bg-emerald-50/30">
+                                    <td class="p-3.5 font-bold text-slate-900">Fondo Retiro / Jubilados</td>
+                                    <td class="p-3.5 text-slate-600">Nacidos hasta 1959 (67+ años o pensionados)</td>
+                                    <td class="p-3.5 text-emerald-800 font-bold font-mono">85% - 95% Renta Fija (Blindaje Total)</td>
+                                    <td class="p-3.5 text-slate-600">Fondo E Ultra Seguro</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
+                    </div>
                 </div>
 
                 <h2>¿Cómo funciona la trayectoria de inversión (Glidepath)?</h2>

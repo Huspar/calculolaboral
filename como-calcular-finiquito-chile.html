@@ -704,7 +704,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
-    <div class="max-w-4xl mx-auto px-6 pt-6">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
         <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
@@ -715,7 +715,7 @@
     </nav>
     
         
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
             <div class="prose-content max-w-none">
                 <!-- Article Header -->
             <header class="mb-12">
@@ -950,49 +950,49 @@
                     </ul>
                 </div>
 
-                <div class="overflow-x-auto my-6">
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-200">
-                                <th class="text-left py-3 pr-4 text-slate-600 font-semibold">Concepto</th>
-                                <th class="text-left py-3 pr-4 text-slate-600 font-semibold">Detalle</th>
-                                <th class="text-right py-3 text-slate-600 font-semibold">Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-500">
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Remuneraciones pendientes</td>
-                                <td class="py-3 pr-4">15 días de marzo</td>
-                                <td class="py-3 text-right font-mono">$500.000</td>
-                            </tr>
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Aviso previo</td>
-                                <td class="py-3 pr-4">1 mes de remuneración</td>
-                                <td class="py-3 text-right font-mono">$1.000.000</td>
-                            </tr>
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Indemnización años de servicio</td>
-                                <td class="py-3 pr-4">$1.000.000 × 5 años</td>
-                                <td class="py-3 text-right font-mono">$5.000.000</td>
-                            </tr>
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Vacaciones proporcionales</td>
-                                <td class="py-3 pr-4">3,5 meses del período actual</td>
-                                <td class="py-3 text-right font-mono">$204.167</td>
-                            </tr>
-                            <tr class="border-b border-slate-100">
-                                <td class="py-3 pr-4 font-medium text-slate-600">Vacaciones pendientes</td>
-                                <td class="py-3 pr-4">5 días × $33.333</td>
-                                <td class="py-3 text-right font-mono">$166.667</td>
-                            </tr>
-                            <tr class="border-t border-slate-200">
-                                <td class="py-4 pr-4 font-bold text-slate-800 text-base" colspan="2">Total estimado
-                                    finiquito</td>
-                                <td class="py-4 text-right font-bold text-emerald-600 text-base font-mono">$6.870.834
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 bg-slate-50/80">
+                                    <th class="text-left py-2.5 px-2.5 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-[11px]">Concepto</th>
+                                    <th class="text-left py-2.5 px-2.5 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-[11px]">Detalle</th>
+                                    <th class="text-right py-2.5 px-2.5 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-[11px]">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-600 divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-2.5 sm:px-4 font-medium text-slate-800">Remuneraciones pendientes</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-slate-500">15 días de marzo</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$500.000</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-2.5 sm:px-4 font-medium text-slate-800">Aviso previo</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-slate-500">1 mes de remuneración</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$1.000.000</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-2.5 sm:px-4 font-medium text-slate-800">Indemnización años servicio</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-slate-500">$1.000.000 × 5 años</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$5.000.000</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-2.5 sm:px-4 font-medium text-slate-800">Vacaciones proporcionales</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-slate-500">3,5 meses del período</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$204.167</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="py-2.5 px-2.5 sm:px-4 font-medium text-slate-800">Vacaciones pendientes</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-slate-500">5 días × $33.333</td>
+                                    <td class="py-2.5 px-2.5 sm:px-4 text-right font-mono font-semibold whitespace-nowrap text-slate-800">$166.667</td>
+                                </tr>
+                                <tr class="border-t-2 border-slate-200 bg-slate-50/80">
+                                    <td class="py-3 px-2.5 sm:px-4 font-bold text-slate-900 text-xs sm:text-base" colspan="2">Total estimado finiquito</td>
+                                    <td class="py-3 px-2.5 sm:px-4 text-right font-bold text-emerald-600 text-xs sm:text-base font-mono whitespace-nowrap">$6.870.834</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <p>

@@ -696,7 +696,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
-    <div class="max-w-4xl mx-auto px-6 pt-6">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
         <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
@@ -707,7 +707,7 @@
     </nav>
     
         
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
             <div class="prose-content max-w-none">
                 <!-- Article Header -->
             <header class="mb-12">
@@ -781,34 +781,34 @@
                 </div>
 
 <!-- Infografía HTML: Flujo de cálculo sueldo líquido -->
-                <div class="my-8 p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+                <div class="my-8 p-4 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
                     <p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-5">Del sueldo bruto al sueldo líquido</p>
                     <div class="max-w-xs mx-auto space-y-2">
                         <div class="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-center shadow-sm">
                             <p class="text-emerald-700 text-xs font-bold mb-0 uppercase">Sueldo Bruto</p>
-                            <p class="text-slate-800 text-lg font-bold mb-0">$1.200.000</p>
+                            <p class="text-slate-800 text-lg font-bold mb-0 font-mono">$1.200.000</p>
                         </div>
                         <div class="flex justify-center"><span class="material-icons text-sky-500 text-sm font-bold">arrow_downward</span></div>
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-2 flex justify-between items-center shadow-sm">
+                        <div class="rounded-lg bg-white border border-slate-100 px-3 sm:px-4 py-2 flex justify-between items-center gap-2 shadow-sm">
                             <span class="text-slate-600 text-xs font-medium">AFP (11,27%)</span>
-                            <span class="text-rose-600 text-xs font-bold">−$135.240</span>
+                            <span class="text-rose-600 text-xs font-bold font-mono shrink-0 text-right">−$135.240</span>
                         </div>
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-2 flex justify-between items-center shadow-sm">
+                        <div class="rounded-lg bg-white border border-slate-100 px-3 sm:px-4 py-2 flex justify-between items-center gap-2 shadow-sm">
                             <span class="text-slate-600 text-xs font-medium">Salud (7%)</span>
-                            <span class="text-rose-600 text-xs font-bold">−$84.000</span>
+                            <span class="text-rose-600 text-xs font-bold font-mono shrink-0 text-right">−$84.000</span>
                         </div>
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-2 flex justify-between items-center shadow-sm">
+                        <div class="rounded-lg bg-white border border-slate-100 px-3 sm:px-4 py-2 flex justify-between items-center gap-2 shadow-sm">
                             <span class="text-slate-600 text-xs font-medium">Cesantía (0,6%)</span>
-                            <span class="text-rose-600 text-xs font-bold">−$7.200</span>
+                            <span class="text-rose-600 text-xs font-bold font-mono shrink-0 text-right">−$7.200</span>
                         </div>
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-2 flex justify-between items-center shadow-sm">
+                        <div class="rounded-lg bg-white border border-slate-100 px-3 sm:px-4 py-2 flex justify-between items-center gap-2 shadow-sm">
                             <span class="text-slate-600 text-xs font-medium">Impuesto Único</span>
-                            <span class="text-amber-600 text-xs font-bold">−$0 (exento)</span>
+                            <span class="text-amber-600 text-xs font-bold font-mono shrink-0 text-right">−$0 (exento)</span>
                         </div>
                         <div class="flex justify-center"><span class="material-icons text-sky-500 text-sm font-bold">arrow_downward</span></div>
                         <div class="rounded-lg bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-200 px-4 py-3 text-center shadow-sm">
                             <p class="text-sky-600 text-xs font-bold mb-0 uppercase">Sueldo Líquido</p>
-                            <p class="text-sky-600 text-lg font-bold mb-0">$973.560</p>
+                            <p class="text-sky-600 text-lg font-bold mb-0 font-mono">$973.560</p>
                         </div>
                     </div>
                 </div>
@@ -952,17 +952,44 @@
                     Para este ejemplo usaremos "AFP Habitat" con una comisión de 1,27% y Salud en "Fonasa" (7% legal). Con esos datos estructuramos el cálculo del bruto hacia tu sueldo líquido transable:
                 </p>
 
-<div class="bg-white border border-slate-200 rounded-xl p-5 my-4 shadow-sm">
-                    <ul class="!list-none !p-0">
-                        <li class="flex justify-between border-b border-slate-100 pb-2 mb-2"><span class="text-slate-600 font-medium">Haberes Imponibles base:</span> <strong class="text-slate-800">$1.200.000</strong></li>
-                        <li class="flex justify-between border-b border-slate-100 pb-2 mb-2 text-rose-600"><span>Cotización AFP (10% + 1,27% = 11,27%):</span> <strong>-$135.240</strong></li>
-                        <li class="flex justify-between border-b border-slate-100 pb-2 mb-2 text-rose-600"><span>Salud Fonasa (7%):</span> <strong>-$84.000</strong></li>
-                        <li class="flex justify-between border-b border-slate-100 pb-2 mb-2 text-rose-600"><span>Cesantía (0,6%):</span> <strong>-$7.200</strong></li>
-                        <li class="flex justify-between border-b border-slate-100 pb-2 mb-2"><span class="text-slate-600 font-medium">Total Cotizaciones Excluidas:</span> <strong class="text-slate-800">$226.440</strong></li>
-                        <li class="flex justify-between font-bold text-slate-800 border-b border-slate-100 pb-2 mb-2"><span>Renta Líquida Imponible:</span> <span class="text-slate-900">$973.560</span></li>
-                        <li class="flex justify-between border-b border-slate-100 pb-2 mb-2 text-rose-600"><span>Impuesto Único retenido (según SII aproximado):</span> <strong>-$1.202</strong></li>
-                        <li class="flex justify-between border-b border-slate-100 pb-2 mb-2 text-emerald-600"><span>Suma de Haberes No Imponibles (Colación/Movilización):</span> <strong>+$50.000</strong></li>
-                        <li class="flex justify-between text-lg font-bold text-sky-600 pt-2"><span class="text-slate-800">SUELDO LÍQUIDO FINAL AL BOLSILLO:</span> <span>$1.022.358</span></li>
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 my-4 shadow-xs">
+                    <ul class="!list-none !p-0 space-y-2.5">
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2">
+                            <span class="text-slate-700 font-medium text-xs sm:text-sm">Haberes Imponibles base:</span>
+                            <strong class="text-slate-900 font-mono text-xs sm:text-sm shrink-0 text-right">$1.200.000</strong>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 text-rose-600">
+                            <span class="text-xs sm:text-sm">Cotización AFP (11,27%):</span>
+                            <strong class="font-mono text-xs sm:text-sm shrink-0 text-right">-$135.240</strong>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 text-rose-600">
+                            <span class="text-xs sm:text-sm">Salud Fonasa (7%):</span>
+                            <strong class="font-mono text-xs sm:text-sm shrink-0 text-right">-$84.000</strong>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 text-rose-600">
+                            <span class="text-xs sm:text-sm">Cesantía (0,6%):</span>
+                            <strong class="font-mono text-xs sm:text-sm shrink-0 text-right">-$7.200</strong>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2">
+                            <span class="text-slate-700 font-medium text-xs sm:text-sm">Total Cotizaciones:</span>
+                            <strong class="text-slate-900 font-mono text-xs sm:text-sm shrink-0 text-right">$226.440</strong>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 font-bold text-slate-900">
+                            <span class="text-xs sm:text-sm">Renta Líquida Imponible:</span>
+                            <span class="font-mono text-xs sm:text-sm shrink-0 text-right">$973.560</span>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 text-rose-600">
+                            <span class="text-xs sm:text-sm">Impuesto Único (SII aprox.):</span>
+                            <strong class="font-mono text-xs sm:text-sm shrink-0 text-right">-$1.202</strong>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 text-emerald-600">
+                            <span class="text-xs sm:text-sm">No Imponibles (Colación/Mov.):</span>
+                            <strong class="font-mono text-xs sm:text-sm shrink-0 text-right">+$50.000</strong>
+                        </li>
+                        <li class="flex items-center justify-between gap-3 text-base sm:text-lg font-bold text-sky-600 pt-1">
+                            <span class="text-slate-900 text-xs sm:text-base">SUELDO LÍQUIDO FINAL:</span>
+                            <span class="font-mono shrink-0 text-right">$1.022.358</span>
+                        </li>
                     </ul>
                 </div>
 

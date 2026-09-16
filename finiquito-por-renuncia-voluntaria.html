@@ -601,7 +601,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
-    <div class="max-w-4xl mx-auto px-6 pt-6">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
         <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
@@ -612,7 +612,7 @@
     </nav>
     
         
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-8 sm:p-12 mb-8 relative overflow-hidden">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
             <div class="prose-content max-w-none">
                 <!-- Article Header -->
                     <header class="mb-12">
@@ -776,29 +776,31 @@
                         <br><em>5.25 días x $26.667 = $140.002.</em>
                     </p>
 
-                    <div class="overflow-x-auto my-6 border border-slate-200 rounded-xl">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 text-slate-700 font-bold text-xs uppercase border-b border-slate-200">
-                                    <th class="p-3">Concepto a Pagar</th>
-                                    <th class="p-3 text-right">Monto Estimado</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm">
-                                <tr>
-                                    <td class="p-3">Sueldo proporcional (15 días trabajados)</td>
-                                    <td class="p-3 text-right font-mono font-semibold">$400.000</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3">Vacaciones proporcionales pendientes (3.75 días hábiles)</td>
-                                    <td class="p-3 text-right font-mono font-semibold">$140.002</td>
-                                </tr>
-                                <tr class="bg-slate-50 font-bold text-slate-800">
-                                    <td class="p-3">Total Finiquito Estimado (Bruto antes de descuentos previsionales)</td>
-                                    <td class="p-3 text-right font-mono text-sky-600">$540.002</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[420px] text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-700 font-bold text-xs uppercase border-b border-slate-200">
+                                        <th class="py-2.5 px-3 sm:px-4">Concepto a Pagar</th>
+                                        <th class="py-2.5 px-3 sm:px-4 text-right">Monto Estimado</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                    <tr>
+                                        <td class="py-2.5 px-3 sm:px-4">Sueldo proporcional (15 días trabajados)</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-right font-mono font-semibold whitespace-nowrap">$400.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 sm:px-4">Vacaciones proporcionales pendientes (3.75 días hábiles)</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-right font-mono font-semibold whitespace-nowrap">$140.002</td>
+                                    </tr>
+                                    <tr class="bg-slate-50 font-bold text-slate-800">
+                                        <td class="py-2.5 px-3 sm:px-4">Total Finiquito Estimado (Bruto antes de descuentos previsionales)</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-right font-mono text-sky-600 font-bold whitespace-nowrap">$540.002</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <!-- Dedicated Finiquito Renuncia Callout -->
@@ -821,43 +823,48 @@
                         La siguiente tabla resume lo que recibes según las causales de término de contrato más frecuentes:
                     </p>
                     
-                    <div class="overflow-x-auto my-6 border border-slate-200 rounded-xl">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-slate-50 text-slate-700 font-bold text-xs uppercase border-b border-slate-200">
-                                    <th class="p-3">Concepto en Finiquito</th>
-                                    <th class="p-3">Renuncia Voluntaria (Art. 159 Nº2)</th>
-                                    <th class="p-3">Necesidades Empresa (Art. 161)</th>
-                                    <th class="p-3">Despido por Culpabilidad (Art. 160)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                <tr>
-                                    <td class="p-3 font-semibold">Sueldo Proporcional</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ se paga</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ se paga</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ se paga</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3 font-semibold">Vacaciones Proporcionales</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ se pagan</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ se pagan</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ se pagan</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3 font-semibold">Indemnización Años de Servicio</td>
-                                    <td class="p-3 text-rose-500">❌ NO (Salvo pacto)</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ (Si lleva >1 año)</td>
-                                    <td class="p-3 text-rose-500">❌ NO corresponde</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3 font-semibold">Indemnización Aviso Previo</td>
-                                    <td class="p-3 text-rose-500">❌ NO corresponde</td>
-                                    <td class="p-3 text-emerald-600">✅ SÍ (Si no avisan 30 días antes)</td>
-                                    <td class="p-3 text-rose-500">❌ NO corresponde</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[560px] text-left border-collapse text-xs sm:text-sm">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-700 font-bold text-xs uppercase border-b border-slate-200">
+                                        <th class="py-2.5 px-3 sm:px-4">Concepto en Finiquito</th>
+                                        <th class="py-2.5 px-3 sm:px-4">Renuncia Voluntaria (Art. 159 Nº2)</th>
+                                        <th class="py-2.5 px-3 sm:px-4">Necesidades Empresa (Art. 161)</th>
+                                        <th class="py-2.5 px-3 sm:px-4">Despido por Culpabilidad (Art. 160)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="py-2.5 px-3 sm:px-4 font-semibold">Sueldo Proporcional</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ se paga</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ se paga</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ se paga</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 sm:px-4 font-semibold">Vacaciones Proporcionales</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ se pagan</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ se pagan</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ se pagan</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 sm:px-4 font-semibold">Indemnización Años de Servicio</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-rose-500 font-medium whitespace-nowrap">❌ NO (Salvo pacto)</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ (Si lleva >1 año)</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-rose-500 font-medium whitespace-nowrap">❌ NO corresponde</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 sm:px-4 font-semibold">Indemnización Aviso Previo</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-rose-500 font-medium whitespace-nowrap">❌ NO corresponde</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-emerald-600 font-medium whitespace-nowrap">✅ SÍ (Si no avisan 30 días antes)</td>
+                                        <td class="py-2.5 px-3 sm:px-4 text-rose-500 font-medium whitespace-nowrap">❌ NO corresponde</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+                            <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
+                        </div>
                     </div>
 
                     <!-- =============== 6. SEGURO DE CESANTÍA =============== -->

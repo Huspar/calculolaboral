@@ -905,7 +905,7 @@
         </div>
 
         <!-- Explanatory SEO Content Section -->
-        <article class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
+        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
             
             <div>
                 <h2 class="text-2xl font-bold text-slate-900 mb-4">¿Cómo se calculan las vacaciones proporcionales en Chile en 2026?</h2>
@@ -952,55 +952,60 @@
             <div>
                 <h3 class="text-xl font-bold text-slate-900 mb-2">Tabla de Referencia Rápida de Vacaciones Proporcionales (Régimen General)</h3>
                 <p class="text-xs sm:text-sm text-slate-500 mb-4">Estimación basada en jornada de lunes a viernes con sueldo mínimo ($553.553 CLP - $18.452 diario):</p>
-                <div class="overflow-x-auto border border-slate-200 rounded-2xl mb-6">
-                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
-                                <th class="p-3.5">Tiempo Trabajado</th>
-                                <th class="p-3.5 text-slate-800">Días Hábiles</th>
-                                <th class="p-3.5 text-amber-700">Inhábiles Aprox.</th>
-                                <th class="p-3.5 text-sky-600">Total Días Corridos</th>
-                                <th class="p-3.5 text-emerald-600">Monto Aprox. (Mínimo)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 font-mono">
-                            <tr>
-                                <td class="p-3.5 font-bold text-slate-800 font-sans">1 Mes</td>
-                                <td class="p-3.5 text-slate-700">1,25 días</td>
-                                <td class="p-3.5 text-amber-700">+0 días</td>
-                                <td class="p-3.5 text-sky-600 font-bold">1,25 días</td>
-                                <td class="p-3.5 text-emerald-600 font-bold">$23.065</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3.5 font-bold text-slate-800 font-sans">3 Meses</td>
-                                <td class="p-3.5 text-slate-700">3,75 días</td>
-                                <td class="p-3.5 text-amber-700">+1 día</td>
-                                <td class="p-3.5 text-sky-600 font-bold">4,75 días</td>
-                                <td class="p-3.5 text-emerald-600 font-bold">$87.647</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3.5 font-bold text-slate-800 font-sans">6 Meses</td>
-                                <td class="p-3.5 text-slate-700">7,50 días</td>
-                                <td class="p-3.5 text-amber-700">+3 días</td>
-                                <td class="p-3.5 text-sky-600 font-bold">10,50 días</td>
-                                <td class="p-3.5 text-emerald-600 font-bold">$193.746</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3.5 font-bold text-slate-800 font-sans">9 Meses</td>
-                                <td class="p-3.5 text-slate-700">11,25 días</td>
-                                <td class="p-3.5 text-amber-700">+4 días</td>
-                                <td class="p-3.5 text-sky-600 font-bold">15,25 días</td>
-                                <td class="p-3.5 text-emerald-600 font-bold">$281.393</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3.5 font-bold text-slate-800 font-sans">12 Meses (1 Año)</td>
-                                <td class="p-3.5 text-slate-700">15,00 días</td>
-                                <td class="p-3.5 text-amber-700">+6 días</td>
-                                <td class="p-3.5 text-sky-600 font-bold">21,00 días</td>
-                                <td class="p-3.5 text-emerald-600 font-bold">$387.492</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="my-6 border border-slate-200 rounded-2xl bg-white shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[540px] text-left border-collapse text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                    <th class="py-2.5 px-3 sm:px-3.5">Tiempo Trabajado</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-slate-800">Días Hábiles</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-amber-700">Inhábiles Aprox.</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-sky-600 text-right">Total Días Corridos</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-emerald-600 text-right">Monto Aprox. (Mínimo)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-mono">
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 font-sans">1 Mes</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700">1,25 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700">+0 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">1,25 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$23.065</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 font-sans">3 Meses</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700">3,75 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700">+1 día</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">4,75 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$87.647</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 font-sans">6 Meses</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700">7,50 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700">+3 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">10,50 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$193.746</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 font-sans">9 Meses</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700">11,25 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700">+4 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">15,25 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$281.393</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 font-sans">12 Meses (1 Año)</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700">15,00 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700">+6 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">21,00 días</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$387.492</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
+                    </div>
                 </div>
             </div>
 
