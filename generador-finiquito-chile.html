@@ -103,29 +103,105 @@
             background: #ffffff;
         }
 
+        /* Protección anti-copia sobre el borrador de vista previa */
+        .protected-preview,
+        .protected-preview * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+        }
+
+        /* Overlay de Marcas de Agua continuas en diagonal y sello central */
         .watermark-overlay {
             position: absolute;
             inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             pointer-events: none;
-            z-index: 10;
+            z-index: 20;
             overflow: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='260' viewBox='0 0 420 260'%3E%3Ctext x='210' y='130' fill='rgba(220,38,38,0.15)' font-size='16' font-family='Arial, sans-serif' font-weight='800' transform='rotate(-28 210 130)' text-anchor='middle' letter-spacing='3'%3EBORRADOR • NO VÁLIDO • CALCULOLABORAL.CL%3C/text%3E%3C/svg%3E");
+            background-repeat: repeat;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 140px;
         }
 
-        .watermark-text {
-            transform: rotate(-35deg);
-            font-size: 4rem;
-            font-weight: 800;
-            color: rgba(15, 23, 42, 0.045);
-            text-transform: uppercase;
-            letter-spacing: 0.25em;
-            user-select: none;
+        .watermark-stamp-container {
+            position: sticky;
+            top: 220px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            pointer-events: none;
+            padding: 0 1rem;
+        }
+
+        .watermark-stamp-box {
+            transform: rotate(-10deg);
+            border: 3.5px dashed rgba(220, 38, 38, 0.65);
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(4px);
+            border-radius: 1rem;
+            padding: 1.5rem 2.25rem;
             text-align: center;
-            line-height: 1.2;
-            border: 4px dashed rgba(15, 23, 42, 0.05);
-            padding: 2rem 4rem;
+            box-shadow: 0 15px 35px -5px rgba(220, 38, 38, 0.25), 0 0 0 6px rgba(254, 226, 226, 0.6);
+            max-width: 440px;
+            pointer-events: auto;
+        }
+
+        .watermark-stamp-box .stamp-badge {
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #b91c1c;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .watermark-stamp-box .stamp-title {
+            font-size: 1.75rem;
+            line-height: 1.1;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #dc2626;
+            font-family: 'Geist', sans-serif;
+        }
+
+        .watermark-stamp-box .stamp-subtitle {
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #991b1b;
+            margin-top: 0.4rem;
+        }
+
+        .watermark-stamp-box .stamp-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.75rem;
+            padding: 0.45rem 1.1rem;
+            background: #dc2626;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            border-radius: 9999px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .watermark-stamp-box .stamp-cta:hover {
+            background: #b91c1c;
+            transform: scale(1.02);
         }
 
         @media print {
@@ -145,7 +221,18 @@
                 box-shadow: none;
                 background: white;
             }
-            .no-print, .watermark-overlay, header, footer, #payment-modal, #unlock-status-bar {
+            /* Si no ha pagado, mantener la marca de agua visible en la impresión */
+            body:not(.paid-unlocked) .watermark-overlay {
+                visibility: visible !important;
+                display: flex !important;
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            body.paid-unlocked .watermark-overlay,
+            .no-print, header, footer, #payment-modal, #unlock-status-bar, #copy-blocked-toast {
                 display: none !important;
             }
         }
@@ -619,17 +706,25 @@
                 </div>
 
                 <!-- CONTENEDOR DE LA HOJA NOTARIAL (PREVIEW DINÁMICO) -->
-                <div class="relative bg-white border border-slate-300 rounded-xl p-6 sm:p-10 notary-sheet min-h-[900px]" id="notary-print-area">
+                <div class="relative bg-white border border-slate-300 rounded-xl p-6 sm:p-10 notary-sheet min-h-[900px] protected-preview select-none" id="notary-print-area">
                     
                     <!-- MARCA DE AGUA (WATERMARK) DE BORRADOR HASTA PAGAR -->
-                    <div class="watermark-overlay">
-                        <div class="watermark-text">
-                            BORRADOR<br>VISTA PREVIA<br>CALCULOLABORAL.CL
+                    <div class="watermark-overlay" id="doc-watermark-overlay">
+                        <div class="watermark-stamp-container">
+                            <div class="watermark-stamp-box">
+                                <span class="stamp-badge">Cálculo Laboral Chile</span>
+                                <div class="stamp-title">VISTA PREVIA</div>
+                                <div class="stamp-subtitle">DOCUMENTO OFICIAL NO VÁLIDO PARA FIRMA NOTARIAL</div>
+                                <button type="button" id="btn-watermark-unlock" class="stamp-cta">
+                                    <span class="material-icons text-sm" aria-hidden="true">lock_open</span>
+                                    Desbloquear Word + PDF ($12.990)
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- CUERPO DEL DOCUMENTO INYECTADO POR finiquito_generator.js -->
-                    <div id="notary-document-body" class="relative z-0">
+                    <div id="notary-document-body" class="relative z-0 protected-preview select-none">
                         <!-- Se llena dinámicamente con las cláusulas notariales completas -->
                         <div class="py-20 text-center text-slate-600">
                             Cargando redacción notarial del finiquito...
@@ -855,6 +950,25 @@
             </div>
         </div>
     </footer>
+
+    <!-- TOAST DE COPIADO BLOQUEADO (ANTI-COPY NOTIFICATION) -->
+    <div id="copy-blocked-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 max-w-sm bg-slate-900 text-white rounded-2xl shadow-2xl p-4 border border-slate-700 flex items-start gap-3 no-print" role="alert">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+            <span class="material-icons text-xl">lock</span>
+        </div>
+        <div class="flex-1">
+            <p class="text-xs font-bold text-white uppercase tracking-wider">Vista Previa Protegida</p>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">El copiado de texto está bloqueado en el borrador notarial. Desbloquea el archivo editable en Word (.docx) y el PDF oficial para firma.</p>
+            <div class="mt-3 flex items-center gap-2">
+                <button type="button" id="toast-unlock-btn" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 active:bg-sky-600 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-sm">
+                    Desbloquear por $12.990
+                </button>
+            </div>
+        </div>
+        <button type="button" id="toast-close-btn" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors" aria-label="Cerrar notificación">
+            <span class="material-icons text-base">close</span>
+        </button>
+    </div>
 
     <!-- SCRIPTS OBLIGATORIOS EN ORDEN DE DEPENDENCIA -->
     <script src="/js/constants.js"></script>

@@ -200,6 +200,7 @@
         loadFromUrlOrStorage();
         updateAll();
         setupPaymentModal();
+        setupCopyProtection();
     }
 
     // Enlazar inputs con listeners de actualización
@@ -702,7 +703,8 @@
         const triggerBtns = [
             document.getElementById('btn-unlock-pdf'),
             document.getElementById('btn-unlock-word'),
-            document.getElementById('btn-primary-checkout')
+            document.getElementById('btn-primary-checkout'),
+            document.getElementById('btn-watermark-unlock')
         ];
 
         const modal = document.getElementById('payment-modal');
@@ -755,6 +757,16 @@
                     const watermarks = document.querySelectorAll('.watermark-overlay');
                     watermarks.forEach(wm => wm.remove());
 
+                    // Desbloquear selección y copia en la vista previa
+                    const printArea = document.getElementById('notary-print-area');
+                    const docBody = document.getElementById('notary-document-body');
+                    if (printArea) printArea.classList.remove('protected-preview', 'select-none');
+                    if (docBody) docBody.classList.remove('protected-preview', 'select-none');
+                    document.body.classList.add('paid-unlocked');
+
+                    // Ocultar toast si estaba visible
+                    hideCopyBlockedToast();
+
                     // Cambiar estados de botones de descarga
                     const unlockBar = document.getElementById('unlock-status-bar');
                     if (unlockBar) {
@@ -765,10 +777,10 @@
                                     <span class="text-xs font-semibold">¡Finiquito Oficial Desbloqueado! Descárgalo en PDF y Word:</span>
                                 </div>
                                 <div class="flex space-x-2">
-                                    <button id="quick-pdf" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow-sm">
+                                    <button id="quick-pdf" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer">
                                         Descargar PDF Oficial
                                     </button>
-                                    <button id="quick-word" class="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold shadow-sm">
+                                    <button id="quick-word" class="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer">
                                         Descargar Word (.docx)
                                     </button>
                                 </div>
@@ -785,14 +797,137 @@
         }
     }
 
+    // Lógica Anti-Copia para proteger la vista previa
+    let toastTimeout = null;
+
+    function showCopyBlockedToast() {
+        const toast = document.getElementById('copy-blocked-toast');
+        if (!toast) return;
+
+        toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+        toast.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            hideCopyBlockedToast();
+        }, 4500);
+    }
+
+    function hideCopyBlockedToast() {
+        const toast = document.getElementById('copy-blocked-toast');
+        if (!toast) return;
+        toast.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+        toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+    }
+
+    function setupCopyProtection() {
+        const printArea = document.getElementById('notary-print-area');
+        if (!printArea) return;
+
+        // 1. Bloquear clic derecho (menú contextual) sobre la vista previa
+        printArea.addEventListener('contextmenu', (e) => {
+            if (!state.isPaid) {
+                e.preventDefault();
+                showCopyBlockedToast();
+            }
+        });
+
+        // 2. Bloquear eventos copy y cut sobre el documento
+        printArea.addEventListener('copy', (e) => {
+            if (!state.isPaid) {
+                e.preventDefault();
+                e.stopPropagation();
+                showCopyBlockedToast();
+            }
+        });
+
+        printArea.addEventListener('cut', (e) => {
+            if (!state.isPaid) {
+                e.preventDefault();
+                e.stopPropagation();
+                showCopyBlockedToast();
+            }
+        });
+
+        // 3. Bloquear inicio de selección y arrastre con ratón
+        printArea.addEventListener('selectstart', (e) => {
+            if (!state.isPaid) {
+                e.preventDefault();
+            }
+        });
+
+        printArea.addEventListener('dragstart', (e) => {
+            if (!state.isPaid) {
+                e.preventDefault();
+            }
+        });
+
+        // 4. Atajos de teclado en la ventana (Ctrl+C, Ctrl+X, Ctrl+P)
+        window.addEventListener('keydown', (e) => {
+            if (state.isPaid) return;
+
+            const isCtrl = e.ctrlKey || e.metaKey;
+            if (!isCtrl) return;
+
+            // Bloquear Ctrl+P para evitar imprimir directamente saltándose el pago
+            if (e.key === 'p' || e.key === 'P') {
+                e.preventDefault();
+                downloadPDF();
+                return;
+            }
+
+            // Bloquear Ctrl+C o Ctrl+X si están copiando en el área de vista previa
+            if (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X') {
+                const activeEl = document.activeElement;
+                // Si el foco está en un input o select del formulario, permitir copiar sus propios datos
+                const isFormInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT' || activeEl.tagName === 'TEXTAREA');
+                if (isFormInput) return;
+
+                const selection = window.getSelection();
+                const textSelected = selection ? selection.toString() : '';
+                const isInPrintArea = printArea.contains(activeEl) || (selection && selection.anchorNode && printArea.contains(selection.anchorNode));
+
+                if (isInPrintArea || textSelected.length > 0) {
+                    e.preventDefault();
+                    showCopyBlockedToast();
+                }
+            }
+        });
+
+        // 5. Botones del Toast
+        const toastCloseBtn = document.getElementById('toast-close-btn');
+        if (toastCloseBtn) {
+            toastCloseBtn.addEventListener('click', hideCopyBlockedToast);
+        }
+
+        const toastUnlockBtn = document.getElementById('toast-unlock-btn');
+        if (toastUnlockBtn) {
+            toastUnlockBtn.addEventListener('click', () => {
+                hideCopyBlockedToast();
+                const modal = document.getElementById('payment-modal');
+                if (modal) modal.classList.remove('hidden');
+            });
+        }
+    }
+
     // Exportador a PDF Nativo
     function downloadPDF() {
+        if (!state.isPaid) {
+            const modal = document.getElementById('payment-modal');
+            if (modal) modal.classList.remove('hidden');
+            return;
+        }
         // Ejecutar impresión del navegador con estilos optimizados para papel Notarial Carta/Oficio
         window.print();
     }
 
     // Exportador a Word (.doc / .docx compatible)
     function downloadWord() {
+        if (!state.isPaid) {
+            const modal = document.getElementById('payment-modal');
+            if (modal) modal.classList.remove('hidden');
+            return;
+        }
         const docBody = document.getElementById('notary-document-body');
         if (!docBody) return;
 
