@@ -310,9 +310,20 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateArt161Context = function() {
         const causeEl = elements.cause || document.getElementById('cause');
         const is161 = causeEl && String(causeEl.value).startsWith('161');
+        const isRenuncia = causeEl && String(causeEl.value).includes('159-2');
         const leadSec = document.getElementById('lead-section');
         const resultAlert = document.getElementById('art161ResultAlert');
+        const renunciaAlert = document.getElementById('renunciaContextAlert');
+        const renunciaResult = document.getElementById('renunciaResultCard');
         
+        // Mostrar alerta en inputs y resultados si la causal es Renuncia Voluntaria (159-2)
+        if (renunciaAlert) {
+            renunciaAlert.classList.toggle('hidden', !isRenuncia);
+        }
+        if (renunciaResult) {
+            renunciaResult.classList.toggle('hidden', !isRenuncia);
+        }
+
         // Mostrar alerta en resultados si la causal es 161 y el finiquito fue calculado (lead-section visible)
         const isLeadVisible = leadSec && !leadSec.classList.contains('hidden');
         if (resultAlert) {
@@ -327,6 +338,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (leadTitle) leadTitle.textContent = '¿Despido por Necesidades de la Empresa (Art. 161)?';
             if (leadDesc) leadDesc.innerHTML = 'Revisa tu carta con un abogado aliado. Si la causal no está debidamente acreditada, puedes exigir el <strong>recargo legal del 30%</strong> y evitar el descuento indebido de tu seguro de cesantía (AFC).';
             if (leadBtnText) leadBtnText.textContent = 'Evaluar Mi Despido (Recargo 30%)';
+        } else if (isRenuncia) {
+            if (leadTitle) leadTitle.textContent = '¿Renuncia Voluntaria? Revisa tu Liquidación Final';
+            if (leadDesc) leadDesc.innerHTML = 'Recuerda que al renunciar no recibes años de servicio, pero <strong>deben pagarte el 100% de tus vacaciones y días trabajados</strong>. Genera tu carta formal o consulta tus dudas.';
+            if (leadBtnText) leadBtnText.textContent = 'Revisar Mis Derechos de Renuncia';
         } else {
             if (leadTitle) leadTitle.textContent = '¿Dudas sobre el cálculo o causal de tu despido?';
             if (leadDesc) leadDesc.innerHTML = 'Revisa con un especialista si tu causal califica para <strong>recargo legal del 30% al 100%</strong> y devolución de descuento AFC.';
