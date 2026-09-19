@@ -368,30 +368,10 @@
             white-space: pre-wrap;
             word-break: break-word;
         }
-        .doc-sheet-protected {
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
-            -webkit-touch-callout: none !important;
-            position: relative;
-        }
-        .doc-sheet-protected * {
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
-        }
         .doc-watermark-overlay {
             position: absolute;
             inset: 0;
             pointer-events: none;
-        }
-        .doc-watermark-overlay.protected-overlay {
-            pointer-events: auto !important;
-            cursor: not-allowed !important;
-        }
-        .doc-watermark-overlay {
             background-image: repeating-linear-gradient(
                 -35deg,
                 rgba(239, 68, 68, 0.03),
@@ -931,19 +911,19 @@
                                 <span class="text-xs font-bold text-slate-800 tracking-wide">FORMATO OFICIAL WORD (.DOCX) 2026</span>
                                 <span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Revisado Código del Trabajo</span>
                             </div>
-                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-800 border border-red-300 shadow-2xs">
-                                <span class="material-icons text-xs text-red-600">lock</span>
-                                <span>DOCUMENTO PROTEGIDO • COPIA DESACTIVADA</span>
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-50 text-sky-800 border border-sky-300 shadow-2xs">
+                                <span class="material-icons text-xs text-sky-600">visibility</span>
+                                <span>VISTA PREVIA ILUSTRATIVA</span>
                             </div>
                         </div>
 
                         <!-- Sheet with Diagonal Watermark -->
-                        <div class="doc-sheet doc-sheet-protected !m-0 !rounded-none !border-0 select-none" oncopy="return false;" oncut="return false;" oncontextmenu="return false;">
+                        <div class="doc-sheet copy-box !m-0 !rounded-none !border-0">
                             <!-- Watermark Overlay -->
-                            <div class="doc-watermark-overlay protected-overlay" aria-hidden="true">
+                            <div class="doc-watermark-overlay" aria-hidden="true">
                                 <div class="doc-watermark-stamp">
                                     VISTA PREVIA DE MUESTRA<br>
-                                    <span class="text-[11px] font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • FORMATO PROTEGIDO CONTRA COPIA</span>
+                                    <span class="text-[11px] font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • DESCARGA EL PACK WORD (.DOCX) ABAJO</span>
                                 </div>
                             </div>
 
@@ -975,19 +955,41 @@ R.U.T.: [RUT REPRESENTANTE]
 Representante Legal de [RAZÓN SOCIAL EMPRESA]
                         </div>
 
-                        <!-- Monetization & Unlock Box -->
+                        <!-- Lead Magnet: Word Pack Download + Secondary CTAs -->
                         <div class="doc-conversion-box">
-                            <div class="flex items-center gap-2 mb-2">
+                            <div class="flex items-center gap-2 mb-1.5">
                                 <span class="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-base">verified_user</span>
+                                    <span class="material-icons text-base">description</span>
                                 </span>
                                 <span class="text-sm sm:text-base font-bold text-white tracking-tight">
-                                    ¿Necesitas emitir el finiquito legal o blindar tu empresa ante la DT?
+                                    ¿Prefieres el archivo oficial en Word (.docx) editable y sin marcas?
                                 </span>
                             </div>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3">
-                                Este modelo de carta es una muestra referencial e ilustrativa (copia no disponible). Para formalizar la desvinculación con cálculo exacto de indemnizaciones listo para notaría, emite tu finiquito legal en línea o blinda tu empresa con el <strong class="text-sky-400">Kit Pyme 2026 ($19.990)</strong>.
+                                Descarga gratis el <strong class="text-sky-400">Pack de Cartas de Despido Chile 2026 (.docx)</strong> con las cláusulas blindadas para incorporar el membrete de tu empresa y el checklist de plazos legales de la DT:
                             </p>
+
+                            <!-- Lead Magnet Inline Form -->
+                            <form class="lead-despido-form bg-slate-950/80 p-3.5 sm:p-4 rounded-2xl border border-slate-700/80 mb-3" onsubmit="enviarLeadDespido(event, this)">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-2.5">
+                                    <input type="text" name="nombre" placeholder="Tu nombre" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500">
+                                    <input type="email" name="correo" placeholder="Tu correo electrónico" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500">
+                                    <input type="text" name="empresa" placeholder="Empresa o Pyme (opcional)" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500">
+                                </div>
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                                    <span class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                                        <span class="material-icons text-emerald-400 text-xs">verified</span>
+                                        Descarga directa inmediata + Copia enviada a tu correo
+                                    </span>
+                                    <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs rounded-xl shadow-md shadow-sky-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                                        <span class="material-icons text-sm">download</span>
+                                        <span>Descargar Pack Word (.zip)</span>
+                                    </button>
+                                </div>
+                                <div class="lead-despido-feedback hidden mt-2.5 p-3 rounded-xl text-xs"></div>
+                            </form>
+
+                            <!-- Complementary Actions -->
                             <div class="doc-conversion-actions">
                                 <a href="generador-finiquito-chile" class="cta-btn doc-btn-sky">
                                     <span class="material-icons text-sm">gavel</span>
@@ -997,6 +999,10 @@ Representante Legal de [RAZÓN SOCIAL EMPRESA]
                                     <span class="material-icons text-sky-400 text-sm">shield</span>
                                     <span>Kit Blindaje Pyme ($19.990)</span>
                                 </a>
+                                <button type="button" class="doc-copy-raw-btn" onclick="copiarTexto(this)" title="Copiar borrador simple de esta página">
+                                    <span class="material-icons text-xs">content_copy</span>
+                                    <span>Copiar borrador simple</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1011,18 +1017,18 @@ Representante Legal de [RAZÓN SOCIAL EMPRESA]
                                 <span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-50 text-red-700 border border-red-200">Plazo 3 Días Hábiles</span>
                             </div>
                             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-800 border border-red-300 shadow-2xs">
-                                <span class="material-icons text-xs text-red-600">lock</span>
-                                <span>DOCUMENTO PROTEGIDO • COPIA DESACTIVADA</span>
+                                <span class="material-icons text-xs text-red-600">visibility</span>
+                                <span>VISTA PREVIA ILUSTRATIVA</span>
                             </div>
                         </div>
 
                         <!-- Sheet with Diagonal Watermark -->
-                        <div class="doc-sheet doc-sheet-protected !m-0 !rounded-none !border-0 select-none" oncopy="return false;" oncut="return false;" oncontextmenu="return false;">
+                        <div class="doc-sheet copy-box !m-0 !rounded-none !border-0">
                             <!-- Watermark Overlay -->
-                            <div class="doc-watermark-overlay protected-overlay" aria-hidden="true">
+                            <div class="doc-watermark-overlay" aria-hidden="true">
                                 <div class="doc-watermark-stamp">
                                     VISTA PREVIA DE MUESTRA<br>
-                                    <span class="text-[11px] font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • FORMATO PROTEGIDO CONTRA COPIA</span>
+                                    <span class="text-[11px] font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • EXIGE PRUEBA DOCUMENTAL DE INASISTENCIA</span>
                                 </div>
                             </div>
 
@@ -1053,19 +1059,41 @@ _________________________________________
 [RAZÓN SOCIAL EMPRESA] / RUT: [RUT]
                         </div>
 
-                        <!-- Monetization & Unlock Box -->
+                        <!-- Lead Magnet: Word Pack Download + Secondary CTAs -->
                         <div class="doc-conversion-box">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="w-7 h-7 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-base">shield</span>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-base">description</span>
                                 </span>
                                 <span class="text-sm sm:text-base font-bold text-white tracking-tight">
-                                    ¿Quieres evitar que el trabajador demande despido injustificado con recargo?
+                                    ¿Necesitas la carta disciplinaria formal en Word (.docx) editable?
                                 </span>
                             </div>
                             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3">
-                                Muestra referencial protegida (copia bloqueada). Los despidos disciplinarios por inasistencia exigen libro de asistencia y finiquito notarial estricto. Emite tu finiquito legal directo o resguarda tu empresa con el <strong class="text-sky-400">Kit Pyme ($19.990)</strong>.
+                                Descarga gratis el <strong class="text-sky-400">Pack de Cartas de Despido Chile 2026 (.docx)</strong> con los modelos por Art. 160 y Art. 161 más el checklist de plazos fatales (3 días hábiles):
                             </p>
+
+                            <!-- Lead Magnet Inline Form -->
+                            <form class="lead-despido-form bg-slate-950/80 p-3.5 sm:p-4 rounded-2xl border border-slate-700/80 mb-3" onsubmit="enviarLeadDespido(event, this)">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-2.5">
+                                    <input type="text" name="nombre" placeholder="Tu nombre" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500">
+                                    <input type="email" name="correo" placeholder="Tu correo electrónico" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500">
+                                    <input type="text" name="empresa" placeholder="Empresa o Pyme (opcional)" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500">
+                                </div>
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                                    <span class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                                        <span class="material-icons text-emerald-400 text-xs">verified</span>
+                                        Descarga directa inmediata + Copia enviada a tu correo
+                                    </span>
+                                    <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs rounded-xl shadow-md shadow-sky-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                                        <span class="material-icons text-sm">download</span>
+                                        <span>Descargar Pack Word (.zip)</span>
+                                    </button>
+                                </div>
+                                <div class="lead-despido-feedback hidden mt-2.5 p-3 rounded-xl text-xs"></div>
+                            </form>
+
+                            <!-- Complementary Actions -->
                             <div class="doc-conversion-actions">
                                 <a href="generador-finiquito-chile" class="cta-btn doc-btn-sky">
                                     <span class="material-icons text-sm">gavel</span>
@@ -1075,6 +1103,10 @@ _________________________________________
                                     <span class="material-icons text-sky-400 text-sm">shield</span>
                                     <span>Kit Blindaje Pyme ($19.990)</span>
                                 </a>
+                                <button type="button" class="doc-copy-raw-btn" onclick="copiarTexto(this)" title="Copiar borrador simple de esta página">
+                                    <span class="material-icons text-xs">content_copy</span>
+                                    <span>Copiar borrador simple</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1772,7 +1804,7 @@ R.U.T.: [TU RUT]
         function copiarTexto(btn) {
             var wrapper = btn.closest('.doc-preview-wrapper');
             var box = wrapper ? wrapper.querySelector('.doc-sheet') : btn.closest('.copy-box');
-            if (!box || box.classList.contains('doc-sheet-protected')) return;
+            if (!box) return;
             var clone = box.cloneNode(true);
             var watermark = clone.querySelector('.doc-watermark-overlay');
             if (watermark) watermark.remove();
@@ -1781,7 +1813,7 @@ R.U.T.: [TU RUT]
             var text = (clone.innerText || clone.textContent || '').trim();
 
             // Append professional legal watermark attribution
-            text += '\n\n---\n[Borrador obtenido en https://calculolaboral.cl/carta-de-despido-chile]\n[Para descargar la plantilla oficial Word (.docx) editable sin marcas y con respaldo legal, visita https://calculolaboral.cl/kit-cumplimiento-laboral-pymes]';
+            text += '\n\n---\n[Borrador obtenido en https://calculolaboral.cl/carta-de-despido-chile]\n[Descarga gratis los modelos oficiales editables en Word (.docx) y genera tu finiquito en https://calculolaboral.cl]';
 
             function onSuccess() {
                 var originalHTML = btn.innerHTML;
@@ -1819,40 +1851,72 @@ R.U.T.: [TU RUT]
             }
         }
 
-        // Anti-copy protection for dismissal letter templates
-        function showCopyBlockedToast() {
-            var existing = document.getElementById('copy-blocked-toast');
-            if (existing) existing.remove();
-            var toast = document.createElement('div');
-            toast.id = 'copy-blocked-toast';
-            toast.innerHTML = '<span class="material-icons" style="font-size:16px;color:#f87171;margin-right:8px;vertical-align:middle;">lock</span><span><strong>Formato protegido:</strong> La copia directa de este modelo está desactivada.</span>';
-            toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#ffffff;padding:12px 22px;border-radius:12px;font-size:13px;box-shadow:0 12px 30px rgba(0,0,0,0.5);border:1px solid #334155;z-index:99999;transition:opacity 0.3s ease;display:flex;align-items:center;pointer-events:none;';
-            document.body.appendChild(toast);
-            setTimeout(function() {
-                toast.style.opacity = '0';
-                setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
-            }, 2800);
+        // Handler for Lead Magnet form: sends lead to /api/send-lead and triggers download
+        function enviarLeadDespido(e, form) {
+            e.preventDefault();
+            var btn = form.querySelector('button[type="submit"]');
+            var feedback = form.querySelector('.lead-despido-feedback');
+            var btnOriginal = btn.innerHTML;
+            
+            var nombre = (form.querySelector('input[name="nombre"]').value || '').trim();
+            var correo = (form.querySelector('input[name="correo"]').value || '').trim();
+            var empresa = (form.querySelector('input[name="empresa"]').value || '').trim();
+            
+            if (!nombre || !correo) {
+                alert('Por favor completa tu nombre y correo.');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-icons text-sm animate-spin" style="animation: spin 1s linear infinite;">refresh</span> Procesando...';
+            
+            fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    correo: correo,
+                    tipo: 'CartaDespido',
+                    fuente: 'Guía Carta de Despido (Pack Word Lead Magnet)',
+                    detalle: empresa ? ('Empresa / Pyme: ' + empresa) : 'Descarga Pack Word Cartas de Despido'
+                })
+            }).then(function(res) {
+                return res.json();
+            }).then(function(data) {
+                btn.disabled = false;
+                btn.innerHTML = btnOriginal;
+                
+                if (feedback) {
+                    feedback.className = 'lead-despido-feedback mt-2.5 p-3.5 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-emerald-200 text-xs space-y-1.5';
+                    feedback.innerHTML = '<div class="flex items-center gap-1.5 font-bold text-white"><span class="material-icons text-emerald-400 text-base">check_circle</span> ¡Pack enviado con éxito a ' + correo + '!</div><p class="text-slate-300">Tu descarga ha comenzado. Si no inicia automáticamente, <a href="/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip" class="text-sky-400 underline font-bold" download>haz clic aquí para descargar el archivo ZIP</a>.</p>';
+                    feedback.classList.remove('hidden');
+                }
+                
+                // Direct file download trigger
+                var a = document.createElement('a');
+                a.href = '/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip';
+                a.download = 'Pack_Modelos_Cartas_Despido_Chile_2026.zip';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'generate_lead', {
+                        currency: 'CLP',
+                        value: 0,
+                        lead_type: 'CartaDespido_Word'
+                    });
+                }
+            }).catch(function(err) {
+                btn.disabled = false;
+                btn.innerHTML = btnOriginal;
+                if (feedback) {
+                    feedback.className = 'lead-despido-feedback mt-2.5 p-3 bg-red-950/80 border border-red-500/40 rounded-xl text-red-200 text-xs';
+                    feedback.innerHTML = 'Hubo un error de conexión, pero puedes <a href="/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip" class="text-white underline font-bold" download>descargar el pack directamente aquí</a>.';
+                    feedback.classList.remove('hidden');
+                }
+            });
         }
-
-        document.querySelectorAll('.doc-sheet-protected, .protected-overlay').forEach(function(el) {
-            el.addEventListener('copy', function(e) {
-                e.preventDefault();
-                showCopyBlockedToast();
-            });
-            el.addEventListener('cut', function(e) {
-                e.preventDefault();
-            });
-            el.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                showCopyBlockedToast();
-            });
-            el.addEventListener('selectstart', function(e) {
-                e.preventDefault();
-            });
-            el.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-            });
-        });
 
         function shareFiniquitoWhatsApp() {
             var totalEl = document.getElementById('totalFiniquitoOutput');

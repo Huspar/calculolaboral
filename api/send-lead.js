@@ -22,7 +22,7 @@ const ALLOWED_ORIGINS = new Set([
     'http://localhost:5500'
 ]);
 
-const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Otro']);
+const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Otro']);
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 const RATE_LIMIT_MAX = 10; // max requests per IP per window
@@ -34,6 +34,7 @@ const FROM_ADDRESS = 'contacto@calculolaboral.cl'; // Verified in Resend on 2026
 const FROM_NAME = 'Cálculo Laboral';
 const NOTIFY_JHON = 'jhonfcj@gmail.com';
 const GUIDE_URL = 'https://calculolaboral.cl/Articulos/lead-magnet-finiquito.pdf';
+const DESPIDO_PACK_URL = 'https://calculolaboral.cl/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip';
 
 function getClientIp(req) {
     const xff = req.headers['x-forwarded-for'];
@@ -290,7 +291,31 @@ module.exports = async (req, res) => {
                 </p>
                 <p style="margin: 16px 0 0; font-size: 13px; color: #64748b;">El link de descarga funciona en cualquier dispositivo. Puedes compartirla con quien quieras.</p>
             `;
-            userHtml = buildEmailHtml({ title: 'Tu guía está lista 📘', intro: userIntro, body: userBody });
+        } else if (cleanTipo === 'CartaDespido') {
+            userSubject = 'Tus Modelos Oficiales de Carta de Despido 2026 (Word .docx)';
+            const userIntro = `Hola ${cleanName}, gracias por solicitar los modelos oficiales de carta de despido en formato Word (.docx).`;
+            const userBody = `
+                <p style="margin: 0 0 12px;"><strong>📄 Pack Oficial de Cartas de Despido Chile 2026</strong></p>
+                <p style="margin: 0 0 12px;">Incluye formatos Word (.docx 100% editables para incorporar membrete y razón social):</p>
+                <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">
+                    <li><strong>Modelo 1:</strong> Despido por Necesidades de la Empresa (Art. 161 inc. 1º) con fundamentación técnica y Ley Bustos.</li>
+                    <li><strong>Modelo 2:</strong> Despido Disciplinario por Inasistencia Injustificada (Art. 160 Nº 3).</li>
+                    <li><strong>Checklist Legal:</strong> Plazos fatales de envío a Correos de Chile y comunicación a la Dirección del Trabajo (DT).</li>
+                </ul>
+                <p style="margin: 20px 0; text-align: center;">
+                    <a href="${DESPIDO_PACK_URL}" style="background: #0ea5e9; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Descargar Pack de Modelos Word (.zip)</a>
+                </p>
+                <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; margin: 18px 0; font-size: 12.5px; color: #92400e;">
+                    <strong>⚠️ Plazo Legal Obligatorio (Art. 177):</strong><br>
+                    Recuerda que una vez entregada o despachada la carta, tienes un plazo legal máximo de <strong>10 días hábiles</strong> para poner a disposición del trabajador su finiquito notarial ratificado.
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px;">
+                    <strong>Soluciones complementarias para tu empresa:</strong><br>
+                    • <a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #0284c7; font-weight: bold;">Generador de Finiquito Notarial ($12.990)</a>: Cálculo exacto de indemnizaciones, feriado proporcional y documento listo para notaría.<br>
+                    • <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #0284c7; font-weight: bold;">Kit de Blindaje Pyme ($19.990)</a>: Protocolo Ley Karin (DS 44), anexos Ley 40 Horas y carpeta de fiscalización DT.
+                </div>
+            `;
+            userHtml = buildEmailHtml({ title: 'Tus Modelos de Carta de Despido (.docx) 📄', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'Multa DT') {
             userSubject = 'Evaluación de Multa DT (Art. 511) - Cálculo Laboral';
