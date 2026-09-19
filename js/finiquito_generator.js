@@ -15,8 +15,8 @@
     };
 
     // Configuración de Pasarela de Pago Oficial ($12.990 CLP)
-    // Inserta aquí el enlace de cobro generado al crear el botón de pago
-    const PAYMENT_GATEWAY_URL = '';
+    // Botón oficial Flow.cl (Webpay Plus, Servipag, Mach, Tarjetas de Débito y Crédito)
+    const PAYMENT_GATEWAY_URL = 'https://www.flow.cl/btn.php?token=w2204f3d0b4ae200fcd0b91d5e497fc703716a16';
 
     // Helper: Formateador de RUT chileno (12.345.678-K)
     function formatRut(value) {
@@ -370,13 +370,15 @@
             fechaPagoEl.value = `${yyyy}-${mm}-${dd}`;
         }
 
-        // 3. Verificar retorno con pago exitoso desde la pasarela (Flow, Webpay, MercadoPago)
-        const isPaidUrl = params.get('pago') === 'exito' || params.get('status') === 'approved' || params.get('paid') === 'true';
-        if (isPaidUrl) {
+        // 3. Verificar si ya pagó en este navegador o si retorna con pago exitoso desde Flow
+        const hasPaidToken = localStorage.getItem('fini_paid_token') === 'true';
+        const isPaidUrl = params.get('pago') === 'exito' || params.get('status') === 'approved' || params.get('status') === '2' || params.get('paid') === 'true';
+
+        if (hasPaidToken || isPaidUrl) {
             setTimeout(() => {
                 applyPaymentSuccess(false);
             }, 300);
-        } else if (params.get('pago') === 'fallo' || params.get('status') === 'rejected') {
+        } else if (params.get('pago') === 'fallo' || params.get('status') === 'rejected' || params.get('status') === '3' || params.get('status') === '4') {
             setTimeout(() => {
                 alert('El pago no fue completado o fue cancelado. Tu borrador de finiquito se encuentra guardado para que puedas volver a intentar cuando lo desees.');
             }, 500);
@@ -857,6 +859,9 @@
     // Aplicar desbloqueo exitoso de finiquito oficial
     function applyPaymentSuccess(immediateDownload = true) {
         state.isPaid = true;
+        try {
+            localStorage.setItem('fini_paid_token', 'true');
+        } catch (e) {}
         const modal = document.getElementById('payment-modal');
         if (modal) modal.classList.add('hidden');
 
