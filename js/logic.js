@@ -28,6 +28,7 @@ class FiniquitoCalculator {
         this.enableNotice = data.enableNotice !== undefined ? data.enableNotice : true;
         this.enablePending = data.enablePending !== undefined ? data.enablePending : true;
         this.simulateAFC = data.simulateAFC !== undefined ? data.simulateAFC : true;
+        this.afcExactAmount = data.afcExactAmount !== undefined ? parseFloat(data.afcExactAmount) : null;
         this.holidays = Array.isArray(data.holidays) ? data.holidays : (typeof CONSTANTS !== 'undefined' ? CONSTANTS.HOLIDAYS_2026 : []);
 
         // Toggle: incluir asignaciones en cálculo de indemnización (IAS / Aviso)
@@ -141,10 +142,25 @@ class FiniquitoCalculator {
             return { total: 0, applied: false };
         }
 
-        // Estimación: 0.6% de remuneración mensual por el tiempo trabajado
-        // En la vida real depende del saldo exacto en la cuenta CIC
-        const afcRate = typeof CONSTANTS !== 'undefined' ? CONSTANTS.AFC_INDEFINIDO_WORKER : 0.006;
-        const estimatedContributionPerMonth = cappedSalary * afcRate;
+        // Si se provee monto exacto según certificado oficial de AFC Chile
+        if (this.afcExactAmount !== null && !isNaN(this.afcExactAmount) && this.afcExactAmount > 0) {
+            return {
+                total: Math.round(this.afcExactAmount),
+                applied: true,
+                percentage: "Certificado",
+                reason: "Aporte empleador a CIC según Certificado AFC (Art. 13 Ley 19.728)"
+            };
+        }
+
+        // Estimación legal: 1.6% de remuneración imponible mensual (tope 135.1 UF) por el tiempo trabajado
+        const topeCesantiaUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_IMPONIBLE_CESANTIA : 135.1;
+        const salaryCapCesantia = this.ufValue * topeCesantiaUF;
+        const cappedCesantiaSalary = Math.min(this.taxableSalary, salaryCapCesantia);
+
+        const afcRate = (typeof CONSTANTS !== 'undefined' && CONSTANTS.AFC_INDEFINIDO_EMPLOYER_CIC) 
+            ? CONSTANTS.AFC_INDEFINIDO_EMPLOYER_CIC 
+            : 0.016; // 1.6% aporte empleador a CIC para contratos indefinidos
+        const estimatedContributionPerMonth = cappedCesantiaSalary * afcRate;
         const totalMonths = (serviceTime.years * 12) + serviceTime.months;
         const total = Math.round(estimatedContributionPerMonth * totalMonths);
 
@@ -152,7 +168,7 @@ class FiniquitoCalculator {
             total,
             applied: true,
             percentage: `${(afcRate * 100).toFixed(1)}%`,
-            reason: "Aporte empleador a cuenta individual (Estimado)"
+            reason: "Aporte empleador a CIC 1,6% (Estimado según Art. 13 Ley 19.728)"
         };
     }
 

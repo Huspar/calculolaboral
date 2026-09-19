@@ -47,7 +47,10 @@ const CONSTANTS = {
     // Rates
     SALUD_LEGAL: 0.07,
     AFC_INDEFINIDO_WORKER: 0.006,
+    AFC_INDEFINIDO_EMPLOYER_CIC: 0.016, // 1.6% Aporte empleador a CIC (Imputable Art. 13 Ley 19.728)
+    AFC_INDEFINIDO_EMPLOYER_FCS: 0.008, // 0.8% Fondo de Cesantía Solidario (No imputable)
     AFC_PLAZO_FIJO_WORKER: 0.0,
+    AFC_PLAZO_FIJO_EMPLOYER: 0.03,      // 3.0% (2.8% CIC + 0.2% FCS)
     FACTOR_HORA_EXTRA_42H: 0.0089286, // (1/168 * 1.5)
 
     // Income Tax Brackets (Impuesto Segunda Categoría) - Feb 2026

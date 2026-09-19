@@ -99,6 +99,24 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.btnLoadExample = document.getElementById('btnLoadExample');
     elements.btnClear = document.getElementById('btnClear');
 
+    // Interconexión con Generador de Finiquito Notarial
+    const btnGotoGen = document.getElementById('btn-goto-generator');
+    if (btnGotoGen) {
+        btnGotoGen.addEventListener('click', (e) => {
+            e.preventDefault();
+            const getCleanVal = (el) => el ? el.value.replace(/[^0-9]/g, '') : '';
+            const params = new URLSearchParams();
+            if (elements.startDate && elements.startDate.value) params.set('startDate', elements.startDate.value);
+            if (elements.endDate && elements.endDate.value) params.set('endDate', elements.endDate.value);
+            if (elements.baseSalary) params.set('baseSalary', getCleanVal(elements.baseSalary));
+            if (elements.gratification) params.set('gratification', getCleanVal(elements.gratification));
+            if (elements.assignments) params.set('assignments', getCleanVal(elements.assignments));
+            if (elements.vacationPending) params.set('vacationDaysPending', elements.vacationPending.value);
+            if (elements.cause) params.set('cause', elements.cause.value);
+            window.location.href = 'generador-finiquito-chile?' + params.toString();
+        });
+    }
+
     // Variable Salary Outputs
     elements.varMonth1 = document.getElementById('varMonth1');
     elements.varMonth2 = document.getElementById('varMonth2');
