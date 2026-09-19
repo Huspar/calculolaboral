@@ -1496,6 +1496,18 @@
                 var afpLbl = document.getElementById('pt-afp-label');
                 if (afpLbl) afpLbl.innerText = 'Descuento ' + afpSelect.options[afpSelect.selectedIndex].text + ':';
             }
+
+            // GA4 Telemetry (debounced)
+            clearTimeout(window._ptTrackTimer);
+            window._ptTrackTimer = setTimeout(function() {
+                if (typeof gtag === 'function' && sueldoLiquido > 0) {
+                    gtag('event', 'calculate_part_time', {
+                        'event_category': 'Calculator',
+                        'value': Math.round(sueldoLiquido),
+                        'horas': getSelectedJornada()
+                    });
+                }
+            }, 1200);
         }
 
         function copyPTResults() {

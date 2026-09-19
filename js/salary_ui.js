@@ -438,6 +438,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const calculator = new ForensicSalaryCalculator(data);
                 const result = calculator.calculate();
                 updateUI(result, data);
+
+                // GA4 Telemetry (debounced)
+                clearTimeout(window._sueldoTrackTimer);
+                window._sueldoTrackTimer = setTimeout(() => {
+                    if (typeof window.gtag === 'function' && result && result.details && result.details.netSalary > 0) {
+                        window.gtag('event', 'calculate_sueldo', {
+                            'event_category': 'Calculator',
+                            'event_label': data.contractType || 'indefinido',
+                            'value': Math.round(result.details.netSalary)
+                        });
+                    }
+                }, 1200);
             } catch (e) {
                 console.error("Calculation Error Details:", e);
                 console.error("Data Payload:", data);
