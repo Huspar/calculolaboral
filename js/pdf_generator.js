@@ -620,7 +620,7 @@
                     </p>
                 </div>
                 <div style="text-align: right; flex-shrink: 0;">
-                    <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #ea580c !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
+                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #ea580c !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
                         Abrir Online →
                     </a>
                     <div style="font-size: 5.5pt; color: #9a3412; margin-top: 2px; font-family: monospace;">calculolaboral.cl/itau</div>

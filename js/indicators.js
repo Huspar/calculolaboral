@@ -445,19 +445,20 @@ document.addEventListener('DOMContentLoaded', () => {
         var href = link.getAttribute('href') || '';
         var isSoicos = href.indexOf('ad.soicos.com') !== -1;
         var isItauShort = href === '/itau' || href.indexOf('/itau') !== -1;
-        var hasAdData = link.hasAttribute('data-ad-name');
+        var isAbakosShort = href === '/abakos' || href.indexOf('/abakos') !== -1;
+        var hasPartnerData = link.hasAttribute('data-partner') || link.hasAttribute('data-promo') || link.hasAttribute('data-ad-name');
 
-        if (!isSoicos && !isItauShort && !hasAdData) return;
+        if (!isSoicos && !isItauShort && !isAbakosShort && !hasPartnerData) return;
 
-        var adName = link.getAttribute('data-ad-name');
+        var adName = link.getAttribute('data-partner') || link.getAttribute('data-promo') || link.getAttribute('data-ad-name');
         if (!adName) {
-            if (href.indexOf('1154903') !== -1) adName = 'abakos_emergencias';
-            else if (href.indexOf('1154772') !== -1) adName = 'abakos_prestamos';
+            if (href.indexOf('1154903') !== -1 || href.indexOf('/abakos-emergencias') !== -1) adName = 'abakos_emergencias';
+            else if (href.indexOf('1154772') !== -1 || href === '/abakos') adName = 'abakos_prestamos';
             else if (href.indexOf('1163773') !== -1 || isItauShort) adName = 'itau_cuenta_corriente';
             else adName = 'soicos_patrocinado';
         }
 
-        var placement = link.getAttribute('data-ad-placement');
+        var placement = link.getAttribute('data-placement') || link.getAttribute('data-ad-placement');
         if (!placement) {
             if (link.closest('#lead-section')) placement = 'lead_section';
             else if (link.closest('.dark-banner')) placement = 'dark_banner';

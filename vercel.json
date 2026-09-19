@@ -5,6 +5,8 @@
     { "source": "/sueldo-liquido", "destination": "/sueldo_liquido", "permanent": true },
     { "source": "/calculadora-finiquito", "destination": "/finiquito_calculator", "permanent": true },
     { "source": "/itau", "destination": "https://ad.soicos.com/1163773", "permanent": false },
+    { "source": "/abakos", "destination": "https://ad.soicos.com/1154772", "permanent": false },
+    { "source": "/abakos-emergencias", "destination": "https://ad.soicos.com/1154903", "permanent": false },
     { "source": "/:page.html", "destination": "/:page", "permanent": true }
   ],
   "headers": [
