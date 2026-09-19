@@ -4678,17 +4678,16 @@ INDEX_CONTENT = """
                     </span>
                     <span class="text-[10px] text-slate-400 font-medium">Abakos Chile</span>
                   </div>
-                  <a href="https://ad.soicos.com/1154903" target="_blank" rel="sponsored nofollow noopener" class="group block max-w-[270px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-sky-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
+                  <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" class="group block max-w-[270px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-sky-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
                     <img src="/assets/abakos-emergencias-app.jpg" alt="Abakos - Apaga tus emergencias financieras con préstamos online" width="270" height="270" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
                   </a>
                   <div class="mt-2 flex items-center justify-between px-1 max-w-[270px] mx-auto text-xs">
                     <span class="text-slate-500 font-medium text-[11px]">¿Gastos inesperados?</span>
-                    <a href="https://ad.soicos.com/1154903" target="_blank" rel="sponsored nofollow noopener" class="font-bold text-sky-600 hover:text-sky-700 flex items-center gap-0.5 text-xs">
+                    <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" class="font-bold text-sky-600 hover:text-sky-700 flex items-center gap-0.5 text-xs">
                       Simular Préstamo <span class="material-icons text-xs">arrow_forward</span>
                     </a>
                   </div>
-                  <img src="https://ad.soicos.com/srv.php?impid=1154903&pieceid=61267&ts=raw" width="1" height="1" style="display:none;" alt="" loading="lazy" />
-                </div>
+                  </div>
             </div>
         </div>
 
@@ -5158,7 +5157,7 @@ INDEX_CONTENT = """
                 </span>
                 <span class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">$0 Mantención</span>
               </div>
-              <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
+              <a href="/itau" target="_blank" rel="sponsored nofollow noopener" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
                 <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
               </a>
               <div class="mt-3 px-1 max-w-[300px] mx-auto text-left">
@@ -5180,7 +5179,7 @@ INDEX_CONTENT = """
                     <span>Transferencias a costo $0 y tarjeta digital</span>
                   </div>
                 </div>
-                <a href="https://ad.soicos.com/1163773" target="_blank" rel="sponsored nofollow noopener" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]">
+                <a href="/itau" target="_blank" rel="sponsored nofollow noopener" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]">
                   <span>Abrir Cuenta Online Gratis</span>
                   <span class="material-icons text-sm">arrow_forward</span>
                 </a>
@@ -5191,8 +5190,7 @@ INDEX_CONTENT = """
                   </a>
                 </div>
               </div>
-              <img src="https://ad.soicos.com/srv.php?impid=1163773&pieceid=65826&ts=raw" width="1" height="1" style="display:none;" alt="" loading="lazy" />
-            </div>
+              </div>
         </div>
     </div>
 
