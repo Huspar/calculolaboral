@@ -14,6 +14,10 @@
         activeTab: 'datos' // 'datos', 'remuneracion', 'descuentos'
     };
 
+    // Configuración de Pasarela de Pago Oficial ($12.990 CLP)
+    // Inserta aquí el enlace de cobro generado al crear el botón de pago
+    const PAYMENT_GATEWAY_URL = '';
+
     // Helper: Formateador de RUT chileno (12.345.678-K)
     function formatRut(value) {
         if (!value) return '';
@@ -266,8 +270,72 @@
         }
     }
 
-    // Pre-cargar datos desde URL o localStorage si viene de la calculadora general
+    // Persistencia local de borrador para evitar pérdida de datos si el usuario va al portal de pago
+    function saveDraftToStorage() {
+        try {
+            const formData = getFormData();
+            localStorage.setItem('fini_draft_payload', JSON.stringify(formData));
+        } catch (e) {
+            console.warn('No se pudo guardar borrador local', e);
+        }
+    }
+
+    function loadDraftFromStorage() {
+        try {
+            const saved = localStorage.getItem('fini_draft_payload');
+            if (!saved) return;
+            const data = JSON.parse(saved);
+            const setIf = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && val !== undefined && val !== null && val !== '') el.value = val;
+            };
+            setIf('empresa-razon', data.empresaRazon);
+            setIf('empresa-rut', data.empresaRut);
+            setIf('empresa-rep-nombre', data.empresaRepNombre);
+            setIf('empresa-rep-rut', data.empresaRepRut);
+            setIf('empresa-domicilio', data.empresaDomicilio);
+            setIf('empresa-ciudad', data.empresaCiudad);
+            setIf('trabajador-nombre', data.trabajadorNombre);
+            setIf('trabajador-rut', data.trabajadorRut);
+            setIf('trabajador-cargo', data.trabajadorCargo);
+            setIf('trabajador-domicilio', data.trabajadorDomicilio);
+            setIf('trabajador-ciudad', data.trabajadorCiudad);
+            setIf('fecha-inicio', data.fechaInicio);
+            setIf('fecha-termino', data.fechaTermino);
+            setIf('fecha-pago', data.fechaPago);
+            setIf('causal-select', data.causal);
+            setIf('sueldo-base', data.sueldoBase);
+            setIf('gratificacion', data.gratificacion);
+            setIf('asignaciones', data.asignaciones);
+            setIf('promedio-variables', data.promedioVariables);
+            setIf('vacaciones-pendientes', data.vacacionesPendientes);
+            setIf('afc-tipo', data.afcTipo);
+            setIf('afc-monto-exacto', data.afcMontoExacto);
+            setIf('descuento-anticipos', data.descuentoAnticipos);
+            setIf('descuento-prestamos', data.descuentoPrestamos);
+            setIf('descuento-alimentos', data.descuentoAlimentos);
+            setIf('forma-pago', data.formaPago);
+            setIf('banco-detalle', data.bancoDetalle);
+
+            if (data.avisoPrevio !== undefined) {
+                const el = document.getElementById('aviso-previo');
+                if (el) el.checked = !!data.avisoPrevio;
+            }
+            if (data.isExtremeZone !== undefined) {
+                const el = document.getElementById('zona-extrema');
+                if (el) el.checked = !!data.isExtremeZone;
+            }
+        } catch (e) {
+            console.warn('No se pudo cargar borrador local', e);
+        }
+    }
+
+    // Pre-cargar datos desde URL o localStorage si viene de la calculadora general o retorna de la pasarela
     function loadFromUrlOrStorage() {
+        // 1. Cargar borrador guardado en el navegador si existe
+        loadDraftFromStorage();
+
+        // 2. Parámetros de URL
         const params = new URLSearchParams(window.location.search);
 
         const getVal = (paramKey, defaultVal = '') => {
@@ -301,6 +369,18 @@
             const dd = String(today.getDate()).padStart(2, '0');
             fechaPagoEl.value = `${yyyy}-${mm}-${dd}`;
         }
+
+        // 3. Verificar retorno con pago exitoso desde la pasarela (Flow, Webpay, MercadoPago)
+        const isPaidUrl = params.get('pago') === 'exito' || params.get('status') === 'approved' || params.get('paid') === 'true';
+        if (isPaidUrl) {
+            setTimeout(() => {
+                applyPaymentSuccess(false);
+            }, 300);
+        } else if (params.get('pago') === 'fallo' || params.get('status') === 'rejected') {
+            setTimeout(() => {
+                alert('El pago no fue completado o fue cancelado. Tu borrador de finiquito se encuentra guardado para que puedas volver a intentar cuando lo desees.');
+            }, 500);
+        }
     }
 
     // Recalcular montos y actualizar la plantilla notarial
@@ -311,6 +391,7 @@
 
         renderSummary(calcData);
         renderNotaryDocument(formData, calcData);
+        saveDraftToStorage();
     }
 
     // Extraer datos del formulario
@@ -739,6 +820,23 @@
                     return;
                 }
 
+                // Guardar borrador completo en el navegador antes de salir a pagar
+                saveDraftToStorage();
+
+                // Si hay URL de pasarela externa configurada (Flow, Webpay, MercadoPago), redirigir directamente
+                if (PAYMENT_GATEWAY_URL && PAYMENT_GATEWAY_URL.trim().length > 0) {
+                    confirmPayBtn.disabled = true;
+                    confirmPayBtn.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Redirigiendo a pasarela segura...
+                    `;
+                    window.location.href = PAYMENT_GATEWAY_URL;
+                    return;
+                }
+
                 confirmPayBtn.disabled = true;
                 confirmPayBtn.innerHTML = `
                     <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -748,52 +846,63 @@
                     Procesando orden...
                 `;
 
-                // Simular validación Webpay/MercadoPago con éxito inmediato
+                // Simular validación con éxito inmediato si no hay gateway configurado
                 setTimeout(() => {
-                    state.isPaid = true;
-                    if (modal) modal.classList.add('hidden');
-
-                    // Remover marcas de agua de la vista previa
-                    const watermarks = document.querySelectorAll('.watermark-overlay');
-                    watermarks.forEach(wm => wm.remove());
-
-                    // Desbloquear selección y copia en la vista previa
-                    const printArea = document.getElementById('notary-print-area');
-                    const docBody = document.getElementById('notary-document-body');
-                    if (printArea) printArea.classList.remove('protected-preview', 'select-none');
-                    if (docBody) docBody.classList.remove('protected-preview', 'select-none');
-                    document.body.classList.add('paid-unlocked');
-
-                    // Ocultar toast si estaba visible
-                    hideCopyBlockedToast();
-
-                    // Cambiar estados de botones de descarga
-                    const unlockBar = document.getElementById('unlock-status-bar');
-                    if (unlockBar) {
-                        unlockBar.innerHTML = `
-                            <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 p-3 rounded-xl flex items-center justify-between">
-                                <div class="flex items-center space-x-2">
-                                    <span class="material-icons text-emerald-600 text-lg">check_circle</span>
-                                    <span class="text-xs font-semibold">¡Finiquito Oficial Desbloqueado! Descárgalo en PDF y Word:</span>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button id="quick-pdf" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer">
-                                        Descargar PDF Oficial
-                                    </button>
-                                    <button id="quick-word" class="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer">
-                                        Descargar Word (.docx)
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                        document.getElementById('quick-pdf')?.addEventListener('click', downloadPDF);
-                        document.getElementById('quick-word')?.addEventListener('click', downloadWord);
-                    }
-
-                    // Abrir diálogo de descarga inmediata
-                    downloadPDF();
+                    applyPaymentSuccess(true);
                 }, 1200);
             });
+        }
+    }
+
+    // Aplicar desbloqueo exitoso de finiquito oficial
+    function applyPaymentSuccess(immediateDownload = true) {
+        state.isPaid = true;
+        const modal = document.getElementById('payment-modal');
+        if (modal) modal.classList.add('hidden');
+
+        // Remover marcas de agua de la vista previa
+        const watermarks = document.querySelectorAll('.watermark-overlay');
+        watermarks.forEach(wm => wm.remove());
+
+        // Desbloquear selección y copia en la vista previa
+        const printArea = document.getElementById('notary-print-area');
+        const docBody = document.getElementById('notary-document-body');
+        if (printArea) printArea.classList.remove('protected-preview', 'select-none');
+        if (docBody) docBody.classList.remove('protected-preview', 'select-none');
+        document.body.classList.add('paid-unlocked');
+
+        // Ocultar toast si estaba visible
+        hideCopyBlockedToast();
+
+        // Cambiar estados de botones de descarga
+        const unlockBar = document.getElementById('unlock-status-bar');
+        if (unlockBar) {
+            unlockBar.innerHTML = `
+                <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 p-3.5 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-in fade-in duration-200">
+                    <div class="flex items-center space-x-2">
+                        <span class="material-icons text-emerald-600 text-2xl">verified</span>
+                        <div>
+                            <span class="text-xs font-bold block text-emerald-950">¡Finiquito Oficial Desbloqueado con Éxito!</span>
+                            <span class="text-[11px] text-emerald-700">Documento listo sin marcas de agua para presentar ante Notario.</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 w-full sm:w-auto">
+                        <button id="quick-pdf" class="flex-1 sm:flex-none px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center justify-center gap-1.5 transition-colors">
+                            <span class="material-icons text-xs">picture_as_pdf</span> Descargar PDF
+                        </button>
+                        <button id="quick-word" class="flex-1 sm:flex-none px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center justify-center gap-1.5 transition-colors">
+                            <span class="material-icons text-xs">description</span> Descargar Word
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('quick-pdf')?.addEventListener('click', downloadPDF);
+            document.getElementById('quick-word')?.addEventListener('click', downloadWord);
+        }
+
+        // Abrir diálogo de descarga si se solicitó
+        if (immediateDownload) {
+            downloadPDF();
         }
     }
 
