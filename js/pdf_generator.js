@@ -460,6 +460,25 @@
                 </div>
             </div>
 
+            <!-- Franja Consejo Financiero Patrocinado Itaú (Diseño Sobrio y Profesional para Impresión/PDF) -->
+            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #ea580c; border-radius: 6px; padding: 5px 10px; margin-top: 5px; margin-bottom: 5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1; padding-right: 10px;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #ea580c; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
+                        <strong style="color: #9a3412; font-size: 6.8pt;">¿Dónde recibir o resguardar el pago de tu finiquito?</strong>
+                    </div>
+                    <p style="font-size: 6.3pt; color: #7c2d12; margin: 0; line-height: 1.3;">
+                        Recibe el depósito de tus indemnizaciones en tu <strong>Cuenta Corriente Banco Itaú con $0 costo de mantención</strong>. Apertura 100% online en 5 minutos, transferencias ilimitadas a costo $0 y tarjeta de débito digital sin límites de saldo.
+                    </p>
+                </div>
+                <div style="text-align: right; flex-shrink: 0;">
+                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #ea580c !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
+                        Abrir Online →
+                    </a>
+                    <div style="font-size: 5.5pt; color: #9a3412; margin-top: 2px; font-family: monospace;">calculolaboral.cl/itau</div>
+                </div>
+            </div>
+
             <!-- Footer Disclaimer -->
             <div class="print-disclaimer" style="font-size: 5.8pt; color: #94a3b8; line-height: 1.25; border-top: 1px solid #e2e8f0; padding-top: 3px; text-align: center;">
                 <strong>NOTA INFORMATIVA:</strong> Simulación computacional de carácter referencial conforme a normativas de la Dirección del Trabajo (DT). No constituye asesoría letrada ni sustituye la liquidación formal suscrita por las partes.<br>
