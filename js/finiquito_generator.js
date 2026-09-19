@@ -370,13 +370,16 @@
             fechaPagoEl.value = `${yyyy}-${mm}-${dd}`;
         }
 
-        // 3. Verificar si ya pagó en este navegador o si retorna con pago exitoso desde Flow
-        const hasPaidToken = localStorage.getItem('fini_paid_token') === 'true';
+        // 3. Verificar si retorna con pago exitoso desde Flow o si tiene token válido para este trabajador
         const isPaidUrl = params.get('pago') === 'exito' || params.get('status') === 'approved' || params.get('status') === '2' || params.get('paid') === 'true';
 
-        if (hasPaidToken || isPaidUrl) {
+        if (isPaidUrl) {
             setTimeout(() => {
-                applyPaymentSuccess(false);
+                applyPaymentSuccess(false, true);
+            }, 300);
+        } else if (checkUnlockStatus(getFormData())) {
+            setTimeout(() => {
+                applyPaymentSuccess(false, false);
             }, 300);
         } else if (params.get('pago') === 'fallo' || params.get('status') === 'rejected' || params.get('status') === '3' || params.get('status') === '4') {
             setTimeout(() => {
@@ -385,11 +388,87 @@
         }
     }
 
+    // Comprobar si el finiquito actual está desbloqueado legítimamente (48 horas y mismo RUT)
+    function checkUnlockStatus(formData) {
+        try {
+            const raw = localStorage.getItem('fini_unlock_payload');
+            if (!raw) return false;
+            const payload = JSON.parse(raw);
+            if (!payload || !payload.expiresAt || !payload.trabajadorRut) return false;
+
+            // 1. Validar expiración de 48 horas
+            const now = Date.now();
+            if (now > payload.expiresAt) {
+                localStorage.removeItem('fini_unlock_payload');
+                localStorage.removeItem('fini_paid_token');
+                return false;
+            }
+
+            // 2. Validar que corresponda al mismo trabajador
+            const cleanCurrent = (formData.trabajadorRut || '').replace(/[^0-9kK]/g, '').toUpperCase();
+            const cleanPaid = (payload.trabajadorRut || '').replace(/[^0-9kK]/g, '').toUpperCase();
+
+            if (cleanCurrent.length >= 7 && cleanPaid.length >= 7 && cleanCurrent !== cleanPaid) {
+                return false;
+            }
+
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Bloquear nuevamente el documento si se cambia a otro trabajador
+    function lockDocument() {
+        state.isPaid = false;
+        document.body.classList.remove('paid-unlocked');
+
+        const printArea = document.getElementById('notary-print-area');
+        const docBody = document.getElementById('notary-document-body');
+        if (printArea) printArea.classList.add('protected-preview', 'select-none');
+        if (docBody) docBody.classList.add('protected-preview', 'select-none');
+
+        // Restaurar overlay de marca de agua si no existe
+        if (!document.getElementById('doc-watermark-overlay') && printArea) {
+            const wmOverlay = document.createElement('div');
+            wmOverlay.className = 'watermark-overlay';
+            wmOverlay.id = 'doc-watermark-overlay';
+            wmOverlay.innerHTML = `
+                <div class="watermark-stamp-container">
+                    <div class="watermark-stamp-box">
+                        <span class="stamp-badge">Cálculo Laboral Chile</span>
+                        <div class="stamp-title">VISTA PREVIA</div>
+                        <div class="stamp-subtitle">DOCUMENTO OFICIAL NO VÁLIDO PARA FIRMA NOTARIAL</div>
+                        <button type="button" id="btn-watermark-unlock" class="stamp-cta">
+                            <span class="material-icons text-sm" aria-hidden="true">lock_open</span>
+                            Desbloquear Word + PDF ($12.990)
+                        </button>
+                    </div>
+                </div>
+            `;
+            printArea.prepend(wmOverlay);
+            document.getElementById('btn-watermark-unlock')?.addEventListener('click', () => {
+                document.getElementById('payment-modal')?.classList.remove('hidden');
+            });
+        }
+
+        const unlockBar = document.getElementById('unlock-status-bar');
+        if (unlockBar) unlockBar.innerHTML = '';
+    }
+
     // Recalcular montos y actualizar la plantilla notarial
     function updateAll() {
         const formData = getFormData();
         const calcData = calculateFiniquito(formData);
         state.calcResult = calcData;
+
+        // Validar vigencia de 48 horas y coincidencia de RUT
+        const isLegitUnlocked = checkUnlockStatus(formData);
+        if (state.isPaid && !isLegitUnlocked) {
+            lockDocument();
+        } else if (!state.isPaid && isLegitUnlocked) {
+            applyPaymentSuccess(false, false);
+        }
 
         renderSummary(calcData);
         renderNotaryDocument(formData, calcData);
@@ -822,6 +901,10 @@
                     return;
                 }
 
+                if (emailInput && emailInput.value) {
+                    localStorage.setItem('fini_customer_email', emailInput.value.trim());
+                }
+
                 // Guardar borrador completo en el navegador antes de salir a pagar
                 saveDraftToStorage();
 
@@ -850,18 +933,72 @@
 
                 // Simular validación con éxito inmediato si no hay gateway configurado
                 setTimeout(() => {
-                    applyPaymentSuccess(true);
+                    applyPaymentSuccess(true, true);
                 }, 1200);
             });
         }
     }
 
-    // Aplicar desbloqueo exitoso de finiquito oficial
-    function applyPaymentSuccess(immediateDownload = true) {
-        state.isPaid = true;
+    // Despacho de finiquito oficial (.doc) al correo electrónico del comprador
+    let hasSentEmail = false;
+
+    async function dispatchFiniquitoEmail(formData, calcData, forceEmail = null) {
+        const email = forceEmail || localStorage.getItem('fini_customer_email') || document.getElementById('checkout-email')?.value?.trim();
+        if (!email || !email.includes('@')) return;
+
+        if (!forceEmail && hasSentEmail) return;
+        if (!forceEmail) hasSentEmail = true;
+
+        const docBody = document.getElementById('notary-document-body');
+        const htmlContent = docBody ? docBody.innerHTML : '';
+
         try {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token') || 'flow';
+
+            const resp = await fetch('/api/send-finiquito', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    empresaRazon: formData.empresaRazon,
+                    empresaRut: formData.empresaRut,
+                    trabajadorNombre: formData.trabajadorNombre,
+                    trabajadorRut: formData.trabajadorRut,
+                    saldoLiquido: calcData?.saldoLiquidoFinal || 0,
+                    htmlContent,
+                    token
+                })
+            });
+
+            if (resp.ok) {
+                alert(`✅ ¡Copia de respaldo enviada exitosamente a ${email} con el documento Word adjunto!`);
+            }
+        } catch (e) {
+            console.warn('Error al despachar finiquito por correo:', e);
+        }
+    }
+
+    // Aplicar desbloqueo exitoso de finiquito oficial con regla de 48 horas
+    function applyPaymentSuccess(immediateDownload = true, sendEmail = true) {
+        state.isPaid = true;
+
+        const formData = getFormData();
+        const calcData = state.calcResult || calculateFiniquito(formData);
+
+        // Guardar payload de desbloqueo válido por 48 horas para este trabajador
+        const unlockPayload = {
+            trabajadorRut: formData.trabajadorRut,
+            trabajadorNombre: formData.trabajadorNombre,
+            empresaRazon: formData.empresaRazon,
+            unlockedAt: Date.now(),
+            expiresAt: Date.now() + (48 * 60 * 60 * 1000) // 48 horas exactas
+        };
+        try {
+            localStorage.setItem('fini_unlock_payload', JSON.stringify(unlockPayload));
             localStorage.setItem('fini_paid_token', 'true');
         } catch (e) {}
+
         const modal = document.getElementById('payment-modal');
         if (modal) modal.classList.add('hidden');
 
@@ -879,30 +1016,60 @@
         // Ocultar toast si estaba visible
         hideCopyBlockedToast();
 
+        // Despachar finiquito por correo automáticamente si corresponde
+        if (sendEmail) {
+            dispatchFiniquitoEmail(formData, calcData);
+        }
+
         // Cambiar estados de botones de descarga
         const unlockBar = document.getElementById('unlock-status-bar');
         if (unlockBar) {
+            const customerEmail = localStorage.getItem('fini_customer_email') || '';
             unlockBar.innerHTML = `
-                <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 p-3.5 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-in fade-in duration-200">
-                    <div class="flex items-center space-x-2">
-                        <span class="material-icons text-emerald-600 text-2xl">verified</span>
-                        <div>
-                            <span class="text-xs font-bold block text-emerald-950">¡Finiquito Oficial Desbloqueado con Éxito!</span>
-                            <span class="text-[11px] text-emerald-700">Documento listo sin marcas de agua para presentar ante Notario.</span>
+                <div class="bg-emerald-50 border border-emerald-300 text-emerald-900 p-4 rounded-xl shadow-sm animate-in fade-in duration-200 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-200/70 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="material-icons text-emerald-600 text-2xl">verified</span>
+                            <div>
+                                <span class="text-xs font-bold block text-emerald-950">¡Finiquito Notarial Oficial Desbloqueado!</span>
+                                <span class="text-[11px] text-emerald-700">Garantía activa de 48 horas para don(ña) <strong>${escapeHtml(formData.trabajadorNombre)}</strong> (RUT: ${escapeHtml(formData.trabajadorRut)}).</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex space-x-2 w-full sm:w-auto">
-                        <button id="quick-pdf" class="flex-1 sm:flex-none px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center justify-center gap-1.5 transition-colors">
-                            <span class="material-icons text-xs">picture_as_pdf</span> Descargar PDF
+                        <button type="button" id="btn-reset-new-finiquito" class="text-[11px] text-slate-500 hover:text-slate-800 underline self-start sm:self-auto cursor-pointer">
+                            Crear finiquito para otro trabajador
                         </button>
-                        <button id="quick-word" class="flex-1 sm:flex-none px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center justify-center gap-1.5 transition-colors">
-                            <span class="material-icons text-xs">description</span> Descargar Word
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="quick-pdf" class="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
+                            <span class="material-icons text-xs">picture_as_pdf</span> Descargar PDF Oficial
+                        </button>
+                        <button type="button" id="quick-word" class="px-3.5 py-2 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
+                            <span class="material-icons text-xs">description</span> Descargar Word (.docx)
+                        </button>
+                        <button type="button" id="quick-resend-email" class="px-3 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
+                            <span class="material-icons text-xs text-sky-600">email</span> ${customerEmail ? 'Reenviar a mi correo' : 'Enviar a mi correo'}
                         </button>
                     </div>
                 </div>
             `;
             document.getElementById('quick-pdf')?.addEventListener('click', downloadPDF);
             document.getElementById('quick-word')?.addEventListener('click', downloadWord);
+            document.getElementById('quick-resend-email')?.addEventListener('click', () => {
+                const targetEmail = prompt('Ingresa el correo al que deseas enviar el documento Word editable:', customerEmail || '');
+                if (targetEmail && targetEmail.includes('@')) {
+                    localStorage.setItem('fini_customer_email', targetEmail.trim());
+                    dispatchFiniquitoEmail(formData, calcData, targetEmail.trim());
+                }
+            });
+            document.getElementById('btn-reset-new-finiquito')?.addEventListener('click', () => {
+                if (confirm('¿Deseas iniciar un nuevo finiquito para otro trabajador? El documento volverá a su estado protegido con marcas de agua.')) {
+                    localStorage.removeItem('fini_unlock_payload');
+                    localStorage.removeItem('fini_paid_token');
+                    localStorage.removeItem('fini_draft_payload');
+                    window.location.href = window.location.pathname;
+                }
+            });
         }
 
         // Abrir diálogo de descarga si se solicitó
