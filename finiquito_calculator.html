@@ -604,7 +604,7 @@
     </header>
 
     
-    <!-- Indicators Carousel (Mobile) / Grid (Desktop) -->
+    <!-- Indicators Carousel & Responsive Layout Helpers -->
     <style>
         @media (max-width: 639px) {
             .indicators-carousel {
@@ -621,18 +621,42 @@
                 scroll-snap-align: start !important;
             }
         }
-        @media (min-width: 640px) {
+        @media (min-width: 640px) and (max-width: 1023px) {
             .indicators-carousel {
                 display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 0.75rem !important;
             }
             .indicator-card {
-                width: auto !important;
+                width: 100% !important;
                 min-width: 0 !important;
                 flex-shrink: 1 !important;
             }
         }
+        @media (min-width: 1024px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+        @media (max-width: 1023px) {
+            .legal-keys-panel {
+                display: none !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .legal-keys-panel {
+                display: block !important;
+            }
+        }
     </style>
-    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-2 mb-3 sm:mb-4 no-print overflow-hidden sm:overflow-visible">
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-2 mb-3 sm:mb-4 no-print">
         <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 pb-2 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
             <!-- UF Card -->
             <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
@@ -939,7 +963,7 @@
                 </div>
 
                 <!-- Panel Informativo de Respaldo Legal (Equilibrio visual y autoridad en Desktop) -->
-                <div class="hidden lg:block pt-3 border-t border-slate-100">
+                <div class="legal-keys-panel pt-3 border-t border-slate-100">
                     <div class="p-3.5 bg-slate-50/90 border border-slate-200/80 rounded-2xl space-y-2 text-xs">
                         <div class="flex items-center justify-between text-slate-800">
                             <span class="inline-flex items-center gap-1.5 font-bold text-[11px] uppercase tracking-wider text-slate-700">
