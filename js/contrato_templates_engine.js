@@ -819,7 +819,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
             <head>
                 <meta charset="UTF-8">
                 <title>Contrato_Trabajo_${res.folio}</title>
-                <script src="https://cdn.tailwindcss.com"></script>
+                <link rel="stylesheet" href="/assets/css/style.css?v=2.6.2">
                 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
                 <style>
                     body {

@@ -532,7 +532,7 @@
             <head>
                 <meta charset="UTF-8">
                 <title>Informe_Ejecutivo_Contratacion_${data.folio}</title>
-                <script src="https://cdn.tailwindcss.com"></script>
+                <link rel="stylesheet" href="/assets/css/style.css?v=2.6.2">
                 ${estilos}
             </head>
             <body class="bg-slate-100 py-6">
