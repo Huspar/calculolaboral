@@ -625,6 +625,22 @@
             });
         }
 
+        // Botón Crear Contrato a la Medida ($12.990)
+        var linkContrato = document.getElementById('link-ir-generador-contrato');
+        if (linkContrato) {
+            linkContrato.addEventListener('click', function (e) {
+                var state = getDatosActuales();
+                try {
+                    localStorage.setItem('simulacion_costo_empresa', JSON.stringify(state));
+                } catch (err) {}
+                var cargoParam = (state.opciones.cargo && state.opciones.cargo !== 'Cargo / Puesto Presupuestado') 
+                    ? encodeURIComponent(state.opciones.cargo) 
+                    : '';
+                var baseParam = state.monto || '850000';
+                linkContrato.href = 'generador-contrato-trabajo-chile?cargo=' + cargoParam + '&base=' + baseParam;
+            });
+        }
+
         // 3. DETECCIÓN DE RETORNO DE PAGO EXITOSO (URL query ?pago=exito)
         var urlParams = new URLSearchParams(window.location.search);
         var statusPago = urlParams.get('pago') || urlParams.get('status');
