@@ -303,7 +303,7 @@
             </div>
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
                 <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope Cesantía</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">134.8 UF</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">135.1 UF</span>
             </div>
         </div>
     </div>
@@ -349,20 +349,38 @@
 
                     <div class="space-y-4 text-xs">
                         <div>
-                            <label for="select-modo-calculo" class="block font-semibold text-slate-700 mb-1">¿Cómo estás negociando la contratación?:</label>
-                            <select id="select-modo-calculo" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800 font-medium text-xs sm:text-sm focus:ring-2 focus:ring-sky-500 outline-none">
-                                <option value="liquido" selected>Sueldo Líquido deseado (Cálculo Inverso)</option>
-                                <option value="base">Sueldo Base pactado (Cálculo Directo)</option>
-                            </select>
+                            <label class="block font-semibold text-slate-700 mb-1.5">¿Cómo estás negociando la contratación?:</label>
+                            <div class="grid grid-cols-2 p-1 bg-slate-100/90 rounded-xl gap-1 border border-slate-200/80">
+                                <button type="button" id="btn-modo-base" class="py-2 px-1.5 rounded-lg text-xs font-bold text-center transition-all bg-white text-sky-700 shadow-xs border border-slate-200 leading-tight">
+                                    Sueldo Base
+                                    <span class="block text-[9.5px] sm:text-[10px] font-normal text-slate-500 mt-0.5">Pactado (Directo)</span>
+                                </button>
+                                <button type="button" id="btn-modo-liquido" class="py-2 px-1.5 rounded-lg text-xs font-semibold text-center transition-all text-slate-600 hover:text-slate-900 leading-tight">
+                                    Sueldo Líquido
+                                    <span class="block text-[9.5px] sm:text-[10px] font-normal text-slate-400 mt-0.5">Líquido (Inverso)</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="select-modo-calculo" value="base">
                         </div>
 
                         <div>
-                            <label id="label-monto-sueldo" for="input-monto-sueldo" class="block font-semibold text-slate-700 mb-1">Sueldo Líquido que pide el Candidato (en bolsillo):</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-sm">$</span>
-                                <input type="text" id="input-monto-sueldo" value="850.000" inputmode="numeric" class="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none font-mono text-base sm:text-lg font-bold text-slate-900">
+                            <div class="flex flex-wrap justify-between items-center gap-1 mb-1">
+                                <label id="label-monto-sueldo" for="input-monto-sueldo" class="block font-semibold text-slate-700">Sueldo Base Mensual:</label>
+                                <span id="badge-modo-calculo" class="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 font-bold border border-sky-200/80">Cálculo Directo DT</span>
                             </div>
-                            <span class="text-[10px] text-slate-500 mt-1 block">Ingresa el monto para simular en tiempo real todos los costos asociados.</span>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold text-base">$</span>
+                                <input type="text" id="input-monto-sueldo" value="850.000" inputmode="numeric" class="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none font-mono text-base sm:text-lg font-bold text-slate-900 transition-all">
+                            </div>
+                            <!-- Botones de Acceso Rápido -->
+                            <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                <span class="text-[10px] text-slate-400 font-medium mr-0.5">Comunes:</span>
+                                <button type="button" class="btn-preset-monto px-2 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-600 text-[11px] font-mono rounded-md border border-slate-200/70 transition-colors" data-monto="553553">$553.553 (Mínimo)</button>
+                                <button type="button" class="btn-preset-monto px-2 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-600 text-[11px] font-mono rounded-md border border-slate-200/70 transition-colors" data-monto="850000">$850.000</button>
+                                <button type="button" class="btn-preset-monto px-2 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-600 text-[11px] font-mono rounded-md border border-slate-200/70 transition-colors" data-monto="1200000">$1.200.000</button>
+                                <button type="button" class="btn-preset-monto px-2 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-600 text-[11px] font-mono rounded-md border border-slate-200/70 transition-colors" data-monto="2000000">$2.000.000</button>
+                            </div>
+                            <span id="help-monto-sueldo" class="text-[10px] text-slate-500 mt-1.5 block">Sueldo pactado en contrato individual (cláusula 4). Desmarcar gratificación reduce el costo directamente.</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
@@ -391,16 +409,31 @@
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
                                     <input type="text" id="input-asignaciones" value="60.000" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 font-mono text-xs sm:text-sm text-slate-800">
                                 </div>
-                                <span class="text-[10px] text-slate-500 mt-0.5 block">Exentas de leyes sociales</span>
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">Haberes exentos de leyes sociales</span>
                             </div>
-                            <div class="flex items-center pt-2 sm:pt-6">
-                                <label class="flex items-start gap-2 cursor-pointer">
-                                    <input type="checkbox" id="check-gratificacion" checked class="mt-0.5 rounded text-sky-600 focus:ring-sky-500">
+                            <div class="p-3 bg-slate-50/80 border border-slate-200/80 rounded-lg flex flex-col justify-between">
+                                <label class="flex items-start gap-2.5 cursor-pointer">
+                                    <input type="checkbox" id="check-gratificacion" checked class="mt-0.5 rounded text-sky-600 focus:ring-sky-500 w-4 h-4 shrink-0">
                                     <div>
-                                        <span class="text-xs font-semibold text-slate-800">Gratificación Legal (Art. 50)</span>
-                                        <p class="text-[10px] text-slate-500">25% con tope 4,75 IMM ($219.031/mes)</p>
+                                        <span id="label-check-gratificacion" class="text-xs font-bold text-slate-900 block">Gratificación Legal Mensual (Art. 50)</span>
+                                        <p id="help-check-gratificacion" class="text-[10px] text-slate-500 mt-0.5">25% con tope de 4,75 IMM ($219.115/mes)</p>
                                     </div>
                                 </label>
+                                <!-- Alerta explicativa dinámica en modo inverso -->
+                                <div id="nota-modo-inverso-gratif" class="hidden mt-2 pt-2 border-t border-slate-200/80 text-[10px] text-slate-600 leading-tight">
+                                    <span class="font-bold text-sky-700">Nota Modo Líquido:</span>
+                                    <span id="texto-explicativo-gratif">Al estar marcada, se incluye en la oferta ($780.630 base + $195.158 gratificación = $850.000 líquidos). Al desmarcarla, todo se imputa a sueldo base para asegurar los $850.000 líquidos acordados.</span>
+                                </div>
+                                <!-- Checkbox para Gratificación Adicional en Modo Líquido -->
+                                <div id="wrap-gratif-adicional" class="hidden mt-2 pt-2 border-t border-slate-200/80">
+                                    <label class="flex items-start gap-2 cursor-pointer">
+                                        <input type="checkbox" id="check-gratif-adicional" class="mt-0.5 rounded text-sky-600 focus:ring-sky-500">
+                                        <div>
+                                            <span class="text-[11px] font-semibold text-slate-800">Pagar Gratificación Adicional</span>
+                                            <p class="text-[10px] text-slate-500">Suma gratificación Art. 50 por sobre el líquido pactado.</p>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -920,6 +953,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="/js/costo_empresa_calculator.js?v=2.6.1"></script>
+    <script src="js/costo_empresa_calculator.js?v=2.6.2"></script>
 </body>
 </html>
