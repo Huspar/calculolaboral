@@ -603,23 +603,22 @@
         document.body.style.overflow = 'hidden';
         document.body.style.touchAction = 'none';
 
-        // 2. Contenedor exterior FIXED INSET-0 con OVERFLOW-Y-AUTO nativo (Scroll asegurado en todo el viewport)
+        // 2. Contenedor exterior FIXED INSET-0
         var modal = document.createElement('div');
         modal.id = 'modal-preview-informe-container';
-        modal.className = 'fixed inset-0 z-[100000] bg-slate-950/90 backdrop-blur-sm overflow-y-auto overscroll-contain flex flex-col items-center py-3 sm:py-6 px-2 sm:px-4 no-print';
+        modal.className = 'fixed inset-0 z-[100000] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 no-print';
         modal.style.boxSizing = 'border-box';
-        modal.style.webkitOverflowScrolling = 'touch';
         modal.innerHTML = `
             <!-- Botón flotante de cierre universal siempre fijo en pantalla -->
             <button type="button" id="btn-floating-close" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-[100002] w-11 h-11 rounded-full bg-slate-900/95 hover:bg-rose-600 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer border-2 border-white/30 active:scale-95" title="Cerrar vista previa (Esc)">
                 <span class="material-icons text-2xl">close</span>
             </button>
 
-            <!-- Tarjeta del documento que se desplaza fluidamente -->
-            <div id="modal-card-inner" class="bg-slate-100 rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-300 relative flex flex-col my-auto sm:my-0 overflow-hidden">
+            <!-- Tarjeta del documento con altura estricta 90vh y estructura Flex Column -->
+            <div id="modal-card-inner" class="bg-slate-100 rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-300 relative flex flex-col overflow-hidden" style="display: flex; flex-direction: column; height: 90vh; max-height: 90vh;">
                 
-                <!-- Barra superior fija (Sticky Header) -->
-                <div class="sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-xs">
+                <!-- Barra superior fija (Header siempre visible, no encogible) -->
+                <div class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-xs flex-shrink-0 z-30" style="flex-shrink: 0;">
                     <div class="flex items-center gap-2.5 min-w-0">
                         <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0">
                             <span class="material-icons text-lg">lock</span>
@@ -645,17 +644,17 @@
                     </div>
                 </div>
 
-                <!-- Contenedor de la Hoja A4 Protegida contra copias -->
-                <div class="p-3 sm:p-6 bg-slate-200/70 flex justify-center" oncontextmenu="return false;" style="user-select: none !important; -webkit-user-select: none !important;">
-                    <div class="w-full max-w-[820px] pb-4" style="user-select: none !important; -webkit-user-select: none !important;">
+                <!-- Contenedor con Scroll garantizado (flex-1 + min-h-0 + overflow-y-auto) -->
+                <div id="scroll-container-preview" class="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 bg-slate-200/70 flex justify-center" style="flex: 1 1 0%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;" oncontextmenu="return false;">
+                    <div class="w-full max-w-[820px] pb-6" style="user-select: none !important; -webkit-user-select: none !important;">
                         ${contenidoHTML}
                     </div>
                 </div>
 
-                <!-- Barra inferior fija (Sticky Bottom Bar) -->
-                <div class="sticky bottom-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 shadow-md">
+                <!-- Barra inferior fija (Footer siempre visible, no encogible) -->
+                <div class="bg-white border-t border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 shadow-md flex-shrink-0 z-30" style="flex-shrink: 0;">
                     <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">
-                        Borrador no válido para presentar • Desbloquea la versión oficial para socios y bancos
+                        Borrador no válido para presentar • Desplaza con el ratón o flechas para ver todo el informe ↓
                     </span>
                     <span class="text-[11px] text-slate-500 font-medium sm:hidden">
                         Borrador no válido para presentar
@@ -673,6 +672,8 @@
         `;
         document.body.appendChild(modal);
 
+        var scrollContainer = document.getElementById('scroll-container-preview');
+
         function cerrarModal() {
             modal.remove();
             document.documentElement.style.overflow = '';
@@ -682,7 +683,19 @@
         }
 
         function handleKey(e) {
-            if (e.key === 'Escape') cerrarModal();
+            if (e.key === 'Escape') {
+                cerrarModal();
+                return;
+            }
+            if (scrollContainer) {
+                if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                    scrollContainer.scrollTop += 120;
+                    e.preventDefault();
+                } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                    scrollContainer.scrollTop -= 120;
+                    e.preventDefault();
+                }
+            }
         }
 
         document.getElementById('btn-floating-close').addEventListener('click', cerrarModal);
@@ -695,10 +708,15 @@
             if (e.target === modal) cerrarModal();
         });
 
-        // Prevenir fuga de eventos wheel al fondo
+        // Enrutar activamente cualquier giro de la rueda del ratón directo al scrollContainer
         modal.addEventListener('wheel', function(e) {
+            if (scrollContainer) {
+                var delta = e.deltaY * (e.deltaMode === 1 ? 25 : 1);
+                scrollContainer.scrollTop += delta;
+            }
+            e.preventDefault();
             e.stopPropagation();
-        }, { passive: true });
+        }, { passive: false });
     }
 
     // Dispara la impresión / guardado en PDF nativo de alta resolución
