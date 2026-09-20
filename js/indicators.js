@@ -18,6 +18,11 @@ const IndicatorsService = {
     // Dataset base offline de contingencia (UF 30 días, UTM 12 meses)
     BASELINE_DATA: {
         uf: [
+            {"fecha": "2026-09-20", "valor": 40975.41},
+            {"fecha": "2026-09-19", "valor": 40967.24},
+            {"fecha": "2026-09-18", "valor": 40959.08},
+            {"fecha": "2026-09-17", "valor": 40950.91},
+            {"fecha": "2026-09-16", "valor": 40942.75},
             {"fecha": "2026-09-15", "valor": 40934.58},
             {"fecha": "2026-09-14", "valor": 40926.41},
             {"fecha": "2026-09-13", "valor": 40918.25},
@@ -42,12 +47,7 @@ const IndicatorsService = {
             {"fecha": "2026-08-25", "valor": 40865.87},
             {"fecha": "2026-08-24", "valor": 40864.55},
             {"fecha": "2026-08-23", "valor": 40863.23},
-            {"fecha": "2026-08-22", "valor": 40861.91},
-            {"fecha": "2026-08-21", "valor": 40860.6},
-            {"fecha": "2026-08-20", "valor": 40859.28},
-            {"fecha": "2026-08-19", "valor": 40857.96},
-            {"fecha": "2026-08-18", "valor": 40856.64},
-            {"fecha": "2026-08-17", "valor": 40855.33}
+            {"fecha": "2026-08-22", "valor": 40861.91}
         ],
         utm: [
             {"fecha": "2026-09-01", "valor": 71721.0},
@@ -189,6 +189,10 @@ const IndicatorsService = {
         CONSTANTS.UTM = utm;
         if (this._isValid(imm)) CONSTANTS.IMM = imm;
 
+        if (typeof CONSTANTS.recalculateTaxBrackets === 'function') {
+            CONSTANTS.recalculateTaxBrackets(utm);
+        }
+
         console.log(`Indicators applied from ${source}: UF=${uf}, UTM=${utm}`);
 
         // Only dispatch if values actually changed (avoids unnecessary recalcs)
@@ -260,11 +264,19 @@ const IndicatorsService = {
             maximumFractionDigits: 0
         }).format(val);
 
-        const ufEl = document.querySelector('.uf-value');
-        if (ufEl && data.uf?.valor) ufEl.textContent = formatUF(data.uf.valor);
+        if (data.uf?.valor) {
+            const formattedUF = formatUF(data.uf.valor);
+            document.querySelectorAll('.uf-value').forEach(el => {
+                el.textContent = formattedUF;
+            });
+        }
 
-        const utmEl = document.querySelector('.utm-value');
-        if (utmEl && data.utm?.valor) utmEl.textContent = formatUTM(data.utm.valor);
+        if (data.utm?.valor) {
+            const formattedUTM = formatUTM(data.utm.valor);
+            document.querySelectorAll('.utm-value').forEach(el => {
+                el.textContent = formattedUTM;
+            });
+        }
 
         const dateEl = document.querySelector('.indicators-date');
         if (dateEl && data.uf?.fecha) {

@@ -8,13 +8,21 @@
     'use strict';
 
     // Constantes e Indicadores Oficiales 2026 (SUSESO, Previred, SII, DT)
-    const UF_VALOR = 39682.99;
-    const UTM_VALOR = 69611;
-    const IMM_VALOR = 553553; // Ingreso Mínimo Mensual referencial 2026
+    function getUF() {
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 40975.41;
+    }
+    function getUTM() {
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UTM) ? CONSTANTS.UTM : 71721;
+    }
+    function getIMM() {
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.IMM) ? CONSTANTS.IMM : 553553;
+    }
     const TOPE_PREV_UF = 89.9; // Tope Imponible AFP/Salud/SIS/Mutual (UF)
     const TOPE_AFC_UF = 135.1; // Tope Imponible Cesantía AFC oficial Previred (UF)
     const TOPE_GRATIF_FACTOR = 4.75; // 4.75 IMM anual / 12 mensual (Art. 50 Código del Trabajo)
-    const TOPE_GRATIF_MENSUAL = Math.round((IMM_VALOR * TOPE_GRATIF_FACTOR) / 12); // $219.115 mensual
+    function getTopeGratifMensual() {
+        return Math.round((getIMM() * TOPE_GRATIF_FACTOR) / 12);
+    }
 
     // Tasas Patronales Legales
     const TASA_SIS = 0.0149; // 1.49% Seguro Invalidez y Sobrevivencia (cargo empleador)
@@ -80,15 +88,17 @@
         // 1. Gratificación Legal Art. 50 (25% sueldo devengado con tope 4,75 IMM / 12)
         var gratificacion = 0;
         if (tieneGratificacion) {
-            gratificacion = Math.min(Math.round(sueldoBase * 0.25), TOPE_GRATIF_MENSUAL);
+            gratificacion = Math.min(Math.round(sueldoBase * 0.25), getTopeGratifMensual());
         }
 
         // 2. Remuneración Imponible Bruta
         var totalImponible = sueldoBase + gratificacion;
 
         // Topes en pesos según UF oficial
-        var topePrevPesos = Math.round(TOPE_PREV_UF * UF_VALOR);
-        var topeAfcPesos = Math.round(TOPE_AFC_UF * UF_VALOR);
+        var currentUF = getUF();
+        var currentUTM = getUTM();
+        var topePrevPesos = Math.round(TOPE_PREV_UF * currentUF);
+        var topeAfcPesos = Math.round(TOPE_AFC_UF * currentUF);
 
         var imponiblePrev = Math.min(totalImponible, topePrevPesos);
         var imponibleAfc = Math.min(totalImponible, topeAfcPesos);
@@ -109,7 +119,7 @@
 
         // Base tributable e Impuesto Único de Segunda Categoría
         var baseTributable = Math.max(0, totalImponible - totalCotizacionesTrabajador);
-        var impuestoSegundaCat = calcularImpuestoUnico(baseTributable, UTM_VALOR);
+        var impuestoSegundaCat = calcularImpuestoUnico(baseTributable, currentUTM);
 
         // Sueldo Líquido resultante en bolsillo
         var sueldoLiquido = totalImponible + asignacionesNoImponibles - totalCotizacionesTrabajador - impuestoSegundaCat;
@@ -217,10 +227,10 @@
         calcularDesdeLiquido: calcularDesdeLiquido,
         formatCLP: formatCLP,
         parseCLP: parseCLP,
-        UF_VALOR: UF_VALOR,
-        UTM_VALOR: UTM_VALOR,
-        IMM_VALOR: IMM_VALOR,
-        TOPE_GRATIF_MENSUAL: TOPE_GRATIF_MENSUAL
+        get UF_VALOR() { return getUF(); },
+        get UTM_VALOR() { return getUTM(); },
+        get IMM_VALOR() { return getIMM(); },
+        get TOPE_GRATIF_MENSUAL() { return getTopeGratifMensual(); }
     };
 
     // Inicialización del DOM cuando la página esté lista
@@ -422,6 +432,10 @@
             if (barAportes) barAportes.style.width = pctAportesEmp + '%';
             if (barProvisiones) barProvisiones.style.width = pctProvisiones + '%';
         }
+
+        document.addEventListener('indicatorsUpdated', function () {
+            recalcular();
+        });
 
         // Inicializar en modo Sueldo Base Pactado (Estándar DT)
         setModo('base');

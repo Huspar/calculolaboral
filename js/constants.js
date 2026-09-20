@@ -10,9 +10,9 @@
  */
 
 const CONSTANTS = {
-    // Economic Indicators
-    UF: 39682.99,
-    UTM: 69611,
+    // Economic Indicators (Actualizados Septiembre 2026 - Banco Central & SII)
+    UF: 40975.41,
+    UTM: 71721,
     IMM: 553553,
 
     // Legal Caps (Topes Imponibles)
@@ -53,17 +53,32 @@ const CONSTANTS = {
     AFC_PLAZO_FIJO_EMPLOYER: 0.03,      // 3.0% (2.8% CIC + 0.2% FCS)
     FACTOR_HORA_EXTRA_42H: 0.0089286, // (1/168 * 1.5)
 
-    // Income Tax Brackets (Impuesto Segunda Categoría) - Feb 2026
+    // Income Tax Brackets (Impuesto Segunda Categoría) - Septiembre 2026 (Base UTM $71.721)
     TAX_BRACKETS: [
-        { limit: 939748.50, factor: 0, rebate: 0 },
-        { limit: 2088330.00, factor: 0.04, rebate: 37589.94 },
-        { limit: 3480550.00, factor: 0.08, rebate: 121123.14 },
-        { limit: 4872770.00, factor: 0.135, rebate: 312553.39 },
-        { limit: 6264990.00, factor: 0.23, rebate: 775466.54 },
-        { limit: 8353320.00, factor: 0.304, rebate: 1239075.80 },
-        { limit: 21579410.00, factor: 0.35, rebate: 1623328.52 },
-        { limit: Infinity, factor: 0.40, rebate: 2702299.02 }
+        { limit: 968233.50, factor: 0, rebate: 0 },
+        { limit: 2151630.00, factor: 0.04, rebate: 38729.34 },
+        { limit: 3586050.00, factor: 0.08, rebate: 124794.54 },
+        { limit: 5020470.00, factor: 0.135, rebate: 322027.29 },
+        { limit: 6454890.00, factor: 0.23, rebate: 798971.94 },
+        { limit: 8606520.00, factor: 0.304, rebate: 1276633.80 },
+        { limit: 22233510.00, factor: 0.35, rebate: 1672533.72 },
+        { limit: Infinity, factor: 0.40, rebate: 2784209.22 }
     ],
+
+    // Función para recalcular tramos tributarios dinámicamente si cambia la UTM
+    recalculateTaxBrackets: function (utm) {
+        var u = utm || this.UTM;
+        this.TAX_BRACKETS = [
+            { limit: 13.5 * u, factor: 0, rebate: 0 },
+            { limit: 30 * u, factor: 0.04, rebate: 0.54 * u },
+            { limit: 50 * u, factor: 0.08, rebate: 1.74 * u },
+            { limit: 70 * u, factor: 0.135, rebate: 4.49 * u },
+            { limit: 90 * u, factor: 0.23, rebate: 11.14 * u },
+            { limit: 120 * u, factor: 0.304, rebate: 17.8 * u },
+            { limit: 310 * u, factor: 0.35, rebate: 23.32 * u },
+            { limit: Infinity, factor: 0.40, rebate: 38.82 * u }
+        ];
+    },
 
     // AFP Rates (For reference/fallback)
     AFP_RATES: {

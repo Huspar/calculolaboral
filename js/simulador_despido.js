@@ -9,9 +9,13 @@
     'use strict';
 
     // Constantes Oficiales 2026
-    const VALOR_UF = 39682.99;
+    function getUF() {
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 40975.41;
+    }
     const TOPE_IAS_UF = 90; // Art. 172 Código del Trabajo
-    const TOPE_IAS_PESOS = Math.round(TOPE_IAS_UF * VALOR_UF); // ~$3.571.469
+    function getTopeIASPesos() {
+        return Math.round(TOPE_IAS_UF * getUF());
+    }
     const SUELDO_MINIMO_2026 = 553553;
 
     // Estado del Simulador
@@ -46,7 +50,7 @@
     // Cálculo Forense Laboral
     function calculate() {
         const sueldo = state.sueldoImponible;
-        const sueldoTopadoIAS = Math.min(sueldo, TOPE_IAS_PESOS);
+        const sueldoTopadoIAS = Math.min(sueldo, getTopeIASPesos());
 
         // Años de servicio para cálculo legal (Art. 163)
         // Fracción superior a 6 meses suma 1 año completo. Máximo 11 años.
@@ -110,7 +114,7 @@
             } else {
                 // Estimación aproximada: 1.6% mensual acumulado sobre el sueldo imponible por los meses trabajados
                 const mesesTotales = (state.anios * 12) + state.meses;
-                const topeAfcImponible = Math.min(sueldo, Math.round(134.8 * VALOR_UF)); // Tope AFC ~134.8 UF
+                const topeAfcImponible = Math.min(sueldo, Math.round(135.1 * getUF())); // Tope AFC 135.1 UF (Previred 2026)
                 montoReintegroAFC = Math.round(topeAfcImponible * 0.016 * mesesTotales);
             }
         }
@@ -491,6 +495,10 @@
     // Inicializar
     document.addEventListener('DOMContentLoaded', function () {
         initEvents();
+        calculate();
+    });
+
+    document.addEventListener('indicatorsUpdated', function () {
         calculate();
     });
 
