@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculadora de Costo Empresa Chile 2026. Calcula cuánto cuesta realmente contratar a un trabajador: simula desde el sueldo líquido o bruto, aportes patronales (SIS, AFC, Mutual) y provisiones laborales para pymes.">
+    <title>Calculadora Costo Empresa Chile 2026 | Costo Real de Contratar</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://calculolaboral.cl/calculadora-costo-empresa-chile">
+    <link rel="alternate" hreflang="es-CL" href="https://calculolaboral.cl/calculadora-costo-empresa-chile">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Calculadora Costo Empresa Chile 2026 | Costo Real de Contratar">
+    <meta property="og:description" content="Simula el costo total de contratar a un trabajador en Chile. Leyes sociales, aportes patronales (SIS, AFC, Mutual) y provisiones de vacaciones e indemnización.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/calculadora-costo-empresa-chile">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og-image.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Google Tag Manager / Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9Y03F1WB8J');
+    </script>
+    
+    <!-- Tailwind CSS Precompilado -->
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    
+    <style>
+        .indicators-carousel {
+            gap: 0.5rem !important;
+        }
+        @media (max-width: 639px) {
+            .indicators-carousel {
+                display: flex !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+                gap: 0.5rem !important;
+            }
+            .indicator-card {
+                min-width: 125px !important;
+                max-width: 125px !important;
+                width: 125px !important;
+                flex-shrink: 0 !important;
+                scroll-snap-align: start !important;
+            }
+        }
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 0.5rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+                gap: 0.625rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #fff !important; }
+        }
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+    </style>
+    
+    <!-- Structured Data (SoftwareApplication, BreadcrumbList & FAQ) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "SoftwareApplication",
+                "name": "Calculadora de Costo Empresa Chile 2026",
+                "operatingSystem": "All",
+                "applicationCategory": "BusinessApplication",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "CLP"
+                },
+                "description": "Herramienta gratuita para calcular el costo real de contratar a un trabajador en Chile, incluyendo aportes patronales SIS, AFC, Mutual y provisiones legales."
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Inicio",
+                        "item": "https://calculolaboral.cl/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Calculadoras",
+                        "item": "https://calculolaboral.cl/#calculadoras"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Calculadora Costo Empresa",
+                        "item": "https://calculolaboral.cl/calculadora-costo-empresa-chile"
+                    }
+                ]
+            },
+            {
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "¿Cuál es la diferencia entre sueldo bruto y costo empresa en Chile?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "El sueldo bruto es la suma de las remuneraciones imponibles y asignaciones pactadas con el trabajador. El costo empresa es el desembolso total real del empleador, que suma al sueldo bruto los aportes patronales obligatorios (SIS 1,49%, AFC empleador 2,4% o 3,0%, y Mutual de Seguridad entre 0,93% y 4,33%), además de las provisiones contables de feriado anual e indemnización por años de servicio."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "¿Cuánto le cuesta a una empresa contratar a un trabajador con sueldo mínimo en 2026?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Para un trabajador con sueldo mínimo ($553.553 imponible con gratificación legal incluida), el costo directo para la empresa asciende aproximadamente a $580.000 - $590.000 mensuales en leyes sociales directas (SIS, AFC y Mutual). Si se incorporan las provisiones contables recomendadas de vacaciones y eventual despido, el costo real mensual se sitúa cerca de los $650.000 CLP (aproximadamente un factor de 1,30x sobre el líquido que recibe el empleado)."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "¿Qué porcentaje adicional sobre el sueldo líquido debe presupuestar una pyme?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Por regla general en el mercado laboral chileno, un trabajador le cuesta a la empresa entre un 25% y un 40% adicional sobre el sueldo líquido pactado (factor multiplicador de 1,25x a 1,40x), dependiendo del nivel de riesgo de la mutualidad del rubro y de si el contrato es indefinido o a plazo fijo."
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans antialiased">
+
+    <!-- ENCABEZADO OFICIAL (HEADER NAVBAR) -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm transition-all duration-300 no-print">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logotipo Oficial SVG -->
+                <a href="./" class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                </a>
+
+                <!-- Menú Desktop -->
+                <nav class="hidden md:flex gap-6 items-center">
+                    <!-- Dropdown Calculadoras -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                            Calculadoras
+                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                            <div class="p-2 space-y-1">
+                                <a href="calculadora-costo-empresa-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 bg-sky-50/80 hover:bg-sky-100 rounded-lg transition-colors font-bold">Costo Empresa / Contratar</a>
+                                <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50/80 hover:bg-rose-100 rounded-lg transition-colors font-bold">Simulador Despido Injustificado</a>
+                                <a href="sueldo_liquido" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Líquido</a>
+                                <a href="finiquito_calculator" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito</a>
+                                <a href="generador-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Generador Finiquito (Word/PDF)</a>
+                                <a href="calculadora-horas-extras" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Horas Extras (42h)</a>
+                                <a href="calculadora-sueldo-part-time" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Part-Time</a>
+                                <a href="calculadora-vacaciones-proporcionales" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Vacaciones Proporcionales</a>
+                                <a href="calculadora-despido-articulo-160" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Art. 160</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Guías -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                            Guías
+                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                            <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                                <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Cómo Reclamar Despido Injustificado</a>
+                                <a href="carta-de-renuncia-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Carta de Renuncia (Asistente)</a>
+                                <a href="generador-anexo-40-horas" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Generador Anexo 40 Horas (42h)</a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Checklist Fiscalización DT (Pymes)</a>
+                                <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Indemnización a Todo Evento (Propuesta)</a>
+                                <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Fondos Generacionales AFP</a>
+                                <a href="como-calcular-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Finiquito</a>
+                                <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Sueldo Líquido</a>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Art. 161 Necesidades Empresa</a>
+                                <a href="ley-40-horas-chile-2026" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Ley 40 Horas 2026</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="para-empleadores" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 transition-colors">
+                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                        <span>Para Empleadores</span>
+                    </a>
+
+                    <a href="blog" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Blog</a>
+                    <a href="contacto" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Menú Mobile -->
+                <details class="md:hidden">
+                    <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors active:scale-95 duration-100 cursor-pointer flex items-center" aria-label="Abrir menú de navegación">
+                        <span class="material-icons">menu</span>
+                    </summary>
+                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
+                        <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-2">
+                            <a href="para-empleadores" class="flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/80">
+                                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                                <span>Portal Para Empleadores</span>
+                            </a>
+                            <a href="calculadora-costo-empresa-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-700 bg-sky-50/90 border border-sky-200">Calculadora Costo Empresa</a>
+                            <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-rose-700 bg-rose-50/90 border border-rose-200">Simulador Despido Injustificado</a>
+                            <a href="kit-cumplimiento-laboral-pymes" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-600 bg-sky-50/80 border border-sky-200/80 hover:bg-sky-100/80 transition-colors">Kit Blindaje Pyme 2026 ($19.990)</a>
+                            <a href="generador-finiquito-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-600 bg-sky-50/80 border border-sky-200/80 hover:bg-sky-100/80 transition-colors">Generador Finiquito Notarial ($12.990)</a>
+                            <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Líquido</a>
+                            <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
+                            <a href="calculadora-horas-extras" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Horas Extras</a>
+                            <div class="border-t border-slate-100 my-2"></div>
+                            <p class="px-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Guías</p>
+                            <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-amber-600 hover:text-amber-700 hover:bg-slate-50 font-bold">Checklist Fiscalización DT</a>
+                            <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 font-bold">Cómo Reclamar Despido</a>
+                            <a href="ley-40-horas-chile-2026" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Ley 40 Horas 2026</a>
+                            <div class="border-t border-slate-100 my-2"></div>
+                            <a href="blog" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Blog</a>
+                            <a href="contacto" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Contacto</a>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </header>
+
+    <!-- SUBHEADER INDICADORES ECONÓMICOS OFICIALES -->
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
+        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Valor UF</span>
+                <span class="uf-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$39.682,99</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
+                <span class="utm-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$69.611</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Sueldo Mínimo</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$553.553</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope AFP/Salud</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">89.9 UF</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope Cesantía</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">134.8 UF</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="bg-gradient-to-b from-white to-slate-50 border-b border-slate-200 pt-7 pb-6 px-4 sm:px-6 no-print">
+        <div class="max-w-[1200px] mx-auto text-center">
+            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full mb-3 shadow-xs">
+                <span class="material-icons text-sm text-sky-600">business_center</span>
+                Herramienta para Empleadores y Pymes • Chile 2026
+            </div>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight break-words">
+                Calculadora Costo Empresa Chile 2026
+            </h1>
+            <p class="mt-2 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                Descubre el <strong>costo real de contratar a un trabajador</strong>. Simula desde el sueldo líquido o base pactado, aportes patronales obligatorios (SIS, AFC, Mutual) y provisiones contables para blindar el flujo de tu pyme.
+            </p>
+            
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs text-slate-600 font-medium">
+                <span class="flex items-center gap-1"><span class="material-icons text-emerald-600 text-sm">verified</span> Fórmulas Previred y SUSESO</span>
+                <span class="flex items-center gap-1"><span class="material-icons text-emerald-600 text-sm">verified</span> Ley 40 Horas (42h en 2026)</span>
+                <span class="flex items-center gap-1"><span class="material-icons text-emerald-600 text-sm">verified</span> Estimación Directa e Inversa</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ESPACIO DE TRABAJO PRINCIPAL (SPLIT SCREEN) -->
+    <main class="flex-grow w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-6 min-w-0">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full min-w-0">
+            
+            <!-- COLUMNA IZQUIERDA: FORMULARIO INTERACTIVO (7 cols) -->
+            <div class="lg:col-span-7 space-y-5 no-print min-w-0 w-full">
+                
+                <!-- BLOQUE 1: PARÁMETROS DEL SUELDO -->
+                <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">Remuneración y Negociación</h2>
+                        </div>
+                        <span class="text-[11px] text-slate-500 font-medium shrink-0">Paso Inicial</span>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label for="select-modo-calculo" class="block font-semibold text-slate-700 mb-1">¿Cómo estás negociando la contratación?:</label>
+                            <select id="select-modo-calculo" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800 font-medium text-xs sm:text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                                <option value="liquido" selected>Sueldo Líquido deseado (Cálculo Inverso)</option>
+                                <option value="base">Sueldo Base pactado (Cálculo Directo)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label id="label-monto-sueldo" for="input-monto-sueldo" class="block font-semibold text-slate-700 mb-1">Sueldo Líquido que pide el Candidato (en bolsillo):</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-sm">$</span>
+                                <input type="text" id="input-monto-sueldo" value="850.000" inputmode="numeric" class="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none font-mono text-base sm:text-lg font-bold text-slate-900">
+                            </div>
+                            <span class="text-[10px] text-slate-500 mt-1 block">Ingresa el monto para simular en tiempo real todos los costos asociados.</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div>
+                                <label for="select-tipo-contrato" class="block font-semibold text-slate-700 mb-1">Tipo de Contrato de Trabajo:</label>
+                                <select id="select-tipo-contrato" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800 font-medium text-xs sm:text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                                    <option value="indefinido" selected>Contrato Indefinido (AFC Empleador 2,4%)</option>
+                                    <option value="plazo">Contrato Plazo Fijo / Obra (AFC Empleador 3,0%)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="select-riesgo-mutual" class="block font-semibold text-slate-700 mb-1">Rubro y Riesgo Mutual (Ley 16.744):</label>
+                                <select id="select-riesgo-mutual" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800 font-medium text-xs sm:text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                                    <option value="0.0093" selected>Bajo: Oficinas, Software (0,93%)</option>
+                                    <option value="0.0178">Medio: Gastronomía, Retail (1,78%)</option>
+                                    <option value="0.0263">Alto: Transporte, Talleres (2,63%)</option>
+                                    <option value="0.0348">Muy Alto: Construcción (3,48%)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div>
+                                <label for="input-asignaciones" class="block font-semibold text-slate-700 mb-1">Colación y Movilización (No imponible):</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
+                                    <input type="text" id="input-asignaciones" value="60.000" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 font-mono text-xs sm:text-sm text-slate-800">
+                                </div>
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">Exentas de leyes sociales</span>
+                            </div>
+                            <div class="flex items-center pt-2 sm:pt-6">
+                                <label class="flex items-start gap-2 cursor-pointer">
+                                    <input type="checkbox" id="check-gratificacion" checked class="mt-0.5 rounded text-sky-600 focus:ring-sky-500">
+                                    <div>
+                                        <span class="text-xs font-semibold text-slate-800">Gratificación Legal (Art. 50)</span>
+                                        <p class="text-[10px] text-slate-500">25% con tope 4,75 IMM ($219.031/mes)</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 2: PROVISIONES DE COSTOS OCULTOS -->
+                <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">Provisiones Laborales (Costos Ocultos)</h2>
+                        </div>
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0">Recomendado</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <label class="flex items-start gap-3 p-3 bg-amber-50/60 border border-amber-200/80 rounded-xl cursor-pointer hover:bg-amber-50 transition-colors">
+                            <input type="checkbox" id="check-provisiones" checked class="mt-0.5 rounded text-sky-600 focus:ring-sky-500">
+                            <div>
+                                <span class="font-bold text-slate-900 text-xs sm:text-sm">Activar reserva mensual de pasivos laborales</span>
+                                <p class="text-slate-600 text-[11px] mt-0.5 leading-relaxed">
+                                    Incluye en el costo real la <strong>Provisión de Vacaciones (4,17% mensual)</strong> y la <strong>Provisión de Indemnización por Años de Servicio (8,33% mensual)</strong>. Evita descalabros de caja al momento de otorgar feriados o desvincular.
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 3: DISTRIBUCIÓN VISUAL DEL DINERO -->
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2">¿A dónde se va cada peso de la contratación?</h3>
+                    <p class="text-xs text-slate-500 mb-3">Proporción gráfica del desembolso total de la empresa:</p>
+                    
+                    <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden flex gap-0.5">
+                        <div id="bar-liquido" class="bg-sky-500 transition-all duration-300" title="Sueldo Líquido" style="width: 65%;"></div>
+                        <div id="bar-descuentos" class="bg-slate-400 transition-all duration-300" title="Descuentos Trabajador (AFP/Salud)" style="width: 15%;"></div>
+                        <div id="bar-aportes" class="bg-emerald-500 transition-all duration-300" title="Aportes Patronales (SIS/AFC/Mutual)" style="width: 8%;"></div>
+                        <div id="bar-provisiones" class="bg-amber-500 transition-all duration-300" title="Provisiones Vacaciones y Despido" style="width: 12%;"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 text-[11px]">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0"></span>
+                            <span class="text-slate-600">Líquido al trabajador</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-400 shrink-0"></span>
+                            <span class="text-slate-600">Leyes del trabajador</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                            <span class="text-slate-600">Aportes patronales</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
+                            <span class="text-slate-600">Provisiones pasivos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 4: TABLA DE DESGLOSE COMPLETO -->
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 mb-3 pb-2 border-b border-slate-100">Desglose Analítico Detallado (CLP)</h3>
+                    
+                    <div class="space-y-4 text-xs">
+                        <!-- Remuneraciones -->
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">1. Remuneración Pactada</span>
+                            <div class="divide-y divide-slate-100 border border-slate-100 rounded-lg">
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Sueldo Base Mensual</span>
+                                    <span id="det-sueldo-base" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Gratificación Legal (Art. 50)</span>
+                                    <span id="det-gratificacion" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 bg-slate-50 font-bold">
+                                    <span class="text-slate-700">Total Imponible Bruto</span>
+                                    <span id="det-total-imponible" class="font-mono text-slate-900 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Colación y Movilización</span>
+                                    <span id="det-asignaciones" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 bg-sky-50/50 font-bold">
+                                    <span class="text-sky-900">Sueldo Bruto Trabajador</span>
+                                    <span id="det-bruto-total" class="font-mono text-sky-800 shrink-0">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aportes patronales -->
+                        <div>
+                            <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block mb-1">2. Aportes Patronales Directos (Cargo 100% Empresa)</span>
+                            <div class="divide-y divide-slate-100 border border-emerald-100 bg-emerald-50/20 rounded-lg">
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Seguro Invalidez (SIS 1,49%)</span>
+                                    <span id="det-sis" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Seguro Cesantía Empleador (AFC)</span>
+                                    <span id="det-afc-emp" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Mutualidad y Ley SANNA</span>
+                                    <span id="det-mutual" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 bg-emerald-100/50 font-bold text-emerald-900">
+                                    <span>Total Leyes Sociales Empresa</span>
+                                    <span id="det-total-aportes-emp" class="font-mono shrink-0">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Provisiones -->
+                        <div>
+                            <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider block mb-1">3. Provisiones Contables Recomendadas</span>
+                            <div class="divide-y divide-slate-100 border border-amber-100 bg-amber-50/20 rounded-lg">
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Provisión Vacaciones (4,17%)</span>
+                                    <span id="det-prov-vacaciones" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2">
+                                    <span class="text-slate-600">Provisión Años Servicio (8,33%)</span>
+                                    <span id="det-prov-ias" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 bg-amber-100/50 font-bold text-amber-900">
+                                    <span>Total Reserva Mensual Pasivos</span>
+                                    <span id="det-total-prov" class="font-mono shrink-0">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Liquidación Trabajador -->
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">4. Lo que se descuenta y recibe el Trabajador</span>
+                            <div class="divide-y divide-slate-100 border border-slate-100 rounded-lg">
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 text-slate-500">
+                                    <span>Cotización AFP (~11,44%)</span>
+                                    <span id="det-afp-trab" class="font-mono shrink-0">-$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 text-slate-500">
+                                    <span>Cotización Salud Fonasa/Isapre (7,0%)</span>
+                                    <span id="det-salud-trab" class="font-mono shrink-0">-$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 text-slate-500">
+                                    <span>Seguro Cesantía Trabajador (0,6%)</span>
+                                    <span id="det-afc-trab" class="font-mono shrink-0">-$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-1.5 px-3 gap-2 text-slate-500">
+                                    <span>Impuesto Único 2da Categoría (SII)</span>
+                                    <span id="det-impuesto-trab" class="font-mono shrink-0">-$0</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 px-3 gap-2 bg-sky-50 font-black text-sky-900 text-sm">
+                                    <span>Sueldo Líquido en Bolsillo</span>
+                                    <span id="det-liquido-final" class="font-mono text-base shrink-0">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMNA DERECHA: TARJETA EJECUTIVA STICKY Y MONETIZACIÓN (5 cols) -->
+            <div class="lg:col-span-5 space-y-5 min-w-0 w-full">
+                
+                <!-- TARJETA EJECUTIVA RESUMEN (STICKY) -->
+                <div class="bg-white border-2 border-sky-500 rounded-2xl p-5 shadow-lg sticky top-20 z-30">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Costo Real de Contratación</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[10px] uppercase tracking-wider">Vigente 2026</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Costo Total Mensual Empresa:</span>
+                            <div class="flex items-baseline gap-2 mt-0.5">
+                                <span id="resumen-costo-mensual" class="text-3xl font-black text-slate-900 font-mono tracking-tight">$0</span>
+                                <span class="text-xs text-slate-500 font-bold">CLP / mes</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 border border-slate-200/90 rounded-xl space-y-1.5 text-xs">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-600">Presupuesto Anual (12m):</span>
+                                <span id="resumen-costo-anual" class="font-mono font-bold text-slate-900 text-sm">$0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-600">Factor Multiplicador Real:</span>
+                                <span id="resumen-factor-multiplicador" class="font-mono font-black text-sky-600 text-sm">1.00x</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-1 border-t border-slate-200 text-[11px] text-slate-500">
+                                <span>Sueldo Líquido acordado:</span>
+                                <span id="resumen-sueldo-liquido" class="font-mono font-semibold text-slate-700">$0</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[11px] text-slate-500">
+                                <span>Aportes patronales directos:</span>
+                                <span id="resumen-aportes-patronales" class="font-mono font-semibold text-emerald-700">$0</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[11px] text-slate-500">
+                                <span>Reserva mensual provisiones:</span>
+                                <span id="resumen-provisiones-mes" class="font-mono font-semibold text-amber-700">$0</span>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="window.print()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-slate-300">
+                            <span class="material-icons text-sm">print</span>
+                            <span>Imprimir Ficha Ejecutiva / Guardar PDF</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BANNER DE MONETIZACIÓN: CONTRATO DE TRABAJO BLINDADO (CARD A) -->
+                <div class="bg-gradient-to-br from-white to-sky-50/50 border border-sky-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-icons text-sky-600 text-base">description</span>
+                        <span class="text-[11px] font-bold text-sky-700 uppercase tracking-wider">Documento Legal Inmediato</span>
+                    </div>
+
+                    <h3 class="text-base font-extrabold text-slate-900 leading-snug">
+                        Pack Contrato de Trabajo Pyme 2026 (Word)
+                    </h3>
+                    <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                        Redactado por abogados laboralistas y listo para firmar. Adaptado a la <strong>Ley de 40 Horas (42h en 2026)</strong>, cláusulas de propiedad intelectual, confidencialidad, teletrabajo y protocolo obligatorio Ley Karin (DS 44).
+                    </p>
+
+                    <div class="my-3 py-2 px-3 bg-white/80 border border-sky-100 rounded-xl space-y-1 text-xs">
+                        <div class="flex items-center gap-1.5 text-slate-700">
+                            <span class="material-icons text-emerald-500 text-xs">check_circle</span>
+                            <span>Jornada Ordinaria 42 horas oficiales 2026</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-slate-700">
+                            <span class="material-icons text-emerald-500 text-xs">check_circle</span>
+                            <span>Cláusulas de resguardo de información y deberes</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-slate-700">
+                            <span class="material-icons text-emerald-500 text-xs">check_circle</span>
+                            <span>Formato Microsoft Word (.docx) 100% editable</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block line-through">Normal $25.000</span>
+                            <span class="text-xl font-black text-slate-900 font-mono">$12.990 <span class="text-xs font-sans text-slate-500 font-normal">CLP</span></span>
+                        </div>
+                        <a href="https://www.flow.cl/btn.php?token=w2204f3d0b4ae200fcd0b91d5e497fc703716a16" target="_blank" rel="noopener noreferrer" class="py-2.5 px-4 bg-sky-500 hover:bg-sky-600 font-bold text-xs rounded-xl shadow-md shadow-sky-500/20 active:scale-95 transition-all text-center flex items-center gap-1.5 no-underline !text-white" style="color: #ffffff !important;">
+                            <span class="material-icons text-xs">download</span>
+                            <span>Descargar Word ($12.990)</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- BANNER DE MONETIZACIÓN: KIT BLINDAJE COMPLETO (CARD B - UPSELL) -->
+                <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-md relative overflow-hidden border border-slate-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                            Mejor Valor Pyme
+                        </span>
+                        <span class="text-[10px] text-slate-400">Por solo +$7.000</span>
+                    </div>
+
+                    <h3 class="text-base font-bold text-white">
+                        Kit Blindaje Laboral Completo ($19.990)
+                    </h3>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                        Lleva el <strong>Contrato de Trabajo</strong> + el <strong>Protocolo Oficial Ley Karin (DS 44)</strong> + <strong>Anexos de 40 Horas</strong> + <strong>Checklist de Fiscalización DT</strong>.
+                    </p>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block line-through">Normal $45.000</span>
+                            <span class="text-xl font-bold font-mono text-emerald-400">$19.990</span>
+                        </div>
+                        <a href="https://www.flow.cl/btn.php?token=cd8bf90f335b1576dfcf71a788713ea8db36f4c0" target="_blank" rel="noopener noreferrer" class="py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20 active:scale-95 transition-all text-center flex items-center gap-1.5 no-underline !text-white" style="color: #ffffff !important;">
+                            <span class="material-icons text-xs">verified_user</span>
+                            <span>Comprar Kit Completo</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- SECCIÓN DE CONTENIDO EDUCATIVO Y GUÍA SEO (Debajo de la calculadora) -->
+        <section class="mt-14 pt-10 border-t border-slate-200 min-w-0 w-full">
+            <div class="max-w-4xl mx-auto space-y-10 min-w-0 w-full">
+                
+                <!-- Guía 1: Cómo se calcula el costo empresa -->
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mb-3">
+                        ¿Cómo se calcula el costo empresa de un trabajador en Chile en 2026?
+                    </h2>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Muchos emprendedores y dueños de pymes en Chile cometen el grave error de calcular su presupuesto considerando únicamente el <strong>sueldo líquido que le transfieren al trabajador</strong> o el sueldo bruto pactado. Sin embargo, el desembolso total de la empresa incluye una serie de <strong>leyes sociales y aportes patronales obligatorios</strong> que no se descuentan de la remuneración del empleado, sino que salen íntegramente del bolsillo de la empresa:
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                            <span class="font-bold text-sm text-slate-900 block mb-1">1. SIS (1,49%)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Seguro de Invalidez y Sobrevivencia. Es 100% de cargo patronal sobre la renta imponible (hasta el tope de 89,9 UF).
+                            </p>
+                        </div>
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                            <span class="font-bold text-sm text-slate-900 block mb-1">2. AFC Empleador (2,4% o 3,0%)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                En contratos indefinidos la empresa aporta el 2,4% (1,6% a CIC y 0,8% a Fondo Solidario). En contratos a plazo fijo aporta el 3,0% completo.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                            <span class="font-bold text-sm text-slate-900 block mb-1">3. Mutualidad (Ley 16.744)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Tasa básica (0,90%) + Ley SANNA (0,03%) + cotización diferenciada por riesgo presunto según la actividad económica (entre 0% y 3,4%).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Comparativa de Ejemplos -->
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">
+                        Tabla de Referencia: Sueldo Líquido vs Costo Real Empresa (Contrato Indefinido 2026)
+                    </h3>
+                    <div class="w-full overflow-x-auto pb-2 scrollbar-none">
+                        <table class="w-full min-w-[580px] text-xs text-left border border-slate-200 rounded-xl overflow-hidden">
+                            <thead class="bg-slate-100 text-slate-800 font-bold uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-3">Sueldo Líquido (Bolsillo)</th>
+                                    <th class="p-3">Sueldo Bruto Imponible</th>
+                                    <th class="p-3">Aportes Patronales</th>
+                                    <th class="p-3">Provisiones (Vacaciones + IAS)</th>
+                                    <th class="p-3 bg-sky-50 text-sky-900">Costo Empresa Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3 font-semibold">$450.000 CLP</td>
+                                    <td class="p-3 font-mono">$553.553 (IMM)</td>
+                                    <td class="p-3 font-mono text-emerald-700">+$26.678</td>
+                                    <td class="p-3 font-mono text-amber-700">+$69.194</td>
+                                    <td class="p-3 font-mono font-bold text-slate-900 bg-sky-50/50">$649.425 (1,44x)</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3 font-semibold">$800.000 CLP</td>
+                                    <td class="p-3 font-mono">$983.840</td>
+                                    <td class="p-3 font-mono text-emerald-700">+$47.420</td>
+                                    <td class="p-3 font-mono text-amber-700">+$122.980</td>
+                                    <td class="p-3 font-mono font-bold text-slate-900 bg-sky-50/50">$1.154.240 (1,44x)</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3 font-semibold">$1.200.000 CLP</td>
+                                    <td class="p-3 font-mono">$1.488.200</td>
+                                    <td class="p-3 font-mono text-emerald-700">+$71.730</td>
+                                    <td class="p-3 font-mono text-amber-700">+$186.025</td>
+                                    <td class="p-3 font-mono font-bold text-slate-900 bg-sky-50/50">$1.745.955 (1,45x)</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3 font-semibold">$2.000.000 CLP</td>
+                                    <td class="p-3 font-mono">$2.580.000</td>
+                                    <td class="p-3 font-mono text-emerald-700">+$124.356</td>
+                                    <td class="p-3 font-mono text-amber-700">+$322.500</td>
+                                    <td class="p-3 font-mono font-bold text-slate-900 bg-sky-50/50">$3.026.856 (1,51x)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <span class="text-[11px] text-slate-500 mt-2 block italic">
+                        * Cálculos referenciales basados en rubro administrativo (Mutual 0,93%), gratificación legal Art. 50 y AFP promedio de mercado.
+                    </span>
+                </div>
+
+                <!-- Comparativa: Contrato Indefinido vs Plazo Fijo vs Boleta -->
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">
+                        Contrato Indefinido vs. Plazo Fijo vs. Honorarios: ¿Cuál conviene a tu Pyme?
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-3">
+                        Al momento de incorporar talento, muchas empresas evalúan modalidades alternativas:
+                    </p>
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="font-bold text-slate-900 block mb-1">Contrato a Plazo Fijo:</span>
+                            <p class="text-slate-600 leading-relaxed">
+                                Tiene un costo previsional ligeramente superior en el seguro de cesantía (AFC empleador es 3,0% en vez de 2,4%), pero elimina la obligación de indemnización por años de servicio al término del plazo. Recuerda que no puede renovarse más de dos veces ni superar 1 año (o 2 años en profesionales con título universitario), o se transformará automáticamente en indefinido.
+                            </p>
+                        </div>
+                        <div class="p-3.5 bg-rose-50/70 border border-rose-200 rounded-xl">
+                            <span class="font-bold text-rose-900 block mb-1">Cuidado con las Boletas de Honorarios (Riesgo de Multas DT):</span>
+                            <p class="text-rose-800 leading-relaxed">
+                                Si un prestador a honorarios cumple horario fijo, tiene jefatura directa, rinde cuentas y utiliza las herramientas de tu empresa, la Dirección del Trabajo y los Tribunales Laborales calificarán la relación como un <strong>contrato de trabajo encubierto</strong>. Esto puede obligar a la pyme a pagar retroactivamente todas las cotizaciones previsionales con multas, reajustes y Ley Bustos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Preguntas Frecuentes sobre el Costo Empresa</h3>
+                    <div class="space-y-3 text-xs">
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                            <h4 class="font-bold text-slate-900 mb-1">¿Qué es el factor multiplicador de contratación?</h4>
+                            <p class="text-slate-600 leading-relaxed">
+                                Es la relación matemática entre el costo total que desembolsa la empresa y el sueldo líquido que recibe el colaborador en su cuenta bancaria. En Chile, este factor oscila típicamente entre <strong>1,25x y 1,45x</strong>. Es decir, por cada $100.000 que pactas con el candidato, debes presupuestar entre $125.000 y $145.000 en el flujo de caja de tu empresa.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                            <h4 class="font-bold text-slate-900 mb-1">¿Por qué debo reservar la provisión de vacaciones e indemnización?</h4>
+                            <p class="text-slate-600 leading-relaxed">
+                                Las vacaciones (feriado anual) y la indemnización por años de servicio son <strong>pasivos laborales devengados mes a mes</strong>. Si no los provisionas en tu contabilidad mensual, cuando un empleado renuncie o sea desvinculado tendrás que pagar semanas o meses de sueldo de golpe en el finiquito, poniendo en riesgo la liquidez de tu negocio.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                            <h4 class="font-bold text-slate-900 mb-1">¿Cómo impacta la Ley de 40 Horas en el costo de contratar?</h4>
+                            <p class="text-slate-600 leading-relaxed">
+                                La Ley 21.561 establece que en 2026 la jornada laboral ordinaria máxima es de <strong>42 horas semanales</strong>. La ley prohíbe expresamente disminuir el sueldo nominal de los trabajadores con motivo de la reducción de jornada, por lo que el costo por hora efectiva trabajada se incrementa proporcionalmente.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA OFICIAL (FOOTER BLANCO COMPACTO INVARIABLE) -->
+    <footer class="bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <!-- Brand Column -->
+            <div class="space-y-3">
+                <a href="./" class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                </a>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
+                </p>
+                <p class="text-[11px] text-slate-400 font-mono">Versión 2.0.0 (2026)</p>
+            </div>
+
+            <!-- Calculadoras Column -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h4>
+                <ul class="space-y-1.5 text-xs">
+                    <li><a href="calculadora-costo-empresa-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Costo Empresa / Contratar</a></li>
+                    <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
+                    <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
+                    <li><a href="finiquito_calculator" class="text-slate-600 hover:text-sky-500 transition-colors">Finiquito Legal</a></li>
+                    <li><a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-500 transition-colors">Horas Extras (42h)</a></li>
+                    <li><a href="calculadora-sueldo-part-time" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Part-Time</a></li>
+                </ul>
+            </div>
+
+            <!-- Guías Clave Column -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h4>
+                <ul class="space-y-1.5 text-xs">
+                    <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
+                    <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
+                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-amber-600 hover:text-amber-700 font-bold transition-colors">Checklist Fiscalización DT</a></li>
+                    <li><a href="despido-necesidades-empresa-articulo-161" class="text-slate-600 hover:text-sky-500 transition-colors">Art. 161 Necesidades Empresa</a></li>
+                    <li><a href="ley-40-horas-chile-2026" class="text-slate-600 hover:text-sky-500 transition-colors">Ley de 40 Horas (42h en 2026)</a></li>
+                    <li class="pt-1"><a href="blog" class="text-sky-600 hover:underline font-semibold flex items-center gap-1">Ver todas las guías <span class="text-[10px]">→</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Empresas & Monetización Column -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h4>
+                <ul class="space-y-1.5 text-xs">
+                    <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
+                    <li><a href="kit-cumplimiento-laboral-pymes" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
+                    <li><a href="generador-finiquito-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Generador Finiquito ($12.990)</a></li>
+                    <li><a href="generador-anexo-40-horas" class="text-slate-600 hover:text-sky-500 transition-colors">Anexo 40 Horas Word</a></li>
+                    <li><a href="sobre-nosotros" class="text-slate-600 hover:text-sky-500 transition-colors">Sobre Nosotros</a></li>
+                    <li><a href="contacto" class="text-slate-600 hover:text-sky-500 transition-colors">Contacto Directo</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Barra Inferior Unificada -->
+        <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <p class="text-xs text-slate-500">
+                &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Código del Trabajo</a> y dictámenes de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Dirección del Trabajo</a>.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500">
+                <a href="terminos" class="hover:text-slate-800 transition-colors">Términos</a>
+                <span class="text-slate-300">·</span>
+                <a href="privacidad" class="hover:text-slate-800 transition-colors">Privacidad</a>
+                <span class="text-slate-300">·</span>
+                <a href="disclaimer" class="hover:text-slate-800 transition-colors">Disclaimer</a>
+                <span class="text-slate-300">·</span>
+                <span class="inline-flex items-center gap-1 text-slate-600 font-medium">
+                    <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
+                    DT Chile Conforme
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/costo_empresa_calculator.js?v=2.6.1"></script>
+</body>
+</html>
