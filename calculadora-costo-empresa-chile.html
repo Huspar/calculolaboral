@@ -383,6 +383,12 @@
                             <span id="help-monto-sueldo" class="text-[10px] text-slate-500 mt-1.5 block">Sueldo pactado en contrato individual (cláusula 4). Desmarcar gratificación reduce el costo directamente.</span>
                         </div>
 
+                        <div>
+                            <label for="input-cargo-presupuestado" class="block font-semibold text-slate-700 mb-1">Cargo o Puesto a Contratar (Opcional):</label>
+                            <input type="text" id="input-cargo-presupuestado" placeholder="Ej: Jefe de Ventas, Desarrollador, Chofer, Administrativo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none text-xs sm:text-sm text-slate-800">
+                            <span class="text-[10px] text-slate-400 mt-0.5 block">Se incluirá personalizado en tu Informe Ejecutivo PDF para socios o directorio.</span>
+                        </div>
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                             <div>
                                 <label for="select-tipo-contrato" class="block font-semibold text-slate-700 mb-1">Tipo de Contrato de Trabajo:</label>
@@ -642,10 +648,64 @@
                             </div>
                         </div>
 
-                        <button type="button" onclick="window.print()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-slate-300">
-                            <span class="material-icons text-sm">print</span>
-                            <span>Imprimir Ficha Ejecutiva / Guardar PDF</span>
+                        <button type="button" id="btn-comprar-informe-pdf" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 font-bold text-xs rounded-xl shadow-md shadow-sky-600/20 active:scale-95 transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer no-underline !text-white" style="color: #ffffff !important;">
+                            <span class="material-icons text-sm">picture_as_pdf</span>
+                            <span>Descargar Informe Ejecutivo + 3 Vías ($4.990)</span>
                         </button>
+
+                        <div class="flex items-center justify-between text-[11px] pt-1 px-1">
+                            <button type="button" id="btn-preview-informe-pdf" class="text-sky-600 hover:text-sky-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer">
+                                <span class="material-icons text-xs">visibility</span>
+                                <span>Ver vista previa de ejemplo</span>
+                            </button>
+                            <button type="button" onclick="window.print()" class="text-slate-500 hover:text-slate-700 font-medium hover:underline flex items-center gap-1 cursor-pointer">
+                                <span class="material-icons text-xs">print</span>
+                                <span>Ficha simple</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD PRODUCTO DESTACADO: INFORME EJECUTIVO 3 COLUMNAS ($4.990) -->
+                <div class="bg-gradient-to-br from-white to-sky-50/40 border-2 border-sky-400/80 rounded-2xl p-5 shadow-md relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-sky-700 bg-sky-100/80 border border-sky-200 px-2.5 py-0.5 rounded-full">
+                            Herramienta de Decisión
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-mono">PDF A4 • Entrega Inmediata</span>
+                    </div>
+
+                    <h3 class="text-base font-extrabold text-slate-900 leading-snug">
+                        Informe Ejecutivo de Presupuesto Laboral & Matriz 3 Vías
+                    </h3>
+                    <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                        El informe que necesitas para presentar a socios, directorio o banco. Incluye la comparativa que nadie muestra: <strong>Contrato Indefinido vs. Plazo Fijo vs. Boleta de Honorarios con Semáforo de Riesgo DT</strong>.
+                    </p>
+
+                    <div class="my-3 py-2.5 px-3 bg-white/90 border border-sky-100 rounded-xl space-y-1.5 text-xs">
+                        <div class="flex items-center gap-1.5 text-slate-700">
+                            <span class="material-icons text-emerald-600 text-xs">check_circle</span>
+                            <span><strong>Comparador 3 Columnas:</strong> Indefinido vs Plazo Fijo vs Boleta</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-slate-700">
+                            <span class="material-icons text-rose-500 text-xs">warning</span>
+                            <span><strong>Semáforo de Riesgo DT:</strong> Contingencia y Ley Bustos en honorarios</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-slate-700">
+                            <span class="material-icons text-sky-600 text-xs">table_chart</span>
+                            <span><strong>Desglose Contable:</strong> Provisiones de balance mensual y anual</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block line-through">Normal $15.000</span>
+                            <span class="text-xl font-black text-slate-900 font-mono">$4.990 <span class="text-xs font-sans text-slate-500 font-normal">CLP</span></span>
+                        </div>
+                        <a href="https://www.flow.cl/btn.php?token=a2ebbd799fc71fb07a2caf43814319d6b44715fa" class="py-2.5 px-4 bg-sky-600 hover:bg-sky-700 font-bold text-xs rounded-xl shadow-md shadow-sky-600/20 active:scale-95 transition-all text-center flex items-center gap-1.5 no-underline !text-white" style="color: #ffffff !important;">
+                            <span class="material-icons text-xs">shopping_cart</span>
+                            <span>Comprar Informe ($4.990)</span>
+                        </a>
                     </div>
                 </div>
 
@@ -954,5 +1014,6 @@
 
     <!-- Scripts -->
     <script src="js/costo_empresa_calculator.js?v=2.6.2"></script>
+    <script src="js/costo_empresa_pdf_generator.js?v=1.0.0"></script>
 </body>
 </html>
