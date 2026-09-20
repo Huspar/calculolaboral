@@ -143,6 +143,7 @@
             .con-marca-agua {
                 position: relative;
                 overflow: hidden;
+                background-image: repeating-linear-gradient(-35deg, rgba(225, 29, 72, 0.04), rgba(225, 29, 72, 0.04) 90px, transparent 90px, transparent 180px) !important;
             }
 
             .watermark-badge {
@@ -290,6 +291,48 @@
                 letter-spacing: 0.5px;
                 display: inline-block;
             }
+
+            /* MARCA DE AGUA NOTORIA PARA INFORME EJECUTIVO */
+            .watermark-informe-stamp {
+                position: absolute !important;
+                top: 48% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) rotate(-28deg) !important;
+                width: 86% !important;
+                max-width: 580px !important;
+                padding: 22px 30px !important;
+                border: 4px dashed rgba(225, 29, 72, 0.65) !important;
+                background-color: rgba(255, 255, 255, 0.90) !important;
+                border-radius: 16px !important;
+                text-align: center !important;
+                box-shadow: 0 12px 40px rgba(225, 29, 72, 0.22) !important;
+                pointer-events: none !important;
+                user-select: none !important;
+                z-index: 50 !important;
+            }
+            .stamp-head {
+                font-size: 24px !important;
+                font-weight: 900 !important;
+                color: #e11d48 !important;
+                letter-spacing: 1.5px !important;
+                line-height: 1.2 !important;
+                text-transform: uppercase !important;
+            }
+            .stamp-sub {
+                font-size: 13px !important;
+                font-weight: 800 !important;
+                color: #9f1239 !important;
+                margin-top: 6px !important;
+                letter-spacing: 0.5px !important;
+                text-transform: uppercase !important;
+            }
+            .stamp-foot {
+                font-size: 10px !important;
+                font-weight: 700 !important;
+                color: #be123c !important;
+                margin-top: 5px !important;
+                text-transform: uppercase !important;
+            }
         </style>
         `;
     }
@@ -305,7 +348,20 @@
 
         return estilos + `
         <div class="informe-a4-page ${marcaAguaClase}">
-            ${esVistaPrevia ? '<div class="watermark-badge">VISTA PREVIA DE EJEMPLO • CÁLCULO LABORAL</div>' : ''}
+            ${esVistaPrevia ? `
+            <div class="no-print" style="background-color: #fff1f2; border: 1.5px solid #fecdd3; color: #be123c; padding: 7px 14px; border-radius: 10px; font-weight: 800; font-size: 11px; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.5px;">
+                <span style="display: flex; align-items: center; gap: 6px;">
+                    <span class="material-icons" style="font-size: 15px;">lock</span>
+                    <span>Borrador de Vista Previa Protegido • Informe Pro-Forma</span>
+                </span>
+                <span style="background-color: #fecdd3; color: #9f1239; padding: 2px 8px; border-radius: 6px; font-size: 9.5px; font-family: monospace;">No Válido Para Decisiones</span>
+            </div>
+            <div class="watermark-informe-stamp">
+                <div class="stamp-head">VISTA PREVIA NO VÁLIDA</div>
+                <div class="stamp-sub">EJEMPLO PRO-FORMA • CÁLCULO LABORAL CHILE</div>
+                <div class="stamp-foot">EVALUACIÓN PRELIMINAR SIN VALIDEZ DE AUDITORÍA NI RESPALDO LEGAL ($4.990)</div>
+            </div>
+            ` : ''}
             
             <!-- ENCABEZADO OFICIAL -->
             <div class="informe-header">
@@ -332,7 +388,7 @@
                     </div>
                     <div class="text-right">
                         <span class="badge-dt-conforme">DT Chile Conforme 2026</span>
-                        <div class="text-[10.5px] text-slate-600 font-mono mt-0.5">Folio: <strong class="text-slate-900">${data.folio}</strong></div>
+                        <div class="text-[10.5px] text-slate-600 font-mono mt-0.5">Folio: <strong class="${esVistaPrevia ? 'text-rose-600' : 'text-slate-900'}">${esVistaPrevia ? 'PREVIEW-NO-VALIDO' : data.folio}</strong></div>
                         <div class="text-[10px] text-slate-400 font-mono">Emisión: ${data.fecha}</div>
                     </div>
                 </div>

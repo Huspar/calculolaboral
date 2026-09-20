@@ -116,29 +116,74 @@
             max-width: 100% !important;
             box-sizing: border-box !important;
             overflow-x: hidden !important;
-        }
+            position: relative !important;
         .con-marca-agua {
             position: relative !important;
-            overflow: hidden !important;
+            background-image: repeating-linear-gradient(-35deg, rgba(225, 29, 72, 0.04), rgba(225, 29, 72, 0.04) 90px, transparent 90px, transparent 180px) !important;
         }
-        .watermark-contrato {
+        /* MARCA DE AGUA NOTORIA Y PROMINENTE (MULTI-ESTAMPA) */
+        .watermark-contrato-stamp {
             position: absolute !important;
-            top: 40% !important;
             left: 50% !important;
             transform: translate(-50%, -50%) rotate(-25deg) !important;
-            font-size: 13px !important;
-            font-weight: 900 !important;
-            color: rgba(225, 29, 72, 0.14) !important;
-            border: 2px dashed rgba(225, 29, 72, 0.25) !important;
-            padding: 8px 16px !important;
-            border-radius: 8px !important;
-            text-transform: uppercase !important;
-            letter-spacing: 1px !important;
+            width: 90% !important;
+            max-width: 520px !important;
+            padding: 16px 20px !important;
+            border: 3.5px dashed rgba(225, 29, 72, 0.70) !important;
+            background-color: rgba(255, 255, 255, 0.92) !important;
+            border-radius: 16px !important;
+            text-align: center !important;
+            box-shadow: 0 10px 35px rgba(225, 29, 72, 0.22) !important;
             pointer-events: none !important;
             user-select: none !important;
-            max-width: 90% !important;
-            text-align: center !important;
-            box-sizing: border-box !important;
+            z-index: 50 !important;
+        }
+        .watermark-stamp-top {
+            top: 220px !important;
+        }
+        .watermark-stamp-mid {
+            top: 55% !important;
+        }
+        .watermark-stamp-bot {
+            top: 86% !important;
+        }
+        .watermark-stamp-title {
+            font-size: 17px !important;
+            font-weight: 900 !important;
+            color: #e11d48 !important;
+            letter-spacing: 1px !important;
+            line-height: 1.2 !important;
+            text-transform: uppercase !important;
+        }
+        .watermark-stamp-sub {
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            color: #9f1239 !important;
+            margin-top: 5px !important;
+            letter-spacing: 0.5px !important;
+            text-transform: uppercase !important;
+        }
+        .watermark-stamp-foot {
+            font-size: 9px !important;
+            font-weight: 700 !important;
+            color: #be123c !important;
+            margin-top: 4px !important;
+            text-transform: uppercase !important;
+        }
+        .watermark-banner-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background-color: #fff1f2;
+            border: 1px solid #fecdd3;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #be123c;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
     </style>
 
@@ -741,6 +786,14 @@
                             Vista Previa en Tiempo Real
                         </span>
                         <span class="text-[9.5px] text-slate-400 font-mono">Actualización dinámica</span>
+                    </div>
+
+                    <div class="watermark-banner-top">
+                        <span class="flex items-center gap-1">
+                            <span class="material-icons text-xs text-rose-600">lock</span>
+                            <span>Borrador de Vista Previa Protegido</span>
+                        </span>
+                        <span class="bg-rose-200/80 text-rose-900 px-2 py-0.5 rounded text-[9px] font-mono">No Válido Para Firma</span>
                     </div>
 
                     <div id="preview-container-box" class="contrato-preview-box max-h-[420px] overflow-y-auto p-3 bg-slate-50/60 border border-slate-200 rounded-xl space-y-2">
