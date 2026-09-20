@@ -292,45 +292,57 @@
                 display: inline-block;
             }
 
-            /* MARCA DE AGUA NOTORIA PARA INFORME EJECUTIVO */
+            /* MARCAS DE AGUA NOTORIAS Y DISUASIVAS (ANTI-COPIA) */
+            .con-marca-agua {
+                position: relative !important;
+                overflow: hidden !important;
+                background-image: repeating-linear-gradient(-35deg, rgba(225, 29, 72, 0.08), rgba(225, 29, 72, 0.08) 60px, transparent 60px, transparent 120px) !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+            }
             .watermark-informe-stamp {
                 position: absolute !important;
-                top: 48% !important;
                 left: 50% !important;
-                transform: translate(-50%, -50%) rotate(-28deg) !important;
-                width: 86% !important;
-                max-width: 580px !important;
-                padding: 22px 30px !important;
-                border: 4px dashed rgba(225, 29, 72, 0.65) !important;
-                background-color: rgba(255, 255, 255, 0.90) !important;
+                transform: translate(-50%, -50%) rotate(-25deg) !important;
+                width: 90% !important;
+                max-width: 600px !important;
+                padding: 18px 24px !important;
+                border: 4px dashed rgba(225, 29, 72, 0.80) !important;
+                background-color: rgba(255, 255, 255, 0.95) !important;
                 border-radius: 16px !important;
                 text-align: center !important;
-                box-shadow: 0 12px 40px rgba(225, 29, 72, 0.22) !important;
+                box-shadow: 0 14px 45px rgba(225, 29, 72, 0.28) !important;
                 pointer-events: none !important;
                 user-select: none !important;
                 z-index: 50 !important;
             }
+            .stamp-pos-tabla {
+                top: 38% !important;
+            }
+            .stamp-pos-desglose {
+                top: 78% !important;
+            }
             .stamp-head {
-                font-size: 24px !important;
+                font-size: 19px !important;
                 font-weight: 900 !important;
                 color: #e11d48 !important;
-                letter-spacing: 1.5px !important;
+                letter-spacing: 1.2px !important;
                 line-height: 1.2 !important;
                 text-transform: uppercase !important;
             }
             .stamp-sub {
-                font-size: 13px !important;
+                font-size: 11.5px !important;
                 font-weight: 800 !important;
                 color: #9f1239 !important;
-                margin-top: 6px !important;
+                margin-top: 5px !important;
                 letter-spacing: 0.5px !important;
                 text-transform: uppercase !important;
             }
             .stamp-foot {
-                font-size: 10px !important;
+                font-size: 9.5px !important;
                 font-weight: 700 !important;
                 color: #be123c !important;
-                margin-top: 5px !important;
+                margin-top: 4px !important;
                 text-transform: uppercase !important;
             }
         </style>
@@ -354,12 +366,19 @@
                     <span class="material-icons" style="font-size: 15px;">lock</span>
                     <span>Borrador de Vista Previa Protegido • Informe Pro-Forma</span>
                 </span>
-                <span style="background-color: #fecdd3; color: #9f1239; padding: 2px 8px; border-radius: 6px; font-size: 9.5px; font-family: monospace;">No Válido Para Decisiones</span>
+                <span style="background-color: #fecdd3; color: #9f1239; padding: 2px 8px; border-radius: 6px; font-size: 9.5px; font-family: monospace;">No Válido Para Presentar</span>
             </div>
-            <div class="watermark-informe-stamp">
-                <div class="stamp-head">VISTA PREVIA NO VÁLIDA</div>
-                <div class="stamp-sub">EJEMPLO PRO-FORMA • CÁLCULO LABORAL CHILE</div>
-                <div class="stamp-foot">EVALUACIÓN PRELIMINAR SIN VALIDEZ DE AUDITORÍA NI RESPALDO LEGAL ($4.990)</div>
+            <!-- Estampa 1 sobre la tabla comparativa -->
+            <div class="watermark-informe-stamp stamp-pos-tabla">
+                <div class="stamp-head">VISTA PREVIA NO VÁLIDA PARA PRESENTAR</div>
+                <div class="stamp-sub">BORRADOR DE EVALUACIÓN PRO-FORMA • CÁLCULO LABORAL CHILE</div>
+                <div class="stamp-foot">DESBLOQUEA LA VERSIÓN OFICIAL PARA AUDITORÍA, BANCOS Y SOCIOS ($4.990)</div>
+            </div>
+            <!-- Estampa 2 sobre el desglose contable -->
+            <div class="watermark-informe-stamp stamp-pos-desglose">
+                <div class="stamp-head">PROHIBIDA SU REPRODUCCIÓN O COPIA</div>
+                <div class="stamp-sub">DOCUMENTO PRELIMINAR SIN VALIDEZ LEGAL NI TRIBUTARIA</div>
+                <div class="stamp-foot">DESCARGA LA VERSIÓN DEFINITIVA TRAS EL PAGO DE $4.990 CLP</div>
             </div>
             ` : ''}
             
@@ -570,6 +589,63 @@
         `;
     }
 
+    // Modal interactivo de Vista Previa In-Page (Anti-copia, sin popup blockers y con carga nítida de fuentes)
+    function mostrarModalPreviewInforme(data) {
+        var prevModal = document.getElementById('modal-preview-informe-container');
+        if (prevModal) prevModal.remove();
+
+        var contenidoHTML = generarHTMLInforme(data, true);
+
+        var modal = document.createElement('div');
+        modal.id = 'modal-preview-informe-container';
+        modal.className = 'fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-xs no-print';
+        modal.innerHTML = `
+            <div class="bg-slate-100 rounded-2xl max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl border border-slate-300 overflow-hidden animate-fade-in">
+                <!-- Barra superior de aviso y compra directa -->
+                <div class="bg-white border-b border-slate-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shadow-xs">
+                            <span class="material-icons text-lg">lock</span>
+                        </span>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                                <span>Borrador de Vista Previa Protegido</span>
+                                <span class="bg-rose-100 text-rose-700 text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase">Pro-Forma</span>
+                            </div>
+                            <div class="text-[10.5px] text-slate-500">
+                                Versión preliminar protegida. El informe final se descarga en PDF oficial limpio sin marcas de agua.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="${FLOW_CHECKOUT_URL}" class="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1.5 cursor-pointer no-underline !text-white" style="color: #ffffff !important;">
+                            <span class="material-icons text-xs">download</span>
+                            <span>Descargar PDF Oficial ($4.990)</span>
+                        </a>
+                        <button type="button" id="btn-cerrar-preview-modal" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors" title="Cerrar vista previa">
+                            <span class="material-icons text-sm">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenedor con Scroll de la Hoja A4 Protegida contra copias -->
+                <div class="p-3 sm:p-6 overflow-y-auto flex-1 flex justify-center bg-slate-200/60" oncontextmenu="return false;" style="user-select: none !important; -webkit-user-select: none !important;">
+                    <div class="w-full max-w-[820px] pointer-events-none">
+                        ${contenidoHTML}
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        document.getElementById('btn-cerrar-preview-modal').addEventListener('click', function() {
+            modal.remove();
+        });
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) modal.remove();
+        });
+    }
+
     // Dispara la impresión / guardado en PDF nativo de alta resolución
     function imprimirInforme(data, esVistaPrevia) {
         var contenidoHTML = generarHTMLInforme(data, esVistaPrevia);
@@ -588,16 +664,24 @@
             <head>
                 <meta charset="UTF-8">
                 <title>Informe_Ejecutivo_Contratacion_${data.folio}</title>
-                <link rel="stylesheet" href="/assets/css/style.css?v=2.6.2">
+                <link rel="stylesheet" href="/assets/css/style.css?v=2.6.3">
+                <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                 ${estilos}
             </head>
             <body class="bg-slate-100 py-6">
                 <div class="no-print text-center mb-4 max-w-[800px] mx-auto flex items-center justify-between px-4">
                     <span class="text-xs text-slate-600 font-medium">Informe generado con éxito para <strong>${data.cargo}</strong></span>
                     <div class="flex gap-2">
-                        <button onclick="window.print()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer">
+                        ${!esVistaPrevia ? `
+                        <button onclick="window.print()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer !text-white" style="color:#fff!important;">
                             Guardar como PDF / Imprimir
                         </button>
+                        ` : `
+                        <a href="${FLOW_CHECKOUT_URL}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer no-underline !text-white" style="color:#fff!important;">
+                            Descargar Informe Oficial ($4.990)
+                        </a>
+                        `}
                         <button onclick="window.close()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-lg cursor-pointer">
                             Cerrar
                         </button>
@@ -608,7 +692,7 @@
                     window.onload = function() {
                         setTimeout(function() {
                             ${!esVistaPrevia ? 'window.print();' : ''}
-                        }, 500);
+                        }, 600);
                     };
                 </script>
             </body>
@@ -669,14 +753,14 @@
             });
         }
 
-        // 2. Botón VISTA PREVIA GRATIS (Con Marca de Agua)
+        // 2. Botón VISTA PREVIA GRATIS (Con Marca de Agua en Modal In-Page)
         if (btnPreviewInforme) {
             btnPreviewInforme.addEventListener('click', function (e) {
                 e.preventDefault();
                 var state = getDatosActuales();
                 var matriz = calcularTresModalidades(state.monto, state.modo, state.opciones);
                 if (matriz) {
-                    imprimirInforme(matriz, true); // true = vista previa con marca de agua
+                    mostrarModalPreviewInforme(matriz);
                 }
             });
         }
@@ -765,6 +849,7 @@
         calcularTresModalidades: calcularTresModalidades,
         generarHTMLInforme: generarHTMLInforme,
         imprimirInforme: imprimirInforme,
+        mostrarModalPreviewInforme: mostrarModalPreviewInforme,
         FLOW_CHECKOUT_URL: FLOW_CHECKOUT_URL
     };
 })();
