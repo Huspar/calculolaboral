@@ -8,7 +8,7 @@
 (function () {
     'use strict';
 
-    var FLOW_TOKEN = 'w2204f3d0b4ae200fcd0b91d5e497fc703716a16';
+    var FLOW_TOKEN = 'l9a58c097adddec2d1e2ffe7626f032ab7fd195f';
     var FLOW_CHECKOUT_URL = 'https://www.flow.cl/btn.php?token=' + FLOW_TOKEN;
 
     // Catálogo de Sectores y Cargos con Funciones Tipo
