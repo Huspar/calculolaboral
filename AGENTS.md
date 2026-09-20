@@ -114,14 +114,105 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
 
 ---
 
-### D. Pie de Página Oficial (Footer Blanco Invariable)
-* **Fondo:** `bg-white border-t border-slate-200 pt-16 pb-12 mt-auto no-print` (¡NUNCA OSCURO!)
-* **Estructura:** Cuadrícula de 4 columnas (`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10`):
-  1. **Columna Marca:** Logotipo oficial SVG + Breve descripción + Versión (`Versión 2.0.0 (2026)`).
-  2. **Columna Calculadoras:** Lista completa de enlaces a calculadoras y simuladores.
-  3. **Columna Guías Populares:** Lista completa de enlaces a las guías pilares del sitio.
-  4. **Columna Sobre el Sitio:** Enlaces institucionales (Para Empleadores, Kit Blindaje, Sobre Nosotros, Contacto, Términos, Privacidad, Disclaimer).
-* **Barra Inferior:** `max-w-[1200px] mx-auto px-6 border-t border-slate-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left` con leyenda legal oficial y sello de verificación `DT Chile Conforme`.
+### D. Pie de Página Oficial (Footer Blanco Compacto Invariable)
+* **Fondo y dimensiones:** `bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print` (¡NUNCA OSCURO NI CON PADDINGS EXCESIVOS!).
+* **Estructura:** Cuadrícula balanceada de 4 columnas (`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8`):
+  1. **Columna Marca:** Logotipo oficial SVG + Breve descripción de la plataforma + Versión (`Versión 2.0.0 (2026)`).
+  2. **Columna Calculadoras (Curada, 6 enlaces):** Simulador Despido Injustificado, Sueldo Líquido, Finiquito Legal, Horas Extras, Sueldo Part-Time, Despido Art. 160.
+  3. **Columna Guías Clave (5 enlaces + enlace a blog):** Cómo Reclamar Despido, Carta de Renuncia, Checklist DT Pymes, Art. 161, Ley 40 Horas + `Ver todas las guías →`.
+  4. **Columna Para Empresas:** Portal Empleadores, Kit Blindaje Laboral ($19.990), Generador Finiquito ($12.990), Anexo 40 Horas, Sobre Nosotros, Contacto Directo.
+* **Barra Inferior Horizontal:** `border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left`:
+  * Leyenda legal BCN & Dirección del Trabajo.
+  * Enlaces horizontales utilitarios en línea: `Términos` · `Privacidad` · `Disclaimer` · Sello de verificación `DT Chile Conforme`.
+
+```html
+<footer class="bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print">
+    <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <!-- Brand Column -->
+        <div class="space-y-3">
+            <a href="./" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
+                    <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M30 84h40M38 79h24"></path>
+                        <path d="M50 22v57"></path>
+                        <path d="M50 14l-2 4h4l-2-4v8"></path>
+                        <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                        <path d="M18 36l-8 18h16Z"></path>
+                        <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                        <path d="M82 36l-8 18h16Z"></path>
+                        <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                        <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                        <path d="M58 43.5v20h10"></path>
+                    </svg>
+                </div>
+                <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+            </a>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
+            </p>
+            <p class="text-[11px] text-slate-400 font-mono">Versión 2.0.0 (2026)</p>
+        </div>
+
+        <!-- Calculadoras Column -->
+        <div class="space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h4>
+            <ul class="space-y-1.5 text-xs">
+                <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
+                <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
+                <li><a href="finiquito_calculator" class="text-slate-600 hover:text-sky-500 transition-colors">Finiquito Legal</a></li>
+                <li><a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-500 transition-colors">Horas Extras (Ley 40 Horas)</a></li>
+                <li><a href="calculadora-sueldo-part-time" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Part-Time</a></li>
+                <li><a href="calculadora-despido-articulo-160" class="text-slate-600 hover:text-sky-500 transition-colors">Despido Art. 160</a></li>
+            </ul>
+        </div>
+
+        <!-- Guías Clave Column -->
+        <div class="space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h4>
+            <ul class="space-y-1.5 text-xs">
+                <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
+                <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
+                <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-amber-600 hover:text-amber-700 font-bold transition-colors">Checklist Fiscalización DT</a></li>
+                <li><a href="despido-necesidades-empresa-articulo-161" class="text-slate-600 hover:text-sky-500 transition-colors">Art. 161 Necesidades Empresa</a></li>
+                <li><a href="ley-40-horas-chile-2026" class="text-slate-600 hover:text-sky-500 transition-colors">Ley de 40 Horas (42h en 2026)</a></li>
+                <li class="pt-1"><a href="blog" class="text-sky-600 hover:underline font-semibold flex items-center gap-1">Ver todas las guías <span class="text-[10px]">→</span></a></li>
+            </ul>
+        </div>
+
+        <!-- Empresas & Monetización Column -->
+        <div class="space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h4>
+            <ul class="space-y-1.5 text-xs">
+                <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
+                <li><a href="kit-cumplimiento-laboral-pymes" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
+                <li><a href="generador-finiquito-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Generador Finiquito ($12.990)</a></li>
+                <li><a href="generador-anexo-40-horas" class="text-slate-600 hover:text-sky-500 transition-colors">Anexo 40 Horas Word</a></li>
+                <li><a href="sobre-nosotros" class="text-slate-600 hover:text-sky-500 transition-colors">Sobre Nosotros</a></li>
+                <li><a href="contacto" class="text-slate-600 hover:text-sky-500 transition-colors">Contacto Directo</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Barra Inferior Unificada -->
+    <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+        <p class="text-xs text-slate-500">
+            &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Código del Trabajo</a> y dictámenes de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Dirección del Trabajo</a>.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500">
+            <a href="terminos" class="hover:text-slate-800 transition-colors">Términos</a>
+            <span class="text-slate-300">·</span>
+            <a href="privacidad" class="hover:text-slate-800 transition-colors">Privacidad</a>
+            <span class="text-slate-300">·</span>
+            <a href="disclaimer" class="hover:text-slate-800 transition-colors">Disclaimer</a>
+            <span class="text-slate-300">·</span>
+            <span class="inline-flex items-center gap-1 text-slate-600 font-medium">
+                <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
+                DT Chile Conforme
+            </span>
+        </div>
+    </div>
+</footer>
+```
 
 ---
 
