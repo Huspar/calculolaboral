@@ -562,64 +562,81 @@
         </div>
     </header>
 
-    
-    <!-- Indicators Carousel (Mobile) / Grid (Desktop) -->
+    <!-- Indicators Carousel & Responsive Layout Helpers -->
     <style>
+        .indicators-carousel {
+            gap: 0.5rem !important;
+        }
         @media (max-width: 639px) {
             .indicators-carousel {
                 display: flex !important;
                 overflow-x: auto !important;
                 scroll-snap-type: x mandatory !important;
                 -webkit-overflow-scrolling: touch !important;
+                gap: 0.5rem !important;
             }
             .indicator-card {
-                min-width: 148px !important;
-                max-width: 148px !important;
-                width: 148px !important;
+                min-width: 125px !important;
+                max-width: 125px !important;
+                width: 125px !important;
                 flex-shrink: 0 !important;
                 scroll-snap-align: start !important;
             }
         }
-        @media (min-width: 640px) {
+        @media (min-width: 640px) and (max-width: 1023px) {
             .indicators-carousel {
                 display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 0.5rem !important;
             }
             .indicator-card {
-                width: auto !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+                gap: 0.625rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
                 min-width: 0 !important;
                 flex-shrink: 1 !important;
             }
         }
     </style>
-    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-3 sm:mt-4 mb-4 sm:mb-8 no-print overflow-hidden sm:overflow-visible">
-        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 pb-2 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
+        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
             <!-- UF Card -->
-            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Valor UF</span>
-                <span class="uf-value text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">$39.682,99</span>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Valor UF</span>
+                <span class="uf-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$39.682,99</span>
             </div>
             <!-- UTM Card -->
-            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">UTM Mensual</span>
-                <span class="utm-value text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">$69.611</span>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
+                <span class="utm-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$69.611</span>
             </div>
             <!-- Sueldo Mínimo Card -->
-            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Sueldo Mínimo</span>
-                <span class="text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">$553.553</span>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Sueldo Mínimo</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$553.553</span>
             </div>
             <!-- Tope AFP Card -->
-            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tope AFP</span>
-                <span class="text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">89.9 UF</span>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope AFP</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">89.9 UF</span>
             </div>
             <!-- Tope Finiquito Card -->
-            <div class="indicator-card bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3 px-3.5 sm:p-4 shadow-xs sm:shadow-sm hover:border-slate-300 sm:hover:shadow transition-all">
-                <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tope Finiquito</span>
-                <span class="text-[15px] sm:text-lg font-black text-slate-900 font-mono tracking-tight">90 UF</span>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope Finiquito</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">90 UF</span>
             </div>
         </div>
-        <div class="flex justify-between items-center mt-2 sm:mt-2.5 px-0.5 text-[10px] text-slate-500 font-medium">
+        <div class="flex justify-between items-center mt-1.5 sm:mt-2 px-0.5 text-[10px] text-slate-500 font-medium">
             <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500 text-[10px]">
                 <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
                 <span>Valores oficiales vigentes (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT Chile</a>)</span>
@@ -631,8 +648,7 @@
         </div>
     </div>
 
-
-    <!-- Main Content -->
+<!-- Main Content -->
     <main class="flex-grow pt-4 pb-16">
         
     <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
