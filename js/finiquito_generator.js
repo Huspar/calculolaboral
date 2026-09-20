@@ -21,7 +21,10 @@
     // Helper: Formateador de RUT chileno (12.345.678-K)
     function formatRut(value) {
         if (!value) return '';
-        let clean = value.replace(/[^0-9kK]/g, '').toUpperCase();
+        const strVal = String(value).trim();
+        // Si es un token de plantilla entre corchetes, no formatear como RUT
+        if (strVal.startsWith('[') && strVal.endsWith(']')) return '';
+        let clean = strVal.replace(/[^0-9kK]/g, '').toUpperCase();
         if (clean.length === 0) return '';
         if (clean.length === 1) return clean;
 
@@ -42,7 +45,7 @@
     // Helper: Validar RUT chileno (Módulo 11)
     function validateRut(rut) {
         if (!rut) return false;
-        let clean = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+        let clean = String(rut).replace(/[^0-9kK]/g, '').toUpperCase();
         if (clean.length < 8) return false;
 
         const dv = clean.slice(-1);
@@ -71,6 +74,15 @@
         return '$' + num.toLocaleString('es-CL');
     }
 
+    // Helper: Formateador de números con separador de miles chileno
+    function formatThousands(val) {
+        if (val === undefined || val === null || val === '') return '';
+        const clean = String(val).replace(/[^0-9]/g, '');
+        if (!clean) return '';
+        const num = parseInt(clean, 10);
+        return isNaN(num) ? '' : num.toLocaleString('es-CL');
+    }
+
     // Helper: Formatear fecha a formato legal chileno ("19 de septiembre de 2026")
     function formatLegalDate(dateString) {
         if (!dateString) return '___ de ____________ de 2026';
@@ -88,114 +100,79 @@
         return `${day} de ${months[month]} de ${year}`;
     }
 
-    // Helper: Conversor de números a palabras en español (pesos chilenos)
+    // Helper: Conversor riguroso de cifras a palabras en español jurídico (pesos chilenos)
     function numberToWords(num) {
         const n = Math.round(Math.abs(Number(num) || 0));
         if (n === 0) return 'cero pesos';
+        if (n === 1) return 'un peso';
 
-        function Unidades(u) {
-            switch (u) {
-                case 1: return 'un';
-                case 2: return 'dos';
-                case 3: return 'tres';
-                case 4: return 'cuatro';
-                case 5: return 'cinco';
-                case 6: return 'seis';
-                case 7: return 'siete';
-                case 8: return 'ocho';
-                case 9: return 'nueve';
-                default: return '';
-            }
-        }
+        const units = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+        const tens = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+        const teens = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
+        const twenties = ['veinte', 'veintiún', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
+        const hundreds = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
 
-        function Decenas(d) {
-            const decena = Math.floor(d / 10);
-            const unidad = d - (decena * 10);
-            switch (decena) {
-                case 1:
-                    switch (unidad) {
-                        case 0: return 'diez';
-                        case 1: return 'once';
-                        case 2: return 'doce';
-                        case 3: return 'trece';
-                        case 4: return 'catorce';
-                        case 5: return 'quince';
-                        default: return 'dieci' + Unidades(unidad);
+        function convertGroup(g) {
+            if (g === 0) return '';
+            if (g === 100) return 'cien';
+            const h = Math.floor(g / 100);
+            const rem = g % 100;
+            const words = [];
+            if (h > 0) words.push(hundreds[h]);
+            if (rem > 0) {
+                if (rem < 10) {
+                    words.push(units[rem]);
+                } else if (rem >= 10 && rem <= 19) {
+                    words.push(teens[rem - 10]);
+                } else if (rem >= 20 && rem <= 29) {
+                    words.push(twenties[rem - 20]);
+                } else {
+                    const t = Math.floor(rem / 10);
+                    const u = rem % 10;
+                    if (u === 0) {
+                        words.push(tens[t]);
+                    } else {
+                        words.push(`${tens[t]} y ${units[u]}`);
                     }
-                case 2:
-                    switch (unidad) {
-                        case 0: return 'veinte';
-                        default: return 'veinti' + Unidades(unidad);
-                    }
-                case 3: return DecenasY('treinta', unidad);
-                case 4: return DecenasY('cuarenta', unidad);
-                case 5: return DecenasY('cincuenta', unidad);
-                case 6: return DecenasY('sesenta', unidad);
-                case 7: return DecenasY('setenta', unidad);
-                case 8: return DecenasY('ochenta', unidad);
-                case 9: return DecenasY('noventa', unidad);
-                case 0: return Unidades(unidad);
+                }
+            }
+            return words.join(' ');
+        }
+
+        const millions = Math.floor(n / 1000000);
+        const remainder = n % 1000000;
+        const thousands = Math.floor(remainder / 1000);
+        const unitsGroup = remainder % 1000;
+
+        const parts = [];
+        if (millions > 0) {
+            if (millions === 1) {
+                parts.push('un millón');
+            } else {
+                parts.push(`${convertGroup(millions)} millones`);
             }
         }
 
-        function DecenasY(strSin, numUnidades) {
-            if (numUnidades > 0) return strSin + ' y ' + Unidades(numUnidades);
-            return strSin;
-        }
-
-        function Centenas(c) {
-            const centenas = Math.floor(c / 100);
-            const decenas = c - (centenas * 100);
-            switch (centenas) {
-                case 1:
-                    if (decenas > 0) return 'ciento ' + Decenas(decenas);
-                    return 'cien';
-                case 2: return 'doscientos ' + Decenas(decenas);
-                case 3: return 'trescientos ' + Decenas(decenas);
-                case 4: return 'cuatrocientos ' + Decenas(decenas);
-                case 5: return 'quinientos ' + Decenas(decenas);
-                case 6: return 'seiscientos ' + Decenas(decenas);
-                case 7: return 'setecientos ' + Decenas(decenas);
-                case 8: return 'ochocientos ' + Decenas(decenas);
-                case 9: return 'novecientos ' + Decenas(decenas);
-                default: return Decenas(decenas);
+        if (thousands > 0) {
+            if (thousands === 1) {
+                parts.push('mil');
+            } else {
+                parts.push(`${convertGroup(thousands)} mil`);
             }
         }
 
-        function Seccion(num, divisor, strSingular, strPlural) {
-            const cientos = Math.floor(num / divisor);
-            const resto = num - (cientos * divisor);
-            let letras = '';
-            if (cientos > 0) {
-                if (cientos > 1) letras = Centenas(cientos) + ' ' + strPlural;
-                else letras = strSingular;
-            }
-            if (resto > 0) letras += '';
-            return letras;
+        if (unitsGroup > 0) {
+            parts.push(convertGroup(unitsGroup));
         }
 
-        function Miles(m) {
-            const divisor = 1000;
-            const cientos = Math.floor(m / divisor);
-            const resto = m - (cientos * divisor);
-            const strMiles = Seccion(m, divisor, 'un mil', 'mil');
-            const strCentenas = Centenas(resto);
-            if (strMiles === '') return strCentenas;
-            return (strMiles + ' ' + strCentenas).trim();
-        }
+        const text = parts.join(' ').trim();
 
-        function Millones(m) {
-            const divisor = 1000000;
-            const cientos = Math.floor(m / divisor);
-            const resto = m - (cientos * divisor);
-            const strMillones = Seccion(m, divisor, 'un millón', 'millones');
-            const strMiles = Miles(resto);
-            if (strMillones === '') return strMiles;
-            return (strMillones + ' ' + strMiles).trim();
+        // En español, si termina en 'millón' o 'millones' exactos, se agrega la preposición 'de pesos'
+        if (millions > 0 && thousands === 0 && unitsGroup === 0) {
+            return `${text} de pesos`;
+        } else {
+            return `${text} pesos`;
         }
-
-        const palabras = Millones(n);
-        return (palabras + ' pesos').trim();
     }
 
     // Inicialización del generador
@@ -222,14 +199,28 @@
             'forma-pago', 'banco-detalle'
         ];
 
+        const currencyIds = new Set([
+            'sueldo-base', 'gratificacion', 'asignaciones', 'promedio-variables',
+            'afc-monto-exacto', 'descuento-anticipos', 'descuento-prestamos', 'descuento-alimentos'
+        ]);
+
+        const rutIds = new Set(['empresa-rut', 'empresa-rep-rut', 'trabajador-rut']);
+
         inputIds.forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
 
             el.addEventListener('input', () => {
-                if (id === 'empresa-rut' || id === 'empresa-rep-rut' || id === 'trabajador-rut') {
-                    const caret = el.selectionStart;
+                if (rutIds.has(id)) {
                     el.value = formatRut(el.value);
+                } else if (currencyIds.has(id)) {
+                    const clean = el.value.replace(/[^0-9]/g, '');
+                    if (clean) {
+                        const num = parseInt(clean, 10);
+                        el.value = num.toLocaleString('es-CL');
+                    } else {
+                        el.value = '';
+                    }
                 }
                 updateAll();
             });
@@ -270,11 +261,17 @@
         }
     }
 
+    function isBracketedToken(val) {
+        if (typeof val !== 'string') return false;
+        const trimmed = val.trim();
+        return trimmed.startsWith('[') && trimmed.endsWith(']');
+    }
+
     // Persistencia local de borrador para evitar pérdida de datos si el usuario va al portal de pago
     function saveDraftToStorage() {
         try {
-            const formData = getFormData();
-            localStorage.setItem('fini_draft_payload', JSON.stringify(formData));
+            const rawData = getRawFormData();
+            localStorage.setItem('fini_draft_payload', JSON.stringify(rawData));
         } catch (e) {
             console.warn('No se pudo guardar borrador local', e);
         }
@@ -285,37 +282,61 @@
             const saved = localStorage.getItem('fini_draft_payload');
             if (!saved) return;
             const data = JSON.parse(saved);
-            const setIf = (id, val) => {
+
+            const setText = (id, val) => {
                 const el = document.getElementById(id);
-                if (el && val !== undefined && val !== null && val !== '') el.value = val;
+                if (el && val !== undefined && val !== null && val !== '' && !isBracketedToken(val)) {
+                    el.value = val;
+                }
             };
-            setIf('empresa-razon', data.empresaRazon);
-            setIf('empresa-rut', data.empresaRut);
-            setIf('empresa-rep-nombre', data.empresaRepNombre);
-            setIf('empresa-rep-rut', data.empresaRepRut);
-            setIf('empresa-domicilio', data.empresaDomicilio);
-            setIf('empresa-ciudad', data.empresaCiudad);
-            setIf('trabajador-nombre', data.trabajadorNombre);
-            setIf('trabajador-rut', data.trabajadorRut);
-            setIf('trabajador-cargo', data.trabajadorCargo);
-            setIf('trabajador-domicilio', data.trabajadorDomicilio);
-            setIf('trabajador-ciudad', data.trabajadorCiudad);
-            setIf('fecha-inicio', data.fechaInicio);
-            setIf('fecha-termino', data.fechaTermino);
-            setIf('fecha-pago', data.fechaPago);
-            setIf('causal-select', data.causal);
-            setIf('sueldo-base', data.sueldoBase);
-            setIf('gratificacion', data.gratificacion);
-            setIf('asignaciones', data.asignaciones);
-            setIf('promedio-variables', data.promedioVariables);
-            setIf('vacaciones-pendientes', data.vacacionesPendientes);
-            setIf('afc-tipo', data.afcTipo);
-            setIf('afc-monto-exacto', data.afcMontoExacto);
-            setIf('descuento-anticipos', data.descuentoAnticipos);
-            setIf('descuento-prestamos', data.descuentoPrestamos);
-            setIf('descuento-alimentos', data.descuentoAlimentos);
-            setIf('forma-pago', data.formaPago);
-            setIf('banco-detalle', data.bancoDetalle);
+
+            const setRut = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && val !== undefined && val !== null && val !== '' && !isBracketedToken(val)) {
+                    el.value = formatRut(val);
+                }
+            };
+
+            const setMoney = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && val !== undefined && val !== null && val !== '' && !isBracketedToken(val)) {
+                    const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
+                    el.value = !isNaN(num) && num > 0 ? num.toLocaleString('es-CL') : (num === 0 ? '0' : '');
+                }
+            };
+
+            setText('empresa-razon', data.empresaRazon);
+            setRut('empresa-rut', data.empresaRut);
+            setText('empresa-rep-nombre', data.empresaRepNombre);
+            setRut('empresa-rep-rut', data.empresaRepRut);
+            setText('empresa-domicilio', data.empresaDomicilio);
+            setText('empresa-ciudad', data.empresaCiudad);
+
+            setText('trabajador-nombre', data.trabajadorNombre);
+            setRut('trabajador-rut', data.trabajadorRut);
+            setText('trabajador-cargo', data.trabajadorCargo);
+            setText('trabajador-domicilio', data.trabajadorDomicilio);
+            setText('trabajador-ciudad', data.trabajadorCiudad);
+
+            setText('fecha-inicio', data.fechaInicio);
+            setText('fecha-termino', data.fechaTermino);
+            setText('fecha-pago', data.fechaPago);
+            setText('causal-select', data.causal);
+
+            setMoney('sueldo-base', data.sueldoBase);
+            setMoney('gratificacion', data.gratificacion);
+            setMoney('asignaciones', data.asignaciones);
+            setMoney('promedio-variables', data.promedioVariables);
+            setText('vacaciones-pendientes', data.vacacionesPendientes);
+
+            setText('afc-tipo', data.afcTipo);
+            setMoney('afc-monto-exacto', data.afcMontoExacto);
+            setMoney('descuento-anticipos', data.descuentoAnticipos);
+            setMoney('descuento-prestamos', data.descuentoPrestamos);
+            setMoney('descuento-alimentos', data.descuentoAlimentos);
+
+            setText('forma-pago', data.formaPago);
+            setText('banco-detalle', data.bancoDetalle);
 
             if (data.avisoPrevio !== undefined) {
                 const el = document.getElementById('aviso-previo');
@@ -342,18 +363,26 @@
             return params.get(paramKey) || localStorage.getItem('fini_' + paramKey) || defaultVal;
         };
 
-        const setIfPresent = (id, val) => {
+        const setTextIfPresent = (id, val) => {
             const el = document.getElementById(id);
-            if (el && val) el.value = val;
+            if (el && val && !isBracketedToken(val)) el.value = val;
         };
 
-        setIfPresent('fecha-inicio', getVal('startDate'));
-        setIfPresent('fecha-termino', getVal('endDate'));
-        setIfPresent('sueldo-base', getVal('baseSalary'));
-        setIfPresent('gratificacion', getVal('gratification'));
-        setIfPresent('asignaciones', getVal('assignments'));
-        setIfPresent('promedio-variables', getVal('variableAverage'));
-        setIfPresent('vacaciones-pendientes', getVal('vacationDaysPending'));
+        const setMoneyIfPresent = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val && !isBracketedToken(val)) {
+                const num = parseFloat(String(val).replace(/[^0-9]/g, ''));
+                if (!isNaN(num)) el.value = num.toLocaleString('es-CL');
+            }
+        };
+
+        setTextIfPresent('fecha-inicio', getVal('startDate'));
+        setTextIfPresent('fecha-termino', getVal('endDate'));
+        setMoneyIfPresent('sueldo-base', getVal('baseSalary'));
+        setMoneyIfPresent('gratificacion', getVal('gratification'));
+        setMoneyIfPresent('asignaciones', getVal('assignments'));
+        setMoneyIfPresent('promedio-variables', getVal('variableAverage'));
+        setTextIfPresent('vacaciones-pendientes', getVal('vacationDaysPending'));
         
         if (params.get('cause')) {
             const causalEl = document.getElementById('causal-select');
@@ -377,7 +406,7 @@
             setTimeout(() => {
                 applyPaymentSuccess(false, true);
             }, 300);
-        } else if (checkUnlockStatus(getFormData())) {
+        } else if (checkUnlockStatus(getRawFormData())) {
             setTimeout(() => {
                 applyPaymentSuccess(false, false);
             }, 300);
@@ -458,12 +487,13 @@
 
     // Recalcular montos y actualizar la plantilla notarial
     function updateAll() {
-        const formData = getFormData();
-        const calcData = calculateFiniquito(formData);
+        const rawData = getRawFormData();
+        const displayData = getDisplayFormData(rawData);
+        const calcData = calculateFiniquito(rawData);
         state.calcResult = calcData;
 
         // Validar vigencia de 48 horas y coincidencia de RUT
-        const isLegitUnlocked = checkUnlockStatus(formData);
+        const isLegitUnlocked = checkUnlockStatus(rawData);
         if (state.isPaid && !isLegitUnlocked) {
             lockDocument();
         } else if (!state.isPaid && isLegitUnlocked) {
@@ -471,34 +501,41 @@
         }
 
         renderSummary(calcData);
-        renderNotaryDocument(formData, calcData);
+        renderNotaryDocument(displayData, calcData);
         saveDraftToStorage();
     }
 
-    // Extraer datos del formulario
-    function getFormData() {
-        const getV = (id) => document.getElementById(id)?.value?.trim() || '';
+    // Extraer datos brutos del formulario (solo lo que el usuario ingresó)
+    function getRawFormData() {
+        const getV = (id) => {
+            const el = document.getElementById(id);
+            if (!el) return '';
+            const val = el.value.trim();
+            return isBracketedToken(val) ? '' : val;
+        };
         const getN = (id) => {
-            const raw = document.getElementById(id)?.value || '0';
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            const raw = el.value || '0';
             return parseFloat(raw.replace(/[^0-9]/g, '')) || 0;
         };
         const getChecked = (id) => document.getElementById(id)?.checked || false;
 
         return {
-            empresaRazon: getV('empresa-razon') || '[RAZÓN SOCIAL DE LA EMPRESA]',
-            empresaRut: getV('empresa-rut') || '[RUT EMPRESA]',
-            empresaRepNombre: getV('empresa-rep-nombre') || '[NOMBRE REPRESENTANTE LEGAL]',
-            empresaRepRut: getV('empresa-rep-rut') || '[RUT REPRESENTANTE]',
-            empresaDomicilio: getV('empresa-domicilio') || '[DOMICILIO EMPLEADOR]',
+            empresaRazon: getV('empresa-razon'),
+            empresaRut: getV('empresa-rut'),
+            empresaRepNombre: getV('empresa-rep-nombre'),
+            empresaRepRut: getV('empresa-rep-rut'),
+            empresaDomicilio: getV('empresa-domicilio'),
             empresaCiudad: getV('empresa-ciudad') || 'Santiago',
 
-            trabajadorNombre: getV('trabajador-nombre') || '[NOMBRE DEL TRABAJADOR]',
-            trabajadorRut: getV('trabajador-rut') || '[RUT TRABAJADOR]',
-            trabajadorCargo: getV('trabajador-cargo') || '[CARGO U OFICIO]',
-            trabajadorDomicilio: getV('trabajador-domicilio') || '[DOMICILIO TRABAJADOR]',
+            trabajadorNombre: getV('trabajador-nombre'),
+            trabajadorRut: getV('trabajador-rut'),
+            trabajadorCargo: getV('trabajador-cargo'),
+            trabajadorDomicilio: getV('trabajador-domicilio'),
             trabajadorCiudad: getV('trabajador-ciudad') || 'Santiago',
 
-            fechaInicio: getV('fecha-inicio') || '2023-01-01',
+            fechaInicio: getV('fecha-inicio') || '2023-03-01',
             fechaTermino: getV('fecha-termino') || '2026-09-19',
             fechaPago: getV('fecha-pago') || '2026-09-19',
             causal: getV('causal-select') || '161',
@@ -507,7 +544,7 @@
             gratificacion: getN('gratificacion'),
             asignaciones: getN('asignaciones'),
             promedioVariables: getN('promedio-variables'),
-            vacacionesPendientes: parseFloat(getV('vacaciones-pendientes')) || 0,
+            vacacionesPendientes: parseFloat(document.getElementById('vacaciones-pendientes')?.value) || 0,
             avisoPrevio: getChecked('aviso-previo'),
             isExtremeZone: getChecked('zona-extrema'),
 
@@ -518,8 +555,40 @@
             descuentoAlimentos: getN('descuento-alimentos'),
 
             formaPago: getV('forma-pago') || 'transferencia',
-            bancoDetalle: getV('banco-detalle') || 'cuenta bancaria informada por el trabajador'
+            bancoDetalle: getV('banco-detalle') || 'BancoEstado Cuenta RUT'
         };
+    }
+
+    // Datos para vista previa del documento legal (con textos de reemplazo solo para la vista previa notarial)
+    function getDisplayFormData(raw) {
+        return {
+            ...raw,
+            empresaRazon: raw.empresaRazon || '[Razón Social del Empleador]',
+            empresaRut: raw.empresaRut || '[RUT Empleador]',
+            empresaRepNombre: raw.empresaRepNombre || '[Nombre del Representante Legal]',
+            empresaRepRut: raw.empresaRepRut || '[RUT Representante]',
+            empresaDomicilio: raw.empresaDomicilio || '[Domicilio del Empleador]',
+            empresaCiudad: raw.empresaCiudad || 'Santiago',
+
+            trabajadorNombre: raw.trabajadorNombre || '[Nombre Completo del Trabajador]',
+            trabajadorRut: raw.trabajadorRut || '[RUT del Trabajador]',
+            trabajadorCargo: raw.trabajadorCargo || '[Cargo u Oficio]',
+            trabajadorDomicilio: raw.trabajadorDomicilio || '[Domicilio del Trabajador]',
+            trabajadorCiudad: raw.trabajadorCiudad || 'Santiago',
+
+            fechaInicio: raw.fechaInicio || '2023-03-01',
+            fechaTermino: raw.fechaTermino || '2026-09-19',
+            fechaPago: raw.fechaPago || '2026-09-19',
+            causal: raw.causal || '161',
+
+            formaPago: raw.formaPago || 'transferencia',
+            bancoDetalle: raw.bancoDetalle || 'cuenta bancaria informada por el trabajador'
+        };
+    }
+
+    // Compatibilidad para funciones secundarias
+    function getFormData() {
+        return getDisplayFormData(getRawFormData());
     }
 
     // Ejecutar motor de cálculo legal usando FiniquitoCalculator
@@ -533,18 +602,18 @@
         const simulateAfc = formData.afcTipo !== 'ninguno';
 
         const calculator = new FiniquitoCalculator({
-            startDate: formData.fechaInicio,
-            endDate: formData.fechaTermino,
-            baseSalary: formData.sueldoBase,
-            gratification: formData.gratificacion,
-            assignments: formData.assignments || formData.asignaciones,
-            variableAverage: formData.promedioVariables,
-            vacationDaysPending: formData.vacacionesPendientes,
-            cause: formData.causal,
-            noticeGiven: formData.avisoPrevio,
+            startDate: formData.fechaInicio || '2023-03-01',
+            endDate: formData.fechaTermino || '2026-09-19',
+            baseSalary: formData.sueldoBase || 0,
+            gratification: formData.gratificacion || 0,
+            assignments: formData.asignaciones || 0,
+            variableAverage: formData.promedioVariables || 0,
+            vacationDaysPending: formData.vacacionesPendientes || 0,
+            cause: formData.causal || '161',
+            noticeGiven: !!formData.avisoPrevio,
             simulateAFC: simulateAfc,
             afcExactAmount: afcExact,
-            isExtremeZone: formData.isExtremeZone
+            isExtremeZone: !!formData.isExtremeZone
         });
 
         const res = calculator.calculate();
