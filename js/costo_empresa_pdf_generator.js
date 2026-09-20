@@ -589,60 +589,104 @@
         `;
     }
 
-    // Modal interactivo de Vista Previa In-Page (Anti-copia, sin popup blockers y con carga nítida de fuentes)
+    // Modal interactivo de Vista Previa In-Page (Anti-copia, interactivo y con scroll perfecto)
     function mostrarModalPreviewInforme(data) {
         var prevModal = document.getElementById('modal-preview-informe-container');
-        if (prevModal) prevModal.remove();
+        if (prevModal) {
+            prevModal.remove();
+            document.body.style.overflow = '';
+        }
 
         var contenidoHTML = generarHTMLInforme(data, true);
 
+        // Bloquear scroll de la página de fondo
+        document.body.style.overflow = 'hidden';
+
         var modal = document.createElement('div');
         modal.id = 'modal-preview-informe-container';
-        modal.className = 'fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-xs no-print';
+        modal.className = 'fixed inset-0 bg-slate-950/85 z-[9999] flex items-center justify-center p-2 sm:p-4 md:p-6 backdrop-blur-sm no-print';
+        modal.style.boxSizing = 'border-box';
         modal.innerHTML = `
-            <div class="bg-slate-100 rounded-2xl max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl border border-slate-300 overflow-hidden animate-fade-in">
-                <!-- Barra superior de aviso y compra directa -->
-                <div class="bg-white border-b border-slate-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shadow-xs">
+            <!-- Botón flotante de cierre universal siempre visible en la esquina superior derecha -->
+            <button type="button" id="btn-floating-close" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-[10001] w-10 h-10 rounded-full bg-slate-900/90 hover:bg-rose-600 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer border border-white/20 active:scale-95" title="Cerrar vista previa (Esc)">
+                <span class="material-icons text-xl">close</span>
+            </button>
+
+            <!-- Tarjeta principal del modal con altura estrictamente contenida en el viewport -->
+            <div id="modal-card-inner" class="bg-slate-100 rounded-2xl max-w-4xl w-full h-[92vh] max-h-[92vh] flex flex-col shadow-2xl border border-slate-300 overflow-hidden relative" style="display: flex; flex-direction: column;">
+                
+                <!-- Barra superior fija (Header siempre visible) -->
+                <div class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-3 flex-shrink-0 z-30 shadow-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0">
                             <span class="material-icons text-lg">lock</span>
                         </span>
-                        <div>
-                            <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                                <span>Borrador de Vista Previa Protegido</span>
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
+                                <span>Borrador Protegido</span>
                                 <span class="bg-rose-100 text-rose-700 text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase">Pro-Forma</span>
                             </div>
-                            <div class="text-[10.5px] text-slate-500">
-                                Versión preliminar protegida. El informe final se descarga en PDF oficial limpio sin marcas de agua.
+                            <div class="text-[10px] sm:text-[11px] text-slate-500 truncate hidden sm:block">
+                                Vista previa con marcas de agua. El informe oficial se descarga limpio en PDF sin sellos.
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <a href="${FLOW_CHECKOUT_URL}" class="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1.5 cursor-pointer no-underline !text-white" style="color: #ffffff !important;">
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <a href="${FLOW_CHECKOUT_URL}" class="py-2 px-3 sm:px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1.5 cursor-pointer no-underline !text-white" style="color: #ffffff !important;">
                             <span class="material-icons text-xs">download</span>
                             <span>Descargar PDF Oficial ($4.990)</span>
                         </a>
-                        <button type="button" id="btn-cerrar-preview-modal" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors" title="Cerrar vista previa">
+                        <button type="button" id="btn-cerrar-preview-modal" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-700 flex items-center justify-center cursor-pointer transition-colors" title="Cerrar vista previa">
                             <span class="material-icons text-sm">close</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Contenedor con Scroll de la Hoja A4 Protegida contra copias -->
-                <div class="p-3 sm:p-6 overflow-y-auto flex-1 flex justify-center bg-slate-200/60" oncontextmenu="return false;" style="user-select: none !important; -webkit-user-select: none !important;">
-                    <div class="w-full max-w-[820px] pointer-events-none">
+                <!-- Contenedor con Scroll garantizado (min-h-0 + flex-1 + overflow-y-auto) -->
+                <div class="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 bg-slate-200/70 flex justify-center" id="scroll-container-preview" oncontextmenu="return false;" style="user-select: none !important; -webkit-user-select: none !important;">
+                    <div class="w-full max-w-[820px] pb-6" style="user-select: none !important; -webkit-user-select: none !important;">
                         ${contenidoHTML}
+                    </div>
+                </div>
+
+                <!-- Barra inferior fija con botón cerrar y botón compra -->
+                <div class="bg-white border-t border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 flex-shrink-0 z-30">
+                    <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">
+                        Desplaza hacia abajo para revisar el desglose contable y la matriz de riesgo ↓
+                    </span>
+                    <span class="text-[11px] text-slate-500 font-medium sm:hidden">
+                        Borrador no válido para presentar
+                    </span>
+                    <div class="flex items-center gap-2 ml-auto">
+                        <button type="button" id="btn-cerrar-preview-bottom" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg cursor-pointer">
+                            Cerrar
+                        </button>
+                        <a href="${FLOW_CHECKOUT_URL}" class="px-3.5 py-1.5 bg-sky-600 hover:bg-sky-700 font-bold text-xs rounded-lg shadow-sm text-white flex items-center gap-1 cursor-pointer no-underline !text-white" style="color:#fff!important;">
+                            <span>Comprar Informe ($4.990)</span>
+                        </a>
                     </div>
                 </div>
             </div>
         `;
         document.body.appendChild(modal);
 
-        document.getElementById('btn-cerrar-preview-modal').addEventListener('click', function() {
+        function cerrarModal() {
             modal.remove();
-        });
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleKey);
+        }
+
+        function handleKey(e) {
+            if (e.key === 'Escape') cerrarModal();
+        }
+
+        document.getElementById('btn-floating-close').addEventListener('click', cerrarModal);
+        document.getElementById('btn-cerrar-preview-modal').addEventListener('click', cerrarModal);
+        document.getElementById('btn-cerrar-preview-bottom').addEventListener('click', cerrarModal);
+        document.addEventListener('keydown', handleKey);
+
         modal.addEventListener('click', function(e) {
-            if (e.target === modal) modal.remove();
+            if (e.target === modal) cerrarModal();
         });
     }
 
@@ -799,6 +843,15 @@
 
             // Mostrar modal de felicitación y descarga automática
             mostrarModalExito(matrizExito);
+        }
+
+        // 4. AUTO-APERTURA DE VISTA PREVIA (Query param ?preview=1)
+        if (urlParams.get('preview') === '1' || urlParams.get('test') === 'preview') {
+            setTimeout(function () {
+                if (btnPreviewInforme) {
+                    btnPreviewInforme.click();
+                }
+            }, 150);
         }
 
         function mostrarModalExito(matriz) {
