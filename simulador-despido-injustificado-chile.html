@@ -194,14 +194,33 @@
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm no-print">
         <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="./" class="flex items-center gap-2">
+                <a href="./" class="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity">
                     <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
-                        <span class="text-white font-bold text-base tracking-tighter">CL</span>
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Pedestal Base -->
+                            <path d="M30 84h40M38 79h24"></path>
+                            <!-- Vertical Pillar -->
+                            <path d="M50 22v57"></path>
+                            <!-- Center pointer tip -->
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <!-- Balance Beam -->
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <!-- Left Pan strings and dish -->
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Right Pan strings and dish -->
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Monogram C wrapping left side -->
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <!-- Monogram L wrapping right side -->
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
                     </div>
-                    <span class="font-bold text-lg tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
                 </a>
                 <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 rounded-full">Auditoría Legal 2026</span>
             </div>

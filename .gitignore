@@ -5,7 +5,9 @@ calculolaboral-v2/
 scratch/
 rediseño-premium/
 .agents/
-__pycache__/
+!.agents/rules/
+!.agents/rules/**
+__pycache__/
 .vercel
 .env*
 *.bak
