@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista de Ejemplo: Informe Ejecutivo de Presupuesto Laboral & Matriz 3 Vías</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700;800;900&family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Geist', system-ui, -apple-system, sans-serif;
+        }
+        .font-mono {
+            font-family: 'Geist Mono', monospace;
+        }
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 8mm 10mm;
+            }
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 py-10 px-4 min-h-screen text-slate-900">
+
+    <div class="max-w-[840px] mx-auto no-print mb-6 flex items-center justify-between bg-white border border-slate-200 px-6 py-3.5 rounded-2xl shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div>
+                <span class="text-xs font-bold text-slate-900 block">Vista de Muestra del Informe Ejecutivo ($4.990 CLP)</span>
+                <span class="text-[11px] text-slate-500">Documento membretado A4 generado para descarga o impresión directa</span>
+            </div>
+        </div>
+        <button onclick="window.print()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5 cursor-pointer">
+            <span class="material-icons text-sm">print</span>
+            <span>Imprimir / PDF Limpio</span>
+        </button>
+    </div>
+
+    <!-- CONTENEDOR DEL INFORME A4 -->
+    <div id="informe-wrapper" class="max-w-[840px] mx-auto"></div>
+
+    <!-- Scripts -->
+    <script src="js/costo_empresa_calculator.js?v=2.6.2"></script>
+    <script src="js/costo_empresa_pdf_generator.js?v=1.0.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var opciones = {
+                cargo: 'Jefe de Operaciones & Logística',
+                tasaMutual: 0.0093,
+                asignaciones: 60000,
+                gratificacion: true,
+                gratificacionAdicional: false
+            };
+            
+            var matriz = window.CostoEmpresaPDF.calcularTresModalidades(850000, 'base', opciones);
+            var html = window.CostoEmpresaPDF.generarHTMLInforme(matriz, false);
+            
+            var wrapper = document.getElementById('informe-wrapper');
+            wrapper.innerHTML = html;
+        });
+    </script>
+</body>
+</html>

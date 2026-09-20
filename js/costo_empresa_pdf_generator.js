@@ -98,225 +98,6 @@
         };
     }
 
-    // Plantilla HTML del Informe Ejecutivo A4
-    function generarHTMLInforme(data, esVistaPrevia) {
-        var ind = data.indefinido;
-        var plz = data.plazo;
-        var hon = data.honorarios;
-
-        var marcaAguaClase = esVistaPrevia ? 'con-marca-agua' : '';
-
-        return `
-        <div class="informe-a4-page ${marcaAguaClase}">
-            ${esVistaPrevia ? '<div class="watermark-badge">VISTA PREVIA DE EJEMPLO • CÁLCULO LABORAL</div>' : ''}
-            
-            <!-- ENCABEZADO OFICIAL -->
-            <div class="informe-header">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
-                    <div class="flex items-center gap-2">
-                        <div class="logo-box">
-                            <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M30 84h40M38 79h24"></path>
-                                <path d="M50 22v57"></path>
-                                <path d="M50 14l-2 4h4l-2-4v8"></path>
-                                <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                                <path d="M18 36l-8 18h16Z"></path>
-                                <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                                <path d="M82 36l-8 18h16Z"></path>
-                                <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                                <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                                <path d="M58 43.5v20h10"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <span class="font-extrabold text-base tracking-tight text-slate-900 block">Cálculo<span class="text-sky-600">Laboral</span></span>
-                            <span class="text-[9px] text-slate-500 uppercase tracking-widest font-mono">Plataforma de Cumplimiento Laboral Pyme</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="badge-dt-conforme">DT Chile Conforme 2026</span>
-                        <div class="text-[10px] text-slate-500 font-mono mt-0.5">Folio: <strong>${data.folio}</strong></div>
-                        <div class="text-[10px] text-slate-400 font-mono">Emisión: ${data.fecha}</div>
-                    </div>
-                </div>
-
-                <div class="text-center my-3">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
-                        Documento de Decisión Estratégica
-                    </span>
-                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight mt-1">
-                        Informe Ejecutivo de Presupuesto Laboral & Matriz de Riesgo
-                    </h1>
-                    <p class="text-xs text-slate-600 max-w-xl mx-auto mt-0.5">
-                        Evaluación integral de costos reales, aportes patronales obligatorios, pasivos laborales ocultos y contingencias inspectivas para: <strong>${data.cargo}</strong>.
-                    </p>
-                </div>
-            </div>
-
-            <!-- FICHA RESUMEN DE NEGOCIACIÓN -->
-            <div class="grid grid-cols-4 gap-2.5 my-3 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                <div>
-                    <span class="block text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider">Sueldo Acordado Líquido</span>
-                    <span class="font-mono font-extrabold text-slate-900 text-sm">${formatCLP(ind.sueldoLiquido)}</span>
-                </div>
-                <div>
-                    <span class="block text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider">Sueldo Base Mensual</span>
-                    <span class="font-mono font-bold text-slate-800 text-sm">${formatCLP(ind.sueldoBase)}</span>
-                </div>
-                <div>
-                    <span class="block text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider">Colación + Movilización</span>
-                    <span class="font-mono font-semibold text-slate-700 text-sm">${formatCLP(ind.asignacionesNoImponibles)}</span>
-                </div>
-                <div>
-                    <span class="block text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider">Tasa Mutual Estimada</span>
-                    <span class="font-mono font-semibold text-slate-700 text-sm">${(ind.costoMutual / (ind.totalImponible || 1) * 100).toFixed(2)}%</span>
-                </div>
-            </div>
-
-            <!-- EL COMPARADOR ESTRATÉGICO DE 3 COLUMNAS -->
-            <div class="my-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-sky-500"></span>
-                        Comparativa Estratégica de Contratación (3 Vías Posibles)
-                    </h2>
-                    <span class="text-[10px] text-slate-500 font-medium">Análisis económico y legal</span>
-                </div>
-
-                <table class="tabla-comparativa">
-                    <thead>
-                        <tr>
-                            <th class="w-1/4">Criterio de Decisión</th>
-                            <th class="w-1/4 col-indef">1. Contrato Indefinido (Estándar)</th>
-                            <th class="w-1/4 col-plazo">2. Contrato a Plazo Fijo</th>
-                            <th class="w-1/4 col-hon">3. Boleta de Honorarios</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Líquido que recibe el colaborador</td>
-                            <td class="font-mono font-bold text-slate-900 bg-sky-50/40">${formatCLP(ind.sueldoLiquido)}</td>
-                            <td class="font-mono font-bold text-slate-900">${formatCLP(plz.sueldoLiquido)}</td>
-                            <td class="font-mono font-bold text-slate-900">${formatCLP(hon.montoLiquido)}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Total Imponible Bruto / Facturado</td>
-                            <td class="font-mono text-slate-800 bg-sky-50/40">${formatCLP(ind.totalImponible)}</td>
-                            <td class="font-mono text-slate-800">${formatCLP(plz.totalImponible)}</td>
-                            <td class="font-mono text-slate-800">${formatCLP(hon.montoBruto)} (Ret. 14,5%)</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Aportes Patronales (SIS, AFC, Mutual)</td>
-                            <td class="font-mono text-emerald-700 bg-sky-50/40">+${formatCLP(ind.totalAportesPatronales)}</td>
-                            <td class="font-mono text-emerald-700">+${formatCLP(plz.totalAportesPatronales)} <span class="text-[9px] text-slate-400 block">(AFC 3,0%)</span></td>
-                            <td class="font-mono text-slate-400">$0 aparente</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Reserva Pasivos (Vacaciones + Finiquito)</td>
-                            <td class="font-mono text-amber-700 bg-sky-50/40">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-600 block">(Vac. + IAS 8,33%)</span></td>
-                            <td class="font-mono text-amber-700">+${formatCLP(plz.totalProvisiones)} <span class="text-[9px] text-slate-400 block">(Solo Vacaciones)</span></td>
-                            <td class="font-mono text-slate-400">$0 aparente</td>
-                        </tr>
-                        <tr class="fila-destacada">
-                            <td class="font-extrabold text-slate-900">COSTO REAL MENSUAL EMPRESA</td>
-                            <td class="font-mono font-black text-sky-700 text-sm bg-sky-100/60">${formatCLP(ind.costoEmpresaTotal)}</td>
-                            <td class="font-mono font-black text-slate-900 text-sm">${formatCLP(plz.costoEmpresaTotal)}</td>
-                            <td class="font-mono font-bold text-slate-600 text-sm">${formatCLP(hon.costoEmpresaMensual)}*</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Presupuesto Anual Consolidado (12m)</td>
-                            <td class="font-mono font-bold text-slate-900 bg-sky-50/40">${formatCLP(ind.costoEmpresaAnual)}</td>
-                            <td class="font-mono font-bold text-slate-900">${formatCLP(plz.costoEmpresaAnual)}</td>
-                            <td class="font-mono text-slate-700">${formatCLP(hon.costoEmpresaAnual)}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Factor Multiplicador sobre Líquido</td>
-                            <td class="font-mono font-bold text-sky-700 bg-sky-50/40">${ind.factorMultiplicador.toFixed(2)}x</td>
-                            <td class="font-mono font-bold text-slate-700">${plz.factorMultiplicador.toFixed(2)}x</td>
-                            <td class="font-mono text-slate-600">${hon.factorMultiplicador.toFixed(2)}x</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Semáforo de Riesgo Inspectivo DT</td>
-                            <td class="bg-sky-50/40"><span class="tag-riesgo tag-bajo">BAJO (Blindado)</span></td>
-                            <td><span class="tag-riesgo tag-medio">MEDIO (Máx 2 renovaciones)</span></td>
-                            <td><span class="tag-riesgo tag-alto">CRÍTICO (Riesgo Demanda)</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- MATRIZ DE RIESGO: BOLETA DE HONORARIOS VS REALIDAD DT -->
-            <div class="box-alerta-riesgo my-3">
-                <div class="flex items-start gap-2.5">
-                    <span class="badge-alerta">ALERTA LEGAL DT</span>
-                    <div>
-                        <h3 class="text-xs font-bold text-rose-900">
-                            Peligro de Contingencia Oculta por Prestación a Honorarios (Art. 7 y 8 Código del Trabajo)
-                        </h3>
-                        <p class="text-[11px] text-rose-800 leading-relaxed mt-0.5">
-                            Si contratas a honorarios pero la persona <strong>cumple horario, tiene jefatura directa, correo corporativo o exclusividad</strong>, la Dirección del Trabajo y los Tribunales calificarán la relación como un <strong>contrato de trabajo encubierto</strong>.
-                        </p>
-                        <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-rose-200/80 text-[10px] text-rose-900">
-                            <div><strong>1. Pago Retroactivo:</strong> Todas las imposiciones adeudadas (AFP, Salud, AFC, Mutual) con reajustes e intereses.</div>
-                            <div><strong>2. Ley Bustos (Art. 162):</strong> La empresa debe pagar el sueldo íntegro de cada mes que dure el juicio laboral.</div>
-                            <div><strong>3. Multa DT:</strong> De 10 a 60 UTM (\$696.000 a \$4.176.000) por trabajador no escriturado.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DESGLOSE CONTABLE ITEMIZADO (PARA CONTADOR Y SOCIOS) -->
-            <div class="my-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1.5">
-                    Desglose Contable Itemizado (Contrato Indefinido - Moneda CLP)
-                </h3>
-                <div class="grid grid-cols-2 gap-3 text-[11px]">
-                    <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
-                        <span class="font-bold text-slate-900 block text-[10px] uppercase tracking-wider mb-1">Aportes Patronales Obligatorios</span>
-                        <div class="flex justify-between"><span>Seguro Invalidez (SIS 1,49%):</span><span class="font-mono font-semibold">${formatCLP(ind.costoSis)}</span></div>
-                        <div class="flex justify-between"><span>Seguro Cesantía AFC (2,40%):</span><span class="font-mono font-semibold">${formatCLP(ind.costoAfcEmp)}</span></div>
-                        <div class="flex justify-between"><span>Mutualidad y Ley SANNA:</span><span class="font-mono font-semibold">${formatCLP(ind.costoMutual)}</span></div>
-                        <div class="flex justify-between pt-1 border-t border-slate-200 font-bold text-emerald-800"><span>Total Leyes Sociales Empresa:</span><span class="font-mono">${formatCLP(ind.totalAportesPatronales)}</span></div>
-                    </div>
-                    <div class="p-2.5 bg-amber-50/50 border border-amber-200 rounded-lg space-y-1">
-                        <span class="font-bold text-amber-900 block text-[10px] uppercase tracking-wider mb-1">Reserva Mensual de Pasivos Laborales</span>
-                        <div class="flex justify-between text-slate-700"><span>Provisión Vacaciones (4,17%):</span><span class="font-mono font-semibold">${formatCLP(ind.provVacaciones)}</span></div>
-                        <div class="flex justify-between text-slate-700"><span>Provisión Años Servicio (8,33%):</span><span class="font-mono font-semibold">${formatCLP(ind.provIas)}</span></div>
-                        <div class="flex justify-between pt-1 border-t border-amber-200 font-bold text-amber-900"><span>Total Reserva Mensual Caja:</span><span class="font-mono">${formatCLP(ind.totalProvisiones)}</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HOJA DE RUTA Y SIGUIENTE PASO -->
-            <div class="p-3 bg-sky-50 border border-sky-200 rounded-xl my-3 text-xs">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <span class="font-extrabold text-sky-900 block">Siguiente Paso Obligatorio: Escriturar el Contrato de Trabajo</span>
-                        <p class="text-[11px] text-sky-800 mt-0.5">
-                            El Código del Trabajo otorga un plazo máximo de <strong>15 días</strong> desde la incorporación para firmar el contrato (o 5 días si dura menos de 30 días) y debe registrarse en el portal Mi DT.
-                        </p>
-                    </div>
-                    <div class="text-right shrink-0 pl-3">
-                        <span class="text-[10px] text-slate-500 block">Herramienta oficial recomendada:</span>
-                        <span class="text-xs font-bold text-sky-700">Pack Contrato Pyme Word ($12.990)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PIE DE PÁGINA Y DISCLAIMER -->
-            <div class="informe-footer mt-4 pt-3 border-t border-slate-200 text-[9px] text-slate-500 leading-tight">
-                <div class="flex justify-between items-center mb-1 font-medium">
-                    <span>Cálculo Laboral Chile • calculolaboral.cl • Plataforma de Inteligencia Laboral para Pymes</span>
-                    <span>Página 1 de 1 • Informe Confidencial</span>
-                </div>
-                <p>
-                    <strong>Aviso Legal y Certificación Referencial:</strong> Informe pro-forma generado según las normativas del Código del Trabajo, Ley 19.728 (AFC), Ley 16.744 (SUSESO), Ley 21.561 (40 Horas / 42h en 2026) y parámetros oficiales de Previred al 2026. Esta estimación es de carácter referencial y presupuestario. Se recomienda validar la tasa de cotización adicional específica con su respectiva mutualidad (ACHS, Mutual CChC, IST o ISL).
-                </p>
-            </div>
-        </div>
-        `;
-    }
-
     // Estilos CSS incrustados para renderizado nítido y A4 print
     function getEstilosInforme() {
         return `
@@ -330,7 +111,7 @@
                     margin: 0;
                     padding: 0;
                     background: #ffffff !important;
-                    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-family: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
@@ -348,13 +129,13 @@
 
             .informe-a4-page {
                 background: #ffffff;
-                max-width: 800px;
+                max-width: 820px;
                 margin: 0 auto;
-                padding: 24px;
+                padding: 28px 32px;
                 border: 1px solid #e2e8f0;
                 border-radius: 16px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+                font-family: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 position: relative;
                 color: #0f172a;
             }
@@ -366,14 +147,14 @@
 
             .watermark-badge {
                 position: absolute;
-                top: 35%;
+                top: 40%;
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(-25deg);
                 font-size: 26px;
                 font-weight: 900;
                 color: rgba(225, 29, 72, 0.14);
                 border: 4px dashed rgba(225, 29, 72, 0.25);
-                padding: 12px 28px;
+                padding: 14px 32px;
                 border-radius: 12px;
                 text-transform: uppercase;
                 letter-spacing: 2px;
@@ -384,14 +165,14 @@
             }
 
             .logo-box {
-                width: 32px;
-                height: 32px;
+                width: 34px;
+                height: 34px;
                 border-radius: 8px;
-                background-color: #0ea5e9;
+                background-color: #0284c7 !important;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+                box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
             }
 
             .badge-dt-conforme {
@@ -401,7 +182,7 @@
                 border: 1px solid #a7f3d0;
                 font-size: 10px;
                 font-weight: 800;
-                padding: 2px 8px;
+                padding: 3px 10px;
                 border-radius: 9999px;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
@@ -409,83 +190,327 @@
 
             .tabla-comparativa {
                 width: 100%;
-                border-collapse: collapse;
+                border-collapse: separate;
+                border-spacing: 0;
                 font-size: 11px;
-                border: 1px solid #e2e8f0;
-                border-radius: 8px;
+                border: 1px solid #cbd5e1;
+                border-radius: 10px;
                 overflow: hidden;
             }
 
             .tabla-comparativa th {
                 background-color: #f8fafc;
-                padding: 8px 10px;
+                padding: 9px 12px;
                 text-align: left;
-                font-weight: 700;
+                font-weight: 800;
                 color: #0f172a;
                 border-bottom: 2px solid #cbd5e1;
+                border-right: 1px solid #e2e8f0;
                 font-size: 10.5px;
             }
 
+            .tabla-comparativa th:last-child {
+                border-right: none;
+            }
+
             .tabla-comparativa th.col-indef {
-                background-color: #f0f9ff;
+                background-color: #e0f2fe;
                 color: #0369a1;
                 border-bottom: 2px solid #0284c7;
             }
 
             .tabla-comparativa td {
-                padding: 6px 10px;
-                border-bottom: 1px solid #f1f5f9;
+                padding: 7px 12px;
+                border-bottom: 1px solid #e2e8f0;
+                border-right: 1px solid #f1f5f9;
                 vertical-align: middle;
             }
 
+            .tabla-comparativa td:last-child {
+                border-right: none;
+            }
+
+            .tabla-comparativa tr:last-child td {
+                border-bottom: none;
+            }
+
             .tabla-comparativa tr.fila-destacada td {
-                background-color: #f8fafc;
-                border-top: 2px solid #cbd5e1;
-                border-bottom: 2px solid #cbd5e1;
+                background-color: #f0fdf4;
+                border-top: 2px solid #0284c7;
+                border-bottom: 2px solid #0284c7;
+            }
+
+            .tabla-comparativa tr.fila-destacada td:nth-child(2) {
+                background-color: #e0f2fe !important;
             }
 
             .tag-riesgo {
                 display: inline-block;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-size: 9px;
+                padding: 2.5px 8px;
+                border-radius: 6px;
+                font-size: 9.5px;
                 font-weight: 800;
                 text-transform: uppercase;
+                letter-spacing: 0.3px;
             }
 
             .tag-bajo {
                 background-color: #dcfce7;
                 color: #15803d;
+                border: 1px solid #bbf7d0;
             }
 
             .tag-medio {
                 background-color: #fef3c7;
                 color: #b45309;
+                border: 1px solid #fde68a;
             }
 
             .tag-alto {
                 background-color: #ffe4e6;
                 color: #be123c;
+                border: 1px solid #fecdd3;
             }
 
             .box-alerta-riesgo {
                 background-color: #fff1f2;
                 border: 1px solid #fecdd3;
-                border-left: 4px solid #e11d48;
-                padding: 10px 12px;
-                border-radius: 8px;
+                border-left: 5px solid #e11d48;
+                padding: 12px 14px;
+                border-radius: 10px;
             }
 
             .badge-alerta {
                 background-color: #e11d48;
                 color: #ffffff;
-                font-size: 9px;
+                font-size: 9.5px;
                 font-weight: 900;
-                padding: 2px 6px;
-                border-radius: 4px;
+                padding: 2.5px 7px;
+                border-radius: 5px;
                 letter-spacing: 0.5px;
+                display: inline-block;
             }
         </style>
+        `;
+    }
+
+    // Plantilla HTML del Informe Ejecutivo A4
+    function generarHTMLInforme(data, esVistaPrevia) {
+        var ind = data.indefinido;
+        var plz = data.plazo;
+        var hon = data.honorarios;
+
+        var marcaAguaClase = esVistaPrevia ? 'con-marca-agua' : '';
+        var estilos = getEstilosInforme();
+
+        return estilos + `
+        <div class="informe-a4-page ${marcaAguaClase}">
+            ${esVistaPrevia ? '<div class="watermark-badge">VISTA PREVIA DE EJEMPLO • CÁLCULO LABORAL</div>' : ''}
+            
+            <!-- ENCABEZADO OFICIAL -->
+            <div class="informe-header">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="logo-box">
+                            <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M30 84h40M38 79h24"></path>
+                                <path d="M50 22v57"></path>
+                                <path d="M50 14l-2 4h4l-2-4v8"></path>
+                                <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                                <path d="M18 36l-8 18h16Z"></path>
+                                <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                <path d="M82 36l-8 18h16Z"></path>
+                                <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                                <path d="M58 43.5v20h10"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-extrabold text-lg tracking-tight text-slate-900 block leading-tight">Cálculo<span class="text-sky-600">Laboral</span></span>
+                            <span class="text-[9px] text-slate-500 uppercase tracking-widest font-mono">Plataforma de Inteligencia Laboral para Pymes</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="badge-dt-conforme">DT Chile Conforme 2026</span>
+                        <div class="text-[10.5px] text-slate-600 font-mono mt-0.5">Folio: <strong class="text-slate-900">${data.folio}</strong></div>
+                        <div class="text-[10px] text-slate-400 font-mono">Emisión: ${data.fecha}</div>
+                    </div>
+                </div>
+
+                <div class="text-center my-3.5">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-sky-800 bg-sky-100/70 px-3 py-1 rounded-full border border-sky-200">
+                        Documento Oficial de Decisión Estratégica & Presupuesto
+                    </span>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight mt-2">
+                        Informe Ejecutivo de Presupuesto Laboral & Matriz 3 Vías
+                    </h1>
+                    <p class="text-xs text-slate-600 max-w-xl mx-auto mt-1 leading-relaxed">
+                        Evaluación integral de costos reales, aportes patronales obligatorios, pasivos laborales ocultos y contingencias inspectivas DT para: <strong class="text-slate-900">${data.cargo}</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FICHA RESUMEN DE NEGOCIACIÓN -->
+            <div class="grid grid-cols-4 gap-3 my-4 p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs">
+                <div>
+                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Sueldo Acordado Líquido</span>
+                    <span class="font-mono font-extrabold text-slate-900 text-sm block mt-0.5">${formatCLP(ind.sueldoLiquido)}</span>
+                </div>
+                <div>
+                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Sueldo Base Mensual</span>
+                    <span class="font-mono font-bold text-slate-800 text-sm block mt-0.5">${formatCLP(ind.sueldoBase)}</span>
+                </div>
+                <div>
+                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Colación + Movilización</span>
+                    <span class="font-mono font-semibold text-slate-700 text-sm block mt-0.5">${formatCLP(ind.asignacionesNoImponibles)}</span>
+                </div>
+                <div>
+                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Tasa Mutual Estimada</span>
+                    <span class="font-mono font-semibold text-slate-700 text-sm block mt-0.5">${(ind.costoMutual / (ind.totalImponible || 1) * 100).toFixed(2)}%</span>
+                </div>
+            </div>
+
+            <!-- EL COMPARADOR ESTRATÉGICO DE 3 COLUMNAS -->
+            <div class="my-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                        Comparativa Estratégica de Contratación (3 Vías Posibles)
+                    </h2>
+                    <span class="text-[10px] text-slate-500 font-medium">Análisis financiero y legal certificado</span>
+                </div>
+
+                <table class="tabla-comparativa">
+                    <thead>
+                        <tr>
+                            <th class="w-1/4">Criterio de Decisión</th>
+                            <th class="w-1/4 col-indef">1. Contrato Indefinido (Estándar)</th>
+                            <th class="w-1/4 col-plazo">2. Contrato a Plazo Fijo</th>
+                            <th class="w-1/4 col-hon">3. Boleta de Honorarios</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold text-slate-700">Líquido que recibe el colaborador</td>
+                            <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.sueldoLiquido)}</td>
+                            <td class="font-mono font-bold text-slate-900">${formatCLP(plz.sueldoLiquido)}</td>
+                            <td class="font-mono font-bold text-slate-900">${formatCLP(hon.montoLiquido)}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold text-slate-700">Total Imponible Bruto / Facturado</td>
+                            <td class="font-mono text-slate-800 bg-sky-50/50">${formatCLP(ind.totalImponible)}</td>
+                            <td class="font-mono text-slate-800">${formatCLP(plz.totalImponible)}</td>
+                            <td class="font-mono text-slate-800">${formatCLP(hon.montoBruto)} <span class="text-[9.5px] text-slate-500">(Ret. 14,5%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold text-slate-700">Aportes Patronales (SIS, AFC, Mutual)</td>
+                            <td class="font-mono font-semibold text-emerald-700 bg-sky-50/50">+${formatCLP(ind.totalAportesPatronales)}</td>
+                            <td class="font-mono font-semibold text-emerald-700">+${formatCLP(plz.totalAportesPatronales)} <span class="text-[9px] text-slate-400 block">(AFC 3,0%)</span></td>
+                            <td class="font-mono text-slate-400">$0 aparente</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold text-slate-700">Reserva Pasivos (Vacaciones + Finiquito)</td>
+                            <td class="font-mono font-semibold text-amber-700 bg-sky-50/50">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-600 block">(Vac. + IAS 8,33%)</span></td>
+                            <td class="font-mono font-semibold text-amber-700">+${formatCLP(plz.totalProvisiones)} <span class="text-[9px] text-slate-400 block">(Solo Vacaciones)</span></td>
+                            <td class="font-mono text-slate-400">$0 aparente</td>
+                        </tr>
+                        <tr class="fila-destacada">
+                            <td class="font-black text-slate-900 text-xs">COSTO REAL MENSUAL EMPRESA</td>
+                            <td class="font-mono font-black text-sky-800 text-base">${formatCLP(ind.costoEmpresaTotal)}</td>
+                            <td class="font-mono font-black text-slate-900 text-sm">${formatCLP(plz.costoEmpresaTotal)}</td>
+                            <td class="font-mono font-bold text-slate-600 text-sm">${formatCLP(hon.costoEmpresaMensual)}*</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold text-slate-700">Presupuesto Anual Consolidado (12m)</td>
+                            <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.costoEmpresaAnual)}</td>
+                            <td class="font-mono font-bold text-slate-900">${formatCLP(plz.costoEmpresaAnual)}</td>
+                            <td class="font-mono text-slate-700">${formatCLP(hon.costoEmpresaAnual)}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold text-slate-700">Factor Multiplicador sobre Líquido</td>
+                            <td class="font-mono font-bold text-sky-700 bg-sky-50/50">${ind.factorMultiplicador.toFixed(2)}x</td>
+                            <td class="font-mono font-bold text-slate-700">${plz.factorMultiplicador.toFixed(2)}x</td>
+                            <td class="font-mono text-slate-600">${hon.factorMultiplicador.toFixed(2)}x</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold text-slate-700">Semáforo de Riesgo Inspectivo DT</td>
+                            <td class="bg-sky-50/50"><span class="tag-riesgo tag-bajo">BAJO (Blindado)</span></td>
+                            <td><span class="tag-riesgo tag-medio">MEDIO (Máx 2 renovaciones)</span></td>
+                            <td><span class="tag-riesgo tag-alto">CRÍTICO (Riesgo Demanda)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MATRIZ DE RIESGO: BOLETA DE HONORARIOS VS REALIDAD DT -->
+            <div class="box-alerta-riesgo my-4">
+                <div class="flex items-start gap-3">
+                    <span class="badge-alerta shrink-0">ALERTA LEGAL DT</span>
+                    <div>
+                        <h3 class="text-xs font-black text-rose-950">
+                            Peligro de Contingencia Oculta por Prestación a Honorarios (Art. 7 y 8 Código del Trabajo)
+                        </h3>
+                        <p class="text-[11px] text-rose-900 leading-relaxed mt-1">
+                            Si contratas a honorarios pero la persona <strong>cumple horario, tiene jefatura directa, correo corporativo o exclusividad</strong>, la Dirección del Trabajo y los Tribunales calificarán la relación como un <strong>contrato de trabajo encubierto</strong>.
+                        </p>
+                        <div class="grid grid-cols-3 gap-2.5 mt-2.5 pt-2.5 border-t border-rose-200/90 text-[10px] text-rose-950 leading-snug">
+                            <div><strong>1. Pago Retroactivo:</strong> Todas las imposiciones adeudadas (AFP, Salud, AFC, Mutual) con reajustes e intereses acumulados.</div>
+                            <div><strong>2. Ley Bustos (Art. 162):</strong> La empresa debe pagar el sueldo íntegro de cada mes transcurrido durante el juicio laboral.</div>
+                            <div><strong>3. Multas DT:</strong> De 10 a 60 UTM ($696.000 a $4.176.000) por trabajador no escriturado según tamaño de empresa.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESGLOSE CONTABLE ITEMIZADO (PARA CONTADOR Y SOCIOS) -->
+            <div class="my-4">
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-900 mb-2">
+                    Desglose Contable Itemizado (Contrato Indefinido - Moneda CLP)
+                </h3>
+                <div class="grid grid-cols-2 gap-3 text-[11px]">
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                        <span class="font-bold text-slate-900 block text-[10px] uppercase tracking-wider mb-1">Aportes Patronales Obligatorios (Costo Directo)</span>
+                        <div class="flex justify-between text-slate-700"><span>Seguro Invalidez y Sobrevivencia (SIS 1,49%):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoSis)}</span></div>
+                        <div class="flex justify-between text-slate-700"><span>Seguro Cesantía AFC Empleador (2,40%):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoAfcEmp)}</span></div>
+                        <div class="flex justify-between text-slate-700"><span>Mutualidad y Ley SANNA (Ley 16.744):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoMutual)}</span></div>
+                        <div class="flex justify-between pt-1.5 border-t border-slate-200 font-bold text-emerald-800"><span>Total Leyes Sociales Empresa:</span><span class="font-mono text-emerald-700">${formatCLP(ind.totalAportesPatronales)}</span></div>
+                    </div>
+                    <div class="p-3 bg-amber-50/50 border border-amber-200 rounded-xl space-y-1.5">
+                        <span class="font-bold text-amber-900 block text-[10px] uppercase tracking-wider mb-1">Reserva Mensual de Pasivos Laborales (Provisiones)</span>
+                        <div class="flex justify-between text-slate-700"><span>Provisión Vacaciones Legales (4,17% mensual):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.provVacaciones)}</span></div>
+                        <div class="flex justify-between text-slate-700"><span>Provisión Indemnización Años Servicio (8,33%):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.provIas)}</span></div>
+                        <div class="flex justify-between pt-1.5 border-t border-amber-200 font-bold text-amber-950"><span>Total Reserva Mensual de Caja:</span><span class="font-mono text-amber-900">${formatCLP(ind.totalProvisiones)}</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HOJA DE RUTA Y SIGUIENTE PASO -->
+            <div class="p-3.5 bg-sky-50 border border-sky-200 rounded-xl my-4 text-xs">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="font-extrabold text-sky-950 block text-xs">Siguiente Paso Obligatorio: Escrituración Formal del Contrato</span>
+                        <p class="text-[11px] text-sky-900 mt-0.5 max-w-lg">
+                            El Código del Trabajo otorga un plazo improrrogable de <strong>15 días</strong> desde la incorporación para firmar el contrato (o 5 días si dura menos de 30 días) y debe registrarse obligatoriamente en el portal Mi DT.
+                        </p>
+                    </div>
+                    <div class="text-right shrink-0 pl-3">
+                        <span class="text-[10px] text-slate-500 block">Herramienta legal recomendada:</span>
+                        <span class="text-xs font-bold text-sky-700">Pack Contrato Pyme Word ($12.990)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PIE DE PÁGINA Y DISCLAIMER -->
+            <div class="informe-footer mt-5 pt-3 border-t border-slate-200 text-[9.5px] text-slate-500 leading-relaxed">
+                <div class="flex justify-between items-center mb-1 font-medium text-slate-600">
+                    <span>Cálculo Laboral Chile • calculolaboral.cl • Inteligencia Laboral para Empleadores y Pymes</span>
+                    <span>Página 1 de 1 • Documento Confidencial</span>
+                </div>
+                <p>
+                    <strong>Aviso Legal y Certificación Referencial:</strong> Informe pro-forma emitido conforme al Código del Trabajo de Chile, Ley 19.728 (AFC), Ley 16.744 (Accidentes y Enfermedades Profesionales), Ley 21.561 (40 Horas / 42h en 2026) y normativas de la Superintendencia de Seguridad Social (SUSESO) y Previred vigentes al año 2026. Esta estimación es de carácter referencial y presupuestario. Se recomienda validar la tasa de riesgo específica con su respectivo organismo administrador mutual (ACHS, Mutual CChC, IST o ISL).
+                </p>
+            </div>
+        </div>
         `;
     }
 
