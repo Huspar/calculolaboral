@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calcula el costo real de un despido mal hecho en Chile: recargos del 30% al 100% (Art. 168), devolución AFC empleador y sueldos caídos por Ley Bustos. Auditoría laboral 2026.">
+    <title>Simulador Despido Injustificado Chile 2026 | ¿Cuánto Cuesta una Demanda Laboral?</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://calculolaboral.cl/simulador-despido-injustificado-chile">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Simulador Despido Injustificado Chile 2026 | ¿Cuánto Cuesta una Demanda Laboral?">
+    <meta property="og:description" content="Calcula el costo real de un despido mal hecho en Chile: recargos del 30% al 100% (Art. 168), devolución AFC empleador y sueldos caídos por Ley Bustos. Auditoría laboral 2026.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/simulador-despido-injustificado-chile">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og-image.png">
+    <meta property="og:site_name" content="Cálculo Laboral Chile">
+    <meta property="og:locale" content="es_CL">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Simulador Despido Injustificado Chile 2026 | ¿Cuánto Cuesta una Demanda Laboral?">
+    <meta name="twitter:description" content="Simula el costo de una demanda por despido injustificado: recargo 30% a 100%, devolución AFC y sueldos por Ley Bustos.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og-image.png">
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "SoftwareApplication",
+                "name": "Simulador de Despido Injustificado y Riesgo de Demanda Laboral Chile",
+                "operatingSystem": "All",
+                "applicationCategory": "BusinessApplication",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "CLP"
+                },
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "4.9",
+                    "reviewCount": "184"
+                },
+                "description": "Calculadora forense para estimar la contingencia económica por despido improcedente, recargos del Art. 168, restitución de seguro de cesantía y nulidad del despido por Ley Bustos."
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Inicio",
+                        "item": "https://calculolaboral.cl/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Calculadoras",
+                        "item": "https://calculolaboral.cl/#calculadoras"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Simulador de Despido Injustificado",
+                        "item": "https://calculolaboral.cl/simulador-despido-injustificado-chile"
+                    }
+                ]
+            },
+            {
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "¿Qué recargo se aplica si el despido por necesidades de la empresa es declarado injustificado?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Conforme al Artículo 168 letra a) del Código del Trabajo, si el juez declara que el despido por necesidades de la empresa (Art. 161) fue injustificado o improcedente, se aplica un recargo legal del 30% sobre la indemnización por años de servicio (IAS)."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "¿El empleador debe devolver el descuento del seguro de cesantía (AFC) si pierde el juicio?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Sí. Conforme a la doctrina unificada y vinculante de la Corte Suprema de Chile, si el despido es declarado improcedente o injustificado, el empleador pierde el beneficio de imputar el 1,6% patronal a la indemnización, por lo que la sentencia le ordena restituir íntegramente dicho monto al trabajador con reajustes e intereses."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "¿Cómo opera la nulidad del despido por Ley Bustos si hay cotizaciones impagas?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Según el Artículo 162 del Código del Trabajo (Ley Bustos), si existen cotizaciones previsionales adeudadas (AFP, Salud o AFC) al momento del despido, éste no produce el efecto de poner término al contrato. El empleador queda obligado a pagar todas las remuneraciones íntegras devengadas desde el despido hasta la convalidación formal ante la DT o el tribunal."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "¿Cuál es el plazo legal para demandar por despido injustificado?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "El plazo legal es de 60 días hábiles judiciales (de lunes a sábado) contados desde la separación del trabajador. Si se interpone reclamo previo ante la Inspección del Trabajo, el plazo se suspende pero en ningún caso podrá exceder de 90 días corridos."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "¿Qué recargo aplica si el empleador despide por falta de probidad (Art. 160) y no lo prueba?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Si se despidió invocando alguna causal disciplinaria del Artículo 160 y el empleador no logra acreditarla en juicio, el recargo sobre la indemnización por años de servicio va del 80% al 100% (si el tribunal califica la imputación como carente de todo motivo plausible)."
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+    
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9Y03F1WB8J');
+    </script>
+    
+    <!-- Precompiled Tailwind CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <style>
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @media (max-width: 639px) {
+            .indicators-carousel {
+                display: flex !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+                gap: 0.5rem !important;
+            }
+            .indicator-card {
+                min-width: 125px !important;
+                max-width: 125px !important;
+                width: 125px !important;
+                flex-shrink: 0 !important;
+                scroll-snap-align: start !important;
+            }
+        }
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 0.5rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+                gap: 0.625rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="./" class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
+                        <span class="text-white font-bold text-base tracking-tighter">CL</span>
+                    </div>
+                    <span class="font-bold text-lg tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                </a>
+                <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 rounded-full">Auditoría Legal 2026</span>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-6">
+                <!-- Dropdown Calculadoras -->
+                <div class="relative group">
+                    <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                        Calculadoras
+                        <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                        <div class="p-2 space-y-1">
+                            <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 rounded-lg transition-colors font-bold">Simulador Despido Injustificado</a>
+                            <a href="generador-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Generador Finiquito ($12.990)</a>
+                            <a href="finiquito_calculator" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Calculadora de Finiquito</a>
+                            <a href="sueldo_liquido" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Líquido</a>
+                            <a href="calculadora-horas-extras" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Horas Extras</a>
+                            <a href="calculadora-sueldo-part-time" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Part-Time</a>
+                            <a href="calculadora-vacaciones-proporcionales" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Vacaciones Proporcionales</a>
+                            <a href="calculadora-despido-articulo-160" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Art. 160</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dropdown Guías -->
+                <div class="relative group">
+                    <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                        Guías
+                        <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                        <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                            <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Cómo Reclamar Despido Injustificado</a>
+                            <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Checklist Fiscalización DT (Pymes)</a>
+                            <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Art. 161 Necesidades Empresa</a>
+                            <a href="que-hacer-si-no-te-pagan-el-finiquito" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Si no te Pagan el Finiquito</a>
+                            <a href="como-calcular-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Finiquito</a>
+                            <a href="carta-de-despido-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Carta de Despido (Ejemplos)</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="para-empleadores" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                    <span>Para Empleadores</span>
+                </a>
+
+                <a href="blog" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Blog</a>
+                <a href="contacto" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Contacto</a>
+            </nav>
+
+            <!-- Mobile Menu Trigger -->
+            <details class="md:hidden">
+                <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors active:scale-95 duration-100 cursor-pointer flex items-center" aria-label="Abrir menú de navegación">
+                    <span class="material-icons">menu</span>
+                </summary>
+                <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
+                    <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-2">
+                        <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-rose-700 bg-rose-50 border border-rose-200">Simulador Despido Injustificado</a>
+                        <a href="para-empleadores" class="flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/80">
+                            <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                            <span>Portal Para Empleadores</span>
+                        </a>
+                        <a href="generador-finiquito-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-600 bg-sky-50">Generador Finiquito Notarial ($12.990)</a>
+                        <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Calculadora de Finiquito</a>
+                        <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Guía: Reclamar Despido Injustificado</a>
+                        <a href="contacto" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Contacto</a>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </header>
+
+    <!-- Economic Indicators Bar -->
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
+        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Valor UF</span>
+                <span class="uf-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$39.682,99</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
+                <span class="utm-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$69.611</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Sueldo Mínimo</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$553.553</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope AFP</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">89.9 UF</span>
+            </div>
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope Finiquito</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">90 UF</span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center mt-1.5 sm:mt-2 px-0.5 text-[10px] text-slate-500 font-medium">
+            <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500 text-[10px]">
+                <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
+                <span>Valores oficiales vigentes vigentes al año 2026 (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT</a>)</span>
+            </div>
+            <a href="finiquito_calculator" class="text-sky-500 hover:underline flex items-center gap-0.5 text-[10px]">
+                <span>Calculadora Básica</span>
+                <span class="material-icons text-[11px]">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow pt-3 pb-16">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-4" aria-label="Breadcrumb">
+                <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
+                <span class="material-icons text-xs">chevron_right</span>
+                <a href="#calculadoras" class="hover:text-sky-500 transition-colors">Calculadoras</a>
+                <span class="material-icons text-xs">chevron_right</span>
+                <span class="text-slate-700 font-semibold">Simulador de Despido Injustificado</span>
+            </nav>
+
+            <!-- Hero Section -->
+            <div class="mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200/80 mb-3 shadow-2xs">
+                    <span class="material-icons text-sm text-rose-600">gavel</span>
+                    <span>Auditoría de Riesgo Judicial Laboral — Chile 2026</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                    Simulador de Despido Injustificado: <br class="hidden sm:inline">
+                    <span class="text-rose-600">¿Cuánto Cuesta un Error Legal en Tribunales?</span>
+                </h1>
+                <p class="text-sm sm:text-base text-slate-600 max-w-3xl mt-2 leading-relaxed">
+                    Descubre la enorme diferencia entre finiquitar de forma blindada versus perder un juicio laboral: calcula los <strong>recargos del 30% al 100%</strong> (Art. 168), la <strong>devolución obligatoria del seguro de cesantía (AFC)</strong> y los <strong>sueldos caídos acumulados por Ley Bustos</strong>.
+                </p>
+
+                <!-- Selector de Modo (Perfil) -->
+                <div class="mt-6 max-w-md bg-slate-200/70 p-1 rounded-2xl flex items-center border border-slate-300/80">
+                    <button id="tab-modo-empleador" type="button" class="flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-xl transition-all bg-white text-slate-900 shadow-sm border border-slate-200/80 flex items-center justify-center gap-1.5">
+                        <span class="material-icons text-base text-slate-700">business</span>
+                        <span>Soy Empleador (Evaluar Riesgo)</span>
+                    </button>
+                    <button id="tab-modo-trabajador" type="button" class="flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-xl transition-all text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5">
+                        <span class="material-icons text-base text-slate-600">badge</span>
+                        <span>Soy Trabajador (Calcular Demanda)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- GRID PRINCIPAL DE LA HERRAMIENTA -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                <!-- COLUMNA IZQUIERDA: FORMULARIO INTERACTIVO (7 cols) -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm space-y-6">
+
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span class="material-icons text-sky-500">tune</span>
+                            <span>1. Parámetros del Contrato y Despido</span>
+                        </h2>
+                        <span class="text-xs font-semibold text-slate-400">Paso 1 de 2</span>
+                    </div>
+
+                    <!-- Sueldo Imponible -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="sim-sueldo" class="text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-1">
+                                Última Remuneración Mensual Imponible (Bruto)
+                            </label>
+                            <span class="text-[11px] font-semibold text-slate-400">Tope IAS: 90 UF ($3.571.469)</span>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold">$</span>
+                            <input type="text" id="sim-sueldo" value="$900.000" inputmode="numeric" class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base sm:text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Sueldo base + gratificación legal + promedio de comisiones variables (últimos 3 meses).</p>
+                    </div>
+
+                    <!-- Antigüedad Laboral -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="sim-anios" class="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5">Años de Servicio</label>
+                            <select id="sim-anios" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
+                                <option value="0">Menos de 1 año</option>
+                                <option value="1">1 año</option>
+                                <option value="2">2 años</option>
+                                <option value="3" selected>3 años</option>
+                                <option value="4">4 años</option>
+                                <option value="5">5 años</option>
+                                <option value="6">6 años</option>
+                                <option value="7">7 años</option>
+                                <option value="8">8 años</option>
+                                <option value="9">9 años</option>
+                                <option value="10">10 años</option>
+                                <option value="11">11 o más años (tope legal)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="sim-meses" class="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5">Meses Adicionales</label>
+                            <select id="sim-meses" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
+                                <option value="0">0 meses</option>
+                                <option value="2" selected>2 meses</option>
+                                <option value="4">4 meses</option>
+                                <option value="6">6 meses</option>
+                                <option value="7">7 meses (suma 1 año extra)</option>
+                                <option value="9">9 meses (suma 1 año extra)</option>
+                                <option value="11">11 meses (suma 1 año extra)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-200/80 -mt-2">
+                        ⚖️ <strong>Regla Art. 163 CT:</strong> Si la fracción de meses trabajados supera los 6 meses, la ley la computa automáticamente como un año entero adicional de indemnización.
+                    </p>
+
+                    <!-- Causal Invocada / En Disputa -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-2">Causal Invocada en la Carta de Despido</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="sim-causal" value="art161" checked class="peer sr-only">
+                                <div class="p-3 border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50/70 peer-checked:text-sky-950 hover:bg-slate-50 transition-all">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-xs">Art. 161: Necesidades de la Empresa</span>
+                                        <span class="text-[10px] font-extrabold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">+30%</span>
+                                    </div>
+                                    <span class="block text-[11px] text-slate-500 mt-1">Causal más común impugnada por falta de justificación económica.</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="sim-causal" value="art159" class="peer sr-only">
+                                <div class="p-3 border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50/70 peer-checked:text-sky-950 hover:bg-slate-50 transition-all">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-xs">Art. 159: Término / Sin Causal</span>
+                                        <span class="text-[10px] font-extrabold px-2 py-0.5 bg-orange-100 text-orange-800 rounded-full">+50%</span>
+                                    </div>
+                                    <span class="block text-[11px] text-slate-500 mt-1">Fin de faena o plazo fijo simulado, o renuncia forzada.</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="sim-causal" value="art160_80" class="peer sr-only">
+                                <div class="p-3 border border-slate-200 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50/70 peer-checked:text-rose-950 hover:bg-slate-50 transition-all">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-xs">Art. 160: Disciplinario Estándar</span>
+                                        <span class="text-[10px] font-extrabold px-2 py-0.5 bg-rose-100 text-rose-800 rounded-full">+80%</span>
+                                    </div>
+                                    <span class="block text-[11px] text-slate-500 mt-1">Falta de probidad, injurias, incumplimiento grave no probado.</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="sim-causal" value="art160_100" class="peer sr-only">
+                                <div class="p-3 border border-slate-200 rounded-xl peer-checked:border-rose-600 peer-checked:bg-rose-50/90 peer-checked:text-rose-950 hover:bg-slate-50 transition-all">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-xs">Art. 160: Imputación Temeraria</span>
+                                        <span class="text-[10px] font-extrabold px-2 py-0.5 bg-rose-200 text-rose-900 rounded-full">+100%</span>
+                                    </div>
+                                    <span class="block text-[11px] text-slate-500 mt-1">Acusación carente de todo motivo plausible ante el tribunal.</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Agravantes y Opciones Críticas -->
+                    <div class="pt-4 border-t border-slate-100 space-y-3.5">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">2. Factores de Riesgo y Agravantes Judiciales</h3>
+
+                        <!-- Aviso Previo Checkbox -->
+                        <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition-colors">
+                            <input type="checkbox" id="sim-aviso-previo" checked class="mt-0.5 rounded text-sky-500 focus:ring-sky-400">
+                            <div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-800 block">¿Se dio aviso previo formal con 30 días de anticipación?</span>
+                                <span class="text-[11px] text-slate-500">Si no se dio aviso formal por escrito, la ley condena a pagar 1 mes de sueldo íntegro adicional.</span>
+                            </div>
+                        </label>
+
+                        <!-- Devolución AFC (Art. 13 Ley 19.728) -->
+                        <div id="block-afc-option" class="p-3 rounded-xl border border-slate-200 bg-slate-50/50 transition-all">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="sim-afc-descuento" checked class="mt-0.5 rounded text-sky-500 focus:ring-sky-400">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs sm:text-sm font-bold text-slate-800">¿El empleador descontó el aporte patronal AFC del finiquito?</span>
+                                        <span class="text-[10px] font-bold px-1.5 py-0.5 bg-red-100 text-red-700 rounded">Corte Suprema</span>
+                                    </div>
+                                    <span class="text-[11px] text-slate-500 block mt-0.5">La jurisprudencia unificada de la Corte Suprema obliga a devolver íntegramente este descuento si el despido es declarado improcedente.</span>
+                                </div>
+                            </label>
+                            <div id="sim-afc-monto-container" class="mt-2.5 pl-6 flex items-center gap-3">
+                                <span class="text-xs text-slate-500">Monto exacto descontado (opcional):</span>
+                                <input type="text" id="sim-afc-monto" placeholder="Cálculo auto (1.6% mes)" class="w-44 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                            </div>
+                        </div>
+
+                        <!-- ALERTA CRÍTICA: LEY BUSTOS (COTIZACIONES IMPAGAS) -->
+                        <div class="p-4 rounded-2xl border-2 border-rose-300 bg-rose-50/80 shadow-xs">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="sim-ley-bustos" class="mt-1 w-4 h-4 rounded text-rose-600 focus:ring-rose-500">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs sm:text-sm font-extrabold text-rose-950 flex items-center gap-1">
+                                            <span class="material-icons text-sm text-rose-600">warning</span>
+                                            ¿Existen cotizaciones previsionales impagas al despedir? (Ley Bustos)
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-rose-800 mt-1 leading-snug">
+                                        <strong>Peligro Extremo:</strong> Conforme al Art. 162 inc. 5º del Código del Trabajo, el despido <strong>no extingue el contrato</strong>. El empleador queda obligado a pagar todos los sueldos mensuales íntegros devengados hasta la fecha de convalidación en tribunal.
+                                    </p>
+                                </div>
+                            </label>
+
+                            <!-- Slider Meses Juicio Ley Bustos -->
+                            <div id="container-meses-bustos" class="hidden mt-3 pt-3 border-t border-rose-200/80 pl-7 space-y-2">
+                                <div class="flex justify-between items-center text-xs font-bold text-rose-900">
+                                    <span>Meses estimados de juicio hasta convalidación:</span>
+                                    <span id="val-meses-bustos" class="font-mono text-sm px-2 py-0.5 bg-rose-200 text-rose-900 rounded-md">5 meses</span>
+                                </div>
+                                <input type="range" id="sim-meses-bustos" min="2" max="12" value="5" class="w-full accent-rose-600 cursor-pointer">
+                                <div class="flex justify-between text-[10px] text-rose-700 font-mono">
+                                    <span>2 meses (mínimo)</span>
+                                    <span>5-6 meses (promedio real)</span>
+                                    <span>12 meses</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Costas Procesales -->
+                        <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition-colors">
+                            <input type="checkbox" id="sim-incluir-costas" checked class="mt-0.5 rounded text-sky-500 focus:ring-sky-400">
+                            <div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-800 block">Incluir estimación de costas personales y judiciales ($800.000)</span>
+                                <span class="text-[11px] text-slate-500">Gastos procesales y honorarios que el juez condena pagar a la parte vencida totalmente.</span>
+                            </div>
+                        </label>
+                    </div>
+
+                </div>
+
+                <!-- COLUMNA DERECHA: DASHBOARD DE RIESGO & CIFRA QUE ASUSTA (5 cols) -->
+                <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
+
+                    <!-- TARJETA PRINCIPAL DE DIAGNÓSTICO -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-7 border-2 border-slate-200/90 shadow-md">
+                        
+                        <!-- Header & Semáforo -->
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Diagnóstico Forense</span>
+                            <div id="res-riesgo-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-amber-100 text-amber-800 border-amber-300">
+                                <span class="w-2 h-2 rounded-full bg-current"></span>
+                                <span>Nivel: Moderado</span>
+                            </div>
+                        </div>
+
+                        <!-- Barra visual de peligro -->
+                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-6">
+                            <div id="res-riesgo-barra" class="h-full bg-amber-500 transition-all duration-500" style="width: 45%;"></div>
+                        </div>
+
+                        <!-- Hero Number Box -->
+                        <div class="p-5 rounded-2xl bg-gradient-to-br from-rose-50 via-red-50 to-orange-50 border border-rose-200 text-center mb-6 shadow-2xs">
+                            <span id="lbl-total-header" class="block text-xs font-bold text-rose-800 uppercase tracking-wider mb-1">
+                                Riesgo Máximo por Demanda Perdida
+                            </span>
+                            <div id="res-total-sentencia" class="text-3xl sm:text-4xl font-extrabold text-rose-600 font-mono tracking-tight my-1.5">
+                                $6.520.000
+                            </div>
+                            <span id="lbl-total-desc" class="block text-[11px] text-rose-700">
+                                Monto total a pagar en caso de sentencia condenatoria desfavorable
+                            </span>
+                        </div>
+
+                        <!-- Comparativa Inicial vs Sobrecosto -->
+                        <div class="grid grid-cols-2 gap-3 mb-6 p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-center">
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Finiquito Inicial</span>
+                                <span id="res-finiquito-inicial" class="text-sm sm:text-base font-bold text-slate-700 font-mono">$2.700.000</span>
+                            </div>
+                            <div class="border-l border-slate-200 pl-3">
+                                <span class="block text-[10px] font-bold text-rose-600 uppercase">Sobrecosto Juicio</span>
+                                <div class="flex items-center justify-center gap-1">
+                                    <span id="res-sobrecosto" class="text-sm sm:text-base font-extrabold text-rose-600 font-mono">+$3.820.000</span>
+                                    <span id="res-porcentaje-incremento" class="text-[10px] font-bold text-rose-700 bg-rose-100 px-1 rounded">+141%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Desglose Rubro por Rubro -->
+                        <div class="space-y-2.5 text-xs text-slate-600 border-t border-slate-100 pt-4">
+                            <div class="flex justify-between items-center py-1">
+                                <span class="flex items-center gap-1 text-slate-700">
+                                    <span>Indemnización Años de Servicio (IAS)</span>
+                                    <span id="res-anios-desc" class="text-[10px] text-slate-400 font-mono">(3 años)</span>
+                                </span>
+                                <span id="res-ias-base" class="font-mono font-bold text-slate-900">$2.700.000</span>
+                            </div>
+
+                            <div class="flex justify-between items-center py-1 text-rose-700 bg-rose-50/50 px-2 rounded-lg">
+                                <span class="flex items-center gap-1 font-semibold">
+                                    <span>Recargo Legal Art. 168</span>
+                                    <span id="res-recargo-pct" class="text-[10px] font-mono font-bold">(+30%)</span>
+                                </span>
+                                <span id="res-recargo-monto" class="font-mono font-extrabold text-rose-600">+$810.000</span>
+                            </div>
+
+                            <div class="flex justify-between items-center py-1">
+                                <span class="text-slate-700">Indemnización Sustitutiva Aviso Previo</span>
+                                <span id="res-aviso-previo" class="font-mono font-semibold text-slate-800">$0</span>
+                            </div>
+
+                            <div class="flex justify-between items-center py-1 text-amber-900 bg-amber-50/50 px-2 rounded-lg">
+                                <span class="font-semibold">Reintegro forzoso descuento AFC (Corte Suprema)</span>
+                                <span id="res-reintegro-afc" class="font-mono font-bold text-amber-800">+$518.400</span>
+                            </div>
+
+                            <!-- Fila Ley Bustos (Condicional) -->
+                            <div id="row-ley-bustos" class="hidden flex justify-between items-center py-1 text-rose-950 bg-rose-100/70 px-2 rounded-lg border border-rose-300">
+                                <span class="font-extrabold flex items-center gap-1">
+                                    <span class="material-icons text-xs text-rose-600">error</span>
+                                    Sueldos Caídos Ley Bustos
+                                </span>
+                                <span id="res-ley-bustos" class="font-mono font-extrabold text-rose-700">+$4.500.000</span>
+                            </div>
+
+                            <!-- Fila Costas -->
+                            <div id="row-costas" class="flex justify-between items-center py-1 text-slate-500">
+                                <span>Costas procesales y personales estimadas</span>
+                                <span id="res-costas" class="font-mono font-medium text-slate-700">+$800.000</span>
+                            </div>
+                        </div>
+
+                        <!-- EMBUDO DE MONETIZACIÓN B2B: BLOQUE EMPLEADOR -->
+                        <div id="cta-bloque-empleador" class="mt-6 pt-5 border-t border-slate-100 space-y-3">
+                            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+                                🛡️ <strong>¿Cómo evitar este riesgo en tu empresa?</strong> El 90% de las demandas laborales se ganan por errores de redacción en la carta de aviso o por finiquitos sin reserva de derechos limitada.
+                            </div>
+
+                            <!-- CTA 1: Generador Finiquito Blindado ($12.990) -->
+                            <a href="generador-finiquito-chile" class="w-full py-3.5 px-4 bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-sky-500/20 hover:shadow-lg hover:shadow-sky-500/30 flex items-center justify-center gap-2 transition-all no-underline" style="color: #ffffff !important;">
+                                <span class="material-icons text-base text-white">verified_user</span>
+                                <span class="text-white">Generar Finiquito Notarial Blindado ($12.990)</span>
+                            </a>
+
+                            <!-- CTA 2: Kit Blindaje Pyme ($19.990) -->
+                            <a href="https://www.flow.cl/btn.php?token=cd8bf90f335b1576dfcf71a788713ea8db36f4c0" target="_blank" rel="noopener noreferrer" class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all no-underline border border-slate-700" style="color: #ffffff !important;">
+                                <span class="material-icons text-sm text-white">shield</span>
+                                <span class="text-white">Descargar Kit de Blindaje Pyme Completo ($19.990)</span>
+                            </a>
+                            <p class="text-[10px] text-center text-slate-400">Incluye contratos 40h, anexos, checklist fiscalización DT y modelos de desvinculación.</p>
+                        </div>
+
+                        <!-- EMBUDO DE MONETIZACIÓN B2C: BLOQUE TRABAJADOR -->
+                        <div id="cta-bloque-trabajador" class="hidden mt-6 pt-5 border-t border-slate-100 space-y-4">
+                            <div class="p-3 bg-sky-50 rounded-xl border border-sky-200 text-sky-950 text-xs leading-relaxed">
+                                ⚖️ <strong>Tu empleador te adeuda esta cifra si el despido es injustificado.</strong> Recuerda que dispones de <strong>60 días hábiles</strong> para demandar en tribunales.
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                <h4 class="text-xs font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                                    <span class="material-icons text-sm text-sky-500">contact_support</span>
+                                    <span>Conectar con un Abogado Laboral Colaborador</span>
+                                </h4>
+                                <p class="text-[11px] text-slate-500 mb-3">Evaluación sin costo inicial. La mayoría de los juicios se cobran a porcentaje sobre lo que se gane en el juicio (cuota litis).</p>
+
+                                <form id="sim-lead-form" class="space-y-2.5">
+                                    <div>
+                                        <input type="text" id="sim-lead-nombre" placeholder="Nombre completo" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="email" id="sim-lead-correo" placeholder="Correo electrónico" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                                        <input type="tel" id="sim-lead-telefono" placeholder="WhatsApp (+569...)" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                                    </div>
+                                    <div>
+                                        <input type="text" id="sim-lead-ciudad" placeholder="Ciudad o Comuna" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                                    </div>
+                                    <div>
+                                        <textarea id="sim-lead-detalle" rows="2" placeholder="¿Qué ocurrió en tu despido? (ej. me dijeron necesidades de la empresa pero contrataron a otro)" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"></textarea>
+                                    </div>
+                                    <label class="flex items-start gap-2 text-[10px] text-slate-500 cursor-pointer">
+                                        <input type="checkbox" id="sim-lead-consent" checked class="mt-0.5 rounded text-sky-500">
+                                        <span>Acepto ser contactado para la revisión legal confidencial de mi caso.</span>
+                                    </label>
+                                    <button type="submit" id="sim-lead-btn" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5" style="color: #ffffff !important;">
+                                        <span class="material-icons text-sm text-white">gavel</span>
+                                        <span class="text-white">Solicitar Evaluación Gratuita con Abogado</span>
+                                    </button>
+                                </form>
+
+                                <div id="sim-lead-success" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+                                    <span class="material-icons text-2xl text-emerald-600">check_circle</span>
+                                    <h5 class="text-xs font-bold text-emerald-900 mt-1">¡Antecedentes Recibidos!</h5>
+                                    <p class="text-[11px] text-emerald-700 mt-0.5">Un abogado laboral colaborador revisará tu caso y te contactará a la brevedad por WhatsApp o correo.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Mini Callout Informativo -->
+                    <div class="p-4 bg-slate-100/70 border border-slate-200/80 rounded-2xl flex items-center gap-3">
+                        <span class="material-icons text-slate-400">info</span>
+                        <p class="text-[11px] text-slate-500 leading-normal m-0">
+                            Cálculos actualizados al año 2026. Basados en jurisprudencia de los Juzgados de Letras del Trabajo y Corte Suprema de Chile.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- SECCIÓN EDUCATIVA Y DE AUTORIDAD SEO (LONG-TAIL) -->
+            <section class="mt-16 pt-12 border-t border-slate-200 prose max-w-none text-slate-700">
+                <div class="max-w-4xl mx-auto space-y-10">
+
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-4">
+                            ¿Por qué un Despido Mal Hecho Cuesta Millones en Chile?
+                        </h2>
+                        <p class="text-sm leading-relaxed mb-4">
+                            En el sistema laboral chileno rige el principio de <strong>estabilidad relativa en el empleo</strong>. Esto significa que un empleador no puede desvincular a un trabajador de manera arbitraria o antojadiza; toda desvinculación debe estar subsumida de forma rigurosa en alguna de las causales taxativas de los artículos 159, 160 o 161 del Código del Trabajo.
+                        </p>
+                        <p class="text-sm leading-relaxed mb-4">
+                            Cuando un empleador redacta una carta de despido vaga, sin hechos concretos o invocando causales económicas inexistentes, la ley faculta al trabajador para recurrir a los <strong>Tribunales de Letras del Trabajo</strong> solicitando que el despido sea declarado <em>injustificado, indebido o improcedente</em> conforme al <strong>Artículo 168 del Código del Trabajo</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Cuadro Comparativo de Recargos Legales -->
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                        <div class="bg-slate-900 px-6 py-3.5 text-white font-bold text-sm flex items-center justify-between">
+                            <span>Tabla de Recargos Judiciales por Despido (Art. 168 Código del Trabajo)</span>
+                            <span class="text-xs text-slate-400 font-normal">Vigente 2026</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                                        <th class="p-3.5">Causal Invocada</th>
+                                        <th class="p-3.5">Recargo sobre la IAS</th>
+                                        <th class="p-3.5">Efecto en Seguro Cesantía (AFC)</th>
+                                        <th class="p-3.5">Aviso Previo</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-slate-700">
+                                    <tr>
+                                        <td class="p-3.5 font-bold text-slate-900">Art. 161 (Necesidades de la empresa)</td>
+                                        <td class="p-3.5 font-extrabold text-amber-700">+30% de recargo</td>
+                                        <td class="p-3.5 text-red-600 font-semibold">Devolución forzosa del 1,6% patronal</td>
+                                        <td class="p-3.5">Se mantiene si se pagó; 1 mes si no se dio aviso</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3.5 font-bold text-slate-900">Art. 159 (Vencimiento, faena o mutuo acuerdo simulado)</td>
+                                        <td class="p-3.5 font-extrabold text-orange-700">+50% de recargo</td>
+                                        <td class="p-3.5 text-slate-500">No aplica imputación</td>
+                                        <td class="p-3.5 font-semibold text-rose-600">Se condena a pago de 1 mes de aviso</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3.5 font-bold text-slate-900">Art. 160 (Falta de probidad, injurias, incumplimiento)</td>
+                                        <td class="p-3.5 font-extrabold text-rose-700">+80% de recargo</td>
+                                        <td class="p-3.5 text-slate-500">No aplica imputación</td>
+                                        <td class="p-3.5 font-semibold text-rose-600">Se condena a pago de 1 mes de aviso</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3.5 font-bold text-slate-900">Art. 160 Carente de todo motivo plausible</td>
+                                        <td class="p-3.5 font-extrabold text-rose-800 bg-rose-50/80">+100% de recargo (máximo)</td>
+                                        <td class="p-3.5 text-slate-500">No aplica imputación</td>
+                                        <td class="p-3.5 font-semibold text-rose-600">Se condena a pago de 1 mes de aviso</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- El peligro de la Ley Bustos -->
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-slate-900">El Mayor Riesgo Financiero: La Nulidad del Despido (Ley Bustos)</h3>
+                        <p class="text-sm leading-relaxed">
+                            Muchos empleadores creen que el peor escenario ante una demanda es pagar el recargo del 30%. <strong>Están equivocados</strong>. El verdadero desastre económico para una Pyme ocurre cuando se aplica la <strong>Ley N° 19.631 (Ley Bustos)</strong>, consagrada en los incisos quinto, sexto y séptimo del Artículo 162 del Código del Trabajo.
+                        </p>
+                        <p class="text-sm leading-relaxed">
+                            Si al momento de notificar la carta de despido la empresa no tenía pagadas <strong>la totalidad de las imposiciones previsionales</strong> (AFP, Fonasa o Isapre, y Seguro de Cesantía AFC) devengadas hasta el último día del mes anterior al despido:
+                        </p>
+                        <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl text-rose-950 text-xs sm:text-sm leading-relaxed space-y-1.5">
+                            <p class="font-bold">Efectos Jurídicos de la Ley Bustos:</p>
+                            <ul class="list-disc pl-5 space-y-1 text-xs">
+                                <li>El despido <strong>no produce el efecto de poner término al contrato de trabajo</strong>.</li>
+                                <li>El empleador queda obligado a pagar al trabajador <strong>todas las remuneraciones mensuales íntegras</strong> desde la fecha del despido hasta el día en que pague la totalidad de la deuda previsional y notifique la convalidación al trabajador.</li>
+                                <li>Si el juicio dura 5 o 6 meses, la empresa debe pagar 5 o 6 sueldos íntegros de remuneración, más cotizaciones, multas e intereses penales de la Ley 17.322.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Por qué la Corte Suprema obliga a devolver la AFC -->
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-slate-900">La Devolución Obligatoria del Descuento AFC (Ley 19.728)</h3>
+                        <p class="text-sm leading-relaxed">
+                            El Artículo 13 de la Ley 19.728 permite al empleador deducir de la indemnización por años de servicio el saldo acumulado en la Cuenta Individual de Cesantía (CIC) proveniente del aporte del 1,6% que él mismo pagó durante la relación laboral.
+                        </p>
+                        <p class="text-sm leading-relaxed">
+                            Sin embargo, mediante reiterada y uniforme jurisprudencia de unificación (Roles Corte Suprema N° 22.846-2018, 23.348-2018 y posteriores), nuestro máximo tribunal ha sentado que:
+                        </p>
+                        <blockquote class="p-3 bg-slate-50 border-l-4 border-slate-400 text-xs italic text-slate-600 rounded-r-lg">
+                            «Si el despido por necesidades de la empresa ha sido declarado injustificado, carece de sustento legal la imputación del aporte del empleador a la indemnización, debiendo restituirse la totalidad del monto descontado con los reajustes e intereses de rigor.»
+                        </blockquote>
+                    </div>
+
+                    <!-- 5 Errores Comunes de las Pymes -->
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-slate-900">Los 5 Errores Fatales que Provocan Demandas Perdidas</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                                <h4 class="font-bold text-slate-900 mb-1">1. Cartas de despido genéricas</h4>
+                                <p class="text-slate-600">Copiar una plantilla de internet diciendo "reestructuración interna" sin detallar qué área se cerró ni presentar balances financieros reales ante el tribunal.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                                <h4 class="font-bold text-slate-900 mb-1">2. Contratar un reemplazo inmediatamente</h4>
+                                <p class="text-slate-600">Si se despide por necesidades de la empresa y a las dos semanas se publica un aviso para contratar a otra persona en las mismas funciones, el juicio se pierde de forma inmediata.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                                <h4 class="font-bold text-slate-900 mb-1">3. No consultar el Registro de Pensiones</h4>
+                                <p class="text-slate-600">Pagar el finiquito sin consultar previamente el Registro Nacional de Deudores de Pensiones de Alimentos (Ley 21.389) hace a la empresa solidariamente responsable de la deuda.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                                <h4 class="font-bold text-slate-900 mb-1">4. Ignorar cotizaciones no declaradas</h4>
+                                <p class="text-slate-600">Confiar ciegamente en que "Previred estaba al día" sin descargar los certificados de cotizaciones de AFP, Fonasa y AFC justo antes del despido (riesgo de Ley Bustos).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Acordeón -->
+                    <div class="space-y-4 pt-4 border-t border-slate-100">
+                        <h3 class="text-xl font-bold text-slate-900">Preguntas Frecuentes sobre Demandas y Finiquitos</h3>
+                        
+                        <div class="space-y-3">
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Puedo firmar el finiquito para recibir mi dinero y demandar después?</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    <strong>Sí, absolutamente, siempre y cuando dejes estampada la Reserva de Derechos</strong> de tu puño y letra antes de firmar ante Notario o al ratificar en el portal Mi DT. Debes escribir: <em>"Me reservo el derecho a demandar despido injustificado e improcedente conforme al Art. 168 del Código del Trabajo, recargos legales y devolución del aporte patronal AFC"</em>. El empleador está legalmente obligado a pagarte de inmediato los montos reconocidos en el finiquito (Ley 21.361).
+                                </p>
+                            </div>
+
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Cuánto tiempo dura un juicio laboral en Chile?</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Bajo el procedimiento de aplicación general, un juicio laboral en primera instancia tarda en promedio entre <strong>3 y 6 meses</strong>. Sin embargo, cerca del 70% de los casos se resuelven antes de la sentencia en la <strong>Audiencia Preparatoria</strong> mediante una conciliación acordada entre los abogados y aprobada por el juez.
+                                </p>
+                            </div>
+
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Qué ocurre si el trabajador no firma el finiquito?</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Si el trabajador se niega a firmar, el empleador debe poner el finiquito y el pago a su disposición dentro de los <strong>10 días hábiles</strong> siguientes al despido. Si no hay acuerdo, el empleador debe consignar los fondos ante la Inspección del Trabajo respectiva para evitar multas de la DT y recargos por mora.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enlaces y Fuentes Oficiales -->
+                    <div class="pt-6 border-t border-slate-200 text-xs text-slate-500 space-y-1.5">
+                        <p class="font-bold text-slate-700">Fuentes Legales y Referencias Oficiales:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">Código del Trabajo de Chile (BCN)</a> — Artículos 161, 162, 163, 168, 172 y 177.</li>
+                            <li><a href="https://www.bcn.cl/leychile/navegar?idNorma=198088" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">Ley N° 19.728 sobre Seguro de Desempleo (AFC)</a> — Artículo 13 sobre deducción e imputación.</li>
+                            <li><a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">Dirección del Trabajo de Chile (DT)</a> — Compendio normativo sobre comparendos de conciliación y multas.</li>
+                            <li><a href="https://www.pjud.cl" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">Poder Judicial de Chile</a> — Jurisprudencia unificada de la Corte Suprema en materia de despido improcedente.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer Global -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 text-xs mt-auto">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-6 h-6 rounded bg-sky-500 flex items-center justify-center text-white font-bold text-xs">CL</div>
+                    <span class="font-bold text-sm text-white">Cálculo<span class="text-sky-500">Laboral</span></span>
+                </div>
+                <p class="text-slate-400 text-xs leading-relaxed mb-3">
+                    Plataforma chilena líder en simuladores y herramientas de cálculo conforme a la legislación laboral vigente en 2026.
+                </p>
+                <div class="flex items-center gap-2 text-[11px] text-slate-500">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Actualizado con valores UF, UTM e IMM 2026</span>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Calculadoras</h4>
+                <ul class="space-y-2">
+                    <li><a href="simulador-despido-injustificado-chile" class="text-rose-400 hover:text-white transition-colors font-medium">Simulador Despido Injustificado</a></li>
+                    <li><a href="generador-finiquito-chile" class="hover:text-white transition-colors">Generador Finiquito Notarial</a></li>
+                    <li><a href="finiquito_calculator" class="hover:text-white transition-colors">Calculadora de Finiquito</a></li>
+                    <li><a href="sueldo_liquido" class="hover:text-white transition-colors">Calculadora Sueldo Líquido</a></li>
+                    <li><a href="calculadora-horas-extras" class="hover:text-white transition-colors">Calculadora Horas Extras</a></li>
+                    <li><a href="calculadora-despido-articulo-160" class="hover:text-white transition-colors">Despido Art. 160</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Para Empleadores</h4>
+                <ul class="space-y-2">
+                    <li><a href="para-empleadores" class="hover:text-white transition-colors font-medium text-sky-400">Portal Para Empleadores</a></li>
+                    <li><a href="kit-cumplimiento-laboral-pymes" class="hover:text-white transition-colors">Kit Blindaje Pyme ($19.990)</a></li>
+                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="hover:text-white transition-colors">Checklist Fiscalización DT</a></li>
+                    <li><a href="generador-anexo-40-horas" class="hover:text-white transition-colors">Generador Anexo 40 Horas</a></li>
+                    <li><a href="carta-de-despido-chile" class="hover:text-white transition-colors">Modelos Carta de Despido</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Legal y Contacto</h4>
+                <ul class="space-y-2">
+                    <li><a href="contacto" class="hover:text-white transition-colors">Contacto y Soporte</a></li>
+                    <li><a href="sobre-nosotros" class="hover:text-white transition-colors">Sobre Nosotros</a></li>
+                    <li><a href="terminos" class="hover:text-white transition-colors">Términos y Condiciones</a></li>
+                    <li><a href="privacidad" class="hover:text-white transition-colors">Política de Privacidad</a></li>
+                    <li><a href="disclaimer" class="hover:text-white transition-colors">Descargo Legal (Disclaimer)</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-[1200px] mx-auto px-6 pt-6 border-t border-slate-800 text-center text-slate-500 text-[11px]">
+            <p>© 2026 Cálculo Laboral Chile. Las simulaciones son de carácter estimativo y pedagógico basadas en el Código del Trabajo y no reemplazan la asesoría letrada individualizada.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/simulador_despido.js?v=1.0.0"></script>
+</body>
+</html>
