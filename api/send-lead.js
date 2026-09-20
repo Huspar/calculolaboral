@@ -311,8 +311,9 @@ module.exports = async (req, res) => {
                 </div>
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px;">
                     <strong>Soluciones complementarias para tu empresa:</strong><br>
-                    • <a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #0284c7; font-weight: bold;">Generador de Finiquito Notarial ($12.990)</a>: Cálculo exacto de indemnizaciones, feriado proporcional y documento listo para notaría.<br>
-                    • <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #0284c7; font-weight: bold;">Kit de Blindaje Pyme ($19.990)</a>: Protocolo Ley Karin (DS 44), anexos Ley 40 Horas y carpeta de fiscalización DT.
+                    • <a href="https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile" style="color: #e11d48; font-weight: bold;">Kit Ley 21.719 Protección de Datos ($29.990)</a>: Evita multas de hasta 20.000 UTM ante la nueva APDP y la DT con los 5 instrumentos obligatorios.<br>
+                    • <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #0284c7; font-weight: bold;">Kit de Blindaje Pyme ($19.990)</a>: Protocolo Ley Karin (DS 44), anexos Ley 40 Horas y carpeta de fiscalización DT.<br>
+                    • <a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #0284c7; font-weight: bold;">Generador de Finiquito Notarial ($12.990)</a>: Cálculo exacto de indemnizaciones, feriado proporcional y documento listo para notaría.
                 </div>
             `;
             userHtml = buildEmailHtml({ title: 'Tus Modelos de Carta de Despido (.docx) 📄', intro: userIntro, body: userBody });
