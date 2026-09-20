@@ -589,34 +589,37 @@
         `;
     }
 
-    // Modal interactivo de Vista Previa In-Page (Anti-copia, interactivo y con scroll perfecto)
+    // Modal interactivo de Vista Previa In-Page (Anti-copia, interactivo y con scroll garantizado)
     function mostrarModalPreviewInforme(data) {
         var prevModal = document.getElementById('modal-preview-informe-container');
         if (prevModal) {
             prevModal.remove();
-            document.body.style.overflow = '';
         }
 
         var contenidoHTML = generarHTMLInforme(data, true);
 
-        // Bloquear scroll de la página de fondo
+        // 1. Bloqueo 100% infranqueable del scroll del fondo (HTML + BODY)
+        document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
+        document.body.style.touchAction = 'none';
 
+        // 2. Contenedor exterior FIXED INSET-0 con OVERFLOW-Y-AUTO nativo (Scroll asegurado en todo el viewport)
         var modal = document.createElement('div');
         modal.id = 'modal-preview-informe-container';
-        modal.className = 'fixed inset-0 bg-slate-950/85 z-[9999] flex items-center justify-center p-2 sm:p-4 md:p-6 backdrop-blur-sm no-print';
+        modal.className = 'fixed inset-0 z-[100000] bg-slate-950/90 backdrop-blur-sm overflow-y-auto overscroll-contain flex flex-col items-center py-3 sm:py-6 px-2 sm:px-4 no-print';
         modal.style.boxSizing = 'border-box';
+        modal.style.webkitOverflowScrolling = 'touch';
         modal.innerHTML = `
-            <!-- Botón flotante de cierre universal siempre visible en la esquina superior derecha -->
-            <button type="button" id="btn-floating-close" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-[10001] w-10 h-10 rounded-full bg-slate-900/90 hover:bg-rose-600 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer border border-white/20 active:scale-95" title="Cerrar vista previa (Esc)">
-                <span class="material-icons text-xl">close</span>
+            <!-- Botón flotante de cierre universal siempre fijo en pantalla -->
+            <button type="button" id="btn-floating-close" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-[100002] w-11 h-11 rounded-full bg-slate-900/95 hover:bg-rose-600 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer border-2 border-white/30 active:scale-95" title="Cerrar vista previa (Esc)">
+                <span class="material-icons text-2xl">close</span>
             </button>
 
-            <!-- Tarjeta principal del modal con altura estrictamente contenida en el viewport -->
-            <div id="modal-card-inner" class="bg-slate-100 rounded-2xl max-w-4xl w-full h-[92vh] max-h-[92vh] flex flex-col shadow-2xl border border-slate-300 overflow-hidden relative" style="display: flex; flex-direction: column;">
+            <!-- Tarjeta del documento que se desplaza fluidamente -->
+            <div id="modal-card-inner" class="bg-slate-100 rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-300 relative flex flex-col my-auto sm:my-0 overflow-hidden">
                 
-                <!-- Barra superior fija (Header siempre visible) -->
-                <div class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-3 flex-shrink-0 z-30 shadow-xs">
+                <!-- Barra superior fija (Sticky Header) -->
+                <div class="sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-xs">
                     <div class="flex items-center gap-2.5 min-w-0">
                         <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0">
                             <span class="material-icons text-lg">lock</span>
@@ -642,17 +645,17 @@
                     </div>
                 </div>
 
-                <!-- Contenedor con Scroll garantizado (min-h-0 + flex-1 + overflow-y-auto) -->
-                <div class="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 bg-slate-200/70 flex justify-center" id="scroll-container-preview" oncontextmenu="return false;" style="user-select: none !important; -webkit-user-select: none !important;">
-                    <div class="w-full max-w-[820px] pb-6" style="user-select: none !important; -webkit-user-select: none !important;">
+                <!-- Contenedor de la Hoja A4 Protegida contra copias -->
+                <div class="p-3 sm:p-6 bg-slate-200/70 flex justify-center" oncontextmenu="return false;" style="user-select: none !important; -webkit-user-select: none !important;">
+                    <div class="w-full max-w-[820px] pb-4" style="user-select: none !important; -webkit-user-select: none !important;">
                         ${contenidoHTML}
                     </div>
                 </div>
 
-                <!-- Barra inferior fija con botón cerrar y botón compra -->
-                <div class="bg-white border-t border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 flex-shrink-0 z-30">
+                <!-- Barra inferior fija (Sticky Bottom Bar) -->
+                <div class="sticky bottom-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 shadow-md">
                     <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">
-                        Desplaza hacia abajo para revisar el desglose contable y la matriz de riesgo ↓
+                        Borrador no válido para presentar • Desbloquea la versión oficial para socios y bancos
                     </span>
                     <span class="text-[11px] text-slate-500 font-medium sm:hidden">
                         Borrador no válido para presentar
@@ -672,7 +675,9 @@
 
         function cerrarModal() {
             modal.remove();
+            document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
+            document.body.style.touchAction = '';
             document.removeEventListener('keydown', handleKey);
         }
 
@@ -685,9 +690,15 @@
         document.getElementById('btn-cerrar-preview-bottom').addEventListener('click', cerrarModal);
         document.addEventListener('keydown', handleKey);
 
+        // Clic en el fondo para cerrar
         modal.addEventListener('click', function(e) {
             if (e.target === modal) cerrarModal();
         });
+
+        // Prevenir fuga de eventos wheel al fondo
+        modal.addEventListener('wheel', function(e) {
+            e.stopPropagation();
+        }, { passive: true });
     }
 
     // Dispara la impresión / guardado en PDF nativo de alta resolución
