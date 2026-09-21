@@ -145,8 +145,8 @@ module.exports = async (req, res) => {
             <h2 style="color: #0369a1; font-size: 15px; font-weight: 700; margin: 0 0 12px;">💡 Guía de Inicio Rápido (3 Pasos):</h2>
             <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #0f172a; line-height: 1.7;">
                 <li style="margin-bottom: 8px;"><strong>Descarga y descomprime</strong> el archivo <code>Kit_Blindaje_Laboral_Pyme_2026.zip</code> adjunto en este correo.</li>
-                <li style="margin-bottom: 8px;"><strong>Abre primero el archivo:</strong> <code>00_INSTRUCCIONES_Y_GUIA_DE_IMPLEMENTACION_PYME.docx</code>.</li>
-                <li><strong>Revisa la Sección 3 (Árbol de Decisión):</strong> Encontrarás una tabla que te indica exactamente cuáles son los 3 o 4 documentos que aplican a tu rubro (${escapeHtml(cleanRubro)}), para que no pierdas tiempo revisando anexos que no necesitas.</li>
+                <li style="margin-bottom: 8px;"><strong>Abre primero el Manual en PDF:</strong> <code>00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf</code> (incluye versión Word editable).</li>
+                <li><strong>Revisa la Página 2 (Árbol de Decisión Rápido):</strong> Encontrarás la matriz que te indica exactamente cuáles son los 3 o 4 documentos que aplican a tu rubro (${escapeHtml(cleanRubro)}), para que no pierdas tiempo revisando anexos que no necesitas.</li>
             </ol>
         </div>
 
@@ -171,7 +171,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Adjunto a este correo encontrarás el archivo Kit_Blindaje_Laboral_Pyme_2026.zip con los 21 documentos oficiales en formato Word (.docx editable).\n\nGuía rápida:\n1. Descomprime el archivo adjunto.\n2. Abre el archivo 00_INSTRUCCIONES_Y_GUIA_DE_IMPLEMENTACION_PYME.docx.\n3. Revisa la Sección 3 (Árbol de Decisión) para ver los documentos específicos de tu rubro.\n\nSoporte: responde directamente a este correo si tienes dudas.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Adjunto a este correo encontrarás el archivo Kit_Blindaje_Laboral_Pyme_2026.zip con los 21 documentos oficiales en formato Word (.docx editable) y el Manual de Instrucciones en PDF.\n\nGuía rápida:\n1. Descomprime el archivo adjunto.\n2. Abre primero el archivo 00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf.\n3. Revisa la Página 2 (Árbol de Decisión) para ver los documentos específicos de tu rubro.\n\nSoporte: responde directamente a este correo si tienes dudas.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {

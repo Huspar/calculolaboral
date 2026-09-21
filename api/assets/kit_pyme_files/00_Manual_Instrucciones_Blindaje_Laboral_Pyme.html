@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Implementación Rápida - Kit de Blindaje Laboral Pyme Chile 2026</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 13mm 14mm 13mm;
+            @bottom-right {
+                content: "Página " counter(page) " de 5";
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+                font-size: 7.5pt;
+                color: #64748b;
+            }
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #0f172a;
+            line-height: 1.4;
+            font-size: 8.8pt;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-break {
+            page-break-before: always;
+            padding-top: 4mm;
+        }
+
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+
+        /* Encabezado Corporativo Oficial */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo-svg {
+            width: 32px;
+            height: 32px;
+            background-color: #0284c7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+        }
+
+        .brand-logo-svg svg {
+            width: 20px;
+            height: 20px;
+            color: #ffffff;
+        }
+
+        .brand-text {
+            font-size: 16pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+
+        .brand-text span {
+            color: #0284c7;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.5pt;
+            color: #64748b;
+            line-height: 1.35;
+        }
+
+        .doc-badge {
+            display: inline-block;
+            background-color: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            padding: 2px 7px;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 7pt;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        /* Títulos y Subtítulos */
+        h1.main-title {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.25;
+            margin: 0 0 5px 0;
+            letter-spacing: -0.3px;
+        }
+
+        p.lead-text {
+            font-size: 8.8pt;
+            color: #475569;
+            margin: 0 0 12px 0;
+            line-height: 1.45;
+        }
+
+        h2.section-title {
+            font-size: 11pt;
+            font-weight: 800;
+            color: #0369a1;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+            margin: 14px 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Cajas de Alerta y Tranquilidad */
+        .callout {
+            border-radius: 8px;
+            padding: 9px 12px;
+            margin: 8px 0;
+            font-size: 8.5pt;
+            line-height: 1.4;
+        }
+
+        .callout-blue {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            color: #0369a1;
+        }
+
+        .callout-amber {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .callout-emerald {
+            background-color: #f0fdf4;
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+
+        .callout-rose {
+            background-color: #fff1f2;
+            border-left: 4px solid #e11d48;
+            color: #9f1239;
+        }
+
+        /* Contenedor de Pasos de la Ruta Crítica */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+            margin: 10px 0 14px 0;
+        }
+
+        .step-card {
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .step-num {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: #0284c7;
+            color: #ffffff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-weight: 800;
+            font-size: 8pt;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 8.5pt;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .step-desc {
+            font-size: 7.8pt;
+            color: #475569;
+            line-height: 1.35;
+        }
+
+        .step-badge {
+            display: inline-block;
+            font-size: 6.8pt;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 4px;
+            margin-top: 6px;
+        }
+
+        .step-badge-red { background: #fee2e2; color: #991b1b; }
+        .step-badge-blue { background: #e0f2fe; color: #075985; }
+        .step-badge-green { background: #dcfce7; color: #166534; }
+
+        /* Tablas de Alta Precisión */
+        table.custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0 12px 0;
+            font-size: 8pt;
+        }
+
+        table.custom-table th {
+            background-color: #0f172a;
+            color: #ffffff;
+            font-weight: 700;
+            text-align: left;
+            padding: 6px 8px;
+            border: 1px solid #1e293b;
+            font-size: 7.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        table.custom-table td {
+            padding: 5.5px 8px;
+            border: 1px solid #e2e8f0;
+            line-height: 1.35;
+            vertical-align: top;
+        }
+
+        table.custom-table tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        /* Checklists */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            padding: 6px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 8pt;
+        }
+
+        .checkbox-box {
+            width: 15px;
+            height: 15px;
+            border: 1.5px solid #0284c7;
+            border-radius: 3px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            background: #ffffff;
+        }
+
+        .badge-sector {
+            display: inline-block;
+            font-size: 7pt;
+            font-weight: 700;
+            padding: 1.5px 5px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .badge-comercio { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .badge-oficina { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-logistica { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+        .badge-todos { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        /* Footer de cada página */
+        .footer-note {
+            margin-top: 12px;
+            padding-top: 6px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 7pt;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 1: PORTADA, TRANQUILIDAD Y LA RUTA CRÍTICA DE 3 PASOS       -->
+    <!-- =================================================================== -->
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo-svg">
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M30 84h40M38 79h24"></path>
+                    <path d="M50 22v57"></path>
+                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                    <path d="M18 36l-8 18h16Z"></path>
+                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M82 36l-8 18h16Z"></path>
+                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                    <path d="M58 43.5v20h10"></path>
+                </svg>
+            </div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <span class="doc-badge">DT Chile Conforme · Edición 2026</span><br>
+            <strong>DOCUMENTO 00 OFICIAL</strong><br>
+            Kit de Blindaje y Cumplimiento Laboral Pyme
+        </div>
+    </div>
+
+    <h1 class="main-title">Manual de Implementación Rápida para Pymes</h1>
+    <p class="lead-text">
+        Guía paso a paso en lenguaje claro para dueños, gerentes, administradores y contadores de empresas en Chile. Cómo blindar tu empresa ante inspecciones de la Dirección del Trabajo (DT), aplicar la <strong>Ley Karin (Ley 21.643 y DS 44)</strong> y cumplir con la <strong>Ley de 40 Horas (Hito legal 42h en 2026)</strong> sin contratar asesorías externas costosas.
+    </p>
+
+    <div class="callout callout-emerald">
+        <strong>💡 Mensaje de Tranquilidad al Empleador:</strong> Al descomprimir el kit encontrarás 21 documentos organizados en 4 carpetas. <strong>No te asustes por la cantidad de archivos:</strong> tu empresa <u>NO</u> debe firmar todos los documentos. El kit es modular: toda pyme firma la base obligatoria (Ley Karin) y únicamente los 2 o 3 anexos específicos de su horario y rubro. En menos de 15 minutos sabrás exactamente cuáles son.
+    </div>
+
+    <h2 class="section-title">
+        <span>1. La Ruta Crítica de Implementación en 3 Fases</span>
+    </h2>
+
+    <div class="steps-container">
+        <!-- Paso 1 -->
+        <div class="step-card">
+            <div class="step-header">
+                <span class="step-num">1</span>
+                <span class="step-title">Día 1: Módulo Base Ley Karin</span>
+            </div>
+            <p class="step-desc">
+                Obligatorio para el 100% de las empresas en Chile, desde 1 trabajador. Imprime el <strong>Protocolo (Doc 01)</strong> y haz firmar el <strong>Comprobante Individual (Doc 05)</strong> a cada dependiente.
+            </p>
+            <span class="step-badge step-badge-red">Prioridad Inmediata</span>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="step-card">
+            <div class="step-header">
+                <span class="step-num">2</span>
+                <span class="step-title">Semana 1: Anexo 40 Horas</span>
+            </div>
+            <p class="step-desc">
+                Aplica la reducción legal de 42 horas para 2026. Selecciona el <strong>Doc 06</strong> si trabajas de lunes a viernes (5x2) o el <strong>Doc 07</strong> si atiendes sábado (6x1). Prohibido bajar sueldos.
+            </p>
+            <span class="step-badge step-badge-blue">Plazo: 15 días DT</span>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="step-card">
+            <div class="step-header">
+                <span class="step-num">3</span>
+                <span class="step-title">Semana 2: Carpeta y Rubro</span>
+            </div>
+            <p class="step-desc">
+                Incorpora las cláusulas de tu giro (propinas en comercio, teletrabajo en oficinas o viáticos en terreno) y audita tu archivador con el <strong>Checklist Oficial DT (Doc 18)</strong>.
+            </p>
+            <span class="step-badge step-badge-green">Blindaje Total</span>
+        </div>
+    </div>
+
+    <h2 class="section-title">
+        <span>2. Tabla de Multas que Evitas al Implementar este Kit</span>
+    </h2>
+
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">Obligación Normativa</th>
+                <th style="width: 20%;">Norma Legal</th>
+                <th style="width: 32%;">Infracción Típica Detectada</th>
+                <th style="width: 23%;">Multa Directa DT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Protocolo Ley Karin</strong></td>
+                <td>Ley 21.643 / DS 44</td>
+                <td>No contar con protocolo formal o no acreditar entrega a trabajadores.</td>
+                <td><strong style="color: #b91c1c;">Hasta 60 UTM</strong> ($4.000.000+)</td>
+            </tr>
+            <tr>
+                <td><strong>Reducción Jornada 42h</strong></td>
+                <td>Ley 21.561 / Art. 11 CT</td>
+                <td>No escriturar el anexo o rebajar remuneraciones arbitrariamente.</td>
+                <td><strong style="color: #b91c1c;">Hasta 60 UTM</strong> por trabajador</td>
+            </tr>
+            <tr>
+                <td><strong>Propinas en Comercio</strong></td>
+                <td>Art. 64 Código Trabajo</td>
+                <td>Descontar comisiones Transbank o retrasar el pago sobre 20 días.</td>
+                <td><strong style="color: #b91c1c;">Hasta 40 UTM</strong> ($2.600.000+)</td>
+            </tr>
+            <tr>
+                <td><strong>Registro Electrónico Mi DT</strong></td>
+                <td>Art. 9° Código Trabajo</td>
+                <td>No cargar contratos o anexos dentro del plazo de 15 días hábiles.</td>
+                <td><strong style="color: #b91c1c;">Hasta 10 UTM</strong> por dependiente</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="callout callout-amber" style="margin-top: 6px;">
+        <strong>⚠️ Regla de Oro Inspectiva:</strong> Ante una fiscalización presencial de la Inspección del Trabajo, el fiscalizador <u>NO</u> otorga plazos de gracia para contratos no escriturados o protocolos no difundidos. Mantener las carpetas firmadas evita el inicio de procesos sancionatorios.
+    </div>
+
+    <div class="footer-note">
+        <span>Cálculo Laboral Chile · Plataforma de Cumplimiento Pyme 2026</span>
+        <span>Página 1 de 5</span>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 2: ÁRBOL DE DECISIÓN RÁPIDO POR RUBRO COMERCIAL              -->
+    <!-- =================================================================== -->
+    <div class="page-break"></div>
+
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo-svg">
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M30 84h40M38 79h24"></path>
+                    <path d="M50 22v57"></path>
+                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                    <path d="M18 36l-8 18h16Z"></path>
+                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M82 36l-8 18h16Z"></path>
+                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                    <path d="M58 43.5v20h10"></path>
+                </svg>
+            </div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <span class="doc-badge">Árbol de Decisión Pyme</span><br>
+            Guía de Selección por Giro Comercial
+        </div>
+    </div>
+
+    <h1 class="main-title">¿Qué Documentos Debe Firmar Mi Empresa?</h1>
+    <p class="lead-text">
+        Utiliza esta matriz de autodiagnóstico para identificar en 30 segundos los archivos exactos que corresponden a tu rubro. No pierdas tiempo revisando documentos que no necesitas.
+    </p>
+
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th style="width: 28%;">Tu Giro o Situación Laboral</th>
+                <th style="width: 27%;">Archivos Exactos que Debes Usar</th>
+                <th style="width: 45%;">Instrucción Operativa y Qué Hacer</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <span class="badge-sector badge-todos">OBLIGATORIO GENERAL</span><br>
+                    <strong>Toda Empresa en Chile</strong><br>
+                    <span style="font-size: 7pt; color: #64748b;">(Desde 1 trabajador, cualquier rubro)</span>
+                </td>
+                <td>
+                    <strong>Docs 01, 02, 03, 04, 05 y 05B</strong><br>
+                    <span style="font-size: 7.5pt; color: #0284c7;">Carpeta 01: Base Ley Karin</span>
+                </td>
+                <td>
+                    Obligatorio por ley. Imprime el <strong>Doc 01</strong> para consulta de la empresa, haz firmar el <strong>Doc 05</strong> a cada dependiente y realiza la charla de difusión registrando firmas en el <strong>Doc 05B</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="badge-sector badge-comercio">RAMA COMERCIO</span><br>
+                    <strong>Locales, Tiendas, Retail y Gastronomía</strong><br>
+                    <span style="font-size: 7pt; color: #64748b;">(Jornada 6x1 de Lunes a Sábado)</span>
+                </td>
+                <td>
+                    <strong>Doc 07:</strong> Anexo 42h Comercio<br>
+                    <strong>Doc 10:</strong> Cláusula Propinas Art. 64<br>
+                    <strong>Doc 11:</strong> Karin Violencia Clientes<br>
+                    <strong>Doc 12:</strong> Turnos y Domingos Art. 38
+                </td>
+                <td>
+                    Firma el <strong>Doc 07</strong> pactando la salida anticipada el sábado o 7h diarias. Si tienes garzones o cajeros, firma el <strong>Doc 10</strong> (propinas 100% íntegras) y el <strong>Doc 11</strong> ante agresiones de terceros.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="badge-sector badge-oficina">RAMA OFICINAS</span><br>
+                    <strong>Servicios, Agencias, Software y Consultoría</strong><br>
+                    <span style="font-size: 7pt; color: #64748b;">(Jornada 5x2 de Lunes a Viernes)</span>
+                </td>
+                <td>
+                    <strong>Doc 06:</strong> Anexo 42h Salida Viernes<br>
+                    <strong>Doc 13:</strong> Pacto Teletrabajo Ley 21.220<br>
+                    <strong>Doc 14:</strong> Desconexión Digital 12h<br>
+                    <strong>Doc 15:</strong> Herramientas e Internet Art. 41
+                </td>
+                <td>
+                    Firma el <strong>Doc 06</strong> adelantando en 2 horas la salida del viernes. Si tu equipo realiza trabajo remoto o híbrido, firma los <strong>Docs 13, 14 y 15</strong> garantizando las 12 horas continuas de desconexión.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="badge-sector badge-logistica">RAMA TERRENO</span><br>
+                    <strong>Transporte, Distribución, Faenas y Bodegas</strong><br>
+                    <span style="font-size: 7pt; color: #64748b;">(Turnos rotativos o personal móvil)</span>
+                </td>
+                <td>
+                    <strong>Doc 08:</strong> Anexo 42h Homogéneo<br>
+                    <strong>Doc 16:</strong> Asistencia GPS / Móvil DT<br>
+                    <strong>Doc 17:</strong> Viáticos y Movilización Art. 41
+                </td>
+                <td>
+                    Aplica el <strong>Doc 08</strong> para ciclos de turnos continuos. Si tienes choferes o técnicos en ruta, el <strong>Doc 16</strong> valida el marcaje digital homologado y el <strong>Doc 17</strong> resguarda los viáticos no imponibles.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="badge-sector badge-todos">CASO ARTÍCULO 22</span><br>
+                    <strong>Personal sin Fiscalización</strong><br>
+                    <span style="font-size: 7pt; color: #64748b;">(Cargos afectados por Ley 40 Horas)</span>
+                </td>
+                <td>
+                    <strong>Doc 09:</strong> Fin de Art. 22 e incorporación a Jornada Fiscalizada
+                </td>
+                <td>
+                    Con la reforma, solo gerentes y subgerentes sin jefatura directa pueden mantener Art. 22. Si tenías vendedores o jefes medios en Art. 22, firma el <strong>Doc 09</strong> para pasar a reloj control sin conflicto laboral.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="callout callout-blue">
+        <strong>📌 Si eres Contador o Asesor Laboral:</strong> Este kit te permite blindar a toda tu cartera de clientes pyme. Solo debes abrir la carpeta del giro del cliente, reemplazar los datos de la razón social y emitir los anexos correspondientes, asegurando cumplimiento total ante la DT.
+    </div>
+
+    <div class="footer-note">
+        <span>Cálculo Laboral Chile · Plataforma de Cumplimiento Pyme 2026</span>
+        <span>Página 2 de 5</span>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 3: RADIOGRAFÍA DE LOS DOCUMENTOS Y CÓMO LLENARLOS           -->
+    <!-- =================================================================== -->
+    <div class="page-break"></div>
+
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo-svg">
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M30 84h40M38 79h24"></path>
+                    <path d="M50 22v57"></path>
+                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                    <path d="M18 36l-8 18h16Z"></path>
+                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M82 36l-8 18h16Z"></path>
+                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                    <path d="M58 43.5v20h10"></path>
+                </svg>
+            </div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <span class="doc-badge">Instrucciones de Llenado</span><br>
+            Edición de Modelos Word (.docx)
+        </div>
+    </div>
+
+    <h1 class="main-title">Cómo Editar los Modelos en Word en 5 Minutos</h1>
+    <p class="lead-text">
+        Todos los archivos fueron creados en formato <strong>Word (.docx) 100% editable</strong>. Los campos que debes completar están claramente resaltados entre corchetes mayúsculas. Solo usa el comando <code>Ctrl + L</code> en Word para reemplazarlos masivamente.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px;">
+            <strong style="color: #0284c7; font-size: 8pt; text-transform: uppercase;">Campos de la Empresa:</strong>
+            <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 7.8pt; color: #334155; line-height: 1.45;">
+                <li><code>[NOMBRE O RAZÓN SOCIAL]</code>: Nombre legal o fantasía.</li>
+                <li><code>[RUT EMPRESA]</code>: RUT tributario con guion y dígito.</li>
+                <li><code>[REPRESENTANTE LEGAL]</code>: Nombre del firmante.</li>
+                <li><code>[DOMICILIO COMERCIAL]</code>: Dirección, comuna y ciudad.</li>
+            </ul>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px;">
+            <strong style="color: #0284c7; font-size: 8pt; text-transform: uppercase;">Campos del Trabajador:</strong>
+            <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 7.8pt; color: #334155; line-height: 1.45;">
+                <li><code>[NOMBRE COMPLETO TRABAJADOR]</code>: Según cédula.</li>
+                <li><code>[RUT TRABAJADOR]</code>: Cédula de identidad.</li>
+                <li><code>[CARGO / FUNCIÓN]</code>: Puesto de trabajo pactado.</li>
+                <li><code>[FECHA]</code>: Fecha de suscripción del anexo.</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2 class="section-title">
+        <span>3. Radiografía de los 4 Instrumentos Más Críticos</span>
+    </h2>
+
+    <div style="margin-bottom: 8px;">
+        <h3 style="margin: 0 0 3px 0; font-size: 8.8pt; color: #0f172a;">
+            <strong>A. Protocolo Integral Ley Karin (Doc 01) y Comprobante (Doc 05)</strong>
+        </h3>
+        <p style="margin: 0; font-size: 8pt; color: #475569; line-height: 1.35;">
+            El <strong>Doc 01</strong> es la política preventiva que exige el Decreto Supremo 44. No necesitas cambiarle casi nada: viene listo con las definiciones legales de acoso sexual, acoso laboral y violencia en el trabajo. Lo realmente indispensable es el <strong>Doc 05 (Comprobante de Entrega)</strong>: imprímelo y haz que cada trabajador escriba su nombre, RUT, firma y fecha. Guárdalo en su carpeta física. Si un fiscalizador llega a tu negocio, ese papel es lo primero que pedirá.
+        </p>
+    </div>
+
+    <div style="margin-bottom: 8px;">
+        <h3 style="margin: 0 0 3px 0; font-size: 8.8pt; color: #0f172a;">
+            <strong>B. Procedimiento Rápido ante una Denuncia Ley Karin (Docs 03 y 04)</strong>
+        </h3>
+        <p style="margin: 0; font-size: 8pt; color: #475569; line-height: 1.35;">
+            Si un dependiente formula una denuncia por acoso o violencia (mediante el <strong>Doc 03</strong>), la ley te otorga un <strong>plazo fatal de 3 días hábiles</strong> para emitir el <strong>Doc 04 (Acta de Medidas de Resguardo)</strong>. Estas medidas pueden ser: separar físicamente los puestos de trabajo, cambiar de turno o pactar teletrabajo provisional mientras se investiga. No sancionar inmediatamente: primero proteger.
+        </p>
+    </div>
+
+    <div style="margin-bottom: 8px;">
+        <h3 style="margin: 0 0 3px 0; font-size: 8.8pt; color: #0f172a;">
+            <strong>C. Anexos de Reducción Ley 40 Horas (Hito 42h en 2026 - Docs 06 y 07)</strong>
+        </h3>
+        <p style="margin: 0; font-size: 8pt; color: #475569; line-height: 1.35;">
+            A contar del 26 de abril de 2026, la jornada legal baja obligatoriamente de 44 a 42 horas. El modelo <strong>Doc 06</strong> formaliza la salida 2 horas antes los viernes (ej: de 18:30 a 16:30 hrs). El modelo <strong>Doc 07</strong> para locales comerciales permite fijar turnos de 7 horas de lunes a sábado o salida temprana el sábado. <u>Regla inquebrantable:</u> El sueldo base pactado y las asignaciones se mantienen exactamente iguales.
+        </p>
+    </div>
+
+    <div style="margin-bottom: 8px;">
+        <h3 style="margin: 0 0 3px 0; font-size: 8.8pt; color: #0f172a;">
+            <strong>D. Cláusula de Propinas sin Descuentos (Doc 10 - Para Restaurantes y Tiendas)</strong>
+        </h3>
+        <p style="margin: 0; font-size: 8pt; color: #475569; line-height: 1.35;">
+            El Artículo 64 del Código del Trabajo prohíbe que el empleador descuente a los garzones las comisiones que cobran Transbank o las máquinas de tarjetas por el pago de propinas, así como cobros por mermas o rotura de vajilla. El <strong>Doc 10</strong> blinda este acuerdo y fija el plazo de liquidación quincenal o mensual dentro del límite legal de 20 días hábiles.
+        </p>
+    </div>
+
+    <div class="footer-note">
+        <span>Cálculo Laboral Chile · Plataforma de Cumplimiento Pyme 2026</span>
+        <span>Página 3 de 5</span>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 4: GUÍA PASO A PASO DEL PORTAL "MI DT"                       -->
+    <!-- =================================================================== -->
+    <div class="page-break"></div>
+
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo-svg">
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M30 84h40M38 79h24"></path>
+                    <path d="M50 22v57"></path>
+                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                    <path d="M18 36l-8 18h16Z"></path>
+                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M82 36l-8 18h16Z"></path>
+                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                    <path d="M58 43.5v20h10"></path>
+                </svg>
+            </div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <span class="doc-badge">Trámites Digitales DT</span><br>
+            Registro Electrónico Laboral (REL)
+        </div>
+    </div>
+
+    <h1 class="main-title">Cómo Registrar los Documentos en el Portal Mi DT</h1>
+    <p class="lead-text">
+        El Código del Trabajo exige que todos los contratos y sus modificaciones sean registrados en el sitio web de la Dirección del Trabajo (portal Mi DT). Sigue estos 4 pasos sencillos para evitar sanciones por omisión de registro.
+    </p>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">1</span>
+            <strong style="font-size: 8.5pt; color: #0f172a;">Paso 1: Ingreso al Portal Mi DT</strong>
+        </div>
+        <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
+            Accede a <strong>www.direcciondeltrabajo.cl</strong> y pulsa en <em>"Mi DT"</em>. Inicia sesión con la <strong>ClaveÚnica</strong> del Representante Legal o del administrador facultado en el portal Registro de Empresas y Sociedades.
+        </p>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">2</span>
+            <strong style="font-size: 8.5pt; color: #0f172a;">Paso 2: Menú Registro Electrónico Laboral (REL)</strong>
+        </div>
+        <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
+            En la barra superior selecciona el perfil de tu empresa. En el menú lateral izquierdo ingresa a: <em>"Registro Electrónico Laboral (REL)"</em> &rarr; <em>"Contratos de Trabajo y Anexos"</em>.
+        </p>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">3</span>
+            <strong style="font-size: 8.5pt; color: #0f172a;">Paso 3: Carga del Anexo de Jornada 42 Horas</strong>
+        </div>
+        <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
+            Busca al dependiente por su RUT y pulsa en <em>"Modificar Contrato / Agregar Anexo"</em>. En el campo de jornada semanal actualiza el valor a <strong>"42 horas semanales"</strong> y registra los días pactados. Dispones de un <strong>plazo legal fatal de 15 días hábiles</strong> contado desde la firma del anexo para completar este registro.
+        </p>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">4</span>
+            <strong style="font-size: 8.5pt; color: #0f172a;">Paso 4: Carga del Protocolo Ley Karin en Reglamento Interno</strong>
+        </div>
+        <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
+            En el menú REL dirígete a <em>"Reglamento Interno de Orden, Higiene y Seguridad"</em>. Si tu empresa tiene 10 o más dependientes, carga el PDF del <strong>Doc 01</strong> como anexo modificatorio al RIOHS. Si tienes menos de 10 dependientes, consérvalo en tu carpeta física de prevención disponible para fiscalización.
+        </p>
+    </div>
+
+    <h2 class="section-title">
+        <span>Preguntas Frecuentes ante Dudas con la DT</span>
+    </h2>
+
+    <div style="font-size: 8pt; line-height: 1.4; color: #334155;">
+        <p style="margin: 0 0 6px 0;">
+            <strong>¿Qué ocurre si un trabajador se niega a firmar el Anexo de 40 Horas?</strong><br>
+            La reducción de la jornada ordinaria es un beneficio de origen legal que no disminuye remuneraciones. Si el dependiente se niega injustificadamente, el empleador debe remitir el anexo firmado a la Inspección del Trabajo respectiva para que esta constate que la modificación opera por el ministerio de la ley (Art. 11 del Código del Trabajo).
+        </p>
+        <p style="margin: 0 0 6px 0;">
+            <strong>¿Qué hacer si un fiscalizador de la DT llega a mi local u oficina de sorpresa?</strong><br>
+            Mantén la calma. Pídele que exhiba su credencial con código QR institucional, ofrece un lugar tranquilo para revisar los documentos y presenta de inmediato el archivador de la Carpeta de Personal auditada según el <strong>Checklist del Doc 18</strong>. Si te solicita algún antecedente no disponible en el local, puedes solicitar formalmente un plazo prudencial de 3 días para su exhibición.
+        </p>
+    </div>
+
+    <div class="footer-note">
+        <span>Cálculo Laboral Chile · Plataforma de Cumplimiento Pyme 2026</span>
+        <span>Página 4 de 5</span>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 5: CHECKLIST IMPRIMIBLE DE BLINDAJE PREVENTIVO              -->
+    <!-- =================================================================== -->
+    <div class="page-break"></div>
+
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo-svg">
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M30 84h40M38 79h24"></path>
+                    <path d="M50 22v57"></path>
+                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                    <path d="M18 36l-8 18h16Z"></path>
+                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M82 36l-8 18h16Z"></path>
+                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                    <path d="M58 43.5v20h10"></path>
+                </svg>
+            </div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <span class="doc-badge">Hoja de Control Imprimible</span><br>
+            Auditoría Preventiva para Carpetas de Personal
+        </div>
+    </div>
+
+    <h1 class="main-title">Checklist Oficial de Inspección DT: 10 Puntos</h1>
+    <p class="lead-text">
+        Imprime esta hoja y audita la carpeta de cada trabajador en tu archivador físico. Si marcas con un visto bueno (✔) las 10 casillas, tu empresa se encuentra en estándar de <strong>cumplimiento pleno y blindada ante multas</strong> de la Inspección del Trabajo.
+    </p>
+
+    <div style="border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; padding: 4px 10px; margin-bottom: 12px;">
+        
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>1. Protocolo Integral Ley Karin Vigente (Doc 01):</strong>
+                <span style="color: #475569;">Documento adaptado a la empresa y disponible para consulta de los dependientes.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>2. Comprobante de Entrega de Protocolo Karin (Doc 05):</strong>
+                <span style="color: #475569;">Firmado en original por el 100% de los dependientes y archivado en su carpeta física.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>3. Acta de Difusión y Capacitación Ley Karin (Doc 05B):</strong>
+                <span style="color: #475569;">Registro firmado que acredita la realización de charla informativa sobre violencia y acoso.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>4. Anexo de Jornada 42 Horas Firmado (Docs 06, 07 u 08):</strong>
+                <span style="color: #475569;">Suscrito en duplicado por ambas partes, manteniendo intactas las remuneraciones.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>5. Carga en Portal Mi DT Acreditada:</strong>
+                <span style="color: #475569;">Anexo registrado en el Registro Electrónico Laboral dentro del plazo legal de 15 días hábiles.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>6. Cláusula Sectorial Específica Vigente:</strong>
+                <span style="color: #475569;">Propinas (Doc 10), Teletrabajo (Doc 13) o Control Asistencia GPS faena (Doc 16) según corresponda.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>7. Sistema de Control de Asistencia al Día:</strong>
+                <span style="color: #475569;">Libro foliado al día o reloj control digital con opción no biométrica garantizada (Res. 38/2024 DT).</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>8. Liquidaciones de Remuneración Foliadas:</strong>
+                <span style="color: #475569;">Firmadas mensualmente por el trabajador o con comprobante de transferencia bancaria respaldado.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>9. Contratos Individuales de Trabajo Escriturados:</strong>
+                <span style="color: #475569;">Firmados dentro de los primeros 15 días de servicio con todas las cláusulas mínimas del Art. 10 CT.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item" style="border-bottom: none;">
+            <div class="checkbox-box"></div>
+            <div>
+                <strong>10. Registro de Entrega de EPP y Reglamento Interno:</strong>
+                <span style="color: #475569;">Comprobante de elementos de protección personal (si aplica) y copia del reglamento interno.</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Cuadro de Control y Firma de Auditoría -->
+    <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 10px; margin-bottom: 10px;">
+        <strong style="font-size: 8pt; color: #0f172a; text-transform: uppercase; display: block; margin-bottom: 6px;">
+            Acta de Auditoría y Control Preventivo Interno:
+        </strong>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 8pt; color: #334155;">
+            <div>
+                Empresa / Razón Social: _____________________________________<br>
+                RUT Empresa: _______________________________________________<br>
+                Dotación Total de Dependientes: _______ trabajadores
+            </div>
+            <div>
+                Auditado por: _______________________________________________<br>
+                Cargo o Función: ____________________________________________<br>
+                Fecha de Auditoría: _____ / _____ / 2026 &nbsp;&nbsp; Firma: _____________
+            </div>
+        </div>
+    </div>
+
+    <!-- Delimitación de Responsabilidad Legal -->
+    <div class="callout callout-blue" style="font-size: 7.2pt; line-height: 1.35; padding: 7px 10px;">
+        <strong>Respaldo Normativo y Validez Legal (Art. 528 C.O.T.):</strong> Las minutas y modelos incluidos en este kit corresponden a formatos referenciales estandarizados confeccionados en conformidad estricta con el Código del Trabajo chileno, Ley N° 21.643 (Ley Karin), Ley N° 21.561 (Ley 40 Horas), Decreto Supremo N° 44 del Mintrab y circulares públicas de la Dirección del Trabajo y la SUSESO. La entrega de estos modelos tiene fines informativos y de estandarización técnica preventiva y no constituye asesoría letrada en juicio, actividad reservada a abogados colegiados y habilitados conforme al artículo 528 del Código Orgánico de Tribunales de Chile.
+    </div>
+
+    <div class="footer-note">
+        <span>&copy; 2026 Cálculo Laboral Chile · Plataforma de Cumplimiento Normativo Pymes · calculolaboral.cl</span>
+        <span>Página 5 de 5</span>
+    </div>
+
+</body>
+</html>
