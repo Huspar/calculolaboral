@@ -8,7 +8,7 @@
 (function () {
     'use strict';
 
-    var FLOW_TOKEN = 'cd8bf90f335b1576dfcf71a788713ea8db36f4c0'; // Token Flow oficial
+    var FLOW_TOKEN = 'o239ec984dd911e87ccd82adfb0db0756abfca63'; // Token Flow oficial Kit Ley 21.719 ($29.990)
     var FLOW_CHECKOUT_URL = 'https://www.flow.cl/btn.php?token=' + FLOW_TOKEN;
 
     // Helper: Escapar HTML

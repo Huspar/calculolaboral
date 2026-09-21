@@ -238,6 +238,6 @@ Antes de dar por terminada la creación de cualquier página o herramienta:
 - [ ] ¿El header es de fondo blanco y contiene la navegación oficial?
 - [ ] ¿La barra de indicadores tiene `whitespace-nowrap` y CSS responsive de 1 fila en mobile?
 - [ ] ¿El footer es de fondo blanco (`bg-white border-t border-slate-200`) con las 4 columnas oficiales?
-- [ ] ¿Los botones de pago Flow.cl (`$12.990` y `$19.990`) tienen los tokens vigentes?
+- [ ] ¿Los botones de pago Flow.cl (`$12.990`, `$19.990` y `$29.990`) tienen los tokens vigentes?
 - [ ] ¿Se añadió la página a `sitemap.xml` con su respectiva prioridad?
 - [ ] ¿Se verificó en vista desktop (1200px) y móvil (390px)?

@@ -631,10 +631,16 @@
                     </form>
 
                     <!-- Mensaje de Redirección -->
-                    <div id="checkout-connecting-msg" class="hidden text-center py-4 space-y-2">
+                    <div id="checkout-connecting-msg" class="hidden text-center py-4 space-y-3">
                         <span class="material-icons text-3xl text-sky-600 animate-spin">sync</span>
                         <p class="text-sm font-bold text-slate-900">Conectando con la pasarela segura Webpay / Flow...</p>
-                        <p class="text-xs text-slate-500">Serás redirigido en un segundo.</p>
+                        <p class="text-xs text-slate-500">Serás redirigido automáticamente en un segundo.</p>
+                        <div class="pt-2">
+                            <a href="https://www.flow.cl/btn.php?token=o239ec984dd911e87ccd82adfb0db0756abfca63" id="flow-manual-link-datos" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 !text-white font-bold text-xs shadow-md transition-all cursor-pointer" style="background-color: #0284c7 !important; color: #ffffff !important;">
+                                <span style="color: #ffffff !important;">Si no redirige automáticamente, haz clic aquí para pagar</span>
+                                <span class="material-icons text-xs" style="color: #ffffff !important;">open_in_new</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
