@@ -133,20 +133,20 @@ module.exports = async (req, res) => {
 
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Hola ${escapeHtml(cleanName)},</p>
         <p style="font-size: 14px; color: #334155; margin: 0 0 20px;">
-            ¡Muchas gracias por tu compra! Hemos confirmado exitosamente tu pago de <strong>$29.990 CLP</strong>. Adjunto a este correo encontrarás el archivo comprimido <strong>Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip</strong> con el <strong>Manual de Uso e Instrucciones Paso a Paso (PDF y Word)</strong> más los 7 instrumentos legales oficiales en formato Word (.doc editable) y Excel profesional formulado.
+            ¡Muchas gracias por tu compra! Hemos confirmado exitosamente tu pago de <strong>$29.990 CLP</strong>. Adjunto a este correo encontrarás el archivo comprimido <strong>Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip</strong> con el <strong>Manual de Uso e Instrucciones Paso a Paso (PDF y Word .docx)</strong> más los 7 instrumentos legales oficiales en formato Word (.docx editable) y Excel profesional (.xlsx) formulado.
         </p>
 
         <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
             <h2 style="color: #166534; font-size: 15px; font-weight: 700; margin: 0 0 12px;">📁 Contenido del Paquete Incluido (Guía Maestra + 7 Instrumentos):</h2>
             <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #0f172a; line-height: 1.7;">
-                <li style="margin-bottom: 6px;"><strong>0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf / .doc:</strong> Guía maestra de implementación rápida con ruta de 3 pasos (15 minutos), tabla comparativa por rubros/sectores (e-commerce, salud, flotas GPS, retail, educación) y checklist imprimible.</li>
-                <li style="margin-bottom: 6px;"><strong>1_Anexo_Laboral_Datos_Personales_Ley_21719.doc:</strong> Anexo de contrato con cláusula biométrica (Res. Ex. 38 DT), confidencialidad de licencias médicas y plazo legal ARCOP de 30 días corridos.</li>
-                <li style="margin-bottom: 6px;"><strong>2_Politica_Privacidad_Web_y_Pyme_Ley_21719.doc:</strong> Para publicar en tu web y contratos comerciales, con catálogo de derechos ARCOP y plazo legal de 30 días corridos (Art. 11).</li>
-                <li style="margin-bottom: 6px;"><strong>3_Clausula_DPA_Proveedores_Encargados_Ley_21719.doc:</strong> Addendum para contador, nómina y hosting con deber de confidencialidad y exención de responsabilidad solidaria.</li>
+                <li style="margin-bottom: 6px;"><strong>0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf / .docx:</strong> Guía maestra de implementación rápida con ruta de 3 pasos (15 minutos), tabla comparativa por rubros/sectores (e-commerce, salud, flotas GPS, retail, educación) y checklist imprimible.</li>
+                <li style="margin-bottom: 6px;"><strong>1_Anexo_Laboral_Datos_Personales_Ley_21719.docx:</strong> Anexo de contrato con cláusula biométrica (Res. Ex. 38 DT), confidencialidad de licencias médicas y plazo legal ARCOP de 30 días corridos.</li>
+                <li style="margin-bottom: 6px;"><strong>2_Politica_Privacidad_Web_y_Pyme_Ley_21719.docx:</strong> Para publicar en tu web y contratos comerciales, con catálogo de derechos ARCOP y plazo legal de 30 días corridos (Art. 11).</li>
+                <li style="margin-bottom: 6px;"><strong>3_Clausula_DPA_Proveedores_Encargados_Ley_21719.docx:</strong> Addendum para contador, nómina y hosting con deber de confidencialidad y exención de responsabilidad solidaria.</li>
                 <li style="margin-bottom: 6px;"><strong>4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx:</strong> Inventario obligatorio Art. 14 ter APDP formulado en Excel profesional con 6 áreas y plazos armonizados.</li>
-                <li style="margin-bottom: 6px;"><strong>5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc:</strong> Protocolo operativo de respuesta y formulario oficial ante la Agencia sin dilaciones indebidas (estándar operativo 72h).</li>
-                <li style="margin-bottom: 6px;"><strong>6_Formulario_Solicitud_Derechos_ARCOP.doc:</strong> Modelo formal de atención de reclamos con acuse de recibo timbrado (plazo legal fatal 30 días corridos).</li>
-                <li><strong>7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.doc:</strong> Test legal de 4 preguntas para certificar por qué tu empresa está exenta de contratar a un Delegado de Protección de Datos (DPO).</li>
+                <li style="margin-bottom: 6px;"><strong>5_Protocolo_Brechas_Seguridad_72h_Ley_21719.docx:</strong> Protocolo operativo de respuesta y formulario oficial ante la Agencia sin dilaciones indebidas (estándar operativo 72h).</li>
+                <li style="margin-bottom: 6px;"><strong>6_Formulario_Solicitud_Derechos_ARCOP.docx:</strong> Modelo formal de atención de reclamos con acuse de recibo timbrado (plazo legal fatal 30 días corridos).</li>
+                <li><strong>7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.docx:</strong> Test legal de 4 preguntas para certificar por qué tu empresa está exenta de contratar a un Delegado de Protección de Datos (DPO).</li>
             </ol>
         </div>
 

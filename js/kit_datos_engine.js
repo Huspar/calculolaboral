@@ -732,69 +732,58 @@
         document.body.removeChild(link);
     }
 
-    // Descargar Manual PDF oficial
-    function descargarManualPDF() {
+    // Helper para descarga de assets oficiales nativos (.docx, .xlsx, .pdf, .zip)
+    function descargarArchivoAsset(url, filename) {
         var link = document.createElement('a');
-        link.href = 'assets/0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf';
-        link.download = '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf';
-        link.target = '_blank';
+        link.href = url;
+        link.download = filename;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
 
-    // Descargar Manual Word (.doc) oficial
+    // Descargar Manual PDF oficial
+    function descargarManualPDF() {
+        descargarArchivoAsset('assets/0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf', '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf');
+    }
+
+    // Descargar Manual Word (.docx) oficial
     function descargarManualDoc() {
-        var link = document.createElement('a');
-        link.href = 'assets/0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.doc';
-        link.download = '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.doc';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        descargarArchivoAsset('assets/0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.docx', '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.docx');
     }
 
     // Descarga masiva del Kit completo (Archivo ZIP oficial con los 9 instrumentos y guía)
     function descargarKitCompleto(datos) {
-        var link = document.createElement('a');
-        link.href = 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip';
-        link.download = 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        descargarArchivoAsset('Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip', 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip');
     }
 
-    // Descargas individuales
+    // Descargas individuales nativas (.docx y .xlsx)
     function descargarAnexoLaboral(datos) {
-        var d = datos || {};
-        var nombreLimpio = (d.empresa || 'Empresa').replace(/\s+/g, '_');
-        descargarDocumentoWord(generarAnexoLaboralHTML(d), `1_Anexo_Laboral_Datos_Personales_Ley_21719_${nombreLimpio}.doc`);
+        descargarArchivoAsset('assets/1_Anexo_Laboral_Datos_Personales_Ley_21719.docx', '1_Anexo_Laboral_Datos_Personales_Ley_21719.docx');
     }
 
     function descargarPoliticaPrivacidad(datos) {
-        var d = datos || {};
-        var nombreLimpio = (d.empresa || 'Empresa').replace(/\s+/g, '_');
-        descargarDocumentoWord(generarPoliticaPrivacidadHTML(d), `2_Politica_Privacidad_y_Proteccion_Datos_${nombreLimpio}.doc`);
+        descargarArchivoAsset('assets/2_Politica_Privacidad_Web_y_Pyme_Ley_21719.docx', '2_Politica_Privacidad_Web_y_Pyme_Ley_21719.docx');
     }
 
     function descargarClausulaDPA(datos) {
-        var d = datos || {};
-        var nombreLimpio = (d.empresa || 'Empresa').replace(/\s+/g, '_');
-        descargarDocumentoWord(generarClausulaDPAHTML(d), `3_Clausula_DPA_Proveedores_Encargados_${nombreLimpio}.doc`);
+        descargarArchivoAsset('assets/3_Clausula_DPA_Proveedores_Encargados_Ley_21719.docx', '3_Clausula_DPA_Proveedores_Encargados_Ley_21719.docx');
+    }
+
+    function descargarRAT(datos) {
+        descargarArchivoAsset('assets/4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx', '4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx');
     }
 
     function descargarProtocoloBrechas(datos) {
-        var d = datos || {};
-        descargarDocumentoWord(generarProtocoloBrechasHTML(d), `5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc`);
+        descargarArchivoAsset('assets/5_Protocolo_Brechas_Seguridad_72h_Ley_21719.docx', '5_Protocolo_Brechas_Seguridad_72h_Ley_21719.docx');
     }
 
     function descargarFormularioARCOP(datos) {
-        var d = datos || {};
-        descargarDocumentoWord(generarFormularioARCOPHTML(d), `6_Formulario_Solicitud_Derechos_ARCOP.doc`);
+        descargarArchivoAsset('assets/6_Formulario_Solicitud_Derechos_ARCOP.docx', '6_Formulario_Solicitud_Derechos_ARCOP.docx');
     }
 
     function descargarTestDPO(datos) {
-        var d = datos || {};
-        descargarDocumentoWord(generarTestDPOHTML(d), `7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.doc`);
+        descargarArchivoAsset('assets/7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.docx', '7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.docx');
     }
 
     // Exportar al objeto global

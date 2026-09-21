@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Implementación Rápida - Kit Ley 21.719 Protección de Datos Personales Chile</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 14mm 14mm 16mm 14mm;
+            @bottom-right {
+                content: counter(page);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+                font-size: 8pt;
+                color: #64748b;
+            }
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #0f172a;
+            line-height: 1.45;
+            font-size: 9.5pt;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-break {
+            page-break-before: always;
+            padding-top: 4mm;
+        }
+
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+
+        /* Encabezado Corporativo */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            background-color: #0ea5e9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        .brand-text {
+            font-size: 17pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text span {
+            color: #0284c7;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 8pt;
+            color: #64748b;
+            line-height: 1.3;
+        }
+
+        .doc-badge {
+            display: inline-block;
+            background-color: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 7.5pt;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        /* Títulos */
+        h1.main-title {
+            font-size: 16pt;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.25;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.3px;
+        }
+
+        p.lead-text {
+            font-size: 9.5pt;
+            color: #475569;
+            margin: 0 0 16px 0;
+            line-height: 1.5;
+        }
+
+        h2.section-title {
+            font-size: 11.5pt;
+            font-weight: 800;
+            color: #0369a1;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin: 16px 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        h3.subsection-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 12px 0 6px 0;
+        }
+
+        /* Cajas de Alerta / Destacado */
+        .callout {
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            font-size: 9pt;
+            line-height: 1.45;
+        }
+
+        .callout-blue {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            color: #0369a1;
+        }
+
+        .callout-amber {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .callout-emerald {
+            background-color: #f0fdf4;
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+
+        /* Pasos de Implementación */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 12px 0 16px 0;
+        }
+
+        .step-card {
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .step-num {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            background-color: #0284c7;
+            color: #ffffff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-weight: 800;
+            font-size: 8.5pt;
+            margin-bottom: 6px;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 9pt;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 8pt;
+            color: #475569;
+            line-height: 1.35;
+        }
+
+        /* Tablas */
+        table.custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.2pt;
+            margin: 10px 0 14px 0;
+        }
+
+        table.custom-table th {
+            background-color: #0f172a;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 7px 8px;
+            text-align: left;
+            font-size: 8pt;
+            border: 1px solid #0f172a;
+        }
+
+        table.custom-table td {
+            padding: 6px 8px;
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+            line-height: 1.35;
+        }
+
+        table.custom-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 7pt;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .tag-blue { background-color: #e0f2fe; color: #0369a1; }
+        .tag-green { background-color: #dcfce7; color: #15803d; }
+        .tag-amber { background-color: #fef3c7; color: #b45309; }
+        .tag-purple { background-color: #f3e8ff; color: #7e22ce; }
+
+        /* Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 8.5pt;
+        }
+
+        .checkbox-box {
+            width: 15px;
+            height: 15px;
+            border: 1.5px solid #0284c7;
+            border-radius: 3px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checklist-content strong {
+            color: #0f172a;
+        }
+
+        .checklist-content span {
+            color: #64748b;
+            font-size: 8pt;
+            display: block;
+            margin-top: 1px;
+        }
+
+        /* Documentos Grid */
+        .docs-list {
+            margin: 10px 0;
+        }
+
+        .doc-row {
+            display: flex;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid #e2e8f0;
+            align-items: baseline;
+        }
+
+        .doc-row-num {
+            font-weight: 800;
+            color: #0284c7;
+            font-size: 9pt;
+            width: 55px;
+            flex-shrink: 0;
+        }
+
+        .doc-row-body {
+            flex-grow: 1;
+            font-size: 8.5pt;
+        }
+
+        .doc-row-body strong {
+            color: #0f172a;
+        }
+
+        .doc-row-body p {
+            margin: 2px 0 0 0;
+            color: #475569;
+            font-size: 8pt;
+            line-height: 1.35;
+        }
+
+        .doc-action {
+            width: 140px;
+            text-align: right;
+            font-size: 7.5pt;
+            color: #64748b;
+            flex-shrink: 0;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer-note {
+            margin-top: 16px;
+            padding-top: 10px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 7.5pt;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 1: PORTADA, BIENVENIDA Y RUTA RÁPIDA EN 3 PASOS              -->
+    <!-- =================================================================== -->
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo">CL</div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <div class="doc-badge">Documento 0 Oficial</div><br>
+            <strong>Kit Ley N° 21.719</strong> · Datos Personales Chile<br>
+            Versión Operativa Pyme 2026
+        </div>
+    </div>
+
+    <h1 class="main-title">Manual de Uso e Implementación Rápida</h1>
+    <p class="lead-text">
+        Guía paso a paso en lenguaje claro para dueños, directores, gerentes y administradores de micro, pequeñas y medianas empresas. Aprende a implementar tu blindaje legal en menos de 15 minutos sin incurrir en costosas asesorías externas.
+    </p>
+
+    <div class="callout callout-emerald">
+        <strong>¿Qué busca la Ley 21.719 y la Dirección del Trabajo?</strong><br>
+        La ley no exige que una pyme tenga sistemas informáticos millonarios. Lo que exige es <strong>Principio de Responsabilidad y Diligencia Debida</strong>: demostrar por escrito que cuidas los datos de tus trabajadores y clientes, que los contratos tienen cláusulas de protección y que sabes qué hacer si ocurre un incidente. Este kit contiene exactamente todo lo exigible.
+    </div>
+
+    <h2 class="section-title">🚀 La Ruta de Implementación en 3 Pasos (15 Minutos)</h2>
+    
+    <div class="steps-container">
+        <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-title">Fase Laboral (Hoy)</div>
+            <div class="step-desc">
+                Imprime y firma el <strong>Documento 1 (Anexo Laboral)</strong> con tus trabajadores junto a la liquidación de sueldo. Quedas protegido ante multas de la DT y regulas el reloj control biométrico.
+            </div>
+        </div>
+        <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-title">Fase Registro (Semana 1)</div>
+            <div class="step-desc">
+                Abre el <strong>Documento 4 (Excel RAT)</strong>, reemplaza en la fila 3 el Nombre y RUT de tu empresa, y guárdalo. Publica el <strong>Documento 2</strong> en el pie de tu web o correos comerciales.
+            </div>
+        </div>
+        <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-title">Fase Resguardo (Carpeta)</div>
+            <div class="step-desc">
+                Archiva los <strong>Documentos 3, 5, 6 y 7</strong> en la carpeta administrativa de la empresa. Servirán como prueba de cumplimiento si la DT o la Agencia APDP te fiscalizan.
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">📁 Radiografía de los 7 Instrumentos Incluidos</h2>
+    <div class="docs-list">
+        <div class="doc-row">
+            <div class="doc-row-num">DOC 1</div>
+            <div class="doc-row-body">
+                <strong>Anexo Laboral de Tratamiento de Datos (Formato Word .doc)</strong>
+                <p>Regula el tratamiento de datos del trabajador: sueldos, Previred, confidencialidad estricta de licencias médicas y la cláusula obligatoria de alternativa no biométrica para reloj control (Res. Ex. N° 38/2024 DT).</p>
+            </div>
+            <div class="doc-action">Cambiar: [EMPRESA], [RUT], [TRABAJADOR] y firmar</div>
+        </div>
+
+        <div class="doc-row">
+            <div class="doc-row-num">DOC 2</div>
+            <div class="doc-row-body">
+                <strong>Política de Privacidad Web y Clientes (Formato Word .doc)</strong>
+                <p>Texto legal obligatorio para informar a clientes y visitantes sobre el uso de sus datos, formularios web, facturación y catálogo de derechos ARCOP con plazo legal de 30 días corridos.</p>
+            </div>
+            <div class="doc-action">Publicar en web o anexar a cotizaciones</div>
+        </div>
+
+        <div class="doc-row">
+            <div class="doc-row-num">DOC 3</div>
+            <div class="doc-row-body">
+                <strong>Cláusula DPA con Proveedores y Encargados (Formato Word .doc)</strong>
+                <p>Addendum para que tu contador externo, proveedor de software o hosting asuman la responsabilidad de confidencialidad y eximan a tu pyme de responsabilidad solidaria si ellos sufren una fuga de datos.</p>
+            </div>
+            <div class="doc-action">Firmar con contador o proveedor de software</div>
+        </div>
+
+        <div class="doc-row">
+            <div class="doc-row-num">DOC 4</div>
+            <div class="doc-row-body">
+                <strong>Registro de Actividades de Tratamiento - RAT (Formato Excel .xlsx)</strong>
+                <p>Inventario formal exigido por el Art. 25 de la Ley 21.719. Contiene pre-configuradas las 6 actividades universales (Sueldos, Licencias, Reloj Control, Clientes, Web y CCTV) con sus bases legales ya fundamentadas.</p>
+            </div>
+            <div class="doc-action">Reemplazar Nombre y RUT en Fila 3 y guardar</div>
+        </div>
+
+        <div class="doc-row">
+            <div class="doc-row-num">DOC 5</div>
+            <div class="doc-row-body">
+                <strong>Protocolo de Notificación de Brechas de Seguridad 72h (Formato Word .doc)</strong>
+                <p>Manual operativo paso a paso y formulario pre-redactado para comunicar a la Agencia APDP y a los afectados en caso de hackeo, pérdida de un computador o extravío de correos.</p>
+            </div>
+            <div class="doc-action">Mantener archivado para emergencias</div>
+        </div>
+
+        <div class="doc-row">
+            <div class="doc-row-num">DOC 6</div>
+            <div class="doc-row-body">
+                <strong>Formulario Oficial de Solicitud de Derechos ARCOP (Formato Word .doc)</strong>
+                <p>Plantilla con timbraje y acuse de recibo para que si un cliente o extrabajador pide borrar o rectificar sus datos, lo tramites de manera formal dentro del plazo legal de 30 días corridos.</p>
+            </div>
+            <div class="doc-action">Disponible en recepción o buzón comercial</div>
+        </div>
+
+        <div class="doc-row">
+            <div class="doc-row-num">DOC 7</div>
+            <div class="doc-row-body">
+                <strong>Guía de Autodiagnóstico DPO / Delegado de Datos (Formato Word .doc)</strong>
+                <p>Cuestionario legal de 4 preguntas que certifica y deja por escrito ante cualquier autoridad por qué tu empresa califica como MiPyme y está 100% exenta de contratar a un Delegado de Datos (DPO).</p>
+            </div>
+            <div class="doc-action">Firmar por Gerente/Dueño y archivar</div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 2: GUÍA POR RUBROS Y SECTORES ECONÓMICOS                     -->
+    <!-- =================================================================== -->
+    <div class="page-break"></div>
+
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo">CL</div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <strong>Guía Práctica por Sectores</strong> · Ley N° 21.719<br>
+            ¿Cómo adaptar el kit a tu tipo de negocio?
+        </div>
+    </div>
+
+    <h2 class="section-title">🏢 ¿Es Estandarizado o Cada Rubro Debe Llenar Cosas Distintas?</h2>
+    <p class="lead-text">
+        <strong>Respuesta corta:</strong> La ley es <strong>idéntica</strong> para todos. El 85% de las actividades (sueldos, boletas, facturas, contratos y licencias médicas) es exactamente el mismo en cualquier empresa chilena. Solo si perteneces a un sector con particularidades operativas debes revisar las siguientes pautas:
+    </p>
+
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">Rubro / Tipo de Negocio</th>
+                <th style="width: 35%;">¿Qué datos específicos maneja?</th>
+                <th style="width: 40%;">Instrucción concreta de aplicación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <strong>Servicios B2B, Talleres, Oficinas y Pymes Estándar</strong><br>
+                    <span class="tag tag-green">100% Plug & Play</span>
+                </td>
+                <td>
+                    Datos de trabajadores (nómina, contratos) y clientes empresa (RUT, facturación, correos de contacto comercial).
+                </td>
+                <td>
+                    <strong>No necesitas modificar ninguna cláusula.</strong> Usa los 7 documentos tal cual vienen en el kit, cambiando únicamente los nombres y RUTs de tu empresa.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Comercio Electrónico (E-commerce) y Tiendas Online</strong><br>
+                    <span class="tag tag-blue">Sector Digital</span>
+                </td>
+                <td>
+                    Direcciones de despacho de clientes particulares, teléfonos, pasarelas de pago (Transbank, Flow, Mercado Pago) y cookies web.
+                </td>
+                <td>
+                    1. Copia y pega el <strong>Documento 2</strong> en el pie de página de tu tienda online (sección <em>"Políticas de Privacidad"</em>).<br>
+                    2. En el <strong>Excel RAT</strong>, mantén activa la fila <code>RAT-05</code> (Ventas web). Si usas Starken o Chilexpress, puedes mencionarlos en la Columna H como encargados de entrega.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Transporte, Logística y Fletes</strong><br>
+                    <span class="tag tag-amber">Flotas y Choferes</span>
+                </td>
+                <td>
+                    <strong>Geolocalización (GPS)</strong> en camiones, furgones o motocicletas de reparto, asociadas a choferes específicos.
+                </td>
+                <td>
+                    1. En el <strong>Documento 1 (Anexo Laboral)</strong>, agrega en la Cláusula Segunda que los vehículos cuentan con GPS por motivos de seguridad y control de ruta.<br>
+                    2. En el <strong>Excel RAT</strong>, añade una fila adicional: <code>RAT-07: Monitoreo GPS Flota</code> con base en el Art. 154 ter del Código del Trabajo.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Salud, Estética y Bienestar</strong><br>
+                    <small>Clínicas, Dentistas, Psicólogos, Kinesiólogos</small><br>
+                    <span class="tag tag-purple">Datos Sensibles</span>
+                </td>
+                <td>
+                    Fichas clínicas, anamnesis, diagnósticos médicos y tratamientos de pacientes particulares.
+                </td>
+                <td>
+                    1. Los datos de salud son <strong>Datos Sensibles</strong> (Art. 10 Ley 19.628 / 21.719). Se debe recabar el consentimiento expreso del paciente en la ficha de ingreso.<br>
+                    2. Firma rigurosamente el <strong>Documento 3 (DPA)</strong> con el proveedor del software médico en la nube donde almacenes las fichas clínicas.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Educación, Jardines y Academias</strong><br>
+                    <small>Talleres, Escuelas, Clubes Deportivos</small><br>
+                    <span class="tag tag-amber">Menores de Edad</span>
+                </td>
+                <td>
+                    Fotografías, nombres y registros de asistencia de <strong>menores de 14 años</strong>.
+                </td>
+                <td>
+                    La Ley 21.719 prohíbe tratar datos de menores sin la autorización expresa del padre, madre o apoderado legal. Haz firmar un anexo de matrícula con la Política del <strong>Documento 2</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Locales Abiertos a Público y Retail</strong><br>
+                    <small>Restaurantes, Tiendas, Bodegas</small><br>
+                    <span class="tag tag-blue">Cámaras CCTV</span>
+                </td>
+                <td>
+                    Grabaciones de imágenes de clientes y transeúntes mediante cámaras de seguridad en accesos y salas de venta.
+                </td>
+                <td>
+                    1. Mantén activa la fila <code>RAT-06</code> en el <strong>Excel RAT</strong>.<br>
+                    2. Instala en la entrada un letrero visible con la leyenda: <em>"Zona protegida por cámaras de seguridad para fines de prevención de delitos. Conforme a la Ley N° 21.719."</em>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="callout callout-blue">
+        <strong>💡 Consejo Práctico para Pymes Chilenas:</strong><br>
+        Si tu empresa realiza más de una actividad (por ejemplo, tienes un taller mecánico que además vende repuestos por internet), simplemente aplicas ambas pautas: mantienes tus anexos laborales firmados y publicas la política en la página web. La estructura de nuestro kit ya viene diseñada para convivir armónicamente.
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- PÁGINA 3: PREGUNTAS FRECUENTES Y CHECKLIST IMPRIMIBLE               -->
+    <!-- =================================================================== -->
+    <div class="page-break"></div>
+
+    <div class="doc-header">
+        <div class="brand-box">
+            <div class="brand-logo">CL</div>
+            <div class="brand-text">Cálculo<span>Laboral</span></div>
+        </div>
+        <div class="doc-meta">
+            <strong>Checklist & FAQ Operativo</strong> · Ley N° 21.719<br>
+            Herramienta de Control Interno
+        </div>
+    </div>
+
+    <h2 class="section-title">❓ Preguntas Frecuentes de Dueños y Gerentes de Pymes</h2>
+
+    <div class="avoid-break">
+        <h3 class="subsection-title">1. ¿Tengo que enviar estos documentos a la Dirección del Trabajo o a alguna entidad del gobierno?</h3>
+        <p style="font-size: 8.5pt; color: #334155; margin: 0 0 8px 0; line-height: 1.4;">
+            <strong>No.</strong> Ninguna ley exige enviar copias previas al Estado. La obligación legal consiste en mantenerlos redactados, firmados y archivados internamente en la empresa. Solo debes exhibirlos cuando un fiscalizador de la DT o de la Agencia de Protección de Datos te los solicite expresamente.
+        </p>
+    </div>
+
+    <div class="avoid-break">
+        <h3 class="subsection-title">2. ¿Qué pasa si un trabajador se niega a poner la huella en el reloj control?</h3>
+        <p style="font-size: 8.5pt; color: #334155; margin: 0 0 8px 0; line-height: 1.4;">
+            La <strong>Resolución Exenta N° 38 de 2024 de la Dirección del Trabajo</strong> prohíbe sancionar o despedir a un trabajador por negarse a usar biometría. Por eso, la Cláusula Cuarta de nuestro <strong>Documento 1</strong> le garantiza expresamente un método alternativo (tarjeta magnética, clave/PIN o libro de firmas). Al estar firmado este anexo, tu empresa queda 100% blindada de multas administrativas.
+        </p>
+    </div>
+
+    <div class="avoid-break">
+        <h3 class="subsection-title">3. ¿Qué hago si sufrimos un hackeo, robo de computador o filtración de correos?</h3>
+        <p style="font-size: 8.5pt; color: #334155; margin: 0 0 8px 0; line-height: 1.4;">
+            Abre inmediatamente el <strong>Documento 5 (Protocolo de Brechas)</strong>. Sigue los 4 pasos operativos: aislar el equipo afectado, evaluar qué datos se vieron comprometidos y, si hubo riesgo para las personas, enviar el formulario pre-redactado a la Agencia APDP y a los afectados sin dilaciones indebidas (estándar de 72 horas).
+        </p>
+    </div>
+
+    <div class="avoid-break">
+        <h3 class="subsection-title">4. ¿Debo contratar a un Delegado de Protección de Datos (DPO)?</h3>
+        <p style="font-size: 8.5pt; color: #334155; margin: 0 0 8px 0; line-height: 1.4;">
+            <strong>No.</strong> Las micro, pequeñas y medianas empresas están exentas de nombrar un DPO, a menos que traten datos sensibles de salud de forma masiva y sistemática (como una gran clínica o un banco). Para demostrar esta exención ante cualquier fiscalizador, completa y firma el <strong>Documento 7 (Test de Autodiagnóstico DPO)</strong> incluido en este kit.
+        </p>
+    </div>
+
+    <h2 class="section-title">✅ Lista de Cotejo de Blindaje Total (Imprimible)</h2>
+    <p style="font-size: 8.5pt; color: #475569; margin: 0 0 10px 0;">
+        Marca con una cruz cada casilla a medida que completes la implementación en tu empresa:
+    </p>
+
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px;">
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div class="checklist-content">
+                <strong>Anexos Laborales Firmados (Documento 1)</strong>
+                <span>Todos los trabajadores contratados tienen firmado el anexo de datos personales y huella biométrica archivado en su carpeta de personal.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div class="checklist-content">
+                <strong>Política de Privacidad Publicada (Documento 2)</strong>
+                <span>Texto visible en el pie de página de la web de la empresa, o disponible en recepción y anexado al pie de correos de cotizaciones.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div class="checklist-content">
+                <strong>Addendum DPA de Proveedores Firmado (Documento 3)</strong>
+                <span>Enviado y suscrito con el contador externo de la empresa y con los proveedores críticos de software de nómina o hosting.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div class="checklist-content">
+                <strong>Excel RAT Guardado y Personalizado (Documento 4)</strong>
+                <span>Planilla completada con el Nombre y RUT de la empresa en la Fila 3, guardada en el computador de administración en formato Excel y PDF.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div class="checklist-content">
+                <strong>Protocolo de Brechas Conocido por Administración (Documento 5)</strong>
+                <span>El personal clave sabe qué hacer y a quién avisar si ocurre un robo informático, pérdida de laptop o filtración de información.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checkbox-box"></div>
+            <div class="checklist-content">
+                <strong>Formulario ARCOP Disponible (Documento 6)</strong>
+                <span>Plantilla lista para responder cualquier solicitud de rectificación o eliminación de datos en el plazo legal fatal de 30 días corridos.</span>
+            </div>
+        </div>
+
+        <div class="checklist-item" style="border-bottom: none;">
+            <div class="checkbox-box"></div>
+            <div class="checklist-content">
+                <strong>Certificado de Exención DPO Firmado (Documento 7)</strong>
+                <span>Test de 4 preguntas firmado por el representante legal que acredita por qué la pyme no está obligada a contratar un DPO externo.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <div>&copy; 2026 Cálculo Laboral Chile · Herramientas Legales y Simuladores para Trabajadores y Pymes</div>
+        <div>Contacto y Soporte: <strong>contacto@calculolaboral.cl</strong></div>
+    </div>
+
+</body>
+</html>

@@ -8,14 +8,14 @@ base64_out = os.path.join(os.path.dirname(__file__), '..', 'api', 'assets', 'kit
 
 files = [
     '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf',
-    '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.doc',
-    '1_Anexo_Laboral_Datos_Personales_Ley_21719.doc',
-    '2_Politica_Privacidad_Web_y_Pyme_Ley_21719.doc',
-    '3_Clausula_DPA_Proveedores_Encargados_Ley_21719.doc',
+    '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.docx',
+    '1_Anexo_Laboral_Datos_Personales_Ley_21719.docx',
+    '2_Politica_Privacidad_Web_y_Pyme_Ley_21719.docx',
+    '3_Clausula_DPA_Proveedores_Encargados_Ley_21719.docx',
     '4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx',
-    '5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc',
-    '6_Formulario_Solicitud_Derechos_ARCOP.doc',
-    '7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.doc'
+    '5_Protocolo_Brechas_Seguridad_72h_Ley_21719.docx',
+    '6_Formulario_Solicitud_Derechos_ARCOP.docx',
+    '7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.docx'
 ]
 
 with zipfile.ZipFile(out_zip, 'w', zipfile.ZIP_DEFLATED) as zf:
