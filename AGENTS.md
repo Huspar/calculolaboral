@@ -120,7 +120,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
   1. **Columna Marca:** Logotipo oficial SVG + Breve descripción de la plataforma + Versión (`Versión 2.0.0 (2026)`).
   2. **Columna Calculadoras (Curada, 6 enlaces):** Simulador Despido Injustificado, Sueldo Líquido, Finiquito Legal, Horas Extras, Sueldo Part-Time, Despido Art. 160.
   3. **Columna Guías Clave (5 enlaces + enlace a blog):** Cómo Reclamar Despido, Carta de Renuncia, Checklist DT Pymes, Art. 161, Ley 40 Horas + `Ver todas las guías →`.
-  4. **Columna Para Empresas:** Portal Empleadores, Kit Blindaje Laboral ($19.990), Generador Finiquito ($12.990), Anexo 40 Horas, Sobre Nosotros, Contacto Directo.
+  4. **Columna Para Empresas:** Portal Empleadores, Kit Ley 21.719 Datos ($29.990), Kit Blindaje Laboral ($19.990), Generador Finiquito ($12.990), Anexo 40 Horas, Sobre Nosotros, Contacto Directo.
 * **Barra Inferior Horizontal:** `border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left`:
   * Leyenda legal BCN & Dirección del Trabajo.
   * Enlaces horizontales utilitarios en línea: `Términos` · `Privacidad` · `Disclaimer` · Sello de verificación `DT Chile Conforme`.
@@ -184,6 +184,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
             <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h4>
             <ul class="space-y-1.5 text-xs">
                 <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
+                <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
                 <li><a href="kit-cumplimiento-laboral-pymes" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
                 <li><a href="generador-finiquito-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Generador Finiquito ($12.990)</a></li>
                 <li><a href="generador-anexo-40-horas" class="text-slate-600 hover:text-sky-500 transition-colors">Anexo 40 Horas Word</a></li>
