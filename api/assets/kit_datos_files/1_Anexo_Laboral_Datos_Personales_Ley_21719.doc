@@ -14,7 +14,7 @@
 <![endif]-->
 <style>
 @page {
-    size: 21.59cm 27.94cm;
+    size: 21.0cm 29.7cm; /* A4 */
     margin: 2.5cm 2.5cm 2.5cm 2.5cm;
     mso-header-margin: 35.4pt;
     mso-footer-margin: 35.4pt;
@@ -37,115 +37,115 @@ table {
 </head>
 <body>
 
-            <div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
-                <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 24px; text-transform: uppercase;">
-                    ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO<br>
-                    AUTORIZACIÓN, TRATAMIENTO Y PROTECCIÓN DE DATOS PERSONALES<br>
-                    <span style="font-size: 10pt; font-weight: normal;">(Conforme a la Ley N° 21.719, Arts. 154 bis y ter del Código del Trabajo y Res. Exenta N° 38/2024 de la Dirección del Trabajo)</span>
-                </p>
+<div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
+    <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 24px; text-transform: uppercase;">
+        ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO<br>
+        AUTORIZACIÓN, TRATAMIENTO Y PROTECCIÓN DE DATOS PERSONALES<br>
+        <span style="font-size: 10pt; font-weight: normal;">(Conforme a la Ley N° 21.719, Arts. 154 bis y ter del Código del Trabajo y Res. Exenta N° 38/2024 de la Dirección del Trabajo)</span>
+    </p>
 
-                <p>
-                    En <strong>Santiago</strong>, a <strong>21 de septiembre de 2026</strong>, entre:
-                </p>
-                <p style="margin-left: 20px;">
-                    1. <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong>, Rol Único Tributario N° <strong>[RUT EMPRESA]</strong>, representada legalmente según consta en el contrato de trabajo principal, en adelante denominada indistintamente el "Empleador" o el "Responsable del Tratamiento"; y
-                </p>
-                <p style="margin-left: 20px;">
-                    2. Don/Doña <strong>[NOMBRE COMPLETO TRABAJADOR]</strong>, cédula nacional de identidad N° <strong>[RUT TRABAJADOR]</strong>, en adelante denominado el "Trabajador" o el "Titular de los Datos";
-                </p>
-                <p>
-                    Se ha convenido y suscrito el siguiente <strong>ANEXO AL CONTRATO DE TRABAJO</strong>:
-                </p>
+    <p>
+        En <strong>[CIUDAD]</strong>, a <strong>[FECHA]</strong>, entre:
+    </p>
+    <p style="margin-left: 20px;">
+        1. <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong>, Rol Único Tributario N° <strong>[RUT EMPRESA]</strong>, representada legalmente según consta en el contrato de trabajo principal, en adelante denominada indistintamente el "Empleador" o el "Responsable del Tratamiento"; y
+    </p>
+    <p style="margin-left: 20px;">
+        2. Don/Doña <strong>[NOMBRE COMPLETO DEL TRABAJADOR]</strong>, cédula nacional de identidad N° <strong>[RUT TRABAJADOR]</strong>, en adelante denominado el "Trabajador" o el "Titular de los Datos";
+    </p>
+    <p>
+        Se ha convenido y suscrito el siguiente <strong>ANEXO AL CONTRATO DE TRABAJO</strong>:
+    </p>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA PRIMERA: ANTECEDENTES Y MARCO NORMATIVO.
-                </p>
-                <p>
-                    Las partes declaran que con fecha 13 de diciembre de 2024 fue promulgada la Ley N° 21.719 que regula la protección y el tratamiento de los datos personales y crea la Agencia de Protección de Datos Personales, y que en conformidad con los artículos 154 bis y 154 ter del Código del Trabajo, el Empleador se encuentra legalmente obligado a custodiar bajo estricta reserva y confidencialidad toda la información privada y sensible del Trabajador devengada con ocasión de la relación laboral.
-                </p>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA PRIMERA: ANTECEDENTES Y MARCO NORMATIVO.
+    </p>
+    <p>
+        Las partes declaran que con fecha 13 de diciembre de 2024 fue promulgada la Ley N° 21.719 que regula la protección y el tratamiento de los datos personales y crea la Agencia de Protección de Datos Personales, y que en conformidad con los artículos 154 bis y 154 ter del Código del Trabajo, el Empleador se encuentra legalmente obligado a custodiar bajo estricta reserva y confidencialidad toda la información privada y sensible del Trabajador devengada con ocasión de la relación laboral.
+    </p>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA SEGUNDA: CATEGORÍAS DE DATOS Y FINALIDAD DEL TRATAMIENTO.
-                </p>
-                <p>
-                    El Trabajador toma conocimiento y autoriza al Empleador a tratar exclusivamente los datos personales estrictamente necesarios para:
-                </p>
-                <ul style="margin-left: 25px;">
-                    <li><strong>Gestión de la Relación Laboral:</strong> Confección y pago de remuneraciones, liquidaciones de sueldo, transferencias bancarias, retenciones judiciales (pensiones de alimentos), pago de cotizaciones previsionales en Previred y gestión de finiquitos ante la Dirección del Trabajo.</li>
-                    <li><strong>Cumplimiento Legal y Previsional:</strong> Envío de reportes al Servicio de Impuestos Internos (SII), Dirección del Trabajo (portal Mi DT) y Administradoras de Fondos de Pensiones / Isapre / Fonasa.</li>
-                    <li><strong>Prevención de Riesgos y Seguridad Ocupacional:</strong> Control de exámenes de salud laboral conforme a la Ley 16.744 y reglamento interno de orden, higiene y seguridad.</li>
-                </ul>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA SEGUNDA: CATEGORÍAS DE DATOS Y FINALIDAD DEL TRATAMIENTO.
+    </p>
+    <p>
+        El Trabajador toma conocimiento y autoriza al Empleador a tratar exclusivamente los datos personales estrictamente necesarios para:
+    </p>
+    <ul style="margin-left: 25px;">
+        <li><strong>Gestión de la Relación Laboral:</strong> Confección y pago de remuneraciones, liquidaciones de sueldo, transferencias bancarias, retenciones judiciales (pensiones de alimentos), pago de cotizaciones previsionales en Previred y gestión de finiquitos ante la Dirección del Trabajo.</li>
+        <li><strong>Cumplimiento Legal y Previsional:</strong> Envío de reportes al Servicio de Impuestos Internos (SII), Dirección del Trabajo (portal Mi DT) y Administradoras de Fondos de Pensiones / Isapre / Fonasa.</li>
+        <li><strong>Prevención de Riesgos y Seguridad Ocupacional:</strong> Control de exámenes de salud laboral conforme a la Ley 16.744 y reglamento interno de orden, higiene y seguridad.</li>
+    </ul>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA TERCERA: TRATAMIENTO DE DATOS SENSIBLES DE SALUD (LICENCIAS MÉDICAS).
-                </p>
-                <p>
-                    En virtud del artículo 12 de la Ley N° 21.719 y el artículo 154 bis del Código del Trabajo, los antecedentes relativos al estado de salud del Trabajador, tales como licencias médicas, diagnósticos y exámenes ocupacionales, constituyen <strong>datos sensibles de especial protección</strong>. El Empleador se compromete formalmente a que el acceso a dichos antecedentes quedará estrictamente limitado al personal de Recursos Humanos encargado de la tramitación previsional (COMPIN/Isapre), prohibiéndose expresamente su divulgación a jefaturas directas o a terceros ajenos a la tramitación legal.
-                </p>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA TERCERA: TRATAMIENTO DE DATOS SENSIBLES DE SALUD (LICENCIAS MÉDICAS).
+    </p>
+    <p>
+        En virtud del artículo 12 de la Ley N° 21.719 y el artículo 154 bis del Código del Trabajo, los antecedentes relativos al estado de salud del Trabajador, tales como licencias médicas, diagnósticos y exámenes ocupacionales, constituyen <strong>datos sensibles de especial protección</strong>. El Empleador se compromete formalmente a que el acceso a dichos antecedentes quedará estrictamente limitado al personal de Recursos Humanos encargado de la tramitación previsional (COMPIN/Isapre), prohibiéndose expresamente su divulgación a jefaturas directas o a terceros ajenos a la tramitación legal.
+    </p>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA CUARTA: SISTEMA DE CONTROL DE ASISTENCIA Y OPCIÓN BIOMÉTRICA (RES. EXENTA N° 38/2024 DT).
-                </p>
-                <p>
-                    En cumplimiento estricto del dictamen y Resolución Exenta N° 38 de 2024 de la Dirección del Trabajo:
-                </p>
-                <ul style="margin-left: 25px;">
-                    <li>El Trabajador toma conocimiento de que la empresa dispone de un sistema automatizado de control de asistencia. En caso de utilizar tecnología biométrica (huella dactilar o reconocimiento facial), el Empleador declara que los datos capturados se almacenan únicamente como patrones o algoritmos matemáticos encriptados y no como imágenes reconstructibles de la huella o rostro.</li>
-                    <li><strong>Garantía de Alternativa No Biométrica:</strong> El Empleador garantiza expresamente al Trabajador el derecho a optar por un método de marcaje alternativo no biométrico (tarjeta magnética, clave/PIN o aplicación), sin que su negativa a utilizar biometría pueda constituir falta laboral, represalia o causal de despido.</li>
-                    <li>Los datos de asistencia no serán utilizados para ningún fin distinto al registro de jornada y cálculo de remuneraciones.</li>
-                </ul>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA CUARTA: SISTEMA DE CONTROL DE ASISTENCIA Y OPCIÓN BIOMÉTRICA (RES. EXENTA N° 38/2024 DT).
+    </p>
+    <p>
+        En cumplimiento estricto del dictamen y Resolución Exenta N° 38 de 2024 de la Dirección del Trabajo:
+    </p>
+    <ul style="margin-left: 25px;">
+        <li>El Trabajador toma conocimiento de que la empresa dispone de un sistema automatizado de control de asistencia. En caso de utilizar tecnología biométrica (huella dactilar o reconocimiento facial), el Empleador declara que los datos capturados se almacenan únicamente como patrones o algoritmos matemáticos encriptados y no como imágenes reconstructibles de la huella o rostro.</li>
+        <li><strong>Garantía de Alternativa No Biométrica:</strong> El Empleador garantiza expresamente al Trabajador el derecho a optar por un método de marcaje alternativo no biométrico (tarjeta magnética, clave/PIN o aplicación), sin que su negativa a utilizar biometría pueda constituir falta laboral, represalia o causal de despido.</li>
+        <li>Los datos de asistencia no serán utilizados para ningún fin distinto al registro de jornada y cálculo de remuneraciones.</li>
+    </ul>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA QUINTA: HERRAMIENTAS CORPORATIVAS Y POLÍTICA DE DISPOSITIVOS.
-                </p>
-                <p>
-                    Los correos electrónicos corporativos, computadores, teléfonos y cuentas asignadas por el Empleador son herramientas de trabajo de propiedad exclusiva de la empresa. El Trabajador se compromete a utilizarlas para los fines de sus funciones. El Empleador podrá implementar medidas de ciberseguridad proporcionales (antivirus, filtros de navegación), respetando en todo momento el derecho a la intimidad y la honra del dependiente, quedando vedada la inspección intrusiva de comunicaciones de carácter estrictamente personal.
-                </p>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA QUINTA: HERRAMIENTAS CORPORATIVAS Y POLÍTICA DE DISPOSITIVOS.
+    </p>
+    <p>
+        Los correos electrónicos corporativos, computadores, teléfonos y cuentas asignadas por el Empleador son herramientas de trabajo de propiedad exclusiva de la empresa. El Trabajador se compromete a utilizarlas para los fines de sus funciones. El Empleador podrá implementar medidas de ciberseguridad proporcionales (antivirus, filtros de navegación), respetando en todo momento el derecho a la intimidad y la honra del dependiente, quedando vedada la inspección intrusiva de comunicaciones de carácter estrictamente personal.
+    </p>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA SEXTA: ENCARGADOS DE TRATAMIENTO (PROVEEDORES EXTERNOS).
-                </p>
-                <p>
-                    El Trabajador es informado de que el Empleador puede contratar los servicios de proveedores tecnológicos externos debidamente homologados (empresas de software de recursos humanos, contadores auditores o servidores en la nube) en calidad de "Encargados de Tratamiento", quienes actuarán bajo contrato vinculante con iguales deberes de reserva y ciberseguridad.
-                </p>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA SEXTA: ENCARGADOS DE TRATAMIENTO (PROVEEDORES EXTERNOS).
+    </p>
+    <p>
+        El Trabajador es informado de que el Empleador puede contratar los servicios de proveedores tecnológicos externos debidamente homologados (empresas de software de recursos humanos, contadores auditores o servidores en la nube) en calidad de "Encargados de Tratamiento", quienes actuarán bajo contrato vinculante con iguales deberes de reserva y ciberseguridad.
+    </p>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA SÉPTIMA: EJERCICIO DE DERECHOS ARCOP.
-                </p>
-                <p>
-                    El Trabajador podrá en todo momento ejercer sus derechos de <strong>Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Bloqueo</strong> de sus datos personales, dirigiéndose por escrito al correo institucional: <strong>privacidad@tuempresa.cl</strong>, el cual será respondido en el plazo máximo de 15 días hábiles establecido por la ley.
-                </p>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA SÉPTIMA: EJERCICIO DE DERECHOS ARCOP.
+    </p>
+    <p>
+        El Trabajador podrá en todo momento ejercer sus derechos de <strong>Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Bloqueo</strong> de sus datos personales, dirigiéndose por escrito al correo institucional: <strong>[CORREO DE CONTACTO PRIVACIDAD]</strong>, el cual será respondido dentro del plazo legal fatal de treinta (30) días corridos contado desde la recepción de la solicitud, de conformidad con lo establecido en el artículo 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719).
+    </p>
 
-                <p style="font-weight: bold; margin-top: 16px;">
-                    CLÁUSULA OCTAVA: PLAZO DE CONSERVACIÓN.
-                </p>
-                <p>
-                    Terminada la relación laboral, los datos del Trabajador se conservarán únicamente durante los plazos legales de prescripción de acciones laborales (2 a 5 años según los Arts. 480 y 510 del Código del Trabajo) y tributarias (6 años según el Código Tributario), tras lo cual se procederá a su bloqueo y destrucción segura.
-                </p>
+    <p style="font-weight: bold; margin-top: 16px;">
+        CLÁUSULA OCTAVA: PLAZO DE CONSERVACIÓN.
+    </p>
+    <p>
+        Terminada la relación laboral, los datos del Trabajador se conservarán durante la vigencia del contrato y hasta por 5 años posteriores a su término (plazo de prescripción de acciones laborales según los Arts. 480 y 510 del Código del Trabajo), salvo la documentación de respaldo contable, previsional y tributario que se resguardará por 6 años (según el Art. 200 del Código Tributario), tras lo cual se procederá a su bloqueo y posterior eliminación o anonimización segura.
+    </p>
 
-                <p style="margin-top: 20px;">
-                    Para constancia, se firma el presente anexo en dos ejemplares del mismo tenor y fecha, quedando uno en poder de cada una de las partes.
-                </p>
+    <p style="margin-top: 20px;">
+        Para constancia, se firma el presente anexo en dos ejemplares del mismo tenor y fecha, quedando uno en poder de cada una de las partes.
+    </p>
 
-                <table style="width: 100%; margin-top: 60px; border-collapse: collapse;">
-                    <tr>
-                        <td style="width: 50%; text-align: center; vertical-align: top; padding: 0 20px;">
-                            <div style="border-top: 1px solid #000; padding-top: 8px;">
-                                <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong><br>
-                                RUT N° [RUT EMPRESA]<br>
-                                <em>EMPLEADOR / RESPONSABLE</em>
-                            </div>
-                        </td>
-                        <td style="width: 50%; text-align: center; vertical-align: top; padding: 0 20px;">
-                            <div style="border-top: 1px solid #000; padding-top: 8px;">
-                                <strong>[NOMBRE COMPLETO TRABAJADOR]</strong><br>
-                                C.I. N° [RUT TRABAJADOR]<br>
-                                <em>TRABAJADOR / TITULAR DE DATOS</em>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        
+    <table style="width: 100%; margin-top: 60px; border-collapse: collapse;">
+        <tr>
+            <td style="width: 50%; text-align: center; vertical-align: top; padding: 0 20px;">
+                <div style="border-top: 1px solid #000; padding-top: 8px;">
+                    <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong><br>
+                    RUT N° [RUT EMPRESA]<br>
+                    <em>EMPLEADOR / RESPONSABLE</em>
+                </div>
+            </td>
+            <td style="width: 50%; text-align: center; vertical-align: top; padding: 0 20px;">
+                <div style="border-top: 1px solid #000; padding-top: 8px;">
+                    <strong>[NOMBRE COMPLETO DEL TRABAJADOR]</strong><br>
+                    C.I. N° [RUT TRABAJADOR]<br>
+                    <em>TRABAJADOR / TITULAR DE DATOS</em>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
 </body>
 </html>

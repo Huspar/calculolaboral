@@ -133,18 +133,19 @@ module.exports = async (req, res) => {
 
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Hola ${escapeHtml(cleanName)},</p>
         <p style="font-size: 14px; color: #334155; margin: 0 0 20px;">
-            ¡Muchas gracias por tu compra! Hemos confirmado exitosamente tu pago de <strong>$29.990 CLP</strong>. Adjunto a este correo encontrarás el archivo comprimido <strong>Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip</strong> con los 6 instrumentos legales oficiales en formato Word (.doc editable) y Excel/CSV formulado.
+            ¡Muchas gracias por tu compra! Hemos confirmado exitosamente tu pago de <strong>$29.990 CLP</strong>. Adjunto a este correo encontrarás el archivo comprimido <strong>Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip</strong> con los 7 instrumentos legales oficiales en formato Word (.doc editable) y Excel profesional formulado.
         </p>
 
         <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
-            <h2 style="color: #166534; font-size: 15px; font-weight: 700; margin: 0 0 12px;">📁 Contenido del Paquete Incluido:</h2>
+            <h2 style="color: #166534; font-size: 15px; font-weight: 700; margin: 0 0 12px;">📁 Contenido del Paquete Incluido (7 Instrumentos):</h2>
             <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #0f172a; line-height: 1.7;">
-                <li style="margin-bottom: 6px;"><strong>1_Anexo_Laboral_Datos_Personales_Ley_21719.doc:</strong> Anexo de contrato con cláusula biométrica (Res. Ex. 38 DT) y reserva de licencias médicas.</li>
-                <li style="margin-bottom: 6px;"><strong>2_Politica_Privacidad_Web_y_Pyme_Ley_21719.doc:</strong> Para publicar en el sitio web y contratos comerciales, con catálogo de derechos ARCOP.</li>
-                <li style="margin-bottom: 6px;"><strong>3_Clausula_DPA_Proveedores_Encargados_Ley_21719.doc:</strong> Addendum para contador, software de nómina y hosting con exención de responsabilidad solidaria.</li>
-                <li style="margin-bottom: 6px;"><strong>4_Registro_Actividades_Tratamiento_RAT_Ley_21719.csv:</strong> Inventario obligatorio Art. 14 ter APDP formulado en Excel/CSV con 6 áreas listas.</li>
-                <li style="margin-bottom: 6px;"><strong>5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc:</strong> Protocolo operativo y formulario oficial de notificación ante la Agencia en plazo de 72 horas.</li>
-                <li><strong>Bonus_Formulario_Solicitud_Derechos_ARCOP.doc:</strong> Modelo formal de atención de reclamos con acuse de recibo timbrado (plazo legal 15 días).</li>
+                <li style="margin-bottom: 6px;"><strong>1_Anexo_Laboral_Datos_Personales_Ley_21719.doc:</strong> Anexo de contrato con cláusula biométrica (Res. Ex. 38 DT), confidencialidad de licencias médicas y plazo legal ARCOP de 30 días corridos.</li>
+                <li style="margin-bottom: 6px;"><strong>2_Politica_Privacidad_Web_y_Pyme_Ley_21719.doc:</strong> Para publicar en tu web y contratos comerciales, con catálogo de derechos ARCOP y plazo legal de 30 días corridos (Art. 11).</li>
+                <li style="margin-bottom: 6px;"><strong>3_Clausula_DPA_Proveedores_Encargados_Ley_21719.doc:</strong> Addendum para contador, nómina y hosting con deber de confidencialidad y exención de responsabilidad solidaria.</li>
+                <li style="margin-bottom: 6px;"><strong>4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx:</strong> Inventario obligatorio Art. 14 ter APDP formulado en Excel profesional con 6 áreas y plazos armonizados.</li>
+                <li style="margin-bottom: 6px;"><strong>5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc:</strong> Protocolo operativo de respuesta y formulario oficial ante la Agencia sin dilaciones indebidas (estándar operativo 72h).</li>
+                <li style="margin-bottom: 6px;"><strong>6_Formulario_Solicitud_Derechos_ARCOP.doc:</strong> Modelo formal de atención de reclamos con acuse de recibo timbrado (plazo legal fatal 30 días corridos).</li>
+                <li><strong>7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.doc:</strong> Test legal de 4 preguntas para certificar por qué tu empresa está exenta de contratar a un Delegado de Protección de Datos (DPO).</li>
             </ol>
         </div>
 
@@ -169,7 +170,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Hemos confirmado tu pago de $29.990 CLP por el Kit Ley 21.719 de Protección de Datos Personales 2026.\n\nAdjunto a este correo encontrarás el archivo Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip con los 6 instrumentos oficiales en formato Word y Excel.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Hemos confirmado tu pago de $29.990 CLP por el Kit Ley 21.719 de Protección de Datos Personales 2026.\n\nAdjunto a este correo encontrarás el archivo Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip con los 7 instrumentos oficiales en formato Word y Excel.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
 
         async function sendResend(to, subject, html, text, attachments = []) {
             if (!resendApiKey) {

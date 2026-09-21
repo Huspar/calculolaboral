@@ -117,14 +117,14 @@
                     CLÁUSULA SÉPTIMA: EJERCICIO DE DERECHOS ARCOP.
                 </p>
                 <p>
-                    El Trabajador podrá en todo momento ejercer sus derechos de <strong>Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Bloqueo</strong> de sus datos personales, dirigiéndose por escrito al correo institucional: <strong>${escapeHtml(datos.emailContacto || 'privacidad@empresa.cl')}</strong>, el cual será respondido en el plazo máximo de 15 días hábiles establecido por la ley.
+                    El Trabajador podrá en todo momento ejercer sus derechos de <strong>Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Bloqueo</strong> de sus datos personales, dirigiéndose por escrito al correo institucional: <strong>${escapeHtml(datos.emailContacto || 'privacidad@empresa.cl')}</strong>, el cual será respondido dentro del plazo legal fatal de treinta (30) días corridos contado desde la recepción de la solicitud, de conformidad con lo establecido en el artículo 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719).
                 </p>
 
                 <p style="font-weight: bold; margin-top: 16px;">
                     CLÁUSULA OCTAVA: PLAZO DE CONSERVACIÓN.
                 </p>
                 <p>
-                    Terminada la relación laboral, los datos del Trabajador se conservarán únicamente durante los plazos legales de prescripción de acciones laborales (2 a 5 años según los Arts. 480 y 510 del Código del Trabajo) y tributarias (6 años según el Código Tributario), tras lo cual se procederá a su bloqueo y destrucción segura.
+                    Terminada la relación laboral, los datos del Trabajador se conservarán durante la vigencia del contrato y hasta por 5 años posteriores a su término (plazo de prescripción de acciones laborales según los Arts. 480 y 510 del Código del Trabajo), salvo la documentación de respaldo contable, previsional y tributario que se resguardará por 6 años (según el Art. 200 del Código Tributario), tras lo cual se procederá a su bloqueo y posterior eliminación o anonimización segura.
                 </p>
 
                 <p style="margin-top: 20px;">
@@ -218,7 +218,7 @@
 
                 <p>
                     <strong>6. DERECHOS DE LOS TITULARES (DERECHOS ARCOP):</strong><br>
-                    Conforme a los artículos 5 al 10 de la Ley N° 21.719, todo titular de datos goza de los siguientes derechos inalienables:
+                    Conforme a los artículos 5° al 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719), todo titular de datos goza de los siguientes derechos inalienables:
                     <ul style="margin-left: 20px;">
                         <li><strong>Acceso:</strong> Solicitar confirmación de qué datos suyos se tratan y obtener copia de ellos.</li>
                         <li><strong>Rectificación:</strong> Modificar datos inexactos, incompletos o desactualizados.</li>
@@ -227,7 +227,7 @@
                         <li><strong>Portabilidad:</strong> Recibir sus datos en un formato digital estructurado, común y de lectura mecánica.</li>
                         <li><strong>Bloqueo:</strong> Suspender provisionalmente el tratamiento mientras se resuelve una impugnación de exactitud.</li>
                     </ul>
-                    Para ejercer estos derechos, el titular debe enviar su solicitud formal al correo <strong>${escapeHtml(email)}</strong> acreditando su identidad. La Empresa responderá dentro del plazo legal improrrogable de <strong>15 días hábiles</strong>.
+                    Para ejercer estos derechos, el titular debe enviar su solicitud formal al correo <strong>${escapeHtml(email)}</strong> acreditando fehacientemente su identidad. La Empresa acusará recibo y responderá fundadamente dentro del plazo legal fatal de <strong>treinta (30) días corridos</strong> contado desde su recepción (Artículo 11 Ley N° 19.628).
                 </p>
 
                 <p>
@@ -283,14 +283,14 @@
                     <li>Garantizar que todo su personal con acceso a los datos esté sujeto a un deber formal de confidencialidad perpetuo.</li>
                     <li>Implementar medidas técnicas y organizativas de seguridad adecuadas para garantizar un nivel de seguridad proporcional al riesgo (cifrado, control de accesos, copias de seguridad).</li>
                     <li>No subcontratar a otro proveedor ("Sub-encargado") sin la autorización previa y escrita del Responsable.</li>
-                    <li>Asistir al Responsable en la tramitación y respuesta oportuna de los derechos ARCOP de los titulares dentro de los plazos legales.</li>
+                    <li>Asistir al Responsable en la tramitación y respuesta oportuna de los derechos ARCOP de los titulares dentro del plazo legal fatal de treinta (30) días corridos.</li>
                 </ul>
 
                 <p style="font-weight: bold; margin-top: 16px;">
-                    3. NOTIFICACIÓN OBLIGATORIA DE INCIDENTES Y BRECHAS (72 HORAS).
+                    3. NOTIFICACIÓN DE INCIDENTES Y BRECHAS (ESTÁNDAR OPERATIVO 72 HORAS).
                 </p>
                 <p>
-                    En caso de que el Encargado sufra un incidente de seguridad, vulneración, filtración, hackeo o pérdida que comprometa los datos personales del Responsable, estará legalmente obligado a notificar al Responsable a más tardar dentro de las <strong>24 horas siguientes</strong> a haber tomado conocimiento del hecho, entregando la descripción del incidente, datos afectados y medidas correctivas inmediatas, a fin de que el Responsable pueda cumplir con la notificación legal a la Agencia de Protección de Datos Personales en el plazo de 72 horas.
+                    En caso de que el Encargado sufra un incidente de seguridad, vulneración, filtración, hackeo o pérdida que comprometa los datos personales del Responsable, estará legalmente obligado a notificar al Responsable a más tardar dentro de las <strong>24 horas siguientes</strong> a haber tomado conocimiento del hecho, entregando la descripción del incidente, datos afectados y medidas correctivas inmediatas, a fin de que el Responsable pueda cumplir con la obligación de notificar a la Agencia de Protección de Datos Personales sin dilaciones indebidas (conforme al Art. 14 sexies de la Ley N° 19.628 reformada), adoptando el estándar operativo y mejor práctica internacional recomendada de un plazo máximo de 72 horas.
                 </p>
 
                 <p style="font-weight: bold; margin-top: 16px;">
@@ -361,7 +361,7 @@
                 'Ejecución de contrato laboral y mandato legal Código del Trabajo',
                 'NO',
                 'Previred, Banco pagador, Software de Nómina, Dirección del Trabajo',
-                '5 años tras término relación laboral (Plazo laboral/tributario)',
+                'Hasta 5 años tras término relación laboral (Arts. 480 y 510 CT) y 6 años respaldo tributario/previsional (Art. 200 CTrib)',
                 'Acceso restringido con clave 2FA, servidor cifrado'
             ],
             [
@@ -446,12 +446,12 @@
             <div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
                 <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 24px; text-transform: uppercase;">
                     PROTOCOLO OPERATIVO DE GESTIÓN Y NOTIFICACIÓN DE BRECHAS DE SEGURIDAD<br>
-                    <span style="font-size: 10pt; font-weight: normal;">(Conforme al Artículo 14 quáter de la Ley N° 21.719 - Notificación en 72 Horas a la Agencia de Protección de Datos)</span>
+                    <span style="font-size: 10pt; font-weight: normal;">(Conforme al Artículo 14 sexies de la Ley N° 19.628, modificada por Ley N° 21.719 - Notificación sin dilaciones indebidas y Estándar Operativo de 72 Horas)</span>
                 </p>
 
                 <p>
                     <strong>1. OBJETIVO:</strong><br>
-                    Establecer las directrices de acción inmediata ante cualquier violación de seguridad, filtración, robo, pérdida, acceso no autorizado o alteración de datos personales custodiados por <strong>${escapeHtml(empresa)}</strong> (RUT ${escapeHtml(rutEmpresa)}), garantizando la contención del daño y el cumplimiento de la obligación legal de notificación a la Agencia de Protección de Datos Personales en el plazo perentorio de <strong>72 horas</strong>.
+                    Establecer las directrices de acción inmediata ante cualquier violación de seguridad, filtración, robo, pérdida, acceso no autorizado o alteración de datos personales custodiados por <strong>${escapeHtml(empresa)}</strong> (RUT ${escapeHtml(rutEmpresa)}), garantizando la contención del daño y el cumplimiento de la obligación legal de notificar a la Agencia de Protección de Datos Personales a la mayor brevedad posible y sin dilaciones indebidas (Art. 14 sexies), adoptando como estándar operativo interno y mejor práctica internacional recomendada un plazo máximo de <strong>72 horas</strong> desde la detección del incidente.
                 </p>
 
                 <p>
@@ -475,7 +475,7 @@
                         Determinar qué categorías de datos fueron expuestas (datos comunes vs. datos sensibles de salud/biometría) y estimar el número aproximado de titulares afectados.
                     </li>
                     <li><strong>FASE 3: Notificación Formal a la Agencia (Horas 36 a 72):</strong>
-                        Si la brecha entraña un riesgo para los derechos de los titulares, remitir el formulario oficial a la Agencia de Protección de Datos Personales antes de cumplir las 72 horas desde el conocimiento del incidente.
+                        Si la brecha entraña un riesgo para los derechos de los titulares, remitir el reporte oficial a la Agencia de Protección de Datos Personales sin dilación indebida, estableciendo como meta de cumplimiento operativo interno no superar las 72 horas desde que se tuvo conocimiento confirmado del incidente.
                     </li>
                     <li><strong>FASE 4: Notificación a Titulares y Mitigación (Posterior a 72 Horas):</strong>
                         Si el riesgo es de gravedad, comunicar directamente a los afectados las medidas que deben tomar (ej. cambio de claves bancarias) y registrar el incidente en la Bitácora Histórica del RAT.
@@ -516,7 +516,7 @@
                 </p>
 
                 <p>
-                    El presente formulario permite a cualquier titular de datos (cliente, trabajador, proveedor o usuario) solicitar ante <strong>${escapeHtml(empresa)}</strong> (RUT ${escapeHtml(rutEmpresa)}) el ejercicio formal de sus derechos reconocidos en los artículos 5 al 10 de la Ley N° 21.719.
+                    El presente formulario permite a cualquier titular de datos (cliente, trabajador, proveedor o usuario) solicitar ante <strong>${escapeHtml(empresa)}</strong> (RUT ${escapeHtml(rutEmpresa)}) el ejercicio formal de sus derechos reconocidos en los artículos 5° al 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719).
                 </p>
 
                 <div style="border: 1px solid #333; padding: 16px; margin-top: 14px;">
@@ -541,7 +541,7 @@
                     </div>
 
                     <p style="font-size: 9.5pt; color: #444; margin-top: 16px;">
-                        <em>Nota Legal: La empresa acusará recibo de esta solicitud y emitirá respuesta formal fundada dentro del plazo máximo de quince (15) días hábiles contado desde la recepción íntegra del formulario y verificación de identidad. Enviar este formulario firmado al correo: <strong>${escapeHtml(email)}</strong>.</em>
+                        <em>Nota Legal: La empresa acusará recibo de esta solicitud y emitirá respuesta formal fundada dentro del plazo legal fatal de treinta (30) días corridos contado desde la recepción íntegra del formulario y la verificación fehaciente de identidad (Artículo 11 de la Ley N° 19.628). Enviar este formulario firmado al correo: <strong>${escapeHtml(email)}</strong>.</em>
                     </p>
 
                     <div style="margin-top: 40px; text-align: center;">
@@ -550,6 +550,119 @@
                         RUT N°: _____________________
                     </div>
                 </div>
+            </div>
+        `;
+    }
+
+    // =========================================================================
+    // INSTRUMENTO 7: EVALUACIÓN Y TEST DE AUTODIAGNÓSTICO DPO (DELEGADO DE DATOS)
+    // =========================================================================
+    function generarTestDPOHTML(datos) {
+        var empresa = datos.empresa || '[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]';
+        var rutEmpresa = datos.rutEmpresa || '[RUT EMPRESA]';
+        var fecha = datos.fecha || getFechaActualTexto();
+
+        return `
+            <div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
+                <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 6px; text-transform: uppercase;">
+                    EVALUACIÓN Y TEST DE AUTODIAGNÓSTICO LEGAL<br>
+                    ¿NECESITA MI EMPRESA NOMBRAR UN DELEGADO DE PROTECCIÓN DE DATOS (DPO)?
+                </p>
+                <p style="text-align: center; font-size: 10pt; color: #444; margin-bottom: 22px;">
+                    Criterios de Obligatoriedad y Régimen de Exención para Micro, Pequeñas y Medianas Empresas (MIPYMES)<br>
+                    Conforme a la Ley N° 21.719 que reforma la Ley N° 19.628 de Protección de Datos Personales de Chile
+                </p>
+
+                <p style="background-color: #f4f6f8; border-left: 4px solid #0284c7; padding: 10px 14px; margin-bottom: 18px;">
+                    <strong>Empresa Evaluada:</strong> ${escapeHtml(empresa)} &nbsp;|&nbsp; <strong>RUT:</strong> ${escapeHtml(rutEmpresa)} &nbsp;|&nbsp; <strong>Fecha de Evaluación:</strong> ${escapeHtml(fecha)}
+                </p>
+
+                <p style="font-weight: bold; margin-top: 14px;">
+                    1. MARCO LEGAL Y REGLA GENERAL: ¿ES OBLIGATORIO EL DPO PARA LAS PYMES EN CHILE?
+                </p>
+                <p>
+                    <strong>NO, COMO REGLA GENERAL.</strong> La Ley N° 21.719 introduce la figura del Delegado de Protección de Datos (DPO u Oficial de Privacidad) inspirada en el estándar internacional (RGPD Art. 37). Sin embargo, el legislador chileno consagró que para las empresas privadas la designación es <strong>VOLUNTARIA</strong>, salvo que concurra alguna de las causales taxativas de excepción legal que se evalúan a continuación.
+                </p>
+
+                <p style="font-weight: bold; margin-top: 18px;">
+                    2. TEST DE EVALUACIÓN RÁPIDA DE OBLIGATORIEDAD (4 PREGUNTAS):
+                </p>
+                <p style="font-size: 10pt; color: #333; margin-bottom: 10px;">
+                    Marque con una <strong>X</strong> la opción que corresponda a las operaciones habituales de su empresa:
+                </p>
+
+                <table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 10.5pt;" border="1" cellpadding="8">
+                    <thead>
+                        <tr style="background-color: #f1f5f9;">
+                            <th style="width: 75%; text-align: left; padding: 8px;">Criterio de Evaluación Legal</th>
+                            <th style="width: 12%; text-align: center; padding: 8px;">SÍ</th>
+                            <th style="width: 13%; text-align: center; padding: 8px;">NO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>1. Entidad Pública o Estatal:</strong><br>
+                                ¿Es su empresa un organismo de la Administración del Estado, servicio público, municipio o empresa pública estatal?
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>2. Observación Masiva y Sistemática de Personas:</strong><br>
+                                ¿La actividad principal y medular de la empresa radica en operaciones que requieren un seguimiento, rastreo geográfico masivo, scoring predictivo financiero continuado o perfilamiento sistemático a gran escala de miles de ciudadanos (ej. telecomunicaciones masivas, aseguradoras de alcance nacional o burós crediticios)?
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>3. Tratamiento a Gran Escala de Datos Sensibles:</strong><br>
+                                ¿El giro principal de la empresa consiste en el tratamiento a gran escala de datos relativos a salud médica, genética o antecedentes penales (ej. laboratorios clínicos, hospitales privados, clínicas masivas)?<br>
+                                <em style="font-size: 9pt; color: #555;">*Nota Legal DT: El almacenamiento interno de licencias médicas de su propia nómina de trabajadores o la huella del reloj control NO califica como tratamiento masivo a gran escala.</em>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>4. Regulación Financiera Sectorial Expresa:</strong><br>
+                                ¿Se encuentra la empresa sujeta a una instrucción vinculante de la Comisión para el Mercado Financiero (CMF) o Superintendencia que le exija expresamente nombrar un oficial de cumplimiento de datos?
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                            <td style="text-align: center; vertical-align: middle;">[ &nbsp; ]</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p style="font-weight: bold; margin-top: 20px;">
+                    3. RESULTADO Y DICTAMEN LEGAL DE LA EVALUACIÓN:
+                </p>
+                <div style="border: 2px solid #0284c7; background-color: #f0f9ff; padding: 14px; border-radius: 6px;">
+                    <p style="margin: 0 0 8px 0; font-weight: bold; color: #0369a1; font-size: 11.5pt;">
+                        [ ✔ ] DICTAMEN: EMPRESA EXENTA DE LA OBLIGACIÓN DE NOMBRAR DPO
+                    </p>
+                    <p style="margin: 0; font-size: 10.5pt; color: #0f172a;">
+                        Si ha respondido <strong>"NO" a las cuatro preguntas</strong>, su empresa <strong>NO ESTÁ OBLIGADA POR LA LEY N° 21.719 A DESIGNAR UN DELEGADO DE PROTECCIÓN DE DATOS (DPO)</strong>, ni contratar personal adicional para este cargo. Su empresa da pleno cumplimiento normativo implementando los 6 instrumentos operativos de este Kit (Anexo Laboral con opción biométrica DT, Política Web, DPA Proveedores, RAT en Excel, Protocolo de Brechas y Formulario ARCOP).
+                    </p>
+                </div>
+
+                <p style="font-weight: bold; margin-top: 18px;">
+                    4. RECOMENDACIÓN PRÁCTICA DE GOBERNANZA PYME (COSTO CERO):
+                </p>
+                <p>
+                    Aunque no esté obligada a nombrar un DPO formal ante la Agencia, la mejor práctica de gestión interna recomendada para la Pyme es designar a un <strong>"Coordinador Interno de Privacidad"</strong> (rol funcional que puede asumir el Encargado de Recursos Humanos, el Contador o el Gerente General), cuyas funciones operativas son:
+                </p>
+                <ul style="margin-left: 25px;">
+                    <li>Centralizar la recepción de correos de solicitudes de derechos ARCOP y responder en el plazo legal de 30 días corridos.</li>
+                    <li>Mantener actualizado el Registro de Actividades de Tratamiento (RAT en Excel) una vez al año.</li>
+                    <li>Actuar como punto de enlace y activar el Protocolo de Brechas en caso de filtración informática o pérdida de equipos.</li>
+                </ul>
+
+                <p style="margin-top: 26px; font-size: 10pt; color: #555; text-align: center;">
+                    Certificado de Autodiagnóstico archivado por <strong>${escapeHtml(empresa)}</strong> para acreditar diligencia y responsabilidad proactiva (Accountability) ante la Agencia de Protección de Datos Personales.
+                </p>
             </div>
         `;
     }
@@ -619,7 +732,7 @@
         document.body.removeChild(link);
     }
 
-    // Descarga masiva del Kit completo (los 5 instrumentos)
+    // Descarga masiva del Kit completo (los 7 instrumentos oficiales)
     function descargarKitCompleto(datos) {
         var nombreLimpio = (datos.empresa || 'Empresa').replace(/\s+/g, '_');
 
@@ -629,27 +742,32 @@
         // 2. Política de Privacidad Web y Clientes
         setTimeout(function () {
             descargarDocumentoWord(generarPoliticaPrivacidadHTML(datos), `2_Politica_Privacidad_y_Proteccion_Datos_${nombreLimpio}.doc`);
-        }, 500);
+        }, 400);
 
         // 3. Cláusula DPA Proveedores
         setTimeout(function () {
             descargarDocumentoWord(generarClausulaDPAHTML(datos), `3_Clausula_DPA_Proveedores_Encargados_${nombreLimpio}.doc`);
-        }, 1000);
+        }, 800);
 
         // 4. RAT en CSV/Excel
         setTimeout(function () {
             descargarRATXlsx(datos);
-        }, 1500);
+        }, 1200);
 
-        // 5. Protocolo de Brechas 72h
+        // 5. Protocolo de Brechas (Estándar Operativo 72h)
         setTimeout(function () {
             descargarDocumentoWord(generarProtocoloBrechasHTML(datos), `5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc`);
+        }, 1600);
+
+        // 6. Formulario ARCOP
+        setTimeout(function () {
+            descargarDocumentoWord(generarFormularioARCOPHTML(datos), `6_Formulario_Solicitud_Derechos_ARCOP.doc`);
         }, 2000);
 
-        // Bonus: Formulario ARCOP
+        // 7. Test de Autodiagnóstico DPO
         setTimeout(function () {
-            descargarDocumentoWord(generarFormularioARCOPHTML(datos), `Bonus_Formulario_Solicitud_Derechos_ARCOP.doc`);
-        }, 2500);
+            descargarDocumentoWord(generarTestDPOHTML(datos), `7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.doc`);
+        }, 2400);
     }
 
     // Descargas individuales
@@ -678,7 +796,12 @@
 
     function descargarFormularioARCOP(datos) {
         var d = datos || {};
-        descargarDocumentoWord(generarFormularioARCOPHTML(d), `Bonus_Formulario_Solicitud_Derechos_ARCOP.doc`);
+        descargarDocumentoWord(generarFormularioARCOPHTML(d), `6_Formulario_Solicitud_Derechos_ARCOP.doc`);
+    }
+
+    function descargarTestDPO(datos) {
+        var d = datos || {};
+        descargarDocumentoWord(generarTestDPOHTML(d), `7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.doc`);
     }
 
     // Exportar al objeto global
@@ -689,6 +812,7 @@
         generarRATCsvContent: generarRATCsvContent,
         generarProtocoloBrechasHTML: generarProtocoloBrechasHTML,
         generarFormularioARCOPHTML: generarFormularioARCOPHTML,
+        generarTestDPOHTML: generarTestDPOHTML,
         descargarDocumentoWord: descargarDocumentoWord,
         descargarRATXlsx: descargarRATXlsx,
         descargarKitCompleto: descargarKitCompleto,
@@ -698,6 +822,7 @@
         descargarRAT: descargarRATXlsx,
         descargarProtocoloBrechas: descargarProtocoloBrechas,
         descargarFormularioARCOP: descargarFormularioARCOP,
+        descargarTestDPO: descargarTestDPO,
         FLOW_CHECKOUT_URL: FLOW_CHECKOUT_URL
     };
 
