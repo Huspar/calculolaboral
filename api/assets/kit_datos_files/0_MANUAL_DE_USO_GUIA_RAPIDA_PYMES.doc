@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Manual de Implementación Rápida Ley 21.719 - Pymes Chile</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page {
+    size: 21.0cm 29.7cm; /* A4 */
+    margin: 2.0cm 2.0cm 2.0cm 2.0cm;
+    mso-header-margin: 35.4pt;
+    mso-footer-margin: 35.4pt;
+    mso-paper-source: 0;
+}
+body {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #000000;
+}
+h1 {
+    font-size: 18pt;
+    color: #0369a1;
+    font-weight: bold;
+    border-bottom: 2pt solid #0284c7;
+    padding-bottom: 6pt;
+    margin-bottom: 12pt;
+}
+h2 {
+    font-size: 13pt;
+    color: #0f172a;
+    font-weight: bold;
+    border-bottom: 1pt solid #cbd5e1;
+    padding-bottom: 4pt;
+    margin-top: 16pt;
+    margin-bottom: 8pt;
+}
+h3 {
+    font-size: 11pt;
+    color: #0284c7;
+    font-weight: bold;
+    margin-top: 10pt;
+    margin-bottom: 4pt;
+}
+p, li {
+    font-size: 10.5pt;
+    line-height: 1.4;
+    color: #1e293b;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12pt 0;
+    font-size: 10pt;
+}
+th {
+    background-color: #0f172a;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 6pt 8pt;
+    border: 1pt solid #0f172a;
+    text-align: left;
+}
+td {
+    padding: 6pt 8pt;
+    border: 1pt solid #cbd5e1;
+    vertical-align: top;
+}
+.callout {
+    background-color: #f0fdf4;
+    border-left: 4pt solid #16a34a;
+    padding: 8pt 12pt;
+    margin: 12pt 0;
+}
+.box-step {
+    background-color: #f8fafc;
+    border: 1pt solid #e2e8f0;
+    padding: 8pt 10pt;
+    margin-bottom: 8pt;
+}
+</style>
+</head>
+<body>
+
+<h1>MANUAL DE USO E IMPLEMENTACIÓN RÁPIDA<br><span style="font-size: 12pt; font-weight: normal; color: #64748b;">KIT LEGALTECH DE CUMPLIMIENTO LEY N° 21.719 (DATOS PERSONALES CHILE 2026)</span></h1>
+
+<div class="callout">
+    <strong>PRINCIPIO BÁSICO PARA EL EMPRESARIO PYME:</strong><br>
+    La Ley N° 21.719 y la Dirección del Trabajo (DT) <strong>no</strong> exigen que una micro, pequeña o mediana empresa compre costosos servidores ni contrate a un estudio de abogados de \$2.000.000. Lo que la ley exige formalmente es el <strong>Principio de Responsabilidad y Diligencia Debida</strong>: demostrar por escrito que cuidas los datos de tus trabajadores y clientes, que tus contratos tienen cláusulas de protección y que sabes qué hacer si ocurre un incidente. Este paquete contiene el 100% de los instrumentos exigibles.
+</div>
+
+<h2>1. LA RUTA DE IMPLEMENTACIÓN EN 3 PASOS (15 MINUTOS)</h2>
+
+<div class="box-step">
+    <strong>PASO 1 (HOY MISMO - ÁREA LABORAL):</strong><br>
+    Imprime el <strong>Documento 1 (Anexo Laboral)</strong>. Complétalo con el nombre de tu empresa, RUT y los datos del trabajador. Fírmalo junto a la entrega de la liquidación de sueldo y archívalo en la carpeta de personal. Con esto cumples la <em>Resolución Exenta N° 38 de 2024 de la Dirección del Trabajo</em> sobre relojes control y blindas la confidencialidad de licencias médicas.
+</div>
+
+<div class="box-step">
+    <strong>PASO 2 (ESTA SEMANA - ÁREA ADMINISTRATIVA Y WEB):</strong><br>
+    Abre el <strong>Documento 4 (Excel RAT)</strong>. En la Fila 3, cambia <code>[NOMBRE DE TU EMPRESA]</code> y <code>[RUT EMPRESA]</code> por tus datos reales y guárdalo. Publica el <strong>Documento 2 (Política de Privacidad)</strong> en el pie de página de tu sitio web o imprímela para tenerla disponible ante clientes.
+</div>
+
+<div class="box-step">
+    <strong>PASO 3 (DE RESGUARDO - PROTOCOLOS DE EMERGENCIA):</strong><br>
+    Archiva los <strong>Documentos 3, 5, 6 y 7</strong> en la carpeta digital de administración. Servirán como prueba de cumplimiento si la Dirección del Trabajo o la Agencia de Protección de Datos te fiscalizan.
+</div>
+
+<h2>2. GUÍA POR RUBROS Y SECTORES: ¿ES ESTANDARIZADO O DIFERENTE?</h2>
+<p>
+    La ley es <strong>idéntica</strong> para todas las empresas de Chile. El 85% del tratamiento de datos (sueldos, boletas, facturas, contratos y licencias médicas) es exactamente el mismo en cualquier rubro. Si perteneces a un sector con particularidades operativas, revisa esta tabla:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 25%;">Rubro / Sector</th>
+            <th style="width: 35%;">¿Qué datos específicos maneja?</th>
+            <th style="width: 40%;">Instrucción de aplicación</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Servicios B2B, Talleres, Fábricas y Oficinas</strong></td>
+            <td>Nómina de trabajadores, emisión de facturas a clientes empresa y proveedores.</td>
+            <td><strong>100% Plug & Play.</strong> No requiere modificar ninguna cláusula. Usa el kit tal cual viene pre-rellenado.</td>
+        </tr>
+        <tr>
+            <td><strong>Comercio Online (E-commerce) y Tiendas</strong></td>
+            <td>Direcciones de envío de clientes particulares, teléfonos y pasarelas de pago (Transbank, Flow, etc.).</td>
+            <td>Publica el <strong>Documento 2</strong> en la web. En el <strong>Excel RAT</strong>, mantén activa la fila <code>RAT-05</code> (Ventas web).</td>
+        </tr>
+        <tr>
+            <td><strong>Transporte, Logística y Fletes</strong></td>
+            <td>Geolocalización (GPS) en camiones, furgones o motocicletas asignadas a choferes.</td>
+            <td>En el <strong>Documento 1</strong>, deja constancia de que los móviles tienen GPS por motivos de seguridad de ruta. En el Excel RAT añade la fila <code>RAT-07: Rastreo GPS Flota</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Salud y Bienestar (Dentistas, Clínicas, Kinesiólogos)</strong></td>
+            <td>Fichas clínicas y diagnósticos médicos de pacientes particulares.</td>
+            <td>Son <strong>Datos Sensibles</strong>. Recaba consentimiento firmado en la ficha de ingreso y firma el <strong>Documento 3 (DPA)</strong> con tu proveedor de software médico.</td>
+        </tr>
+        <tr>
+            <td><strong>Educación, Jardines y Academias</strong></td>
+            <td>Datos e imágenes de menores de 14 años.</td>
+            <td>La ley exige que la autorización la firme obligatoriamente el padre, madre o tutor legal en la ficha de matrícula.</td>
+        </tr>
+        <tr>
+            <td><strong>Locales Comerciales Abiertos a Público</strong></td>
+            <td>Cámaras de vigilancia (CCTV) que graban a transeúntes y clientes.</td>
+            <td>Mantén la fila <code>RAT-06</code> en el Excel RAT y coloca un letrero visible a la entrada: <em>"Zona videovigilada conforme a la Ley N° 21.719"</em>.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3. PREGUNTAS FRECUENTES (FAQ)</h2>
+<p><strong>¿Tengo que enviar estos documentos a alguna entidad del Estado?</strong><br>
+No. Ninguna ley exige enviar copias previas. Se custodian internamente en la empresa y se exhiben únicamente ante una fiscalización.</p>
+
+<p><strong>¿Qué pasa si un trabajador se niega a poner la huella en el reloj control?</strong><br>
+La Dirección del Trabajo (Res. Ex. 38/2024) prohíbe despedirlo o sancionarlo. Debes ofrecerle una alternativa no biométrica (tarjeta, clave o libro). Al tener firmado nuestro Documento 1, tu empresa queda blindada de multas.</p>
+
+<p><strong>¿Debo contratar a un Delegado de Protección de Datos (DPO)?</strong><br>
+No. Las Pymes están legalmente exentas. Para acreditarlo formalmente, firma el <strong>Documento 7 (Test DPO)</strong> incluido en este paquete.</p>
+
+<h2>4. CHECKLIST DE BLINDAJE TOTAL (LISTA DE COTEJO)</h2>
+<ul>
+    <li>[ ] <strong>Documento 1:</strong> Anexos laborales firmados y archivados en las carpetas de los trabajadores.</li>
+    <li>[ ] <strong>Documento 2:</strong> Política de privacidad publicada en la web o en recepción/correos.</li>
+    <li>[ ] <strong>Documento 3:</strong> Cláusula DPA firmada con el contador externo y proveedor de software.</li>
+    <li>[ ] <strong>Documento 4:</strong> Excel RAT personalizado con Razón Social y RUT archivado en digital.</li>
+    <li>[ ] <strong>Documento 5:</strong> Protocolo de brechas 72h guardado en administración para emergencias.</li>
+    <li>[ ] <strong>Documento 6:</strong> Formulario ARCOP disponible para responder reclamos en plazo legal de 30 días.</li>
+    <li>[ ] <strong>Documento 7:</strong> Test de autodiagnóstico DPO firmado que acredita tu exención legal.</li>
+</ul>
+
+<hr style="border: 0; border-top: 1pt solid #e2e8f0; margin-top: 20pt;">
+<p style="font-size: 8pt; color: #64748b; text-align: center;">
+    &copy; 2026 Cálculo Laboral Chile · contacto@calculolaboral.cl · Todos los derechos reservados.
+</p>
+
+</body>
+</html>

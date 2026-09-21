@@ -732,42 +732,35 @@
         document.body.removeChild(link);
     }
 
-    // Descarga masiva del Kit completo (los 7 instrumentos oficiales)
+    // Descargar Manual PDF oficial
+    function descargarManualPDF() {
+        var link = document.createElement('a');
+        link.href = 'assets/0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf';
+        link.download = '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf';
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Descargar Manual Word (.doc) oficial
+    function descargarManualDoc() {
+        var link = document.createElement('a');
+        link.href = 'assets/0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.doc';
+        link.download = '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.doc';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Descarga masiva del Kit completo (Archivo ZIP oficial con los 9 instrumentos y guía)
     function descargarKitCompleto(datos) {
-        var nombreLimpio = (datos.empresa || 'Empresa').replace(/\s+/g, '_');
-
-        // 1. Anexo Laboral
-        descargarDocumentoWord(generarAnexoLaboralHTML(datos), `1_Anexo_Laboral_Datos_Personales_Ley_21719_${nombreLimpio}.doc`);
-
-        // 2. Política de Privacidad Web y Clientes
-        setTimeout(function () {
-            descargarDocumentoWord(generarPoliticaPrivacidadHTML(datos), `2_Politica_Privacidad_y_Proteccion_Datos_${nombreLimpio}.doc`);
-        }, 400);
-
-        // 3. Cláusula DPA Proveedores
-        setTimeout(function () {
-            descargarDocumentoWord(generarClausulaDPAHTML(datos), `3_Clausula_DPA_Proveedores_Encargados_${nombreLimpio}.doc`);
-        }, 800);
-
-        // 4. RAT en CSV/Excel
-        setTimeout(function () {
-            descargarRATXlsx(datos);
-        }, 1200);
-
-        // 5. Protocolo de Brechas (Estándar Operativo 72h)
-        setTimeout(function () {
-            descargarDocumentoWord(generarProtocoloBrechasHTML(datos), `5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc`);
-        }, 1600);
-
-        // 6. Formulario ARCOP
-        setTimeout(function () {
-            descargarDocumentoWord(generarFormularioARCOPHTML(datos), `6_Formulario_Solicitud_Derechos_ARCOP.doc`);
-        }, 2000);
-
-        // 7. Test de Autodiagnóstico DPO
-        setTimeout(function () {
-            descargarDocumentoWord(generarTestDPOHTML(datos), `7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.doc`);
-        }, 2400);
+        var link = document.createElement('a');
+        link.href = 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip';
+        link.download = 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     // Descargas individuales
@@ -816,6 +809,8 @@
         descargarDocumentoWord: descargarDocumentoWord,
         descargarRATXlsx: descargarRATXlsx,
         descargarKitCompleto: descargarKitCompleto,
+        descargarManualPDF: descargarManualPDF,
+        descargarManualDoc: descargarManualDoc,
         descargarAnexoLaboral: descargarAnexoLaboral,
         descargarPoliticaPrivacidad: descargarPoliticaPrivacidad,
         descargarClausulaDPA: descargarClausulaDPA,
