@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Formulario Derechos ARCOP Ley 21.719</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page {
+    size: 21.59cm 27.94cm;
+    margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+    mso-header-margin: 35.4pt;
+    mso-footer-margin: 35.4pt;
+    mso-paper-source: 0;
+}
+body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000000;
+}
+h1, h2, h3, p, li {
+    color: #000000;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+</style>
+</head>
+<body>
+
+            <div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
+                <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 24px; text-transform: uppercase;">
+                    FORMULARIO OFICIAL DE SOLICITUD DE EJERCICIO DE DERECHOS ARCOP<br>
+                    <span style="font-size: 10pt; font-weight: normal;">(Acceso, Rectificación, Supresión, Oposición, Portabilidad y Bloqueo - Ley N° 21.719)</span>
+                </p>
+
+                <p>
+                    El presente formulario permite a cualquier titular de datos (cliente, trabajador, proveedor o usuario) solicitar ante <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong> (RUT [RUT EMPRESA]) el ejercicio formal de sus derechos reconocidos en los artículos 5 al 10 de la Ley N° 21.719.
+                </p>
+
+                <div style="border: 1px solid #333; padding: 16px; margin-top: 14px;">
+                    <p style="font-weight: bold; margin-top: 0;">1. DATOS DEL TITULAR SOLICITANTE:</p>
+                    <p style="margin: 4px 0;">Nombre Completo: ___________________________________________________________</p>
+                    <p style="margin: 4px 0;">RUT / Documento de Identidad: _________________________________________________</p>
+                    <p style="margin: 4px 0;">Correo Electrónico de Notificación: _____________________________________________</p>
+                    <p style="margin: 4px 0;">Teléfono de Contacto: _________________________________________________________</p>
+                    <p style="margin: 4px 0;">Calidad del Titular: [ ] Cliente [ ] Trabajador [ ] Ex-trabajador [ ] Proveedor [ ] Otro</p>
+
+                    <p style="font-weight: bold; margin-top: 16px;">2. DERECHO QUE SOLICITA EJERCER (Marcar con una X):</p>
+                    <p style="margin: 4px 0;">[ ] <strong>ACCESO:</strong> Deseo conocer qué datos personales míos posee la empresa y su tratamiento.</p>
+                    <p style="margin: 4px 0;">[ ] <strong>RECTIFICACIÓN:</strong> Solicito corregir o actualizar datos inexactos o incompletos.</p>
+                    <p style="margin: 4px 0;">[ ] <strong>SUPRESIÓN / CANCELACIÓN:</strong> Solicito eliminar mis datos por haber expirado la finalidad.</p>
+                    <p style="margin: 4px 0;">[ ] <strong>OPOSICIÓN:</strong> Solicito que mis datos no sean utilizados para publicidad ni promociones.</p>
+                    <p style="margin: 4px 0;">[ ] <strong>PORTABILIDAD:</strong> Solicito copia de mis datos en formato interoperable (CSV/XML).</p>
+                    <p style="margin: 4px 0;">[ ] <strong>BLOQUEO:</strong> Solicito la suspensión cautelar temporal del tratamiento de mis datos.</p>
+
+                    <p style="font-weight: bold; margin-top: 16px;">3. DESCRIPCIÓN DE LA SOLICITUD Y ANTECEDENTES DE RESPALDO:</p>
+                    <div style="border: 1px dashed #666; height: 90px; padding: 6px; margin-top: 4px;">
+                        [Indique aquí el detalle de los datos a rectificar, eliminar o consultar]
+                    </div>
+
+                    <p style="font-size: 9.5pt; color: #444; margin-top: 16px;">
+                        <em>Nota Legal: La empresa acusará recibo de esta solicitud y emitirá respuesta formal fundada dentro del plazo máximo de quince (15) días hábiles contado desde la recepción íntegra del formulario y verificación de identidad. Enviar este formulario firmado al correo: <strong>privacidad@tuempresa.cl</strong>.</em>
+                    </p>
+
+                    <div style="margin-top: 40px; text-align: center;">
+                        ________________________________________________<br>
+                        <strong>Firma del Titular Solicitante</strong><br>
+                        RUT N°: _____________________
+                    </div>
+                </div>
+            </div>
+        
+</body>
+</html>

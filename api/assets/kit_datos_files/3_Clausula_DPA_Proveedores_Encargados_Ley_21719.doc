@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Clausula DPA Proveedores Ley 21.719</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page {
+    size: 21.59cm 27.94cm;
+    margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+    mso-header-margin: 35.4pt;
+    mso-footer-margin: 35.4pt;
+    mso-paper-source: 0;
+}
+body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000000;
+}
+h1, h2, h3, p, li {
+    color: #000000;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+</style>
+</head>
+<body>
+
+            <div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
+                <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 24px; text-transform: uppercase;">
+                    ANEXO DE TRATAMIENTO DE DATOS PERSONALES (DPA - DATA PROCESSING AGREEMENT)<br>
+                    ENTRE RESPONSABLE Y ENCARGADO DEL TRATAMIENTO<br>
+                    <span style="font-size: 10pt; font-weight: normal;">(Conforme al Artículo 14 bis y 14 ter de la Ley N° 21.719 de Chile)</span>
+                </p>
+
+                <p>
+                    El presente Anexo de Tratamiento de Datos Personales se suscribe entre <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong> (RUT [RUT EMPRESA]), en adelante el "Responsable", y <strong>[NOMBRE DEL PROVEEDOR / CONTADOR / SOFTWARE]</strong> (RUT [RUT PROVEEDOR]), en adelante el "Encargado", como parte integrante del contrato de prestación de servicios vigente entre las partes.
+                </p>
+
+                <p style="font-weight: bold; margin-top: 16px;">
+                    1. OBJETO Y ALCANCE DEL TRATAMIENTO.
+                </p>
+                <p>
+                    El Encargado tratará por cuenta del Responsable los datos personales necesarios para la prestación del servicio encomendado (contabilidad, nómina, alojamiento en la nube, soporte o desarrollo de software), comprometiéndose a no utilizarlos para ninguna otra finalidad propia ni de terceros.
+                </p>
+
+                <p style="font-weight: bold; margin-top: 16px;">
+                    2. OBLIGACIONES LEGALES DEL ENCARGADO (ARTÍCULO 14 BIS).
+                </p>
+                <p>
+                    El Encargado se obliga expresamente a:
+                </p>
+                <ul style="margin-left: 25px;">
+                    <li>Tratar los datos únicamente siguiendo las instrucciones documentadas del Responsable.</li>
+                    <li>Garantizar que todo su personal con acceso a los datos esté sujeto a un deber formal de confidencialidad perpetuo.</li>
+                    <li>Implementar medidas técnicas y organizativas de seguridad adecuadas para garantizar un nivel de seguridad proporcional al riesgo (cifrado, control de accesos, copias de seguridad).</li>
+                    <li>No subcontratar a otro proveedor ("Sub-encargado") sin la autorización previa y escrita del Responsable.</li>
+                    <li>Asistir al Responsable en la tramitación y respuesta oportuna de los derechos ARCOP de los titulares dentro de los plazos legales.</li>
+                </ul>
+
+                <p style="font-weight: bold; margin-top: 16px;">
+                    3. NOTIFICACIÓN OBLIGATORIA DE INCIDENTES Y BRECHAS (72 HORAS).
+                </p>
+                <p>
+                    En caso de que el Encargado sufra un incidente de seguridad, vulneración, filtración, hackeo o pérdida que comprometa los datos personales del Responsable, estará legalmente obligado a notificar al Responsable a más tardar dentro de las <strong>24 horas siguientes</strong> a haber tomado conocimiento del hecho, entregando la descripción del incidente, datos afectados y medidas correctivas inmediatas, a fin de que el Responsable pueda cumplir con la notificación legal a la Agencia de Protección de Datos Personales en el plazo de 72 horas.
+                </p>
+
+                <p style="font-weight: bold; margin-top: 16px;">
+                    4. DESTINO FINAL DE LOS DATOS TRAS EL TÉRMINO DEL SERVICIO.
+                </p>
+                <p>
+                    Finalizada la prestación del servicio principal, el Encargado deberá, a elección del Responsable, devolver íntegramente o destruir de forma segura e irrecuperable todas las bases de datos y copias existentes, emitiendo un certificado formal de destrucción.
+                </p>
+
+                <p style="font-weight: bold; margin-top: 16px;">
+                    5. RESPONSABILIDAD E INDEMNIDAD.
+                </p>
+                <p>
+                    El incumplimiento de las obligaciones aquí previstas por parte del Encargado hará aplicables las sanciones de la Ley N° 21.719, debiendo el Encargado indemnizar íntegramente al Responsable por cualquier multa cursada por la Agencia de Protección de Datos Personales o reclamos judiciales derivados directamente de su negligencia o dolo.
+                </p>
+
+                <table style="width: 100%; margin-top: 50px; border-collapse: collapse;">
+                    <tr>
+                        <td style="width: 50%; text-align: center; vertical-align: top; padding: 0 20px;">
+                            <div style="border-top: 1px solid #000; padding-top: 8px;">
+                                <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong><br>
+                                RUT N° [RUT EMPRESA]<br>
+                                <em>RESPONSABLE DEL TRATAMIENTO</em>
+                            </div>
+                        </td>
+                        <td style="width: 50%; text-align: center; vertical-align: top; padding: 0 20px;">
+                            <div style="border-top: 1px solid #000; padding-top: 8px;">
+                                <strong>[NOMBRE DEL PROVEEDOR / CONTADOR / SOFTWARE]</strong><br>
+                                RUT N° [RUT PROVEEDOR]<br>
+                                <em>ENCARGADO DEL TRATAMIENTO</em>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        
+</body>
+</html>

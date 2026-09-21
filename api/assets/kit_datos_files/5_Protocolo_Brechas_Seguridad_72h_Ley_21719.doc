@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Protocolo Brechas Seguridad 72h Ley 21.719</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page {
+    size: 21.59cm 27.94cm;
+    margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+    mso-header-margin: 35.4pt;
+    mso-footer-margin: 35.4pt;
+    mso-paper-source: 0;
+}
+body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000000;
+}
+h1, h2, h3, p, li {
+    color: #000000;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+</style>
+</head>
+<body>
+
+            <div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
+                <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 24px; text-transform: uppercase;">
+                    PROTOCOLO OPERATIVO DE GESTIÓN Y NOTIFICACIÓN DE BRECHAS DE SEGURIDAD<br>
+                    <span style="font-size: 10pt; font-weight: normal;">(Conforme al Artículo 14 quáter de la Ley N° 21.719 - Notificación en 72 Horas a la Agencia de Protección de Datos)</span>
+                </p>
+
+                <p>
+                    <strong>1. OBJETIVO:</strong><br>
+                    Establecer las directrices de acción inmediata ante cualquier violación de seguridad, filtración, robo, pérdida, acceso no autorizado o alteración de datos personales custodiados por <strong>[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]</strong> (RUT [RUT EMPRESA]), garantizando la contención del daño y el cumplimiento de la obligación legal de notificación a la Agencia de Protección de Datos Personales en el plazo perentorio de <strong>72 horas</strong>.
+                </p>
+
+                <p>
+                    <strong>2. CLASIFICACIÓN DE INCIDENTES DE SEGURIDAD:</strong><br>
+                    Se considera brecha de seguridad:
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Acceso Ilícito / Ciberataque:</strong> Infección por Ransomware, phishing exitoso con acceso a bases de datos o cuentas de correo corporativas.</li>
+                        <li><strong>Pérdida o Robo de Dispositivos:</strong> Extravío de notebooks, teléfonos móviles o discos duros con información de clientes o nóminas no encriptadas.</li>
+                        <li><strong>Error Humano Operativo:</strong> Envío masivo de correos con datos personales sin copia oculta (BCC), o publicación accidental de archivos confidenciales.</li>
+                    </ul>
+                </p>
+
+                <p>
+                    <strong>3. PROTOCOLO DE RESPUESTA EN 4 PASOS:</strong>
+                </p>
+                <ol style="margin-left: 25px;">
+                    <li><strong>FASE 1: Detección y Contención (Horas 0 a 12):</strong>
+                        Desconectar inmediatamente de la red los equipos comprometidos, cambiar contraseñas de accesos administrativos, revocar tokens de sesión y aislar el servidor afectado.
+                    </li>
+                    <li><strong>FASE 2: Evaluación Forense y del Impacto (Horas 12 a 36):</strong>
+                        Determinar qué categorías de datos fueron expuestas (datos comunes vs. datos sensibles de salud/biometría) y estimar el número aproximado de titulares afectados.
+                    </li>
+                    <li><strong>FASE 3: Notificación Formal a la Agencia (Horas 36 a 72):</strong>
+                        Si la brecha entraña un riesgo para los derechos de los titulares, remitir el formulario oficial a la Agencia de Protección de Datos Personales antes de cumplir las 72 horas desde el conocimiento del incidente.
+                    </li>
+                    <li><strong>FASE 4: Notificación a Titulares y Mitigación (Posterior a 72 Horas):</strong>
+                        Si el riesgo es de gravedad, comunicar directamente a los afectados las medidas que deben tomar (ej. cambio de claves bancarias) y registrar el incidente en la Bitácora Histórica del RAT.
+                    </li>
+                </ol>
+
+                <p style="font-weight: bold; margin-top: 24px; text-transform: uppercase;">
+                    ANEXO: MODELO DE FORMULARIO DE REPORTE DE BRECHA A LA AGENCIA (72 HORAS)
+                </p>
+                <div style="border: 1px solid #333; padding: 16px; background-color: #fdfdfd; margin-top: 10px;">
+                    <p style="margin: 4px 0;"><strong>A:</strong> AGENCIA DE PROTECCIÓN DE DATOS PERSONALES DE CHILE (APDP)</p>
+                    <p style="margin: 4px 0;"><strong>DE:</strong> [NOMBRE DE LA EMPRESA / RAZÓN SOCIAL] | RUT: [RUT EMPRESA]</p>
+                    <p style="margin: 4px 0;"><strong>FECHA Y HORA DEL INCIDENTE:</strong> [Indicar fecha y hora exacta del suceso]</p>
+                    <p style="margin: 4px 0;"><strong>FECHA Y HORA DE DETECCIÓN:</strong> [Indicar cuándo se tomó conocimiento]</p>
+                    <p style="margin: 8px 0;"><strong>1. NATURALEZA DE LA VULNERACIÓN:</strong><br>[ ] Confidencialidad (Divulgación/Acceso no autorizado)<br>[ ] Integridad (Alteración indebida)<br>[ ] Disponibilidad (Pérdida/Destrucción o Ransomware)</p>
+                    <p style="margin: 8px 0;"><strong>2. CATEGORÍAS Y NÚMERO APROXIMADO DE AFECTADOS:</strong><br>[Describir si son clientes o trabajadores, y cantidad estimada]</p>
+                    <p style="margin: 8px 0;"><strong>3. CONSECUENCIAS Y RIESGOS PREVISIBLES:</strong><br>[Describir eventuales perjuicios económicos o reputacionales]</p>
+                    <p style="margin: 8px 0;"><strong>4. MEDIDAS CORRECTIVAS ADOPTADAS O PROPUESTAS:</strong><br>[Detallar parches, desconexión y contención realizada]</p>
+                    <p style="margin: 8px 0;"><strong>5. PERSONA DE CONTACTO INSTITUCIONAL:</strong><br>Nombre: [Responsable]<br>Teléfono: [Teléfono]<br>Correo: [Email de contacto]</p>
+                </div>
+            </div>
+        
+</body>
+</html>

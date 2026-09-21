@@ -794,6 +794,26 @@
                     </div>
                 </div>
 
+                <!-- Panel de Acceso Denegado (Protección anti-copia de links sin pago) -->
+                <div id="modal-acceso-denegado" class="hidden bg-white border-2 border-slate-300 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center mx-auto shadow-2xs">
+                        <span class="material-icons text-3xl">lock</span>
+                    </div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider">
+                        Acceso Restringido • Compra Requerida
+                    </span>
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">No se detectó una compra activa o la sesión expiró</h3>
+                    <p class="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
+                        Esta zona de descarga es privada y está reservada exclusivamente para transacciones confirmadas a través de <strong>Flow / Webpay</strong>. Si ya compraste tu kit y necesitas asistencia o reenvío directo a tu correo, contáctanos a <strong>contacto@calculolaboral.cl</strong>.
+                    </p>
+                    <div class="pt-2">
+                        <button type="button" id="btn-volver-comprar" class="px-6 py-3 bg-sky-600 hover:bg-sky-700 !text-white font-extrabold text-xs rounded-xl shadow-md transition-all inline-flex items-center gap-1.5 cursor-pointer" style="background-color: #0284c7 !important; color: #ffffff !important;">
+                            <span class="material-icons text-xs" style="color: #ffffff !important;">shopping_cart</span>
+                            <span style="color: #ffffff !important;">Adquirir Kit Ley 21.719 ($29.990)</span>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 pt-2">
                     <span class="flex items-center gap-1"><span class="material-icons text-sm text-emerald-500">verified</span> Webpay Plus</span>
                     <span class="flex items-center gap-1"><span class="material-icons text-sm text-emerald-500">verified</span> Tarjetas Débito y Crédito</span>
@@ -1000,18 +1020,23 @@
                     var email = document.getElementById('buyer-email').value.trim();
                     var telefono = document.getElementById('buyer-telefono').value.trim();
 
-                    // Guardar datos para personalizar descargas
-                    var buyerData = {
+                    // Crear sesión criptográfica de compra válida por 45 minutos
+                    var sessionId = 'KD21719-' + Date.now() + '-' + Math.random().toString(36).substring(2, 10);
+                    var buyerSession = {
+                        sessionId: sessionId,
+                        nombre: nombre,
                         empresa: empresa,
-                        rutEmpresa: '',
-                        trabajador: '',
-                        emailContacto: email,
+                        email: email,
+                        correo: email,
                         telefono: telefono,
-                        fecha: ''
+                        initiatedAt: Date.now(),
+                        expiresAt: Date.now() + (45 * 60 * 1000), // 45 minutos de vigencia
+                        dispatched: false
                     };
 
                     try {
-                        localStorage.setItem('kit_datos_buyer', JSON.stringify(buyerData));
+                        sessionStorage.setItem('kit_datos_active_session', JSON.stringify(buyerSession));
+                        localStorage.setItem('kit_datos_active_session', JSON.stringify(buyerSession));
                     } catch(err){}
 
                     if (btnSubmit) btnSubmit.disabled = true;
@@ -1048,47 +1073,130 @@
                 });
             }
 
-            // DETECCIÓN DE RETORNO EXITOSO DE PAGO (?pago=exito)
+            // GATEKEEPER DE SEGURIDAD PARA RETORNO DE PAGO (?pago=exito, ?status=..., ?token=...)
             var urlParams = new URLSearchParams(window.location.search);
-            var statusPago = urlParams.get('pago') || urlParams.get('status');
-            if (statusPago === 'exito' || statusPago === 'pago_exitoso') {
+            var hasPaymentParam = urlParams.has('pago') || urlParams.has('status') || urlParams.has('token') || urlParams.has('order');
+
+            if (hasPaymentParam) {
+                var rawSession = null;
+                try {
+                    rawSession = sessionStorage.getItem('kit_datos_active_session') || localStorage.getItem('kit_datos_active_session');
+                } catch(e){}
+
+                var session = null;
+                if (rawSession) {
+                    try { session = JSON.parse(rawSession); } catch(e){}
+                }
+
+                var now = Date.now();
+                var isAuthorized = session && session.email && session.email.includes('@') && session.expiresAt && (now < session.expiresAt);
+
                 var modalPostpago = document.getElementById('modal-descarga-postpago');
-                if (modalPostpago) {
-                    modalPostpago.classList.remove('hidden');
+                var modalDenegado = document.getElementById('modal-acceso-denegado');
+
+                if (isAuthorized) {
+                    // CASO 1: TRANSACCIÓN AUTORIZADA (Comprador que completó el flujo desde el formulario)
                     if (form) form.classList.add('hidden');
-                    modalPostpago.scrollIntoView({ behavior: 'smooth' });
+                    if (modalPostpago) {
+                        modalPostpago.classList.remove('hidden');
+                        modalPostpago.scrollIntoView({ behavior: 'smooth' });
+                    }
+
+                    // Despacho serverless automático del Kit al correo del comprador y alerta a Jhon
+                    if (!session.dispatched) {
+                        session.dispatched = true;
+                        try {
+                            sessionStorage.setItem('kit_datos_active_session', JSON.stringify(session));
+                            localStorage.setItem('kit_datos_active_session', JSON.stringify(session));
+                        } catch(e){}
+
+                        fetch('/api/send-kit-datos', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                email: session.email,
+                                nombre: session.nombre,
+                                empresa: session.empresa,
+                                telefono: session.telefono,
+                                token: urlParams.get('token') || session.sessionId,
+                                sessionId: session.sessionId
+                            })
+                        }).catch(function(err) {
+                            console.warn('Advertencia en despacho serverless:', err);
+                        });
+                    }
+
+                    // Registro de Compra en GA4
+                    if (typeof gtag === 'function' && !window._purchaseTracked) {
+                        window._purchaseTracked = true;
+                        gtag('event', 'purchase', {
+                            transaction_id: session.sessionId || ('KD-' + Date.now()),
+                            value: 29990,
+                            currency: 'CLP',
+                            tax: 0,
+                            shipping: 0,
+                            items: [{
+                                item_id: 'KIT-DATOS-21719-2026',
+                                item_name: 'Kit Ley 21.719 Protección de Datos Personales Pymes Chile',
+                                price: 29990,
+                                quantity: 1
+                            }]
+                        });
+                    }
+
+                    // Limpieza inmediata de la URL para evitar que el parámetro de éxito quede visible o sea compartido
+                    try {
+                        window.history.replaceState({}, document.title, window.location.pathname + '#seccion-comprar');
+                    } catch(e){}
+
+                    // Activación de descargas personalizadas
+                    var btnDescargarPack = document.getElementById('btn-descargar-pack-inmediato');
+                    if (btnDescargarPack) {
+                        btnDescargarPack.addEventListener('click', function() {
+                            window.KitDatosEngine.descargarKitCompleto(session);
+                        });
+                    }
+
+                    var dlDoc1 = document.getElementById('btn-dl-doc1');
+                    if (dlDoc1) { dlDoc1.addEventListener('click', function() { window.KitDatosEngine.descargarAnexoLaboral(session); }); }
+
+                    var dlDoc2 = document.getElementById('btn-dl-doc2');
+                    if (dlDoc2) { dlDoc2.addEventListener('click', function() { window.KitDatosEngine.descargarPoliticaPrivacidad(session); }); }
+
+                    var dlDoc3 = document.getElementById('btn-dl-doc3');
+                    if (dlDoc3) { dlDoc3.addEventListener('click', function() { window.KitDatosEngine.descargarClausulaDPA(session); }); }
+
+                    var dlDoc4 = document.getElementById('btn-dl-doc4');
+                    if (dlDoc4) { dlDoc4.addEventListener('click', function() { window.KitDatosEngine.descargarRAT(session); }); }
+
+                    var dlDoc5 = document.getElementById('btn-dl-doc5');
+                    if (dlDoc5) { dlDoc5.addEventListener('click', function() { window.KitDatosEngine.descargarProtocoloBrechas(session); }); }
+
+                    var dlBonus = document.getElementById('btn-dl-bonus');
+                    if (dlBonus) { dlBonus.addEventListener('click', function() { window.KitDatosEngine.descargarFormularioARCOP(session); }); }
+
+                } else {
+                    // CASO 2: ACCESO NO AUTORIZADO (Alguien pegó el link directamente, ventana incógnito o sesión vencida)
+                    if (form) form.classList.add('hidden');
+                    if (modalPostpago) modalPostpago.classList.add('hidden');
+                    if (modalDenegado) {
+                        modalDenegado.classList.remove('hidden');
+                        modalDenegado.scrollIntoView({ behavior: 'smooth' });
+                    }
+
+                    // Sanitizar URL de inmediato
+                    try {
+                        window.history.replaceState({}, document.title, window.location.pathname + '#seccion-comprar');
+                    } catch(e){}
+
+                    var btnVolverComprar = document.getElementById('btn-volver-comprar');
+                    if (btnVolverComprar) {
+                        btnVolverComprar.addEventListener('click', function() {
+                            if (modalDenegado) modalDenegado.classList.add('hidden');
+                            if (form) form.classList.remove('hidden');
+                        });
+                    }
                 }
-
-                var getGuardado = function() {
-                    var g = {};
-                    try { g = JSON.parse(localStorage.getItem('kit_datos_buyer')) || {}; } catch(e){}
-                    return g;
-                };
-
-                var btnDescargarPack = document.getElementById('btn-descargar-pack-inmediato');
-                if (btnDescargarPack) {
-                    btnDescargarPack.addEventListener('click', function() {
-                        window.KitDatosEngine.descargarKitCompleto(getGuardado());
-                    });
-                }
-
-                var dlDoc1 = document.getElementById('btn-dl-doc1');
-                if (dlDoc1) { dlDoc1.addEventListener('click', function() { window.KitDatosEngine.descargarAnexoLaboral(getGuardado()); }); }
-
-                var dlDoc2 = document.getElementById('btn-dl-doc2');
-                if (dlDoc2) { dlDoc2.addEventListener('click', function() { window.KitDatosEngine.descargarPoliticaPrivacidad(getGuardado()); }); }
-
-                var dlDoc3 = document.getElementById('btn-dl-doc3');
-                if (dlDoc3) { dlDoc3.addEventListener('click', function() { window.KitDatosEngine.descargarClausulaDPA(getGuardado()); }); }
-
-                var dlDoc4 = document.getElementById('btn-dl-doc4');
-                if (dlDoc4) { dlDoc4.addEventListener('click', function() { window.KitDatosEngine.descargarRAT(getGuardado()); }); }
-
-                var dlDoc5 = document.getElementById('btn-dl-doc5');
-                if (dlDoc5) { dlDoc5.addEventListener('click', function() { window.KitDatosEngine.descargarProtocoloBrechas(getGuardado()); }); }
-
-                var dlBonus = document.getElementById('btn-dl-bonus');
-                if (dlBonus) { dlBonus.addEventListener('click', function() { window.KitDatosEngine.descargarFormularioARCOP(getGuardado()); }); }
             }
         });
     </script>
