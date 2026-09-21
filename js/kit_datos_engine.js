@@ -604,7 +604,7 @@
         document.body.removeChild(link);
     }
 
-    function descargarRATCsv(datos) {
+    function descargarRATXlsx(datos) {
         var content = generarRATCsvContent(datos);
         var blob = new Blob(['\ufeff', content], {
             type: 'text/csv;charset=utf-8;'
@@ -638,7 +638,7 @@
 
         // 4. RAT en CSV/Excel
         setTimeout(function () {
-            descargarRATCsv(datos);
+            descargarRATXlsx(datos);
         }, 1500);
 
         // 5. Protocolo de Brechas 72h
@@ -690,12 +690,12 @@
         generarProtocoloBrechasHTML: generarProtocoloBrechasHTML,
         generarFormularioARCOPHTML: generarFormularioARCOPHTML,
         descargarDocumentoWord: descargarDocumentoWord,
-        descargarRATCsv: descargarRATCsv,
+        descargarRATXlsx: descargarRATXlsx,
         descargarKitCompleto: descargarKitCompleto,
         descargarAnexoLaboral: descargarAnexoLaboral,
         descargarPoliticaPrivacidad: descargarPoliticaPrivacidad,
         descargarClausulaDPA: descargarClausulaDPA,
-        descargarRAT: descargarRATCsv,
+        descargarRAT: descargarRATXlsx,
         descargarProtocoloBrechas: descargarProtocoloBrechas,
         descargarFormularioARCOP: descargarFormularioARCOP,
         FLOW_CHECKOUT_URL: FLOW_CHECKOUT_URL
