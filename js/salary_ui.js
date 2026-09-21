@@ -152,6 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Note: indicators.js will overwrite this with real data if available
         }
 
+        // Ensure initial salary value is populated if empty
+        if (inputs.salary && (!inputs.salary.value || inputs.salary.value.trim() === '')) {
+            const defaultImm = (typeof CONSTANTS !== 'undefined' && CONSTANTS.IMM) ? CONSTANTS.IMM : 553553;
+            inputs.salary.value = formatCLP(defaultImm);
+        }
+
         // Attach fintech currency mask to all CLP monetary inputs
         const monetaryKeys = ['salary', 'bonuses', 'gratificationManual', 'colacion', 'movilizacion', 'viaticos', 'ccaf', 'apv', 'prestamos', 'pension', 'sindicato', 'otrosDescuentos'];
         const vMod = getV();
@@ -458,6 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("ForensicSalaryCalculator class is undefined");
         }
     };
+    window.calculateSueldo = calculate;
 
     const updateUI = (res, data) => {
         const d = res.details;
