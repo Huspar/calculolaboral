@@ -652,6 +652,35 @@
         }, 2500);
     }
 
+    // Descargas individuales
+    function descargarAnexoLaboral(datos) {
+        var d = datos || {};
+        var nombreLimpio = (d.empresa || 'Empresa').replace(/\s+/g, '_');
+        descargarDocumentoWord(generarAnexoLaboralHTML(d), `1_Anexo_Laboral_Datos_Personales_Ley_21719_${nombreLimpio}.doc`);
+    }
+
+    function descargarPoliticaPrivacidad(datos) {
+        var d = datos || {};
+        var nombreLimpio = (d.empresa || 'Empresa').replace(/\s+/g, '_');
+        descargarDocumentoWord(generarPoliticaPrivacidadHTML(d), `2_Politica_Privacidad_y_Proteccion_Datos_${nombreLimpio}.doc`);
+    }
+
+    function descargarClausulaDPA(datos) {
+        var d = datos || {};
+        var nombreLimpio = (d.empresa || 'Empresa').replace(/\s+/g, '_');
+        descargarDocumentoWord(generarClausulaDPAHTML(d), `3_Clausula_DPA_Proveedores_Encargados_${nombreLimpio}.doc`);
+    }
+
+    function descargarProtocoloBrechas(datos) {
+        var d = datos || {};
+        descargarDocumentoWord(generarProtocoloBrechasHTML(d), `5_Protocolo_Brechas_Seguridad_72h_Ley_21719.doc`);
+    }
+
+    function descargarFormularioARCOP(datos) {
+        var d = datos || {};
+        descargarDocumentoWord(generarFormularioARCOPHTML(d), `Bonus_Formulario_Solicitud_Derechos_ARCOP.doc`);
+    }
+
     // Exportar al objeto global
     window.KitDatosEngine = {
         generarAnexoLaboralHTML: generarAnexoLaboralHTML,
@@ -663,6 +692,12 @@
         descargarDocumentoWord: descargarDocumentoWord,
         descargarRATCsv: descargarRATCsv,
         descargarKitCompleto: descargarKitCompleto,
+        descargarAnexoLaboral: descargarAnexoLaboral,
+        descargarPoliticaPrivacidad: descargarPoliticaPrivacidad,
+        descargarClausulaDPA: descargarClausulaDPA,
+        descargarRAT: descargarRATCsv,
+        descargarProtocoloBrechas: descargarProtocoloBrechas,
+        descargarFormularioARCOP: descargarFormularioARCOP,
         FLOW_CHECKOUT_URL: FLOW_CHECKOUT_URL
     };
 
