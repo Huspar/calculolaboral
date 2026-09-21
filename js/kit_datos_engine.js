@@ -174,69 +174,87 @@
                     Última actualización: ${escapeHtml(fecha)}
                 </p>
 
-                <p>
-                    <strong>1. IDENTIFICACIÓN DEL RESPONSABLE DEL TRATAMIENTO:</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    1. IDENTIFICACIÓN DEL RESPONSABLE DEL TRATAMIENTO:
+                </p>
+                <p style="margin-top: 0;">
                     El responsable del tratamiento de los datos personales recopilados a través del sitio web <strong>${escapeHtml(web)}</strong>, canales de venta presencial, WhatsApp corporativo y formularios digitales es <strong>${escapeHtml(empresa)}</strong>, Rol Único Tributario N° <strong>${escapeHtml(rutEmpresa)}</strong>, domiciliada en <strong>${escapeHtml(direccion)}</strong>, correo electrónico de contacto: <strong>${escapeHtml(email)}</strong> (en adelante, la "Empresa").
                 </p>
 
-                <p>
-                    <strong>2. PRINCIPIOS DE TRATAMIENTO APLICADOS (ARTÍCULO 4 LEY 21.719):</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    2. PRINCIPIOS DE TRATAMIENTO APLICADOS (ARTÍCULO 4 LEY 21.719):
+                </p>
+                <p style="margin-top: 0;">
                     La Empresa trata los datos de conformidad con los principios rectores de:
-                    <ul style="margin-left: 20px;">
-                        <li><strong>Licitud y Lealtad:</strong> Los datos se tratan solo mediando base legal expresa (consentimiento, contrato o cumplimiento de obligación legal).</li>
-                        <li><strong>Finalidad Específica:</strong> Los datos se recopilan únicamente para fines explícitos y determinados.</li>
-                        <li><strong>Proporcionalidad y Minimización:</strong> Solo se solicita la información estrictamente necesaria para cumplir con el servicio contratado.</li>
-                        <li><strong>Calidad y Exactitud:</strong> Se adoptan medidas razonables para mantener los datos veraces y actualizados.</li>
-                        <li><strong>Seguridad y Confidencialidad:</strong> Aplicación de controles técnicos y organizativos para evitar accesos no autorizados, hackeos, pérdidas o alteraciones.</li>
-                    </ul>
                 </p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Licitud y Lealtad:</strong> Los datos se tratan solo mediando base legal expresa (consentimiento, contrato o cumplimiento de obligación legal).</li>
+                    <li><strong>Finalidad Específica:</strong> Los datos se recopilan únicamente para fines explícitos y determinados.</li>
+                    <li><strong>Proporcionalidad y Minimización:</strong> Solo se solicita la información estrictamente necesaria para cumplir con el servicio contratado.</li>
+                    <li><strong>Calidad y Exactitud:</strong> Se adoptan medidas razonables para mantener los datos veraces y actualizados.</li>
+                    <li><strong>Seguridad y Confidencialidad:</strong> Aplicación de controles técnicos y organizativos para evitar accesos no autorizados, hackeos, pérdidas o alteraciones.</li>
+                </ul>
 
-                <p>
-                    <strong>3. DATOS QUE RECOPILAMOS Y FINALIDADES:</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    3. DATOS QUE RECOPILAMOS Y FINALIDADES:
+                </p>
+                <p style="margin-top: 0;">
                     La Empresa podrá recopilar:
-                    <ul style="margin-left: 20px;">
-                        <li><strong>Datos Identificatorios y de Contacto:</strong> Nombre completo, RUT, correo electrónico, teléfono y dirección de despacho, con la finalidad de procesar compras, emitir facturas/boletas electrónicas según normas del SII y gestionar envíos.</li>
-                        <li><strong>Datos de Atención al Cliente:</strong> Consultas formuladas por formularios de contacto o WhatsApp, con la finalidad de brindar soporte técnico y cotizaciones comerciales.</li>
-                        <li><strong>Datos de Navegación (Cookies):</strong> Dirección IP, tipo de navegador y páginas visitadas para fines estadísticos y de rendimiento del sitio web.</li>
-                    </ul>
                 </p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Datos Identificatorios y de Contacto:</strong> Nombre completo, RUT, correo electrónico, teléfono y dirección de despacho, con la finalidad de procesar compras, emitir facturas/boletas electrónicas según normas del SII y gestionar envíos.</li>
+                    <li><strong>Datos de Atención al Cliente:</strong> Consultas formuladas por formularios de contacto o WhatsApp, con la finalidad de brindar soporte técnico y cotizaciones comerciales.</li>
+                    <li><strong>Datos de Navegación (Cookies):</strong> Dirección IP, tipo de navegador y páginas visitadas para fines estadísticos y de rendimiento del sitio web.</li>
+                </ul>
 
-                <p>
-                    <strong>4. BASES DE LICITUD (LEGITIMACIÓN):</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    4. BASES DE LICITUD (LEGITIMACIÓN):
+                </p>
+                <p style="margin-top: 0;">
                     El tratamiento de datos se fundamenta en:
-                    <ul style="margin-left: 20px;">
-                        <li>La ejecución de una relación contractual o medidas precontractuales solicitadas por el cliente (Art. 13 letra a Ley 21.719).</li>
-                        <li>El cumplimiento de obligaciones tributarias, comerciales y de protección al consumidor (Ley 19.496 y Código Tributario).</li>
-                        <li>El consentimiento libre, previo, expreso e informado del usuario para comunicaciones promocionales (revocable en cualquier momento).</li>
-                    </ul>
                 </p>
+                <ul style="margin-left: 20px;">
+                    <li>La ejecución de una relación contractual o medidas precontractuales solicitadas por el cliente (Art. 13 letra a Ley 21.719).</li>
+                    <li>El cumplimiento de obligaciones tributarias, comerciales y de protección al consumidor (Ley 19.496 y Código Tributario).</li>
+                    <li>El consentimiento libre, previo, expreso e informado del usuario para comunicaciones promocionales (revocable en cualquier momento).</li>
+                </ul>
 
-                <p>
-                    <strong>5. TRANSFERENCIA Y ENCARGADOS DE TRATAMIENTO:</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    5. TRANSFERENCIA Y ENCARGADOS DE TRATAMIENTO:
+                </p>
+                <p style="margin-top: 0;">
                     La Empresa no comercializa, arrienda ni vende bases de datos personales a terceros bajo ninguna circunstancia. Los datos podrán comunicarse a proveedores tecnológicos de pasarelas de pago (Transbank, Flow, Mercado Pago), empresas de courier logístico y servicios de facturación, quienes operan en calidad de "Encargados de Tratamiento" sujetos a estrictos contratos de confidencialidad.
                 </p>
 
-                <p>
-                    <strong>6. DERECHOS DE LOS TITULARES (DERECHOS ARCOP):</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    6. DERECHOS DE LOS TITULARES (DERECHOS ARCOP):
+                </p>
+                <p style="margin-top: 0;">
                     Conforme a los artículos 5° al 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719), todo titular de datos goza de los siguientes derechos inalienables:
-                    <ul style="margin-left: 20px;">
-                        <li><strong>Acceso:</strong> Solicitar confirmación de qué datos suyos se tratan y obtener copia de ellos.</li>
-                        <li><strong>Rectificación:</strong> Modificar datos inexactos, incompletos o desactualizados.</li>
-                        <li><strong>Supresión (Cancelación):</strong> Exigir la eliminación de sus datos cuando ya no sean necesarios para la finalidad originaria.</li>
-                        <li><strong>Oposición:</strong> Negarse al uso de sus datos para fines comerciales o publicidad directa.</li>
-                        <li><strong>Portabilidad:</strong> Recibir sus datos en un formato digital estructurado, común y de lectura mecánica.</li>
-                        <li><strong>Bloqueo:</strong> Suspender provisionalmente el tratamiento mientras se resuelve una impugnación de exactitud.</li>
-                    </ul>
+                </p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Acceso:</strong> Solicitar confirmación de qué datos suyos se tratan y obtener copia de ellos.</li>
+                    <li><strong>Rectificación:</strong> Modificar datos inexactos, incompletos o desactualizados.</li>
+                    <li><strong>Supresión (Cancelación):</strong> Exigir la eliminación de sus datos cuando ya no sean necesarios para la finalidad originaria.</li>
+                    <li><strong>Oposición:</strong> Negarse al uso de sus datos para fines comerciales o publicidad directa.</li>
+                    <li><strong>Portabilidad:</strong> Recibir sus datos en un formato digital estructurado, común y de lectura mecánica.</li>
+                    <li><strong>Bloqueo:</strong> Suspender provisionalmente el tratamiento mientras se resuelve una impugnación de exactitud.</li>
+                </ul>
+                <p>
                     Para ejercer estos derechos, el titular debe enviar su solicitud formal al correo <strong>${escapeHtml(email)}</strong> acreditando fehacientemente su identidad. La Empresa acusará recibo y responderá fundadamente dentro del plazo legal fatal de <strong>treinta (30) días corridos</strong> contado desde su recepción (Artículo 11 Ley N° 19.628).
                 </p>
 
-                <p>
-                    <strong>7. PLAZOS DE RETENCIÓN DE INFORMACIÓN:</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    7. PLAZOS DE RETENCIÓN DE INFORMACIÓN:
+                </p>
+                <p style="margin-top: 0;">
                     Los datos de clientes se conservarán mientras dure la relación comercial y durante el plazo de 6 años establecido por el Código Tributario para fiscalizaciones contables, tras lo cual serán eliminados o anonimizados.
                 </p>
 
-                <p>
-                    <strong>8. AGENCIA DE PROTECCIÓN DE DATOS PERSONALES:</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    8. AGENCIA DE PROTECCIÓN DE DATOS PERSONALES:
+                </p>
+                <p style="margin-top: 0;">
                     En caso de que el titular considere que sus derechos no han sido satisfechos oportunamente, tiene el derecho de recurrir ante la <strong>Agencia de Protección de Datos Personales</strong> de Chile de conformidad a los procedimientos sancionatorios de la ley.
                 </p>
             </div>
@@ -449,23 +467,27 @@
                     <span style="font-size: 10pt; font-weight: normal;">(Conforme al Artículo 14 sexies de la Ley N° 19.628, modificada por Ley N° 21.719 - Notificación sin dilaciones indebidas y Estándar Operativo de 72 Horas)</span>
                 </p>
 
-                <p>
-                    <strong>1. OBJETIVO:</strong><br>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    1. OBJETIVO:
+                </p>
+                <p style="margin-top: 0;">
                     Establecer las directrices de acción inmediata ante cualquier violación de seguridad, filtración, robo, pérdida, acceso no autorizado o alteración de datos personales custodiados por <strong>${escapeHtml(empresa)}</strong> (RUT ${escapeHtml(rutEmpresa)}), garantizando la contención del daño y el cumplimiento de la obligación legal de notificar a la Agencia de Protección de Datos Personales a la mayor brevedad posible y sin dilaciones indebidas (Art. 14 sexies), adoptando como estándar operativo interno y mejor práctica internacional recomendada un plazo máximo de <strong>72 horas</strong> desde la detección del incidente.
                 </p>
 
-                <p>
-                    <strong>2. CLASIFICACIÓN DE INCIDENTES DE SEGURIDAD:</strong><br>
-                    Se considera brecha de seguridad:
-                    <ul style="margin-left: 20px;">
-                        <li><strong>Acceso Ilícito / Ciberataque:</strong> Infección por Ransomware, phishing exitoso con acceso a bases de datos o cuentas de correo corporativas.</li>
-                        <li><strong>Pérdida o Robo de Dispositivos:</strong> Extravío de notebooks, teléfonos móviles o discos duros con información de clientes o nóminas no encriptadas.</li>
-                        <li><strong>Error Humano Operativo:</strong> Envío masivo de correos con datos personales sin copia oculta (BCC), o publicación accidental de archivos confidenciales.</li>
-                    </ul>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    2. CLASIFICACIÓN DE INCIDENTES DE SEGURIDAD:
                 </p>
+                <p style="margin-top: 0;">
+                    Se considera brecha de seguridad:
+                </p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Acceso Ilícito / Ciberataque:</strong> Infección por Ransomware, phishing exitoso con acceso a bases de datos o cuentas de correo corporativas.</li>
+                    <li><strong>Pérdida o Robo de Dispositivos:</strong> Extravío de notebooks, teléfonos móviles o discos duros con información de clientes o nóminas no encriptadas.</li>
+                    <li><strong>Error Humano Operativo:</strong> Envío masivo de correos con datos personales sin copia oculta (BCC), o publicación accidental de archivos confidenciales.</li>
+                </ul>
 
-                <p>
-                    <strong>3. PROTOCOLO DE RESPUESTA EN 4 PASOS:</strong>
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                    3. PROTOCOLO DE RESPUESTA EN 4 PASOS:
                 </p>
                 <ol style="margin-left: 25px;">
                     <li><strong>FASE 1: Detección y Contención (Horas 0 a 12):</strong>
@@ -482,11 +504,12 @@
                     </li>
                 </ol>
 
-                <p style="font-weight: bold; margin-top: 24px; text-transform: uppercase;">
-                    ANEXO: MODELO DE FORMULARIO DE REPORTE DE BRECHA A LA AGENCIA (72 HORAS)
-                </p>
-                <div style="border: 1px solid #333; padding: 16px; background-color: #fdfdfd; margin-top: 10px;">
-                    <p style="margin: 4px 0;"><strong>A:</strong> AGENCIA DE PROTECCIÓN DE DATOS PERSONALES DE CHILE (APDP)</p>
+                <div style="page-break-before: always; margin-top: 20px;">
+                    <p style="font-weight: bold; margin-top: 10px; text-transform: uppercase;">
+                        ANEXO: MODELO DE FORMULARIO DE REPORTE DE BRECHA A LA AGENCIA (72 HORAS)
+                    </p>
+                    <div style="border: 1.5px solid #0f172a; padding: 16px; background-color: #fdfdfd; margin-top: 10px; page-break-inside: avoid;">
+                        <p style="margin: 4px 0;"><strong>A:</strong> AGENCIA DE PROTECCIÓN DE DATOS PERSONALES DE CHILE (APDP)</p>
                     <p style="margin: 4px 0;"><strong>DE:</strong> ${escapeHtml(empresa)} | RUT: ${escapeHtml(rutEmpresa)}</p>
                     <p style="margin: 4px 0;"><strong>FECHA Y HORA DEL INCIDENTE:</strong> [Indicar fecha y hora exacta del suceso]</p>
                     <p style="margin: 4px 0;"><strong>FECHA Y HORA DE DETECCIÓN:</strong> [Indicar cuándo se tomó conocimiento]</p>
@@ -495,6 +518,7 @@
                     <p style="margin: 8px 0;"><strong>3. CONSECUENCIAS Y RIESGOS PREVISIBLES:</strong><br>[Describir eventuales perjuicios económicos o reputacionales]</p>
                     <p style="margin: 8px 0;"><strong>4. MEDIDAS CORRECTIVAS ADOPTADAS O PROPUESTAS:</strong><br>[Detallar parches, desconexión y contención realizada]</p>
                     <p style="margin: 8px 0;"><strong>5. PERSONA DE CONTACTO INSTITUCIONAL:</strong><br>Nombre: [Responsable]<br>Teléfono: [Teléfono]<br>Correo: [Email de contacto]</p>
+                    </div>
                 </div>
             </div>
         `;

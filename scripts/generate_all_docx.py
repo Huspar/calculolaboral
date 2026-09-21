@@ -3,19 +3,19 @@ import docx
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.oxml import parse_xml, OxmlElement
-from docx.oxml.ns import nsdecls, qn
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'api', 'assets', 'kit_datos_files')
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'assets')
 
-def create_base_doc():
+def create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9):
     doc = docx.Document()
     for s in doc.sections:
-        s.top_margin = Inches(0.9)
-        s.bottom_margin = Inches(0.9)
-        s.left_margin = Inches(1.0)
-        s.right_margin = Inches(1.0)
+        s.top_margin = Inches(top)
+        s.bottom_margin = Inches(bottom)
+        s.left_margin = Inches(left)
+        s.right_margin = Inches(right)
         s.page_width = Inches(8.27)  # A4
         s.page_height = Inches(11.69)
     return doc
@@ -25,10 +25,8 @@ def set_cell_background(cell, fill_hex):
     shd = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{fill_hex}"/>')
     tcPr.append(shd)
 
-def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
+def set_cell_margins(cell, top=80, bottom=80, left=120, right=120):
     tcPr = cell._tc.get_or_add_tcPr()
-    tcMar = parse_xml(f'<w:tcBorders {nsdecls("w")}/>')
-    # Use padding XML
     margins = parse_xml(
         f'<w:tcMar {nsdecls("w")}>'
         f'<w:top w:w="{top}" w:type="dxa"/>'
@@ -39,9 +37,17 @@ def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
     )
     tcPr.append(margins)
 
+def prevent_row_split(table):
+    for row in table.rows:
+        trPr = row._tr.get_or_add_trPr()
+        trPr.append(parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
+
 def add_header_brand(doc, doc_number_text):
     p = doc.add_paragraph()
-    p.paragraph_format.space_after = Pt(14)
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p.paragraph_format.space_after = Pt(10)
+    p.paragraph_format.space_before = Pt(0)
+    
     run_brand = p.add_run("CÁLCULO LABORAL CHILE  |  PLATAFORMA LEGALTECH\n")
     run_brand.font.name = 'Calibri'
     run_brand.font.size = Pt(8.5)
@@ -57,96 +63,112 @@ def add_title(doc, title_text, subtitle_text=None):
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.keep_with_next = True
     run = p.add_run(title_text)
     run.font.name = 'Calibri'
-    run.font.size = Pt(13.5)
+    run.font.size = Pt(13)
     run.font.bold = True
     run.font.color.rgb = RGBColor(15, 23, 42)
 
     if subtitle_text:
         p2 = doc.add_paragraph()
         p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p2.paragraph_format.space_after = Pt(16)
+        p2.paragraph_format.space_after = Pt(12)
+        p2.paragraph_format.keep_with_next = True
         run2 = p2.add_run(subtitle_text)
         run2.font.name = 'Calibri'
-        run2.font.size = Pt(9.5)
+        run2.font.size = Pt(9)
         run2.font.italic = True
         run2.font.color.rgb = RGBColor(71, 85, 105)
 
-def add_heading(doc, text):
+def add_heading(doc, text, space_before=10, space_after=3):
+    """
+    CRÍTICO: Los encabezados SIEMPRE están alineados a la izquierda (LEFT).
+    Esto impide 100% que Word expanda o separe las palabras con espacios gigantes
+    cuando el usuario tiene configurada la justificación completa.
+    """
     p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(12)
-    p.paragraph_format.space_after = Pt(4)
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p.paragraph_format.keep_with_next = True
+    p.paragraph_format.space_before = Pt(space_before)
+    p.paragraph_format.space_after = Pt(space_after)
     run = p.add_run(text)
     run.font.name = 'Calibri'
-    run.font.size = Pt(11)
+    run.font.size = Pt(10.5)
     run.font.bold = True
     run.font.color.rgb = RGBColor(2, 132, 199)
+    return p
 
-def add_body(doc, text, bold_prefix=None, space_after=6):
+def add_body(doc, text, bold_prefix=None, space_after=5, line_spacing=1.15):
     p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     p.paragraph_format.space_after = Pt(space_after)
-    p.paragraph_format.line_spacing = 1.15
+    p.paragraph_format.line_spacing = line_spacing
     if bold_prefix:
         r_b = p.add_run(bold_prefix)
         r_b.font.name = 'Calibri'
-        r_b.font.size = Pt(10)
+        r_b.font.size = Pt(9.5)
         r_b.font.bold = True
         r_b.font.color.rgb = RGBColor(15, 23, 42)
     run = p.add_run(text)
     run.font.name = 'Calibri'
-    run.font.size = Pt(10)
+    run.font.size = Pt(9.5)
     run.font.color.rgb = RGBColor(30, 41, 59)
     return p
 
 def add_bullet(doc, text, bold_prefix=None):
     p = doc.add_paragraph(style='List Bullet')
-    p.paragraph_format.space_after = Pt(4)
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p.paragraph_format.space_after = Pt(3)
     p.paragraph_format.line_spacing = 1.15
     if bold_prefix:
         r_b = p.add_run(bold_prefix)
         r_b.font.name = 'Calibri'
-        r_b.font.size = Pt(10)
+        r_b.font.size = Pt(9.5)
         r_b.font.bold = True
         r_b.font.color.rgb = RGBColor(15, 23, 42)
     run = p.add_run(text)
     run.font.name = 'Calibri'
-    run.font.size = Pt(10)
+    run.font.size = Pt(9.5)
     run.font.color.rgb = RGBColor(30, 41, 59)
 
-def add_callout(doc, title, body, bg_hex="F0F9FF", border_hex="0284C7"):
+def add_callout(doc, title, body, bg_hex="F0F9FF"):
     table = doc.add_table(rows=1, cols=1)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
-    table.columns[0].width = Inches(6.27)
+    table.columns[0].width = Inches(6.47)
     cell = table.cell(0, 0)
     set_cell_background(cell, bg_hex)
-    set_cell_margins(cell, top=140, bottom=140, left=180, right=180)
+    set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
+    prevent_row_split(table)
     
     p = cell.paragraphs[0]
-    p.paragraph_format.space_after = Pt(3)
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p.paragraph_format.space_after = Pt(2)
     r1 = p.add_run(title + "\n")
     r1.font.name = 'Calibri'
-    r1.font.size = Pt(10)
+    r1.font.size = Pt(9.5)
     r1.font.bold = True
     r1.font.color.rgb = RGBColor(2, 132, 199)
     
     r2 = p.add_run(body)
     r2.font.name = 'Calibri'
-    r2.font.size = Pt(9.5)
+    r2.font.size = Pt(9)
     r2.font.color.rgb = RGBColor(51, 65, 85)
     
     p_space = doc.add_paragraph()
-    p_space.paragraph_format.space_after = Pt(6)
+    p_space.paragraph_format.space_after = Pt(4)
 
 def add_signature_block(doc, left_title, left_sub, right_title, right_sub):
     p_sp = doc.add_paragraph()
-    p_sp.paragraph_format.space_before = Pt(28)
+    p_sp.paragraph_format.space_before = Pt(24)
+    p_sp.paragraph_format.keep_with_next = True
     
     table = doc.add_table(rows=1, cols=2)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    table.columns[0].width = Inches(3.1)
-    table.columns[1].width = Inches(3.1)
+    table.columns[0].width = Inches(3.2)
+    table.columns[1].width = Inches(3.2)
+    prevent_row_split(table)
     
     c1 = table.cell(0, 0)
     p1 = c1.paragraphs[0]
@@ -155,9 +177,9 @@ def add_signature_block(doc, left_title, left_sub, right_title, right_sub):
     r1.font.color.rgb = RGBColor(100, 116, 139)
     r1_b = p1.add_run(left_title + "\n")
     r1_b.bold = True
-    r1_b.font.size = Pt(9.5)
+    r1_b.font.size = Pt(9)
     r1_s = p1.add_run(left_sub)
-    r1_s.font.size = Pt(8.5)
+    r1_s.font.size = Pt(8)
     r1_s.font.color.rgb = RGBColor(71, 85, 105)
 
     c2 = table.cell(0, 1)
@@ -167,9 +189,9 @@ def add_signature_block(doc, left_title, left_sub, right_title, right_sub):
     r2.font.color.rgb = RGBColor(100, 116, 139)
     r2_b = p2.add_run(right_title + "\n")
     r2_b.bold = True
-    r2_b.font.size = Pt(9.5)
+    r2_b.font.size = Pt(9)
     r2_s = p2.add_run(right_sub)
-    r2_s.font.size = Pt(8.5)
+    r2_s.font.size = Pt(8)
     r2_s.font.color.rgb = RGBColor(71, 85, 105)
 
 
@@ -177,7 +199,7 @@ def add_signature_block(doc, left_title, left_sub, right_title, right_sub):
 # DOC 0: MANUAL DE USO E INSTRUCCIONES PASO A PASO
 # =========================================================================
 def build_doc_0():
-    doc = create_base_doc()
+    doc = create_base_doc(top=0.8, bottom=0.8, left=0.85, right=0.85)
     add_header_brand(doc, "Documento 0 Oficial  •  Guía Maestra de Implementación")
     add_title(doc, "MANUAL DE USO E IMPLEMENTACIÓN RÁPIDA", 
               "Kit LegalTech Ley N° 21.719 de Protección de Datos Personales (Chile 2026)\nGuía práctica paso a paso para Micro, Pequeñas y Medianas Empresas (MiPymes)")
@@ -191,20 +213,27 @@ def build_doc_0():
     add_body(doc, "Abre el Documento 4 (Excel RAT). En la Fila 3, cambia [NOMBRE DE TU EMPRESA] y [RUT EMPRESA] por tus datos reales y guárdalo en tu computador. Publica el Documento 2 (Política de Privacidad) en el pie de tu sitio web o imprímela para tenerla disponible ante clientes.", bold_prefix="PASO 2 (ESTA SEMANA - ÁREA ADMINISTRATIVA Y WEB): ")
     add_body(doc, "Archiva los Documentos 3, 5, 6 y 7 en la carpeta digital de administración. Servirán como prueba de cumplimiento si la Dirección del Trabajo o la Agencia de Protección de Datos Personales (APDP) te fiscalizan.", bold_prefix="PASO 3 (DE RESGUARDO - PROTOCOLOS DE EMERGENCIA): ")
 
+    # Salto de página para que la tabla comparativa de sectores quede 100% entera en la Página 2
+    doc.add_page_break()
+
+    add_header_brand(doc, "Documento 0 Oficial  •  Guía Práctica por Sectores y Rubros")
     add_heading(doc, "2. GUÍA POR RUBROS Y SECTORES: ¿ES ESTANDARIZADO O DIFERENTE?")
     add_body(doc, "La ley es IDÉNTICA para todas las empresas de Chile. El 85% del tratamiento de datos (sueldos, boletas, facturas, contratos y licencias médicas) es exactamente el mismo en cualquier rubro. Si perteneces a un sector con particularidades operativas, revisa la siguiente tabla:")
 
     table = doc.add_table(rows=7, cols=3)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    prevent_row_split(table)
+
     headers = ["Rubro / Sector", "¿Qué datos específicos maneja?", "Instrucción de aplicación con el Kit"]
     for i, h in enumerate(headers):
         c = table.cell(0, i)
         set_cell_background(c, "0F172A")
-        set_cell_margins(c, top=80, bottom=80, left=100, right=100)
+        set_cell_margins(c, top=80, bottom=80, left=90, right=90)
         p = c.paragraphs[0]
+        p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         r = p.add_run(h)
         r.font.name = 'Calibri'
-        r.font.size = Pt(9)
+        r.font.size = Pt(8.5)
         r.font.bold = True
         r.font.color.rgb = RGBColor(255, 255, 255)
 
@@ -222,8 +251,9 @@ def build_doc_0():
         for col_idx, text in enumerate(data):
             c = table.cell(row_idx, col_idx)
             set_cell_background(c, bg)
-            set_cell_margins(c, top=70, bottom=70, left=90, right=90)
+            set_cell_margins(c, top=60, bottom=60, left=80, right=80)
             p = c.paragraphs[0]
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
             r = p.add_run(text)
             r.font.name = 'Calibri'
             r.font.size = Pt(8.5)
@@ -231,6 +261,10 @@ def build_doc_0():
             if col_idx == 0:
                 r.font.bold = True
 
+    # Salto de página para que el FAQ y el Checklist queden enteros en la Página 3
+    doc.add_page_break()
+
+    add_header_brand(doc, "Documento 0 Oficial  •  Preguntas Frecuentes y Checklist de Blindaje")
     add_heading(doc, "3. PREGUNTAS FRECUENTES (FAQ) DE DUEÑOS Y GERENTES DE PYMES")
     add_body(doc, "No. Ninguna ley exige enviar copias al Estado. Se custodian internamente en la empresa y se exhiben únicamente cuando la Dirección del Trabajo o la Agencia APDP fiscalizan.", bold_prefix="¿Tengo que enviar estos documentos a alguna entidad del Estado? ")
     add_body(doc, "La Dirección del Trabajo (Res. Ex. N° 38/2024) prohíbe despedirlo o sancionarlo. Debes ofrecerle una alternativa no biométrica (tarjeta magnética, clave o libro). Al tener firmado nuestro Documento 1, tu empresa queda blindada.", bold_prefix="¿Qué pasa si un trabajador se niega a poner la huella en el reloj control? ")
@@ -253,7 +287,7 @@ def build_doc_0():
 # DOC 1: ANEXO LABORAL DE TRATAMIENTO DE DATOS PERSONALES
 # =========================================================================
 def build_doc_1():
-    doc = create_base_doc()
+    doc = create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9)
     add_header_brand(doc, "Documento 1 Oficial  •  Formato Word Editable (.docx)")
     add_title(doc, "ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO\nAUTORIZACIÓN, TRATAMIENTO Y PROTECCIÓN DE DATOS PERSONALES",
               "(Conforme a la Ley N° 21.719, Arts. 154 bis y ter del Código del Trabajo y Res. Exenta N° 38/2024 de la Dirección del Trabajo)")
@@ -305,34 +339,44 @@ def build_doc_1():
 # DOC 2: POLÍTICA DE PRIVACIDAD WEB Y CLIENTES
 # =========================================================================
 def build_doc_2():
-    doc = create_base_doc()
+    doc = create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9)
     add_header_brand(doc, "Documento 2 Oficial  •  Formato Word Editable (.docx)")
     add_title(doc, "POLÍTICA GENERAL DE PRIVACIDAD Y PROTECCIÓN DE DATOS PERSONALES",
               "Conforme a la Ley N° 21.719 sobre Protección y Tratamiento de Datos Personales de la República de Chile\nDocumento para publicación en sitio web y entrega a clientes comerciales")
 
+    # TÍTULO 1: Alineado a la izquierda, sin caracteres extraños ni saltos justificables
     add_heading(doc, "1. IDENTIFICACIÓN DEL RESPONSABLE DEL TRATAMIENTO")
     add_body(doc, "El responsable del tratamiento de los datos personales recopilados a través del sitio web https://www.empresa.cl, canales de venta presencial, WhatsApp corporativo y formularios digitales es [NOMBRE DE LA EMPRESA / RAZÓN SOCIAL], Rol Único Tributario N° [RUT EMPRESA], domiciliada en [DIRECCIÓN COMERCIAL, COMUNA, CIUDAD], correo electrónico de contacto: privacidad@empresa.cl (en adelante, la 'Empresa').")
 
+    # TÍTULO 2
     add_heading(doc, "2. PRINCIPIOS DE TRATAMIENTO APLICADOS (ARTÍCULO 4 LEY 21.719)")
+    add_body(doc, "La Empresa trata los datos de conformidad con los principios rectores de la legislación chilena:")
     add_bullet(doc, "Los datos se tratan solo mediando base legal expresa (consentimiento, contrato o cumplimiento de obligación legal).", bold_prefix="Licitud y Lealtad: ")
     add_bullet(doc, "Los datos se recopilan únicamente para fines explícitos y determinados.", bold_prefix="Finalidad Específica: ")
     add_bullet(doc, "Solo se solicita la información estrictamente necesaria para cumplir con el servicio contratado.", bold_prefix="Proporcionalidad y Minimización: ")
     add_bullet(doc, "Se adoptan medidas razonables para mantener los datos veraces y actualizados.", bold_prefix="Calidad y Exactitud: ")
     add_bullet(doc, "Aplicación de controles técnicos y organizativos para evitar accesos no autorizados, hackeos, pérdidas o alteraciones.", bold_prefix="Seguridad y Confidencialidad: ")
 
+    # TÍTULO 3 (EL QUE SE VEÍA SEPARADO EN LA FOTO)
+    # Al ser un add_heading independiente alineado a la izquierda, NUNCA se expandirá ni separará
     add_heading(doc, "3. DATOS QUE RECOPILAMOS Y FINALIDADES")
+    add_body(doc, "La Empresa podrá recopilar los siguientes antecedentes personales:")
     add_bullet(doc, "Nombre completo, RUT, correo electrónico, teléfono y dirección de despacho, con la finalidad de procesar compras, emitir facturas/boletas electrónicas según normas del SII y gestionar envíos logísticos.", bold_prefix="Datos Identificatorios y de Facturación: ")
     add_bullet(doc, "Consultas formuladas por formularios de contacto o WhatsApp, con la finalidad de brindar soporte técnico y cotizaciones comerciales.", bold_prefix="Datos de Atención al Cliente: ")
     add_bullet(doc, "Dirección IP, tipo de navegador y páginas visitadas para fines estadísticos y de rendimiento del sitio web.", bold_prefix="Datos de Navegación (Cookies): ")
 
+    # TÍTULO 4
     add_heading(doc, "4. BASES DE LICITUD (LEGITIMACIÓN)")
+    add_body(doc, "El tratamiento de datos se fundamenta en las siguientes causales de licitud:")
     add_bullet(doc, "La ejecución de una relación contractual o medidas precontractuales solicitadas por el cliente (Art. 13 letra a Ley 21.719).")
     add_bullet(doc, "El cumplimiento de obligaciones tributarias, comerciales y de protección al consumidor (Ley 19.496 y Código Tributario).")
     add_bullet(doc, "El consentimiento libre, previo, expreso e informado del usuario para comunicaciones promocionales (revocable en cualquier momento).")
 
+    # TÍTULO 5
     add_heading(doc, "5. TRANSFERENCIA Y ENCARGADOS DE TRATAMIENTO")
     add_body(doc, "La Empresa no comercializa, arrienda ni vende bases de datos personales a terceros bajo ninguna circunstancia. Los datos podrán comunicarse a proveedores tecnológicos de pasarelas de pago (Transbank, Flow, Mercado Pago), empresas de courier logístico y servicios de facturación, quienes operan en calidad de 'Encargados de Tratamiento' sujetos a estrictos contratos de confidencialidad.")
 
+    # TÍTULO 6
     add_heading(doc, "6. DERECHOS DE LOS TITULARES (DERECHOS ARCOP)")
     add_body(doc, "Conforme a los artículos 5° al 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719), todo titular de datos goza de los siguientes derechos inalienables:")
     add_bullet(doc, "Solicitar confirmación de qué datos suyos se tratan y obtener copia de ellos.", bold_prefix="Acceso: ")
@@ -343,9 +387,11 @@ def build_doc_2():
     add_bullet(doc, "Suspender provisionalmente el tratamiento mientras se resuelve una impugnación de exactitud.", bold_prefix="Bloqueo: ")
     add_body(doc, "Para ejercer estos derechos, el titular debe enviar su solicitud formal al correo privacidad@empresa.cl acreditando su identidad. La Empresa acusará recibo y responderá fundadamente dentro del plazo legal fatal de treinta (30) días corridos contado desde su recepción (Artículo 11 Ley N° 19.628).")
 
+    # TÍTULO 7
     add_heading(doc, "7. PLAZOS DE RETENCIÓN DE INFORMACIÓN")
     add_body(doc, "Los datos de clientes se conservarán mientras dure la relación comercial y durante el plazo de 6 años establecido por el Código Tributario para fiscalizaciones contables, tras lo cual serán eliminados o anonimizados.")
 
+    # TÍTULO 8
     add_heading(doc, "8. AGENCIA DE PROTECCIÓN DE DATOS PERSONALES")
     add_body(doc, "En caso de que el titular considere que sus derechos no han sido satisfechos oportunamente, tiene el derecho de recurrir ante la Agencia de Protección de Datos Personales de Chile de conformidad a los procedimientos sancionatorios de la ley.")
     return doc
@@ -355,7 +401,7 @@ def build_doc_2():
 # DOC 3: CLÁUSULA DPA PROVEEDORES Y ENCARGADOS
 # =========================================================================
 def build_doc_3():
-    doc = create_base_doc()
+    doc = create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9)
     add_header_brand(doc, "Documento 3 Oficial  •  Formato Word Editable (.docx)")
     add_title(doc, "ANEXO DE TRATAMIENTO DE DATOS PERSONALES (DPA)\nENTRE RESPONSABLE Y ENCARGADO DEL TRATAMIENTO",
               "(Conforme al Artículo 14 bis y 14 ter de la Ley N° 21.719 de Chile)")
@@ -388,10 +434,10 @@ def build_doc_3():
 
 
 # =========================================================================
-# DOC 5: PROTOCOLO DE BRECHAS DE SEGURIDAD 72H
+# DOC 5: PROTOCOLO DE BRECHAS DE SEGURIDAD 72H (CORRECCIÓN RECUADRO PARTIDO)
 # =========================================================================
 def build_doc_5():
-    doc = create_base_doc()
+    doc = create_base_doc(top=0.8, bottom=0.8, left=0.85, right=0.85)
     add_header_brand(doc, "Documento 5 Oficial  •  Formato Word Editable (.docx)")
     add_title(doc, "PROTOCOLO OPERATIVO DE GESTIÓN Y NOTIFICACIÓN DE BRECHAS DE SEGURIDAD",
               "(Conforme al Artículo 14 sexies de la Ley N° 19.628 reformada por Ley N° 21.719 - Estándar Operativo 72 Horas)")
@@ -410,77 +456,107 @@ def build_doc_5():
     add_body(doc, "Si la brecha entraña un riesgo para los derechos de los titulares, remitir el reporte oficial a la Agencia de Protección de Datos Personales sin dilación indebida, estableciendo como meta de cumplimiento operativo interno no superar las 72 horas desde que se tuvo conocimiento confirmado del incidente.", bold_prefix="FASE 3: Notificación Formal a la Agencia (Horas 36 a 72): ")
     add_body(doc, "Si el riesgo es de gravedad, comunicar directamente a los afectados las medidas que deben tomar (ej. cambio de claves bancarias) y registrar el incidente en la Bitácora Histórica del RAT.", bold_prefix="FASE 4: Notificación a Titulares y Mitigación (Posterior a 72 Horas): ")
 
+    # =========================================================================
+    # CORRECCIÓN VITAL DEL RECUADRO:
+    # Agregamos salto de página explícito ANTES del Anexo del Formulario.
+    # Con esto, la FASE 4 cierra limpiamente la Página 1, y el recuadro del Formulario
+    # se imprime 100% ENTERO e INTACTO en la Página 2, sin partirse por la mitad.
+    # =========================================================================
+    doc.add_page_break()
+
+    add_header_brand(doc, "Documento 5 Oficial  •  Anexo: Formulario de Notificación APDP")
     add_heading(doc, "ANEXO: FORMULARIO OFICIAL DE REPORTE DE BRECHA A LA AGENCIA (72 HORAS)")
+    add_body(doc, "Complete el siguiente formulario y remítalo a los canales oficiales de la Agencia de Protección de Datos Personales en caso de un incidente calificado:")
     
     table = doc.add_table(rows=1, cols=1)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table.autofit = False
+    table.columns[0].width = Inches(6.5)
+    prevent_row_split(table)
+    
     c = table.cell(0, 0)
     set_cell_background(c, "F8FAFC")
-    set_cell_margins(c, top=120, bottom=120, left=140, right=140)
+    set_cell_margins(c, top=100, bottom=100, left=130, right=130)
     
     p = c.paragraphs[0]
-    p.paragraph_format.space_after = Pt(4)
-    p.paragraph_format.line_spacing = 1.2
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.line_spacing = 1.15
     
     lines = [
         ("A: ", "AGENCIA DE PROTECCIÓN DE DATOS PERSONALES DE CHILE (APDP)"),
         ("DE: ", "[NOMBRE DE LA EMPRESA] | RUT: [RUT EMPRESA]"),
         ("FECHA Y HORA DEL INCIDENTE: ", "[Indicar fecha y hora exacta del suceso]"),
         ("FECHA Y HORA DE DETECCIÓN: ", "[Indicar cuándo se tomó conocimiento confirmado]"),
-        ("1. NATURALEZA DE LA VULNERACIÓN: ", "\n[  ] Confidencialidad (Divulgación/Acceso no autorizado)\n[  ] Integridad (Alteración indebida)\n[  ] Disponibilidad (Pérdida/Destrucción o Ransomware)"),
-        ("2. CATEGORÍAS Y NÚMERO APROXIMADO DE AFECTADOS: ", "\n[Describir si son clientes o trabajadores, y cantidad estimada]"),
-        ("3. CONSECUENCIAS Y RIESGOS PREVISIBLES: ", "\n[Describir eventuales perjuicios económicos o reputacionales para los titulares]"),
-        ("4. MEDIDAS CORRECTIVAS ADOPTADAS O PROPUESTAS: ", "\n[Detallar parches, desconexión y contención realizada]"),
-        ("5. CONTACTO INSTITUCIONAL DE RESPUESTA: ", "\nNombre del Representante: [Nombre]\nTeléfono Directo: [Teléfono]\nCorreo Electrónico Oficial: [Email]")
+        ("1. NATURALEZA DE LA VULNERACIÓN: ", "\n[  ] Confidencialidad (Divulgación o acceso no autorizado)\n[  ] Integridad (Alteración o modificación indebida)\n[  ] Disponibilidad (Pérdida, destrucción o secuestro por Ransomware)"),
+        ("2. CATEGORÍAS Y NÚMERO APROXIMADO DE AFECTADOS: ", "\n[Describir si son clientes o trabajadores, y cantidad aproximada]"),
+        ("3. CONSECUENCIAS Y RIESGOS PREVISIBLES: ", "\n[Describir eventuales perjuicios económicos, patrimoniales o reputacionales]"),
+        ("4. MEDIDAS CORRECTIVAS ADOPTADAS O PROPUESTAS: ", "\n[Detallar parches, desconexión de red, reseteo de claves y contención realizada]"),
+        ("5. PERSONA DE CONTACTO INSTITUCIONAL DE RESPUESTA: ", "\nNombre del Representante: [Nombre y Cargo]\nTeléfono Directo: [Teléfono]\nCorreo Electrónico Oficial: [Email]")
     ]
     for b_prefix, text in lines:
         rb = p.add_run(b_prefix)
         rb.font.bold = True
-        rb.font.size = Pt(9.5)
+        rb.font.size = Pt(9)
         rt = p.add_run(text + "\n")
-        rt.font.size = Pt(9.5)
+        rt.font.size = Pt(9)
 
     return doc
 
 
 # =========================================================================
-# DOC 6: FORMULARIO DE DERECHOS ARCOP
+# DOC 6: FORMULARIO DE DERECHOS ARCOP (DISEÑADO EXACTO EN 1 SOLA PÁGINA)
 # =========================================================================
 def build_doc_6():
-    doc = create_base_doc()
-    add_header_brand(doc, "Documento 6 Oficial  •  Formato Word Editable (.docx)")
+    # Márgenes compactos de 0.65 pulgadas para asegurar 1 sola página completa
+    doc = create_base_doc(top=0.6, bottom=0.6, left=0.75, right=0.75)
+    add_header_brand(doc, "Documento 6 Oficial  •  Formulario Imprimible en 1 Página (.docx)")
     add_title(doc, "FORMULARIO OFICIAL DE SOLICITUD DE EJERCICIO DE DERECHOS ARCOP",
               "(Acceso, Rectificación, Supresión, Oposición, Portabilidad y Bloqueo - Ley N° 21.719)")
 
-    add_body(doc, "El presente formulario permite a cualquier titular de datos (cliente, trabajador, ex-trabajador, proveedor o usuario) solicitar ante [NOMBRE DE LA EMPRESA] (RUT [RUT EMPRESA]) el ejercicio formal de sus derechos reconocidos en los artículos 5° al 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719).")
+    add_body(doc, "El presente formulario permite a cualquier titular de datos (cliente, trabajador, ex-trabajador, proveedor o usuario) solicitar ante [NOMBRE DE LA EMPRESA] (RUT [RUT EMPRESA]) el ejercicio formal de sus derechos reconocidos en los artículos 5° al 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719).", space_after=3)
 
-    add_heading(doc, "1. DATOS DEL TITULAR SOLICITANTE")
-    add_body(doc, "Nombre Completo: ____________________________________________________________________")
-    add_body(doc, "RUT / Documento de Identidad: ________________________________________________________")
-    add_body(doc, "Correo Electrónico de Notificación: ____________________________________________________")
-    add_body(doc, "Teléfono Móvil de Contacto: _________________________________________________________")
-    add_body(doc, "Calidad del Titular:  [  ] Cliente    [  ] Trabajador    [  ] Ex-trabajador    [  ] Proveedor    [  ] Otro")
+    add_heading(doc, "1. DATOS DEL TITULAR SOLICITANTE", space_before=6, space_after=2)
+    add_body(doc, "Nombre Completo: ____________________________________________________________________", space_after=2)
+    add_body(doc, "RUT / Documento de Identidad: ________________________________________________________", space_after=2)
+    add_body(doc, "Correo Electrónico de Notificación: ____________________________________________________", space_after=2)
+    add_body(doc, "Teléfono Móvil de Contacto: _________________________________________________________", space_after=2)
+    add_body(doc, "Calidad del Titular:   [  ] Cliente     [  ] Trabajador     [  ] Ex-trabajador     [  ] Proveedor     [  ] Otro", space_after=4)
 
-    add_heading(doc, "2. DERECHO QUE SOLICITA EJERCER (Marcar con una X)")
+    add_heading(doc, "2. DERECHO QUE SOLICITA EJERCER (Marcar con una X)", space_before=6, space_after=2)
     add_bullet(doc, "Deseo conocer qué datos personales míos posee la empresa y su tratamiento.", bold_prefix="[  ] ACCESO: ")
     add_bullet(doc, "Solicito corregir o actualizar datos inexactos, incompletos o desactualizados.", bold_prefix="[  ] RECTIFICACIÓN: ")
     add_bullet(doc, "Solicito eliminar mis datos por haber expirado la finalidad o plazo legal.", bold_prefix="[  ] SUPRESIÓN / CANCELACIÓN: ")
-    add_bullet(doc, "Solicito que mis datos no sean utilizados para fines publicitarios o promocionales.", bold_prefix="[  ] OPOSICIÓN: ")
+    add_bullet(doc, "Solicito que mis datos no sean utilizados para fines publicitarios o comerciales.", bold_prefix="[  ] OPOSICIÓN: ")
     add_bullet(doc, "Solicito copia de mis datos en formato estructurado, interoperable y de lectura mecánica.", bold_prefix="[  ] PORTABILIDAD: ")
     add_bullet(doc, "Solicito la suspensión cautelar temporal del tratamiento mientras se resuelve mi solicitud.", bold_prefix="[  ] BLOQUEO: ")
 
-    add_heading(doc, "3. DETALLE DE LA SOLICITUD Y ANTECEDENTES DE RESPALDO")
-    add_body(doc, "[Indique detalladamente los datos que solicita acceder, rectificar, cancelar o bloquear, acompañando los documentos de respaldo correspondientes si aplica]:\n\n\n\n")
+    add_heading(doc, "3. DETALLE DE LA SOLICITUD Y ANTECEDENTES DE RESPALDO", space_before=6, space_after=2)
+    
+    # Cuadro delimitado para que el usuario escriba a mano o en computador
+    table_desc = doc.add_table(rows=1, cols=1)
+    table_desc.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table_desc.columns[0].width = Inches(6.7)
+    prevent_row_split(table_desc)
+    c_desc = table_desc.cell(0, 0)
+    set_cell_background(c_desc, "FAFAFA")
+    set_cell_margins(c_desc, top=60, bottom=60, left=100, right=100)
+    p_desc = c_desc.paragraphs[0]
+    p_desc.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    r_desc = p_desc.add_run("[Indique detalladamente los datos que solicita acceder, rectificar, cancelar o bloquear, acompañando los documentos de respaldo correspondientes si aplica]:\n\n\n")
+    r_desc.font.size = Pt(8.5)
+    r_desc.font.color.rgb = RGBColor(100, 116, 139)
 
     add_callout(doc, "PLAZO LEGAL FATAL DE RESPUESTA (ARTÍCULO 11 LEY N° 19.628):",
-                "La Empresa acusará recibo formal de esta solicitud y emitirá una respuesta fundada dentro del plazo fatal de treinta (30) días corridos contado desde la recepción íntegra del formulario y la verificación fehaciente de la identidad del solicitante. Enviar este formulario firmado a: privacidad@empresa.cl.",
+                "La Empresa acusará recibo formal de esta solicitud y emitirá respuesta fundada dentro del plazo fatal de treinta (30) días corridos contado desde la recepción íntegra del formulario y la verificación fehaciente de la identidad del solicitante. Enviar este formulario firmado a: privacidad@empresa.cl.",
                 bg_hex="FFFBEB")
 
     p_sig = doc.add_paragraph()
-    p_sig.paragraph_format.space_before = Pt(30)
+    p_sig.paragraph_format.space_before = Pt(14)
+    p_sig.paragraph_format.space_after = Pt(0)
     p_sig.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = p_sig.add_run("_____________________________________________________\nFirma del Titular Solicitante\nRUT N° _____________________\nFecha: _____ / _____ / 2026")
-    r.font.size = Pt(9.5)
+    r = p_sig.add_run("_____________________________________________________\nFirma del Titular Solicitante  •  RUT: _____________________\nFecha: _____ / _____ / 2026")
+    r.font.size = Pt(9)
     r.font.bold = True
     return doc
 
@@ -489,7 +565,7 @@ def build_doc_6():
 # DOC 7: TEST AUTODIAGNÓSTICO DPO
 # =========================================================================
 def build_doc_7():
-    doc = create_base_doc()
+    doc = create_base_doc(top=0.8, bottom=0.8, left=0.85, right=0.85)
     add_header_brand(doc, "Documento 7 Oficial  •  Formato Word Editable (.docx)")
     add_title(doc, "EVALUACIÓN Y TEST DE AUTODIAGNÓSTICO LEGAL\n¿NECESITA MI EMPRESA NOMBRAR UN DELEGADO DE PROTECCIÓN DE DATOS (DPO)?",
               "Criterios de Obligatoriedad y Régimen de Exención para Micro, Pequeñas y Medianas Empresas (MIPYMES)\nConforme a la Ley N° 21.719 que reforma la Ley N° 19.628 de Protección de Datos Personales de Chile")
@@ -506,9 +582,10 @@ def build_doc_7():
 
     table = doc.add_table(rows=5, cols=3)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    table.columns[0].width = Inches(4.5)
+    table.columns[0].width = Inches(4.8)
     table.columns[1].width = Inches(0.85)
     table.columns[2].width = Inches(0.85)
+    prevent_row_split(table)
 
     headers = ["Criterio de Evaluación Legal", "SÍ", "NO"]
     for i, h in enumerate(headers):
@@ -518,9 +595,11 @@ def build_doc_7():
         p = c.paragraphs[0]
         if i > 0:
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        else:
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         r = p.add_run(h)
         r.font.name = 'Calibri'
-        r.font.size = Pt(9)
+        r.font.size = Pt(8.5)
         r.font.bold = True
         r.font.color.rgb = RGBColor(255, 255, 255)
 
@@ -537,6 +616,7 @@ def build_doc_7():
         set_cell_background(c0, bg)
         set_cell_margins(c0, top=60, bottom=60, left=80, right=80)
         p0 = c0.paragraphs[0]
+        p0.alignment = WD_ALIGN_PARAGRAPH.LEFT
         r0 = p0.add_run(q)
         r0.font.name = 'Calibri'
         r0.font.size = Pt(8.5)
