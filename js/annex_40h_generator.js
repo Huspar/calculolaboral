@@ -96,8 +96,19 @@
         }
     }
 
-    // Build the full legal annex text for clipboard copy
-    function getAnnexFullText() {
+    // Helper to safely escape HTML in user inputs
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // Extract all values for the annex document
+    function getAnnexValues() {
         const city = elements.city?.value.trim() || 'Santiago';
         const effDate = formatDateSpanish(elements.effectiveDate?.value) || '26 de abril de 2026';
         const compName = elements.companyName?.value.trim() || '[NOMBRE O RAZÓN SOCIAL DEL EMPLEADOR]';
@@ -111,28 +122,159 @@
         const prevH = elements.prevHours?.value || '44';
         const sched = getScheduleData();
 
-        let t = `ANEXO DE CONTRATO DE TRABAJO\n`;
-        t += `ADECUACIÓN DE JORNADA LABORAL - LEY Nº 21.561 (40 HORAS)\n\n`;
-        t += `En ${city}, a ${effDate}, entre:\n\n`;
-        t += `1. Por una parte, ${compName}, Rol Único Tributario Nº ${compRut}, domiciliada para estos efectos en ${compAddr}, representada legalmente por don(ña) ${repName}, en adelante denominado indistintamente como "el Empleador"; y\n\n`;
-        t += `2. Por otra parte, don(ña) ${workName}, Cédula Nacional de Identidad Nº ${workRut}, desempeñándose en el cargo de ${workPos}, en adelante denominado como "el Trabajador",\n\n`;
-        t += `se ha convenido en celebrar el siguiente Anexo al Contrato Individual de Trabajo suscrito entre las partes con fecha ${origDate}:\n\n`;
-        t += `PRIMERO: ANTECEDENTES Y MARCO LEGAL\n`;
-        t += `Con fecha 26 de abril de 2023 se promulgó y publicó en el Diario Oficial la Ley Nº 21.561, que modifica el Código del Trabajo con el objeto de reducir la jornada ordinaria laboral semanal de 45 a 40 horas, fijando una implementación gradual que contempla la reducción obligatoria a 42 horas semanales cumplidos tres años desde su entrada en vigencia (año 2026).\n\n`;
-        t += `SEGUNDO: REDUCCIÓN DE LA JORNADA ORDINARIA\n`;
-        t += `En virtud de lo dispuesto en el artículo primero y normas transitorias de la Ley Nº 21.561, las partes vienen en modificar la cláusula sobre jornada de trabajo del contrato individual original, reemplazando la jornada previa de ${prevH} horas semanales por una nueva jornada ordinaria de 42 (cuarenta y dos) horas semanales.\n\n`;
-        t += `TERCERO: DISTRIBUCIÓN HORARIA Y DESCANSOS\n`;
-        t += `${sched.text}\n\n`;
-        t += `CUARTO: MANTENCIÓN DE REMUNERACIONES (IRRENUNCIABILIDAD)\n`;
-        t += `En conformidad expresa con el artículo tercero transitorio de la Ley Nº 21.561, la presente adecuación y reducción horaria no implicará, bajo ningún respecto ni circunstancia, una disminución de las remuneraciones convenidas en el contrato de trabajo ni menoscabo patrimonial para el Trabajador, manteniéndose inalterables el sueldo base pactado y demás asignaciones legales o convencionales vigentes.\n\n`;
-        t += `QUINTO: VIGENCIA DE LAS DEMÁS ESTIPULACIONES\n`;
-        t += `En todo lo no modificado expresa o tácitamente por el presente instrumento, continúan plenamente vigentes y válidas todas y cada una de las demás cláusulas y estipulaciones del Contrato Individual de Trabajo y sus anexos anteriores.\n\n`;
-        t += `SEXTO: EJEMPLARES Y PROTOCOLIZACIÓN\n`;
-        t += `Para constancia y en cumplimiento de lo establecido en el artículo 11 del Código del Trabajo, el presente anexo se firma en dos ejemplares de idéntico tenor y fecha, quedando uno en poder del Trabajador y otro en la carpeta de personal en custodia del Empleador.\n\n\n`;
+        return {
+            city, effDate, compName, compRut, compAddr, repName,
+            workName, workRut, workPos, origDate, prevH, sched
+        };
+    }
+
+    // Format schedule text into elegant HTML
+    function formatScheduleHTML(text) {
+        if (!text) return '';
+        const paragraphs = text.split('\n\n');
+        return paragraphs.map(para => {
+            if (para.includes('\n• ') || para.startsWith('• ')) {
+                const lines = para.split('\n');
+                return lines.map(line => {
+                    const trimmed = line.trim();
+                    if (trimmed.startsWith('•')) {
+                        const content = trimmed.substring(1).trim();
+                        const colonIdx = content.indexOf(':');
+                        if (colonIdx !== -1) {
+                            const label = escapeHTML(content.substring(0, colonIdx + 1));
+                            const rest = escapeHTML(content.substring(colonIdx + 1));
+                            return `<div style="padding-left: 18px; margin: 4px 0; text-indent: -12px;">• <strong>${label}</strong>${rest}</div>`;
+                        }
+                        return `<div style="padding-left: 18px; margin: 4px 0; text-indent: -12px;">• ${escapeHTML(content)}</div>`;
+                    }
+                    return `<p style="margin: 6px 0;">${escapeHTML(trimmed)}</p>`;
+                }).join('');
+            } else {
+                return `<p style="margin: 6px 0;">${escapeHTML(para)}</p>`;
+            }
+        }).join('');
+    }
+
+    // Single source of truth for the Annex document HTML (used for both Preview and Print/PDF)
+    function buildDocumentHTML(options) {
+        const isPrint = options && options.isPrint;
+        const d = getAnnexValues();
+        const escCompName = escapeHTML(d.compName);
+        const escCompRut = escapeHTML(d.compRut);
+        const escCompAddr = escapeHTML(d.compAddr);
+        const escRepName = escapeHTML(d.repName);
+        const escWorkName = escapeHTML(d.workName);
+        const escWorkRut = escapeHTML(d.workRut);
+        const escWorkPos = escapeHTML(d.workPos);
+        const escCity = escapeHTML(d.city);
+        const escEffDate = escapeHTML(d.effDate);
+        const escOrigDate = escapeHTML(d.origDate);
+        const escPrevH = escapeHTML(d.prevH);
+
+        const innerHTML = `
+            <div style="text-align: center; margin-bottom: 22px;">
+                <div style="font-size: 8pt; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: #64748b; font-family: system-ui, -apple-system, sans-serif; margin-bottom: 4px;">
+                    Instrumento Jurídico Laboral · Artículos 10 y 11 del Código del Trabajo
+                </div>
+                <h1 style="font-size: 13pt; font-weight: 800; text-transform: uppercase; margin: 0; color: #0f172a; letter-spacing: -0.01em; line-height: 1.35;">
+                    ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO
+                </h1>
+                <h2 style="font-size: 10.5pt; font-weight: 600; font-style: italic; color: #334155; margin: 4px 0 0; line-height: 1.35;">
+                    Adecuación de Jornada Ordinaria de Trabajo a 42 Horas Semanales (Ley Nº 21.561)
+                </h2>
+            </div>
+
+            <p style="text-align: justify; margin-bottom: 12px;">
+                En la ciudad de <strong>${escCity}</strong>, a <strong>${escEffDate}</strong>, comparecen por una parte <strong>${escCompName}</strong>, Rol Único Tributario Nº <strong>${escCompRut}</strong>, con domicilio para estos efectos en ${escCompAddr}, debidamente representada por su representante legal don(ña) <strong>${escRepName}</strong>, en adelante denominado indistintamente como "el Empleador"; y por la otra, don(ña) <strong>${escWorkName}</strong>, Cédula Nacional de Identidad Nº <strong>${escWorkRut}</strong>, domiciliado(a) en los registros de la empresa, quien se desempeña en calidad de <strong>${escWorkPos}</strong>, en adelante denominado como "el Trabajador", quienes han convenido suscribir el presente Anexo al Contrato de Trabajo celebrado originalmente con fecha <strong>${escOrigDate}</strong>:
+            </p>
+
+            <p style="text-align: justify; margin-bottom: 12px;">
+                <strong>PRIMERO: ANTECEDENTES Y MARCO LEGAL.</strong> Con fecha 26 de abril de 2023 se promulgó y publicó en el Diario Oficial la Ley Nº 21.561, que modifica el Código del Trabajo en materia de jornada ordinaria, fijando una reducción progresiva que alcanza el hito legal de 42 horas semanales a partir del año 2026.
+            </p>
+
+            <p style="text-align: justify; margin-bottom: 12px;">
+                <strong>SEGUNDO: MODIFICACIÓN DE LA JORNADA ORDINARIA.</strong> En conformidad con el artículo primero y las normas transitorias de la Ley Nº 21.561, las partes acuerdan modificar la cláusula sobre jornada de trabajo del contrato individual original, reemplazando la jornada previa de ${escPrevH} horas semanales por una nueva jornada ordinaria de <strong>42 (cuarenta y dos) horas semanales</strong>.
+            </p>
+
+            <div style="text-align: justify; margin-bottom: 12px;">
+                <strong>TERCERO: DISTRIBUCIÓN HORARIA Y DESCANSOS.</strong>
+                ${formatScheduleHTML(d.sched.text)}
+            </div>
+
+            <p style="text-align: justify; margin-bottom: 12px;">
+                <strong>CUARTO: IRRENUNCIABILIDAD Y MANTENCIÓN DE REMUNERACIONES.</strong> En cumplimiento del mandato imperativo del artículo tercero transitorio de la citada ley, se estipula de forma expresa que la reducción de jornada no significará en caso alguno rebaja de las remuneraciones convenidas en el contrato de trabajo ni menoscabo patrimonial para el Trabajador, manteniéndose íntegramente los haberes fijos, variables y asignaciones legales o convencionales vigentes.
+            </p>
+
+            <p style="text-align: justify; margin-bottom: 12px;">
+                <strong>QUINTO: SUBSISTENCIA DE LAS DEMÁS ESTIPULACIONES.</strong> Las restantes cláusulas del contrato individual de trabajo y anexos precedentes se mantienen plenamente válidas y vigentes en todo lo que no resulte modificado por este instrumento.
+            </p>
+
+            <p style="text-align: justify; margin-bottom: 24px;">
+                <strong>SEXTO: EJEMPLARES Y REGISTRO.</strong> En cumplimiento del artículo 11 del Código del Trabajo, el presente anexo se otorga y firma en dos ejemplares de idéntico tenor y fecha, quedando uno en poder de cada una de las partes interesadas para su debida custodia y registro laboral.
+            </p>
+
+            <!-- Bloque de Firmas -->
+            <div style="margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; text-align: center; font-family: system-ui, -apple-system, sans-serif; font-size: 8.5pt; page-break-inside: avoid; break-inside: avoid;">
+                <div>
+                    <div style="border-top: 1px solid #0f172a; padding-top: 8px; margin-top: 40px;">
+                        <div style="font-weight: 700; text-transform: uppercase; color: #0f172a;">${escCompName}</div>
+                        <div style="color: #475569; font-size: 8pt; margin-top: 2px;">p.p. ${escRepName}</div>
+                        <div style="font-family: monospace; font-size: 8pt; color: #334155; margin-top: 1px;">RUT: ${escCompRut}</div>
+                        <div style="font-size: 7.5pt; color: #64748b; font-weight: 700; text-transform: uppercase; margin-top: 3px; letter-spacing: 0.05em;">Empleador / Representante Legal</div>
+                    </div>
+                </div>
+                <div>
+                    <div style="border-top: 1px solid #0f172a; padding-top: 8px; margin-top: 40px;">
+                        <div style="font-weight: 700; text-transform: uppercase; color: #0f172a;">${escWorkName}</div>
+                        <div style="font-family: monospace; font-size: 8pt; color: #334155; margin-top: 14px;">CNI: ${escWorkRut}</div>
+                        <div style="font-size: 7.5pt; color: #64748b; font-weight: 700; text-transform: uppercase; margin-top: 3px; letter-spacing: 0.05em;">Trabajador</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 28px; text-align: center; font-family: system-ui, -apple-system, sans-serif; font-size: 7.5pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+                Documento elaborado conforme a la Ley Nº 21.561 y el Código del Trabajo · calculolaboral.cl
+            </div>
+        `;
+
+        if (isPrint) {
+            return `
+                <div class="annex-print-doc" style="font-family: 'Newsreader', Georgia, 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.55; color: #0f172a; max-width: 100%; margin: 0 auto; box-sizing: border-box; text-align: justify;">
+                    ${innerHTML}
+                </div>
+            `;
+        } else {
+            return `
+                <div class="annex-preview-doc bg-white border border-slate-200/90 rounded-xl p-5 sm:p-7 shadow-xs" style="font-family: 'Newsreader', Georgia, 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.55; color: #0f172a; text-align: justify;">
+                    ${innerHTML}
+                </div>
+            `;
+        }
+    }
+
+    // Build the full legal annex text for clipboard copy
+    function getAnnexFullText() {
+        const d = getAnnexValues();
+        let t = `ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO\n`;
+        t += `ADECUACIÓN DE JORNADA ORDINARIA A 42 HORAS SEMANALES (LEY Nº 21.561)\n\n`;
+        t += `En la ciudad de ${d.city}, a ${d.effDate}, comparecen por una parte ${d.compName}, Rol Único Tributario Nº ${d.compRut}, con domicilio para estos efectos en ${d.compAddr}, debidamente representada por su representante legal don(ña) ${d.repName}, en adelante denominado indistintamente como "el Empleador"; y por la otra, don(ña) ${d.workName}, Cédula Nacional de Identidad Nº ${d.workRut}, domiciliado(a) en los registros de la empresa, quien se desempeña en calidad de ${d.workPos}, en adelante denominado como "el Trabajador", quienes han convenido suscribir el presente Anexo al Contrato de Trabajo celebrado originalmente con fecha ${d.origDate}:\n\n`;
+        t += `PRIMERO: ANTECEDENTES Y MARCO LEGAL.\n`;
+        t += `Con fecha 26 de abril de 2023 se promulgó y publicó en el Diario Oficial la Ley Nº 21.561, que modifica el Código del Trabajo en materia de jornada ordinaria, fijando una reducción progresiva que alcanza el hito legal de 42 horas semanales a partir del año 2026.\n\n`;
+        t += `SEGUNDO: MODIFICACIÓN DE LA JORNADA ORDINARIA.\n`;
+        t += `En conformidad con el artículo primero y las normas transitorias de la Ley Nº 21.561, las partes acuerdan modificar la cláusula sobre jornada de trabajo del contrato individual original, reemplazando la jornada previa de ${d.prevH} horas semanales por una nueva jornada ordinaria de 42 (cuarenta y dos) horas semanales.\n\n`;
+        t += `TERCERO: DISTRIBUCIÓN HORARIA Y DESCANSOS.\n`;
+        t += `${d.sched.text}\n\n`;
+        t += `CUARTO: IRRENUNCIABILIDAD Y MANTENCIÓN DE REMUNERACIONES.\n`;
+        t += `En cumplimiento del mandato imperativo del artículo tercero transitorio de la citada ley, se estipula de forma expresa que la reducción de jornada no significará en caso alguno rebaja de las remuneraciones convenidas en el contrato de trabajo ni menoscabo patrimonial para el Trabajador, manteniéndose íntegramente los haberes fijos, variables y asignaciones legales o convencionales vigentes.\n\n`;
+        t += `QUINTO: SUBSISTENCIA DE LAS DEMÁS ESTIPULACIONES.\n`;
+        t += `Las restantes cláusulas del contrato individual de trabajo y anexos precedentes se mantienen plenamente válidas y vigentes en todo lo que no resulte modificado por este instrumento.\n\n`;
+        t += `SEXTO: EJEMPLARES Y REGISTRO.\n`;
+        t += `En cumplimiento del artículo 11 del Código del Trabajo, el presente anexo se otorga y firma en dos ejemplares de idéntico tenor y fecha, quedando uno en poder de cada una de las partes interesadas para su debida custodia y registro laboral.\n\n\n`;
         t += `________________________________________               ________________________________________\n`;
         t += `FIRMA DEL EMPLEADOR / REP. LEGAL                       FIRMA DEL TRABAJADOR\n`;
-        t += `${compName}                                             ${workName}\n`;
-        t += `RUT: ${compRut}                                        CNI: ${workRut}\n`;
+        t += `${d.compName}\n`;
+        t += `p.p. ${d.repName}                                      ${d.workName}\n`;
+        t += `RUT: ${d.compRut}                                      CNI: ${d.workRut}\n`;
 
         return t;
     }
@@ -140,137 +282,12 @@
     // Update screen preview
     function updatePreview() {
         if (!elements.previewContainer) return;
-
-        const compName = elements.companyName?.value.trim() || 'Razón Social / Nombre Empleador';
-        const compRut = elements.companyRut?.value.trim() || 'XX.XXX.XXX-X';
-        const workName = elements.workerName?.value.trim() || 'Nombre del Trabajador';
-        const workRut = elements.workerRut?.value.trim() || 'XX.XXX.XXX-X';
-        const workPos = elements.workerPosition?.value.trim() || 'Cargo / Función';
-        const city = elements.city?.value.trim() || 'Santiago';
-        const effDate = formatDateSpanish(elements.effectiveDate?.value) || '26 de abril de 2026';
-        const prevH = elements.prevHours?.value || '44';
-        const sched = getScheduleData();
-
-        const html = `
-            <div class="space-y-4 text-slate-800 font-sans text-xs md:text-sm leading-relaxed">
-                <div class="text-center pb-3 border-b border-slate-200">
-                    <p class="font-bold text-xs uppercase tracking-wider text-slate-500">Documento Oficial Art. 11 Código del Trabajo</p>
-                    <h3 class="font-black text-slate-900 text-sm md:text-base mt-1">ANEXO DE CONTRATO DE TRABAJO - ADECUACIÓN LEY Nº 21.561</h3>
-                    <p class="text-xs text-sky-700 font-semibold mt-0.5">Implementación Hito 42 Horas Semanales</p>
-                </div>
-
-                <p>En <strong class="text-slate-900">${city}</strong>, a <strong class="text-slate-900">${effDate}</strong>, entre <strong>${compName}</strong>, RUT Nº <strong>${compRut}</strong>, y don(ña) <strong>${workName}</strong>, RUT Nº <strong>${workRut}</strong>, en su calidad de <strong>${workPos}</strong>, se acuerda el siguiente anexo:</p>
-
-                <div class="bg-amber-50/70 border-l-4 border-amber-500 p-3 rounded-r-lg space-y-1">
-                    <p class="font-bold text-amber-900 text-xs uppercase">Cláusula Segunda: Reducción Legal de Jornada</p>
-                    <p class="text-amber-950 text-xs">Se sustituye la jornada anterior de ${prevH} horas semanales por una nueva jornada ordinaria de <strong>42 (cuarenta y dos) horas semanales</strong> sin alteración ni menoscabo alguno en la remuneración del trabajador.</p>
-                </div>
-
-                <div class="space-y-1">
-                    <p class="font-bold text-slate-900 text-xs uppercase">Cláusula Tercera: Distribución Horaria</p>
-                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-700 whitespace-pre-line font-mono">
-${sched.text}
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-200 grid grid-cols-2 gap-4 text-center">
-                    <div class="border-t border-dashed border-slate-400 pt-2">
-                        <p class="font-bold text-[11px] text-slate-900">${compName}</p>
-                        <p class="text-[10px] text-slate-500">Firma Empleador (RUT: ${compRut})</p>
-                    </div>
-                    <div class="border-t border-dashed border-slate-400 pt-2">
-                        <p class="font-bold text-[11px] text-slate-900">${workName}</p>
-                        <p class="text-[10px] text-slate-500">Firma Trabajador (CNI: ${workRut})</p>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        elements.previewContainer.innerHTML = html;
+        elements.previewContainer.innerHTML = buildDocumentHTML({ isPrint: false });
     }
 
     // Build print HTML document for window.print() (Clean A4 portrait, perfect serif legal styling)
     function buildPrintHTML() {
-        const city = elements.city?.value.trim() || 'Santiago';
-        const effDate = formatDateSpanish(elements.effectiveDate?.value) || '26 de abril de 2026';
-        const compName = elements.companyName?.value.trim() || '________________________________________';
-        const compRut = elements.companyRut?.value.trim() || '_______________';
-        const compAddr = elements.companyAddress?.value.trim() || '________________________________________';
-        const repName = elements.repName?.value.trim() || '________________________________________';
-        const workName = elements.workerName?.value.trim() || '________________________________________';
-        const workRut = elements.workerRut?.value.trim() || '_______________';
-        const workPos = elements.workerPosition?.value.trim() || '____________________';
-        const origDate = formatDateSpanish(elements.contractDate?.value) || '____________________';
-        const prevH = elements.prevHours?.value || '44';
-        const sched = getScheduleData();
-
-        return `
-            <div style="font-family: 'Newsreader', Georgia, 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.55; color: #0f172a; max-width: 100%; margin: 0 auto; box-sizing: border-box;">
-                
-                <div style="text-align: center; margin-bottom: 24px;">
-                    <div style="font-size: 8.5pt; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: #475569; font-family: system-ui, sans-serif; margin-bottom: 4px;">
-                        Instrumento Jurídico Laboral · Artículos 10 y 11 del Código del Trabajo
-                    </div>
-                    <h1 style="font-size: 13.5pt; font-weight: 800; text-transform: uppercase; margin: 0; color: #0f172a; letter-spacing: -0.01em;">
-                        ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO
-                    </h1>
-                    <h2 style="font-size: 11pt; font-weight: 600; font-style: italic; color: #334155; margin: 4px 0 0;">
-                        Adecuación de Jornada Ordinaria de Trabajo a 42 Horas Semanales (Ley Nº 21.561)
-                    </h2>
-                </div>
-
-                <p style="text-align: justify; margin-bottom: 14px;">
-                    En la ciudad de <strong>${city}</strong>, a <strong>${effDate}</strong>, comparecen por una parte <strong>${compName}</strong>, Rol Único Tributario Nº <strong>${compRut}</strong>, con domicilio en ${compAddr}, debidamente representada por su representante legal don(ña) <strong>${repName}</strong>, en adelante denominado indistintamente como "el Empleador"; y por la otra, don(ña) <strong>${workName}</strong>, Cédula Nacional de Identidad Nº <strong>${workRut}</strong>, domiciliado(a) en los registros de la empresa, quien se desempeña en calidad de <strong>${workPos}</strong>, en adelante denominado como "el Trabajador", quienes han convenido suscribir el presente Anexo al Contrato de Trabajo celebrado originalmente con fecha <strong>${origDate}</strong>:
-                </p>
-
-                <p style="text-align: justify; margin-bottom: 12px;">
-                    <strong>PRIMERO: ANTECEDENTES.</strong> Con fecha 26 de abril de 2023 se publicó la Ley Nº 21.561 que modifica el Código del Trabajo en materia de jornada ordinaria, fijando una reducción progresiva que alcanza el hito legal de 42 horas semanales a partir del año 2026.
-                </p>
-
-                <p style="text-align: justify; margin-bottom: 12px;">
-                    <strong>SEGUNDO: MODIFICACIÓN DE JORNADA.</strong> En observancia irrestricta de las normas transitorias y del artículo primero de la Ley Nº 21.561, las partes modifican la cláusula de jornada del contrato matriz, rebajando la jornada ordinaria previa de ${prevH} horas a una nueva jornada de <strong>42 (cuarenta y dos) horas semanales</strong>.
-                </p>
-
-                <p style="text-align: justify; margin-bottom: 12px;">
-                    <strong>TERCERO: DISTRIBUCIÓN HORARIA.</strong> ${sched.text.replace(/\n\n/g, '<br><br>')}
-                </p>
-
-                <p style="text-align: justify; margin-bottom: 12px;">
-                    <strong>CUARTO: IRRENUNCIABILIDAD Y MANTENCIÓN DE REMUNERACIONES.</strong> En cumplimiento del mandato imperativo del artículo tercero transitorio de la citada ley, se estipula de forma expresa que la reducción de jornada no significará en caso alguno rebaja de la remuneración convenida, manteniéndose íntegramente los haberes fijos, variables y asignaciones legales vigentes.
-                </p>
-
-                <p style="text-align: justify; margin-bottom: 12px;">
-                    <strong>QUINTO: SUBSISTENCIA CONTRACTUAL.</strong> Las restantes cláusulas del contrato individual de trabajo y anexos precedentes se mantienen plenamente válidas y vigentes en todo lo que no resulte modificado por este acto.
-                </p>
-
-                <p style="text-align: justify; margin-bottom: 24px;">
-                    <strong>SEXTO: EJEMPLARES.</strong> En cumplimiento del artículo 11 del Código del Trabajo, el presente instrumento se otorga y firma en dos ejemplares de idéntico tenor y fecha, quedando uno en poder de cada parte interesada.
-                </p>
-
-                <!-- Bloque de Firmas -->
-                <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: center; font-family: system-ui, sans-serif; font-size: 9pt;">
-                    <div>
-                        <div style="border-top: 1px solid #0f172a; padding-top: 8px; margin-top: 50px;">
-                            <div style="font-weight: 700; text-transform: uppercase;">${compName}</div>
-                            <div style="color: #475569;">p.p. ${repName}</div>
-                            <div style="font-family: monospace; font-size: 8.5pt;">RUT: ${compRut}</div>
-                            <div style="font-size: 8pt; color: #64748b; margin-top: 2px;">EMPLEADOR / REPRESENTANTE LEGAL</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div style="border-top: 1px solid #0f172a; padding-top: 8px; margin-top: 50px;">
-                            <div style="font-weight: 700; text-transform: uppercase;">${workName}</div>
-                            <div style="font-family: monospace; font-size: 8.5pt;">CNI: ${workRut}</div>
-                            <div style="font-size: 8pt; color: #64748b; margin-top: 2px;">TRABAJADOR</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 30px; text-align: center; font-family: system-ui, sans-serif; font-size: 7.5pt; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 8px;">
-                    Documento formal generado conforme a la Ley Nº 21.561 y la Dirección del Trabajo de Chile · calculolaboral.cl
-                </div>
-            </div>
-        `;
+        return buildDocumentHTML({ isPrint: true });
     }
 
     // Copy to clipboard
