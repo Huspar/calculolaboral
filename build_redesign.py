@@ -4667,16 +4667,17 @@ INDEX_CONTENT = """
             </div>
         </div>
 
-        <!-- 2. Full-Width Legal Advisory & Partner Banner (Horizontal 2 cols en Desktop) -->
-        <div id="lead-section" class="w-full bg-gradient-to-br from-amber-50/90 via-white to-amber-50/60 border-2 border-amber-300 rounded-3xl p-6 sm:p-8 shadow-sm no-print hidden">
-            <div class="flex flex-col lg:flex-row gap-8 items-start">
-                <!-- Columna Izquierda: Información de derechos y recargo 30% -->
+        <!-- 2. Full-Width Forensic Dismissal Bridge Banner (Simulador de Despido Injustificado) -->
+        <div id="lead-section" class="w-full bg-gradient-to-br from-amber-50/80 via-white to-rose-50/40 border-2 border-amber-300/90 rounded-3xl p-6 sm:p-8 shadow-sm no-print hidden">
+            <div class="flex flex-col lg:flex-row gap-8 items-center justify-between">
+                <!-- Columna Izquierda: Información de derechos, causal y recargo 30% -->
                 <div class="w-full lg:w-7/12 space-y-3.5">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-200/90 text-amber-950 border border-amber-300">
-                            <span class="material-icons text-xs">gavel</span> Evaluación Legal Inicial
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-800 border border-rose-200">
+                            <span class="material-icons text-xs">gavel</span> Demanda Laboral & Recargo Legal
                         </span>
-                        <span class="text-xs font-semibold text-amber-800">Abogados Laborales Aliados</span>
+                        <span class="text-xs font-semibold text-slate-500">·</span>
+                        <span id="lead-card-badge" class="text-xs font-semibold text-slate-600">Simulación Forense Completa</span>
                     </div>
 
                     <h3 id="lead-title" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
@@ -4688,14 +4689,14 @@ INDEX_CONTENT = """
                     </p>
 
                     <!-- Tarjeta de Recargo Estimable (Art. 161) -->
-                    <div id="art161ResultAlert" class="p-3.5 bg-amber-100/60 border border-amber-300/80 rounded-2xl flex items-center justify-between gap-3">
+                    <div id="art161ResultAlert" class="p-3.5 bg-amber-100/70 border border-amber-300/90 rounded-2xl flex items-center justify-between gap-3">
                         <div class="flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-xl bg-amber-200 text-amber-900 flex items-center justify-center shrink-0">
+                            <span class="w-8 h-8 rounded-xl bg-amber-200 text-amber-950 flex items-center justify-center shrink-0">
                                 <span class="material-icons text-sm">trending_up</span>
                             </span>
                             <div>
                                 <span class="block text-[10px] font-bold text-amber-900 uppercase">Recargo Adicional 30% Estimable</span>
-                                <span class="text-[11px] text-amber-800">Suma a tu indemnización por años de servicio</span>
+                                <span class="text-[11px] text-amber-800">Suma directa a tu indemnización por años de servicio calculada</span>
                             </div>
                         </div>
                         <span id="art161RecargoAmount" class="text-base sm:text-lg font-black text-emerald-700 font-mono">+$0</span>
@@ -4703,59 +4704,50 @@ INDEX_CONTENT = """
 
                     <div class="flex flex-wrap gap-2 pt-1 text-[11px] font-medium text-slate-500">
                         <span class="flex items-center gap-1 bg-white border border-slate-200 px-2.5 py-1 rounded-lg">
-                            <span class="material-icons text-[13px] text-emerald-600">check_circle</span> Sin cobro inicial
+                            <span class="material-icons text-[13px] text-emerald-600">check_circle</span> Recargo 30% al 100%
+                        </span>
+                        <span class="flex items-center gap-1 bg-white border border-slate-200 px-2.5 py-1 rounded-lg">
+                            <span class="material-icons text-[13px] text-emerald-600">check_circle</span> Devolución Seguro Cesantía (AFC)
                         </span>
                         <span class="flex items-center gap-1 bg-white border border-slate-200 px-2.5 py-1 rounded-lg">
                             <span class="material-icons text-[13px] text-emerald-600">check_circle</span> Plazo 60 días DT
                         </span>
-                        <span class="flex items-center gap-1 bg-white border border-slate-200 px-2.5 py-1 rounded-lg">
-                            <span class="material-icons text-[13px] text-emerald-600">check_circle</span> Devolución AFC
-                        </span>
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Formulario de Contacto -->
-                <div class="w-full lg:w-5/12 bg-white p-5 sm:p-6 rounded-2xl border border-amber-200 shadow-sm">
-                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                        <span class="material-icons text-sm text-amber-500" aria-hidden="true">contact_mail</span> Consulta Confidencial
-                    </h4>
-                    <form id="lead-form" class="space-y-2.5" onsubmit="event.preventDefault(); enviarLead();">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5 ml-0.5">Tu Nombre y Apellido</label>
-                            <input type="text" id="lead-nombre" placeholder="Ej: Juan Pérez" required
-                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/80 outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-400 text-slate-800 placeholder-slate-400 font-medium transition-all">
+                <!-- Columna Derecha: Tarjeta de Acción / Puente al Simulador de Despido Injustificado -->
+                <div class="w-full lg:w-5/12 bg-white p-5 sm:p-6 rounded-2xl border border-amber-200/90 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100">
+                                Herramienta Forense DT
+                            </span>
+                            <span class="text-[10px] text-slate-400 font-mono">100% Gratis</span>
                         </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5 ml-0.5">Correo Electrónico</label>
-                            <input type="email" id="lead-correo" placeholder="tu@email.com" required
-                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/80 outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-400 text-slate-800 placeholder-slate-400 font-medium transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5 ml-0.5">Teléfono / WhatsApp</label>
-                            <input type="tel" id="lead-telefono" placeholder="+56 9..." required
-                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/80 outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-400 text-slate-800 placeholder-slate-400 font-medium font-mono transition-all">
-                        </div>
-                        <div class="pt-0.5">
-                            <label class="flex items-start gap-2 text-[10px] text-slate-500 cursor-pointer select-none leading-tight">
-                                <input type="checkbox" id="lead-privacy" required class="w-3.5 h-3.5 mt-0.5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer shrink-0">
-                                <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-700 hover:text-amber-600">Política de Privacidad</a> y autorizo la evaluación legal con un abogado aliado.</span>
-                            </label>
-                        </div>
-                        <button type="submit"
-                            class="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 mt-1">
-                            <span class="material-icons text-sm">outgoing_mail</span>
-                            <span id="lead-btn-text">Solicitar Revisión Legal</span>
-                        </button>
-                    </form>
-                    <div id="lead-confirmacion" class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center mt-2">
-                        <span class="material-icons text-emerald-600 text-lg block mb-0.5">check_circle</span>
-                        <p class="text-xs font-bold text-emerald-950">¡Solicitud recibida!</p>
-                        <p class="text-[11px] text-emerald-800">Un abogado aliado revisará tus antecedentes a la brevedad.</p>
+                        <h4 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                            Simula tu Demanda y Riesgo de Despido Injustificado
+                        </h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Calcula el monto total exacto que puedes demandar ante los Tribunales del Trabajo o la Inspección del Trabajo, incluyendo recargos legales, nulidad del despido (Ley Bustos) y restitución de fondos previsionales.
+                        </p>
                     </div>
-                    <p class="text-[9px] text-amber-900/80 text-center flex items-center justify-center gap-1 mt-2 font-medium">
-                        <span class="material-icons text-[11px] text-emerald-600">lock</span>
-                        100% Confidencial · Sin cobros ocultos
-                    </p>
+
+                    <div class="space-y-2 pt-1">
+                        <a id="lead-simulator-btn" href="simulador-despido-injustificado-chile" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-98 flex items-center justify-center gap-2 no-underline text-center" style="text-decoration: none !important;">
+                            <span class="material-icons text-base text-slate-950">calculate</span>
+                            <span id="lead-btn-text">Calcular en el Simulador de Despido</span>
+                            <span class="material-icons text-base text-slate-950">arrow_forward</span>
+                        </a>
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 px-1 pt-1">
+                            <a href="reclamar-despido-injustificado-chile" class="hover:text-sky-600 font-semibold flex items-center gap-1 transition-colors">
+                                <span>Cómo reclamar en la DT</span>
+                                <span class="material-icons text-[12px]">open_in_new</span>
+                            </a>
+                            <button type="button" onclick="openModalLeadFiniquito()" class="text-amber-700 hover:text-amber-800 font-bold underline cursor-pointer">
+                                ¿Prefieres hablar con un abogado?
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5664,7 +5656,7 @@ INDEX_SCRIPTS = """
     <script src="/js/salary_logic.js?v=2.0.3"></script>
     <script src="/js/salary_ui.js?v=2.0.7"></script>
     <script src="/js/logic.js?v=2.0.3"></script>
-    <script src="/js/ui.js?v=2.0.9"></script>
+    <script src="/js/ui.js?v=2.1.1"></script>
     <script>
         // High-end tab system switching between both calculators
         function switchCalculatorTab(tab) {

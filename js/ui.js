@@ -337,19 +337,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const leadTitle = document.getElementById('lead-title');
         const leadDesc = document.getElementById('lead-desc');
         const leadBtnText = document.getElementById('lead-btn-text');
+        const leadSimBtn = document.getElementById('lead-simulator-btn');
+        const leadCardBadge = document.getElementById('lead-card-badge');
 
         if (is161) {
             if (leadTitle) leadTitle.textContent = '¿Despido por Necesidades de la Empresa (Art. 161)?';
-            if (leadDesc) leadDesc.innerHTML = 'Revisa tu carta con un abogado aliado. Si la causal no está debidamente acreditada, puedes exigir el <strong>recargo legal del 30%</strong> y evitar el descuento indebido de tu seguro de cesantía (AFC).';
-            if (leadBtnText) leadBtnText.textContent = 'Evaluar Mi Despido (Recargo 30%)';
+            if (leadDesc) leadDesc.innerHTML = 'Si los motivos económicos de tu carta de despido no están debidamente acreditados en tribunales, puedes exigir el <strong>recargo legal del 30%</strong> sobre tus años de servicio y evitar el descuento indebido de tu seguro de cesantía (AFC).';
+            if (leadBtnText) leadBtnText.textContent = 'Calcular en el Simulador de Despido';
+            if (leadSimBtn) leadSimBtn.href = 'simulador-despido-injustificado-chile';
+            if (leadCardBadge) leadCardBadge.textContent = 'Recargo 30% al 100% · Devolución AFC';
         } else if (isRenuncia) {
-            if (leadTitle) leadTitle.textContent = '¿Renuncia Voluntaria? Revisa tu Liquidación Final';
-            if (leadDesc) leadDesc.innerHTML = 'Recuerda que al renunciar no recibes años de servicio, pero <strong>deben pagarte el 100% de tus vacaciones y días trabajados</strong>. Genera tu carta formal o consulta tus dudas.';
-            if (leadBtnText) leadBtnText.textContent = 'Revisar Mis Derechos de Renuncia';
+            if (leadTitle) leadTitle.textContent = '¿Renuncia Voluntaria? Revisa tus Derechos Legales';
+            if (leadDesc) leadDesc.innerHTML = 'Recuerda que al renunciar no recibes años de servicio, pero <strong>deben pagarte el 100% de tus vacaciones proporcionales y días trabajados</strong>. Genera tu carta formal o consulta tus derechos.';
+            if (leadBtnText) leadBtnText.textContent = 'Generar Carta de Renuncia Gratis';
+            if (leadSimBtn) leadSimBtn.href = 'carta-de-renuncia-chile';
+            if (leadCardBadge) leadCardBadge.textContent = 'Modelo Notaría & Mi DT';
         } else {
             if (leadTitle) leadTitle.textContent = '¿Dudas sobre el cálculo o causal de tu despido?';
-            if (leadDesc) leadDesc.innerHTML = 'Revisa con un especialista si tu causal califica para <strong>recargo legal del 30% al 100%</strong> y devolución de descuento AFC.';
-            if (leadBtnText) leadBtnText.textContent = 'Solicitar Revisión Legal';
+            if (leadDesc) leadDesc.innerHTML = 'Revisa en nuestro simulador forense si tu desvinculación califica para <strong>recargo legal del 30% al 100%</strong> (Art. 168), nulidad de despido (Ley Bustos) y restitución de fondos previsionales.';
+            if (leadBtnText) leadBtnText.textContent = 'Evaluar en el Simulador de Despido';
+            if (leadSimBtn) leadSimBtn.href = 'simulador-despido-injustificado-chile';
+            if (leadCardBadge) leadCardBadge.textContent = 'Simulación Forense Completa';
         }
     };
 
@@ -370,8 +378,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (leadSec) {
             leadSec.classList.remove('hidden');
             leadSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            const nameInput = document.getElementById('lead-nombre');
-            if (nameInput) setTimeout(() => nameInput.focus(), 400);
         }
     };
 
