@@ -1090,6 +1090,35 @@
                     </div>
                 </div>
 
+                <!-- Card de Asesoría Legal Express: Recargo 30% y AFC (Art. 161) -->
+                <div id="art161ExpressCard" class="hidden mt-3.5 p-4 bg-gradient-to-br from-amber-50/90 via-white to-amber-50/50 border-2 border-amber-300/90 rounded-2xl shadow-xs space-y-2.5 no-print">
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider bg-amber-200/90 text-amber-950 px-2.5 py-0.5 rounded-full border border-amber-300">
+                            <span class="material-icons text-xs">gavel</span> Asesoría Legal Laboral
+                        </span>
+                        <span class="text-[10px] text-amber-900 font-bold bg-amber-100 px-2 py-0.5 rounded-md">Sin Cobro Inicial</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 tracking-tight leading-snug">
+                            ¿Te despidieron por Necesidades de la Empresa?
+                        </h4>
+                        <p class="text-[11px] text-slate-600 leading-snug mt-1">
+                            Si la causal no está justificada, puedes exigir un <strong class="text-amber-950">recargo legal del 30%</strong> y evitar el <strong class="text-amber-950">descuento de tu AFC</strong>.
+                        </p>
+                        <div class="mt-2 p-2 bg-amber-100/70 border border-amber-300/80 rounded-xl flex items-center justify-between">
+                            <span class="text-[10.5px] font-bold text-amber-900 uppercase">Recargo 30% Reclamable:</span>
+                            <span id="art161ExpressAmount" class="text-sm font-black text-emerald-700 font-mono">+$0</span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="openModalLeadFiniquito()" class="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <span class="material-icons text-sm">assignment_turned_in</span>
+                        <span>Evaluar Mi Caso con un Abogado</span>
+                    </button>
+                    <p class="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1">
+                        <span class="material-icons text-[12px] text-emerald-600">lock</span> 100% Confidencial · Cobro solo si ganan tu caso
+                    </p>
+                </div>
+
                 <!-- Card Especial para Renuncia Voluntaria (Art. 159 Nº2) -->
                 <div id="renunciaResultCard" class="hidden mt-3 p-4 bg-gradient-to-br from-sky-50 via-white to-blue-50 border border-sky-200 rounded-2xl shadow-xs space-y-2.5 no-print">
                     <div class="flex items-center justify-between">
@@ -2338,8 +2367,100 @@
         </div>
     </div>
 
+    <!-- Modal Express Asesoría Legal Finiquito -->
+    <div id="modal-lead-finiquito" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden no-print" role="dialog" aria-modal="true" aria-labelledby="modal-lead-title">
+        <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- Header del Modal -->
+            <div class="bg-gradient-to-r from-amber-50 via-white to-amber-50 px-5 py-4 border-b border-amber-200/90 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-xs">
+                        <span class="material-icons text-base">gavel</span>
+                    </div>
+                    <div>
+                        <h3 id="modal-lead-title" class="text-xs sm:text-sm font-bold text-slate-900 leading-tight">Evaluación Legal Gratuita</h3>
+                        <p class="text-[10px] text-slate-500">Abogados Laborales Aliados · Revisión de Causal Art. 161</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModalLeadFiniquito()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer">
+                    <span class="material-icons text-base">close</span>
+                </button>
+            </div>
 
-    
+            <!-- Cuerpo del Modal -->
+            <div class="p-5 space-y-3.5">
+                <!-- Resumen del cálculo activo -->
+                <div class="p-3 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-1 text-xs">
+                    <div class="flex justify-between text-slate-600">
+                        <span>Finiquito Calculado:</span>
+                        <strong id="modal-finiquito-monto" class="font-mono text-slate-900">$0</strong>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Recargo 30% Art. 161:</span>
+                        <strong id="modal-recargo-monto" class="font-mono text-emerald-700">+$0</strong>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Causal:</span>
+                        <span id="modal-causal-texto" class="font-semibold text-slate-800 text-[11px] truncate max-w-[200px]">Necesidades de la Empresa</span>
+                    </div>
+                </div>
+
+                <!-- Formulario Express -->
+                <form id="form-modal-lead" onsubmit="enviarModalLeadFiniquito(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">Nombre y Apellido</label>
+                        <input type="text" id="modal-lead-nombre" required placeholder="Ej: Marcela Soto"
+                            class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/80 focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-400 outline-none transition-all text-slate-800 font-medium">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">Teléfono / WhatsApp</label>
+                            <input type="tel" id="modal-lead-telefono" required placeholder="+56 9 1234 5678"
+                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/80 focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-400 outline-none transition-all text-slate-800 font-mono font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">Correo Electrónico</label>
+                            <input type="email" id="modal-lead-correo" required placeholder="tu@correo.cl"
+                                class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/80 focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-400 outline-none transition-all text-slate-800 font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Casilla Innegociable de Privacidad -->
+                    <div class="pt-0.5">
+                        <label class="flex items-start gap-2 text-[10.5px] text-slate-600 cursor-pointer select-none leading-snug">
+                            <input type="checkbox" id="modal-lead-privacy" required class="w-3.5 h-3.5 mt-0.5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer shrink-0">
+                            <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-amber-600">Política de Privacidad</a> y autorizo la evaluación confidencial de mi caso con un abogado laboral aliado (Ley 21.719 / 19.628).</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="btn-submit-modal-lead"
+                        class="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 mt-1">
+                        <span class="material-icons text-sm">send</span>
+                        <span>Solicitar Evaluación Confidencial Gratis</span>
+                    </button>
+
+                    <p class="text-[10px] text-slate-400 text-center">
+                        Sin cobro por adelantado · Honorarios a cuota litis solo si se recupera dinero
+                    </p>
+                </form>
+
+                <!-- Caja de Éxito Post-Envío -->
+                <div id="modal-lead-success" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-2">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                        <span class="material-icons text-xl">check_circle</span>
+                    </div>
+                    <h4 class="text-xs font-bold text-slate-900">¡Solicitud recibida con éxito!</h4>
+                    <p class="text-[11px] text-slate-600 leading-snug">
+                        Un abogado laboral especialista revisará los antecedentes de tu despido y te contactará a la brevedad por WhatsApp o correo.
+                    </p>
+                    <button type="button" onclick="closeModalLeadFiniquito()" class="mt-2 px-4 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 cursor-pointer">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
@@ -2391,6 +2512,13 @@
                 if (response.ok) {
                     document.getElementById('lead-form').classList.add('hidden');
                     document.getElementById('lead-confirmacion').classList.remove('hidden');
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'generate_lead', {
+                            event_category: 'lead',
+                            event_label: fuenteCustom || fuenteDefault,
+                            value: parseInt(String(monto).replace(/[^\d]/g, ''), 10) || 0
+                        });
+                    }
                 } else {
                     throw new Error('Error al enviar');
                 }

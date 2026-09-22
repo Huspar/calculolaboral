@@ -315,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultAlert = document.getElementById('art161ResultAlert');
         const renunciaAlert = document.getElementById('renunciaContextAlert');
         const renunciaResult = document.getElementById('renunciaResultCard');
+        const expressCard = document.getElementById('art161ExpressCard');
         
         // Mostrar alerta en inputs y resultados si la causal es Renuncia Voluntaria (159-2)
         if (renunciaAlert) {
@@ -328,6 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const isLeadVisible = leadSec && !leadSec.classList.contains('hidden');
         if (resultAlert) {
             resultAlert.classList.toggle('hidden', !is161 || !isLeadVisible);
+        }
+        if (expressCard) {
+            expressCard.classList.toggle('hidden', !is161 || !isLeadVisible);
         }
 
         const leadTitle = document.getElementById('lead-title');
@@ -882,17 +886,32 @@ function updateCalculations() {
         const is161 = (causeSelect && String(causeSelect.value).startsWith('161')) || (elements.cause && String(elements.cause.value).startsWith('161'));
         const resultAlert = document.getElementById('art161ResultAlert');
         const recargoEl = document.getElementById('art161RecargoAmount');
+        const expressCard = document.getElementById('art161ExpressCard');
+        const expressAmountEl = document.getElementById('art161ExpressAmount');
+
+        const ias = (results.indemnities && results.indemnities.yearsOfService) ? results.indemnities.yearsOfService.total : 0;
+        const recargo = ias > 0 ? Math.round(ias * 0.3) : 0;
+        window.resultadoRecargo30Monto = recargo > 0 ? format(recargo) : '0';
+
         if (is161) {
             if (resultAlert) resultAlert.classList.remove('hidden');
-            const ias = (results.indemnities && results.indemnities.yearsOfService) ? results.indemnities.yearsOfService.total : 0;
-            if (ias > 0 && recargoEl) {
-                const recargo = Math.round(ias * 0.3);
-                recargoEl.textContent = '+' + format(recargo);
-            } else if (recargoEl) {
-                recargoEl.textContent = 'Aplica sobre años de servicio';
+            if (recargoEl) {
+                recargoEl.textContent = recargo > 0 ? ('+' + format(recargo)) : 'Aplica sobre años de servicio';
+            }
+            if (expressCard) expressCard.classList.remove('hidden');
+            if (expressAmountEl) {
+                expressAmountEl.textContent = recargo > 0 ? ('+' + format(recargo)) : 'Consultar monto';
+            }
+            if (typeof gtag === 'function' && !window._leadCtaViewTracked) {
+                window._leadCtaViewTracked = true;
+                gtag('event', 'view_lead_cta', {
+                    event_category: 'lead',
+                    event_label: 'Finiquito Art 161 Express Card'
+                });
             }
         } else {
             if (resultAlert) resultAlert.classList.add('hidden');
+            if (expressCard) expressCard.classList.add('hidden');
         }
 
         if (typeof window.updateArt161Context === 'function') {
@@ -1045,3 +1064,120 @@ document.addEventListener('indicatorsUpdated', () => {
         updateCalculations();
     }
 });
+
+// ==========================================
+// MODAL EXPRESS ASESORÍA LEGAL FINIQUITO
+// ==========================================
+window.openModalLeadFiniquito = function() {
+    const modal = document.getElementById('modal-lead-finiquito');
+    if (!modal) return;
+    
+    const finiquitoMontoEl = document.getElementById('modal-finiquito-monto');
+    const recargoMontoEl = document.getElementById('modal-recargo-monto');
+    const causalTextoEl = document.getElementById('modal-causal-texto');
+    
+    const formatCurrencyPrefix = function(val, defaultVal) {
+        if (!val || val === '0') return defaultVal;
+        const clean = String(val).replace(/^[+$]+/, '');
+        return clean ? ('$' + clean) : defaultVal;
+    };
+    if (finiquitoMontoEl) finiquitoMontoEl.textContent = formatCurrencyPrefix(window.resultadoActualMonto, '$0');
+    if (recargoMontoEl) recargoMontoEl.textContent = window.resultadoRecargo30Monto ? ('+' + formatCurrencyPrefix(window.resultadoRecargo30Monto, '$0')) : '+$0';
+    
+    const causeSelect = document.getElementById('cause');
+    if (causalTextoEl && causeSelect && causeSelect.selectedIndex >= 0) {
+        causalTextoEl.textContent = causeSelect.options[causeSelect.selectedIndex].text;
+    }
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    if (typeof gtag === 'function') {
+        gtag('event', 'click_lead_cta', {
+            event_category: 'lead',
+            event_label: 'Open Modal Express Finiquito'
+        });
+    }
+    
+    setTimeout(function() {
+        const nameInput = document.getElementById('modal-lead-nombre');
+        if (nameInput) nameInput.focus();
+    }, 120);
+};
+
+window.closeModalLeadFiniquito = function() {
+    const modal = document.getElementById('modal-lead-finiquito');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+};
+
+window.enviarModalLeadFiniquito = function(event) {
+    if (event) event.preventDefault();
+    
+    const privacyCheck = document.getElementById('modal-lead-privacy');
+    if (privacyCheck && !privacyCheck.checked) {
+        alert('Debes aceptar la Política de Privacidad para continuar.');
+        return;
+    }
+    
+    const nombre = document.getElementById('modal-lead-nombre').value.trim();
+    const correo = document.getElementById('modal-lead-correo').value.trim();
+    const telefono = document.getElementById('modal-lead-telefono').value.trim();
+    
+    if (!nombre || !correo || !telefono) {
+        alert('Por favor completa todos los campos requeridos.');
+        return;
+    }
+    
+    const btn = document.getElementById('btn-submit-modal-lead');
+    const originalBtnText = btn ? btn.innerHTML : 'Enviar';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Enviando solicitud...';
+    }
+    
+    const causeSelect = document.getElementById('cause');
+    const causeText = causeSelect && causeSelect.selectedIndex >= 0 ? causeSelect.options[causeSelect.selectedIndex].text : 'Art. 161 Necesidades de la Empresa';
+    const monto = window.resultadoActualMonto || '0';
+    const recargo = window.resultadoRecargo30Monto || '0';
+    const antiqText = document.getElementById('antiquityOutput') ? document.getElementById('antiquityOutput').textContent.trim() : '';
+    
+    const detalleLead = 'Causal: ' + causeText + (antiqText ? ' | Antigüedad: ' + antiqText : '') + ' | Finiquito: $' + monto + ' | Recargo 30%: $' + recargo + ' | Consentimiento privacidad: SI';
+    
+    fetch('/api/send-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            nombre: nombre,
+            correo: correo,
+            telefono: telefono,
+            monto_calculado: monto,
+            tipo: 'Finiquito',
+            fuente: 'Modal Express - Calculadora Finiquito (Art. 161)',
+            detalle: detalleLead
+        })
+    }).then(function(response) {
+        if (response.ok) {
+            document.getElementById('form-modal-lead').classList.add('hidden');
+            document.getElementById('modal-lead-success').classList.remove('hidden');
+            
+            if (typeof gtag === 'function') {
+                gtag('event', 'generate_lead', {
+                    event_category: 'lead',
+                    event_label: 'Modal Express Finiquito Art 161',
+                    value: parseInt(String(monto).replace(/[^\d]/g, ''), 10) || 0
+                });
+            }
+        } else {
+            throw new Error('Error al enviar solicitud');
+        }
+    }).catch(function(err) {
+        alert('Hubo un problema al enviar tus datos. Por favor inténtalo nuevamente.');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalBtnText;
+        }
+    });
+};
