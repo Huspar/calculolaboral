@@ -133,7 +133,7 @@ module.exports = async (req, res) => {
 
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Hola ${escapeHtml(cleanName)},</p>
         <p style="font-size: 14px; color: #334155; margin: 0 0 20px;">
-            ¡Muchas gracias por tu compra! Hemos confirmado exitosamente tu pago de <strong>$29.990 CLP</strong>. Adjunto a este correo encontrarás el archivo comprimido <strong>Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip</strong> con el <strong>Manual de Uso e Instrucciones Paso a Paso (PDF y Word .docx)</strong> más los 7 instrumentos legales oficiales en formato Word (.docx editable) y Excel profesional (.xlsx) formulado.
+            ¡Muchas gracias por tu compra! Hemos confirmado exitosamente tu pago de <strong>$29.990 CLP</strong>. Adjunto a este correo encontrarás el archivo comprimido <strong>Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip</strong> con el <strong>Manual de Uso e Instrucciones Paso a Paso (PDF y Word .docx)</strong> más los 7 instrumentos legales en formato Word (.docx editable) y Excel profesional (.xlsx) formulado.
         </p>
 
         <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
@@ -144,9 +144,9 @@ module.exports = async (req, res) => {
                 <li style="margin-bottom: 6px;"><strong>2_Politica_Privacidad_Web_y_Pyme_Ley_21719.docx:</strong> Para publicar en tu web y contratos comerciales, con catálogo de derechos ARCOP y plazo legal de 30 días corridos (Art. 11).</li>
                 <li style="margin-bottom: 6px;"><strong>3_Clausula_DPA_Proveedores_Encargados_Ley_21719.docx:</strong> Addendum para contador, nómina y hosting con deber de confidencialidad y exención de responsabilidad solidaria.</li>
                 <li style="margin-bottom: 6px;"><strong>4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx:</strong> Inventario obligatorio Art. 14 ter APDP formulado en Excel profesional con 6 áreas y plazos armonizados.</li>
-                <li style="margin-bottom: 6px;"><strong>5_Protocolo_Brechas_Seguridad_72h_Ley_21719.docx:</strong> Protocolo operativo de respuesta y formulario oficial ante la Agencia sin dilaciones indebidas (estándar operativo 72h).</li>
+                <li style="margin-bottom: 6px;"><strong>5_Protocolo_Brechas_Seguridad_72h_Ley_21719.docx:</strong> Protocolo operativo de respuesta y formulario ante la Agencia sin dilaciones indebidas (estándar operativo 72h).</li>
                 <li style="margin-bottom: 6px;"><strong>6_Formulario_Solicitud_Derechos_ARCOP.docx:</strong> Modelo formal de atención de reclamos con acuse de recibo timbrado (plazo legal fatal 30 días corridos).</li>
-                <li><strong>7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.docx:</strong> Test legal de 4 preguntas para certificar por qué tu empresa está exenta de contratar a un Delegado de Protección de Datos (DPO).</li>
+                <li><strong>7_Guia_Autodiagnostico_DPO_Delegado_Proteccion_Datos_Pyme.docx:</strong> Test preventivo de 4 preguntas para evaluar y respaldar documentalmente por qué tu empresa está exenta de contratar a un Delegado de Protección de Datos (DPO).</li>
             </ol>
         </div>
 
@@ -155,7 +155,7 @@ module.exports = async (req, res) => {
             <ul style="margin: 0; padding-left: 18px; line-height: 1.6;">
                 <li>Descomprime el archivo adjunto en tu computador.</li>
                 <li>Reemplaza los campos entre corchetes <code>[NOMBRE EMPRESA]</code> y <code>[RUT]</code> con tus datos reales.</li>
-                <li>Firma el anexo con tus dependientes y publica la política en tu sitio web para certificar tu estándar de cumplimiento.</li>
+                <li>Firma el anexo con tus dependientes y publica la política en tu sitio web para respaldar tu estándar de cumplimiento.</li>
             </ul>
         </div>
 
@@ -171,7 +171,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Hemos confirmado tu pago de $29.990 CLP por el Kit Ley 21.719 de Protección de Datos Personales 2026.\n\nAdjunto a este correo encontrarás el archivo Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip con los 7 instrumentos oficiales en formato Word y Excel.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Hemos confirmado tu pago de $29.990 CLP por el Kit Ley 21.719 de Protección de Datos Personales 2026.\n\nAdjunto a este correo encontrarás el archivo Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip con los 7 instrumentos legales en formato Word y Excel.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
 
         async function sendResend(to, subject, html, text, attachments = []) {
             if (!resendApiKey) {

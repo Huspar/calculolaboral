@@ -200,7 +200,7 @@ def add_signature_block(doc, left_title, left_sub, right_title, right_sub):
 # =========================================================================
 def build_doc_0():
     doc = create_base_doc(top=0.8, bottom=0.8, left=0.85, right=0.85)
-    add_header_brand(doc, "Documento 0 Oficial  •  Guía Maestra de Implementación")
+    add_header_brand(doc, "Documento 0  •  Guía Maestra de Implementación")
     add_title(doc, "MANUAL DE USO E IMPLEMENTACIÓN RÁPIDA", 
               "Kit LegalTech Ley N° 21.719 de Protección de Datos Personales (Chile 2026)\nGuía práctica paso a paso para Micro, Pequeñas y Medianas Empresas (MiPymes)")
     
@@ -216,7 +216,7 @@ def build_doc_0():
     # Salto de página para que la tabla comparativa de sectores quede 100% entera en la Página 2
     doc.add_page_break()
 
-    add_header_brand(doc, "Documento 0 Oficial  •  Guía Práctica por Sectores y Rubros")
+    add_header_brand(doc, "Documento 0  •  Guía Práctica por Sectores y Rubros")
     add_heading(doc, "2. GUÍA POR RUBROS Y SECTORES: ¿ES ESTANDARIZADO O DIFERENTE?")
     add_body(doc, "La ley es IDÉNTICA para todas las empresas de Chile. El 85% del tratamiento de datos (sueldos, boletas, facturas, contratos y licencias médicas) es exactamente el mismo en cualquier rubro. Si perteneces a un sector con particularidades operativas, revisa la siguiente tabla:")
 
@@ -264,14 +264,14 @@ def build_doc_0():
     # Salto de página para que el FAQ y el Checklist queden enteros en la Página 3
     doc.add_page_break()
 
-    add_header_brand(doc, "Documento 0 Oficial  •  Preguntas Frecuentes y Checklist de Blindaje")
+    add_header_brand(doc, "Documento 0  •  Preguntas Frecuentes y Checklist Preventivo")
     add_heading(doc, "3. PREGUNTAS FRECUENTES (FAQ) DE DUEÑOS Y GERENTES DE PYMES")
     add_body(doc, "No. Ninguna ley exige enviar copias al Estado. Se custodian internamente en la empresa y se exhiben únicamente cuando la Dirección del Trabajo o la Agencia APDP fiscalizan.", bold_prefix="¿Tengo que enviar estos documentos a alguna entidad del Estado? ")
-    add_body(doc, "La Dirección del Trabajo (Res. Ex. N° 38/2024) prohíbe despedirlo o sancionarlo. Debes ofrecerle una alternativa no biométrica (tarjeta magnética, clave o libro). Al tener firmado nuestro Documento 1, tu empresa adopta el estándar oficial exigido por la DT para prevenir sanciones.", bold_prefix="¿Qué pasa si un trabajador se niega a poner la huella en el reloj control? ")
+    add_body(doc, "La Dirección del Trabajo (Res. Ex. N° 38/2024) prohíbe despedirlo o sancionarlo. Debes ofrecerle una alternativa no biométrica (tarjeta magnética, clave o libro). Al tener firmado nuestro Documento 1, tu empresa adopta el estándar preventivo exigido por la DT para prevenir sanciones.", bold_prefix="¿Qué pasa si un trabajador se niega a poner la huella en el reloj control? ")
     add_body(doc, "Abre inmediatamente el Documento 5 (Protocolo de Brechas). Sigue los 4 pasos: aislar el equipo, evaluar qué datos se vieron afectados y remitir el reporte a la Agencia sin dilaciones indebidas (meta 72 horas).", bold_prefix="¿Qué hacer ante un hackeo o robo de computador con datos? ")
     add_body(doc, "No. Las micro, pequeñas y medianas empresas están legalmente exentas. Para acreditarlo formalmente ante cualquier inspector, firma el Documento 7 (Test DPO) incluido en este kit.", bold_prefix="¿Debo contratar a un Delegado de Protección de Datos (DPO)? ")
 
-    add_heading(doc, "4. CHECKLIST DE BLINDAJE TOTAL (LISTA DE COTEJO)")
+    add_heading(doc, "4. CHECKLIST DE CUMPLIMIENTO NORMATIVO (LISTA DE COTEJO)")
     add_bullet(doc, "Todos los trabajadores contratados tienen firmado el anexo de datos personales y huella archivado en su carpeta de personal.", bold_prefix="[  ] Documento 1 (Anexo Laboral): ")
     add_bullet(doc, "Texto visible en el pie de página de la web o anexado a correos de cotizaciones y disponible en recepción.", bold_prefix="[  ] Documento 2 (Política de Privacidad): ")
     add_bullet(doc, "Suscrito con el contador externo de la empresa y con los proveedores de software o hosting.", bold_prefix="[  ] Documento 3 (Cláusula DPA): ")
@@ -288,7 +288,7 @@ def build_doc_0():
 # =========================================================================
 def build_doc_1():
     doc = create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9)
-    add_header_brand(doc, "Documento 1 Oficial  •  Formato Word Editable (.docx)")
+    add_header_brand(doc, "Documento 1  •  Formato Word Editable (.docx)")
     add_title(doc, "ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO\nAUTORIZACIÓN, TRATAMIENTO Y PROTECCIÓN DE DATOS PERSONALES",
               "(Conforme a la Ley N° 21.719, Arts. 154 bis y ter del Código del Trabajo y Res. Exenta N° 38/2024 de la Dirección del Trabajo)")
     
@@ -340,7 +340,7 @@ def build_doc_1():
 # =========================================================================
 def build_doc_2():
     doc = create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9)
-    add_header_brand(doc, "Documento 2 Oficial  •  Formato Word Editable (.docx)")
+    add_header_brand(doc, "Documento 2  •  Formato Word Editable (.docx)")
     add_title(doc, "POLÍTICA GENERAL DE PRIVACIDAD Y PROTECCIÓN DE DATOS PERSONALES",
               "Conforme a la Ley N° 21.719 sobre Protección y Tratamiento de Datos Personales de la República de Chile\nDocumento para publicación en sitio web y entrega a clientes comerciales")
 
@@ -402,7 +402,7 @@ def build_doc_2():
 # =========================================================================
 def build_doc_3():
     doc = create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9)
-    add_header_brand(doc, "Documento 3 Oficial  •  Formato Word Editable (.docx)")
+    add_header_brand(doc, "Documento 3  •  Formato Word Editable (.docx)")
     add_title(doc, "ANEXO DE TRATAMIENTO DE DATOS PERSONALES (DPA)\nENTRE RESPONSABLE Y ENCARGADO DEL TRATAMIENTO",
               "(Conforme al Artículo 14 bis y 14 ter de la Ley N° 21.719 de Chile)")
 
@@ -438,7 +438,7 @@ def build_doc_3():
 # =========================================================================
 def build_doc_5():
     doc = create_base_doc(top=0.8, bottom=0.8, left=0.85, right=0.85)
-    add_header_brand(doc, "Documento 5 Oficial  •  Formato Word Editable (.docx)")
+    add_header_brand(doc, "Documento 5  •  Formato Word Editable (.docx)")
     add_title(doc, "PROTOCOLO OPERATIVO DE GESTIÓN Y NOTIFICACIÓN DE BRECHAS DE SEGURIDAD",
               "(Conforme al Artículo 14 sexies de la Ley N° 19.628 reformada por Ley N° 21.719 - Estándar Operativo 72 Horas)")
 
@@ -453,7 +453,7 @@ def build_doc_5():
     add_heading(doc, "3. PROTOCOLO DE RESPUESTA EN 4 FASES")
     add_body(doc, "Desconectar inmediatamente de la red los equipos comprometidos, cambiar contraseñas de accesos administrativos, revocar tokens de sesión y aislar el servidor afectado.", bold_prefix="FASE 1: Detección y Contención (Horas 0 a 12): ")
     add_body(doc, "Determinar qué categorías de datos fueron expuestas (datos comunes vs. datos sensibles de salud/biometría) y estimar el número aproximado de titulares afectados.", bold_prefix="FASE 2: Evaluación Forense y del Impacto (Horas 12 a 36): ")
-    add_body(doc, "Si la brecha entraña un riesgo para los derechos de los titulares, remitir el reporte oficial a la Agencia de Protección de Datos Personales sin dilación indebida, estableciendo como meta de cumplimiento operativo interno no superar las 72 horas desde que se tuvo conocimiento confirmado del incidente.", bold_prefix="FASE 3: Notificación Formal a la Agencia (Horas 36 a 72): ")
+    add_body(doc, "Si la brecha entraña un riesgo para los derechos de los titulares, remitir el reporte a la Agencia de Protección de Datos Personales sin dilación indebida, estableciendo como meta de cumplimiento operativo interno no superar las 72 horas desde que se tuvo conocimiento confirmado del incidente.", bold_prefix="FASE 3: Notificación Formal a la Agencia (Horas 36 a 72): ")
     add_body(doc, "Si el riesgo es de gravedad, comunicar directamente a los afectados las medidas que deben tomar (ej. cambio de claves bancarias) y registrar el incidente en la Bitácora Histórica del RAT.", bold_prefix="FASE 4: Notificación a Titulares y Mitigación (Posterior a 72 Horas): ")
 
     # =========================================================================
@@ -464,8 +464,8 @@ def build_doc_5():
     # =========================================================================
     doc.add_page_break()
 
-    add_header_brand(doc, "Documento 5 Oficial  •  Anexo: Formulario de Notificación APDP")
-    add_heading(doc, "ANEXO: FORMULARIO OFICIAL DE REPORTE DE BRECHA A LA AGENCIA (72 HORAS)")
+    add_header_brand(doc, "Documento 5  •  Anexo: Formulario de Notificación APDP")
+    add_heading(doc, "ANEXO: FORMULARIO DE REPORTE DE BRECHA A LA AGENCIA (72 HORAS)")
     add_body(doc, "Complete el siguiente formulario y remítalo a los canales oficiales de la Agencia de Protección de Datos Personales en caso de un incidente calificado:")
     
     table = doc.add_table(rows=1, cols=1)
@@ -510,8 +510,8 @@ def build_doc_5():
 def build_doc_6():
     # Márgenes compactos de 0.65 pulgadas para asegurar 1 sola página completa
     doc = create_base_doc(top=0.6, bottom=0.6, left=0.75, right=0.75)
-    add_header_brand(doc, "Documento 6 Oficial  •  Formulario Imprimible en 1 Página (.docx)")
-    add_title(doc, "FORMULARIO OFICIAL DE SOLICITUD DE EJERCICIO DE DERECHOS ARCOP",
+    add_header_brand(doc, "Documento 6  •  Formulario Imprimible en 1 Página (.docx)")
+    add_title(doc, "FORMULARIO ESTÁNDAR DE SOLICITUD DE EJERCICIO DE DERECHOS ARCOP",
               "(Acceso, Rectificación, Supresión, Oposición, Portabilidad y Bloqueo - Ley N° 21.719)")
 
     add_body(doc, "El presente formulario permite a cualquier titular de datos (cliente, trabajador, ex-trabajador, proveedor o usuario) solicitar ante [NOMBRE DE LA EMPRESA] (RUT [RUT EMPRESA]) el ejercicio formal de sus derechos reconocidos en los artículos 5° al 11 de la Ley N° 19.628 (modificada por la Ley N° 21.719).", space_after=3)
@@ -566,7 +566,7 @@ def build_doc_6():
 # =========================================================================
 def build_doc_7():
     doc = create_base_doc(top=0.8, bottom=0.8, left=0.85, right=0.85)
-    add_header_brand(doc, "Documento 7 Oficial  •  Formato Word Editable (.docx)")
+    add_header_brand(doc, "Documento 7  •  Formato Word Editable (.docx)")
     add_title(doc, "EVALUACIÓN Y TEST DE AUTODIAGNÓSTICO LEGAL\n¿NECESITA MI EMPRESA NOMBRAR UN DELEGADO DE PROTECCIÓN DE DATOS (DPO)?",
               "Criterios de Obligatoriedad y Régimen de Exención para Micro, Pequeñas y Medianas Empresas (MIPYMES)\nConforme a la Ley N° 21.719 que reforma la Ley N° 19.628 de Protección de Datos Personales de Chile")
 
@@ -639,12 +639,12 @@ def build_doc_7():
         r2.font.bold = True
         r2.font.color.rgb = RGBColor(16, 185, 129)
 
-    add_heading(doc, "3. DICTAMEN Y CONCLUSIÓN JURÍDICA")
-    add_body(doc, "Al haber respondido 'NO' a las cuatro preguntas del test, se certifica legalmente que la empresa NO se encuentra en ninguna de las causales taxativas de obligatoriedad y está 100% EXENTA de contratar o designar a un Delegado de Protección de Datos (DPO). Las funciones de coordinación y respuesta ante la Agencia pueden ser ejercidas internamente por la administración o gerencia general sin costo adicional.")
+    add_heading(doc, "3. CONCLUSIÓN Y EVALUACIÓN PREVENTIVA")
+    add_body(doc, "Al haber respondido 'NO' a las cuatro preguntas del test, se concluye documentalmente que la empresa NO se encuentra en las causales taxativas de obligatoriedad y no requiere contratar ni designar a un Delegado de Protección de Datos (DPO) externo. Las funciones de coordinación y respuesta ante la Agencia pueden ser ejercidas internamente por la administración o gerencia general sin costo adicional.")
 
     add_signature_block(doc,
                         "[NOMBRE DEL REPRESENTANTE LEGAL]", "RUT N° [RUT REPRESENTANTE]\nGERENTE GENERAL / ADMINISTRADOR",
-                        "[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]", "RUT N° [RUT EMPRESA]\nFECHA DE CERTIFICACIÓN: [FECHA ACTUAL]")
+                        "[NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]", "RUT N° [RUT EMPRESA]\nFECHA DE EVALUACIÓN: [FECHA ACTUAL]")
 
     return doc
 

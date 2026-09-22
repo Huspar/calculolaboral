@@ -655,7 +655,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
             
             <div class="text-center mb-6 border-b border-slate-300 pb-4">
                 <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-1">
-                    Documento Oficial Conforme al Código del Trabajo (Edición 2026) • Folio: ${res.folio}
+                    Instrumento Contractual Conforme al Código del Trabajo (Edición 2026) • Folio: ${res.folio}
                 </div>
                 <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">
                     Contrato Individual de Trabajo
@@ -862,7 +862,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
         var wordBodyHtml = `
         <div class="Section1">
             <p style="text-align: center; font-size: 9pt; font-family: 'Times New Roman', serif; color: #555555; margin-bottom: 2pt;">
-                DOCUMENTO OFICIAL CONFORME AL CÓDIGO DEL TRABAJO DE CHILE (EDICIÓN 2026) • FOLIO: ${res.folio}
+                INSTRUMENTO CONTRACTUAL CONFORME AL CÓDIGO DEL TRABAJO DE CHILE (EDICIÓN 2026) • FOLIO: ${res.folio}
             </p>
             <h1 style="text-align: center; font-size: 14pt; font-family: 'Times New Roman', serif; font-weight: bold; text-transform: uppercase; margin-top: 6pt; margin-bottom: 2pt;">
                 CONTRATO INDIVIDUAL DE TRABAJO
@@ -1270,7 +1270,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                 ` : ''}
 
                 <div class="no-print max-w-[820px] mx-auto mb-4 flex justify-between items-center bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-                    <span class="text-xs text-slate-700 font-semibold">Contrato Oficial: <strong>${escapeHtml(datos.trabajadorNombre || 'Trabajador')}</strong> (${escapeHtml(datos.cargoNombre || 'Cargo')})</span>
+                    <span class="text-xs text-slate-700 font-semibold">Contrato de Trabajo: <strong>${escapeHtml(datos.trabajadorNombre || 'Trabajador')}</strong> (${escapeHtml(datos.cargoNombre || 'Cargo')})</span>
                     <div class="flex gap-2">
                         <button onclick="window.print()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer !text-white" style="color:#fff!important;">
                             <span class="material-icons text-xs">print</span>

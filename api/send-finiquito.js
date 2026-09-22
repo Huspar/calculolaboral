@@ -158,7 +158,7 @@ module.exports = async (req, res) => {
         const filenameSafe = `Finiquito_${cleanTrabajador.replace(/[^a-zA-Z0-9]/g, '_')}_${cleanTrabajadorRut.replace(/[^a-zA-Z0-9]/g, '')}.doc`;
 
         // 1. Email para el Comprador
-        const buyerSubject = `Tu Finiquito Notarial Oficial [${cleanTrabajador}] - Pack Legal ($12.990)`;
+        const buyerSubject = `Tu Finiquito Notarial Completo [${cleanTrabajador}] - Pack Legal ($12.990)`;
         const buyerHtml = `<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8"></head>
@@ -173,7 +173,7 @@ module.exports = async (req, res) => {
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Estimado(a) empleador(a) de ${escapeHtml(cleanEmpresa)},</p>
         
         <p style="font-size: 14px; color: #334155; margin: 0 0 18px;">
-            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Pack Finiquito Notarial Oficial</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.doc 100% editable)</strong> listo para imprimir o personalizar.
+            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Pack Finiquito Notarial Completo</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.doc editable)</strong> listo para imprimir o personalizar.
         </p>
 
         <!-- Tarjeta de Resumen del Documento -->
@@ -206,7 +206,7 @@ module.exports = async (req, res) => {
         <!-- Botón de acceso Web durante 48 horas -->
         <div style="text-align: center; margin: 28px 0;">
             <a href="https://calculolaboral.cl/generador-finiquito-chile?pago=exito" style="background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 13px; font-weight: bold; border-radius: 10px; display: inline-block;">
-                Ver / Re-descargar en la Web (Garantía 48 Horas)
+                Ver / Re-descargar en la Web (Acceso 48 Horas)
             </a>
             <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
                 Tu sesión web se mantendrá desbloqueada para este trabajador durante 48 horas por si necesitas ajustar algún dato.
@@ -274,7 +274,7 @@ module.exports = async (req, res) => {
 <head><meta charset="UTF-8"></head>
 <body style="font-family: sans-serif; color: #0f172a; padding: 20px;">
     <h2 style="color: #16a34a; margin-top: 0;">🎉 ¡Nueva Venta de Finiquito Notarial ($12.990 CLP)!</h2>
-    <p>El documento Word oficial ha sido generado y despachado automáticamente al correo del empleador.</p>
+    <p>El documento Word ha sido generado y despachado automáticamente al correo del empleador.</p>
     <table style="width: 100%; font-size: 14px; border-collapse: collapse; margin-top: 15px;">
         <tr><td style="padding: 6px 0; color: #64748b; width: 150px;">Empresa:</td><td style="padding: 6px 0; font-weight: bold;">${escapeHtml(cleanEmpresa)} (${escapeHtml(cleanEmpresaRut)})</td></tr>
         <tr><td style="padding: 6px 0; color: #64748b;">Trabajador:</td><td style="padding: 6px 0; font-weight: bold;">${escapeHtml(cleanTrabajador)} (${escapeHtml(cleanTrabajadorRut)})</td></tr>

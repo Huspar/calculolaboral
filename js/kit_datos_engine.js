@@ -497,7 +497,7 @@
                         Determinar qué categorías de datos fueron expuestas (datos comunes vs. datos sensibles de salud/biometría) y estimar el número aproximado de titulares afectados.
                     </li>
                     <li><strong>FASE 3: Notificación Formal a la Agencia (Horas 36 a 72):</strong>
-                        Si la brecha entraña un riesgo para los derechos de los titulares, remitir el reporte oficial a la Agencia de Protección de Datos Personales sin dilación indebida, estableciendo como meta de cumplimiento operativo interno no superar las 72 horas desde que se tuvo conocimiento confirmado del incidente.
+                        Si la brecha entraña un riesgo para los derechos de los titulares, remitir el reporte a la Agencia de Protección de Datos Personales sin dilación indebida, estableciendo como meta de cumplimiento operativo interno no superar las 72 horas desde que se tuvo conocimiento confirmado del incidente.
                     </li>
                     <li><strong>FASE 4: Notificación a Titulares y Mitigación (Posterior a 72 Horas):</strong>
                         Si el riesgo es de gravedad, comunicar directamente a los afectados las medidas que deben tomar (ej. cambio de claves bancarias) y registrar el incidente en la Bitácora Histórica del RAT.
@@ -535,7 +535,7 @@
         return `
             <div style="font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.5; color: #000; text-align: justify;">
                 <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 24px; text-transform: uppercase;">
-                    FORMULARIO OFICIAL DE SOLICITUD DE EJERCICIO DE DERECHOS ARCOP<br>
+                    FORMULARIO ESTÁNDAR DE SOLICITUD DE EJERCICIO DE DERECHOS ARCOP<br>
                     <span style="font-size: 10pt; font-weight: normal;">(Acceso, Rectificación, Supresión, Oposición, Portabilidad y Bloqueo - Ley N° 21.719)</span>
                 </p>
 
@@ -685,7 +685,7 @@
                 </ul>
 
                 <p style="margin-top: 26px; font-size: 10pt; color: #555; text-align: center;">
-                    Certificado de Autodiagnóstico archivado por <strong>${escapeHtml(empresa)}</strong> para acreditar diligencia y responsabilidad proactiva (Accountability) ante la Agencia de Protección de Datos Personales.
+                    Registro de Autodiagnóstico archivado por <strong>${escapeHtml(empresa)}</strong> para respaldar diligencia y responsabilidad proactiva (Accountability) ante la Agencia de Protección de Datos Personales.
                 </p>
             </div>
         `;

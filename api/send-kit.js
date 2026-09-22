@@ -138,7 +138,7 @@ module.exports = async (req, res) => {
 
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Hola ${escapeHtml(cleanName)},</p>
         <p style="font-size: 14px; color: #334155; margin: 0 0 20px;">
-            ¡Muchas gracias por tu compra! Hemos confirmado tu pago de <strong>$19.990 CLP</strong>. Adjunto a este correo encontrarás el paquete comprimido <strong>Kit_Blindaje_Laboral_Pyme_2026.zip</strong> con los 21 documentos oficiales en formato Word (.docx 100% editable) y las guías de implementación para la Dirección del Trabajo (DT).
+            ¡Muchas gracias por tu compra! Hemos confirmado tu pago de <strong>$19.990 CLP</strong>. Adjunto a este correo encontrarás el paquete comprimido <strong>Kit_Blindaje_Laboral_Pyme_2026.zip</strong> con los 21 documentos en formato Word (.docx editable) y las guías de implementación para la Dirección del Trabajo (DT).
         </p>
 
         <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
@@ -171,7 +171,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Adjunto a este correo encontrarás el archivo Kit_Blindaje_Laboral_Pyme_2026.zip con los 21 documentos oficiales en formato Word (.docx editable) y el Manual de Instrucciones en PDF.\n\nGuía rápida:\n1. Descomprime el archivo adjunto.\n2. Abre primero el archivo 00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf.\n3. Revisa la Página 2 (Árbol de Decisión) para ver los documentos específicos de tu rubro.\n\nSoporte: responde directamente a este correo si tienes dudas.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola ${cleanName},\n\n¡Muchas gracias por tu compra! Adjunto a este correo encontrarás el archivo Kit_Blindaje_Laboral_Pyme_2026.zip con los 21 documentos en formato Word (.docx editable) y el Manual de Instrucciones en PDF.\n\nGuía rápida:\n1. Descomprime el archivo adjunto.\n2. Abre primero el archivo 00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf.\n3. Revisa la Página 2 (Árbol de Decisión) para ver los documentos específicos de tu rubro.\n\nSoporte: responde directamente a este correo si tienes dudas.\n\nEquipo de Cálculo Laboral\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {

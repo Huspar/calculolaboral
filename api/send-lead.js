@@ -292,11 +292,11 @@ module.exports = async (req, res) => {
                 <p style="margin: 16px 0 0; font-size: 13px; color: #64748b;">El link de descarga funciona en cualquier dispositivo. Puedes compartirla con quien quieras.</p>
             `;
         } else if (cleanTipo === 'CartaDespido') {
-            userSubject = 'Tus Modelos Oficiales de Carta de Despido 2026 (Word .docx)';
-            const userIntro = `Hola ${cleanName}, gracias por solicitar los modelos oficiales de carta de despido en formato Word (.docx).`;
+            userSubject = 'Tus Modelos de Carta de Despido 2026 (Word .docx)';
+            const userIntro = `Hola ${cleanName}, gracias por solicitar los modelos de carta de despido en formato Word (.docx).`;
             const userBody = `
-                <p style="margin: 0 0 12px;"><strong>📄 Pack Oficial de Cartas de Despido Chile 2026</strong></p>
-                <p style="margin: 0 0 12px;">Incluye formatos Word (.docx 100% editables para incorporar membrete y razón social):</p>
+                <p style="margin: 0 0 12px;"><strong>📄 Pack de Cartas de Despido Chile 2026</strong></p>
+                <p style="margin: 0 0 12px;">Incluye formatos Word (.docx totalmente editables para incorporar membrete y razón social):</p>
                 <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">
                     <li><strong>Modelo 1:</strong> Despido por Necesidades de la Empresa (Art. 161 inc. 1º) con fundamentación técnica y Ley Bustos.</li>
                     <li><strong>Modelo 2:</strong> Despido Disciplinario por Inasistencia Injustificada (Art. 160 Nº 3).</li>

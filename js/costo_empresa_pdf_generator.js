@@ -372,7 +372,7 @@
             <div class="watermark-informe-stamp stamp-pos-tabla">
                 <div class="stamp-head">VISTA PREVIA NO VÁLIDA PARA PRESENTAR</div>
                 <div class="stamp-sub">BORRADOR DE EVALUACIÓN PRO-FORMA • CÁLCULO LABORAL CHILE</div>
-                <div class="stamp-foot">DESBLOQUEA LA VERSIÓN OFICIAL PARA AUDITORÍA, BANCOS Y SOCIOS ($4.990)</div>
+                <div class="stamp-foot">DESBLOQUEA EL INFORME COMPLETO EN PDF PARA AUDITORÍA, BANCOS Y SOCIOS ($4.990)</div>
             </div>
             <!-- Estampa 2 sobre el desglose contable -->
             <div class="watermark-informe-stamp stamp-pos-desglose">
@@ -382,7 +382,7 @@
             </div>
             ` : ''}
             
-            <!-- ENCABEZADO OFICIAL -->
+            <!-- ENCABEZADO INFORME -->
             <div class="informe-header">
                 <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
                     <div class="flex items-center gap-2.5">
@@ -414,7 +414,7 @@
 
                 <div class="text-center my-3.5">
                     <span class="text-[10px] font-extrabold uppercase tracking-wider text-sky-800 bg-sky-100/70 px-3 py-1 rounded-full border border-sky-200">
-                        Documento Oficial de Decisión Estratégica & Presupuesto
+                        Informe Ejecutivo de Decisión Estratégica & Presupuesto
                     </span>
                     <h1 class="text-2xl font-black text-slate-900 tracking-tight mt-2">
                         Informe Ejecutivo de Presupuesto Laboral & Matriz 3 Vías
@@ -452,7 +452,7 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
                         Comparativa Estratégica de Contratación (3 Vías Posibles)
                     </h2>
-                    <span class="text-[10px] text-slate-500 font-medium">Análisis financiero y legal certificado</span>
+                    <span class="text-[10px] text-slate-500 font-medium">Análisis financiero y laboral referencial</span>
                 </div>
 
                 <table class="tabla-comparativa">
@@ -629,14 +629,14 @@
                                 <span class="bg-rose-100 text-rose-700 text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase">Pro-Forma</span>
                             </div>
                             <div class="text-[10px] sm:text-[11px] text-slate-500 truncate hidden sm:block">
-                                Vista previa con marcas de agua. El informe oficial se descarga limpio en PDF sin sellos.
+                                Vista previa con marcas de agua. El informe completo se descarga limpio en PDF sin sellos.
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <a href="${FLOW_CHECKOUT_URL}" class="py-2 px-3 sm:px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1.5 cursor-pointer no-underline !text-white" style="color: #ffffff !important;">
                             <span class="material-icons text-xs">download</span>
-                            <span>Descargar PDF Oficial ($4.990)</span>
+                            <span>Descargar Informe en PDF ($4.990)</span>
                         </a>
                         <button type="button" id="btn-cerrar-preview-modal" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-700 flex items-center justify-center cursor-pointer transition-colors" title="Cerrar vista previa">
                             <span class="material-icons text-sm">close</span>
@@ -752,7 +752,7 @@
                         </button>
                         ` : `
                         <a href="${FLOW_CHECKOUT_URL}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer no-underline !text-white" style="color:#fff!important;">
-                            Descargar Informe Oficial ($4.990)
+                            Descargar Informe Completo ($4.990)
                         </a>
                         `}
                         <button onclick="window.close()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-lg cursor-pointer">
@@ -899,7 +899,7 @@
                         Hemos procesado tu pago por Flow.cl exitosamente. Tu informe con la <strong>Comparativa de 3 Columnas y Matriz de Riesgo DT</strong> ya se encuentra preparado.
                     </p>
                     <div class="my-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-left space-y-1 font-mono">
-                        <div class="flex justify-between text-slate-500"><span>Folio Oficial:</span><span class="font-bold text-slate-800">${matriz.folio}</span></div>
+                        <div class="flex justify-between text-slate-500"><span>Nº de Folio:</span><span class="font-bold text-slate-800">${matriz.folio}</span></div>
                         <div class="flex justify-between text-slate-500"><span>Puesto:</span><span class="font-bold text-slate-800">${matriz.cargo}</span></div>
                         <div class="flex justify-between text-slate-500"><span>Costo Indefinido:</span><span class="font-bold text-sky-700">${formatCLP(matriz.indefinido.costoEmpresaTotal)}</span></div>
                     </div>

@@ -467,7 +467,7 @@
                     <div class="watermark-stamp-box">
                         <span class="stamp-badge">Cálculo Laboral Chile</span>
                         <div class="stamp-title">VISTA PREVIA</div>
-                        <div class="stamp-subtitle">DOCUMENTO OFICIAL NO VÁLIDO PARA FIRMA NOTARIAL</div>
+                        <div class="stamp-subtitle">BORRADOR NO VÁLIDO PARA FIRMA NOTARIAL</div>
                         <button type="button" id="btn-watermark-unlock" class="stamp-cta">
                             <span class="material-icons text-sm" aria-hidden="true">lock_open</span>
                             Desbloquear Word + PDF ($12.990)
@@ -1100,7 +1100,7 @@
                         <div class="flex items-center space-x-2">
                             <span class="material-icons text-emerald-600 text-2xl">verified</span>
                             <div>
-                                <span class="text-xs font-bold block text-emerald-950">¡Finiquito Notarial Oficial Desbloqueado!</span>
+                                <span class="text-xs font-bold block text-emerald-950">¡Finiquito Notarial Desbloqueado!</span>
                                 <span class="text-[11px] text-emerald-700">Garantía activa de 48 horas para don(ña) <strong>${escapeHtml(formData.trabajadorNombre)}</strong> (RUT: ${escapeHtml(formData.trabajadorRut)}).</span>
                             </div>
                         </div>
@@ -1111,7 +1111,7 @@
 
                     <div class="flex flex-wrap items-center gap-2">
                         <button type="button" id="quick-pdf" class="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
-                            <span class="material-icons text-xs">picture_as_pdf</span> Descargar PDF Oficial
+                            <span class="material-icons text-xs">picture_as_pdf</span> Descargar Finiquito en PDF
                         </button>
                         <button type="button" id="quick-word" class="px-3.5 py-2 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
                             <span class="material-icons text-xs">description</span> Descargar Word (.docx)
