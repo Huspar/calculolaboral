@@ -511,14 +511,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "applicationCategory": "FinanceApplication",
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/sueldo_liquido",
-                    "description": description,
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": "4.9",
-                        "reviewCount": "412",
-                        "bestRating": "5",
-                        "worstRating": "1"
-                    }
+                    "description": description
                 },
                 {
                     "@type": "BreadcrumbList",
@@ -543,14 +536,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "applicationCategory": "FinanceApplication",
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/finiquito_calculator",
-                    "description": description,
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": "4.9",
-                        "reviewCount": "580",
-                        "bestRating": "5",
-                        "worstRating": "1"
-                    }
+                    "description": description
                 },
                 {
                     "@type": "BreadcrumbList",
@@ -575,14 +561,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "applicationCategory": "FinanceApplication",
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/calculadora-horas-extras",
-                    "description": description,
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": "4.9",
-                        "reviewCount": "348",
-                        "bestRating": "5",
-                        "worstRating": "1"
-                    }
+                    "description": description
                 },
                 {
                     "@type": "BreadcrumbList",
@@ -616,14 +595,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "name": "Calculadora de Sueldo Part-Time Chile 2026",
                     "applicationCategory": "FinanceApplication",
                     "operatingSystem": "All",
-                    "description": description,
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": "4.9",
-                        "reviewCount": "215",
-                        "bestRating": "5",
-                        "worstRating": "1"
-                    }
+                    "description": description
                 },
                 {
                     "@type": "BreadcrumbList",
@@ -648,14 +620,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "applicationCategory": "FinanceApplication",
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/calculadora-vacaciones-proporcionales",
-                    "description": description,
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": "4.9",
-                        "reviewCount": "284",
-                        "bestRating": "5",
-                        "worstRating": "1"
-                    }
+                    "description": description
                 },
                 {
                     "@type": "BreadcrumbList",
@@ -680,14 +645,7 @@ def generate_seo_tags(filename, title, description, page_type="website"):
                     "applicationCategory": "FinanceApplication",
                     "operatingSystem": "All",
                     "url": "https://calculolaboral.cl/calculadora-despido-articulo-160",
-                    "description": description,
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": "4.9",
-                        "reviewCount": "319",
-                        "bestRating": "5",
-                        "worstRating": "1"
-                    }
+                    "description": description
                 },
                 {
                     "@type": "BreadcrumbList",

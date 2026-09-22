@@ -32,96 +32,91 @@
     
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "SoftwareApplication",
-                "name": "Simulador de Despido Injustificado y Riesgo de Demanda Laboral Chile",
-                "operatingSystem": "All",
-                "applicationCategory": "BusinessApplication",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "CLP"
-                },
-                "aggregateRating": {
-                    "@type": "AggregateRating",
-                    "ratingValue": "4.9",
-                    "reviewCount": "184"
-                },
-                "description": "Calculadora forense para estimar la contingencia económica por despido improcedente, recargos del Art. 168, restitución de seguro de cesantía y nulidad del despido por Ley Bustos."
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "name": "Simulador de Despido Injustificado y Riesgo de Demanda Laboral Chile",
+            "operatingSystem": "All",
+            "applicationCategory": "BusinessApplication",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "CLP"
             },
-            {
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                    {
-                        "@type": "ListItem",
-                        "position": 1,
-                        "name": "Inicio",
-                        "item": "https://calculolaboral.cl/"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 2,
-                        "name": "Calculadoras",
-                        "item": "https://calculolaboral.cl/#calculadoras"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 3,
-                        "name": "Simulador de Despido Injustificado",
-                        "item": "https://calculolaboral.cl/simulador-despido-injustificado-chile"
+            "description": "Calculadora forense para estimar la contingencia económica por despido improcedente, recargos del Art. 168, restitución de seguro de cesantía y nulidad del despido por Ley Bustos."
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Inicio",
+                    "item": "https://calculolaboral.cl/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Calculadoras",
+                    "item": "https://calculolaboral.cl/#calculadoras"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Simulador de Despido Injustificado",
+                    "item": "https://calculolaboral.cl/simulador-despido-injustificado-chile"
+                }
+            ]
+        },
+        {
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "¿Qué recargo se aplica si el despido por necesidades de la empresa es declarado injustificado?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Conforme al Artículo 168 letra a) del Código del Trabajo, si el juez declara que el despido por necesidades de la empresa (Art. 161) fue injustificado o improcedente, se aplica un recargo legal del 30% sobre la indemnización por años de servicio (IAS)."
                     }
-                ]
-            },
-            {
-                "@type": "FAQPage",
-                "mainEntity": [
-                    {
-                        "@type": "Question",
-                        "name": "¿Qué recargo se aplica si el despido por necesidades de la empresa es declarado injustificado?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Conforme al Artículo 168 letra a) del Código del Trabajo, si el juez declara que el despido por necesidades de la empresa (Art. 161) fue injustificado o improcedente, se aplica un recargo legal del 30% sobre la indemnización por años de servicio (IAS)."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿El empleador debe devolver el descuento del seguro de cesantía (AFC) si pierde el juicio?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Sí. Conforme a la doctrina unificada y vinculante de la Corte Suprema de Chile, si el despido es declarado improcedente o injustificado, el empleador pierde el beneficio de imputar el 1,6% patronal a la indemnización, por lo que la sentencia le ordena restituir íntegramente dicho monto al trabajador con reajustes e intereses."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Cómo opera la nulidad del despido por Ley Bustos si hay cotizaciones impagas?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Según el Artículo 162 del Código del Trabajo (Ley Bustos), si existen cotizaciones previsionales adeudadas (AFP, Salud o AFC) al momento del despido, éste no produce el efecto de poner término al contrato. El empleador queda obligado a pagar todas las remuneraciones íntegras devengadas desde el despido hasta la convalidación formal ante la DT o el tribunal."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Cuál es el plazo legal para demandar por despido injustificado?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "El plazo legal es de 60 días hábiles judiciales (de lunes a sábado) contados desde la separación del trabajador. Si se interpone reclamo previo ante la Inspección del Trabajo, el plazo se suspende pero en ningún caso podrá exceder de 90 días corridos."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Qué recargo aplica si el empleador despide por falta de probidad (Art. 160) y no lo prueba?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Si se despidió invocando alguna causal disciplinaria del Artículo 160 y el empleador no logra acreditarla en juicio, el recargo sobre la indemnización por años de servicio va del 80% al 100% (si el tribunal califica la imputación como carente de todo motivo plausible)."
-                        }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿El empleador debe devolver el descuento del seguro de cesantía (AFC) si pierde el juicio?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Sí. Conforme a la doctrina unificada y vinculante de la Corte Suprema de Chile, si el despido es declarado improcedente o injustificado, el empleador pierde el beneficio de imputar el 1,6% patronal a la indemnización, por lo que la sentencia le ordena restituir íntegramente dicho monto al trabajador con reajustes e intereses."
                     }
-                ]
-            }
-        ]
-    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Cómo opera la nulidad del despido por Ley Bustos si hay cotizaciones impagas?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Según el Artículo 162 del Código del Trabajo (Ley Bustos), si existen cotizaciones previsionales adeudadas (AFP, Salud o AFC) al momento del despido, éste no produce el efecto de poner término al contrato. El empleador queda obligado a pagar todas las remuneraciones íntegras devengadas desde el despido hasta la convalidación formal ante la DT o el tribunal."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Cuál es el plazo legal para demandar por despido injustificado?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "El plazo legal es de 60 días hábiles judiciales (de lunes a sábado) contados desde la separación del trabajador. Si se interpone reclamo previo ante la Inspección del Trabajo, el plazo se suspende pero en ningún caso podrá exceder de 90 días corridos."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Qué recargo aplica si el empleador despide por falta de probidad (Art. 160) y no lo prueba?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Si se despidió invocando alguna causal disciplinaria del Artículo 160 y el empleador no logra acreditarla en juicio, el recargo sobre la indemnización por años de servicio va del 80% al 100% (si el tribunal califica la imputación como carente de todo motivo plausible)."
+                    }
+                }
+            ]
+        }
+    ]
+}
     </script>
     
     <!-- Fonts and Icons -->
@@ -441,7 +436,7 @@
                     <span class="text-rose-600">¿Cuánto Cuesta un Error Legal en Tribunales?</span>
                 </h1>
                 <p class="text-sm sm:text-base text-slate-600 max-w-3xl mt-2 leading-relaxed">
-                    Descubre la enorme diferencia entre finiquitar de forma blindada versus perder un juicio laboral: calcula los <strong>recargos del 30% al 100%</strong> (Art. 168), la <strong>devolución obligatoria del seguro de cesantía (AFC)</strong> y los <strong>sueldos caídos acumulados por Ley Bustos</strong>.
+                    Descubre la enorme diferencia entre finiquitar con pleno respaldo legal versus perder un juicio laboral: calcula los <strong>recargos del 30% al 100%</strong> (Art. 168), la <strong>devolución obligatoria del seguro de cesantía (AFC)</strong> y los <strong>sueldos caídos acumulados por Ley Bustos</strong>.
                 </p>
 
                 <!-- Selector de Modo (Perfil) -->
@@ -745,10 +740,10 @@
                                 🛡️ <strong>¿Cómo evitar este riesgo en tu empresa?</strong> El 90% de las demandas laborales se ganan por errores de redacción en la carta de aviso o por finiquitos sin reserva de derechos limitada.
                             </div>
 
-                            <!-- CTA 1: Generador Finiquito Blindado ($12.990) -->
+                            <!-- CTA 1: Generador Finiquito Notarial ($12.990) -->
                             <a href="generador-finiquito-chile" class="w-full py-3.5 px-4 bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-sky-500/20 hover:shadow-lg hover:shadow-sky-500/30 flex items-center justify-center gap-2 transition-all no-underline" style="color: #ffffff !important;">
                                 <span class="material-icons text-base text-white">verified_user</span>
-                                <span class="text-white">Generar Finiquito Notarial Blindado ($12.990)</span>
+                                <span class="text-white">Generar Finiquito Notarial Word/PDF ($12.990)</span>
                             </a>
 
                             <!-- CTA 2: Kit Blindaje Pyme ($19.990) -->
