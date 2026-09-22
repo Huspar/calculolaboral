@@ -130,6 +130,8 @@
             .informe-a4-page {
                 background: #ffffff;
                 max-width: 820px;
+                width: 100%;
+                min-width: 0;
                 margin: 0 auto;
                 padding: 28px 32px;
                 border: 1px solid #e2e8f0;
@@ -138,12 +140,16 @@
                 font-family: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 position: relative;
                 color: #0f172a;
+                box-sizing: border-box;
+                overflow: hidden;
             }
 
             .con-marca-agua {
-                position: relative;
-                overflow: hidden;
-                background-image: repeating-linear-gradient(-35deg, rgba(225, 29, 72, 0.04), rgba(225, 29, 72, 0.04) 90px, transparent 90px, transparent 180px) !important;
+                position: relative !important;
+                overflow: hidden !important;
+                background-image: repeating-linear-gradient(-35deg, rgba(225, 29, 72, 0.08), rgba(225, 29, 72, 0.08) 60px, transparent 60px, transparent 120px) !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
             }
 
             .watermark-badge {
@@ -262,23 +268,22 @@
             }
 
             .tag-medio {
-                background-color: #fef3c7;
-                color: #b45309;
-                border: 1px solid #fde68a;
+                background-color: #fef9c3;
+                color: #854d0e;
+                border: 1px solid #fde047;
             }
 
             .tag-alto {
-                background-color: #ffe4e6;
-                color: #be123c;
-                border: 1px solid #fecdd3;
+                background-color: #fee2e2;
+                color: #b91c1c;
+                border: 1px solid #fca5a5;
             }
 
             .box-alerta-riesgo {
                 background-color: #fff1f2;
-                border: 1px solid #fecdd3;
-                border-left: 5px solid #e11d48;
+                border: 1.5px solid #fecdd3;
+                border-radius: 12px;
                 padding: 12px 14px;
-                border-radius: 10px;
             }
 
             .badge-alerta {
@@ -293,13 +298,6 @@
             }
 
             /* MARCAS DE AGUA NOTORIAS Y DISUASIVAS (ANTI-COPIA) */
-            .con-marca-agua {
-                position: relative !important;
-                overflow: hidden !important;
-                background-image: repeating-linear-gradient(-35deg, rgba(225, 29, 72, 0.08), rgba(225, 29, 72, 0.08) 60px, transparent 60px, transparent 120px) !important;
-                user-select: none !important;
-                -webkit-user-select: none !important;
-            }
             .watermark-informe-stamp {
                 position: absolute !important;
                 left: 50% !important;
@@ -315,6 +313,7 @@
                 pointer-events: none !important;
                 user-select: none !important;
                 z-index: 50 !important;
+                box-sizing: border-box !important;
             }
             .stamp-pos-tabla {
                 top: 38% !important;
@@ -345,6 +344,178 @@
                 margin-top: 4px !important;
                 text-transform: uppercase !important;
             }
+
+            .tabla-comparativa-wrapper {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                display: block;
+                box-sizing: border-box;
+            }
+
+            .banner-borrador-alerta {
+                background-color: #fff1f2;
+                border: 1.5px solid #fecdd3;
+                color: #be123c;
+                padding: 7px 14px;
+                border-radius: 10px;
+                font-weight: 800;
+                font-size: 11px;
+                text-transform: uppercase;
+                margin-bottom: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                letter-spacing: 0.5px;
+                box-sizing: border-box;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            /* ADAPTACIÓN MÓVIL ESTRICTA PARA PANTALLAS PEQUEÑAS (SMARTPHONES) */
+            @media screen and (max-width: 640px) {
+                .informe-a4-page {
+                    padding: 12px 10px !important;
+                    border-radius: 12px !important;
+                    max-width: 100% !important;
+                    width: 100% !important;
+                    min-width: 0 !important;
+                    box-sizing: border-box !important;
+                    font-size: 10px !important;
+                    overflow: hidden !important;
+                }
+                .banner-borrador-alerta {
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    gap: 5px !important;
+                    font-size: 9px !important;
+                    padding: 6px 8px !important;
+                    margin-bottom: 10px !important;
+                }
+                .informe-header-top {
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    gap: 8px !important;
+                }
+                .informe-header-meta {
+                    text-align: left !important;
+                    width: 100% !important;
+                    display: flex !important;
+                    flex-wrap: wrap !important;
+                    align-items: center !important;
+                    justify-content: space-between !important;
+                    gap: 4px !important;
+                    padding-top: 6px !important;
+                    border-top: 1px dashed #e2e8f0 !important;
+                }
+                .resumen-negociacion-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                    gap: 6px !important;
+                    padding: 8px !important;
+                    margin-top: 8px !important;
+                    margin-bottom: 8px !important;
+                }
+                .resumen-negociacion-grid > div {
+                    background: #ffffff;
+                    padding: 6px 7px;
+                    border-radius: 8px;
+                    border: 1px solid #e2e8f0;
+                }
+                .tabla-comparativa-wrapper {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    min-width: 0 !important;
+                    overflow-x: auto !important;
+                    -webkit-overflow-scrolling: touch !important;
+                    display: block !important;
+                    box-sizing: border-box !important;
+                    margin-left: 0 !important;
+                    margin-right: 0 !important;
+                    padding-bottom: 8px !important;
+                    border-radius: 8px;
+                }
+                .tabla-comparativa {
+                    min-width: 500px !important;
+                    width: 500px !important;
+                }
+                .tabla-comparativa th, .tabla-comparativa td {
+                    padding: 6px 7px !important;
+                    font-size: 9.5px !important;
+                }
+                .tabla-comparativa th {
+                    font-size: 9px !important;
+                    padding: 7px 7px !important;
+                }
+                .box-alerta-riesgo {
+                    padding: 9px 10px !important;
+                    margin-top: 8px !important;
+                    margin-bottom: 8px !important;
+                }
+                .alerta-riesgo-grid {
+                    grid-template-columns: 1fr !important;
+                    gap: 6px !important;
+                }
+                .alerta-riesgo-grid > div {
+                    background: rgba(255, 255, 255, 0.7);
+                    padding: 5px 8px;
+                    border-radius: 6px;
+                    border: 1px solid #fecdd3;
+                }
+                .desglose-contable-grid {
+                    grid-template-columns: 1fr !important;
+                    gap: 8px !important;
+                }
+                .siguiente-paso-flex {
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    gap: 6px !important;
+                }
+                .siguiente-paso-flex > div:last-child {
+                    text-align: left !important;
+                    padding-left: 0 !important;
+                    padding-top: 6px !important;
+                    border-top: 1px dashed #bae6fd !important;
+                    width: 100% !important;
+                }
+                .informe-footer-top {
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    gap: 3px !important;
+                }
+                .watermark-informe-stamp {
+                    width: 82% !important;
+                    max-width: 280px !important;
+                    padding: 7px 8px !important;
+                    border-width: 1.5px !important;
+                    transform: translate(-50%, -50%) rotate(-8deg) !important;
+                    border-radius: 10px !important;
+                    box-sizing: border-box !important;
+                    box-shadow: 0 8px 25px rgba(225, 29, 72, 0.2) !important;
+                }
+                .stamp-pos-tabla {
+                    top: 36% !important;
+                }
+                .stamp-pos-desglose {
+                    top: 79% !important;
+                }
+                .stamp-head {
+                    font-size: 10px !important;
+                    letter-spacing: 0.2px !important;
+                    line-height: 1.15 !important;
+                }
+                .stamp-sub {
+                    font-size: 8px !important;
+                    margin-top: 2px !important;
+                    line-height: 1.15 !important;
+                }
+                .stamp-foot {
+                    font-size: 6.5px !important;
+                    margin-top: 2px !important;
+                    line-height: 1.15 !important;
+                }
+            }
         </style>
         `;
     }
@@ -361,12 +532,12 @@
         return estilos + `
         <div class="informe-a4-page ${marcaAguaClase}">
             ${esVistaPrevia ? `
-            <div class="no-print" style="background-color: #fff1f2; border: 1.5px solid #fecdd3; color: #be123c; padding: 7px 14px; border-radius: 10px; font-weight: 800; font-size: 11px; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; letter-spacing: 0.5px;">
-                <span style="display: flex; align-items: center; gap: 6px;">
-                    <span class="material-icons" style="font-size: 15px;">lock</span>
-                    <span>Borrador de Vista Previa Protegido • Informe Pro-Forma</span>
+            <div class="no-print banner-borrador-alerta">
+                <span style="display: flex; align-items: center; gap: 5px;" class="leading-tight">
+                    <span class="material-icons shrink-0" style="font-size: 14px;">lock</span>
+                    <span>Borrador Protegido • Pro-Forma</span>
                 </span>
-                <span style="background-color: #fecdd3; color: #9f1239; padding: 2px 8px; border-radius: 6px; font-size: 9.5px; font-family: monospace;">No Válido Para Presentar</span>
+                <span style="background-color: #fecdd3; color: #9f1239; padding: 2px 7px; border-radius: 5px; font-size: 8.5px; font-family: monospace;" class="shrink-0">No Válido Para Presentar</span>
             </div>
             <!-- Estampa 1 sobre la tabla comparativa -->
             <div class="watermark-informe-stamp stamp-pos-tabla">
@@ -384,9 +555,9 @@
             
             <!-- ENCABEZADO INFORME -->
             <div class="informe-header">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4 informe-header-top">
                     <div class="flex items-center gap-2.5">
-                        <div class="logo-box">
+                        <div class="logo-box shrink-0">
                             <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M30 84h40M38 79h24"></path>
                                 <path d="M50 22v57"></path>
@@ -400,47 +571,47 @@
                                 <path d="M58 43.5v20h10"></path>
                             </svg>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <span class="font-extrabold text-lg tracking-tight text-slate-900 block leading-tight">Cálculo<span class="text-sky-600">Laboral</span></span>
-                            <span class="text-[9px] text-slate-500 uppercase tracking-widest font-mono">Plataforma de Inteligencia Laboral para Pymes</span>
+                            <span class="text-[9px] text-slate-500 uppercase tracking-widest font-mono block truncate">Inteligencia Laboral Pymes</span>
                         </div>
                     </div>
-                    <div class="text-right">
+                    <div class="text-right informe-header-meta">
                         <span class="badge-dt-conforme">Fórmulas Conforme a DT 2026</span>
                         <div class="text-[10.5px] text-slate-600 font-mono mt-0.5">Folio: <strong class="${esVistaPrevia ? 'text-rose-600' : 'text-slate-900'}">${esVistaPrevia ? 'PREVIEW-NO-VALIDO' : data.folio}</strong></div>
                         <div class="text-[10px] text-slate-400 font-mono">Emisión: ${data.fecha}</div>
                     </div>
                 </div>
 
-                <div class="text-center my-3.5">
-                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-sky-800 bg-sky-100/70 px-3 py-1 rounded-full border border-sky-200">
+                <div class="text-center my-2.5 sm:my-3.5">
+                    <span class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-sky-800 bg-sky-100/70 px-2.5 py-1 rounded-full border border-sky-200 inline-block max-w-full">
                         Informe Ejecutivo de Decisión Estratégica & Presupuesto
                     </span>
-                    <h1 class="text-2xl font-black text-slate-900 tracking-tight mt-2">
-                        Informe Ejecutivo de Presupuesto Laboral & Matriz 3 Vías
+                    <h1 class="text-lg sm:text-2xl font-black text-slate-900 tracking-tight mt-1.5 sm:mt-2 leading-tight">
+                        Informe Presupuesto Laboral & Matriz 3 Vías
                     </h1>
-                    <p class="text-xs text-slate-600 max-w-xl mx-auto mt-1 leading-relaxed">
+                    <p class="text-[11px] sm:text-xs text-slate-600 max-w-xl mx-auto mt-1 leading-relaxed">
                         Evaluación integral de costos reales, aportes patronales obligatorios, pasivos laborales ocultos y contingencias inspectivas DT para: <strong class="text-slate-900">${data.cargo}</strong>.
                     </p>
                 </div>
             </div>
 
             <!-- FICHA RESUMEN DE NEGOCIACIÓN -->
-            <div class="grid grid-cols-4 gap-3 my-4 p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 my-4 p-3 sm:p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl text-xs resumen-negociacion-grid">
                 <div>
-                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Sueldo Acordado Líquido</span>
+                    <span class="block text-[9px] sm:text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Sueldo Acordado Líquido</span>
                     <span class="font-mono font-extrabold text-slate-900 text-sm block mt-0.5">${formatCLP(ind.sueldoLiquido)}</span>
                 </div>
                 <div>
-                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Sueldo Base Mensual</span>
+                    <span class="block text-[9px] sm:text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Sueldo Base Mensual</span>
                     <span class="font-mono font-bold text-slate-800 text-sm block mt-0.5">${formatCLP(ind.sueldoBase)}</span>
                 </div>
                 <div>
-                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Colación + Movilización</span>
+                    <span class="block text-[9px] sm:text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Colación + Movilización</span>
                     <span class="font-mono font-semibold text-slate-700 text-sm block mt-0.5">${formatCLP(ind.asignacionesNoImponibles)}</span>
                 </div>
                 <div>
-                    <span class="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Tasa Mutual Estimada</span>
+                    <span class="block text-[9px] sm:text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Tasa Mutual Estimada</span>
                     <span class="font-mono font-semibold text-slate-700 text-sm block mt-0.5">${(ind.costoMutual / (ind.totalImponible || 1) * 100).toFixed(2)}%</span>
                 </div>
             </div>
@@ -452,69 +623,79 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
                         Comparativa Estratégica de Contratación (3 Vías Posibles)
                     </h2>
-                    <span class="text-[10px] text-slate-500 font-medium">Análisis financiero y laboral referencial</span>
+                    <span class="text-[10px] text-slate-500 font-medium hidden sm:inline">Análisis financiero y laboral referencial</span>
                 </div>
 
-                <table class="tabla-comparativa">
-                    <thead>
-                        <tr>
-                            <th class="w-1/4">Criterio de Decisión</th>
-                            <th class="w-1/4 col-indef">1. Contrato Indefinido (Estándar)</th>
-                            <th class="w-1/4 col-plazo">2. Contrato a Plazo Fijo</th>
-                            <th class="w-1/4 col-hon">3. Boleta de Honorarios</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Líquido que recibe el colaborador</td>
-                            <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.sueldoLiquido)}</td>
-                            <td class="font-mono font-bold text-slate-900">${formatCLP(plz.sueldoLiquido)}</td>
-                            <td class="font-mono font-bold text-slate-900">${formatCLP(hon.montoLiquido)}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Total Imponible Bruto / Facturado</td>
-                            <td class="font-mono text-slate-800 bg-sky-50/50">${formatCLP(ind.totalImponible)}</td>
-                            <td class="font-mono text-slate-800">${formatCLP(plz.totalImponible)}</td>
-                            <td class="font-mono text-slate-800">${formatCLP(hon.montoBruto)} <span class="text-[9.5px] text-slate-500">(Ret. 14,5%)</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Aportes Patronales (SIS, AFC, Mutual)</td>
-                            <td class="font-mono font-semibold text-emerald-700 bg-sky-50/50">+${formatCLP(ind.totalAportesPatronales)}</td>
-                            <td class="font-mono font-semibold text-emerald-700">+${formatCLP(plz.totalAportesPatronales)} <span class="text-[9px] text-slate-400 block">(AFC 3,0%)</span></td>
-                            <td class="font-mono text-slate-400">$0 aparente</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Reserva Pasivos (Vacaciones + Finiquito)</td>
-                            <td class="font-mono font-semibold text-amber-700 bg-sky-50/50">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-600 block">(Vac. + IAS 8,33%)</span></td>
-                            <td class="font-mono font-semibold text-amber-700">+${formatCLP(plz.totalProvisiones)} <span class="text-[9px] text-slate-400 block">(Solo Vacaciones)</span></td>
-                            <td class="font-mono text-slate-400">$0 aparente</td>
-                        </tr>
-                        <tr class="fila-destacada">
-                            <td class="font-black text-slate-900 text-xs">COSTO REAL MENSUAL EMPRESA</td>
-                            <td class="font-mono font-black text-sky-800 text-base">${formatCLP(ind.costoEmpresaTotal)}</td>
-                            <td class="font-mono font-black text-slate-900 text-sm">${formatCLP(plz.costoEmpresaTotal)}</td>
-                            <td class="font-mono font-bold text-slate-600 text-sm">${formatCLP(hon.costoEmpresaMensual)}*</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Presupuesto Anual Consolidado (12m)</td>
-                            <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.costoEmpresaAnual)}</td>
-                            <td class="font-mono font-bold text-slate-900">${formatCLP(plz.costoEmpresaAnual)}</td>
-                            <td class="font-mono text-slate-700">${formatCLP(hon.costoEmpresaAnual)}</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Factor Multiplicador sobre Líquido</td>
-                            <td class="font-mono font-bold text-sky-700 bg-sky-50/50">${ind.factorMultiplicador.toFixed(2)}x</td>
-                            <td class="font-mono font-bold text-slate-700">${plz.factorMultiplicador.toFixed(2)}x</td>
-                            <td class="font-mono text-slate-600">${hon.factorMultiplicador.toFixed(2)}x</td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold text-slate-700">Semáforo de Riesgo Inspectivo DT</td>
-                            <td class="bg-sky-50/50"><span class="tag-riesgo tag-bajo">BAJO (Blindado)</span></td>
-                            <td><span class="tag-riesgo tag-medio">MEDIO (Máx 2 renovaciones)</span></td>
-                            <td><span class="tag-riesgo tag-alto">CRÍTICO (Riesgo Demanda)</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="sm:hidden flex items-center justify-between px-2.5 py-1 mb-2 bg-sky-50/90 border border-sky-200/80 rounded-lg text-[9.5px] text-sky-800 font-medium">
+                    <span class="flex items-center gap-1">
+                        <span class="material-icons text-xs text-sky-600">swipe</span>
+                        <span>Desliza para comparar las 3 vías</span>
+                    </span>
+                    <span class="font-bold text-sky-600">3 columnas →</span>
+                </div>
+
+                <div class="tabla-comparativa-wrapper">
+                    <table class="tabla-comparativa">
+                        <thead>
+                            <tr>
+                                <th style="width: 28%;">Criterio de Decisión</th>
+                                <th class="col-indef" style="width: 24%;">1. Contrato Indefinido (Estándar)</th>
+                                <th class="col-plazo" style="width: 24%;">2. Contrato a Plazo Fijo</th>
+                                <th class="col-hon" style="width: 24%;">3. Boleta de Honorarios</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold text-slate-700">Líquido que recibe el colaborador</td>
+                                <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.sueldoLiquido)}</td>
+                                <td class="font-mono font-bold text-slate-900">${formatCLP(plz.sueldoLiquido)}</td>
+                                <td class="font-mono font-bold text-slate-900">${formatCLP(hon.montoLiquido)}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold text-slate-700">Total Imponible Bruto / Facturado</td>
+                                <td class="font-mono text-slate-800 bg-sky-50/50">${formatCLP(ind.totalImponible)}</td>
+                                <td class="font-mono text-slate-800">${formatCLP(plz.totalImponible)}</td>
+                                <td class="font-mono text-slate-800">${formatCLP(hon.montoBruto)} <span class="text-[9.5px] text-slate-500">(Ret. 14,5%)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold text-slate-700">Aportes Patronales (SIS, AFC, Mutual)</td>
+                                <td class="font-mono font-semibold text-emerald-700 bg-sky-50/50">+${formatCLP(ind.totalAportesPatronales)}</td>
+                                <td class="font-mono font-semibold text-emerald-700">+${formatCLP(plz.totalAportesPatronales)} <span class="text-[9px] text-slate-400 block">(AFC 3,0%)</span></td>
+                                <td class="font-mono text-slate-400">$0 aparente</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold text-slate-700">Reserva Pasivos (Vacaciones + Finiquito)</td>
+                                <td class="font-mono font-semibold text-amber-700 bg-sky-50/50">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-600 block">(Vac. + IAS 8,33%)</span></td>
+                                <td class="font-mono font-semibold text-amber-700">+${formatCLP(plz.totalProvisiones)} <span class="text-[9px] text-slate-400 block">(Solo Vacaciones)</span></td>
+                                <td class="font-mono text-slate-400">$0 aparente</td>
+                            </tr>
+                            <tr class="fila-destacada">
+                                <td class="font-black text-slate-900 text-xs">COSTO REAL MENSUAL EMPRESA</td>
+                                <td class="font-mono font-black text-sky-800 text-base">${formatCLP(ind.costoEmpresaTotal)}</td>
+                                <td class="font-mono font-black text-slate-900 text-sm">${formatCLP(plz.costoEmpresaTotal)}</td>
+                                <td class="font-mono font-bold text-slate-600 text-sm">${formatCLP(hon.costoEmpresaMensual)}*</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold text-slate-700">Presupuesto Anual Consolidado (12m)</td>
+                                <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.costoEmpresaAnual)}</td>
+                                <td class="font-mono font-bold text-slate-900">${formatCLP(plz.costoEmpresaAnual)}</td>
+                                <td class="font-mono text-slate-700">${formatCLP(hon.costoEmpresaAnual)}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold text-slate-700">Factor Multiplicador sobre Líquido</td>
+                                <td class="font-mono font-bold text-sky-700 bg-sky-50/50">${ind.factorMultiplicador.toFixed(2)}x</td>
+                                <td class="font-mono font-bold text-slate-700">${plz.factorMultiplicador.toFixed(2)}x</td>
+                                <td class="font-mono text-slate-600">${hon.factorMultiplicador.toFixed(2)}x</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold text-slate-700">Semáforo de Riesgo Inspectivo DT</td>
+                                <td class="bg-sky-50/50"><span class="tag-riesgo tag-bajo">BAJO (Estándar Legal)</span></td>
+                                <td><span class="tag-riesgo tag-medio">MEDIO (Máx 2 renovaciones)</span></td>
+                                <td><span class="tag-riesgo tag-alto">CRÍTICO (Riesgo Demanda)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- MATRIZ DE RIESGO: BOLETA DE HONORARIOS VS REALIDAD DT -->
@@ -528,7 +709,7 @@
                         <p class="text-[11px] text-rose-900 leading-relaxed mt-1">
                             Si contratas a honorarios pero la persona <strong>cumple horario, tiene jefatura directa, correo corporativo o exclusividad</strong>, la Dirección del Trabajo y los Tribunales calificarán la relación como un <strong>contrato de trabajo encubierto</strong>.
                         </p>
-                        <div class="grid grid-cols-3 gap-2.5 mt-2.5 pt-2.5 border-t border-rose-200/90 text-[10px] text-rose-950 leading-snug">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 mt-2.5 pt-2.5 border-t border-rose-200/90 text-[10px] text-rose-950 leading-snug alerta-riesgo-grid">
                             <div><strong>1. Pago Retroactivo:</strong> Todas las imposiciones adeudadas (AFP, Salud, AFC, Mutual) con reajustes e intereses acumulados.</div>
                             <div><strong>2. Ley Bustos (Art. 162):</strong> La empresa debe pagar el sueldo íntegro de cada mes transcurrido durante el juicio laboral.</div>
                             <div><strong>3. Multas DT:</strong> De 10 a 60 UTM ($696.000 a $4.176.000) por trabajador no escriturado según tamaño de empresa.</div>
@@ -542,7 +723,7 @@
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-900 mb-2">
                     Desglose Contable Itemizado (Contrato Indefinido - Moneda CLP)
                 </h3>
-                <div class="grid grid-cols-2 gap-3 text-[11px]">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-[11px] desglose-contable-grid">
                     <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
                         <span class="font-bold text-slate-900 block text-[10px] uppercase tracking-wider mb-1">Aportes Patronales Obligatorios (Costo Directo)</span>
                         <div class="flex justify-between text-slate-700"><span>Seguro Invalidez y Sobrevivencia (SIS 1,49%):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoSis)}</span></div>
@@ -560,8 +741,8 @@
             </div>
 
             <!-- HOJA DE RUTA Y SIGUIENTE PASO -->
-            <div class="p-3.5 bg-sky-50 border border-sky-200 rounded-xl my-4 text-xs">
-                <div class="flex items-center justify-between">
+            <div class="p-3 sm:p-3.5 bg-sky-50 border border-sky-200 rounded-xl my-4 text-xs">
+                <div class="flex items-center justify-between siguiente-paso-flex">
                     <div>
                         <span class="font-extrabold text-sky-950 block text-xs">Siguiente Paso Obligatorio: Escrituración Formal del Contrato</span>
                         <p class="text-[11px] text-sky-900 mt-0.5 max-w-lg">
@@ -577,12 +758,12 @@
 
             <!-- PIE DE PÁGINA Y DISCLAIMER -->
             <div class="informe-footer mt-5 pt-3 border-t border-slate-200 text-[9.5px] text-slate-500 leading-relaxed">
-                <div class="flex justify-between items-center mb-1 font-medium text-slate-600">
+                <div class="flex justify-between items-center mb-1 font-medium text-slate-600 informe-footer-top">
                     <span>Cálculo Laboral Chile • calculolaboral.cl • Inteligencia Laboral para Empleadores y Pymes</span>
                     <span>Página 1 de 1 • Documento Confidencial</span>
                 </div>
                 <p>
-                    <strong>Aviso Legal y Certificación Referencial:</strong> Informe pro-forma emitido conforme al Código del Trabajo de Chile, Ley 19.728 (AFC), Ley 16.744 (Accidentes y Enfermedades Profesionales), Ley 21.561 (40 Horas / 42h en 2026) y normativas de la Superintendencia de Seguridad Social (SUSESO) y Previred vigentes al año 2026. Esta estimación es de carácter referencial y presupuestario. Se recomienda validar la tasa de riesgo específica con su respectivo organismo administrador mutual (ACHS, Mutual CChC, IST o ISL).
+                    <strong>Aviso Legal y Estimación Referencial:</strong> Informe pro-forma emitido conforme al Código del Trabajo de Chile, Ley 19.728 (AFC), Ley 16.744 (Accidentes y Enfermedades Profesionales), Ley 21.561 (40 Horas / 42h en 2026) y normativas de la Superintendencia de Seguridad Social (SUSESO) y Previred vigentes al año 2026. Esta estimación es de carácter referencial y presupuestario. Se recomienda validar la tasa de riesgo específica con su respectivo organismo administrador mutual (ACHS, Mutual CChC, IST o ISL).
                 </p>
             </div>
         </div>
@@ -606,65 +787,67 @@
         // 2. Contenedor exterior FIXED INSET-0
         var modal = document.createElement('div');
         modal.id = 'modal-preview-informe-container';
-        modal.className = 'fixed inset-0 z-[100000] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 no-print';
+        modal.className = 'fixed inset-0 z-[100000] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-1 sm:p-4 no-print';
         modal.style.boxSizing = 'border-box';
         modal.innerHTML = `
-            <!-- Botón flotante de cierre universal siempre fijo en pantalla -->
-            <button type="button" id="btn-floating-close" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-[100002] w-11 h-11 rounded-full bg-slate-900/95 hover:bg-rose-600 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer border-2 border-white/30 active:scale-95" title="Cerrar vista previa (Esc)">
+            <!-- Botón flotante de cierre universal siempre fijo en pantalla (solo desktop/tablet para no chocar en móvil) -->
+            <button type="button" id="btn-floating-close" class="hidden sm:flex fixed top-3 right-3 sm:top-5 sm:right-5 z-[100002] w-11 h-11 rounded-full bg-slate-900/95 hover:bg-rose-600 text-white items-center justify-center shadow-2xl transition-all cursor-pointer border-2 border-white/30 active:scale-95" title="Cerrar vista previa (Esc)">
                 <span class="material-icons text-2xl">close</span>
             </button>
 
-            <!-- Tarjeta del documento con altura estricta 90vh y estructura Flex Column -->
-            <div id="modal-card-inner" class="bg-slate-100 rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-300 relative flex flex-col overflow-hidden" style="display: flex; flex-direction: column; height: 90vh; max-height: 90vh;">
+            <!-- Tarjeta del documento con altura estricta y estructura Flex Column -->
+            <div id="modal-card-inner" class="bg-slate-100 rounded-xl sm:rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-300 relative flex flex-col overflow-hidden min-w-0" style="display: flex; flex-direction: column; height: 96vh; max-height: 96vh; min-width: 0; width: 100%; box-sizing: border-box;">
                 
                 <!-- Barra superior fija (Header siempre visible, no encogible) -->
-                <div class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-3 shadow-xs flex-shrink-0 z-30" style="flex-shrink: 0;">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0">
-                            <span class="material-icons text-lg">lock</span>
+                <div class="bg-white border-b border-slate-200 px-2.5 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-3 shadow-xs flex-shrink-0 z-30" style="flex-shrink: 0; min-width: 0; width: 100%; box-sizing: border-box;">
+                    <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                            <span class="material-icons text-base sm:text-lg">lock</span>
                         </span>
                         <div class="min-w-0">
-                            <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
-                                <span>Borrador Protegido</span>
-                                <span class="bg-rose-100 text-rose-700 text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase">Pro-Forma</span>
+                            <div class="text-[11px] sm:text-xs font-bold text-slate-900 flex items-center gap-1 sm:gap-1.5">
+                                <span class="truncate">Borrador</span>
+                                <span class="bg-rose-100 text-rose-700 text-[8px] sm:text-[9px] font-mono px-1 py-0.2 rounded font-bold uppercase shrink-0">Pro-Forma</span>
                             </div>
                             <div class="text-[10px] sm:text-[11px] text-slate-500 truncate hidden sm:block">
                                 Vista previa con marcas de agua. El informe completo se descarga limpio en PDF sin sellos.
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <a href="${FLOW_CHECKOUT_URL}" class="py-2 px-3 sm:px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1.5 cursor-pointer no-underline !text-white" style="color: #ffffff !important;">
+                    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                        <a href="${FLOW_CHECKOUT_URL}" class="py-1.5 sm:py-2 px-2 sm:px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-[11px] sm:text-xs rounded-lg sm:rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1 sm:gap-1.5 cursor-pointer no-underline !text-white shrink-0" style="color: #ffffff !important;">
                             <span class="material-icons text-xs">download</span>
-                            <span>Descargar Informe en PDF ($4.990)</span>
+                            <span class="hidden sm:inline">Descargar Informe en PDF ($4.990)</span>
+                            <span class="sm:hidden">Descargar ($4.990)</span>
                         </a>
-                        <button type="button" id="btn-cerrar-preview-modal" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-700 flex items-center justify-center cursor-pointer transition-colors" title="Cerrar vista previa">
-                            <span class="material-icons text-sm">close</span>
+                        <button type="button" id="btn-cerrar-preview-modal" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-700 flex items-center justify-center cursor-pointer transition-colors shrink-0" title="Cerrar vista previa">
+                            <span class="material-icons text-xs sm:text-sm">close</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Contenedor con Scroll garantizado (flex-1 + min-h-0 + overflow-y-auto) -->
-                <div id="scroll-container-preview" class="flex-1 min-h-0 overflow-y-auto p-3 sm:p-6 bg-slate-200/70 flex justify-center" style="flex: 1 1 0%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;" oncontextmenu="return false;">
-                    <div class="w-full max-w-[820px] pb-6" style="user-select: none !important; -webkit-user-select: none !important;">
+                <!-- Contenedor con Scroll garantizado (flex-1 + min-h-0 + overflow-y-auto + display: block) -->
+                <div id="scroll-container-preview" class="flex-1 min-h-0 min-w-0 w-full overflow-y-auto overflow-x-hidden p-1.5 sm:p-6 bg-slate-200/70 block" style="flex: 1 1 0%; min-height: 0; min-width: 0; width: 100%; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; box-sizing: border-box;" oncontextmenu="return false;">
+                    <div class="w-full max-w-[820px] mx-auto min-w-0 pb-6" style="min-width: 0; max-width: 100%; box-sizing: border-box; user-select: none !important; -webkit-user-select: none !important;">
                         ${contenidoHTML}
                     </div>
                 </div>
 
                 <!-- Barra inferior fija (Footer siempre visible, no encogible) -->
-                <div class="bg-white border-t border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 shadow-md flex-shrink-0 z-30" style="flex-shrink: 0;">
+                <div class="bg-white border-t border-slate-200 px-2.5 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-1.5 sm:gap-3 shadow-md flex-shrink-0 z-30" style="flex-shrink: 0; min-width: 0; width: 100%; box-sizing: border-box;">
                     <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">
-                        Borrador no válido para presentar • Desplaza con el ratón o flechas para ver todo el informe ↓
+                        Borrador no válido para presentar • Desplaza para ver todo el informe ↓
                     </span>
-                    <span class="text-[11px] text-slate-500 font-medium sm:hidden">
-                        Borrador no válido para presentar
+                    <span class="text-[10px] text-slate-500 font-medium sm:hidden truncate">
+                        Borrador referencial
                     </span>
-                    <div class="flex items-center gap-2 ml-auto">
-                        <button type="button" id="btn-cerrar-preview-bottom" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-1.5 sm:gap-2 ml-auto shrink-0">
+                        <button type="button" id="btn-cerrar-preview-bottom" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] sm:text-xs rounded-lg cursor-pointer shrink-0">
                             Cerrar
                         </button>
-                        <a href="${FLOW_CHECKOUT_URL}" class="px-3.5 py-1.5 bg-sky-600 hover:bg-sky-700 font-bold text-xs rounded-lg shadow-sm text-white flex items-center gap-1 cursor-pointer no-underline !text-white" style="color:#fff!important;">
-                            <span>Comprar Informe ($4.990)</span>
+                        <a href="${FLOW_CHECKOUT_URL}" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-sky-600 hover:bg-sky-700 font-bold text-[11px] sm:text-xs rounded-lg shadow-sm text-white flex items-center gap-1 cursor-pointer no-underline !text-white shrink-0" style="color:#fff!important;">
+                            <span class="hidden sm:inline">Comprar Informe ($4.990)</span>
+                            <span class="sm:hidden">Comprar ($4.990)</span>
                         </a>
                     </div>
                 </div>
