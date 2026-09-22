@@ -123,7 +123,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
   4. **Columna Para Empresas:** Portal Empleadores, Kit Ley 21.719 Datos ($29.990), Kit Blindaje Laboral ($19.990), Generador Finiquito ($12.990), Anexo 40 Horas, Sobre Nosotros, Contacto Directo.
 * **Barra Inferior Horizontal:** `border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left`:
   * Leyenda legal BCN & Dirección del Trabajo.
-  * Enlaces horizontales utilitarios en línea: `Términos` · `Privacidad` · `Disclaimer` · Sello de verificación `DT Chile Conforme`.
+  * Enlaces horizontales utilitarios en línea: `Términos` · `Privacidad` · `Disclaimer` · Sello técnico `Fórmulas Conforme a DT`.
 
 ```html
 <footer class="bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print">
@@ -208,7 +208,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
             <span class="text-slate-300">·</span>
             <span class="inline-flex items-center gap-1 text-slate-600 font-medium">
                 <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
-                DT Chile Conforme
+                Fórmulas Conforme a DT
             </span>
         </div>
     </div>

@@ -1176,7 +1176,7 @@ FOOTER_HTML = """
             <div class="flex items-center gap-4">
                 <span class="text-xs text-slate-500 flex items-center gap-1">
                     <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
-                    DT Chile Conforme
+                    Fórmulas Conforme a DT
                 </span>
             </div>
         </div>

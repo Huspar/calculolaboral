@@ -406,7 +406,7 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <span class="badge-dt-conforme">DT Chile Conforme 2026</span>
+                        <span class="badge-dt-conforme">Fórmulas Conforme a DT 2026</span>
                         <div class="text-[10.5px] text-slate-600 font-mono mt-0.5">Folio: <strong class="${esVistaPrevia ? 'text-rose-600' : 'text-slate-900'}">${esVistaPrevia ? 'PREVIEW-NO-VALIDO' : data.folio}</strong></div>
                         <div class="text-[10px] text-slate-400 font-mono">Emisión: ${data.fecha}</div>
                     </div>
