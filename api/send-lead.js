@@ -35,6 +35,9 @@ const FROM_NAME = 'Cálculo Laboral';
 const NOTIFY_JHON = 'jhonfcj@gmail.com';
 const GUIDE_URL = 'https://calculolaboral.cl/Articulos/lead-magnet-finiquito.pdf';
 const DESPIDO_PACK_URL = 'https://calculolaboral.cl/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip';
+const DESPIDO_DOCX_ART161_URL = 'https://calculolaboral.cl/descargas/01_Modelo_Carta_Despido_Art161_Necesidades_Empresa_2026.docx';
+const DESPIDO_DOCX_ART160_URL = 'https://calculolaboral.cl/descargas/02_Modelo_Carta_Despido_Art160_N3_Inasistencia_Injustificada_2026.docx';
+const DESPIDO_DOCX_CHECKLIST_URL = 'https://calculolaboral.cl/descargas/03_Checklist_Legal_Envio_Carta_Despido_y_Plazos_DT_2026.docx';
 
 function getClientIp(req) {
     const xff = req.headers['x-forwarded-for'];
@@ -303,8 +306,27 @@ module.exports = async (req, res) => {
                     <li><strong>Checklist Legal:</strong> Plazos fatales de envío a Correos de Chile y comunicación a la Dirección del Trabajo (DT).</li>
                 </ul>
                 <p style="margin: 20px 0; text-align: center;">
-                    <a href="${DESPIDO_PACK_URL}" style="background: #0ea5e9; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Descargar Pack de Modelos Word (.zip)</a>
+                    <a href="${DESPIDO_PACK_URL}" style="background: #0284c7; color: #ffffff !important; padding: 13px 26px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 14px;">Descargar Pack Completo (.zip)</a>
                 </p>
+                <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin: 18px 0;">
+                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: bold; color: #0f172a;">
+                        📱 ¿En tu celular o prefieres descargar los archivos Word directamente?
+                    </p>
+                    <p style="margin: 0 0 10px; font-size: 12px; color: #475569;">
+                        Haz clic en cualquiera de los enlaces directos para abrir o guardar cada documento Word (.docx) sin necesidad de descomprimir:
+                    </p>
+                    <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.7;">
+                        <li style="margin-bottom: 4px;">
+                            <a href="${DESPIDO_DOCX_ART161_URL}" style="color: #0284c7; text-decoration: underline; font-weight: 600;">Descargar Modelo 1: Art. 161 Necesidades de la Empresa (.docx)</a>
+                        </li>
+                        <li style="margin-bottom: 4px;">
+                            <a href="${DESPIDO_DOCX_ART160_URL}" style="color: #0284c7; text-decoration: underline; font-weight: 600;">Descargar Modelo 2: Art. 160 Nº 3 Inasistencia Injustificada (.docx)</a>
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <a href="${DESPIDO_DOCX_CHECKLIST_URL}" style="color: #0284c7; text-decoration: underline; font-weight: 600;">Descargar Checklist: Plazos y Trámites DT (.docx)</a>
+                        </li>
+                    </ul>
+                </div>
                 <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; margin: 18px 0; font-size: 12.5px; color: #92400e;">
                     <strong>⚠️ Plazo Legal Obligatorio (Art. 177):</strong><br>
                     Recuerda que una vez entregada o despachada la carta, tienes un plazo legal máximo de <strong>10 días hábiles</strong> para poner a disposición del trabajador su finiquito notarial ratificado.

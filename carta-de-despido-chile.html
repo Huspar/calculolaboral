@@ -1899,9 +1899,57 @@ R.U.T.: [TU RUT]
                 alert('Por favor completa tu nombre y correo.');
                 return;
             }
+
+            function escapeHtmlText(str) {
+                var d = document.createElement('div');
+                d.textContent = str || '';
+                return d.innerHTML;
+            }
             
             btn.disabled = true;
             btn.innerHTML = '<span class="material-icons text-sm animate-spin" style="animation: spin 1s linear infinite;">refresh</span> Procesando...';
+
+            function renderDownloadLinks(isError) {
+                var headerIcon = isError ? 'info' : 'check_circle';
+                var headerIconColor = isError ? 'text-amber-600' : 'text-emerald-600';
+                var titleText = isError 
+                    ? '¡Tu descarga está lista!' 
+                    : '¡Pack enviado con éxito a ' + escapeHtmlText(correo) + '!';
+                var subtitle = isError
+                    ? 'Hubo una interrupción de conexión con el correo, pero puedes acceder y descargar tus archivos de inmediato:'
+                    : 'Tu descarga ha comenzado automáticamente. Si tu navegador o celular no la inicia, usa los botones directos:';
+
+                return '<div class="space-y-3">' +
+                    '<div class="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">' +
+                        '<span class="material-icons ' + headerIconColor + ' text-base sm:text-lg">' + headerIcon + '</span>' +
+                        '<span>' + titleText + '</span>' +
+                    '</div>' +
+                    '<p class="text-[11.5px] sm:text-xs text-slate-600 leading-relaxed">' + subtitle + '</p>' +
+                    '<div class="pt-0.5">' +
+                        '<a href="/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip" download="Pack_Modelos_Cartas_Despido_Chile_2026.zip" class="inline-flex items-center gap-1.5 px-4 py-2 bg-sky-600 hover:bg-sky-700 !text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer active:scale-95" style="background-color: #0284c7 !important; color: #ffffff !important;">' +
+                            '<span class="material-icons text-sm" style="color: #ffffff;">download</span>' +
+                            '<span style="color: #ffffff;">Descargar Pack Completo (.ZIP)</span>' +
+                        '</a>' +
+                    '</div>' +
+                    '<div class="pt-2.5 border-t border-slate-200/90 text-slate-700">' +
+                        '<span class="text-[11px] font-bold text-slate-900 block mb-1.5">📱 Descarga directa por documento (ideal para celulares):</span>' +
+                        '<div class="flex flex-col gap-1.5 text-[11px] sm:text-xs">' +
+                            '<a href="/descargas/01_Modelo_Carta_Despido_Art161_Necesidades_Empresa_2026.docx" download class="inline-flex items-center gap-1.5 text-sky-700 hover:text-sky-900 font-semibold underline">' +
+                                '<span class="material-icons text-[14px] text-sky-600">description</span>' +
+                                '<span>Modelo 1: Art. 161 Necesidades de la Empresa (.docx)</span>' +
+                            '</a>' +
+                            '<a href="/descargas/02_Modelo_Carta_Despido_Art160_N3_Inasistencia_Injustificada_2026.docx" download class="inline-flex items-center gap-1.5 text-sky-700 hover:text-sky-900 font-semibold underline">' +
+                                '<span class="material-icons text-[14px] text-sky-600">description</span>' +
+                                '<span>Modelo 2: Art. 160 Nº 3 Inasistencia Injustificada (.docx)</span>' +
+                            '</a>' +
+                            '<a href="/descargas/03_Checklist_Legal_Envio_Carta_Despido_y_Plazos_DT_2026.docx" download class="inline-flex items-center gap-1.5 text-sky-700 hover:text-sky-900 font-semibold underline">' +
+                                '<span class="material-icons text-[14px] text-sky-600">checklist</span>' +
+                                '<span>Checklist: Plazos Fatales y Notificación DT (.docx)</span>' +
+                            '</a>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }
             
             fetch('/api/send-lead', {
                 method: 'POST',
@@ -1914,24 +1962,33 @@ R.U.T.: [TU RUT]
                     detalle: empresa ? ('Empresa / Pyme: ' + empresa) : 'Descarga Pack Word Cartas de Despido'
                 })
             }).then(function(res) {
+                if (!res.ok) {
+                    throw new Error('HTTP ' + res.status);
+                }
                 return res.json();
             }).then(function(data) {
                 btn.disabled = false;
                 btn.innerHTML = btnOriginal;
                 
                 if (feedback) {
-                    feedback.className = 'lead-despido-feedback mt-2.5 p-3.5 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-emerald-200 text-xs space-y-1.5';
-                    feedback.innerHTML = '<div class="flex items-center gap-1.5 font-bold text-white"><span class="material-icons text-emerald-400 text-base">check_circle</span> ¡Pack enviado con éxito a ' + correo + '!</div><p class="text-slate-300">Tu descarga ha comenzado. Si no inicia automáticamente, <a href="/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip" class="text-sky-400 underline font-bold" download>haz clic aquí para descargar el archivo ZIP</a>.</p>';
+                    feedback.className = 'lead-despido-feedback mt-3 p-3.5 sm:p-4 bg-emerald-50/90 border border-emerald-300 rounded-2xl text-xs';
+                    feedback.innerHTML = renderDownloadLinks(false);
                     feedback.classList.remove('hidden');
                 }
                 
-                // Direct file download trigger
-                var a = document.createElement('a');
-                a.href = '/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip';
-                a.download = 'Pack_Modelos_Cartas_Despido_Chile_2026.zip';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                // Direct file download trigger (wrapped in try-catch for mobile browsers)
+                try {
+                    var a = document.createElement('a');
+                    a.href = '/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip';
+                    a.download = 'Pack_Modelos_Cartas_Despido_Chile_2026.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function() {
+                        if (a && a.parentNode) a.parentNode.removeChild(a);
+                    }, 500);
+                } catch (e) {
+                    console.log('Auto-download blocked, manual link displayed:', e);
+                }
                 
                 if (typeof gtag !== 'undefined') {
                     gtag('event', 'generate_lead', {
@@ -1944,8 +2001,8 @@ R.U.T.: [TU RUT]
                 btn.disabled = false;
                 btn.innerHTML = btnOriginal;
                 if (feedback) {
-                    feedback.className = 'lead-despido-feedback mt-2.5 p-3 bg-red-950/80 border border-red-500/40 rounded-xl text-red-200 text-xs';
-                    feedback.innerHTML = 'Hubo un error de conexión, pero puedes <a href="/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip" class="text-white underline font-bold" download>descargar el pack directamente aquí</a>.';
+                    feedback.className = 'lead-despido-feedback mt-3 p-3.5 sm:p-4 bg-amber-50/90 border border-amber-300 rounded-2xl text-xs';
+                    feedback.innerHTML = renderDownloadLinks(true);
                     feedback.classList.remove('hidden');
                 }
             });

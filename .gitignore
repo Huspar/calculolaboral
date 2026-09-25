@@ -21,6 +21,7 @@ temp_*
 Kit_Blindaje_Laboral_Pyme_2026/
 *.zip
 !api/assets/*.zip
+!descargas/*.zip
 assets/downloads/
 ~$*
 
