@@ -99,76 +99,76 @@
     
     <!-- Structured Data (SoftwareApplication, BreadcrumbList & FAQ) -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "SoftwareApplication",
-                "name": "Calculadora de Costo Empresa Chile 2026",
-                "operatingSystem": "All",
-                "applicationCategory": "BusinessApplication",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "CLP"
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "name": "Calculadora de Costo Empresa Chile 2026",
+            "operatingSystem": "All",
+            "applicationCategory": "BusinessApplication",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "CLP"
+            },
+            "description": "Herramienta gratuita para calcular el costo real de contratar a un trabajador en Chile, incluyendo aportes patronales SIS, AFC, Mutual y provisiones legales."
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Inicio",
+                    "item": "https://calculolaboral.cl/"
                 },
-                "description": "Herramienta gratuita para calcular el costo real de contratar a un trabajador en Chile, incluyendo aportes patronales SIS, AFC, Mutual y provisiones legales."
-            },
-            {
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                    {
-                        "@type": "ListItem",
-                        "position": 1,
-                        "name": "Inicio",
-                        "item": "https://calculolaboral.cl/"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 2,
-                        "name": "Calculadoras",
-                        "item": "https://calculolaboral.cl/#calculadoras"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 3,
-                        "name": "Calculadora Costo Empresa",
-                        "item": "https://calculolaboral.cl/calculadora-costo-empresa-chile"
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Calculadoras",
+                    "item": "https://calculolaboral.cl/#calculadoras"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Calculadora Costo Empresa",
+                    "item": "https://calculolaboral.cl/calculadora-costo-empresa-chile"
+                }
+            ]
+        },
+        {
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "¿Cuál es la diferencia entre sueldo bruto y costo empresa en Chile?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "El sueldo bruto es la suma de las remuneraciones imponibles y asignaciones pactadas con el trabajador. El costo empresa es el desembolso total real del empleador, que suma al sueldo bruto los aportes patronales obligatorios (SIS 1,49%, AFC empleador 2,4% o 3,0%, y Mutual de Seguridad entre 0,93% y 4,33%), además de las provisiones contables de feriado anual e indemnización por años de servicio."
                     }
-                ]
-            },
-            {
-                "@type": "FAQPage",
-                "mainEntity": [
-                    {
-                        "@type": "Question",
-                        "name": "¿Cuál es la diferencia entre sueldo bruto y costo empresa en Chile?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "El sueldo bruto es la suma de las remuneraciones imponibles y asignaciones pactadas con el trabajador. El costo empresa es el desembolso total real del empleador, que suma al sueldo bruto los aportes patronales obligatorios (SIS 1,49%, AFC empleador 2,4% o 3,0%, y Mutual de Seguridad entre 0,93% y 4,33%), además de las provisiones contables de feriado anual e indemnización por años de servicio."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Cuánto le cuesta a una empresa contratar a un trabajador con sueldo mínimo en 2026?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Para un trabajador con sueldo mínimo ($553.553 imponible con gratificación legal incluida), el costo directo para la empresa asciende aproximadamente a $580.000 - $590.000 mensuales en leyes sociales directas (SIS, AFC y Mutual). Si se incorporan las provisiones contables recomendadas de vacaciones y eventual despido, el costo real mensual se sitúa cerca de los $650.000 CLP (aproximadamente un factor de 1,30x sobre el líquido que recibe el empleado)."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Qué porcentaje adicional sobre el sueldo líquido debe presupuestar una pyme?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Por regla general en el mercado laboral chileno, un trabajador le cuesta a la empresa entre un 25% y un 40% adicional sobre el sueldo líquido pactado (factor multiplicador de 1,25x a 1,40x), dependiendo del nivel de riesgo de la mutualidad del rubro y de si el contrato es indefinido o a plazo fijo."
-                        }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Cuánto le cuesta a una empresa contratar a un trabajador con sueldo mínimo en 2026?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Para un trabajador con sueldo mínimo ($553.553 imponible con gratificación legal incluida), el costo directo para la empresa asciende aproximadamente a $580.000 - $590.000 mensuales en leyes sociales directas (SIS, AFC y Mutual). Si se incorporan las provisiones contables recomendadas de vacaciones y eventual despido, el costo real mensual se sitúa cerca de los $650.000 CLP (aproximadamente un factor de 1,30x sobre el líquido que recibe el empleado)."
                     }
-                ]
-            }
-        ]
-    }
-    </script>
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Qué porcentaje adicional sobre el sueldo líquido debe presupuestar una pyme?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Por regla general en el mercado laboral chileno, un trabajador le cuesta a la empresa entre un 25% y un 40% adicional sobre el sueldo líquido pactado (factor multiplicador de 1,25x a 1,40x), dependiendo del nivel de riesgo de la mutualidad del rubro y de si el contrato es indefinido o a plazo fijo."
+                    }
+                }
+            ]
+        }
+    ]
+}
+</script>
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans antialiased">
 
@@ -950,7 +950,7 @@
 
             <!-- Calculadoras Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="calculadora-costo-empresa-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Costo Empresa / Contratar</a></li>
                     <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
@@ -963,7 +963,7 @@
 
             <!-- Guías Clave Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
                     <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
@@ -976,7 +976,7 @@
 
             <!-- Empresas & Monetización Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
                 <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>

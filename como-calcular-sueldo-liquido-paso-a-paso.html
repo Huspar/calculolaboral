@@ -39,10 +39,20 @@
             "description": "Con $1.500.000 bruto te quedan $1.187.000 líquido. Conoce la fórmula legal paso a paso con descuentos de AFP, salud, cesantía e impuestos 2026.",
             "author": {
                 "@type": "Organization",
-                "name": "Cálculo Laboral"
+                "name": "Cálculo Laboral",
+                "url": "https://calculolaboral.cl"
             },
             "datePublished": "2026-01-01",
-            "dateModified": "2026-07-08"
+            "dateModified": "2026-07-08",
+            "image": "https://calculolaboral.cl/assets/og-image.png",
+            "publisher": {
+                "@type": "Organization",
+                "name": "Cálculo Laboral",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://calculolaboral.cl/favicon-32x32.png"
+                }
+            }
         },
         {
             "@type": "BreadcrumbList",
@@ -836,7 +846,7 @@
                     </div>
                 </div>
 
-                <h3>Resumen Rápido</h3>
+                <h2>Resumen Rápido</h2>
                 <ul>
                     <li>Identifica los haberes imponibles en la boleta antes de calcular el líquido.</li>
                     <li>Calcula las cotizaciones: AFP (10% + comisión), Salud (Fonasa 7% o descuento Isapre) y Seguro de Cesantía.</li>
@@ -847,9 +857,8 @@
 
 <!-- Callout con enlaces cruzados -->
                 <div class="my-6 p-5 rounded-xl bg-emerald-50/40 border border-emerald-200 shadow-sm">
-                    <h4 class="text-emerald-700 font-bold text-sm mb-2 flex items-center gap-2 m-0">
-                        <span class="material-icons text-base">info</span> ¿Quieres profundizar en tus haberes y jornada laboral?
-                    </h4>
+                    <div class="text-emerald-700 font-bold text-sm mb-2 flex items-center gap-2 m-0"><span class="material-icons text-base">info</span> ¿Quieres profundizar en tus haberes y jornada laboral?
+                    </div>
                     <p class="text-xs text-slate-600 mb-3 leading-relaxed">
                         Entender tu liquidación va más allá del cálculo básico de líquido. Te recomendamos leer nuestras guías especializadas:
                     </p>
@@ -1094,7 +1103,7 @@
 
             <!-- Calculadoras Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
                     <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
@@ -1107,7 +1116,7 @@
 
             <!-- Guías Clave Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
                     <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
@@ -1120,7 +1129,7 @@
 
             <!-- Empresas & Monetización Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
                 <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
@@ -1169,11 +1178,17 @@
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
-                    </h4>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
+                    </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UF</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
                             <tbody id="uf-history-body">
                                 <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
                             </tbody>
@@ -1181,11 +1196,17 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
-                    </h4>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UTM</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Período</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
                             <tbody id="utm-history-body">
                                 <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
                             </tbody>

@@ -1,3 +1,11 @@
 User-agent: *
 Allow: /
+
+# Exclude affiliate redirects and serverless API endpoints from indexing and audit crawlers
+Disallow: /itau
+Disallow: /abakos
+Disallow: /abakos-emergencias
+Disallow: /api/
+Disallow: /descargas/
+
 Sitemap: https://calculolaboral.cl/sitemap.xml

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Calcula tu sueldo líquido part-time en Chile 2026 (30h, 20h o personalizado). Incluye comisiones, semana corrida, descuentos y protección de Gratuidad para estudiantes (Art. 40 bis).">
-    <title>Calculadora de Sueldo Part-Time Chile 2026 | 30h, 20h y Comisiones</title>
+    <title>Calculadora Sueldo Part-Time Chile 2026 (30h y 20h DT)</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://calculolaboral.cl/calculadora-sueldo-part-time">
     
     <!-- Open Graph Tags -->
-    <meta property="og:title" content="Calculadora de Sueldo Part-Time Chile 2026 | 30h, 20h y Comisiones">
+    <meta property="og:title" content="Calculadora Sueldo Part-Time Chile 2026 (30h y 20h DT)">
     <meta property="og:description" content="Calcula tu sueldo líquido part-time en Chile 2026 (30h, 20h o personalizado). Incluye comisiones, semana corrida, descuentos y protección de Gratuidad para estudiantes (Art. 40 bis).">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://calculolaboral.cl/calculadora-sueldo-part-time">
@@ -24,7 +24,7 @@
     <meta property="og:locale" content="es_CL">
     <meta property="og:site_name" content="Cálculo Laboral">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Calculadora de Sueldo Part-Time Chile 2026 | 30h, 20h y Comisiones">
+    <meta name="twitter:title" content="Calculadora Sueldo Part-Time Chile 2026 (30h y 20h DT)">
     <meta name="twitter:description" content="Calcula tu sueldo líquido part-time en Chile 2026 (30h, 20h o personalizado). Incluye comisiones, semana corrida, descuentos y protección de Gratuidad para estudiantes (Art. 40 bis).">
     <meta name="twitter:image" content="https://calculolaboral.cl/assets/og-image.png">
     
@@ -88,7 +88,7 @@
         }
     ]
 }
-    </script>
+</script>
     
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1029,7 +1029,7 @@
 
             <!-- Calculadoras Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
                     <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
@@ -1042,7 +1042,7 @@
 
             <!-- Guías Clave Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
                     <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
@@ -1055,7 +1055,7 @@
 
             <!-- Empresas & Monetización Column -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h4>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h3>
                 <ul class="space-y-1.5 text-xs">
                     <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
                 <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
@@ -1104,11 +1104,17 @@
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
-                    </h4>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
+                    </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UF</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
                             <tbody id="uf-history-body">
                                 <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
                             </tbody>
@@ -1116,11 +1122,17 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
-                    </h4>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UTM</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Período</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
                             <tbody id="utm-history-body">
                                 <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
                             </tbody>
