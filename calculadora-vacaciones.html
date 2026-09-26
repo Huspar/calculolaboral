@@ -434,20 +434,40 @@
                 </p>
             </div>
 
-            <!-- Mode Selector Tabs (3 Modes) -->
+            <!-- Mode Selector Tabs (3 Cards) -->
             <div class="max-w-4xl mx-auto mb-8 no-print">
-                <div class="flex flex-col sm:flex-row bg-slate-200/80 p-1.5 rounded-2xl gap-1.5">
-                    <button type="button" id="tab-btn-proporcionales" onclick="switchVacMode('proporcionales')" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm bg-white text-slate-900 cursor-pointer">
-                        <span class="material-icons text-base text-sky-600">receipt_long</span>
-                        <span>Vacaciones Proporcionales (Finiquito)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Tab 1: Proporcionales -->
+                    <button type="button" id="tab-btn-proporcionales" onclick="switchVacMode('proporcionales')" class="py-3 px-4 rounded-2xl border-2 border-sky-500 bg-white text-slate-900 shadow-md shadow-sky-500/10 font-bold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer">
+                        <span id="tab-icon-box-proporcionales" class="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
+                            <span class="material-icons text-base">receipt_long</span>
+                        </span>
+                        <div class="text-left">
+                            <span class="block leading-tight font-bold">Vacaciones Proporcionales</span>
+                            <span id="tab-sub-proporcionales" class="block text-[10px] text-sky-600 font-semibold">Finiquito y Despido</span>
+                        </div>
                     </button>
-                    <button type="button" id="tab-btn-activo" onclick="switchVacMode('activo')" class="flex-1 py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all text-slate-600 hover:text-slate-900 hover:bg-white/60 cursor-pointer">
-                        <span class="material-icons text-base text-emerald-600">event_available</span>
-                        <span>Días Acumulados (Trabajador Activo)</span>
+
+                    <!-- Tab 2: Activo -->
+                    <button type="button" id="tab-btn-activo" onclick="switchVacMode('activo')" class="py-3 px-4 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-xs hover:border-slate-300 font-semibold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer">
+                        <span id="tab-icon-box-activo" class="w-8 h-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center shrink-0">
+                            <span class="material-icons text-base">event_available</span>
+                        </span>
+                        <div class="text-left">
+                            <span class="block leading-tight font-bold">Días Acumulados</span>
+                            <span id="tab-sub-activo" class="block text-[10px] text-slate-400 font-medium">Trabajador Activo</span>
+                        </div>
                     </button>
-                    <button type="button" id="tab-btn-progresivas" onclick="switchVacMode('progresivas')" class="flex-1 py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all text-slate-600 hover:text-slate-900 hover:bg-white/60 cursor-pointer">
-                        <span class="material-icons text-base text-indigo-600">trending_up</span>
-                        <span>Feriado Progresivo (Antigüedad)</span>
+
+                    <!-- Tab 3: Progresivas -->
+                    <button type="button" id="tab-btn-progresivas" onclick="switchVacMode('progresivas')" class="py-3 px-4 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-xs hover:border-slate-300 font-semibold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer">
+                        <span id="tab-icon-box-progresivas" class="w-8 h-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center shrink-0">
+                            <span class="material-icons text-base">trending_up</span>
+                        </span>
+                        <div class="text-left">
+                            <span class="block leading-tight font-bold">Feriado Progresivo</span>
+                            <span id="tab-sub-progresivas" class="block text-[10px] text-slate-400 font-medium">Por Antigüedad</span>
+                        </div>
                     </button>
                 </div>
             </div>
@@ -1132,25 +1152,47 @@
             const btnAct = document.getElementById('tab-btn-activo');
             const btnProg = document.getElementById('tab-btn-progresivas');
 
+            const iconProp = document.getElementById('tab-icon-box-proporcionales');
+            const iconAct = document.getElementById('tab-icon-box-activo');
+            const iconProg = document.getElementById('tab-icon-box-progresivas');
+
+            const subProp = document.getElementById('tab-sub-proporcionales');
+            const subAct = document.getElementById('tab-sub-activo');
+            const subProg = document.getElementById('tab-sub-progresivas');
+
             const ctrlProp = document.getElementById('mode-proporcionales-controls');
             const ctrlAct = document.getElementById('mode-activo-controls');
             const ctrlProg = document.getElementById('mode-progresivas-controls');
 
+            // Reset all to default unselected button card style
             [btnProp, btnAct, btnProg].forEach(b => {
-                b.className = 'flex-1 py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all text-slate-600 hover:text-slate-900 hover:bg-white/60 cursor-pointer';
+                b.className = 'py-3 px-4 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-xs hover:border-slate-300 font-semibold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer';
             });
+            [iconProp, iconAct, iconProg].forEach(i => {
+                if (i) i.className = 'w-8 h-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center shrink-0';
+            });
+            [subProp, subAct, subProg].forEach(s => {
+                if (s) s.className = 'block text-[10px] text-slate-400 font-medium';
+            });
+
             [ctrlProp, ctrlAct, ctrlProg].forEach(c => c.classList.add('hidden'));
 
             if (mode === 'proporcionales') {
-                btnProp.className = 'flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm bg-white text-slate-900 cursor-pointer';
+                btnProp.className = 'py-3 px-4 rounded-2xl border-2 border-sky-500 bg-white text-slate-900 shadow-md shadow-sky-500/10 font-bold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer';
+                if (iconProp) iconProp.className = 'w-8 h-8 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center shrink-0';
+                if (subProp) subProp.className = 'block text-[10px] text-sky-600 font-semibold';
                 ctrlProp.classList.remove('hidden');
                 calculateVacaciones();
             } else if (mode === 'activo') {
-                btnAct.className = 'flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm bg-white text-slate-900 cursor-pointer';
+                btnAct.className = 'py-3 px-4 rounded-2xl border-2 border-emerald-500 bg-white text-slate-900 shadow-md shadow-emerald-500/10 font-bold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer';
+                if (iconAct) iconAct.className = 'w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0';
+                if (subAct) subAct.className = 'block text-[10px] text-emerald-600 font-semibold';
                 ctrlAct.classList.remove('hidden');
                 calculateVacacionesActivo();
             } else if (mode === 'progresivas') {
-                btnProg.className = 'flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm bg-white text-slate-900 cursor-pointer';
+                btnProg.className = 'py-3 px-4 rounded-2xl border-2 border-indigo-500 bg-white text-slate-900 shadow-md shadow-indigo-500/10 font-bold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer';
+                if (iconProg) iconProg.className = 'w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0';
+                if (subProg) subProg.className = 'block text-[10px] text-indigo-600 font-semibold';
                 ctrlProg.classList.remove('hidden');
                 calculateVacacionesProgresivas();
             }
