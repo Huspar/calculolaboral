@@ -4,6 +4,8 @@
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/sueldo-liquido", "destination": "/sueldo_liquido", "permanent": true },
     { "source": "/calculadora-finiquito", "destination": "/finiquito_calculator", "permanent": true },
+    { "source": "/calculadora-vacaciones-proporcionales", "destination": "/calculadora-vacaciones", "permanent": true },
+    { "source": "/guia-vacaciones-proporcionales", "destination": "/calculadora-vacaciones", "permanent": true },
     { "source": "/itau", "destination": "https://ad.soicos.com/1163773", "permanent": false },
     { "source": "/abakos", "destination": "https://ad.soicos.com/1154772", "permanent": false },
     { "source": "/abakos-emergencias", "destination": "https://ad.soicos.com/1154903", "permanent": false },
