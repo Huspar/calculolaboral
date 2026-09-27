@@ -355,17 +355,17 @@
             }
         }
     </style>
-    <div class="max-w-[1200px] mx-auto px-6 pt-3 pb-1 no-print">
-        <div class="indicators-carousel">
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
+        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
             <!-- UF Card -->
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UF Hoy</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-uf">$39.813</span>
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Valor UF</span>
+                <span class="uf-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-uf">$40.975,41</span>
             </div>
             <!-- UTM Card -->
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
                 <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-utm">$68.647</span>
+                <span class="utm-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-utm">$71.721</span>
             </div>
             <!-- Sueldo Mínimo Card -->
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
@@ -1084,7 +1084,10 @@
         }
 
         function calculateSeguroCesantia() {
-            var sueldo = parseCleanNumber(document.getElementById('afc-sueldo-base').value) || 553553;
+            var ufActual = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 40975.41;
+            var topeImponibleAFC = (typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? (CONSTANTS.TOPE_IMPONIBLE_CESANTIA * ufActual) : (135.1 * ufActual);
+            var sueldoRaw = parseCleanNumber(document.getElementById('afc-sueldo-base').value) || (typeof CONSTANTS !== 'undefined' ? CONSTANTS.IMM : 553553);
+            var sueldo = Math.min(sueldoRaw, Math.round(topeImponibleAFC));
             var tipoContratoEl = document.querySelector('input[name="afc-tipo-contrato"]:checked');
             var tipo = tipoContratoEl ? tipoContratoEl.value : 'indefinido';
             var meses = parseInt(document.getElementById('afc-meses-trabajados').value, 10) || 1;
@@ -1237,6 +1240,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', calculateSeguroCesantia);
+        document.addEventListener('indicatorsUpdated', calculateSeguroCesantia);
+        document.addEventListener('indicatorsLoaded', calculateSeguroCesantia);
     </script>
 </body>
 </html>

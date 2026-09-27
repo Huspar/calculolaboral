@@ -266,14 +266,14 @@ const IndicatorsService = {
 
         if (data.uf?.valor) {
             const formattedUF = formatUF(data.uf.valor);
-            document.querySelectorAll('.uf-value').forEach(el => {
+            document.querySelectorAll('.uf-value, #header-uf').forEach(el => {
                 el.textContent = formattedUF;
             });
         }
 
         if (data.utm?.valor) {
             const formattedUTM = formatUTM(data.utm.valor);
-            document.querySelectorAll('.utm-value').forEach(el => {
+            document.querySelectorAll('.utm-value, #header-utm').forEach(el => {
                 el.textContent = formattedUTM;
             });
         }

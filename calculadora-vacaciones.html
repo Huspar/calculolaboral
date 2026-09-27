@@ -370,18 +370,17 @@
         }
     </style>
 
-    <!-- Economic Indicators Sub-header -->
-    <div class="max-w-[1200px] mx-auto px-6 pt-3 pb-1 no-print">
-        <div class="indicators-carousel">
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
+        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
             <!-- UF Card -->
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UF Hoy</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-uf">$39.813</span>
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Valor UF</span>
+                <span class="uf-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-uf">$40.975,41</span>
             </div>
             <!-- UTM Card -->
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
                 <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-utm">$68.647</span>
+                <span class="utm-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-utm">$71.721</span>
             </div>
             <!-- Sueldo Mínimo Card -->
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
@@ -1093,7 +1092,7 @@
                 <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
                     <span class="material-icons text-sky-500">history</span> Historial de Indicadores Oficiales
                 </h3>
-                <button type="button" id="close-history" class="text-slate-400 hover:text-slate-600 p-1 rounded-full cursor-pointer">
+                <button type="button" id="btn-close-history" class="text-slate-400 hover:text-slate-600 p-1 rounded-full cursor-pointer">
                     <span class="material-icons">close</span>
                 </button>
             </div>
@@ -1591,64 +1590,8 @@
         }
     </script>
 
-    <!-- Indicators History Modal JS -->
-    <script>
-        const btnHistory = document.getElementById('btn-history');
-        const historyModal = document.getElementById('history-modal');
-        const closeHistory = document.getElementById('close-history');
-
-        if (btnHistory && historyModal && closeHistory) {
-            btnHistory.addEventListener('click', () => {
-                historyModal.classList.remove('hidden');
-                loadIndicatorsHistory();
-            });
-            closeHistory.addEventListener('click', () => {
-                historyModal.classList.add('hidden');
-            });
-            historyModal.addEventListener('click', (e) => {
-                if (e.target === historyModal) historyModal.classList.add('hidden');
-            });
-        }
-
-        async function loadIndicatorsHistory() {
-            const ufBody = document.getElementById('uf-history-body');
-            const utmBody = document.getElementById('utm-history-body');
-            if (!ufBody || !utmBody) return;
-
-            try {
-                const res = await fetch('https://mindicador.cl/api/uf');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.serie && data.serie.length > 0) {
-                        ufBody.innerHTML = data.serie.slice(0, 10).map(item => `
-                            <tr>
-                                <td class="py-1.5 px-3 text-left font-sans">${new Date(item.fecha).toLocaleDateString('es-CL')}</td>
-                                <td class="py-1.5 px-3 text-right font-bold text-slate-800">$${item.valor.toLocaleString('es-CL')}</td>
-                            </tr>
-                        `).join('');
-                    }
-                }
-            } catch (e) {
-                ufBody.innerHTML = '<tr><td colspan="2" class="py-2 text-center text-slate-400 font-sans">No se pudo cargar el historial de UF</td></tr>';
-            }
-
-            try {
-                const res = await fetch('https://mindicador.cl/api/utm');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.serie && data.serie.length > 0) {
-                        utmBody.innerHTML = data.serie.slice(0, 6).map(item => `
-                            <tr>
-                                <td class="py-1.5 px-3 text-left font-sans capitalize">${new Date(item.fecha).toLocaleDateString('es-CL', { month: 'long', year: 'numeric' })}</td>
-                                <td class="py-1.5 px-3 text-right font-bold text-slate-800">$${item.valor.toLocaleString('es-CL')}</td>
-                            </tr>
-                        `).join('');
-                    }
-                }
-            } catch (e) {
-                utmBody.innerHTML = '<tr><td colspan="2" class="py-2 text-center text-slate-400 font-sans">No se pudo cargar el historial de UTM</td></tr>';
-            }
-        }
-    </script>
+    <!-- Centralized Constants & Live Indicators -->
+    <script src="/js/constants.js?v=2.0.4"></script>
+    <script src="/js/indicators.js?v=2.1.1"></script>
 </body>
 </html>
