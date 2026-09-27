@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simula gratis tus giros mensuales del Seguro de Cesantía en Chile (AFC 2026). Revisa montos del 70% al 35%, requisitos y tabla con la Ley 21.628.">
+    <title>Simulador de Seguro de Cesantía AFC Chile 2026 (DT)</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://calculolaboral.cl/simulador-seguro-cesantia-afc">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Simulador de Seguro de Cesantía AFC Chile 2026 (DT)">
+    <meta property="og:description" content="Simula gratis tus giros mensuales del Seguro de Cesantía en Chile (AFC 2026). Revisa montos del 70% al 35%, requisitos y tabla con la Ley 21.628.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/simulador-seguro-cesantia-afc">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/guia-seguro-cesantia-chile.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Simulador de Seguro de Cesantía AFC Chile 2026 (DT)">
+    <meta name="twitter:description" content="Simula gratis tus giros mensuales del Seguro de Cesantía en Chile (AFC 2026). Revisa montos del 70% al 35%, requisitos y tabla con la Ley 21.628.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/guia-seguro-cesantia-chile.png">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "name": "Simulador de Seguro de Cesantía AFC Chile 2026",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "All",
+            "url": "https://calculolaboral.cl/simulador-seguro-cesantia-afc",
+            "description": "Simulador en línea del Seguro de Cesantía de la AFC en Chile según la Ley 19.728 y Ley 21.628. Calcula giros mensuales decrecientes y montos para contratos indefinidos y plazo fijo."
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Inicio",
+                    "item": "https://calculolaboral.cl/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Calculadoras",
+                    "item": "https://calculolaboral.cl/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Simulador Seguro de Cesantía AFC",
+                    "item": "https://calculolaboral.cl/simulador-seguro-cesantia-afc"
+                }
+            ]
+        },
+        {
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "¿Cuántas cotizaciones necesito para cobrar el Seguro de Cesantía en 2026?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Con la Ley 21.628, los requisitos se flexibilizaron: para contrato indefinido se exigen mínimo 10 cotizaciones mensuales (continuas o discontinuas) en los últimos 5 años. Para contrato a plazo fijo u obra se exigen al menos 5 cotizaciones."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿En cuántas cuotas y qué porcentaje se paga el Seguro de Cesantía?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Se paga en giros mensuales decrecientes calculados sobre el promedio de remuneraciones imponibles: 1° mes 70%, 2° mes 55%, 3° mes 45%, 4° mes 40% y 5° mes 35%. Si queda saldo en la cuenta individual (CIC), se puede extender a un 6° mes al 30%."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Puedo cobrar el Seguro de Cesantía si renuncio voluntariamente?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Sí. Todo trabajador que renuncia voluntariamente tiene derecho a retirar el 100% de los fondos acumulados en su Cuenta Individual de Cesantía (CIC), acreditando la renuncia legalizada ante notario o la DT. La renuncia voluntaria solo inhabilita el acceso al Fondo de Cesantía Solidario (FCS)."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Qué es el Fondo de Cesantía Solidario (FCS) y cuándo aplica?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "El Fondo de Cesantía Solidario es un fondo estatal complementario que cubre los giros de cesantía cuando los ahorros individuales en la CIC se agotan, siempre que la causal de término sea despido (Art. 161, 159 o quiebra) y se cumplan los requisitos de cotizaciones."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "¿Por qué el empleador descuenta el Seguro de Cesantía de mi finiquito?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Según el artículo 13 de la Ley 19.728, solo en despidos por Necesidades de la Empresa (Art. 161) el empleador puede imputar o descontar de la indemnización por años de servicio el total de los aportes del 1,6% que él realizó a la cuenta del trabajador."
+                    }
+                }
+            ]
+        }
+    ]
+}
+    </script>
+    
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-9Y03F1WB8J');
+    </script>
+    
+    <!-- Precompiled Tailwind CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <style>
+        @media (min-width: 1024px) {
+            [class*="lg:w-[480px]"], .lg-w-480 {
+                width: 480px !important;
+                flex-shrink: 0 !important;
+            }
+            [class*="lg:w-[440px]"], .lg-w-440 {
+                width: 440px !important;
+                flex-shrink: 0 !important;
+            }
+            [class*="lg:w-7/12"], .lg-col-7 {
+                width: 58.333333% !important;
+            }
+            [class*="lg:w-5/12"], .lg-col-5 {
+                width: 41.666667% !important;
+            }
+        }
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .prose-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 2.25rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .prose-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+        .prose-content p {
+            margin-bottom: 1.25rem;
+            line-height: 1.75;
+        }
+        .prose-content ul {
+            margin-bottom: 1.25rem;
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+        .prose-content ol {
+            margin-bottom: 1.25rem;
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+        }
+        .prose-content li {
+            margin-bottom: 0.5rem;
+        }
+        .prose-content strong {
+            color: #0f172a;
+            font-weight: 600;
+        }
+        .prose-content a {
+            color: #0ea5e9;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .prose-content a:hover {
+            color: #0284c7;
+        }
+        .prose-content a.cta-btn,
+        .prose-content a.bg-sky-500,
+        .prose-content a[class*="bg-sky-"],
+        .prose-content a[class*="bg-blue-"] {
+            color: #ffffff !important;
+            text-decoration: none !important;
+            font-weight: 600 !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-sky-500/20 selection:text-slate-900">
+
+    <!-- Header Oficial Invariable -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm transition-all duration-300 no-print">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo Oficial -->
+                <a href="./" class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex gap-6 items-center">
+                    <div class="relative group">
+                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                            Calculadoras
+                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                            <div class="p-2 space-y-1">
+                                <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50/80 hover:bg-rose-100 rounded-lg transition-colors font-bold">Simulador Despido Injustificado</a>
+                                <a href="simulador-seguro-cesantia-afc" class="block px-3 py-2 text-xs font-semibold text-sky-700 bg-sky-50/90 hover:bg-sky-100 rounded-lg transition-colors font-bold">Seguro de Cesantía (AFC)</a>
+                                <a href="sueldo_liquido" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Líquido</a>
+                                <a href="finiquito_calculator" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito</a>
+                                <a href="generador-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Generador Finiquito (Word/PDF)</a>
+                                <a href="calculadora-horas-extras" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Horas Extras</a>
+                                <a href="calculadora-sueldo-part-time" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Part-Time</a>
+                                <a href="calculadora-vacaciones" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Calculadora de Vacaciones</a>
+                                <a href="calculadora-despido-articulo-160" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Art. 160</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
+                            Guías
+                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                            <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
+                                <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Cómo Reclamar Despido</a>
+                                <a href="carta-de-renuncia-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Carta de Renuncia (Asistente)</a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Checklist Fiscalización DT</a>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Art. 161 Necesidades Empresa</a>
+                                <a href="ley-40-horas-chile-2026" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Ley 40 Horas (42h en 2026)</a>
+                                <a href="como-leer-liquidacion-de-sueldo" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Leer Liquidación</a>
+                                <a href="que-hacer-si-no-te-pagan-el-finiquito" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Si no te Pagan el Finiquito</a>
+                                <a href="finiquito-por-renuncia-voluntaria" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito Renuncia Voluntaria</a>
+                                <a href="carta-de-despido-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Carta de Despido Ejemplo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="para-empleadores" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 transition-colors">
+                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                        <span>Para Empleadores</span>
+                    </a>
+
+                    <a href="blog" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Blog</a>
+                    <a href="contacto" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Mobile Menu -->
+                <details class="md:hidden">
+                    <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors active:scale-95 duration-100 cursor-pointer flex items-center" aria-label="Abrir menú de navegación">
+                        <span class="material-icons">menu</span>
+                    </summary>
+                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
+                        <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-2">
+                            <a href="simulador-seguro-cesantia-afc" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-700 bg-sky-50/90 border border-sky-200">Simulador Seguro Cesantía (AFC)</a>
+                            <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-rose-700 bg-rose-50/90 border border-rose-200">Simulador Despido Injustificado</a>
+                            <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Líquido</a>
+                            <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
+                            <a href="calculadora-horas-extras" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Horas Extras</a>
+                            <a href="calculadora-vacaciones" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Calculadora de Vacaciones</a>
+                            <div class="border-t border-slate-100 my-2"></div>
+                            <a href="blog" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Blog</a>
+                            <a href="contacto" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Contacto</a>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </header>
+
+    <!-- Indicators Carousel (Responsive Sub-header) -->
+    <style>
+        .indicators-carousel {
+            gap: 0.5rem !important;
+        }
+        @media (max-width: 639px) {
+            .indicators-carousel {
+                display: flex !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+                gap: 0.5rem !important;
+            }
+            .indicator-card {
+                min-width: 125px !important;
+                max-width: 125px !important;
+                width: 125px !important;
+                flex-shrink: 0 !important;
+                scroll-snap-align: start !important;
+            }
+        }
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 0.5rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .indicators-carousel {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+                gap: 0.625rem !important;
+            }
+            .indicator-card {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex-shrink: 1 !important;
+            }
+        }
+    </style>
+    <div class="max-w-[1200px] mx-auto px-6 pt-3 pb-1 no-print">
+        <div class="indicators-carousel">
+            <!-- UF Card -->
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UF Hoy</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-uf">$39.813</span>
+            </div>
+            <!-- UTM Card -->
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-utm">$68.647</span>
+            </div>
+            <!-- Sueldo Mínimo Card -->
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Sueldo Mínimo</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$553.553</span>
+            </div>
+            <!-- Tope AFP Card -->
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope AFP</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">89.9 UF</span>
+            </div>
+            <!-- Tope Finiquito Card -->
+            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
+                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope Finiquito</span>
+                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">90 UF</span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center mt-1.5 sm:mt-2 px-0.5 text-[10px] text-slate-500 font-medium">
+            <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500 text-[10px]">
+                <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
+                <span>Valores oficiales vigentes (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT Chile</a>)</span>
+            </div>
+            <button type="button" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px] cursor-pointer bg-transparent border-0 p-0">
+                <span class="material-icons text-[12px]" aria-hidden="true">history</span>
+                <span>Historial</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow pt-4 pb-16">
+        <div class="max-w-[1200px] mx-auto px-6">
+            
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+                <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
+                <span class="material-icons text-xs">chevron_right</span>
+                <span class="text-slate-400">Calculadoras</span>
+                <span class="material-icons text-xs">chevron_right</span>
+                <span class="text-slate-600 font-semibold">Simulador Seguro de Cesantía AFC</span>
+            </nav>
+
+            <!-- Hero Header Section -->
+            <div class="text-center my-8 max-w-2xl mx-auto no-print">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-200 mb-3">
+                    <span class="material-icons text-xs text-sky-600">verified_user</span> Ley 21.628 Actualizada • Cobertura AFC Chile 2026
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+                    Simulador de Seguro de Cesantía AFC Chile 2026
+                </h1>
+                <p class="text-slate-500 text-sm mt-1">
+                    Calcula cuánto dinero te corresponde cobrar mes a mes en tus giros de la <strong>Cuenta Individual (CIC)</strong> y conoce tus derechos al <strong>Fondo Solidario</strong> y el impacto en tu finiquito.
+                </p>
+            </div>
+
+            <!-- Two-Column Interactive Calculator Layout -->
+            <div class="flex flex-col lg:flex-row gap-8 items-start mb-16">
+                
+                <!-- Left Column: Form Controls (440px Fixed) -->
+                <div class="w-full lg:w-[440px] shrink-0 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                    <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span class="material-icons text-sky-500">tune</span> Datos para el cálculo
+                        </h2>
+                        <span class="text-[11px] font-mono text-slate-400 font-semibold" id="afc-ley-badge">Ley 21.628</span>
+                    </div>
+
+                    <!-- 1. Tipo de Contrato -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            Tipo de Contrato Laboral
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="afc-tipo-contrato" value="indefinido" checked onchange="calculateSeguroCesantia()" class="peer sr-only">
+                                <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
+                                    Indefinido <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Mín. 10 cotiz.</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="afc-tipo-contrato" value="plazofijo" onchange="calculateSeguroCesantia()" class="peer sr-only">
+                                <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
+                                    Plazo Fijo u Obra <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Mín. 5 cotiz.</span>
+                                </div>
+                            </label>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">La Ley 21.628 flexibilizó el acceso a 10 cotizaciones para indefinido y 5 para plazo fijo.</p>
+                    </div>
+
+                    <!-- 2. Sueldo Imponible Promedio -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="afc-sueldo-base" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                Sueldo Imponible Promedio
+                            </label>
+                            <button type="button" onclick="setAFCMinimo()" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg transition-colors cursor-pointer active:scale-95">
+                                Usar Mínimo ($553.553)
+                            </button>
+                        </div>
+                        <div class="relative rounded-2xl shadow-sm">
+                            <input type="text" id="afc-sueldo-base" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatAFCInput(this); calculateSeguroCesantia();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Promedio de tus últimos sueldos brutos imponibles (tope legal AFC: 135,1 UF).</p>
+                    </div>
+
+                    <!-- 3. Tiempo Trabajado / Cotizaciones -->
+                    <div>
+                        <label for="afc-meses-trabajados" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                            Tiempo Trabajado (Meses cotizados)
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <input type="number" id="afc-meses-trabajados" value="24" min="1" max="360" step="1" oninput="calculateSeguroCesantia()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
+                            <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">meses</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 pt-2">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-1">Rápido:</span>
+                            <button type="button" onclick="setAFCMonths(6)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">6 Meses</button>
+                            <button type="button" onclick="setAFCMonths(12)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">1 Año</button>
+                            <button type="button" onclick="setAFCMonths(24)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">2 Años</button>
+                            <button type="button" onclick="setAFCMonths(36)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">3+ Años</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Causal de Término -->
+                    <div>
+                        <label for="afc-causal" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                            Causal de Término de Contrato
+                        </label>
+                        <select id="afc-causal" onchange="calculateSeguroCesantia()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all cursor-pointer">
+                            <option value="161" selected>Despido por Necesidades de la Empresa (Art. 161)</option>
+                            <option value="plazo">Fin de Plazo Fijo, Obra o Faena (Art. 159 N° 4 o 5)</option>
+                            <option value="renuncia">Renuncia Voluntaria del Trabajador (Art. 159 N° 2)</option>
+                            <option value="mutuo">Mutuo Acuerdo entre las partes (Art. 159 N° 1)</option>
+                            <option value="disciplinario">Despido Disciplinario o Sin Derecho (Art. 160)</option>
+                        </select>
+                        <p class="text-[11px] text-slate-400 mt-1">El despido por Art. 161 permite al empleador descontar el 1,6% en tu finiquito.</p>
+                    </div>
+
+                    <!-- 5. Saldo Real Opcional en Cartola AFC -->
+                    <div class="pt-2 border-t border-slate-100">
+                        <details class="group">
+                            <summary class="text-xs font-bold text-sky-600 hover:text-sky-700 cursor-pointer list-none flex items-center justify-between">
+                                <span>¿Sabes tu saldo exacto en la AFC? (Opcional)</span>
+                                <span class="material-icons text-xs group-open:rotate-180 transition-transform">expand_more</span>
+                            </summary>
+                            <div class="mt-3 space-y-2">
+                                <label for="afc-saldo-manual" class="block text-[11px] text-slate-500">
+                                    Ingresa el saldo total de tu Cuenta Individual (CIC):
+                                </label>
+                                <input type="text" id="afc-saldo-manual" placeholder="Ej: $ 1.250.000" inputmode="numeric" oninput="formatAFCSaldoManual(this); calculateSeguroCesantia();" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                                <p class="text-[10px] text-slate-400">Si lo dejas en blanco, el simulador proyectará tu saldo acumulado automáticamente.</p>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Right Column: Results Summary & Giros Table -->
+                <div class="w-full flex-grow bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm lg:self-start space-y-6">
+                    
+                    <!-- Main Totals Section -->
+                    <div class="text-center sm:text-left border-b border-slate-100 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Total Estimado a Recibir</span>
+                            <div class="flex items-baseline gap-2 justify-center sm:justify-start">
+                                <span id="afc-total-recibir" class="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-mono">$1.742.500</span>
+                            </div>
+                            <p class="text-xs text-emerald-600 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1" id="afc-elegibilidad-badge">
+                                <span class="material-icons text-xs">check_circle</span> Cumples requisitos de cotizaciones (Ley 21.628)
+                            </p>
+                        </div>
+                        <div class="text-center sm:text-right bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Giros Proyectados</span>
+                            <span id="afc-cantidad-giros" class="text-lg font-bold text-sky-600 font-mono">5 Meses</span>
+                        </div>
+                    </div>
+
+                    <!-- Projection Metric Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                            <span class="text-slate-500 block text-[10px] font-bold uppercase tracking-wider mb-1">Promedio Imponible</span>
+                            <span class="font-mono font-bold text-base text-slate-900" id="afc-res-promedio">$850.000</span>
+                        </div>
+                        <div class="bg-sky-50/60 border border-sky-200 rounded-2xl p-4">
+                            <span class="text-sky-700 block text-[10px] font-bold uppercase tracking-wider mb-1">1er Giro (70%)</span>
+                            <span class="font-mono font-bold text-base text-sky-700" id="afc-res-primer-giro">$595.000</span>
+                        </div>
+                        <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4">
+                            <span class="text-emerald-700 block text-[10px] font-bold uppercase tracking-wider mb-1">Saldo Proyectado CIC</span>
+                            <span class="font-mono font-bold text-base text-emerald-700" id="afc-res-saldo-cic">$336.326</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabla Oficial de Giros Mensuales -->
+                    <div class="space-y-3 pt-2">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Calendario de Pagos Mensuales</h3>
+                            <span class="text-[11px] text-slate-500 font-medium">Porcentajes según Ley 21.628</span>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-2xs">
+                            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                                <caption class="sr-only">Calendario de pagos mensuales del Seguro de Cesantía</caption>
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 text-xs">
+                                        <th scope="col" class="py-2.5 px-4 font-semibold">Giro / Mes</th>
+                                        <th scope="col" class="py-2.5 px-4 font-semibold text-center">% Legal</th>
+                                        <th scope="col" class="py-2.5 px-4 text-right font-semibold">Monto Estimado</th>
+                                        <th scope="col" class="py-2.5 px-4 text-right font-semibold">Fuente de Pago</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 font-mono text-xs" id="afc-table-body">
+                                    <!-- Rendered dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Smart Impact Card: Descuento AFC en Finiquito (Art. 161) -->
+                    <div id="afc-finiquito-bridge-card" class="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/90 shadow-2xs space-y-2">
+                        <div class="flex items-center gap-2 text-amber-800 font-bold text-xs">
+                            <span class="material-icons text-amber-600 text-base">receipt_long</span>
+                            <span>Impacto en tu Finiquito (Descuento Patronal del 1,6%)</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed m-0">
+                            Por haber sido despedido por el <strong>Art. 161 (Necesidades de la empresa)</strong>, la ley permite al empleador descontar de tu indemnización por años de servicio lo que él aportó a tu cuenta AFC: aproximadamente <strong class="text-slate-900 font-mono" id="afc-monto-descuento-finiquito">$326.400</strong>.
+                        </p>
+                        <div class="pt-2">
+                            <a href="finiquito_calculator" class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:text-amber-900 underline">
+                                <span>Ver cómo queda tu finiquito con este descuento restado</span>
+                                <span class="material-icons text-xs">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3 border-t border-slate-100">
+                        <button type="button" onclick="copyAFCResults()" id="afc-copy-btn" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                            <span class="material-icons text-sm">content_copy</span> <span id="afc-copy-text">Copiar Simulación</span>
+                        </button>
+                        <button type="button" onclick="shareAFCWhatsApp()" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 active:scale-95 cursor-pointer">
+                            <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.586 1.761.882 2.796.883 3.18 0 5.767-2.586 5.768-5.766.001-3.18-2.585-5.77-5.768-5.77zm3.394 8.204c-.146.415-.85.766-1.177.812-.328.047-.751.066-2.197-.533-1.848-.767-3.04-2.646-3.133-2.769-.092-.122-.743-.99-.743-1.89 0-.899.469-1.343.636-1.527.167-.184.364-.23.486-.23.121 0 .243.002.348.007.111.005.259-.042.404.307.149.358.508 1.238.552 1.329.045.091.076.197.015.318-.061.122-.091.198-.182.304-.091.106-.192.237-.274.318-.091.091-.186.19-.08.373.106.182.471.777 1.01 1.258.694.619 1.28.81 1.462.901.182.091.289.076.395-.046.106-.122.456-.532.577-.714.122-.182.243-.152.408-.091.167.061 1.062.5 1.244.591.182.091.304.137.348.213.045.076.045.441-.101.856zM12 2C6.477 2 2 6.477 2 12c0 1.891.526 3.662 1.442 5.176L2 22l4.98-1.306A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+                            Compartir en WhatsApp
+                        </button>
+                        <a href="finiquito_calculator" class="flex-1 py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center shadow-md shadow-sky-500/10 active:scale-95 !no-underline">
+                            <span class="material-icons text-sm">gavel</span> Finiquito Legal
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comprehensive Editorial Guide Section (Single Column Clean Experience) -->
+            <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
+                
+                <!-- Editorial Cover Figure -->
+                <figure class="mb-10 max-w-[800px] mx-auto text-center">
+                    <div class="rounded-2xl overflow-hidden border border-slate-100 bg-slate-50/40 p-4 sm:p-6 flex items-center justify-center">
+                        <img src="assets/guia-seguro-cesantia-chile.png" 
+                             alt="Ilustración 3D del Seguro de Cesantía en Chile y ahorro en la Cuenta Individual AFC" 
+                             title="Seguro de Cesantía Chile: requisitos, cómo cobrar y montos de giros AFC"
+                             class="h-auto object-contain mx-auto" 
+                             style="max-width: 220px; max-height: 180px;"
+                             loading="lazy" 
+                             width="220" 
+                             height="180">
+                    </div>
+                    <figcaption class="text-xs text-slate-500 mt-3 leading-relaxed">
+                        El Seguro de Cesantía combina la Cuenta Individual (CIC) con el Fondo de Cesantía Solidario (FCS) en Chile.
+                    </figcaption>
+                </figure>
+
+                <!-- Section 1: ¿Qué es y cómo se financia? -->
+                <div class="prose-content">
+                    <h2>1. ¿Qué es el Seguro de Cesantía y cómo se financia en Chile?</h2>
+                    <p>
+                        El <strong>Seguro de Cesantía</strong> es un derecho de seguridad social obligatorio para todos los trabajadores dependientes protegidos por el Código del Trabajo en Chile. Su administración está a cargo exclusivo de la <strong>AFC (Administradora de Fondos de Cesantía)</strong> y tiene como propósito entregar estabilidad financiera mediante pagos mensuales sucesivos tras la pérdida del empleo.
+                    </p>
+                    <p>
+                        El financiamiento del sistema se realiza mensualmente mediante cotizaciones sobre la remuneración imponible del trabajador, con un tope mensual legal de <strong>135,1 UF</strong>:
+                    </p>
+                    <ul>
+                        <li><strong>Contratos Indefinidos:</strong> Se financia con un aporte del trabajador del <strong>0,6%</strong> de su sueldo imponible y un aporte patronal del empleador del <strong>2,4%</strong> (un 1,6% se abona directamente en la Cuenta Individual CIC y un 0,8% va al Fondo de Cesantía Solidario FCS).</li>
+                        <li><strong>Contratos a Plazo Fijo, Obra o Faena:</strong> El trabajador no cotiza (0%). El empleador financia el <strong>3,0%</strong> completo (un 2,8% va a la Cuenta Individual CIC y un 0,2% al Fondo Solidario).</li>
+                        <li><strong>Trabajadoras de Casa Particular:</strong> Tienen un régimen donde el empleador cotiza el 3% íntegro con reglas especiales.</li>
+                    </ul>
+                </div>
+
+                <!-- Section 2: Requisitos Flexibilizados Ley 21.628 -->
+                <div class="prose-content">
+                    <h2>2. Requisitos oficiales para cobrar el Seguro de Cesantía en 2026</h2>
+                    <p>
+                        Gracias a la entrada en vigencia de la <strong>Ley 21.628</strong>, los requisitos de cotizaciones exigidos para solicitar el retiro de fondos se redujeron de forma permanente, facilitando el acceso a trabajadores que antes quedaban fuera:
+                    </p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6 not-prose">
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-sky-700 bg-sky-100/80 px-2 py-0.5 rounded-full mb-2">
+                                <span class="material-icons text-xs">business_center</span> Contrato Indefinido
+                            </span>
+                            <div class="text-lg font-bold text-slate-900 mb-1">Mínimo 10 Cotizaciones</div>
+                            <p class="text-xs text-slate-600 leading-relaxed m-0">
+                                Continuas o discontinuas dentro de los últimos 5 años anteriores al término de contrato, con uno o más empleadores.
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full mb-2">
+                                <span class="material-icons text-xs">event_note</span> Plazo Fijo u Obra
+                            </span>
+                            <div class="text-lg font-bold text-slate-900 mb-1">Mínimo 5 Cotizaciones</div>
+                            <p class="text-xs text-slate-600 leading-relaxed m-0">
+                                Continuas o discontinuas en los últimos 5 años. Antes se exigían 6 meses; la ley vigente rebajó el requisito a solo 5.
+                            </p>
+                        </div>
+                    </div>
+
+                    <p>
+                        Además del número de imposiciones, es requisito indispensable <strong>estar efectivamente cesante</strong> y acreditarlo con alguno de los documentos válidos reconocidos por la AFC: finiquito firmado y ratificado, carta de despido recepcionada, carta de renuncia firmada ante ministro de fe, acta de comparendo ante la Dirección del Trabajo o sentencia judicial.
+                    </p>
+                </div>
+
+                <!-- Section 3: Descuento AFC en Finiquito (Art. 13 Ley 19.728) -->
+                <div class="prose-content">
+                    <h2>3. ¿Cómo se relaciona el Seguro de Cesantía con el Finiquito?</h2>
+                    <p>
+                        Esta es la materia que genera más dudas y litigios laborales en Chile. Si fuiste despedido por la causal de <strong>Necesidades de la Empresa (Artículo 161 del Código del Trabajo)</strong>, la ley autoriza al empleador a imputar en tu finiquito los aportes que él pagó a tu AFC:
+                    </p>
+                    
+                    <div class="p-5 rounded-2xl bg-rose-50 border border-rose-200 text-slate-800 my-6 not-prose">
+                        <div class="flex items-center gap-2 mb-2 font-bold text-sm text-rose-800">
+                            <span class="material-icons text-rose-600 text-base">warning</span>
+                            <span>Regla de Oro del Descuento AFC (Art. 13 Ley 19.728)</span>
+                        </div>
+                        <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside m-0 leading-relaxed">
+                            <li>El empleador <strong>solo puede descontar el 1,6% que él aportó</strong> a tu Cuenta Individual (reajustado según la rentabilidad de la AFC).</li>
+                            <li><strong>Nunca puede descontar tus propios aportes del 0,6%</strong>, ni los dineros del Fondo Solidario.</li>
+                            <li>El descuento solo puede restarse de la <strong>indemnización por años de servicio</strong>; está prohibido descontarlo de tus vacaciones proporcionales o de los días de sueldo trabajados.</li>
+                            <li>Si demandas por <em>Despido Injustificado</em> y el tribunal declara improcedente la causal del Art. 161, la jurisprudencia de los tribunales chilenos ordena la <strong>devolución íntegra del descuento de la AFC</strong> al trabajador.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Callout Card: Enlace al Simulador de Finiquito -->
+                    <div class="my-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-sky-50 to-blue-50 border-2 border-sky-200 flex flex-col sm:flex-row items-center justify-between gap-4 not-prose shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-sky-500/20">
+                                <span class="material-icons text-lg">gavel</span>
+                            </div>
+                            <div>
+                                <span class="text-xs font-black text-sky-900 uppercase tracking-wider block mb-0.5">Herramienta Gratuita DT</span>
+                                <div class="text-sm sm:text-base font-bold text-slate-900">Simulador de Finiquito Legal con Descuento AFC</div>
+                                <p class="text-xs text-slate-600 m-0 mt-0.5">Calcula tu indemnización por años de servicio con el descuento del 1,6% restado de forma exacta según la causal de despido.</p>
+                            </div>
+                        </div>
+                        <a href="finiquito_calculator"
+                            class="cta-btn inline-flex items-center justify-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-600 !text-white font-bold text-xs rounded-xl shadow-md shadow-sky-500/15 transition-all hover:scale-[1.01] active:scale-95 !no-underline cursor-pointer shrink-0"
+                            style="background-color: #0ea5e9 !important; color: #ffffff !important;">
+                            <span style="color: #ffffff !important;">Calcular Finiquito</span>
+                            <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Section 4: Renuncia Voluntaria y la AFC -->
+                <div class="prose-content">
+                    <h2>4. ¿Puedo cobrar el Seguro de Cesantía si renuncié voluntariamente?</h2>
+                    <p>
+                        <strong>Sí, rotundamente.</strong> Existe el mito generalizado de que quien renuncia pierde su Seguro de Cesantía. Esto es falso: los dineros depositados en tu Cuenta Individual (CIC) son de tu exclusiva propiedad patrimonial.
+                    </p>
+                    <p>
+                        La única diferencia práctica es que quien renuncia voluntariamente:
+                    </p>
+                    <ul>
+                        <li><strong>Tiene derecho a cobrar todo el saldo acumulado en su cuenta individual (CIC)</strong> mediante los giros que alcancen a financiarse.</li>
+                        <li><strong>No tiene acceso al Fondo de Cesantía Solidario (FCS)</strong>, ya que el fondo solidario exige haber sido despedido por causales no imputables a la voluntad del trabajador (Art. 161, 159 o quiebra).</li>
+                    </ul>
+                    <p>
+                        Para tramitarlo tras una renuncia, debes adjuntar tu <strong>carta de renuncia voluntaria ratificada ante notario o la DT</strong> con al menos 30 días de anticipación o con recepción del empleador.
+                    </p>
+                </div>
+
+                <!-- Section 5: Paso a paso para cobrar en línea en www.afc.cl -->
+                <div class="prose-content">
+                    <h2>5. Paso a paso para solicitar el cobro 100% digital en la AFC</h2>
+                    <p>
+                        Actualmente no necesitas hacer filas ni acudir presencialmente a las sucursales físicas de la AFC. El trámite se gestiona completo por internet:
+                    </p>
+                    <ol>
+                        <li>Ingresa al portal oficial de la <a href="https://www.afc.cl" target="_blank" rel="noopener noreferrer">AFC Chile (www.afc.cl)</a> y haz clic en <strong>"Sucursal Virtual Afiliados"</strong>.</li>
+                        <li>Inicia sesión con tu <strong>RUT y ClaveÚnica</strong> del Registro Civil (o contraseña registrada de la AFC).</li>
+                        <li>Selecciona la opción <strong>"Cobro del Seguro"</strong> y luego <strong>"Solicitar cobro"</strong>.</li>
+                        <li>Adjunta en formato PDF o fotografía nítida tu <strong>documento de término de relación laboral</strong> (finiquito firmado, carta de despido o renuncia).</li>
+                        <li>Ingresa los datos de tu <strong>cuenta bancaria</strong> (CuentaRUT, Cuenta Corriente o Vista) para recibir las transferencias mensuales automáticas.</li>
+                        <li>Revisa el calendario propuesto de pagos y confirma la solicitud. En un plazo promedio de 4 a 10 días hábiles recibirás la confirmación de aprobación.</li>
+                    </ol>
+
+                    <!-- Official AFC Contact Box -->
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 my-6 not-prose">
+                        <div class="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-200 pb-2 flex items-center gap-1.5">
+                            <span class="material-icons text-sky-500 text-sm">support_agent</span> Canales Oficiales de Atención AFC Chile
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons text-emerald-600 text-base">language</span>
+                                <div><strong class="block text-slate-800">Sitio Web:</strong> <a href="https://www.afc.cl" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">www.afc.cl</a></div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons text-emerald-600 text-base">phone</span>
+                                <div><strong class="block text-slate-800">Call Center:</strong> 600 584 3000</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons text-emerald-600 text-base">smartphone</span>
+                                <div><strong class="block text-slate-800">Desde Celulares:</strong> 2 2257 9350</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Cuenta Individual (CIC) vs Fondo Solidario (FCS) -->
+                <div class="prose-content">
+                    <h2>6. Diferencias entre Cuenta Individual (CIC) y Fondo Solidario (FCS)</h2>
+                    <p>
+                        Para entender tu cartola, es fundamental distinguir los dos pilares del Seguro de Cesantía:
+                    </p>
+                    <div class="overflow-x-auto my-6 border border-slate-200 rounded-2xl bg-white shadow-2xs not-prose">
+                        <table class="w-full min-w-[500px] text-left border-collapse text-xs sm:text-sm">
+                            <caption class="sr-only">Comparativa entre Cuenta Individual y Fondo Solidario</caption>
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                    <th scope="col" class="py-2.5 px-4 font-semibold">Característica</th>
+                                    <th scope="col" class="py-2.5 px-4 font-semibold text-sky-700">Cuenta Individual (CIC)</th>
+                                    <th scope="col" class="py-2.5 px-4 font-semibold text-emerald-700">Fondo Solidario (FCS)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs">
+                                <tr>
+                                    <td class="py-2.5 px-4 font-bold text-slate-800">Propiedad del dinero</td>
+                                    <td class="py-2.5 px-4 text-slate-600">100% del trabajador (heredable)</td>
+                                    <td class="py-2.5 px-4 text-slate-600">Fondo colectivo público de reparto</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-4 font-bold text-slate-800">Causales de cobro</td>
+                                    <td class="py-2.5 px-4 text-slate-600">Cualquiera (despido, renuncia, mutuo)</td>
+                                    <td class="py-2.5 px-4 text-slate-600">Solo involuntarias (Art. 161, 159 N°4/5)</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-4 font-bold text-slate-800">Monto del pago</td>
+                                    <td class="py-2.5 px-4 text-slate-600">Sin tope (depende del saldo ahorrado)</td>
+                                    <td class="py-2.5 px-4 text-slate-600">Con topes mínimos y máximos legales</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-4 font-bold text-slate-800">Aporte patronal</td>
+                                    <td class="py-2.5 px-4 text-slate-600">1,6% (descontable en Art. 161)</td>
+                                    <td class="py-2.5 px-4 text-slate-600">0,8% (no descontable en finiquito)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 7: FAQs Accordion -->
+                <div class="prose-content">
+                    <h2>Preguntas Frecuentes sobre el Seguro de Cesantía</h2>
+                    <div class="space-y-3 not-prose mt-4">
+                        <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
+                            <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
+                                ¿Qué ocurre con mi Seguro de Cesantía si encuentro un nuevo trabajo antes de cobrar todos los giros?
+                                <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                            </summary>
+                            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed m-0">
+                                Los giros pendientes se suspenden automáticamente en el momento en que tu nuevo empleador empiece a cotizar por ti en la AFC. El saldo restante no se pierde: permanece invertido y ganando rentabilidad en tu Cuenta Individual (CIC) para cuando lo necesites en el futuro.
+                            </p>
+                        </details>
+
+                        <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
+                            <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
+                                ¿El Seguro de Cesantía paga cotizaciones de salud y jubilación?
+                                <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                            </summary>
+                            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed m-0">
+                                Si cobras con cargo al Fondo de Cesantía Solidario (FCS), la ley cubre automáticamente el pago de tu cotización de salud de Fonasa (7%) y la cotización previsional de tu AFP (10%). Si retiras solo de tu Cuenta Individual (CIC), conservas la cobertura médica de Fonasa por hasta 12 meses pero no se generan aportes a tu AFP.
+                            </p>
+                        </details>
+
+                        <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
+                            <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
+                                ¿Qué plazo tengo para tramitar el cobro en la AFC tras ser despedido?
+                                <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                            </summary>
+                            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed m-0">
+                                No existe un plazo límite de caducidad para cobrar de tu Cuenta Individual. Los fondos son tuyos de por vida. Sin embargo, para acceder al Fondo Solidario (FCS) se recomienda ingresar la solicitud dentro de los primeros 30 a 60 días posteriores al cese de actividades.
+                            </p>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Section 8: Related Tools Cards -->
+                <div class="not-prose pt-8 border-t border-slate-100">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Calculadoras y Guías Recomendadas</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <a href="finiquito_calculator" class="p-4 bg-slate-50 hover:bg-sky-50/60 border border-slate-200 rounded-2xl transition-all group block !no-underline">
+                            <span class="material-icons text-sky-500 text-xl mb-1 block">gavel</span>
+                            <span class="text-xs font-bold text-slate-900 group-hover:text-sky-600 block">Calculadora de Finiquito</span>
+                            <span class="text-[11px] text-slate-500 block mt-0.5">Años de servicio y aviso previo</span>
+                        </a>
+                        <a href="calculadora-vacaciones" class="p-4 bg-slate-50 hover:bg-sky-50/60 border border-slate-200 rounded-2xl transition-all group block !no-underline">
+                            <span class="material-icons text-emerald-500 text-xl mb-1 block">beach_access</span>
+                            <span class="text-xs font-bold text-slate-900 group-hover:text-sky-600 block">Calculadora de Vacaciones</span>
+                            <span class="text-[11px] text-slate-500 block mt-0.5">Días acumulados y proporcionales</span>
+                        </a>
+                        <a href="simulador-despido-injustificado-chile" class="p-4 bg-slate-50 hover:bg-rose-50/60 border border-slate-200 rounded-2xl transition-all group block !no-underline">
+                            <span class="material-icons text-rose-500 text-xl mb-1 block">balance</span>
+                            <span class="text-xs font-bold text-slate-900 group-hover:text-rose-600 block">Despido Injustificado</span>
+                            <span class="text-[11px] text-slate-500 block mt-0.5">Recargo del 30%, 50% y 100%</span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- Footer Oficial Blanco Compacto Invariable -->
+    <footer class="bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <!-- Brand Column -->
+            <div class="space-y-3">
+                <a href="./" class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+                </a>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
+                </p>
+                <p class="text-[11px] text-slate-400 font-mono">Versión 2.0.0 (2026)</p>
+            </div>
+
+            <!-- Calculadoras Column -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h3>
+                <ul class="space-y-1.5 text-xs">
+                    <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
+                    <li><a href="simulador-seguro-cesantia-afc" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Seguro de Cesantía (AFC)</a></li>
+                    <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
+                    <li><a href="finiquito_calculator" class="text-slate-600 hover:text-sky-500 transition-colors">Finiquito Legal</a></li>
+                    <li><a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-500 transition-colors">Horas Extras (Ley 40 Horas)</a></li>
+                    <li><a href="calculadora-vacaciones" class="text-slate-600 hover:text-sky-500 transition-colors">Calculadora de Vacaciones</a></li>
+                    <li><a href="calculadora-sueldo-part-time" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Part-Time</a></li>
+                </ul>
+            </div>
+
+            <!-- Guías Clave Column -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h3>
+                <ul class="space-y-1.5 text-xs">
+                    <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
+                    <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
+                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-amber-600 hover:text-amber-700 font-bold transition-colors">Checklist Fiscalización DT</a></li>
+                    <li><a href="despido-necesidades-empresa-articulo-161" class="text-slate-600 hover:text-sky-500 transition-colors">Art. 161 Necesidades Empresa</a></li>
+                    <li><a href="ley-40-horas-chile-2026" class="text-slate-600 hover:text-sky-500 transition-colors">Ley de 40 Horas (42h en 2026)</a></li>
+                    <li class="pt-1"><a href="blog" class="text-sky-600 hover:underline font-semibold flex items-center gap-1">Ver todas las guías <span class="text-[10px]">→</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Empresas & Monetización Column -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h3>
+                <ul class="space-y-1.5 text-xs">
+                    <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
+                    <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
+                    <li><a href="kit-cumplimiento-laboral-pymes" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
+                    <li><a href="generador-finiquito-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Generador Finiquito ($12.990)</a></li>
+                    <li><a href="generador-anexo-40-horas" class="text-slate-600 hover:text-sky-500 transition-colors">Anexo 40 Horas Word</a></li>
+                    <li><a href="sobre-nosotros" class="text-slate-600 hover:text-sky-500 transition-colors">Sobre Nosotros</a></li>
+                    <li><a href="contacto" class="text-slate-600 hover:text-sky-500 transition-colors">Contacto Directo</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Barra Inferior Unificada -->
+        <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <p class="text-xs text-slate-500">
+                &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en la <a href="https://www.bcn.cl/leychile/navegar?idNorma=185856" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Ley 19.728</a> y <a href="https://www.bcn.cl/leychile/navegar?idNorma=1198544" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Ley 21.628</a> de la República de Chile.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500">
+                <a href="terminos" class="hover:text-slate-800 transition-colors">Términos</a>
+                <span class="text-slate-300">·</span>
+                <a href="privacidad" class="hover:text-slate-800 transition-colors">Privacidad</a>
+                <span class="text-slate-300">·</span>
+                <a href="disclaimer" class="hover:text-slate-800 transition-colors">Disclaimer</a>
+                <span class="text-slate-300">·</span>
+                <span class="inline-flex items-center gap-1 text-slate-600 font-medium">
+                    <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
+                    Fórmulas Conforme a AFC y DT
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-sky-500">history</span>
+                    <div class="text-base font-bold text-slate-900">Historial de Indicadores</div>
+                </div>
+                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
+                    </div>
+                    <div class="max-h-[250px] overflow-y-auto pr-1">
+                        <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UF</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="uf-history-body">
+                                <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    </div>
+                    <div class="max-h-[250px] overflow-y-auto pr-1">
+                        <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UTM</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Período</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="utm-history-body">
+                                <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/constants.js?v=2.0.3"></script>
+    <script src="/js/indicators.js?v=2.0.3"></script>
+    <script>
+        function parseCleanNumber(val) {
+            if (!val) return 0;
+            return parseInt(val.toString().replace(/[^0-9]/g, ''), 10) || 0;
+        }
+
+        function formatCurrency(num) {
+            return '$' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function formatAFCInput(input) {
+            var raw = input.value || '';
+            var oldSel = input.selectionStart || 0;
+            var digitsBefore = 0;
+            for (var i = 0; i < oldSel; i++) {
+                if (/\d/.test(raw[i])) digitsBefore++;
+            }
+            var digits = raw.replace(/\D/g, '');
+            if (!digits) { input.value = ''; return; }
+            var cleanDigits = digits.slice(0, 11);
+            var formatted = '$ ' + parseInt(cleanDigits, 10).toLocaleString('es-CL');
+            input.value = formatted;
+            var newPos = formatted.length;
+            var counted = 0;
+            for (var j = 0; j < formatted.length; j++) {
+                if (/\d/.test(formatted[j])) {
+                    counted++;
+                    if (counted === digitsBefore) { newPos = j + 1; break; }
+                }
+            }
+            if (digitsBefore === 0) newPos = 2;
+            try { input.setSelectionRange(newPos, newPos); } catch (e) {}
+        }
+
+        function formatAFCSaldoManual(input) {
+            formatAFCInput(input);
+        }
+
+        function setAFCMinimo() {
+            var input = document.getElementById('afc-sueldo-base');
+            input.value = '$ 553.553';
+            calculateSeguroCesantia();
+        }
+
+        function setAFCMonths(months) {
+            var input = document.getElementById('afc-meses-trabajados');
+            input.value = months;
+            calculateSeguroCesantia();
+        }
+
+        function calculateSeguroCesantia() {
+            var sueldo = parseCleanNumber(document.getElementById('afc-sueldo-base').value) || 553553;
+            var tipoContratoEl = document.querySelector('input[name="afc-tipo-contrato"]:checked');
+            var tipo = tipoContratoEl ? tipoContratoEl.value : 'indefinido';
+            var meses = parseInt(document.getElementById('afc-meses-trabajados').value, 10) || 1;
+            var causal = document.getElementById('afc-causal').value;
+            
+            var saldoManualInput = document.getElementById('afc-saldo-manual');
+            var saldoManual = saldoManualInput ? parseCleanNumber(saldoManualInput.value) : 0;
+
+            // Cotizaciones mínimas exigidas Ley 21.628
+            var minCotiz = tipo === 'indefinido' ? 10 : 5;
+            var esElegible = meses >= minCotiz;
+
+            // Saldo estimado acumulado en la CIC (Aporte patronal + trabajador con rentabilidad)
+            // Indefinido: 1.6% CIC empleador + 0.6% CIC trabajador = 2.2% mensual a la CIC
+            // Plazo fijo: 2.8% CIC empleador
+            var factorAporteCIC = tipo === 'indefinido' ? 0.022 : 0.028;
+            var saldoProyectado = saldoManual > 0 ? saldoManual : Math.round(sueldo * factorAporteCIC * meses * 1.035);
+
+            // Porcentajes oficiales decrecientes Ley 21.628 (70%, 55%, 45%, 40%, 35%)
+            var porcentajes = [0.70, 0.55, 0.45, 0.40, 0.35];
+            var giros = [];
+            var totalAcumulado = 0;
+
+            for (var i = 0; i < porcentajes.length; i++) {
+                var montoTeorico = Math.round(sueldo * porcentajes[i]);
+                totalAcumulado += montoTeorico;
+                
+                // Determinar fuente (Cuenta Individual vs Fondo Solidario)
+                var fuente = 'Cuenta Individual (CIC)';
+                if (saldoProyectado < totalAcumulado) {
+                    if (causal === '161' || causal === 'plazo') {
+                        fuente = 'Fondo Solidario (FCS)';
+                    } else {
+                        fuente = 'Saldo CIC insuficiente';
+                    }
+                }
+
+                giros.push({
+                    numero: i + 1,
+                    porcentaje: Math.round(porcentajes[i] * 100) + '%',
+                    monto: montoTeorico,
+                    fuente: fuente
+                });
+            }
+
+            // Render Totals
+            var totalRecibirEl = document.getElementById('afc-total-recibir');
+            if (totalRecibirEl) totalRecibirEl.innerText = formatCurrency(totalAcumulado);
+
+            var cantGirosEl = document.getElementById('afc-cantidad-giros');
+            if (cantGirosEl) cantGirosEl.innerText = giros.length + ' Meses';
+
+            var resPromedioEl = document.getElementById('afc-res-promedio');
+            if (resPromedioEl) resPromedioEl.innerText = formatCurrency(sueldo);
+
+            var resPrimerGiroEl = document.getElementById('afc-res-primer-giro');
+            if (resPrimerGiroEl) resPrimerGiroEl.innerText = formatCurrency(giros[0].monto);
+
+            var resSaldoCicEl = document.getElementById('afc-res-saldo-cic');
+            if (resSaldoCicEl) resSaldoCicEl.innerText = formatCurrency(saldoProyectado);
+
+            // Elegibilidad Badge
+            var badgeEl = document.getElementById('afc-elegibilidad-badge');
+            if (badgeEl) {
+                if (esElegible) {
+                    badgeEl.className = 'text-xs text-emerald-600 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
+                    badgeEl.innerHTML = '<span class="material-icons text-xs">check_circle</span> Cumples requisitos de cotizaciones (' + meses + ' cotizadas de ' + minCotiz + ' mínimas)';
+                } else {
+                    badgeEl.className = 'text-xs text-amber-600 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
+                    badgeEl.innerHTML = '<span class="material-icons text-xs">warning</span> Faltan ' + (minCotiz - meses) + ' cotizaciones para el mínimo legal (' + minCotiz + ' exigidas)';
+                }
+            }
+
+            // Render Table Body
+            var tbody = document.getElementById('afc-table-body');
+            if (tbody) {
+                tbody.innerHTML = '';
+                for (var j = 0; j < giros.length; j++) {
+                    var g = giros[j];
+                    var tr = document.createElement('tr');
+                    var isFCS = g.fuente.indexOf('FCS') !== -1;
+                    tr.className = isFCS ? 'bg-emerald-50/30' : '';
+                    tr.innerHTML = '<td class="py-2.5 px-4 font-bold text-slate-800">' + g.numero + '° Mes (Giro ' + g.numero + ')</td>' +
+                                   '<td class="py-2.5 px-4 text-center font-bold text-sky-600">' + g.porcentaje + '</td>' +
+                                   '<td class="py-2.5 px-4 text-right font-extrabold text-slate-900">' + formatCurrency(g.monto) + '</td>' +
+                                   '<td class="py-2.5 px-4 text-right ' + (isFCS ? 'text-emerald-700 font-semibold' : 'text-slate-500') + '">' + g.fuente + '</td>';
+                    tbody.appendChild(tr);
+                }
+            }
+
+            // Descuento AFC en Finiquito (Art. 161)
+            var bridgeCard = document.getElementById('afc-finiquito-bridge-card');
+            var descMontoEl = document.getElementById('afc-monto-descuento-finiquito');
+            if (bridgeCard && descMontoEl) {
+                if (causal === '161') {
+                    bridgeCard.classList.remove('hidden');
+                    // Empleador aporta 1.6% mensual en indefinido
+                    var montoDescuento = Math.round(sueldo * 0.016 * meses);
+                    descMontoEl.innerText = formatCurrency(montoDescuento);
+                } else {
+                    bridgeCard.classList.add('hidden');
+                }
+            }
+
+            // GA4 Telemetry (debounced)
+            clearTimeout(window._afcTrackTimer);
+            window._afcTrackTimer = setTimeout(function() {
+                if (typeof gtag === 'function' && totalAcumulado > 0) {
+                    gtag('event', 'calculate_seguro_cesantia', {
+                        'event_category': 'Calculator',
+                        'value': Math.round(totalAcumulado),
+                        'tipo_contrato': tipo,
+                        'sueldo_promedio': sueldo,
+                        'meses': meses
+                    });
+                }
+            }, 1200);
+        }
+
+        function copyAFCResults() {
+            var sueldo = document.getElementById('afc-res-promedio').innerText;
+            var total = document.getElementById('afc-total-recibir').innerText;
+            var primerGiro = document.getElementById('afc-res-primer-giro').innerText;
+            var giros = document.getElementById('afc-cantidad-giros').innerText;
+
+            var text = "Simulación Seguro de Cesantía AFC (calculolaboral.cl):\n" +
+                       "Sueldo Imponible Promedio: " + sueldo + "\n" +
+                       "Giros Proyectados: " + giros + "\n" +
+                       "Monto 1er Giro (70%): " + primerGiro + "\n" +
+                       "Total Estimado a Cobrar: " + total + "\n" +
+                       "Calcula el tuyo gratis en: https://calculolaboral.cl/simulador-seguro-cesantia-afc";
+
+            navigator.clipboard.writeText(text).then(function() {
+                var btnText = document.getElementById('afc-copy-text');
+                if (btnText) {
+                    btnText.innerText = '¡Copiado!';
+                    setTimeout(function() { btnText.innerText = 'Copiar Simulación'; }, 2000);
+                }
+            });
+        }
+
+        function shareAFCWhatsApp() {
+            var total = document.getElementById('afc-total-recibir').innerText;
+            var primerGiro = document.getElementById('afc-res-primer-giro').innerText;
+            var texto = 'Hola! Hice mi simulación del Seguro de Cesantía en Cálculo Laboral Chile con la Ley 21.628: 1er giro al 70% da ' + primerGiro + ' y un total estimado de ' + total + '. Simula tus giros gratis aquí: https://calculolaboral.cl/simulador-seguro-cesantia-afc';
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'share', { method: 'WhatsApp', content_type: 'seguro_cesantia' });
+            }
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', calculateSeguroCesantia);
+    </script>
+</body>
+</html>
