@@ -2492,133 +2492,87 @@
                 </p>
             </div>
 
-            <!-- Editorial Guides Grid (Asymmetric Layout breaking the generic 3-card template) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12 text-left items-stretch">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 text-left">
                 
-                <!-- Featured Lead Guide (Spans 7 columns on Desktop): Reclamar Despido Injustificado DT -->
-                <div class="lg:col-span-7 reveal-on-scroll delay-100 bg-white p-7 sm:p-9 rounded-3xl border border-rose-200/80 shadow-2xs hover:shadow-md flex flex-col justify-between transition-all relative overflow-hidden group">
+                <!-- Guide Card 1: Reclamar Despido Injustificado DT -->
+                <div class="step-card reveal-on-scroll delay-100 bg-white p-7 sm:p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-all">
                     <div>
-                        <!-- Header Badges -->
-                        <div class="flex flex-wrap items-center justify-between gap-2.5 mb-5 pb-1">
-                            <span class="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-rose-800 bg-rose-50 border border-rose-200/90 px-3 py-1.5 rounded-full">
-                                <span class="material-icons text-sm text-rose-600">gavel</span>
-                                <span>Guía Principal • Trámite DT</span>
-                            </span>
-                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
-                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                                <span>Plazo Fatal: 60 Días Hábiles</span>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                                <span class="material-icons text-xl">gavel</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-rose-700 bg-rose-50 border border-rose-200/80 px-2.5 py-1 rounded-full">
+                                Trámite DT • Plazo 60 Días
                             </span>
                         </div>
-
-                        <!-- Title & Intro -->
-                        <h3 class="font-extrabold text-2xl sm:text-3xl text-gray-950 tracking-tight leading-snug mb-3">
-                            Cómo Reclamar un Despido Injustificado y Exigir el +30%
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
+                            Cómo Reclamar un Despido Injustificado
                         </h3>
-                        <p class="text-sm sm:text-base text-gray-600 leading-relaxed font-sans mb-6">
-                            Si tu empleador invocó "Necesidades de la Empresa" (Art. 161) sin fundamentos reales o descontó el aporte patronal del seguro de cesantía, la ley laboral chilena te faculta a exigir recargos legales. Conoce el procedimiento formal:
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
+                            Procedimiento formal ante la Inspección del Trabajo: plazos fatales de 60 días hábiles, citación al comparendo de conciliación y cómo exigir el recargo legal del 30% más el reembolso del aporte AFC.
                         </p>
-
-                        <!-- Actionable Step Anatomy inside the card -->
-                        <div class="space-y-3 bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200/70 mb-6">
-                            <div class="flex items-start gap-3">
-                                <div class="w-6 h-6 rounded-full bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
-                                <div>
-                                    <div class="font-bold text-xs sm:text-sm text-slate-900">Reserva de derechos manuscrita</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Escribe la fórmula legal sobre tu firma para recibir el pago inmediato en notaría sin renunciar a reclamar.</div>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-6 h-6 rounded-full bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
-                                <div>
-                                    <div class="font-bold text-xs sm:text-sm text-slate-900">Reclamo ante la Inspección del Trabajo</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Ingreso presencial o en Mi DT antes del día 60 hábil (suspende el plazo de caducidad hasta el día 90).</div>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-6 h-6 rounded-full bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
-                                <div>
-                                    <div class="font-bold text-xs sm:text-sm text-slate-900">Comparendo o Demanda Judicial</div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Audiencia de conciliación y cobro del 30% al 100% de recargo legal más el reembolso íntegro de AFC.</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-
-                    <!-- Footer Action -->
-                    <div class="pt-5 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <span class="text-xs text-gray-500 font-medium">Lectura estimada: 4 min • Conforme al Art. 168 CT</span>
-                        <a href="reclamar-despido-injustificado-chile" class="btn-yellow-pill group text-xs sm:text-sm px-6 py-2.5 inline-flex items-center gap-2 shadow-xs hover:shadow transition-all">
-                            <span class="font-bold">Ver Guía Paso a Paso</span>
-                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                    <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 font-medium">Lectura: 4 min</span>
+                        <a href="reclamar-despido-injustificado-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Ver paso a paso</span>
+                            <span class="material-icons text-base">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Secondary Guides Column (Spans 5 columns on Desktop, Stacked Vertically) -->
-                <div class="lg:col-span-5 flex flex-col gap-6">
-                    
-                    <!-- Guide Card 2: Carta de Renuncia Voluntaria -->
-                    <div class="reveal-on-scroll delay-200 bg-white p-6 sm:p-7 rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md flex flex-col justify-between flex-1 transition-all">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                                        <span class="material-icons text-xl">edit_note</span>
-                                    </div>
-                                    <div>
-                                        <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Herramienta Gratuita</div>
-                                        <div class="text-xs text-slate-400 font-medium">Art. 159 N° 2 CT</div>
-                                    </div>
-                                </div>
-                                <span class="text-xs text-gray-400 font-medium">Asistente</span>
+                <!-- Guide Card 2: Carta de Renuncia Voluntaria -->
+                <div class="step-card reveal-on-scroll delay-200 bg-white p-7 sm:p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                                <span class="material-icons text-xl">edit_note</span>
                             </div>
-                            <h4 class="font-bold text-lg sm:text-xl text-gray-950 mb-2 tracking-tight">
-                                Carta de Renuncia Voluntaria
-                            </h4>
-                            <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans mb-4">
-                                Redactor interactivo con los 30 días de anticipación legal obligatorios. Evita retenciones ilegales en tu finiquito y genera el texto formal listo para notaría o portal Mi DT.
-                            </p>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">
+                                Asistente • Art. 159 N° 2
+                            </span>
                         </div>
-                        <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                            <span class="text-xs text-emerald-800 font-semibold">Listo en 2 minutos</span>
-                            <a href="carta-de-renuncia-chile" class="text-xs sm:text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 transition-colors">
-                                <span>Redactar carta gratis</span>
-                                <span class="material-icons text-sm">arrow_forward</span>
-                            </a>
-                        </div>
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
+                            Carta de Renuncia Voluntaria
+                        </h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
+                            Redactor interactivo gratuito con los 30 días de anticipación legal obligatorios. Evita retenciones ilegales en tu finiquito y genera el texto formal listo para notaría o portal Mi DT.
+                        </p>
                     </div>
+                    <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 font-medium">Herramienta Gratuita</span>
+                        <a href="carta-de-renuncia-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Redactar carta gratis</span>
+                            <span class="material-icons text-base">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
 
-                    <!-- Guide Card 3: Despido Art. 161 & Restitución AFC -->
-                    <div class="reveal-on-scroll delay-300 bg-white p-6 sm:p-7 rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md flex flex-col justify-between flex-1 transition-all">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
-                                        <span class="material-icons text-xl">balance</span>
-                                    </div>
-                                    <div>
-                                        <div class="text-[10px] font-bold uppercase tracking-wider text-indigo-700">Jurisprudencia</div>
-                                        <div class="text-xs text-slate-400 font-medium">Corte Suprema</div>
-                                    </div>
-                                </div>
-                                <span class="text-xs text-gray-400 font-medium">Lectura: 5 min</span>
+                <!-- Guide Card 3: Despido Art. 161 & Restitución AFC -->
+                <div class="step-card reveal-on-scroll delay-300 bg-white p-7 sm:p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                <span class="material-icons text-xl">balance</span>
                             </div>
-                            <h4 class="font-bold text-lg sm:text-xl text-gray-950 mb-2 tracking-tight">
-                                Art. 161: Restitución del Aporte Patronal AFC
-                            </h4>
-                            <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans mb-4">
-                                Aprende a detectar cartas de despido genéricas. Conoce la doctrina reiterada de la Corte Suprema que prohíbe al empleador descontar el seguro de cesantía en despidos improcedentes.
-                            </p>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-2.5 py-1 rounded-full">
+                                Doctrina Corte Suprema
+                            </span>
                         </div>
-                        <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                            <span class="text-xs text-indigo-900 font-semibold">Doctrina unificada</span>
-                            <a href="despido-necesidades-empresa-articulo-161" class="text-xs sm:text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 transition-colors">
-                                <span>Leer análisis legal</span>
-                                <span class="material-icons text-sm">arrow_forward</span>
-                            </a>
-                        </div>
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
+                            Art. 161: Necesidades de la Empresa
+                        </h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
+                            Aprende a detectar cartas de despido genéricas o improcedentes. Conoce los fallos judiciales unificados que prohíben al empleador descontar el aporte patronal del seguro de cesantía.
+                        </p>
                     </div>
-
+                    <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 font-medium">Lectura: 5 min</span>
+                        <a href="despido-necesidades-empresa-articulo-161" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Leer análisis legal</span>
+                            <span class="material-icons text-base">arrow_forward</span>
+                        </a>
+                    </div>
                 </div>
 
             </div>
