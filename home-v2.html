@@ -648,6 +648,33 @@
                 gap: 3rem;
             }
         }
+
+        /* TealHQ Elevated Curved Dark Footer */
+        .teal-footer-curve {
+            background-color: var(--teal-forest-deep, #00241E);
+            color: #FFFFFF;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 -10px 40px -10px rgba(0, 36, 30, 0.15);
+        }
+        @media (min-width: 1024px) {
+            .teal-footer-curve {
+                border-top-left-radius: 72px;
+                border-top-right-radius: 0px;
+            }
+        }
+        .teal-footer-link {
+            color: #94A3B8;
+            transition: color 0.15s ease, transform 0.15s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .teal-footer-link:hover {
+            color: #FFB703;
+            transform: translateX(2px);
+        }
     </style>
 </head>
 <body>
@@ -2658,93 +2685,109 @@
         </div>
     </section>
 
-    <!-- Footer Unificado Compacto Oficial (Regla de Oro Invariable) -->
-    <footer class="bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print">
-        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            <!-- Brand Column -->
-            <div class="space-y-3">
-                <a href="./" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
-                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M30 84h40M38 79h24"></path>
-                            <path d="M50 22v57"></path>
-                            <path d="M50 14l-2 4h4l-2-4v8"></path>
-                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                            <path d="M18 36l-8 18h16Z"></path>
-                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M82 36l-8 18h16Z"></path>
-                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                            <path d="M58 43.5v20h10"></path>
-                        </svg>
+    <!-- SECTION 6: TEALHQ ASYMMETRIC CURVED FOOTER (Pine Forest Deep #00241E) -->
+    <footer class="bg-warm-surface no-print pt-6">
+        <div class="teal-footer-curve text-white">
+            <div class="site-container py-14 sm:py-16">
+                <!-- Main Links Grid (TealHQ Architecture - 4 Columns) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
+                    
+                    <!-- Col 1 & 2: Brand & Mission -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <a href="./" class="inline-flex items-center gap-2.5 group">
+                            <div class="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center text-gray-950 font-bold shadow-md shadow-amber-400/20 group-hover:scale-105 transition-transform">
+                                <svg class="w-5 h-5 text-gray-950" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M30 84h40M38 79h24"></path>
+                                    <path d="M50 22v57"></path>
+                                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                                    <path d="M18 36l-8 18h16Z"></path>
+                                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M82 36l-8 18h16Z"></path>
+                                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                                    <path d="M58 43.5v20h10"></path>
+                                </svg>
+                            </div>
+                            <span class="font-extrabold text-2xl tracking-tight text-white">
+                                Cálculo<span class="text-amber-400">Laboral</span>
+                            </span>
+                        </a>
+                        <p class="text-xs sm:text-[13px] text-slate-300 leading-relaxed max-w-sm">
+                            Plataforma legal independiente de cálculo laboral en Chile. Diseñada con rigor normativo para transparentar indemnizaciones, proteger derechos y blindar a las pymes (2026).
+                        </p>
+                        <div class="pt-2 flex flex-wrap items-center gap-2.5">
+                            <span class="text-[11px] font-mono text-emerald-400 bg-emerald-950/70 border border-emerald-500/25 px-2.5 py-1 rounded-full font-medium">
+                                Versión 2.5 • Marzo 2026
+                            </span>
+                            <span class="text-[11px] text-slate-400">
+                                Ley 40 Horas (42h vigente)
+                            </span>
+                        </div>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
-                </a>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
-                </p>
-                <p class="text-[11px] text-slate-400 font-mono">Versión 2.0.0 (2026)</p>
-            </div>
 
-            <!-- Calculadoras Column -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h3>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="calculadora-costo-empresa-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Costo Empresa / Contratar</a></li>
-                    <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
-                    <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
-                    <li><a href="finiquito_calculator" class="text-slate-600 hover:text-sky-500 transition-colors">Finiquito Legal</a></li>
-                    <li><a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-500 transition-colors">Horas Extras (Ley 40 Horas)</a></li>
-                    <li><a href="calculadora-sueldo-part-time" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Part-Time</a></li>
-                    <li><a href="simulador-seguro-cesantia-afc" class="text-slate-600 hover:text-sky-500 transition-colors">Seguro Cesantía (AFC)</a></li>
-                    <li><a href="calculadora-despido-articulo-160" class="text-slate-600 hover:text-sky-500 transition-colors">Despido Art. 160</a></li>
-                </ul>
-            </div>
+                    <!-- Col 2: Calculadoras -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">Calculadoras</h4>
+                        <ul class="space-y-2 text-xs sm:text-[13px]">
+                            <li><a href="simulador-despido-injustificado-chile" class="teal-footer-link font-semibold text-rose-300 hover:text-rose-200">Despido Injustificado</a></li>
+                            <li><a href="finiquito_calculator" class="teal-footer-link">Finiquito Legal</a></li>
+                            <li><a href="sueldo_liquido" class="teal-footer-link">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-costo-empresa-chile" class="teal-footer-link">Costo Empresa / Contratar</a></li>
+                            <li><a href="calculadora-horas-extras" class="teal-footer-link">Horas Extras (Ley 40h)</a></li>
+                            <li><a href="calculadora-sueldo-part-time" class="teal-footer-link">Sueldo Part-Time</a></li>
+                            <li><a href="simulador-seguro-cesantia-afc" class="teal-footer-link">Seguro Cesantía (AFC)</a></li>
+                            <li><a href="calculadora-despido-articulo-160" class="teal-footer-link">Despido Art. 160</a></li>
+                        </ul>
+                    </div>
 
-            <!-- Guías Clave Column -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h3>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
-                    <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
-                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-amber-600 hover:text-amber-700 font-bold transition-colors">Checklist Fiscalización DT</a></li>
-                    <li><a href="despido-necesidades-empresa-articulo-161" class="text-slate-600 hover:text-sky-500 transition-colors">Art. 161 Necesidades Empresa</a></li>
-                    <li><a href="ley-40-horas-chile-2026" class="text-slate-600 hover:text-sky-500 transition-colors">Ley de 40 Horas (42h en 2026)</a></li>
-                    <li class="pt-1"><a href="blog" class="text-sky-600 hover:underline font-semibold flex items-center gap-1">Ver todas las guías <span class="text-[10px]">→</span></a></li>
-                </ul>
-            </div>
+                    <!-- Col 3: Guías Clave -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">Guías Legales</h4>
+                        <ul class="space-y-2 text-xs sm:text-[13px]">
+                            <li><a href="reclamar-despido-injustificado-chile" class="teal-footer-link font-semibold text-amber-300 hover:text-amber-200">Cómo Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="teal-footer-link">Carta de Renuncia</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="teal-footer-link">Checklist Fiscalización DT</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="teal-footer-link">Art. 161 Necesidades</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="teal-footer-link">Ley 40 Horas (42h en 2026)</a></li>
+                            <li><a href="#abogados-laborales" class="teal-footer-link text-emerald-400 hover:text-emerald-300">Asesoría con Abogados</a></li>
+                            <li class="pt-1"><a href="blog" class="inline-flex items-center gap-1 font-semibold text-amber-400 hover:text-amber-300">Ver todas las guías →</a></li>
+                        </ul>
+                    </div>
 
-            <!-- Empresas & Monetización Column -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h3>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
-                    <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
-                    <li><a href="kit-cumplimiento-laboral-pymes" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
-                    <li><a href="generador-finiquito-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Generador Finiquito ($12.990)</a></li>
-                    <li><a href="generador-anexo-40-horas" class="text-slate-600 hover:text-sky-500 transition-colors">Anexo 40 Horas Word</a></li>
-                    <li><a href="sobre-nosotros" class="text-slate-600 hover:text-sky-500 transition-colors">Sobre Nosotros</a></li>
-                    <li><a href="contacto" class="text-slate-600 hover:text-sky-500 transition-colors">Contacto Directo</a></li>
-                </ul>
-            </div>
-        </div>
+                    <!-- Col 4: Para Empresas -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">Para Empresas</h4>
+                        <ul class="space-y-2 text-xs sm:text-[13px]">
+                            <li><a href="para-empleadores" class="teal-footer-link font-semibold text-slate-200 hover:text-amber-300">Portal Empleadores (Pymes)</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="teal-footer-link text-rose-300 hover:text-rose-200">Kit Ley 21.719 Datos ($29.990)</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="teal-footer-link">Kit Blindaje Laboral ($19.990)</a></li>
+                            <li><a href="generador-finiquito-chile" class="teal-footer-link">Generador Finiquito ($12.990)</a></li>
+                            <li><a href="generador-anexo-40-horas" class="teal-footer-link">Anexo 40 Horas Word</a></li>
+                            <li><a href="sobre-nosotros" class="teal-footer-link">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="teal-footer-link">Contacto Directo</a></li>
+                        </ul>
+                    </div>
+                </div>
 
-        <!-- Barra Inferior Unificada -->
-        <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <p class="text-xs text-slate-500">
-                &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Código del Trabajo</a> y dictámenes de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Dirección del Trabajo</a>.
-            </p>
-            <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500">
-                <a href="terminos" class="hover:text-slate-800 transition-colors">Términos</a>
-                <span class="text-slate-300">·</span>
-                <a href="privacidad" class="hover:text-slate-800 transition-colors">Privacidad</a>
-                <span class="text-slate-300">·</span>
-                <a href="disclaimer" class="hover:text-slate-800 transition-colors">Disclaimer</a>
-                <span class="text-slate-300">·</span>
-                <span class="inline-flex items-center gap-1 text-slate-600 font-medium">
-                    <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
-                    Fórmulas Conforme a DT
-                </span>
+                <!-- Bottom Legal Bar (TealHQ minimal footer) -->
+                <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-300 text-center md:text-left">
+                    <div>
+                        &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-white font-medium">Código del Trabajo</a> y dictámenes de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-white font-medium">Dirección del Trabajo</a>.
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-4 text-xs">
+                        <a href="terminos" class="text-slate-300 hover:text-white transition-colors">Términos</a>
+                        <span class="text-slate-500">·</span>
+                        <a href="privacidad" class="text-slate-300 hover:text-white transition-colors">Privacidad</a>
+                        <span class="text-slate-500">·</span>
+                        <a href="disclaimer" class="text-slate-300 hover:text-white transition-colors">Disclaimer</a>
+                        <span class="text-slate-500">·</span>
+                        <span class="inline-flex items-center gap-1.5 text-emerald-300 font-medium bg-emerald-950/70 px-2.5 py-1 rounded-full border border-emerald-500/25">
+                            <span class="material-icons text-xs text-emerald-400" aria-hidden="true">verified</span>
+                            Fórmulas Conforme a DT
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
