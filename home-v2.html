@@ -18,7 +18,7 @@
     <!-- Google Fonts & Material Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
@@ -187,10 +187,6 @@
             }
         }
 
-        /* Handwritten Pen Font for Notary Simulation */
-        .font-handwriting {
-            font-family: 'Caveat', 'Segoe Script', 'Brush Script MT', cursive;
-        }
 
         /* Notary Official Stamp Simulation */
         .notary-stamp {
@@ -651,7 +647,7 @@
                                         </div>
                                         <div>
                                             <div class="font-bold text-sm text-gray-900 leading-tight">Liquidación de Finiquito</div>
-                                            <div class="text-[11px] text-gray-400 font-mono-num">FÓRMULA ART. 177 CÓDIGO DEL TRABAJO</div>
+                                            <div class="text-[11px] text-gray-500 font-medium">Fórmula Art. 177 Código del Trabajo</div>
                                         </div>
                                     </div>
                                     <span class="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
@@ -757,10 +753,6 @@
                 <div id="content-tab-reserva" class="hidden relative z-10">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         <div class="lg:col-span-5 space-y-5 text-left">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold">
-                                <span class="material-icons text-sm">verified_user</span>
-                                <span>Blindaje Notarial Obligatorio</span>
-                            </div>
                             <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
                                 La frase escrita a mano que salva tu dinero en la notaría
                             </h3>
@@ -776,7 +768,7 @@
                                         <span>Copiar</span>
                                     </button>
                                 </div>
-                                <div id="reserva-text-box" class="p-3.5 bg-amber-50/50 rounded-xl font-mono text-xs text-gray-800 leading-relaxed border border-amber-200">
+                                <div id="reserva-text-box" class="p-4 bg-amber-50/70 rounded-xl font-sans text-sm font-medium text-gray-900 leading-relaxed border border-amber-200">
                                     "Me reservo expresamente el derecho a reclamar judicialmente la improcedencia del descuento del aporte patronal al seguro de cesantía (Art. 13 Ley 19.728) y las diferencias que correspondan por indemnizaciones legales y feriado proporcional."
                                 </div>
                                 <p class="text-[11px] text-gray-500 italic">
@@ -801,7 +793,7 @@
                                         <h4 class="font-extrabold text-sm sm:text-base text-stone-900 tracking-tight">
                                             FINIQUITO DE CONTRATO DE TRABAJO
                                         </h4>
-                                        <span class="text-[11px] text-stone-500 font-mono">CONFORME ART. 177 CÓDIGO DEL TRABAJO</span>
+                                        <span class="text-[11px] text-stone-500 font-medium">CONFORME ART. 177 CÓDIGO DEL TRABAJO</span>
                                     </div>
                                     <div class="notary-stamp">
                                         CERTIFICACIÓN NOTARIAL<br>MINISTRO DE FE
@@ -825,7 +817,7 @@
                                         <!-- Employer Signature Block -->
                                         <div class="text-left space-y-1">
                                             <div class="h-10 flex items-center">
-                                                <span class="font-mono text-xs text-stone-400 italic">[Firma Electrónica Avanzada]</span>
+                                                <span class="font-sans text-xs text-stone-400 italic">[Firma Electrónica Avanzada]</span>
                                             </div>
                                             <div class="w-full border-b border-stone-400"></div>
                                             <div class="text-[10px] font-bold uppercase text-stone-600">Representante Legal Empleador</div>
@@ -834,13 +826,14 @@
 
                                         <!-- Worker Signature Block with Blue Ink Handwritten Reservation -->
                                         <div class="space-y-1 text-left">
-                                            <div class="p-2.5 rounded-lg bg-blue-50/90 border border-blue-200 text-blue-900 font-handwriting text-base sm:text-lg leading-tight shadow-xs">
-                                                ✍️ "Me reservo expresamente el derecho a reclamar la restitución del descuento de AFC y diferencias de feriado proporcional."
+                                            <div class="p-3 rounded-xl bg-blue-50/80 border border-blue-200 text-blue-950 font-sans italic font-medium text-xs sm:text-[13px] leading-relaxed shadow-2xs">
+                                                <span class="not-italic font-bold text-blue-700 block text-[10px] uppercase tracking-wider mb-1">✍️ Reserva manuscrita del trabajador:</span>
+                                                "Me reservo expresamente el derecho a reclamar la restitución del descuento de AFC y diferencias de feriado proporcional."
                                             </div>
                                             <div class="w-full border-b-2 border-blue-900 mt-2"></div>
                                             <div class="flex justify-between items-center text-[10px]">
                                                 <span class="font-bold text-blue-950 uppercase">Firma del Trabajador</span>
-                                                <span class="font-mono text-stone-400">RUT: 15.892.431-K</span>
+                                                <span class="font-sans font-medium text-stone-400">RUT: 15.892.431-K</span>
                                             </div>
                                         </div>
 
@@ -900,10 +893,7 @@
     <section class="py-16 sm:py-24 bg-white border-t border-gray-100 text-center">
         <div class="site-container">
             
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-full">
-                Guía Práctica Paso a Paso
-            </span>
-            <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mt-4">
+            <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                 Cómo cobrar tu finiquito sin perder dinero
             </h2>
             <p class="mt-4 text-base sm:text-lg text-gray-600 max-w-xl mx-auto mb-16">
@@ -913,87 +903,47 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
                 
                 <!-- Step 1 -->
-                <div class="p-7 rounded-3xl bg-slate-50 border border-gray-200 hover:border-gray-300 transition-all hover:-translate-y-1 hover:shadow-md flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-5">
-                            <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm shadow-xs">
-                                1
-                            </div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider bg-gray-200/80 text-gray-700 px-2.5 py-1 rounded-full">
-                                Art. 161 vs 160
-                            </span>
-                        </div>
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">Revisa tu Carta</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            Verifica si la empresa invoca Necesidades de la Empresa (Art. 161) con fundamentos reales o causales disciplinarias sin sustento.
-                        </p>
+                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all flex flex-col justify-start">
+                    <div style="background-color: var(--teal-forest);" class="w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                        01
                     </div>
-                    <div class="pt-4 mt-4 border-t border-gray-200/60 text-xs font-semibold text-gray-400">
-                        Paso inicial indispensable
-                    </div>
+                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Revisa tu Carta</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                        Verifica si la empresa invoca Necesidades de la Empresa (Art. 161) con fundamentos económicos reales o causales disciplinarias sin sustento legal.
+                    </p>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="p-7 rounded-3xl bg-slate-50 border border-gray-200 hover:border-gray-300 transition-all hover:-translate-y-1 hover:shadow-md flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-5">
-                            <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm shadow-xs">
-                                2
-                            </div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">
-                                Tope 90 UF Legal
-                            </span>
-                        </div>
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">Simula tus Cifras</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            Calcula tus años de servicio topados a 90 UF ($3.692.938), mes de aviso sustitutivo y vacaciones en días hábiles (lunes a viernes).
-                        </p>
+                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all flex flex-col justify-start">
+                    <div style="background-color: var(--teal-forest);" class="w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                        02
                     </div>
-                    <div class="pt-4 mt-4 border-t border-gray-200/60 text-xs font-semibold text-emerald-700">
-                        Cálculo 100% gratuito
-                    </div>
+                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Simula tus Cifras</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                        Calcula tus años de servicio con el tope legal de 90 UF, el mes de aviso sustitutivo y el feriado proporcional en días hábiles (lunes a viernes).
+                    </p>
                 </div>
 
                 <!-- Step 3 (Featured) -->
-                <div class="p-7 rounded-3xl bg-amber-50/90 border-2 border-amber-400 hover:border-amber-500 transition-all hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between relative overflow-hidden">
-                    <div>
-                        <div class="flex justify-between items-center mb-5">
-                            <div class="w-10 h-10 rounded-2xl bg-amber-400 text-gray-950 font-extrabold flex items-center justify-center text-sm shadow-xs">
-                                3
-                            </div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-200 text-amber-950 px-2.5 py-1 rounded-full">
-                                ⚠️ Paso Crítico
-                            </span>
-                        </div>
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">Escribe la Reserva</h3>
-                        <p class="text-xs sm:text-sm text-gray-800 leading-relaxed">
-                            Copia nuestra fórmula notarial de tu puño y letra sobre tu firma antes de estamparla. Así recibes tu pago en el acto y mantienes intacto tu derecho a reclamar.
-                        </p>
+                <div class="p-8 rounded-3xl bg-amber-50/80 border-2 border-amber-400 hover:border-amber-500 hover:shadow-lg transition-all flex flex-col justify-start relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-400 text-gray-950 font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                        03
                     </div>
-                    <div class="pt-4 mt-4 border-t border-amber-300/80 text-xs font-bold text-amber-900">
-                        Conserva tu derecho a reclamar
-                    </div>
+                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Escribe la Reserva</h3>
+                    <p class="text-sm text-gray-800 leading-relaxed font-medium font-sans">
+                        Copia la fórmula notarial de tu puño y letra sobre tu firma antes de estamparla. Así recibes tu pago en el acto y mantienes intacto tu derecho a reclamar.
+                    </p>
                 </div>
 
                 <!-- Step 4 -->
-                <div class="p-7 rounded-3xl bg-slate-50 border border-gray-200 hover:border-gray-300 transition-all hover:-translate-y-1 hover:shadow-md flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-5">
-                            <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm shadow-xs">
-                                4
-                            </div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-full">
-                                Plazo DT: 60 días
-                            </span>
-                        </div>
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">Cobra y Reclama</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            Recibe tu cheque o transferencia en notaría y presenta tu reclamo formal ante la Inspección del Trabajo o demanda con abogado.
-                        </p>
+                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all flex flex-col justify-start">
+                    <div style="background-color: var(--teal-forest);" class="w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                        04
                     </div>
-                    <div class="pt-4 mt-4 border-t border-gray-200/60 text-xs font-semibold text-indigo-700">
-                        Comparendo de conciliación
-                    </div>
+                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Cobra y Reclama</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                        Recibe tu cheque o transferencia bancaria en notaría y presenta tu reclamo formal ante la Inspección del Trabajo dentro del plazo legal de 60 días.
+                    </p>
                 </div>
 
             </div>
@@ -1014,78 +964,76 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 text-left">
                 
-                <div class="bg-white p-7 rounded-3xl border border-gray-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4">
-                            <span class="material-icons">savings</span>
+                        <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-5">
+                            <span class="material-icons text-xl">savings</span>
                         </div>
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">Descuento patronal de la AFC</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            Si tu despido es injustificado, la Corte Suprema ha dictaminado reiteradamente que la empresa no puede descontarte el aporte que hizo a tu seguro de cesantía.
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Descuento patronal de la AFC</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                            Si tu despido es injustificado, la Corte Suprema ha dictaminado reiteradamente que la empresa no puede descontarte el aporte patronal efectuado al seguro de cesantía.
                         </p>
                     </div>
-                    <div class="pt-5 mt-5 border-t border-gray-100">
-                        <a href="simulador-despido-injustificado-chile" class="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1">
-                            Simular recuperación de AFC <span class="material-icons text-sm">arrow_forward</span>
+                    <div class="pt-6 mt-6 border-t border-gray-100">
+                        <a href="simulador-despido-injustificado-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Simular recuperación de AFC</span>
+                            <span class="material-icons text-base">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
-                <div class="bg-white p-7 rounded-3xl border border-gray-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-                            <span class="material-icons">calendar_today</span>
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-5">
+                            <span class="material-icons text-xl">calendar_today</span>
                         </div>
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">Feriado Legal y Proporcional</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            El Código del Trabajo dictamina que el feriado anual se computa en días hábiles (de lunes a viernes). Sábados y domingos no deben restarse de tus vacaciones.
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Feriado Legal y Proporcional</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                            El Código del Trabajo dictamina que el feriado anual se computa en días hábiles (de lunes a viernes). Los fines de semana no deben restarse de tus vacaciones.
                         </p>
                     </div>
-                    <div class="pt-5 mt-5 border-t border-gray-100">
-                        <a href="calculadora-vacaciones-proporcionales" class="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1">
-                            Calculadora vacaciones DT <span class="material-icons text-sm">arrow_forward</span>
+                    <div class="pt-6 mt-6 border-t border-gray-100">
+                        <a href="calculadora-vacaciones-proporcionales" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Calculadora vacaciones DT</span>
+                            <span class="material-icons text-base">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
-                <div class="bg-white p-7 rounded-3xl border border-gray-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
-                            <span class="material-icons">exit_to_app</span>
+                        <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5">
+                            <span class="material-icons text-xl">exit_to_app</span>
                         </div>
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">Autodespido (Art. 171)</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            Si tu empleador no paga cotizaciones, comete acoso laboral o rebaja tu sueldo, puedes autodespedirte y cobrar todas tus indemnizaciones con recargo legal.
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Autodespido (Art. 171)</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                            Si tu empleador no paga cotizaciones, comete acoso laboral o rebaja tu sueldo, puedes autodespedirte y cobrar tus indemnizaciones legales con recargo.
                         </p>
                     </div>
-                    <div class="pt-5 mt-5 border-t border-gray-100">
-                        <a href="blog" class="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1">
-                            Leer guía de autodespido <span class="material-icons text-sm">arrow_forward</span>
+                    <div class="pt-6 mt-6 border-t border-gray-100">
+                        <a href="blog" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Leer guía de autodespido</span>
+                            <span class="material-icons text-base">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Wide Action Banner (TealHQ Dark Pine Forest) with Feature Badges -->
+            <!-- Wide Action Banner (TealHQ Dark Pine Forest) -->
             <div style="background-color: var(--teal-forest);" class="rounded-3xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl text-left">
-                <div class="space-y-4 max-w-xl">
-                    <div class="flex flex-wrap gap-2 text-[11px] font-semibold">
-                        <span class="bg-white/10 text-emerald-300 px-3 py-1 rounded-full">✓ Modelos Word editables</span>
-                        <span class="bg-white/10 text-emerald-300 px-3 py-1 rounded-full">✓ Anexos Ley 40 Horas (42h)</span>
-                        <span class="bg-white/10 text-emerald-300 px-3 py-1 rounded-full">✓ Fórmulas Conforme a DT</span>
-                    </div>
+                <div class="space-y-3.5 max-w-xl">
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                         ¿Tienes una Pyme? Genera finiquitos y anexos 40h con respaldo legal
                     </h3>
-                    <p class="text-sm text-slate-200 leading-relaxed">
-                        Kit de cumplimiento laboral para empleadores con plantillas oficiales, checklist de fiscalización DT y cláusulas de blindaje conformes a la Ley 21.561.
+                    <p class="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
+                        Kit de cumplimiento laboral para empleadores con modelos editables Word, checklist de fiscalización DT y cláusulas de blindaje conformes a la Ley 21.561.
                     </p>
                 </div>
                 <div>
-                    <a href="para-empleadores" class="btn-yellow-pill group text-sm px-6 py-3.5 whitespace-nowrap inline-flex items-center gap-2.5 shadow-lg">
+                    <a href="para-empleadores" class="btn-yellow-pill group text-sm px-7 py-4 whitespace-nowrap inline-flex items-center gap-2.5 shadow-lg">
                         <span>Ver Portal Empleadores</span>
                         <span class="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center transition-transform duration-200 group-hover:translate-x-1">
                             <span class="material-icons text-sm">arrow_forward</span>
@@ -1097,161 +1045,64 @@
         </div>
     </section>
 
-    <!-- SECTION 5: CRITERIOS JURÍDICOS Y PRECEDENTES LABORALES (100% Verificables) -->
-    <section class="py-16 sm:py-24 bg-white border-t border-gray-100 text-center">
-        <div class="site-container">
-            
-            <div class="max-w-2xl mx-auto mb-14">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-full">
-                    Jurisprudencia & Marco Legal
-                </span>
-                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mt-4">
-                    Criterios laborales vigentes en Chile
-                </h2>
-                <p class="mt-3 text-base text-gray-600">
-                    Bases legales y doctrina unificada aplicadas en las fórmulas de cálculo de nuestra plataforma.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                
-                <!-- Precedente 1: Corte Suprema AFC -->
-                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
-                                <span class="material-icons text-lg">gavel</span>
-                            </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Doctrina Unificada</span>
-                        </div>
-                        <h3 class="font-bold text-base text-gray-900 mb-2">Devolución del Aporte AFC</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            La Corte Suprema ha resuelto de manera uniforme y reiterada que si el despido por necesidades de la empresa no se funda en motivos graves e inevitables, el descuento del aporte patronal al seguro de cesantía es improcedente y debe restituirse.
-                        </p>
-                    </div>
-                    <div class="pt-5 mt-5 border-t border-gray-200/80 flex items-center justify-between text-xs">
-                        <span class="font-mono text-gray-500 font-semibold">Corte Suprema de Justicia</span>
-                        <a href="simulador-despido-injustificado-chile" class="font-bold text-emerald-800 hover:underline flex items-center gap-1">
-                            Simular caso <span class="material-icons text-xs">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Precedente 2: Código del Trabajo Feriado -->
-                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
-                                <span class="material-icons text-lg">menu_book</span>
-                            </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Art. 67 Código del Trabajo</span>
-                        </div>
-                        <h3 class="font-bold text-base text-gray-900 mb-2">Cómputo Hábil de Vacaciones</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            El feriado legal y proporcional se calcula exclusivamente en días hábiles (de lunes a viernes para estos efectos). Los días sábados, domingos y festivos no pueden computarse como feriado consumido según la normativa laboral chilena.
-                        </p>
-                    </div>
-                    <div class="pt-5 mt-5 border-t border-gray-200/80 flex items-center justify-between text-xs">
-                        <span class="font-mono text-gray-500 font-semibold">Dirección del Trabajo</span>
-                        <a href="calculadora-vacaciones-proporcionales" class="font-bold text-emerald-800 hover:underline flex items-center gap-1">
-                            Calculadora DT <span class="material-icons text-xs">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Precedente 3: Reserva Notarial Circular 78 DT -->
-                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
-                                <span class="material-icons text-lg">draw</span>
-                            </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Circular N° 78 DT</span>
-                        </div>
-                        <h3 class="font-bold text-base text-gray-900 mb-2">Validez de la Reserva Escrita</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            La Dirección del Trabajo instruye a los ministros de fe y notarios públicos que el trabajador tiene derecho a estampar una reserva de derechos manuscrita al firmar su finiquito, permitiéndole cobrar haberes reconocidos sin renunciar a acciones legales.
-                        </p>
-                    </div>
-                    <div class="pt-5 mt-5 border-t border-gray-200/80 flex items-center justify-between text-xs">
-                        <span class="font-mono text-gray-500 font-semibold">Dictámenes DT</span>
-                        <a href="reclamar-despido-injustificado-chile" class="font-bold text-emerald-800 hover:underline flex items-center gap-1">
-                            Leer guía <span class="material-icons text-xs">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-    </section>
-
-            </div>
-
-        </div>
-    </section>
-
-    <!-- SECTION 6: FAQ ACCORDION -->
+    <!-- SECTION 5: FAQ ACCORDION -->
     <section class="py-16 sm:py-24 bg-slate-50 border-t border-gray-200/90">
         <div class="site-container max-w-[850px]">
             
             <div class="text-center mb-12">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-full">
-                    Dudas Frecuentes
-                </span>
-                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3 mt-4">
+                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3">
                     Preguntas Frecuentes
                 </h2>
-                <p class="text-gray-600 text-sm">Todo lo que necesitas saber antes de acudir a la notaría o firmar en Chile.</p>
+                <p class="text-gray-600 text-sm sm:text-base">Todo lo que necesitas saber antes de acudir a la notaría o firmar en Chile.</p>
             </div>
 
-            <div class="space-y-3.5 text-left">
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
-                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
+            <div class="space-y-4 text-left">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿El empleador puede obligarme a firmar el finiquito si no estoy de acuerdo?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-gray-600 mt-3 pt-3 border-t border-gray-100 leading-relaxed">
+                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         No. El finiquito es un acto voluntario. Nadie puede forzarte a firmar. Si no estás conforme con los montos o la causal, puedes negarte a firmar o estampar de tu puño y letra la <strong>Cláusula de Reserva de Derechos</strong> sobre tu firma para recibir el pago de inmediato y reclamar las diferencias posteriormente.
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
-                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Cuántos días tiene la empresa para poner a disposición y pagar el finiquito?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-gray-600 mt-3 pt-3 border-t border-gray-100 leading-relaxed">
+                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         Conforme al artículo 177 del Código del Trabajo, el empleador tiene un plazo legal máximo e improrrogable de <strong>10 días hábiles</strong> siguientes a la separación del trabajador para poner a su disposición el finiquito y el pago total. Si incumple, puedes presentar un reclamo inmediato ante la Inspección del Trabajo.
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
-                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Es legal que me descuenten el aporte patronal de la AFC?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-gray-600 mt-3 pt-3 border-t border-gray-100 leading-relaxed">
+                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         La Corte Suprema ha establecido en doctrina reiterada y unificada que si el despido por necesidades de la empresa es injustificado, dicho descuento resulta improcedente y la empresa debe devolvértelo en su totalidad. Por eso es vital estampar la reserva de derechos antes de firmar.
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
-                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Puedo cobrar el dinero de inmediato en la notaría y reclamar después?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-gray-600 mt-3 pt-3 border-t border-gray-100 leading-relaxed">
+                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         Sí, exactamente para eso existe la reserva de derechos. Puedes recibir tu cheque o vale vista en el mismo acto notarial y escribir sobre tu firma que te reservas el derecho a reclamar diferencias de indemnizaciones, vacaciones o descuento de AFC. El notario está instruido por la Circular N° 78 de la DT para no impedir esta anotación.
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
-                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Cómo se calcula el feriado proporcional si trabajé menos de un año?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-gray-600 mt-3 pt-3 border-t border-gray-100 leading-relaxed">
+                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         Por cada mes trabajado corresponden exactamente <strong>1.25 días hábiles</strong> de vacaciones (15 días anuales divididos en 12 meses). Se contabilizan únicamente de lunes a viernes (sábados y domingos son inhábiles según el Código del Trabajo) y se valorizan según tu sueldo base más los haberes variables promedio.
                     </p>
                 </details>
