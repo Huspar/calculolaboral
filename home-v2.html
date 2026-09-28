@@ -700,7 +700,7 @@
                                     <button type="button" onclick="setLiveSueldo(1500000)" class="sueldo-chip text-[10px] sm:text-[11px] font-semibold py-1 px-2 sm:px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
                                         $1.500.000
                                     </button>
-                                    <button type="button" onclick="setLiveSueldo(3692938)" id="chip-tope" class="sueldo-chip text-[10px] sm:text-[11px] font-bold py-1 px-2 sm:px-2.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-all cursor-pointer" title="Tope máximo para indemnizaciones por años de servicio">
+                                    <button type="button" onclick="setTopeLegal()" id="chip-tope" class="sueldo-chip text-[10px] sm:text-[11px] font-bold py-1 px-2 sm:px-2.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-all cursor-pointer" title="Tope legal para indemnizaciones por años de servicio (Art. 172 Código del Trabajo)">
                                         Tope 90 UF
                                     </button>
                                 </div>
@@ -1593,6 +1593,7 @@
         function highlightSueldoChips(val) {
             const chipImm = document.getElementById('chip-imm');
             const chipTope = document.getElementById('chip-tope');
+            const topeUF = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
             if (chipImm) {
                 if (val === 553553) {
                     chipImm.classList.add('ring-2', 'ring-amber-500', 'font-black');
@@ -1601,7 +1602,7 @@
                 }
             }
             if (chipTope) {
-                if (val === 3692938) {
+                if (val >= (topeUF - 1000)) {
                     chipTope.classList.add('ring-2', 'ring-indigo-500', 'font-black');
                 } else {
                     chipTope.classList.remove('ring-2', 'ring-indigo-500', 'font-black');
@@ -1609,15 +1610,21 @@
             }
         }
 
+        function setTopeLegal() {
+            const tope = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
+            setLiveSueldo(tope);
+        }
+
         // Chip preset setter
         function setLiveSueldo(amount) {
             liveState.sueldo = Math.max(0, parseInt(amount, 10) || 0);
             const slider = document.getElementById('slider-sueldo');
+            const topeUF = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
             if (slider) {
                 if (liveState.sueldo === 553553) {
                     slider.value = 550000; // Coloca la bolita en el extremo inicial
-                } else if (liveState.sueldo === 3692938) {
-                    slider.value = 3690000;
+                } else if (liveState.sueldo >= (topeUF - 1000)) {
+                    slider.value = Math.min(Math.round(topeUF / 10000) * 10000, 4000000);
                 } else {
                     slider.value = Math.min(Math.max(Math.round(liveState.sueldo / 10000) * 10000, 550000), 4000000);
                 }
@@ -1738,8 +1745,8 @@
 
         // Live calculation engine
         function calculateLiveFiniquito() {
-            const topeUF = typeof CONSTANTS !== 'undefined' ? (90 * CONSTANTS.UF) : 3692938;
-            const isTopado = liveState.sueldo >= topeUF;
+            const topeUF = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
+            const isTopado = liveState.sueldo >= (topeUF - 100);
             const sueldoTopado = Math.min(liveState.sueldo, topeUF);
 
             // Alerta visual de Tope 90 UF
@@ -1755,6 +1762,7 @@
             const anosTopeNote = document.getElementById('live-anos-tope-note');
             if (anosTopeNote) {
                 if (isTopado && liveState.causal === '161') {
+                    anosTopeNote.innerText = `Topado a 90 UF (${formatCLP(topeUF)}/año)`;
                     anosTopeNote.classList.remove('hidden');
                 } else {
                     anosTopeNote.classList.add('hidden');
@@ -1764,6 +1772,7 @@
             const avisoTopeNote = document.getElementById('live-aviso-tope-note');
             if (avisoTopeNote) {
                 if (isTopado && liveState.causal === '161' && liveState.aviso) {
+                    avisoTopeNote.innerText = `Topado a 90 UF (${formatCLP(topeUF)})`;
                     avisoTopeNote.classList.remove('hidden');
                 } else {
                     avisoTopeNote.classList.add('hidden');
