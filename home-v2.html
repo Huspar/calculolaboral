@@ -286,7 +286,7 @@
     </div>
 
     <!-- MAIN NAVBAR (TealHQ Pill Style) -->
-    <header class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs transition-all duration-300 no-print">
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 shadow-2xs transition-all duration-300 no-print">
         <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-16">
                 
@@ -441,11 +441,11 @@
 
                         <!-- 1. Slider de Sueldo Bruto Mensual -->
                         <div class="mt-6 space-y-2.5">
-                            <div class="flex justify-between items-baseline">
+                            <div class="flex justify-between items-baseline gap-2">
                                 <label for="hero-slider-sueldo" class="text-xs font-bold uppercase tracking-wider text-slate-500">
                                     Sueldo bruto mensual
                                 </label>
-                                <span id="hero-sueldo-val" style="color: var(--brand-forest);" class="text-2xl font-extrabold font-mono-val number-ticking">
+                                <span id="hero-sueldo-val" style="color: var(--brand-forest);" class="text-xl sm:text-2xl font-extrabold font-mono-val number-ticking whitespace-nowrap">
                                     $ 1.200.000
                                 </span>
                             </div>
@@ -491,28 +491,28 @@
 
                         <!-- Total Estimado a Cobrar Card -->
                         <div style="background-color: var(--brand-mint); border: 1.5px solid var(--brand-mint-border);" class="mt-6 rounded-2xl p-5">
-                            <div class="flex justify-between items-baseline mb-3">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-baseline gap-1 mb-3">
                                 <span style="color: var(--brand-forest);" class="text-xs font-bold uppercase tracking-wider">
                                     Total estimado a cobrar
                                 </span>
-                                <span id="hero-total-val" style="color: var(--brand-forest);" class="text-3xl font-extrabold font-mono-val tracking-tight number-ticking">
+                                <span id="hero-total-val" style="color: var(--brand-forest);" class="text-2xl sm:text-3xl font-extrabold font-mono-val tracking-tight number-ticking whitespace-nowrap">
                                     $ 5.400.000
                                 </span>
                             </div>
 
                             <!-- Desglose concentric -->
-                            <div class="grid grid-cols-3 gap-2 pt-3 border-t border-emerald-200/80 text-center">
+                            <div class="grid grid-cols-3 gap-1.5 sm:gap-2 pt-3 border-t border-emerald-200/80 text-center">
                                 <div class="bg-white/80 rounded-xl p-2 border border-emerald-100">
-                                    <span class="block text-[9.5px] font-bold text-slate-400 uppercase">Años servicio</span>
-                                    <span id="hero-desglose-anos" class="font-mono-val text-xs font-bold text-slate-800">$ 3.600.000</span>
+                                    <span class="block text-[9px] sm:text-[9.5px] font-bold text-slate-400 uppercase">Años servicio</span>
+                                    <span id="hero-desglose-anos" class="font-mono-val text-[11px] sm:text-xs font-bold text-slate-800 whitespace-nowrap">$ 3.600.000</span>
                                 </div>
                                 <div class="bg-white/80 rounded-xl p-2 border border-emerald-100">
-                                    <span class="block text-[9.5px] font-bold text-slate-400 uppercase">Mes aviso</span>
-                                    <span id="hero-desglose-aviso" class="font-mono-val text-xs font-bold text-slate-800">$ 1.200.000</span>
+                                    <span class="block text-[9px] sm:text-[9.5px] font-bold text-slate-400 uppercase">Mes aviso</span>
+                                    <span id="hero-desglose-aviso" class="font-mono-val text-[11px] sm:text-xs font-bold text-slate-800 whitespace-nowrap">$ 1.200.000</span>
                                 </div>
                                 <div class="bg-white/80 rounded-xl p-2 border border-emerald-100">
-                                    <span class="block text-[9.5px] font-bold text-slate-400 uppercase">Vacaciones</span>
-                                    <span id="hero-desglose-vacaciones" class="font-mono-val text-xs font-bold text-slate-800">$ 600.000</span>
+                                    <span class="block text-[9px] sm:text-[9.5px] font-bold text-slate-400 uppercase">Vacaciones</span>
+                                    <span id="hero-desglose-vacaciones" class="font-mono-val text-[11px] sm:text-xs font-bold text-slate-800 whitespace-nowrap">$ 600.000</span>
                                 </div>
                             </div>
                         </div>
@@ -521,7 +521,7 @@
                         <div id="hero-afc-alert" class="mt-4 p-3.5 bg-amber-50/90 border border-amber-200/90 rounded-2xl flex items-start gap-2.5 text-xs text-amber-900">
                             <span class="material-icons text-amber-600 text-sm mt-0.5">warning</span>
                             <div class="leading-relaxed">
-                                <strong class="font-bold">Atención con el descuento AFC:</strong> Tu empleador intentará descontarte cerca de <span id="hero-afc-val" class="font-mono-val font-bold">$ 650.000</span> de aporte patronal. Con la reserva notarial puedes recuperarlo.
+                                <strong class="font-bold">Atención con el descuento AFC:</strong> Tu empleador intentará descontarte cerca de <span id="hero-afc-val" class="font-mono-val font-bold whitespace-nowrap">$ 650.000</span> de aporte patronal. Con la reserva notarial puedes recuperarlo.
                             </div>
                         </div>
 
@@ -1115,7 +1115,7 @@
         };
 
         function formatCLP(val) {
-            return '$ ' + Math.round(val).toLocaleString('es-CL');
+            return '$\u00A0' + Math.round(val).toLocaleString('es-CL');
         }
 
         function parseCleanNumber(val) {
