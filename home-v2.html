@@ -209,6 +209,33 @@
             transform: translateY(1px) scale(0.98);
         }
 
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 26px;
+            font-size: 14.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.25);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(0, 56, 46, 0.35);
+            color: #FFFFFF !important;
+        }
+        .btn-dark-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
         .btn-outline-pill {
             background-color: #FFFFFF;
             color: #374151 !important;
@@ -1759,7 +1786,7 @@
 
                     <!-- Footer Action -->
                     <div class="pt-6 border-t border-slate-200 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <a href="para-empleadores" class="btn-outline-pill group w-full sm:w-auto text-sm px-6 py-3.5 inline-flex items-center justify-center gap-2 bg-slate-900 !text-white border-slate-900 hover:bg-slate-800 shadow-md hover:shadow-lg transition-all">
+                        <a href="para-empleadores" class="btn-dark-pill group w-full sm:w-auto text-sm px-6 py-3.5 inline-flex items-center justify-center gap-2">
                             <span class="font-bold" style="color: #ffffff !important;">Explorar Soluciones para Pymes</span>
                             <span class="material-icons text-sm group-hover:translate-x-1 transition-transform" style="color: #ffffff !important;">arrow_forward</span>
                         </a>
