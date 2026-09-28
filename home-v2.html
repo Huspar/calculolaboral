@@ -18,204 +18,185 @@
     <!-- Google Fonts & Material Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
     <link rel="stylesheet" href="/assets/css/style.css?v=2.7.0">
     
-    <!-- TealHQ Design System & Emil Kowalski Interaction Physics -->
+    <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
         :root {
-            --brand-forest: #043D30;
-            --brand-forest-hover: #065442;
-            --brand-forest-dark: #02241C;
-            --brand-accent: #F59E0B;
-            --brand-accent-hover: #D97706;
-            --brand-accent-light: #FEF3C7;
-            --brand-mint: #ECFDF5;
-            --brand-mint-border: #A7F3D0;
-            --brand-periwinkle: #4F46E5;
-            --surface-canvas: #FFFFFF;
-            --surface-subtle: #F8FAF9;
+            --teal-forest: #00382E;
+            --teal-forest-hover: #004D40;
+            --teal-forest-deep: #00241E;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FB8500;
+            --teal-mint-bg: #F4F7F6;
+            --teal-card-bg: #FFFFFF;
+            --teal-border: #E5E7EB;
+            --teal-text-dark: #111827;
+            --teal-text-muted: #4B5563;
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            background-color: var(--surface-canvas);
-            color: #1F2937;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--teal-text-dark);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
         }
 
-        .font-mono-val {
+        .font-mono-num {
             font-family: 'Geist Mono', monospace;
             font-feature-settings: 'tnum' on, 'zero' on;
         }
 
-        /* Typography & Headings */
-        .teal-hero-title {
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            line-height: 1.08;
-            color: var(--brand-forest);
+        /* Enforce tight, contained layout on large and ultrawide screens */
+        .site-container {
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        /* TealHQ Mega Menu Dropdowns */
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-chevron {
+            transform: rotate(180deg);
         }
 
         /* TealHQ Pill Buttons */
-        .btn-teal-primary {
-            background-color: var(--brand-accent);
-            color: #0F172A !important;
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
             font-weight: 700;
             border-radius: 9999px;
-            padding: 14px 28px;
-            font-size: 15px;
+            padding: 12px 26px;
+            font-size: 14.5px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: all 0.25s var(--ease-spring);
-            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
             text-decoration: none;
-            cursor: pointer;
             border: none;
-        }
-        .btn-teal-primary:hover {
-            background-color: var(--brand-accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.45);
-        }
-        .btn-teal-primary:active {
-            transform: translateY(1px) scale(0.98);
-            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
-        }
-
-        .btn-teal-forest {
-            background-color: var(--brand-forest);
-            color: #FFFFFF !important;
-            font-weight: 700;
-            border-radius: 9999px;
-            padding: 14px 28px;
-            font-size: 15px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.25s var(--ease-spring);
-            box-shadow: 0 4px 14px rgba(4, 61, 48, 0.2);
-            text-decoration: none;
             cursor: pointer;
-            border: none;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
         }
-        .btn-teal-forest:hover {
-            background-color: var(--brand-forest-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(4, 61, 48, 0.3);
+        .btn-yellow-pill:hover {
+            background-color: #FFAA00;
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
         }
-        .btn-teal-forest:active {
+        .btn-yellow-pill:active {
             transform: translateY(1px) scale(0.98);
         }
 
-        .btn-teal-secondary {
+        .btn-outline-pill {
             background-color: #FFFFFF;
             color: #374151 !important;
             font-weight: 600;
             border-radius: 9999px;
-            padding: 13px 24px;
+            padding: 11px 22px;
             font-size: 14px;
-            border: 1.5px solid #E5E7EB;
+            border: 1.5px solid #D1D5DB;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.25s var(--ease-spring);
+            transition: all 0.2s var(--ease-spring);
             text-decoration: none;
             cursor: pointer;
         }
-        .btn-teal-secondary:hover {
-            border-color: #CBD5E1;
+        .btn-outline-pill:hover {
+            border-color: #9CA3AF;
             background-color: #F9FAFB;
-            transform: translateY(-1.5px);
             color: #111827 !important;
+            transform: translateY(-1px);
         }
 
-        /* TealHQ Pill Tabs */
-        .showcase-tab {
+        /* Product Showcase Tab Styles (Exact TealHQ style) */
+        .product-tab {
+            position: relative;
+            padding-bottom: 14px;
+            padding-left: 16px;
+            padding-right: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #6B7280;
+            background: none;
+            border: none;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 20px;
-            border-radius: 9999px;
-            font-size: 13.5px;
-            font-weight: 700;
-            color: #4B5563;
-            background: transparent;
-            border: 1.5px solid transparent;
-            cursor: pointer;
-            transition: all 0.25s var(--ease-spring);
+            transition: color 0.2s ease;
             white-space: nowrap;
         }
-        .showcase-tab:hover {
-            color: var(--brand-forest);
-            background: #F3F4F6;
+        .product-tab:hover {
+            color: var(--teal-forest);
         }
-        .showcase-tab.active {
-            color: var(--brand-forest);
-            background: #FFFFFF;
-            border-color: #E5E7EB;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        .product-tab.active {
+            color: var(--teal-forest);
+            font-weight: 700;
+        }
+        .product-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--teal-forest);
+            border-radius: 3px 3px 0 0;
         }
 
-        /* TealHQ Double-Bezel Card Container */
-        .showcase-wrapper {
-            background: #F8FAF9;
-            border: 1px solid rgba(4, 61, 48, 0.08);
-            border-radius: 36px;
-            padding: 36px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 48px -12px rgba(4, 61, 48, 0.06);
+        /* Showcase Mockup Curved Backdrops (TealHQ Organic Shapes) */
+        .teal-organic-backdrop {
+            position: absolute;
+            right: -40px;
+            top: -40px;
+            bottom: -40px;
+            width: 58%;
+            background-color: #4F46E5; /* Periwinkle/Royal Purple organic slab like TealHQ */
+            border-top-left-radius: 90px;
+            border-bottom-left-radius: 90px;
+            z-index: 0;
+            pointer-events: none;
         }
-        @media (max-width: 640px) {
-            .showcase-wrapper {
-                padding: 20px;
-                border-radius: 24px;
+        @media (max-width: 1024px) {
+            .teal-organic-backdrop {
+                display: none;
             }
         }
 
-        /* Floating Organic Shape Accent behind card (TealHQ signature) */
-        .organic-bg-blob {
-            position: absolute;
-            right: -80px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 520px;
-            height: 520px;
-            border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-            background: linear-gradient(135deg, rgba(4, 61, 48, 0.12) 0%, rgba(245, 158, 11, 0.12) 100%);
-            pointer-events: none;
-            filter: blur(40px);
-            z-index: 0;
-        }
-
-        /* Product Mockup Stage */
-        .mockup-card {
+        /* Real UI Mockup Card */
+        .saas-window-card {
             background: #FFFFFF;
             border: 1px solid #E5E7EB;
-            border-radius: 28px;
-            box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
-            transition: all 0.35s var(--ease-spring);
+            border-radius: 24px;
+            box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
             position: relative;
-            z-index: 1;
-        }
-        .mockup-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.12);
+            z-index: 10;
         }
 
-        /* Custom Slider Range */
+        /* Range Slider Track & Thumb */
         .teal-range {
             -webkit-appearance: none;
             appearance: none;
@@ -232,74 +213,71 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: var(--brand-forest);
+            background: var(--teal-forest);
             border: 3px solid #FFFFFF;
-            box-shadow: 0 4px 12px rgba(4, 61, 48, 0.35);
+            box-shadow: 0 4px 10px rgba(0, 56, 46, 0.4);
             cursor: grab;
-            transition: transform 0.15s var(--ease-bounce), box-shadow 0.15s ease;
+            transition: transform 0.15s ease;
         }
         .teal-range::-webkit-slider-thumb:hover {
             transform: scale(1.15);
-            box-shadow: 0 6px 16px rgba(4, 61, 48, 0.45);
         }
         .teal-range::-moz-range-thumb {
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: var(--brand-forest);
+            background: var(--teal-forest);
             border: 3px solid #FFFFFF;
-            box-shadow: 0 4px 12px rgba(4, 61, 48, 0.35);
+            box-shadow: 0 4px 10px rgba(0, 56, 46, 0.4);
             cursor: grab;
         }
 
-        /* Number Ticking Physics */
-        .number-ticking {
-            display: inline-block;
+        /* Number Ticking */
+        .num-ticker {
             transition: transform 0.15s var(--ease-spring), opacity 0.15s ease;
         }
 
-        /* How it works steps */
-        .step-pill-nav {
+        /* How it works steps pills */
+        .how-step-pill {
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #4B5563;
+            background: transparent;
+            border: none;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 18px;
-            border-radius: 9999px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #6B7280;
-            cursor: pointer;
-            transition: all 0.25s var(--ease-spring);
+            transition: all 0.2s var(--ease-spring);
         }
-        .step-pill-nav.active {
-            background-color: var(--brand-forest);
+        .how-step-pill:hover {
+            color: var(--teal-forest);
+            background: #F3F4F6;
+        }
+        .how-step-pill.active {
+            background-color: #111827;
             color: #FFFFFF;
         }
 
-        /* Floating badge animation */
-        @keyframes float-badge {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-        .animate-float {
-            animation: float-badge 3.5s ease-in-out infinite;
+        /* TealHQ Asymmetrical Footer */
+        .teal-footer-curve {
+            border-top-left-radius: 72px;
+            background-color: var(--teal-forest);
         }
     </style>
 </head>
-<body class="selection:bg-amber-100 selection:text-amber-900">
+<body>
 
-    <!-- TOP NOTIFICATION STRIP: Ley 40 Horas & Indicadores 2026 -->
-    <div style="background-color: var(--brand-forest);" class="text-white py-2 px-4 text-xs no-print border-b border-white/10">
-        <div class="max-w-[1240px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-            <!-- Left: Aviso normativo -->
-            <div class="flex items-center gap-2 text-[11px] sm:text-xs">
-                <span class="inline-flex items-center gap-1 font-bold bg-white/15 px-2.5 py-0.5 rounded-full text-amber-300 text-[10px] uppercase tracking-wider">
-                    <span class="material-icons text-xs">gavel</span> Ley 40 Horas (42h en 2026)
-                </span>
-                <span class="text-slate-200 hidden sm:inline">Jornada legal rebajada y fórmulas al día conforme a la Dirección del Trabajo</span>
+    <!-- TOP BAR: Indicadores Económicos Oficiales 2026 -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="site-container flex flex-col md:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
+                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) • Fórmulas actualizadas Dirección del Trabajo</span>
             </div>
-            <!-- Right: Indicadores oficiales en vivo -->
-            <div class="flex items-center gap-3 sm:gap-4 text-[11px] font-mono-val text-slate-200">
+            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
                 <span class="text-white/20">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -309,14 +287,14 @@
         </div>
     </div>
 
-    <!-- MAIN NAVBAR (TealHQ Pill Clean Style) -->
-    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 shadow-2xs no-print">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center h-18">
+    <!-- MAIN NAVBAR (Exact TealHQ Structure: Dropdowns with rotating chevrons & twin pill buttons) -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print">
+        <div class="site-container">
+            <div class="flex justify-between items-center h-20">
                 
-                <!-- Logo TealHQ style: Icon + Clean Bold Wordmark -->
-                <a href="./" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
-                    <div style="background-color: var(--brand-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-xs active:scale-95 transition-transform">
+                <!-- Logo TealHQ style: Clean modern emblem + wordmark -->
+                <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-xs">
                         <svg class="w-5 h-5 text-amber-400" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M30 84h40M38 79h24"></path>
                             <path d="M50 22v57"></path>
@@ -328,387 +306,436 @@
                             <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
                         </svg>
                     </div>
-                    <div class="flex flex-col">
-                        <span style="color: var(--brand-forest);" class="font-extrabold text-xl tracking-tight leading-none">
-                            cálculolaboral<span class="text-amber-500">.</span>
-                        </span>
-                        <span class="text-[9.5px] font-semibold text-slate-400 tracking-wider uppercase mt-1">
-                            Plataforma Legal Chile
-                        </span>
-                    </div>
+                    <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
+                        cálculolaboral<span class="text-amber-500">.</span>
+                    </span>
                 </a>
 
-                <!-- Desktop Navigation Links (TealHQ Pill Style) -->
-                <nav class="hidden lg:flex gap-1 items-center">
-                    <a href="#showcase-suite" class="px-4 py-2 rounded-full text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all">
-                        Simulador 2026
+                <!-- Desktop Center Navigation with Rotating Dropdowns -->
+                <nav class="hidden lg:flex items-center gap-1 text-[15px] font-semibold text-gray-700">
+                    
+                    <a href="finiquito_calculator" class="px-4 py-6 hover:text-emerald-900 transition-colors">
+                        Simulador Finiquito
                     </a>
-                    <a href="simulador-despido-injustificado-chile" class="px-4 py-2 rounded-full text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all flex items-center gap-1.5">
-                        <span>Despido Injustificado</span>
-                        <span class="bg-rose-100 text-rose-700 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">+30% a 100%</span>
-                    </a>
-                    <a href="sueldo_liquido" class="px-4 py-2 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-                        Sueldo Líquido
-                    </a>
-                    <a href="calculadora-horas-extras" class="px-4 py-2 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-                        Horas Extras 42h
-                    </a>
-                    <a href="blog" class="px-4 py-2 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-                        Guías & DT
-                    </a>
-                    <a href="para-empleadores" class="px-4 py-2 rounded-full text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all">
+
+                    <!-- Dropdown: Calculadoras ⌵ (With Rotating Chevron) -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Mega Menu Panel -->
+                        <div class="nav-dropdown-menu absolute left-0 top-full w-[540px] bg-white rounded-2xl border border-gray-100 shadow-xl p-4 z-50">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-xl">gavel</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Despido Injustificado</div>
+                                        <div class="text-xs text-gray-500 mt-0.5">Recargo +30% y recuperación de aporte AFC.</div>
+                                    </div>
+                                </a>
+
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-xl">payments</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Sueldo Líquido</div>
+                                        <div class="text-xs text-gray-500 mt-0.5">Descuentos previsionales AFP, Fonasa y SII.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-xl">schedule</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Horas Extras 42h</div>
+                                        <div class="text-xs text-gray-500 mt-0.5">Cálculo al 50% con nuevo factor legal 2026.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-vacaciones-proporcionales" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-xl">beach_access</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Vacaciones Proporcionales</div>
+                                        <div class="text-xs text-gray-500 mt-0.5">Cómputo exacto sólo en días hábiles.</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown: Recursos ⌵ (With Rotating Chevron) -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
+                            <span>Recursos</span>
+                            <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Dropdown Panel -->
+                        <div class="nav-dropdown-menu absolute left-0 top-full w-[460px] bg-white rounded-2xl border border-gray-100 shadow-xl p-4 z-50">
+                            <div class="space-y-1">
+                                <a href="reclamar-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-lg">description</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Cómo Reclamar un Despido</div>
+                                        <div class="text-xs text-gray-500">Pasos ante la Dirección del Trabajo y plazos de 60 días.</div>
+                                    </div>
+                                </a>
+
+                                <a href="carta-de-renuncia-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-lg">edit</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Carta de Renuncia Voluntaria</div>
+                                        <div class="text-xs text-gray-500">Generador con aviso previo de 30 días legales.</div>
+                                    </div>
+                                </a>
+
+                                <a href="blog" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-lg">library_books</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Guías Laborales & Dictámenes</div>
+                                        <div class="text-xs text-gray-500">Art. 161, Ley Karin, Ley 40 Horas y jurisprudencia.</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="para-empleadores" class="px-4 py-6 hover:text-emerald-900 transition-colors">
                         Para Pymes
                     </a>
                 </nav>
 
-                <!-- Action CTA (TealHQ Sign-Up Button Style) -->
+                <!-- Right Twin Pill Action Buttons (TealHQ Log in + Sign up style) -->
                 <div class="hidden sm:flex items-center gap-3">
-                    <a href="#showcase-suite" class="btn-teal-primary text-xs py-2.5 px-6">
-                        <span>Simular Finiquito Gratis</span>
-                        <span class="material-icons text-sm">arrow_forward</span>
+                    <a href="para-empleadores" class="btn-outline-pill">
+                        Portal Pymes
+                    </a>
+                    <a href="#showcase" class="btn-yellow-pill">
+                        <span>Simular Finiquito</span>
                     </a>
                 </div>
 
                 <!-- Mobile Hamburger Toggle -->
                 <details class="lg:hidden">
-                    <summary class="list-none p-2 rounded-xl text-slate-700 hover:bg-slate-100 cursor-pointer" aria-label="Abrir menú">
+                    <summary class="list-none p-2 rounded-xl text-gray-700 hover:bg-gray-100 cursor-pointer" aria-label="Abrir menú">
                         <span class="material-icons">menu</span>
                     </summary>
-                    <div class="fixed left-0 right-0 top-24 bg-white border-b border-slate-200 shadow-xl z-50 p-5 space-y-3">
-                        <a href="#showcase-suite" class="block px-4 py-2.5 rounded-xl text-sm font-bold text-emerald-950 bg-emerald-50">Simulador Finiquito Legal 2026</a>
-                        <a href="simulador-despido-injustificado-chile" class="block px-4 py-2.5 rounded-xl text-sm font-bold text-rose-600 bg-rose-50">Despido Injustificado (Demanda)</a>
-                        <a href="sueldo_liquido" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700">Calculadora Sueldo Líquido</a>
-                        <a href="calculadora-horas-extras" class="block px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700">Horas Extras Ley 40 Horas</a>
-                        <a href="para-empleadores" class="block px-4 py-2.5 rounded-xl text-sm font-bold text-emerald-950">Portal Pymes & Empleadores</a>
+                    <div class="fixed left-0 right-0 top-24 bg-white border-b border-slate-200 shadow-xl z-50 p-6 space-y-3">
+                        <a href="finiquito_calculator" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950 bg-emerald-50">Simulador Finiquito Legal 2026</a>
+                        <a href="simulador-despido-injustificado-chile" class="block px-4 py-3 rounded-xl text-base font-bold text-rose-600 bg-rose-50">Despido Injustificado (+30%)</a>
+                        <a href="sueldo_liquido" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Calculadora Sueldo Líquido</a>
+                        <a href="calculadora-horas-extras" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Horas Extras Ley 40 Horas</a>
+                        <a href="para-empleadores" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950">Portal Empleadores & Pymes</a>
                     </div>
                 </details>
             </div>
         </div>
     </header>
 
-    <!-- SECTION 1: TEALHQ CENTERED HERO -->
-    <section class="pt-16 sm:pt-24 pb-14 sm:pb-20 relative overflow-hidden bg-white text-center">
-        <div class="max-w-[1000px] mx-auto px-4 sm:px-6 relative z-10">
+    <!-- SECTION 1: TEALHQ CENTERED HERO (Clean, No Pill Badges, Massive Typography) -->
+    <section class="pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
+        <div class="site-container">
             
-            <!-- Eyebrow Badge Pill (TealHQ style) -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold mb-6">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Fórmulas Oficiales Dirección del Trabajo • Chile 2026</span>
-            </div>
-
-            <!-- Massive Centered Headline (TealHQ typography) -->
-            <h1 class="teal-hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6">
-                Calcula tu Finiquito Legal.<br>
-                <span class="text-amber-500">Cobra cada peso que te corresponde.</span>
+            <!-- Confident 2-Line Headline (Exact TealHQ weight & proportion) -->
+            <h1 style="color: var(--teal-forest);" class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] max-w-4xl mx-auto">
+                Calcula tu Finiquito.<br>
+                <span class="text-amber-500">Cobra lo que es tuyo.</span>
             </h1>
 
-            <!-- Centered Subtitle (Restrained, punchy copy) -->
-            <p class="text-base sm:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto mb-9">
-                La plataforma de cálculo laboral más precisa de Chile. Simula tus indemnizaciones exactas, detecta descuentos patronales indebidos y blinda tu firma en notaría.
+            <!-- Professional Sentence Subtitle (No AI fluff) -->
+            <p class="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Simulador laboral con las fórmulas vigentes 2026 de la Dirección del Trabajo, tope legal de 90 UF y la cláusula de reserva notarial.
             </p>
 
-            <!-- Big Centered Yellow Pill CTA -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-                <a href="#showcase-suite" class="btn-teal-primary text-base sm:text-lg px-8 py-4 w-full sm:w-auto">
-                    <span>Simular Finiquito Gratis — 100% al Día DT 2026</span>
-                    <span class="material-icons text-lg">arrow_forward</span>
+            <!-- TealHQ Primary Yellow Action Pill -->
+            <div class="mt-8 flex justify-center">
+                <a href="#showcase" class="btn-yellow-pill text-base px-8 py-4">
+                    <span>Simular Finiquito Gratis — 100% al Día</span>
+                    <span class="material-icons text-base">arrow_forward</span>
                 </a>
             </div>
 
-            <!-- Micro Trust Badges Row -->
-            <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 font-semibold">
-                <span class="inline-flex items-center gap-1.5">
-                    <span class="material-icons text-emerald-600 text-sm">verified</span> Topes 90 UF vigentes
-                </span>
-                <span class="inline-flex items-center gap-1.5">
-                    <span class="material-icons text-emerald-600 text-sm">shield</span> Cláusula de Reserva Notarial
-                </span>
-                <span class="inline-flex items-center gap-1.5">
-                    <span class="material-icons text-emerald-600 text-sm">lock_open</span> Sin registro obligatorio
-                </span>
+            <!-- Subtle micro-proof -->
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-gray-500 font-semibold">
+                <span>✓ Normativa DT 2026</span>
+                <span>•</span>
+                <span>✓ Topes UF Actualizados</span>
+                <span>•</span>
+                <span>✓ Reserva de Derechos Incluida</span>
             </div>
+
         </div>
     </section>
 
-    <!-- SECTION 2: TEALHQ INTERACTIVE SHOWCASE SUITE (The Crown Jewel) -->
-    <section id="showcase-suite" class="py-12 sm:py-16 bg-white border-t border-slate-100">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
+    <!-- SECTION 2: TEALHQ INTERACTIVE SHOWCASE SUITE (The Star Feature) -->
+    <section id="showcase" class="pb-24 pt-4">
+        <div class="site-container">
             
-            <!-- Centered Interactive Product Tabs (Just like TealHQ: AI Resumes, Job Tracker, Matching Mode...) -->
-            <div class="flex items-center justify-center mb-10 overflow-x-auto pb-2 scrollbar-none">
-                <div class="inline-flex p-1.5 bg-slate-100 rounded-full border border-slate-200/80 gap-1">
-                    <button type="button" class="showcase-tab active" onclick="switchSuiteTab('express')" id="tab-btn-express">
-                        <span class="material-icons text-base text-amber-500">payments</span>
-                        <span>1. Simulador Express</span>
+            <!-- Product Navigation Tabs (Exact TealHQ Underline Tabs) -->
+            <div class="flex justify-center border-b border-gray-200 mb-10 overflow-x-auto scrollbar-none">
+                <div class="inline-flex gap-2 sm:gap-6">
+                    <button type="button" class="product-tab active" onclick="switchProductTab('simulador')" id="tab-btn-simulador">
+                        <span class="material-icons text-base">calculate</span>
+                        <span>Simulador Express</span>
                     </button>
-                    <button type="button" class="showcase-tab" onclick="switchSuiteTab('injustificado')" id="tab-btn-injustificado">
-                        <span class="material-icons text-base text-rose-500">gavel</span>
-                        <span>2. Despido Injustificado (+30%)</span>
+                    <button type="button" class="product-tab" onclick="switchProductTab('despido')" id="tab-btn-despido">
+                        <span class="material-icons text-base">gavel</span>
+                        <span>Despido Injustificado (+30%)</span>
                     </button>
-                    <button type="button" class="showcase-tab" onclick="switchSuiteTab('reserva')" id="tab-btn-reserva">
-                        <span class="material-icons text-base text-emerald-600">edit_note</span>
-                        <span>3. Reserva Notarial</span>
+                    <button type="button" class="product-tab" onclick="switchProductTab('reserva')" id="tab-btn-reserva">
+                        <span class="material-icons text-base">draw</span>
+                        <span>Reserva Notarial</span>
                     </button>
-                    <button type="button" class="showcase-tab" onclick="switchSuiteTab('horasextras')" id="tab-btn-horasextras">
-                        <span class="material-icons text-base text-indigo-500">schedule</span>
-                        <span>4. Horas Extras 42h</span>
+                    <button type="button" class="product-tab" onclick="switchProductTab('horas')" id="tab-btn-horas">
+                        <span class="material-icons text-base">schedule</span>
+                        <span>Horas Extras 42h</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Double-Bezel Showcase Box with Organic Background Accent -->
-            <div class="showcase-wrapper">
-                <div class="organic-bg-blob"></div>
+            <!-- Master Showcase Box with TealHQ Asymmetric Curved Backdrop -->
+            <div class="relative bg-slate-50 border border-gray-200/90 rounded-[32px] p-6 sm:p-12 overflow-hidden shadow-sm">
+                
+                <!-- Organic Color Slab behind right side (TealHQ Signature) -->
+                <div class="teal-organic-backdrop"></div>
 
-                <!-- ================= TAB CONTENT 1: SIMULADOR EXPRESS ================= -->
-                <div id="tab-content-express" class="relative z-10 transition-all duration-300">
+                <!-- ================= TAB 1: SIMULADOR EXPRESS ================= -->
+                <div id="content-tab-simulador" class="relative z-10">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         
-                        <!-- Left: Controls & Copy -->
-                        <div class="lg:col-span-6 space-y-6">
+                        <!-- Left Controls Column -->
+                        <div class="lg:col-span-5 space-y-6 text-left">
                             <div>
-                                <span class="text-xs font-bold text-emerald-800 uppercase tracking-widest bg-emerald-100/80 px-3 py-1 rounded-full">
-                                    Motor de Cálculo DT 2026
-                                </span>
-                                <h3 class="text-2xl sm:text-3xl font-extrabold text-emerald-950 mt-3 tracking-tight">
-                                    Cálculo instantáneo con topes y haberes legales
+                                <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
+                                    Cálculo instantáneo con haberes y topes legales
                                 </h3>
-                                <p class="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">
-                                    Mueve el sueldo mensual y los años continuos de servicio. Nuestro motor aplica en tiempo real el tope legal de 90 UF (<span class="font-mono-val font-bold">$3.692.938</span>), el mes de aviso y los días hábiles de feriado proporcional.
+                                <p class="text-sm text-gray-600 mt-2.5 leading-relaxed">
+                                    Mueve el sueldo mensual y los años de antigüedad. El motor aplica en tiempo real el tope de 90 UF (<span class="font-mono-num font-bold">$3.692.938</span>), el mes de aviso y las vacaciones en días hábiles.
                                 </p>
                             </div>
 
-                            <!-- Interactive Live Slider -->
-                            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+                            <!-- Live Slider Card -->
+                            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-3">
                                 <div class="flex justify-between items-baseline gap-2">
-                                    <label for="suite-slider-sueldo" class="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                        Sueldo base mensual
-                                    </label>
-                                    <span id="suite-sueldo-display" style="color: var(--brand-forest);" class="text-2xl font-extrabold font-mono-val number-ticking whitespace-nowrap">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Sueldo Bruto Mensual</span>
+                                    <span id="live-sueldo-val" style="color: var(--teal-forest);" class="text-2xl font-extrabold font-mono-num num-ticker whitespace-nowrap">
                                         $ 1.200.000
                                     </span>
                                 </div>
-                                <input type="range" id="suite-slider-sueldo" min="550000" max="4500000" step="50000" value="1200000" class="teal-range" oninput="updateSuiteCalculator()" aria-label="Sueldo base mensual">
-                                <div class="flex justify-between text-[11px] font-medium text-slate-400">
-                                    <span>Mínimo: $553.553</span>
-                                    <span>Promedio: $1.200.000</span>
-                                    <span>Tope: 90 UF</span>
+                                <input type="range" id="slider-sueldo" min="500000" max="4500000" step="50000" value="1200000" class="teal-range" oninput="calculateLiveFiniquito()" aria-label="Sueldo Bruto Mensual">
+                                <div class="flex justify-between text-[11px] font-medium text-gray-400">
+                                    <span>$553.553</span>
+                                    <span>$1.200.000</span>
+                                    <span>Tope 90 UF</span>
                                 </div>
                             </div>
 
-                            <!-- Causal & Años Controls -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Causal de Término</label>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <button type="button" id="btn-causal-161" onclick="setSuiteCausal('161')" style="background-color: var(--brand-forest); color: white;" class="py-2 px-2.5 rounded-xl font-bold text-xs shadow-xs transition-all cursor-pointer">
-                                            Art. 161 (Despido)
+                            <!-- Causal & Años -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="bg-white p-4 rounded-2xl border border-gray-200">
+                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Causal</span>
+                                    <div class="grid grid-cols-2 gap-1.5">
+                                        <button type="button" id="btn-c-161" onclick="setLiveCausal('161')" style="background-color: var(--teal-forest); color: white;" class="py-2 px-2 rounded-xl font-bold text-xs cursor-pointer transition-all">
+                                            Art. 161
                                         </button>
-                                        <button type="button" id="btn-causal-renuncia" onclick="setSuiteCausal('renuncia')" class="py-2 px-2.5 rounded-xl font-bold text-xs text-slate-600 hover:text-slate-900 bg-slate-100 transition-all cursor-pointer">
-                                            Renuncia / Plazo
+                                        <button type="button" id="btn-c-ren" onclick="setLiveCausal('ren')" class="py-2 px-2 rounded-xl font-bold text-xs text-gray-600 bg-gray-100 hover:text-gray-900 cursor-pointer transition-all">
+                                            Renuncia
                                         </button>
                                     </div>
                                 </div>
 
-                                <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Años Trabajados</label>
-                                    <div class="grid grid-cols-5 gap-1" id="suite-anos-container">
-                                        <button type="button" onclick="setSuiteAnos(1)" class="suite-ano-btn py-1.5 rounded-lg border border-slate-200 font-bold text-xs text-slate-700">1a</button>
-                                        <button type="button" onclick="setSuiteAnos(2)" class="suite-ano-btn py-1.5 rounded-lg border border-slate-200 font-bold text-xs text-slate-700">2a</button>
-                                        <button type="button" onclick="setSuiteAnos(3)" style="background-color: var(--brand-forest); color: white; border-color: var(--brand-forest);" class="suite-ano-btn py-1.5 rounded-lg border font-bold text-xs">3a</button>
-                                        <button type="button" onclick="setSuiteAnos(5)" class="suite-ano-btn py-1.5 rounded-lg border border-slate-200 font-bold text-xs text-slate-700">5a</button>
-                                        <button type="button" onclick="setSuiteAnos(8)" class="suite-ano-btn py-1.5 rounded-lg border border-slate-200 font-bold text-xs text-slate-700">8a</button>
+                                <div class="bg-white p-4 rounded-2xl border border-gray-200">
+                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Años Servicio</span>
+                                    <div class="grid grid-cols-5 gap-1" id="live-anos-group">
+                                        <button type="button" onclick="setLiveAnos(1)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">1a</button>
+                                        <button type="button" onclick="setLiveAnos(2)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">2a</button>
+                                        <button type="button" onclick="setLiveAnos(3)" style="background-color: var(--teal-forest); color: white; border-color: var(--teal-forest);" class="live-ano-btn py-1.5 rounded-lg border font-bold text-xs">3a</button>
+                                        <button type="button" onclick="setLiveAnos(5)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">5a</button>
+                                        <button type="button" onclick="setLiveAnos(8)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">8a</button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Botón hacia calculadora avanzada -->
-                            <div class="pt-2">
-                                <a href="finiquito_calculator" class="btn-teal-primary text-sm">
-                                    <span>Ir al cálculo con fechas exactas</span>
-                                    <span class="material-icons text-base">arrow_forward</span>
-                                </a>
-                            </div>
+                            <a href="finiquito_calculator" class="btn-yellow-pill text-sm py-3 px-6">
+                                <span>Calcular con fechas exactas</span>
+                                <span class="material-icons text-base">arrow_forward</span>
+                            </a>
                         </div>
 
-                        <!-- Right: Digital Finiquito Voucher (High-Fidelity TealHQ Style Card) -->
-                        <div class="lg:col-span-6">
-                            <div class="mockup-card p-6 sm:p-8">
+                        <!-- Right SaaS Application Window Mockup -->
+                        <div class="lg:col-span-7">
+                            <div class="saas-window-card p-6 sm:p-8 space-y-6">
                                 
-                                <!-- Voucher Header -->
-                                <div class="flex justify-between items-center pb-5 border-b border-slate-100">
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
+                                <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
                                             <span class="material-icons text-lg">receipt_long</span>
                                         </div>
                                         <div>
-                                            <h4 class="font-bold text-sm text-slate-900 leading-tight">Liquidación de Finiquito</h4>
-                                            <span class="text-[11px] text-slate-400 font-mono-val">REF-2026-CHILE • DT ART. 177</span>
+                                            <div class="font-bold text-sm text-gray-900 leading-tight">Liquidación de Finiquito</div>
+                                            <div class="text-[11px] text-gray-400 font-mono-num">FÓRMULA ART. 177 CÓDIGO DEL TRABAJO</div>
                                         </div>
                                     </div>
-                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                                        <span class="material-icons text-xs">verified</span> Válido 2026
+                                    <span class="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                                        Vigente 2026
                                     </span>
                                 </div>
 
-                                <!-- Total Callout (Hero number) -->
-                                <div class="my-6 p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center">
+                                <!-- Grand Total Hero Display -->
+                                <div class="p-6 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center">
                                     <span class="block text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1">
                                         Total Estimado a Cobrar
                                     </span>
-                                    <div id="suite-voucher-total" style="color: var(--brand-forest);" class="text-3xl sm:text-4xl font-extrabold font-mono-val tracking-tight number-ticking whitespace-nowrap">
+                                    <div id="live-total-display" style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold font-mono-num tracking-tight num-ticker whitespace-nowrap">
                                         $ 5.400.000
                                     </div>
-                                    <span class="block text-[11px] text-slate-500 mt-1">Sujeto a firma con Cláusula de Reserva Notarial</span>
+                                    <span class="block text-xs text-gray-500 mt-1">Sujeto a firma con Cláusula de Reserva Notarial</span>
                                 </div>
 
-                                <!-- Itemized Breakdown List -->
-                                <div class="space-y-3 text-xs">
-                                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                                        <span class="text-slate-600 font-medium">Indemnización años de servicio (<span id="suite-voucher-anos-qty">3</span> años):</span>
-                                        <span id="suite-voucher-anos" class="font-mono-val font-bold text-slate-900 whitespace-nowrap">$ 3.600.000</span>
+                                <!-- Itemized Rows -->
+                                <div class="space-y-3 text-xs sm:text-sm">
+                                    <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Años de Servicio (<span id="live-anos-label">3</span> años computables):</span>
+                                        <span id="live-monto-anos" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 3.600.000</span>
                                     </div>
-                                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                                        <span class="text-slate-600 font-medium">Mes de aviso previo (Art. 161):</span>
-                                        <span id="suite-voucher-aviso" class="font-mono-val font-bold text-slate-900 whitespace-nowrap">$ 1.200.000</span>
+                                    <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Indemnización Sustitutiva Aviso Previo:</span>
+                                        <span id="live-monto-aviso" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 1.200.000</span>
                                     </div>
-                                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                                        <span class="text-slate-600 font-medium">Feriado proporcional estimado (15 días hábiles):</span>
-                                        <span id="suite-voucher-vac" class="font-mono-val font-bold text-slate-900 whitespace-nowrap">$ 600.000</span>
+                                    <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Feriado Proporcional (15 días hábiles):</span>
+                                        <span id="live-monto-vac" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 600.000</span>
                                     </div>
                                 </div>
 
-                                <!-- AFC Retención Warning Floating Chip -->
-                                <div id="suite-voucher-afc" class="mt-5 p-3.5 bg-amber-50 border border-amber-200/90 rounded-2xl flex items-start gap-2.5 text-xs text-amber-900">
-                                    <span class="material-icons text-amber-600 text-sm mt-0.5">warning</span>
+                                <!-- AFC Warning Floating Box -->
+                                <div id="live-afc-box" class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-950">
+                                    <span class="material-icons text-amber-600 text-sm mt-0.5">info</span>
                                     <div>
-                                        <strong>Descuento AFC a vigilar:</strong> Tu empleador descontará aprox. <span id="suite-voucher-afc-monto" class="font-mono-val font-bold whitespace-nowrap">$ 691.200</span> por aporte patronal al seguro de cesantía. Escribe la reserva notarial para recuperarlo.
+                                        <strong>Alerta Descuento AFC:</strong> Tu empleador intentará retener cerca de <span id="live-monto-afc" class="font-mono-num font-bold whitespace-nowrap">$ 691.200</span> de aporte patronal. Con la reserva notarial puedes recuperarlo.
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
                     </div>
                 </div>
 
-                <!-- ================= TAB CONTENT 2: DESPIDO INJUSTIFICADO ================= -->
-                <div id="tab-content-injustificado" class="hidden relative z-10 transition-all duration-300">
+                <!-- ================= TAB 2: DESPIDO INJUSTIFICADO ================= -->
+                <div id="content-tab-despido" class="hidden relative z-10">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                        <div class="lg:col-span-6 space-y-5">
-                            <span class="text-xs font-bold text-rose-700 uppercase tracking-widest bg-rose-100 px-3 py-1 rounded-full">
-                                Artículos 168 & 161 Código del Trabajo
-                            </span>
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                                ¿Despido por Necesidades de la Empresa? Tienes derecho a un recargo del +30%
+                        <div class="lg:col-span-5 space-y-5 text-left">
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
+                                ¿Despido por Necesidades de la Empresa? Recargo legal del +30%
                             </h3>
-                            <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
-                                Los tribunales laborales en Chile exigen que la empresa demuestre que el despido fue por razones económicas graves, externas y permanentes. Si tu carta es genérica, la ley te otorga un recargo automático del 30% sobre tus años de servicio y la restitución del descuento AFC.
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Los tribunales laborales en Chile exigen que la empresa pruebe motivos económicos graves e inevitables. Si la carta es genérica, la ley te otorga un 30% adicional sobre tus años de servicio y la restitución total del descuento de cesantía.
                             </p>
-                            <div class="p-4 bg-white rounded-2xl border border-slate-200 text-xs space-y-2">
-                                <div class="flex items-center gap-2 font-bold text-rose-700">
+                            <div class="p-4 bg-white rounded-2xl border border-gray-200 text-xs text-gray-700 space-y-1.5">
+                                <div class="font-bold text-rose-600 flex items-center gap-1.5">
                                     <span class="material-icons text-sm">balance</span>
-                                    <span>Jurisprudencia Unificada Corte Suprema 2024-2026</span>
+                                    Jurisprudencia Unificada Corte Suprema
                                 </div>
-                                <p class="text-slate-600">
-                                    La Corte Suprema ha determinado de forma invariable que si el despido por necesidades de la empresa es injustificado, el empleador pierde el derecho a imputar su aporte a la AFC.
+                                <p class="text-gray-500">
+                                    El descuento patronal de la AFC solo procede en despidos procedentes. Si se declara injustificado, el empleador debe reintegrarlo íntegramente.
                                 </p>
                             </div>
-                            <div>
-                                <a href="simulador-despido-injustificado-chile" class="btn-teal-primary text-sm">
-                                    <span>Simular Demanda Despido Injustificado</span>
-                                    <span class="material-icons text-base">arrow_forward</span>
-                                </a>
-                            </div>
+                            <a href="simulador-despido-injustificado-chile" class="btn-yellow-pill text-sm py-3 px-6">
+                                <span>Simular Demanda Despido Injustificado</span>
+                                <span class="material-icons text-base">arrow_forward</span>
+                            </a>
                         </div>
 
-                        <!-- Right: Battle Comparison Card -->
-                        <div class="lg:col-span-6">
-                            <div class="mockup-card p-6 sm:p-8 space-y-5">
-                                <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                                    <span class="font-bold text-xs uppercase tracking-wider text-slate-400">Comparativa Legal</span>
-                                    <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full">Ejemplo Sueldo $1.200.000 (3 años)</span>
+                        <!-- Right Battle Card -->
+                        <div class="lg:col-span-7">
+                            <div class="saas-window-card p-6 sm:p-8 space-y-5">
+                                <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Comparación Económica</span>
+                                    <span class="text-xs font-semibold text-gray-500">Caso: Sueldo $1.200.000 • 3 Años</span>
                                 </div>
-
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <!-- Lo que ofrece la empresa -->
-                                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                                        <span class="text-[11px] font-bold text-slate-500 uppercase block mb-1">Lo que te ofrece la empresa</span>
-                                        <div class="text-2xl font-extrabold font-mono-val text-slate-700">$ 4.708.800</div>
-                                        <p class="text-[11px] text-slate-400 mt-2">Finiquito estándar con descuento abusivo de la AFC (-$691.200).</p>
+                                    <div class="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                                        <span class="text-xs font-bold text-gray-500 uppercase block mb-1">Lo que te ofrece la empresa</span>
+                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-gray-700">$ 4.708.800</div>
+                                        <p class="text-xs text-gray-400 mt-2">Finiquito estándar con descuento patronal de la AFC (-$691.200).</p>
                                     </div>
-
-                                    <!-- Lo que ganas demandando -->
-                                    <div class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-500">
-                                        <span class="text-[11px] font-bold text-emerald-800 uppercase block mb-1">Con Demanda o Mediación</span>
-                                        <div class="text-2xl font-extrabold font-mono-val text-emerald-700">$ 6.480.000</div>
-                                        <p class="text-[11px] text-emerald-800 font-medium mt-2">+30% recargo legal ($1.080.000) + Devolución AFC completa.</p>
+                                    <div class="p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-500">
+                                        <span class="text-xs font-bold text-emerald-800 uppercase block mb-1">Con Reclamo o Demanda</span>
+                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-emerald-700">$ 6.480.000</div>
+                                        <p class="text-xs text-emerald-800 font-medium mt-2">+30% recargo legal ($1.080.000) y devolución de la AFC.</p>
                                     </div>
                                 </div>
-
-                                <div class="p-4 rounded-2xl bg-amber-500 text-slate-950 font-bold text-sm flex items-center justify-between">
-                                    <span>Diferencia a tu favor:</span>
-                                    <span class="font-mono-val text-lg whitespace-nowrap">+ $ 1.771.200</span>
+                                <div class="p-4 rounded-xl bg-amber-400 text-gray-950 font-bold text-sm flex items-center justify-between">
+                                    <span>Monto adicional a tu favor:</span>
+                                    <span class="font-mono-num text-lg whitespace-nowrap">+ $ 1.771.200</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ================= TAB CONTENT 3: RESERVA NOTARIAL ================= -->
-                <div id="tab-content-reserva" class="hidden relative z-10 transition-all duration-300">
+                <!-- ================= TAB 3: RESERVA NOTARIAL ================= -->
+                <div id="content-tab-reserva" class="hidden relative z-10">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                        <div class="lg:col-span-6 space-y-5">
-                            <span class="text-xs font-bold text-emerald-800 uppercase tracking-widest bg-emerald-100 px-3 py-1 rounded-full">
-                                Blindaje Notarial Inmediato
-                            </span>
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                                La frase manuscrita que salva tu dinero en la notaría
+                        <div class="lg:col-span-5 space-y-5 text-left">
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
+                                La frase escrita a mano que salva tu dinero en la notaría
                             </h3>
-                            <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
-                                Puedes cobrar tu cheque o transferencia de inmediato sin renunciar a tus derechos. Sólo debes escribir a mano esta cláusula oficial sobre tu firma en todas las copias del finiquito.
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Puedes cobrar tu cheque o transferencia de inmediato en la notaría sin renunciar a tus derechos. Sólo debes escribir a mano esta fórmula oficial sobre tu firma en todas las copias.
                             </p>
-
-                            <!-- Box con texto para copiar -->
                             <div class="bg-white p-5 rounded-2xl border-2 border-amber-300 shadow-sm space-y-3">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-xs font-bold text-slate-700 uppercase">Texto Oficial de Reserva</span>
-                                    <button type="button" onclick="copySuiteReserva()" id="btn-suite-copiar" class="btn-teal-primary text-xs py-1.5 px-3">
+                                    <span class="text-xs font-bold text-gray-700 uppercase">Texto Oficial a Copiar</span>
+                                    <button type="button" onclick="copyReservaPhrase()" id="btn-copy-phrase" class="btn-yellow-pill text-xs py-1.5 px-3">
                                         <span class="material-icons text-sm">content_copy</span>
-                                        <span>Copiar texto</span>
+                                        <span>Copiar</span>
                                     </button>
                                 </div>
-                                <div id="suite-texto-reserva" class="p-3 bg-slate-50 rounded-xl font-mono-val text-xs text-slate-800 leading-relaxed border border-slate-200">
+                                <div id="reserva-text-box" class="p-3 bg-gray-50 rounded-xl font-mono-num text-xs text-gray-800 leading-relaxed border border-gray-200">
                                     "Me reservo expresamente el derecho a reclamar judicialmente la improcedencia del descuento del aporte patronal al seguro de cesantía (Art. 13 Ley 19.728) y las diferencias que correspondan por indemnizaciones legales y feriado proporcional."
                                 </div>
                             </div>
-
-                            <p class="text-xs text-slate-500 italic">
-                                * El notario no puede negarse a autenticar el finiquito si incluyes esta cláusula (Dictamen DT N° 2390/041).
-                            </p>
                         </div>
 
-                        <!-- Right: Visual Finiquito Document Mockup with Sticky Note -->
-                        <div class="lg:col-span-6">
-                            <div class="mockup-card p-6 sm:p-8 bg-white border border-slate-200 space-y-4 relative">
-                                <div class="text-center font-bold text-sm uppercase text-slate-700 pb-3 border-b border-slate-200">
+                        <!-- Right Document Simulation -->
+                        <div class="lg:col-span-7">
+                            <div class="saas-window-card p-6 sm:p-8 space-y-4">
+                                <div class="text-center font-bold text-sm uppercase text-gray-700 pb-3 border-b border-gray-200">
                                     Finiquito de Contrato de Trabajo
                                 </div>
-                                <div class="space-y-2 text-[11px] text-slate-400 font-mono-val">
-                                    <div class="h-3 bg-slate-100 rounded w-full"></div>
-                                    <div class="h-3 bg-slate-100 rounded w-5/6"></div>
-                                    <div class="h-3 bg-slate-100 rounded w-4/6"></div>
+                                <div class="space-y-2 text-[11px] text-gray-300 font-mono-num">
+                                    <div class="h-3 bg-gray-100 rounded w-full"></div>
+                                    <div class="h-3 bg-gray-100 rounded w-4/5"></div>
+                                    <div class="h-3 bg-gray-100 rounded w-3/5"></div>
                                 </div>
-
-                                <!-- Signature box with handwritten note simulation -->
-                                <div class="mt-6 pt-6 border-t-2 border-dashed border-slate-200 flex justify-between items-end">
+                                <div class="mt-8 pt-6 border-t-2 border-dashed border-gray-200 flex justify-between items-end">
                                     <div>
-                                        <div class="w-36 border-b border-slate-400 mb-1"></div>
-                                        <span class="text-[10px] text-slate-500 uppercase">Firma del Empleador</span>
+                                        <div class="w-32 border-b border-gray-400 mb-1"></div>
+                                        <span class="text-[10px] text-gray-400 uppercase">Firma Empleador</span>
                                     </div>
                                     <div class="relative">
-                                        <!-- Post-it style callout pointing to signature -->
-                                        <div class="bg-amber-100 border border-amber-300 rounded-xl p-3 text-[11px] text-amber-950 font-bold shadow-md max-w-[220px] mb-2 animate-float">
-                                            ✍️ Escribe aquí a mano antes de firmar la reserva notarial
+                                        <div class="bg-amber-100 border border-amber-300 rounded-xl p-3 text-xs text-amber-950 font-bold shadow-md max-w-[220px] mb-2">
+                                            ✍️ Escribe aquí a mano la reserva de derechos antes de firmar
                                         </div>
                                         <div class="w-36 border-b-2 border-emerald-600 mb-1"></div>
                                         <span class="text-[10px] font-bold text-emerald-800 uppercase">Firma del Trabajador</span>
@@ -719,45 +746,40 @@
                     </div>
                 </div>
 
-                <!-- ================= TAB CONTENT 4: HORAS EXTRAS 42H ================= -->
-                <div id="tab-content-horasextras" class="hidden relative z-10 transition-all duration-300">
+                <!-- ================= TAB 4: HORAS EXTRAS 42H ================= -->
+                <div id="content-tab-horas" class="hidden relative z-10">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                        <div class="lg:col-span-6 space-y-5">
-                            <span class="text-xs font-bold text-indigo-700 uppercase tracking-widest bg-indigo-100 px-3 py-1 rounded-full">
-                                Ley 21.561 • Vigente en Chile
-                            </span>
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        <div class="lg:col-span-5 space-y-5 text-left">
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
                                 Nueva Jornada 42h: Tu valor por hora extra aumentó
                             </h3>
-                            <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
-                                Al reducirse la jornada legal ordinaria a 42 horas semanales, el factor legal oficial para el cálculo del recargo del 50% subió a <strong>0.0079365</strong>. Si la empresa te liquida con el factor antiguo de 44 o 45 horas, te está pagando de menos.
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Al reducirse la jornada legal a 42 horas en 2026, el factor legal para el cálculo del recargo del 50% subió a <strong>0.0079365</strong>. Si la empresa usa el factor antiguo de 44 o 45 horas, te está pagando de menos.
                             </p>
-                            <div>
-                                <a href="calculadora-horas-extras" class="btn-teal-primary text-sm">
-                                    <span>Ir a la Calculadora Oficial de Horas Extras</span>
-                                    <span class="material-icons text-base">arrow_forward</span>
-                                </a>
-                            </div>
+                            <a href="calculadora-horas-extras" class="btn-yellow-pill text-sm py-3 px-6">
+                                <span>Abrir Calculadora de Horas Extras</span>
+                                <span class="material-icons text-base">arrow_forward</span>
+                            </a>
                         </div>
 
-                        <!-- Right: Interactive Factor Comparator -->
-                        <div class="lg:col-span-6">
-                            <div class="mockup-card p-6 sm:p-8 space-y-4">
-                                <h4 class="font-bold text-sm text-slate-900">Comparador de Recargo Legal por Hora Extra</h4>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase block">Jornada Antigua (44h)</span>
-                                        <div class="text-xl font-mono-val font-bold text-slate-600 mt-1">$ 9.090 / hora</div>
-                                        <span class="text-[10px] text-slate-400 font-mono-val">Factor 0.0075757</span>
+                        <!-- Right Comparison -->
+                        <div class="lg:col-span-7">
+                            <div class="saas-window-card p-6 sm:p-8 space-y-4">
+                                <h4 class="font-bold text-sm text-gray-900">Comparador de Recargo Legal por Hora Extra</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="p-4 rounded-xl bg-gray-50 border border-gray-200">
+                                        <span class="text-xs font-bold text-gray-400 uppercase block">Jornada Antigua (44h)</span>
+                                        <div class="text-xl font-mono-num font-bold text-gray-600 mt-1">$ 9.090 / hora</div>
+                                        <span class="text-[11px] text-gray-400 font-mono-num">Factor 0.0075757</span>
                                     </div>
                                     <div class="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-500">
-                                        <span class="text-[10px] font-bold text-emerald-800 uppercase block">Nueva Jornada 2026 (42h)</span>
-                                        <div class="text-xl font-mono-val font-bold text-emerald-700 mt-1">$ 9.524 / hora</div>
-                                        <span class="text-[10px] text-emerald-700 font-mono-val font-bold">Factor 0.0079365</span>
+                                        <span class="text-xs font-bold text-emerald-800 uppercase block">Nueva Jornada 2026 (42h)</span>
+                                        <div class="text-xl font-mono-num font-bold text-emerald-700 mt-1">$ 9.524 / hora</div>
+                                        <span class="text-[11px] text-emerald-700 font-mono-num font-bold">Factor 0.0079365</span>
                                     </div>
                                 </div>
-                                <div class="p-3.5 bg-slate-50 rounded-xl text-xs text-slate-600 border border-slate-200">
-                                    💡 <strong>Ejemplo en 15 horas extras mensuales:</strong> Representa una diferencia de más de <span class="font-mono-val font-bold text-emerald-800">+$65.000</span> a favor del trabajador cada mes.
+                                <div class="p-3.5 bg-gray-50 rounded-xl text-xs text-gray-600 border border-gray-200">
+                                    💡 <strong>Diferencia acumulativa:</strong> En 15 horas extras mensuales representa más de <span class="font-mono-num font-bold text-emerald-800">+$65.000</span> a tu favor cada mes.
                                 </div>
                             </div>
                         </div>
@@ -768,149 +790,123 @@
         </div>
     </section>
 
-    <!-- SECTION 3: HOW IT WORKS (TealHQ 4-Step Interactive Journey) -->
-    <section class="py-16 sm:py-24 bg-white border-t border-slate-100 text-center">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
+    <!-- SECTION 3: HOW IT WORKS (TealHQ 4-Step Journey) -->
+    <section class="py-16 sm:py-24 bg-white border-t border-gray-100 text-center">
+        <div class="site-container">
             
-            <span class="text-xs font-bold text-emerald-800 uppercase tracking-widest bg-emerald-100/80 px-3 py-1 rounded-full">
-                Guía Paso a Paso
-            </span>
-            <h2 class="teal-hero-title text-3xl sm:text-4xl md:text-5xl mt-4 mb-4">
+            <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                 Cómo cobrar tu finiquito sin perder dinero
             </h2>
-            <p class="text-base text-slate-600 max-w-xl mx-auto mb-12">
-                Sigue estos 4 pasos legales para garantizar que recibes cada peso que te corresponde por ley.
+            <p class="mt-4 text-base sm:text-lg text-gray-600 max-w-xl mx-auto mb-12">
+                4 pasos legales desde que recibes tu carta de despido hasta el cobro en notaría.
             </p>
 
-            <!-- 4-Column Asymmetric Cards (TealHQ Bento Steps) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-                
-                <!-- Step 1 -->
-                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all hover:-translate-y-1">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-950 text-white font-extrabold flex items-center justify-center text-sm mb-5">
+                <div class="p-6 rounded-3xl bg-slate-50 border border-gray-200 hover:border-gray-300 transition-all hover:-translate-y-1">
+                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm mb-5">
                         1
                     </div>
-                    <h3 class="font-bold text-lg text-slate-900 mb-2">Revisa tu Carta</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Verifica si te despiden por Art. 161 (Necesidades de la empresa) o si invocan causales disciplinarias sin pruebas.
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">Revisa tu Carta</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                        Verifica si invocan Art. 161 (Necesidades de la empresa) o causales disciplinarias sin fundamentos.
                     </p>
                 </div>
 
-                <!-- Step 2 -->
-                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all hover:-translate-y-1">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-950 text-white font-extrabold flex items-center justify-center text-sm mb-5">
+                <div class="p-6 rounded-3xl bg-slate-50 border border-gray-200 hover:border-gray-300 transition-all hover:-translate-y-1">
+                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm mb-5">
                         2
                     </div>
-                    <h3 class="font-bold text-lg text-slate-900 mb-2">Simula tus Cifras</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Usa nuestro simulador oficial para calcular años de servicio topados a 90 UF, mes de aviso y vacaciones en días hábiles.
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">Simula tus Cifras</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                        Calcula tus años de servicio topados a 90 UF, mes de aviso y vacaciones proporcionales en días hábiles.
                     </p>
                 </div>
 
-                <!-- Step 3 -->
-                <div class="p-6 rounded-3xl bg-amber-50/80 border-2 border-amber-300 transition-all hover:-translate-y-1">
-                    <div class="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 font-extrabold flex items-center justify-center text-sm mb-5">
+                <div class="p-6 rounded-3xl bg-amber-50/80 border-2 border-amber-300 hover:border-amber-400 transition-all hover:-translate-y-1">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-400 text-gray-950 font-extrabold flex items-center justify-center text-sm mb-5">
                         3
                     </div>
-                    <h3 class="font-bold text-lg text-slate-900 mb-2">Escribe la Reserva</h3>
-                    <p class="text-xs text-slate-700 leading-relaxed">
-                        Copia nuestra fórmula notarial a mano antes de firmar para no regalar el descuento de cesantía ni renunciar a demandar.
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">Escribe la Reserva</h3>
+                    <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                        Copia nuestra fórmula notarial a mano sobre tu firma para no regalar la retención patronal de la AFC.
                     </p>
                 </div>
 
-                <!-- Step 4 -->
-                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all hover:-translate-y-1">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-950 text-white font-extrabold flex items-center justify-center text-sm mb-5">
+                <div class="p-6 rounded-3xl bg-slate-50 border border-gray-200 hover:border-gray-300 transition-all hover:-translate-y-1">
+                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm mb-5">
                         4
                     </div>
-                    <h3 class="font-bold text-lg text-slate-900 mb-2">Cobra y Reclama</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Recibe tu cheque o transferencia de inmediato en notaría y presenta tu reclamo en la DT o juzgados laborales.
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">Cobra y Reclama</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                        Recibe tu pago inmediato en notaría y presenta tu reclamo formal ante la Inspección del Trabajo.
                     </p>
                 </div>
-
             </div>
 
         </div>
     </section>
 
-    <!-- SECTION 4: BENTO GRID ("LO QUE TU EMPLEADOR PREFIERE QUE NO SEPAS") -->
-    <section class="py-16 sm:py-24 bg-slate-50 border-t border-slate-200/80">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
+    <!-- SECTION 4: BENTO GRID DE ASESORÍA LABORAL -->
+    <section class="py-16 sm:py-24 bg-slate-50 border-t border-gray-200/90">
+        <div class="site-container">
             
             <div class="text-center max-w-xl mx-auto mb-14">
-                <span class="text-xs font-bold text-amber-800 uppercase tracking-widest bg-amber-100 px-3 py-1 rounded-full">
-                    Blindaje Legal del Trabajador
-                </span>
-                <h2 class="teal-hero-title text-3xl sm:text-4xl md:text-5xl mt-4 mb-3">
+                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                     Lo que tu empleador prefiere que no sepas
                 </h2>
-                <p class="text-base text-slate-600">
-                    En Chile, miles de finiquitos se firman con errores graves a favor de la empresa. Conoce tus derechos inalienables.
+                <p class="mt-3 text-base text-gray-600">
+                    En Chile, miles de finiquitos se firman con errores graves a favor de la empresa.
                 </p>
             </div>
 
-            <!-- Bento Grid 3 Cards + 1 Wide Action Card -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 text-left">
                 
-                <!-- Bento Card 1: Descuento AFC -->
-                <div class="bg-white p-7 rounded-3xl border border-slate-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="bg-white p-7 rounded-3xl border border-gray-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                                <span class="material-icons">savings</span>
-                            </span>
-                            <span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full">Recupera $600K a $2M</span>
+                        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4">
+                            <span class="material-icons">savings</span>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2">Descuento patronal de la AFC</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            Si tu despido es injustificado, la Corte Suprema ha dictaminado reiteradamente que la empresa no puede descontarte el aporte a la AFC.
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">Descuento patronal de la AFC</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                            Si tu despido es injustificado, la Corte Suprema ha dictaminado reiteradamente que la empresa no puede descontarte el aporte que hizo a tu seguro de cesantía.
                         </p>
                     </div>
-                    <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-800">
-                        <a href="simulador-despido-injustificado-chile" class="hover:underline flex items-center gap-1">
+                    <div class="pt-5 mt-5 border-t border-gray-100">
+                        <a href="simulador-despido-injustificado-chile" class="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1">
                             Simular recuperación de AFC <span class="material-icons text-sm">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Bento Card 2: Vacaciones días hábiles -->
-                <div class="bg-white p-7 rounded-3xl border border-slate-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="bg-white p-7 rounded-3xl border border-gray-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                                <span class="material-icons">calendar_today</span>
-                            </span>
-                            <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full">Sólo Días Hábiles</span>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
+                            <span class="material-icons">calendar_today</span>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2">Feriado Legal y Proporcional</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            El Código del Trabajo dictamina que el feriado anual se computa en días hábiles (de lunes a viernes). Los sábados, domingos y festivos no deben restarse de tus días pendientes.
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">Feriado Legal y Proporcional</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                            El Código del Trabajo dictamina que el feriado anual se computa en días hábiles (de lunes a viernes). Sábados y domingos no deben restarse de tus vacaciones.
                         </p>
                     </div>
-                    <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-800">
-                        <a href="calculadora-vacaciones-proporcionales" class="hover:underline flex items-center gap-1">
+                    <div class="pt-5 mt-5 border-t border-gray-100">
+                        <a href="calculadora-vacaciones-proporcionales" class="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1">
                             Calculadora vacaciones DT <span class="material-icons text-sm">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Bento Card 3: Autodespido -->
-                <div class="bg-white p-7 rounded-3xl border border-slate-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="bg-white p-7 rounded-3xl border border-gray-200 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                                <span class="material-icons">exit_to_app</span>
-                            </span>
-                            <span class="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full">Art. 171 Código Trabajo</span>
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                            <span class="material-icons">exit_to_app</span>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2">Autodespido (Despido Indirecto)</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            Si tu empleador no paga cotizaciones, comete acoso laboral o baja tu sueldo unilateralmente, puedes autodespedirte y cobrar todas tus indemnizaciones con recargo legal.
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">Autodespido (Art. 171)</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                            Si tu empleador no paga cotizaciones, comete acoso laboral o rebaja tu sueldo, puedes autodespedirte y cobrar todas tus indemnizaciones con recargo legal.
                         </p>
                     </div>
-                    <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-800">
-                        <a href="blog" class="hover:underline flex items-center gap-1">
+                    <div class="pt-5 mt-5 border-t border-gray-100">
+                        <a href="blog" class="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1">
                             Leer guía de autodespido <span class="material-icons text-sm">arrow_forward</span>
                         </a>
                     </div>
@@ -918,21 +914,18 @@
 
             </div>
 
-            <!-- Wide Action Banner (TealHQ style dark curved banner for employers/tools) -->
-            <div style="background-color: var(--brand-forest);" class="rounded-3xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl">
-                <div class="space-y-3 text-left max-w-xl">
-                    <span class="text-xs font-bold text-amber-300 uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full">
-                        Portal para Empresas & Empleadores
-                    </span>
+            <!-- Wide Action Banner (TealHQ Dark Pine Forest) -->
+            <div style="background-color: var(--teal-forest);" class="rounded-3xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl text-left">
+                <div class="space-y-3 max-w-xl">
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                        ¿Tienes una Pyme? Genera finiquitos legales y anexos 40 horas sin multas
+                        ¿Tienes una Pyme? Genera finiquitos y anexos 40h sin multas
                     </h3>
                     <p class="text-sm text-slate-200 leading-relaxed">
-                        Kit de cumplimiento laboral para pymes con plantillas Word/PDF oficiales, checklist de fiscalización DT y cláusulas conforme a la Ley 21.561.
+                        Kit de cumplimiento laboral para pymes con plantillas Word/PDF oficiales, checklist de fiscalización DT y cláusulas conformes a la Ley 21.561.
                     </p>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <a href="para-empleadores" class="btn-teal-primary text-sm whitespace-nowrap">
+                <div>
+                    <a href="para-empleadores" class="btn-yellow-pill text-sm whitespace-nowrap">
                         <span>Ver Portal Empleadores</span>
                         <span class="material-icons text-sm">arrow_forward</span>
                     </a>
@@ -943,54 +936,44 @@
     </section>
 
     <!-- SECTION 5: FAQ ACCORDION -->
-    <section class="py-16 sm:py-24 bg-white border-t border-slate-100">
-        <div class="max-w-[850px] mx-auto px-4 sm:px-6">
+    <section class="py-16 sm:py-24 bg-white border-t border-gray-100">
+        <div class="site-container max-w-[850px]">
             
             <div class="text-center mb-12">
-                <h2 class="teal-hero-title text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3">
-                    Preguntas Frecuentes sobre Finiquitos
+                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3">
+                    Preguntas Frecuentes
                 </h2>
-                <p class="text-slate-600 text-sm">Todo lo que necesitas saber antes de acudir a la notaría en Chile.</p>
+                <p class="text-gray-600 text-sm">Todo lo que necesitas saber antes de acudir a la notaría en Chile.</p>
             </div>
 
-            <div class="space-y-3">
-                <details class="group bg-slate-50 border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
-                    <summary class="flex justify-between items-center font-bold text-slate-900 text-sm sm:text-base">
+            <div class="space-y-3 text-left">
+                <details class="group bg-slate-50 border border-gray-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
                         <span>¿El empleador puede obligarme a firmar el finiquito si no estoy de acuerdo?</span>
-                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
-                        No. Nadie puede forzarte a firmar. Si no estás conforme con las cifras, puedes negarte a firmar o, mucho mejor, estampar a mano la Cláusula de Reserva de Derechos sobre tu firma. Con la reserva puedes cobrar los montos ofrecidos inmediatamente y demandar las diferencias en tribunales.
+                    <p class="text-xs sm:text-sm text-gray-600 mt-3 leading-relaxed">
+                        No. Nadie puede forzarte a firmar. Puedes negarte a firmar o estampar a mano la Cláusula de Reserva de Derechos sobre tu firma para cobrar el dinero de inmediato y demandar las diferencias posteriormente.
                     </p>
                 </details>
 
-                <details class="group bg-slate-50 border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
-                    <summary class="flex justify-between items-center font-bold text-slate-900 text-sm sm:text-base">
+                <details class="group bg-slate-50 border border-gray-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
                         <span>¿Cuántos días tiene la empresa para pagar el finiquito?</span>
-                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
-                        Conforme al artículo 177 del Código del Trabajo, el empleador tiene un plazo máximo e improrrogable de <strong>10 días hábiles</strong> siguientes a la separación del trabajador para poner a su disposición el finiquito y el pago total de las indemnizaciones.
+                    <p class="text-xs sm:text-sm text-gray-600 mt-3 leading-relaxed">
+                        Conforme al artículo 177 del Código del Trabajo, el empleador tiene un plazo máximo de <strong>10 días hábiles</strong> siguientes a la separación del trabajador para poner a su disposición el finiquito y el pago total.
                     </p>
                 </details>
 
-                <details class="group bg-slate-50 border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
-                    <summary class="flex justify-between items-center font-bold text-slate-900 text-sm sm:text-base">
-                        <span>¿Es legal que me descuenten el seguro de cesantía (aporte patronal AFC)?</span>
-                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+                <details class="group bg-slate-50 border border-gray-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
+                    <summary class="flex justify-between items-center font-bold text-gray-900 text-sm sm:text-base">
+                        <span>¿Es legal que descuenten el aporte patronal de la AFC?</span>
+                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
                     </summary>
-                    <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
-                        El artículo 13 de la Ley 19.728 lo contempla para despidos por el Art. 161 (Necesidades de la empresa). Sin embargo, la Corte Suprema ha dictaminado de forma reiterada y unificada que si el despido es declarado improcedente o injustificado judicialmente, dicho descuento se vuelve ilegal y la empresa debe devolvértelo en su totalidad con intereses y reajustes.
-                    </p>
-                </details>
-
-                <details class="group bg-slate-50 border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
-                    <summary class="flex justify-between items-center font-bold text-slate-900 text-sm sm:text-base">
-                        <span>¿Cuál es el tope legal de 90 UF para la indemnización por años de servicio?</span>
-                        <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
-                    </summary>
-                    <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
-                        Para el cálculo de la indemnización por años de servicio y el mes de aviso, la remuneración mensual se topa en un máximo de 90 Unidades de Fomento (UF) del último día del mes anterior al despido. En 2026, esto equivale a aproximadamente <strong>$3.692.000</strong>. Todo sueldo superior se calcula utilizando este tope legal máximo.
+                    <p class="text-xs sm:text-sm text-gray-600 mt-3 leading-relaxed">
+                        La Corte Suprema ha dictaminado de forma reiterada y unificada que si el despido es declarado improcedente o injustificado judicialmente, dicho descuento se vuelve ilegal y la empresa debe devolvértelo en su totalidad.
                     </p>
                 </details>
             </div>
@@ -998,140 +981,112 @@
         </div>
     </section>
 
-    <!-- SECTION 6: FINAL CTA STRIP -->
-    <section class="py-14 sm:py-20 bg-slate-900 text-white text-center">
-        <div class="max-w-[800px] mx-auto px-4 sm:px-6 space-y-6">
-            <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
-                No firmes tu finiquito a ciegas.
-            </h2>
-            <p class="text-slate-300 text-base sm:text-lg max-w-xl mx-auto">
-                Conoce tus montos exactos en 30 segundos y protege tus derechos laborales ante cualquier notaría en Chile.
-            </p>
-            <div>
-                <a href="#showcase-suite" class="btn-teal-primary text-base px-8 py-4">
-                    <span>Comenzar Cálculo Gratis</span>
-                    <span class="material-icons text-base">arrow_forward</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- PIE DE PÁGINA OFICIAL (Obligatorio e Invariable según AGENTS.md) -->
-    <footer class="bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print">
-        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            <!-- Brand Column -->
-            <div class="space-y-3">
-                <a href="./" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
-                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M30 84h40M38 79h24"></path>
-                            <path d="M50 22v57"></path>
-                            <path d="M50 14l-2 4h4l-2-4v8"></path>
-                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                            <path d="M18 36l-8 18h16Z"></path>
-                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M82 36l-8 18h16Z"></path>
-                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                            <path d="M58 43.5v20h10"></path>
-                        </svg>
+    <!-- SECTION 6: EXACT TEALHQ ASYMMETRIC CURVED FOOTER (rounded-tl-[72px] + Pine Forest) -->
+    <footer class="bg-white no-print">
+        <div class="teal-footer-curve text-white">
+            <div class="site-container py-16 sm:py-20">
+                
+                <!-- Main Links Grid (TealHQ Architecture) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
+                    
+                    <!-- Col 1: Brand -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-gray-950 font-bold">
+                                <span class="material-icons text-lg">balance</span>
+                            </div>
+                            <span class="font-extrabold text-2xl tracking-tight text-white">
+                                cálculolaboral<span class="text-amber-400">.</span>
+                            </span>
+                        </div>
+                        <p class="text-xs text-white/70 leading-relaxed max-w-sm">
+                            Plataforma legal independiente de cálculo laboral en Chile. Desarrollada para transparentar liquidaciones, proteger los derechos del trabajador y blindar a las pymes.
+                        </p>
+                        <div class="pt-2 text-xs font-mono-num text-white/40">
+                            Versión 2.5 • Actualizada Marzo 2026
+                        </div>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
-                </a>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
-                </p>
-                <p class="text-[11px] text-slate-400 font-mono">Versión 2.0.0 (2026)</p>
-            </div>
 
-            <!-- Calculadoras Column -->
-            <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h4>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
-                    <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
-                    <li><a href="finiquito_calculator" class="text-slate-600 hover:text-sky-500 transition-colors">Finiquito Legal</a></li>
-                    <li><a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-500 transition-colors">Horas Extras (Ley 40 Horas)</a></li>
-                    <li><a href="calculadora-sueldo-part-time" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Part-Time</a></li>
-                    <li><a href="calculadora-despido-articulo-160" class="text-slate-600 hover:text-sky-500 transition-colors">Despido Art. 160</a></li>
-                </ul>
-            </div>
+                    <!-- Col 2: Calculadoras -->
+                    <div class="space-y-3">
+                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Calculadoras</h4>
+                        <ul class="space-y-2.5 text-[13px]">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-amber-300 transition-colors">Finiquito Legal</a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Despido Injustificado</a></li>
+                            <li><a href="sueldo_liquido" class="text-white hover:text-amber-300 transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white hover:text-amber-300 transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white hover:text-amber-300 transition-colors">Vacaciones Proporcionales</a></li>
+                        </ul>
+                    </div>
 
-            <!-- Guías Clave Column -->
-            <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h4>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
-                    <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
-                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-amber-600 hover:text-amber-700 font-bold transition-colors">Checklist Fiscalización DT</a></li>
-                    <li><a href="despido-necesidades-empresa-articulo-161" class="text-slate-600 hover:text-sky-500 transition-colors">Art. 161 Necesidades Empresa</a></li>
-                    <li><a href="ley-40-horas-chile-2026" class="text-slate-600 hover:text-sky-500 transition-colors">Ley de 40 Horas (42h en 2026)</a></li>
-                    <li class="pt-1"><a href="blog" class="text-sky-600 hover:underline font-semibold flex items-center gap-1">Ver todas las guías <span class="text-[10px]">→</span></a></li>
-                </ul>
-            </div>
+                    <!-- Col 3: Guías Clave -->
+                    <div class="space-y-3">
+                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Guías Legales</h4>
+                        <ul class="space-y-2.5 text-[13px]">
+                            <li><a href="reclamar-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="text-white hover:text-amber-300 transition-colors">Carta de Renuncia</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white hover:text-amber-300 transition-colors">Art. 161 Necesidades</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white hover:text-amber-300 transition-colors">Ley 40 Horas (42h)</a></li>
+                            <li><a href="blog" class="text-white hover:text-amber-300 transition-colors">Todas las Guías →</a></li>
+                        </ul>
+                    </div>
 
-            <!-- Para Empresas Column -->
-            <div class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h4>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
-                    <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
-                    <li><a href="kit-cumplimiento-laboral-pymes" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
-                    <li><a href="generador-finiquito-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Generador Finiquito ($12.990)</a></li>
-                    <li><a href="generador-anexo-40-horas" class="text-slate-600 hover:text-sky-500 transition-colors">Anexo 40 Horas Word</a></li>
-                    <li><a href="sobre-nosotros" class="text-slate-600 hover:text-sky-500 transition-colors">Sobre Nosotros</a></li>
-                    <li><a href="contacto" class="text-slate-600 hover:text-sky-500 transition-colors">Contacto Directo</a></li>
-                </ul>
-            </div>
-        </div>
+                    <!-- Col 4: Empresas & Legal -->
+                    <div class="space-y-3">
+                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Empresas</h4>
+                        <ul class="space-y-2.5 text-[13px]">
+                            <li><a href="para-empleadores" class="text-white hover:text-amber-300 transition-colors">Portal Pymes</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white hover:text-amber-300 transition-colors">Kit Blindaje Laboral</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-white hover:text-amber-300 transition-colors">Generador Finiquitos</a></li>
+                            <li><a href="contacto" class="text-white hover:text-amber-300 transition-colors">Contacto Directo</a></li>
+                        </ul>
+                    </div>
 
-        <!-- Barra Inferior Unificada -->
-        <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <p class="text-xs text-slate-500">
-                &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Código del Trabajo</a> y dictámenes de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Dirección del Trabajo</a>.
-            </p>
-            <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500">
-                <a href="terminos" class="hover:text-slate-800 transition-colors">Términos</a>
-                <span class="text-slate-300">·</span>
-                <a href="privacidad" class="hover:text-slate-800 transition-colors">Privacidad</a>
-                <span class="text-slate-300">·</span>
-                <a href="disclaimer" class="hover:text-slate-800 transition-colors">Disclaimer</a>
-                <span class="text-slate-300">·</span>
-                <span class="inline-flex items-center gap-1 text-slate-600 font-medium">
-                    <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
-                    Fórmulas Conforme a DT
-                </span>
+                </div>
+
+                <!-- Bottom Legal Bar (TealHQ minimal footer) -->
+                <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
+                    <div>
+                        &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <a href="terminos" class="hover:text-white transition-colors">Términos</a>
+                        <span>·</span>
+                        <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
+                        <span>·</span>
+                        <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </footer>
 
-    <!-- INTERACTIVE ENGINE & SCRIPTS (Emil Kowalski Transitions) -->
+    <!-- INTERACTIVITY ENGINE (Pure vanilla JavaScript) -->
     <script src="/js/constants.js?v=2.0.4"></script>
     <script src="/js/indicators.js?v=2.1.1"></script>
     <script>
-        // Formato moneda CLP seguro (con espacio de no ruptura)
         function formatCLP(val) {
             return '$\u00A0' + Math.round(val).toLocaleString('es-CL');
         }
 
-        // Estado del motor de la suite
-        const suiteState = {
+        const liveState = {
             sueldo: 1200000,
             causal: '161',
             anos: 3
         };
 
-        // Tab Switching Engine (TealHQ Interactive Showcase)
-        function switchSuiteTab(tabKey) {
-            const tabs = ['express', 'injustificado', 'reserva', 'horasextras'];
+        // Tab Switching
+        function switchProductTab(tabKey) {
+            const tabs = ['simulador', 'despido', 'reserva', 'horas'];
             tabs.forEach(k => {
                 const btn = document.getElementById('tab-btn-' + k);
-                const content = document.getElementById('tab-content-' + k);
+                const content = document.getElementById('content-tab-' + k);
                 if (k === tabKey) {
                     btn.classList.add('active');
                     content.classList.remove('hidden');
                     content.style.opacity = '0';
-                    content.style.transform = 'translateY(10px)';
+                    content.style.transform = 'translateY(8px)';
                     setTimeout(() => {
                         content.style.opacity = '1';
                         content.style.transform = 'translateY(0)';
@@ -1143,99 +1098,98 @@
             });
         }
 
-        // Slider dynamic fill
-        function updateSuiteSliderTrack(slider) {
+        // Dynamic slider gradient
+        function updateSliderTrack(slider) {
             const min = parseFloat(slider.min);
             const max = parseFloat(slider.max);
             const val = parseFloat(slider.value);
             const pct = ((val - min) / (max - min)) * 100;
-            slider.style.background = `linear-gradient(to right, #043D30 0%, #043D30 ${pct}%, #E5E7EB ${pct}%, #E5E7EB 100%)`;
+            slider.style.background = `linear-gradient(to right, #00382E 0%, #00382E ${pct}%, #E5E7EB ${pct}%, #E5E7EB 100%)`;
         }
 
-        // Calculadora reactiva de la Suite
-        function updateSuiteCalculator() {
-            const slider = document.getElementById('suite-slider-sueldo');
+        // Live calculation engine
+        function calculateLiveFiniquito() {
+            const slider = document.getElementById('slider-sueldo');
             if (slider) {
-                suiteState.sueldo = parseInt(slider.value, 10);
-                updateSuiteSliderTrack(slider);
+                liveState.sueldo = parseInt(slider.value, 10);
+                updateSliderTrack(slider);
             }
 
-            const sueldoDisplay = document.getElementById('suite-sueldo-display');
-            if (sueldoDisplay) sueldoDisplay.innerText = formatCLP(suiteState.sueldo);
+            const sueldoDisplay = document.getElementById('live-sueldo-val');
+            if (sueldoDisplay) sueldoDisplay.innerText = formatCLP(liveState.sueldo);
 
             const topeUF = typeof CONSTANTS !== 'undefined' ? (90 * CONSTANTS.UF) : 3692938;
-            const sueldoTopado = Math.min(suiteState.sueldo, topeUF);
+            const sueldoTopado = Math.min(liveState.sueldo, topeUF);
 
             let montoAnos = 0;
             let montoAviso = 0;
-            let montoVac = Math.round((suiteState.sueldo / 30) * 15);
+            let montoVac = Math.round((liveState.sueldo / 30) * 15);
 
-            if (suiteState.causal === '161') {
-                montoAnos = Math.min(suiteState.anos, 11) * sueldoTopado;
+            if (liveState.causal === '161') {
+                montoAnos = Math.min(liveState.anos, 11) * sueldoTopado;
                 montoAviso = sueldoTopado;
-                const afcBox = document.getElementById('suite-voucher-afc');
+                const afcBox = document.getElementById('live-afc-box');
                 if (afcBox) afcBox.style.display = 'flex';
 
-                const afcEst = Math.round(sueldoTopado * 0.016 * 12 * Math.min(suiteState.anos, 11));
-                const afcDisplay = document.getElementById('suite-voucher-afc-monto');
+                const afcEst = Math.round(sueldoTopado * 0.016 * 12 * Math.min(liveState.anos, 11));
+                const afcDisplay = document.getElementById('live-monto-afc');
                 if (afcDisplay) afcDisplay.innerText = formatCLP(afcEst);
             } else {
                 montoAnos = 0;
                 montoAviso = 0;
-                const afcBox = document.getElementById('suite-voucher-afc');
+                const afcBox = document.getElementById('live-afc-box');
                 if (afcBox) afcBox.style.display = 'none';
             }
 
-            const granTotal = montoAnos + montoAviso + montoVac;
+            const total = montoAnos + montoAviso + montoVac;
 
-            // Actualizar voucher
-            const totalEl = document.getElementById('suite-voucher-total');
-            if (totalEl) {
-                totalEl.style.transform = 'scale(1.04)';
-                totalEl.innerText = formatCLP(granTotal);
-                setTimeout(() => { totalEl.style.transform = 'scale(1)'; }, 140);
+            const totalDisplay = document.getElementById('live-total-display');
+            if (totalDisplay) {
+                totalDisplay.style.transform = 'scale(1.03)';
+                totalDisplay.innerText = formatCLP(total);
+                setTimeout(() => { totalDisplay.style.transform = 'scale(1)'; }, 140);
             }
 
-            const anosQtyEl = document.getElementById('suite-voucher-anos-qty');
-            if (anosQtyEl) anosQtyEl.innerText = suiteState.anos;
+            const anosLabel = document.getElementById('live-anos-label');
+            if (anosLabel) anosLabel.innerText = liveState.anos;
 
-            const anosEl = document.getElementById('suite-voucher-anos');
-            if (anosEl) anosEl.innerText = formatCLP(montoAnos);
+            const anosDisplay = document.getElementById('live-monto-anos');
+            if (anosDisplay) anosDisplay.innerText = formatCLP(montoAnos);
 
-            const avisoEl = document.getElementById('suite-voucher-aviso');
-            if (avisoEl) avisoEl.innerText = formatCLP(montoAviso);
+            const avisoDisplay = document.getElementById('live-monto-aviso');
+            if (avisoDisplay) avisoDisplay.innerText = formatCLP(montoAviso);
 
-            const vacEl = document.getElementById('suite-voucher-vac');
-            if (vacEl) vacEl.innerText = formatCLP(montoVac);
+            const vacDisplay = document.getElementById('live-monto-vac');
+            if (vacDisplay) vacDisplay.innerText = formatCLP(montoVac);
         }
 
-        function setSuiteCausal(causal) {
-            suiteState.causal = causal;
-            const btn161 = document.getElementById('btn-causal-161');
-            const btnRen = document.getElementById('btn-causal-renuncia');
+        function setLiveCausal(causal) {
+            liveState.causal = causal;
+            const btn161 = document.getElementById('btn-c-161');
+            const btnRen = document.getElementById('btn-c-ren');
 
             if (causal === '161') {
-                btn161.style.backgroundColor = 'var(--brand-forest)';
+                btn161.style.backgroundColor = 'var(--teal-forest)';
                 btn161.style.color = '#FFFFFF';
                 btnRen.style.backgroundColor = '#F3F4F6';
                 btnRen.style.color = '#4B5563';
             } else {
-                btnRen.style.backgroundColor = 'var(--brand-forest)';
+                btnRen.style.backgroundColor = 'var(--teal-forest)';
                 btnRen.style.color = '#FFFFFF';
                 btn161.style.backgroundColor = '#F3F4F6';
                 btn161.style.color = '#4B5563';
             }
-            updateSuiteCalculator();
+            calculateLiveFiniquito();
         }
 
-        function setSuiteAnos(anos) {
-            suiteState.anos = anos;
-            const buttons = document.querySelectorAll('.suite-ano-btn');
+        function setLiveAnos(anos) {
+            liveState.anos = anos;
+            const buttons = document.querySelectorAll('.live-ano-btn');
             buttons.forEach(b => {
-                const bAnos = parseInt(b.innerText, 10);
-                if (bAnos === anos) {
-                    b.style.backgroundColor = 'var(--brand-forest)';
-                    b.style.borderColor = 'var(--brand-forest)';
+                const val = parseInt(b.innerText, 10);
+                if (val === anos) {
+                    b.style.backgroundColor = 'var(--teal-forest)';
+                    b.style.borderColor = 'var(--teal-forest)';
                     b.style.color = '#FFFFFF';
                 } else {
                     b.style.backgroundColor = '#FFFFFF';
@@ -1243,28 +1197,27 @@
                     b.style.color = '#374151';
                 }
             });
-            updateSuiteCalculator();
+            calculateLiveFiniquito();
         }
 
-        function copySuiteReserva() {
-            const texto = document.getElementById('suite-texto-reserva').innerText;
+        function copyReservaPhrase() {
+            const texto = document.getElementById('reserva-text-box').innerText;
             navigator.clipboard.writeText(texto).then(() => {
-                const btn = document.getElementById('btn-suite-copiar');
-                btn.innerHTML = '<span class="material-icons text-sm">check</span> ¡Copiado!';
+                const btn = document.getElementById('btn-copy-phrase');
+                btn.innerHTML = '<span class="material-icons text-xs">check</span> ¡Copiado!';
                 setTimeout(() => {
-                    btn.innerHTML = '<span class="material-icons text-sm">content_copy</span> Copiar texto';
+                    btn.innerHTML = '<span class="material-icons text-xs">content_copy</span> Copiar';
                 }, 2200);
             });
         }
 
-        // Inicialización al cargar la página
         document.addEventListener('DOMContentLoaded', () => {
-            const slider = document.getElementById('suite-slider-sueldo');
+            const slider = document.getElementById('slider-sueldo');
             if (slider) {
-                slider.addEventListener('input', updateSuiteCalculator);
-                updateSuiteSliderTrack(slider);
+                slider.addEventListener('input', calculateLiveFiniquito);
+                updateSliderTrack(slider);
             }
-            updateSuiteCalculator();
+            calculateLiveFiniquito();
         });
     </script>
 </body>
