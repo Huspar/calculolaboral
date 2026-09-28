@@ -230,6 +230,33 @@
             transform: translateY(-1px);
         }
 
+        /* Catalog Directory Interactive Filter Pills */
+        .catalog-filter-btn {
+            padding: 8px 18px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.2s var(--ease-spring);
+            cursor: pointer;
+            border: 1.5px solid #CBD5E1;
+            background-color: #FFFFFF;
+            color: #334155 !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .catalog-filter-btn:hover {
+            border-color: #00382E;
+            color: #00382E !important;
+            background-color: #F8FAFC;
+        }
+        .catalog-filter-btn.active-filter {
+            background-color: #00382E !important;
+            border-color: #00382E !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(0, 56, 46, 0.22);
+        }
+
         /* Product Showcase Tab Styles (Exact TealHQ style) */
         .product-tab {
             position: relative;
@@ -1089,16 +1116,16 @@
 
                 <!-- Interactive Filter Controls (Pure Vanilla JS) -->
                 <div class="mt-8 flex flex-wrap items-center justify-center gap-2">
-                    <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter px-4 py-2 rounded-full text-xs font-bold transition-all bg-gray-900 text-white shadow-xs cursor-pointer">
+                    <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter">
                         Todas las herramientas (15)
                     </button>
-                    <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-700 border border-gray-200/90 hover:border-gray-400 cursor-pointer">
+                    <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn">
                         Trabajadores (9)
                     </button>
-                    <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-700 border border-gray-200/90 hover:border-gray-400 cursor-pointer">
+                    <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn">
                         Pymes & Empleadores (5)
                     </button>
-                    <button type="button" onclick="filterCatalog('afp', this)" class="catalog-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-700 border border-gray-200/90 hover:border-gray-400 cursor-pointer">
+                    <button type="button" onclick="filterCatalog('afp', this)" class="catalog-filter-btn">
                         Previsión & AFP (1)
                     </button>
                 </div>
@@ -2365,15 +2392,8 @@
             const cards = document.querySelectorAll('.catalog-card');
             const buttons = document.querySelectorAll('.catalog-filter-btn');
             
-            buttons.forEach(btn => {
-                btn.classList.remove('bg-gray-900', 'text-white', 'shadow-xs');
-                btn.classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-200/90');
-            });
-            
-            if (btnElement) {
-                btnElement.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-200/90');
-                btnElement.classList.add('bg-gray-900', 'text-white', 'shadow-xs');
-            }
+            buttons.forEach(btn => btn.classList.remove('active-filter'));
+            if (btnElement) btnElement.classList.add('active-filter');
             
             cards.forEach(card => {
                 const cardCat = card.getAttribute('data-category');
