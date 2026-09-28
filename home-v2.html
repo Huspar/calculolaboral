@@ -590,6 +590,20 @@
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
             transform: translateY(-1px);
         }
+
+        /* Lawyer Section (Section: Abogados Laborales) */
+        .lawyer-section-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        @media (min-width: 960px) {
+            .lawyer-section-grid {
+                grid-template-columns: 1.1fr 0.9fr;
+                gap: 2.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1121,6 +1135,20 @@
                                     </div>
                                 </div>
 
+                                <!-- Micro-CTA: Revisión Legal con Abogado -->
+                                <div class="p-3 bg-slate-50 border border-slate-200/90 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0">
+                                            <span class="material-icons text-xs">gavel</span>
+                                        </span>
+                                        <span class="text-slate-700 font-medium">¿Te despidieron o dudas de tu cálculo?</span>
+                                    </div>
+                                    <a href="#abogados-laborales" class="font-bold text-emerald-800 hover:text-emerald-950 whitespace-nowrap inline-flex items-center gap-1 hover:underline">
+                                        <span>Revisar con un abogado</span>
+                                        <span class="material-icons text-xs">arrow_forward</span>
+                                    </a>
+                                </div>
+
                             </div>
                         </div>
 
@@ -1146,10 +1174,16 @@
                                     El descuento patronal de la AFC solo procede en despidos procedentes. Si se declara injustificado, el empleador debe reintegrarlo íntegramente.
                                 </p>
                             </div>
-                            <a href="simulador-despido-injustificado-chile" class="btn-yellow-pill text-sm py-3 px-6">
-                                <span>Simular Demanda Despido Injustificado</span>
-                                <span class="material-icons text-base">arrow_forward</span>
-                            </a>
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                                <a href="simulador-despido-injustificado-chile" class="btn-yellow-pill text-sm py-3 px-6 text-center">
+                                    <span>Simular Demanda (+30%)</span>
+                                    <span class="material-icons text-base">arrow_forward</span>
+                                </a>
+                                <a href="#abogados-laborales" class="px-4 py-3 rounded-full border border-slate-300 hover:border-slate-400 bg-white text-slate-800 hover:text-slate-950 font-bold text-xs inline-flex items-center justify-center gap-1.5 transition-all shadow-2xs">
+                                    <span class="material-icons text-sm text-emerald-700">support_agent</span>
+                                    <span>Evaluar caso con abogado</span>
+                                </a>
+                            </div>
                         </div>
 
                         <!-- Right Battle Card -->
@@ -1174,6 +1208,13 @@
                                 <div class="p-4 rounded-xl bg-amber-400 text-gray-950 font-bold text-sm flex items-center justify-between">
                                     <span>Diferencia legal reclamable:</span>
                                     <span class="font-mono-num text-lg whitespace-nowrap">+ $ 1.771.200</span>
+                                </div>
+                                <div class="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gray-500">
+                                    <span>Por ley, demandas &gt; 15 UTM exigen abogado habilitado.</span>
+                                    <a href="#abogados-laborales" class="font-bold text-emerald-800 hover:underline inline-flex items-center gap-1">
+                                        <span>Solicitar revisión legal</span>
+                                        <span class="material-icons text-xs">arrow_forward</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -2085,6 +2126,253 @@
         </div>
     </section>
 
+    <!-- SECTION: EVALUACIÓN LEGAL LABORAL (Tabla de Criterios & Formulario Directo de Abogados) -->
+    <section id="abogados-laborales" class="py-14 sm:py-20 bg-white border-t border-b border-gray-200/90 scroll-mt-12">
+        <div class="site-container">
+            
+            <div class="reveal-on-scroll text-center max-w-3xl mx-auto mb-12">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/70 px-3.5 py-1.5 rounded-full mb-3 whitespace-nowrap" style="white-space: nowrap !important; line-height: 1;">
+                    <span class="material-icons text-sm text-emerald-700">balance</span>
+                    <span>Orientación Jurídica Laboral</span>
+                </span>
+                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+                    ¿Cuándo necesitas un Abogado Laboral para tu caso?
+                </h2>
+                <p class="mt-3 text-sm sm:text-base text-gray-600 leading-relaxed">
+                    En Chile, la ley fija un <strong>plazo fatal estricto de 60 días hábiles</strong> para reclamar judicialmente un despido. Conoce los criterios legales reales para evaluar si amerita acción en tribunales y solicita la revisión de tus antecedentes con un profesional colaborador.
+                </p>
+            </div>
+
+            <!-- 2-Column Responsive Layout: Tabla de Criterios (Left) vs Formulario de Contacto (Right) -->
+            <div class="lawyer-section-grid">
+                
+                <!-- Columna Izquierda: Tabla de Criterios & Transparencia Real -->
+                <div class="reveal-on-scroll space-y-5 text-left">
+                    
+                    <!-- Callout Plazo Fatal 60 días -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/90 flex items-start gap-3.5">
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span class="material-icons text-lg text-amber-800">event_busy</span>
+                        </div>
+                        <div>
+                            <h4 class="text-xs sm:text-sm font-bold text-amber-950 uppercase tracking-wide">Plazo Legal Fatal: 60 Días Hábiles (Art. 168 CT)</h4>
+                            <p class="text-xs text-amber-900/90 mt-1 leading-relaxed">
+                                Desde la fecha de tu despido, dispones de 60 días hábiles judiciales para demandar en tribunales. La interposición de un reclamo ante la Dirección del Trabajo suspende este cómputo, pero nunca más allá de 30 días hábiles adicionales.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Criterios de Evaluación Legal -->
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                        <div class="p-4 sm:p-5 bg-slate-50/80 border-b border-slate-200">
+                            <h3 class="font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                                <span class="material-icons text-emerald-700 text-base">fact_check</span>
+                                <span>Criterios Técnicos para saber si amerita Abogado</span>
+                            </h3>
+                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Situaciones laborales habituales y su requerimiento legal según el Código del Trabajo.</p>
+                        </div>
+
+                        <div class="divide-y divide-slate-100 text-xs">
+                            
+                            <!-- Fila 1: Monto > 15 UTM -->
+                            <div class="p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-2 hover:bg-slate-50/50 transition-colors">
+                                <div class="space-y-1">
+                                    <div class="font-bold text-slate-900 text-xs sm:text-sm">
+                                        1. Juicio sobre 15 UTM (~$1.040.000)
+                                    </div>
+                                    <p class="text-slate-600 leading-relaxed text-xs">
+                                        Procedimiento ordinario de aplicación general en Juzgados de Letras del Trabajo.
+                                    </p>
+                                </div>
+                                <div class="sm:text-right flex-shrink-0">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[11px] whitespace-nowrap">
+                                        Obligatorio por ley
+                                    </span>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">Art. 498 Código del Trabajo</div>
+                                </div>
+                            </div>
+
+                            <!-- Fila 2: Despido Art. 161 (Necesidades de la empresa) -->
+                            <div class="p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-2 hover:bg-slate-50/50 transition-colors">
+                                <div class="space-y-1">
+                                    <div class="font-bold text-slate-900 text-xs sm:text-sm">
+                                        2. Despido por "Necesidades de la Empresa"
+                                    </div>
+                                    <p class="text-slate-600 leading-relaxed text-xs">
+                                        Si la justificación es genérica o contrataron nuevo personal: se demanda el <strong>recargo del +30%</strong> en años de servicio y la <strong>devolución íntegra del aporte patronal AFC</strong>.
+                                    </p>
+                                </div>
+                                <div class="sm:text-right flex-shrink-0">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-[11px] whitespace-nowrap">
+                                        Altamente viable
+                                    </span>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">Jurisprudencia Suprema</div>
+                                </div>
+                            </div>
+
+                            <!-- Fila 3: Despido Disciplinario Art. 160 -->
+                            <div class="p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-2 hover:bg-slate-50/50 transition-colors">
+                                <div class="space-y-1">
+                                    <div class="font-bold text-slate-900 text-xs sm:text-sm">
+                                        3. Despido sin Indemnización (Art. 160)
+                                    </div>
+                                    <p class="text-slate-600 leading-relaxed text-xs">
+                                        Acusación de falta de probidad o inasistencia sin pruebas fehacientes. Si se gana, el juez ordena pagar indemnizaciones completas más recargos del 80% o 100%.
+                                    </p>
+                                </div>
+                                <div class="sm:text-right flex-shrink-0">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[11px] whitespace-nowrap">
+                                        Revisión urgente
+                                    </span>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">Riesgo de perder $0</div>
+                                </div>
+                            </div>
+
+                            <!-- Fila 4: Autodespido / Despido Indirecto -->
+                            <div class="p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-2 hover:bg-slate-50/50 transition-colors">
+                                <div class="space-y-1">
+                                    <div class="font-bold text-slate-900 text-xs sm:text-sm">
+                                        4. Autodespido o Despido Indirecto (Art. 171)
+                                    </div>
+                                    <p class="text-slate-600 leading-relaxed text-xs">
+                                        Por no pago continuado de cotizaciones previsionales, acoso laboral o rebaja salarial unilateral. Requiere redacción técnica de carta antes de retirarse.
+                                    </p>
+                                </div>
+                                <div class="sm:text-right flex-shrink-0">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-sky-50 text-sky-800 border border-sky-200 font-bold text-[11px] whitespace-nowrap">
+                                        Asesoría previa
+                                    </span>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">Art. 171 Código del Trabajo</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Compromisos Éticos Claros (100% Cumplibles) -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs text-slate-600 space-y-2">
+                        <div class="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span class="material-icons text-sm text-emerald-700">verified</span>
+                            <span>Transparencia y Condiciones de Atención</span>
+                        </div>
+                        <ul class="space-y-1.5 text-slate-600 list-disc list-inside text-[11.5px] leading-relaxed">
+                            <li><strong>Evaluación preliminar sin costo:</strong> Un abogado colaborador revisa tu carta de despido y liquidación para verificar si existe fundamento legal antes de iniciar acciones.</li>
+                            <li><strong>Modalidad Cuota Litis habitual:</strong> En la gran mayoría de los juicios laborales de trabajadores, los honorarios se pactan a porcentaje sobre lo efectivamente recuperado en juicio o acuerdo conciliatorio.</li>
+                            <li><strong>Sin promesas ficticias de triunfo:</strong> Por ética profesional, ningún abogado puede garantizar un resultado; el juez resuelve según el mérito de la prueba aportada en audiencia.</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- Columna Derecha: Formulario Directo de Solicitud de Evaluación -->
+                <div class="reveal-on-scroll delay-100 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm text-left">
+                    <div class="mb-5 pb-4 border-b border-slate-100">
+                        <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full mb-2">
+                            Confidencial · Respuesta en Días Hábiles
+                        </span>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                            Solicitar Revisión Legal de mi Caso
+                        </h3>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Completa el formulario para que un abogado laboralista colaborador examine tus antecedentes y te oriente oportunamente en tus plazos y opciones legales.
+                        </p>
+                    </div>
+
+                    <form id="home-lawyer-form" class="space-y-3.5" onsubmit="handleLawyerFormSubmit(event)">
+                        
+                        <!-- Nombre Completo -->
+                        <div>
+                            <label for="lawyer-nombre" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nombre Completo *</label>
+                            <input type="text" id="lawyer-nombre" name="nombre" required placeholder="Ej. Camila Morales Silva" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                        </div>
+
+                        <!-- Teléfono / WhatsApp & Correo -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="lawyer-telefono" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">WhatsApp / Teléfono *</label>
+                                <input type="tel" id="lawyer-telefono" name="telefono" required placeholder="+56 9 1234 5678" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                            </div>
+                            <div>
+                                <label for="lawyer-correo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico *</label>
+                                <input type="email" id="lawyer-correo" name="correo" required placeholder="tu@correo.cl" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                            </div>
+                        </div>
+
+                        <!-- Ciudad / Región & Tipo de Causal -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="lawyer-ciudad" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ciudad o Comuna *</label>
+                                <input type="text" id="lawyer-ciudad" name="ciudad" required placeholder="Ej. Santiago, Concepción..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                            </div>
+                            <div>
+                                <label for="lawyer-motivo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Motivo / Causal *</label>
+                                <select id="lawyer-motivo" name="motivo" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                                    <option value="" disabled selected>Selecciona tu situación...</option>
+                                    <option value="Despido Art. 161 (Necesidades de la empresa)">Despido Art. 161 (Necesidades de la empresa)</option>
+                                    <option value="Despido Injustificado / Causal cuestionable">Despido Injustificado / Causal cuestionable</option>
+                                    <option value="Retención indebida Aporte Patronal AFC">Retención indebida Aporte Patronal AFC</option>
+                                    <option value="Despido sin indemnización Art. 160">Despido sin indemnización Art. 160</option>
+                                    <option value="Autodespido / Despido Indirecto Art. 171">Autodespido / Despido Indirecto Art. 171</option>
+                                    <option value="No pago de cotizaciones (Ley Bustos)">No pago de cotizaciones (Ley Bustos)</option>
+                                    <option value="Finiquito impago o mal calculado">Finiquito impago o mal calculado</option>
+                                    <option value="Otra consulta legal laboral">Otra consulta legal laboral</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Breve detalle del caso -->
+                        <div>
+                            <label for="lawyer-detalle" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Breve resumen de tu situación</label>
+                            <textarea id="lawyer-detalle" name="detalle" rows="3" placeholder="Ej. Me despidieron el 10 de este mes por necesidades de la empresa, trabajé 4 años, mi sueldo era de $900.000 y me descontaron la AFC..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium resize-none"></textarea>
+                        </div>
+
+                        <!-- Checkbox Consentimiento -->
+                        <div class="pt-1">
+                            <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+                                <input type="checkbox" id="lawyer-consent" name="consentimiento" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                                <span class="leading-snug text-[11px] text-slate-500">
+                                    Autorizo el tratamiento confidencial de mis datos y su remisión a un abogado laboralista colaborador para la evaluación preliminar de mi caso según la <a href="privacidad" target="_blank" class="underline font-semibold text-slate-700 hover:text-emerald-700">Política de Privacidad</a>.
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Botón Submit -->
+                        <div class="pt-2">
+                            <button type="submit" id="lawyer-submit-btn" class="w-full py-3.5 px-6 rounded-xl font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer" style="background-color: #064E3B !important; color: #FFFFFF !important;">
+                                <span class="material-icons text-base" style="color: #FFFFFF !important;">gavel</span>
+                                <span style="color: #FFFFFF !important;">Solicitar Revisión de Caso con Abogado</span>
+                            </button>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 text-center leading-relaxed">
+                            🔒 Tus datos son confidenciales y están protegidos por el secreto profesional legal.
+                        </p>
+                    </form>
+
+                    <!-- Mensaje de Éxito Interactivo -->
+                    <div id="lawyer-success-box" class="hidden p-6 bg-emerald-50/90 border border-emerald-200 rounded-2xl text-center space-y-3">
+                        <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
+                            <span class="material-icons text-2xl text-emerald-700">check_circle</span>
+                        </div>
+                        <h4 class="text-base font-bold text-emerald-950">¡Antecedentes Recibidos con Éxito!</h4>
+                        <p class="text-xs text-emerald-900/90 max-w-sm mx-auto leading-relaxed">
+                            Un abogado laboralista colaborador revisará la información enviada y se pondrá en contacto contigo en horario hábil a través de WhatsApp o correo electrónico para evaluar la viabilidad de tu reclamo y orientarte en los plazos fatales.
+                        </p>
+                        <div class="pt-2">
+                            <button type="button" onclick="resetLawyerForm()" class="text-xs font-semibold text-emerald-800 hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                <span class="material-icons text-xs">refresh</span>
+                                <span>Enviar otra consulta</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
     <!-- SECTION 5: GUÍAS LEGALES DE ACCIÓN INMEDIATA & DEFENSA DEL TRABAJADOR -->
     <section class="section-py bg-white border-t border-gray-200/90">
         <div class="site-container">
@@ -2828,6 +3116,78 @@
                 document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-revealed'));
             }
         });
+
+        // Lawyer Case Assessment Form Handling
+        function handleLawyerFormSubmit(e) {
+            e.preventDefault();
+            var form = document.getElementById('home-lawyer-form');
+            var successBox = document.getElementById('lawyer-success-box');
+            var submitBtn = document.getElementById('lawyer-submit-btn');
+
+            var nombre = document.getElementById('lawyer-nombre').value.trim();
+            var telefono = document.getElementById('lawyer-telefono').value.trim();
+            var correo = document.getElementById('lawyer-correo').value.trim();
+            var ciudad = document.getElementById('lawyer-ciudad').value.trim();
+            var motivo = document.getElementById('lawyer-motivo').value;
+            var detalle = document.getElementById('lawyer-detalle').value.trim();
+
+            if (!nombre || !telefono || !correo || !motivo) {
+                alert('Por favor completa todos los campos requeridos (*).');
+                return;
+            }
+
+            var originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-icons text-base animate-spin" style="color: #FFFFFF !important;">sync</span> <span style="color: #FFFFFF !important;">Enviando antecedentes...</span>';
+
+            var payload = {
+                nombre: nombre,
+                correo: correo,
+                telefono: telefono,
+                ciudad: ciudad,
+                tipo: 'Consulta Legal',
+                fuente: 'Home Formulario Abogados',
+                detalle: 'Motivo: ' + motivo + ' | Ciudad: ' + ciudad + ' | Detalle: ' + detalle
+            };
+
+            fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function(res) {
+                if (res.ok) {
+                    form.classList.add('hidden');
+                    successBox.classList.remove('hidden');
+                } else {
+                    return fetch('https://formsubmit.co/ajax/contacto@calculolaboral.cl', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(payload)
+                    }).then(function() {
+                        form.classList.add('hidden');
+                        successBox.classList.remove('hidden');
+                    });
+                }
+            }).catch(function() {
+                form.classList.add('hidden');
+                successBox.classList.remove('hidden');
+            }).finally(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            });
+        }
+
+        function resetLawyerForm() {
+            var form = document.getElementById('home-lawyer-form');
+            var successBox = document.getElementById('lawyer-success-box');
+            if (form) {
+                form.reset();
+                form.classList.remove('hidden');
+            }
+            if (successBox) {
+                successBox.classList.add('hidden');
+            }
+        }
     </script>
 </body>
 </html>
