@@ -137,6 +137,17 @@
             }
         }
 
+        .partner-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 1024px) {
+            .partner-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
         .font-mono-num {
             font-family: 'Geist Mono', monospace;
             font-feature-settings: 'tnum' on, 'zero' on;
@@ -1070,7 +1081,7 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left mb-6">
+            <div class="partner-grid text-left mb-6">
                 
                 <!-- Partner Card 1: Banco Itaú -->
                 <div class="step-card reveal-on-scroll delay-100 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-8 flex flex-col justify-between transition-all">
