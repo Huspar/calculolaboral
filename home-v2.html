@@ -633,7 +633,7 @@
                 <div class="inline-flex gap-2 sm:gap-6">
                     <button type="button" class="product-tab active" onclick="switchProductTab('simulador')" id="tab-btn-simulador">
                         <span class="material-icons text-base">calculate</span>
-                        <span>Simulador Express</span>
+                        <span>Simulador de Finiquito</span>
                     </button>
                     <button type="button" class="product-tab" onclick="switchProductTab('despido')" id="tab-btn-despido">
                         <span class="material-icons text-base">gavel</span>
@@ -656,44 +656,57 @@
                 <!-- Organic Color Slab behind right side (TealHQ Signature) -->
                 <div class="teal-organic-backdrop"></div>
 
-                <!-- ================= TAB 1: SIMULADOR EXPRESS ================= -->
+                <!-- ================= TAB 1: SIMULADOR DE FINIQUITO ================= -->
                 <div id="content-tab-simulador" class="relative z-10">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         
                         <!-- Left Controls Column -->
-                        <div class="lg:col-span-5 space-y-6 text-left">
+                        <div class="lg:col-span-5 space-y-5 text-left">
                             <div>
                                 <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
-                                    Cálculo instantáneo con haberes y topes legales
+                                    Cálculo rápido de finiquito con topes legales
                                 </h3>
-                                <p class="text-sm text-gray-600 mt-2.5 leading-relaxed">
-                                    Mueve el sueldo mensual y los años de antigüedad. El motor aplica en tiempo real el tope de 90 UF (<span class="font-mono-num font-bold">$3.692.938</span>), el mes de aviso y las vacaciones en días hábiles.
+                                <p class="text-xs sm:text-sm text-gray-600 mt-2 leading-relaxed">
+                                    Simula tus indemnizaciones al peso legal según el Código del Trabajo. Aplica el tope legal de 90 UF (<span class="font-mono-num font-bold">$3.692.938</span>), el mes de aviso sustitutivo y tus vacaciones proporcionales.
                                 </p>
                             </div>
 
-                            <!-- Live Slider Card -->
-                            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-3">
-                                <div class="flex justify-between items-baseline gap-2">
+                            <!-- Live Salary Card with Presets & Manual Input -->
+                            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-3.5">
+                                <div class="flex justify-between items-center gap-2">
                                     <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Sueldo Bruto Mensual</span>
-                                    <span id="live-sueldo-val" style="color: var(--teal-forest);" class="text-2xl font-extrabold font-mono-num num-ticker whitespace-nowrap">
-                                        $ 1.200.000
-                                    </span>
+                                    <div class="relative">
+                                        <input type="text" id="live-sueldo-input" value="$ 1.200.000" onfocus="this.select()" onblur="handleManualSueldoBlur(this)" oninput="handleManualSueldoInput(this)" class="font-mono-num font-extrabold text-xl text-right text-emerald-950 bg-slate-50 border border-gray-200 hover:border-gray-300 focus:border-emerald-600 focus:bg-white rounded-xl py-1 px-3 w-40 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20" title="Haz clic para escribir un sueldo exacto">
+                                    </div>
                                 </div>
-                                <input type="range" id="slider-sueldo" min="500000" max="4500000" step="50000" value="1200000" class="teal-range" oninput="calculateLiveFiniquito()" aria-label="Sueldo Bruto Mensual">
-                                <div class="flex justify-between text-[11px] font-medium text-gray-400">
-                                    <span>$553.553</span>
-                                    <span>$1.200.000</span>
-                                    <span>Tope 90 UF</span>
+
+                                <!-- Slider -->
+                                <input type="range" id="slider-sueldo" min="553553" max="4000000" step="10000" value="1200000" class="teal-range" oninput="handleSliderInput()" aria-label="Sueldo Bruto Mensual">
+
+                                <!-- Quick Preset Chips -->
+                                <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                                    <button type="button" onclick="setLiveSueldo(553553)" id="chip-imm" class="sueldo-chip text-[11px] font-bold py-1 px-2.5 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 transition-all flex items-center gap-1 cursor-pointer">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Mínimo: $553.553
+                                    </button>
+                                    <button type="button" onclick="setLiveSueldo(1000000)" class="sueldo-chip text-[11px] font-semibold py-1 px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
+                                        $1.000.000
+                                    </button>
+                                    <button type="button" onclick="setLiveSueldo(1500000)" class="sueldo-chip text-[11px] font-semibold py-1 px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
+                                        $1.500.000
+                                    </button>
+                                    <button type="button" onclick="setLiveSueldo(3692938)" id="chip-tope" class="sueldo-chip text-[11px] font-bold py-1 px-2.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-all cursor-pointer" title="Tope máximo para indemnizaciones por años de servicio">
+                                        Tope 90 UF
+                                    </button>
                                 </div>
                             </div>
 
-                            <!-- Causal & Años -->
+                            <!-- Controls Row 1: Causal & Años de Servicio -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="bg-white p-4 rounded-2xl border border-gray-200">
-                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Causal</span>
+                                <div class="bg-white p-3.5 rounded-2xl border border-gray-200">
+                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Causal de Término</span>
                                     <div class="grid grid-cols-2 gap-1.5">
                                         <button type="button" id="btn-c-161" onclick="setLiveCausal('161')" style="background-color: var(--teal-forest); color: white;" class="py-2 px-2 rounded-xl font-bold text-xs cursor-pointer transition-all">
-                                            Art. 161
+                                            Art. 161 (Despido)
                                         </button>
                                         <button type="button" id="btn-c-ren" onclick="setLiveCausal('ren')" class="py-2 px-2 rounded-xl font-bold text-xs text-gray-600 bg-gray-100 hover:text-gray-900 cursor-pointer transition-all">
                                             Renuncia
@@ -701,20 +714,55 @@
                                     </div>
                                 </div>
 
-                                <div class="bg-white p-4 rounded-2xl border border-gray-200">
-                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Años Servicio</span>
+                                <div class="bg-white p-3.5 rounded-2xl border border-gray-200">
+                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Años Computables</span>
                                     <div class="grid grid-cols-5 gap-1" id="live-anos-group">
-                                        <button type="button" onclick="setLiveAnos(1)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">1a</button>
-                                        <button type="button" onclick="setLiveAnos(2)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">2a</button>
-                                        <button type="button" onclick="setLiveAnos(3)" style="background-color: var(--teal-forest); color: white; border-color: var(--teal-forest);" class="live-ano-btn py-1.5 rounded-lg border font-bold text-xs">3a</button>
-                                        <button type="button" onclick="setLiveAnos(5)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">5a</button>
-                                        <button type="button" onclick="setLiveAnos(8)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700">8a</button>
+                                        <button type="button" onclick="setLiveAnos(1)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">1a</button>
+                                        <button type="button" onclick="setLiveAnos(2)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">2a</button>
+                                        <button type="button" onclick="setLiveAnos(3)" style="background-color: var(--teal-forest); color: white; border-color: var(--teal-forest);" class="live-ano-btn py-1.5 rounded-lg border font-bold text-xs cursor-pointer">3a</button>
+                                        <button type="button" onclick="setLiveAnos(5)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">5a</button>
+                                        <button type="button" onclick="setLiveAnos(8)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">8a</button>
                                     </div>
                                 </div>
                             </div>
 
-                            <a href="finiquito_calculator" class="btn-yellow-pill text-sm py-3 px-6">
-                                <span>Calcular con fechas exactas</span>
+                            <!-- Controls Row 2: Aviso Previo & Vacaciones Pendientes -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="live-adv-controls">
+                                
+                                <!-- Aviso Previo Toggle -->
+                                <div id="live-aviso-box" class="bg-white p-3.5 rounded-2xl border border-gray-200 transition-opacity">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">¿Hubo aviso 30 días?</span>
+                                        <span class="material-icons text-xs text-gray-400" title="Si no hubo carta con 30 días de anticipación, la empresa debe pagar 1 sueldo adicional">help_outline</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1.5">
+                                        <button type="button" id="btn-aviso-no" onclick="setLiveAviso(true)" style="background-color: var(--teal-forest); color: white;" class="py-1.5 px-1.5 rounded-xl font-bold text-xs cursor-pointer transition-all leading-tight">
+                                            No (+1 mes)
+                                        </button>
+                                        <button type="button" id="btn-aviso-si" onclick="setLiveAviso(false)" class="py-1.5 px-1.5 rounded-xl font-bold text-xs text-gray-600 bg-gray-100 hover:text-gray-900 cursor-pointer transition-all leading-tight">
+                                            Sí ($0)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Vacaciones Stepper / Chips -->
+                                <div class="bg-white p-3.5 rounded-2xl border border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Vacaciones pendientes</span>
+                                        <span id="live-vac-count" class="font-mono-num font-bold text-xs text-emerald-800">15 días</span>
+                                    </div>
+                                    <div class="grid grid-cols-4 gap-1" id="live-vac-group">
+                                        <button type="button" onclick="setLiveVac(5)" class="live-vac-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">5d</button>
+                                        <button type="button" onclick="setLiveVac(10)" class="live-vac-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">10d</button>
+                                        <button type="button" onclick="setLiveVac(15)" style="background-color: var(--teal-forest); color: white; border-color: var(--teal-forest);" class="live-vac-btn py-1.5 rounded-lg border font-bold text-xs cursor-pointer">15d</button>
+                                        <button type="button" onclick="setLiveVac(20)" class="live-vac-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">20d</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <a href="finiquito_calculator" class="btn-yellow-pill text-sm py-3 px-6 w-full sm:w-auto justify-center">
+                                <span>Calcular con fechas exactas e historial</span>
                                 <span class="material-icons text-base">arrow_forward</span>
                             </a>
                         </div>
@@ -760,7 +808,7 @@
                                         <span id="live-monto-aviso" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 1.200.000</span>
                                     </div>
                                     <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
-                                        <span class="text-gray-600 font-medium">Feriado Proporcional (15 días hábiles):</span>
+                                        <span class="text-gray-600 font-medium">Feriado Proporcional (<span id="live-vac-label">15</span> días hábiles):</span>
                                         <span id="live-monto-vac" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 600.000</span>
                                     </div>
                                 </div>
@@ -1466,7 +1514,9 @@
         const liveState = {
             sueldo: 1200000,
             causal: '161',
-            anos: 3
+            anos: 3,
+            aviso: true, // true = no hubo 30 días de aviso -> se paga 1 mes sustitutivo
+            diasVac: 15
         };
 
         const backdropColors = {
@@ -1521,31 +1571,144 @@
             const min = parseFloat(slider.min);
             const max = parseFloat(slider.max);
             const val = parseFloat(slider.value);
-            const pct = ((val - min) / (max - min)) * 100;
+            const pct = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
             slider.style.background = `linear-gradient(to right, #00382E 0%, #00382E ${pct}%, #E5E7EB ${pct}%, #E5E7EB 100%)`;
+        }
+
+        function highlightSueldoChips(val) {
+            const chipImm = document.getElementById('chip-imm');
+            const chipTope = document.getElementById('chip-tope');
+            if (chipImm) {
+                if (val === 553553) {
+                    chipImm.classList.add('ring-2', 'ring-amber-500', 'font-black');
+                } else {
+                    chipImm.classList.remove('ring-2', 'ring-amber-500', 'font-black');
+                }
+            }
+            if (chipTope) {
+                if (val === 3692938) {
+                    chipTope.classList.add('ring-2', 'ring-indigo-500', 'font-black');
+                } else {
+                    chipTope.classList.remove('ring-2', 'ring-indigo-500', 'font-black');
+                }
+            }
+        }
+
+        // Chip preset setter
+        function setLiveSueldo(amount) {
+            liveState.sueldo = Math.max(0, parseInt(amount, 10) || 0);
+            const slider = document.getElementById('slider-sueldo');
+            if (slider) {
+                slider.value = Math.min(Math.max(liveState.sueldo, 553553), 4000000);
+                updateSliderTrack(slider);
+            }
+            const input = document.getElementById('live-sueldo-input');
+            if (input) {
+                input.value = formatCLP(liveState.sueldo);
+            }
+            highlightSueldoChips(liveState.sueldo);
+            calculateLiveFiniquito();
+        }
+
+        // Manual text input
+        function handleManualSueldoInput(input) {
+            const raw = input.value.replace(/[^\d]/g, '');
+            if (!raw) return;
+            const num = parseInt(raw, 10);
+            liveState.sueldo = num;
+            const slider = document.getElementById('slider-sueldo');
+            if (slider) {
+                slider.value = Math.min(Math.max(num, 553553), 4000000);
+                updateSliderTrack(slider);
+            }
+            highlightSueldoChips(num);
+            calculateLiveFiniquito();
+        }
+
+        function handleManualSueldoBlur(input) {
+            const raw = input.value.replace(/[^\d]/g, '');
+            let num = parseInt(raw, 10) || 553553;
+            if (num < 100000) num = 553553;
+            liveState.sueldo = num;
+            input.value = formatCLP(num);
+            const slider = document.getElementById('slider-sueldo');
+            if (slider) {
+                slider.value = Math.min(Math.max(num, 553553), 4000000);
+                updateSliderTrack(slider);
+            }
+            highlightSueldoChips(num);
+            calculateLiveFiniquito();
+        }
+
+        function handleSliderInput() {
+            const slider = document.getElementById('slider-sueldo');
+            if (!slider) return;
+            liveState.sueldo = parseInt(slider.value, 10);
+            updateSliderTrack(slider);
+            const input = document.getElementById('live-sueldo-input');
+            if (input) input.value = formatCLP(liveState.sueldo);
+            highlightSueldoChips(liveState.sueldo);
+            calculateLiveFiniquito();
+        }
+
+        function setLiveAviso(pagaAviso) {
+            liveState.aviso = pagaAviso;
+            const btnNo = document.getElementById('btn-aviso-no');
+            const btnSi = document.getElementById('btn-aviso-si');
+            if (btnNo && btnSi) {
+                if (pagaAviso) {
+                    btnNo.style.backgroundColor = 'var(--teal-forest)';
+                    btnNo.style.color = '#FFFFFF';
+                    btnSi.style.backgroundColor = '#F3F4F6';
+                    btnSi.style.color = '#4B5563';
+                } else {
+                    btnSi.style.backgroundColor = 'var(--teal-forest)';
+                    btnSi.style.color = '#FFFFFF';
+                    btnNo.style.backgroundColor = '#F3F4F6';
+                    btnNo.style.color = '#4B5563';
+                }
+            }
+            calculateLiveFiniquito();
+        }
+
+        function setLiveVac(dias) {
+            liveState.diasVac = dias;
+            const countLabel = document.getElementById('live-vac-count');
+            if (countLabel) countLabel.innerText = dias + ' días';
+            
+            const vacLabelReceipt = document.getElementById('live-vac-label');
+            if (vacLabelReceipt) vacLabelReceipt.innerText = dias;
+
+            const buttons = document.querySelectorAll('.live-vac-btn');
+            buttons.forEach(b => {
+                const val = parseInt(b.innerText, 10);
+                if (val === dias) {
+                    b.style.backgroundColor = 'var(--teal-forest)';
+                    b.style.borderColor = 'var(--teal-forest)';
+                    b.style.color = '#FFFFFF';
+                } else {
+                    b.style.backgroundColor = '#FFFFFF';
+                    b.style.borderColor = '#E5E7EB';
+                    b.style.color = '#374151';
+                }
+            });
+            calculateLiveFiniquito();
         }
 
         // Live calculation engine
         function calculateLiveFiniquito() {
-            const slider = document.getElementById('slider-sueldo');
-            if (slider) {
-                liveState.sueldo = parseInt(slider.value, 10);
-                updateSliderTrack(slider);
-            }
-
-            const sueldoDisplay = document.getElementById('live-sueldo-val');
-            if (sueldoDisplay) sueldoDisplay.innerText = formatCLP(liveState.sueldo);
-
             const topeUF = typeof CONSTANTS !== 'undefined' ? (90 * CONSTANTS.UF) : 3692938;
             const sueldoTopado = Math.min(liveState.sueldo, topeUF);
 
             let montoAnos = 0;
             let montoAviso = 0;
-            let montoVac = Math.round((liveState.sueldo / 30) * 15);
+            const diasVac = liveState.diasVac || 15;
+            let montoVac = Math.round((liveState.sueldo / 30) * diasVac);
 
             if (liveState.causal === '161') {
                 montoAnos = Math.min(liveState.anos, 11) * sueldoTopado;
-                montoAviso = sueldoTopado;
+                montoAviso = liveState.aviso ? sueldoTopado : 0;
+                
                 const afcBox = document.getElementById('live-afc-box');
                 if (afcBox) afcBox.style.display = 'flex';
 
@@ -1563,39 +1726,47 @@
 
             const totalDisplay = document.getElementById('live-total-display');
             if (totalDisplay) {
-                totalDisplay.style.transform = 'scale(1.03)';
                 totalDisplay.innerText = formatCLP(total);
-                setTimeout(() => { totalDisplay.style.transform = 'scale(1)'; }, 140);
             }
 
             const anosLabel = document.getElementById('live-anos-label');
             if (anosLabel) anosLabel.innerText = liveState.anos;
 
             const anosDisplay = document.getElementById('live-monto-anos');
-            if (anosDisplay) anosDisplay.innerText = formatCLP(montoAnos);
+            if (anosDisplay) {
+                anosDisplay.innerText = (liveState.causal === 'ren') ? '$ 0 (No aplica)' : formatCLP(montoAnos);
+            }
 
             const avisoDisplay = document.getElementById('live-monto-aviso');
-            if (avisoDisplay) avisoDisplay.innerText = formatCLP(montoAviso);
+            if (avisoDisplay) {
+                avisoDisplay.innerText = (liveState.causal === 'ren') ? '$ 0 (No aplica)' : formatCLP(montoAviso);
+            }
 
             const vacDisplay = document.getElementById('live-monto-vac');
             if (vacDisplay) vacDisplay.innerText = formatCLP(montoVac);
+
+            const vacLabel = document.getElementById('live-vac-label');
+            if (vacLabel) vacLabel.innerText = diasVac;
         }
 
         function setLiveCausal(causal) {
             liveState.causal = causal;
             const btn161 = document.getElementById('btn-c-161');
             const btnRen = document.getElementById('btn-c-ren');
+            const avisoBox = document.getElementById('live-aviso-box');
 
             if (causal === '161') {
                 btn161.style.backgroundColor = 'var(--teal-forest)';
                 btn161.style.color = '#FFFFFF';
                 btnRen.style.backgroundColor = '#F3F4F6';
                 btnRen.style.color = '#4B5563';
+                if (avisoBox) avisoBox.style.opacity = '1';
             } else {
                 btnRen.style.backgroundColor = 'var(--teal-forest)';
                 btnRen.style.color = '#FFFFFF';
                 btn161.style.backgroundColor = '#F3F4F6';
                 btn161.style.color = '#4B5563';
+                if (avisoBox) avisoBox.style.opacity = '0.45';
             }
             calculateLiveFiniquito();
         }
@@ -1632,9 +1803,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             const slider = document.getElementById('slider-sueldo');
             if (slider) {
-                slider.addEventListener('input', calculateLiveFiniquito);
+                slider.addEventListener('input', handleSliderInput);
                 updateSliderTrack(slider);
             }
+            highlightSueldoChips(liveState.sueldo);
             calculateLiveFiniquito();
 
             // Fluid Scroll Reveal Choreography
