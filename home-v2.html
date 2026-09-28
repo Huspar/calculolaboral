@@ -701,45 +701,53 @@
 
             <!-- High-Search Power Tool Buttons in Chile -->
             <div class="mt-8 pt-6 border-t border-slate-200/60 max-w-4xl mx-auto">
-                <div class="flex items-center justify-center gap-2 mb-3.5 text-xs font-bold uppercase tracking-wider text-slate-500">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div class="flex items-center justify-center gap-1.5 mb-3.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 text-center">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
                     <span>Calculadoras con mayor búsqueda en Chile:</span>
                 </div>
-                <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+                <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-3">
                     
                     <!-- 1. Finiquito Legal -->
-                    <a href="finiquito_calculator" class="power-tool-btn group">
-                        <div class="w-6 h-6 rounded-full bg-emerald-100/80 text-emerald-800 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                            <span class="material-icons text-sm">calculate</span>
+                    <a href="finiquito_calculator" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-emerald-100/80 text-emerald-800 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                <span class="material-icons text-sm">calculate</span>
+                            </div>
+                            <span class="font-bold text-slate-800 group-hover:text-emerald-950 transition-colors text-xs sm:text-sm">Finiquito Legal</span>
                         </div>
-                        <span class="font-bold text-slate-800 group-hover:text-emerald-950 transition-colors">Finiquito Legal</span>
                         <span class="material-icons text-slate-400 group-hover:text-emerald-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
                     </a>
 
                     <!-- 2. Sueldo Líquido -->
-                    <a href="sueldo_liquido" class="power-tool-btn group">
-                        <div class="w-6 h-6 rounded-full bg-blue-100/80 text-blue-800 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                            <span class="material-icons text-sm">payments</span>
+                    <a href="sueldo_liquido" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-blue-100/80 text-blue-800 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <span class="material-icons text-sm">payments</span>
+                            </div>
+                            <span class="font-bold text-slate-800 group-hover:text-blue-950 transition-colors text-xs sm:text-sm">Sueldo Líquido</span>
                         </div>
-                        <span class="font-bold text-slate-800 group-hover:text-blue-950 transition-colors">Sueldo Líquido</span>
                         <span class="material-icons text-slate-400 group-hover:text-blue-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
                     </a>
 
                     <!-- 3. Vacaciones Proporcionales -->
-                    <a href="calculadora-vacaciones-proporcionales" class="power-tool-btn group">
-                        <div class="w-6 h-6 rounded-full bg-sky-100/80 text-sky-800 flex items-center justify-center flex-shrink-0 group-hover:bg-sky-600 group-hover:text-white transition-colors">
-                            <span class="material-icons text-sm">beach_access</span>
+                    <a href="calculadora-vacaciones-proporcionales" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-sky-100/80 text-sky-800 flex items-center justify-center flex-shrink-0 group-hover:bg-sky-600 group-hover:text-white transition-colors">
+                                <span class="material-icons text-sm">beach_access</span>
+                            </div>
+                            <span class="font-bold text-slate-800 group-hover:text-sky-950 transition-colors text-xs sm:text-sm">Vacaciones DT</span>
                         </div>
-                        <span class="font-bold text-slate-800 group-hover:text-sky-950 transition-colors">Vacaciones DT</span>
                         <span class="material-icons text-slate-400 group-hover:text-sky-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
                     </a>
 
                     <!-- 4. Seguro de Cesantía AFC -->
-                    <a href="simulador-seguro-cesantia-afc" class="power-tool-btn group">
-                        <div class="w-6 h-6 rounded-full bg-amber-100/80 text-amber-800 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                            <span class="material-icons text-sm">account_balance_wallet</span>
+                    <a href="simulador-seguro-cesantia-afc" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-amber-100/80 text-amber-800 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                                <span class="material-icons text-sm">account_balance_wallet</span>
+                            </div>
+                            <span class="font-bold text-slate-800 group-hover:text-amber-950 transition-colors text-xs sm:text-sm">Seguro Cesantía</span>
                         </div>
-                        <span class="font-bold text-slate-800 group-hover:text-amber-950 transition-colors">Seguro Cesantía AFC</span>
                         <span class="material-icons text-slate-400 group-hover:text-amber-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
                     </a>
 
