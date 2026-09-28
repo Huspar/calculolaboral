@@ -1529,6 +1529,11 @@
                     </div>
                 </div>
 
+            </div>
+
+            <!-- Additional 9 Tools (Collapsible / Expandable) -->
+            <div id="extra-catalog-tools" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 mt-3.5 sm:mt-4 transition-all">
+
                 <!-- CARD 7: Sueldo Part-Time -->
                 <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-purple-500 transition-all group" data-category="trabajador">
                     <div>
@@ -1772,6 +1777,14 @@
                     </div>
                 </div>
 
+            </div>
+
+            <!-- Expandable Catalog Toggle Button (Option 1) -->
+            <div class="mt-8 text-center" id="catalog-toggle-wrapper">
+                <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-slate-300 hover:border-slate-800 text-slate-800 font-bold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer">
+                    <span id="toggle-catalog-text">Mostrar las 15 herramientas y kits (9 más)</span>
+                    <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon">keyboard_arrow_down</span>
+                </button>
             </div>
 
         </div>
@@ -2587,22 +2600,79 @@
             });
         }
 
+        let isCatalogExpanded = false;
+
+        function toggleFullCatalog() {
+            isCatalogExpanded = !isCatalogExpanded;
+            const extraContainer = document.getElementById('extra-catalog-tools');
+            const toggleBtnText = document.getElementById('toggle-catalog-text');
+            const toggleBtnIcon = document.getElementById('toggle-catalog-icon');
+            
+            if (isCatalogExpanded) {
+                if (extraContainer) extraContainer.classList.remove('hidden');
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar solo las 6 principales';
+                if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_up';
+            } else {
+                if (extraContainer) extraContainer.classList.add('hidden');
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 15 herramientas y kits (9 más)';
+                if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_down';
+                
+                const catSection = document.getElementById('calculadoras');
+                if (catSection) {
+                    const rect = catSection.getBoundingClientRect();
+                    if (rect.top < 0) {
+                        catSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            }
+        }
+
+        function expandCatalog() {
+            if (!isCatalogExpanded) {
+                isCatalogExpanded = true;
+                const extraContainer = document.getElementById('extra-catalog-tools');
+                const toggleBtnText = document.getElementById('toggle-catalog-text');
+                const toggleBtnIcon = document.getElementById('toggle-catalog-icon');
+                if (extraContainer) extraContainer.classList.remove('hidden');
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar solo las 6 principales';
+                if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_up';
+            }
+        }
+
         function filterCatalog(category, btnElement) {
             const cards = document.querySelectorAll('.catalog-card');
             const buttons = document.querySelectorAll('.catalog-filter-btn');
+            const toggleWrapper = document.getElementById('catalog-toggle-wrapper');
             
             buttons.forEach(btn => btn.classList.remove('active-filter'));
             if (btnElement) btnElement.classList.add('active-filter');
             
-            cards.forEach(card => {
-                const cardCat = card.getAttribute('data-category');
-                if (category === 'all' || cardCat === category) {
+            if (category !== 'all') {
+                expandCatalog();
+                if (toggleWrapper) toggleWrapper.style.display = 'none';
+                
+                cards.forEach(card => {
+                    const cardCat = card.getAttribute('data-category');
+                    if (cardCat === category) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            } else {
+                if (toggleWrapper) toggleWrapper.style.display = 'block';
+                cards.forEach(card => {
                     card.style.display = 'flex';
-                    card.classList.add('is-revealed');
-                } else {
-                    card.style.display = 'none';
+                });
+                const extraContainer = document.getElementById('extra-catalog-tools');
+                if (extraContainer) {
+                    if (isCatalogExpanded) {
+                        extraContainer.classList.remove('hidden');
+                    } else {
+                        extraContainer.classList.add('hidden');
+                    }
                 }
-            });
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
