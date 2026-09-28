@@ -50,12 +50,14 @@
         }
 
         .hero-py {
-            padding-top: 4rem;
+            position: relative;
+            padding-top: 4.5rem;
             padding-bottom: 3.5rem;
+            background: radial-gradient(1100px 550px at 50% -30px, rgba(255, 183, 3, 0.08), rgba(0, 56, 46, 0.02) 65%, transparent 100%);
         }
         @media (min-width: 640px) {
             .hero-py {
-                padding-top: 5.5rem;
+                padding-top: 6rem;
                 padding-bottom: 4.5rem;
             }
         }
@@ -79,6 +81,59 @@
             .section-py {
                 padding-top: 6rem;
                 padding-bottom: 6rem;
+            }
+        }
+
+        .bg-warm-surface {
+            background-color: #F8FAF9;
+        }
+
+        /* Fluid Motion & Scroll Reveals (GPU-accelerated) */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-on-scroll.is-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+
+        /* Step Card Kinetic Hover Physics */
+        .step-card {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px -12px rgba(0, 56, 46, 0.08);
+            border-color: #CBD5E1;
+        }
+        .step-badge {
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .step-card:hover .step-badge {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        /* Timeline Connector between Steps on Desktop */
+        .timeline-connector {
+            position: absolute;
+            top: 52px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: repeating-linear-gradient(to right, #CBD5E1 0, #CBD5E1 6px, transparent 6px, transparent 12px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        @media (max-width: 1023px) {
+            .timeline-connector {
+                display: none;
             }
         }
 
@@ -207,7 +262,7 @@
             top: -40px;
             bottom: -40px;
             width: 58%;
-            background-color: #4F46E5; /* Periwinkle/Royal Purple organic slab like TealHQ */
+            background-color: #064E3B; /* Deep Emerald Forest harmonized with brand */
             border-top-left-radius: 90px;
             border-bottom-left-radius: 90px;
             z-index: 0;
@@ -601,7 +656,7 @@
             </div>
 
             <!-- Master Showcase Box with TealHQ Asymmetric Curved Backdrop -->
-            <div class="relative bg-slate-50 border border-gray-200/90 rounded-[32px] p-6 sm:p-12 overflow-hidden shadow-sm">
+            <div class="relative bg-warm-surface border border-gray-200/90 rounded-[32px] p-6 sm:p-12 overflow-hidden shadow-sm">
                 
                 <!-- Organic Color Slab behind right side (TealHQ Signature) -->
                 <div class="teal-organic-backdrop"></div>
@@ -926,69 +981,74 @@
     <section class="section-py bg-white border-t border-gray-100 text-center">
         <div class="site-container">
             
-            <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
-                Cómo cobrar tu finiquito sin perder dinero
-            </h2>
-            <p class="mt-4 text-base sm:text-lg text-gray-600 max-w-xl mx-auto mb-16">
-                4 pasos legales desde que recibes tu carta de despido hasta el cobro efectivo de tu dinero.
-            </p>
+            <div class="reveal-on-scroll text-center max-w-xl mx-auto mb-16">
+                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+                    Cómo cobrar tu finiquito sin perder dinero
+                </h2>
+                <p class="mt-4 text-base sm:text-lg text-gray-600">
+                    4 pasos legales desde que recibes tu carta de despido hasta el cobro efectivo de tu dinero.
+                </p>
+            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left items-stretch">
-                
-                <!-- Step 1 -->
-                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all flex flex-col justify-start">
-                    <div style="background-color: var(--teal-forest);" class="w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
-                        01
+            <div class="relative">
+                <div class="timeline-connector"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left items-stretch relative z-10">
+                    
+                    <!-- Step 1 -->
+                    <div class="step-card reveal-on-scroll delay-100 p-8 rounded-3xl bg-white border border-gray-200/90 hover:shadow-md flex flex-col justify-start">
+                        <div style="background-color: var(--teal-forest);" class="step-badge w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                            01
+                        </div>
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Revisa tu Carta</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                            Verifica si la empresa invoca Necesidades de la Empresa (Art. 161) con fundamentos económicos reales o causales disciplinarias sin sustento legal.
+                        </p>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Revisa tu Carta</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed font-sans">
-                        Verifica si la empresa invoca Necesidades de la Empresa (Art. 161) con fundamentos económicos reales o causales disciplinarias sin sustento legal.
-                    </p>
-                </div>
 
-                <!-- Step 2 -->
-                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all flex flex-col justify-start">
-                    <div style="background-color: var(--teal-forest);" class="w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
-                        02
+                    <!-- Step 2 -->
+                    <div class="step-card reveal-on-scroll delay-200 p-8 rounded-3xl bg-white border border-gray-200/90 hover:shadow-md flex flex-col justify-start">
+                        <div style="background-color: var(--teal-forest);" class="step-badge w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                            02
+                        </div>
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Simula tus Cifras</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                            Calcula tus años de servicio con el tope legal de 90 UF, el mes de aviso sustitutivo y el feriado proporcional en días hábiles (lunes a viernes).
+                        </p>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Simula tus Cifras</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed font-sans">
-                        Calcula tus años de servicio con el tope legal de 90 UF, el mes de aviso sustitutivo y el feriado proporcional en días hábiles (lunes a viernes).
-                    </p>
-                </div>
 
-                <!-- Step 3 (Featured) -->
-                <div class="p-8 rounded-3xl bg-amber-50/80 border-2 border-amber-400 hover:border-amber-500 hover:shadow-lg transition-all flex flex-col justify-start relative overflow-hidden">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-400 text-gray-950 font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
-                        03
+                    <!-- Step 3 (Featured) -->
+                    <div class="step-card reveal-on-scroll delay-300 p-8 rounded-3xl bg-amber-50/80 border-2 border-amber-400 hover:border-amber-500 hover:shadow-lg flex flex-col justify-start relative overflow-hidden">
+                        <div class="step-badge w-12 h-12 rounded-2xl bg-amber-400 text-gray-950 font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                            03
+                        </div>
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Escribe la Reserva</h3>
+                        <p class="text-sm text-gray-800 leading-relaxed font-medium font-sans">
+                            Copia la fórmula notarial de tu puño y letra sobre tu firma antes de estamparla. Así recibes tu pago en el acto y mantienes intacto tu derecho a reclamar.
+                        </p>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Escribe la Reserva</h3>
-                    <p class="text-sm text-gray-800 leading-relaxed font-medium font-sans">
-                        Copia la fórmula notarial de tu puño y letra sobre tu firma antes de estamparla. Así recibes tu pago en el acto y mantienes intacto tu derecho a reclamar.
-                    </p>
-                </div>
 
-                <!-- Step 4 -->
-                <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all flex flex-col justify-start">
-                    <div style="background-color: var(--teal-forest);" class="w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
-                        04
+                    <!-- Step 4 -->
+                    <div class="step-card reveal-on-scroll delay-400 p-8 rounded-3xl bg-white border border-gray-200/90 hover:shadow-md flex flex-col justify-start">
+                        <div style="background-color: var(--teal-forest);" class="step-badge w-12 h-12 rounded-2xl text-white font-extrabold flex items-center justify-center text-base mb-6 shadow-xs">
+                            04
+                        </div>
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Cobra y Reclama</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                            Recibe tu cheque o transferencia bancaria en notaría y presenta tu reclamo formal ante la Inspección del Trabajo dentro del plazo legal de 60 días.
+                        </p>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Cobra y Reclama</h3>
-                    <p class="text-sm text-gray-600 leading-relaxed font-sans">
-                        Recibe tu cheque o transferencia bancaria en notaría y presenta tu reclamo formal ante la Inspección del Trabajo dentro del plazo legal de 60 días.
-                    </p>
-                </div>
 
+                </div>
             </div>
 
         </div>
     </section>
 
     <!-- SECTION 4: BENTO GRID DE ASESORÍA LABORAL -->
-    <section class="section-py bg-slate-50 border-t border-gray-200/90">
+    <section class="section-py bg-warm-surface border-t border-gray-200/90">
         <div class="site-container">
             
-            <div class="text-center max-w-xl mx-auto mb-14">
+            <div class="reveal-on-scroll text-center max-w-xl mx-auto mb-14">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                     Lo que tu empleador prefiere que no sepas
                 </h2>
@@ -999,10 +1059,16 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 text-left">
                 
-                <div class="bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <!-- Bento Card 1: AFC (Featured with Highlight Badge) -->
+                <div class="step-card reveal-on-scroll delay-100 bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-5">
-                            <span class="material-icons text-xl">savings</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                                <span class="material-icons text-xl">savings</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-rose-700 bg-rose-50 border border-rose-200/80 px-2.5 py-1 rounded-full">
+                                <span class="material-icons text-xs">trending_up</span> Mayor Monto Reclamable
+                            </span>
                         </div>
                         <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Descuento patronal de la AFC</h3>
                         <p class="text-sm text-gray-600 leading-relaxed font-sans">
@@ -1017,7 +1083,8 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <!-- Bento Card 2: Feriado Legal -->
+                <div class="step-card reveal-on-scroll delay-200 bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
                         <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-5">
                             <span class="material-icons text-xl">calendar_today</span>
@@ -1035,7 +1102,8 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <!-- Bento Card 3: Autodespido -->
+                <div class="step-card reveal-on-scroll delay-300 bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
                         <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5">
                             <span class="material-icons text-xl">exit_to_app</span>
@@ -1056,7 +1124,7 @@
             </div>
 
             <!-- Wide Action Banner (TealHQ Dark Pine Forest) -->
-            <div style="background-color: var(--teal-forest);" class="rounded-3xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl text-left">
+            <div style="background-color: var(--teal-forest);" class="reveal-on-scroll delay-200 rounded-3xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl text-left">
                 <div class="space-y-3.5 max-w-xl">
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                         ¿Tienes una Pyme? Genera finiquitos y anexos 40h con respaldo legal
@@ -1079,10 +1147,10 @@
     </section>
 
     <!-- SECTION 5: FAQ ACCORDION -->
-    <section class="section-py bg-slate-50 border-t border-gray-200/90">
+    <section class="section-py bg-warm-surface border-t border-gray-200/90">
         <div class="site-container max-w-[850px]">
             
-            <div class="text-center mb-12">
+            <div class="reveal-on-scroll text-center mb-12">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3">
                     Preguntas Frecuentes
                 </h2>
@@ -1090,7 +1158,7 @@
             </div>
 
             <div class="space-y-4 text-left">
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="reveal-on-scroll delay-100 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿El empleador puede obligarme a firmar el finiquito si no estoy de acuerdo?</span>
                         <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
@@ -1100,7 +1168,7 @@
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="reveal-on-scroll delay-100 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Cuántos días tiene la empresa para poner a disposición y pagar el finiquito?</span>
                         <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
@@ -1110,7 +1178,7 @@
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Es legal que me descuenten el aporte patronal de la AFC?</span>
                         <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
@@ -1120,7 +1188,7 @@
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Puedo cobrar el dinero de inmediato en la notaría y reclamar después?</span>
                         <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
@@ -1130,7 +1198,7 @@
                     </p>
                 </details>
 
-                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="reveal-on-scroll delay-300 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Cómo se calcula el feriado proporcional si trabajé menos de un año?</span>
                         <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
@@ -1240,13 +1308,13 @@
         };
 
         const backdropColors = {
-            'simulador': '#4F46E5', // Indigo
-            'despido': '#E11D48',   // Ruby
-            'reserva': '#D97706',   // Amber
-            'horas': '#059669'      // Emerald
+            'simulador': '#064E3B', // Deep Emerald Forest
+            'despido': '#9F1239',   // Rich Wine/Ruby
+            'reserva': '#D97706',   // Warm Amber Gold
+            'horas': '#0F766E'      // Deep Teal Sage
         };
 
-        // Tab Switching with Organic Slab Color Morphing
+        // Tab Switching with Organic Slab Color Morphing & Spring Physics
         function switchProductTab(tabKey) {
             const tabs = ['simulador', 'despido', 'reserva', 'horas'];
             const backdrop = document.querySelector('.teal-organic-backdrop');
@@ -1260,11 +1328,12 @@
                     btn.classList.add('active');
                     content.classList.remove('hidden');
                     content.style.opacity = '0';
-                    content.style.transform = 'translateY(8px)';
-                    setTimeout(() => {
+                    content.style.transform = 'translateY(12px) scale(0.99)';
+                    content.style.transition = 'opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+                    requestAnimationFrame(() => {
                         content.style.opacity = '1';
-                        content.style.transform = 'translateY(0)';
-                    }, 20);
+                        content.style.transform = 'translateY(0) scale(1)';
+                    });
                 } else {
                     btn.classList.remove('active');
                     content.classList.add('hidden');
@@ -1405,6 +1474,24 @@
                 updateSliderTrack(slider);
             }
             calculateLiveFiniquito();
+
+            // Fluid Scroll Reveal Choreography
+            if ('IntersectionObserver' in window) {
+                const revealObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-revealed');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    rootMargin: '0px 0px -50px 0px',
+                    threshold: 0.12
+                });
+                document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+            } else {
+                document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-revealed'));
+            }
         });
     </script>
 </body>
