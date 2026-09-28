@@ -626,6 +626,15 @@
                 </div>
             </div>
 
+            <!-- Quick-Access Pills for Alternative Tools -->
+            <div class="mt-7 flex flex-wrap items-center justify-center gap-2 text-xs">
+                <span class="text-gray-400 font-medium">Accesos directos:</span>
+                <a href="sueldo_liquido" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200 hover:border-emerald-500 hover:text-emerald-800 text-gray-700 font-semibold shadow-2xs transition-all">Sueldo Líquido</a>
+                <a href="calculadora-horas-extras" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200 hover:border-emerald-500 hover:text-emerald-800 text-gray-700 font-semibold shadow-2xs transition-all">Horas Extras 42h</a>
+                <a href="carta-de-renuncia-chile" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200 hover:border-emerald-500 hover:text-emerald-800 text-gray-700 font-semibold shadow-2xs transition-all">Carta de Renuncia</a>
+                <a href="calculadora-vacaciones-proporcionales" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200 hover:border-emerald-500 hover:text-emerald-800 text-gray-700 font-semibold shadow-2xs transition-all">Vacaciones DT</a>
+            </div>
+
         </div>
     </section>
 
@@ -1044,83 +1053,250 @@
         </div>
     </section>
 
-    <!-- SECTION 4: BENTO GRID DE ASESORÍA LABORAL -->
+    <!-- SECTION 4: SOLUCIONES FINANCIERAS ALIADAS (Itaú & Abakos) -->
     <section class="section-py bg-warm-surface border-t border-gray-200/90">
         <div class="site-container">
             
-            <div class="reveal-on-scroll text-center max-w-xl mx-auto mb-14">
+            <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-14">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/70 px-3 py-1 rounded-full mb-3">
+                    <span class="material-icons text-sm text-emerald-700">account_balance_wallet</span>
+                    Soluciones Financieras Aliadas
+                </span>
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
-                    Lo que tu empleador prefiere que no sepas
+                    Herramientas para gestionar tu dinero
                 </h2>
                 <p class="mt-3 text-base text-gray-600">
-                    En Chile, miles de finiquitos se firman con errores graves a favor de la empresa.
+                    Opciones verificadas para recibir tu liquidación, evitar comisiones de mantención o solventar imprevistos durante tu transición.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 text-left">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left mb-6">
                 
-                <!-- Bento Card 1: AFC (Featured with Highlight Badge) -->
-                <div class="step-card reveal-on-scroll delay-100 bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                <!-- Partner Card 1: Banco Itaú -->
+                <div class="step-card reveal-on-scroll delay-100 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-8 flex flex-col justify-between transition-all">
                     <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                                <span class="material-icons text-xl">savings</span>
-                            </div>
-                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-rose-700 bg-rose-50 border border-rose-200/80 px-2.5 py-1 rounded-full">
-                                <span class="material-icons text-xs">trending_up</span> Mayor Monto Reclamable
+                        <!-- Header badge strip -->
+                        <div class="flex items-center justify-between gap-2 mb-6">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-orange-700 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                                Recomendado · Cuenta Sueldo
+                            </span>
+                            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                                Patrocinado · Banco Itaú
                             </span>
                         </div>
-                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Descuento patronal de la AFC</h3>
-                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
-                            Si tu despido es injustificado, la Corte Suprema ha dictaminado reiteradamente que la empresa no puede descontarte el aporte patronal efectuado al seguro de cesantía.
+
+                        <!-- Content Grid: Image + Details -->
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center mb-6">
+                            <div class="sm:col-span-5 flex justify-center">
+                                <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-orange-300 transition-all shadow-xs group">
+                                    <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="w-full max-w-[200px] sm:max-w-none h-auto object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                                </a>
+                            </div>
+                            <div class="sm:col-span-7 space-y-3">
+                                <h3 class="font-extrabold text-xl text-gray-950 tracking-tight leading-snug">
+                                    Plan Cuenta Corriente con $0 costo de mantención
+                                </h3>
+                                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans">
+                                    ¿Dónde recibirás tu finiquito o tu próxima remuneración? Mantén costo $0 permanente abonando tu sueldo.
+                                </p>
+                                <ul class="space-y-1.5 text-xs text-gray-700 font-medium">
+                                    <li class="flex items-center gap-2">
+                                        <span class="material-icons text-emerald-600 text-sm">check_circle</span>
+                                        <span>Apertura 100% online en 5 minutos</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="material-icons text-emerald-600 text-sm">check_circle</span>
+                                        <span>Solo requieres cédula de identidad vigente</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="material-icons text-emerald-600 text-sm">check_circle</span>
+                                        <span>Transferencias ilimitadas a costo $0</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action -->
+                    <div class="pt-5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <span class="text-xs text-gray-400 font-medium">Sujeto a evaluación de antecedentes comerciales</span>
+                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-orange-600 hover:bg-orange-700 active:scale-95" style="background-color: #ea580c !important; color: #ffffff !important;">
+                            <span style="color: #ffffff !important;">Abrir Cuenta Online Gratis</span>
+                            <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Partner Card 2: Abakos Chile -->
+                <div class="step-card reveal-on-scroll delay-200 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-8 flex flex-col justify-between transition-all">
+                    <div>
+                        <!-- Header badge strip -->
+                        <div class="flex items-center justify-between gap-2 mb-6">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-full">
+                                <span class="material-icons text-xs text-sky-600">bolt</span>
+                                Liquidez Inmediata · Emergencias
+                            </span>
+                            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                                Patrocinado · Abakos Chile
+                            </span>
+                        </div>
+
+                        <!-- Content Grid: Image + Details -->
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center mb-6">
+                            <div class="sm:col-span-5 flex justify-center">
+                                <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-sky-300 transition-all shadow-xs group">
+                                    <img src="/assets/abakos-emergencias-app.jpg" alt="Abakos Chile - Apaga tus emergencias financieras con préstamos online" width="270" height="270" class="w-full max-w-[200px] sm:max-w-none h-auto object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                                </a>
+                            </div>
+                            <div class="sm:col-span-7 space-y-3">
+                                <h3 class="font-extrabold text-xl text-gray-950 tracking-tight leading-snug">
+                                    Préstamos 100% online para contingencias
+                                </h3>
+                                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans">
+                                    El empleador dispone de hasta 10 días hábiles para liquidar tu pago. Si requieres liquidez inmediata, simula sin anticipos.
+                                </p>
+                                <ul class="space-y-1.5 text-xs text-gray-700 font-medium">
+                                    <li class="flex items-center gap-2">
+                                        <span class="material-icons text-emerald-600 text-sm">check_circle</span>
+                                        <span>Evaluación y aprobación 100% digital</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="material-icons text-emerald-600 text-sm">check_circle</span>
+                                        <span>Sin cobros previos ni pagos adelantados</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="material-icons text-emerald-600 text-sm">check_circle</span>
+                                        <span>Depósito directo en tu cuenta bancaria</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action -->
+                    <div class="pt-5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <span class="text-xs text-gray-400 font-medium">Respuesta rápida desde cualquier punto de Chile</span>
+                        <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-sky-600 hover:bg-sky-700 active:scale-95" style="background-color: #0284c7 !important; color: #ffffff !important;">
+                            <span style="color: #ffffff !important;">Simular Préstamo Online</span>
+                            <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 5: GUÍAS LEGALES DE ACCIÓN INMEDIATA & DEFENSA DEL TRABAJADOR -->
+    <section class="section-py bg-white border-t border-gray-200/90">
+        <div class="site-container">
+            
+            <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-14">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-sky-800 bg-sky-100/70 px-3 py-1 rounded-full mb-3">
+                    <span class="material-icons text-sm text-sky-700">menu_book</span>
+                    Guías Laborales & Dictámenes DT
+                </span>
+                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+                    Lo que debes saber antes de firmar
+                </h2>
+                <p class="mt-3 text-base text-gray-600">
+                    Instrucciones jurídicas paso a paso para proteger tus derechos laborales conforme a la ley chilena vigente.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 text-left">
+                
+                <!-- Guide Card 1: Reclamar Despido Injustificado DT -->
+                <div class="step-card reveal-on-scroll delay-100 bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                                <span class="material-icons text-xl">gavel</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-rose-700 bg-rose-50 border border-rose-200/80 px-2.5 py-1 rounded-full">
+                                Trámite DT • Plazo 60 Días
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
+                            Cómo Reclamar un Despido Injustificado
+                        </h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
+                            Procedimiento formal ante la Inspección del Trabajo: plazos fatales de 60 días hábiles, citación al comparendo de conciliación y cómo exigir el recargo legal del 30% más el reembolso del aporte AFC.
                         </p>
                     </div>
-                    <div class="pt-6 mt-6 border-t border-gray-100">
-                        <a href="simulador-despido-injustificado-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
-                            <span>Simular recuperación de AFC</span>
+                    <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 font-medium">Lectura: 4 min</span>
+                        <a href="reclamar-despido-injustificado-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Ver paso a paso</span>
                             <span class="material-icons text-base">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Bento Card 2: Feriado Legal -->
+                <!-- Guide Card 2: Carta de Renuncia Voluntaria -->
                 <div class="step-card reveal-on-scroll delay-200 bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-5">
-                            <span class="material-icons text-xl">calendar_today</span>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                                <span class="material-icons text-xl">edit_note</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">
+                                Asistente • Art. 159 N° 2
+                            </span>
                         </div>
-                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Feriado Legal y Proporcional</h3>
-                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
-                            El Código del Trabajo dictamina que el feriado anual se computa en días hábiles (de lunes a viernes). Los fines de semana no deben restarse de tus vacaciones.
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
+                            Carta de Renuncia Voluntaria
+                        </h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
+                            Redactor interactivo gratuito con los 30 días de anticipación legal obligatorios. Evita retenciones ilegales en tu finiquito y genera el texto formal listo para notaría o portal Mi DT.
                         </p>
                     </div>
-                    <div class="pt-6 mt-6 border-t border-gray-100">
-                        <a href="calculadora-vacaciones-proporcionales" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
-                            <span>Calculadora vacaciones DT</span>
+                    <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 font-medium">Herramienta Gratuita</span>
+                        <a href="carta-de-renuncia-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Redactar carta gratis</span>
                             <span class="material-icons text-base">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Bento Card 3: Autodespido -->
+                <!-- Guide Card 3: Despido Art. 161 & Restitución AFC -->
                 <div class="step-card reveal-on-scroll delay-300 bg-white p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md transition-all">
                     <div>
-                        <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5">
-                            <span class="material-icons text-xl">exit_to_app</span>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                <span class="material-icons text-xl">balance</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-2.5 py-1 rounded-full">
+                                Doctrina Corte Suprema
+                            </span>
                         </div>
-                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">Autodespido (Art. 171)</h3>
-                        <p class="text-sm text-gray-600 leading-relaxed font-sans">
-                            Si tu empleador no paga cotizaciones, comete acoso laboral o rebaja tu sueldo, puedes autodespedirte y cobrar tus indemnizaciones legales con recargo.
+                        <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
+                            Art. 161: Necesidades de la Empresa
+                        </h3>
+                        <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
+                            Aprende a detectar cartas de despido genéricas o improcedentes. Conoce los fallos judiciales unificados que prohíben al empleador descontar el aporte patronal del seguro de cesantía.
                         </p>
                     </div>
-                    <div class="pt-6 mt-6 border-t border-gray-100">
-                        <a href="blog" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
-                            <span>Leer guía de autodespido</span>
+                    <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 font-medium">Lectura: 5 min</span>
+                        <a href="despido-necesidades-empresa-articulo-161" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
+                            <span>Leer análisis legal</span>
                             <span class="material-icons text-base">arrow_forward</span>
                         </a>
                     </div>
                 </div>
 
+            </div>
+
+            <!-- Link to All Guides in Blog -->
+            <div class="reveal-on-scroll text-center mb-12">
+                <a href="blog" class="inline-flex items-center gap-2 text-sm font-bold text-emerald-800 hover:text-emerald-950 hover:underline">
+                    <span>Ver todas las guías, jurisprudencia y dictámenes DT en nuestro Blog</span>
+                    <span class="material-icons text-base">arrow_forward</span>
+                </a>
             </div>
 
             <!-- Wide Action Banner (TealHQ Dark Pine Forest) -->
