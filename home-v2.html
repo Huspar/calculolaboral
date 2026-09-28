@@ -447,8 +447,18 @@
                         </button>
                         
                         <!-- Mega Menu Panel -->
-                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 580px; min-width: 580px;">
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 600px; min-width: 600px;">
                             <div class="grid grid-cols-2 gap-2">
+                                <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-xl">calculate</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Finiquito Legal Completo</div>
+                                        <div class="text-xs text-gray-500 mt-0.5">Años de servicio, aviso previo y feriado.</div>
+                                    </div>
+                                </a>
+
                                 <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
                                         <span class="material-icons text-xl">gavel</span>
@@ -459,8 +469,18 @@
                                     </div>
                                 </a>
 
+                                <a href="simulador-seguro-cesantia-afc" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
+                                        <span class="material-icons text-xl">account_balance_wallet</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-900">Seguro Cesantía AFC</div>
+                                        <div class="text-xs text-gray-500 mt-0.5">Saldo CIC y giros del Fondo Solidario.</div>
+                                    </div>
+                                </a>
+
                                 <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
                                         <span class="material-icons text-xl">payments</span>
                                     </div>
                                     <div>
@@ -480,13 +500,20 @@
                                 </a>
 
                                 <a href="calculadora-vacaciones-proporcionales" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
+                                    <div class="w-10 h-10 rounded-full bg-sky-50 text-sky-700 flex items-center justify-center flex-shrink-0">
                                         <span class="material-icons text-xl">beach_access</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-sm text-gray-900">Vacaciones Proporcionales</div>
                                         <div class="text-xs text-gray-500 mt-0.5">Cómputo exacto sólo en días hábiles.</div>
                                     </div>
+                                </a>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between px-2 text-xs">
+                                <span class="text-gray-500 font-medium">9 calculadoras laborales vigentes</span>
+                                <a href="#calculadoras" class="font-bold text-emerald-800 hover:text-emerald-950 inline-flex items-center gap-1 transition-colors">
+                                    <span>Ver catálogo completo (15 herramientas)</span>
+                                    <span class="material-icons text-xs">arrow_forward</span>
                                 </a>
                             </div>
                         </div>
@@ -560,8 +587,10 @@
                     <div class="fixed left-0 right-0 top-24 bg-white border-b border-slate-200 shadow-xl z-50 p-6 space-y-3">
                         <a href="finiquito_calculator" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950 bg-emerald-50">Simulador Finiquito Legal 2026</a>
                         <a href="simulador-despido-injustificado-chile" class="block px-4 py-3 rounded-xl text-base font-bold text-rose-600 bg-rose-50">Despido Injustificado (+30%)</a>
+                        <a href="simulador-seguro-cesantia-afc" class="block px-4 py-3 rounded-xl text-base font-bold text-amber-800 bg-amber-50">Seguro de Cesantía AFC</a>
                         <a href="sueldo_liquido" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Calculadora Sueldo Líquido</a>
                         <a href="calculadora-horas-extras" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Horas Extras Ley 40 Horas</a>
+                        <a href="#calculadoras" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-800 bg-slate-100 border border-slate-200">Ver Todas las Calculadoras (15) ↓</a>
                         <a href="para-empleadores" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950">Portal Empleadores & Pymes</a>
                     </div>
                 </details>
@@ -584,13 +613,18 @@
                 Calculadoras y herramientas para trabajadores y pymes. Al día con la normativa 2026.
             </p>
 
-            <!-- TealHQ Primary Yellow Action Pill with Button-in-Button Micro-Physics -->
-            <div class="mt-8 flex justify-center">
-                <a href="#showcase" class="btn-yellow-pill group text-base px-8 py-3.5 inline-flex items-center gap-3 shadow-md hover:shadow-lg transition-all">
-                    <span class="font-bold">Explorar Calculadoras y Herramientas</span>
-                    <span class="w-7 h-7 rounded-full bg-black/10 flex items-center justify-center transition-transform duration-200 group-hover:translate-x-1">
-                        <span class="material-icons text-base">arrow_forward</span>
+            <!-- TealHQ Primary Action Buttons (Twin Actions: Express Simulator & Complete Catalog) -->
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-xl mx-auto">
+                <a href="#showcase" class="btn-yellow-pill group text-base px-7 py-3.5 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg transition-all">
+                    <span class="font-bold">Simular Finiquito Rápido</span>
+                    <span class="w-7 h-7 rounded-full bg-black/10 flex items-center justify-center transition-transform duration-200 group-hover:translate-y-0.5">
+                        <span class="material-icons text-base">arrow_downward</span>
                     </span>
+                </a>
+                <a href="#calculadoras" class="btn-outline-pill group text-base px-6 py-3.5 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold shadow-xs hover:shadow-md transition-all">
+                    <span class="material-icons text-emerald-700 text-lg">apps</span>
+                    <span>Ver Todas las Calculadoras</span>
+                    <span class="px-2 py-0.5 text-xs font-mono font-bold rounded-full bg-emerald-100 text-emerald-800">9</span>
                 </a>
             </div>
 
@@ -616,6 +650,7 @@
             <div class="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs">
                 <span class="text-gray-400 font-medium">Accesos directos:</span>
                 <a href="sueldo_liquido" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200/90 hover:border-emerald-500 hover:text-emerald-800 text-gray-600 font-medium shadow-2xs transition-all">Sueldo Líquido</a>
+                <a href="simulador-seguro-cesantia-afc" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200/90 hover:border-emerald-500 hover:text-emerald-800 text-gray-600 font-medium shadow-2xs transition-all">Seguro Cesantía AFC</a>
                 <a href="calculadora-horas-extras" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200/90 hover:border-emerald-500 hover:text-emerald-800 text-gray-600 font-medium shadow-2xs transition-all">Horas Extras 42h</a>
                 <a href="carta-de-renuncia-chile" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200/90 hover:border-emerald-500 hover:text-emerald-800 text-gray-600 font-medium shadow-2xs transition-all">Carta de Renuncia</a>
                 <a href="calculadora-vacaciones-proporcionales" class="px-3.5 py-1.5 rounded-full bg-white border border-gray-200/90 hover:border-emerald-500 hover:text-emerald-800 text-gray-600 font-medium shadow-2xs transition-all">Vacaciones DT</a>
@@ -1032,6 +1067,453 @@
                 </div>
 
             </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2.5: COMPREHENSIVE DIRECTORY OF CALCULATORS & LEGAL TOOLS (#calculadoras) -->
+    <section id="calculadoras" class="section-py bg-slate-50 border-t border-b border-gray-200/90 scroll-mt-14">
+        <div class="site-container">
+            
+            <!-- Section Header -->
+            <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-bold uppercase tracking-wider mb-3">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                    <span>Catálogo Oficial 2026</span>
+                </div>
+                <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+                    Todas nuestras calculadoras y herramientas
+                </h2>
+                <p class="mt-4 text-base sm:text-lg text-gray-600">
+                    Fórmulas laborales y previsionales auditadas según dictámenes de la Dirección del Trabajo (DT) y normativa legal vigente en Chile.
+                </p>
+
+                <!-- Interactive Filter Controls (Pure Vanilla JS) -->
+                <div class="mt-8 flex flex-wrap items-center justify-center gap-2">
+                    <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter px-4 py-2 rounded-full text-xs font-bold transition-all bg-gray-900 text-white shadow-xs cursor-pointer">
+                        Todas las herramientas (15)
+                    </button>
+                    <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-700 border border-gray-200/90 hover:border-gray-400 cursor-pointer">
+                        Trabajadores (9)
+                    </button>
+                    <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-700 border border-gray-200/90 hover:border-gray-400 cursor-pointer">
+                        Pymes & Empleadores (5)
+                    </button>
+                    <button type="button" onclick="filterCatalog('afp', this)" class="catalog-filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-700 border border-gray-200/90 hover:border-gray-400 cursor-pointer">
+                        Previsión & AFP (1)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Tool Grid (15 Cards) -->
+            <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                
+                <!-- CARD 1: Finiquito Legal Completo -->
+                <div class="catalog-card reveal-on-scroll bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-emerald-600 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">calculate</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-emerald-100/80 text-emerald-800">
+                                Más Utilizada
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-emerald-900 transition-colors">
+                            Finiquito Legal Completo
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Cálculo legal con años de servicio, mes de aviso sustitutivo y feriado proporcional en días hábiles (lunes a viernes).
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 161, 162 y 163</span>
+                        <a href="finiquito_calculator" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 group-hover:text-emerald-900 transition-colors">
+                            <span>Calcular finiquito</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 2: Simulador Despido Injustificado -->
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-2xl border border-rose-200/70 p-6 flex flex-col justify-between hover:shadow-lg hover:border-rose-500 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">gavel</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-rose-100/80 text-rose-800">
+                                Recargo +30% a 100%
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-rose-900 transition-colors">
+                            Despido Injustificado (Art. 168)
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Estima el recargo legal del 30% por necesidades de la empresa y la devolución íntegra del descuento por aporte patronal AFC.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Demanda Laboral</span>
+                        <a href="simulador-despido-injustificado-chile" class="inline-flex items-center gap-1 text-xs font-bold text-rose-600 group-hover:text-rose-800 transition-colors">
+                            <span>Simular demanda</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 3: Seguro de Cesantía AFC -->
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-amber-500 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">account_balance_wallet</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-amber-100/80 text-amber-800">
+                                Ley 21.628 / 2026
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-amber-900 transition-colors">
+                            Seguro de Cesantía AFC
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Proyecta tu tabla de pagos decrecientes (70% al 35%) con fondos de tu Cuenta Individual (CIC) o Fondo Solidario (FCS).
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">AFC Chile Oficial</span>
+                        <a href="simulador-seguro-cesantia-afc" class="inline-flex items-center gap-1 text-xs font-bold text-amber-700 group-hover:text-amber-900 transition-colors">
+                            <span>Calcular giros AFC</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 4: Calculadora Sueldo Líquido -->
+                <div class="catalog-card reveal-on-scroll bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-emerald-600 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">payments</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-blue-100/80 text-blue-800">
+                                Bruto a Líquido
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-blue-900 transition-colors">
+                            Calculadora de Sueldo Líquido
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Desglose de AFP (10% + comisión), Fonasa/Isapre (7%), Seguro Cesantía (0.6%) y tramos de Impuesto Único de Segunda Categoría.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 42 Nº 1 LIR</span>
+                        <a href="sueldo_liquido" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 group-hover:text-blue-900 transition-colors">
+                            <span>Calcular líquido</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 5: Horas Extras 42h -->
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-indigo-500 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">schedule</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-indigo-100/80 text-indigo-800">
+                                Ley 40 Horas (42h)
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-indigo-900 transition-colors">
+                            Horas Extras con Recargo 50%
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Aplica el factor legal actualizado (0.0079365) para la jornada laboral ordinaria reducida a 42 horas en 2026.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 30 y 32 CT</span>
+                        <a href="calculadora-horas-extras" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 group-hover:text-indigo-800 transition-colors">
+                            <span>Calcular horas extras</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 6: Vacaciones Proporcionales -->
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-sky-500 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">beach_access</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-sky-100/80 text-sky-800">
+                                Días Hábiles
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-sky-900 transition-colors">
+                            Vacaciones Proporcionales DT
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Cómputo exacto de feriado devengado (1,25 días hábiles por mes) excluyendo sábados, domingos e inhábiles legales.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 67 y 73 CT</span>
+                        <a href="calculadora-vacaciones-proporcionales" class="inline-flex items-center gap-1 text-xs font-bold text-sky-600 group-hover:text-sky-800 transition-colors">
+                            <span>Calcular feriado</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 7: Sueldo Part-Time -->
+                <div class="catalog-card reveal-on-scroll bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-purple-500 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">work_outline</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-purple-100/80 text-purple-800">
+                                Hasta 30h Semanales
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-purple-900 transition-colors">
+                            Sueldo Contrato Part-Time
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Valor hora proporcional al sueldo mínimo legal ($553.553) y liquidación de jornada parcial con cobertura de salud y pensión.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 40 bis CT</span>
+                        <a href="calculadora-sueldo-part-time" class="inline-flex items-center gap-1 text-xs font-bold text-purple-600 group-hover:text-purple-800 transition-colors">
+                            <span>Calcular part-time</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 8: Despido Art. 160 -->
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-rose-400 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">warning_amber</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-rose-100/80 text-rose-800">
+                                Sin Indemnización
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-rose-900 transition-colors">
+                            Despido Art. 160 (Causales Graves)
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Evalúa despidos disciplinarios imputados y calcula únicamente los haberes irrenunciables que el empleador debe pagar sí o sí.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 160 CT</span>
+                        <a href="calculadora-despido-articulo-160" class="inline-flex items-center gap-1 text-xs font-bold text-rose-600 group-hover:text-rose-800 transition-colors">
+                            <span>Revisar causales</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 9: Carta de Renuncia Voluntaria -->
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-emerald-600 transition-all group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">draw</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-emerald-100/80 text-emerald-800">
+                                Aviso Previo 30 Días
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-emerald-900 transition-colors">
+                            Carta de Renuncia Voluntaria
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Asistente automatizado para redactar tu renuncia con todas las formalidades del Código del Trabajo, lista para legalizar.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 159 Nº 2 CT</span>
+                        <a href="carta-de-renuncia-chile" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 group-hover:text-emerald-900 transition-colors">
+                            <span>Redactar carta</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 10: Generador Finiquito Word/PDF -->
+                <div class="catalog-card reveal-on-scroll bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-emerald-600 transition-all group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">description</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-teal-100/80 text-teal-900">
+                                Formato Oficial DT
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-teal-900 transition-colors">
+                            Generador de Finiquito Word/PDF
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Redacta finiquitos legales completos para empleadores, con cláusulas de ratificación ante ministro de fe y prevención de demandas.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Art. 177 CT</span>
+                        <a href="generador-finiquito-chile" class="inline-flex items-center gap-1 text-xs font-bold text-teal-800 group-hover:text-teal-950 transition-colors">
+                            <span>Generar finiquito</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 11: Generador Anexo 40 Horas -->
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-emerald-600 transition-all group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">history_edu</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-teal-100/80 text-teal-900">
+                                Normativa 2026
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-teal-900 transition-colors">
+                            Anexo Contrato Ley 40 Horas
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Plantilla descargable en Word para pactar por escrito la adecuación horaria (42h) con los trabajadores de tu empresa.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Ley 21.561</span>
+                        <a href="generador-anexo-40-horas" class="inline-flex items-center gap-1 text-xs font-bold text-teal-800 group-hover:text-teal-950 transition-colors">
+                            <span>Generar anexo</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 12: Kit Blindaje Laboral Pymes -->
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-sky-600 transition-all group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">verified_user</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-sky-100/80 text-sky-900">
+                                Kit Pymes DT
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-sky-900 transition-colors">
+                            Kit Blindaje Laboral para Pymes
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Contratos por obra y fijos, cartas de despido blindadas para evitar demandas del 30% y checklist de fiscalización DT.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Defensa Preventiva</span>
+                        <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center gap-1 text-xs font-bold text-sky-700 group-hover:text-sky-900 transition-colors">
+                            <span>Ver kit pymes</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 13: Kit Ley 21.719 Protección Datos -->
+                <div class="catalog-card reveal-on-scroll bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-rose-500 transition-all group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">security</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-rose-100/80 text-rose-900">
+                                Ley 21.719
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-rose-900 transition-colors">
+                            Kit Protección de Datos Personales
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Protocolos de privacidad laboral, cláusulas de tratamiento de datos de colaboradores y anexos obligatorios para empresas.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Agencia de Datos</span>
+                        <a href="kit-cumplimiento-ley-datos-personales-chile" class="inline-flex items-center gap-1 text-xs font-bold text-rose-700 group-hover:text-rose-900 transition-colors">
+                            <span>Ver kit datos</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 14: Portal Empleadores (Pymes) -->
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-2xl border border-gray-200/90 p-6 flex flex-col justify-between hover:shadow-lg hover:border-emerald-700 transition-all group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">storefront</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-emerald-100/80 text-emerald-900">
+                                Portal Central
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-emerald-950 transition-colors">
+                            Portal para Empleadores & Pymes
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Soluciones preventivas para dueños y administradores de empresas: costo de contratación, finiquitos y asesoría de cumplimiento.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">calculolaboral.cl/pymes</span>
+                        <a href="para-empleadores" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 group-hover:text-emerald-950 transition-colors">
+                            <span>Ingresar al portal</span>
+                            <span class="material-icons text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 15: Módulo Previsional AFP -->
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-2xl border-2 border-dashed border-amber-300 p-6 flex flex-col justify-between hover:shadow-lg hover:border-amber-500 transition-all group" data-category="afp">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-2xl">savings</span>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-amber-100 text-amber-900">
+                                Próximamente 2026
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-950 group-hover:text-amber-900 transition-colors">
+                            Módulo Previsional & Proyección AFP
+                        </h3>
+                        <p class="text-xs text-gray-600 leading-relaxed mt-2 mb-4 font-sans">
+                            Simulador en preparación para proyectar la rentabilidad histórica de los fondos A al E, comisiones cobradas por AFP y cálculo de pensión esperada.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] font-mono-num text-gray-400 font-semibold">Superintendencia Pensiones</span>
+                        <span class="inline-flex items-center gap-1 text-xs font-bold text-amber-700">
+                            <span>En desarrollo</span>
+                            <span class="material-icons text-sm">schedule</span>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
     </section>
 
@@ -1876,6 +2358,31 @@
                 setTimeout(() => {
                     btn.innerHTML = '<span class="material-icons text-xs">content_copy</span> Copiar';
                 }, 2200);
+            });
+        }
+
+        function filterCatalog(category, btnElement) {
+            const cards = document.querySelectorAll('.catalog-card');
+            const buttons = document.querySelectorAll('.catalog-filter-btn');
+            
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-gray-900', 'text-white', 'shadow-xs');
+                btn.classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-200/90');
+            });
+            
+            if (btnElement) {
+                btnElement.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-200/90');
+                btnElement.classList.add('bg-gray-900', 'text-white', 'shadow-xs');
+            }
+            
+            cards.forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                if (category === 'all' || cardCat === category) {
+                    card.style.display = 'flex';
+                    card.classList.add('is-revealed');
+                } else {
+                    card.style.display = 'none';
+                }
             });
         }
 
