@@ -90,15 +90,18 @@
 
         /* Fluid Motion & Scroll Reveals (GPU-accelerated) */
         .reveal-on-scroll {
-            opacity: 0;
-            transform: translateY(22px);
-            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
+            opacity: 1 !important;
+            transform: none !important;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
         .reveal-on-scroll.is-revealed {
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 1 !important;
+            transform: none !important;
         }
+
+        /* Micro-shadow fallbacks */
+        .shadow-2xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04); }
+        .shadow-xs { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.05); }
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
         .delay-300 { transition-delay: 0.3s; }
@@ -706,7 +709,7 @@
                 <a href="#calculadoras" class="btn-outline-pill group text-base px-6 py-3.5 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold shadow-xs hover:shadow-md transition-all">
                     <span class="material-icons text-emerald-700 text-lg">apps</span>
                     <span>Ver Todas las Calculadoras</span>
-                    <span class="px-2 py-0.5 text-xs font-mono font-bold rounded-full bg-emerald-100 text-emerald-800">9</span>
+                    <span class="px-2 py-0.5 text-xs font-mono font-bold rounded-full bg-emerald-100 text-emerald-800">15</span>
                 </a>
             </div>
 
@@ -1198,7 +1201,7 @@
     </section>
 
     <!-- SECTION 3: SOLUCIONES FINANCIERAS ALIADAS (Itaú & Abakos) - Posición Estratégica Inmediata -->
-    <section class="section-py bg-warm-surface border-t border-gray-200/90">
+    <section class="py-12 sm:py-16 bg-warm-surface border-t border-gray-200/90">
         <div class="site-container">
             
             <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-10">
@@ -1328,7 +1331,7 @@
     </section>
 
     <!-- SECTION 4: DIRECTORY OF CALCULATORS & LEGAL TOOLS (#calculadoras) - COMPACT HIGH-DENSITY EDITION -->
-    <section id="calculadoras" class="section-py bg-slate-50 border-t border-b border-gray-200/90 scroll-mt-14">
+    <section id="calculadoras" class="py-12 sm:py-16 bg-slate-50 border-t border-b border-gray-200/90 scroll-mt-14">
         <div class="site-container">
             
             <!-- Section Header -->
@@ -1365,7 +1368,7 @@
             <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
                 
                 <!-- CARD 1: Finiquito Legal Completo -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1392,7 +1395,7 @@
                 </div>
 
                 <!-- CARD 2: Simulador Despido Injustificado -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-rose-200/70 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-rose-200/70 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1419,7 +1422,7 @@
                 </div>
 
                 <!-- CARD 3: Seguro de Cesantía AFC -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1446,7 +1449,7 @@
                 </div>
 
                 <!-- CARD 4: Calculadora Sueldo Líquido -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1473,7 +1476,7 @@
                 </div>
 
                 <!-- CARD 5: Horas Extras 42h -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-indigo-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-indigo-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1500,7 +1503,7 @@
                 </div>
 
                 <!-- CARD 6: Vacaciones Proporcionales -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-sky-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-sky-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1527,7 +1530,7 @@
                 </div>
 
                 <!-- CARD 7: Sueldo Part-Time -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-purple-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-purple-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1554,7 +1557,7 @@
                 </div>
 
                 <!-- CARD 8: Despido Art. 160 -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-rose-400 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-400 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1581,7 +1584,7 @@
                 </div>
 
                 <!-- CARD 9: Carta de Renuncia Voluntaria -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1608,7 +1611,7 @@
                 </div>
 
                 <!-- CARD 10: Generador Finiquito Word/PDF -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
+                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1635,7 +1638,7 @@
                 </div>
 
                 <!-- CARD 11: Generador Anexo 40 Horas -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1662,7 +1665,7 @@
                 </div>
 
                 <!-- CARD 12: Kit Blindaje Laboral Pymes -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-sky-600 transition-all group" data-category="pyme">
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-sky-600 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -1689,7 +1692,7 @@
                 </div>
 
                 <!-- CARD 13: Kit Ley 21.719 Protección Datos -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-all group" data-category="pyme">
+                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
@@ -1716,7 +1719,7 @@
                 </div>
 
                 <!-- CARD 14: Portal Empleadores (Pymes) -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-700 transition-all group" data-category="pyme">
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-700 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
@@ -1743,7 +1746,7 @@
                 </div>
 
                 <!-- CARD 15: Módulo Previsional AFP -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border-2 border-dashed border-amber-300 p-4 sm:p-4.5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-all group" data-category="afp">
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border-2 border-dashed border-amber-300 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-all group" data-category="afp">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
@@ -1775,7 +1778,7 @@
     </section>
 
     <!-- SECTION 5: EDITORIAL ASYMMETRIC PROFILE HUBS (Trabajadores vs Pymes - Authentic Human Design) -->
-    <section class="section-py bg-white border-t border-gray-200/90">
+    <section class="py-12 sm:py-16 bg-white border-t border-gray-200/90">
         <div class="site-container">
             
             <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-10">
