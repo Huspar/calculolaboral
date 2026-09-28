@@ -137,13 +137,15 @@
             }
         }
 
-        .partner-grid {
+        .partner-grid,
+        .bento-dual-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
         }
         @media (min-width: 1024px) {
-            .partner-grid {
+            .partner-grid,
+            .bento-dual-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
@@ -1633,7 +1635,7 @@
             </div>
 
             <!-- Bento Dual Master Cards Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left items-stretch">
+            <div class="bento-dual-grid text-left items-stretch">
                 
                 <!-- BENTO CARD 1: PARA TRABAJADORES -->
                 <div class="reveal-on-scroll delay-100 rounded-3xl bg-gradient-to-b from-white to-emerald-50/50 border-2 border-emerald-500/30 hover:border-emerald-600/80 p-7 sm:p-10 flex flex-col justify-between shadow-2xs hover:shadow-xl transition-all relative overflow-hidden group">
