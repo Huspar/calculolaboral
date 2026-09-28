@@ -21,33 +21,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- Tailwind CSS CDN con configuración de paleta de la propuesta -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            forest: '#064E3B',    // Verde bosque profundo
-                            forestLight: '#0B644D',
-                            emerald: '#059669',
-                            mint: '#ECFDF5',
-                            mustard: '#F59E0B',   // Amarillo mostaza enérgico
-                            mustardHover: '#D97706',
-                            mustardLight: '#FEF3C7',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-                        mono: ['"Geist Mono"', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Precompiled Local Tailwind CSS (CSP Compliant) -->
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.7.0">
     
     <style>
+        /* Brand Color Utilities (Fallback & CSP Compliant) */
+        .bg-brand-forest { background-color: #064E3B !important; }
+        .bg-brand-forestLight { background-color: #0B644D !important; }
+        .bg-brand-mint { background-color: #ECFDF5 !important; }
+        .bg-brand-mustard { background-color: #F59E0B !important; color: #0f172a !important; }
+        .bg-brand-mustardHover:hover { background-color: #D97706 !important; }
+        .bg-brand-mustardLight { background-color: #FEF3C7 !important; }
+        .text-brand-forest { color: #064E3B !important; }
+        .text-brand-mustard { color: #F59E0B !important; }
+        .border-brand-forest { border-color: #064E3B !important; }
+        .border-brand-forestLight { border-color: #0B644D !important; }
+
         /* Slider personalizado */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
