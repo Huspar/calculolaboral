@@ -22,7 +22,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.7.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.7.1">
     
     <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
@@ -47,6 +47,39 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
+        }
+
+        .hero-py {
+            padding-top: 4rem;
+            padding-bottom: 3.5rem;
+        }
+        @media (min-width: 640px) {
+            .hero-py {
+                padding-top: 5.5rem;
+                padding-bottom: 4.5rem;
+            }
+        }
+
+        .showcase-py {
+            padding-top: 1rem;
+            padding-bottom: 4.5rem;
+        }
+        @media (min-width: 640px) {
+            .showcase-py {
+                padding-top: 1.5rem;
+                padding-bottom: 6rem;
+            }
+        }
+
+        .section-py {
+            padding-top: 4.5rem;
+            padding-bottom: 4.5rem;
+        }
+        @media (min-width: 640px) {
+            .section-py {
+                padding-top: 6rem;
+                padding-bottom: 6rem;
+            }
         }
 
         .font-mono-num {
@@ -471,7 +504,7 @@
     </header>
 
     <!-- SECTION 1: TEALHQ CENTERED HERO (Clean, No Pill Badges, Massive Typography) -->
-    <section class="pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
+    <section class="hero-py text-center">
         <div class="site-container">
             
             <!-- Confident 2-Line Headline (Exact TealHQ weight & proportion) -->
@@ -542,7 +575,7 @@
     </section>
 
     <!-- SECTION 2: TEALHQ INTERACTIVE SHOWCASE SUITE (The Star Feature) -->
-    <section id="showcase" class="pb-24 pt-4">
+    <section id="showcase" class="showcase-py">
         <div class="site-container">
             
             <!-- Product Navigation Tabs (Exact TealHQ Underline Tabs) -->
@@ -890,7 +923,7 @@
     </section>
 
     <!-- SECTION 3: HOW IT WORKS (TealHQ 4-Step Journey) -->
-    <section class="py-16 sm:py-24 bg-white border-t border-gray-100 text-center">
+    <section class="section-py bg-white border-t border-gray-100 text-center">
         <div class="site-container">
             
             <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
@@ -900,7 +933,7 @@
                 4 pasos legales desde que recibes tu carta de despido hasta el cobro efectivo de tu dinero.
             </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left items-stretch">
                 
                 <!-- Step 1 -->
                 <div class="p-8 rounded-3xl bg-slate-50 border border-gray-200/90 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all flex flex-col justify-start">
@@ -952,7 +985,7 @@
     </section>
 
     <!-- SECTION 4: BENTO GRID DE ASESORÍA LABORAL -->
-    <section class="py-16 sm:py-24 bg-slate-50 border-t border-gray-200/90">
+    <section class="section-py bg-slate-50 border-t border-gray-200/90">
         <div class="site-container">
             
             <div class="text-center max-w-xl mx-auto mb-14">
@@ -1046,7 +1079,7 @@
     </section>
 
     <!-- SECTION 5: FAQ ACCORDION -->
-    <section class="py-16 sm:py-24 bg-slate-50 border-t border-gray-200/90">
+    <section class="section-py bg-slate-50 border-t border-gray-200/90">
         <div class="site-container max-w-[850px]">
             
             <div class="text-center mb-12">
