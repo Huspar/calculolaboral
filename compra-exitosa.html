@@ -302,26 +302,47 @@
                 border-top-right-radius: 0px;
             }
             .teal-footer-curve .footer-inner-container {
-                padding-left: 8rem !important; /* 128px > 96px curve */
-                padding-right: 3rem !important;
+                padding-left: 5rem !important; /* clearance for 96px curve on 1024px-1200px */
+                padding-right: 2rem !important;
+            }
+        }
+        @media (min-width: 1200px) and (max-width: 1439px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 3.5rem !important;
+                padding-right: 2rem !important;
             }
         }
         @media (min-width: 1440px) {
             .teal-footer-curve .footer-inner-container {
-                padding-left: 4rem !important;
-                padding-right: 4rem !important;
+                padding-left: 2rem !important;
+                padding-right: 2rem !important;
             }
         }
+body { overflow-x: hidden; }
 
+        
 
     
-        body { overflow-x: hidden; }
-</style>
+        /* Core Layout Container & Width Constraints */
+        .site-container,
+        .max-w-\[1240px\],
+        [class*="max-w-[1240px]"] {
+            max-width: 1240px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .max-w-4xl {
+            max-width: 56rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
@@ -338,26 +359,34 @@
 
     <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
     <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-20">
                 
-                <!-- Brand Logo: Dark green box + Gold balance icon + Wordmark -->
-                <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
-                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-xs">
-                        <svg class="w-5 h-5 text-[#FFB703]" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Brand Logo: Official CálculoLaboral Brand Logo -->
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform shrink-0" style="background-color: #0ea5e9;">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Pedestal Base -->
                             <path d="M30 84h40M38 79h24"></path>
+                            <!-- Vertical Pillar -->
                             <path d="M50 22v57"></path>
+                            <!-- Center pointer tip -->
                             <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <!-- Balance Beam -->
                             <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <!-- Left Pan strings and dish -->
                             <path d="M18 36l-8 18h16Z"></path>
                             <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Right Pan strings and dish -->
                             <path d="M82 36l-8 18h16Z"></path>
                             <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Monogram C wrapping left side -->
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <!-- Monogram L wrapping right side -->
+                            <path d="M58 43.5v20h10"></path>
                         </svg>
                     </div>
-                    <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
-                        cálculolaboral<span class="text-[#FFB703]">.</span>
-                    </span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #0ea5e9;">Laboral</span></span>
                 </a>
 
                 <!-- Desktop Center Navigation -->
@@ -514,8 +543,11 @@
 
 
 
+
+
+
     <!-- Main Content -->
-    <main class="flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16 w-full text-center">
+    <main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 md:py-16 w-full text-center">
 
         <!-- Case: No Active Purchase Session -->
         <div id="no-session-view" class="hidden bg-white border border-slate-200 rounded-3xl p-8 shadow-xs text-center space-y-4">
@@ -630,27 +662,47 @@
     <!-- Elevated Curved Dark Footer (TealHQ Architecture) -->
     <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
     <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
     <footer class="no-print mt-16">
         <div class="teal-footer-curve">
-            <div class="footer-inner-container max-w-[1240px] mx-auto px-6 py-16 sm:py-20">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
                 
                 <!-- Main Grid 4 Columns -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
                     
                     <!-- Col 1: Brand & Description -->
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="flex items-center gap-2.5">
-                            <div style="background-color: #FFB703;" class="w-9 h-9 rounded-xl bg-[#FFB703] flex items-center justify-center text-slate-950 font-bold shrink-0 shadow-sm">
-                                <span class="material-icons text-lg" style="color: #00382E;">balance</span>
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #0ea5e9;">
+                                <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <!-- Pedestal Base -->
+                                    <path d="M30 84h40M38 79h24"></path>
+                                    <!-- Vertical Pillar -->
+                                    <path d="M50 22v57"></path>
+                                    <!-- Center pointer tip -->
+                                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <!-- Balance Beam -->
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                                    <!-- Left Pan strings and dish -->
+                                    <path d="M18 36l-8 18h16Z"></path>
+                                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <!-- Right Pan strings and dish -->
+                                    <path d="M82 36l-8 18h16Z"></path>
+                                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <!-- Monogram C wrapping left side -->
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                                    <!-- Monogram L wrapping right side -->
+                                    <path d="M58 43.5v20h10"></path>
+                                </svg>
                             </div>
-                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none whitespace-nowrap">
-                                cálculolaboral<span class="text-[#FFB703]">.</span>
-                            </span>
-                        </div>
-                        <p class="text-xs text-white/70 leading-relaxed max-w-sm">
-                            Plataforma legal independiente de cálculo laboral en Chile. Desarrollada para transparentar liquidaciones, proteger los derechos del trabajador y blindar a las pymes.
+                            <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #38bdf8;">Laboral</span></span>
+                        </a>
+                        <p class="text-xs text-white/75 leading-relaxed max-w-xs">
+                            Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-                        <div class="pt-1 text-[11px] font-mono-num text-white/40">
+                        <div class="pt-1 text-[11px] font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
@@ -659,12 +711,12 @@
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Calculadoras</h4>
                         <ul class="space-y-2 text-xs">
-                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
-                            <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
-                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
-                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#FFB703] transition-colors">Horas Extras 42h</a></li>
-                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#FFB703] transition-colors">Vacaciones Proporcionales</a></li>
-                            <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Part-Time</a></li>
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#38bdf8] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Despido Injustificado</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#38bdf8] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#38bdf8] transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#38bdf8] transition-colors">Vacaciones Proporcionales</a></li>
+                            <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#38bdf8] transition-colors">Sueldo Part-Time</a></li>
                         </ul>
                     </div>
 
@@ -672,36 +724,36 @@
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Guías Legales</h4>
                         <ul class="space-y-2 text-xs">
-                            <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Cómo Reclamar Despido</a></li>
-                            <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carta de Renuncia</a></li>
-                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white/80 hover:text-[#FFB703] transition-colors">Art. 161 Necesidades</a></li>
-                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
-                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas (42h)</a></li>
-                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                            <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Cómo Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Carta de Renuncia</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white/80 hover:text-[#38bdf8] transition-colors">Art. 161 Necesidades</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#38bdf8] transition-colors">Ley 40 Horas</a></li>
+                            <li><a href="blog" class="text-[#38bdf8] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 4: Empresas -->
+                    <!-- Col 4: Para Empresas -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Empresas</h4>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Para Empresas</h4>
                         <ul class="space-y-2 text-xs">
-                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores (Pymes)</a></li>
-                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
-                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
-                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Finiquito ($12.990)</a></li>
-                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
-                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#38bdf8] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Kit Ley 21.719 Datos</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#38bdf8] transition-colors">Kit Blindaje Laboral</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Generador Finiquito</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#38bdf8] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#38bdf8] transition-colors">Contacto Directo</a></li>
                         </ul>
                     </div>
 
                 </div>
 
                 <!-- Bottom Bar -->
-                <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
                     <div>
                         &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex flex-wrap items-center justify-center gap-4">
                         <a href="terminos" class="hover:text-white transition-colors">Términos</a>
                         <span>·</span>
                         <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>

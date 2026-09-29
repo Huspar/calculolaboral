@@ -5,7 +5,7 @@ import glob
 CANONICAL_TICKER_AND_HEADER = """
     <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
@@ -22,26 +22,34 @@ CANONICAL_TICKER_AND_HEADER = """
 
     <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
     <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-20">
                 
-                <!-- Brand Logo: Dark green box + Gold balance icon + Wordmark -->
-                <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
-                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-xs">
-                        <svg class="w-5 h-5 text-[#FFB703]" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Brand Logo: Official CálculoLaboral Brand Logo -->
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform shrink-0" style="background-color: #0ea5e9;">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Pedestal Base -->
                             <path d="M30 84h40M38 79h24"></path>
+                            <!-- Vertical Pillar -->
                             <path d="M50 22v57"></path>
+                            <!-- Center pointer tip -->
                             <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <!-- Balance Beam -->
                             <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <!-- Left Pan strings and dish -->
                             <path d="M18 36l-8 18h16Z"></path>
                             <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Right Pan strings and dish -->
                             <path d="M82 36l-8 18h16Z"></path>
                             <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Monogram C wrapping left side -->
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <!-- Monogram L wrapping right side -->
+                            <path d="M58 43.5v20h10"></path>
                         </svg>
                     </div>
-                    <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
-                        cálculolaboral<span class="text-[#FFB703]">.</span>
-                    </span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #0ea5e9;">Laboral</span></span>
                 </a>
 
                 <!-- Desktop Center Navigation -->
@@ -200,25 +208,42 @@ CANONICAL_TICKER_AND_HEADER = """
 CANONICAL_FOOTER = """    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
     <footer class="no-print mt-16">
         <div class="teal-footer-curve">
-            <div class="footer-inner-container max-w-[1240px] mx-auto px-6 py-16 sm:py-20">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
                 
                 <!-- Main Grid 4 Columns -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
                     
                     <!-- Col 1: Brand & Description -->
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="flex items-center gap-2.5">
-                            <div style="background-color: #FFB703;" class="w-9 h-9 rounded-xl bg-[#FFB703] flex items-center justify-center text-slate-950 font-bold shrink-0 shadow-sm">
-                                <span class="material-icons text-lg" style="color: #00382E;">balance</span>
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #0ea5e9;">
+                                <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <!-- Pedestal Base -->
+                                    <path d="M30 84h40M38 79h24"></path>
+                                    <!-- Vertical Pillar -->
+                                    <path d="M50 22v57"></path>
+                                    <!-- Center pointer tip -->
+                                    <path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <!-- Balance Beam -->
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                                    <!-- Left Pan strings and dish -->
+                                    <path d="M18 36l-8 18h16Z"></path>
+                                    <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <!-- Right Pan strings and dish -->
+                                    <path d="M82 36l-8 18h16Z"></path>
+                                    <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <!-- Monogram C wrapping left side -->
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                                    <!-- Monogram L wrapping right side -->
+                                    <path d="M58 43.5v20h10"></path>
+                                </svg>
                             </div>
-                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none whitespace-nowrap">
-                                cálculolaboral<span class="text-[#FFB703]">.</span>
-                            </span>
-                        </div>
-                        <p class="text-xs text-white/70 leading-relaxed max-w-sm">
-                            Plataforma legal independiente de cálculo laboral en Chile. Desarrollada para transparentar liquidaciones, proteger los derechos del trabajador y blindar a las pymes.
+                            <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #38bdf8;">Laboral</span></span>
+                        </a>
+                        <p class="text-xs text-white/75 leading-relaxed max-w-xs">
+                            Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-                        <div class="pt-1 text-[11px] font-mono-num text-white/40">
+                        <div class="pt-1 text-[11px] font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
@@ -227,12 +252,12 @@ CANONICAL_FOOTER = """    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#0038
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Calculadoras</h4>
                         <ul class="space-y-2 text-xs">
-                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
-                            <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
-                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
-                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#FFB703] transition-colors">Horas Extras 42h</a></li>
-                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#FFB703] transition-colors">Vacaciones Proporcionales</a></li>
-                            <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Part-Time</a></li>
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#38bdf8] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Despido Injustificado</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#38bdf8] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#38bdf8] transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#38bdf8] transition-colors">Vacaciones Proporcionales</a></li>
+                            <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#38bdf8] transition-colors">Sueldo Part-Time</a></li>
                         </ul>
                     </div>
 
@@ -240,36 +265,36 @@ CANONICAL_FOOTER = """    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#0038
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Guías Legales</h4>
                         <ul class="space-y-2 text-xs">
-                            <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Cómo Reclamar Despido</a></li>
-                            <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carta de Renuncia</a></li>
-                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white/80 hover:text-[#FFB703] transition-colors">Art. 161 Necesidades</a></li>
-                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
-                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas (42h)</a></li>
-                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                            <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Cómo Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Carta de Renuncia</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white/80 hover:text-[#38bdf8] transition-colors">Art. 161 Necesidades</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#38bdf8] transition-colors">Ley 40 Horas</a></li>
+                            <li><a href="blog" class="text-[#38bdf8] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 4: Empresas -->
+                    <!-- Col 4: Para Empresas -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Empresas</h4>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Para Empresas</h4>
                         <ul class="space-y-2 text-xs">
-                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores (Pymes)</a></li>
-                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
-                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
-                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Finiquito ($12.990)</a></li>
-                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
-                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#38bdf8] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Kit Ley 21.719 Datos</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#38bdf8] transition-colors">Kit Blindaje Laboral</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#38bdf8] transition-colors">Generador Finiquito</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#38bdf8] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#38bdf8] transition-colors">Contacto Directo</a></li>
                         </ul>
                     </div>
 
                 </div>
 
                 <!-- Bottom Bar -->
-                <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
                     <div>
                         &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex flex-wrap items-center justify-center gap-4">
                         <a href="terminos" class="hover:text-white transition-colors">Términos</a>
                         <span>·</span>
                         <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
@@ -310,19 +335,40 @@ CANONICAL_FOOTER_CSS = r"""
                 border-top-right-radius: 0px;
             }
             .teal-footer-curve .footer-inner-container {
-                padding-left: 8rem !important; /* 128px > 96px curve */
-                padding-right: 3rem !important;
+                padding-left: 5rem !important; /* clearance for 96px curve on 1024px-1200px */
+                padding-right: 2rem !important;
+            }
+        }
+        @media (min-width: 1200px) and (max-width: 1439px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 3.5rem !important;
+                padding-right: 2rem !important;
             }
         }
         @media (min-width: 1440px) {
             .teal-footer-curve .footer-inner-container {
-                padding-left: 4rem !important;
-                padding-right: 4rem !important;
+                padding-left: 2rem !important;
+                padding-right: 2rem !important;
             }
         }
 """
 
 CANONICAL_HEAD_CSS = r"""
+        /* Core Layout Container & Width Constraints */
+        .site-container,
+        .max-w-\[1240px\],
+        [class*="max-w-[1240px]"] {
+            max-width: 1240px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .max-w-4xl {
+            max-width: 56rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
         /* TealHQ Required Signature System Tokens & Components */
         :root {
             --teal-forest: #00382E;
@@ -461,6 +507,35 @@ def process_file(filepath):
         head = content[:head_end]
         rest = content[head_end:]
 
+        # Ensure container constraints exist and are strictly canonical
+        core_layout_css = """
+        /* Core Layout Container & Width Constraints */
+        .site-container,
+        .max-w-\\[1240px\\],
+        [class*="max-w-[1240px]"] {
+            max-width: 1240px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .max-w-4xl {
+            max-width: 56rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+"""
+        # Remove any previous container constraints block
+        head = re.sub(
+            r'/\*\s*(?:Container constraints preventing full-width runaway|Core Layout Container & Width Constraints)\s*\*/[\s\S]*?(\.max-w-4xl\s*\{[^}]*\}|\.max-w-\\\[1240px\\\][^{]*\{[^}]*\})',
+            '',
+            head
+        )
+        last_style_idx = head.rfind('</style>')
+        if last_style_idx != -1:
+            head = head[:last_style_idx] + core_layout_css.rstrip() + '\n    ' + head[last_style_idx:]
+        else:
+            head = head + f'<style>{core_layout_css}</style>\n'
+
         # Ensure base tokens and components exist
         if 'btn-yellow-pill' not in head:
             last_style_idx = head.rfind('</style>')
@@ -469,14 +544,18 @@ def process_file(filepath):
             else:
                 head = head + f'<style>{CANONICAL_HEAD_CSS}</style>\n'
 
-        # Update or inject canonical footer CSS, removing any duplicate or old rules
-        footer_css_pattern = r'(\s*/\*\s*TealHQ[^*]*\*/)?\s*\.teal-footer-curve\s*\{[^}]*\}(?:\s*@media[^{]*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})*'
-        matches = list(re.finditer(footer_css_pattern, head))
-        if matches:
-            for m in reversed(matches[:-1]):
-                head = head[:m.start()] + head[m.end():]
-            last_m = list(re.finditer(footer_css_pattern, head))[-1]
-            head = head[:last_m.start()] + '\n' + CANONICAL_FOOTER_CSS.strip() + '\n' + head[last_m.end():]
+        # Update or inject canonical footer CSS, cleanly replacing any duplicate or old rules
+        if '.teal-footer-curve' in head:
+            first = head.find('.teal-footer-curve')
+            comment = head.rfind('/* TealHQ Elevated Curved Dark Footer', 0, first)
+            start = comment if comment != -1 and first - comment < 150 else first
+            last = head.rfind('teal-footer-curve')
+            end_m = re.search(r'\}\s*\}\s*', head[last:])
+            if end_m:
+                end = last + end_m.end()
+                head = head[:start] + CANONICAL_FOOTER_CSS.strip() + '\n' + head[end:]
+            else:
+                head = head[:start] + CANONICAL_FOOTER_CSS.strip() + '\n' + head[last:]
         else:
             last_style_idx = head.rfind('</style>')
             if last_style_idx != -1:
@@ -497,6 +576,28 @@ def process_file(filepath):
     if footer_m:
         content = content[:footer_m.start()] + CANONICAL_FOOTER.strip() + content[footer_m.end():]
 
+    # 5. Standardize Main Container
+    filename = os.path.basename(filepath)
+    if filename == 'index.html':
+        if '<main' not in content:
+            header_end = content.find('</header>')
+            footer_start = content.find('<footer')
+            if header_end != -1 and footer_start != -1 and header_end < footer_start:
+                between = content[header_end + 9:footer_start]
+                content = content[:header_end + 9] + '\n\n    <!-- MAIN CONTAINER -->\n    <main class="site-container max-w-[1240px] mx-auto w-full">' + between + '    </main>\n\n' + content[footer_start:]
+    else:
+        main_m = re.search(r'<main\b([^>]*)>', content)
+        if main_m:
+            attrs = main_m.group(1)
+            cm = re.search(r'class="([^"]*)"', attrs)
+            if cm:
+                classes = cm.group(1).split()
+                if 'site-container' not in classes:
+                    classes.insert(0, 'site-container')
+                    new_class = ' '.join(classes)
+                    new_attrs = attrs[:cm.start()] + f'class="{new_class}"' + attrs[cm.end():]
+                    content = content[:main_m.start()] + f'<main{new_attrs}>' + content[main_m.end():]
+
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
     print(f'Processed: {filepath}')
@@ -506,7 +607,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] != '--all':
         process_file(sys.argv[1])
     else:
-        files = [f for f in sorted(glob.glob('*.html')) if f not in ['home-v2.html', 'ejemplo-informe-ejecutivo.html', '_template.html']]
-        print(f'Processing {len(files)} core HTML files...')
+        files = [f for f in sorted(glob.glob('*.html')) if f not in ['home-v2.html', 'ejemplo-informe-ejecutivo.html']]
+        print(f'Processing {len(files)} files (46 core HTML pages + _template.html)...')
         for f in files:
             process_file(f)
