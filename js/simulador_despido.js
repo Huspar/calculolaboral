@@ -299,15 +299,15 @@
         if (btnModoEmp && btnModoTrab) {
             btnModoEmp.addEventListener('click', function () {
                 state.mode = 'empleador';
-                btnModoEmp.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-xl transition-all bg-white text-slate-900 shadow-sm border border-slate-200/80';
-                btnModoTrab.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-xl transition-all text-slate-600 hover:text-slate-900';
+                btnModoEmp.className = 'product-tab active';
+                btnModoTrab.className = 'product-tab';
                 calculate();
             });
 
             btnModoTrab.addEventListener('click', function () {
                 state.mode = 'trabajador';
-                btnModoTrab.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-xl transition-all bg-white text-slate-900 shadow-sm border border-slate-200/80';
-                btnModoEmp.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-xl transition-all text-slate-600 hover:text-slate-900';
+                btnModoTrab.className = 'product-tab active';
+                btnModoEmp.className = 'product-tab';
                 calculate();
             });
         }
