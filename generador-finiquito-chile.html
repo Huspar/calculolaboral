@@ -24,11 +24,15 @@
     <meta property="og:image" content="https://calculolaboral.cl/assets/og-image.png">
     <meta property="og:locale" content="es_CL">
     <meta property="og:site_name" content="Cálculo Laboral">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Generador Finiquito Notarial Chile 2026 (Word y PDF)">
+    <meta name="twitter:description" content="Genera el finiquito de contrato de trabajo listo para Notaría en Chile en Word y PDF. Con cláusulas Ley Bustos, Ley 21.389 de alimentos y descuento AFC verificado.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og-image.png">
     
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Google Tag Manager / Analytics -->
@@ -118,6 +122,143 @@
 </script>
     
     <style>
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .bg-warm-surface {
+            background-color: #F8FAF9;
+        }
+
+        .font-mono-num {
+            font-family: 'Geist Mono', monospace;
+            font-feature-settings: 'tnum' on, 'zero' on;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Pill Buttons */
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 26px;
+            font-size: 14.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
+        }
+        .btn-yellow-pill:hover {
+            background-color: #FFAA00;
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
+        }
+        .btn-yellow-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 26px;
+            font-size: 14.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.25);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(0, 56, 46, 0.35);
+            color: #FFFFFF !important;
+        }
+        .btn-dark-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #374151 !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 11px 22px;
+            font-size: 14px;
+            border: 1.5px solid #D1D5DB;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover {
+            border-color: var(--teal-forest);
+            color: var(--teal-forest) !important;
+            background-color: #F8FAF9;
+        }
+
+        .site-container {
+            max-width: 1240px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        /* Dropdowns */
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Elevated Curved Dark Footer */
+        .teal-footer-curve {
+            background-color: #00382E;
+            color: #FFFFFF;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        @media (min-width: 1024px) {
+            .teal-footer-curve {
+                border-top-left-radius: 96px;
+                border-top-right-radius: 0px;
+            }
+        }
+
         /* Estilos específicos de hoja notarial y marcas de agua */
         .notary-sheet {
             font-family: 'Newsreader', 'Times New Roman', serif;
@@ -162,12 +303,12 @@
         }
 
         .watermark-stamp-box {
-            transform: rotate(-10deg);
-            border: 3.5px dashed rgba(220, 38, 38, 0.65);
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(4px);
-            border-radius: 1rem;
-            padding: 1.5rem 2.25rem;
+            transform: rotate(-8deg);
+            border: 3.5px dashed rgba(220, 38, 38, 0.7);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(6px);
+            border-radius: 1.25rem;
+            padding: 1.6rem 2.25rem;
             text-align: center;
             box-shadow: 0 15px 35px -5px rgba(220, 38, 38, 0.25), 0 0 0 6px rgba(254, 226, 226, 0.6);
             max-width: 440px;
@@ -207,24 +348,27 @@
         .watermark-stamp-box .stamp-cta {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            margin-top: 0.75rem;
-            padding: 0.45rem 1.1rem;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-top: 0.85rem;
+            padding: 0.6rem 1.4rem;
             background: #dc2626;
-            color: #ffffff;
-            font-size: 0.75rem;
+            color: #ffffff !important;
+            font-size: 0.8rem;
             font-weight: 800;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.03em;
             border-radius: 9999px;
             box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
             cursor: pointer;
             transition: all 0.2s;
             border: none;
+            width: 100%;
         }
 
         .watermark-stamp-box .stamp-cta:hover {
             background: #b91c1c;
             transform: scale(1.02);
+            color: #ffffff !important;
         }
 
         @media print {
@@ -244,7 +388,6 @@
                 box-shadow: none;
                 background: white;
             }
-            /* Si no ha pagado, mantener la marca de agua visible en la impresión */
             body:not(.paid-unlocked) .watermark-overlay {
                 visibility: visible !important;
                 display: flex !important;
@@ -259,6 +402,7 @@
                 display: none !important;
             }
         }
+
         @media (max-width: 639px) {
             .indicators-carousel {
                 display: flex !important;
@@ -301,148 +445,228 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+<body class="bg-warm-surface text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-[#00382E]/10 selection:text-slate-900">
 
-    <!-- Header -->
-        <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm transition-all duration-300 no-print">
-        <div class="max-w-[1200px] mx-auto px-6">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <a href="./" class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity">
-                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
-                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                            <!-- Pedestal Base -->
-                            <path d="M30 84h40M38 79h24"></path>
-                            <!-- Vertical Pillar -->
-                            <path d="M50 22v57"></path>
-                            <!-- Center pointer tip -->
-                            <path d="M50 14l-2 4h4l-2-4v8"></path>
-                            <!-- Balance Beam -->
-                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                            <!-- Left Pan strings and dish -->
-                            <path d="M18 36l-8 18h16Z"></path>
-                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <!-- Right Pan strings and dish -->
-                            <path d="M82 36l-8 18h16Z"></path>
-                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <!-- Monogram C wrapping left side -->
-                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                            <!-- Monogram L wrapping right side -->
-                            <path d="M58 43.5v20h10"></path>
-                        </svg>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+    <!-- Top Bar / Live Indicadores (TealHQ Architecture) -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 px-4 no-print border-b border-white/10">
+        <div class="max-w-[1240px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2 font-mono text-[11px] text-white/90">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Indicadores Económicos Oficiales 2026: UF: $40.975,41 · UTM: $71.721 · Sueldo Mínimo: $553.553 · Tope Finiquito: 90 UF</span>
+            </div>
+            <div class="flex items-center gap-4 text-[11px] text-white/70">
+                <a href="https://www.dt.gob.cl" target="_blank" rel="noopener" class="hover:text-white transition-colors">Dirección del Trabajo</a>
+                <span>·</span>
+                <a href="https://www.bcentral.cl" target="_blank" rel="noopener" class="hover:text-white transition-colors">Banco Central</a>
+                <span>·</span>
+                <span class="text-amber-300 font-semibold">Notarías & DT Chile</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TealHQ Header / Navigation -->
+    <header class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 no-print transition-all duration-200 shadow-xs">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            <!-- Brand Emblem -->
+            <a href="./" class="flex items-center gap-3 group cursor-pointer">
+                <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md shadow-emerald-950/20 group-hover:scale-105 transition-all">
+                    <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Pedestal Base -->
+                        <path d="M30 84h40M38 79h24"></path>
+                        <!-- Vertical Pillar -->
+                        <path d="M50 22v57"></path>
+                        <!-- Center pointer tip -->
+                        <path d="M50 14l-2 4h4l-2-4v8"></path>
+                        <!-- Balance Beam -->
+                        <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                        <!-- Left Pan strings and dish -->
+                        <path d="M18 36l-8 18h16Z"></path>
+                        <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                        <!-- Right Pan strings and dish -->
+                        <path d="M82 36l-8 18h16Z"></path>
+                        <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                        <!-- Monogram C wrapping left side -->
+                        <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                        <!-- Monogram L wrapping right side -->
+                        <path d="M58 43.5v20h10"></path>
+                    </svg>
+                </div>
+                <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
+                    cálculolaboral<span class="text-amber-500">.</span>
+                </span>
+            </a>
+
+            <!-- Desktop Center Navigation -->
+            <nav class="hidden lg:flex items-center gap-1 text-[15px] font-semibold text-gray-700">
+                <a href="generador-finiquito-chile" class="px-4 py-6 text-emerald-950 font-bold transition-colors">
+                    Generador Finiquito
                 </a>
 
-                <!-- Desktop Menu -->
-                <nav class="hidden md:flex gap-6 items-center">
-                    <!-- Dropdown Calculadoras -->
-                    <div class="relative group">
-                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
-                            Calculadoras
-                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
-                        </button>
-                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
-                            <div class="p-2 space-y-1">
-                                <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50/80 hover:bg-rose-100 rounded-lg transition-colors font-bold">Simulador Despido Injustificado</a>
-                                <a href="sueldo_liquido" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Líquido</a>
-                                <a href="finiquito_calculator" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito</a>
-                                <a href="generador-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Generador Finiquito (Word/PDF)</a>
-                                <a href="calculadora-horas-extras" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Horas Extras</a>
-                                <a href="calculadora-sueldo-part-time" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Sueldo Part-Time</a>
-                                <a href="calculadora-vacaciones" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Calculadora de Vacaciones</a>
-                                <a href="calculadora-despido-articulo-160" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Despido Art. 160</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Dropdown Guías -->
-                    <div class="relative group">
-                        <button class="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors py-2 outline-none">
-                            Guías
-                            <span class="material-icons text-xs group-hover:rotate-180 transition-transform">expand_more</span>
-                        </button>
-                        <div class="absolute left-0 mt-0 w-64 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
-                            <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto">
-                                <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Cómo Reclamar Despido Injustificado</a>
-                                <a href="carta-de-renuncia-chile" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Carta de Renuncia (Asistente)</a>
-                                <a href="generador-anexo-40-horas" class="block px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Generador Anexo 40 Horas (42h)</a>
-                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Checklist Fiscalización DT (Pymes)</a>
-                                <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 rounded-lg transition-colors font-bold">Indemnización a Todo Evento (Propuesta)</a>
-                                <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Fondos Generacionales AFP</a>
-                                <a href="como-calcular-finiquito-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Finiquito</a>
-                                <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Calcular Sueldo Líquido</a>
-                                <a href="como-leer-liquidacion-de-sueldo" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cómo Leer Liquidación</a>
-                                <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Art. 161 Necesidades Empresa</a>
-                                <a href="ley-40-horas-chile-2026" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Ley 40 Horas 2026</a>
-                                <a href="calculadora-vacaciones" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Calculadora de Vacaciones</a>
-                                <a href="seguro-de-cesantia-chile-como-cobrar" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Cobrar Seguro Cesantía</a>
-                                <a href="que-hacer-si-no-te-pagan-el-finiquito" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Si no te Pagan el Finiquito</a>
-                                <a href="finiquito-por-renuncia-voluntaria" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Finiquito Renuncia Voluntaria</a>
-                                <a href="carta-de-despido-chile" class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50 rounded-lg transition-colors">Carta de Despido Ejemplo</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <a href="para-empleadores" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/70 transition-colors">
-                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-                        <span>Para Empleadores</span>
-                    </a>
-
-                    <a href="blog" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Blog</a>
-                    <a href="contacto" class="text-sm font-semibold text-slate-600 hover:text-sky-500 transition-colors">Contacto</a>
-                </nav>
-
-                <!-- Mobile Menu -->
-                <details class="md:hidden">
-                    <summary class="list-none p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors active:scale-95 duration-100 cursor-pointer flex items-center" aria-label="Abrir menú de navegación">
-                        <span class="material-icons">menu</span>
-                    </summary>
-                    <div class="fixed left-0 right-0 top-16 bg-white border-t border-slate-200 shadow-xl z-50 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
-                        <div class="max-w-[1200px] mx-auto px-6 py-4 space-y-2">
-                            <a href="para-empleadores" class="flex items-center gap-2 px-3 py-2 rounded-lg text-base font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/80">
-                                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
-                                <span>Portal Para Empleadores</span>
+                <!-- Dropdown: Herramientas ⌵ -->
+                <div class="nav-dropdown-group relative">
+                    <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
+                        <span>Calculadoras</span>
+                        <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Mega Menu Panel -->
+                    <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 600px; min-width: 600px;">
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-xl">calculate</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Finiquito Legal Completo</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">Años de servicio, aviso previo y feriado.</div>
+                                </div>
                             </a>
-                            <a href="simulador-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-rose-700 bg-rose-50/90 border border-rose-200">Simulador Despido Injustificado</a>
-                            <a href="kit-cumplimiento-laboral-pymes" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-600 bg-sky-50/80 border border-sky-200/80 hover:bg-sky-100/80 transition-colors">Kit Blindaje Pyme 2026 ($19.990)</a>
-                            <a href="generador-finiquito-chile" class="block px-3 py-2 rounded-lg text-sm font-bold text-sky-600 bg-sky-50/80 border border-sky-200/80 hover:bg-sky-100/80 transition-colors">Generador Finiquito Notarial ($12.990)</a>
-                            <a href="carta-de-renuncia-chile" class="block px-3 py-2 rounded-lg text-base font-semibold text-sky-600 bg-sky-50 font-bold">Carta de Renuncia (Asistente)</a>
-                            <a href="generador-anexo-40-horas" class="block px-3 py-2 rounded-lg text-base font-semibold text-sky-600 bg-sky-50 font-bold">Generador Anexo 40 Horas (42h)</a>
-                            <a href="checklist-fiscalizacion-dt-pymes-chile" class="block px-3 py-2 rounded-lg text-base font-semibold text-amber-600 bg-amber-50 font-bold">Checklist Fiscalización DT (Pymes)</a>
-                            <a href="sueldo_liquido" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Líquido</a>
-                            <a href="finiquito_calculator" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito</a>
-                            <a href="calculadora-horas-extras" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Horas Extras</a>
-                            <a href="calculadora-sueldo-part-time" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Sueldo Part-Time</a>
-                            <a href="calculadora-vacaciones" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Calculadora de Vacaciones</a>
-                            <a href="calculadora-despido-articulo-160" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Despido Art. 160</a>
-                            <div class="border-t border-slate-100 my-2"></div>
-                            <p class="px-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Guías</p>
-                            <a href="reclamar-despido-injustificado-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-sky-600 hover:text-sky-700 hover:bg-slate-50 font-bold">Cómo Reclamar Despido Injustificado</a>
-                            <a href="propuesta-indemnizacion-a-todo-evento-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 font-bold">Indemnización a Todo Evento (Propuesta)</a>
-                            <a href="fondos-generacionales-afp-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Fondos Generacionales AFP</a>
-                            <a href="como-calcular-finiquito-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Calcular Finiquito</a>
-                            <a href="como-calcular-sueldo-liquido-paso-a-paso" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Calcular Sueldo Líquido</a>
-                            <a href="como-leer-liquidacion-de-sueldo" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cómo Leer Liquidación</a>
-                            <a href="despido-necesidades-empresa-articulo-161" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Art. 161 Necesidades Empresa</a>
-                            <a href="ley-40-horas-chile-2026" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Ley 40 Horas 2026</a>
-                            <a href="calculadora-vacaciones" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Vacaciones Proporcionales</a>
-                            <a href="seguro-de-cesantia-chile-como-cobrar" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Cobrar Seguro Cesantía</a>
-                            <a href="que-hacer-si-no-te-pagan-el-finiquito" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Si no te Pagan el Finiquito</a>
-                            <a href="finiquito-por-renuncia-voluntaria" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Finiquito Renuncia Voluntaria</a>
-                            <a href="carta-de-despido-chile" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Carta de Despido Ejemplo</a>
-                            <div class="border-t border-slate-100 my-2"></div>
-                            <a href="blog" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Blog</a>
-                            <a href="contacto" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-600 hover:text-sky-500 hover:bg-slate-50">Contacto</a>
+
+                            <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-xl">gavel</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Despido Injustificado</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">Recargo +30% y recuperación aporte AFC.</div>
+                                </div>
+                            </a>
+
+                            <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-xl">payments</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Sueldo Líquido</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">Descuentos previsionales AFP, Fonasa e impuestos.</div>
+                                </div>
+                            </a>
+
+                            <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-xl">schedule</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Horas Extras 42h</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">Recargo 50% y 100% Ley 40 Horas.</div>
+                                </div>
+                            </a>
+
+                            <a href="calculadora-sueldo-part-time" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-xl">hourglass_bottom</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Sueldo Part-Time 30h</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">Jornada parcial y protección estudiante.</div>
+                                </div>
+                            </a>
+
+                            <a href="calculadora-vacaciones" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-xl">beach_access</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Calculadora de Vacaciones</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">Proporcionales, hábiles e inhábiles DT.</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between px-2 text-xs">
+                            <span class="text-gray-500 font-medium">9 calculadoras laborales vigentes</span>
+                            <a href="./#calculadoras" class="font-bold text-emerald-800 hover:text-emerald-950 inline-flex items-center gap-1 transition-colors">
+                                <span>Ver catálogo completo (15 herramientas)</span>
+                                <span class="material-icons text-xs">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
-                </details>
+                </div>
+
+                <!-- Dropdown: Recursos ⌵ -->
+                <div class="nav-dropdown-group relative">
+                    <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
+                        <span>Recursos</span>
+                        <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Panel -->
+                    <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 480px; min-width: 480px;">
+                        <div class="space-y-1">
+                            <a href="reclamar-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-lg">description</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Cómo Reclamar un Despido</div>
+                                    <div class="text-xs text-gray-500">Pasos ante la DT y plazos fatales.</div>
+                                </div>
+                            </a>
+
+                            <a href="carta-de-renuncia-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-lg">edit</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Carta de Renuncia Voluntaria</div>
+                                    <div class="text-xs text-gray-500">Generador con aviso previo de 30 días legales.</div>
+                                </div>
+                            </a>
+
+                            <a href="blog" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-lg">library_books</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Guías Laborales & Dictámenes</div>
+                                    <div class="text-xs text-gray-500">Art. 161, Ley Karin, Ley 40 Horas.</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="para-empleadores" class="px-4 py-6 hover:text-emerald-900 transition-colors">
+                    Para Pymes
+                </a>
+            </nav>
+
+            <!-- Right Twin Pill Action Buttons -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="para-empleadores" class="btn-outline-pill">
+                    Portal Pymes
+                </a>
+                <button type="button" onclick="document.getElementById('payment-modal')?.classList.remove('hidden')" class="btn-yellow-pill">
+                    <span class="material-icons text-sm" style="color: #111827 !important;">lock_open</span>
+                    <span>Descargar Pack ($12.990)</span>
+                </button>
             </div>
+
+            <!-- Mobile Hamburger Toggle -->
+            <details class="lg:hidden static">
+                <summary class="list-none p-2 rounded-xl text-gray-700 hover:bg-gray-100 cursor-pointer" aria-label="Abrir menú">
+                    <span class="material-icons">menu</span>
+                </summary>
+                <div class="absolute left-0 right-0 top-full bg-white border-b border-slate-200 shadow-xl z-50 p-6 space-y-3">
+                    <a href="generador-finiquito-chile" class="block px-4 py-3 rounded-xl text-base font-bold text-amber-950 bg-amber-50">Generador Finiquito ($12.990)</a>
+                    <a href="finiquito_calculator" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Simulador Finiquito Legal 2026</a>
+                    <a href="simulador-despido-injustificado-chile" class="block px-4 py-3 rounded-xl text-base font-bold text-rose-600 bg-rose-50">Despido Injustificado (+30%)</a>
+                    <a href="sueldo_liquido" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Calculadora Sueldo Líquido</a>
+                    <a href="calculadora-horas-extras" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Horas Extras Ley 40 Horas</a>
+                    <a href="calculadora-sueldo-part-time" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Sueldo Part-Time 30h</a>
+                    <a href="calculadora-vacaciones" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Calculadora de Vacaciones</a>
+                    <a href="./#calculadoras" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-800 bg-slate-100 border border-slate-200">Ver Todas las Calculadoras (15) ↓</a>
+                    <a href="para-empleadores" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950">Portal Empleadores & Pymes</a>
+                </div>
+            </details>
         </div>
     </header>
 
     <!-- Barra de Indicadores Económicos Oficiales -->
-    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
+    <div class="w-full max-w-[1240px] mx-auto px-4 sm:px-6 mt-2 mb-2 sm:mb-3 no-print">
         <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
             <!-- UF Card -->
             <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
@@ -475,7 +699,7 @@
                 <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
                 <span>Valores oficiales vigentes (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT Chile</a>)</span>
             </div>
-            <button type="button" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px] cursor-pointer bg-transparent border-0 p-0">
+            <button type="button" id="btn-history" class="text-[#00382E] hover:underline flex items-center gap-0.5 text-[10px] cursor-pointer bg-transparent border-0 p-0 font-semibold">
                 <span class="material-icons text-[12px]" aria-hidden="true">history</span>
                 <span>Historial</span>
             </button>
@@ -483,40 +707,46 @@
     </div>
 
     <!-- HERO DE ENCABEZADO -->
-    <section class="bg-gradient-to-b from-white to-slate-50 border-b border-slate-200 pt-8 pb-6 px-4 no-print">
-        <div class="max-w-[1200px] mx-auto px-6 text-center">
-            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full mb-3">
-                <span class="material-icons text-sm">gavel</span>
+    <section class="bg-gradient-to-b from-white via-slate-50/60 to-warm-surface border-b border-slate-200/80 pt-10 pb-8 px-4 no-print">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 text-center">
+            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-950 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
+                <span class="material-icons text-sm text-emerald-700">gavel</span>
                 Art. 177 Código del Trabajo • Ley Bustos • Ley 21.389
             </div>
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
                 Generador de Finiquito Notarial y Pack de Despido
             </h1>
-            <p class="mt-2 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-                Completa los datos en 3 minutos y obtén el documento legal listo para firmar ante Notario o la Inspección del Trabajo, con fórmulas conforme al Código del Trabajo y respaldo para pymes.
+            <p class="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                Completa los datos en 3 minutos y obtén el documento legal listo para firmar ante Notario o la Inspección del Trabajo, con redacción jurídica profesional, respaldo de fórmulas conforme a DT y blindaje pyme.
             </p>
             
             <!-- Badges de confianza -->
-            <div class="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-600 font-medium">
-                <span class="flex items-center gap-1"><span class="material-icons text-emerald-600 text-sm">verified</span> Válido en todas las Notarías de Chile</span>
-                <span class="flex items-center gap-1"><span class="material-icons text-emerald-600 text-sm">verified</span> Descuento AFC Art. 13 Verificado</span>
-                <span class="flex items-center gap-1"><span class="material-icons text-emerald-600 text-sm">verified</span> Respaldo Ley Bustos y Previred</span>
+            <div class="mt-5 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-700 font-medium">
+                <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200/80 shadow-2xs">
+                    <span class="material-icons text-emerald-600 text-sm">verified</span> Válido en todas las Notarías de Chile
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200/80 shadow-2xs">
+                    <span class="material-icons text-emerald-600 text-sm">verified</span> Descuento AFC Art. 13 Verificado
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200/80 shadow-2xs">
+                    <span class="material-icons text-emerald-600 text-sm">verified</span> Respaldo Ley Bustos y Previred
+                </span>
             </div>
         </div>
     </section>
 
     <!-- ESPACIO DE TRABAJO PRINCIPAL (SPLIT SCREEN) -->
-    <main class="flex-grow max-w-[1200px] mx-auto px-6 py-6 w-full">
+    <main class="flex-grow max-w-[1240px] mx-auto px-4 sm:px-6 py-8 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             <!-- COLUMNA IZQUIERDA: FORMULARIO REACTIVO (5 cols) -->
             <div class="lg:col-span-5 space-y-5 no-print">
                 
                 <!-- ACORDEÓN 1: DATOS DE LA EMPRESA (EMPLEADOR) -->
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold">1</span>
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-full bg-[#00382E] text-white flex items-center justify-center text-xs font-bold">1</span>
                             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">Datos del Empleador (Empresa)</h2>
                         </div>
                         <span class="text-[11px] text-slate-500 font-medium">Parte Compareciente</span>
@@ -525,38 +755,38 @@
                     <div class="space-y-3.5 text-xs">
                         <div>
                             <label for="empresa-razon" class="block font-semibold text-slate-700 mb-1">Razón Social o Nombre del Empleador:</label>
-                            <input type="text" id="empresa-razon" placeholder="Ej: Transportes y Servicios del Sur SpA" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                            <input type="text" id="empresa-razon" placeholder="Ej: Transportes y Servicios del Sur SpA" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                         </div>
                         <div>
                             <label for="empresa-domicilio" class="block font-semibold text-slate-700 mb-1">Domicilio Legal del Empleador:</label>
-                            <input type="text" id="empresa-domicilio" placeholder="Ej: Av. Providencia 1234, Of. 502, Providencia" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                            <input type="text" id="empresa-domicilio" placeholder="Ej: Av. Providencia 1234, Of. 502, Providencia" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label for="empresa-rut" class="block font-semibold text-slate-700 mb-1">RUT Empresa:</label>
-                                <input type="text" id="empresa-rut" placeholder="76.123.456-7" maxlength="12" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 font-mono text-xs sm:text-sm">
+                                <input type="text" id="empresa-rut" placeholder="76.123.456-7" maxlength="12" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 font-mono-num text-xs sm:text-sm transition-all">
                             </div>
                             <div>
                                 <label for="empresa-ciudad" class="block font-semibold text-slate-700 mb-1">Ciudad Notaría:</label>
-                                <input type="text" id="empresa-ciudad" value="Santiago" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                                <input type="text" id="empresa-ciudad" value="Santiago" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                             </div>
                         </div>
                         <div>
                             <label for="empresa-rep-nombre" class="block font-semibold text-slate-700 mb-1">Nombre Representante Legal:</label>
-                            <input type="text" id="empresa-rep-nombre" placeholder="Ej: Juan Carlos Soto Pérez" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                            <input type="text" id="empresa-rep-nombre" placeholder="Ej: Juan Carlos Soto Pérez" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                         </div>
                         <div>
                             <label for="empresa-rep-rut" class="block font-semibold text-slate-700 mb-1">RUT Representante Legal:</label>
-                            <input type="text" id="empresa-rep-rut" placeholder="12.345.678-9" maxlength="12" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 font-mono text-xs sm:text-sm">
+                            <input type="text" id="empresa-rep-rut" placeholder="12.345.678-9" maxlength="12" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 font-mono-num text-xs sm:text-sm transition-all">
                         </div>
                     </div>
                 </div>
 
                 <!-- ACORDEÓN 2: DATOS DEL TRABAJADOR -->
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold">2</span>
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-full bg-[#00382E] text-white flex items-center justify-center text-xs font-bold">2</span>
                             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">Datos del Trabajador</h2>
                         </div>
                         <span class="text-[11px] text-slate-500 font-medium">Parte Trabajadora</span>
@@ -565,34 +795,34 @@
                     <div class="space-y-3.5 text-xs">
                         <div>
                             <label for="trabajador-nombre" class="block font-semibold text-slate-700 mb-1">Nombre Completo del Trabajador:</label>
-                            <input type="text" id="trabajador-nombre" placeholder="Ej: María Paz González Rojas" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                            <input type="text" id="trabajador-nombre" placeholder="Ej: María Paz González Rojas" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                         </div>
                         <div>
                             <label for="trabajador-domicilio" class="block font-semibold text-slate-700 mb-1">Domicilio del Trabajador:</label>
-                            <input type="text" id="trabajador-domicilio" placeholder="Ej: Los Robles 456, Depto 12" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                            <input type="text" id="trabajador-domicilio" placeholder="Ej: Los Robles 456, Depto 12" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                         </div>
                         <div>
                             <label for="trabajador-cargo" class="block font-semibold text-slate-700 mb-1">Cargo u Oficio Desempeñado:</label>
-                            <input type="text" id="trabajador-cargo" placeholder="Ej: Jefe de Operaciones y Logística" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                            <input type="text" id="trabajador-cargo" placeholder="Ej: Jefe de Operaciones y Logística" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label for="trabajador-rut" class="block font-semibold text-slate-700 mb-1">RUT Trabajador:</label>
-                                <input type="text" id="trabajador-rut" placeholder="18.987.654-3" maxlength="12" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 font-mono text-xs sm:text-sm">
+                                <input type="text" id="trabajador-rut" placeholder="18.987.654-3" maxlength="12" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 font-mono-num text-xs sm:text-sm transition-all">
                             </div>
                             <div>
                                 <label for="trabajador-ciudad" class="block font-semibold text-slate-700 mb-1">Comuna / Ciudad:</label>
-                                <input type="text" id="trabajador-ciudad" value="Santiago" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 text-xs sm:text-sm">
+                                <input type="text" id="trabajador-ciudad" value="Santiago" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 text-xs sm:text-sm transition-all">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- ACORDEÓN 3: VIGENCIA, FECHAS Y CAUSAL LEGAL -->
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold">3</span>
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-full bg-[#00382E] text-white flex items-center justify-center text-xs font-bold">3</span>
                             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">Fechas y Causal Legal de Término</h2>
                         </div>
                     </div>
@@ -601,21 +831,21 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
                             <div>
                                 <label for="fecha-inicio" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Fecha Ingreso:</label>
-                                <input type="date" id="fecha-inicio" value="2023-03-01" class="w-full px-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 text-xs">
+                                <input type="date" id="fecha-inicio" value="2023-03-01" class="w-full px-2.5 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 text-xs">
                             </div>
                             <div>
                                 <label for="fecha-termino" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Fecha Término:</label>
-                                <input type="date" id="fecha-termino" value="2026-09-19" class="w-full px-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 text-xs">
+                                <input type="date" id="fecha-termino" value="2026-09-19" class="w-full px-2.5 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 text-xs">
                             </div>
                             <div>
                                 <label for="fecha-pago" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Fecha Finiquito:</label>
-                                <input type="date" id="fecha-pago" value="2026-09-19" class="w-full px-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 text-xs">
+                                <input type="date" id="fecha-pago" value="2026-09-19" class="w-full px-2.5 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 text-xs">
                             </div>
                         </div>
 
                         <div>
                             <label for="causal-select" class="block font-semibold text-slate-700 mb-1">Causal Legal de Desvinculación (Código del Trabajo):</label>
-                            <select id="causal-select" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-slate-800 font-medium text-xs sm:text-sm">
+                            <select id="causal-select" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] outline-none text-slate-800 font-medium text-xs sm:text-sm">
                                 <option value="161" selected>Art. 161 — Necesidades de la Empresa</option>
                                 <option value="159-2">Art. 159 Nº 2 — Renuncia Voluntaria</option>
                                 <option value="159-4">Art. 159 Nº 4 — Vencimiento del Plazo Convenido</option>
@@ -625,12 +855,12 @@
                         </div>
 
                         <!-- Checkbox Aviso Previo (Solo Art. 161) -->
-                        <div id="aviso-previo-box" class="p-3 bg-amber-50/70 border border-amber-200 rounded-lg">
+                        <div id="aviso-previo-box" class="p-3.5 bg-amber-50/70 border border-amber-200/90 rounded-xl">
                             <label class="flex items-start gap-2.5 cursor-pointer">
-                                <input type="checkbox" id="aviso-previo" class="mt-0.5 rounded text-sky-600 focus:ring-sky-500">
+                                <input type="checkbox" id="aviso-previo" class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]">
                                 <div>
                                     <span class="font-bold text-slate-800">¿Se dio aviso de despido con 30 días de anticipación?</span>
-                                    <p class="text-[11px] text-slate-600 mt-0.5">Si NO se dio con 30 días de anticipación, corresponde pagar la <strong>indemnización sustitutiva del aviso previo</strong> (equivalente a 1 mes de sueldo).</p>
+                                    <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">Si NO se dio con 30 días de anticipación, corresponde pagar la <strong>indemnización sustitutiva del aviso previo</strong> (equivalente a 1 mes de sueldo base + gratificación).</p>
                                 </div>
                             </label>
                         </div>
@@ -638,28 +868,28 @@
                 </div>
 
                 <!-- ACORDEÓN 4: REMUNERACIONES Y PARÁMETROS -->
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold">4</span>
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-full bg-[#00382E] text-white flex items-center justify-center text-xs font-bold">4</span>
                             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">Remuneración Mensual y Vacaciones</h2>
                         </div>
                     </div>
 
-                    <div class="space-y-3 text-xs">
+                    <div class="space-y-3.5 text-xs">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label for="sueldo-base" class="block font-semibold text-slate-700 mb-1">Sueldo Base Mensual:</label>
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
-                                    <input type="text" id="sueldo-base" value="1.200.000" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 font-mono text-xs sm:text-sm">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
+                                    <input type="text" id="sueldo-base" value="1.200.000" inputmode="numeric" class="w-full pl-8 pr-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 font-mono-num text-xs sm:text-sm">
                                 </div>
                             </div>
                             <div>
                                 <label for="gratificacion" class="block font-semibold text-slate-700 mb-1">Gratificación Legal Mensual:</label>
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
-                                    <input type="text" id="gratificacion" value="219.031" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 font-mono text-xs sm:text-sm">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
+                                    <input type="text" id="gratificacion" value="219.031" inputmode="numeric" class="w-full pl-8 pr-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 font-mono-num text-xs sm:text-sm">
                                 </div>
                             </div>
                         </div>
@@ -668,16 +898,16 @@
                             <div>
                                 <label for="asignaciones" class="block font-semibold text-slate-700 mb-1">Colación y Movilización:</label>
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
-                                    <input type="text" id="asignaciones" value="80.000" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 font-mono text-xs sm:text-sm">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
+                                    <input type="text" id="asignaciones" value="80.000" inputmode="numeric" class="w-full pl-8 pr-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 font-mono-num text-xs sm:text-sm">
                                 </div>
                                 <span class="text-[10px] text-slate-500 mt-0.5 block">Asignaciones no imponibles</span>
                             </div>
                             <div>
                                 <label for="promedio-variables" class="block font-semibold text-slate-700 mb-1">Promedio Comisiones (3 Meses):</label>
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
-                                    <input type="text" id="promedio-variables" value="0" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 font-mono text-xs sm:text-sm">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
+                                    <input type="text" id="promedio-variables" value="0" inputmode="numeric" class="w-full pl-8 pr-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 font-mono-num text-xs sm:text-sm">
                                 </div>
                                 <span class="text-[10px] text-slate-500 mt-0.5 block">Solo si percibe comisiones variables</span>
                             </div>
@@ -686,12 +916,12 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                             <div>
                                 <label for="vacaciones-pendientes" class="block font-semibold text-slate-700 mb-1">Días Feriado / Vacaciones:</label>
-                                <input type="number" id="vacaciones-pendientes" value="5" step="0.5" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-slate-800 font-mono text-xs sm:text-sm">
+                                <input type="number" id="vacaciones-pendientes" value="5" step="0.5" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] text-slate-800 font-mono-num text-xs sm:text-sm">
                                 <span class="text-[10px] text-slate-500 mt-0.5 block">Días hábiles acumulados y proporcionales</span>
                             </div>
-                            <div class="flex items-center pt-2 sm:pt-5">
+                            <div class="flex items-center pt-2 sm:pt-6">
                                 <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" id="zona-extrema" class="rounded text-sky-600 focus:ring-sky-500">
+                                    <input type="checkbox" id="zona-extrema" class="rounded text-[#00382E] focus:ring-[#00382E]">
                                     <span class="text-xs font-semibold text-slate-700">Zona Extrema (20 días/año)</span>
                                 </label>
                             </div>
@@ -700,17 +930,17 @@
                 </div>
 
                 <!-- ACORDEÓN 5: DESCUENTOS Y MEDIO DE PAGO -->
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold">5</span>
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-full bg-[#00382E] text-white flex items-center justify-center text-xs font-bold">5</span>
                             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">Descuentos y Medio de Pago</h2>
                         </div>
                     </div>
 
                     <div class="space-y-3.5 text-xs">
                         <!-- AFC Config -->
-                        <div id="afc-config-box" class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+                        <div id="afc-config-box" class="p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl space-y-2">
                             <label for="afc-tipo" class="block font-bold text-slate-800">Deducción Aporte Empleador AFC (Art. 13 Ley 19.728):</label>
                             <select id="afc-tipo" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800 font-medium text-xs sm:text-sm">
                                 <option value="estimado" selected>Estimación legal (1,6% aporte empleador a CIC)</option>
@@ -722,7 +952,7 @@
                                 <label for="afc-monto-exacto" class="block font-semibold text-slate-700 mb-1">Monto según Certificado AFC Chile:</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs sm:text-sm">$</span>
-                                    <input type="text" id="afc-monto-exacto" placeholder="0" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg text-slate-800 font-mono text-xs sm:text-sm">
+                                    <input type="text" id="afc-monto-exacto" placeholder="0" inputmode="numeric" class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-lg text-slate-800 font-mono-num text-xs sm:text-sm">
                                 </div>
                                 <span class="text-[10px] text-slate-500 mt-0.5 block">Descarga tu certificado con Clave AFC en www.afc.cl</span>
                             </div>
@@ -734,21 +964,21 @@
                                 <label for="descuento-anticipos" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Anticipos ($):</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs">$</span>
-                                    <input type="text" id="descuento-anticipos" value="0" inputmode="numeric" class="w-full pl-7 pr-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 font-mono text-xs sm:text-sm text-slate-800">
+                                    <input type="text" id="descuento-anticipos" value="0" inputmode="numeric" class="w-full pl-7 pr-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00382E]/20 font-mono-num text-xs sm:text-sm text-slate-800">
                                 </div>
                             </div>
                             <div>
                                 <label for="descuento-prestamos" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Préstamo CCAF ($):</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs">$</span>
-                                    <input type="text" id="descuento-prestamos" value="0" inputmode="numeric" class="w-full pl-7 pr-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 font-mono text-xs sm:text-sm text-slate-800">
+                                    <input type="text" id="descuento-prestamos" value="0" inputmode="numeric" class="w-full pl-7 pr-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00382E]/20 font-mono-num text-xs sm:text-sm text-slate-800">
                                 </div>
                             </div>
                             <div>
                                 <label for="descuento-alimentos" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Pensión Alim. ($):</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 font-bold text-xs">$</span>
-                                    <input type="text" id="descuento-alimentos" value="0" inputmode="numeric" class="w-full pl-7 pr-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 font-mono text-xs sm:text-sm text-slate-800" title="Retención Judicial Ley 21.389">
+                                    <input type="text" id="descuento-alimentos" value="0" inputmode="numeric" class="w-full pl-7 pr-2 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#00382E]/20 font-mono-num text-xs sm:text-sm text-slate-800" title="Retención Judicial Ley 21.389">
                                 </div>
                             </div>
                         </div>
@@ -757,7 +987,7 @@
                         <div class="space-y-3 pt-2">
                             <div>
                                 <label for="forma-pago" class="block font-semibold text-slate-700 mb-1">Forma de Pago:</label>
-                                <select id="forma-pago" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800 font-medium text-xs sm:text-sm">
+                                <select id="forma-pago" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-800 font-medium text-xs sm:text-sm">
                                     <option value="transferencia" selected>Transferencia bancaria</option>
                                     <option value="cheque">Cheque nominativo</option>
                                     <option value="vale-vista">Vale vista bancario</option>
@@ -766,7 +996,7 @@
                             </div>
                             <div>
                                 <label for="banco-detalle" class="block font-semibold text-slate-700 mb-1">Detalle de Cuenta o Banco:</label>
-                                <input type="text" id="banco-detalle" value="BancoEstado Cuenta RUT" placeholder="Ej: Cuenta RUT / Corriente" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs sm:text-sm text-slate-800">
+                                <input type="text" id="banco-detalle" value="BancoEstado Cuenta RUT" placeholder="Ej: Cuenta RUT / Corriente" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800">
                             </div>
                         </div>
                     </div>
@@ -778,42 +1008,42 @@
             <div class="lg:col-span-7 space-y-4">
                 
                 <!-- BARRA DE ACCIÓN Y STATUS RÁPIDO (STICKY) -->
-                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm sticky top-16 z-30 no-print">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm sticky top-20 z-30 no-print backdrop-blur-md bg-white/95">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <span class="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">Saldo Líquido a Pagar:</span>
+                            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Saldo Líquido a Pagar al Trabajador:</span>
                             <div class="flex items-baseline gap-2">
-                                <span id="resumen-liquido-pagar" class="text-2xl font-black text-slate-900 font-mono tracking-tight">$0</span>
-                                <span class="text-xs text-slate-600 font-medium">CLP</span>
+                                <span id="resumen-liquido-pagar" class="text-3xl font-black text-slate-900 font-mono-num tracking-tight">$0</span>
+                                <span class="text-xs text-slate-500 font-medium">CLP</span>
                             </div>
-                            <span id="resumen-liquido-palabras" class="text-[11px] text-slate-600 italic block line-clamp-1">cero pesos</span>
+                            <span id="resumen-liquido-palabras" class="text-[11px] text-slate-500 italic block line-clamp-1">cero pesos</span>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <button id="btn-primary-checkout" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white rounded-xl text-xs font-bold shadow-md shadow-sky-600/20 transition-all cursor-pointer">
-                                <span class="material-icons text-sm">file_download</span>
-                                Descargar Pack Notarial ($12.990)
+                            <button id="btn-primary-checkout" class="btn-yellow-pill w-full sm:w-auto text-xs sm:text-sm">
+                                <span class="material-icons text-base" style="color: #111827 !important;">lock_open</span>
+                                <span>Descargar Pack Notarial ($12.990)</span>
                             </button>
                         </div>
                     </div>
 
                     <!-- Resumen de Haberes Rápido -->
-                    <div class="grid grid-cols-4 gap-2 pt-3 mt-3 border-t border-slate-100 text-[11px] text-slate-600">
+                    <div class="grid grid-cols-4 gap-2 pt-3.5 mt-3.5 border-t border-slate-100 text-[11px] text-slate-600">
                         <div>
-                            <span class="block text-slate-600 font-medium">Años Servicio:</span>
-                            <span id="resumen-ias" class="font-bold text-slate-800 font-mono">$0</span>
+                            <span class="block text-slate-500 font-medium">Años Servicio:</span>
+                            <span id="resumen-ias" class="font-bold text-slate-900 font-mono-num">$0</span>
                         </div>
                         <div>
-                            <span class="block text-slate-600 font-medium">Aviso Previo:</span>
-                            <span id="resumen-aviso" class="font-bold text-slate-800 font-mono">$0</span>
+                            <span class="block text-slate-500 font-medium">Aviso Previo:</span>
+                            <span id="resumen-aviso" class="font-bold text-slate-900 font-mono-num">$0</span>
                         </div>
                         <div>
-                            <span class="block text-slate-600 font-medium">Vacaciones:</span>
-                            <span id="resumen-vacaciones" class="font-bold text-slate-800 font-mono">$0</span>
+                            <span class="block text-slate-500 font-medium">Vacaciones:</span>
+                            <span id="resumen-vacaciones" class="font-bold text-slate-900 font-mono-num">$0</span>
                         </div>
                         <div>
-                            <span class="block text-slate-600 font-medium">Descuentos:</span>
-                            <span id="resumen-descuentos" class="font-bold text-red-600 font-mono">-$0</span>
+                            <span class="block text-slate-500 font-medium">Descuentos:</span>
+                            <span id="resumen-descuentos" class="font-bold text-rose-600 font-mono-num">-$0</span>
                         </div>
                     </div>
 
@@ -821,7 +1051,7 @@
                 </div>
 
                 <!-- CONTENEDOR DE LA HOJA NOTARIAL (PREVIEW DINÁMICO) -->
-                <div class="relative bg-white border border-slate-300 rounded-xl p-6 sm:p-10 notary-sheet min-h-[900px] protected-preview select-none" id="notary-print-area">
+                <div class="relative bg-white border border-slate-300 rounded-2xl p-6 sm:p-10 notary-sheet min-h-[900px] protected-preview select-none shadow-md" id="notary-print-area">
                     
                     <!-- MARCA DE AGUA (WATERMARK) DE BORRADOR HASTA PAGAR -->
                     <div class="watermark-overlay" id="doc-watermark-overlay">
@@ -831,8 +1061,8 @@
                                 <div class="stamp-title">VISTA PREVIA</div>
                                 <div class="stamp-subtitle">BORRADOR PREVIO NO VÁLIDO PARA FIRMA NOTARIAL</div>
                                 <button type="button" id="btn-watermark-unlock" class="stamp-cta">
-                                    <span class="material-icons text-sm" aria-hidden="true">lock_open</span>
-                                    Desbloquear Word + PDF ($12.990)
+                                    <span class="material-icons text-sm" aria-hidden="true" style="color: #ffffff !important;">lock_open</span>
+                                    <span>Desbloquear Word + PDF ($12.990)</span>
                                 </button>
                             </div>
                         </div>
@@ -841,7 +1071,7 @@
                     <!-- CUERPO DEL DOCUMENTO INYECTADO POR finiquito_generator.js -->
                     <div id="notary-document-body" class="relative z-0 protected-preview select-none">
                         <!-- Se llena dinámicamente con las cláusulas notariales completas -->
-                        <div class="py-20 text-center text-slate-600">
+                        <div class="py-24 text-center text-slate-500 font-sans">
                             Cargando redacción notarial del finiquito...
                         </div>
                     </div>
@@ -849,15 +1079,15 @@
                 </div>
 
                 <!-- BOTONES DE DESCARGA SECUNDARIOS -->
-                <div class="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm no-print">
-                    <span class="text-xs text-slate-600">¿Deseas editar el documento en tu computador?</span>
-                    <div class="flex gap-2">
-                        <button id="btn-unlock-word" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-white border border-slate-200/90 rounded-2xl shadow-xs no-print">
+                    <span class="text-xs text-slate-600">¿Deseas editar el documento legal en tu computador?</span>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button id="btn-unlock-word" class="btn-outline-pill !py-2 !px-3.5 !text-xs flex-1 sm:flex-initial">
                             <span class="material-icons text-sm text-blue-600">description</span>
                             Descargar en Word (.docx)
                         </button>
-                        <button id="btn-unlock-pdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer">
-                            <span class="material-icons text-sm text-red-600">picture_as_pdf</span>
+                        <button id="btn-unlock-pdf" class="btn-outline-pill !py-2 !px-3.5 !text-xs flex-1 sm:flex-initial">
+                            <span class="material-icons text-sm text-rose-600">picture_as_pdf</span>
                             Descargar en PDF Notarial
                         </button>
                     </div>
@@ -868,51 +1098,51 @@
         </div>
 
         <!-- SECCIÓN DE PREGUNTAS FRECUENTES Y BLINDAJE JURÍDICO -->
-        <section class="mt-16 no-print max-w-[1200px] mx-auto px-6">
-            <h2 class="text-xl font-bold text-slate-900 text-center mb-6">
+        <section class="mt-16 no-print max-w-[1240px] mx-auto px-4 sm:px-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-8">
                 Preguntas Frecuentes sobre el Finiquito Legal en Chile
             </h2>
 
-            <div class="space-y-4 text-sm text-slate-700">
-                <details class="bg-white border border-slate-200 rounded-xl p-4 cursor-pointer">
-                    <summary class="font-bold text-slate-900 flex justify-between items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
+                    <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                        <span class="material-icons text-emerald-600 text-base">verified</span>
                         ¿Es válido este documento para firmar en cualquier notaría de Chile?
-                        <span class="material-icons text-slate-600 text-sm">expand_more</span>
-                    </summary>
-                    <p class="mt-2 text-slate-600 leading-relaxed text-xs">
+                    </h3>
+                    <p class="text-slate-600 leading-relaxed text-xs">
                         <strong>Sí.</strong> El documento generado cumple con los requisitos del Artículo 177 del Código del Trabajo chileno. Incluye la individualización de las partes con RUT y representación, liquidación ítem por ítem, declaración jurada de la Ley Bustos (Nº 19.631), declaración de consulta de la Ley 21.389 sobre pensión de alimentos y el espacio obligatorio para la reserva de derechos del trabajador.
                     </p>
-                </details>
+                </div>
 
-                <details class="bg-white border border-slate-200 rounded-xl p-4 cursor-pointer">
-                    <summary class="font-bold text-slate-900 flex justify-between items-center">
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
+                    <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                        <span class="material-icons text-emerald-600 text-base">schedule</span>
                         ¿Cuál es el plazo legal que tiene el empleador para pagar el finiquito?
-                        <span class="material-icons text-slate-600 text-sm">expand_more</span>
-                    </summary>
-                    <p class="mt-2 text-slate-600 leading-relaxed text-xs">
+                    </h3>
+                    <p class="text-slate-600 leading-relaxed text-xs">
                         El empleador tiene un plazo perentorio de <strong>10 días hábiles</strong> contados desde la separación del trabajador para poner a su disposición el finiquito y el pago total (Art. 177 inc. 4º). Si no se cumple este plazo, la Dirección del Trabajo puede cursar multas administrativas de hasta 60 UTM.
                     </p>
-                </details>
+                </div>
 
-                <details class="bg-white border border-slate-200 rounded-xl p-4 cursor-pointer">
-                    <summary class="font-bold text-slate-900 flex justify-between items-center">
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
+                    <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                        <span class="material-icons text-emerald-600 text-base">shield</span>
                         ¿Cómo funciona la deducción del Seguro de Cesantía (AFC)?
-                        <span class="material-icons text-slate-600 text-sm">expand_more</span>
-                    </summary>
-                    <p class="mt-2 text-slate-600 leading-relaxed text-xs">
+                    </h3>
+                    <p class="text-slate-600 leading-relaxed text-xs">
                         En despidos por el Artículo 161 (Necesidades de la empresa), el Artículo 13 de la Ley 19.728 permite al empleador deducir de la indemnización por años de servicio lo que aportó a la Cuenta Individual de Cesantía (1,6% mensual) más la rentabilidad. Para acreditarlo en notaría, el empleador debe llevar el Certificado de Saldo descargado de <em>www.afc.cl</em>.
                     </p>
-                </details>
+                </div>
 
-                <details class="bg-white border border-slate-200 rounded-xl p-4 cursor-pointer">
-                    <summary class="font-bold text-slate-900 flex justify-between items-center">
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
+                    <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                        <span class="material-icons text-emerald-600 text-base">fact_check</span>
                         ¿Qué documentos debo llevar a la notaría para firmar?
-                        <span class="material-icons text-slate-600 text-sm">expand_more</span>
-                    </summary>
-                    <p class="mt-2 text-slate-600 leading-relaxed text-xs">
+                    </h3>
+                    <p class="text-slate-600 leading-relaxed text-xs">
                         Debes llevar: <strong>1)</strong> Tres copias impresas de este finiquito; <strong>2)</strong> Cédula de identidad vigente de ambas partes; <strong>3)</strong> Certificado de cotizaciones previsionales al día (F-30 o comprobantes Previred para Ley Bustos); y <strong>4)</strong> El pago correspondiente (transferencia acreditada, cheque o vale vista).
                     </p>
-                </details>
+                </div>
             </div>
         </section>
 
@@ -920,59 +1150,59 @@
 
     <!-- MODAL DE PAGO / CHECKOUT ($12.990 CLP) -->
     <div id="payment-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print">
-        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-150">
-            <button id="btn-close-modal" class="absolute top-4 right-4 text-slate-600 hover:text-slate-600 p-1 rounded-lg">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative animate-in fade-in zoom-in duration-150">
+            <button id="btn-close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 rounded-xl transition-colors cursor-pointer" aria-label="Cerrar ventana">
                 <span class="material-icons text-lg">close</span>
             </button>
 
             <div class="text-center pb-4 border-b border-slate-100">
-                <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <span class="material-icons text-2xl">verified_user</span>
+                <div style="background-color: var(--teal-forest);" class="w-12 h-12 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md shadow-emerald-950/20">
+                    <span class="material-icons text-2xl" style="color: #ffffff !important;">verified_user</span>
                 </div>
                 <h3 class="text-lg font-extrabold text-slate-900">Pack Finiquito Notarial Completo</h3>
-                <p class="text-xs text-slate-600 mt-1">Listo para firmar en Notaría o Inspección del Trabajo</p>
+                <p class="text-xs text-slate-500 mt-1">Listo para firmar en Notaría o Inspección del Trabajo</p>
             </div>
 
-            <div class="py-4 space-y-3 text-xs text-slate-700">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2">
+            <div class="py-4 space-y-3.5 text-xs text-slate-700">
+                <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100 space-y-2">
                     <div class="flex items-center gap-2">
                         <span class="material-icons text-emerald-600 text-sm">check_circle</span>
                         <span><strong>Finiquito Notarial</strong> en PDF de alta fidelidad (Sin marcas de agua)</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="material-icons text-emerald-600 text-sm">check_circle</span>
-                        <span><strong>Documento Word (.docx)</strong> editable</span>
+                        <span><strong>Documento Word (.docx)</strong> 100% editable</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="material-icons text-emerald-600 text-sm">check_circle</span>
-                        <span><strong>Carta de Despido Formal</strong> redactada según causal Art. 161 o 159</span>
+                        <span><strong>Carta de Despido Formal</strong> redactada según Art. 161 o 159</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="material-icons text-emerald-600 text-sm">check_circle</span>
-                        <span><strong>Checklist de Previred y Notaría</strong> para evitar multas de la DT</span>
+                        <span><strong>Checklist Previred y Notaría</strong> para evitar multas de la DT</span>
                     </div>
                 </div>
 
                 <div>
                     <label for="checkout-email" class="block font-semibold text-slate-700 mb-1">Tu Correo Electrónico (para enviarte copia de respaldo):</label>
-                    <input type="email" id="checkout-email" placeholder="tu-empresa@gmail.com" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-sky-500">
+                    <input type="email" id="checkout-email" placeholder="tu-empresa@gmail.com" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                 </div>
 
-                <div class="flex items-center justify-between p-3 bg-sky-50/70 border border-sky-200 rounded-xl">
+                <div class="flex items-center justify-between p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-2xl">
                     <div>
-                        <span class="text-[11px] text-sky-800 font-semibold uppercase">Total a pagar:</span>
-                        <div class="text-xl font-black text-sky-950 font-mono">$12.990 CLP</div>
+                        <span class="text-[11px] text-amber-900 font-semibold uppercase tracking-wider">Total a pagar:</span>
+                        <div class="text-xl font-black text-slate-900 font-mono-num">$12.990 CLP</div>
                     </div>
-                    <span class="text-[10px] text-sky-800 font-semibold bg-sky-200/60 px-2 py-1 rounded">Pago único</span>
+                    <span class="text-[10px] text-amber-900 font-bold bg-amber-200/80 px-2.5 py-1 rounded-full">Pago único</span>
                 </div>
             </div>
 
             <div class="pt-2">
-                <button id="btn-confirm-payment" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                    <span class="material-icons text-base">lock</span>
-                    Pagar con Webpay / Flow ($12.990)
+                <button id="btn-confirm-payment" class="btn-yellow-pill w-full !py-3.5 !text-sm">
+                    <span class="material-icons text-base" style="color: #111827 !important;">lock</span>
+                    <span style="color: #111827 !important;">Pagar con Webpay / Flow ($12.990)</span>
                 </button>
-                <div class="flex items-center justify-center gap-2 mt-2.5 text-[10px] text-slate-500 font-medium">
+                <div class="flex items-center justify-center gap-2 mt-3 text-[10px] text-slate-500 font-medium">
                     <span>🔒 Transacción Segura y Encriptada vía Flow</span>
                     <span>•</span>
                     <span>Webpay</span>
@@ -985,92 +1215,87 @@
         </div>
     </div>
 
-    <!-- Footer Oficial del Sitio -->
-        <!-- Footer Unificado Compacto Oficial -->
-    <footer class="bg-white border-t border-slate-200 pt-10 pb-8 mt-auto no-print">
-        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            <!-- Brand Column -->
-            <div class="space-y-3">
-                <a href="./" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
-                        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M30 84h40M38 79h24"></path>
-                            <path d="M50 22v57"></path>
-                            <path d="M50 14l-2 4h4l-2-4v8"></path>
-                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                            <path d="M18 36l-8 18h16Z"></path>
-                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M82 36l-8 18h16Z"></path>
-                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                            <path d="M58 43.5v20h10"></path>
-                        </svg>
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED FOOTER (Pine Forest #00382E) -->
+    <footer class="bg-warm-surface no-print mt-16">
+        <div class="teal-footer-curve text-white">
+            <div class="site-container py-16 sm:py-20">
+                
+                <!-- Main Links Grid (TealHQ Architecture) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
+                    
+                    <!-- Col 1: Brand -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-gray-950 font-bold">
+                                <span class="material-icons text-lg">balance</span>
+                            </div>
+                            <span class="font-extrabold text-2xl tracking-tight text-white">
+                                cálculolaboral<span class="text-amber-400">.</span>
+                            </span>
+                        </div>
+                        <p class="text-xs text-white/70 leading-relaxed max-w-sm">
+                            Plataforma legal independiente de cálculo laboral en Chile. Desarrollada para transparentar liquidaciones, proteger los derechos del trabajador y blindar a las pymes.
+                        </p>
+                        <div class="pt-2 text-xs font-mono text-white/40">
+                            Versión 2.5 • Actualizada Marzo 2026
+                        </div>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
-                </a>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
-                </p>
-                <p class="text-[11px] text-slate-400 font-mono">Versión 2.0.0 (2026)</p>
-            </div>
 
-            <!-- Calculadoras Column -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Calculadoras</h3>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="simulador-despido-injustificado-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Simulador Despido Injustificado</a></li>
-                    <li><a href="sueldo_liquido" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Líquido</a></li>
-                    <li><a href="finiquito_calculator" class="text-slate-600 hover:text-sky-500 transition-colors">Finiquito Legal</a></li>
-                    <li><a href="calculadora-horas-extras" class="text-slate-600 hover:text-sky-500 transition-colors">Horas Extras (Ley 40 Horas)</a></li>
-                    <li><a href="calculadora-sueldo-part-time" class="text-slate-600 hover:text-sky-500 transition-colors">Sueldo Part-Time</a></li>
-                    <li><a href="calculadora-despido-articulo-160" class="text-slate-600 hover:text-sky-500 transition-colors">Despido Art. 160</a></li>
-                </ul>
-            </div>
+                    <!-- Col 2: Calculadoras -->
+                    <div class="space-y-3">
+                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Calculadoras</h4>
+                        <ul class="space-y-2.5 text-[13px]">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-amber-300 transition-colors">Finiquito Legal</a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Despido Injustificado</a></li>
+                            <li><a href="sueldo_liquido" class="text-white hover:text-amber-300 transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white hover:text-amber-300 transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="calculadora-sueldo-part-time" class="text-white hover:text-amber-300 transition-colors">Sueldo Part-Time</a></li>
+                            <li><a href="calculadora-vacaciones" class="text-white hover:text-amber-300 transition-colors">Calculadora Vacaciones</a></li>
+                            <li><a href="calculadora-despido-articulo-160" class="text-white hover:text-amber-300 transition-colors">Despido Art. 160</a></li>
+                        </ul>
+                    </div>
 
-            <!-- Guías Clave Column -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Guías Clave</h3>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="reclamar-despido-injustificado-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Cómo Reclamar Despido</a></li>
-                    <li><a href="carta-de-renuncia-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Carta de Renuncia (Asistente)</a></li>
-                    <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-amber-600 hover:text-amber-700 font-bold transition-colors">Checklist Fiscalización DT</a></li>
-                    <li><a href="despido-necesidades-empresa-articulo-161" class="text-slate-600 hover:text-sky-500 transition-colors">Art. 161 Necesidades Empresa</a></li>
-                    <li><a href="ley-40-horas-chile-2026" class="text-slate-600 hover:text-sky-500 transition-colors">Ley de 40 Horas (42h en 2026)</a></li>
-                    <li class="pt-1"><a href="blog" class="text-sky-600 hover:underline font-semibold flex items-center gap-1">Ver todas las guías <span class="text-[10px]">→</span></a></li>
-                </ul>
-            </div>
+                    <!-- Col 3: Guías Clave -->
+                    <div class="space-y-3">
+                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Guías Legales</h4>
+                        <ul class="space-y-2.5 text-[13px]">
+                            <li><a href="reclamar-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="text-white hover:text-amber-300 transition-colors">Carta de Renuncia</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white hover:text-amber-300 transition-colors">Art. 161 Necesidades</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white hover:text-amber-300 transition-colors">Ley 40 Horas (42h)</a></li>
+                            <li><a href="blog" class="text-white hover:text-amber-300 transition-colors">Todas las Guías →</a></li>
+                        </ul>
+                    </div>
 
-            <!-- Empresas & Monetización Column -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Para Empresas</h3>
-                <ul class="space-y-1.5 text-xs">
-                    <li><a href="para-empleadores" class="text-slate-700 hover:text-sky-600 font-semibold transition-colors">Portal Empleadores (Pymes)</a></li>
-                <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-rose-600 hover:text-rose-700 font-bold transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
-                    <li><a href="kit-cumplimiento-laboral-pymes" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
-                    <li><a href="generador-finiquito-chile" class="text-sky-600 hover:text-sky-700 font-bold transition-colors">Generador Finiquito ($12.990)</a></li>
-                    <li><a href="generador-anexo-40-horas" class="text-slate-600 hover:text-sky-500 transition-colors">Anexo 40 Horas Word</a></li>
-                    <li><a href="sobre-nosotros" class="text-slate-600 hover:text-sky-500 transition-colors">Sobre Nosotros</a></li>
-                    <li><a href="contacto" class="text-slate-600 hover:text-sky-500 transition-colors">Contacto Directo</a></li>
-                </ul>
-            </div>
-        </div>
+                    <!-- Col 4: Empresas & Legal -->
+                    <div class="space-y-3">
+                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Empresas</h4>
+                        <ul class="space-y-2.5 text-[13px]">
+                            <li><a href="para-empleadores" class="text-white hover:text-amber-300 transition-colors">Portal Pymes</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white hover:text-amber-300 transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Generador Finiquitos ($12.990)</a></li>
+                            <li><a href="generador-anexo-40-horas" class="text-white hover:text-amber-300 transition-colors">Anexo 40 Horas Word</a></li>
+                            <li><a href="contacto" class="text-white hover:text-amber-300 transition-colors">Contacto Directo</a></li>
+                        </ul>
+                    </div>
 
-        <!-- Barra Inferior Unificada -->
-        <div class="max-w-[1200px] mx-auto px-6 border-t border-slate-200/90 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <p class="text-xs text-slate-500">
-                &copy; 2026 Cálculo Laboral Chile. Cálculos referenciales basados en el <a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Código del Trabajo</a> y dictámenes de la <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Dirección del Trabajo</a>.
-            </p>
-            <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500">
-                <a href="terminos" class="hover:text-slate-800 transition-colors">Términos</a>
-                <span class="text-slate-300">·</span>
-                <a href="privacidad" class="hover:text-slate-800 transition-colors">Privacidad</a>
-                <span class="text-slate-300">·</span>
-                <a href="disclaimer" class="hover:text-slate-800 transition-colors">Disclaimer</a>
-                <span class="text-slate-300">·</span>
-                <span class="inline-flex items-center gap-1 text-slate-600 font-medium">
-                    <span class="material-icons text-xs text-emerald-500" aria-hidden="true">verified</span>
-                    Fórmulas Conforme a DT
-                </span>
+                </div>
+
+                <!-- Bottom Legal Bar (TealHQ minimal footer) -->
+                <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
+                    <div>
+                        &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <a href="terminos" class="hover:text-white transition-colors">Términos</a>
+                        <span>·</span>
+                        <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
+                        <span>·</span>
+                        <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </footer>
@@ -1084,12 +1309,12 @@
             <p class="text-xs font-bold text-white uppercase tracking-wider">Vista Previa Protegida</p>
             <p class="text-xs text-slate-300 mt-1 leading-relaxed">El copiado de texto está bloqueado en el borrador notarial. Desbloquea el archivo editable en Word (.docx) y el PDF listo para firma.</p>
             <div class="mt-3 flex items-center gap-2">
-                <button type="button" id="toast-unlock-btn" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 active:bg-sky-600 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-sm">
-                    Desbloquear por $12.990
+                <button type="button" id="toast-unlock-btn" class="btn-yellow-pill !py-1.5 !px-3.5 !text-xs cursor-pointer">
+                    <span>Desbloquear por $12.990</span>
                 </button>
             </div>
         </div>
-        <button type="button" id="toast-close-btn" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors" aria-label="Cerrar notificación">
+        <button type="button" id="toast-close-btn" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer" aria-label="Cerrar notificación">
             <span class="material-icons text-base">close</span>
         </button>
     </div>
@@ -1099,17 +1324,17 @@
         <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
+                    <span class="material-icons text-emerald-800">history</span>
                     <div class="text-base font-bold text-slate-900">Historial de Indicadores</div>
                 </div>
-                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
+                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100 cursor-pointer">
                     <span class="material-icons">close</span>
                 </button>
             </div>
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> UF (Últimos 30 días)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1127,7 +1352,7 @@
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> UTM (Últimos 12 meses)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
