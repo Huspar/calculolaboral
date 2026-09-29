@@ -156,6 +156,7 @@
         .font-mono-num {
             font-family: 'Geist Mono', monospace;
             font-feature-settings: 'tnum' on, 'zero' on;
+            font-variant-numeric: tabular-nums;
         }
 
         /* Enforce tight, contained layout on large and ultrawide screens */
@@ -315,40 +316,84 @@
             transform: translateY(0) scale(0.98);
         }
 
-        /* Product Showcase Tab Styles (Exact TealHQ style) */
+        /* Product Showcase Segmented Control (Emil Kowalski Physics & Pill Style) */
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+        .segmented-control-container {
+            background-color: #F1F5F9;
+            border: 1px solid #E2E8F0;
+            border-radius: 9999px;
+            padding: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            max-width: 100%;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .segmented-control-container::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+        @media (max-width: 640px) {
+            .segmented-control-container {
+                border-radius: 16px;
+                padding: 4px;
+                gap: 2px;
+                width: max-content;
+                min-width: 100%;
+                justify-content: flex-start;
+            }
+        }
         .product-tab {
             position: relative;
-            padding-bottom: 14px;
-            padding-left: 16px;
-            padding-right: 16px;
-            font-size: 15px;
+            padding: 8px 18px;
+            font-size: 13.5px;
             font-weight: 600;
-            color: #6B7280;
-            background: none;
-            border: none;
+            color: #64748B;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 9999px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: color 0.2s ease;
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
             white-space: nowrap;
+            user-select: none;
+            text-decoration: none;
+        }
+        @media (max-width: 640px) {
+            .product-tab {
+                padding: 7px 12px;
+                font-size: 12px;
+                gap: 5px;
+                border-radius: 12px;
+                flex-shrink: 0;
+            }
         }
         .product-tab:hover {
-            color: var(--teal-forest);
+            color: #00382E;
+            background-color: rgba(255, 255, 255, 0.55);
         }
         .product-tab.active {
-            color: var(--teal-forest);
+            color: #00382E;
+            background-color: #FFFFFF;
             font-weight: 700;
+            border-color: rgba(0, 56, 46, 0.08);
+            box-shadow: 0 2px 8px -1px rgba(0, 56, 46, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
         }
-        .product-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background-color: var(--teal-forest);
-            border-radius: 3px 3px 0 0;
+        .product-tab:active {
+            transform: scale(0.97);
         }
 
         /* Showcase Mockup Curved Backdrops (TealHQ Organic Shapes) */
@@ -987,9 +1032,9 @@
     <section id="showcase" class="showcase-py">
         <div class="site-container">
             
-            <!-- Product Navigation Tabs (Exact TealHQ Underline Tabs) -->
-            <div class="flex justify-center border-b border-gray-200 mb-10 overflow-x-auto scrollbar-none">
-                <div class="inline-flex gap-2 sm:gap-6">
+            <!-- Product Navigation Tabs (Emil Kowalski Segmented Control) -->
+            <div class="flex justify-center mb-8 sm:mb-10 overflow-x-auto scrollbar-none px-2 py-1">
+                <div class="segmented-control-container">
                     <button type="button" class="product-tab active" onclick="switchProductTab('simulador')" id="tab-btn-simulador">
                         <span class="material-icons text-base">calculate</span>
                         <span>Simulador de Finiquito</span>
@@ -1274,26 +1319,79 @@
 
                         <!-- Right Battle Card -->
                         <div class="lg:col-span-7">
-                            <div class="saas-window-card p-6 sm:p-8 space-y-5">
+                            <div class="saas-window-card p-4 sm:p-7 space-y-4 sm:space-y-5">
                                 <div class="flex justify-between items-center pb-3 border-b border-gray-100">
                                     <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Comparación Económica</span>
                                     <span class="text-xs font-semibold text-gray-500">Caso: Sueldo $1.200.000 • 3 Años</span>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div class="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                    <div class="p-4 sm:p-5 rounded-2xl bg-gray-50 border border-gray-200">
                                         <span class="text-xs font-bold text-gray-500 uppercase block mb-1">Lo que te ofrece la empresa</span>
-                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-gray-700">$ 4.708.800</div>
+                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-gray-700 whitespace-nowrap">$ 4.708.800</div>
                                         <p class="text-xs text-gray-400 mt-2">Finiquito estándar con descuento patronal de la AFC (-$691.200).</p>
                                     </div>
-                                    <div class="p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-500">
+                                    <div class="p-4 sm:p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-500">
                                         <span class="text-xs font-bold text-emerald-800 uppercase block mb-1">Si se acoge reclamo o demanda</span>
-                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-emerald-700">$ 6.480.000</div>
+                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-emerald-700 whitespace-nowrap">$ 6.480.000</div>
                                         <p class="text-xs text-emerald-800 font-medium mt-2">+30% recargo legal Art. 168 y restitución de la AFC.</p>
                                     </div>
                                 </div>
-                                <div class="p-4 rounded-xl bg-amber-400 text-gray-950 font-bold text-sm flex items-center justify-between">
+
+                                <!-- Forensic Legal Comparative Ledger Table -->
+                                <div class="overflow-hidden rounded-xl border border-gray-200/90 bg-white shadow-2xs">
+                                    <div class="px-3 py-2 bg-slate-50 border-b border-gray-100 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                        <span>Desglose Comparativo Forense</span>
+                                        <span class="text-[10px] text-slate-400 font-mono">Art. 161 vs 168</span>
+                                    </div>
+                                    <div class="overflow-x-auto scrollbar-none">
+                                        <table class="w-full text-left text-[11px] sm:text-xs">
+                                            <thead class="bg-slate-50/80 border-b border-gray-100 text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                                <tr>
+                                                    <th scope="col" class="py-2 px-2 sm:px-4">Concepto Legal</th>
+                                                    <th scope="col" class="py-2 px-1.5 sm:px-3 text-right text-slate-500 whitespace-nowrap"><span class="sm:hidden">Empresa</span><span class="hidden sm:inline">Oferta Empresa</span></th>
+                                                    <th scope="col" class="py-2 px-2 sm:px-4 text-right text-emerald-800 whitespace-nowrap"><span class="sm:hidden">Demanda</span><span class="hidden sm:inline">Con Demanda DT</span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-100 text-gray-700">
+                                                <tr>
+                                                    <td class="py-2 px-2 sm:px-4 font-medium text-slate-800">Años de Servicio (3 años)</td>
+                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-500 whitespace-nowrap">$3.600.000</td>
+                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-800 whitespace-nowrap">$3.600.000</td>
+                                                </tr>
+                                                <tr class="bg-emerald-50/40">
+                                                    <td class="py-2 px-2 sm:px-4">
+                                                        <span class="font-bold text-emerald-950">+30% Recargo Art. 168</span>
+                                                        <span class="block text-[9.5px] sm:text-[10px] text-emerald-700 leading-tight">Despido injustificado</span>
+                                                    </td>
+                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-400 whitespace-nowrap">$0</td>
+                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-700 whitespace-nowrap">+$1.080.000</td>
+                                                </tr>
+                                                <tr class="bg-rose-50/30">
+                                                    <td class="py-2 px-2 sm:px-4">
+                                                        <span class="font-medium text-slate-800">Descuento AFC</span>
+                                                        <span class="block text-[9.5px] sm:text-[10px] text-rose-600 leading-tight">Restitución Corte Suprema</span>
+                                                    </td>
+                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-rose-600 font-semibold whitespace-nowrap">-$691.200</td>
+                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-700 whitespace-nowrap">$0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-2 px-2 sm:px-4 font-medium text-slate-800">Mes de Aviso Previo</td>
+                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-500 whitespace-nowrap">$1.200.000</td>
+                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-800 whitespace-nowrap">$1.200.000</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-2 px-2 sm:px-4 font-medium text-slate-800">Feriado Proporcional (15d)</td>
+                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-500 whitespace-nowrap">$600.000</td>
+                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-800 whitespace-nowrap">$600.000</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="p-3.5 sm:p-4 rounded-xl bg-amber-400 text-gray-950 font-bold text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                                     <span>Diferencia legal reclamable:</span>
-                                    <span class="font-mono-num text-lg whitespace-nowrap">+ $ 1.771.200</span>
+                                    <span class="font-mono-num text-lg sm:text-xl font-extrabold whitespace-nowrap">+ $ 1.771.200</span>
                                 </div>
                                 <div class="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gray-500">
                                     <span>Por ley, demandas &gt; 15 UTM exigen abogado habilitado.</span>
@@ -1342,7 +1440,7 @@
 
                         <!-- Right Document Simulation: Hyper-realistic Chilean Notarized Finiquito -->
                         <div class="lg:col-span-7">
-                            <div class="saas-window-card p-6 sm:p-8 space-y-4 bg-[#FDFBF7] border border-stone-200 shadow-xl relative overflow-hidden text-left">
+                            <div class="saas-window-card p-4 sm:p-7 space-y-4 bg-[#FDFBF7] border border-stone-200 shadow-xl relative overflow-hidden text-left">
                                 
                                 <!-- Document Header with Stamp -->
                                 <div class="flex justify-between items-start pb-3 border-b border-stone-300/80">
@@ -1421,7 +1519,7 @@
 
                         <!-- Right Comparison -->
                         <div class="lg:col-span-7">
-                            <div class="saas-window-card p-6 sm:p-8 space-y-4">
+                            <div class="saas-window-card p-4 sm:p-7 space-y-4">
                                 <h4 class="font-bold text-sm text-gray-900">Comparador de Recargo Legal por Hora Extra</h4>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div class="p-4 rounded-xl bg-gray-50 border border-gray-200">
@@ -1435,6 +1533,24 @@
                                         <span class="text-[11px] text-emerald-700 font-mono-num font-bold">Factor 0.0079365</span>
                                     </div>
                                 </div>
+
+                                <!-- Official Statutory DT Mathematical Formula Box -->
+                                <div class="p-3.5 bg-slate-900 text-white rounded-xl space-y-1.5 border border-slate-800 shadow-2xs">
+                                    <div class="flex items-center justify-between text-[11px] text-slate-400 gap-2">
+                                        <span class="font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 text-[10px] sm:text-[11px]">
+                                            <span class="material-icons text-xs">functions</span>
+                                            Fórmula Legal DT (Jornada 42h)
+                                        </span>
+                                        <span class="font-mono text-[9.5px] sm:text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded whitespace-nowrap">Dictamen N° 2354/60</span>
+                                    </div>
+                                    <div class="font-mono text-[11px] sm:text-[13px] text-emerald-300 py-1 leading-snug">
+                                        (Sueldo Base ÷ 30) × 28 ÷ 42 × 1.5 = <strong class="text-white font-bold whitespace-nowrap">Factor 0.0079365</strong>
+                                    </div>
+                                    <p class="text-[10px] sm:text-[10.5px] text-slate-400 leading-normal">
+                                        Fórmula legal obligatoria para contratos mensuales con jornada de 42 horas en 2026.
+                                    </p>
+                                </div>
+
                                 <div class="p-3.5 bg-gray-50 rounded-xl text-xs text-gray-600 border border-gray-200">
                                     💡 <strong>Diferencia acumulativa:</strong> En 15 horas extras mensuales representa más de <span class="font-mono-num font-bold text-emerald-800">+$65.000</span> a tu favor cada mes.
                                 </div>
