@@ -3,76 +3,1302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generador Interactivo de Contratos de Trabajo a la Medida en Chile 2026. Crea contratos individuales de trabajo a la medida adaptados a tu rubro, con jornada legal de 42 horas (Ley 40 Horas), protocolo Ley Karin (DS 44) y registro Mi DT. Descarga inmediata en Word (.docx) y PDF.">
+    <meta name="description" content="Generador Interactivo de Contratos de Trabajo a la Medida en Chile 2026. Crea contratos individuales de trabajo adaptados a tu rubro, con jornada legal de 42 horas (Ley 40 Horas), protocolo Ley Karin (DS 44) y registro Mi DT. Descarga inmediata en Word (.docx) y PDF.">
     <title>Generador de Contrato de Trabajo Pyme 2026 a la Medida | Cálculo Laboral</title>
     
-        <!-- Elevated Curved Dark Footer (TealHQ Architecture) -->
-    <footer class="mt-20 no-print">
-        <div class="teal-footer-curve pt-16 pb-12">
-            <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
-                    
-                    <!-- Col 1: Brand -->
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-emerald-800/80 flex items-center justify-center text-white">
-                                <span class="material-icons text-lg">balance</span>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://calculolaboral.cl/generador-contrato-trabajo-chile">
+    <link rel="alternate" hreflang="es-CL" href="https://calculolaboral.cl/generador-contrato-trabajo-chile">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Generador de Contrato de Trabajo Pyme 2026 a la Medida | Cálculo Laboral">
+    <meta property="og:description" content="Crea tu contrato individual de trabajo a la medida para cualquier rubro en Chile. Jornada 42h legal 2026, Ley Karin y dictámenes DT. Descarga en Word (.docx) y PDF.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/generador-contrato-trabajo-chile">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og-image.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Generador de Contrato de Trabajo Pyme 2026 a la Medida | Cálculo Laboral">
+    <meta name="twitter:description" content="Crea tu contrato individual de trabajo a la medida para cualquier rubro en Chile. Jornada 42h legal 2026, Ley Karin y dictámenes DT.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og-image.png">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Google Tag Manager / Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9Y03F1WB8J');
+    </script>
+    
+    <!-- Precompiled Tailwind CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.2">
+    <style>
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAF9;
+            color: #1E293B;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-mono-num {
+            font-family: 'Geist Mono', monospace;
+            font-feature-settings: 'tnum' on, 'zero' on;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Standardized Pill Buttons */
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.3);
+        }
+        .btn-yellow-pill:hover {
+            background-color: var(--teal-yellow-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 183, 3, 0.38);
+        }
+        .btn-yellow-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.22);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 56, 46, 0.32);
+        }
+        .btn-dark-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #374151 !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 10px 20px;
+            font-size: 13.5px;
+            border: 1.5px solid #D1D5DB;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover {
+            border-color: var(--teal-forest);
+            color: var(--teal-forest) !important;
+            background-color: #F8FAF9;
+        }
+
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+
+        /* Step Progress Pills */
+        .step-pill {
+            transition: all 0.2s var(--ease-spring);
+        }
+        .step-pill.active {
+            background-color: var(--teal-forest) !important;
+            color: #ffffff !important;
+            border-color: var(--teal-forest) !important;
+        }
+        .step-pill.active span.step-number {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .step-pill.completed {
+            background-color: #f0fdf4 !important;
+            color: #166534 !important;
+            border-color: #bbf7d0 !important;
+        }
+        .step-pill.completed span.step-number {
+            background-color: #dcfce7 !important;
+            color: #166534 !important;
+        }
+
+        /* Contrato Preview Styles */
+        .contrato-preview-box {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11px;
+            line-height: 1.45;
+            color: #1e293b;
+            text-align: justify;
+        }
+        .contrato-preview-box h4 {
+            font-family: 'Geist', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 10px;
+            margin-bottom: 3px;
+        }
+
+        .con-marca-agua {
+            position: relative !important;
+            background-image: repeating-linear-gradient(-35deg, rgba(225, 29, 72, 0.04), rgba(225, 29, 72, 0.04) 90px, transparent 90px, transparent 180px) !important;
+        }
+
+        .watermark-contrato-stamp {
+            position: absolute !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) rotate(-25deg) !important;
+            width: 90% !important;
+            max-width: 480px !important;
+            padding: 14px 18px !important;
+            border: 3.5px dashed rgba(225, 29, 72, 0.70) !important;
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 16px !important;
+            text-align: center !important;
+            box-shadow: 0 10px 35px rgba(225, 29, 72, 0.22) !important;
+            pointer-events: none !important;
+            user-select: none !important;
+            z-index: 50 !important;
+        }
+        .watermark-stamp-top { top: 200px !important; }
+        .watermark-stamp-mid { top: 55% !important; }
+        .watermark-stamp-bot { top: 86% !important; }
+        .watermark-stamp-title {
+            font-size: 16px !important;
+            font-weight: 900 !important;
+            color: #e11d48 !important;
+            letter-spacing: 1px !important;
+            line-height: 1.2 !important;
+            text-transform: uppercase !important;
+        }
+        .watermark-stamp-sub {
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            color: #9f1239 !important;
+            margin-top: 4px !important;
+            text-transform: uppercase !important;
+        }
+        .watermark-banner-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background-color: #fff1f2;
+            border: 1px solid #fecdd3;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #be123c;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dropdowns */
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-chevron {
+            transform: rotate(180deg);
+        }
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+    
+        /* TealHQ Required Signature System Tokens & Components */
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 26px;
+            font-size: 14.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
+        }
+        .btn-yellow-pill:hover {
+            background-color: #FFAA00;
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
+        }
+        .btn-yellow-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 26px;
+            font-size: 14.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.25);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(0, 56, 46, 0.35);
+            color: #FFFFFF !important;
+        }
+        .btn-dark-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #374151 !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 11px 22px;
+            font-size: 14px;
+            border: 1.5px solid #D1D5DB;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover {
+            border-color: #9CA3AF;
+            background-color: #F9FAFB;
+            color: #111827 !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-chevron {
+            transform: rotate(180deg);
+        }
+/* TealHQ Elevated Curved Dark Footer (#00382E & 96px curve) */
+        .teal-footer-curve {
+            background-color: #00382E;
+            color: #FFFFFF;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .teal-footer-curve .footer-inner-container {
+            max-width: 1240px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            .teal-footer-curve {
+                border-top-left-radius: 96px;
+                border-top-right-radius: 0px;
+            }
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 8rem !important; /* 128px > 96px curve */
+                padding-right: 3rem !important;
+            }
+        }
+        @media (min-width: 1440px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 4rem !important;
+                padding-right: 4rem !important;
+            }
+        }
+
+
+    </style>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Generador de Contratos de Trabajo Pyme Chile 2026",
+        "url": "https://calculolaboral.cl/generador-contrato-trabajo-chile",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All",
+        "description": "Generador dinámico de contratos de trabajo individuales para micro y pequeñas empresas en Chile. Ajustado a 11 sectores económicos, Ley 40 Horas (42h en 2026) y protocolo Ley Karin (DS 44).",
+        "offers": {
+            "@type": "Offer",
+            "price": "12990",
+            "priceCurrency": "CLP"
+        }
+    }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
+            </div>
+            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
+                <span class="text-white/20">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
+                <span class="text-white/20">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Brand Logo: Dark green box + Gold balance icon + Wordmark -->
+                <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-xs">
+                        <svg class="w-5 h-5 text-[#FFB703]" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                        </svg>
+                    </div>
+                    <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
+                        cálculolaboral<span class="text-[#FFB703]">.</span>
+                    </span>
+                </a>
+
+                <!-- Desktop Center Navigation -->
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">
+                        Simulador Finiquito
+                    </a>
+
+                    <!-- Dropdown: Herramientas ⌵ -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">calculate</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                    </div>
+                                </a>
+
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">payments</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                    </div>
+                                </a>
+
+                                <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">gavel</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">schedule</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-vacaciones-proporcionales" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">beach_access</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                    </div>
+                                </a>
+
+                                <a href="simulador-seguro-cesantia-afc" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">account_balance_wallet</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                    </div>
+                                </a>
                             </div>
-                            <span class="font-extrabold text-2xl tracking-tight text-white">
-                                cálculolaboral<span class="text-amber-400">.</span>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown: Guías ⌵ -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+                            <div class="space-y-1">
+                                <a href="reclamar-despido-injustificado-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cómo Reclamar Despido Injustificado
+                                </a>
+                                <a href="carta-de-renuncia-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Generador de Carta de Renuncia
+                                </a>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Art. 161 Necesidades de la Empresa
+                                </a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Checklist Fiscalización DT Pymes
+                                </a>
+                                <a href="ley-40-horas-chile-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Ley 40 Horas (42 Horas en 2026)
+                                </a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">
+                                        Ver todas las guías en el Blog →
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="para-empleadores" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">
+                        Para Empleadores
+                    </a>
+                </nav>
+
+                <!-- Header Right CTAs (TealHQ Pill Style) -->
+                <div class="flex items-center gap-2">
+                    <a href="para-empleadores" class="hidden md:inline-flex btn-yellow-pill !py-2.5 !px-5 !text-xs !shadow-xs">
+                        Portal Empleadores
+                    </a>
+                    <a href="contacto" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">
+                        Contacto
+                    </a>
+                    
+                    <!-- Mobile Hamburger -->
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl">menu</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-3">
+            <a href="finiquito_calculator" class="block text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="sueldo_liquido" class="block text-sm font-semibold text-slate-700">Sueldo Líquido</a>
+            <a href="simulador-despido-injustificado-chile" class="block text-sm font-semibold text-slate-700">Despido Injustificado</a>
+            <a href="calculadora-horas-extras" class="block text-sm font-semibold text-slate-700">Horas Extras 42h</a>
+            <a href="para-empleadores" class="block text-sm font-semibold text-slate-700">Portal Empleadores</a>
+            <a href="blog" class="block text-sm font-semibold text-slate-700">Blog de Guías Laborales</a>
+            <div class="pt-2">
+                <a href="para-empleadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
+            </div>
+        </div>
+    </header>
+
+
+
+<!-- 4. MAIN PAGE BODY -->
+    <main class="flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+        <div class="w-full">
+            
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-4" aria-label="Breadcrumb">
+                <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
+                <span class="material-icons text-xs">chevron_right</span>
+                <a href="para-empleadores" class="hover:text-[#00382E] transition-colors font-medium">Para Empleadores</a>
+                <span class="material-icons text-xs">chevron_right</span>
+                <span class="text-slate-700 font-semibold">Generador de Contrato de Trabajo</span>
+            </nav>
+
+            <!-- Hero Section -->
+            <div class="text-center mt-3 mb-8 max-w-3xl mx-auto no-print">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 text-slate-700 shadow-2xs mb-4">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-900 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span class="material-icons text-[11px]">verified</span> Edición Pyme 2026
+                    </span>
+                    <span class="text-xs font-semibold text-slate-800">
+                        Conforme a Dictámenes DT y Ley 40 Horas
+                    </span>
+                </div>
+
+                <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                    Generador de Contrato de Trabajo a la Medida
+                </h1>
+                <p class="text-slate-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto leading-relaxed">
+                    Olvídate de plantillas genéricas que la Dirección del Trabajo multa. Selecciona tu <strong>rubro exacto, horario (42 horas)</strong> y condiciones salariales. Descarga tu contrato personalizado en <strong>Word (.docx editable)</strong> y <strong>PDF listo para firmar</strong>.
+                </p>
+            </div>
+
+            <!-- Wizard Step Pills (Progress Indicator) -->
+            <div class="max-w-4xl mx-auto mb-8 no-print">
+                <div class="grid grid-cols-5 gap-1.5 sm:gap-2 text-center text-xs font-bold">
+                    <button type="button" onclick="irAlPaso(1)" id="pill-step-1" class="step-pill active py-2.5 px-1.5 sm:px-2 rounded-2xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer">
+                        <span class="step-number w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center justify-center">1</span>
+                        <span class="text-[11px] hidden sm:inline">Partes</span>
+                    </button>
+                    <button type="button" onclick="irAlPaso(2)" id="pill-step-2" class="step-pill py-2.5 px-1.5 sm:px-2 rounded-2xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer">
+                        <span class="step-number w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center justify-center">2</span>
+                        <span class="text-[11px] hidden sm:inline">Rubro</span>
+                    </button>
+                    <button type="button" onclick="irAlPaso(3)" id="pill-step-3" class="step-pill py-2.5 px-1.5 sm:px-2 rounded-2xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer">
+                        <span class="step-number w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center justify-center">3</span>
+                        <span class="text-[11px] hidden sm:inline">Jornada 42h</span>
+                    </button>
+                    <button type="button" onclick="irAlPaso(4)" id="pill-step-4" class="step-pill py-2.5 px-1.5 sm:px-2 rounded-2xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer">
+                        <span class="step-number w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center justify-center">4</span>
+                        <span class="text-[11px] hidden sm:inline">Renta</span>
+                    </button>
+                    <button type="button" onclick="irAlPaso(5)" id="pill-step-5" class="step-pill py-2.5 px-1.5 sm:px-2 rounded-2xl border border-slate-200 bg-white shadow-xs flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer">
+                        <span class="step-number w-5 h-5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center justify-center">5</span>
+                        <span class="text-[11px] hidden sm:inline">Blindaje</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TWO-COLUMN WORKSPACE: WIZARD FORM (7 cols) + STICKY PREVIEW & DOWNLOAD (5 cols) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
+                
+                <!-- COLUMNA IZQUIERDA: FORMULARIO WIZARD (7 COLS) -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- PASO 1: PARTES Y TIPO DE CONTRATO -->
+                    <div id="step-section-1" class="wizard-step bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5">
+                        <div class="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                            <span class="w-7 h-7 rounded-xl bg-[#00382E] text-white font-black text-xs flex items-center justify-center">1</span>
+                            <h2 class="text-base font-extrabold text-slate-900">Identificación de las Partes y Tipo de Contrato</h2>
+                        </div>
+
+                        <!-- Tipo de Contrato -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Modalidad de Contratación:</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                <label class="border border-slate-200 rounded-2xl p-3 text-center cursor-pointer hover:border-[#00382E] transition-all has-[:checked]:border-[#00382E] has-[:checked]:bg-emerald-50/40">
+                                    <input type="radio" name="tipoContrato" value="indefinido" checked class="sr-only" onchange="actualizarContrato()">
+                                    <span class="font-bold block text-slate-900">Indefinido</span>
+                                    <span class="text-[10px] text-slate-500">Estándar continuo</span>
+                                </label>
+                                <label class="border border-slate-200 rounded-2xl p-3 text-center cursor-pointer hover:border-[#00382E] transition-all has-[:checked]:border-[#00382E] has-[:checked]:bg-emerald-50/40">
+                                    <input type="radio" name="tipoContrato" value="plazo" class="sr-only" onchange="actualizarContrato()">
+                                    <span class="font-bold block text-slate-900">Plazo Fijo</span>
+                                    <span class="text-[10px] text-slate-500">Fecha de término</span>
+                                </label>
+                                <label class="border border-slate-200 rounded-2xl p-3 text-center cursor-pointer hover:border-[#00382E] transition-all has-[:checked]:border-[#00382E] has-[:checked]:bg-emerald-50/40">
+                                    <input type="radio" name="tipoContrato" value="obra" class="sr-only" onchange="actualizarContrato()">
+                                    <span class="font-bold block text-slate-900">Obra o Faena</span>
+                                    <span class="text-[10px] text-slate-500">Término de faena</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Campos condicionales plazo / obra -->
+                        <div id="campo-plazo-fijo" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-amber-50/70 border border-amber-200 rounded-2xl text-xs">
+                            <div>
+                                <label class="block font-bold text-amber-900 mb-1">Fecha de Término del Plazo Fijo:</label>
+                                <input type="date" id="input-fecha-termino-plazo" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs" onchange="actualizarContrato()">
+                            </div>
+                            <div class="flex items-center text-[11px] text-amber-800">
+                                <span>Máximo 1 año legal (o 2 años para gerentes/profesionales). Máximo 2 renovaciones antes de pasar a indefinido.</span>
+                            </div>
+                        </div>
+
+                        <div id="campo-obra-faena" class="hidden p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-2xl text-xs space-y-2">
+                            <div>
+                                <label class="block font-bold text-[#00382E] mb-1">Nombre de la Obra o Proyecto:</label>
+                                <input type="text" id="input-nombre-obra" placeholder="Ej: Construcción Edificio Los Robles / Proyecto Minero" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs" oninput="actualizarContrato()">
+                            </div>
+                        </div>
+
+                        <!-- Datos Empleador -->
+                        <div class="space-y-3 pt-2">
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">A. Datos del Empleador (Empresa o Persona Natural)</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Razón Social o Nombre Empleador:</label>
+                                    <input type="text" id="input-empresa-nombre" placeholder="Ej: Comercial y Servicios SpA" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">RUT Empresa / Empleador:</label>
+                                    <input type="text" id="input-empresa-rut" placeholder="77.123.456-7" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Nombre Representante Legal:</label>
+                                    <input type="text" id="input-empresa-rep" placeholder="Ej: Juan Carlos Pérez Soto" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">RUT Representante Legal:</label>
+                                    <input type="text" id="input-empresa-rep-rut" placeholder="15.678.901-2" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block font-semibold text-slate-700 mb-1">Dirección Comercial Completa y Comuna:</label>
+                                    <input type="text" id="input-empresa-direccion" placeholder="Ej: Av. Providencia 1234, Oficina 601, Providencia, Santiago" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datos Trabajador -->
+                        <div class="space-y-3 pt-2">
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">B. Datos del Trabajador(a)</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Nombre Completo del Trabajador:</label>
+                                    <input type="text" id="input-trabajador-nombre" placeholder="Ej: María José Morales Valenzuela" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">RUT del Trabajador:</label>
+                                    <input type="text" id="input-trabajador-rut" placeholder="18.345.678-9" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Nacionalidad y Estado Civil:</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="text" id="input-trabajador-nacionalidad" value="chilena" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs outline-none" oninput="actualizarContrato()">
+                                        <input type="text" id="input-trabajador-estado-civil" value="soltero(a)" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs outline-none" oninput="actualizarContrato()">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Fecha de Nacimiento:</label>
+                                    <input type="date" id="input-trabajador-fecha-nac" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs outline-none" onchange="actualizarContrato()">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block font-semibold text-slate-700 mb-1">Domicilio Particular y Comuna del Trabajador:</label>
+                                    <input type="text" id="input-trabajador-direccion" placeholder="Ej: Los Plátanos 456, Maipú, Región Metropolitana" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-2">
+                            <button type="button" onclick="irAlPaso(2)" class="btn-yellow-pill !py-2.5 !px-5 !text-xs flex items-center gap-1.5 cursor-pointer">
+                                <span>Siguiente: Rubro y Cargo</span>
+                                <span class="material-icons text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PASO 2: RUBRO, CARGO Y FUNCIONES -->
+                    <div id="step-section-2" class="wizard-step hidden bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5">
+                        <div class="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                            <span class="w-7 h-7 rounded-xl bg-[#00382E] text-white font-black text-xs flex items-center justify-center">2</span>
+                            <h2 class="text-base font-extrabold text-slate-900">Rubro Económico, Cargo y Biblioteca de Funciones</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <label class="block font-bold text-slate-800 mb-1">1. Sector o Rubro de la Empresa:</label>
+                                <select id="select-sector-empresa" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-semibold bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="cambiarSector()">
+                                    <option value="oficina">🏢 Oficinas, Administración & Tecnología</option>
+                                    <option value="comercio">🛍️ Comercio, Retail & Tiendas</option>
+                                    <option value="gastronomia">🍽️ Gastronomía, Restaurantes & Eventos</option>
+                                    <option value="ventas">💼 Fuerza de Ventas & Ejecutivos Comerciales</option>
+                                    <option value="logistica">🚚 Logística, Bodega & Reparto</option>
+                                    <option value="construccion">🏗️ Construcción, Obras & Maestranzas</option>
+                                    <option value="salud">🏥 Salud, Cuidados & Estética</option>
+                                    <option value="seguridad">🛡️ Seguridad Privada & Conserjería</option>
+                                    <option value="educacion">🎓 Educación & Capacitación</option>
+                                    <option value="agro">🌾 Agroindustria & Temporeros</option>
+                                    <option value="directivo">👔 Cargos Directivos & Gerenciales</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-800 mb-1">2. Cargo Sugerido o Personalizado:</label>
+                                <select id="select-cargos-sugeridos" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="seleccionarCargoSugerido()">
+                                    <!-- Llenado por JS -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-800 mb-1">Nombre Exacto del Cargo a Estipular en Contrato:</label>
+                            <input type="text" id="input-cargo-nombre" placeholder="Ej: Jefe de Operaciones & Logística" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-900" oninput="actualizarContrato()">
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-xs font-bold text-slate-800">Funciones Específicas del Trabajador (Cláusula 1):</label>
+                                <span class="text-[10px] text-slate-500">Editables directamente</span>
+                            </div>
+                            <textarea id="textarea-funciones" rows="5" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-2xl text-xs font-mono leading-relaxed text-slate-800 focus:ring-2 focus:ring-[#00382E]" placeholder="Una función por línea..." oninput="actualizarContrato()"></textarea>
+                            <span class="text-[10px] text-slate-400 mt-1 block">El Código del Trabajo (Art. 10 Nº 3) prohíbe funciones ambiguas. Pon cada tarea específica en una línea distinta.</span>
+                        </div>
+
+                        <div class="flex justify-between pt-2">
+                            <button type="button" onclick="irAlPaso(1)" class="btn-outline-pill !py-2 !px-4 !text-xs cursor-pointer">
+                                Volver
+                            </button>
+                            <button type="button" onclick="irAlPaso(3)" class="btn-yellow-pill !py-2.5 !px-5 !text-xs flex items-center gap-1.5 cursor-pointer">
+                                <span>Siguiente: Jornada 42h</span>
+                                <span class="material-icons text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PASO 3: JORNADA 42 HORAS Y MODALIDAD -->
+                    <div id="step-section-3" class="wizard-step hidden bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5">
+                        <div class="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                            <span class="w-7 h-7 rounded-xl bg-[#00382E] text-white font-black text-xs flex items-center justify-center">3</span>
+                            <h2 class="text-base font-extrabold text-slate-900">Jornada Legal Vigente (Hito 42 Horas Ley 21.561)</h2>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-800 mb-1.5">Selecciona la Estructura de Horario Conforme a la DT:</label>
+                            <select id="select-jornada-clave" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-semibold bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="cambiarJornada()">
+                                <option value="5x2_viernes_corto">🕒 Jornada 5x2 Oficina: Lunes a Viernes (42h - Salida Viernes Corto)</option>
+                                <option value="5x2_uniforme">🕒 Jornada 5x2 Uniforme: Lunes a Viernes (42h - 8h 24m diarias)</option>
+                                <option value="6x1_comercio">🛍️ Jornada 6x1 Comercio: Lunes a Sábado (42h - Art. 38 y 7 domingos)</option>
+                                <option value="turnos_rotativos">🔄 Turnos Rotativos Continuos (Mañana / Tarde / Noche - Art. 38)</option>
+                                <option value="part_time_20h">⏱️ Jornada Parcial (Part-Time): 20 Horas Semanales (Art. 40 bis)</option>
+                                <option value="part_time_30h">⏱️ Jornada Parcial (Part-Time): 30 Horas Semanales (Tope Art. 40 bis)</option>
+                                <option value="teletrabajo_hibrido">💻 Teletrabajo Híbrido (Presencial + Remoto con Desconexión 12h)</option>
+                                <option value="teletrabajo_100">🏠 Teletrabajo 100% Remoto (Ley 21.220 con Asignación)</option>
+                                <option value="chofer_carga">🚚 Choferes de Carga Terrestre (180h mensuales - Art. 25 bis)</option>
+                                <option value="art_22_estricto">⚠️ Exclusión de Jornada (Art. 22 inc. 2 - Exclusivo Gerentes con mando)</option>
+                            </select>
+                        </div>
+
+                        <!-- Recuadro informativo de la jornada -->
+                        <div id="info-jornada-box" class="p-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl text-xs space-y-1.5">
+                            <span class="font-bold text-[#00382E] block text-[11px] uppercase tracking-wider">Redacción Legal Conforme a Dictamen DT:</span>
+                            <p id="info-jornada-texto" class="text-[11px] text-slate-700 leading-relaxed font-mono whitespace-pre-line"></p>
+                        </div>
+
+                        <!-- Alerta de riesgo si marcan Art. 22 -->
+                        <div id="alerta-art22" class="hidden p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs space-y-1">
+                            <div class="flex items-center gap-1.5 text-rose-800 font-bold">
+                                <span class="material-icons text-sm">warning</span>
+                                <span>ADVERTENCIA DT LEY 40 HORAS: Art. 22 Inciso 2 Restringido</span>
+                            </div>
+                            <p class="text-[11px] text-rose-700 leading-relaxed">
+                                La DT y los tribunales multan con <strong>hasta 60 UTM ($4.303.260)</strong> a empresas que aplican Art. 22 a recepcionistas, programadores, choferes o personal con control horario. Úsalo <strong>únicamente</strong> si la persona tiene facultades de administración general.
+                            </p>
+                        </div>
+
+                        <div class="flex justify-between pt-2">
+                            <button type="button" onclick="irAlPaso(2)" class="btn-outline-pill !py-2 !px-4 !text-xs cursor-pointer">
+                                Volver
+                            </button>
+                            <button type="button" onclick="irAlPaso(4)" class="btn-yellow-pill !py-2.5 !px-5 !text-xs flex items-center gap-1.5 cursor-pointer">
+                                <span>Siguiente: Remuneraciones</span>
+                                <span class="material-icons text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PASO 4: REMUNERACIONES Y COMISIONES -->
+                    <div id="step-section-4" class="wizard-step hidden bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5">
+                        <div class="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                            <span class="w-7 h-7 rounded-xl bg-[#00382E] text-white font-black text-xs flex items-center justify-center">4</span>
+                            <h2 class="text-base font-extrabold text-slate-900">Estructura Salarial, Gratificación y Asignaciones</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <label class="block font-bold text-slate-800 mb-1">Sueldo Base Mensual Pactado (CLP):</label>
+                                <input type="number" id="input-sueldo-base" value="850000" step="5000" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">Sueldo Mínimo legal 2026: $553.553</span>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-800 mb-1">Modalidad de Gratificación Legal:</label>
+                                <select id="select-tipo-gratif" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="actualizarContrato()">
+                                    <option value="art50">Artículo 50 (25% mensual con tope 4,75 IMM - Recomendado)</option>
+                                    <option value="art47">Artículo 47 (30% de utilidades líquidas en balance anual)</option>
+                                    <option value="sin_gratif">Sin gratificación mensual pactada</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Comisiones y Semana Corrida -->
+                        <div class="p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-2 text-xs">
+                            <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                                <input type="checkbox" id="check-tiene-comisiones" class="rounded text-[#00382E] focus:ring-[#00382E]" onchange="toggleComisiones()">
+                                <span>¿El trabajador devengará Comisiones o Metas Variables?</span>
+                            </label>
+                            <div id="campo-detalle-comisiones" class="hidden space-y-1.5 pt-1">
+                                <input type="text" id="input-detalle-comision" placeholder="Ej: Comisión del 3% sobre ventas netas mensuales efectivamente cobradas" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs" oninput="actualizarContrato()">
+                                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-[10.5px] text-emerald-800">
+                                    <strong>Conforme a DT Art. 45:</strong> El contrato incorporará automáticamente la fórmula legal de cálculo de la <strong>Semana Corrida</strong> conforme a dictámenes vigentes.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Asignaciones No Imponibles -->
+                        <div class="space-y-2 text-xs">
+                            <span class="font-bold text-slate-800 block">Asignaciones Compensatorias No Imponibles (Art. 41):</span>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-[10px] text-slate-500 mb-0.5">Colación:</label>
+                                    <input type="number" id="input-asig-colacion" value="30000" step="5000" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs font-mono" oninput="actualizarContrato()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-500 mb-0.5">Movilización:</label>
+                                    <input type="number" id="input-asig-movilizacion" value="30000" step="5000" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs font-mono" oninput="actualizarContrato()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-500 mb-0.5">Teletrabajo (Luz/Net):</label>
+                                    <input type="number" id="input-asig-teletrabajo" value="0" step="5000" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs font-mono" oninput="actualizarContrato()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between pt-2">
+                            <button type="button" onclick="irAlPaso(3)" class="btn-outline-pill !py-2 !px-4 !text-xs cursor-pointer">
+                                Volver
+                            </button>
+                            <button type="button" onclick="irAlPaso(5)" class="btn-yellow-pill !py-2.5 !px-5 !text-xs flex items-center gap-1.5 cursor-pointer">
+                                <span>Siguiente: Cláusulas de Blindaje</span>
+                                <span class="material-icons text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PASO 5: BLINDAJE LEGAL DT -->
+                    <div id="step-section-5" class="wizard-step hidden bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5">
+                        <div class="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                            <span class="w-7 h-7 rounded-xl bg-[#00382E] text-white font-black text-xs flex items-center justify-center">5</span>
+                            <h2 class="text-base font-extrabold text-slate-900">Cláusulas Especiales de Blindaje Legal DT</h2>
+                        </div>
+
+                        <div class="space-y-2.5 text-xs">
+                            <label class="flex items-start gap-2.5 p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl cursor-pointer hover:bg-emerald-50/40 transition-colors">
+                                <input type="checkbox" id="check-ley-karin" checked class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]" onchange="actualizarContrato()">
+                                <div>
+                                    <span class="font-bold text-slate-900 block">Protocolo Obligatorio Ley Karin (DS 44 Mintrab)</span>
+                                    <span class="text-[11px] text-slate-600">Obligatorio para todas las empresas en Chile. Compromiso de no agresión y constancia de entrega del protocolo.</span>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-start gap-2.5 p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl cursor-pointer hover:bg-emerald-50/40 transition-colors">
+                                <input type="checkbox" id="check-confidencialidad" checked class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]" onchange="actualizarContrato()">
+                                <div>
+                                    <span class="font-bold text-slate-900 block">Confidencialidad, Propiedad Intelectual y No Concurrencia</span>
+                                    <span class="text-[11px] text-slate-600">Protege bases de datos, códigos, cartera de clientes y prohíbe trabajar para competidores en el mismo giro.</span>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-2.5 p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl cursor-pointer hover:bg-emerald-50/40 transition-colors">
+                                <input type="checkbox" id="check-herramientas" checked class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]" onchange="actualizarContrato()">
+                                <div>
+                                    <span class="font-bold text-slate-900 block">Custodia de Equipos y Deber de Restitución Inmediata</span>
+                                    <span class="text-[11px] text-slate-600">Computador, celular, vehículo o herramientas de trabajo asignadas solo para uso laboral y con entrega inmediata al término.</span>
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-2.5 p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl cursor-pointer hover:bg-emerald-50/40 transition-colors">
+                                <input type="checkbox" id="check-bandas-horarias" class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]" onchange="actualizarContrato()">
+                                <div>
+                                    <span class="font-bold text-slate-900 block">Banda Horaria Padres/Madres (Art. 27 Ley 40 Horas)</span>
+                                    <span class="text-[11px] text-slate-600">Para colaboradores con hijos menores de 12 años que soliciten anticipar o retrasar su ingreso hasta en 1 hora.</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Callout Ley 21.719 Protección de Datos -->
+                        <div class="p-4 bg-rose-50/70 border border-rose-200 rounded-2xl text-xs space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-rose-900 flex items-center gap-1">
+                                    <span class="material-icons text-xs text-rose-600">shield</span> Nueva Ley 21.719 de Protección de Datos Personales
+                                </span>
+                                <span class="text-[10px] font-mono text-rose-700 font-extrabold">2026</span>
+                            </div>
+                            <p class="text-[11px] text-slate-600 leading-snug">
+                                ¿Tu empresa maneja licencias médicas, cuentas bancarias o control biométrico? Conoce el <a href="kit-cumplimiento-ley-datos-personales-chile" class="font-bold text-[#00382E] hover:underline">Kit Ley 21.719 con Anexo Laboral y RAT en Excel</a> para evitar multas de hasta 20.000 UTM.
+                            </p>
+                        </div>
+
+                        <div class="flex justify-between pt-2">
+                            <button type="button" onclick="irAlPaso(4)" class="btn-outline-pill !py-2 !px-4 !text-xs cursor-pointer">
+                                Volver
+                            </button>
+                            <button type="button" id="btn-comprar-contrato-step5" class="btn-yellow-pill !py-3.5 !px-6 !text-xs !shadow-md flex items-center gap-2 cursor-pointer">
+                                <span class="material-icons text-sm">download</span>
+                                <span>Descargar Contrato Word .docx ($12.990)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- COLUMNA DERECHA: PREVIEW Y DESCARGA STICKY (5 COLS) -->
+                <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-5">
+                    
+                    <!-- CARD DE ACCIÓN Y COMPRA FLOW ($12.990) -->
+                    <div class="bg-white border-2 border-[#00382E] rounded-3xl p-6 shadow-lg relative overflow-hidden space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#00382E] bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                                Suite Legal Inmediata
+                            </span>
+                            <span class="text-[10px] text-slate-500 font-mono">Word .docx + PDF</span>
+                        </div>
+
+                        <h3 class="text-base font-extrabold text-slate-900 leading-snug">
+                            Pack Contrato de Trabajo Pyme 2026
+                        </h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Documento a la medida, redactado conforme al Código del Trabajo, <strong>jornada legal de 42 horas</strong> y protocolo obligatorio <strong>Ley Karin (DS 44)</strong>.
+                        </p>
+
+                        <div class="py-2.5 px-3 bg-slate-50 border border-slate-200/90 rounded-2xl text-xs space-y-1.5">
+                            <div class="flex items-center gap-1.5 text-slate-700">
+                                <span class="material-icons text-emerald-600 text-xs">check_circle</span>
+                                <span><strong>Microsoft Word (.docx):</strong> Totalmente editable</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-slate-700">
+                                <span class="material-icons text-emerald-600 text-xs">check_circle</span>
+                                <span><strong>Anexo Obligatorio Ley Karin:</strong> Constancia DS 44</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-slate-700">
+                                <span class="material-icons text-emerald-600 text-xs">check_circle</span>
+                                <span><strong>Instructivo Mi DT:</strong> Sube tu contrato en los 15 días</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block line-through">Normal $25.000</span>
+                                <span class="text-2xl font-black text-slate-900 font-mono">$12.990 <span class="text-xs font-sans text-slate-500 font-normal">CLP</span></span>
+                            </div>
+                            <button type="button" id="btn-comprar-contrato-main" class="btn-yellow-pill !py-3 !px-5 !text-xs !shadow-md flex items-center gap-1.5 cursor-pointer">
+                                <span class="material-icons text-xs">download</span>
+                                <span>Descargar Word ($12.990)</span>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100">
+                            <button type="button" id="btn-preview-pdf" class="text-[#00382E] font-bold hover:underline flex items-center gap-1 cursor-pointer bg-transparent border-0">
+                                <span class="material-icons text-xs">visibility</span>
+                                <span>Ver vista previa en PDF</span>
+                            </button>
+                            <span class="text-slate-400 font-mono text-[10px]">Fórmulas Conforme a DT</span>
+                        </div>
+                    </div>
+
+                    <!-- CAJA DE VISTA PREVIA VISUAL INTERACTIVA -->
+                    <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-2.5">
+                            <span class="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                <span class="material-icons text-xs text-[#00382E]">description</span> Vista Previa en Tiempo Real
+                            </span>
+                            <span class="text-[9.5px] text-slate-400 font-mono">Actualización dinámica</span>
+                        </div>
+
+                        <div class="watermark-banner-top">
+                            <span class="flex items-center gap-1">
+                                <span class="material-icons text-xs text-rose-600">lock</span>
+                                <span>Borrador de Vista Previa Protegido</span>
+                            </span>
+                            <span class="bg-rose-200/80 text-rose-900 px-2 py-0.5 rounded text-[9px] font-mono">No Válido Para Firma</span>
+                        </div>
+
+                        <div id="preview-container-box" class="contrato-preview-box max-h-[420px] overflow-y-auto p-3.5 bg-slate-50/60 border border-slate-200 rounded-2xl space-y-2">
+                            <!-- El texto del contrato se renderiza aquí dinámicamente -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- 5. SECCIÓN DE CONTENIDO EDUCATIVO Y REQUISITOS DT -->
+            <section class="mt-14 pt-10 border-t border-slate-200/90 min-w-0 w-full no-print">
+                <div class="max-w-4xl mx-auto space-y-10 min-w-0 w-full">
+                    
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mb-3">
+                            Requisitos Legales Obligatorios del Contrato de Trabajo en Chile (Art. 10 C. del Trabajo)
+                        </h2>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            El Código del Trabajo de Chile y las directrices de la Dirección del Trabajo exigen que todo contrato individual de trabajo sea escriturado dentro del plazo fatal de <strong>15 días corridos</strong> desde la incorporación del trabajador (o <strong>5 días</strong> si se trata de contratos por obra, faena o plazo fijo menor a 30 días). El documento debe contener de manera taxativa:
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                            <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
+                                <span class="font-bold text-sm text-slate-900 block mb-1">1. Lugar y Fecha</span>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Individualización clara de las partes con mención precisa de RUT, nacionalidad, domicilio particular y fecha de nacimiento del empleado.
+                                </p>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
+                                <span class="font-bold text-sm text-slate-900 block mb-1">2. Funciones y Cargo</span>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Determinación precisa de la naturaleza de los servicios y del lugar o ciudad en que hayan de prestarse. La DT prohíbe funciones ambiguas.
+                                </p>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
+                                <span class="font-bold text-sm text-slate-900 block mb-1">3. Monto y Forma de Pago</span>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Monto, forma y período de pago de la remuneración acordada, junto con la estipulación explícita de la gratificación legal y asignaciones.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sanciones por no escriturar -->
+                    <div class="p-5 bg-rose-50/70 border border-rose-200 rounded-3xl text-xs space-y-2">
+                        <span class="font-bold text-rose-900 text-sm block">Sanciones y Multas DT por Falta de Escrituración del Contrato</span>
+                        <p class="text-rose-800 leading-relaxed">
+                            Si el empleador no escritura el contrato dentro del plazo legal de 15 días, el artículo 9 del Código del Trabajo contempla una doble sanción:
+                        </p>
+                        <ul class="list-disc pl-5 space-y-1 text-rose-800">
+                            <li><strong>Multa a beneficio fiscal:</strong> De 1 a 5 UTM para microempresas, de 5 a 10 UTM para pequeñas empresas y hasta 60 UTM para medianas y grandes.</li>
+                            <li><strong>Presunción legal a favor del trabajador:</strong> La falta de contrato escrito hace presumir legalmente que son verdaderas las estipulaciones sobre remuneraciones y condiciones de trabajo que declare el trabajador.</li>
+                            <li><strong>Obligación de Registro Mi DT:</strong> Todo contrato debe subirse a la plataforma electrónica de la Dirección del Trabajo dentro de los 15 días siguientes a su suscripción.</li>
+                        </ul>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Preguntas Frecuentes sobre Contratos de Trabajo</h3>
+                        <div class="space-y-3 text-xs">
+                            <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
+                                <h4 class="font-bold text-slate-900 mb-1">¿Qué cambió con la Ley de 40 Horas en la redacción de contratos?</h4>
+                                <p class="text-slate-600 leading-relaxed">
+                                    En 2026 la jornada laboral ordinaria legal máxima es de <strong>42 horas semanales</strong>. Los contratos nuevos deben estipular una distribución semanal que no supere este límite y que respete el descanso diario mínimo de colación (que no es imputable a la jornada).
+                                </p>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
+                                <h4 class="font-bold text-slate-900 mb-1">¿Por qué es obligatoria la cláusula sobre la Ley Karin?</h4>
+                                <p class="text-slate-600 leading-relaxed">
+                                    La Ley 21.643 (Ley Karin) y el Decreto Supremo 44 del Ministerio del Trabajo exigen que todo empleador en Chile informe oportunamente a los trabajadores sobre el protocolo de prevención del acoso laboral, acoso sexual y violencia en el trabajo. Incluir esta constancia en el contrato acredita fehacientemente el cumplimiento ante una fiscalización de la DT.
+                                </p>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
+                                <h4 class="font-bold text-slate-900 mb-1">¿En qué formato se entrega el contrato de trabajo generado?</h4>
+                                <p class="text-slate-600 leading-relaxed">
+                                    Recibirás inmediatamente tu documento en dos formatos: un archivo <strong>Microsoft Word (.docx)</strong> 100% editable sin contraseñas ni candados, y un documento <strong>PDF</strong> formateado y listo para imprimir o enviar para firma electrónica conforme a la Ley 19.799.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- 6. ELEVATED CURVED DARK FOOTER (TealHQ Architecture) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container max-w-[1240px] mx-auto px-6 py-16 sm:py-20">
+                
+                <!-- Main Grid 4 Columns -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
+                    
+                    <!-- Col 1: Brand & Description -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="flex items-center gap-2.5">
+                            <div style="background-color: #FFB703;" class="w-9 h-9 rounded-xl bg-[#FFB703] flex items-center justify-center text-slate-950 font-bold shrink-0 shadow-sm">
+                                <span class="material-icons text-lg" style="color: #00382E;">balance</span>
+                            </div>
+                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none whitespace-nowrap">
+                                cálculolaboral<span class="text-[#FFB703]">.</span>
                             </span>
                         </div>
                         <p class="text-xs text-white/70 leading-relaxed max-w-sm">
                             Plataforma legal independiente de cálculo laboral en Chile. Desarrollada para transparentar liquidaciones, proteger los derechos del trabajador y blindar a las pymes.
                         </p>
-                        <div class="pt-2 text-xs font-mono text-white/40">
-                            Versión 2.5 • Actualizada Marzo 2026
+                        <div class="pt-1 text-[11px] font-mono-num text-white/40">
+                            Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
 
                     <!-- Col 2: Calculadoras -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Calculadoras</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="finiquito_calculator" class="text-white hover:text-amber-300 transition-colors">Finiquito Legal</a></li>
-                            <li><a href="simulador-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Despido Injustificado</a></li>
-                            <li><a href="sueldo_liquido" class="text-white hover:text-amber-300 transition-colors">Sueldo Líquido</a></li>
-                            <li><a href="calculadora-horas-extras" class="text-white hover:text-amber-300 transition-colors">Horas Extras 42h</a></li>
-                            <li><a href="calculadora-sueldo-part-time" class="text-white hover:text-amber-300 transition-colors">Sueldo Part-Time</a></li>
-                            <li><a href="calculadora-vacaciones" class="text-white hover:text-amber-300 transition-colors">Calculadora Vacaciones</a></li>
-                            <li><a href="calculadora-despido-articulo-160" class="text-white hover:text-amber-300 transition-colors">Despido Art. 160</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Calculadoras</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#FFB703] transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#FFB703] transition-colors">Vacaciones Proporcionales</a></li>
+                            <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Part-Time</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 3: Guías Clave -->
+                    <!-- Col 3: Guías Legales -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Guías Legales</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="reclamar-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Reclamar Despido</a></li>
-                            <li><a href="carta-de-renuncia-chile" class="text-white hover:text-amber-300 transition-colors">Carta de Renuncia</a></li>
-                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white hover:text-amber-300 transition-colors">Art. 161 Necesidades</a></li>
-                            <li><a href="ley-40-horas-chile-2026" class="text-white hover:text-amber-300 transition-colors">Ley 40 Horas (42h)</a></li>
-                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white hover:text-amber-300 transition-colors">Checklist Fiscalización DT</a></li>
-                            <li><a href="blog" class="text-white hover:text-amber-300 transition-colors">Todas las Guías →</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Guías Legales</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Cómo Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carta de Renuncia</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white/80 hover:text-[#FFB703] transition-colors">Art. 161 Necesidades</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas (42h)</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 4: Empresas & Legal -->
+                    <!-- Col 4: Empresas -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Empresas</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="para-empleadores" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Portal Pymes</a></li>
-                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
-                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
-                            <li><a href="generador-finiquito-chile" class="text-white hover:text-amber-300 transition-colors">Generador Finiquitos ($12.990)</a></li>
-                            <li><a href="generador-anexo-40-horas" class="text-white hover:text-amber-300 transition-colors">Anexo 40 Horas Word</a></li>
-                            <li><a href="contacto" class="text-white hover:text-amber-300 transition-colors">Contacto Directo</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Empresas</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores (Pymes)</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Finiquito ($12.990)</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
                         </ul>
                     </div>
 
                 </div>
 
-                <!-- Bottom Legal Bar -->
+                <!-- Bottom Bar -->
                 <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
                     <div>
                         &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
@@ -83,6 +1309,11 @@
                         <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
                         <span>·</span>
                         <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                        <span>·</span>
+                        <span class="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                            <span class="material-icons text-xs" aria-hidden="true">verified</span>
+                            Fórmulas Conforme a DT
+                        </span>
                     </div>
                 </div>
 
@@ -90,12 +1321,78 @@
         </div>
     </footer>
 
+    <!-- History Modal -->
+    <div id="history-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-[#00382E]">history</span>
+                    <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
+                </div>
+                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-full transition-colors cursor-pointer">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#00382E]"></span> UF (Últimos 30 días)
+                    </div>
+                    <div class="max-h-[250px] overflow-y-auto pr-1">
+                        <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UF</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="uf-history-body">
+                                <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#FFB703]"></span> UTM (Últimos 12 meses)
+                    </div>
+                    <div class="max-h-[250px] overflow-y-auto pr-1">
+                        <table class="w-full text-left">
+                            <caption class="sr-only">Historial de valores UTM</caption>
+                            <thead>
+                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                    <th scope="col" class="py-1 px-2 font-semibold">Período</th>
+                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="utm-history-body">
+                                <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPTS -->
     <script src="/js/constants.js?v=2.0.4"></script>
     <script src="/js/indicators.js?v=2.1.1"></script>
     <script src="js/contrato_templates_engine.js?v=1.0.0"></script>
     <script>
         var pasoActual = 1;
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
         function irAlPaso(paso) {
             pasoActual = paso;
@@ -176,7 +1473,8 @@
         }
 
         function recolectarDatos() {
-            var tipoContrato = document.querySelector('input[name="tipoContrato"]:checked').value;
+            var tipoContratoEl = document.querySelector('input[name="tipoContrato"]:checked');
+            var tipoContrato = tipoContratoEl ? tipoContratoEl.value : 'indefinido';
             
             // Plazo y Obra toggles
             var boxPlazo = document.getElementById('campo-plazo-fijo');
@@ -189,37 +1487,37 @@
 
             return {
                 tipoContrato: tipoContrato,
-                fechaTerminoPlazo: document.getElementById('input-fecha-termino-plazo').value,
-                nombreObra: document.getElementById('input-nombre-obra').value,
-                empresaRazonSocial: document.getElementById('input-empresa-nombre').value,
-                empresaRut: document.getElementById('input-empresa-rut').value,
-                empresaRepresentante: document.getElementById('input-empresa-rep').value,
-                empresaRepRut: document.getElementById('input-empresa-rep-rut').value,
-                empresaDireccion: document.getElementById('input-empresa-direccion').value,
+                fechaTerminoPlazo: document.getElementById('input-fecha-termino-plazo')?.value || '',
+                nombreObra: document.getElementById('input-nombre-obra')?.value || '',
+                empresaRazonSocial: document.getElementById('input-empresa-nombre')?.value || '',
+                empresaRut: document.getElementById('input-empresa-rut')?.value || '',
+                empresaRepresentante: document.getElementById('input-empresa-rep')?.value || '',
+                empresaRepRut: document.getElementById('input-empresa-rep-rut')?.value || '',
+                empresaDireccion: document.getElementById('input-empresa-direccion')?.value || '',
                 empresaEmail: 'contacto@empresa.cl',
                 ciudadEmpresa: 'Santiago',
-                trabajadorNombre: document.getElementById('input-trabajador-nombre').value,
-                trabajadorRut: document.getElementById('input-trabajador-rut').value,
-                trabajadorNacionalidad: document.getElementById('input-trabajador-nacionalidad').value,
-                trabajadorEstadoCivil: document.getElementById('input-trabajador-estado-civil').value,
-                trabajadorFechaNac: document.getElementById('input-trabajador-fecha-nac').value,
-                trabajadorDireccion: document.getElementById('input-trabajador-direccion').value,
+                trabajadorNombre: document.getElementById('input-trabajador-nombre')?.value || '',
+                trabajadorRut: document.getElementById('input-trabajador-rut')?.value || '',
+                trabajadorNacionalidad: document.getElementById('input-trabajador-nacionalidad')?.value || 'chilena',
+                trabajadorEstadoCivil: document.getElementById('input-trabajador-estado-civil')?.value || 'soltero(a)',
+                trabajadorFechaNac: document.getElementById('input-trabajador-fecha-nac')?.value || '',
+                trabajadorDireccion: document.getElementById('input-trabajador-direccion')?.value || '',
                 trabajadorComuna: '',
                 trabajadorEmail: 'trabajador@email.cl',
-                cargoNombre: document.getElementById('input-cargo-nombre').value,
+                cargoNombre: document.getElementById('input-cargo-nombre')?.value || '',
                 funciones: funcionesArray,
-                jornadaClave: document.getElementById('select-jornada-clave').value,
-                sueldoBase: parseFloat(document.getElementById('input-sueldo-base').value) || 850000,
-                tipoGratificacion: document.getElementById('select-tipo-gratif').value,
-                tieneComisiones: document.getElementById('check-tiene-comisiones').checked,
-                detalleComision: document.getElementById('input-detalle-comision').value,
-                asignacionColacion: parseFloat(document.getElementById('input-asig-colacion').value) || 0,
-                asignacionMovilizacion: parseFloat(document.getElementById('input-asig-movilizacion').value) || 0,
-                asignacionTeletrabajo: parseFloat(document.getElementById('input-asig-teletrabajo').value) || 0,
-                incluirLeyKarin: document.getElementById('check-ley-karin').checked,
-                incluirConfidencialidad: document.getElementById('check-confidencialidad').checked,
-                incluirHerramientas: document.getElementById('check-herramientas').checked,
-                incluirBandaHoraria: document.getElementById('check-bandas-horarias').checked
+                jornadaClave: document.getElementById('select-jornada-clave')?.value || '5x2_viernes_corto',
+                sueldoBase: parseFloat(document.getElementById('input-sueldo-base')?.value) || 850000,
+                tipoGratificacion: document.getElementById('select-tipo-gratif')?.value || 'art50',
+                tieneComisiones: document.getElementById('check-tiene-comisiones')?.checked || false,
+                detalleComision: document.getElementById('input-detalle-comision')?.value || '',
+                asignacionColacion: parseFloat(document.getElementById('input-asig-colacion')?.value) || 0,
+                asignacionMovilizacion: parseFloat(document.getElementById('input-asig-movilizacion')?.value) || 0,
+                asignacionTeletrabajo: parseFloat(document.getElementById('input-asig-teletrabajo')?.value) || 0,
+                incluirLeyKarin: document.getElementById('check-ley-karin')?.checked !== false,
+                incluirConfidencialidad: document.getElementById('check-confidencialidad')?.checked !== false,
+                incluirHerramientas: document.getElementById('check-herramientas')?.checked !== false,
+                incluirBandaHoraria: document.getElementById('check-bandas-horarias')?.checked || false
             };
         }
 
@@ -307,9 +1605,9 @@
                 var modal = document.createElement('div');
                 modal.className = 'fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 backdrop-blur-xs no-print';
                 modal.innerHTML = `
-                    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center animate-bounce-in">
-                        <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md shadow-emerald-500/20">
-                            <span class="material-icons text-3xl">verified</span>
+                    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center animate-bounce-in">
+                        <div class="w-14 h-14 bg-emerald-100 text-[#00382E] rounded-full flex items-center justify-center mx-auto mb-3 shadow-md shadow-emerald-500/20">
+                            <span class="material-icons text-3xl text-emerald-700">verified</span>
                         </div>
                         <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-0.5 rounded-full uppercase tracking-wider">
                             Pago Confirmado ($12.990 CLP)
@@ -318,21 +1616,30 @@
                         <p class="text-xs text-slate-600 mt-1 leading-relaxed">
                             Hemos verificado tu pago por Flow.cl. Ya puedes descargar tu documento editable en Word y tu versión PDF limpia.
                         </p>
-                        <div class="my-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-left space-y-1 font-mono">
-                            <div class="flex justify-between text-slate-500"><span>Trabajador:</span><span class="font-bold text-slate-800">${escapeHtml(datos.trabajadorNombre || 'Trabajador')}</span></div>
-                            <div class="flex justify-between text-slate-500"><span>Cargo:</span><span class="font-bold text-slate-800">${escapeHtml(datos.cargoNombre || 'Cargo')}</span></div>
-                            <div class="flex justify-between text-slate-500"><span>Modalidad:</span><span class="font-bold text-sky-700">${datos.tipoContrato.toUpperCase()}</span></div>
+                        <div class="my-4 p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-left space-y-1 font-mono">
+                            <div class="flex justify-between text-slate-500">
+                                <span>Trabajador:</span>
+                                <span class="font-bold text-slate-800">${escapeHtml(datos.trabajadorNombre || 'Trabajador')}</span>
+                            </div>
+                            <div class="flex justify-between text-slate-500">
+                                <span>Cargo:</span>
+                                <span class="font-bold text-slate-800">${escapeHtml(datos.cargoNombre || 'Cargo')}</span>
+                            </div>
+                            <div class="flex justify-between text-slate-500">
+                                <span>Modalidad:</span>
+                                <span class="font-bold text-[#00382E]">${datos.tipoContrato.toUpperCase()}</span>
+                            </div>
                         </div>
                         <div class="space-y-2">
-                            <button id="btn-descargar-word-limpio" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 font-bold text-xs text-white rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                            <button id="btn-descargar-word-limpio" class="w-full btn-yellow-pill !py-3 !text-xs !shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
                                 <span class="material-icons text-sm">description</span>
                                 <span>Descargar en Word (.docx editable)</span>
                             </button>
-                            <button id="btn-descargar-pdf-limpio" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700 rounded-xl border border-slate-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                            <button id="btn-descargar-pdf-limpio" class="w-full btn-outline-pill !py-2.5 !text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                                 <span class="material-icons text-sm">picture_as_pdf</span>
                                 <span>Abrir / Imprimir PDF</span>
                             </button>
-                            <button id="btn-cerrar-modal" class="w-full py-2 text-xs text-slate-500 hover:text-slate-700 font-medium cursor-pointer">
+                            <button id="btn-cerrar-modal" class="w-full py-2 text-xs text-slate-500 hover:text-slate-700 font-medium cursor-pointer bg-transparent border-0">
                                 Continuar editando
                             </button>
                         </div>

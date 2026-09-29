@@ -25,3 +25,6 @@ Kit_Blindaje_Laboral_Pyme_2026/
 assets/downloads/
 ~$*
 
+
+tools/screenshots/
+*.png

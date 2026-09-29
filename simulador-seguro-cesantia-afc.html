@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Simula gratis tus giros mensuales del Seguro de Cesantía en Chile (AFC 2026). Revisa montos del 70% al 35%, requisitos y tabla con la Ley 21.628.">
-    <title>Simulador de Seguro de Cesantía AFC Chile 2026 (DT)</title>
+    <title>Simulador de Seguro de Cesantía AFC Chile 2026 (DT) | Cálculo Laboral</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -111,7 +111,7 @@
         }
     ]
 }
-    </script>
+</script>
     
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,29 +125,186 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     
     <!-- Precompiled Tailwind CSS -->
     <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
     <style>
-        @media (min-width: 1024px) {
-            [class*="lg:w-[480px]"], .lg-w-480 {
-                width: 480px !important;
-                flex-shrink: 0 !important;
-            }
-            [class*="lg:w-[440px]"], .lg-w-440 {
-                width: 440px !important;
-                flex-shrink: 0 !important;
-            }
-            [class*="lg:w-7/12"], .lg-col-7 {
-                width: 58.333333% !important;
-            }
-            [class*="lg:w-5/12"], .lg-col-5 {
-                width: 41.666667% !important;
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAF9;
+            color: #1E293B;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-mono-num {
+            font-family: 'Geist Mono', monospace;
+            font-feature-settings: 'tnum' on, 'zero' on;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Standardized Pill Buttons */
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.3);
+        }
+        .btn-yellow-pill:hover {
+            background-color: var(--teal-yellow-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 183, 3, 0.38);
+        }
+        .btn-yellow-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.22);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 56, 46, 0.32);
+        }
+        .btn-dark-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #374151 !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 10px 20px;
+            font-size: 13.5px;
+            border: 1.5px solid #D1D5DB;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover {
+            border-color: var(--teal-forest);
+            color: var(--teal-forest) !important;
+            background-color: #F8FAF9;
+        }
+
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
             }
         }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+
+        /* Segmented Control Switcher */
+        .segmented-control-container {
+            background-color: #F1F5F9;
+            border: 1px solid #E2E8F0;
+            border-radius: 9999px;
+            padding: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            max-width: 100%;
+        }
+        .product-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .product-tab:hover {
+            color: var(--teal-forest);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .product-tab.active {
+            color: var(--teal-forest);
+            background-color: #FFFFFF;
+            font-weight: 700;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border-color: #E2E8F0;
+        }
+
+        /* Dropdowns */
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-chevron {
+            transform: rotate(180deg);
+        }
+
         .scrollbar-none::-webkit-scrollbar {
             display: none;
         }
@@ -155,74 +312,15 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        .prose-content h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-top: 2.25rem;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-        }
-        .prose-content h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.01em;
-        }
-        .prose-content p {
-            margin-bottom: 1.25rem;
-            line-height: 1.75;
-        }
-        .prose-content ul {
-            margin-bottom: 1.25rem;
-            list-style-type: disc;
-            padding-left: 1.5rem;
-        }
-        .prose-content ol {
-            margin-bottom: 1.25rem;
-            list-style-type: decimal;
-            padding-left: 1.5rem;
-        }
-        .prose-content li {
-            margin-bottom: 0.5rem;
-        }
-        .prose-content strong {
-            color: #0f172a;
-            font-weight: 600;
-        }
-        .prose-content a {
-            color: #0ea5e9;
-            text-decoration: underline;
-            font-weight: 500;
-        }
-        .prose-content a:hover {
-            color: #0284c7;
-        }
-        .prose-content a.cta-btn,
-        .prose-content a.bg-sky-500,
-        .prose-content a[class*="bg-sky-"],
-        .prose-content a[class*="bg-blue-"] {
-            color: #ffffff !important;
-            text-decoration: none !important;
-            font-weight: 600 !important;
-        }
-    </style>
-<style>
+
+/* TealHQ Required Signature System Tokens & Components */
         :root {
             --teal-forest: #00382E;
-            --teal-forest-hover: #002D25;
+            --teal-forest-hover: #002820;
             --teal-forest-deep: #00261F;
             --teal-yellow: #FFB703;
             --teal-yellow-hover: #FFAA00;
-            --accent-gold: #FFB703;
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .font-mono-num {
-            font-family: 'Geist Mono', monospace;
-            font-feature-settings: 'tnum' on, 'lnum' on;
-            font-variant-numeric: tabular-nums;
         }
 
         .btn-yellow-pill {
@@ -243,10 +341,9 @@
             box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
         }
         .btn-yellow-pill:hover {
-            background-color: var(--teal-yellow-hover);
+            background-color: #FFAA00;
             transform: translateY(-1.5px);
             box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
-            color: #111827 !important;
         }
         .btn-yellow-pill:active {
             transform: translateY(1px) scale(0.98);
@@ -279,30 +376,6 @@
             transform: translateY(1px) scale(0.98);
         }
 
-        .btn-rose-pill {
-            background-color: #E11D48;
-            color: #FFFFFF !important;
-            font-weight: 700;
-            border-radius: 9999px;
-            padding: 12px 26px;
-            font-size: 14.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
-        }
-        .btn-rose-pill:hover {
-            background-color: #BE123C;
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.45);
-            color: #FFFFFF !important;
-        }
-
         .btn-outline-pill {
             background-color: #FFFFFF;
             color: #374151 !important;
@@ -320,12 +393,32 @@
             cursor: pointer;
         }
         .btn-outline-pill:hover {
-            border-color: var(--teal-forest);
-            color: var(--teal-forest) !important;
-            background-color: #F8FAF9;
+            border-color: #9CA3AF;
+            background-color: #F9FAFB;
+            color: #111827 !important;
+            transform: translateY(-1px);
         }
 
-        /* Dropdowns */
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+
         .nav-dropdown-menu {
             opacity: 0;
             visibility: hidden;
@@ -342,8 +435,7 @@
         .nav-dropdown-group:hover .nav-chevron {
             transform: rotate(180deg);
         }
-
-        /* Elevated Curved Dark Footer */
+/* TealHQ Elevated Curved Dark Footer (#00382E & 96px curve) */
         .teal-footer-curve {
             background-color: #00382E;
             color: #FFFFFF;
@@ -352,345 +444,313 @@
             position: relative;
             overflow: hidden;
         }
+        .teal-footer-curve .footer-inner-container {
+            max-width: 1240px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
         @media (min-width: 1024px) {
             .teal-footer-curve {
                 border-top-left-radius: 96px;
                 border-top-right-radius: 0px;
             }
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 8rem !important; /* 128px > 96px curve */
+                padding-right: 3rem !important;
+            }
         }
-    </style>
-</head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-sky-500/20 selection:text-slate-900">
+        @media (min-width: 1440px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 4rem !important;
+                padding-right: 4rem !important;
+            }
+        }
 
-    <!-- Header Oficial Invariable -->
-        <!-- Top Bar Ticker -->
-    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 px-4 no-print border-b border-white/10">
-        <div class="max-w-[1240px] mx-auto flex items-center justify-between gap-4">
-            <div class="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
-                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FFB703] text-[#111827]">ACTUALIZADO 2026</span>
-                <span class="text-white/90 hidden sm:inline">Simulador Seguro de Cesantía AFC: Giros Mensuales Decrecientes (70% al 35%) y Fondos CIC / FSC</span>
-                <span class="text-white/90 sm:hidden">Simulador AFC Chile 2026</span>
+
+    
+        body { overflow-x: hidden; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
             </div>
-            <div class="flex items-center gap-4 text-[11px] font-mono text-white/70 shrink-0">
-                <span class="hidden md:inline">Cálculo Laboral Chile</span>
-                <a href="finiquito_calculator" class="text-[#FFB703] hover:underline font-bold">Calcular Finiquito &rarr;</a>
+            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
+                <span class="text-white/20">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
+                <span class="text-white/20">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
             </div>
         </div>
     </div>
 
-    <!-- TealHQ Header / Navigation -->
-    <header class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 no-print transition-all duration-200 shadow-xs">
-        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-            <!-- Brand Emblem -->
-            <a href="./" class="flex items-center gap-3 group cursor-pointer">
-                <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md shadow-emerald-950/20 group-hover:scale-105 transition-all">
-                    <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                        <!-- Pedestal Base -->
-                        <path d="M30 84h40M38 79h24"></path>
-                        <!-- Vertical Pillar -->
-                        <path d="M50 22v57"></path>
-                        <!-- Center pointer tip -->
-                        <path d="M50 14l-2 4h4l-2-4v8"></path>
-                        <!-- Balance Beam -->
-                        <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                        <!-- Left Pan strings and dish -->
-                        <path d="M18 36l-8 18h16Z"></path>
-                        <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                        <!-- Right Pan strings and dish -->
-                        <path d="M82 36l-8 18h16Z"></path>
-                        <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                        <!-- Monogram C wrapping left side -->
-                        <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                        <!-- Monogram L wrapping right side -->
-                        <path d="M58 43.5v20h10"></path>
-                    </svg>
-                </div>
-                <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
-                    cálculolaboral<span class="text-amber-500">.</span>
-                </span>
-            </a>
-
-            <!-- Desktop Center Navigation -->
-            <nav class="hidden lg:flex items-center gap-1 text-[15px] font-semibold text-gray-700">
-                <a href="para-empleadores" class="px-4 py-6 text-emerald-950 font-bold transition-colors">
-                    Portal Pymes
+    <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Brand Logo: Dark green box + Gold balance icon + Wordmark -->
+                <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-xs">
+                        <svg class="w-5 h-5 text-[#FFB703]" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                        </svg>
+                    </div>
+                    <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
+                        cálculolaboral<span class="text-[#FFB703]">.</span>
+                    </span>
                 </a>
 
-                <!-- Dropdown: Calculadoras ⌵ -->
-                <div class="nav-dropdown-group relative">
-                    <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
-                        <span>Calculadoras</span>
-                        <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
-                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    
-                    <!-- Mega Menu Panel -->
-                    <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 600px; min-width: 600px;">
-                        <div class="grid grid-cols-2 gap-2">
-                            <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-xl">payments</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Finiquito Legal Completo</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">Años de servicio, aviso previo y feriado.</div>
-                                </div>
-                            </a>
+                <!-- Desktop Center Navigation -->
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">
+                        Simulador Finiquito
+                    </a>
 
-                            <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-xl">gavel</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Despido Injustificado</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">Recargo +30% y aporte AFC.</div>
-                                </div>
-                            </a>
+                    <!-- Dropdown: Herramientas ⌵ -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">calculate</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                    </div>
+                                </a>
 
-                            <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-xl">account_balance_wallet</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Sueldo Líquido</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">Descuentos previsionales 2026.</div>
-                                </div>
-                            </a>
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">payments</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                    </div>
+                                </a>
 
-                            <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-xl">schedule</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Horas Extras Ley 40 Horas</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">Recargo 50% y factor 42h.</div>
-                                </div>
-                            </a>
+                                <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">gavel</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                    </div>
+                                </a>
 
-                            <a href="generador-finiquito-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-xl">description</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Generador Finiquito ($12.990)</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">Word y PDF listo para Notaría.</div>
-                                </div>
-                            </a>
+                                <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">schedule</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                    </div>
+                                </a>
 
-                            <a href="calculadora-sueldo-part-time" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-xl">work_outline</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Sueldo Part-Time</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">Jornada parcial de 30h semanales.</div>
-                                </div>
-                            </a>
+                                <a href="calculadora-vacaciones-proporcionales" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">beach_access</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                    </div>
+                                </a>
+
+                                <a href="simulador-seguro-cesantia-afc" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">account_balance_wallet</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Dropdown: Recursos ⌵ -->
-                <div class="nav-dropdown-group relative">
-                    <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
-                        <span>Guías DT</span>
-                        <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
-                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    
-                    <!-- Dropdown Panel -->
-                    <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 480px; min-width: 480px;">
-                        <div class="space-y-1">
-                            <a href="checklist-fiscalizacion-dt-pymes-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-lg">fact_check</span>
+                    <!-- Dropdown: Guías ⌵ -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+                            <div class="space-y-1">
+                                <a href="reclamar-despido-injustificado-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cómo Reclamar Despido Injustificado
+                                </a>
+                                <a href="carta-de-renuncia-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Generador de Carta de Renuncia
+                                </a>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Art. 161 Necesidades de la Empresa
+                                </a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Checklist Fiscalización DT Pymes
+                                </a>
+                                <a href="ley-40-horas-chile-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Ley 40 Horas (42 Horas en 2026)
+                                </a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">
+                                        Ver todas las guías en el Blog →
+                                    </a>
                                 </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Checklist Fiscalización DT</div>
-                                    <div class="text-xs text-gray-500">10 documentos obligatorios para pymes.</div>
-                                </div>
-                            </a>
-
-                            <a href="generador-anexo-40-horas" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-lg">post_add</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Anexo Ley 40 Horas (42h)</div>
-                                    <div class="text-xs text-gray-500">Generador gratuito en Word y PDF.</div>
-                                </div>
-                            </a>
-
-                            <a href="kit-cumplimiento-laboral-pymes" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-lg">shield</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">Kit Blindaje Laboral ($19.990)</div>
-                                    <div class="text-xs text-gray-500">Karin + 40 Horas + Inspección DT.</div>
-                                </div>
-                            </a>
+                            </div>
                         </div>
                     </div>
+
+                    <a href="para-empleadores" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">
+                        Para Empleadores
+                    </a>
+                </nav>
+
+                <!-- Header Right CTAs (TealHQ Pill Style) -->
+                <div class="flex items-center gap-2">
+                    <a href="para-empleadores" class="hidden md:inline-flex btn-yellow-pill !py-2.5 !px-5 !text-xs !shadow-xs">
+                        Portal Empleadores
+                    </a>
+                    <a href="contacto" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">
+                        Contacto
+                    </a>
+                    
+                    <!-- Mobile Hamburger -->
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl">menu</span>
+                    </button>
                 </div>
 
-                <a href="kit-cumplimiento-laboral-pymes" class="px-4 py-6 text-slate-700 font-bold hover:text-emerald-900 transition-colors">
-                    Kit Laboral ($19.990)
-                </a>
-            </nav>
-
-            <!-- Right Twin Pill Action Buttons -->
-            <div class="hidden sm:flex items-center gap-3">
-                <a href="kit-cumplimiento-laboral-pymes" class="btn-outline-pill">
-                    Kit Laboral ($19.990)
-                </a>
-                <a href="kit-cumplimiento-ley-datos-personales-chile" class="btn-yellow-pill">
-                    <span class="material-icons text-sm" style="color: #111827 !important;">security</span>
-                    <span>Kit Datos ($29.990)</span>
-                </a>
             </div>
+        </div>
 
-            <!-- Mobile Hamburger Toggle -->
-            <details class="lg:hidden static">
-                <summary class="list-none p-2 rounded-xl text-gray-700 hover:bg-gray-100 cursor-pointer" aria-label="Abrir menú">
-                    <span class="material-icons">menu</span>
-                </summary>
-                <div class="absolute left-0 right-0 top-full bg-white border-b border-slate-200 shadow-xl z-50 p-6 space-y-3">
-                    <a href="para-empleadores" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950 bg-emerald-50">Portal Para Empleadores</a>
-                    <a href="kit-cumplimiento-laboral-pymes" class="block px-4 py-3 rounded-xl text-base font-bold text-slate-800 bg-slate-100">Kit Blindaje Laboral ($19.990)</a>
-                    <a href="kit-cumplimiento-ley-datos-personales-chile" class="block px-4 py-3 rounded-xl text-base font-bold text-rose-700 bg-rose-50">Kit Ley 21.719 Datos ($29.990)</a>
-                    <a href="generador-finiquito-chile" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Generador Finiquito ($12.990)</a>
-                    <a href="generador-anexo-40-horas" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Generador Anexo 40 Horas</a>
-                    <a href="finiquito_calculator" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Finiquito Legal Completo</a>
-                </div>
-            </details>
+        <!-- Mobile Drawer -->
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-3">
+            <a href="finiquito_calculator" class="block text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="sueldo_liquido" class="block text-sm font-semibold text-slate-700">Sueldo Líquido</a>
+            <a href="simulador-despido-injustificado-chile" class="block text-sm font-semibold text-slate-700">Despido Injustificado</a>
+            <a href="calculadora-horas-extras" class="block text-sm font-semibold text-slate-700">Horas Extras 42h</a>
+            <a href="para-empleadores" class="block text-sm font-semibold text-slate-700">Portal Empleadores</a>
+            <a href="blog" class="block text-sm font-semibold text-slate-700">Blog de Guías Laborales</a>
+            <div class="pt-2">
+                <a href="para-empleadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
+            </div>
         </div>
     </header>
 
-    <!-- Indicators Carousel (Responsive Sub-header) -->
-    <style>
-        .indicators-carousel {
-            gap: 0.5rem !important;
-        }
-        @media (max-width: 639px) {
-            .indicators-carousel {
-                display: flex !important;
-                overflow-x: auto !important;
-                scroll-snap-type: x mandatory !important;
-                -webkit-overflow-scrolling: touch !important;
-                gap: 0.5rem !important;
-            }
-            .indicator-card {
-                min-width: 125px !important;
-                max-width: 125px !important;
-                width: 125px !important;
-                flex-shrink: 0 !important;
-                scroll-snap-align: start !important;
-            }
-        }
-        @media (min-width: 640px) and (max-width: 1023px) {
-            .indicators-carousel {
-                display: grid !important;
-                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-                gap: 0.5rem !important;
-            }
-            .indicator-card {
-                width: 100% !important;
-                min-width: 0 !important;
-                flex-shrink: 1 !important;
-            }
-        }
-        @media (min-width: 1024px) {
-            .indicators-carousel {
-                display: grid !important;
-                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-                gap: 0.625rem !important;
-            }
-            .indicator-card {
-                width: 100% !important;
-                min-width: 0 !important;
-                flex-shrink: 1 !important;
-            }
-        }
-    </style>
-    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
-        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
-            <!-- UF Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Valor UF</span>
-                <span class="uf-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-uf">$40.975,41</span>
-            </div>
-            <!-- UTM Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
-                <span class="utm-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight" id="header-utm">$71.721</span>
-            </div>
-            <!-- Sueldo Mínimo Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Sueldo Mínimo</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$553.553</span>
-            </div>
-            <!-- Tope AFP Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope AFP</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">89.9 UF</span>
-            </div>
-            <!-- Tope Finiquito Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope Finiquito</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">90 UF</span>
-            </div>
-        </div>
-        <div class="flex justify-between items-center mt-1.5 sm:mt-2 px-0.5 text-[10px] text-slate-500 font-medium">
-            <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500 text-[10px]">
-                <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
-                <span>Valores oficiales vigentes (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT Chile</a>)</span>
-            </div>
-            <button type="button" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px] cursor-pointer bg-transparent border-0 p-0">
-                <span class="material-icons text-[12px]" aria-hidden="true">history</span>
-                <span>Historial</span>
-            </button>
-        </div>
-    </div>
 
-    <!-- Main Content Container -->
-    <main class="flex-grow pt-4 pb-16">
-        <div class="max-w-[1200px] mx-auto px-6">
+
+<!-- 4. MAIN PAGE BODY -->
+    <main class="flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+        <div class="w-full">
             
             <!-- Breadcrumbs -->
-            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
-                <a href="./" class="hover:text-sky-500 transition-colors font-medium">Inicio</a>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-4" aria-label="Breadcrumb">
+                <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
                 <span class="material-icons text-xs">chevron_right</span>
-                <span class="text-slate-400">Calculadoras</span>
+                <a href="finiquito_calculator" class="hover:text-[#00382E] transition-colors font-medium">Finiquito</a>
                 <span class="material-icons text-xs">chevron_right</span>
-                <span class="text-slate-600 font-semibold">Simulador Seguro de Cesantía AFC</span>
+                <span class="text-slate-700 font-semibold">Seguro de Cesantía AFC</span>
             </nav>
 
-            <!-- Hero Header Section -->
-            <div class="text-center my-8 max-w-2xl mx-auto no-print">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-200 mb-3">
-                    <span class="material-icons text-xs text-sky-600">verified_user</span> Ley 21.628 Actualizada • Cobertura AFC Chile 2026
-                </span>
-                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+            <!-- Hero Section -->
+            <div class="text-center mt-3 mb-8 max-w-3xl mx-auto no-print">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 text-slate-700 shadow-2xs mb-4">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-900 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span class="material-icons text-[11px]">verified_user</span> Ley 21.628 Flexibilizada
+                    </span>
+                    <span class="text-xs font-semibold text-slate-800">
+                        Mínimo 10 cotizaciones (Indefinido) y 5 (Plazo Fijo)
+                    </span>
+                </div>
+
+                <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
                     Simulador de Seguro de Cesantía AFC Chile 2026
                 </h1>
-                <p class="text-slate-500 text-sm mt-1">
-                    Calcula cuánto dinero te corresponde cobrar mes a mes en tus giros de la <strong>Cuenta Individual (CIC)</strong> y conoce tus derechos al <strong>Fondo Solidario</strong> y el impacto en tu finiquito.
+                <p class="text-slate-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto leading-relaxed">
+                    Calcula cuánto te corresponde recibir mes a mes con los <strong>giros decrecientes (70% al 35%)</strong> en tu Cuenta Individual (CIC), conoce tus derechos al <strong>Fondo Solidario (FCS)</strong> y proyecta el impacto en tu finiquito.
                 </p>
             </div>
 
-            <!-- Two-Column Interactive Calculator Layout -->
-            <div class="flex flex-col lg:flex-row gap-8 items-start mb-16">
+            <!-- Segmented Control Tabs (Product Switcher) -->
+            <div class="flex justify-center mb-10 overflow-x-auto scrollbar-none px-2 py-1 no-print">
+                <div class="segmented-control-container">
+                    <a href="finiquito_calculator" class="product-tab">
+                        <span class="material-icons text-sm text-[#00382E]">gavel</span>
+                        <span>Finiquito Legal</span>
+                    </a>
+                    <a href="simulador-despido-injustificado-chile" class="product-tab">
+                        <span class="material-icons text-sm text-rose-600">warning</span>
+                        <span>Despido Injustificado</span>
+                    </a>
+                    <a href="sueldo_liquido" class="product-tab">
+                        <span class="material-icons text-sm text-blue-600">payments</span>
+                        <span>Sueldo Líquido</span>
+                    </a>
+                    <a href="calculadora-horas-extras" class="product-tab">
+                        <span class="material-icons text-sm text-amber-600">schedule</span>
+                        <span>Horas Extras 42h</span>
+                    </a>
+                    <a href="calculadora-sueldo-part-time" class="product-tab">
+                        <span class="material-icons text-sm text-indigo-600">hourglass_bottom</span>
+                        <span>Part-Time</span>
+                    </a>
+                    <a href="calculadora-vacaciones" class="product-tab">
+                        <span class="material-icons text-sm text-sky-600">beach_access</span>
+                        <span>Vacaciones DT</span>
+                    </a>
+                    <a href="calculadora-despido-articulo-160" class="product-tab">
+                        <span class="material-icons text-sm text-amber-700">warning_amber</span>
+                        <span>Art. 160</span>
+                    </a>
+                    <a href="simulador-seguro-cesantia-afc" class="product-tab active">
+                        <span class="material-icons text-sm text-[#00382E]">savings</span>
+                        <span>Seguro AFC</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5. TWO-COLUMN CALCULATOR INTERFACE (440px Form Left, Flexible Results Right) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
                 
-                <!-- Left Column: Form Controls (440px Fixed) -->
-                <div class="w-full lg:w-[440px] shrink-0 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <!-- LEFT COLUMN: Form Controls (440px Feel via lg:col-span-5) -->
+                <div class="lg:col-span-5 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-6">
                     <div class="flex justify-between items-center pb-3 border-b border-slate-100">
                         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                            <span class="material-icons text-sky-500">tune</span> Datos para el cálculo
+                            <span class="material-icons text-[#00382E] text-xl">tune</span> Datos para el cálculo
                         </h2>
-                        <span class="text-[11px] font-mono text-slate-400 font-semibold" id="afc-ley-badge">Ley 21.628</span>
+                        <span class="text-[11px] font-mono text-[#00382E] font-bold bg-slate-100 px-2.5 py-0.5 rounded-full" id="afc-ley-badge">
+                            Ley 21.628
+                        </span>
                     </div>
 
                     <!-- 1. Tipo de Contrato -->
@@ -701,14 +761,16 @@
                         <div class="grid grid-cols-2 gap-2">
                             <label class="cursor-pointer">
                                 <input type="radio" name="afc-tipo-contrato" value="indefinido" checked onchange="calculateSeguroCesantia()" class="peer sr-only">
-                                <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
-                                    Indefinido <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Mín. 10 cotiz.</span>
+                                <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
+                                    Indefinido
+                                    <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">Mín. 10 cotiz.</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="afc-tipo-contrato" value="plazofijo" onchange="calculateSeguroCesantia()" class="peer sr-only">
-                                <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
-                                    Plazo Fijo u Obra <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Mín. 5 cotiz.</span>
+                                <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
+                                    Plazo Fijo u Obra
+                                    <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">Mín. 5 cotiz.</span>
                                 </div>
                             </label>
                         </div>
@@ -721,12 +783,12 @@
                             <label for="afc-sueldo-base" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
                                 Sueldo Imponible Promedio
                             </label>
-                            <button type="button" onclick="setAFCMinimo()" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg transition-colors cursor-pointer active:scale-95">
+                            <button type="button" onclick="setAFCMinimo()" class="text-xs font-bold text-[#00382E] hover:text-[#002820] bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-lg transition-colors cursor-pointer active:scale-95">
                                 Usar Mínimo ($553.553)
                             </button>
                         </div>
-                        <div class="relative rounded-2xl shadow-sm">
-                            <input type="text" id="afc-sueldo-base" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatAFCInput(this); calculateSeguroCesantia();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                        <div class="relative rounded-2xl shadow-2xs">
+                            <input type="text" id="afc-sueldo-base" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatAFCInput(this); calculateSeguroCesantia();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                         </div>
                         <p class="text-[11px] text-slate-400 mt-1">Promedio de tus últimos sueldos brutos imponibles (tope legal AFC: 135,1 UF).</p>
                     </div>
@@ -737,15 +799,15 @@
                             Tiempo Trabajado (Meses cotizados)
                         </label>
                         <div class="flex items-center gap-3">
-                            <input type="number" id="afc-meses-trabajados" value="24" min="1" max="360" step="1" oninput="calculateSeguroCesantia()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
+                            <input type="number" id="afc-meses-trabajados" value="24" min="1" max="360" step="1" oninput="calculateSeguroCesantia()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                             <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">meses</span>
                         </div>
                         <div class="flex items-center gap-1.5 pt-2">
                             <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-1">Rápido:</span>
-                            <button type="button" onclick="setAFCMonths(6)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">6 Meses</button>
-                            <button type="button" onclick="setAFCMonths(12)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">1 Año</button>
-                            <button type="button" onclick="setAFCMonths(24)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">2 Años</button>
-                            <button type="button" onclick="setAFCMonths(36)" class="px-2 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">3+ Años</button>
+                            <button type="button" onclick="setAFCMonths(6)" class="px-2.5 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">6 Meses</button>
+                            <button type="button" onclick="setAFCMonths(12)" class="px-2.5 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">1 Año</button>
+                            <button type="button" onclick="setAFCMonths(24)" class="px-2.5 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">2 Años</button>
+                            <button type="button" onclick="setAFCMonths(36)" class="px-2.5 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">3+ Años</button>
                         </div>
                     </div>
 
@@ -754,20 +816,20 @@
                         <label for="afc-causal" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                             Causal de Término de Contrato
                         </label>
-                        <select id="afc-causal" onchange="calculateSeguroCesantia()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all cursor-pointer">
+                        <select id="afc-causal" onchange="calculateSeguroCesantia()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all cursor-pointer">
                             <option value="161" selected>Despido por Necesidades de la Empresa (Art. 161)</option>
                             <option value="plazo">Fin de Plazo Fijo, Obra o Faena (Art. 159 N° 4 o 5)</option>
                             <option value="renuncia">Renuncia Voluntaria del Trabajador (Art. 159 N° 2)</option>
                             <option value="mutuo">Mutuo Acuerdo entre las partes (Art. 159 N° 1)</option>
                             <option value="disciplinario">Despido Disciplinario o Sin Derecho (Art. 160)</option>
                         </select>
-                        <p class="text-[11px] text-slate-400 mt-1">El despido por Art. 161 permite al empleador descontar el 1,6% en tu finiquito.</p>
+                        <p class="text-[11px] text-slate-400 mt-1">El despido por Art. 161 permite al empleador descontar el 1,6% patronal en tu finiquito.</p>
                     </div>
 
                     <!-- 5. Saldo Real Opcional en Cartola AFC -->
                     <div class="pt-2 border-t border-slate-100">
                         <details class="group">
-                            <summary class="text-xs font-bold text-sky-600 hover:text-sky-700 cursor-pointer list-none flex items-center justify-between">
+                            <summary class="text-xs font-bold text-[#00382E] hover:underline cursor-pointer list-none flex items-center justify-between">
                                 <span>¿Sabes tu saldo exacto en la AFC? (Opcional)</span>
                                 <span class="material-icons text-xs group-open:rotate-180 transition-transform">expand_more</span>
                             </summary>
@@ -775,54 +837,57 @@
                                 <label for="afc-saldo-manual" class="block text-[11px] text-slate-500">
                                     Ingresa el saldo total de tu Cuenta Individual (CIC):
                                 </label>
-                                <input type="text" id="afc-saldo-manual" placeholder="Ej: $ 1.250.000" inputmode="numeric" oninput="formatAFCSaldoManual(this); calculateSeguroCesantia();" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                                <input type="text" id="afc-saldo-manual" placeholder="Ej: $ 1.250.000" inputmode="numeric" oninput="formatAFCSaldoManual(this); calculateSeguroCesantia();" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E]">
                                 <p class="text-[10px] text-slate-400">Si lo dejas en blanco, el simulador proyectará tu saldo acumulado automáticamente.</p>
                             </div>
                         </details>
                     </div>
                 </div>
 
-                <!-- Right Column: Results Summary & Giros Table -->
-                <div class="w-full flex-grow bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm lg:self-start space-y-6">
+                <!-- RIGHT COLUMN: Results Summary & Giros Table (lg:col-span-7) -->
+                <div class="lg:col-span-7 space-y-6">
                     
-                    <!-- Main Totals Section -->
-                    <div class="text-center sm:text-left border-b border-slate-100 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div>
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Total Estimado a Recibir</span>
-                            <div class="flex items-baseline gap-2 justify-center sm:justify-start">
-                                <span id="afc-total-recibir" class="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight font-mono">$1.742.500</span>
-                            </div>
-                            <p class="text-xs text-emerald-600 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1" id="afc-elegibilidad-badge">
-                                <span class="material-icons text-xs">check_circle</span> Cumples requisitos de cotizaciones (Ley 21.628)
-                            </p>
+                    <!-- HERO RESULTS CARD -->
+                    <div class="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs relative overflow-hidden">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                            <span class="text-xs font-bold text-[#00382E] uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-icons text-sm">savings</span> Total Estimado a Recibir
+                            </span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-800 border border-slate-200" id="afc-cantidad-giros">
+                                5 Meses
+                            </span>
                         </div>
-                        <div class="text-center sm:text-right bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Giros Proyectados</span>
-                            <span id="afc-cantidad-giros" class="text-lg font-bold text-sky-600 font-mono">5 Meses</span>
+
+                        <div class="mt-2 mb-3">
+                            <span id="afc-total-recibir" style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold font-mono tracking-tight leading-none">$ 1.742.500</span>
                         </div>
+
+                        <p class="text-xs text-emerald-800 font-semibold mt-1 flex items-center gap-1" id="afc-elegibilidad-badge">
+                            <span class="material-icons text-sm text-emerald-600">check_circle</span> Cumples requisitos de cotizaciones (Ley 21.628)
+                        </p>
                     </div>
 
-                    <!-- Projection Metric Cards -->
+                    <!-- 3 KPI METRIC CARDS -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs">
                             <span class="text-slate-500 block text-[10px] font-bold uppercase tracking-wider mb-1">Promedio Imponible</span>
                             <span class="font-mono font-bold text-base text-slate-900" id="afc-res-promedio">$850.000</span>
                         </div>
-                        <div class="bg-sky-50/60 border border-sky-200 rounded-2xl p-4">
-                            <span class="text-sky-700 block text-[10px] font-bold uppercase tracking-wider mb-1">1er Giro (70%)</span>
-                            <span class="font-mono font-bold text-base text-sky-700" id="afc-res-primer-giro">$595.000</span>
+                        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4 shadow-2xs">
+                            <span class="text-amber-900 block text-[10px] font-bold uppercase tracking-wider mb-1">1er Giro (70%)</span>
+                            <span class="font-mono font-bold text-base text-amber-800" id="afc-res-primer-giro">$595.000</span>
                         </div>
-                        <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4">
-                            <span class="text-emerald-700 block text-[10px] font-bold uppercase tracking-wider mb-1">Saldo Proyectado CIC</span>
-                            <span class="font-mono font-bold text-base text-emerald-700" id="afc-res-saldo-cic">$336.326</span>
+                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 shadow-2xs">
+                            <span class="text-emerald-900 block text-[10px] font-bold uppercase tracking-wider mb-1">Saldo Proyectado CIC</span>
+                            <span class="font-mono font-bold text-base text-emerald-800" id="afc-res-saldo-cic">$336.326</span>
                         </div>
                     </div>
 
-                    <!-- Tabla Oficial de Giros Mensuales -->
-                    <div class="space-y-3 pt-2">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Calendario de Pagos Mensuales</h3>
-                            <span class="text-[11px] text-slate-500 font-medium">Porcentajes según Ley 21.628</span>
+                    <!-- TABLA OFICIAL DE GIROS MENSUALES -->
+                    <div class="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-4">
+                        <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Calendario de Pagos Mensuales</h3>
+                            <span class="text-[11px] text-slate-400 font-medium">Porcentajes Ley 21.628</span>
                         </div>
 
                         <div class="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-2xs">
@@ -843,47 +908,48 @@
                         </div>
                     </div>
 
-                    <!-- Smart Impact Card: Descuento AFC en Finiquito (Art. 161) -->
-                    <div id="afc-finiquito-bridge-card" class="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/90 shadow-2xs space-y-2">
-                        <div class="flex items-center gap-2 text-amber-800 font-bold text-xs">
-                            <span class="material-icons text-amber-600 text-base">receipt_long</span>
+                    <!-- SMART IMPACT CARD: Descuento AFC en Finiquito (Art. 161) -->
+                    <div id="afc-finiquito-bridge-card" class="p-5 rounded-3xl bg-amber-50/70 border border-amber-200 shadow-2xs space-y-2">
+                        <div class="flex items-center gap-2 text-amber-900 font-bold text-xs">
+                            <span class="material-icons text-amber-700 text-base">receipt_long</span>
                             <span>Impacto en tu Finiquito (Descuento Patronal del 1,6%)</span>
                         </div>
                         <p class="text-xs text-slate-600 leading-relaxed m-0">
-                            Por haber sido despedido por el <strong>Art. 161 (Necesidades de la empresa)</strong>, la ley permite al empleador descontar de tu indemnización por años de servicio lo que él aportó a tu cuenta AFC: aproximadamente <strong class="text-slate-900 font-mono" id="afc-monto-descuento-finiquito">$326.400</strong>.
+                            Por haber sido despedido por el <strong>Art. 161 (Necesidades de la empresa)</strong>, la ley faculta al empleador a descontar de tu indemnización por años de servicio lo que él aportó a tu cuenta AFC: aproximadamente <strong class="text-slate-900 font-mono" id="afc-monto-descuento-finiquito">$326.400</strong>.
                         </p>
                         <div class="pt-2">
-                            <a href="finiquito_calculator" class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:text-amber-900 underline">
+                            <a href="finiquito_calculator" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#00382E] hover:underline">
                                 <span>Ver cómo queda tu finiquito con este descuento restado</span>
                                 <span class="material-icons text-xs">arrow_forward</span>
                             </a>
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="pt-2 flex flex-col sm:flex-row gap-3 border-t border-slate-100">
-                        <button type="button" onclick="copyAFCResults()" id="afc-copy-btn" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                    <!-- ACTION BUTTONS -->
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                        <button type="button" onclick="copyAFCResults()" id="afc-copy-btn" class="btn-outline-pill flex-1">
                             <span class="material-icons text-sm">content_copy</span> <span id="afc-copy-text">Copiar Simulación</span>
                         </button>
-                        <button type="button" onclick="shareAFCWhatsApp()" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 active:scale-95 cursor-pointer">
+                        <button type="button" onclick="shareAFCWhatsApp()" class="btn-yellow-pill flex-1">
                             <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.586 1.761.882 2.796.883 3.18 0 5.767-2.586 5.768-5.766.001-3.18-2.585-5.77-5.768-5.77zm3.394 8.204c-.146.415-.85.766-1.177.812-.328.047-.751.066-2.197-.533-1.848-.767-3.04-2.646-3.133-2.769-.092-.122-.743-.99-.743-1.89 0-.899.469-1.343.636-1.527.167-.184.364-.23.486-.23.121 0 .243.002.348.007.111.005.259-.042.404.307.149.358.508 1.238.552 1.329.045.091.076.197.015.318-.061.122-.091.198-.182.304-.091.106-.192.237-.274.318-.091.091-.186.19-.08.373.106.182.471.777 1.01 1.258.694.619 1.28.81 1.462.901.182.091.289.076.395-.046.106-.122.456-.532.577-.714.122-.182.243-.152.408-.091.167.061 1.062.5 1.244.591.182.091.304.137.348.213.045.076.045.441-.101.856zM12 2C6.477 2 2 6.477 2 12c0 1.891.526 3.662 1.442 5.176L2 22l4.98-1.306A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
-                            Compartir en WhatsApp
+                            <span>WhatsApp</span>
                         </button>
-                        <a href="finiquito_calculator" class="flex-1 py-3 px-4 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center shadow-md shadow-sky-500/10 active:scale-95 !no-underline">
-                            <span class="material-icons text-sm">gavel</span> Finiquito Legal
+                        <a href="finiquito_calculator" class="btn-dark-pill flex-1">
+                            <span class="material-icons text-sm">gavel</span> <span>Finiquito Legal</span>
                         </a>
                     </div>
+
                 </div>
             </div>
 
-            <!-- Comprehensive Editorial Guide Section (Single Column Clean Experience) -->
-            <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
+            <!-- 6. COMPREHENSIVE EDITORIAL GUIDE SECTION (SEO POWERHOUSE) -->
+            <article class="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-10 shadow-xs space-y-10 max-w-4xl mx-auto">
                 
                 <!-- Editorial Cover Figure -->
-                <figure class="mb-10 max-w-[800px] mx-auto text-center">
-                    <div class="rounded-2xl overflow-hidden border border-slate-100 bg-slate-50/40 p-4 sm:p-6 flex items-center justify-center">
+                <figure class="max-w-[700px] mx-auto text-center">
+                    <div class="rounded-2xl overflow-hidden border border-slate-100 bg-slate-50/60 p-4 sm:p-6 flex items-center justify-center">
                         <img src="assets/guia-seguro-cesantia-chile.png" 
-                             alt="Ilustración 3D del Seguro de Cesantía en Chile y ahorro en la Cuenta Individual AFC" 
+                             alt="Ilustración del Seguro de Cesantía en Chile y ahorro en la Cuenta Individual AFC" 
                              title="Seguro de Cesantía Chile: requisitos, cómo cobrar y montos de giros AFC"
                              class="h-auto object-contain mx-auto" 
                              style="max-width: 220px; max-height: 180px;"
@@ -891,21 +957,21 @@
                              width="220" 
                              height="180">
                     </div>
-                    <figcaption class="text-xs text-slate-500 mt-3 leading-relaxed">
+                    <figcaption class="text-xs text-slate-500 mt-2 leading-relaxed">
                         El Seguro de Cesantía combina la Cuenta Individual (CIC) con el Fondo de Cesantía Solidario (FCS) en Chile.
                     </figcaption>
                 </figure>
 
                 <!-- Section 1: ¿Qué es y cómo se financia? -->
-                <div class="prose-content">
-                    <h2>1. ¿Qué es el Seguro de Cesantía y cómo se financia en Chile?</h2>
-                    <p>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">1. ¿Qué es el Seguro de Cesantía y cómo se financia en Chile?</h2>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                         El <strong>Seguro de Cesantía</strong> es un derecho de seguridad social obligatorio para todos los trabajadores dependientes protegidos por el Código del Trabajo en Chile. Su administración está a cargo exclusivo de la <strong>AFC (Administradora de Fondos de Cesantía)</strong> y tiene como propósito entregar estabilidad financiera mediante pagos mensuales sucesivos tras la pérdida del empleo.
                     </p>
-                    <p>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                         El financiamiento del sistema se realiza mensualmente mediante cotizaciones sobre la remuneración imponible del trabajador, con un tope mensual legal de <strong>135,1 UF</strong>:
                     </p>
-                    <ul>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-slate-600 space-y-2 mb-4 leading-relaxed">
                         <li><strong>Contratos Indefinidos:</strong> Se financia con un aporte del trabajador del <strong>0,6%</strong> de su sueldo imponible y un aporte patronal del empleador del <strong>2,4%</strong> (un 1,6% se abona directamente en la Cuenta Individual CIC y un 0,8% va al Fondo de Cesantía Solidario FCS).</li>
                         <li><strong>Contratos a Plazo Fijo, Obra o Faena:</strong> El trabajador no cotiza (0%). El empleador financia el <strong>3,0%</strong> completo (un 2,8% va a la Cuenta Individual CIC y un 0,2% al Fondo Solidario).</li>
                         <li><strong>Trabajadoras de Casa Particular:</strong> Tienen un régimen donde el empleador cotiza el 3% íntegro con reglas especiales.</li>
@@ -913,15 +979,15 @@
                 </div>
 
                 <!-- Section 2: Requisitos Flexibilizados Ley 21.628 -->
-                <div class="prose-content">
-                    <h2>2. Requisitos oficiales para cobrar el Seguro de Cesantía en 2026</h2>
-                    <p>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">2. Requisitos oficiales para cobrar el Seguro de Cesantía en 2026</h2>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                         Gracias a la entrada en vigencia de la <strong>Ley 21.628</strong>, los requisitos de cotizaciones exigidos para solicitar el retiro de fondos se redujeron de forma permanente, facilitando el acceso a trabajadores que antes quedaban fuera:
                     </p>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6 not-prose">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
                         <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-sky-700 bg-sky-100/80 px-2 py-0.5 rounded-full mb-2">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#00382E] bg-slate-200/80 px-2 py-0.5 rounded-full mb-2">
                                 <span class="material-icons text-xs">business_center</span> Contrato Indefinido
                             </span>
                             <div class="text-lg font-bold text-slate-900 mb-1">Mínimo 10 Cotizaciones</div>
@@ -931,7 +997,7 @@
                         </div>
 
                         <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full mb-2">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-900 bg-emerald-100/80 px-2 py-0.5 rounded-full mb-2">
                                 <span class="material-icons text-xs">event_note</span> Plazo Fijo u Obra
                             </span>
                             <div class="text-lg font-bold text-slate-900 mb-1">Mínimo 5 Cotizaciones</div>
@@ -941,21 +1007,21 @@
                         </div>
                     </div>
 
-                    <p>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
                         Además del número de imposiciones, es requisito indispensable <strong>estar efectivamente cesante</strong> y acreditarlo con alguno de los documentos válidos reconocidos por la AFC: finiquito firmado y ratificado, carta de despido recepcionada, carta de renuncia firmada ante ministro de fe, acta de comparendo ante la Dirección del Trabajo o sentencia judicial.
                     </p>
                 </div>
 
                 <!-- Section 3: Descuento AFC en Finiquito (Art. 13 Ley 19.728) -->
-                <div class="prose-content">
-                    <h2>3. ¿Cómo se relaciona el Seguro de Cesantía con el Finiquito?</h2>
-                    <p>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">3. ¿Cómo se relaciona el Seguro de Cesantía con el Finiquito?</h2>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                         Esta es la materia que genera más dudas y litigios laborales en Chile. Si fuiste despedido por la causal de <strong>Necesidades de la Empresa (Artículo 161 del Código del Trabajo)</strong>, la ley autoriza al empleador a imputar en tu finiquito los aportes que él pagó a tu AFC:
                     </p>
                     
-                    <div class="p-5 rounded-2xl bg-rose-50 border border-rose-200 text-slate-800 my-6 not-prose">
-                        <div class="flex items-center gap-2 mb-2 font-bold text-sm text-rose-800">
-                            <span class="material-icons text-rose-600 text-base">warning</span>
+                    <div class="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 text-slate-800 my-6">
+                        <div class="flex items-center gap-2 mb-2 font-bold text-sm text-amber-900">
+                            <span class="material-icons text-amber-700 text-base">warning</span>
                             <span>Regla de Oro del Descuento AFC (Art. 13 Ley 19.728)</span>
                         </div>
                         <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside m-0 leading-relaxed">
@@ -965,54 +1031,28 @@
                             <li>Si demandas por <em>Despido Injustificado</em> y el tribunal declara improcedente la causal del Art. 161, la jurisprudencia de los tribunales chilenos ordena la <strong>devolución íntegra del descuento de la AFC</strong> al trabajador.</li>
                         </ul>
                     </div>
-
-                    <!-- Callout Card: Enlace al Simulador de Finiquito -->
-                    <div class="my-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-sky-50 to-blue-50 border-2 border-sky-200 flex flex-col sm:flex-row items-center justify-between gap-4 not-prose shadow-sm">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-sky-500/20">
-                                <span class="material-icons text-lg">gavel</span>
-                            </div>
-                            <div>
-                                <span class="text-xs font-black text-sky-900 uppercase tracking-wider block mb-0.5">Herramienta Gratuita DT</span>
-                                <div class="text-sm sm:text-base font-bold text-slate-900">Simulador de Finiquito Legal con Descuento AFC</div>
-                                <p class="text-xs text-slate-600 m-0 mt-0.5">Calcula tu indemnización por años de servicio con el descuento del 1,6% restado de forma exacta según la causal de despido.</p>
-                            </div>
-                        </div>
-                        <a href="finiquito_calculator"
-                            class="cta-btn inline-flex items-center justify-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-600 !text-white font-bold text-xs rounded-xl shadow-md shadow-sky-500/15 transition-all hover:scale-[1.01] active:scale-95 !no-underline cursor-pointer shrink-0"
-                            style="background-color: #0ea5e9 !important; color: #ffffff !important;">
-                            <span style="color: #ffffff !important;">Calcular Finiquito</span>
-                            <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Section 4: Renuncia Voluntaria y la AFC -->
-                <div class="prose-content">
-                    <h2>4. ¿Puedo cobrar el Seguro de Cesantía si renuncié voluntariamente?</h2>
-                    <p>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">4. ¿Puedo cobrar el Seguro de Cesantía si renuncié voluntariamente?</h2>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                         <strong>Sí, rotundamente.</strong> Existe el mito generalizado de que quien renuncia pierde su Seguro de Cesantía. Esto es falso: los dineros depositados en tu Cuenta Individual (CIC) son de tu exclusiva propiedad patrimonial.
                     </p>
-                    <p>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                         La única diferencia práctica es que quien renuncia voluntariamente:
                     </p>
-                    <ul>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-slate-600 space-y-1.5 mb-4 leading-relaxed">
                         <li><strong>Tiene derecho a cobrar todo el saldo acumulado en su cuenta individual (CIC)</strong> mediante los giros que alcancen a financiarse.</li>
                         <li><strong>No tiene acceso al Fondo de Cesantía Solidario (FCS)</strong>, ya que el fondo solidario exige haber sido despedido por causales no imputables a la voluntad del trabajador (Art. 161, 159 o quiebra).</li>
                     </ul>
-                    <p>
-                        Para tramitarlo tras una renuncia, debes adjuntar tu <strong>carta de renuncia voluntaria ratificada ante notario o la DT</strong> con al menos 30 días de anticipación o con recepción del empleador.
-                    </p>
                 </div>
 
-                <!-- Section 5: Paso a paso para cobrar en línea en www.afc.cl -->
-                <div class="prose-content">
-                    <h2>5. Paso a paso para solicitar el cobro 100% digital en la AFC</h2>
-                    <p>
-                        Actualmente no necesitas hacer filas ni acudir presencialmente a las sucursales físicas de la AFC. El trámite se gestiona completo por internet:
-                    </p>
-                    <ol>
-                        <li>Ingresa al portal oficial de la <a href="https://www.afc.cl" target="_blank" rel="noopener noreferrer">AFC Chile (www.afc.cl)</a> y haz clic en <strong>"Sucursal Virtual Afiliados"</strong>.</li>
+                <!-- Section 5: Paso a paso para cobrar en www.afc.cl -->
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">5. Paso a paso para solicitar el cobro 100% digital en la AFC</h2>
+                    <ol class="list-decimal list-inside text-xs sm:text-sm text-slate-600 space-y-2 mb-6 leading-relaxed">
+                        <li>Ingresa al portal oficial de la <a href="https://www.afc.cl" target="_blank" rel="noopener noreferrer" class="text-[#00382E] font-bold hover:underline">AFC Chile (www.afc.cl)</a> y haz clic en <strong>"Sucursal Virtual Afiliados"</strong>.</li>
                         <li>Inicia sesión con tu <strong>RUT y ClaveÚnica</strong> del Registro Civil (o contraseña registrada de la AFC).</li>
                         <li>Selecciona la opción <strong>"Cobro del Seguro"</strong> y luego <strong>"Solicitar cobro"</strong>.</li>
                         <li>Adjunta en formato PDF o fotografía nítida tu <strong>documento de término de relación laboral</strong> (finiquito firmado, carta de despido o renuncia).</li>
@@ -1021,14 +1061,14 @@
                     </ol>
 
                     <!-- Official AFC Contact Box -->
-                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 my-6 not-prose">
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                         <div class="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-200 pb-2 flex items-center gap-1.5">
-                            <span class="material-icons text-sky-500 text-sm">support_agent</span> Canales Oficiales de Atención AFC Chile
+                            <span class="material-icons text-[#00382E] text-sm">support_agent</span> Canales Oficiales de Atención AFC Chile
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                             <div class="flex items-center gap-2">
                                 <span class="material-icons text-emerald-600 text-base">language</span>
-                                <div><strong class="block text-slate-800">Sitio Web:</strong> <a href="https://www.afc.cl" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">www.afc.cl</a></div>
+                                <div><strong class="block text-slate-800">Sitio Web:</strong> <a href="https://www.afc.cl" target="_blank" rel="noopener noreferrer" class="text-[#00382E] hover:underline font-semibold">www.afc.cl</a></div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="material-icons text-emerald-600 text-base">phone</span>
@@ -1043,19 +1083,16 @@
                 </div>
 
                 <!-- Section 6: Cuenta Individual (CIC) vs Fondo Solidario (FCS) -->
-                <div class="prose-content">
-                    <h2>6. Diferencias entre Cuenta Individual (CIC) y Fondo Solidario (FCS)</h2>
-                    <p>
-                        Para entender tu cartola, es fundamental distinguir los dos pilares del Seguro de Cesantía:
-                    </p>
-                    <div class="overflow-x-auto my-6 border border-slate-200 rounded-2xl bg-white shadow-2xs not-prose">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">6. Diferencias entre Cuenta Individual (CIC) y Fondo Solidario (FCS)</h2>
+                    <div class="overflow-x-auto my-6 border border-slate-200 rounded-2xl bg-white shadow-2xs">
                         <table class="w-full min-w-[500px] text-left border-collapse text-xs sm:text-sm">
                             <caption class="sr-only">Comparativa entre Cuenta Individual y Fondo Solidario</caption>
                             <thead>
                                 <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
                                     <th scope="col" class="py-2.5 px-4 font-semibold">Característica</th>
-                                    <th scope="col" class="py-2.5 px-4 font-semibold text-sky-700">Cuenta Individual (CIC)</th>
-                                    <th scope="col" class="py-2.5 px-4 font-semibold text-emerald-700">Fondo Solidario (FCS)</th>
+                                    <th scope="col" class="py-2.5 px-4 font-semibold text-[#00382E]">Cuenta Individual (CIC)</th>
+                                    <th scope="col" class="py-2.5 px-4 font-semibold text-emerald-800">Fondo Solidario (FCS)</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-xs">
@@ -1085,10 +1122,10 @@
                 </div>
 
                 <!-- Section 7: FAQs Accordion -->
-                <div class="prose-content">
-                    <h2>Preguntas Frecuentes sobre el Seguro de Cesantía</h2>
-                    <div class="space-y-3 not-prose mt-4">
-                        <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">Preguntas Frecuentes sobre el Seguro de Cesantía</h2>
+                    <div class="space-y-3 mt-4">
+                        <details class="bg-slate-50 border border-slate-200 rounded-2xl p-4 group">
                             <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
                                 ¿Qué ocurre con mi Seguro de Cesantía si encuentro un nuevo trabajo antes de cobrar todos los giros?
                                 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
@@ -1098,7 +1135,7 @@
                             </p>
                         </details>
 
-                        <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
+                        <details class="bg-slate-50 border border-slate-200 rounded-2xl p-4 group">
                             <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
                                 ¿El Seguro de Cesantía paga cotizaciones de salud y jubilación?
                                 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
@@ -1108,7 +1145,7 @@
                             </p>
                         </details>
 
-                        <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
+                        <details class="bg-slate-50 border border-slate-200 rounded-2xl p-4 group">
                             <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
                                 ¿Qué plazo tengo para tramitar el cobro en la AFC tras ser despedido?
                                 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
@@ -1120,100 +1157,81 @@
                     </div>
                 </div>
 
-                <!-- Section 8: Related Tools Cards -->
-                <div class="not-prose pt-8 border-t border-slate-100">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Calculadoras y Guías Recomendadas</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <a href="finiquito_calculator" class="p-4 bg-slate-50 hover:bg-sky-50/60 border border-slate-200 rounded-2xl transition-all group block !no-underline">
-                            <span class="material-icons text-sky-500 text-xl mb-1 block">gavel</span>
-                            <span class="text-xs font-bold text-slate-900 group-hover:text-sky-600 block">Calculadora de Finiquito</span>
-                            <span class="text-[11px] text-slate-500 block mt-0.5">Años de servicio y aviso previo</span>
-                        </a>
-                        <a href="calculadora-vacaciones" class="p-4 bg-slate-50 hover:bg-sky-50/60 border border-slate-200 rounded-2xl transition-all group block !no-underline">
-                            <span class="material-icons text-emerald-500 text-xl mb-1 block">beach_access</span>
-                            <span class="text-xs font-bold text-slate-900 group-hover:text-sky-600 block">Calculadora de Vacaciones</span>
-                            <span class="text-[11px] text-slate-500 block mt-0.5">Días acumulados y proporcionales</span>
-                        </a>
-                        <a href="simulador-despido-injustificado-chile" class="p-4 bg-slate-50 hover:bg-rose-50/60 border border-slate-200 rounded-2xl transition-all group block !no-underline">
-                            <span class="material-icons text-rose-500 text-xl mb-1 block">balance</span>
-                            <span class="text-xs font-bold text-slate-900 group-hover:text-rose-600 block">Despido Injustificado</span>
-                            <span class="text-[11px] text-slate-500 block mt-0.5">Recargo del 30%, 50% y 100%</span>
-                        </a>
-                    </div>
-                </div>
             </article>
 
         </div>
     </main>
 
-    <!-- Footer Oficial Blanco Compacto Invariable -->
-    <!-- Elevated Curved Dark Footer (TealHQ Architecture) -->
-    <footer class="mt-20 no-print">
-        <div class="teal-footer-curve pt-16 pb-12">
-            <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+    <!-- 7. EXACT TEALHQ ASYMMETRIC CURVED FOOTER (Pine Forest #00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container max-w-[1240px] mx-auto px-6 py-16 sm:py-20">
+                
+                <!-- Main Grid 4 Columns -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
                     
-                    <!-- Col 1: Brand -->
-                    <div class="space-y-4">
+                    <!-- Col 1: Brand & Description -->
+                    <div class="lg:col-span-2 space-y-4">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-emerald-800/80 flex items-center justify-center text-white">
-                                <span class="material-icons text-lg">balance</span>
+                            <div style="background-color: #FFB703;" class="w-9 h-9 rounded-xl bg-[#FFB703] flex items-center justify-center text-slate-950 font-bold shrink-0 shadow-sm">
+                                <span class="material-icons text-lg" style="color: #00382E;">balance</span>
                             </div>
-                            <span class="font-extrabold text-2xl tracking-tight text-white">
-                                cálculolaboral<span class="text-amber-400">.</span>
+                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none whitespace-nowrap">
+                                cálculolaboral<span class="text-[#FFB703]">.</span>
                             </span>
                         </div>
                         <p class="text-xs text-white/70 leading-relaxed max-w-sm">
                             Plataforma legal independiente de cálculo laboral en Chile. Desarrollada para transparentar liquidaciones, proteger los derechos del trabajador y blindar a las pymes.
                         </p>
-                        <div class="pt-2 text-xs font-mono text-white/40">
-                            Versión 2.5 • Actualizada Marzo 2026
+                        <div class="pt-1 text-[11px] font-mono-num text-white/40">
+                            Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
 
                     <!-- Col 2: Calculadoras -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Calculadoras</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="finiquito_calculator" class="text-white hover:text-amber-300 transition-colors">Finiquito Legal</a></li>
-                            <li><a href="simulador-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Despido Injustificado</a></li>
-                            <li><a href="sueldo_liquido" class="text-white hover:text-amber-300 transition-colors">Sueldo Líquido</a></li>
-                            <li><a href="calculadora-horas-extras" class="text-white hover:text-amber-300 transition-colors">Horas Extras 42h</a></li>
-                            <li><a href="calculadora-sueldo-part-time" class="text-white hover:text-amber-300 transition-colors">Sueldo Part-Time</a></li>
-                            <li><a href="calculadora-vacaciones" class="text-white hover:text-amber-300 transition-colors">Calculadora Vacaciones</a></li>
-                            <li><a href="calculadora-despido-articulo-160" class="text-white hover:text-amber-300 transition-colors">Despido Art. 160</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Calculadoras</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#FFB703] transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#FFB703] transition-colors">Vacaciones Proporcionales</a></li>
+                            <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Part-Time</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 3: Guías Clave -->
+                    <!-- Col 3: Guías Legales -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Guías Legales</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="reclamar-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Reclamar Despido</a></li>
-                            <li><a href="carta-de-renuncia-chile" class="text-white hover:text-amber-300 transition-colors">Carta de Renuncia</a></li>
-                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white hover:text-amber-300 transition-colors">Art. 161 Necesidades</a></li>
-                            <li><a href="ley-40-horas-chile-2026" class="text-white hover:text-amber-300 transition-colors">Ley 40 Horas (42h)</a></li>
-                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white hover:text-amber-300 transition-colors">Checklist Fiscalización DT</a></li>
-                            <li><a href="blog" class="text-white hover:text-amber-300 transition-colors">Todas las Guías →</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Guías Legales</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Cómo Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carta de Renuncia</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white/80 hover:text-[#FFB703] transition-colors">Art. 161 Necesidades</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas (42h)</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 4: Empresas & Legal -->
+                    <!-- Col 4: Empresas -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Empresas</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="para-empleadores" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Portal Pymes</a></li>
-                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
-                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-amber-300 font-bold hover:text-amber-200 transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
-                            <li><a href="generador-finiquito-chile" class="text-white hover:text-amber-300 transition-colors">Generador Finiquitos ($12.990)</a></li>
-                            <li><a href="generador-anexo-40-horas" class="text-white hover:text-amber-300 transition-colors">Anexo 40 Horas Word</a></li>
-                            <li><a href="contacto" class="text-white hover:text-amber-300 transition-colors">Contacto Directo</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Empresas</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores (Pymes)</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Finiquito ($12.990)</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
                         </ul>
                     </div>
 
                 </div>
 
-                <!-- Bottom Legal Bar -->
+                <!-- Bottom Bar -->
                 <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
                     <div>
                         &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
@@ -1224,6 +1242,11 @@
                         <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
                         <span>·</span>
                         <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                        <span>·</span>
+                        <span class="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                            <span class="material-icons text-xs" aria-hidden="true">verified</span>
+                            Fórmulas Conforme a DT
+                        </span>
                     </div>
                 </div>
 
@@ -1232,21 +1255,22 @@
     </footer>
 
     <!-- History Modal -->
-    <div id="history-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
+    <div id="history-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
-                    <div class="text-base font-bold text-slate-900">Historial de Indicadores</div>
+                    <span class="material-icons text-[#00382E]">history</span>
+                    <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
                 </div>
-                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
+                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-full transition-colors cursor-pointer">
                     <span class="material-icons">close</span>
                 </button>
             </div>
             
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#00382E]"></span> UF (Últimos 30 días)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1264,7 +1288,8 @@
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#FFB703]"></span> UTM (Últimos 12 meses)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1285,9 +1310,11 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="/js/constants.js?v=2.0.3"></script>
-    <script src="/js/indicators.js?v=2.0.3"></script>
+    <!-- Centralized Constants & Live Indicators Scripts -->
+    <script src="/js/constants.js?v=2.0.4"></script>
+    <script src="/js/indicators.js?v=2.1.1"></script>
+    
+    <!-- AFC Calculation Engine -->
     <script>
         function parseCleanNumber(val) {
             if (!val) return 0;
@@ -1295,31 +1322,15 @@
         }
 
         function formatCurrency(num) {
-            return '$' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return '$ ' + Math.round(num).toLocaleString('es-CL');
         }
 
         function formatAFCInput(input) {
             var raw = input.value || '';
-            var oldSel = input.selectionStart || 0;
-            var digitsBefore = 0;
-            for (var i = 0; i < oldSel; i++) {
-                if (/\d/.test(raw[i])) digitsBefore++;
-            }
             var digits = raw.replace(/\D/g, '');
             if (!digits) { input.value = ''; return; }
             var cleanDigits = digits.slice(0, 11);
-            var formatted = '$ ' + parseInt(cleanDigits, 10).toLocaleString('es-CL');
-            input.value = formatted;
-            var newPos = formatted.length;
-            var counted = 0;
-            for (var j = 0; j < formatted.length; j++) {
-                if (/\d/.test(formatted[j])) {
-                    counted++;
-                    if (counted === digitsBefore) { newPos = j + 1; break; }
-                }
-            }
-            if (digitsBefore === 0) newPos = 2;
-            try { input.setSelectionRange(newPos, newPos); } catch (e) {}
+            input.value = '$ ' + parseInt(cleanDigits, 10).toLocaleString('es-CL');
         }
 
         function formatAFCSaldoManual(input) {
@@ -1328,25 +1339,29 @@
 
         function setAFCMinimo() {
             var input = document.getElementById('afc-sueldo-base');
-            input.value = '$ 553.553';
-            calculateSeguroCesantia();
+            if (input) {
+                input.value = '$ 553.553';
+                calculateSeguroCesantia();
+            }
         }
 
         function setAFCMonths(months) {
             var input = document.getElementById('afc-meses-trabajados');
-            input.value = months;
-            calculateSeguroCesantia();
+            if (input) {
+                input.value = months;
+                calculateSeguroCesantia();
+            }
         }
 
         function calculateSeguroCesantia() {
-            var ufActual = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 40975.41;
+            var ufActual = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41049.01;
             var topeImponibleAFC = (typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? (CONSTANTS.TOPE_IMPONIBLE_CESANTIA * ufActual) : (135.1 * ufActual);
-            var sueldoRaw = parseCleanNumber(document.getElementById('afc-sueldo-base').value) || (typeof CONSTANTS !== 'undefined' ? CONSTANTS.IMM : 553553);
+            var sueldoRaw = parseCleanNumber(document.getElementById('afc-sueldo-base')?.value) || 553553;
             var sueldo = Math.min(sueldoRaw, Math.round(topeImponibleAFC));
             var tipoContratoEl = document.querySelector('input[name="afc-tipo-contrato"]:checked');
             var tipo = tipoContratoEl ? tipoContratoEl.value : 'indefinido';
-            var meses = parseInt(document.getElementById('afc-meses-trabajados').value, 10) || 1;
-            var causal = document.getElementById('afc-causal').value;
+            var meses = parseInt(document.getElementById('afc-meses-trabajados')?.value, 10) || 1;
+            var causal = document.getElementById('afc-causal')?.value || '161';
             
             var saldoManualInput = document.getElementById('afc-saldo-manual');
             var saldoManual = saldoManualInput ? parseCleanNumber(saldoManualInput.value) : 0;
@@ -1408,11 +1423,11 @@
             var badgeEl = document.getElementById('afc-elegibilidad-badge');
             if (badgeEl) {
                 if (esElegible) {
-                    badgeEl.className = 'text-xs text-emerald-600 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
-                    badgeEl.innerHTML = '<span class="material-icons text-xs">check_circle</span> Cumples requisitos de cotizaciones (' + meses + ' cotizadas de ' + minCotiz + ' mínimas)';
+                    badgeEl.className = 'text-xs text-emerald-800 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
+                    badgeEl.innerHTML = '<span class="material-icons text-xs text-emerald-600">check_circle</span> Cumples requisitos de cotizaciones (' + meses + ' cotizadas de ' + minCotiz + ' mínimas)';
                 } else {
-                    badgeEl.className = 'text-xs text-amber-600 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
-                    badgeEl.innerHTML = '<span class="material-icons text-xs">warning</span> Faltan ' + (minCotiz - meses) + ' cotizaciones para el mínimo legal (' + minCotiz + ' exigidas)';
+                    badgeEl.className = 'text-xs text-amber-800 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
+                    badgeEl.innerHTML = '<span class="material-icons text-xs text-amber-600">warning</span> Faltan ' + (minCotiz - meses) + ' cotizaciones para el mínimo legal (' + minCotiz + ' exigidas)';
                 }
             }
 
@@ -1424,11 +1439,11 @@
                     var g = giros[j];
                     var tr = document.createElement('tr');
                     var isFCS = g.fuente.indexOf('FCS') !== -1;
-                    tr.className = isFCS ? 'bg-emerald-50/30' : '';
+                    tr.className = isFCS ? 'bg-emerald-50/40' : '';
                     tr.innerHTML = '<td class="py-2.5 px-4 font-bold text-slate-800">' + g.numero + '° Mes (Giro ' + g.numero + ')</td>' +
-                                   '<td class="py-2.5 px-4 text-center font-bold text-sky-600">' + g.porcentaje + '</td>' +
+                                   '<td class="py-2.5 px-4 text-center font-bold text-[#00382E]">' + g.porcentaje + '</td>' +
                                    '<td class="py-2.5 px-4 text-right font-extrabold text-slate-900">' + formatCurrency(g.monto) + '</td>' +
-                                   '<td class="py-2.5 px-4 text-right ' + (isFCS ? 'text-emerald-700 font-semibold' : 'text-slate-500') + '">' + g.fuente + '</td>';
+                                   '<td class="py-2.5 px-4 text-right ' + (isFCS ? 'text-emerald-800 font-semibold' : 'text-slate-500') + '">' + g.fuente + '</td>';
                     tbody.appendChild(tr);
                 }
             }
@@ -1463,10 +1478,10 @@
         }
 
         function copyAFCResults() {
-            var sueldo = document.getElementById('afc-res-promedio').innerText;
-            var total = document.getElementById('afc-total-recibir').innerText;
-            var primerGiro = document.getElementById('afc-res-primer-giro').innerText;
-            var giros = document.getElementById('afc-cantidad-giros').innerText;
+            var sueldo = document.getElementById('afc-res-promedio')?.innerText || '';
+            var total = document.getElementById('afc-total-recibir')?.innerText || '';
+            var primerGiro = document.getElementById('afc-res-primer-giro')?.innerText || '';
+            var giros = document.getElementById('afc-cantidad-giros')?.innerText || '';
 
             var text = "Simulación Seguro de Cesantía AFC (calculolaboral.cl):\n" +
                        "Sueldo Imponible Promedio: " + sueldo + "\n" +
@@ -1485,8 +1500,8 @@
         }
 
         function shareAFCWhatsApp() {
-            var total = document.getElementById('afc-total-recibir').innerText;
-            var primerGiro = document.getElementById('afc-res-primer-giro').innerText;
+            var total = document.getElementById('afc-total-recibir')?.innerText || '';
+            var primerGiro = document.getElementById('afc-res-primer-giro')?.innerText || '';
             var texto = 'Hola! Hice mi simulación del Seguro de Cesantía en Cálculo Laboral Chile con la Ley 21.628: 1er giro al 70% da ' + primerGiro + ' y un total estimado de ' + total + '. Simula tus giros gratis aquí: https://calculolaboral.cl/simulador-seguro-cesantia-afc';
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'share', { method: 'WhatsApp', content_type: 'seguro_cesantia' });

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Calcula gratis tus horas extras en Chile (2026) con la Ley de 40 Horas (42h vigente). Valor hora al 50% y 100% con sueldo mínimo y fórmulas oficiales DT.">
-    <title>Calculadora Horas Extras Chile 2026 (Ley 40 Horas - 42h)</title>
+    <title>Calculadora Horas Extras Chile 2026 (Ley 40 Horas - 42h) | Cálculo Laboral</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -16,7 +16,7 @@
     <link rel="canonical" href="https://calculolaboral.cl/calculadora-horas-extras">
     
     <!-- Open Graph Tags -->
-    <meta property="og:title" content="Calculadora Horas Extras Chile 2026 (Ley 40 Horas - 42h)">
+    <meta property="og:title" content="Calculadora Horas Extras Chile 2026 (Ley 40 Horas - 42h) | Cálculo Laboral">
     <meta property="og:description" content="Calcula gratis tus horas extras en Chile (2026) con la Ley de 40 Horas (42h vigente). Valor hora al 50% y 100% con sueldo mínimo y fórmulas oficiales DT.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://calculolaboral.cl/calculadora-horas-extras">
@@ -53,6 +53,12 @@
                 {
                     "@type": "ListItem",
                     "position": 2,
+                    "name": "Calculadoras",
+                    "item": "https://calculolaboral.cl/#calculadoras"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
                     "name": "Calculadora de Horas Extras",
                     "item": "https://calculolaboral.cl/calculadora-horas-extras"
                 }
@@ -79,7 +85,7 @@
                 },
                 {
                     "@type": "Question",
-                    "name": "¿Las horas extras pagan impuestos y cotizaciones?",
+                    "name": "¿Las horas extras pagan impuestos y cotizaciones previsionales?",
                     "acceptedAnswer": {
                         "@type": "Answer",
                         "text": "Sí. Las horas extraordinarias constituyen remuneración imponible y tributable, por lo que están sujetas a los descuentos legales de AFP, Salud (Fonasa/Isapre) y Seguro de Cesantía."
@@ -99,12 +105,6 @@
 }
 </script>
     
-    <!-- Fonts and Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
     <script>
@@ -115,8 +115,16 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
     
-    <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <!-- Fonts and Icons (Geist & Material Icons) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Precompiled Base CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.7.1">
+    
+    <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
         :root {
             --teal-forest: #00382E;
@@ -124,11 +132,21 @@
             --teal-forest-deep: #00261F;
             --teal-yellow: #FFB703;
             --teal-yellow-hover: #FFAA00;
+            --teal-mint-bg: #F4F7F6;
+            --teal-card-bg: #FFFFFF;
+            --teal-border: #E5E7EB;
+            --teal-text-dark: #111827;
+            --teal-text-muted: #4B5563;
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .bg-warm-surface {
-            background-color: #F8FAF9;
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--teal-text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
         }
 
         .font-mono-num {
@@ -137,171 +155,11 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Segmented Control Tabs (Emil Kowalski style) */
-        .scrollbar-none {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .scrollbar-none::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-        }
-        .segmented-control-container {
-            background-color: #F1F5F9;
-            border: 1px solid #E2E8F0;
-            border-radius: 9999px;
-            padding: 5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            max-width: 100%;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .segmented-control-container::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-        }
-        @media (max-width: 640px) {
-            .segmented-control-container {
-                border-radius: 16px;
-                padding: 4px;
-                gap: 2px;
-                width: max-content;
-                min-width: 100%;
-                justify-content: flex-start;
-            }
-        }
-        .product-tab {
-            position: relative;
-            padding: 8px 18px;
-            font-size: 13.5px;
-            font-weight: 600;
-            color: #64748B;
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 9999px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-            white-space: nowrap;
-            user-select: none;
-            text-decoration: none;
-        }
-        @media (max-width: 640px) {
-            .product-tab {
-                padding: 7px 12px;
-                font-size: 12px;
-                gap: 5px;
-                border-radius: 12px;
-                flex-shrink: 0;
-            }
-        }
-        .product-tab:hover {
-            color: #00382E;
-            background-color: rgba(255, 255, 255, 0.55);
-        }
-        .product-tab.active {
-            color: #00382E;
-            background-color: #FFFFFF;
-            font-weight: 700;
-            border-color: rgba(0, 56, 46, 0.08);
-            box-shadow: 0 2px 8px -1px rgba(0, 56, 46, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
-        }
-        .product-tab:active {
-            transform: scale(0.97);
-        }
+        /* Micro-shadow fallbacks */
+        .shadow-2xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04); }
+        .shadow-xs { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.05); }
 
-        /* Pill Buttons */
-        .btn-yellow-pill {
-            background-color: var(--teal-yellow);
-            color: #111827 !important;
-            font-weight: 700;
-            border-radius: 9999px;
-            padding: 12px 26px;
-            font-size: 14.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
-        }
-        .btn-yellow-pill:hover {
-            background-color: #FFAA00;
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
-        }
-        .btn-yellow-pill:active {
-            transform: translateY(1px) scale(0.98);
-        }
-
-        .btn-dark-pill {
-            background-color: var(--teal-forest);
-            color: #FFFFFF !important;
-            font-weight: 700;
-            border-radius: 9999px;
-            padding: 12px 26px;
-            font-size: 14.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.25);
-        }
-        .btn-dark-pill:hover {
-            background-color: var(--teal-forest-hover);
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(0, 56, 46, 0.35);
-            color: #FFFFFF !important;
-        }
-        .btn-dark-pill:active {
-            transform: translateY(1px) scale(0.98);
-        }
-
-        .btn-outline-pill {
-            background-color: #FFFFFF;
-            color: #374151 !important;
-            font-weight: 600;
-            border-radius: 9999px;
-            padding: 11px 22px;
-            font-size: 14px;
-            border: 1.5px solid #D1D5DB;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .btn-outline-pill:hover {
-            border-color: var(--teal-forest);
-            color: var(--teal-forest) !important;
-            background-color: #F8FAF9;
-        }
-
-        .site-container {
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 24px;
-            padding-right: 24px;
-        }
-
-        /* Dropdowns */
+        /* TealHQ Mega Menu Dropdowns */
         .nav-dropdown-menu {
             opacity: 0;
             visibility: hidden;
@@ -319,7 +177,158 @@
             transform: rotate(180deg);
         }
 
-        /* Elevated Curved Dark Footer */
+        /* TealHQ Pill Buttons */
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.28);
+        }
+        .btn-yellow-pill:hover {
+            background-color: var(--teal-yellow-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 183, 3, 0.38);
+        }
+        .btn-yellow-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.22);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 56, 46, 0.32);
+        }
+        .btn-dark-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #374151 !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 10px 20px;
+            font-size: 13.5px;
+            border: 1.5px solid #D1D5DB;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover {
+            border-color: var(--teal-forest);
+            color: var(--teal-forest) !important;
+            background-color: #F8FAF9;
+        }
+
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+
+        /* Segmented Control Switcher */
+        .segmented-control-container {
+            background-color: #F1F5F9;
+            border: 1px solid #E2E8F0;
+            border-radius: 9999px;
+            padding: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            max-width: 100%;
+        }
+        .product-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .product-tab:hover {
+            color: #00382E;
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+        .product-tab.active {
+            color: #00382E;
+            background-color: #FFFFFF;
+            font-weight: 700;
+            border-color: rgba(0, 56, 46, 0.08);
+            box-shadow: 0 2px 8px -1px rgba(0, 56, 46, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Fast Chips */
+        .sueldo-chip {
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+            background-color: #F1F5F9;
+            color: #475569;
+            border: 1px solid #E2E8F0;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .sueldo-chip:hover {
+            background-color: #E2E8F0;
+            color: #0F172A;
+            border-color: #CBD5E1;
+        }
+/* TealHQ Elevated Curved Dark Footer (#00382E & 96px curve) */
         .teal-footer-curve {
             background-color: #00382E;
             color: #FFFFFF;
@@ -328,345 +337,45 @@
             position: relative;
             overflow: hidden;
         }
+        .teal-footer-curve .footer-inner-container {
+            max-width: 1240px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
         @media (min-width: 1024px) {
             .teal-footer-curve {
                 border-top-left-radius: 96px;
                 border-top-right-radius: 0px;
             }
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 8rem !important; /* 128px > 96px curve */
+                padding-right: 3rem !important;
+            }
+        }
+        @media (min-width: 1440px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 4rem !important;
+                padding-right: 4rem !important;
+            }
         }
 
-        @media (min-width: 1024px) {
-            [class*="lg:w-[480px]"], .lg-w-480 {
-                width: 480px !important;
-                flex-shrink: 0 !important;
-            }
-            [class*="lg:w-7/12"], .lg-col-7 {
-                width: 58.333333% !important;
-            }
-            [class*="lg:w-5/12"], .lg-col-5 {
-                width: 41.666667% !important;
-            }
-        }
-        .prose-content h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-        }
-        .prose-content h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.01em;
-        }
-        .prose-content p {
-            margin-bottom: 1.25rem;
-            line-height: 1.75;
-        }
-        .prose-content ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-            margin-bottom: 1.25rem;
-        }
-        .prose-content ol {
-            list-style-type: decimal;
-            padding-left: 1.5rem;
-            margin-bottom: 1.25rem;
-        }
-        .prose-content li {
-            margin-bottom: 0.5rem;
-        }
-        .prose-content strong {
-            color: #0f172a;
-            font-weight: 600;
-        }
-        .prose-content a {
-            color: #0ea5e9;
-            text-decoration: underline;
-            font-weight: 500;
-        }
-        .prose-content a:hover {
-            color: #0284c7;
-        }
-        .prose-content a.cta-btn,
-        .prose-content a.bg-sky-500,
-        .prose-content a[class*="bg-sky-"],
-        .prose-content a[class*="bg-blue-"] {
-            color: #ffffff !important;
-            text-decoration: none !important;
-            font-weight: 600 !important;
-        }
-        .prose-content a.cta-btn:hover,
-        .prose-content a.bg-sky-500:hover,
-        .prose-content a[class*="bg-sky-"]:hover,
-        .prose-content a[class*="bg-blue-"]:hover {
-            color: #ffffff !important;
-            text-decoration: none !important;
-        }
-        .prose-content a.cta-btn span,
-        .prose-content a.bg-sky-500 span,
-        .prose-content a[class*="bg-sky-"] span,
-        .prose-content a[class*="bg-blue-"] span {
-            color: #ffffff !important;
-        }
-        .prose-content a.cta-lead-btn {
-            color: #ffffff !important;
-            text-decoration: none !important;
-            font-weight: 700 !important;
-        }
-        .prose-content a.cta-lead-btn:hover {
-            color: #ffffff !important;
-            text-decoration: none !important;
-        }
-        .prose-content .callout {
-            background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
-            padding: 1rem 1.25rem;
-            border-radius: 0.5rem;
-            margin: 1.5rem 0;
-        }
-        .prose-content .callout-amber {
-            background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
-            padding: 1rem 1.25rem;
-            border-radius: 0.5rem;
-            margin: 1.5rem 0;
-        }
-        .prose-content .formula-box {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin: 1.5rem 0;
-            text-align: center;
-        }
-        .rubro-card {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            padding: 1rem;
-            transition: all 0.2s ease;
-        }
-        .rubro-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-        }
-        .rubro-label {
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.125rem 0.5rem;
-            border-radius: 9999px;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-        .rubro-imponible {
-            background-color: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #e0f2fe;
-        }
-        .rubro-no-imponible {
-            background-color: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #dcfce7;
-        }
-        .rubro-descuento {
-            background-color: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fee2e2;
-        }
-        .timeline-item {
-            position: relative;
-            padding-left: 1.75rem;
-            border-left: 2px solid #e2e8f0;
-            padding-bottom: 1.5rem;
-        }
-        .timeline-item::before {
-            content: "";
-            position: absolute;
-            left: -5px;
-            top: 4px;
-            width: 8px;
-            height: 8px;
-            border-radius: 9999px;
-            background-color: #cbd5e1;
-            border: 2px solid #ffffff;
-            transition: all 0.2s ease;
-        }
-        .timeline-item.active {
-            border-left-color: #0ea5e9;
-        }
-        .timeline-item.active::before {
-            background-color: #0ea5e9;
-            left: -7px;
-            top: 2px;
-            width: 12px;
-            height: 12px;
-            box-shadow: 0 0 0 4px rgb(14 165 233 / 0.15);
-        }
-        .timeline-item:last-child {
-            padding-bottom: 0;
-            border-left-color: transparent;
-        }
-        .step-card {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.02);
-        }
-        .step-number {
-            width: 2.25rem;
-            height: 2.25rem;
-            background-color: #e0f2fe;
-            color: #0369a1;
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.875rem;
-            flex-shrink: 0;
-        }
-        .field-error {
-            color: #ef4444;
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-        }
-        .print-only { display: none !important; }
-        
-        /* High-contrast CTA and button link enforcement */
-        .cta-btn, .cta-btn *,
-        .prose a.cta-btn, .prose a.cta-btn *,
-        .prose a[class*="bg-sky-500"], .prose a[class*="bg-sky-500"] *,
-        .prose a[class*="bg-emerald-600"], .prose a[class*="bg-emerald-600"] *,
-        .prose a[class*="bg-blue-600"], .prose a[class*="bg-blue-600"] * {
-            color: #ffffff !important;
-            text-decoration: none !important;
-        }
-        .cta-lead-btn, .cta-lead-btn *,
-        .prose a.cta-lead-btn, .prose a.cta-lead-btn * {
-            color: #0f172a !important;
-            text-decoration: none !important;
-            font-weight: 700 !important;
-        }
-        
-        .copy-box {
-            position: relative;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 0.875rem;
-            line-height: 1.6;
-            color: #1e293b;
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin: 1.25rem 0;
-        }
-        .copy-btn {
-            position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            color: #475569;
-            padding: 0.35rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            z-index: 10;
-        }
-        .copy-btn:hover {
-            background: #0ea5e9;
-            color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
-        }
-        .copy-btn.copied {
-            background: #10b981 !important;
-            color: #ffffff !important;
-            border-color: #10b981 !important;
-        }
 
-        #print-section {
-            display: none;
-        }
-
-        @media print {
-            @page {
-                size: A4 portrait;
-                margin: 6mm 8mm;
-            }
-            body > *:not(#print-section) {
-                display: none !important;
-            }
-            #print-section {
-                display: block !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                overflow: visible !important;
-                height: auto !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: #ffffff !important;
-                color: #1e293b !important;
-                box-sizing: border-box !important;
-            }
-            html, body {
-                background: #ffffff !important;
-                color: #1e293b !important;
-                font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
-                font-size: 8.5pt !important;
-                line-height: 1.35 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                overflow: visible !important;
-            }
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .print-table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-            }
-            .print-table th, .print-table td {
-                border: 1px solid #e2e8f0 !important;
-            }
-            .print-section-title {
-                page-break-after: avoid !important;
-                break-after: avoid !important;
-            }
+        /* Floating Mobile Result Bar */
+        #mobile-result-bar {
+            box-shadow: 0 -8px 24px -4px rgba(0, 56, 46, 0.15);
+            transition: transform 0.25s var(--ease-spring);
         }
     </style>
-    
 </head>
-<body class="bg-warm-surface text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#FFB703]/30 selection:text-slate-900">
-
-    <!-- TOP BAR: Indicadores Económicos Oficiales 2026 -->
+<body class="min-h-screen flex flex-col">
+<!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
-        <div class="site-container flex flex-col md:flex-row justify-between items-center gap-2">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
-                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) • Fórmulas actualizadas Dirección del Trabajo</span>
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
             </div>
             <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
@@ -678,15 +387,15 @@
         </div>
     </div>
 
-    <!-- MAIN NAVBAR (TealHQ Structure: Dropdowns with rotating chevrons & twin pill buttons) -->
-    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print">
-        <div class="site-container">
+    <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="max-w-[1240px] mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-20">
                 
-                <!-- Logo TealHQ style: Clean modern emblem + wordmark -->
+                <!-- Brand Logo: Dark green box + Gold balance icon + Wordmark -->
                 <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
                     <div style="background-color: var(--teal-forest);" class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-xs">
-                        <svg class="w-5 h-5 text-amber-400" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="w-5 h-5 text-[#FFB703]" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M30 84h40M38 79h24"></path>
                             <path d="M50 22v57"></path>
                             <path d="M50 14l-2 4h4l-2-4v8"></path>
@@ -698,377 +407,280 @@
                         </svg>
                     </div>
                     <span style="color: var(--teal-forest);" class="font-extrabold text-2xl tracking-tight">
-                        cálculolaboral<span class="text-amber-500">.</span>
+                        cálculolaboral<span class="text-[#FFB703]">.</span>
                     </span>
                 </a>
 
-                <!-- Desktop Center Navigation with Rotating Dropdowns -->
-                <nav class="hidden lg:flex items-center gap-1 text-[15px] font-semibold text-gray-700">
-                    
-                    <a href="calculadora-horas-extras" class="px-4 py-6 text-emerald-950 font-bold transition-colors">
-                        Horas Extras (42h)
+                <!-- Desktop Center Navigation -->
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">
+                        Simulador Finiquito
                     </a>
 
-                    <!-- Dropdown: Herramientas ⌵ (With Rotating Chevron) -->
+                    <!-- Dropdown: Herramientas ⌵ -->
                     <div class="nav-dropdown-group relative">
-                        <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
                             <span>Herramientas</span>
-                            <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
                                 <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
                         
-                        <!-- Mega Menu Panel -->
-                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 600px; min-width: 600px;">
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
                             <div class="grid grid-cols-2 gap-2">
                                 <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-xl">calculate</span>
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">calculate</span>
                                     </div>
                                     <div>
-                                        <div class="font-bold text-sm text-gray-900">Finiquito Legal Completo</div>
-                                        <div class="text-xs text-gray-500 mt-0.5">Años de servicio, aviso previo y feriado.</div>
-                                    </div>
-                                </a>
-
-                                <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-xl">gavel</span>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-gray-900">Despido Injustificado</div>
-                                        <div class="text-xs text-gray-500 mt-0.5">Recargo +30% y recuperación de aporte AFC.</div>
+                                        <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
                                     </div>
                                 </a>
 
                                 <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-xl">payments</span>
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">payments</span>
                                     </div>
                                     <div>
-                                        <div class="font-bold text-sm text-gray-900">Sueldo Líquido</div>
-                                        <div class="text-xs text-gray-500 mt-0.5">Descuentos previsionales AFP, Fonasa y SII.</div>
+                                        <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
                                     </div>
                                 </a>
 
-                                <a href="calculadora-sueldo-part-time" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-xl">hourglass_bottom</span>
+                                <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">gavel</span>
                                     </div>
                                     <div>
-                                        <div class="font-bold text-sm text-gray-900">Sueldo Part-Time</div>
-                                        <div class="text-xs text-gray-500 mt-0.5">Jornada parcial de 30 horas y subsidios.</div>
+                                        <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">schedule</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
                                     </div>
                                 </a>
 
                                 <a href="calculadora-vacaciones-proporcionales" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-sky-50 text-sky-700 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-xl">beach_access</span>
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">beach_access</span>
                                     </div>
                                     <div>
-                                        <div class="font-bold text-sm text-gray-900">Vacaciones Proporcionales</div>
-                                        <div class="text-xs text-gray-500 mt-0.5">Cómputo exacto sólo en días hábiles.</div>
+                                        <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
                                     </div>
                                 </a>
 
-                                <a href="calculadora-despido-articulo-160" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-xl">warning</span>
+                                <a href="simulador-seguro-cesantia-afc" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">account_balance_wallet</span>
                                     </div>
                                     <div>
-                                        <div class="font-bold text-sm text-gray-900">Despido Art. 160</div>
-                                        <div class="text-xs text-gray-500 mt-0.5">Causales sin derecho a indemnización.</div>
+                                        <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
                                     </div>
-                                </a>
-                            </div>
-                            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between px-2 text-xs">
-                                <span class="text-gray-500 font-medium">9 calculadoras laborales vigentes</span>
-                                <a href="./#calculadoras" class="font-bold text-emerald-800 hover:text-emerald-950 inline-flex items-center gap-1 transition-colors">
-                                    <span>Ver catálogo completo (15 herramientas)</span>
-                                    <span class="material-icons text-xs">arrow_forward</span>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Dropdown: Recursos ⌵ (With Rotating Chevron) -->
+                    <!-- Dropdown: Guías ⌵ -->
                     <div class="nav-dropdown-group relative">
-                        <button type="button" class="flex items-center gap-1.5 px-4 py-6 hover:text-emerald-900 transition-colors cursor-pointer">
-                            <span>Recursos</span>
-                            <svg class="nav-chevron w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
                                 <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
                         
-                        <!-- Dropdown Panel -->
-                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-gray-100 shadow-2xl p-4 z-50" style="width: 480px; min-width: 480px;">
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
                             <div class="space-y-1">
-                                <a href="reclamar-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-lg">description</span>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-gray-900">Cómo Reclamar un Despido</div>
-                                        <div class="text-xs text-gray-500">Pasos ante la Dirección del Trabajo y plazos de 60 días.</div>
-                                    </div>
+                                <a href="reclamar-despido-injustificado-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cómo Reclamar Despido Injustificado
                                 </a>
-
-                                <a href="carta-de-renuncia-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-lg">edit</span>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-gray-900">Carta de Renuncia Voluntaria</div>
-                                        <div class="text-xs text-gray-500">Generador con aviso previo de 30 días legales.</div>
-                                    </div>
+                                <a href="carta-de-renuncia-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Generador de Carta de Renuncia
                                 </a>
-
-                                <a href="blog" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-icons text-lg">library_books</span>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-sm text-gray-900">Guías Laborales & Dictámenes</div>
-                                        <div class="text-xs text-gray-500">Art. 161, Ley Karin, Ley 40 Horas y jurisprudencia.</div>
-                                    </div>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Art. 161 Necesidades de la Empresa
                                 </a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Checklist Fiscalización DT Pymes
+                                </a>
+                                <a href="ley-40-horas-chile-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Ley 40 Horas (42 Horas en 2026)
+                                </a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">
+                                        Ver todas las guías en el Blog →
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <a href="para-empleadores" class="px-4 py-6 hover:text-emerald-900 transition-colors">
-                        Para Pymes
+                    <a href="para-empleadores" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">
+                        Para Empleadores
                     </a>
                 </nav>
 
-                <!-- Right Twin Pill Action Buttons -->
-                <div class="hidden sm:flex items-center gap-3">
-                    <a href="para-empleadores" class="btn-outline-pill">
-                        Portal Pymes
+                <!-- Header Right CTAs (TealHQ Pill Style) -->
+                <div class="flex items-center gap-2">
+                    <a href="para-empleadores" class="hidden md:inline-flex btn-yellow-pill !py-2.5 !px-5 !text-xs !shadow-xs">
+                        Portal Empleadores
                     </a>
-                    <a href="#he-total-bruto" class="btn-yellow-pill">
-                        <span>Ver Horas Extras</span>
+                    <a href="contacto" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">
+                        Contacto
                     </a>
+                    
+                    <!-- Mobile Hamburger -->
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl">menu</span>
+                    </button>
                 </div>
 
-                <!-- Mobile Hamburger Toggle -->
-                <details class="lg:hidden static">
-                    <summary class="list-none p-2 rounded-xl text-gray-700 hover:bg-gray-100 cursor-pointer" aria-label="Abrir menú">
-                        <span class="material-icons">menu</span>
-                    </summary>
-                    <div class="absolute left-0 right-0 top-full bg-white border-b border-slate-200 shadow-xl z-50 p-6 space-y-3">
-                        <a href="calculadora-horas-extras" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950 bg-emerald-50">Horas Extras Ley 40 Horas</a>
-                        <a href="finiquito_calculator" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Simulador Finiquito Legal 2026</a>
-                        <a href="simulador-despido-injustificado-chile" class="block px-4 py-3 rounded-xl text-base font-bold text-rose-600 bg-rose-50">Despido Injustificado (+30%)</a>
-                        <a href="sueldo_liquido" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Calculadora Sueldo Líquido</a>
-                        <a href="calculadora-sueldo-part-time" class="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700">Sueldo Part-Time</a>
-                        <a href="./#calculadoras" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-800 bg-slate-100 border border-slate-200">Ver Todas las Calculadoras (15) ↓</a>
-                        <a href="para-empleadores" class="block px-4 py-3 rounded-xl text-base font-bold text-emerald-950">Portal Empleadores & Pymes</a>
-                    </div>
-                </details>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-3">
+            <a href="finiquito_calculator" class="block text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="sueldo_liquido" class="block text-sm font-semibold text-slate-700">Sueldo Líquido</a>
+            <a href="simulador-despido-injustificado-chile" class="block text-sm font-semibold text-slate-700">Despido Injustificado</a>
+            <a href="calculadora-horas-extras" class="block text-sm font-semibold text-slate-700">Horas Extras 42h</a>
+            <a href="para-empleadores" class="block text-sm font-semibold text-slate-700">Portal Empleadores</a>
+            <a href="blog" class="block text-sm font-semibold text-slate-700">Blog de Guías Laborales</a>
+            <div class="pt-2">
+                <a href="para-empleadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
             </div>
         </div>
     </header>
 
-    <!-- Indicators Carousel & Responsive Layout Helpers -->
-    <style>
-        .indicators-carousel {
-            gap: 0.5rem !important;
-        }
-        @media (max-width: 639px) {
-            .indicators-carousel {
-                display: flex !important;
-                overflow-x: auto !important;
-                scroll-snap-type: x mandatory !important;
-                -webkit-overflow-scrolling: touch !important;
-                gap: 0.5rem !important;
-            }
-            .indicator-card {
-                min-width: 125px !important;
-                max-width: 125px !important;
-                width: 125px !important;
-                flex-shrink: 0 !important;
-                scroll-snap-align: start !important;
-            }
-        }
-        @media (min-width: 640px) and (max-width: 1023px) {
-            .indicators-carousel {
-                display: grid !important;
-                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-                gap: 0.5rem !important;
-            }
-            .indicator-card {
-                width: 100% !important;
-                min-width: 0 !important;
-                flex-shrink: 1 !important;
-            }
-        }
-        @media (min-width: 1024px) {
-            .indicators-carousel {
-                display: grid !important;
-                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-                gap: 0.625rem !important;
-            }
-            .indicator-card {
-                width: 100% !important;
-                min-width: 0 !important;
-                flex-shrink: 1 !important;
-            }
-        }
-    </style>
-    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 mt-1.5 mb-2 sm:mb-2.5 no-print">
-        <div class="indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 pb-1 sm:pb-0 scrollbar-none overscroll-x-contain -mx-4 px-4 sm:mx-0 sm:px-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
-            <!-- UF Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Valor UF</span>
-                <span class="uf-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$40.975,41</span>
-            </div>
-            <!-- UTM Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">UTM Mensual</span>
-                <span class="utm-value text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$71.721</span>
-            </div>
-            <!-- Sueldo Mínimo Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Sueldo Mínimo</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">$553.553</span>
-            </div>
-            <!-- Tope AFP Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope AFP</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">89.9 UF</span>
-            </div>
-            <!-- Tope Finiquito Card -->
-            <div class="indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all">
-                <span class="block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap">Tope Finiquito</span>
-                <span class="text-sm sm:text-[15px] font-extrabold text-slate-900 font-mono tracking-tight leading-tight">90 UF</span>
-            </div>
-        </div>
-        <div class="flex justify-between items-center mt-1.5 sm:mt-2 px-0.5 text-[10px] text-slate-500 font-medium">
-            <div id="indicators-status" class="flex items-center gap-1.5 text-slate-500 text-[10px]">
-                <span class="material-icons text-[13px] text-emerald-500" aria-hidden="true">check_circle</span>
-                <span>Valores oficiales vigentes (<a href="https://www.bcentral.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">Banco Central</a> y <a href="https://www.dt.gob.cl" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-600 font-medium">DT Chile</a>)</span>
-            </div>
-            <button type="button" id="btn-history" class="text-sky-500 hover:text-sky-600 hover:underline flex items-center gap-0.5 text-[10px] cursor-pointer bg-transparent border-0 p-0">
-                <span class="material-icons text-[12px]" aria-hidden="true">history</span>
-                <span>Historial</span>
-            </button>
-        </div>
-    </div>
 
-<!-- Main Content -->
-    <main class="flex-grow pt-4 pb-16">
-        <div class="max-w-[1200px] mx-auto px-6">
-        <!-- Breadcrumbs -->
+
+<!-- 4. MAIN BODY -->
+    <main class="flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+
+        <!-- Breadcrumbs & Editorial Header (TealHQ Typography) -->
         <nav class="flex items-center gap-2 text-xs text-slate-400 mb-4" aria-label="Breadcrumb">
-            <a href="./" class="hover:text-emerald-900 transition-colors font-medium">Inicio</a>
+            <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
             <span class="material-icons text-xs">chevron_right</span>
-            <span class="text-slate-600 font-semibold">Calculadora de Horas Extras</span>
+            <a href="./#calculadoras" class="hover:text-[#00382E] transition-colors">Calculadoras</a>
+            <span class="material-icons text-xs">chevron_right</span>
+            <span class="text-slate-800 font-semibold">Calculadora de Horas Extras</span>
         </nav>
 
-        <!-- Hero Header Minimalista (TealHQ / High-End Design) -->
-        <div class="text-center mt-2 mb-6 sm:mb-8 max-w-3xl mx-auto no-print">
-            <!-- Sleek Announcement Micro-Pill -->
-            <a href="ley-40-horas-chile-2026" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-emerald-600/30 text-slate-600 hover:text-emerald-900 transition-all shadow-2xs hover:shadow-xs group mb-4 !no-underline">
-                <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                    <span class="material-icons text-[11px]">schedule</span> Ley 40 Horas
-                </span>
-                <span class="text-xs font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">
-                    Jornada legal de 42 horas vigente en Chile durante 2026
-                </span>
-                <span class="material-icons text-xs text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all">arrow_forward</span>
+        <div class="mb-8 text-center sm:text-left">
+            <a href="ley-40-horas-chile-2026" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100/70 border border-emerald-200 text-emerald-900 text-xs font-semibold transition-all mb-3.5 !no-underline shadow-2xs">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-600"></span>
+                <span>Jornada legal de 42 horas vigente en Chile (2026)</span>
+                <span class="material-icons text-xs text-emerald-700">arrow_forward</span>
             </a>
-
-            <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-                Calculadora de Horas Extras Chile 2026
+            <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                Calculadora de Horas Extras Chile 2026<span class="text-[#FFB703]">.</span>
             </h1>
-            <p class="text-slate-600 text-sm sm:text-base mt-3 max-w-xl mx-auto leading-relaxed">
-                Calcula el valor exacto de tu hora ordinaria y horas extraordinarias con recargo legal del <strong>50%</strong> y <strong>100%</strong> según las fórmulas y factores vigentes de la Dirección del Trabajo (Jornada 42h en 2026).
+            <p class="text-sm sm:text-base text-slate-600 max-w-2xl mt-3 leading-relaxed">
+                Calcula el valor exacto de tu hora ordinaria y horas extraordinarias con recargo legal del <strong>50%</strong> y <strong>100%</strong> según las fórmulas y factores actualizados de la Dirección del Trabajo (DT).
             </p>
         </div>
 
-        <!-- Suite of Tools Segmented Control (Emil Kowalski Physics & Pill Style) -->
-        <div class="flex justify-center mb-8 overflow-x-auto scrollbar-none px-2 py-1 no-print">
+        <!-- Suite of Tools Segmented Switcher (TealHQ Pill Style) -->
+        <div class="flex justify-start sm:justify-center mb-8 overflow-x-auto scrollbar-none py-1 no-print">
             <div class="segmented-control-container">
                 <a href="finiquito_calculator" class="product-tab">
-                    <span class="material-icons text-base text-emerald-700">gavel</span>
+                    <span class="material-icons text-sm text-[#00382E]">gavel</span>
                     <span>Finiquito Legal</span>
                 </a>
                 <a href="simulador-despido-injustificado-chile" class="product-tab">
-                    <span class="material-icons text-base text-rose-600">report_problem</span>
-                    <span>Despido Injustificado (+30%)</span>
+                    <span class="material-icons text-sm text-rose-600">report_problem</span>
+                    <span>Despido Injustificado</span>
                 </a>
                 <a href="sueldo_liquido" class="product-tab">
-                    <span class="material-icons text-base text-blue-600">payments</span>
+                    <span class="material-icons text-sm text-blue-600">payments</span>
                     <span>Sueldo Líquido</span>
                 </a>
                 <a href="calculadora-horas-extras" class="product-tab active">
-                    <span class="material-icons text-base text-amber-500">schedule</span>
+                    <span class="material-icons text-sm text-[#FFB703]">schedule</span>
                     <span>Horas Extras 42h</span>
                 </a>
                 <a href="calculadora-sueldo-part-time" class="product-tab">
-                    <span class="material-icons text-base text-indigo-500">hourglass_bottom</span>
+                    <span class="material-icons text-sm text-indigo-500">hourglass_bottom</span>
                     <span>Part-Time</span>
                 </a>
             </div>
         </div>
 
-        <!-- Two Column Interactive Layout (440px Inputs Left, Flexible Results Right) -->
+        <!-- TWO COLUMN INTERACTIVE LAYOUT -->
         <div class="flex flex-col lg:flex-row gap-8 items-start mb-16">
             
             <!-- Left Column: Form Controls (440px Fixed) -->
-            <div class="w-full lg:w-[440px] shrink-0 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="w-full lg:w-[440px] shrink-0 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
                 <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <span class="material-icons text-sky-500">tune</span> Datos para el cálculo
+                    <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span class="material-icons text-[#00382E]">tune</span>
+                        <span>Datos para el cálculo</span>
                     </h2>
-                    <span class="text-[11px] font-mono text-slate-400 font-semibold" id="he-divisor-badge">Divisor DT: 180 hrs</span>
+                    <span class="text-[11px] font-mono-num text-slate-400 font-semibold" id="he-divisor-badge">Divisor DT: 180 hrs</span>
                 </div>
 
                 <!-- 1. Sueldo Base -->
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label for="he-sueldo-base" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label for="he-sueldo-base" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
                             Sueldo Base Mensual
                         </label>
-                        <button type="button" onclick="setHEMinimo()" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-1 rounded-lg transition-colors cursor-pointer active:scale-95">
+                        <button type="button" onclick="setHEMinimo()" class="text-[11px] font-bold text-[#00382E] hover:underline bg-emerald-50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer">
                             Usar Mínimo ($553.553)
                         </button>
                     </div>
-                    <div class="relative rounded-2xl shadow-sm">
-                        <input type="text" id="he-sueldo-base" value="$ 553.553" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatHEInput(this); calculateHorasExtras();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold">$</span>
+                        <input type="text" id="he-sueldo-base" value="$ 553.553" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatHEInput(this); calculateHorasExtras();" class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono-num font-bold text-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E] focus:border-transparent transition-all">
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-1">Sueldo fijo pactado en tu contrato de trabajo.</p>
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        <button type="button" onclick="setHESalary(553553)" class="sueldo-chip">Mínimo: $553.553</button>
+                        <button type="button" onclick="setHESalary(800000)" class="sueldo-chip">$800.000</button>
+                        <button type="button" onclick="setHESalary(1000000)" class="sueldo-chip">$1.000.000</button>
+                        <button type="button" onclick="setHESalary(1500000)" class="sueldo-chip">$1.500.000</button>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1.5">Sueldo fijo pactado en tu contrato de trabajo.</p>
                 </div>
 
                 <!-- 2. Jornada Semanal Pactada -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                         Jornada Semanal Pactada
                     </label>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="cursor-pointer">
                             <input type="radio" name="he-jornada" value="42" checked onchange="calculateHorasExtras()" class="peer sr-only">
-                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
-                                42 horas <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Legal 2026 (÷180)</span>
+                            <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
+                                42 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Legal 2026 (÷180)</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="he-jornada" value="40" onchange="calculateHorasExtras()" class="peer sr-only">
-                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
-                                40 horas <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Sello 40h (÷171.4)</span>
+                            <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
+                                40 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Sello 40h (÷171.4)</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="he-jornada" value="44" onchange="calculateHorasExtras()" class="peer sr-only">
-                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
-                                44 horas <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Etapa 2024 (÷188.6)</span>
+                            <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
+                                44 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Etapa 2024 (÷188.6)</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="he-jornada" value="45" onchange="calculateHorasExtras()" class="peer sr-only">
-                            <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-700 font-bold text-xs hover:bg-slate-50 transition-all">
-                                45 horas <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-sky-600">Histórica (÷192.9)</span>
+                            <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
+                                45 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Histórica (÷192.9)</span>
                             </div>
                         </label>
                     </div>
@@ -1082,13 +694,13 @@
                             <label for="he-cant-50" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
                                 Horas Extras al 50%
                             </label>
-                            <span class="text-[10px] font-semibold text-sky-600 font-mono" id="he-live-unit-50">$4.613 c/u</span>
+                            <span class="text-[10px] font-semibold text-amber-700 font-mono-num" id="he-live-unit-50">$4.613 c/u</span>
                         </div>
                         <span class="block text-[10px] text-slate-400 mb-2">Días hábiles normales (lunes a sábado)</span>
                         <div class="flex items-center gap-2">
-                            <button type="button" onclick="adjustHE('he-cant-50', -1)" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all">-</button>
-                            <input type="number" id="he-cant-50" value="10" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2 bg-white border border-slate-200 rounded-xl font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500">
-                            <button type="button" onclick="adjustHE('he-cant-50', 1)" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all">+</button>
+                            <button type="button" onclick="adjustHE('he-cant-50', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
+                            <input type="number" id="he-cant-50" value="10" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <button type="button" onclick="adjustHE('he-cant-50', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
                         </div>
                     </div>
 
@@ -1098,19 +710,19 @@
                             <label for="he-cant-100" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
                                 Horas Extras al 100%
                             </label>
-                            <span class="text-[10px] font-semibold text-emerald-600 font-mono" id="he-live-unit-100">$6.151 c/u</span>
+                            <span class="text-[10px] font-semibold text-emerald-700 font-mono-num" id="he-live-unit-100">$6.151 c/u</span>
                         </div>
                         <span class="block text-[10px] text-slate-400 mb-2">Domingos, festivos o pacto especial</span>
                         <div class="flex items-center gap-2">
-                            <button type="button" onclick="adjustHE('he-cant-100', -1)" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all">-</button>
-                            <input type="number" id="he-cant-100" value="0" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2 bg-white border border-slate-200 rounded-xl font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500">
-                            <button type="button" onclick="adjustHE('he-cant-100', 1)" class="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all">+</button>
+                            <button type="button" onclick="adjustHE('he-cant-100', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
+                            <input type="number" id="he-cant-100" value="0" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <button type="button" onclick="adjustHE('he-cant-100', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Results Summary (TealHQ Design) -->
+            <!-- Right Column: Results Summary Card (TealHQ Design) -->
             <div class="w-full flex-grow bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm lg:self-start space-y-6">
                 
                 <!-- Main Header / Totals Section -->
@@ -1175,79 +787,79 @@
                         Compartir en WhatsApp
                     </button>
                     <a href="sueldo_liquido" class="btn-yellow-pill flex-1">
-                        <span class="material-icons text-sm">payments</span> Ver en Sueldo
+                        <span class="material-icons text-sm" style="color: #111827 !important;">payments</span>
+                        <span style="color: #111827 !important;">Ver en Sueldo</span>
                     </a>
                 </div>
 
                 <!-- Banner Patrocinado Itaú -->
-                <div class="mt-5 p-3.5 bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/90 rounded-2xl shadow-xs no-print text-center">
-                  <div class="flex items-center justify-between mb-2 px-1 max-w-[300px] mx-auto">
-                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                      <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Publicidad Patrocinada
-                    </span>
-                    <span class="text-[10px] text-slate-400 font-medium">Banco Itaú Chile</span>
-                  </div>
-                  <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
-                    <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención al recibir sueldo" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
-                  </a>
-                  <div class="mt-2.5 max-w-[300px] mx-auto text-left px-1">
-                    <p class="text-[11px] text-slate-600 leading-tight mb-2">
-                      Recibe tu sueldo y horas extras en tu <strong>Cuenta Corriente Itaú con $0 costo de mantención</strong>.
-                    </p>
-                    <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_btn" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 !text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" style="background-color: #ea580c !important; color: #ffffff !important; text-decoration: none !important; ">
-                      <span style="color: #ffffff !important;">Abrir Cuenta Online</span>
-                      <span class="material-icons text-xs" style="color: #ffffff !important;">arrow_forward</span>
+                <div class="mt-5 p-4 bg-slate-50 border border-slate-200/90 rounded-2xl shadow-xs no-print text-center">
+                    <div class="flex items-center justify-between mb-2 px-1 max-w-[300px] mx-auto">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Publicidad Patrocinada
+                        </span>
+                        <span class="text-[10px] text-slate-400 font-medium">Banco Itaú Chile</span>
+                    </div>
+                    <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
+                        <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención al recibir sueldo" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
                     </a>
-                  </div>
+                    <div class="mt-2.5 max-w-[300px] mx-auto text-left px-1">
+                        <p class="text-[11px] text-slate-600 leading-tight mb-2">
+                            Recibe tu sueldo y horas extras en tu <strong>Cuenta Corriente Itaú con $0 costo de mantención</strong>.
+                        </p>
+                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_btn" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 !text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" style="background-color: #ea580c !important; color: #ffffff !important; text-decoration: none !important;">
+                            <span style="color: #ffffff !important;">Abrir Cuenta Online</span>
+                            <span class="material-icons text-xs" style="color: #ffffff !important;">arrow_forward</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- B2B Box: Anexo 40h & Kit Blindaje Pyme 2026 (SaaS Premium Institucional) -->
+        <!-- B2B Box: Anexo 40h & Kit Blindaje Pyme 2026 -->
         <section class="max-w-4xl mx-auto my-8 no-print" aria-label="Solución para Empleadores y Contadores">
-            <div class="bg-white border-2 border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-                <!-- Subtle decorative glow -->
-                <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-sky-100/50 blur-3xl pointer-events-none -z-0"></div>
-
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
                 <div class="space-y-2.5 max-w-xl text-center md:text-left relative z-10">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-bold uppercase tracking-wider border border-sky-200 shadow-2xs">
-                        <span class="material-icons text-xs text-sky-600">business</span>
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold uppercase tracking-wider border border-emerald-200 shadow-2xs">
+                        <span class="material-icons text-xs text-emerald-700">business</span>
                         Para Empleadores y Encargados de Nómina
                     </div>
                     <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight m-0">
-                        ¿Calculando horas extras con la <span class="text-sky-600">Ley 40 Horas (42h en 2026)</span>?
+                        ¿Calculando horas extras con la <span class="text-emerald-700">Ley 40 Horas (42h en 2026)</span>?
                     </h3>
                     <p class="text-xs sm:text-sm text-slate-600 leading-relaxed m-0">
-                        Actualiza obligatoriamente los contratos de tu personal con el <strong class="text-slate-800">Anexo de Jornada 42 Horas</strong> y blinda tu empresa ante fiscalizaciones con el <strong class="text-slate-800">Kit de Cumplimiento Laboral Pyme 2026</strong> (Protocolo Ley Karin DS 44 + Políticas).
+                        Actualiza obligatoriamente los contratos de tu personal con el <strong class="text-slate-800">Anexo de Jornada 42 Horas</strong> y blinda tu empresa ante fiscalizaciones con el <strong class="text-slate-800">Kit de Cumplimiento Laboral Pyme 2026</strong>.
                     </p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0 relative z-10">
-                    <a href="generador-anexo-40-horas" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/90 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 text-center shadow-2xs !no-underline">
-                        <span class="material-icons text-sm text-slate-500">description</span>
-                        <span>Anexo 40h (Gratis)</span>
+                    <a href="generador-anexo-40-horas" class="btn-outline-pill !text-xs">
+                        <span class="material-icons text-sm">description</span>
+                        <span>Anexo 40h Word</span>
                     </a>
-                    <a href="kit-cumplimiento-laboral-pymes" class="py-3 px-5 rounded-xl bg-sky-600 hover:bg-sky-700 !text-white font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-sky-600/25 active:scale-95 text-center !no-underline" style="background-color: #0284c7 !important; color: #ffffff !important;">
-                        <span class="material-icons text-sm" style="color: #ffffff !important;">verified_user</span>
-                        <span style="color: #ffffff !important;">Kit Blindaje ($19.990)</span>
+                    <a href="https://www.flow.cl/btn.php?token=6b44a47" target="_blank" rel="noopener noreferrer" class="btn-yellow-pill !text-xs">
+                        <span class="material-icons text-sm" style="color: #111827 !important;">verified_user</span>
+                        <span style="color: #111827 !important;">Kit Blindaje ($19.990)</span>
                     </a>
                 </div>
             </div>
         </section>
 
         <!-- Explanatory SEO Content Section -->
-        <article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
+        <article class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 md:p-12 shadow-sm space-y-8 max-w-4xl mx-auto">
             
             <div>
-                <h2 class="text-2xl font-bold text-slate-900 mb-4">¿Cómo se calculan las horas extras en Chile en 2026?</h2>
+                <h2 style="color: var(--teal-forest);" class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-4">
+                    ¿Cómo se calculan las horas extras en Chile en 2026?
+                </h2>
                 <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                     Con la entrada en vigencia de la segunda etapa de la <strong>Ley 40 Horas (Ley 21.561)</strong>, la jornada laboral ordinaria máxima en Chile se redujo a <strong>42 horas semanales</strong>. Esto incrementó automáticamente el valor de la hora de trabajo para todos los trabajadores dependientes.
                 </p>
                 
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6">
                     <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-base">functions</span> Fórmula Oficial de la Dirección del Trabajo (DT)
+                        <span class="material-icons text-[#00382E] text-base">functions</span> Fórmula Oficial de la Dirección del Trabajo (DT)
                     </h3>
-                    <p class="text-xs sm:text-sm text-slate-600 font-mono bg-white p-3 rounded-xl border border-slate-200 mb-3">
+                    <p class="text-xs sm:text-sm text-slate-700 font-mono-num bg-white p-3 rounded-xl border border-slate-200 mb-3">
                         Valor Hora Ordinaria = (Sueldo Base / 30) × (7 / Jornada Semanal) = Sueldo Base / Divisor Mensual
                     </p>
                     <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
@@ -1269,53 +881,50 @@
                             <thead>
                                 <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
                                     <th class="py-2.5 px-3 sm:px-3.5">Cantidad de Horas</th>
-                                    <th class="py-2.5 px-3 sm:px-3.5 text-sky-600 text-right">Total 50% (Hábiles)</th>
-                                    <th class="py-2.5 px-3 sm:px-3.5 text-emerald-600 text-right">Total 100% (Festivos)</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-amber-700 text-right">Total 50% (Hábiles)</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-emerald-700 text-right">Total 100% (Festivos)</th>
                                     <th class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right">Líquido Aprox. (~80%)</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100 font-mono">
+                            <tbody class="divide-y divide-slate-100 font-mono-num">
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">1 Hora Extra</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$4.613</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$6.151</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$4.613</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$6.151</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$3.690</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">2 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$9.226</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$12.301</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$9.226</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$12.301</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$7.381</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">5 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$23.065</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$30.753</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$23.065</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$30.753</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$18.452</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">10 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$46.130</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$61.506</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$46.130</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$61.506</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$36.904</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">15 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$69.195</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$92.259</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$69.195</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$92.259</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$55.356</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">20 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$92.260</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$123.012</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$92.260</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$123.012</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$73.808</td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
-                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
                     </div>
                 </div>
             </div>
@@ -1331,66 +940,63 @@
                                 <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
                                     <th class="py-2.5 px-3 sm:px-3.5">Sueldo Base</th>
                                     <th class="py-2.5 px-3 sm:px-3.5 text-right">Hora Ordinaria (÷180)</th>
-                                    <th class="py-2.5 px-3 sm:px-3.5 text-sky-600 text-right">Hora 50%</th>
-                                    <th class="py-2.5 px-3 sm:px-3.5 text-emerald-600 text-right">Hora 100%</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-amber-700 text-right">Hora 50%</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-emerald-700 text-right">Hora 100%</th>
                                     <th class="py-2.5 px-3 sm:px-3.5 text-slate-800 text-right">Total 10 Horas (50%)</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100 font-mono">
+                            <tbody class="divide-y divide-slate-100 font-mono-num">
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$553.553 (Mínimo)</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$3.075</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$4.613</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$6.151</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$4.613</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$6.151</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$46.130</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$700.000</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$3.889</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$5.833</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$7.778</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$5.833</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$7.778</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$58.333</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$850.000</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$4.722</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$7.083</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$9.444</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$7.083</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$9.444</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$70.833</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$1.000.000</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$5.556</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$8.333</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$11.111</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$8.333</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$11.111</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$83.333</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$1.200.000</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$6.667</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$10.000</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$13.333</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$10.000</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$13.333</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$100.000</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$1.500.000</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$8.333</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$12.500</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$16.667</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$12.500</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$16.667</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$125.000</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$2.000.000</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$11.111</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-sky-600 font-bold text-right whitespace-nowrap">$16.667</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-600 font-bold text-right whitespace-nowrap">$22.222</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$16.667</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$22.222</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$166.667</td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
-                        <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
                     </div>
                 </div>
             </div>
@@ -1399,15 +1005,15 @@
             <div>
                 <h3 class="text-xl font-bold text-slate-900 mb-3">Límites y requisitos legales según el Código del Trabajo</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
-                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
                         <strong class="block text-slate-900 mb-1">⏱️ Máximo 2 horas al día</strong>
                         <p class="text-slate-600 text-xs">La ley prohíbe realizar más de 2 horas extraordinarias diarias para proteger la salud del trabajador (Art. 31).</p>
                     </div>
-                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
                         <strong class="block text-slate-900 mb-1">📝 Pacto escrito obligatorio</strong>
                         <p class="text-slate-600 text-xs">Debe existir un acuerdo firmado por escrito con vigencia máxima de 3 meses, renovable si persisten las faenas temporales.</p>
                     </div>
-                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
                         <strong class="block text-slate-900 mb-1">💵 Pago en la liquidación</strong>
                         <p class="text-slate-600 text-xs">Deben liquidarse y pagarse conjuntamente con las remuneraciones ordinarias del respectivo período mensual.</p>
                     </div>
@@ -1418,104 +1024,113 @@
             <div>
                 <h3 class="text-xl font-bold text-slate-900 mb-4">Preguntas Frecuentes sobre Horas Extras</h3>
                 <div class="space-y-3">
-                    <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
-                        <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
-                            ¿Las horas extras pagan impuestos y cotizaciones previsionales?
-                            <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
-                        </summary>
-                        <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
+                        <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Las horas extras pagan impuestos y cotizaciones previsionales?</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                             Sí. Las horas extraordinarias son consideradas <strong>remuneración imponible y tributable</strong>. Por tanto, se les descuenta AFP (10,58% a 11,45%), Salud (7%) y Seguro de Cesantía (0,6%). Si tu total imponible supera las 13,5 UTM mensuales, también tributan impuesto único.
                         </p>
-                    </details>
-                    <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
-                        <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
-                            ¿Cuándo corresponde pagar horas extras al 100%?
-                            <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
-                        </summary>
-                        <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
+                        <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Cuándo corresponde pagar horas extras al 100%?</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                             El recargo legal mínimo del Código del Trabajo es del 50%. Sin embargo, se paga el 100% (o más) cuando las horas extras se realizan en días domingos o festivos en empresas que no tienen turnos continuos, o cuando se pactó contractualmente un recargo superior mediante convenio individual o colectivo.
                         </p>
-                    </details>
-                    <details class="bg-slate-50 border border-slate-200 rounded-xl p-4 group">
-                        <summary class="font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center text-sm">
-                            ¿Puedo compensar las horas extras con días de descanso?
-                            <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
-                        </summary>
-                        <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
+                        <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Puedo compensar las horas extras con días de descanso?</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                             Con la Ley 21.561 (40 Horas), las partes pueden acordar por escrito que las horas extraordinarias se compensen con hasta 5 días hábiles de feriado adicional al año, debiendo otorgarse 1,5 horas de descanso por cada hora extra trabajada.
                         </p>
-                    </details>
+                    </div>
                 </div>
             </div>
         </article>
-</div>
+
     </main>
 
-    
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED FOOTER (Pine Forest #00382E) -->
-    <footer class="bg-warm-surface no-print mt-16">
-        <div class="teal-footer-curve text-white">
-            <div class="site-container py-16 sm:py-20">
+    <!-- MOBILE FLOATING RESULT BAR -->
+    <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between no-print">
+        <div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Horas Extras</div>
+            <div id="mobile-total-display" style="color: var(--teal-forest);" class="text-lg font-extrabold font-mono-num leading-tight">$46.130</div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="button" onclick="var t=document.getElementById('he-total-bruto');if(t)t.scrollIntoView({behavior:'smooth',block:'center'})" class="btn-dark-pill !py-2 !px-3.5 !text-xs !shadow-xs">
+                <span>Ver Detalle</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 6. FOOTER (TealHQ Asymmetric Dark Curved Footer #00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container max-w-[1240px] mx-auto px-6 py-16 sm:py-20">
                 
-                <!-- Main Links Grid (TealHQ Architecture) -->
+                <!-- Main Grid 4 Columns -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10 text-left">
                     
-                    <!-- Col 1: Brand -->
+                    <!-- Col 1: Brand & Description -->
                     <div class="lg:col-span-2 space-y-4">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-gray-950 font-bold">
-                                <span class="material-icons text-lg">balance</span>
+                            <div style="background-color: #FFB703;" class="w-9 h-9 rounded-xl bg-[#FFB703] flex items-center justify-center text-slate-950 font-bold shrink-0 shadow-sm">
+                                <span class="material-icons text-lg" style="color: #00382E;">balance</span>
                             </div>
-                            <span class="font-extrabold text-2xl tracking-tight text-white">
-                                cálculolaboral<span class="text-amber-400">.</span>
+                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none whitespace-nowrap">
+                                cálculolaboral<span class="text-[#FFB703]">.</span>
                             </span>
                         </div>
                         <p class="text-xs text-white/70 leading-relaxed max-w-sm">
                             Plataforma legal independiente de cálculo laboral en Chile. Desarrollada para transparentar liquidaciones, proteger los derechos del trabajador y blindar a las pymes.
                         </p>
-                        <div class="pt-2 text-xs font-mono text-white/40">
-                            Versión 2.5 • Actualizada Marzo 2026
+                        <div class="pt-1 text-[11px] font-mono-num text-white/40">
+                            Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
 
                     <!-- Col 2: Calculadoras -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Calculadoras</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="finiquito_calculator" class="text-white hover:text-amber-300 transition-colors">Finiquito Legal</a></li>
-                            <li><a href="simulador-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Despido Injustificado</a></li>
-                            <li><a href="sueldo_liquido" class="text-white hover:text-amber-300 transition-colors">Sueldo Líquido</a></li>
-                            <li><a href="calculadora-horas-extras" class="text-white hover:text-amber-300 transition-colors">Horas Extras 42h</a></li>
-                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white hover:text-amber-300 transition-colors">Vacaciones Proporcionales</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Calculadoras</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#FFB703] transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#FFB703] transition-colors">Vacaciones Proporcionales</a></li>
+                            <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Part-Time</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 3: Guías Clave -->
+                    <!-- Col 3: Guías Legales -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Guías Legales</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="reclamar-despido-injustificado-chile" class="text-white hover:text-amber-300 transition-colors">Reclamar Despido</a></li>
-                            <li><a href="carta-de-renuncia-chile" class="text-white hover:text-amber-300 transition-colors">Carta de Renuncia</a></li>
-                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white hover:text-amber-300 transition-colors">Art. 161 Necesidades</a></li>
-                            <li><a href="ley-40-horas-chile-2026" class="text-white hover:text-amber-300 transition-colors">Ley 40 Horas (42h)</a></li>
-                            <li><a href="blog" class="text-white hover:text-amber-300 transition-colors">Todas las Guías →</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Guías Legales</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Cómo Reclamar Despido</a></li>
+                            <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carta de Renuncia</a></li>
+                            <li><a href="despido-necesidades-empresa-articulo-161" class="text-white/80 hover:text-[#FFB703] transition-colors">Art. 161 Necesidades</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas (42h)</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
                         </ul>
                     </div>
 
-                    <!-- Col 4: Empresas & Legal -->
+                    <!-- Col 4: Empresas -->
                     <div class="space-y-3">
-                        <h4 class="text-[13px] font-semibold text-white/60 uppercase tracking-wider">Empresas</h4>
-                        <ul class="space-y-2.5 text-[13px]">
-                            <li><a href="para-empleadores" class="text-white hover:text-amber-300 transition-colors">Portal Pymes</a></li>
-                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white hover:text-amber-300 transition-colors">Kit Blindaje Laboral</a></li>
-                            <li><a href="generador-finiquito-chile" class="text-white hover:text-amber-300 transition-colors">Generador Finiquitos</a></li>
-                            <li><a href="contacto" class="text-white hover:text-amber-300 transition-colors">Contacto Directo</a></li>
+                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Empresas</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores (Pymes)</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos ($29.990)</a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Blindaje Laboral ($19.990)</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Finiquito ($12.990)</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
                         </ul>
                     </div>
 
                 </div>
 
-                <!-- Bottom Legal Bar (TealHQ minimal footer) -->
+                <!-- Bottom Bar -->
                 <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
                     <div>
                         &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
@@ -1526,6 +1141,11 @@
                         <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
                         <span>·</span>
                         <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                        <span>·</span>
+                        <span class="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                            <span class="material-icons text-xs" aria-hidden="true">verified</span>
+                            Fórmulas Conforme a DT
+                        </span>
                     </div>
                 </div>
 
@@ -1533,278 +1153,9 @@
         </div>
     </footer>
 
-    
-    <!-- History Modal -->
-    <div id="history-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
-                <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
-                    <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
-                </div>
-                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> UF (Últimos 30 días)
-                    </div>
-                    <div class="max-h-[250px] overflow-y-auto pr-1">
-                        <table class="w-full text-left">
-                            <caption class="sr-only">Historial de valores UF</caption>
-                            <thead>
-                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
-                                    <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
-                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="uf-history-body">
-                                <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
-                    </div>
-                    <div class="max-h-[250px] overflow-y-auto pr-1">
-                        <table class="w-full text-left">
-                            <caption class="sr-only">Historial de valores UTM</caption>
-                            <thead>
-                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
-                                    <th scope="col" class="py-1 px-2 font-semibold">Período</th>
-                                    <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="utm-history-body">
-                                <tr><td class="p-2 text-center text-slate-500 text-xs italic font-medium">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    
-    <!-- Load shared indicators script -->
-    <script src="/js/constants.js?v=2.0.3"></script>
-    <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.1.1"></script>
-    <script>
-        function enviarLead(fuenteCustom) {
-            var nombre = document.getElementById('lead-nombre').value.trim();
-            var correo = document.getElementById('lead-correo').value.trim();
-            var telefono = document.getElementById('lead-telefono').value.trim();
-            var monto = window.resultadoActualMonto || '0';
-            var detalle = window.resultadoDesgloseLead || '';
-
-            var privacyCheck = document.getElementById('lead-privacy');
-            if (privacyCheck && !privacyCheck.checked) {
-                alert('Debes aceptar la Política de Privacidad para continuar.');
-                return;
-            }
-
-            if (!nombre || !correo) {
-                alert('Por favor completa nombre y correo.');
-                return;
-            }
-
-            var btn = document.querySelector('#lead-form button');
-            var btnTextOriginal = btn ? btn.innerHTML : 'Enviar';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = 'Enviando solicitud...';
-            }
-
-            var causeSelect = document.getElementById('cause');
-            var fuenteDefault = (causeSelect && causeSelect.value === '161') ? 'Calculadora Finiquito - Art. 161' : 'Calculadora de Finiquito';
-
-            fetch('/api/send-lead', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    nombre: nombre,
-                    correo: correo,
-                    telefono: telefono,
-                    monto_calculado: monto,
-                    tipo: 'Finiquito',
-                    fuente: fuenteCustom || fuenteDefault,
-                    detalle: detalle
-                })
-            }).then(function(response) {
-                if (response.ok) {
-                    document.getElementById('lead-form').classList.add('hidden');
-                    document.getElementById('lead-confirmacion').classList.remove('hidden');
-                } else {
-                    throw new Error('Error al enviar');
-                }
-            }).catch(function(err) {
-                alert('Hubo un problema al enviar tus datos. Por favor inténtalo nuevamente.');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = btnTextOriginal;
-                }
-            });
-        }
-
-        function enviarLeadArticulo(event, formId, fuente) {
-            if (event) event.preventDefault();
-            var form = document.getElementById(formId);
-            if (!form) return;
-
-            var nombre = form.querySelector('[name="nombre"]').value.trim();
-            var correo = form.querySelector('[name="correo"]').value.trim();
-            var telefono = form.querySelector('[name="telefono"]').value.trim();
-            var detalleInput = form.querySelector('[name="consulta"]');
-            var detalle = detalleInput ? detalleInput.value.trim() : '';
-
-            var privacyCheck = form.querySelector('[name="privacy_consent"]');
-            if (privacyCheck && !privacyCheck.checked) {
-                alert('Debes aceptar la Política de Privacidad para continuar.');
-                return;
-            }
-
-            if (!nombre || !correo) {
-                alert('Por favor ingresa tu nombre y correo electrónico.');
-                return;
-            }
-
-            var btn = form.querySelector('button[type="submit"]');
-            var btnOriginal = btn ? btn.innerHTML : 'Solicitar Revisión';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = 'Enviando...';
-            }
-
-            fetch('/api/send-lead', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    nombre: nombre,
-                    correo: correo,
-                    telefono: telefono,
-                    tipo: 'Despido',
-                    fuente: fuente || 'Guía Informativa',
-                    detalle: detalle
-                })
-            }).then(function(response) {
-                if (response.ok) {
-                    var successDiv = document.getElementById(formId + '-confirmacion');
-                    if (successDiv) {
-                        form.classList.add('hidden');
-                        successDiv.classList.remove('hidden');
-                    } else {
-                        form.innerHTML = '<div class="p-6 bg-emerald-50 rounded-2xl text-center border border-emerald-200"><h4 class="text-base font-bold text-emerald-950 mb-1">¡Solicitud recibida con éxito!</h4><p class="text-xs text-emerald-800">Un abogado laboralista revisará tus antecedentes y te contactará a la brevedad.</p></div>';
-                    }
-                } else {
-                    throw new Error('Error en el servidor');
-                }
-            }).catch(function(err) {
-                alert('Ocurrió un error al enviar tu consulta. Por favor inténtalo de nuevo.');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = btnOriginal;
-                }
-            });
-        }
-
-        function copiarTexto(btn) {
-            var box = btn.closest('.copy-box');
-            if (!box) return;
-            var clone = box.cloneNode(true);
-            var btnInClone = clone.querySelector('.copy-btn');
-            if (btnInClone) btnInClone.remove();
-            var text = (clone.innerText || clone.textContent || '').trim();
-
-            function onSuccess() {
-                var originalHTML = btn.innerHTML;
-                btn.innerHTML = '<span class="material-icons text-xs" style="vertical-align:middle;font-size:14px;">check</span> ¡Copiado!';
-                btn.classList.add('copied');
-                setTimeout(function() {
-                    btn.innerHTML = originalHTML;
-                    btn.classList.remove('copied');
-                }, 2500);
-            }
-
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(onSuccess).catch(function() {
-                    fallbackCopy(text);
-                });
-            } else {
-                fallbackCopy(text);
-            }
-
-            function fallbackCopy(str) {
-                var ta = document.createElement('textarea');
-                ta.value = str;
-                ta.style.position = 'fixed';
-                ta.style.left = '-9999px';
-                document.body.appendChild(ta);
-                ta.focus();
-                ta.select();
-                try {
-                    document.execCommand('copy');
-                    onSuccess();
-                } catch (e) {
-                    console.error('Fallback copy failed', e);
-                }
-                document.body.removeChild(ta);
-            }
-        }
-
-        function shareFiniquitoWhatsApp() {
-            var totalEl = document.getElementById('totalFiniquitoOutput');
-            var total = totalEl ? totalEl.innerText.trim() : '';
-            var texto = 'Hola! Hice mi cálculo de finiquito en Cálculo Laboral Chile' + (total && total !== '$0' && total !== '—' ? ' y me dio ' + total : '') + '. Puedes calcular el tuyo gratis según la Dirección del Trabajo aquí: https://calculolaboral.cl/finiquito_calculator';
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'share', { method: 'WhatsApp', content_type: 'finiquito' });
-            }
-            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
-        }
-
-        function shareSueldoWhatsApp() {
-            var liquidoEl = document.getElementById('netSalaryOutput');
-            var liquido = liquidoEl ? liquidoEl.innerText.trim() : '';
-            var texto = 'Hola! Calculé mi sueldo líquido en Cálculo Laboral Chile' + (liquido && liquido !== '$0' && liquido !== '—' ? ' (Líquido: ' + liquido + ')' : '') + '. Revisa tu liquidación con todos los descuentos legales aquí: https://calculolaboral.cl/sueldo_liquido';
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'share', { method: 'WhatsApp', content_type: 'sueldo_liquido' });
-            }
-            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
-        }
-
-        function shareHEWhatsApp() {
-            var totalBrutoEl = document.getElementById('he-total-bruto');
-            var horasEl = document.getElementById('he-total-horas');
-            var totalBruto = totalBrutoEl ? totalBrutoEl.innerText.trim() : '$46.130';
-            var horas = horasEl ? horasEl.innerText.trim() : '10.0 hrs';
-            var texto = 'Hola! Calculé mis horas extras en Cálculo Laboral Chile con la Ley 40 Horas (42h en 2026): ' + horas + ' extras = ' + totalBruto + ' adicionales. Simula las tuyas gratis aquí: https://calculolaboral.cl/calculadora-horas-extras';
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'share', { method: 'WhatsApp', content_type: 'horas_extras' });
-            }
-            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
-        }
-
-        function sharePTWhatsApp() {
-            var liquidoEl = document.getElementById('pt-sueldo-liquido');
-            var jornadaEl = document.getElementById('pt-jornada-badge');
-            var liquido = liquidoEl ? liquidoEl.innerText.trim() : '$323.512';
-            var jornada = jornadaEl ? jornadaEl.innerText.trim() : '30 Horas/Sem';
-            var texto = 'Hola! Calculé mi sueldo part-time (' + jornada + ') en Cálculo Laboral Chile: Sueldo Líquido estimado ' + liquido + '. Revisa el tuyo gratis con protección para estudiantes aquí: https://calculolaboral.cl/calculadora-sueldo-part-time';
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'share', { method: 'WhatsApp', content_type: 'part_time' });
-            }
-            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
-        }
-    </script>
-    
+    <!-- Scripts -->
+    <script src="/js/constants.js?v=2.0.4"></script>
+    <script src="/js/indicators.js?v=2.1.1"></script>
     <script>
         function parseCleanNumber(val) {
             if (!val) return 0;
@@ -1843,6 +1194,14 @@
             var input = document.getElementById('he-sueldo-base');
             input.value = '$ 553.553';
             calculateHorasExtras();
+        }
+
+        function setHESalary(amount) {
+            var input = document.getElementById('he-sueldo-base');
+            if (input) {
+                input.value = '$ ' + Math.round(amount).toLocaleString('es-CL');
+                calculateHorasExtras();
+            }
         }
 
         function adjustHE(id, delta) {
@@ -1886,6 +1245,7 @@
             // Render totals
             var tBruto = document.getElementById('he-total-bruto'); if (tBruto) tBruto.innerText = formatCurrency(totalBruto);
             var tNeto = document.getElementById('he-total-neto'); if (tNeto) tNeto.innerText = formatCurrency(totalNeto);
+            var mDisplay = document.getElementById('mobile-total-display'); if (mDisplay) mDisplay.innerText = formatCurrency(totalBruto);
 
             // Render breakdown
             var dc50 = document.getElementById('he-desc-cant-50'); if (dc50) dc50.innerText = cant50;
@@ -1914,8 +1274,8 @@
             var unit50 = document.getElementById('he-unit-50').innerText;
             var horas = document.getElementById('he-total-horas').innerText;
 
-            var text = "Calculo de Horas Extras (calculolaboral.cl):\n" +
-                       "Sueldo Base: $" + sueldoBase + "\n" +
+            var text = "Cálculo de Horas Extras (calculolaboral.cl):\n" +
+                       "Sueldo Base: " + sueldoBase + "\n" +
                        "Horas Extras Realizadas: " + horas + "\n" +
                        "Valor Unitario 50%: " + unit50 + "\n" +
                        "Total Bruto a Pago: " + total;
@@ -1929,8 +1289,19 @@
             });
         }
 
+        function shareHEWhatsApp() {
+            var totalBrutoEl = document.getElementById('he-total-bruto');
+            var horasEl = document.getElementById('he-total-horas');
+            var totalBruto = totalBrutoEl ? totalBrutoEl.innerText.trim() : '$46.130';
+            var horas = horasEl ? horasEl.innerText.trim() : '10.0 hrs';
+            var texto = 'Hola! Calculé mis horas extras en Cálculo Laboral Chile con la Ley 40 Horas (42h en 2026): ' + horas + ' extras = ' + totalBruto + ' adicionales. Simula las tuyas gratis aquí: https://calculolaboral.cl/calculadora-horas-extras';
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'share', { method: 'WhatsApp', content_type: 'horas_extras' });
+            }
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
+        }
+
         document.addEventListener('DOMContentLoaded', calculateHorasExtras);
     </script>
-
 </body>
 </html>

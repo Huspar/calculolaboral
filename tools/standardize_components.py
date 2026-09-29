@@ -1,213 +1,9 @@
-<!DOCTYPE html>
-<html lang="es-CL">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{META}}
-    <link rel="canonical" href="{{CANONICAL}}">
-    <link rel="alternate" hreflang="es-CL" href="{{CANONICAL}}">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="icon" href="/favicon.ico">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
-    <style>
-        /* ONLY light-theme styles — no dark remnants */
-        .prose-content { line-height: 1.75; color: #334155; }
-        .prose-content h1 { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; }
-        .prose-content h2 { font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 2rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
-        .prose-content h3 { font-size: 1.1rem; font-weight: 600; color: #1e293b; margin: 1.5rem 0 0.5rem; }
-        .prose-content p { margin-bottom: 1rem; }
-        .prose-content ul, .prose-content ol { margin: 0.75rem 0; padding-left: 1.5rem; }
-        .prose-content li { margin-bottom: 0.4rem; }
-        .prose-content strong { color: #0f172a; font-weight: 600; }
-        .prose-content a { color: #0ea5e9; text-decoration: underline; text-underline-offset: 2px; }
-        .prose-content a:hover { color: #0284c7; }
-        .prose-content blockquote { border-left: 3px solid #cbd5e1; padding: 0.5rem 1rem; margin: 1.25rem 0; color: #64748b; font-style: italic; }
-        .prose-content img { max-width: 100%; border-radius: 8px; margin: 1.5rem 0; }
-        .prose-content table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-        .prose-content th { background: #f8fafc; text-align: left; padding: 0.6rem 0.9rem; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; }
-        .prose-content td { padding: 0.6rem 0.9rem; border-bottom: 1px solid #f1f5f9; }
-        .callout { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
-        .callout-warning { background: #fffbeb; border-left-color: #f59e0b; }
-        .callout-danger { background: #fef2f2; border-left-color: #ef4444; }
-        .img-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; margin: 1.5rem 0; }
-        .img-card img { width: 100%; height: auto; max-height: 400px; object-fit: contain; border-radius: 8px; }
-    </style>
-<style>
-        :root {
-            --teal-forest: #00382E;
-            --teal-forest-hover: #002D25;
-            --teal-forest-deep: #00261F;
-            --teal-yellow: #FFB703;
-            --teal-yellow-hover: #FFAA00;
-            --accent-gold: #FFB703;
-            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .font-mono-num {
-            font-family: 'Geist Mono', monospace;
-            font-feature-settings: 'tnum' on, 'lnum' on;
-            font-variant-numeric: tabular-nums;
-        }
+import os
+import re
+import glob
 
-        .btn-yellow-pill {
-            background-color: var(--teal-yellow);
-            color: #111827 !important;
-            font-weight: 700;
-            border-radius: 9999px;
-            padding: 12px 26px;
-            font-size: 14.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
-        }
-        .btn-yellow-pill:hover {
-            background-color: var(--teal-yellow-hover);
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
-            color: #111827 !important;
-        }
-        .btn-yellow-pill:active {
-            transform: translateY(1px) scale(0.98);
-        }
-
-        .btn-dark-pill {
-            background-color: var(--teal-forest);
-            color: #FFFFFF !important;
-            font-weight: 700;
-            border-radius: 9999px;
-            padding: 12px 26px;
-            font-size: 14.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.25);
-        }
-        .btn-dark-pill:hover {
-            background-color: var(--teal-forest-hover);
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(0, 56, 46, 0.35);
-            color: #FFFFFF !important;
-        }
-        .btn-dark-pill:active {
-            transform: translateY(1px) scale(0.98);
-        }
-
-        .btn-rose-pill {
-            background-color: #E11D48;
-            color: #FFFFFF !important;
-            font-weight: 700;
-            border-radius: 9999px;
-            padding: 12px 26px;
-            font-size: 14.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
-        }
-        .btn-rose-pill:hover {
-            background-color: #BE123C;
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.45);
-            color: #FFFFFF !important;
-        }
-
-        .btn-outline-pill {
-            background-color: #FFFFFF;
-            color: #374151 !important;
-            font-weight: 600;
-            border-radius: 9999px;
-            padding: 11px 22px;
-            font-size: 14px;
-            border: 1.5px solid #D1D5DB;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s var(--ease-spring);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .btn-outline-pill:hover {
-            border-color: var(--teal-forest);
-            color: var(--teal-forest) !important;
-            background-color: #F8FAF9;
-        }
-
-        /* Dropdowns */
-        .nav-dropdown-menu {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transform: translateY(8px);
-            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
-        }
-        .nav-dropdown-group:hover .nav-dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-        .nav-dropdown-group:hover .nav-chevron {
-            transform: rotate(180deg);
-        }
-
-        /* Elevated Curved Dark Footer */
-/* TealHQ Elevated Curved Dark Footer (#00382E & 96px curve) */
-        .teal-footer-curve {
-            background-color: #00382E;
-            color: #FFFFFF;
-            border-top-left-radius: 40px;
-            border-top-right-radius: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-        .teal-footer-curve .footer-inner-container {
-            max-width: 1240px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-        @media (min-width: 1024px) {
-            .teal-footer-curve {
-                border-top-left-radius: 96px;
-                border-top-right-radius: 0px;
-            }
-            .teal-footer-curve .footer-inner-container {
-                padding-left: 8rem !important; /* 128px > 96px curve */
-                padding-right: 3rem !important;
-            }
-        }
-        @media (min-width: 1440px) {
-            .teal-footer-curve .footer-inner-container {
-                padding-left: 4rem !important;
-                padding-right: 4rem !important;
-            }
-        }
-
-    </style>
-</head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
-<!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
+CANONICAL_TICKER_AND_HEADER = """
+    <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-2">
@@ -399,17 +195,9 @@
             </div>
         </div>
     </header>
+"""
 
-
-<!-- MAIN CONTENT -->
-<main class="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-10 pb-16">
-{{CONTENT}}
-</main>
-
-<!-- FOOTER -->
-    <!-- Footer Unificado Compacto Oficial -->
-    <!-- Elevated Curved Dark Footer (TealHQ Architecture) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
+CANONICAL_FOOTER = """    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
     <footer class="no-print mt-16">
         <div class="teal-footer-curve">
             <div class="footer-inner-container max-w-[1240px] mx-auto px-6 py-16 sm:py-20">
@@ -497,6 +285,228 @@
 
             </div>
         </div>
-    </footer>
-</body>
-</html>
+    </footer>"""
+
+CANONICAL_FOOTER_CSS = r"""
+        /* TealHQ Elevated Curved Dark Footer (#00382E & 96px curve) */
+        .teal-footer-curve {
+            background-color: #00382E;
+            color: #FFFFFF;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .teal-footer-curve .footer-inner-container {
+            max-width: 1240px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            .teal-footer-curve {
+                border-top-left-radius: 96px;
+                border-top-right-radius: 0px;
+            }
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 8rem !important; /* 128px > 96px curve */
+                padding-right: 3rem !important;
+            }
+        }
+        @media (min-width: 1440px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 4rem !important;
+                padding-right: 4rem !important;
+            }
+        }
+"""
+
+CANONICAL_HEAD_CSS = r"""
+        /* TealHQ Required Signature System Tokens & Components */
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 26px;
+            font-size: 14.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
+        }
+        .btn-yellow-pill:hover {
+            background-color: #FFAA00;
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
+        }
+        .btn-yellow-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 26px;
+            font-size: 14.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.25);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 20px rgba(0, 56, 46, 0.35);
+            color: #FFFFFF !important;
+        }
+        .btn-dark-pill:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #374151 !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 11px 22px;
+            font-size: 14px;
+            border: 1.5px solid #D1D5DB;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover {
+            border-color: #9CA3AF;
+            background-color: #F9FAFB;
+            color: #111827 !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-chevron {
+            transform: rotate(180deg);
+        }
+""" + CANONICAL_FOOTER_CSS
+
+def process_file(filepath):
+    with open(filepath, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # 1. Remove any blanket `.hidden { display: none !important; }`
+    content = re.sub(r'/\*\s*Hidden utility guarantee\s*\*/\s*\.hidden\s*\{\s*display:\s*none\s*!important;\s*\}', '', content)
+    content = re.sub(r'^\s*\.hidden\s*\{\s*display:\s*none\s*!important;\s*\}', '', content, flags=re.MULTILINE)
+
+    # 2. Update CSS in <head>
+    head_end = content.find('</head>')
+    if head_end != -1:
+        head = content[:head_end]
+        rest = content[head_end:]
+
+        # Ensure base tokens and components exist
+        if 'btn-yellow-pill' not in head:
+            last_style_idx = head.rfind('</style>')
+            if last_style_idx != -1:
+                head = head[:last_style_idx] + CANONICAL_HEAD_CSS + '\n    ' + head[last_style_idx:]
+            else:
+                head = head + f'<style>{CANONICAL_HEAD_CSS}</style>\n'
+
+        # Update or inject canonical footer CSS, removing any duplicate or old rules
+        footer_css_pattern = r'(\s*/\*\s*TealHQ[^*]*\*/)?\s*\.teal-footer-curve\s*\{[^}]*\}(?:\s*@media[^{]*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})*'
+        matches = list(re.finditer(footer_css_pattern, head))
+        if matches:
+            for m in reversed(matches[:-1]):
+                head = head[:m.start()] + head[m.end():]
+            last_m = list(re.finditer(footer_css_pattern, head))[-1]
+            head = head[:last_m.start()] + '\n' + CANONICAL_FOOTER_CSS.strip() + '\n' + head[last_m.end():]
+        else:
+            last_style_idx = head.rfind('</style>')
+            if last_style_idx != -1:
+                head = head[:last_style_idx] + '\n' + CANONICAL_FOOTER_CSS.strip() + '\n' + head[last_style_idx:]
+            else:
+                head = head + f'<style>{CANONICAL_FOOTER_CSS.strip()}</style>\n'
+
+        content = head + rest
+
+    # 3. Standardize Header: from after <body...> to </header>
+    body_m = re.search(r'(<body[^>]*>)', content)
+    header_m = re.search(r'(</header>)', content)
+    if body_m and header_m and body_m.end() < header_m.end():
+        content = content[:body_m.end()] + '\n' + CANONICAL_TICKER_AND_HEADER.strip() + '\n' + content[header_m.end():]
+
+    # 4. Standardize Footer: replace <footer...>...</footer>
+    footer_m = re.search(r'(<footer\b[^>]*>[\s\S]*?</footer>)', content)
+    if footer_m:
+        content = content[:footer_m.start()] + CANONICAL_FOOTER.strip() + content[footer_m.end():]
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(content)
+    print(f'Processed: {filepath}')
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] != '--all':
+        process_file(sys.argv[1])
+    else:
+        files = [f for f in sorted(glob.glob('*.html')) if f not in ['home-v2.html', 'ejemplo-informe-ejecutivo.html', '_template.html']]
+        print(f'Processing {len(files)} core HTML files...')
+        for f in files:
+            process_file(f)

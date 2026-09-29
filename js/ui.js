@@ -203,11 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Visual feedback: highlight active chip
             presetYearButtons.forEach(b => {
-                b.classList.remove('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+                b.classList.remove('active', 'bg-white', 'text-slate-700');
                 b.classList.add('bg-white', 'text-slate-700');
             });
             btn.classList.remove('bg-white', 'text-slate-700');
-            btn.classList.add('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+            btn.classList.add('active');
         });
     });
 
@@ -483,9 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.btn-preset-year').forEach(b => {
             if (b.dataset.years === '2') {
                 b.classList.remove('bg-white', 'text-slate-700');
-                b.classList.add('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+                b.classList.add('active');
             } else {
-                b.classList.remove('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+                b.classList.remove('active');
                 b.classList.add('bg-white', 'text-slate-700');
             }
         });
@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Reset preset chips
             document.querySelectorAll('.btn-preset-year').forEach(b => {
-                b.classList.remove('bg-sky-500', 'text-white', 'border-sky-500', 'shadow-sm');
+                b.classList.remove('active');
                 b.classList.add('bg-white', 'text-slate-700');
             });
 

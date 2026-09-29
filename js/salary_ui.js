@@ -237,6 +237,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Mobile Result Bar Scroll Listener
+        window.addEventListener('scroll', () => {
+            if (!display.mobileResultBar || !isSueldoActive()) return;
+            const net = parseInput(display.netSalary ? display.netSalary.textContent : '0');
+            if (window.scrollY > 200 && net > 0) {
+                display.mobileResultBar.classList.remove('translate-y-full');
+            } else {
+                display.mobileResultBar.classList.add('translate-y-full');
+            }
+        }, { passive: true });
+
         if (isSueldoActive()) {
             calculate();
         }
@@ -265,15 +276,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateContractUI = () => {
         if (!inputs.btnIndefinido || !inputs.btnPlazo) return;
         if (contractType === 'indefinido') {
-            inputs.btnIndefinido.classList.remove('text-slate-400', 'hover:text-white');
-            inputs.btnIndefinido.classList.add('bg-primary', 'text-white', 'shadow-lg');
-            inputs.btnPlazo.classList.remove('bg-primary', 'text-white', 'shadow-lg');
-            inputs.btnPlazo.classList.add('text-slate-400', 'hover:text-white');
+            inputs.btnIndefinido.classList.remove('text-slate-500', 'bg-transparent');
+            inputs.btnIndefinido.classList.add('bg-primary', 'text-white', 'shadow-xs');
+            inputs.btnPlazo.classList.remove('bg-primary', 'text-white', 'shadow-xs');
+            inputs.btnPlazo.classList.add('text-slate-500', 'bg-transparent');
         } else {
-            inputs.btnPlazo.classList.remove('text-slate-400', 'hover:text-white');
-            inputs.btnPlazo.classList.add('bg-primary', 'text-white', 'shadow-lg');
-            inputs.btnIndefinido.classList.remove('bg-primary', 'text-white', 'shadow-lg');
-            inputs.btnIndefinido.classList.add('text-slate-400', 'hover:text-white');
+            inputs.btnPlazo.classList.remove('text-slate-500', 'bg-transparent');
+            inputs.btnPlazo.classList.add('bg-primary', 'text-white', 'shadow-xs');
+            inputs.btnIndefinido.classList.remove('bg-primary', 'text-white', 'shadow-xs');
+            inputs.btnIndefinido.classList.add('text-slate-500', 'bg-transparent');
         }
     };
 
@@ -574,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // CCAF Info
             if (d.ccafAmount > 0) {
                 display.notifications.appendChild(
-                    createAlert('bg-sky-50', 'border border-sky-200', 'text-sky-600', 'info', 'text-sky-950 font-semibold', 'CCAF reduce tu base imponible')
+                    createAlert('bg-slate-100', 'border border-slate-300', 'text-slate-700', 'info', 'text-slate-900 font-semibold', 'CCAF reduce tu base imponible')
                 );
             }
 
