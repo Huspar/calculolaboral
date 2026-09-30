@@ -39,7 +39,13 @@
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "All",
             "url": "https://calculolaboral.cl/finiquito_calculator",
-            "description": "Calculadora y simulador de finiquito legal en Chile (2026) según la DT. Calcula años de servicio, aviso previo y vacaciones con informe en PDF gratis."
+            "description": "Calculadora y simulador de finiquito legal en Chile (2026) según la DT. Calcula años de servicio, aviso previo y vacaciones con informe en PDF gratis.",
+            "browserRequirements": "Requires JavaScript. Modern browser.",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "CLP"
+            }
         },
         {
             "@type": "BreadcrumbList",
@@ -105,7 +111,7 @@
         }
     ]
 }
-    </script>
+</script>
     
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -732,11 +738,11 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <span class="block text-[11px] font-medium text-slate-500 mb-1">Fecha de Inicio</span>
+                                <label for="startDate" class="block text-[11px] font-medium text-slate-500 mb-1">Fecha de Inicio</label>
                                 <input type="date" id="startDate" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                             <div>
-                                <span class="block text-[11px] font-medium text-slate-500 mb-1">Fecha de Término</span>
+                                <label for="endDate" class="block text-[11px] font-medium text-slate-500 mb-1">Fecha de Término</label>
                                 <input type="date" id="endDate" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                         </div>
@@ -771,23 +777,23 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <span class="block text-[11px] font-medium text-slate-500 mb-1">Sueldo Base Mensual</span>
+                                <label for="baseSalary" class="block text-[11px] font-medium text-slate-500 mb-1">Sueldo Base Mensual</label>
                                 <input type="text" id="baseSalary" data-type="currency" placeholder="$ 850.000" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-mono-num text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                             <div>
-                                <span class="block text-[11px] font-medium text-slate-500 mb-1">Gratificación Mensual (25%)</span>
+                                <label for="gratification" class="block text-[11px] font-medium text-slate-500 mb-1">Gratificación Mensual (25%)</label>
                                 <input type="text" id="gratification" data-type="currency" placeholder="$ 212.500" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-mono-num text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                         </div>
                         <div>
-                            <span class="block text-[11px] font-medium text-slate-500 mb-1">Asignaciones Fijas No Imponibles (Colación + Movilización)</span>
+                            <label for="assignments" class="block text-[11px] font-medium text-slate-500 mb-1">Asignaciones Fijas No Imponibles (Colación + Movilización)</label>
                             <input type="text" id="assignments" data-type="currency" placeholder="$ 0" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-mono-num text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                         </div>
                     </div>
 
                     <!-- STEP 3: Causal de Despido & Aviso Previo -->
                     <div class="space-y-3 pt-2">
-                        <label class="text-xs font-bold text-slate-800 uppercase tracking-wider block">3. Causal de Término de Contrato</label>
+                        <label for="cause" class="text-xs font-bold text-slate-800 uppercase tracking-wider block">3. Causal de Término de Contrato</label>
                         <div>
                             <select id="cause" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                                 <option value="161" selected>Art. 161 - Necesidades de la Empresa (Indemnización + Aviso)</option>
@@ -801,7 +807,7 @@
 
                         <!-- Checkbox Aviso Previo -->
                         <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                            <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <label for="noticeGiven" class="flex items-start gap-3 cursor-pointer select-none">
                                 <input type="checkbox" id="noticeGiven" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-[#00382E] focus:ring-[#00382E] cursor-pointer">
                                 <div>
                                     <span class="text-xs font-bold text-slate-800 block">¿Se dio aviso previo con 30 días de anticipación?</span>
@@ -815,13 +821,13 @@
 
                     <!-- STEP 4: Vacaciones Pendientes -->
                     <div class="space-y-3 pt-2">
-                        <label class="text-xs font-bold text-slate-800 uppercase tracking-wider block">4. Vacaciones Pendientes</label>
+                        <label for="vacationPending" class="text-xs font-bold text-slate-800 uppercase tracking-wider block">4. Vacaciones Pendientes</label>
                         <div class="flex items-center gap-3">
-                            <button type="button" id="btnVacationMinus" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-lg cursor-pointer transition-colors active:scale-95">
+                            <button type="button" id="btnVacationMinus" aria-label="Disminuir vacaciones pendientes" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-lg cursor-pointer transition-colors active:scale-95">
                                 -
                             </button>
                             <input type="number" id="vacationPending" value="0" min="0" step="0.5" class="flex-1 px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-mono-num text-center text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none">
-                            <button type="button" id="btnVacationPlus" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-lg cursor-pointer transition-colors active:scale-95">
+                            <button type="button" id="btnVacationPlus" aria-label="Aumentar vacaciones pendientes" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-lg cursor-pointer transition-colors active:scale-95">
                                 +
                             </button>
                         </div>
@@ -830,14 +836,14 @@
 
                     <!-- STEP 5: Opciones Avanzadas (Acordeón) -->
                     <div class="pt-2 border-t border-slate-100">
-                        <button type="button" id="btnToggleAdvanced" class="flex items-center justify-between w-full text-xs font-bold text-slate-700 hover:text-slate-900 cursor-pointer py-1">
+                        <button type="button" id="btnToggleAdvanced" aria-label="Alternar opciones avanzadas de cálculo" class="flex items-center justify-between w-full text-xs font-bold text-slate-700 hover:text-slate-900 cursor-pointer py-1">
                             <span>Opciones Avanzadas (Sueldo Variable, Topes UF)</span>
                             <span id="iconToggleAdvanced" class="material-icons text-base text-slate-400">expand_more</span>
                         </button>
                         
                         <div id="containerAdvancedOptions" class="hidden mt-4 space-y-4 pt-2">
                             <!-- Sueldo Variable Checkbox -->
-                            <label class="flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
+                            <label for="hasVariableSalary" class="flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                                 <input type="checkbox" id="hasVariableSalary" class="w-4 h-4 rounded border-slate-300 text-[#00382E] focus:ring-[#00382E]">
                                 <span>Tengo comisiones o sueldo variable (promedio últimos 3 meses)</span>
                             </label>
@@ -846,9 +852,18 @@
                             <div id="variableSalaryContainer" class="hidden p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
                                 <span class="block text-xs font-bold text-slate-800">Comisiones brutas de los últimos 3 meses:</span>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                    <input type="text" id="varMonth1" data-type="currency" placeholder="Mes 1 ($)" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono-num">
-                                    <input type="text" id="varMonth2" data-type="currency" placeholder="Mes 2 ($)" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono-num">
-                                    <input type="text" id="varMonth3" data-type="currency" placeholder="Mes 3 ($)" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono-num">
+                                    <div>
+                                        <label for="varMonth1" class="sr-only">Comisiones Mes 1</label>
+                                        <input type="text" id="varMonth1" data-type="currency" placeholder="Mes 1 ($)" aria-label="Comisiones Mes 1" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono-num">
+                                    </div>
+                                    <div>
+                                        <label for="varMonth2" class="sr-only">Comisiones Mes 2</label>
+                                        <input type="text" id="varMonth2" data-type="currency" placeholder="Mes 2 ($)" aria-label="Comisiones Mes 2" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono-num">
+                                    </div>
+                                    <div>
+                                        <label for="varMonth3" class="sr-only">Comisiones Mes 3</label>
+                                        <input type="text" id="varMonth3" data-type="currency" placeholder="Mes 3 ($)" aria-label="Comisiones Mes 3" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono-num">
+                                    </div>
                                 </div>
                                 <div class="text-[11px] text-slate-500">
                                     Promedio mensual variable: <strong id="variableAverageOutput" class="text-slate-800 font-mono-num">$0</strong>
@@ -857,11 +872,11 @@
 
                             <!-- Additional Legal Options -->
                             <div class="space-y-2 pt-1 text-xs text-slate-600">
-                                <label class="flex items-center gap-2 cursor-pointer">
+                                <label for="includeAssignmentsInVacation" class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" id="includeAssignmentsInVacation" checked class="w-3.5 h-3.5 rounded border-slate-300 text-[#00382E]">
                                     <span>Incluir colación y movilización en feriado proporcional (Criterio DT)</span>
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
+                                <label for="includeAssignmentsInIndemnity" class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" id="includeAssignmentsInIndemnity" checked class="w-3.5 h-3.5 rounded border-slate-300 text-[#00382E]">
                                     <span>Incluir asignaciones fijas en base de indemnización</span>
                                 </label>
@@ -970,7 +985,7 @@
                                 <span>Generar Finiquito Notarial Word/PDF ($12.990)</span>
                             </a>
 
-                            <button type="button" id="share-fini-wsp" onclick="shareFiniquitoWhatsApp()" class="btn-outline-pill w-full !py-2.5 !text-xs">
+                            <button type="button" id="share-fini-wsp" aria-label="Compartir cálculo por WhatsApp" onclick="shareFiniquitoWhatsApp()" class="btn-outline-pill w-full !py-2.5 !text-xs">
                                 <span class="material-icons text-base text-emerald-600">share</span>
                                 <span>Compartir cálculo por WhatsApp</span>
                             </button>
@@ -997,11 +1012,11 @@
                 <span id="mobile-result-percentage" class="hidden"></span>
             </div>
             <div class="flex items-center gap-2">
-                <button type="button" id="mobile-pdf-btn" onclick="var b=document.getElementById('download-pdf-btn');if(b)b.click();" class="btn-yellow-pill !py-2 !px-3.5 !text-xs !shadow-xs">
+                <button type="button" id="mobile-pdf-btn" aria-label="Descargar finiquito en PDF" onclick="var b=document.getElementById('download-pdf-btn');if(b)b.click();" class="btn-yellow-pill !py-2 !px-3.5 !text-xs !shadow-xs">
                     <span class="material-icons text-sm" style="color: #111827 !important;">picture_as_pdf</span>
                     <span style="color: #111827 !important;">PDF</span>
                 </button>
-                <button type="button" id="btnScrollToResults" onclick="var t=document.getElementById('resultados-finiquito');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})" class="btn-dark-pill !py-2 !px-3.5 !text-xs !shadow-xs">
+                <button type="button" id="btnScrollToResults" aria-label="Ver desglose detallado de resultados" onclick="var t=document.getElementById('resultados-finiquito');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})" class="btn-dark-pill !py-2 !px-3.5 !text-xs !shadow-xs">
                     <span>Ver Desglose</span>
                 </button>
             </div>
@@ -1145,7 +1160,7 @@
                 </div>
 
                 <div class="copy-box">
-                    <button type="button" class="copy-btn" onclick="copiarTexto(this)">
+                    <button type="button" class="copy-btn" aria-label="Copiar texto de reserva de derechos" onclick="copiarTexto(this)">
                         <span class="material-icons text-xs">content_copy</span> Copiar
                     </button>
 "Me reservo el derecho a demandar judicialmente por despido injustificado, nulidad del despido, cobro de prestaciones adeudadas y la restitución del descuento indebido del aporte de la AFC, conforme a los artículos 168 y 177 del Código del Trabajo."
@@ -1218,21 +1233,21 @@
                 <!-- Formulario -->
                 <form id="lead-form" onsubmit="event.preventDefault(); enviarLead();" class="mt-6 space-y-3.5 text-left max-w-lg mx-auto">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre Completo</label>
+                        <label for="lead-nombre" class="block text-[11px] font-bold text-slate-700 mb-1">Nombre Completo</label>
                         <input type="text" id="lead-nombre" required placeholder="Ej: Valentina Morales" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Correo Electrónico</label>
+                            <label for="lead-correo" class="block text-[11px] font-bold text-slate-700 mb-1">Correo Electrónico</label>
                             <input type="email" id="lead-correo" required placeholder="tu@correo.cl" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp / Teléfono</label>
+                            <label for="lead-telefono" class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp / Teléfono</label>
                             <input type="tel" id="lead-telefono" required placeholder="+56 9 1234 5678" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none font-mono-num">
                         </div>
                     </div>
                     <div class="pt-1">
-                        <label class="flex items-start gap-2 text-[10.5px] text-slate-600 cursor-pointer">
+                        <label for="lead-privacy" class="flex items-start gap-2 text-[10.5px] text-slate-600 cursor-pointer">
                             <input type="checkbox" id="lead-privacy" required class="w-3.5 h-3.5 mt-0.5 rounded border-slate-300 text-[#00382E] focus:ring-[#00382E]">
                             <span>Acepto la <a href="privacidad" target="_blank" class="underline font-semibold text-slate-800">Política de Privacidad</a> y autorizo la evaluación confidencial de mi despido con un abogado laboral colaborador.</span>
                         </label>

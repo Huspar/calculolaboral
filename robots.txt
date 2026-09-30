@@ -1,11 +1,47 @@
 User-agent: *
 Allow: /
-
-# Exclude affiliate redirects and serverless API endpoints from indexing and audit crawlers
 Disallow: /itau
 Disallow: /abakos
 Disallow: /abakos-emergencias
 Disallow: /api/
 Disallow: /descargas/
+Content-Signal: ai-train=yes, search=yes
+
+# AI Crawlers & LLM Agents (RFC 9309 Compliant)
+User-agent: GPTBot
+Allow: /
+Disallow: /itau
+Disallow: /abakos
+Disallow: /abakos-emergencias
+Disallow: /api/
+Disallow: /descargas/
+Content-Signal: ai-train=yes, search=yes
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /itau
+Disallow: /abakos
+Disallow: /abakos-emergencias
+Disallow: /api/
+Disallow: /descargas/
+Content-Signal: ai-train=yes, search=yes
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /itau
+Disallow: /abakos
+Disallow: /abakos-emergencias
+Disallow: /api/
+Disallow: /descargas/
+Content-Signal: ai-train=yes, search=yes
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /itau
+Disallow: /abakos
+Disallow: /abakos-emergencias
+Disallow: /api/
+Disallow: /descargas/
+Content-Signal: ai-train=yes, search=yes
 
 Sitemap: https://calculolaboral.cl/sitemap.xml

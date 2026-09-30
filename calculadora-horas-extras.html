@@ -39,7 +39,13 @@
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "All",
             "url": "https://calculolaboral.cl/calculadora-horas-extras",
-            "description": "Calcula gratis el valor de tus horas extras en Chile con la Ley 40 Horas (42h en 2026). Hora 50% a $4.613 y 100% a $6.151 con sueldo mínimo. Fórmulas oficiales DT."
+            "description": "Calcula gratis el valor de tus horas extras en Chile con la Ley 40 Horas (42h en 2026). Hora 50% a $4.613 y 100% a $6.151 con sueldo mínimo. Fórmulas oficiales DT.",
+            "browserRequirements": "Requires JavaScript. Modern browser.",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "CLP"
+            }
         },
         {
             "@type": "BreadcrumbList",
@@ -700,26 +706,26 @@
                         Jornada Semanal Pactada
                     </label>
                     <div class="grid grid-cols-2 gap-2">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="he-jornada" value="42" checked onchange="calculateHorasExtras()" class="peer sr-only">
+                        <label class="cursor-pointer" for="he-jornada-42">
+                            <input type="radio" id="he-jornada-42" name="he-jornada" value="42" checked onchange="calculateHorasExtras()" class="peer sr-only" aria-label="42 horas semanales (Legal 2026)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                 42 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Legal 2026 (÷180)</span>
                             </div>
                         </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="he-jornada" value="40" onchange="calculateHorasExtras()" class="peer sr-only">
+                        <label class="cursor-pointer" for="he-jornada-40">
+                            <input type="radio" id="he-jornada-40" name="he-jornada" value="40" onchange="calculateHorasExtras()" class="peer sr-only" aria-label="40 horas semanales (Sello 40h)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                 40 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Sello 40h (÷171.4)</span>
                             </div>
                         </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="he-jornada" value="44" onchange="calculateHorasExtras()" class="peer sr-only">
+                        <label class="cursor-pointer" for="he-jornada-44">
+                            <input type="radio" id="he-jornada-44" name="he-jornada" value="44" onchange="calculateHorasExtras()" class="peer sr-only" aria-label="44 horas semanales (Etapa 2024)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                 44 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Etapa 2024 (÷188.6)</span>
                             </div>
                         </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="he-jornada" value="45" onchange="calculateHorasExtras()" class="peer sr-only">
+                        <label class="cursor-pointer" for="he-jornada-45">
+                            <input type="radio" id="he-jornada-45" name="he-jornada" value="45" onchange="calculateHorasExtras()" class="peer sr-only" aria-label="45 horas semanales (Histórica)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                 45 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Histórica (÷192.9)</span>
                             </div>
@@ -739,9 +745,9 @@
                         </div>
                         <span class="block text-[10px] text-slate-400 mb-2">Días hábiles normales (lunes a sábado)</span>
                         <div class="flex items-center gap-2">
-                            <button type="button" onclick="adjustHE('he-cant-50', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
+                            <button type="button" aria-label="Disminuir horas extras al 50%" onclick="adjustHE('he-cant-50', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
                             <input type="number" id="he-cant-50" value="10" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
-                            <button type="button" onclick="adjustHE('he-cant-50', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
+                            <button type="button" aria-label="Aumentar horas extras al 50%" onclick="adjustHE('he-cant-50', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
                         </div>
                     </div>
 
@@ -755,9 +761,9 @@
                         </div>
                         <span class="block text-[10px] text-slate-400 mb-2">Domingos, festivos o pacto especial</span>
                         <div class="flex items-center gap-2">
-                            <button type="button" onclick="adjustHE('he-cant-100', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
+                            <button type="button" aria-label="Disminuir horas extras al 100%" onclick="adjustHE('he-cant-100', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
                             <input type="number" id="he-cant-100" value="0" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
-                            <button type="button" onclick="adjustHE('he-cant-100', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
+                            <button type="button" aria-label="Aumentar horas extras al 100%" onclick="adjustHE('he-cant-100', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
                         </div>
                     </div>
                 </div>
@@ -841,7 +847,7 @@
                         </span>
                         <span class="text-[10px] text-slate-400 font-medium">Banco Itaú Chile</span>
                     </div>
-                    <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
+                    <a href="/itau" target="_blank" rel="sponsored nofollow noopener" aria-label="Abrir Cuenta Corriente Itaú online" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
                         <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención al recibir sueldo" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
                     </a>
                     <div class="mt-2.5 max-w-[300px] mx-auto text-left px-1">

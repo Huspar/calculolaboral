@@ -32,10 +32,32 @@
     <script type="application/ld+json">
 {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Blog Laboral Chile 2026",
-    "description": "Guías detalladas y consejos expertos sobre legislación laboral, contratos, remuneraciones y finiquitos en Chile.",
-    "url": "https://calculolaboral.cl/blog"
+    "@graph": [
+        {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Blog Laboral Chile 2026",
+            "description": "Guías detalladas y consejos expertos sobre legislación laboral, contratos, remuneraciones y finiquitos en Chile.",
+            "url": "https://calculolaboral.cl/blog"
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Inicio",
+                    "item": "https://calculolaboral.cl/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Blog Laboral",
+                    "item": "https://calculolaboral.cl/blog"
+                }
+            ]
+        }
+    ]
 }
 </script>
     

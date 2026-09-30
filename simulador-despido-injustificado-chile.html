@@ -45,7 +45,8 @@
                 "price": "0",
                 "priceCurrency": "CLP"
             },
-            "description": "Calculadora forense para estimar la contingencia económica por despido improcedente, recargos del Art. 168, restitución de seguro de cesantía y nulidad del despido por Ley Bustos."
+            "description": "Calculadora forense para estimar la contingencia económica por despido improcedente, recargos del Art. 168, restitución de seguro de cesantía y nulidad del despido por Ley Bustos.",
+            "browserRequirements": "Requires JavaScript. Modern browser."
         },
         {
             "@type": "BreadcrumbList",
@@ -726,8 +727,8 @@
                 <div>
                     <label class="block text-xs sm:text-sm font-bold text-slate-800 mb-2.5">Causal Invocada en la Carta de Despido</label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="sim-causal" value="art161" checked class="peer sr-only">
+                        <label for="sim-causal-art161" class="cursor-pointer">
+                            <input type="radio" id="sim-causal-art161" name="sim-causal" value="art161" checked class="peer sr-only">
                             <div class="p-3.5 border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/40 peer-checked:text-slate-900 hover:bg-slate-50 transition-all">
                                 <div class="flex items-center justify-between">
                                     <span class="font-bold text-xs">Art. 161: Necesidades Empresa</span>
@@ -737,8 +738,8 @@
                             </div>
                         </label>
 
-                        <label class="cursor-pointer">
-                            <input type="radio" name="sim-causal" value="art159" class="peer sr-only">
+                        <label for="sim-causal-art159" class="cursor-pointer">
+                            <input type="radio" id="sim-causal-art159" name="sim-causal" value="art159" class="peer sr-only">
                             <div class="p-3.5 border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/40 peer-checked:text-slate-900 hover:bg-slate-50 transition-all">
                                 <div class="flex items-center justify-between">
                                     <span class="font-bold text-xs">Art. 159: Término de Faena</span>
@@ -748,8 +749,8 @@
                             </div>
                         </label>
 
-                        <label class="cursor-pointer">
-                            <input type="radio" name="sim-causal" value="art160_80" class="peer sr-only">
+                        <label for="sim-causal-art160-80" class="cursor-pointer">
+                            <input type="radio" id="sim-causal-art160-80" name="sim-causal" value="art160_80" class="peer sr-only">
                             <div class="p-3.5 border border-slate-200 rounded-2xl peer-checked:border-rose-600 peer-checked:bg-rose-50/50 peer-checked:text-slate-900 hover:bg-slate-50 transition-all">
                                 <div class="flex items-center justify-between">
                                     <span class="font-bold text-xs">Art. 160: Disciplinario</span>
@@ -759,8 +760,8 @@
                             </div>
                         </label>
 
-                        <label class="cursor-pointer">
-                            <input type="radio" name="sim-causal" value="art160_100" class="peer sr-only">
+                        <label for="sim-causal-art160-100" class="cursor-pointer">
+                            <input type="radio" id="sim-causal-art160-100" name="sim-causal" value="art160_100" class="peer sr-only">
                             <div class="p-3.5 border border-slate-200 rounded-2xl peer-checked:border-rose-600 peer-checked:bg-rose-50/80 peer-checked:text-slate-900 hover:bg-slate-50 transition-all">
                                 <div class="flex items-center justify-between">
                                     <span class="font-bold text-xs">Art. 160: Imputación Temeraria</span>
@@ -777,7 +778,7 @@
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">2. Factores de Riesgo y Agravantes Judiciales</h3>
 
                     <!-- Aviso Previo Checkbox -->
-                    <label class="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <label for="sim-aviso-previo" class="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 cursor-pointer transition-colors">
                         <input type="checkbox" id="sim-aviso-previo" checked class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]">
                         <div>
                             <span class="text-xs sm:text-sm font-bold text-slate-800 block">¿Se dio aviso previo formal con 30 días de anticipación?</span>
@@ -787,7 +788,7 @@
 
                     <!-- Devolución AFC (Art. 13 Ley 19.728) -->
                     <div id="block-afc-option" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 transition-all">
-                        <label class="flex items-start gap-3 cursor-pointer">
+                        <label for="sim-afc-descuento" class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox" id="sim-afc-descuento" checked class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]">
                             <div>
                                 <div class="flex items-center gap-2">
@@ -798,14 +799,14 @@
                             </div>
                         </label>
                         <div id="sim-afc-monto-container" class="mt-2.5 pl-6 flex flex-wrap items-center gap-3">
-                            <span class="text-xs text-slate-600">Monto exacto descontado (opcional):</span>
-                            <input type="text" id="sim-afc-monto" placeholder="Cálculo auto (1.6% mes)" class="w-44 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-mono-num text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
+                            <label for="sim-afc-monto" class="text-xs text-slate-600">Monto exacto descontado (opcional):</label>
+                            <input type="text" id="sim-afc-monto" placeholder="Cálculo auto (1.6% mes)" aria-label="Monto exacto descontado AFC" class="w-44 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-mono-num text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
                         </div>
                     </div>
 
                     <!-- ALERTA CRÍTICA: LEY BUSTOS (COTIZACIONES IMPAGAS) -->
                     <div class="p-4 rounded-2xl border-2 border-rose-300 bg-rose-50/80 shadow-xs">
-                        <label class="flex items-start gap-3 cursor-pointer">
+                        <label for="sim-ley-bustos" class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox" id="sim-ley-bustos" class="mt-1 w-4 h-4 rounded text-rose-600 focus:ring-rose-500">
                             <div>
                                 <div class="flex items-center gap-2">
@@ -823,10 +824,10 @@
                         <!-- Slider Meses Juicio Ley Bustos -->
                         <div id="container-meses-bustos" class="hidden mt-3 pt-3 border-t border-rose-200/80 pl-7 space-y-2">
                             <div class="flex justify-between items-center text-xs font-bold text-rose-900">
-                                <span>Meses estimados de juicio hasta convalidación:</span>
+                                <label for="sim-meses-bustos">Meses estimados de juicio hasta convalidación:</label>
                                 <span id="val-meses-bustos" class="font-mono-num text-sm px-2 py-0.5 bg-rose-200 text-rose-900 rounded-md">5 meses</span>
                             </div>
-                            <input type="range" id="sim-meses-bustos" min="2" max="12" value="5" class="w-full accent-rose-600 cursor-pointer">
+                            <input type="range" id="sim-meses-bustos" min="2" max="12" value="5" class="w-full accent-rose-600 cursor-pointer" aria-label="Meses estimados de juicio hasta convalidación">
                             <div class="flex justify-between text-[10px] text-rose-700 font-mono-num">
                                 <span>2 meses (mínimo)</span>
                                 <span>5-6 meses (promedio real)</span>
@@ -836,7 +837,7 @@
                     </div>
 
                     <!-- Costas Procesales -->
-                    <label class="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <label for="sim-incluir-costas" class="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 cursor-pointer transition-colors">
                         <input type="checkbox" id="sim-incluir-costas" checked class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]">
                         <div>
                             <span class="text-xs sm:text-sm font-bold text-slate-800 block">Incluir estimación de costas personales y judiciales ($800.000)</span>
@@ -974,19 +975,28 @@
 
                             <form id="sim-lead-form" class="space-y-2.5">
                                 <div>
-                                    <input type="text" id="sim-lead-nombre" placeholder="Nombre completo" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
+                                    <label for="sim-lead-nombre" class="sr-only">Nombre completo</label>
+                                    <input type="text" id="sim-lead-nombre" placeholder="Nombre completo" aria-label="Nombre completo" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <input type="email" id="sim-lead-correo" placeholder="Correo electrónico" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
-                                    <input type="tel" id="sim-lead-telefono" placeholder="WhatsApp (+569...)" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
+                                    <div>
+                                        <label for="sim-lead-correo" class="sr-only">Correo electrónico</label>
+                                        <input type="email" id="sim-lead-correo" placeholder="Correo electrónico" aria-label="Correo electrónico" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
+                                    </div>
+                                    <div>
+                                        <label for="sim-lead-telefono" class="sr-only">WhatsApp (+569...)</label>
+                                        <input type="tel" id="sim-lead-telefono" placeholder="WhatsApp (+569...)" aria-label="WhatsApp (+569...)" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
+                                    </div>
                                 </div>
                                 <div>
-                                    <input type="text" id="sim-lead-ciudad" placeholder="Ciudad o Comuna" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
+                                    <label for="sim-lead-ciudad" class="sr-only">Ciudad o Comuna</label>
+                                    <input type="text" id="sim-lead-ciudad" placeholder="Ciudad o Comuna" aria-label="Ciudad o Comuna" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]">
                                 </div>
                                 <div>
-                                    <textarea id="sim-lead-detalle" rows="2" placeholder="¿Qué ocurrió en tu despido? (ej. me dijeron necesidades de la empresa pero contrataron a otro)" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]"></textarea>
+                                    <label for="sim-lead-detalle" class="sr-only">¿Qué ocurrió en tu despido?</label>
+                                    <textarea id="sim-lead-detalle" rows="2" placeholder="¿Qué ocurrió en tu despido? (ej. me dijeron necesidades de la empresa pero contrataron a otro)" aria-label="¿Qué ocurrió en tu despido?" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#00382E]"></textarea>
                                 </div>
-                                <label class="flex items-start gap-2 text-[10px] text-slate-500 cursor-pointer">
+                                <label for="sim-lead-consent" class="flex items-start gap-2 text-[10px] text-slate-500 cursor-pointer">
                                     <input type="checkbox" id="sim-lead-consent" checked class="mt-0.5 rounded text-[#00382E]">
                                     <span>Acepto ser contactado para la revisión legal confidencial de mi caso.</span>
                                 </label>
