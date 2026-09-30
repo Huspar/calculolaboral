@@ -10,13 +10,16 @@ Este archivo define las reglas obligatorias e innegociables para el desarrollo d
 
 ---
 
-### A. Logotipo Oficial de la Marca (Innegociable)
-El logotipo oficial está compuesto por un contenedor azul cielo con el **isotipo SVG de la balanza con monograma C y L**, acompañado del texto corporativo con "Cálculo" en gris oscuro y "Laboral" en azul:
+### A. Logotipo Oficial de la Marca (Innegociable - Paleta Oficial Opción 1)
+El logotipo oficial está compuesto por un emblema de alto contraste con el **isotipo SVG de la balanza con monograma C y L**:
+- **En Encabezado (Header/Navbar):** Contenedor verde bosque profundo (`#00382E`) de `w-9 h-9 rounded-xl`, isotipo SVG en ámbar dorado cálido (`#FFB703`), con tipografía corporativa "Cálculo" en gris oscuro (`text-slate-900`) y "Laboral" en verde bosque (`color: #00382E`).
+- **En Pie de Página (Footer Curvado TealHQ):** Contenedor en ámbar dorado cálido (`#FFB703`) de `w-9 h-9 rounded-xl`, isotipo SVG en verde bosque profundo (`#00382E`), con tipografía corporativa "Cálculo" en blanco (`text-white`) y "Laboral" en ámbar dorado (`color: #FFB703`).
 
+#### Versión Header (Navbar Oficial):
 ```html
-<a href="./" class="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity">
-    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 active:scale-95 transition-transform">
-        <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition-transform shrink-0" style="background-color: #00382E;">
+        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
             <!-- Pedestal Base -->
             <path d="M30 84h40M38 79h24"></path>
             <!-- Vertical Pillar -->
@@ -37,7 +40,36 @@ El logotipo oficial está compuesto por un contenedor azul cielo con el **isotip
             <path d="M58 43.5v20h10"></path>
         </svg>
     </div>
-    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span class="text-sky-500">Laboral</span></span>
+    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+</a>
+```
+
+#### Versión Footer (.teal-footer-curve Oficial):
+```html
+<a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+        <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Pedestal Base -->
+            <path d="M30 84h40M38 79h24"></path>
+            <!-- Vertical Pillar -->
+            <path d="M50 22v57"></path>
+            <!-- Center pointer tip -->
+            <path d="M50 14l-2 4h4l-2-4v8"></path>
+            <!-- Balance Beam -->
+            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+            <!-- Left Pan strings and dish -->
+            <path d="M18 36l-8 18h16Z"></path>
+            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+            <!-- Right Pan strings and dish -->
+            <path d="M82 36l-8 18h16Z"></path>
+            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+            <!-- Monogram C wrapping left side -->
+            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+            <!-- Monogram L wrapping right side -->
+            <path d="M58 43.5v20h10"></path>
+        </svg>
+    </div>
+    <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
 ```
 
