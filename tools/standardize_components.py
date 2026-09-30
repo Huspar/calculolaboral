@@ -250,7 +250,7 @@ CANONICAL_FOOTER = """    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#0038
 
                     <!-- Col 2: Calculadoras -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Calculadoras</h4>
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Calculadoras</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
                             <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
@@ -263,7 +263,7 @@ CANONICAL_FOOTER = """    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#0038
 
                     <!-- Col 3: Guías Legales -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Guías Legales</h4>
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Guías Legales</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Cómo Reclamar Despido</a></li>
                             <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carta de Renuncia</a></li>
@@ -276,7 +276,7 @@ CANONICAL_FOOTER = """    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#0038
 
                     <!-- Col 4: Para Empresas -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-white/60 uppercase tracking-wider">Para Empresas</h4>
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
                             <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos</a></li>
