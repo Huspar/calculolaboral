@@ -851,6 +851,43 @@ div[style*="teal-forest-deep"] .font-mono-num > span {
     }
 }
 
+/* ---------- Impresion de documentos ---------- */
+
+@media print {
+    html,
+    body {
+        background: #FFFFFF !important;
+    }
+
+    /* Plantillas antiguas: el informe vigente es #print-section (js/print_brand.js) */
+    #print-template-sueldo,
+    #print-template-finiquito {
+        display: none !important;
+    }
+
+    /* Los margenes los define @page; sin relleno extra */
+    #print-section {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Ningun contenedor con desplazamiento debe mostrar barras en papel */
+    * {
+        overflow: visible !important;
+        scrollbar-width: none !important;
+    }
+
+    ::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .cl-calcnav,
+    .cl-sponsor,
+    .cl-quicklinks {
+        display: none !important;
+    }
+}
+
 /* ---------- Movimiento reducido ---------- */
 
 @media (prefers-reduced-motion: reduce) {

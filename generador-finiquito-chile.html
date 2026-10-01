@@ -388,6 +388,32 @@
             .no-print, header, footer, #payment-modal, #unlock-status-bar, #copy-blocked-toast {
                 display: none !important;
             }
+
+            /* Solo el documento en el papel: lo demas sale del flujo (no solo se oculta) */
+            @page { size: letter portrait; margin: 16mm 18mm 14mm; }
+            body > *:not(main):not(:has(#notary-print-area)) { display: none !important; }
+            main *:not(#notary-print-area):not(#notary-print-area *):not(:has(#notary-print-area)) { display: none !important; }
+            main, main *:has(#notary-print-area) {
+                display: block !important;
+                position: static !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 0 !important;
+                box-shadow: none !important;
+                background: none !important;
+                max-width: none !important;
+                width: auto !important;
+                min-height: 0 !important;
+            }
+            #notary-print-area {
+                position: static !important;
+                padding: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                min-height: 0 !important;
+                box-shadow: none !important;
+            }
+            #notary-print-area table { page-break-inside: avoid; break-inside: avoid; }
         }
 
 /* TealHQ Required Signature System Tokens & Components */
@@ -584,7 +610,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.3.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.4.0">
 </head>
 <body class="bg-canvas text-slate-800 font-sans antialiased min-h-screen flex flex-col">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->

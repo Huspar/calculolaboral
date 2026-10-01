@@ -173,7 +173,7 @@
 
         const innerHTML = `
             <div style="text-align: center; margin-bottom: 22px;">
-                <div style="font-size: 8pt; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: #64748b; font-family: system-ui, -apple-system, sans-serif; margin-bottom: 4px;">
+                <div style="font-size: 8pt; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: #64748b; font-family: 'Geist', system-ui, sans-serif; margin-bottom: 4px;">
                     Instrumento Jurídico Laboral · Artículos 10 y 11 del Código del Trabajo
                 </div>
                 <h1 style="font-size: 13pt; font-weight: 800; text-transform: uppercase; margin: 0; color: #0f172a; letter-spacing: -0.01em; line-height: 1.35;">
@@ -214,7 +214,7 @@
             </p>
 
             <!-- Bloque de Firmas -->
-            <div style="margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; text-align: center; font-family: system-ui, -apple-system, sans-serif; font-size: 8.5pt; page-break-inside: avoid; break-inside: avoid;">
+            <div style="margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; text-align: center; font-family: 'Geist', system-ui, sans-serif; font-size: 8.5pt; page-break-inside: avoid; break-inside: avoid;">
                 <div>
                     <div style="border-top: 1px solid #0f172a; padding-top: 8px; margin-top: 40px;">
                         <div style="font-weight: 700; text-transform: uppercase; color: #0f172a;">${escCompName}</div>
@@ -232,7 +232,7 @@
                 </div>
             </div>
 
-            <div style="margin-top: 28px; text-align: center; font-family: system-ui, -apple-system, sans-serif; font-size: 7.5pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+            <div style="margin-top: 16px; text-align: center; font-family: 'Geist', system-ui, sans-serif; font-size: 7.5pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px;">
                 Documento elaborado conforme a la Ley Nº 21.561 y el Código del Trabajo · calculolaboral.cl
             </div>
         `;

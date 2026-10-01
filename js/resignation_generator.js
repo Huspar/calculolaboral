@@ -306,12 +306,12 @@
             <div style="font-family: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif; color: #0f172a; font-size: 11pt; line-height: 1.65; max-width: 100%; margin: 0 auto;">
                 
                 <!-- Ciudad y Fecha alineada a la derecha -->
-                <div style="text-align: right; margin-bottom: 2rem; font-family: system-ui, -apple-system, sans-serif; font-size: 10pt; color: #334155;">
+                <div style="text-align: right; margin-bottom: 2rem; font-family: 'Geist', system-ui, sans-serif; font-size: 10pt; color: #334155;">
                     ${city}, ${notifyDate}
                 </div>
 
                 <!-- Destinatario -->
-                <div style="margin-bottom: 1.75rem; font-family: system-ui, -apple-system, sans-serif; font-size: 11pt; line-height: 1.45;">
+                <div style="margin-bottom: 1.75rem; font-family: 'Geist', system-ui, sans-serif; font-size: 11pt; line-height: 1.45;">
                     <div style="font-weight: 700; color: #0f172a;">Señores</div>
                     <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.02em;">${company}</div>
                     <div style="color: #475569;">Presente</div>
@@ -346,7 +346,7 @@
                 <div style="margin-top: 1.75rem; margin-bottom: 0.5rem;">
                     <p style="margin-bottom: 4.5rem;">Saluda atentamente a ustedes,</p>
                     
-                    <div style="max-width: 300px; font-family: system-ui, -apple-system, sans-serif;">
+                    <div style="max-width: 300px; font-family: 'Geist', system-ui, sans-serif;">
                         <div style="border-top: 1px solid #334155; padding-top: 6px;">
                             <div style="font-weight: 700; font-size: 10pt; color: #0f172a; text-transform: uppercase;">${workerName}</div>
                             <div style="font-size: 9pt; color: #334155; font-family: monospace; font-weight: 600;">RUT: ${workerRut}</div>
@@ -356,7 +356,7 @@
                 </div>
 
                 <!-- Casilleros de Formalidades Legales: Recepción y Ministro de Fe -->
-                <div style="margin-top: 2.25rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: system-ui, -apple-system, sans-serif; font-size: 8.5pt; color: #475569;">
+                <div style="margin-top: 2.25rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: 'Geist', system-ui, sans-serif; font-size: 8.5pt; color: #475569;">
                     <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #ffffff;">
                         <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; font-size: 8pt; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
                             Constancia de Recepción Empleador
@@ -381,7 +381,7 @@
                 </div>
 
                 <!-- Footer Legal -->
-                <div style="margin-top: 1rem; text-align: center; font-family: system-ui, -apple-system, sans-serif; font-size: 7.5pt; color: #94a3b8;">
+                <div style="margin-top: 1rem; text-align: center; font-family: 'Geist', system-ui, sans-serif; font-size: 7.5pt; color: #94a3b8;">
                     Documento extendido conforme a los Artículos 159 Nº 2 y 177 del Código del Trabajo de Chile · calculolaboral.cl
                 </div>
 

@@ -101,12 +101,22 @@
     // Estilos CSS incrustados para renderizado nítido y A4 print
     function getEstilosInforme() {
         return `
+        <style>${window.CLPrint ? CLPrint.css() : ''}</style>
         <style>
             @media print {
                 @page {
                     size: A4 portrait;
-                    margin: 8mm 10mm;
+                    margin: 10mm 12mm;
                 }
+                /* Una sola hoja: espaciado compacto solo en papel */
+                .informe-a4-page .my-4 { margin-top: 7px !important; margin-bottom: 7px !important; }
+                .informe-a4-page .clr-head { margin-bottom: 8px !important; padding-bottom: 7px !important; }
+                .resumen-negociacion-grid { margin: 8px 0 !important; padding: 7px 10px !important; }
+                .tabla-comparativa th { padding-top: 6px !important; padding-bottom: 6px !important; }
+                .tabla-comparativa td { padding-top: 4px !important; padding-bottom: 4px !important; }
+                .box-alerta-riesgo { padding: 9px 12px !important; }
+                .desglose-contable-grid > div { padding: 8px 10px !important; }
+                .informe-footer { margin-top: 8px !important; padding-top: 6px !important; }
                 body {
                     margin: 0;
                     padding: 0;
@@ -553,47 +563,12 @@
             </div>
             ` : ''}
             
-            <!-- ENCABEZADO INFORME -->
+            <!-- ENCABEZADO INFORME (identidad comun: js/print_brand.js) -->
             <div class="informe-header">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4 informe-header-top">
-                    <div class="flex items-center gap-2.5">
-                        <div class="logo-box shrink-0">
-                            <svg class="w-5 h-5 text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M30 84h40M38 79h24"></path>
-                                <path d="M50 22v57"></path>
-                                <path d="M50 14l-2 4h4l-2-4v8"></path>
-                                <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                                <path d="M18 36l-8 18h16Z"></path>
-                                <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                                <path d="M82 36l-8 18h16Z"></path>
-                                <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                                <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                                <path d="M58 43.5v20h10"></path>
-                            </svg>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="font-extrabold text-lg tracking-tight text-slate-900 block leading-tight">Cálculo<span class="text-forest-600">Laboral</span></span>
-                            <span class="text-[9px] text-slate-500 uppercase tracking-widest font-mono block truncate">Inteligencia Laboral Pymes</span>
-                        </div>
-                    </div>
-                    <div class="text-right informe-header-meta">
-                        <span class="badge-dt-conforme">Fórmulas Conforme a DT 2026</span>
-                        <div class="text-[10.5px] text-slate-600 font-mono mt-0.5">Folio: <strong class="${esVistaPrevia ? 'text-rose-600' : 'text-slate-900'}">${esVistaPrevia ? 'PREVIEW-NO-VALIDO' : data.folio}</strong></div>
-                        <div class="text-[10px] text-slate-400 font-mono">Emisión: ${data.fecha}</div>
-                    </div>
-                </div>
-
-                <div class="text-center my-2.5 sm:my-3.5">
-                    <span class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-forest-800 bg-forest-100/70 px-2.5 py-1 rounded-full border border-forest-200 inline-block max-w-full">
-                        Informe Ejecutivo de Decisión Estratégica & Presupuesto
-                    </span>
-                    <h1 class="text-lg sm:text-2xl font-black text-slate-900 tracking-tight mt-1.5 sm:mt-2 leading-tight">
-                        Informe Presupuesto Laboral & Matriz 3 Vías
-                    </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-600 max-w-xl mx-auto mt-1 leading-relaxed">
-                        Evaluación integral de costos reales, aportes patronales obligatorios, pasivos laborales ocultos y contingencias inspectivas DT para: <strong class="text-slate-900">${data.cargo}</strong>.
-                    </p>
-                </div>
+                ${window.CLPrint ? CLPrint.header({ doctype: 'Informe ejecutivo de contratación', date: data.fecha, folio: esVistaPrevia ? 'VISTA PREVIA' : data.folio }) : ''}
+                <h1 class="clr-title">Informe Presupuesto Laboral &amp; Matriz 3 Vías</h1>
+                <p class="clr-sub">Evaluación integral de costos reales, aportes patronales obligatorios, pasivos laborales ocultos y contingencias inspectivas DT para: <strong style="color:#111827">${data.cargo}</strong>.</p>
+                <p class="clr-cite">Código del Trabajo · Ley 19.728 (AFC) · Ley 16.744 · Ley 21.561 · Fórmulas conforme a DT 2026</p>
             </div>
 
             <!-- FICHA RESUMEN DE NEGOCIACIÓN -->
@@ -920,7 +895,7 @@
             <head>
                 <meta charset="UTF-8">
                 <title>Informe_Ejecutivo_Contratacion_${data.folio}</title>
-                <link rel="stylesheet" href="/assets/css/style.css?v=2.6.3">
+                <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
                 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                 ${estilos}
@@ -934,7 +909,7 @@
                             Guardar como PDF / Imprimir
                         </button>
                         ` : `
-                        <a href="${FLOW_CHECKOUT_URL}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer no-underline !text-white" style="color:#fff!important;">
+                        <a href="${FLOW_CHECKOUT_URL}" class="px-4 py-2 bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer no-underline !text-white" style="color:#fff!important;">
                             Descargar Informe Completo ($4.990)
                         </a>
                         `}

@@ -137,521 +137,197 @@
         }, 100);
     }
 
-    // 7.5 HELPER: BRANDED HEADER WITH OFFICIAL SVG LOGO & PALETTE
-    function getBrandedHeaderHTML(reportTitle, dateString, folio) {
-        return `
-            <div style="border-bottom: 2px solid #0F5E4F; padding-bottom: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 36px; height: 36px; border-radius: 8px; background-color: #0F5E4F !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(15, 94, 79,0.25);">
-                        <svg style="width: 24px; height: 24px;" viewBox="0 0 100 100" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M30 84h40M38 79h24"></path>
-                            <path d="M50 22v57"></path>
-                            <path d="M50 14l-2 4h4l-2-4v8"></path>
-                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
-                            <path d="M18 36l-8 18h16Z"></path>
-                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M82 36l-8 18h16Z"></path>
-                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
-                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
-                            <path d="M58 43.5v20h10"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <div style="margin: 0; font-size: 14pt; font-weight: 800; color: #0f172a; line-height: 1.1; letter-spacing: -0.3px;">
-                            Cálculo<span style="color: #0F5E4F;">Laboral</span>
-                        </div>
-                        <div style="font-size: 6.8pt; font-weight: 600; color: #64748b; letter-spacing: 0.3px; margin-top: 1px;">
-                            PLATAFORMA LEGAL Y FINANCIERA · CHILE
-                        </div>
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <span style="display: inline-block; padding: 3px 9px; background-color: #EEF6F3 !important; border: 1px solid #ADD6C9; border-radius: 9999px; font-size: 7.5pt; font-weight: 700; color: #064A3E; letter-spacing: 0.5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
-                        ${reportTitle}
-                    </span>
-                    <div style="font-size: 7pt; color: #64748b; margin-top: 3px;">
-                        Fecha: <strong style="color: #0f172a;">${dateString}</strong>
-                    </div>
-                    ${folio ? `<div style="font-size: 6.5pt; color: #94a3b8; font-family: monospace; letter-spacing: 0.3px;">Folio: ${folio}</div>` : ''}
-                </div>
-            </div>
-        `;
+    // 7.5 HELPER: envoltorio con la identidad de los informes (js/print_brand.js)
+    function wrapReport(inner) {
+        const css = (window.CLPrint && CLPrint.css) ? CLPrint.css() : '';
+        return `<style>${css}</style><div class="clr">${inner}</div>`;
+    }
+
+    function headerHTML(doctype, dateString, folio) {
+        if (window.CLPrint) return CLPrint.header({ doctype, date: dateString, folio });
+        return `<div style="font-weight:800;font-size:13pt;border-bottom:1.5pt solid #00382E;padding-bottom:8pt;margin-bottom:10pt;">CálculoLaboral · ${doctype} · ${dateString}</div>`;
+    }
+
+    function indicatorsHTML() {
+        const fmt = (v) => (typeof v === 'number' ? '$' + v.toLocaleString('es-CL', { maximumFractionDigits: 2 }) : (v || '--'));
+        const c = (typeof CONSTANTS !== 'undefined') ? CONSTANTS : {};
+        return `<div class="clr-ind"><span>UF <b class="mono">${fmt(c.UF)}</b></span><span>UTM <b class="mono">${fmt(c.UTM)}</b></span><span>Sueldo mínimo <b class="mono">${fmt(c.IMM)}</b></span></div>`;
+    }
+
+    function sponsorHTML(question, text) {
+        return `<div class="clr-sponsor"><div><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div><span class="url">calculolaboral.cl/itau</span></div>`;
     }
 
     // 8. COMPILE FINIQUITO REPORT
     function compileFiniquitoReport(dateString) {
-        // Generate unique folio: YYYYMMDD-XXXXX
-        const now = new Date();
-        const folioDate = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-        const folioRandom = Math.random().toString(36).substring(2, 7).toUpperCase();
-        const folio = `FIN-${folioDate}-${folioRandom}`;
+        const folio = window.CLPrint ? CLPrint.folio('FIN') : '';
+        const $ = (id) => document.getElementById(id);
 
-        // Economic indicators from CONSTANTS (global)
-        const uf = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : '--';
-        const utm = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UTM) ? CONSTANTS.UTM : '--';
-        const imm = (typeof CONSTANTS !== 'undefined' && CONSTANTS.IMM) ? CONSTANTS.IMM : '--';
+        const total = $('totalAmount')?.textContent || '$0';
+        const antiquity = $('antiquityOutput')?.textContent || 'No especificada';
+        const vacationDays = $('totalVacationDaysOutput')?.textContent || '0 días';
+        const yearsService = $('yearsServiceAmount')?.textContent || '$0';
+        const noticeAmount = $('noticeAmount')?.textContent || '$0';
+        const pendingSalary = $('pendingSalaryAmount')?.textContent || '$0';
+        const vacationProp = $('vacationPropAmount')?.textContent || '$0';
+        const vacationPendingAmt = $('vacationPendingAmount')?.textContent || '$0';
+        const afcRow = $('afcRow');
+        const afcAmount = (afcRow && !afcRow.classList.contains('hidden')) ? ($('afcAmount')?.textContent || '$0') : '$0';
 
-        // Query results safely from DOM
-        const total = document.getElementById('totalAmount')?.textContent || '$0';
-        const antiquity = document.getElementById('antiquityOutput')?.textContent || 'No especificada';
-        const vacationDays = document.getElementById('totalVacationDaysOutput')?.textContent || '0 días';
-        
-        const yearsService = document.getElementById('yearsServiceAmount')?.textContent || '$0';
-        const noticeAmount = document.getElementById('noticeAmount')?.textContent || '$0';
-        const pendingSalary = document.getElementById('pendingSalaryAmount')?.textContent || '$0';
-        const vacationProp = document.getElementById('vacationPropAmount')?.textContent || '$0';
-        const vacationPendingAmt = document.getElementById('vacationPendingAmount')?.textContent || '$0';
-        
-        // AFC Deduction (if displayed or not hidden)
-        const afcRow = document.getElementById('afcRow');
-        const afcAmount = (afcRow && !afcRow.classList.contains('hidden')) 
-            ? document.getElementById('afcAmount')?.textContent 
-            : '$0';
-
-        // Query input values for general details
-        const startDateVal = document.getElementById('startDate')?.value || '--';
-        const endDateVal = document.getElementById('endDate')?.value || '--';
-        const baseSalary = document.getElementById('baseSalary')?.value || '0';
-        const assignments = document.getElementById('assignments')?.value || '0';
-        
-        const causeSelect = document.getElementById('cause');
+        const startDateVal = $('startDate')?.value || '--';
+        const endDateVal = $('endDate')?.value || '--';
+        const baseSalary = $('baseSalary')?.value || '0';
+        const assignments = $('assignments')?.value || '0';
+        const causeSelect = $('cause');
         const cause = causeSelect ? causeSelect.options[causeSelect.selectedIndex]?.text : 'No especificada';
-        
-        const noticeCheckbox = document.getElementById('noticeGiven');
-        const noticeText = (noticeCheckbox && noticeCheckbox.checked) ? 'Sí' : 'No';
+        const noticeText = ($('noticeGiven') && $('noticeGiven').checked) ? 'Sí' : 'No';
 
-        // --- NEW: Income tab fields ---
-        const hasVariableSalary = document.getElementById('hasVariableSalary')?.checked || false;
-        const varMonth1 = document.getElementById('varMonth1')?.value || '0';
-        const varMonth2 = document.getElementById('varMonth2')?.value || '0';
-        const varMonth3 = document.getElementById('varMonth3')?.value || '0';
-        const variableAverage = document.getElementById('variableAverageOutput')?.textContent || '$0';
+        const hasVariableSalary = $('hasVariableSalary')?.checked || false;
+        const variableAverage = $('variableAverageOutput')?.textContent || '$0';
+        const gratVal = parseCleanNumber($('gratification')?.value || '0');
+        const vacPDays = parseCleanNumber($('vacationPending')?.value || '0');
 
-        const gratification = document.getElementById('gratification')?.value || '0';
-        const vacPendingDays = document.getElementById('vacationPending')?.value || '0';
-        const includeAssignInVac = document.getElementById('includeAssignmentsInVacation')?.checked || false;
-
-        // --- NEW: Advanced options tab fields ---
-        const enableIAS = document.getElementById('enableIAS')?.checked ?? true;
-        const enableNotice = document.getElementById('enableNotice')?.checked ?? true;
-        const simulateAFC = document.getElementById('simulateAFC')?.checked || false;
-        const enablePending = document.getElementById('enablePending')?.checked ?? true;
-        const includeAssignInIndem = document.getElementById('includeAssignmentsInIndemnity')?.checked || false;
-
-        // Helper: build variable salary rows for Bases de Cálculo
-        let variableSalaryRows = '';
-        if (hasVariableSalary) {
-            variableSalaryRows = `
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Sueldo Variable:</td>
-                            <td style="font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Sí (prom. ${variableAverage})</td>
-                        </tr>`;
-        }
-
-        // Helper: gratification row
-        let gratificationRow = '';
-        const gratVal = parseCleanNumber(gratification);
-        if (gratVal > 0) {
-            gratificationRow = `
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Gratificación Art. 50:</td>
-                            <td style="font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">$${formatNumber(gratVal)} CLP</td>
-                        </tr>`;
-        }
-
-        // Helper: vacation pending days row
-        let vacPendingRow = '';
-        const vacPDays = parseCleanNumber(vacPendingDays);
-        if (vacPDays > 0) {
-            vacPendingRow = `
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Vac. pendientes ant.:</td>
-                            <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0;">${vacPDays} días</td>
-                        </tr>`;
-        }
-
-        // Build options checkmarks (compact single line per option)
-        const checkIcon = '☑';
-        const uncheckIcon = '☐';
-        const optionsItems = [
-            { label: 'Indemn. Años Serv.', active: enableIAS },
-            { label: 'Aviso Previo', active: enableNotice },
-            { label: 'Desc. AFC', active: simulateAFC },
-            { label: 'Sueldo Pendiente', active: enablePending },
-            { label: 'Asign. en IAS', active: includeAssignInIndem },
-            { label: 'Asign. en Vac.', active: includeAssignInVac }
+        const options = [
+            { label: 'Indemnización por años de servicio', active: $('enableIAS')?.checked ?? true },
+            { label: 'Aviso previo', active: $('enableNotice')?.checked ?? true },
+            { label: 'Descuento AFC', active: $('simulateAFC')?.checked || false },
+            { label: 'Sueldo pendiente', active: $('enablePending')?.checked ?? true },
+            { label: 'Asignaciones en IAS', active: $('includeAssignmentsInIndemnity')?.checked || false },
+            { label: 'Asignaciones en vacaciones', active: $('includeAssignmentsInVacation')?.checked || false }
         ];
 
-        return `
-            ${getBrandedHeaderHTML('SIMULACIÓN DE FINIQUITO LEGAL', dateString, folio)}
+        const row = (k, v, cls = '') => `<tr><td class="k">${k}</td><td class="v ${cls}">${v}</td></tr>`;
+        const item = (title, note, amount, cls = '') => `<tr><td><b>${title}</b><span class="n">${note}</span></td><td class="v ${cls}">${amount}</td></tr>`;
+        const hasAfc = afcAmount !== '$0' && afcAmount !== '0' && afcAmount !== '';
 
-            <!-- Economic Indicators Chips -->
-            <div style="display: flex; gap: 6px; margin-bottom: 8px; font-size: 7pt;">
-                <div style="flex: 1; background: #EEF6F3 !important; border: 1px solid #ADD6C9; border-radius: 5px; padding: 3px 6px; text-align: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                    <span style="color: #064A3E; font-weight: 700; text-transform: uppercase; font-size: 6.5pt;">UF:</span>&nbsp;&nbsp;<strong style="color: #0c4a6e; font-size: 7.5pt;">$${typeof uf === 'number' ? formatNumber(uf) : uf}</strong>
-                </div>
-                <div style="flex: 1; background: #f8fafc !important; border: 1px solid #e2e8f0; border-radius: 5px; padding: 3px 6px; text-align: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                    <span style="color: #475569; font-weight: 700; text-transform: uppercase; font-size: 6.5pt;">UTM:</span>&nbsp;&nbsp;<strong style="color: #1e293b; font-size: 7.5pt;">$${typeof utm === 'number' ? formatNumber(utm) : utm}</strong>
-                </div>
-                <div style="flex: 1; background: #fffbeb !important; border: 1px solid #fde68a; border-radius: 5px; padding: 3px 6px; text-align: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                    <span style="color: #b45309; font-weight: 700; text-transform: uppercase; font-size: 6.5pt;">Sueldo Mínimo (IMM):</span>&nbsp;&nbsp;<strong style="color: #78350f; font-size: 7.5pt;">$${typeof imm === 'number' ? formatNumber(imm) : imm}</strong>
-                </div>
-            </div>
+        return wrapReport(`
+            ${headerHTML('Simulación de finiquito', dateString, folio)}
+            <h1 class="clr-title">Liquidación estimada de finiquito</h1>
+            <p class="clr-sub">Desglose de indemnizaciones y haberes a la fecha de término del contrato.</p>
+            <p class="clr-cite">Código del Trabajo, arts. 67, 73, 159, 160, 161, 163, 168 y 177</p>
+            ${indicatorsHTML()}
 
-            <!-- Subtitle and Scope -->
-            <div style="border-left: 3px solid #0F5E4F; padding-left: 8px; margin-bottom: 8px;">
-                <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">
-                    Reporte de Liquidación Estimada de Finiquito Laboral
-                </div>
-                <div style="font-size: 6.8pt; color: #64748b; margin-top: 1px;">
-                    Desglose normativo conforme al Código del Trabajo de Chile (Arts. 67, 73, 159, 160, 161, 163, 168 y 177) y jurisprudencia DT 2026.
-                </div>
-            </div>
-
-            <!-- Column Layout: Resumen del Contrato and Bases de Cálculo side by side -->
-            <div style="display: flex; gap: 10px; margin-bottom: 6px; width: 100%;">
-                <div style="flex: 1; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">1. Resumen del Contrato</div>
-                    <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
-                        <tr>
-                            <td style="font-weight: 600; width: 40%; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Inicio:</td>
-                            <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-family: monospace; font-weight: 600;">${formatInputDate(startDateVal)}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Término:</td>
-                            <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-family: monospace; font-weight: 600;">${formatInputDate(endDateVal)}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Antigüedad:</td>
-                            <td style="font-weight: 700; color: #0f172a; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${antiquity}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Causal:</td>
-                            <td style="font-size: 6.8pt; padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #064A3E;">${cause}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">¿Aviso previo?:</td>
-                            <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600;">${noticeText}</td>
-                        </tr>
+            <div class="clr-grid">
+                <section>
+                    <p class="clr-h">Contrato</p>
+                    <table class="clr-t">
+                        ${row('Inicio', formatInputDate(startDateVal))}
+                        ${row('Término', formatInputDate(endDateVal))}
+                        ${row('Antigüedad', antiquity)}
+                        <tr><td class="k">Causal</td><td class="v" style="white-space:normal;font-family:inherit;max-width:190pt">${cause}</td></tr>
+                        ${row('Aviso previo dado', noticeText)}
                     </table>
-                </div>
-                <div style="width: 46%; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">2. Bases de Cálculo y Remuneración</div>
-                    <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
-                        <tr>
-                            <td style="font-weight: 600; width: 50%; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Sueldo Base:</td>
-                            <td style="font-weight: 700; text-align: right; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">$${formatNumber(parseCleanNumber(baseSalary))}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Haberes no Imp.:</td>
-                            <td style="text-align: right; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">$${formatNumber(parseCleanNumber(assignments))}</td>
-                        </tr>
-                        ${gratificationRow}
-                        ${variableSalaryRows}
-                        ${vacPendingRow}
+                </section>
+                <section>
+                    <p class="clr-h">Bases de cálculo</p>
+                    <table class="clr-t">
+                        ${row('Sueldo base', '$' + formatNumber(parseCleanNumber(baseSalary)))}
+                        ${row('Haberes no imponibles', '$' + formatNumber(parseCleanNumber(assignments)))}
+                        ${gratVal > 0 ? row('Gratificación (art. 50)', '$' + formatNumber(gratVal)) : ''}
+                        ${hasVariableSalary ? row('Promedio sueldo variable', variableAverage) : ''}
+                        ${vacPDays > 0 ? row('Vacaciones pendientes', vacPDays + ' días') : ''}
                     </table>
-                </div>
+                </section>
             </div>
 
-            <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 4px; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">3. Detalle de Indemnizaciones y Haberes</div>
-            <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt; margin-bottom: 6px;">
-                <thead>
-                    <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                        <th style="width: 72%; text-align: left; padding: 4px 6px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Concepto Liquidado & Fundamento Legal</th>
-                        <th style="text-align: right; padding: 4px 6px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Monto Estimado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="padding: 3px 6px; border: 1px solid #e2e8f0;">
-                            <div style="font-weight: 700; color: #0f172a;">Indemnización por Años de Servicio (IAS)</div>
-                            <div style="font-size: 6.3pt; color: #64748b;">Art. 163 Código del Trabajo (1 mes por año de servicio continuo o fracción &ge; 6 meses, tope legal 11 años / 90 UF)</div>
-                        </td>
-                        <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 8pt; color: #0f172a; padding: 3px 6px; border: 1px solid #e2e8f0;">${yearsService}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 3px 6px; border: 1px solid #e2e8f0;">
-                            <div style="font-weight: 700; color: #0f172a;">Indemnización Sustitutiva del Aviso Previo</div>
-                            <div style="font-size: 6.3pt; color: #64748b;">Art. 161 inc. 2 Código del Trabajo (Equivalente a un mes de remuneración por no mediar 30 días de anticipación)</div>
-                        </td>
-                        <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 8pt; color: #0f172a; padding: 3px 6px; border: 1px solid #e2e8f0;">${noticeAmount}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 3px 6px; border: 1px solid #e2e8f0;">
-                            <div style="font-weight: 700; color: #0f172a;">Feriado Proporcional (${vacationDays})</div>
-                            <div style="font-size: 6.3pt; color: #64748b;">Art. 73 inc. 3 Código del Trabajo (1.25 días hábiles por mes trabajado, proyectados sobre calendario corrido)</div>
-                        </td>
-                        <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 8pt; color: #0f172a; padding: 3px 6px; border: 1px solid #e2e8f0;">${vacationProp}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 3px 6px; border: 1px solid #e2e8f0;">
-                            <div style="font-weight: 700; color: #0f172a;">Feriado Legal Pendiente (Períodos Anteriores)</div>
-                            <div style="font-size: 6.3pt; color: #64748b;">Art. 67 Código del Trabajo (Vacaciones anuales acumuladas de períodos anteriores no gozadas)</div>
-                        </td>
-                        <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 8pt; color: #0f172a; padding: 3px 6px; border: 1px solid #e2e8f0;">${vacationPendingAmt}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 3px 6px; border: 1px solid #e2e8f0;">
-                            <div style="font-weight: 700; color: #0f172a;">Remuneraciones Pendientes (Días del Mes)</div>
-                            <div style="font-size: 6.3pt; color: #64748b;">Sueldo proporcional por días efectivamente trabajados en el mes de desvinculación</div>
-                        </td>
-                        <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 8pt; color: #0f172a; padding: 3px 6px; border: 1px solid #e2e8f0;">${pendingSalary}</td>
-                    </tr>
-                    ${afcAmount !== '$0' && afcAmount !== '0' && afcAmount !== '' ? `
-                    <tr style="background-color: #fef2f2 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                        <td style="padding: 3px 6px; border: 1px solid #fecaca; color: #991b1b;">
-                            <div style="font-weight: 700;">(-) Descuento Aporte AFC Empleador</div>
-                            <div style="font-size: 6.3pt; color: #b91c1c;">Art. 13 Ley 19.728. <em>Nota: Impugnable judicialmente con recargo si la causal de despido es injustificada.</em></div>
-                        </td>
-                        <td style="text-align: right; font-weight: 800; font-family: monospace; font-size: 8pt; color: #dc2626; padding: 3px 6px; border: 1px solid #fecaca;">-${afcAmount}</td>
-                    </tr>
-                    ` : ''}
-                </tbody>
-            </table>
+            <section class="clr-sec">
+                <p class="clr-h">Detalle de indemnizaciones y haberes</p>
+                <table class="clr-t">
+                    ${item('Indemnización por años de servicio', 'Art. 163: un mes por año o fracción superior a seis meses, tope de 11 años y 90 UF.', yearsService)}
+                    ${item('Indemnización sustitutiva del aviso previo', 'Art. 161 inc. 2: un mes de remuneración si no hubo aviso con 30 días.', noticeAmount)}
+                    ${item('Feriado proporcional (' + vacationDays + ')', 'Art. 73: 1,25 días hábiles por mes trabajado, proyectados en días corridos.', vacationProp)}
+                    ${item('Feriado legal pendiente', 'Art. 67: vacaciones de períodos anteriores no tomadas.', vacationPendingAmt)}
+                    ${item('Remuneraciones pendientes', 'Días trabajados en el mes del término.', pendingSalary)}
+                    ${hasAfc ? item('Descuento aporte AFC del empleador', 'Art. 13 Ley 19.728. Impugnable si el despido se declara injustificado.', '−' + afcAmount.replace(/^[\s\-−]+/, ''), 'neg') : ''}
+                </table>
+            </section>
 
-            <!-- Premium Hero Total Box (Sky Blue Brand Theme) -->
-            <div style="background: linear-gradient(135deg, #EEF6F3 0%, #D6EBE4 100%) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; border: 2px solid #0F5E4F; border-radius: 7px; padding: 7px 14px; margin-top: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <span style="font-size: 6.2pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #0F5E4F; display: block;">✓ CÁLCULO VERIFICADO · VALOR ESTIMADO LÍQUIDO</span>
-                    <span style="font-size: 9.5pt; font-weight: 800; color: #0f172a;">Total Neto Estimado del Finiquito:</span>
-                </div>
-                <div style="text-align: right;">
-                    <span style="font-size: 18pt; font-weight: 900; color: #064A3E; font-family: monospace; letter-spacing: -0.5px;">${total}</span>
-                    <span style="font-size: 10pt; font-weight: 800; color: #0F5E4F; margin-left: 2px;">CLP</span>
-                </div>
+            <div class="clr-total">
+                <div class="lbl">Total estimado del finiquito<small>Monto líquido referencial a la fecha de término</small></div>
+                <div class="amt">${total}</div>
+            </div>
+            <div class="clr-flags">${options.map(o => `<span class="${o.active ? '' : 'off'}">${o.active ? '✓' : '·'} ${o.label}</span>`).join('')}</div>
+
+            <div class="clr-note">
+                <b class="t">Reserva de derechos al firmar · plazo de pago: 10 días hábiles (art. 177)</b>
+                Ante el ministro de fe, escribe de tu puño y letra una reserva, por ejemplo: <i>“Me reservo el derecho a reclamar despido injustificado, el recargo legal y la devolución del descuento AFC”</i>. Firmar con reserva no impide recibir el pago de los montos reconocidos.
             </div>
 
-            <!-- Parameters Badges -->
-            <div style="display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 5px;">
-                ${optionsItems.map(o => `<span style="font-size: 6pt; padding: 1.5px 5px; border-radius: 3px; border: 1px solid ${o.active ? '#ADD6C9' : '#e2e8f0'}; background-color: ${o.active ? '#EEF6F3' : '#f8fafc'} !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; color: ${o.active ? '#064A3E' : '#94a3b8'}; font-weight: 600;">${o.active ? '✓' : '✗'} ${o.label}</span>`).join('')}
+            <div class="clr-steps">
+                <div><b>1. Compara cada concepto.</b> Los montos que ofrezca tu empleador no deberían ser menores a los de este informe.</div>
+                <div><b>2. Pide aclaraciones.</b> Si difieren el sueldo base, los años o los feriados, solicita la planilla antes de firmar.</div>
+                <div><b>3. Firma el finiquito de la empresa.</b> Este informe es tu respaldo; el documento válido lo extiende el empleador ante ministro de fe.</div>
             </div>
 
-            <!-- Amber Legal Alert & Reserva de Derechos -->
-            <div style="background-color: #fffbeb !important; border: 1px solid #fde68a; border-left: 3.5px solid #f59e0b; border-radius: 5px; padding: 5px 8px; margin-bottom: 6px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5px;">
-                    <strong style="color: #92400e; font-size: 6.6pt; text-transform: uppercase; letter-spacing: 0.4px;">
-                        ⚖️ RECOMENDACIÓN LEGAL · RESERVA DE DERECHOS EN EL FINIQUITO
-                    </strong>
-                    <span style="font-size: 5.8pt; color: #b45309; font-weight: 600;">Plazo legal de pago: 10 días hábiles (Art. 177 CT)</span>
-                </div>
-                <p style="font-size: 6.2pt; color: #78350f; margin: 0; line-height: 1.3;">
-                    Al firmar ante ministro de fe, <strong>estampa de tu puño y letra la frase de Reserva de Derechos</strong> (ej: <em>"Me reservo el derecho a reclamar despido injustificado, recargo legal del 30% al 100% y devolución del descuento AFC"</em>). Firmar con reserva no impide recibir el pago inmediato de los montos reconocidos por el empleador.
-                </p>
-            </div>
+            ${sponsorHTML('¿Dónde recibir el pago de tu finiquito?', 'Cuenta Corriente Itaú con $0 costo de mantención, apertura 100% online.')}
 
-            <!-- Guía de Cotejo para el Trabajador (Sin firmas para evitar confusión) -->
-            <div style="background-color: #f8fafc !important; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 6px 10px; margin-top: 6px; margin-bottom: 5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;">
-                    <strong style="color: #0f172a; font-size: 6.6pt; text-transform: uppercase; letter-spacing: 0.3px;">
-                        📋 GUÍA DE COTEJO PERSONAL · DOCUMENTO INFORMATIVO (NO REQUIERE FIRMAS)
-                    </strong>
-                    <span style="font-size: 5.8pt; color: #64748b; font-weight: 600;">Uso exclusivo de consulta</span>
-                </div>
-                <div style="display: flex; gap: 12px; font-size: 6.1pt; color: #475569; line-height: 1.35;">
-                    <div style="flex: 1;">
-                        <strong>1. Compara cada concepto:</strong> Revisa que los montos ofrecidos por tu empleador no sean inferiores a los calculados en este informe.
-                    </div>
-                    <div style="flex: 1;">
-                        <strong>2. Solicita aclaraciones:</strong> Si existen discrepancias en sueldo base, años o feriados, exige la planilla oficial antes de firmar.
-                    </div>
-                    <div style="flex: 1;">
-                        <strong>3. Firma el finiquito de la empresa:</strong> Este informe es tu respaldo de cálculo. El documento legal vinculante es extendido por el empleador ante ministro de fe.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Franja Consejo Financiero Patrocinado Itaú (Diseño Sobrio y Profesional para Impresión/PDF) -->
-            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #00382E; border-radius: 6px; padding: 5px 10px; margin-top: 5px; margin-bottom: 5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
-                <div style="flex: 1; padding-right: 10px;">
-                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #00382E; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
-                        <strong style="color: #9a3412; font-size: 6.8pt;">¿Dónde recibir o resguardar el pago de tu finiquito?</strong>
-                    </div>
-                    <p style="font-size: 6.3pt; color: #7c2d12; margin: 0; line-height: 1.3;">
-                        Recibe el depósito de tus indemnizaciones en tu <strong>Cuenta Corriente Banco Itaú con $0 costo de mantención</strong>. Apertura 100% online en 5 minutos, transferencias ilimitadas a costo $0 y tarjeta de débito digital sin límites de saldo.
-                    </p>
-                </div>
-                <div style="text-align: right; flex-shrink: 0;">
-                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #00382E !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
-                        Abrir Online →
-                    </a>
-                    <div style="font-size: 5.5pt; color: #9a3412; margin-top: 2px; font-family: monospace;">calculolaboral.cl/itau</div>
-                </div>
-            </div>
-
-            <!-- Footer Disclaimer -->
-            <div class="print-disclaimer" style="font-size: 5.8pt; color: #94a3b8; line-height: 1.25; border-top: 1px solid #e2e8f0; padding-top: 3px; text-align: center;">
-                <strong>NOTA INFORMATIVA:</strong> Simulación computacional de carácter referencial conforme a normativas de la Dirección del Trabajo (DT). No constituye asesoría letrada ni sustituye la liquidación formal suscrita por las partes.<br>
-                <strong>CÁLCULO LABORAL CHILE</strong> — <a href="https://calculolaboral.cl" style="color: #0F5E4F; text-decoration: none;">www.calculolaboral.cl</a> — Documento generado automáticamente
-            </div>
-        `;
+            <footer class="clr-foot">Simulación referencial conforme a la normativa de la Dirección del Trabajo. No constituye asesoría legal ni reemplaza el finiquito firmado por las partes. <span class="brand">calculolaboral.cl</span></footer>
+        `);
     }
 
     // 9. COMPILE SUELDO REPORT
     function compileSueldoReport(dateString) {
-        // Query results safely from DOM
-        const netSalary = document.getElementById('headerNetSalary')?.textContent || '$0';
-        const totalDiscounts = document.getElementById('headerTotalDiscounts')?.textContent || '$0';
-        
-        const afp = document.getElementById('resultAFP')?.textContent || '$0';
-        const health = document.getElementById('resultHealth')?.textContent || '$0';
-        const afc = document.getElementById('resultAFC')?.textContent || '$0';
-        const tax = document.getElementById('resultTax')?.textContent || '$0';
+        const $ = (id) => document.getElementById(id);
+        const txt = (id, d = '—') => ($(id)?.textContent || d).trim();
+        const visible = (id) => { const el = $(id); return el && !el.classList.contains('hidden'); };
 
-        const labelAFP = document.getElementById('labelAFP')?.textContent || 'Modelo';
-        const labelHealth = document.getElementById('labelHealth')?.textContent || '7%';
+        const netSalary = txt('headerNetSalary', '$0');
+        const totalDiscounts = txt('headerTotalDiscounts', '$0');
+        const healthLabel = txt('print-row-salary-health').includes('Isapre') ? 'Isapre' : 'Fonasa';
+        const amountOnly = (s) => s.replace(/\s*\((Fonasa|Isapre)\)\s*$/, '');
 
-        // Input values
-        const baseSalary = document.getElementById('salary')?.value || '0';
-        const overtimeHours = document.getElementById('overtime')?.value || '0';
-        const bonuses = document.getElementById('bonuses')?.value || '0';
-        
-        const colacion = document.getElementById('colacion')?.value || '0';
-        const movilizacion = document.getElementById('movilizacion')?.value || '0';
-        const viaticos = document.getElementById('viaticos')?.value || '0';
+        const row = (k, v, cls = '') => `<tr><td class="k">${k}</td><td class="v ${cls}">${v}</td></tr>`;
+        const optional = [
+            ['print-row-salary-ccaf-container', 'print-row-salary-ccaf', 'Crédito Caja de Compensación (CCAF)'],
+            ['print-row-salary-apv-container', 'print-row-salary-apv', 'Ahorro previsional voluntario (APV)'],
+            ['print-row-salary-loans-container', 'print-row-salary-loans', 'Préstamos y anticipos'],
+            ['print-row-salary-pension-container', 'print-row-salary-pension', 'Pensión de alimentos'],
+            ['print-row-salary-sindicato-container', 'print-row-salary-sindicato', 'Cuota sindical'],
+            ['print-row-salary-other-container', 'print-row-salary-other', 'Otros descuentos']
+        ].filter(r => visible(r[0])).map(r => row(r[2], txt(r[1]), 'neg')).join('');
 
-        // Additional discounts
-        const ccaf = document.getElementById('ccaf')?.value || '0';
-        const apv = document.getElementById('apv')?.value || '0';
-        const prestamos = document.getElementById('prestamos')?.value || '0';
-        const pension = document.getElementById('pension')?.value || '0';
-        const sindicato = document.getElementById('sindicato')?.value || '0';
-        const otrosDescuentos = document.getElementById('otrosDescuentos')?.value || '0';
+        return wrapReport(`
+            ${headerHTML('Simulación de sueldo líquido', dateString, window.CLPrint ? CLPrint.folio('SUE') : '')}
+            <h1 class="clr-title">Liquidación estimada de sueldo</h1>
+            <p class="clr-sub">Haberes, descuentos legales y sueldo líquido mensual a pagar.</p>
+            <p class="clr-cite">Código del Trabajo, arts. 41, 42 y 50 · Ley de la Renta, art. 43</p>
+            ${indicatorsHTML()}
 
-        return `
-            ${getBrandedHeaderHTML('SIMULACIÓN DE SUELDO LÍQUIDO', dateString, null)}
-
-            <div style="border-left: 3px solid #0F5E4F; padding-left: 8px; margin-bottom: 8px;">
-                <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">
-                    Reporte de Simulación de Sueldo Líquido Mensual
-                </div>
-                <div style="font-size: 6.8pt; color: #64748b; margin-top: 1px;">
-                    Desglose de haberes imponibles, no imponibles y deducciones previsionales conforme a la normativa legal vigente (DT, SII y SP).
-                </div>
-            </div>
-
-            <!-- Column Layout: Haberes and Descuentos Previsionales side by side -->
-            <div style="display: flex; gap: 10px; margin-bottom: 6px; width: 100%;">
-                <div style="flex: 1; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">1. Haberes (Ingresos Brutos)</div>
-                    <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
-                        <thead>
-                            <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                                <th style="width: 60%; padding: 3px 5px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Concepto</th>
-                                <th style="text-align: right; padding: 3px 5px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Sueldo Base Mensual</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; padding: 2.5px 5px; border: 1px solid #e2e8f0;">$${formatNumber(parseCleanNumber(baseSalary))} CLP</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; color: #475569;">Horas Extras (${overtimeHours}h)</td>
-                                <td style="text-align: right; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0; color: #64748b;">(En liquidación)</td>
-                            </tr>
-                            ${parseCleanNumber(bonuses) > 0 ? `
-                            <tr>
-                                <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; color: #475569;">Bonos e Imponibles</td>
-                                <td style="text-align: right; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">$${formatNumber(parseCleanNumber(bonuses))} CLP</td>
-                            </tr>
-                            ` : ''}
-                            <tr>
-                                <td style="font-weight: 700; background-color: #f8fafc; padding: 2.5px 5px; border: 1px solid #e2e8f0; color: #0f172a;">Haberes No Imponibles</td>
-                                <td style="text-align: right; font-weight: 700; font-family: monospace; background-color: #f8fafc; padding: 2.5px 5px; border: 1px solid #e2e8f0;">$${formatNumber(parseCleanNumber(colacion) + parseCleanNumber(movilizacion) + parseCleanNumber(viaticos))} CLP</td>
-                            </tr>
-                        </tbody>
+            <div class="clr-grid">
+                <section>
+                    <p class="clr-h">Haberes</p>
+                    <table class="clr-t">
+                        ${row('Sueldo base', txt('print-input-salary-base'))}
+                        ${row('Horas extraordinarias', txt('print-input-salary-ot'))}
+                        ${row('Gratificación legal', txt('print-input-salary-grat'))}
+                        ${row('Bonos imponibles', txt('print-input-salary-bonuses'))}
+                        ${row('Asignación de colación', txt('print-input-salary-colacion'))}
+                        ${row('Asignación de movilización', txt('print-input-salary-movilizacion'))}
+                        ${row('Viáticos y otros no imponibles', txt('print-input-salary-viaticos'))}
                     </table>
-                </div>
-                <div style="flex: 1; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">2. Descuentos Previsionales Obligatorios</div>
-                    <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
-                        <thead>
-                            <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                                <th style="width: 60%; padding: 3px 5px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Descuento Obligatorio</th>
-                                <th style="text-align: right; padding: 3px 5px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Monto Retenido</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">AFP (${labelAFP})</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${afp.startsWith('-') ? afp : '-' + afp}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Salud (${labelHealth})</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${health.startsWith('-') ? health : '-' + health}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Seguro de Cesantía AFC</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${afc.startsWith('-') ? afc : '-' + afc}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Impuesto 2ª Categoría (SII)</td>
-                                <td style="text-align: right; font-family: monospace; font-weight: 700; color: #b91c1c; padding: 2.5px 5px; border: 1px solid #e2e8f0;">${tax.startsWith('-') ? tax : '-' + tax}</td>
-                            </tr>
-                        </tbody>
+                </section>
+                <section>
+                    <p class="clr-h">Descuentos</p>
+                    <table class="clr-t">
+                        ${row('AFP ' + txt('print-input-salary-afp-name', ''), txt('print-row-salary-afp'), 'neg')}
+                        ${row('Salud (' + healthLabel + ')', amountOnly(txt('print-row-salary-health')), 'neg')}
+                        ${row('Seguro de cesantía (AFC)', txt('print-row-salary-afc'), 'neg')}
+                        ${row('Impuesto único de segunda categoría', txt('print-row-salary-tax'), 'neg')}
+                        ${optional}
+                        <tr class="sum"><td>Total descuentos</td><td class="v neg">${totalDiscounts}</td></tr>
                     </table>
-                </div>
+                </section>
             </div>
 
-            ${parseCleanNumber(ccaf) > 0 || parseCleanNumber(apv) > 0 || parseCleanNumber(prestamos) > 0 || parseCleanNumber(pension) > 0 || parseCleanNumber(sindicato) > 0 || parseCleanNumber(otrosDescuentos) > 0 ? `
-            <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 4px; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">3. Otros Descuentos Aplicados</div>
-            <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt; margin-bottom: 6px;">
-                <thead>
-                    <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                        <th style="width: 70%; padding: 3px 5px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Descuento Adicional</th>
-                        <th style="text-align: right; padding: 3px 5px; border: 1px solid #e2e8f0; font-size: 6.8pt; color: #334155; text-transform: uppercase;">Monto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${parseCleanNumber(ccaf) > 0 ? `<tr><td style="padding: 2.5px 5px; border: 1px solid #e2e8f0;">Caja Compensación (CCAF)</td><td style="text-align: right; color: #b91c1c; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-$${formatNumber(parseCleanNumber(ccaf))} CLP</td></tr>` : ''}
-                    ${parseCleanNumber(apv) > 0 ? `<tr><td style="padding: 2.5px 5px; border: 1px solid #e2e8f0;">APV (Ahorro Previsional Voluntario)</td><td style="text-align: right; color: #b91c1c; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-$${formatNumber(parseCleanNumber(apv))} CLP</td></tr>` : ''}
-                    ${parseCleanNumber(prestamos) > 0 ? `<tr><td style="padding: 2.5px 5px; border: 1px solid #e2e8f0;">Préstamos de la Empresa</td><td style="text-align: right; color: #b91c1c; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-$${formatNumber(parseCleanNumber(prestamos))} CLP</td></tr>` : ''}
-                    ${parseCleanNumber(pension) > 0 ? `<tr><td style="padding: 2.5px 5px; border: 1px solid #e2e8f0;">Pensión Alimenticia</td><td style="text-align: right; color: #b91c1c; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-$${formatNumber(parseCleanNumber(pension))} CLP</td></tr>` : ''}
-                    ${parseCleanNumber(sindicato) > 0 ? `<tr><td style="padding: 2.5px 5px; border: 1px solid #e2e8f0;">Cuota Sindical</td><td style="text-align: right; color: #b91c1c; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-$${formatNumber(parseCleanNumber(sindicato))} CLP</td></tr>` : ''}
-                    ${parseCleanNumber(otrosDescuentos) > 0 ? `<tr><td style="padding: 2.5px 5px; border: 1px solid #e2e8f0;">Otros Descuentos Diversos</td><td style="text-align: right; color: #b91c1c; font-family: monospace; padding: 2.5px 5px; border: 1px solid #e2e8f0;">-$${formatNumber(parseCleanNumber(otrosDescuentos))} CLP</td></tr>` : ''}
-                </tbody>
-            </table>
-            ` : ''}
-
-            <!-- Premium Hero Total Box (Sky Blue Brand Theme) -->
-            <div style="background: linear-gradient(135deg, #EEF6F3 0%, #D6EBE4 100%) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; border: 2px solid #0F5E4F; border-radius: 7px; padding: 7px 14px; margin-top: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <span style="font-size: 6.2pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #0F5E4F; display: block;">✓ CÁLCULO PREVISIONAL EXACTO</span>
-                    <span style="font-size: 9.5pt; font-weight: 800; color: #0f172a;">Sueldo Líquido Estimado a Percibir:</span>
-                    <div style="font-size: 6.5pt; color: #64748b; margin-top: 1px;">Total retenciones previsionales y tributarias: <strong style="color: #991b1b;">${totalDiscounts}</strong></div>
-                </div>
-                <div style="text-align: right;">
-                    <span style="font-size: 18pt; font-weight: 900; color: #064A3E; font-family: monospace; letter-spacing: -0.5px;">${netSalary}</span>
-                    <span style="font-size: 10pt; font-weight: 800; color: #0F5E4F; margin-left: 2px;">CLP</span>
-                </div>
+            <div class="clr-total">
+                <div class="lbl">Sueldo líquido a pagar<small>Monto mensual estimado que recibe el trabajador</small></div>
+                <div class="amt">${netSalary}</div>
             </div>
 
-            <!-- Franja Consejo Financiero Patrocinado Itaú (Diseño Sobrio y Profesional para Impresión/PDF) -->
-            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #00382E; border-radius: 6px; padding: 6px 10px; margin-top: 6px; margin-bottom: 6px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
-                <div style="flex: 1; padding-right: 10px;">
-                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #00382E; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
-                        <strong style="color: #9a3412; font-size: 6.8pt;">¿Dónde recibir tu remuneración mensual?</strong>
-                    </div>
-                    <p style="font-size: 6.3pt; color: #7c2d12; margin: 0; line-height: 1.3;">
-                        Recibe tu sueldo líquido en tu <strong>Cuenta Corriente Banco Itaú con $0 costo de mantención</strong>. Apertura 100% online en 5 minutos, transferencias ilimitadas a costo $0 y tarjeta de débito digital sin cobros ocultos.
-                    </p>
-                </div>
-                <div style="text-align: right; flex-shrink: 0;">
-                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #00382E !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
-                        Abrir Online →
-                    </a>
-                    <div style="font-size: 5.5pt; color: #9a3412; margin-top: 2px; font-family: monospace;">calculolaboral.cl/itau</div>
-                </div>
-            </div>
+            ${sponsorHTML('¿Dónde recibir tu sueldo?', 'Cuenta Corriente Itaú con $0 costo de mantención, apertura 100% online.')}
 
-            <!-- Footer Disclaimer -->
-            <div class="print-disclaimer" style="font-size: 5.8pt; color: #94a3b8; line-height: 1.25; border-top: 1px solid #e2e8f0; padding-top: 3px; text-align: center; margin-top: 6px;">
-                <strong>NOTA DE CARÁCTER INFORMATIVO:</strong> Simulación computacional referencial según normativa legal chilena. No tiene validez legal oficial ante el empleador, la DT o tribunales.<br>
-                <strong>CÁLCULO LABORAL CHILE</strong> — <a href="https://calculolaboral.cl" style="color: #0F5E4F; text-decoration: none;">www.calculolaboral.cl</a> — Documento generado automáticamente
-            </div>
-        `;
+            <footer class="clr-foot">Simulación referencial según la normativa vigente en Chile. No constituye comprobante de pago ni tiene validez ante la Dirección del Trabajo o el SII. <span class="brand">calculolaboral.cl</span></footer>
+        `);
     }
 
     // 10. FORMAT HELPERS

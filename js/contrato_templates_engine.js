@@ -654,7 +654,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
             ` : ''}
             
             <div class="text-center mb-6 border-b border-slate-300 pb-4">
-                <div class="text-xs font-mono uppercase tracking-widest text-slate-500 mb-1">
+                <div class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-1">
                     Instrumento Contractual Conforme al Código del Trabajo (Edición 2026) • Folio: ${res.folio}
                 </div>
                 <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">
@@ -1150,7 +1150,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
             <head>
                 <meta charset="UTF-8">
                 <title>Contrato_Trabajo_${res.folio}</title>
-                <link rel="stylesheet" href="/assets/css/style.css?v=2.6.2">
+                <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
                 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                 <style>
