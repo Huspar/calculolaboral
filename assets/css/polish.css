@@ -715,6 +715,122 @@ main h3 {
     inset: 0;
 }
 
+/* =====================================================================
+ * Fase 4 · empleadores y kits
+ * ===================================================================== */
+
+/* Una sola opcion recomendada por grupo de precios */
+.cl-recommend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    background-color: var(--cl-amber);
+    color: var(--cl-forest);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.cl-recommend::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--cl-forest);
+}
+
+/* Etiqueta de producto: dato, no insignia de color */
+.cl-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--cl-forest-700);
+}
+
+.cl-group-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    margin: 0 0 1rem;
+}
+
+.cl-group-head + .grid {
+    margin-bottom: 2.75rem;
+}
+
+.cl-group-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cl-ink);
+}
+
+.cl-group-desc {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+/* Recursos gratuitos del hero: enlaces de texto, no pildoras */
+.cl-quicklinks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.cl-quicklinks span {
+    color: #6B7280;
+}
+
+.cl-quicklinks a {
+    font-weight: 600;
+    color: var(--cl-forest-600);
+    text-decoration: underline;
+    text-decoration-color: rgba(15, 94, 79, 0.3);
+    text-underline-offset: 0.2em;
+    transition: color 150ms var(--cl-ease-ui), text-decoration-color 150ms var(--cl-ease-ui);
+}
+
+.cl-quicklinks a:hover {
+    color: var(--cl-forest);
+    text-decoration-color: currentColor;
+}
+
+/* ---------- Contraste de botones heredados ---------- */
+
+/* Boton de contacto de las guias: ambar de marca con texto oscuro (antes blanco, 2,1:1) */
+.cta-lead-btn,
+.cta-lead-btn *,
+.prose-content a.cta-lead-btn,
+.prose-content a.cta-lead-btn *,
+.prose a.cta-lead-btn,
+.prose a.cta-lead-btn * {
+    color: var(--cl-ink) !important;
+}
+
+.cta-lead-btn,
+.prose-content a.cta-lead-btn {
+    background-color: var(--cl-amber) !important;
+}
+
+.cta-lead-btn:hover {
+    background-color: #FFAA00 !important;
+}
+
+/* Botones de documento sobre verde: el texto va en blanco */
+.btn-yellow-pill.doc-btn-sky,
+.btn-yellow-pill.doc-btn-sky span {
+    color: #FFFFFF !important;
+}
+
+/* Subtitulos de modos inactivos en vacaciones (la clase la cambia el JS de la pagina) */
+[id^="tab-sub-"].text-slate-400 {
+    color: #64748B !important;
+}
+
 /* ---------- Piso tipografico de 12px para etiquetas definidas por pagina ---------- */
 
 .sueldo-chip,

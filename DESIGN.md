@@ -138,6 +138,15 @@ Toda página enlaza, al final del `<head>`, `/assets/css/polish.css` y, antes de
 - Las imágenes `og:image` de redes sociales siguen siendo los JPG/PNG anteriores (los SVG no sirven para vista previa social).
 - Blog: nota destacada (`.cl-feature`) + grilla `.cl-post-grid`; la categoría va como metadato (`.cl-post-meta`), nunca como insignia de color sobre la imagen. Patrocinios siempre como `.cl-sponsor`, fuera de la grilla.
 
+## Jerarquía de botones y precios (Fase 4)
+
+- **Una sola acción principal por página o grupo**, siempre `btn-yellow-pill` (ámbar con texto `#111827`). En el portal de empleadores es el Kit Ley 21.719; en cada kit, el botón de compra.
+- Acciones secundarias: `btn-outline-pill`. Acciones terciarias: enlace de texto subrayado (`.cl-quicklinks`).
+- `btn-dark-pill` (verde bosque) solo para acciones de apoyo dentro de bloques oscuros o formularios; nunca compite con el ámbar en la misma vista.
+- Grupos de precios: título de grupo `.cl-group-title`, una sola tarjeta destacada con borde `forest-800` y la etiqueta `.cl-recommend` ("Recomendado"). El resto de las etiquetas de producto son `.cl-tag` (texto, sin fondo).
+- Nunca rojo/rose en botones de compra ni en cajas de venta cruzada: el rojo es solo para riesgo (multas, nulidad).
+- No modificar los enlaces ni tokens de Flow.cl al cambiar estilos.
+
 Después de cambiar clases, recompilar con `npm run build:css` y subir el `?v=` de `style.css` en las páginas, porque `/assets/` se sirve con caché inmutable.
 
 ## Do's and Don'ts
