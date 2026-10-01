@@ -145,7 +145,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         .prose-content { line-height: 1.75; color: #334155; }
         .prose-content h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; line-height: 1.25; }
@@ -157,10 +157,10 @@
         .prose-content strong { color: #0f172a; font-weight: 600; }
         .prose-content a { color: #0F5E4F; text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
         .prose-content a:hover { color: #064A3E; }
-        .callout { background: #EEF6F3; border-left: 4px solid #0F5E4F; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
-        .callout-amber { background: #fffbeb; border-left: 4px solid #d97706; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
-        .callout-emerald { background: #ecfdf5; border-left: 4px solid #059669; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
-        .callout-rose { background: #fff1f2; border-left: 4px solid #e11d48; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout { background: #EEF6F3; border: 1px solid color-mix(in srgb, #0F5E4F 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout-amber { background: #fffbeb; border: 1px solid color-mix(in srgb, #d97706 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout-emerald { background: #ecfdf5; border: 1px solid color-mix(in srgb, #059669 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout-rose { background: #fff1f2; border: 1px solid color-mix(in srgb, #e11d48 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
 
         /* Scoped styles for CTA banner (SaaS Premium Institucional) */
         .pyme-banner {
@@ -539,7 +539,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -549,7 +549,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -609,7 +609,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -618,7 +618,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -627,7 +627,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -636,7 +636,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -645,7 +645,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -654,7 +654,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -726,7 +726,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Article Body -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full">
 <!-- Breadcrumbs -->
 <nav aria-label="Migas de pan" class="flex items-center gap-2 text-xs text-slate-400 mb-6">
@@ -736,28 +736,21 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold truncate">Ley de Equidad de Género y Brecha Salarial 2026</span>
 </nav>
-<article class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-8 md:p-12 mb-12">
+<article class="cl-article mb-12 relative">
 <!-- Article Header -->
 <header class="mb-8">
-<div class="flex flex-wrap items-center gap-2.5 mb-4">
-<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-forest-50 text-forest-700 border border-forest-200/60">
-                            Equidad Laboral 2026
-                        </span>
-<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-slate-200/60">
-                            Código del Trabajo Art. 62 bis
-                        </span>
-</div>
 <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
                         Nueva Ley de Equidad de Género en Chile 2026: Empresas obligadas a medir brecha salarial, plazos y sanciones DT
                     </h1>
+<p class="cl-meta">Equidad Laboral 2026 · Código del Trabajo Art. 62 bis</p>
 <!-- E-E-A-T Trust Badge -->
-<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-8 mt-2">
-<div class="w-12 h-12 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center flex-shrink-0">
+<div class="cl-trust">
+<div class="cl-trust-icon">
 <span class="material-icons text-emerald-600">verified</span>
 </div>
 <div>
 <p class="text-sm text-slate-800 font-semibold m-0">Contenido Conforme a Normativa Oficial DT (2026)</p>
-<p class="text-xs text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
+<p class="text-sm text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 pb-6 border-b border-slate-100">
@@ -791,8 +784,8 @@ body { overflow-x: hidden; }
                         La agenda laboral chilena en 2026 ha dado un salto decisivo hacia la transparencia salarial. Tras la consolidación de la <strong>Ley de Equidad de Género e Igualdad Salarial</strong> y los requerimientos informativos de la Comisión para el Mercado Financiero (CMF NCG 461) y la Dirección del Trabajo (DT), medir la brecha salarial entre hombres y mujeres dejó de ser una recomendación de responsabilidad social empresarial: <strong>hoy es una obligación fiscalizable con severas sanciones económicas</strong>.
                     </p>
 <div class="callout-amber">
-<div class="font-bold text-amber-900 text-sm m-0">La alerta de los gremios empresariales (Diario Financiero)&gt;</div>
-<p class="text-xs sm:text-sm text-amber-800 m-0 mt-1">
+<div class="font-bold text-amber-900 text-sm m-0">La alerta de los gremios empresariales (Diario Financiero)</div>
+<p class="text-sm sm:text-sm text-amber-800 m-0 mt-1">
                             Según auditorías del sector corporativo y datos reportados por <em>Diario Financiero</em>, <strong>el 57% de las empresas obligadas aún no cuenta con un sistema formal de medición de brecha salarial ni con un registro analítico de remuneraciones</strong>, exponiéndose a multas inspectivas de hasta 60 UTM y a contingencias judiciales por discriminación arbitraria.
                         </p>
 </div>
@@ -817,21 +810,21 @@ body { overflow-x: hidden; }
 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
 <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-forest-600 text-white flex items-center justify-center text-xs font-black">1</span> Empresas Grandes (200 o más trabajadores)
                             </div>
-<p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-2 leading-relaxed">
                                 Todas las personas jurídicas o empresas que cuenten con una dotación total igual o superior a 200 dependientes en el país. Tienen la obligación de levantar una auditoría salarial anual desagregada por género, calcular la brecha en remuneración fija y variable, e incorporar el procedimiento de reclamos en el RIOHS.
                             </p>
 </div>
 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
 <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-forest-600 text-white flex items-center justify-center text-xs font-black">2</span> Medianas Empresas en Sectores Estratégicos (Desde 50 trabajadores)
                             </div>
-<p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-2 leading-relaxed">
                                 Empresas con 50 a 199 trabajadores que desarrollen actividades en rubros con histórica subrepresentación femenina o segregación ocupacional: <strong>minería, energía, construcción, sector financiero y bancario, transporte de carga y pasajeros, y desarrollo tecnológico/software (I+D)</strong>.
                             </p>
 </div>
 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
 <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-forest-600 text-white flex items-center justify-center text-xs font-black">3</span> Sociedades Reguladas por la CMF (Norma de Carácter General N° 461)
                             </div>
-<p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-2 leading-relaxed">
                                 Emisores de valores de oferta pública, bancos, aseguradoras y AFP. Deben reportar públicamente en su Memoria Anual los indicadores ESG de brecha salarial por jerarquía funcional y la presencia femenina en directorios y puestos de primera línea.
                             </p>
 </div>
@@ -885,17 +878,17 @@ body { overflow-x: hidden; }
 </tr>
 </tbody>
 </table>
-<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-xs text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
 <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
                         </div>
 </div>
 <!-- Bloque Publicitario Responsivo Abakos -->
 <div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-forest-50/40 via-white to-slate-50 border border-slate-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-forest-600 bg-forest-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+<span class="text-xs font-extrabold uppercase tracking-wider text-forest-600 bg-forest-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
 <span class="w-1.5 h-1.5 rounded-full bg-[#F8FAF9]0 animate-pulse"></span> Publicidad Patrocinada
                             </span>
-<span class="text-[10px] text-slate-500 font-semibold">Abakos Chile • Préstamos Online</span>
+<span class="text-xs text-slate-500 font-semibold">Abakos Chile • Préstamos Online</span>
 </div>
 <a class="group block overflow-hidden rounded-xl border border-slate-200/90 hover:border-slate-300 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/abakos" rel="sponsored nofollow noopener" target="_blank">
 <picture class="block w-full">
@@ -904,7 +897,7 @@ body { overflow-x: hidden; }
 </picture>
 </a>
 <div class="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 px-1 text-xs">
-<span class="text-slate-600 font-medium text-[11px] sm:text-xs text-center sm:text-left">
+<span class="text-slate-600 font-medium text-xs sm:text-xs text-center sm:text-left">
                                 ¿Necesitas liquidez o te faltan lucas a fin de mes? Simula en minutos <strong>sin pagos por adelantado</strong>.
                             </span>
 <a class="btn-dark-pill w-full sm:w-auto inline-flex items-center justify-center gap-1.5 !text-white !no-underline font-bold text-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/abakos" rel="sponsored nofollow noopener" style="background-color: #0F5E4F !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
@@ -929,8 +922,8 @@ body { overflow-x: hidden; }
                         Compara las remuneraciones fijas y variables (incluyendo asignaciones, bonos e incentivos) dentro de un mismo grupo profesional o nivel de responsabilidad. Si en un nivel profesional equivalente la brecha supera el <strong>5% sin causa objetiva acreditada</strong>, la empresa se expone a fiscalización por discriminación indirecta.
                     </p>
 <div class="callout-emerald">
-<h3 class="font-bold text-emerald-900 text-sm m-0">Uso de la Mediana Salarial&gt;</h3>
-<p class="text-xs sm:text-sm text-emerald-800 m-0 mt-1">
+<h3 class="font-bold text-emerald-900 text-sm m-0">Uso de la Mediana Salarial</h3>
+<p class="text-sm sm:text-sm text-emerald-800 m-0 mt-1">
                             La DT y la CMF recomiendan calcular tanto el <strong>promedio aritmético</strong> como la <strong>mediana salarial</strong> de cada estamento, a fin de evitar que sueldos ejecutivos atípicos distorsionen la realidad retributiva del grueso de los trabajadores. Puedes simular el impacto de los descuentos e impuestos de cualquier nivel de sueldo con nuestra <a class="text-emerald-700 font-semibold underline" href="sueldo_liquido">Calculadora de Sueldo Líquido</a>.
                         </p>
 </div>
@@ -987,7 +980,7 @@ body { overflow-x: hidden; }
 <span>¿Una Pyme de menos de 50 trabajadores está obligada a medir la brecha salarial?</span>
 <summary class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</summary>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Aunque las micro y pequeñas empresas de menos de 50 dependientes no están obligadas a elaborar el reporte público anual, <strong>el principio de no discriminación salarial del artículo 62 bis rige para todas las empresas de Chile sin excepción</strong>. Si una trabajadora de una Pyme demuestra que percibe una renta menor por idéntico trabajo sin justificación objetiva, puede demandar ante la DT o los tribunales del trabajo.
                                 </p>
 </details>
@@ -996,7 +989,7 @@ body { overflow-x: hidden; }
 <span>¿Pueden incluirse los bonos y comisiones variables en el cálculo de la brecha?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Sí, de hecho es obligatorio. El registro salarial debe desagregar el <strong>sueldo base</strong> y las <strong>asignaciones y bonos variables</strong>. Gran parte de la brecha salarial oculta en el sector privado se produce en el reparto discrecional de bonos de fin de año o asignaciones de asignación directa, lo cual debe quedar transparentado en la auditoría.
                                 </p>
 </details>
@@ -1005,7 +998,7 @@ body { overflow-x: hidden; }
 <span>¿Qué puede hacer una trabajadora si sospecha que gana menos que un par hombre?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Primero, presentar un reclamo interno escrito conforme al procedimiento del Reglamento Interno de la empresa. La empresa debe responder fundadamente en 30 días. Si la respuesta es insatisfactoria o no se emite, la trabajadora puede acudir a la Dirección del Trabajo para una fiscalización o interponer una demanda de tutela por discriminación con patrocinio de un abogado o de la Defensoría Laboral.
                                 </p>
 </details>
@@ -1014,7 +1007,7 @@ body { overflow-x: hidden; }
 <span>¿Es obligatorio publicar las remuneraciones nominales de cada empleado?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     No. La ley resguarda la privacidad de los datos personales (Ley 19.628). El registro salarial y el reporte anual no individualizan los sueldos con nombres y apellidos, sino que entregan <strong>promedios, medianas y porcentajes agrupados por estamentos o categorías profesionales</strong> de al menos 3 o más personas para evitar la identificación directa.
                                 </p>
 </details>
@@ -1023,7 +1016,7 @@ body { overflow-x: hidden; }
 <span>¿Cómo impacta esta normativa en las liquidaciones mensuales y en el finiquito?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Si una trabajadora logra una nivelación salarial por resolución judicial o acuerdo administrativo, la empresa debe reajustar su base imponible para el pago de cotizaciones previsionales retroactivas. Asimismo, al momento de un eventual finiquito, la <strong>indemnización por años de servicio</strong> se recalcula sobre la base de la última remuneración mensual debidamente nivelada. Puedes verificar las indemnizaciones con nuestra <a class="text-forest-600 font-semibold hover:underline" href="finiquito_calculator">Calculadora de Finiquito</a>.
                                 </p>
 </details>
@@ -1079,10 +1072,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>

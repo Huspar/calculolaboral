@@ -51,9 +51,23 @@
         });
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
+    // Navegacion de calculadoras: deja visible la pestaña activa en moviles
+    function revealCurrentTab() {
+        var current = document.querySelector('.cl-calcnav [aria-current="page"]');
+        if (!current) return;
+        var track = current.parentElement;
+        if (track.scrollWidth <= track.clientWidth) return;
+        track.scrollLeft = current.offsetLeft - (track.clientWidth - current.offsetWidth) / 2;
+    }
+
+    function start() {
         init();
+        revealCurrentTab();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+    } else {
+        start();
     }
 })();

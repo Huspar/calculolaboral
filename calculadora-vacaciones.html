@@ -128,7 +128,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.9.0">
     
     <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
@@ -511,7 +511,7 @@
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="min-h-screen flex flex-col">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -521,7 +521,7 @@
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
             </div>
-            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
                 <span class="text-white/20">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -586,7 +586,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
                                     </div>
                                 </a>
 
@@ -596,7 +596,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
                                     </div>
                                 </a>
 
@@ -606,7 +606,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
                                     </div>
                                 </a>
 
@@ -616,7 +616,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
                                     </div>
                                 </a>
 
@@ -626,7 +626,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
                                     </div>
                                 </a>
 
@@ -636,7 +636,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
                                     </div>
                                 </a>
                             </div>
@@ -737,48 +737,18 @@
 
             <!-- Hero Title & Subtitle -->
             <div class="mb-8">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#00382E] text-xs font-semibold mb-3 border border-emerald-200/70">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                    <span>Art. 67, 68 y 73 CT • Cómputo Oficial con Inhábiles DT y Feriado Progresivo</span>
-                    <span class="material-icons text-xs">arrow_forward</span>
-                </div>
                 <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
                     Calculadora de Vacaciones Chile 2026.
                 </h1>
+                <p class="cl-meta">Art. 67, 68 y 73 CT • Cómputo Oficial con Inhábiles DT y Feriado Progresivo</p>
                 <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
                     Calcula de inmediato tus <strong>días acumulados</strong>, el <strong>pago de vacaciones proporcionales en finiquito</strong> con proyección obligatoria de inhábiles y tus días de <strong>feriado progresivo</strong> según la Dirección del Trabajo.
                 </p>
             </div>
 
-            <!-- Segmented Control Navigation -->
-            <div class="flex items-center justify-start sm:justify-center mb-8 overflow-x-auto scrollbar-none py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-                <div class="segmented-control-container">
-                    <a href="finiquito_calculator" class="product-tab">
-                        <span class="material-icons text-sm">calculate</span>
-                        <span>Finiquito Legal</span>
-                    </a>
-                    <a href="simulador-despido-injustificado-chile" class="product-tab">
-                        <span class="material-icons text-sm text-rose-600">warning</span>
-                        <span>Despido Injustificado</span>
-                    </a>
-                    <a href="sueldo_liquido" class="product-tab">
-                        <span class="material-icons text-sm">payments</span>
-                        <span>Sueldo Líquido</span>
-                    </a>
-                    <a href="calculadora-horas-extras" class="product-tab">
-                        <span class="material-icons text-sm">schedule</span>
-                        <span>Horas Extras 42h</span>
-                    </a>
-                    <a href="calculadora-sueldo-part-time" class="product-tab">
-                        <span class="material-icons text-sm">hourglass_bottom</span>
-                        <span>Part-Time</span>
-                    </a>
-                    <a href="calculadora-vacaciones" class="product-tab active">
-                        <span class="material-icons text-sm text-[#00382E]">beach_access</span>
-                        <span>Vacaciones DT</span>
-                    </a>
-                </div>
-            </div>
+            <nav class="cl-calcnav no-print" aria-label="Calculadoras">
+                <div class="cl-calcnav-track"><a href="finiquito_calculator">Finiquito</a><a href="simulador-despido-injustificado-chile">Despido injustificado</a><a href="sueldo_liquido">Sueldo líquido</a><a href="calculadora-horas-extras">Horas extras</a><a href="calculadora-sueldo-part-time">Part-time</a><a href="calculadora-vacaciones" aria-current="page">Vacaciones</a><a href="calculadora-despido-articulo-160">Despido Art. 160</a><a href="simulador-seguro-cesantia-afc">Seguro de cesantía</a><a href="calculadora-costo-empresa-chile">Costo empresa</a></div>
+            </nav>
 
             <!-- Mode Selector Tabs (3 Cards) -->
             <div class="max-w-4xl mx-auto mb-8 no-print">
@@ -790,7 +760,7 @@
                         </span>
                         <div class="text-left">
                             <span class="block leading-tight font-bold">Vacaciones Proporcionales</span>
-                            <span id="tab-sub-proporcionales" class="block text-[10px] text-emerald-800 font-semibold">Finiquito y Despido</span>
+                            <span id="tab-sub-proporcionales" class="block text-xs text-emerald-800 font-semibold">Finiquito y Despido</span>
                         </div>
                     </button>
 
@@ -801,7 +771,7 @@
                         </span>
                         <div class="text-left">
                             <span class="block leading-tight font-bold">Días Acumulados</span>
-                            <span id="tab-sub-activo" class="block text-[10px] text-slate-400 font-medium">Trabajador Activo</span>
+                            <span id="tab-sub-activo" class="block text-xs text-slate-400 font-medium">Trabajador Activo</span>
                         </div>
                     </button>
 
@@ -812,7 +782,7 @@
                         </span>
                         <div class="text-left">
                             <span class="block leading-tight font-bold">Feriado Progresivo</span>
-                            <span id="tab-sub-progresivas" class="block text-[10px] text-slate-400 font-medium">Por Antigüedad</span>
+                            <span id="tab-sub-progresivas" class="block text-xs text-slate-400 font-medium">Por Antigüedad</span>
                         </div>
                     </button>
                 </div>
@@ -830,7 +800,7 @@
                             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                                 <span class="material-icons text-[#00382E] text-xl">tune</span> Vacaciones en Finiquito
                             </h2>
-                            <span class="text-[11px] font-mono text-slate-500 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">Art. 73 CT</span>
+                            <span class="text-xs font-mono text-slate-500 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">Art. 73 CT</span>
                         </div>
 
                         <!-- 1. Fechas de Contrato -->
@@ -850,7 +820,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-1.5 pt-1">
-                                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-1">Rango rápido:</span>
+                                <span class="text-xs text-slate-400 font-bold uppercase tracking-wider mr-1">Rango rápido:</span>
                                 <button type="button" onclick="setVacRangeMonths(6)" class="sueldo-chip">6 Meses</button>
                                 <button type="button" onclick="setVacRangeMonths(12)" class="sueldo-chip">1 Año</button>
                                 <button type="button" onclick="setVacRangeMonths(24)" class="sueldo-chip">2 Años</button>
@@ -870,7 +840,7 @@
                             <div class="relative rounded-2xl shadow-2xs">
                                 <input type="text" id="vac-sueldo-base" value="$ 553.553" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatVacInput(this); calculateVacaciones();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1">Remuneración íntegra fija (Sueldo / 30 según Art. 71 CT).</p>
+                            <p class="text-xs text-slate-400 mt-1">Remuneración íntegra fija (Sueldo / 30 según Art. 71 CT).</p>
                         </div>
 
                         <!-- 3. Días ya Tomados -->
@@ -882,7 +852,7 @@
                                 <input type="number" id="vac-dias-tomados" value="0" min="0" max="60" step="0.5" oninput="calculateVacaciones()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                                 <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">días hábiles</span>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1">Días de descanso tomados durante el período computable.</p>
+                            <p class="text-xs text-slate-400 mt-1">Días de descanso tomados durante el período computable.</p>
                         </div>
 
                         <!-- 4. Régimen Geográfico -->
@@ -895,18 +865,18 @@
                                     <input type="radio" name="vac-regimen" value="general" checked onchange="calculateVacaciones()" class="peer sr-only">
                                     <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                         Régimen General
-                                        <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">15 días/año (1.25/mes)</span>
+                                        <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">15 días/año (1.25/mes)</span>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
                                     <input type="radio" name="vac-regimen" value="extrema" onchange="calculateVacaciones()" class="peer sr-only">
                                     <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                         Zona Extrema
-                                        <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">20 días/año (1.67/mes)</span>
+                                        <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">20 días/año (1.67/mes)</span>
                                     </div>
                                 </label>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1">Aplica a Regiones de Aysén, Magallanes y Provincia de Palena.</p>
+                            <p class="text-xs text-slate-400 mt-1">Aplica a Regiones de Aysén, Magallanes y Provincia de Palena.</p>
                         </div>
 
                         <!-- 5. Jornada Semanal -->
@@ -919,14 +889,14 @@
                                     <input type="radio" name="vac-jornada" value="5" checked onchange="calculateVacaciones()" class="peer sr-only">
                                     <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                         Lunes a Viernes
-                                        <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">Sábado inhábil DT</span>
+                                        <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Sábado inhábil DT</span>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
                                     <input type="radio" name="vac-jornada" value="6" onchange="calculateVacaciones()" class="peer sr-only">
                                     <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                         Lunes a Sábado
-                                        <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">Sábado hábil laboral</span>
+                                        <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Sábado hábil laboral</span>
                                     </div>
                                 </label>
                             </div>
@@ -939,7 +909,7 @@
                             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                                 <span class="material-icons text-[#00382E] text-xl">event_available</span> Días Disponibles Hoy
                             </h2>
-                            <span class="text-[11px] font-mono text-slate-500 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">Art. 67 CT</span>
+                            <span class="text-xs font-mono text-slate-500 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">Art. 67 CT</span>
                         </div>
 
                         <div>
@@ -947,7 +917,7 @@
                                 Fecha de Ingreso a la Empresa
                             </label>
                             <input type="date" id="act-fecha-ingreso" onchange="calculateVacacionesActivo()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
-                            <p class="text-[11px] text-slate-400 mt-1">Día exacto en que comenzaste a prestar servicios.</p>
+                            <p class="text-xs text-slate-400 mt-1">Día exacto en que comenzaste a prestar servicios.</p>
                         </div>
 
                         <div>
@@ -958,7 +928,7 @@
                                 <input type="number" id="act-dias-tomados" value="0" min="0" max="60" step="0.5" oninput="calculateVacacionesActivo()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                                 <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">días tomados</span>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1">Días de vacaciones que ya solicitaste y disfrutaste.</p>
+                            <p class="text-xs text-slate-400 mt-1">Días de vacaciones que ya solicitaste y disfrutaste.</p>
                         </div>
 
                         <div>
@@ -970,14 +940,14 @@
                                     <input type="radio" name="act-regimen" value="general" checked onchange="calculateVacacionesActivo()" class="peer sr-only">
                                     <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                         General
-                                        <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">1,25 días al mes</span>
+                                        <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">1,25 días al mes</span>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
                                     <input type="radio" name="act-regimen" value="extrema" onchange="calculateVacacionesActivo()" class="peer sr-only">
                                     <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                         Zona Extrema
-                                        <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">1,67 días al mes</span>
+                                        <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">1,67 días al mes</span>
                                     </div>
                                 </label>
                             </div>
@@ -988,7 +958,7 @@
                                 <label for="act-sueldo" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
                                     Sueldo Base (Opcional)
                                 </label>
-                                <span class="text-[10px] text-slate-400">Para valorizar tus días</span>
+                                <span class="text-xs text-slate-400">Para valorizar tus días</span>
                             </div>
                             <input type="text" id="act-sueldo" value="$ 553.553" inputmode="numeric" oninput="formatVacInput(this); calculateVacacionesActivo();" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                         </div>
@@ -1000,7 +970,7 @@
                             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                                 <span class="material-icons text-amber-600 text-xl">trending_up</span> Feriado Progresivo
                             </h2>
-                            <span class="text-[11px] font-mono text-slate-500 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">Art. 68 CT</span>
+                            <span class="text-xs font-mono text-slate-500 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">Art. 68 CT</span>
                         </div>
 
                         <div>
@@ -1011,7 +981,7 @@
                                 <input type="number" id="prog-anios-totales" value="10" min="0" max="45" step="1" oninput="calculateVacacionesProgresivas()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                                 <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">años cotizados</span>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1">Total de años aportados en cualquier empleador (mínimo 10 para activar el beneficio).</p>
+                            <p class="text-xs text-slate-400 mt-1">Total de años aportados en cualquier empleador (mínimo 10 para activar el beneficio).</p>
                         </div>
 
                         <div>
@@ -1022,7 +992,7 @@
                                 <input type="number" id="prog-anios-actual" value="3" min="0" max="35" step="1" oninput="calculateVacacionesProgresivas()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                                 <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">años continuos</span>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1">Se suma 1 día extra por cada 3 años cumplidos con el empleador vigente.</p>
+                            <p class="text-xs text-slate-400 mt-1">Se suma 1 día extra por cada 3 años cumplidos con el empleador vigente.</p>
                         </div>
 
                         <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl text-xs text-amber-950 leading-relaxed">
@@ -1044,14 +1014,14 @@
                             <span id="results-hero-badge-title" class="text-xs font-bold text-[#00382E] uppercase tracking-wider flex items-center gap-1.5">
                                 <span class="material-icons text-sm">payments</span> Total Feriado Proporcional a Pagar
                             </span>
-                            <span id="results-hero-badge-sub" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
+                            <span id="results-hero-badge-sub" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
                                 Monto Bruto en Finiquito
                             </span>
                         </div>
                         <div class="mt-2 mb-3">
                             <span id="results-hero-main-val" style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold font-mono tracking-tight leading-none">$ 0</span>
                         </div>
-                        <p id="results-hero-desc" class="text-xs text-slate-600 leading-relaxed">
+                        <p id="results-hero-desc" class="text-sm text-slate-600 leading-relaxed">
                             Este monto corresponde a la compensación íntegra en dinero del feriado legal y proporcional pendiente. <strong>No está afecto a cotizaciones previsionales de AFP ni Salud</strong> (Dictamen DT N° 2399/112).
                         </p>
                     </div>
@@ -1059,28 +1029,28 @@
                     <!-- 3 STAT KPI CARDS -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center sm:text-left">
-                            <span id="kpi-1-title" class="text-slate-500 block text-[10px] font-bold uppercase tracking-wider mb-1">Días Hábiles Netos</span>
+                            <span id="kpi-1-title" class="text-slate-500 block text-xs font-bold uppercase tracking-wider mb-1">Días Hábiles Netos</span>
                             <div class="flex items-baseline justify-center sm:justify-start gap-1">
                                 <span class="font-mono font-bold text-xl text-slate-900" id="kpi-1-val">0.00</span>
                                 <span class="text-xs text-slate-500 font-semibold" id="kpi-1-unit">días</span>
                             </div>
-                            <span class="text-[10px] text-slate-400 block mt-1" id="kpi-1-desc">Devengados menos tomados</span>
+                            <span class="text-xs text-slate-400 block mt-1" id="kpi-1-desc">Devengados menos tomados</span>
                         </div>
                         <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 text-center sm:text-left">
-                            <span id="kpi-2-title" class="text-amber-800 block text-[10px] font-bold uppercase tracking-wider mb-1">Inhábiles Proyectados</span>
+                            <span id="kpi-2-title" class="text-amber-800 block text-xs font-bold uppercase tracking-wider mb-1">Inhábiles Proyectados</span>
                             <div class="flex items-baseline justify-center sm:justify-start gap-1">
                                 <span class="font-mono font-bold text-xl text-amber-700" id="kpi-2-val">+0.00</span>
                                 <span class="text-xs text-amber-800 font-semibold" id="kpi-2-unit">días</span>
                             </div>
-                            <span class="text-[10px] text-amber-700/80 block mt-1" id="kpi-2-desc">Fines de semana y festivos DT</span>
+                            <span class="text-xs text-amber-700/80 block mt-1" id="kpi-2-desc">Fines de semana y festivos DT</span>
                         </div>
                         <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 text-center sm:text-left">
-                            <span id="kpi-3-title" class="text-emerald-800 block text-[10px] font-bold uppercase tracking-wider mb-1">Total Días a Liquidar</span>
+                            <span id="kpi-3-title" class="text-emerald-800 block text-xs font-bold uppercase tracking-wider mb-1">Total Días a Liquidar</span>
                             <div class="flex items-baseline justify-center sm:justify-start gap-1">
                                 <span class="font-mono font-bold text-xl text-emerald-700" id="kpi-3-val">0.00</span>
                                 <span class="text-xs text-emerald-800 font-semibold" id="kpi-3-unit">días corridos</span>
                             </div>
-                            <span class="text-[10px] text-emerald-700/80 block mt-1" id="kpi-3-desc">Multiplicados por sueldo diario</span>
+                            <span class="text-xs text-emerald-700/80 block mt-1" id="kpi-3-desc">Multiplicados por sueldo diario</span>
                         </div>
                     </div>
 
@@ -1139,7 +1109,7 @@
                                 <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
                                     Plantilla Solicitud Formal de Vacaciones (Word)
                                 </h4>
-                                <p class="text-xs text-slate-600 mb-3">
+                                <p class="text-sm text-slate-600 mb-3">
                                     Descarga gratis el formato formal editable para solicitar tus días de descanso al empleador conforme a las exigencias de la Dirección del Trabajo.
                                 </p>
                                 <button type="button" onclick="openVacTemplateModal()" class="btn-outline-pill !py-2 !px-4 !text-xs cursor-pointer">
@@ -1176,10 +1146,10 @@
                             <table class="w-full text-xs sm:text-sm border-collapse">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200">
-                                        <th scope="col" class="py-3 px-4 text-left font-bold text-slate-700 uppercase tracking-wider text-[11px]">Meses Trabajados</th>
-                                        <th scope="col" class="py-3 px-4 text-center font-bold text-slate-700 uppercase tracking-wider text-[11px]">Días Hábiles (Régimen General)</th>
-                                        <th scope="col" class="py-3 px-4 text-center font-bold text-slate-700 uppercase tracking-wider text-[11px]">Días Hábiles (Zona Extrema)</th>
-                                        <th scope="col" class="py-3 px-4 text-center font-bold text-slate-700 uppercase tracking-wider text-[11px]">Días Corridos Estimados DT</th>
+                                        <th scope="col" class="py-3 px-4 text-left font-bold text-slate-700 uppercase tracking-wider text-xs">Meses Trabajados</th>
+                                        <th scope="col" class="py-3 px-4 text-center font-bold text-slate-700 uppercase tracking-wider text-xs">Días Hábiles (Régimen General)</th>
+                                        <th scope="col" class="py-3 px-4 text-center font-bold text-slate-700 uppercase tracking-wider text-xs">Días Hábiles (Zona Extrema)</th>
+                                        <th scope="col" class="py-3 px-4 text-center font-bold text-slate-700 uppercase tracking-wider text-xs">Días Corridos Estimados DT</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-slate-600 font-mono">
@@ -1253,7 +1223,7 @@
                                 ¿Las vacaciones proporcionales pagan cotizaciones de AFP y Salud?
                                 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
                             </summary>
-                            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            <p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
                                 <strong>No.</strong> La indemnización por feriado legal y proporcional no constituye remuneración imponible conforme al artículo 41 del Código del Trabajo y al Dictamen DT N° 2399/112. Se paga el monto bruto íntegro sin descuentos de previsión ni de salud.
                             </p>
                         </details>
@@ -1263,7 +1233,7 @@
                                 ¿Qué pasa con mis vacaciones si renuncio voluntariamente?
                                 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
                             </summary>
-                            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            <p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
                                 El empleador está obligado por ley a pagarte en el finiquito el 100% de los días de vacaciones acumulados que no hayas utilizado, sin importar que hayas renunciado voluntariamente o que el contrato haya terminado por mutuo acuerdo.
                             </p>
                         </details>
@@ -1273,7 +1243,7 @@
                                 ¿Puedo acumular más de dos períodos de vacaciones?
                                 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
                             </summary>
-                            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            <p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
                                 Según el artículo 70 del Código del Trabajo, las vacaciones deben otorgarse de preferencia en primavera o verano y <strong>solo pueden acumularse hasta por dos períodos consecutivos</strong> de común acuerdo. El empleador debe otorgar al menos el primer período antes de que se cumpla el tercero.
                             </p>
                         </details>
@@ -1283,7 +1253,7 @@
                                 ¿Cómo se calcula el sueldo diario en remuneraciones variables o comisiones?
                                 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
                             </summary>
-                            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            <p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
                                 Si tienes un sueldo variable o comisiones, según el artículo 71 del Código del Trabajo, el sueldo diario se determina calculando el <strong>promedio de lo ganado en los últimos tres meses trabajados</strong> y dividiéndolo por la cantidad de días correspondientes.
                             </p>
                         </details>
@@ -1299,7 +1269,7 @@
     <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3.5 z-40 no-print">
         <div class="flex items-center justify-between gap-3">
             <div>
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Feriado Proporcional</span>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block">Feriado Proporcional</span>
                 <span id="mobile-total-display" style="color: var(--teal-forest);" class="text-xl font-black font-mono">
                     $ 0
                 </span>
@@ -1357,10 +1327,10 @@
                             </div>
                             <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
                         </a>
-                        <p class="text-xs text-white/75 leading-relaxed max-w-xs">
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-                        <div class="pt-1 text-[11px] font-mono-num text-white/50">
+                        <div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
@@ -1454,7 +1424,7 @@
                 <button type="submit" id="lead-vac-submit-btn" class="w-full py-3 px-4 btn-yellow-pill justify-center !shadow-md cursor-pointer">
                     Descargar Plantilla Gratis (Word)
                 </button>
-                <p class="text-[11px] text-slate-400 text-center">Tus datos están protegidos. Sin spam.</p>
+                <p class="text-xs text-slate-400 text-center">Tus datos están protegidos. Sin spam.</p>
             </form>
             <div id="vac-lead-success" class="text-center py-4 space-y-3 hidden">
                 <span class="material-icons text-4xl text-emerald-500">check_circle</span>
@@ -1502,7 +1472,7 @@
                 if (i) i.className = 'w-8 h-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center shrink-0';
             });
             [subProp, subAct, subProg].forEach(s => {
-                if (s) s.className = 'block text-[10px] text-slate-400 font-medium';
+                if (s) s.className = 'block text-xs text-slate-400 font-medium';
             });
 
             [ctrlProp, ctrlAct, ctrlProg].forEach(c => c.classList.add('hidden'));
@@ -1510,19 +1480,19 @@
             if (mode === 'proporcionales') {
                 btnProp.className = 'py-3 px-4 rounded-2xl border-2 border-[#00382E] bg-white text-slate-900 shadow-md shadow-[#00382E]/10 font-bold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer';
                 if (iconProp) iconProp.className = 'w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0';
-                if (subProp) subProp.className = 'block text-[10px] text-emerald-800 font-semibold';
+                if (subProp) subProp.className = 'block text-xs text-emerald-800 font-semibold';
                 ctrlProp.classList.remove('hidden');
                 calculateVacaciones();
             } else if (mode === 'activo') {
                 btnAct.className = 'py-3 px-4 rounded-2xl border-2 border-[#00382E] bg-white text-slate-900 shadow-md shadow-[#00382E]/10 font-bold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer';
                 if (iconAct) iconAct.className = 'w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0';
-                if (subAct) subAct.className = 'block text-[10px] text-emerald-800 font-semibold';
+                if (subAct) subAct.className = 'block text-xs text-emerald-800 font-semibold';
                 ctrlAct.classList.remove('hidden');
                 calculateVacacionesActivo();
             } else if (mode === 'progresivas') {
                 btnProg.className = 'py-3 px-4 rounded-2xl border-2 border-[#00382E] bg-white text-slate-900 shadow-md shadow-[#00382E]/10 font-bold text-xs sm:text-sm flex items-center justify-start sm:justify-center gap-2.5 transition-all cursor-pointer';
                 if (iconProg) iconProg.className = 'w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0';
-                if (subProg) subProg.className = 'block text-[10px] text-amber-800 font-semibold';
+                if (subProg) subProg.className = 'block text-xs text-amber-800 font-semibold';
                 ctrlProg.classList.remove('hidden');
                 calculateVacacionesProgresivas();
             }
@@ -1600,7 +1570,7 @@
             var bSub = document.getElementById('results-hero-badge-sub');
             if (bSub) {
                 bSub.textContent = 'Monto Bruto en Finiquito';
-                bSub.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200';
+                bSub.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-900 border border-emerald-200';
             }
             var hDesc = document.getElementById('results-hero-desc');
             if (hDesc) hDesc.innerHTML = 'Este monto corresponde a la compensación íntegra en dinero del feriado legal y proporcional pendiente. <strong>No está afecto a cotizaciones previsionales de AFP ni Salud</strong> (Dictamen DT N° 2399/112).';
@@ -1739,7 +1709,7 @@
             var bSub = document.getElementById('results-hero-badge-sub');
             if (bSub) {
                 bSub.textContent = 'Derecho al Descanso Legal';
-                bSub.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200';
+                bSub.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-900 border border-emerald-200';
             }
             var hDesc = document.getElementById('results-hero-desc');
             if (hDesc) hDesc.innerHTML = 'Estos son los <strong>días hábiles acumulados a hoy</strong> que puedes solicitar formalmente a tu empleador para disfrutar de tus vacaciones remuneradas.';
@@ -1816,7 +1786,7 @@
             var bSub = document.getElementById('results-hero-badge-sub');
             if (bSub) {
                 bSub.textContent = 'Art. 68 Código del Trabajo';
-                bSub.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-200';
+                bSub.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200';
             }
             var hDesc = document.getElementById('results-hero-desc');
             if (hDesc) hDesc.innerHTML = 'El feriado progresivo premia tu trayectoria laboral sumando 1 día hábil adicional cada 3 años de antigüedad tras haber cumplido los 10 primeros años cotizados.';
@@ -1960,7 +1930,7 @@
 
     <!-- Centralized Constants & Live Indicators -->
     <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.1.1"></script>
+    <script src="/js/indicators.js?v=2.9.0"></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

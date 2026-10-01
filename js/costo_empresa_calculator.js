@@ -280,7 +280,7 @@
                 if (labelMonto) labelMonto.innerText = 'Sueldo Base Mensual:';
                 if (badgeModo) {
                     badgeModo.innerText = 'Cálculo Directo DT';
-                    badgeModo.className = 'text-[10px] px-2 py-0.5 rounded-full bg-forest-100 text-forest-700 font-bold border border-forest-200/80';
+                    badgeModo.className = 'text-xs px-2 py-0.5 rounded-full bg-forest-100 text-forest-700 font-bold border border-forest-200/80';
                 }
                 if (helpMonto) {
                     helpMonto.innerText = 'Sueldo pactado en contrato individual (cláusula 4). Desmarcar gratificación reduce el costo directamente.';
@@ -297,7 +297,7 @@
                 if (labelMonto) labelMonto.innerText = 'Sueldo Líquido que pide el Candidato (en bolsillo):';
                 if (badgeModo) {
                     badgeModo.innerText = 'Cálculo Inverso (Líquido)';
-                    badgeModo.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold border border-amber-200/80';
+                    badgeModo.className = 'text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold border border-amber-200/80';
                 }
                 if (helpMonto) {
                     helpMonto.innerText = 'Monto neto final transferido al trabajador tras descuentos obligatorios (AFP, Salud, AFC e Impuesto).';

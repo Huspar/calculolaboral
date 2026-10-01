@@ -85,7 +85,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -183,14 +183,14 @@
         }
         .prose-content .callout {
             background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
+            border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
         }
         .prose-content .callout-amber {
             background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
@@ -914,7 +914,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -924,7 +924,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -984,7 +984,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -993,7 +993,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -1002,7 +1002,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -1011,7 +1011,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -1020,7 +1020,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -1029,7 +1029,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -1101,7 +1101,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Content -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full pt-2">
 <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
 <a class="hover:text-forest-500 transition-colors font-medium" href="./">Inicio</a>
@@ -1110,14 +1110,10 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Carta de Despido Chile</span>
 </nav>
-<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="cl-article mb-8 relative">
 <div class="prose-content max-w-none">
 <!-- Article Header -->
 <header class="mb-12">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F8FAF9] border border-slate-200 text-forest-600 text-xs font-semibold tracking-wider uppercase mb-4">
-<span class="material-icons text-[14px]">gavel</span>
-                            Guía Laboral
-                        </div>
 <h1 class="text-3xl sm:text-4xl font-bold text-slate-800 leading-tight mb-4">
                             Carta de Despido en Chile: Requisitos y Modelos 2026
                             <span class="text-slate-500 font-normal text-2xl sm:text-3xl block mt-1">plantillas para copiar, plazos de envío y validez legal</span>
@@ -1128,13 +1124,13 @@ body { overflow-x: hidden; }
 <span>9 min lectura</span>
 </div>
 <!-- E-E-A-T Trust Badge -->
-<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-8 mt-2">
-<div class="w-12 h-12 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center flex-shrink-0">
+<div class="cl-trust">
+<div class="cl-trust-icon">
 <span class="material-icons text-emerald-600">verified</span>
 </div>
 <div>
 <p class="text-sm text-slate-800 font-semibold m-0">Contenido Conforme a Normativa Oficial DT (2026)</p>
-<p class="text-xs text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
+<p class="text-sm text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
 </div>
 </div>
 </header>
@@ -1158,14 +1154,14 @@ body { overflow-x: hidden; }
                         En esta guía detallamos los requisitos obligatorios de la carta de despido, los plazos legales de entrega y envío a la Inspección del Trabajo, los errores más comunes de redacción, y proporcionamos <strong>3 modelos referenciales listos para ser copiados</strong>.
                     </p>
 <!-- CTA Lead — ¿Irregularidades en tu carta? -->
-<div class="my-8 p-6 rounded-2xl bg-amber-50/40 border-l-4 border-amber-500 border border-amber-200/60 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 no-print">
+<div class="my-8 p-6 rounded-2xl bg-amber-50/40 border border-amber-200/60 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 no-print">
 <div class="flex items-start gap-4">
 <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600">
 <span class="material-icons text-[24px]">gavel</span>
 </div>
 <div class="space-y-1">
 <div class="text-base font-bold text-slate-800 m-0 !mt-0 !mb-1">¿Tu carta de despido tiene irregularidades?</div>
-<p class="text-xs sm:text-sm text-slate-600 m-0 !mb-0 leading-relaxed">La falta de detalles en los hechos, invocar la causal de necesidades de la empresa de forma genérica, o no adjuntar el comprobante de pago de cotizaciones previsionales son vicios graves. Si tu empleador cometió estos errores, podrías demandar un despido injustificado y obtener un <strong>recargo del 30% al 50%</strong>. Permítenos conectar tu caso con un especialista para evaluar tus antecedentes.</p>
+<p class="text-sm sm:text-sm text-slate-600 m-0 !mb-0 leading-relaxed">La falta de detalles en los hechos, invocar la causal de necesidades de la empresa de forma genérica, o no adjuntar el comprobante de pago de cotizaciones previsionales son vicios graves. Si tu empleador cometió estos errores, podrías demandar un despido injustificado y obtener un <strong>recargo del 30% al 50%</strong>. Permítenos conectar tu caso con un especialista para evaluar tus antecedentes.</p>
 </div>
 </div>
 <a class="cta-lead-btn w-full md:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-amber-500 hover:bg-amber-600 !text-slate-900 font-bold text-sm rounded-xl shadow-md shadow-amber-500/20 transition-all hover:scale-[1.01] active:scale-95 whitespace-nowrap !no-underline cursor-pointer" href="#lead-form-carta">
@@ -1221,7 +1217,7 @@ body { overflow-x: hidden; }
 <h3 class="text-xl font-extrabold tracking-tight text-slate-900 !mt-0 !mb-0">
                                     ¿Tu empresa cuenta con contratos, anexos y protocolos al día ante la DT?
                                 </h3>
-<p class="text-xs sm:text-sm leading-relaxed text-slate-600 !mb-0">
+<p class="text-sm sm:text-sm leading-relaxed text-slate-600 !mb-0">
                                     Más del 60% de las contingencias laborales en despidos se agravan por falta de anexos contractuales vigentes o ausencia de protocolos obligatorios. Descarga el <strong class="text-slate-800">Kit de Blindaje Laboral Pyme 2026</strong> con anexos Ley 40 Horas, protocolo obligatorio Ley Karin (DS 44) y carpeta de fiscalización DT en Word por solo $19.990.
                                 </p>
 </div>
@@ -1240,9 +1236,9 @@ body { overflow-x: hidden; }
 <div class="flex items-center gap-2">
 <span class="material-icons text-forest-500 text-base">description</span>
 <span class="text-xs font-bold text-slate-800 tracking-wide">FORMATO ESTÁNDAR WORD (.DOCX) 2026</span>
-<span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Revisado Código del Trabajo</span>
+<span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Revisado Código del Trabajo</span>
 </div>
-<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs">
 <span class="material-icons text-xs text-forest-600">visibility</span>
 <span>VISTA PREVIA ILUSTRATIVA</span>
 </div>
@@ -1253,7 +1249,7 @@ body { overflow-x: hidden; }
 <div aria-hidden="true" class="doc-watermark-overlay">
 <div class="doc-watermark-stamp">
                                     VISTA PREVIA DE MUESTRA<br/>
-<span class="text-[11px] font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • DESCARGA EL PACK WORD (.DOCX) ABAJO</span>
+<span class="text-xs font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • DESCARGA EL PACK WORD (.DOCX) ABAJO</span>
 </div>
 </div>
 <strong>CARTA DE AVISO DE TÉRMINO DE CONTRATO DE TRABAJO
@@ -1293,7 +1289,7 @@ Representante Legal de [RAZÓN SOCIAL EMPRESA]
                                     ¿Prefieres el archivo en Word (.docx) editable y sin marcas?
                                 </span>
 </div>
-<p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
+<p class="text-sm sm:text-sm text-slate-600 leading-relaxed mb-3">
                                 Descarga gratis el <strong class="text-forest-700">Pack de Cartas de Despido Chile 2026 (.docx)</strong> con las cláusulas de resguardo legal para incorporar el membrete de tu empresa y el checklist de plazos legales de la DT:
                             </p>
 <!-- Lead Magnet Inline Form -->
@@ -1304,7 +1300,7 @@ Representante Legal de [RAZÓN SOCIAL EMPRESA]
 <input class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-forest-500 focus:ring-1 focus:ring-[#00382E]" name="empresa" placeholder="Empresa o Pyme (opcional)" type="text"/>
 </div>
 <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-<span class="text-[11px] text-slate-500 flex items-center gap-1.5">
+<span class="text-xs text-slate-500 flex items-center gap-1.5">
 <span class="material-icons text-emerald-600 text-xs">verified</span>
                                         Descarga directa inmediata + Copia enviada a tu correo
                                     </span>
@@ -1339,9 +1335,9 @@ Representante Legal de [RAZÓN SOCIAL EMPRESA]
 <div class="flex items-center gap-2">
 <span class="material-icons text-red-500 text-base">warning</span>
 <span class="text-xs font-bold text-slate-800 tracking-wide">PLANTILLA DESPIDO DISCIPLINARIO (SIN INDEMNIZACIÓN)</span>
-<span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-50 text-red-700 border border-red-200">Plazo 3 Días Hábiles</span>
+<span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">Plazo 3 Días Hábiles</span>
 </div>
-<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-800 border border-red-300 shadow-2xs">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-800 border border-red-300 shadow-2xs">
 <span class="material-icons text-xs text-red-600">visibility</span>
 <span>VISTA PREVIA ILUSTRATIVA</span>
 </div>
@@ -1352,7 +1348,7 @@ Representante Legal de [RAZÓN SOCIAL EMPRESA]
 <div aria-hidden="true" class="doc-watermark-overlay">
 <div class="doc-watermark-stamp">
                                     VISTA PREVIA DE MUESTRA<br/>
-<span class="text-[11px] font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • EXIGE PRUEBA DOCUMENTAL DE INASISTENCIA</span>
+<span class="text-xs font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • EXIGE PRUEBA DOCUMENTAL DE INASISTENCIA</span>
 </div>
 </div>
 <strong>CARTA DE COMUNICACIÓN DE TÉRMINO DE CONTRATO
@@ -1391,7 +1387,7 @@ _________________________________________
                                     ¿Necesitas la carta disciplinaria formal en Word (.docx) editable?
                                 </span>
 </div>
-<p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
+<p class="text-sm sm:text-sm text-slate-600 leading-relaxed mb-3">
                                 Descarga gratis el <strong class="text-forest-700">Pack de Cartas de Despido Chile 2026 (.docx)</strong> con los modelos por Art. 160 y Art. 161 más el checklist de plazos fatales (3 días hábiles):
                             </p>
 <!-- Lead Magnet Inline Form -->
@@ -1402,7 +1398,7 @@ _________________________________________
 <input class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-forest-500 focus:ring-1 focus:ring-[#00382E]" name="empresa" placeholder="Empresa o Pyme (opcional)" type="text"/>
 </div>
 <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-<span class="text-[11px] text-slate-500 flex items-center gap-1.5">
+<span class="text-xs text-slate-500 flex items-center gap-1.5">
 <span class="material-icons text-emerald-600 text-xs">verified</span>
                                         Descarga directa inmediata + Copia enviada a tu correo
                                     </span>
@@ -1440,9 +1436,9 @@ _________________________________________
 <div class="flex items-center gap-2">
 <span class="material-icons text-forest-500 text-base">person</span>
 <span class="text-xs font-bold text-slate-800 tracking-wide">PLANTILLA RENUNCIA VOLUNTARIA (ART. 159 Nº2)</span>
-<span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-forest-50 text-forest-700 border border-forest-200">Exige Ratificación Notarial</span>
+<span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-forest-50 text-forest-700 border border-forest-200">Exige Ratificación Notarial</span>
 </div>
-<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-300 shadow-2xs">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 shadow-2xs">
 <span class="material-icons text-xs text-amber-600">lock</span>
 <span>VISTA PREVIA CON MARCA DE AGUA</span>
 </div>
@@ -1453,7 +1449,7 @@ _________________________________________
 <div aria-hidden="true" class="doc-watermark-overlay">
 <div class="doc-watermark-stamp">
                                     VISTA PREVIA DE MUESTRA<br/>
-<span class="text-[11px] font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • DEBE SER RATIFICADA ANTE MINISTRO DE FE</span>
+<span class="text-xs font-bold tracking-widest text-red-600/60 block mt-1">CALCULOLABORAL.CL • DEBE SER RATIFICADA ANTE MINISTRO DE FE</span>
 </div>
 </div>
 <strong>CARTA DE RENUNCIA VOLUNTARIA</strong>
@@ -1490,7 +1486,7 @@ R.U.T.: [TU RUT]
                                     ¿Renuncias? Simula cuánto te corresponde de finiquito por ley
                                 </span>
 </div>
-<p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
+<p class="text-sm sm:text-sm text-slate-600 leading-relaxed mb-3">
                                 Al renunciar voluntariamente tienes derecho a recibir tus días trabajados del mes y vacaciones proporcionales pendientes. Simula gratis o genera el documento notarial listo.
                             </p>
 <div class="doc-conversion-actions">
@@ -1635,7 +1631,7 @@ R.U.T.: [TU RUT]
 </div>
 <!-- Disclaimer -->
 <div class="mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
-<p class="!text-xs !text-slate-500 !mb-0 !leading-relaxed">
+<p class="!text-sm !text-slate-500 !mb-0 !leading-relaxed">
 <strong>Aviso legal:</strong> Esta guía abarca los artículos referenciales del Código laboral en materias de comunicaciones de despido de modo informativo. No constituimos un estudio jurídico legal. Ante incertidumbres graves, o querer demandar causales de despido injustificado, aconsejamos dirigirse a la Inspección de Trabajo para orientación.
                         </p>
 </div>
@@ -1683,10 +1679,10 @@ R.U.T.: [TU RUT]
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>
@@ -1768,7 +1764,7 @@ R.U.T.: [TU RUT]
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UF</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Fecha</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1786,7 +1782,7 @@ R.U.T.: [TU RUT]
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UTM</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Período</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1802,7 +1798,7 @@ R.U.T.: [TU RUT]
 </div>
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.0.3"></script>
-<script src="/js/indicators.js?v=2.0.3"></script>
+<script src="/js/indicators.js?v=2.9.0"></script>
 <script src="/js/pdf_generator.js?v=2.8.0"></script>
 <script>
         function enviarLead(fuenteCustom) {
@@ -2016,7 +2012,7 @@ R.U.T.: [TU RUT]
                         '<span class="material-icons ' + headerIconColor + ' text-base sm:text-lg">' + headerIcon + '</span>' +
                         '<span>' + titleText + '</span>' +
                     '</div>' +
-                    '<p class="text-[11.5px] sm:text-xs text-slate-600 leading-relaxed">' + subtitle + '</p>' +
+                    '<p class="text-xs sm:text-xs text-slate-600 leading-relaxed">' + subtitle + '</p>' +
                     '<div class="pt-0.5">' +
                         '<a href="/descargas/Pack_Modelos_Cartas_Despido_Chile_2026.zip" download="Pack_Modelos_Cartas_Despido_Chile_2026.zip" class="btn-yellow-pill inline-flex items-center gap-1.5 !text-white font-bold text-xs transition-all cursor-pointer active:scale-95" style="background-color: #0F5E4F !important; color: #ffffff !important;">' +
                             '<span class="material-icons text-sm" style="color: #ffffff;">download</span>' +
@@ -2024,8 +2020,8 @@ R.U.T.: [TU RUT]
                         '</a>' +
                     '</div>' +
                     '<div class="pt-2.5 border-t border-slate-200/90 text-slate-700">' +
-                        '<span class="text-[11px] font-bold text-slate-900 block mb-1.5">📱 Descarga directa por documento (ideal para celulares):</span>' +
-                        '<div class="flex flex-col gap-1.5 text-[11px] sm:text-xs">' +
+                        '<span class="text-xs font-bold text-slate-900 block mb-1.5">📱 Descarga directa por documento (ideal para celulares):</span>' +
+                        '<div class="flex flex-col gap-1.5 text-xs sm:text-xs">' +
                             '<a href="/descargas/01_Modelo_Carta_Despido_Art161_Necesidades_Empresa_2026.docx" download class="inline-flex items-center gap-1.5 text-forest-700 hover:text-forest-900 font-semibold underline">' +
                                 '<span class="material-icons text-[14px] text-forest-600">description</span>' +
                                 '<span>Modelo 1: Art. 161 Necesidades de la Empresa (.docx)</span>' +

@@ -145,7 +145,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         .prose-content { line-height: 1.75; color: #334155; }
         .prose-content h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; line-height: 1.25; }
@@ -157,10 +157,10 @@
         .prose-content strong { color: #0f172a; font-weight: 600; }
         .prose-content a { color: #0F5E4F; text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
         .prose-content a:hover { color: #064A3E; }
-        .callout { background: #EEF6F3; border-left: 4px solid #0F5E4F; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
-        .callout-amber { background: #fffbeb; border-left: 4px solid #d97706; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
-        .callout-emerald { background: #ecfdf5; border-left: 4px solid #059669; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
-        .callout-rose { background: #fff1f2; border-left: 4px solid #e11d48; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout { background: #EEF6F3; border: 1px solid color-mix(in srgb, #0F5E4F 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout-amber { background: #fffbeb; border: 1px solid color-mix(in srgb, #d97706 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout-emerald { background: #ecfdf5; border: 1px solid color-mix(in srgb, #059669 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .callout-rose { background: #fff1f2; border: 1px solid color-mix(in srgb, #e11d48 35%, transparent); padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
 
         /* Scoped styles for CTA banner (SaaS Premium Institucional) */
         .pyme-banner {
@@ -539,7 +539,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -549,7 +549,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -609,7 +609,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -618,7 +618,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -627,7 +627,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -636,7 +636,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -645,7 +645,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -654,7 +654,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -726,7 +726,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Article Body -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full">
 <!-- Breadcrumbs -->
 <nav aria-label="Migas de pan" class="flex items-center gap-2 text-xs text-slate-400 mb-6">
@@ -736,28 +736,21 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold truncate">Sala Cuna en Chile 2026 (Art. 203 CT)</span>
 </nav>
-<article class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-8 md:p-12 mb-12">
+<article class="cl-article mb-12 relative">
 <!-- Article Header -->
 <header class="mb-8">
-<div class="flex flex-wrap items-center gap-2.5 mb-4">
-<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                            Beneficios &amp; Maternidad 2026
-                        </span>
-<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-slate-200/60">
-                            Código del Trabajo Art. 203
-                        </span>
-</div>
 <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
                         Sala Cuna en Chile 2026: Cómo funciona hoy el Art. 203, monto del bono compensatorio y qué cambia con la nueva ley
                     </h1>
+<p class="cl-meta">Beneficios &amp; Maternidad 2026 · Código del Trabajo Art. 203</p>
 <!-- E-E-A-T Trust Badge -->
-<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-8 mt-2">
-<div class="w-12 h-12 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center flex-shrink-0">
+<div class="cl-trust">
+<div class="cl-trust-icon">
 <span class="material-icons text-emerald-600">verified</span>
 </div>
 <div>
 <p class="text-sm text-slate-800 font-semibold m-0">Contenido Conforme a Normativa Oficial DT (2026)</p>
-<p class="text-xs text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
+<p class="text-sm text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 pb-6 border-b border-slate-100">
@@ -791,8 +784,8 @@ body { overflow-x: hidden; }
                         El derecho a sala cuna es una de las instituciones más trascendentales y debatidas del derecho laboral chileno. Consagrado en el <strong>artículo 203 del Código del Trabajo</strong>, este beneficio impone al empleador la obligación de habilitar o financiar el cuidado de los hijos e hijas menores de dos años de sus dependientes. Sin embargo, su diseño histórico —que condiciona la exigencia a contar con <strong>20 o más trabajadoras mujeres</strong>— ha generado distorsiones profundas en el mercado laboral y un intenso debate legislativo en 2026.
                     </p>
 <div class="callout-amber">
-<div class="font-bold text-amber-900 text-sm m-0">El llamado "impuesto a la mujer" en las Pymes&gt;</div>
-<p class="text-xs sm:text-sm text-amber-800 m-0 mt-1">
+<div class="font-bold text-amber-900 text-sm m-0">El llamado "impuesto a la mujer" en las Pymes</div>
+<p class="text-sm sm:text-sm text-amber-800 m-0 mt-1">
                             Diversos estudios económicos de la OCDE y gremios empresariales en Chile han evidenciado el <em>efecto barrera de la trabajadora 19</em>: muchas pequeñas y medianas empresas evitan contratar a su vigésima dependiente mujer para no asumir el costo completo de financiar salas cunas privadas, el cual puede superar los $450.000 mensuales por cada menor.
                         </p>
 </div>
@@ -813,8 +806,8 @@ body { overflow-x: hidden; }
 <li><strong>Empresas con múltiples sucursales:</strong> Si la empresa tiene varias sucursales o locales en una misma ciudad o comuna, el cómputo de 20 mujeres se aplica respecto del total de la empresa en esa localidad o establecimiento, según los dictámenes de la DT sobre unidad económica.</li>
 </ul>
 <div class="callout">
-<h3 class="font-bold text-forest-900 text-sm m-0">Derecho accesorio esencial: 1 hora diaria para alimentación (Art. 206)&gt;</h3>
-<p class="text-xs sm:text-sm text-forest-800 m-0 mt-1">
+<h3 class="font-bold text-forest-900 text-sm m-0">Derecho accesorio esencial: 1 hora diaria para alimentación (Art. 206)</h3>
+<p class="text-sm sm:text-sm text-forest-800 m-0 mt-1">
                             Toda madre trabajadora tiene derecho a disponer de a lo menos <strong>una hora al día para alimentar a sus hijos menores de dos años</strong>. Este lapso se considera efectivamente trabajado para todos los efectos legales y salariales, no puede ser descontado de la remuneración y se amplía con el tiempo necesario para los viajes de ida y vuelta.
                         </p>
 </div>
@@ -826,21 +819,21 @@ body { overflow-x: hidden; }
 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
 <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-[#00382E] text-[#FFB703] flex items-center justify-center text-xs font-black">A</span> Sala Cuna anexa e independiente en el establecimiento
                             </div>
-<p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-2 leading-relaxed">
                                 Habilitada en el mismo local donde prestan servicios las trabajadoras. Debe contar con empadronamiento y autorización de la <strong>Junta Nacional de Jardines Infantiles (JUNJI)</strong> o el Reconocimiento Oficial del Ministerio de Educación (Subsecretaría de Educación Parvularia).
                             </p>
 </div>
 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
 <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-[#00382E] text-[#FFB703] flex items-center justify-center text-xs font-black">B</span> Construcción y mantención de servicios comunes
                             </div>
-<p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-2 leading-relaxed">
                                 Dos o más empresas ubicadas en una misma área geográfica, parque empresarial, centro comercial o edificio corporativo pueden asociarse para financiar conjuntamente una sala cuna compartida para sus trabajadoras.
                             </p>
 </div>
 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
 <div class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-[#00382E] text-[#FFB703] flex items-center justify-center text-xs font-black">C</span> Pago del servicio en una sala cuna externa autorizada (La más utilizada)
                             </div>
-<p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-2 leading-relaxed">
                                 La empresa suscribe un convenio y asume el pago del 100% de la matrícula y mensualidad en una sala cuna particular cercana al lugar de trabajo o al domicilio de la madre. <strong>Requisito ineludible:</strong> el recinto debe contar con autorización de la JUNJI o Mineduc. No sirve contratar guarderías informales ni jardines sin certificación.
                             </p>
 </div>
@@ -890,7 +883,7 @@ body { overflow-x: hidden; }
 </tbody>
 </table>
 </div>
-<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-xs text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
 <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
                         </div>
 </div>
@@ -908,17 +901,17 @@ body { overflow-x: hidden; }
 </ul>
 <div class="callout-emerald">
 <h3 class="font-bold text-emerald-900 text-sm m-0">Tratamiento Tributario y Previsional: ¿Paga AFP, Salud o Impuestos?&gt;</h3>
-<p class="text-xs sm:text-sm text-emerald-800 m-0 mt-1">
+<p class="text-sm sm:text-sm text-emerald-800 m-0 mt-1">
 <strong>NO, el bono compensatorio es 100% no imponible y no tributable.</strong> Conforme a dictámenes reiterados del Servicio de Impuestos Internos (SII) y de la Dirección del Trabajo, este pago no remunera la prestación de servicios, sino que constituye una indemnización compensatoria de un gasto legal de protección de la maternidad. Por lo tanto, no se le descuenta AFP, Fonasa, Isapre ni Impuesto Único de Segunda Categoría.
                         </p>
 </div>
 <!-- Bloque Publicitario Responsivo Abakos -->
 <div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-forest-50/40 via-white to-slate-50 border border-slate-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-forest-600 bg-forest-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+<span class="text-xs font-extrabold uppercase tracking-wider text-forest-600 bg-forest-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
 <span class="w-1.5 h-1.5 rounded-full bg-[#F8FAF9]0 animate-pulse"></span> Publicidad Patrocinada
                             </span>
-<span class="text-[10px] text-slate-500 font-semibold">Abakos Chile • Préstamos Online</span>
+<span class="text-xs text-slate-500 font-semibold">Abakos Chile • Préstamos Online</span>
 </div>
 <a class="group block overflow-hidden rounded-xl border border-slate-200/90 hover:border-slate-300 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/abakos" rel="sponsored nofollow noopener" target="_blank">
 <picture class="block w-full">
@@ -927,7 +920,7 @@ body { overflow-x: hidden; }
 </picture>
 </a>
 <div class="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 px-1 text-xs">
-<span class="text-slate-600 font-medium text-[11px] sm:text-xs text-center sm:text-left">
+<span class="text-slate-600 font-medium text-xs sm:text-xs text-center sm:text-left">
                                 ¿Necesitas liquidez o te faltan lucas a fin de mes? Simula en minutos <strong>sin pagos por adelantado</strong>.
                             </span>
 <a class="btn-dark-pill w-full sm:w-auto inline-flex items-center justify-center gap-1.5 !text-white !no-underline font-bold text-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/abakos" rel="sponsored nofollow noopener" style="background-color: #0F5E4F !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
@@ -998,7 +991,7 @@ body { overflow-x: hidden; }
 <span>¿Puede un padre trabajador solicitar el beneficio de sala cuna para su hijo?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Bajo la ley actual, el padre tiene derecho a sala cuna si se le ha conferido judicialmente el cuidado personal del menor de dos años, o si la madre fallece o se encuentra imposibilitada de cuidar al niño. Con el nuevo proyecto de Sala Cuna Universal, se avanza hacia la plena corresponsabilidad parental compartida.
                                 </p>
 </details>
@@ -1007,7 +1000,7 @@ body { overflow-x: hidden; }
 <span>¿Qué pasa si la trabajadora no desea llevar a su hijo a la sala cuna dispuesta por la empresa?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Si la empresa ofrece y mantiene una sala cuna que cumple con todas las exigencias legales (anexa o externa autorizada por JUNJI/Mineduc) y la madre decide voluntariamente no utilizarla por razones de conveniencia personal o familiar, el empleador se entiende liberado de su obligación y no está forzado por ley a pagar un bono compensatorio en dinero.
                                 </p>
 </details>
@@ -1016,7 +1009,7 @@ body { overflow-x: hidden; }
 <span>¿Cómo se debe redactar el anexo de bono compensatorio de sala cuna?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Debe constar por escrito como anexo al contrato de trabajo, detallando: 1) la causal de excepción invocada (salud del menor, teletrabajo o falta de vacantes autorizadas); 2) el monto mensual acordado; 3) su carácter expreso de asignación compensatoria no remuneratoria ni imponible; y 4) su vigencia sujeta al cumplimiento de los dos años de edad del menor.
                                 </p>
 </details>
@@ -1025,7 +1018,7 @@ body { overflow-x: hidden; }
 <span>¿El empleador puede suspender el pago de sala cuna durante las vacaciones de la trabajadora?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     No. Las salas cunas particulares cobran aranceles anuales o semestrales continuos que deben mantenerse reservados. Suspender el pago de la mensualidad privaría al menor de su matrícula para el reintegro de la trabajadora, lo que ha sido calificado por la DT como un menoscabo ilícito.
                                 </p>
 </details>
@@ -1034,7 +1027,7 @@ body { overflow-x: hidden; }
 <span>¿Cómo simular el sueldo líquido si recibo bono de sala cuna?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 leading-relaxed">
                                     Al no ser imponible ni tributable, el bono compensatorio se suma directamente en la columna de <strong>Haberes No Imponibles</strong> en tu liquidación mensual, aumentando en un 100% tu líquido a pagar sin generar retención de impuestos ni descuentos previsionales. Puedes comprobar el desglose exacto en nuestra <a class="text-forest-600 font-semibold hover:underline" href="sueldo_liquido">Calculadora de Sueldo Líquido</a>.
                                 </p>
 </details>
@@ -1090,10 +1083,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>

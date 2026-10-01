@@ -144,7 +144,7 @@ const Validation = {
         let errorEl = inputEl.parentElement.querySelector('.field-error');
         if (!errorEl) {
             errorEl = document.createElement('p');
-            errorEl.className = 'field-error text-[11px] text-red-400 mt-1 flex items-center gap-1 animate-fade-in';
+            errorEl.className = 'field-error text-xs text-red-400 mt-1 flex items-center gap-1 animate-fade-in';
             errorEl.innerHTML = `<span class="material-icons text-[12px]">error_outline</span> <span class="error-text"></span>`;
             // Insert after the input (or after its parent wrapper if inside one)
             inputEl.parentElement.appendChild(errorEl);

@@ -894,7 +894,7 @@
                         <p class="font-bold uppercase text-gray-900">${escapeHtml(f.empresaRazon)}</p>
                         <p class="text-gray-600">RUT: ${escapeHtml(f.empresaRut)}</p>
                         <p class="text-gray-600">Por don(ña) ${escapeHtml(f.empresaRepNombre)}</p>
-                        <p class="text-gray-500 text-[10px]">EMPLEADORA</p>
+                        <p class="text-gray-500 text-xs">EMPLEADORA</p>
                     </div>
 
                     <!-- Firma Trabajador -->
@@ -902,20 +902,20 @@
                         <div class="w-48 border-b border-gray-900 mb-2"></div>
                         <p class="font-bold uppercase text-gray-900">${escapeHtml(f.trabajadorNombre)}</p>
                         <p class="text-gray-600">RUT: ${escapeHtml(f.trabajadorRut)}</p>
-                        <p class="text-gray-500 text-[10px]">TRABAJADOR(A)</p>
+                        <p class="text-gray-500 text-xs">TRABAJADOR(A)</p>
                     </div>
                 </div>
 
                 <!-- Recuadro Reserva de Derechos -->
                 <div class="mt-8 p-3 border border-dashed border-gray-400 text-xs text-gray-700 bg-gray-50/50">
-                    <p class="font-bold uppercase text-gray-800 text-[11px] mb-1">Espacio Exclusivo para Reserva de Derechos del Trabajador(a) (Ley Nº 21.361):</p>
-                    <p class="italic text-[11px] text-gray-500 h-8 flex items-center">
+                    <p class="font-bold uppercase text-gray-800 text-xs mb-1">Espacio Exclusivo para Reserva de Derechos del Trabajador(a) (Ley Nº 21.361):</p>
+                    <p class="italic text-xs text-gray-500 h-8 flex items-center">
                         [Si no formula reserva, cruzar con una línea. El trabajador conserva el derecho a reservar acciones laborales].
                     </p>
                 </div>
 
                 <!-- Ratificación Notarial -->
-                <div class="mt-8 pt-4 border-t border-gray-300 text-center text-[11px] text-gray-600">
+                <div class="mt-8 pt-4 border-t border-gray-300 text-center text-xs text-gray-600">
                     <p class="font-bold uppercase tracking-wider text-gray-800">AUTORIZACIÓN ANTE MINISTRO DE FE</p>
                     <p class="mt-1">
                         Autorizo las firmas estampadas precedentemente de don(ña) <strong>${escapeHtml(f.empresaRepNombre)}</strong> y de don(ña) <strong>${escapeHtml(f.trabajadorNombre)}</strong>, quienes previa exhibición de sus respectivas cédulas de identidad manifestaron haber leído y aceptado el contenido del presente instrumento.
@@ -1101,10 +1101,10 @@
                             <span class="material-icons text-emerald-600 text-2xl">verified</span>
                             <div>
                                 <span class="text-xs font-bold block text-emerald-950">¡Finiquito Notarial Desbloqueado!</span>
-                                <span class="text-[11px] text-emerald-700">Garantía activa de 48 horas para don(ña) <strong>${escapeHtml(formData.trabajadorNombre)}</strong> (RUT: ${escapeHtml(formData.trabajadorRut)}).</span>
+                                <span class="text-xs text-emerald-700">Garantía activa de 48 horas para don(ña) <strong>${escapeHtml(formData.trabajadorNombre)}</strong> (RUT: ${escapeHtml(formData.trabajadorRut)}).</span>
                             </div>
                         </div>
-                        <button type="button" id="btn-reset-new-finiquito" class="text-[11px] text-slate-500 hover:text-slate-800 underline self-start sm:self-auto cursor-pointer">
+                        <button type="button" id="btn-reset-new-finiquito" class="text-xs text-slate-500 hover:text-slate-800 underline self-start sm:self-auto cursor-pointer">
                             Crear finiquito para otro trabajador
                         </button>
                     </div>

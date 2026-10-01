@@ -121,7 +121,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.9.0">
     <style>
         :root {
             --teal-forest: #00382E;
@@ -499,7 +499,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="min-h-screen flex flex-col">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -509,7 +509,7 @@ body { overflow-x: hidden; }
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
             </div>
-            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
                 <span class="text-white/20">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -574,7 +574,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
                                     </div>
                                 </a>
 
@@ -584,7 +584,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
                                     </div>
                                 </a>
 
@@ -594,7 +594,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
                                     </div>
                                 </a>
 
@@ -604,7 +604,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
                                     </div>
                                 </a>
 
@@ -614,7 +614,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
                                     </div>
                                 </a>
 
@@ -624,7 +624,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
                                     </div>
                                 </a>
                             </div>
@@ -726,8 +726,8 @@ body { overflow-x: hidden; }
             <!-- Hero Minimalista (TealHQ Architectural Hierarchy) -->
             <div class="text-center mt-3 mb-8 max-w-3xl mx-auto no-print">
                 <a href="simulador-despido-injustificado-chile" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 transition-all shadow-2xs hover:shadow-xs group mb-4 !no-underline">
-                    <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
-                        <span class="material-icons text-[11px]">gavel</span> Art. 160 & 168 letra c CT
+                    <span class="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+                        <span class="material-icons text-xs">gavel</span> Art. 160 & 168 letra c CT
                     </span>
                     <span class="text-xs font-semibold text-slate-800">
                         Derechos Irrenunciables + Recargo Judicial 50% al 100%
@@ -743,39 +743,9 @@ body { overflow-x: hidden; }
                 </p>
             </div>
 
-            <!-- Segmented Control Tabs (Product Switcher) -->
-            <div class="flex justify-center mb-10 overflow-x-auto scrollbar-none px-2 py-1 no-print">
-                <div class="segmented-control-container">
-                    <a href="finiquito_calculator" class="product-tab">
-                        <span class="material-icons text-sm text-[#00382E]">gavel</span>
-                        <span>Finiquito Legal</span>
-                    </a>
-                    <a href="simulador-despido-injustificado-chile" class="product-tab">
-                        <span class="material-icons text-sm text-rose-600">warning</span>
-                        <span>Despido Injustificado</span>
-                    </a>
-                    <a href="sueldo_liquido" class="product-tab">
-                        <span class="material-icons text-sm text-forest-600">payments</span>
-                        <span>Sueldo Líquido</span>
-                    </a>
-                    <a href="calculadora-horas-extras" class="product-tab">
-                        <span class="material-icons text-sm text-amber-600">schedule</span>
-                        <span>Horas Extras 42h</span>
-                    </a>
-                    <a href="calculadora-sueldo-part-time" class="product-tab">
-                        <span class="material-icons text-sm text-forest-600">hourglass_bottom</span>
-                        <span>Part-Time</span>
-                    </a>
-                    <a href="calculadora-vacaciones" class="product-tab">
-                        <span class="material-icons text-sm text-forest-600">beach_access</span>
-                        <span>Vacaciones DT</span>
-                    </a>
-                    <a href="calculadora-despido-articulo-160" class="product-tab active">
-                        <span class="material-icons text-sm text-amber-700">warning_amber</span>
-                        <span>Art. 160</span>
-                    </a>
-                </div>
-            </div>
+            <nav class="cl-calcnav no-print" aria-label="Calculadoras">
+                <div class="cl-calcnav-track"><a href="finiquito_calculator">Finiquito</a><a href="simulador-despido-injustificado-chile">Despido injustificado</a><a href="sueldo_liquido">Sueldo líquido</a><a href="calculadora-horas-extras">Horas extras</a><a href="calculadora-sueldo-part-time">Part-time</a><a href="calculadora-vacaciones">Vacaciones</a><a href="calculadora-despido-articulo-160" aria-current="page">Despido Art. 160</a><a href="simulador-seguro-cesantia-afc">Seguro de cesantía</a><a href="calculadora-costo-empresa-chile">Costo empresa</a></div>
+            </nav>
 
             <!-- 5. TWO-COLUMN CALCULATOR INTERFACE (440px Form Left, Flexible Results Right) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
@@ -786,7 +756,7 @@ body { overflow-x: hidden; }
                         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                             <span class="material-icons text-[#00382E] text-xl">tune</span> Antecedentes del Despido
                         </h2>
-                        <span class="text-[11px] font-mono text-amber-900 font-bold bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                        <span class="text-xs font-mono text-amber-900 font-bold bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
                             Plazo Pago: 10 Días
                         </span>
                     </div>
@@ -844,7 +814,7 @@ body { overflow-x: hidden; }
                         <div class="relative rounded-2xl shadow-2xs">
                             <input type="text" id="art160-sueldo" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatArt160Input(this); calculateArt160();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-1">Sueldo base + gratificación + comisiones (tope legal 90 UF: ~$3.690.000).</p>
+                        <p class="text-xs text-slate-400 mt-1">Sueldo base + gratificación + comisiones (tope legal 90 UF: ~$3.690.000).</p>
                     </div>
 
                     <!-- 4. Días trabajados del mes y Vacaciones Pendientes -->
@@ -854,14 +824,14 @@ body { overflow-x: hidden; }
                                 Días trabajados del mes
                             </label>
                             <input type="number" id="art160-dias-mes" value="15" min="1" max="30" oninput="calculateArt160()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
-                            <span class="text-[10px] text-slate-400 mt-1 block">Días del mes de despido</span>
+                            <span class="text-xs text-slate-400 mt-1 block">Días del mes de despido</span>
                         </div>
                         <div>
                             <label for="art160-dias-vac" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                                 Vacaciones Pendientes
                             </label>
                             <input type="number" id="art160-dias-vac" value="8" min="0" step="0.5" oninput="calculateArt160()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
-                            <span class="text-[10px] text-slate-400 mt-1 block">Días hábiles acumulados</span>
+                            <span class="text-xs text-slate-400 mt-1 block">Días hábiles acumulados</span>
                         </div>
                     </div>
 
@@ -875,25 +845,25 @@ body { overflow-x: hidden; }
                                 <input type="radio" name="art160-recargo" value="50" onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     50%
-                                    <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">Mínimo legal</span>
+                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Mínimo legal</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="art160-recargo" value="80" checked onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     80%
-                                    <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">Promedio Jueces</span>
+                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Promedio Jueces</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="art160-recargo" value="100" onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     100%
-                                    <span class="block text-[10px] font-normal text-slate-400 peer-checked:text-[#00382E]/80">Máximo legal</span>
+                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Máximo legal</span>
                                 </div>
                             </label>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-1.5">El recargo legal para despidos Art. 160 improcedentes va del 50% al 100% sobre los años de servicio.</p>
+                        <p class="text-xs text-slate-400 mt-1.5">El recargo legal para despidos Art. 160 improcedentes va del 50% al 100% sobre los años de servicio.</p>
                     </div>
 
                 </div>
@@ -907,7 +877,7 @@ body { overflow-x: hidden; }
                             <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
                                 <span class="material-icons text-sm text-emerald-600">verified</span> 1. Finiquito Inmediato Obligatorio
                             </span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
                                 Plazo Legal: 10 Días Hábiles
                             </span>
                         </div>
@@ -916,7 +886,7 @@ body { overflow-x: hidden; }
                             <span id="art160-monto-inmediato" class="text-3xl sm:text-5xl font-extrabold font-mono text-emerald-700 tracking-tight leading-none">$ 0</span>
                         </div>
                         
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
                             <strong>Aunque te despidan por el Art. 160, el empleador NO puede retener este dinero bajo ninguna circunstancia.</strong> Son remuneraciones por días ya laborados y feriado acumulado que deben pagarse ante notario o en Mi DT (Art. 177 CT).
                         </p>
 
@@ -947,7 +917,7 @@ body { overflow-x: hidden; }
                             <span class="text-xs font-bold text-[#00382E] uppercase tracking-wider flex items-center gap-1.5">
                                 <span class="material-icons text-sm text-[#00382E]">gavel</span> 2. Si Demandas por Despido Injustificado
                             </span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-200">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200">
                                 Art. 168 letra c CT
                             </span>
                         </div>
@@ -956,7 +926,7 @@ body { overflow-x: hidden; }
                             <span id="art160-monto-demanda" style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold font-mono tracking-tight leading-none">$ 0</span>
                         </div>
 
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
                             Si el empleador no logra probar en tribunales la gravedad irrefutable del hecho, el tribunal laboral ordenará el pago íntegro de tus años de servicio y aviso previo con un <strong>recargo legal del 50% al 100%</strong>.
                         </p>
 
@@ -1005,35 +975,35 @@ body { overflow-x: hidden; }
                                 ¿Quieres evaluar la legalidad de tu carta de despido?
                             </h3>
                         </div>
-                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
                             En despidos por el Art. 160, la redacción de la carta es decisiva. Si el empleador fue ambiguo o no detalló los hechos con fecha, hora y circunstancias exactas, la demanda tiene altísima probabilidad de éxito.
                         </p>
 
                         <form id="art160-lead-form" onsubmit="enviarLeadArt160(event)" class="space-y-3">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label for="art160-lead-nombre" class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Nombre y Apellido *</label>
+                                    <label for="art160-lead-nombre" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nombre y Apellido *</label>
                                     <input type="text" id="art160-lead-nombre" name="nombre" required placeholder="Ej: Roberto Muñoz" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 text-slate-800">
                                 </div>
                                 <div>
-                                    <label for="art160-lead-correo" class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico *</label>
+                                    <label for="art160-lead-correo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico *</label>
                                     <input type="email" id="art160-lead-correo" name="correo" required placeholder="roberto@correo.com" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 text-slate-800">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label for="art160-lead-telefono" class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">WhatsApp / Teléfono *</label>
+                                    <label for="art160-lead-telefono" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">WhatsApp / Teléfono *</label>
                                     <input type="tel" id="art160-lead-telefono" name="telefono" required placeholder="+56 9 8765 4321" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 text-slate-800">
                                 </div>
                                 <div>
-                                    <label for="art160-lead-detalle" class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Estado de tu finiquito</label>
+                                    <label for="art160-lead-detalle" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Estado de tu finiquito</label>
                                     <input type="text" id="art160-lead-detalle" name="detalle" placeholder="Ej: Recibí la carta ayer, aún no firmo" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 text-slate-800">
                                 </div>
                             </div>
 
                             <div class="pt-1">
-                                <label for="art160-lead-consent" class="flex items-start gap-2 text-[11px] text-slate-600 cursor-pointer">
+                                <label for="art160-lead-consent" class="flex items-start gap-2 text-xs text-slate-600 cursor-pointer">
                                     <input type="checkbox" id="art160-lead-consent" name="privacy_consent" required class="w-3.5 h-3.5 mt-0.5 rounded border-slate-300 text-[#00382E] focus:ring-[#00382E] cursor-pointer">
                                     <span>Acepto la <a href="/privacidad" target="_blank" class="underline font-semibold text-slate-800 hover:text-[#00382E]">Política de Privacidad</a> y autorizo el tratamiento confidencial de mis antecedentes.</span>
                                 </label>
@@ -1044,7 +1014,7 @@ body { overflow-x: hidden; }
                                     <span class="material-icons text-sm">send</span>
                                     <span>Solicitar Revisión Legal</span>
                                 </button>
-                                <span class="text-[11px] text-slate-500">Evaluación confidencial • Respuesta en menos de 24 hrs hábiles</span>
+                                <span class="text-xs text-slate-500">Evaluación confidencial • Respuesta en menos de 24 hrs hábiles</span>
                             </div>
                         </form>
 
@@ -1075,7 +1045,7 @@ body { overflow-x: hidden; }
                             <div class="font-bold text-emerald-900 text-sm mb-1 flex items-center gap-1.5">
                                 <span class="material-icons text-emerald-600 text-base">check_circle</span> Derechos Irrenunciables
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Los días trabajados del mes en curso y las vacaciones proporcionales y acumuladas son propiedad del trabajador. El empleador está obligado por ley a pagarlos en un plazo fatal de 10 días hábiles (Art. 177 CT).
                             </p>
                         </div>
@@ -1083,7 +1053,7 @@ body { overflow-x: hidden; }
                             <div class="font-bold text-slate-900 text-sm mb-1 flex items-center gap-1.5">
                                 <span class="material-icons text-[#00382E] text-base">gavel</span> La Carga de la Prueba
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 En tribunales laborales, el empleador está obligado a probar con pruebas contundentes y testigos cada hecho de la carta. No bastan sospechas ni acusaciones genéricas.
                             </p>
                         </div>
@@ -1131,10 +1101,10 @@ body { overflow-x: hidden; }
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Conforme al <strong>artículo 177 del Código del Trabajo</strong> (modificado por la Ley N° 21.361), tienes el derecho legal de estampar una <strong>reserva de derechos</strong> de tu puño y letra antes de firmar ante notario o al ratificar en el portal de la Dirección del Trabajo (Mi DT).
                     </p>
-                    <div class="p-4 rounded-2xl bg-slate-50 border-l-4 border-[#00382E] border border-slate-200 text-slate-800 font-mono text-xs sm:text-sm leading-relaxed mb-3 shadow-2xs">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 font-mono text-xs sm:text-sm leading-relaxed mb-3 shadow-2xs">
                         "Me reservo el derecho a demandar despido injustificado e improcedente conforme al Art. 168 del Código del Trabajo, recargos legales, restitución de prestaciones y cobro de indemnizaciones adeudadas."
                     </div>
-                    <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    <p class="text-slate-600 text-sm sm:text-sm leading-relaxed">
                         <strong>Importante:</strong> El notario o ministro de fe no puede negarse a registrar la reserva, y el empleador está legalmente forzado a pagar de inmediato los montos de vacaciones y días trabajados reconocidos.
                     </p>
                 </div>
@@ -1196,10 +1166,10 @@ body { overflow-x: hidden; }
                             </div>
                             <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
                         </a>
-                        <p class="text-xs text-white/75 leading-relaxed max-w-xs">
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-                        <div class="pt-1 text-[11px] font-mono-num text-white/50">
+                        <div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
@@ -1290,7 +1260,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UF</caption>
                             <thead>
-                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>
@@ -1309,7 +1279,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UTM</caption>
                             <thead>
-                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Período</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>
@@ -1326,7 +1296,7 @@ body { overflow-x: hidden; }
 
     <!-- Centralized Constants & Live Indicators Scripts -->
     <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.1.1"></script>
+    <script src="/js/indicators.js?v=2.9.0"></script>
     
     <!-- Art. 160 Calculation Engine -->
     <script>

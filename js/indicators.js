@@ -319,7 +319,7 @@ const IndicatorsService = {
         const cfg = configs[state];
         if (!cfg) return;
 
-        statusEl.className = `flex items-center gap-1 text-[10px] mt-1.5 transition-all duration-300 font-medium ${cfg.classes}`;
+        statusEl.className = `flex items-center gap-1 text-xs mt-1.5 transition-all duration-300 font-medium ${cfg.classes}`;
         statusEl.innerHTML = `<span class="material-icons text-[13px]">${cfg.icon}</span> ${cfg.text}`;
     },
 
@@ -347,8 +347,8 @@ const IndicatorsService = {
             const valStr = formatMoney(item.valor);
             html += `
                 <tr class="border-b border-slate-100 hover:bg-slate-50/90 transition-colors">
-                    <td class="py-1.5 px-1 sm:px-2 text-slate-700 font-medium text-[11px] sm:text-xs whitespace-nowrap">${dateStr}</td>
-                    <td class="py-1.5 px-1 sm:px-2 text-emerald-600 font-bold font-mono text-[11px] sm:text-xs text-right whitespace-nowrap">${valStr}</td>
+                    <td class="py-1.5 px-1 sm:px-2 text-slate-700 font-medium text-xs sm:text-xs whitespace-nowrap">${dateStr}</td>
+                    <td class="py-1.5 px-1 sm:px-2 text-emerald-600 font-bold font-mono text-xs sm:text-xs text-right whitespace-nowrap">${valStr}</td>
                 </tr>
             `;
         });

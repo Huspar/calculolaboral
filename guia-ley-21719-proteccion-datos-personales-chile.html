@@ -143,7 +143,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         .prose-content > h2, .prose-content h2:not(.not-prose *) {
             font-size: 1.45rem;
@@ -516,7 +516,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -526,7 +526,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -586,7 +586,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -595,7 +595,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -604,7 +604,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -613,7 +613,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -622,7 +622,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -631,7 +631,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -703,7 +703,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- MAIN CONTENT WRAPPER -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full">
 <!-- Breadcrumbs -->
 <nav aria-label="Migas de pan" class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto no-print">
@@ -713,16 +713,13 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Guía Ley 21.719 Protección de Datos</span>
 </nav>
-<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="cl-article mb-8 relative">
 <!-- Article Header -->
 <header class="mb-8 border-b border-slate-100 pb-8">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-50 border border-forest-200 text-forest-700 text-xs font-bold tracking-wider uppercase mb-4">
-<span class="material-icons text-[14px]">security</span>
-                        Cumplimiento Legal Obligatorio 2026
-                    </div>
 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-4 tracking-tight">
                         Ley N° 21.719 de Protección de Datos Personales en Chile: Guía de Obligaciones, Multas y Plazos para Pymes
                     </h1>
+<p class="cl-meta">Cumplimiento Legal Obligatorio 2026</p>
 <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
                         Chile reemplazó la antigua Ley 19.628 y creó la <strong>Agencia de Protección de Datos Personales (APDP)</strong> con facultades sancionatorias de hasta <strong>20.000 UTM ($1.434 millones CLP)</strong>. Conoce en detalle qué exige la ley a cualquier negocio que maneje datos de clientes o trabajadores, cómo opera el régimen especial de amonestaciones y cómo blindar tu empresa.
                     </p>
@@ -768,22 +765,22 @@ body { overflow-x: hidden; }
 <div class="p-3 bg-white rounded-xl border border-forest-100">
 <span class="block text-slate-500 font-medium mb-0.5">Alcance</span>
 <strong class="text-slate-900 block text-xs">Aplica al 100% de las Pymes</strong>
-<span class="text-[10px] text-slate-500">Sin importar tamaño ni ventas</span>
+<span class="text-xs text-slate-500">Sin importar tamaño ni ventas</span>
 </div>
 <div class="p-3 bg-white rounded-xl border border-forest-100">
 <span class="block text-slate-500 font-medium mb-0.5">Sanciones</span>
 <strong class="text-rose-700 block text-xs">Hasta 20.000 UTM</strong>
-<span class="text-[10px] text-slate-500">Aprox. $1.434 millones CLP</span>
+<span class="text-xs text-slate-500">Aprox. $1.434 millones CLP</span>
 </div>
 <div class="p-3 bg-white rounded-xl border border-forest-100">
 <span class="block text-slate-500 font-medium mb-0.5">Ventana de Gracia</span>
 <strong class="text-emerald-700 block text-xs">Amonestación Año 1</strong>
-<span class="text-[10px] text-slate-500">Solo si demuestras adecuación</span>
+<span class="text-xs text-slate-500">Solo si demuestras adecuación</span>
 </div>
 <div class="p-3 bg-white rounded-xl border border-forest-100">
 <span class="block text-slate-500 font-medium mb-0.5">Solución Rápida</span>
 <a class="text-forest-600 hover:text-forest-700 font-bold block text-xs underline" href="kit-cumplimiento-ley-datos-personales-chile">Kit Ley 21.719 en Word</a>
-<span class="text-[10px] text-slate-500">5 instrumentos por $29.990</span>
+<span class="text-xs text-slate-500">5 instrumentos por $29.990</span>
 </div>
 </div>
 </div>
@@ -834,8 +831,8 @@ body { overflow-x: hidden; }
 <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs">Infracción Leve</span>
 <span class="text-xs font-mono font-bold text-slate-800">Hasta 5.000 UTM</span>
 </div>
-<p class="text-xs text-slate-600 mb-2">Falta de información clara en avisos web, no responder solicitudes ARCOP en el plazo o errores formales no sustantivos.</p>
-<div class="text-[11px] font-mono text-slate-500 bg-slate-50 p-2 rounded-lg">
+<p class="text-sm text-slate-600 mb-2">Falta de información clara en avisos web, no responder solicitudes ARCOP en el plazo o errores formales no sustantivos.</p>
+<div class="text-xs font-mono text-slate-500 bg-slate-50 p-2 rounded-lg">
 <strong>Multa máxima:</strong> $358.605.000 CLP
                             </div>
 </div>
@@ -844,8 +841,8 @@ body { overflow-x: hidden; }
 <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 font-bold text-xs">Infracción Grave</span>
 <span class="text-xs font-mono font-bold text-amber-900">Hasta 10.000 UTM</span>
 </div>
-<p class="text-xs text-slate-600 mb-2">Tratar datos sin base de licitud válida, no contar con Registro RAT o transferir datos a proveedores sin contrato DPA.</p>
-<div class="text-[11px] font-mono text-amber-800 bg-amber-50/60 p-2 rounded-lg">
+<p class="text-sm text-slate-600 mb-2">Tratar datos sin base de licitud válida, no contar con Registro RAT o transferir datos a proveedores sin contrato DPA.</p>
+<div class="text-xs font-mono text-amber-800 bg-amber-50/60 p-2 rounded-lg">
 <strong>Multa máxima:</strong> $717.210.000 CLP
                             </div>
 </div>
@@ -854,8 +851,8 @@ body { overflow-x: hidden; }
 <span class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-800 font-bold text-xs">Infracción Gravísima</span>
 <span class="text-xs font-mono font-bold text-rose-900">Hasta 20.000 UTM</span>
 </div>
-<p class="text-xs text-slate-600 mb-2">Filtraciones masivas no reportadas en 72 horas, vulneración deliberada de datos de salud o biometría de trabajadores.</p>
-<div class="text-[11px] font-mono text-rose-800 bg-rose-50/70 p-2 rounded-lg">
+<p class="text-sm text-slate-600 mb-2">Filtraciones masivas no reportadas en 72 horas, vulneración deliberada de datos de salud o biometría de trabajadores.</p>
+<div class="text-xs font-mono text-rose-800 bg-rose-50/70 p-2 rounded-lg">
 <strong>Multa máxima:</strong> $1.434.420.000 CLP (o hasta 4% ingresos)
                             </div>
 </div>
@@ -893,7 +890,7 @@ body { overflow-x: hidden; }
 </tbody>
 </table>
 </div>
-<p class="text-xs text-slate-500 italic">
+<p class="text-sm text-slate-500 italic">
                         *Nota legal: Para grandes empresas y reincidentes, la ley contempla además la aplicación alternativa de hasta un <strong>2% al 4% de los ingresos anuales por ventas y servicios</strong> del infractor.
                     </p>
 <!-- SECCIÓN 3 -->
@@ -906,7 +903,7 @@ body { overflow-x: hidden; }
 <span class="material-icons text-base text-emerald-600">verified</span>
                             Beneficio Exclusivo Primer Año: Amonestación por Escrito
                         </div>
-<p class="text-xs text-emerald-800 leading-relaxed m-0">
+<p class="text-sm text-emerald-800 leading-relaxed m-0">
                             Durante los <strong>primeros 12 meses contados desde la entrada en vigencia</strong>, la APDP privilegiará la aplicación de <strong>amonestaciones escritas y programas de adecuación</strong> en lugar de multas económicas para micro y pequeñas empresas, salvo en casos de reincidencia o infracciones gravísimas deliberadas.
                         </p>
 </div>
@@ -940,9 +937,9 @@ body { overflow-x: hidden; }
 <div class="my-8 p-5 sm:p-6 rounded-2xl bg-[#EEF6F3] border border-[#D6EBE4] not-prose">
 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 <div class="space-y-1">
-<span class="px-2.5 py-0.5 rounded-full bg-[#00382E] text-[#FFB703] font-bold text-[10px] uppercase tracking-wider">Plantillas Profesionales</span>
+<span class="px-2.5 py-0.5 rounded-full bg-[#00382E] text-[#FFB703] font-bold text-xs uppercase tracking-wider">Plantillas Profesionales</span>
 <div class="text-sm sm:text-base font-bold text-slate-900 m-0">¿Necesitas regularizar los contratos de tus colaboradores hoy?</div>
-<p class="text-xs text-slate-600 m-0 leading-relaxed">
+<p class="text-sm text-slate-600 m-0 leading-relaxed">
                                     El Kit Ley 21.719 incluye el <strong>Anexo de Protección de Datos y Biometría Laboral</strong> en Word editable, redactado conforme a la Res. 38/2024 de la DT.
                                 </p>
 </div>
@@ -964,9 +961,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1 flex-1">
 <div class="flex justify-between items-center">
 <div class="text-sm font-bold text-slate-900 m-0">Política de Privacidad Web y de Clientes</div>
-<span class="text-[10px] font-bold text-slate-500 uppercase">Obligatorio Web</span>
+<span class="text-xs font-bold text-slate-500 uppercase">Obligatorio Web</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed m-0">
+<p class="text-sm text-slate-600 leading-relaxed m-0">
                                     Documento público que debe figurar en tu sitio web, formularios de cotización o tiendas e-commerce. Informa qué datos recopilas, bases de licitud, uso de cookies y cómo ejercer derechos ARCOP.
                                 </p>
 </div>
@@ -977,9 +974,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1 flex-1">
 <div class="flex justify-between items-center">
 <div class="text-sm font-bold text-slate-900 m-0">Registro de Actividades de Tratamiento (RAT)</div>
-<span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md uppercase">Art. 14 Ter</span>
+<span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md uppercase">Art. 14 Ter</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed m-0">
+<p class="text-sm text-slate-600 leading-relaxed m-0">
                                     Inventario exhaustivo (habitualmente en Excel o software de gestión) donde se mapean todas las bases de datos de la empresa: finalidad, categorías de datos, destinatarios y plazos de conservación.
                                 </p>
 </div>
@@ -990,9 +987,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1 flex-1">
 <div class="flex justify-between items-center">
 <div class="text-sm font-bold text-slate-900 m-0">Anexo de Protección de Datos para Trabajadores</div>
-<span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">Laboral DT</span>
+<span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">Laboral DT</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed m-0">
+<p class="text-sm text-slate-600 leading-relaxed m-0">
                                     Cláusula contractual que regula el tratamiento de antecedentes personales, manejo de licencias médicas, uso de correo corporativo y consentimiento para marcaje biométrico.
                                 </p>
 </div>
@@ -1003,9 +1000,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1 flex-1">
 <div class="flex justify-between items-center">
 <div class="text-sm font-bold text-slate-900 m-0">Acuerdo de Tratamiento de Datos con Proveedores (DPA)</div>
-<span class="text-[10px] font-bold text-forest-700 bg-forest-50 px-2 py-0.5 rounded-md uppercase">Art. 14 Bis</span>
+<span class="text-xs font-bold text-forest-700 bg-forest-50 px-2 py-0.5 rounded-md uppercase">Art. 14 Bis</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed m-0">
+<p class="text-sm text-slate-600 leading-relaxed m-0">
                                     Contrato obligatorio para cualquier proveedor externo que acceda a tus datos: tu contador externo, empresa de software de sueldos, hosting, CRM o agencia de marketing digital.
                                 </p>
 </div>
@@ -1016,9 +1013,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1 flex-1">
 <div class="flex justify-between items-center">
 <div class="text-sm font-bold text-slate-900 m-0">Protocolo de Notificación de Brechas (Estándar 72 Horas)</div>
-<span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md uppercase">Art. 14 Sexies</span>
+<span class="text-xs font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md uppercase">Art. 14 Sexies</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed m-0">
+<p class="text-sm text-slate-600 leading-relaxed m-0">
                                     Procedimiento de acción rápida ante pérdida de notebooks, hackeos, ransomware o filtraciones por correo para dar aviso a la APDP sin dilaciones indebidas (adoptando el estándar operativo de 72 horas).
                                 </p>
 </div>
@@ -1080,7 +1077,7 @@ body { overflow-x: hidden; }
 <div class="p-5 rounded-2xl bg-rose-50/80 border border-rose-200/90 flex flex-col md:flex-row items-center justify-between gap-4 transition-colors" id="caja-resultado-riesgo">
 <div class="space-y-1 text-center md:text-left">
 <p class="text-sm font-extrabold text-rose-800 m-0" id="resultado-titulo">Exposición Crítica a Sanciones</p>
-<p class="text-xs text-rose-700 leading-relaxed m-0" id="resultado-descripcion">
+<p class="text-sm text-rose-700 leading-relaxed m-0" id="resultado-descripcion">
                                     Tu empresa no cuenta con los 5 instrumentos obligatorios. Te expones a multas de hasta 20.000 UTM ($1.434 millones CLP) ante fiscalizaciones de la APDP.
                                 </p>
 </div>
@@ -1116,7 +1113,7 @@ body { overflow-x: hidden; }
 <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 m-0">
                                 Blinda tu Empresa Hoy con el <span class="text-forest-600">Kit de Cumplimiento Ley 21.719</span>
 </h3>
-<p class="text-xs sm:text-sm leading-relaxed text-slate-600">
+<p class="text-sm sm:text-sm leading-relaxed text-slate-600">
                                 No pagues entre $800.000 y $1.500.000 a un estudio jurídico corporativo. Descarga los 5 instrumentos oficiales 100% editables para Pymes con instrucciones paso a paso para completar en menos de 20 minutos.
                             </p>
 <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -1125,7 +1122,7 @@ body { overflow-x: hidden; }
 <span class="material-icons text-base" style="color: #ffffff !important;">arrow_forward</span>
 </a>
 </div>
-<p class="text-[11px] text-slate-500 m-0">
+<p class="text-sm text-slate-500 m-0">
                                 Pago seguro vía Webpay / Flow • Descarga instantánea en Word y Excel + Envío inmediato a tu correo • Actualizado normativa 2026
                             </p>
 </div>
@@ -1138,7 +1135,7 @@ body { overflow-x: hidden; }
 <span>¿Tengo que contratar obligatoriamente un Delegado de Protección de Datos (DPO)?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm text-slate-600 mt-3 leading-relaxed">
                                 No para la gran mayoría de las pymes. La ley contempla la designación obligatoria del Delegado de Protección de Datos únicamente para organismos públicos o empresas que realicen tratamiento masivo o sistemático de datos sensibles a gran escala. Para una micro o pequeña empresa común, basta con designar formalmente a un encargado interno de coordinar la privacidad y los requerimientos ARCOP.
                             </p>
 </details>
@@ -1147,7 +1144,7 @@ body { overflow-x: hidden; }
 <span>¿Qué son los derechos ARCOP y cuánto plazo tengo para responderlos?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm text-slate-600 mt-3 leading-relaxed">
                                 Son los derechos que tiene cualquier persona sobre sus datos: Acceso, Rectificación, Cancelación (supresión), Oposición, Portabilidad y Bloqueo. Ante la solicitud formal de un cliente o extrabajador, la empresa tiene un plazo fatal legal de <strong>30 días corridos</strong> para responder de forma gratuita. No responder dentro de plazo constituye infracción sancionable por la APDP.
                             </p>
 </details>
@@ -1156,7 +1153,7 @@ body { overflow-x: hidden; }
 <span>¿Puedo enviar promociones o correos masivos a clientes antiguos?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm text-slate-600 mt-3 leading-relaxed">
                                 Solo si cuentas con una base de licitud válida (consentimiento previo e informado o interés legítimo demostrado para productos similares) y siempre que incorpores en cada comunicación un enlace directo y gratuito para darse de baja (opt-out inmediato). La compra de bases de datos de terceros sin trazabilidad de consentimiento queda terminantemente prohibida bajo la Ley 21.719.
                             </p>
 </details>
@@ -1165,7 +1162,7 @@ body { overflow-x: hidden; }
 <span>¿Qué ocurre si comparto datos de clientes con mi empresa de transporte o courier?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm text-slate-600 mt-3 leading-relaxed">
                                 En este caso, el courier actúa como <em>Encargado de Tratamiento</em> bajo el Artículo 14 bis. La transferencia es legal porque es indispensable para ejecutar la compraventa, pero la empresa mandante debe asegurarse de contar con un <strong>Acuerdo de Tratamiento de Datos (DPA)</strong> que obligue al transportista a no utilizar los datos para otros fines y a destruirlos una vez completada la entrega.
                             </p>
 </details>
@@ -1174,7 +1171,7 @@ body { overflow-x: hidden; }
 <span>¿Qué diferencia hay entre este Kit de $29.990 y el Kit Laboral de $19.990?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs text-slate-600 mt-3 leading-relaxed">
+<p class="text-sm text-slate-600 mt-3 leading-relaxed">
                                 El <em>Kit Blindaje Laboral ($19.990)</em> cubre las obligaciones del Código del Trabajo fiscalizadas por la Inspección del Trabajo (contratos, Ley 40 Horas, protocolo Ley Karin, reglamento interno). El <em>Kit Ley 21.719 ($29.990)</em> es un paquete especializado para la nueva normativa de Protección de Datos Personales fiscalizada por la APDP, con el Registro RAT, la Política Web, contratos DPA con proveedores y el protocolo de brechas en 72 horas. Ambos kits se complementan perfectamente.
                             </p>
 </details>
@@ -1224,10 +1221,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>
@@ -1353,7 +1350,7 @@ body { overflow-x: hidden; }
         }
     </script>
 <script src="js/constants.js?v=2.0.4"></script>
-<script src="js/indicators.js?v=2.0.4"></script>
+<script src="js/indicators.js?v=2.9.0"></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

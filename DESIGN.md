@@ -122,6 +122,14 @@ Toda página enlaza, al final del `<head>`, `/assets/css/polish.css` y, antes de
 - Curvas: `cubic-bezier(0.16, 1, 0.3, 1)` para entradas y `cubic-bezier(0.2, 0, 0, 1)` para estados. Sin rebote.
 - `prefers-reduced-motion: reduce` desactiva el marcador, el asentado y los acordeones animados.
 
+## Plantillas (Fase 2)
+
+- **Sin etiquetas sobre los títulos.** No se usan píldoras ni rótulos en mayúsculas encima de un `h1`/`h2`. Si el dato es normativo (artículo, ley, vigencia), va **debajo** del título como `<p class="cl-meta">` (línea ámbar corta + texto en `forest-700`, 13px). Si es decorativo, se elimina.
+- **Calculadoras.** Debajo del texto introductorio va siempre la misma navegación `<nav class="cl-calcnav">` con las 9 calculadoras en el mismo orden y `aria-current="page"` en la actual. La publicidad nunca va dentro de la tarjeta de resultados: se usa `<aside class="cl-sponsor">` después de la grilla.
+- **Guías y páginas legales.** `main.cl-reading` (46rem de ancho) y `<article class="cl-article">` sin tarjeta, así los avisos interiores no quedan como tarjetas anidadas. El sello DT usa `.cl-trust` (líneas finas arriba y abajo, sin caja).
+- **Tipografía.** Piso de 12px (`text-xs`) para cualquier texto; párrafos de más de una línea en 14px (`text-sm`) o más. Sin mayúsculas en botones ni en textos de más de unas pocas palabras.
+- **Avisos.** Sin franjas laterales gruesas (`border-l-4`): borde de 1px en el tono del aviso.
+
 Después de cambiar clases, recompilar con `npm run build:css` y subir el `?v=` de `style.css` en las páginas, porque `/assets/` se sirve con caché inmutable.
 
 ## Do's and Don'ts

@@ -654,7 +654,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
             ` : ''}
             
             <div class="text-center mb-6 border-b border-slate-300 pb-4">
-                <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-1">
+                <div class="text-xs font-mono uppercase tracking-widest text-slate-500 mb-1">
                     Instrumento Contractual Conforme al Código del Trabajo (Edición 2026) • Folio: ${res.folio}
                 </div>
                 <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">
@@ -795,28 +795,28 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                 <!-- ANEXO OBLIGATORIO: CONSTANCIA RECEPCIÓN LEY KARIN -->
                 <div class="page-break-before mt-12 pt-8 border-t-2 border-dashed border-slate-300" style="page-break-before: always;">
                     <div class="text-center mb-5">
-                        <span class="text-[9.5px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full uppercase tracking-wider">
+                        <span class="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full uppercase tracking-wider">
                             Documento Anexo Obligatorio (Decreto Supremo Nº 44 Mintrab)
                         </span>
                         <h3 class="text-base font-extrabold text-slate-900 mt-2 uppercase tracking-tight">
                             Constancia de Entrega y Recepción de Protocolo Ley Karin
                         </h3>
-                        <p class="text-[10px] text-slate-500 font-mono mt-0.5">
+                        <p class="text-xs text-slate-500 font-mono mt-0.5">
                             En cumplimiento de la Ley Nº 21.643 y el Decreto Supremo Nº 44 del Ministerio del Trabajo y Previsión Social
                         </p>
                     </div>
-                    <p class="text-[11px] leading-relaxed text-slate-700 text-justify">
+                    <p class="text-xs leading-relaxed text-slate-700 text-justify">
                         En la ciudad de <strong>${escapeHtml(res.ciudad)}</strong>, a <strong>${escapeHtml(res.fecha)}</strong>, el(la) Trabajador(a) don(ña) 
                         <strong>${escapeHtml(d.trabajadorNombre || '[Nombre Trabajador]')}</strong>, cédula nacional de identidad Nº 
                         <strong>${escapeHtml(d.trabajadorRut || '[RUT]')}</strong>, deja constancia expresa y bajo su firma que, en este acto y de manera previa al inicio de sus funciones, ha recibido formalmente de parte de su empleador 
                         <strong>${escapeHtml(d.empresaRazonSocial || '[Razón Social Empleador]')}</strong>, RUT Nº <strong>${escapeHtml(d.empresaRut || '[RUT]')}</strong>, un ejemplar íntegro, impreso y en soporte electrónico de los siguientes instrumentos laborales:
                     </p>
-                    <ol class="list-decimal pl-6 mt-3 space-y-1.5 text-[11px] text-slate-800 font-semibold">
+                    <ol class="list-decimal pl-6 mt-3 space-y-1.5 text-xs text-slate-800 font-semibold">
                         <li><strong>Reglamento Interno de Orden, Higiene y Seguridad</strong> de la empresa, debidamente actualizado con las directrices de la Ley Nº 21.643 (Ley Karin).</li>
                         <li><strong>Protocolo de Prevención de la Violencia y el Acoso en el Trabajo</strong>, elaborado de conformidad con los estándares del Decreto Supremo Nº 44 del Ministerio del Trabajo.</li>
                         <li><strong>Procedimiento Formal y Canales de Denuncia, Investigación y Medidas de Resguardo</strong> vigentes para denuncias internas ante la empresa o ante la Inspección del Trabajo.</li>
                     </ol>
-                    <p class="text-[10.5px] text-slate-600 mt-3 text-justify">
+                    <p class="text-xs text-slate-600 mt-3 text-justify">
                         El Trabajador declara haber sido debidamente informado de los canales de denuncia, de las medidas de resguardo y del derecho de acogerse a la atención psicológica temprana ante la respectiva mutualidad administradora del seguro de la Ley Nº 16.744.
                     </p>
                     
@@ -1265,7 +1265,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                         <span class="material-icons text-base">lock</span>
                         <span>DOCUMENTO DE VISTA PREVIA • NO VÁLIDO PARA FIRMAR NI PRESENTAR ANTE LA DT</span>
                     </div>
-                    <span class="bg-white/20 px-2.5 py-0.5 rounded text-[10px] uppercase tracking-wider">Borrador Protegido</span>
+                    <span class="bg-white/20 px-2.5 py-0.5 rounded text-xs uppercase tracking-wider">Borrador Protegido</span>
                 </div>
                 ` : ''}
 

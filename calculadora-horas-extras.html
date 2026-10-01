@@ -128,7 +128,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.9.0">
     
     <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
@@ -410,7 +410,7 @@
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="min-h-screen flex flex-col">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -420,7 +420,7 @@
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
             </div>
-            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
                 <span class="text-white/20">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -485,7 +485,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
                                     </div>
                                 </a>
 
@@ -495,7 +495,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
                                     </div>
                                 </a>
 
@@ -505,7 +505,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
                                     </div>
                                 </a>
 
@@ -515,7 +515,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
                                     </div>
                                 </a>
 
@@ -525,7 +525,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
                                     </div>
                                 </a>
 
@@ -535,7 +535,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
                                     </div>
                                 </a>
                             </div>
@@ -634,44 +634,18 @@
         </nav>
 
         <div class="mb-8 text-center sm:text-left">
-            <a href="ley-40-horas-chile-2026" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100/70 border border-emerald-200 text-emerald-900 text-xs font-semibold transition-all mb-3.5 !no-underline shadow-2xs">
-                <span class="inline-block w-2 h-2 rounded-full bg-emerald-600"></span>
-                <span>Jornada legal de 42 horas vigente en Chile (2026)</span>
-                <span class="material-icons text-xs text-emerald-700">arrow_forward</span>
-            </a>
             <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
                 Calculadora de Horas Extras Chile 2026<span class="text-[#FFB703]">.</span>
             </h1>
+            <a href="ley-40-horas-chile-2026" class="cl-meta cl-meta-link">Jornada legal de 42 horas vigente en Chile (2026)<span class="material-icons" aria-hidden="true">arrow_forward</span></a>
             <p class="text-sm sm:text-base text-slate-600 max-w-2xl mt-3 leading-relaxed">
                 Calcula el valor exacto de tu hora ordinaria y horas extraordinarias con recargo legal del <strong>50%</strong> y <strong>100%</strong> según las fórmulas y factores actualizados de la Dirección del Trabajo (DT).
             </p>
         </div>
 
-        <!-- Suite of Tools Segmented Switcher (TealHQ Pill Style) -->
-        <div class="flex justify-start sm:justify-center mb-8 overflow-x-auto scrollbar-none py-1 no-print">
-            <div class="segmented-control-container">
-                <a href="finiquito_calculator" class="product-tab">
-                    <span class="material-icons text-sm text-[#00382E]">gavel</span>
-                    <span>Finiquito Legal</span>
-                </a>
-                <a href="simulador-despido-injustificado-chile" class="product-tab">
-                    <span class="material-icons text-sm text-rose-600">report_problem</span>
-                    <span>Despido Injustificado</span>
-                </a>
-                <a href="sueldo_liquido" class="product-tab">
-                    <span class="material-icons text-sm text-forest-600">payments</span>
-                    <span>Sueldo Líquido</span>
-                </a>
-                <a href="calculadora-horas-extras" class="product-tab active">
-                    <span class="material-icons text-sm text-[#FFB703]">schedule</span>
-                    <span>Horas Extras 42h</span>
-                </a>
-                <a href="calculadora-sueldo-part-time" class="product-tab">
-                    <span class="material-icons text-sm text-forest-500">hourglass_bottom</span>
-                    <span>Part-Time</span>
-                </a>
-            </div>
-        </div>
+        <nav class="cl-calcnav no-print" aria-label="Calculadoras">
+                <div class="cl-calcnav-track"><a href="finiquito_calculator">Finiquito</a><a href="simulador-despido-injustificado-chile">Despido injustificado</a><a href="sueldo_liquido">Sueldo líquido</a><a href="calculadora-horas-extras" aria-current="page">Horas extras</a><a href="calculadora-sueldo-part-time">Part-time</a><a href="calculadora-vacaciones">Vacaciones</a><a href="calculadora-despido-articulo-160">Despido Art. 160</a><a href="simulador-seguro-cesantia-afc">Seguro de cesantía</a><a href="calculadora-costo-empresa-chile">Costo empresa</a></div>
+            </nav>
 
         <!-- TWO COLUMN INTERACTIVE LAYOUT -->
         <div class="flex flex-col lg:flex-row gap-8 items-start mb-16">
@@ -683,7 +657,7 @@
                         <span class="material-icons text-[#00382E]">tune</span>
                         <span>Datos para el cálculo</span>
                     </h2>
-                    <span class="text-[11px] font-mono-num text-slate-400 font-semibold" id="he-divisor-badge">Divisor DT: 180 hrs</span>
+                    <span class="text-xs font-mono-num text-slate-400 font-semibold" id="he-divisor-badge">Divisor DT: 180 hrs</span>
                 </div>
 
                 <!-- 1. Sueldo Base -->
@@ -692,7 +666,7 @@
                         <label for="he-sueldo-base" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
                             Sueldo Base Mensual
                         </label>
-                        <button type="button" onclick="setHEMinimo()" class="text-[11px] font-bold text-[#00382E] hover:underline bg-emerald-50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer">
+                        <button type="button" onclick="setHEMinimo()" class="text-xs font-bold text-[#00382E] hover:underline bg-emerald-50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer">
                             Usar Mínimo ($553.553)
                         </button>
                     </div>
@@ -706,7 +680,7 @@
                         <button type="button" onclick="setHESalary(1000000)" class="sueldo-chip">$1.000.000</button>
                         <button type="button" onclick="setHESalary(1500000)" class="sueldo-chip">$1.500.000</button>
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-1.5">Sueldo fijo pactado en tu contrato de trabajo.</p>
+                    <p class="text-xs text-slate-400 mt-1.5">Sueldo fijo pactado en tu contrato de trabajo.</p>
                 </div>
 
                 <!-- 2. Jornada Semanal Pactada -->
@@ -718,25 +692,25 @@
                         <label class="cursor-pointer" for="he-jornada-42">
                             <input type="radio" id="he-jornada-42" name="he-jornada" value="42" checked onchange="calculateHorasExtras()" class="peer sr-only" aria-label="42 horas semanales (Legal 2026)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
-                                42 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Legal 2026 (÷180)</span>
+                                42 horas <span class="block text-xs font-normal text-slate-500 peer-checked:text-emerald-800">Legal 2026 (÷180)</span>
                             </div>
                         </label>
                         <label class="cursor-pointer" for="he-jornada-40">
                             <input type="radio" id="he-jornada-40" name="he-jornada" value="40" onchange="calculateHorasExtras()" class="peer sr-only" aria-label="40 horas semanales (Sello 40h)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
-                                40 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Sello 40h (÷171.4)</span>
+                                40 horas <span class="block text-xs font-normal text-slate-500 peer-checked:text-emerald-800">Sello 40h (÷171.4)</span>
                             </div>
                         </label>
                         <label class="cursor-pointer" for="he-jornada-44">
                             <input type="radio" id="he-jornada-44" name="he-jornada" value="44" onchange="calculateHorasExtras()" class="peer sr-only" aria-label="44 horas semanales (Etapa 2024)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
-                                44 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Etapa 2024 (÷188.6)</span>
+                                44 horas <span class="block text-xs font-normal text-slate-500 peer-checked:text-emerald-800">Etapa 2024 (÷188.6)</span>
                             </div>
                         </label>
                         <label class="cursor-pointer" for="he-jornada-45">
                             <input type="radio" id="he-jornada-45" name="he-jornada" value="45" onchange="calculateHorasExtras()" class="peer sr-only" aria-label="45 horas semanales (Histórica)">
                             <div class="p-3 text-center border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/50 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
-                                45 horas <span class="block text-[10px] font-normal text-slate-500 peer-checked:text-emerald-800">Histórica (÷192.9)</span>
+                                45 horas <span class="block text-xs font-normal text-slate-500 peer-checked:text-emerald-800">Histórica (÷192.9)</span>
                             </div>
                         </label>
                     </div>
@@ -750,9 +724,9 @@
                             <label for="he-cant-50" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
                                 Horas Extras al 50%
                             </label>
-                            <span class="text-[10px] font-semibold text-amber-700 font-mono-num" id="he-live-unit-50">$4.613 c/u</span>
+                            <span class="text-xs font-semibold text-amber-700 font-mono-num" id="he-live-unit-50">$4.613 c/u</span>
                         </div>
-                        <span class="block text-[10px] text-slate-400 mb-2">Días hábiles normales (lunes a sábado)</span>
+                        <span class="block text-xs text-slate-400 mb-2">Días hábiles normales (lunes a sábado)</span>
                         <div class="flex items-center gap-2">
                             <button type="button" aria-label="Disminuir horas extras al 50%" onclick="adjustHE('he-cant-50', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
                             <input type="number" id="he-cant-50" value="10" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
@@ -766,9 +740,9 @@
                             <label for="he-cant-100" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
                                 Horas Extras al 100%
                             </label>
-                            <span class="text-[10px] font-semibold text-emerald-700 font-mono-num" id="he-live-unit-100">$6.151 c/u</span>
+                            <span class="text-xs font-semibold text-emerald-700 font-mono-num" id="he-live-unit-100">$6.151 c/u</span>
                         </div>
-                        <span class="block text-[10px] text-slate-400 mb-2">Domingos, festivos o pacto especial</span>
+                        <span class="block text-xs text-slate-400 mb-2">Domingos, festivos o pacto especial</span>
                         <div class="flex items-center gap-2">
                             <button type="button" aria-label="Disminuir horas extras al 100%" onclick="adjustHE('he-cant-100', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
                             <input type="number" id="he-cant-100" value="0" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
@@ -793,7 +767,7 @@
                         </p>
                     </div>
                     <div class="text-center sm:text-right bg-slate-50 border border-slate-200/80 rounded-2xl px-4 py-3">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Total Horas</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block">Total Horas</span>
                         <span id="he-total-horas" class="text-lg font-bold text-emerald-800 font-mono-num">10.0 hrs</span>
                     </div>
                 </div>
@@ -801,15 +775,15 @@
                 <!-- Unit Values Grid (Light Theme) -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                        <span class="text-slate-500 block text-[10px] font-bold uppercase tracking-wider mb-1">Hora Ordinaria</span>
+                        <span class="text-slate-500 block text-xs font-bold uppercase tracking-wider mb-1">Hora Ordinaria</span>
                         <span class="font-mono-num font-bold text-base text-slate-900" id="he-unit-ordinaria">$3.075</span>
                     </div>
                     <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4">
-                        <span class="text-amber-800 block text-[10px] font-bold uppercase tracking-wider mb-1">Hora Extra 50%</span>
+                        <span class="text-amber-800 block text-xs font-bold uppercase tracking-wider mb-1">Hora Extra 50%</span>
                         <span class="font-mono-num font-bold text-base text-amber-900" id="he-unit-50">$4.613</span>
                     </div>
                     <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4">
-                        <span class="text-emerald-800 block text-[10px] font-bold uppercase tracking-wider mb-1">Hora Extra 100%</span>
+                        <span class="text-emerald-800 block text-xs font-bold uppercase tracking-wider mb-1">Hora Extra 100%</span>
                         <span class="font-mono-num font-bold text-base text-emerald-900" id="he-unit-100">$6.151</span>
                     </div>
                 </div>
@@ -847,30 +821,23 @@
                         <span style="color: #111827 !important;">Ver en Sueldo</span>
                     </a>
                 </div>
+            </div>
+        </div>
 
-                <!-- Banner Patrocinado Itaú -->
-                <div class="mt-5 p-4 bg-slate-50 border border-slate-200/90 rounded-2xl shadow-xs no-print text-center">
-                    <div class="flex items-center justify-between mb-2 px-1 max-w-[300px] mx-auto">
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-forest-700"></span> Publicidad Patrocinada
-                        </span>
-                        <span class="text-[10px] text-slate-400 font-medium">Banco Itaú Chile</span>
-                    </div>
-                    <a href="/itau" target="_blank" rel="sponsored nofollow noopener" aria-label="Abrir Cuenta Corriente Itaú online" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-amber-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
-                        <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención al recibir sueldo" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
-                    </a>
-                    <div class="mt-2.5 max-w-[300px] mx-auto text-left px-1">
-                        <p class="text-[11px] text-slate-600 leading-tight mb-2">
-                            Recibe tu sueldo y horas extras en tu <strong>Cuenta Corriente Itaú con $0 costo de mantención</strong>.
-                        </p>
-                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_btn" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-forest-800 hover:bg-forest-900 !text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important;">
+                <!-- Patrocinado: fuera de la tarjeta de resultados -->
+        <aside class="cl-sponsor no-print" aria-label="Contenido patrocinado">
+            <div class="cl-sponsor-media"><a href="/itau" target="_blank" rel="sponsored nofollow noopener" aria-label="Abrir Cuenta Corriente Itaú online" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-amber-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
+                        <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención al recibir sueldo" width="300" height="250" class="block w-full h-auto rounded-xl" loading="lazy">
+                    </a></div>
+            <div class="cl-sponsor-body">
+                <p class="cl-sponsor-label">Publicidad · Banco Itaú Chile</p>
+                <p class="text-sm text-slate-700 leading-relaxed">Recibe tu sueldo y horas extras en tu <strong>Cuenta Corriente Itaú con $0 costo de mantención</strong>.</p>
+                <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_btn" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-forest-800 hover:bg-forest-900 !text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important;">
                             <span style="color: #ffffff !important;">Abrir Cuenta Online</span>
                             <span class="material-icons text-xs" style="color: #ffffff !important;">arrow_forward</span>
                         </a>
-                    </div>
-                </div>
             </div>
-        </div>
+        </aside>
 
         <!-- B2B Box: Anexo 40h & Kit Blindaje Pyme 2026 -->
         <section class="max-w-4xl mx-auto my-8 no-print" aria-label="Solución para Empleadores y Contadores">
@@ -883,7 +850,7 @@
                     <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight m-0">
                         ¿Calculando horas extras con la <span class="text-emerald-700">Ley 40 Horas (42h en 2026)</span>?
                     </h3>
-                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed m-0">
+                    <p class="text-sm sm:text-sm text-slate-600 leading-relaxed m-0">
                         Actualiza obligatoriamente los contratos de tu personal con el <strong class="text-slate-800">Anexo de Jornada 42 Horas</strong> y blinda tu empresa ante fiscalizaciones con el <strong class="text-slate-800">Kit de Cumplimiento Laboral Pyme 2026</strong>.
                     </p>
                 </div>
@@ -1063,11 +1030,11 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
                     <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
                         <strong class="block text-slate-900 mb-1">⏱️ Máximo 2 horas al día</strong>
-                        <p class="text-slate-600 text-xs">La ley prohíbe realizar más de 2 horas extraordinarias diarias para proteger la salud del trabajador (Art. 31).</p>
+                        <p class="text-slate-600 text-sm">La ley prohíbe realizar más de 2 horas extraordinarias diarias para proteger la salud del trabajador (Art. 31).</p>
                     </div>
                     <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
                         <strong class="block text-slate-900 mb-1">📝 Pacto escrito obligatorio</strong>
-                        <p class="text-slate-600 text-xs">Debe existir un acuerdo firmado por escrito con vigencia máxima de 3 meses, renovable si persisten las faenas temporales.</p>
+                        <p class="text-slate-600 text-sm">Debe existir un acuerdo firmado por escrito con vigencia máxima de 3 meses, renovable si persisten las faenas temporales.</p>
                     </div>
                     <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
                         <strong class="block text-slate-900 mb-1">💵 Pago en la liquidación</strong>
@@ -1082,19 +1049,19 @@
                 <div class="space-y-3">
                     <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
                         <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Las horas extras pagan impuestos y cotizaciones previsionales?</h4>
-                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <p class="text-sm sm:text-sm text-slate-600 leading-relaxed">
                             Sí. Las horas extraordinarias son consideradas <strong>remuneración imponible y tributable</strong>. Por tanto, se les descuenta AFP (10,58% a 11,45%), Salud (7%) y Seguro de Cesantía (0,6%). Si tu total imponible supera las 13,5 UTM mensuales, también tributan impuesto único.
                         </p>
                     </div>
                     <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
                         <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Cuándo corresponde pagar horas extras al 100%?</h4>
-                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <p class="text-sm sm:text-sm text-slate-600 leading-relaxed">
                             El recargo legal mínimo del Código del Trabajo es del 50%. Sin embargo, se paga el 100% (o más) cuando las horas extras se realizan en días domingos o festivos en empresas que no tienen turnos continuos, o cuando se pactó contractualmente un recargo superior mediante convenio individual o colectivo.
                         </p>
                     </div>
                     <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
                         <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Puedo compensar las horas extras con días de descanso?</h4>
-                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <p class="text-sm sm:text-sm text-slate-600 leading-relaxed">
                             Con la Ley 21.561 (40 Horas), las partes pueden acordar por escrito que las horas extraordinarias se compensen con hasta 5 días hábiles de feriado adicional al año, debiendo otorgarse 1,5 horas de descanso por cada hora extra trabajada.
                         </p>
                     </div>
@@ -1107,7 +1074,7 @@
     <!-- MOBILE FLOATING RESULT BAR -->
     <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between no-print">
         <div>
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Horas Extras</div>
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Horas Extras</div>
             <div id="mobile-total-display" style="color: var(--teal-forest);" class="text-lg font-extrabold font-mono-num leading-tight">$46.130</div>
         </div>
         <div class="flex items-center gap-2">
@@ -1159,10 +1126,10 @@
                             </div>
                             <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
                         </a>
-                        <p class="text-xs text-white/75 leading-relaxed max-w-xs">
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-                        <div class="pt-1 text-[11px] font-mono-num text-white/50">
+                        <div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
@@ -1233,7 +1200,7 @@
 
     <!-- Scripts -->
     <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.1.1"></script>
+    <script src="/js/indicators.js?v=2.9.0"></script>
     <script>
         function parseCleanNumber(val) {
             if (!val) return 0;

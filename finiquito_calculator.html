@@ -129,7 +129,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.9.0">
     
     <!-- TealHQ Signature Design System Styles -->
     <style>
@@ -460,7 +460,7 @@
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -470,7 +470,7 @@
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
             </div>
-            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
                 <span class="text-white/20">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -535,7 +535,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
                                     </div>
                                 </a>
 
@@ -545,7 +545,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
                                     </div>
                                 </a>
 
@@ -555,7 +555,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
                                     </div>
                                 </a>
 
@@ -565,7 +565,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
                                     </div>
                                 </a>
 
@@ -575,7 +575,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
                                     </div>
                                 </a>
 
@@ -585,7 +585,7 @@
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
                                     </div>
                                 </a>
                             </div>
@@ -692,25 +692,9 @@
                 Calcula con rigor legal tus indemnizaciones por años de servicio, aviso previo, feriado proporcional y días pendientes conforme a las causales del Código del Trabajo (Art. 161, 159 y 160). Actualizado con el sueldo mínimo de <strong>$553.553</strong> y topes de <strong>90 UF</strong> para 2026.
             </p>
 
-            <!-- Segmented Control Switcher -->
-            <div class="mt-6">
-                <div class="segmented-switcher-wrapper no-print">
-                    <div class="segmented-switcher">
-                        <a href="finiquito_calculator" id="tab-btn-finiquito" class="segmented-item active">
-                            <span class="material-icons text-sm text-[#00382E]">calculate</span>
-                            <span>Finiquito Legal (DT)</span>
-                        </a>
-                        <a href="sueldo_liquido" id="tab-btn-sueldo" class="segmented-item">
-                            <span class="material-icons text-sm text-slate-400">payments</span>
-                            <span>Sueldo Líquido</span>
-                        </a>
-                        <a href="calculadora-horas-extras" class="segmented-item hidden sm:inline-flex">
-                            <span class="material-icons text-sm text-slate-400">schedule</span>
-                            <span>Horas Extras 42h</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <nav class="cl-calcnav no-print" aria-label="Calculadoras">
+                <div class="cl-calcnav-track"><a href="finiquito_calculator" aria-current="page">Finiquito</a><a href="simulador-despido-injustificado-chile">Despido injustificado</a><a href="sueldo_liquido">Sueldo líquido</a><a href="calculadora-horas-extras">Horas extras</a><a href="calculadora-sueldo-part-time">Part-time</a><a href="calculadora-vacaciones">Vacaciones</a><a href="calculadora-despido-articulo-160">Despido Art. 160</a><a href="simulador-seguro-cesantia-afc">Seguro de cesantía</a><a href="calculadora-costo-empresa-chile">Costo empresa</a></div>
+            </nav>
         </div>
 
         <!-- 4. CALCULATOR SPLIT-SCREEN BENTO CONTAINER -->
@@ -747,18 +731,18 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label for="startDate" class="block text-[11px] font-medium text-slate-500 mb-1">Fecha de Inicio</label>
+                                <label for="startDate" class="block text-xs font-medium text-slate-500 mb-1">Fecha de Inicio</label>
                                 <input type="date" id="startDate" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                             <div>
-                                <label for="endDate" class="block text-[11px] font-medium text-slate-500 mb-1">Fecha de Término</label>
+                                <label for="endDate" class="block text-xs font-medium text-slate-500 mb-1">Fecha de Término</label>
                                 <input type="date" id="endDate" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                         </div>
 
                         <!-- Presets de Antigüedad -->
                         <div class="pt-1">
-                            <span class="block text-[11px] font-medium text-slate-500 mb-1.5">Antigüedad rápida:</span>
+                            <span class="block text-xs font-medium text-slate-500 mb-1.5">Antigüedad rápida:</span>
                             <div class="flex flex-wrap gap-2">
                                 <button type="button" data-years="1" class="btn-preset-year px-3 py-1 text-xs font-semibold bg-white text-slate-700 border border-slate-200 rounded-full hover:border-[#00382E] transition-all cursor-pointer">
                                     1 año
@@ -786,16 +770,16 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label for="baseSalary" class="block text-[11px] font-medium text-slate-500 mb-1">Sueldo Base Mensual</label>
+                                <label for="baseSalary" class="block text-xs font-medium text-slate-500 mb-1">Sueldo Base Mensual</label>
                                 <input type="text" id="baseSalary" data-type="currency" placeholder="$ 850.000" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-mono-num text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                             <div>
-                                <label for="gratification" class="block text-[11px] font-medium text-slate-500 mb-1">Gratificación Mensual (25%)</label>
+                                <label for="gratification" class="block text-xs font-medium text-slate-500 mb-1">Gratificación Mensual (25%)</label>
                                 <input type="text" id="gratification" data-type="currency" placeholder="$ 212.500" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-mono-num text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                             </div>
                         </div>
                         <div>
-                            <label for="assignments" class="block text-[11px] font-medium text-slate-500 mb-1">Asignaciones Fijas No Imponibles (Colación + Movilización)</label>
+                            <label for="assignments" class="block text-xs font-medium text-slate-500 mb-1">Asignaciones Fijas No Imponibles (Colación + Movilización)</label>
                             <input type="text" id="assignments" data-type="currency" placeholder="$ 0" class="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-mono-num text-slate-900 focus:bg-white focus:border-[#00382E] focus:ring-1 focus:ring-[#00382E] outline-none transition-all">
                         </div>
                     </div>
@@ -820,7 +804,7 @@
                                 <input type="checkbox" id="noticeGiven" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-[#00382E] focus:ring-[#00382E] cursor-pointer">
                                 <div>
                                     <span class="text-xs font-bold text-slate-800 block">¿Se dio aviso previo con 30 días de anticipación?</span>
-                                    <span class="text-[11.5px] text-slate-500 leading-snug block mt-0.5">
+                                    <span class="text-xs text-slate-500 leading-snug block mt-0.5">
                                         Si la empresa <strong>no avisó con 30 días</strong> (despido inmediato), debe pagar 1 mes de sueldo por indemnización sustitutiva de aviso previo.
                                     </span>
                                 </div>
@@ -840,7 +824,7 @@
                                 +
                             </button>
                         </div>
-                        <p class="text-[11px] text-slate-400">Días hábiles de periodos anteriores no tomados (se pagan íntegros).</p>
+                        <p class="text-xs text-slate-400">Días hábiles de periodos anteriores no tomados (se pagan íntegros).</p>
                     </div>
 
                     <!-- STEP 5: Opciones Avanzadas (Acordeón) -->
@@ -874,7 +858,7 @@
                                         <input type="text" id="varMonth3" data-type="currency" placeholder="Mes 3 ($)" aria-label="Comisiones Mes 3" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono-num">
                                     </div>
                                 </div>
-                                <div class="text-[11px] text-slate-500">
+                                <div class="text-xs text-slate-500">
                                     Promedio mensual variable: <strong id="variableAverageOutput" class="text-slate-800 font-mono-num">$0</strong>
                                 </div>
                             </div>
@@ -891,7 +875,7 @@
                                 </label>
                             </div>
 
-                            <div class="p-3 bg-slate-100/70 rounded-xl text-[11px] text-slate-600">
+                            <div class="p-3 bg-slate-100/70 rounded-xl text-xs text-slate-600">
                                 Tope legal máximo de indemnización mensual: <strong id="ufCapValue" class="text-slate-900 font-mono-num">$3.692.938</strong> (90 UF).
                             </div>
                         </div>
@@ -909,7 +893,7 @@
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Fórmulas Oficiales DT 2026
                             </span>
-                            <span id="lastUpdateDate" class="text-[10px] text-slate-400 font-medium">Marzo 2026</span>
+                            <span id="lastUpdateDate" class="text-xs text-slate-400 font-medium">Marzo 2026</span>
                         </div>
 
                         <!-- Hero Main Amount -->
@@ -930,7 +914,7 @@
                             <div id="yearsRow" class="flex justify-between items-start gap-2">
                                 <div>
                                     <span class="font-bold text-slate-800 block">Indemnización por Años de Servicio</span>
-                                    <span id="antiquityOutput" class="text-[11px] text-slate-500">0 años y 0 meses</span>
+                                    <span id="antiquityOutput" class="text-xs text-slate-500">0 años y 0 meses</span>
                                 </div>
                                 <span id="yearsServiceAmount" class="font-bold text-slate-900 font-mono-num text-sm text-right">$ - CLP</span>
                             </div>
@@ -939,7 +923,7 @@
                             <div id="noticeRow" class="flex justify-between items-start gap-2">
                                 <div>
                                     <span class="font-bold text-slate-800 block">Aviso Previo Sustitutivo</span>
-                                    <span class="text-[11px] text-slate-500">1 mes de remuneración</span>
+                                    <span class="text-xs text-slate-500">1 mes de remuneración</span>
                                 </div>
                                 <span id="noticeAmount" class="font-bold text-slate-900 font-mono-num text-sm text-right">$ - CLP</span>
                             </div>
@@ -948,7 +932,7 @@
                             <div class="flex justify-between items-start gap-2">
                                 <div>
                                     <span class="font-bold text-slate-800 block">Vacaciones Proporcionales</span>
-                                    <span id="totalVacationDaysOutput" class="text-[11px] text-slate-500">0 días hábiles</span>
+                                    <span id="totalVacationDaysOutput" class="text-xs text-slate-500">0 días hábiles</span>
                                 </div>
                                 <span id="vacationPropAmount" class="font-bold text-slate-900 font-mono-num text-sm text-right">$ - CLP</span>
                             </div>
@@ -957,7 +941,7 @@
                             <div class="flex justify-between items-start gap-2">
                                 <div>
                                     <span class="font-bold text-slate-800 block">Vacaciones Pendientes</span>
-                                    <span class="text-[11px] text-slate-500">Días anteriores devengados</span>
+                                    <span class="text-xs text-slate-500">Días anteriores devengados</span>
                                 </div>
                                 <span id="vacationPendingAmount" class="font-bold text-slate-900 font-mono-num text-sm text-right">$ - CLP</span>
                             </div>
@@ -966,7 +950,7 @@
                             <div class="flex justify-between items-start gap-2">
                                 <div>
                                     <span class="font-bold text-slate-800 block">Remuneración Días del Mes</span>
-                                    <span id="daysWorkedOutput" class="text-[11px] text-slate-500">Días pendientes de pago</span>
+                                    <span id="daysWorkedOutput" class="text-xs text-slate-500">Días pendientes de pago</span>
                                 </div>
                                 <span id="pendingSalaryAmount" class="font-bold text-slate-900 font-mono-num text-sm text-right">$ - CLP</span>
                             </div>
@@ -975,7 +959,7 @@
                             <div id="afcRow" class="flex justify-between items-start gap-2 p-2.5 rounded-xl bg-rose-50/70 border border-rose-100 text-rose-900">
                                 <div>
                                     <span class="font-bold block">Descuento AFC Aporte Empleador</span>
-                                    <span class="text-[10.5px] text-rose-700/80">Solo aplicable en Art. 161</span>
+                                    <span class="text-xs text-rose-700/80">Solo aplicable en Art. 161</span>
                                 </div>
                                 <span id="afcAmount" class="font-bold font-mono-num text-sm text-right text-rose-700">-$ - CLP</span>
                             </div>
@@ -1001,7 +985,7 @@
                         </div>
 
                         <!-- Legal Technical Note -->
-                        <div class="mt-4 pt-3 border-t border-slate-100 text-[10.5px] text-slate-400 text-center leading-relaxed">
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-400 text-center leading-relaxed">
                             Cálculo legal referencial según Art. 163 y 177 del Código del Trabajo. No requiere registro previo.
                         </div>
 
@@ -1016,7 +1000,7 @@
         <!-- 5. FLOATING MOBILE BAR (Bottom Sheet for Mobile Viewports) -->
         <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 shadow-lg flex items-center justify-between no-print hidden">
             <div>
-                <span id="mobile-result-label" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Finiquito</span>
+                <span id="mobile-result-label" class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Total Finiquito</span>
                 <span id="mobile-result-value" class="font-mono-num font-extrabold text-lg text-[#00382E]">$ -</span>
                 <span id="mobile-result-percentage" class="hidden"></span>
             </div>
@@ -1053,13 +1037,13 @@
                 </div>
                 <div class="shrink-0 w-full sm:w-auto text-center">
                     <div class="bg-slate-50 border border-slate-200 p-6 rounded-2xl flex flex-col items-center gap-3 max-w-xs mx-auto">
-                        <span class="text-[11px] text-slate-400 line-through font-medium">Precio normal: $39.990</span>
+                        <span class="text-xs text-slate-400 line-through font-medium">Precio normal: $39.990</span>
                         <div class="text-3xl font-extrabold text-slate-900 font-mono-num">$19.990 <span class="text-xs font-normal text-slate-500">CLP</span></div>
-                        <span class="inline-block px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold rounded-full">Pago único · Sin suscripciones</span>
-                        <a href="https://www.flow.cl/btn.php?token=6b44a47" target="_blank" rel="noopener noreferrer" class="btn-yellow-pill w-full !text-xs uppercase tracking-wider !shadow-md mt-1">
+                        <span class="inline-block px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">Pago único · Sin suscripciones</span>
+                        <a href="https://www.flow.cl/btn.php?token=6b44a47" target="_blank" rel="noopener noreferrer" class="btn-yellow-pill w-full !text-xs !shadow-md mt-1">
                             <span style="color: #111827 !important;">Comprar Kit Blindaje ($19.990)</span>
                         </a>
-                        <a href="para-empleadores" class="text-[11.5px] text-slate-500 hover:text-[#00382E] transition-colors underline">
+                        <a href="para-empleadores" class="text-xs text-slate-500 hover:text-[#00382E] transition-colors underline">
                             O revisa el Portal para Empleadores →
                         </a>
                     </div>
@@ -1076,7 +1060,7 @@
                     </div>
                     <div>
                         <h4 class="text-sm font-bold text-slate-900 mb-1">Normativa DT & Código del Trabajo</h4>
-                        <p class="text-xs text-slate-500 leading-relaxed">
+                        <p class="text-sm text-slate-500 leading-relaxed">
                             Fórmulas actualizadas conforme a los Artículos 161, 163 y 177 del Código del Trabajo, divisores de 42h (Ley 40 Horas) y tope de 90 UF.
                         </p>
                     </div>
@@ -1088,7 +1072,7 @@
                     </div>
                     <div>
                         <h4 class="text-sm font-bold text-slate-900 mb-1">100% Privado y Sin Registro</h4>
-                        <p class="text-xs text-slate-500 leading-relaxed">
+                        <p class="text-sm text-slate-500 leading-relaxed">
                             Los cálculos se ejecutan localmente en tu propio dispositivo. No guardamos remuneraciones ni solicitamos tu RUT para simular.
                         </p>
                     </div>
@@ -1100,7 +1084,7 @@
                     </div>
                     <div>
                         <h4 class="text-sm font-bold text-slate-900 mb-1">Exportación Oficial en PDF</h4>
-                        <p class="text-xs text-slate-500 leading-relaxed">
+                        <p class="text-sm text-slate-500 leading-relaxed">
                             Genera e imprime un informe desglosado con cada rubro valorizado con un solo clic, sin marcas de agua y de uso totalmente libre.
                         </p>
                     </div>
@@ -1112,7 +1096,6 @@
         <article class="my-14 bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-xs space-y-10 no-print">
             
             <div class="border-b border-slate-100 pb-6">
-                <span class="text-xs font-bold text-[#00382E] uppercase tracking-wider">Guía Práctica Legal DT 2026</span>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
                     ¿Cómo se calcula legalmente un finiquito de trabajo en Chile?
                 </h2>
@@ -1162,7 +1145,7 @@
                     <span class="material-icons text-amber-700 text-2xl shrink-0">edit_note</span>
                     <div>
                         <h3 class="text-base font-bold text-amber-950">Cláusula de Reserva de Derechos en el Finiquito</h3>
-                        <p class="text-xs text-amber-900 leading-relaxed mt-1">
+                        <p class="text-sm text-amber-900 leading-relaxed mt-1">
                             Si no estás de acuerdo con la causal de despido, con los montos calculados o con el descuento de la AFC, debes escribir a mano la siguiente frase antes de firmar en la notaría o portal de la DT:
                         </p>
                     </div>
@@ -1175,7 +1158,7 @@
 "Me reservo el derecho a demandar judicialmente por despido injustificado, nulidad del despido, cobro de prestaciones adeudadas y la restitución del descuento indebido del aporte de la AFC, conforme a los artículos 168 y 177 del Código del Trabajo."
                 </div>
 
-                <p class="text-[11.5px] text-amber-800">
+                <p class="text-sm text-amber-800">
                     <strong>Importante:</strong> El empleador está obligado a pagarte los montos que no estén en disputa en el finiquito, aun cuando estampes tu reserva de derechos.
                 </p>
             </div>
@@ -1235,36 +1218,36 @@
                 <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">
                     ¿Consideras que tu despido fue injustificado?
                 </h3>
-                <p class="text-xs text-slate-600 leading-relaxed">
+                <p class="text-sm text-slate-600 leading-relaxed">
                     Si te despidieron por Necesidades de la Empresa (Art. 161) y la justificación es genérica o falsa, puedes demandar judicialmente para obtener un recargo del <strong>30% sobre tus años de servicio</strong> y recuperar el descuento de la AFC.
                 </p>
 
                 <!-- Formulario -->
                 <form id="lead-form" onsubmit="event.preventDefault(); enviarLead();" class="mt-6 space-y-3.5 text-left max-w-lg mx-auto">
                     <div>
-                        <label for="lead-nombre" class="block text-[11px] font-bold text-slate-700 mb-1">Nombre Completo</label>
+                        <label for="lead-nombre" class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo</label>
                         <input type="text" id="lead-nombre" required placeholder="Ej: Valentina Morales" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label for="lead-correo" class="block text-[11px] font-bold text-slate-700 mb-1">Correo Electrónico</label>
+                            <label for="lead-correo" class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico</label>
                             <input type="email" id="lead-correo" required placeholder="tu@correo.cl" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none">
                         </div>
                         <div>
-                            <label for="lead-telefono" class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp / Teléfono</label>
+                            <label for="lead-telefono" class="block text-xs font-bold text-slate-700 mb-1">WhatsApp / Teléfono</label>
                             <input type="tel" id="lead-telefono" required placeholder="+56 9 1234 5678" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none font-mono-num">
                         </div>
                     </div>
                     <div class="pt-1">
-                        <label for="lead-privacy" class="flex items-start gap-2 text-[10.5px] text-slate-600 cursor-pointer">
+                        <label for="lead-privacy" class="flex items-start gap-2 text-xs text-slate-600 cursor-pointer">
                             <input type="checkbox" id="lead-privacy" required class="w-3.5 h-3.5 mt-0.5 rounded border-slate-300 text-[#00382E] focus:ring-[#00382E]">
                             <span>Acepto la <a href="privacidad" target="_blank" class="underline font-semibold text-slate-800">Política de Privacidad</a> y autorizo la evaluación confidencial de mi despido con un abogado laboral colaborador.</span>
                         </label>
                     </div>
-                    <button type="submit" class="btn-yellow-pill w-full !text-xs uppercase tracking-wider mt-2">
+                    <button type="submit" class="btn-yellow-pill w-full !text-xs mt-2">
                         <span>Solicitar Evaluación Legal Gratuita</span>
                     </button>
-                    <p class="text-[10px] text-slate-400 text-center">
+                    <p class="text-xs text-slate-400 text-center">
                         Honorarios a cuota litis solo si se obtiene resultado favorable en tribunal.
                     </p>
                 </form>
@@ -1273,7 +1256,7 @@
                 <div id="lead-confirmacion" class="hidden p-6 bg-emerald-50 rounded-2xl border border-emerald-200 text-center space-y-2 max-w-lg mx-auto">
                     <span class="material-icons text-3xl text-emerald-600">check_circle</span>
                     <h4 class="text-sm font-bold text-slate-900">¡Solicitud enviada con éxito!</h4>
-                    <p class="text-xs text-slate-600 leading-relaxed">
+                    <p class="text-sm text-slate-600 leading-relaxed">
                         Un abogado laboral colaborador evaluará los antecedentes de tu finiquito y te contactará a la brevedad por WhatsApp o correo.
                     </p>
                 </div>
@@ -1325,10 +1308,10 @@
                             </div>
                             <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
                         </a>
-                        <p class="text-xs text-white/75 leading-relaxed max-w-xs">
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-                        <div class="pt-1 text-[11px] font-mono-num text-white/50">
+                        <div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
@@ -1402,9 +1385,9 @@
 
     <!-- Scripts Engine -->
     <script src="/js/constants.js?v=2.0.3"></script>
-    <script src="/js/indicators.js?v=2.0.3"></script>
+    <script src="/js/indicators.js?v=2.9.0"></script>
     <script src="/js/pdf_generator.js?v=2.8.0"></script>
-    <script src="/js/validation.js?v=2.8.0"></script>
+    <script src="/js/validation.js?v=2.9.0"></script>
     <script src="/js/logic.js?v=2.0.3"></script>
     <script src="/js/ui.js?v=3.0.0"></script>
 

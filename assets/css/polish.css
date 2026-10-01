@@ -203,6 +203,246 @@ main details[open] > :not(summary) {
         linear-gradient(160deg, #00382E 0%, #00261F 100%);
 }
 
+/* =====================================================================
+ * Fase 2 · componentes de plantilla
+ * ===================================================================== */
+
+main h1,
+main h2,
+main h3 {
+    text-wrap: balance;
+}
+
+/* ---------- Referencia normativa bajo el titulo ----------
+ * Reemplaza las etiquetas tipo pildora: se lee como la cita de un
+ * documento legal, no como una insignia de marketing. */
+
+.cl-meta {
+    display: block;
+    margin: 0.75rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cl-forest-700);
+}
+
+.cl-meta::before {
+    content: "";
+    display: inline-block;
+    width: 1.25rem;
+    height: 2px;
+    margin-inline-end: 0.5rem;
+    vertical-align: middle;
+    background-color: var(--cl-amber);
+    border-radius: 2px;
+}
+
+.cl-meta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-decoration: underline;
+    text-decoration-color: rgba(6, 74, 62, 0.35);
+    text-underline-offset: 0.2em;
+    transition: color 150ms var(--cl-ease-ui), text-decoration-color 150ms var(--cl-ease-ui);
+}
+
+.cl-meta-link:hover {
+    color: var(--cl-forest);
+    text-decoration-color: currentColor;
+}
+
+.cl-meta-link .material-icons {
+    font-size: 1rem;
+    transition: translate 200ms var(--cl-ease-out);
+}
+
+.cl-meta-link:hover .material-icons {
+    translate: 2px 0;
+}
+
+/* ---------- Navegacion entre calculadoras ---------- */
+
+.cl-calcnav {
+    position: relative;
+    margin: 1.75rem 0 2rem;
+    border-bottom: 1px solid #E2E8E5;
+}
+
+.cl-calcnav-track {
+    display: flex;
+    gap: 1.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-padding-inline: 1rem;
+}
+
+.cl-calcnav-track::-webkit-scrollbar {
+    display: none;
+}
+
+.cl-calcnav a {
+    position: relative;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4B5563;
+    white-space: nowrap;
+    transition: color 150ms var(--cl-ease-ui);
+}
+
+.cl-calcnav a::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+    background-color: #C9D6D1;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 220ms var(--cl-ease-out), background-color 150ms var(--cl-ease-ui);
+}
+
+.cl-calcnav a:hover {
+    color: var(--cl-forest);
+}
+
+.cl-calcnav a:hover::after {
+    transform: scaleX(1);
+}
+
+.cl-calcnav a[aria-current="page"] {
+    color: var(--cl-forest);
+    font-weight: 650;
+}
+
+.cl-calcnav a[aria-current="page"]::after {
+    height: 3px;
+    background-color: var(--cl-amber);
+    transform: scaleX(1);
+}
+
+/* Pista de contenido oculto: desvanece el borde cuando la fila desborda */
+@media (max-width: 1023px) {
+    .cl-calcnav::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 1px;
+        width: 2.5rem;
+        pointer-events: none;
+        background: linear-gradient(to right, rgba(248, 250, 249, 0), var(--cl-canvas));
+    }
+}
+
+/* ---------- Bloque patrocinado (fuera de los resultados) ---------- */
+
+.cl-sponsor {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    align-items: center;
+    max-width: 56rem;
+    margin: 2.5rem auto;
+    padding: 1rem;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 1rem;
+}
+
+@media (min-width: 640px) {
+    .cl-sponsor {
+        grid-template-columns: 9rem minmax(0, 1fr);
+        gap: 1.5rem;
+        padding: 1.25rem;
+    }
+}
+
+.cl-sponsor-label {
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    color: #6B7280;
+}
+
+.cl-sponsor-body > a {
+    width: auto !important;
+    display: inline-flex !important;
+    margin-top: 0.75rem;
+    padding-inline: 1.25rem !important;
+}
+
+/* ---------- Guias: articulo abierto y medida de lectura ---------- */
+
+.cl-reading {
+    max-width: 46rem !important;
+}
+
+.cl-article {
+    background: none;
+    border: 0;
+    padding: 0;
+}
+
+.cl-article header h1 {
+    color: var(--cl-ink);
+    letter-spacing: -0.02em;
+}
+
+.cl-trust {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 0.5rem 0 2rem;
+    padding: 0.875rem 0;
+    border-top: 1px solid #E5E7EB;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.cl-trust-icon {
+    flex: none;
+    padding-top: 1px;
+    line-height: 1;
+}
+
+.cl-trust-icon .material-icons {
+    font-size: 1.25rem;
+}
+
+.cl-trust p {
+    margin: 0 !important;
+}
+
+.cl-trust p + p {
+    margin-top: 0.25rem !important;
+}
+
+/* ---------- Piso tipografico de 12px para etiquetas definidas por pagina ---------- */
+
+.sueldo-chip,
+.rubro-label {
+    font-size: 0.75rem !important;
+}
+
+/* ---------- Barra superior de indicadores (UF, UTM, IMM) ---------- */
+
+div[style*="teal-forest-deep"] .font-mono-num > span {
+    white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+    div[style*="teal-forest-deep"] .font-mono-num {
+        font-size: 11px;
+        column-gap: 0.625rem;
+    }
+}
+
 /* ---------- Movimiento reducido ---------- */
 
 @media (prefers-reduced-motion: reduce) {

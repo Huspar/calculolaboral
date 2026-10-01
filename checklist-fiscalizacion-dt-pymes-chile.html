@@ -122,7 +122,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         .prose-content > h2, .prose-content h2:not(.not-prose *) {
             font-size: 1.5rem;
@@ -549,7 +549,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -559,7 +559,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -619,7 +619,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -628,7 +628,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -637,7 +637,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -646,7 +646,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -655,7 +655,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -664,7 +664,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -736,7 +736,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Content -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full">
 <!-- Breadcrumbs -->
 <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto no-print">
@@ -746,13 +746,9 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Checklist Fiscalización DT Pymes</span>
 </nav>
-<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="cl-article mb-8 relative">
 <!-- Article Header -->
 <header class="mb-8 border-b border-slate-100 pb-8">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F8FAF9] border border-slate-200 text-forest-700 text-xs font-bold tracking-wider uppercase mb-4">
-<span class="material-icons text-[14px]">fact_check</span>
-                        Guía Preventiva de Fiscalización Pyme
-                    </div>
 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-4 tracking-tight">
                         Checklist Fiscalización DT 2026: Qué Documentos Pide la Inspección del Trabajo a las Pymes
                     </h1>
@@ -811,72 +807,72 @@ body { overflow-x: hidden; }
 <!-- Microempresa Card -->
 <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-xs">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-slate-100 pb-2.5 mb-2.5">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-slate-200/80 font-bold text-[11px] w-fit">Microempresa</span>
-<span class="text-[11px] font-semibold text-slate-500">1 a 9 trabajadores</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-slate-200/80 font-bold text-xs w-fit">Microempresa</span>
+<span class="text-xs font-semibold text-slate-500">1 a 9 trabajadores</span>
 </div>
 <div class="grid grid-cols-3 gap-1.5 text-center">
 <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-<span class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
-<span class="block text-[11px] font-bold text-slate-800">1-2 UTM</span>
-<span class="block text-[9px] text-slate-500 font-mono mt-0.5">Hasta $143k</span>
+<span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
+<span class="block text-xs font-bold text-slate-800">1-2 UTM</span>
+<span class="block text-xs text-slate-500 font-mono mt-0.5">Hasta $143k</span>
 </div>
 <div class="bg-amber-50/60 rounded-xl p-2 border border-amber-200/60">
-<span class="block text-[9px] font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
-<span class="block text-[11px] font-bold text-amber-800">3-6 UTM</span>
-<span class="block text-[9px] text-amber-600 font-mono mt-0.5">Hasta $430k</span>
+<span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
+<span class="block text-xs font-bold text-amber-800">3-6 UTM</span>
+<span class="block text-xs text-amber-600 font-mono mt-0.5">Hasta $430k</span>
 </div>
 <div class="bg-rose-50/70 rounded-xl p-2 border border-rose-200/70">
-<span class="block text-[9px] font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
-<span class="block text-[11px] font-black text-rose-800">7-10 UTM</span>
-<span class="block text-[9px] text-rose-600 font-mono mt-0.5">Hasta $717k</span>
+<span class="block text-xs font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
+<span class="block text-xs font-black text-rose-800">7-10 UTM</span>
+<span class="block text-xs text-rose-600 font-mono mt-0.5">Hasta $717k</span>
 </div>
 </div>
 </div>
 <!-- Pequeña Empresa Card -->
 <div class="bg-white border border-forest-100 rounded-2xl p-3.5 shadow-xs">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-slate-100 pb-2.5 mb-2.5">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-forest-50 text-forest-700 border border-forest-200/80 font-bold text-[11px] w-fit">Pequeña Empresa</span>
-<span class="text-[11px] font-semibold text-slate-500">10 a 49 trabajadores</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-forest-50 text-forest-700 border border-forest-200/80 font-bold text-xs w-fit">Pequeña Empresa</span>
+<span class="text-xs font-semibold text-slate-500">10 a 49 trabajadores</span>
 </div>
 <div class="grid grid-cols-3 gap-1.5 text-center">
 <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-<span class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
-<span class="block text-[11px] font-bold text-slate-800">2-5 UTM</span>
-<span class="block text-[9px] text-slate-500 font-mono mt-0.5">Hasta $358k</span>
+<span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
+<span class="block text-xs font-bold text-slate-800">2-5 UTM</span>
+<span class="block text-xs text-slate-500 font-mono mt-0.5">Hasta $358k</span>
 </div>
 <div class="bg-amber-50/60 rounded-xl p-2 border border-amber-200/60">
-<span class="block text-[9px] font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
-<span class="block text-[11px] font-bold text-amber-800">6-15 UTM</span>
-<span class="block text-[9px] text-amber-600 font-mono mt-0.5">Hasta $1.07M</span>
+<span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
+<span class="block text-xs font-bold text-amber-800">6-15 UTM</span>
+<span class="block text-xs text-amber-600 font-mono mt-0.5">Hasta $1.07M</span>
 </div>
 <div class="bg-rose-50/70 rounded-xl p-2 border border-rose-200/70">
-<span class="block text-[9px] font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
-<span class="block text-[11px] font-black text-rose-800">16-40 UTM</span>
-<span class="block text-[9px] text-rose-600 font-mono mt-0.5">Hasta $2.86M</span>
+<span class="block text-xs font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
+<span class="block text-xs font-black text-rose-800">16-40 UTM</span>
+<span class="block text-xs text-rose-600 font-mono mt-0.5">Hasta $2.86M</span>
 </div>
 </div>
 </div>
 <!-- Mediana Empresa Card -->
 <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-xs">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-slate-100 pb-2.5 mb-2.5">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-bold text-[11px] w-fit">Mediana Empresa</span>
-<span class="text-[11px] font-semibold text-slate-500">50 a 199 trabajadores</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-bold text-xs w-fit">Mediana Empresa</span>
+<span class="text-xs font-semibold text-slate-500">50 a 199 trabajadores</span>
 </div>
 <div class="grid grid-cols-3 gap-1.5 text-center">
 <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-<span class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
-<span class="block text-[11px] font-bold text-slate-800">5-10 UTM</span>
-<span class="block text-[9px] text-slate-500 font-mono mt-0.5">Hasta $717k</span>
+<span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Leve</span>
+<span class="block text-xs font-bold text-slate-800">5-10 UTM</span>
+<span class="block text-xs text-slate-500 font-mono mt-0.5">Hasta $717k</span>
 </div>
 <div class="bg-amber-50/60 rounded-xl p-2 border border-amber-200/60">
-<span class="block text-[9px] font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
-<span class="block text-[11px] font-bold text-amber-800">11-30 UTM</span>
-<span class="block text-[9px] text-amber-600 font-mono mt-0.5">Hasta $2.15M</span>
+<span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-0.5">Grave</span>
+<span class="block text-xs font-bold text-amber-800">11-30 UTM</span>
+<span class="block text-xs text-amber-600 font-mono mt-0.5">Hasta $2.15M</span>
 </div>
 <div class="bg-rose-50/70 rounded-xl p-2 border border-rose-200/70">
-<span class="block text-[9px] font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
-<span class="block text-[11px] font-black text-rose-800">31-60 UTM</span>
-<span class="block text-[9px] text-rose-600 font-mono mt-0.5">Hasta $4.30M</span>
+<span class="block text-xs font-bold text-rose-700 uppercase tracking-wider mb-0.5">Gravísima</span>
+<span class="block text-xs font-black text-rose-800">31-60 UTM</span>
+<span class="block text-xs text-rose-600 font-mono mt-0.5">Hasta $4.30M</span>
 </div>
 </div>
 </div>
@@ -884,7 +880,7 @@ body { overflow-x: hidden; }
 <!-- Desktop / Tablet Table View (hidden sm:block) -->
 <div class="hidden sm:block overflow-x-auto my-6 not-prose border border-slate-200 rounded-2xl shadow-xs bg-white">
 <table class="w-full text-xs text-left border-collapse table-auto">
-<thead class="bg-slate-50 text-slate-800 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
+<thead class="bg-slate-50 text-slate-800 font-bold uppercase tracking-wider text-xs border-b border-slate-200">
 <tr>
 <th class="py-3 px-2.5 whitespace-nowrap">Tipo de Empresa</th>
 <th class="py-3 px-2.5 whitespace-nowrap">Dotación</th>
@@ -901,15 +897,15 @@ body { overflow-x: hidden; }
 <td class="py-3.5 px-2.5 whitespace-nowrap text-slate-600 font-medium">1 a 9 trabajadores</td>
 <td class="py-3.5 px-2.5 whitespace-nowrap">
 <span class="font-bold text-slate-800">1 a 2 UTM</span>
-<span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($71.721 - $143.442)</span>
+<span class="block text-slate-500 font-mono text-xs tracking-tight mt-0.5">($71.721 - $143.442)</span>
 </td>
 <td class="py-3.5 px-2.5 whitespace-nowrap">
 <span class="font-bold text-amber-700">3 a 6 UTM</span>
-<span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($215.163 - $430.326)</span>
+<span class="block text-slate-500 font-mono text-xs tracking-tight mt-0.5">($215.163 - $430.326)</span>
 </td>
 <td class="py-3.5 px-2.5 whitespace-nowrap bg-rose-50/20">
 <span class="font-black text-rose-700">7 a 10 UTM</span>
-<span class="block font-mono text-[10px] tracking-tight text-rose-600 mt-0.5">($502.047 - $717.210)</span>
+<span class="block font-mono text-xs tracking-tight text-rose-600 mt-0.5">($502.047 - $717.210)</span>
 </td>
 </tr>
 <tr class="bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
@@ -919,15 +915,15 @@ body { overflow-x: hidden; }
 <td class="py-3.5 px-2.5 whitespace-nowrap text-slate-600 font-medium">10 a 49 trabajadores</td>
 <td class="py-3.5 px-2.5 whitespace-nowrap">
 <span class="font-bold text-slate-800">2 a 5 UTM</span>
-<span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($143.442 - $358.605)</span>
+<span class="block text-slate-500 font-mono text-xs tracking-tight mt-0.5">($143.442 - $358.605)</span>
 </td>
 <td class="py-3.5 px-2.5 whitespace-nowrap">
 <span class="font-bold text-amber-700">6 a 15 UTM</span>
-<span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($430.326 - $1.075.815)</span>
+<span class="block text-slate-500 font-mono text-xs tracking-tight mt-0.5">($430.326 - $1.075.815)</span>
 </td>
 <td class="py-3.5 px-2.5 whitespace-nowrap bg-rose-50/20">
 <span class="font-black text-rose-700">16 a 40 UTM</span>
-<span class="block font-mono text-[10px] tracking-tight text-rose-600 mt-0.5">($1.147.536 - $2.868.840)</span>
+<span class="block font-mono text-xs tracking-tight text-rose-600 mt-0.5">($1.147.536 - $2.868.840)</span>
 </td>
 </tr>
 <tr class="hover:bg-slate-50/70 transition-colors">
@@ -937,15 +933,15 @@ body { overflow-x: hidden; }
 <td class="py-3.5 px-2.5 whitespace-nowrap text-slate-600 font-medium">50 a 199 trabajadores</td>
 <td class="py-3.5 px-2.5 whitespace-nowrap">
 <span class="font-bold text-slate-800">5 a 10 UTM</span>
-<span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($358.605 - $717.210)</span>
+<span class="block text-slate-500 font-mono text-xs tracking-tight mt-0.5">($358.605 - $717.210)</span>
 </td>
 <td class="py-3.5 px-2.5 whitespace-nowrap">
 <span class="font-bold text-amber-700">11 a 30 UTM</span>
-<span class="block text-slate-500 font-mono text-[10px] tracking-tight mt-0.5">($788.931 - $2.151.630)</span>
+<span class="block text-slate-500 font-mono text-xs tracking-tight mt-0.5">($788.931 - $2.151.630)</span>
 </td>
 <td class="py-3.5 px-2.5 whitespace-nowrap bg-rose-50/20">
 <span class="font-black text-rose-700">31 a 60 UTM</span>
-<span class="block font-mono text-[10px] tracking-tight text-rose-600 mt-0.5">($2.223.351 - $4.303.260)</span>
+<span class="block font-mono text-xs tracking-tight text-rose-600 mt-0.5">($2.223.351 - $4.303.260)</span>
 </td>
 </tr>
 </tbody>
@@ -962,7 +958,7 @@ body { overflow-x: hidden; }
 <h3 class="text-xl font-extrabold tracking-tight text-slate-900 !mt-0 !mb-0">
                                     Blindaje Laboral Pyme 2026: <span class="text-forest-600">21 Documentos Clave</span> en Word
                                 </h3>
-<p class="text-xs sm:text-sm leading-relaxed text-slate-600 !mb-0">
+<p class="text-sm sm:text-sm leading-relaxed text-slate-600 !mb-0">
                                     No redactes desde cero ni pagues asesorías caras. Descarga el kit completo con anexos 40h (42h en 2026), protocolo Ley Karin adaptado por rubro, contratos, pacto de horas extras y guía anti-multas por solo <strong class="text-slate-800">$19.990</strong>.
                                 </p>
 </div>
@@ -987,9 +983,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Contrato de Trabajo Individual Escriturado y Firmado</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Contratación</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Contratación</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Artículos 9 y 10 del Código del Trabajo.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Que se haya firmado dentro de los primeros 15 días (o 5 días en contratos por obra o menores a 30 días) y que contenga las 7 cláusulas mínimas obligatorias, especificando lugar exacto de faena y funciones reales.
                                     </p>
@@ -1003,9 +999,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Anexo de Modificación de Jornada Ley 40 Horas (42h en 2026)</div>
-<span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-wider">Hito 2026</span>
+<span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-900 text-xs font-bold uppercase tracking-wider">Hito 2026</span>
 </div>
-<p class="text-xs text-slate-700 leading-relaxed">
+<p class="text-sm text-slate-700 leading-relaxed">
 <strong>Base legal:</strong> Ley N° 21.561 y Artículo 11 del Código del Trabajo.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Que la reducción a 42 horas semanales esté debidamente escriturada mediante anexo firmado sin reducción de sueldo, y registrada en el portal Mi DT dentro de los 15 días hábiles siguientes.
                                     </p>
@@ -1019,9 +1015,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-rose-950">Protocolo de Prevención Ley Karin (Acoso Sexual, Laboral y Violencia)</div>
-<span class="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[10px] font-bold uppercase tracking-wider">Gravísima</span>
+<span class="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-xs font-bold uppercase tracking-wider">Gravísima</span>
 </div>
-<p class="text-xs text-slate-700 leading-relaxed">
+<p class="text-sm text-slate-700 leading-relaxed">
 <strong>Base legal:</strong> Ley N° 21.643, Decreto Supremo N° 44 del Mintrab y Circular 3.813 de la SUSESO.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Obligatorio para <strong>todas las empresas sin importar dotación (incluso con 1 solo trabajador)</strong>. Debe contener matriz de riesgos psicosociales, medidas tempranas de resguardo y procedimiento interno de denuncia. Multa de hasta 60 UTM.
                                     </p>
@@ -1035,9 +1031,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Acta de Designación del Canal y Encargado de Denuncias</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Canal Karin</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Canal Karin</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Art. 211-B Código del Trabajo.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Existencia formal de un correo o buzón de denuncias con la designación por escrito de la persona responsable de recibirlas y derivarlas a la DT o mutualidad en un plazo no mayor a 3 días hábiles.
                                     </p>
@@ -1051,9 +1047,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Acta de Difusión y Capacitación Ley Karin Firmada</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Capacitación</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Capacitación</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Dictamen DT N° 362/19 de 2024.<br/>
 <strong>Qué revisa el fiscalizador:</strong> No basta con tener el protocolo guardado. La empresa debe acreditar con lista física firmada por cada trabajador que el protocolo fue efectivamente entregado y capacitado.
                                     </p>
@@ -1067,9 +1063,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Libro o Sistema de Control de Asistencia Diario</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Jornada</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Jornada</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Artículo 33 del Código del Trabajo.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Registro diario de hora de entrada y salida (incluyendo descanso de colación). Si es libro físico, no debe presentar enmiendas ni firmas en blanco; si es digital, debe contar con resolución de certificación DT.
                                     </p>
@@ -1079,12 +1075,12 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs text-rose-600">security</span>
                                                 Alerta DT &amp; APDP: Control Biométrico (Huella o Rostro)
                                             </span>
-<span class="text-[10px] font-mono text-rose-700 font-bold">Multas hasta 20.000 UTM</span>
+<span class="text-xs font-mono text-rose-700 font-bold">Multas hasta 20.000 UTM</span>
 </div>
-<p class="text-[11px] text-slate-600 leading-snug">
+<p class="text-sm text-slate-600 leading-snug">
                                             Si utilizas marcación digital con datos biométricos, la nueva Ley 21.719 y la DT exigen el consentimiento expreso y el Registro de Actividades de Tratamiento (RAT).
                                         </p>
-<a class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 hover:text-rose-800 hover:underline pt-0.5" href="kit-cumplimiento-ley-datos-personales-chile">
+<a class="inline-flex items-center gap-1 text-xs font-bold text-rose-700 hover:text-rose-800 hover:underline pt-0.5" href="kit-cumplimiento-ley-datos-personales-chile">
 <span>Obtener Anexo Laboral y RAT en el Kit Ley 21.719 ($29.990)</span>
 <span class="material-icons text-xs">arrow_forward</span>
 </a>
@@ -1099,9 +1095,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Pacto de Horas Extraordinarias por Escrito (Máx. 90 días)</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Sobretiempo</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Sobretiempo</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Artículo 32 del Código del Trabajo.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Si algún dependiente registra horas extras en el libro, debe existir pacto individual firmado con vigencia no superior a 3 meses que acredite la necesidad transitoria de la empresa.
                                     </p>
@@ -1115,9 +1111,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Liquidaciones de Sueldo con Detalle y Comprobante Previred</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Remuneraciones</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Remuneraciones</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Artículo 54 bis del Código del Trabajo.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Copia firmada de la liquidación del mes anterior con desglose de haberes imponibles y no imponibles, más certificado F30/Previred de cotizaciones al día.
                                     </p>
@@ -1131,9 +1127,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Comprobante de Entrega de EPP y Reglamento Interno (RIOHS)</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Higiene y Seguridad</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Higiene y Seguridad</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Artículos 153, 156 y 184 del Código del Trabajo y Ley 16.744.<br/>
 <strong>Qué revisa el fiscalizador:</strong> En empresas de 10 o más trabajadores, acuse de recibo del RIOHS con 30 días de vigencia. En tareas operativas, registro firmado de entrega gratuita de Elementos de Protección Personal.
                                     </p>
@@ -1147,9 +1143,9 @@ body { overflow-x: hidden; }
 <div class="space-y-1.5 flex-1">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="text-sm font-bold text-slate-900">Anexo de Teletrabajo o Regulación Restringida Art. 22 Inciso 2°</div>
-<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase tracking-wider">Modalidad Especial</span>
+<span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">Modalidad Especial</span>
 </div>
-<p class="text-xs text-slate-600 leading-relaxed">
+<p class="text-sm text-slate-600 leading-relaxed">
 <strong>Base legal:</strong> Ley N° 21.220 y nuevo Art. 22 inciso 2° restringido por Ley 21.561.<br/>
 <strong>Qué revisa el fiscalizador:</strong> Si el dependiente trabaja a distancia, debe constar anexo con derecho a desconexión digital de 12 horas. Si está con Art. 22, solo se admite para gerentes sin fiscalización superior inmediata.
                                     </p>
@@ -1168,7 +1164,7 @@ body { overflow-x: hidden; }
 <h3 class="text-xl font-extrabold tracking-tight text-slate-900 !mt-0 !mb-0">
                                     ¿Tu empresa maneja datos de personal o clientes? <span class="text-rose-600">Ley 21.719</span>
 </h3>
-<p class="text-xs sm:text-sm leading-relaxed text-slate-600 !mb-0">
+<p class="text-sm sm:text-sm leading-relaxed text-slate-600 !mb-0">
                                     La nueva Agencia (APDP) sanciona con multas de hasta <strong>20.000 UTM</strong>. Obtén los 5 instrumentos obligatorios: Anexo Trabajadores (Res. 38 DT), Registro RAT en Excel formulado, Política Web y Contratos DPA por <strong>$29.990 CLP</strong>.
                                 </p>
 </div>
@@ -1256,7 +1252,7 @@ body { overflow-x: hidden; }
 <div class="p-5 rounded-2xl bg-rose-50/80 border border-rose-200/90 flex flex-col md:flex-row items-center justify-between gap-4 transition-colors" id="risk-result-box">
 <div class="space-y-1 text-center md:text-left">
 <p class="text-sm font-extrabold text-rose-800 m-0" id="risk-result-title">Riesgo Financiero Alto</p>
-<p class="text-xs text-rose-700 leading-relaxed m-0" id="risk-result-desc">Te faltan 10 documentos esenciales. Te expones a multas acumuladas de hasta $4.000.000 CLP ante una inspección de la DT.</p>
+<p class="text-sm text-rose-700 leading-relaxed m-0" id="risk-result-desc">Te faltan 10 documentos esenciales. Te expones a multas acumuladas de hasta $4.000.000 CLP ante una inspección de la DT.</p>
 </div>
 <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto shrink-0">
 <button class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-slate-300" onclick="window.print()" type="button">
@@ -1308,7 +1304,7 @@ body { overflow-x: hidden; }
 <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 m-0">
                                 Blinda tu Pyme Hoy Mismo con los <span style="color: var(--teal-forest);">21 Documentos Clave</span>
 </h3>
-<p class="text-xs sm:text-sm leading-relaxed text-slate-600">
+<p class="text-sm sm:text-sm leading-relaxed text-slate-600">
                                 Ahorra cientos de miles de pesos en multas y honorarios jurídicos. Recibe en tu correo el paquete completo en formato Word totalmente editable con instrucciones de completado en 15 minutos.
                             </p>
 <div class="pt-2">
@@ -1317,7 +1313,7 @@ body { overflow-x: hidden; }
 <span class="material-icons text-base" style="color: #111827 !important;">arrow_forward</span>
 </a>
 </div>
-<p class="text-[11px] text-slate-500 m-0">
+<p class="text-sm text-slate-500 m-0">
                                 Pago único vía Webpay / Flow • Descarga instantánea + envío automático a tu correo • Actualizado normativa 2026
                             </p>
 </div>
@@ -1330,7 +1326,7 @@ body { overflow-x: hidden; }
 <span>¿Qué pasa si un trabajador se niega a firmar el anexo de 40 horas?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
                                 La reducción de jornada es una ley de orden público imperativa. Si el trabajador no firma por desacuerdo en la distribución horaria, el empleador puede aplicar unilateralmente la reducción anticipando la salida conforme al Dictamen 213/08 de la DT, dejando constancia de la entrega de la propuesta por carta certificada o ante la DT para acreditar que no hubo omisión del empleador.
                             </p>
 </details>
@@ -1339,7 +1335,7 @@ body { overflow-x: hidden; }
 <span>¿La mutualidad (ACHS, Mutual, IST, ISL) me entrega todos estos documentos gratis?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
                                 No. Por disposición de la SUSESO (Circular 3.813), la mutualidad únicamente está obligada a entregar el modelo base preventivo del Protocolo Ley Karin. Las mutualidades no redactan anexos de contratos, cláusulas de 40 horas, pactos de horas extraordinarias, descargos administrativos ni contratos de trabajo.
                             </p>
 </details>
@@ -1348,7 +1344,7 @@ body { overflow-x: hidden; }
 <span>¿Las empresas de menos de 10 trabajadores necesitan tener Protocolo Ley Karin?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
                                 Sí. El Decreto Supremo N° 44 del Ministerio del Trabajo establece expresamente que la obligación de contar con un Protocolo de Prevención del Acoso y Violencia rige para <strong>todos los empleadores, desde 1 trabajador en adelante</strong>. La única diferencia es que en empresas de menos de 10 trabajadores no se incorpora a un RIOHS formal, sino como un protocolo autónomo de prevención y canal de denuncias.
                             </p>
 </details>
@@ -1357,7 +1353,7 @@ body { overflow-x: hidden; }
 <span>¿Qué documentos deben estar físicamente en faena y cuáles pueden estar digitales?</span>
 <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="text-xs sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
+<p class="text-sm sm:text-sm text-slate-600 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed">
                                 En el lugar de trabajo debe encontrarse permanentemente el <strong>registro diario de asistencia</strong> (físico o acceso al terminal digital) y una copia del <strong>Protocolo Ley Karin con el canal de denuncias visible</strong>. Los contratos y anexos pueden exhibirse en formato digital o en papel, siempre que cuenten con firma electrónica fidedigna o acuse de recibo demostrable.
                             </p>
 </details>
@@ -1406,10 +1402,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>

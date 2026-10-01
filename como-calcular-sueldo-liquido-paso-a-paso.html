@@ -127,7 +127,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -225,14 +225,14 @@
         }
         .prose-content .callout {
             background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
+            border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
         }
         .prose-content .callout-amber {
             background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
@@ -788,7 +788,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -798,7 +798,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -858,7 +858,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -867,7 +867,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -876,7 +876,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -885,7 +885,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -894,7 +894,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -903,7 +903,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -975,7 +975,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Content -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full pt-2">
 <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
 <a class="hover:text-forest-500 transition-colors font-medium" href="./">Inicio</a>
@@ -984,14 +984,10 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Cómo Calcular Sueldo Líquido Chile 2026: Fórmula y Paso a Paso</span>
 </nav>
-<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="cl-article mb-8 relative">
 <div class="prose-content max-w-none">
 <!-- Article Header -->
 <header class="mb-12">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 bg-emerald-50/40 rounded-2xl p-5 shadow-sm my-6 text-xs font-semibold tracking-wider uppercase mb-4">
-<span class="material-icons text-[14px]">account_balance_wallet</span>
-                    Educación Financiera
-                </div>
 <h1 class="text-3xl sm:text-4xl font-bold text-slate-800 leading-tight mb-4">Cómo calcular el sueldo líquido en Chile (fórmula 2026)</h1>
 <div class="flex items-center gap-4 text-xs text-slate-500 mb-6">
 <span>Actualizado: Marzo 2026</span>
@@ -1000,7 +996,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- E-E-A-T Trust Badge -->
 <div class="flex items-center gap-4 p-4 rounded-xl bg-[#F8FAF9] border border-slate-200 mb-8 mt-2">
-<div class="w-12 h-12 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center flex-shrink-0">
+<div class="cl-trust-icon">
 <span class="material-icons text-forest-600">gavel</span>
 </div>
 <div>
@@ -1046,7 +1042,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- Infografía HTML: Flujo de cálculo sueldo líquido -->
 <div class="my-8 p-4 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
-<p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-5">Del sueldo bruto al sueldo líquido</p>
+<p class="text-center text-xs font-bold text-slate-500 tracking-widest mb-5">Del sueldo bruto al sueldo líquido</p>
 <div class="max-w-xs mx-auto space-y-2">
 <div class="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-center shadow-sm">
 <p class="text-emerald-700 text-xs font-bold mb-0 uppercase">Sueldo Bruto</p>
@@ -1088,7 +1084,7 @@ body { overflow-x: hidden; }
 <div class="my-6 p-5 rounded-xl bg-emerald-50/40 border border-emerald-200 shadow-sm">
 <div class="text-emerald-700 font-bold text-sm mb-2 flex items-center gap-2 m-0"><span class="material-icons text-base">info</span> ¿Quieres profundizar en tus haberes y jornada laboral?
                     </div>
-<p class="text-xs text-slate-600 mb-3 leading-relaxed">
+<p class="text-sm text-slate-600 mb-3 leading-relaxed">
                         Entender tu liquidación va más allá del cálculo básico de líquido. Te recomendamos leer nuestras guías especializadas:
                     </p>
 <ul class="text-xs text-slate-600 space-y-2 m-0 pl-4">
@@ -1139,10 +1135,10 @@ body { overflow-x: hidden; }
 <!-- Bloque Publicitario Responsivo Itaú -->
 <div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-amber-50/40 via-white to-slate-50 border border-amber-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+<span class="text-xs font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
 <span class="w-1.5 h-1.5 rounded-full bg-forest-700 animate-pulse"></span> Publicidad Patrocinada
                         </span>
-<span class="text-[10px] text-slate-500 font-semibold">Banco Itaú • Cuenta Corriente</span>
+<span class="text-xs text-slate-500 font-semibold">Banco Itaú • Cuenta Corriente</span>
 </div>
 <a class="group block overflow-hidden rounded-xl border border-amber-200/90 hover:border-amber-400 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/itau" rel="sponsored nofollow noopener" target="_blank">
 <picture class="block w-full">
@@ -1151,7 +1147,7 @@ body { overflow-x: hidden; }
 </picture>
 </a>
 <div class="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 px-1 text-xs">
-<span class="text-slate-600 font-medium text-[11px] sm:text-xs text-center sm:text-left">
+<span class="text-slate-600 font-medium text-xs sm:text-xs text-center sm:text-left">
                             ¿Dónde recibir tu remuneración? Ábrela 100% online en 5 min con tu carnet y <strong>$0 costo de mantención</strong>.
                         </span>
 <a class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-forest-800 hover:bg-forest-900 !text-white !no-underline font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/itau" rel="sponsored nofollow noopener" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
@@ -1160,7 +1156,7 @@ body { overflow-x: hidden; }
 </a>
 </div>
 <div class="mt-2.5 pt-2 border-t border-slate-100 text-center">
-<a class="text-[11px] !text-slate-400 hover:!text-amber-700 !no-underline transition-colors font-medium inline-flex items-center gap-0.5" href="mejores-cuentas-para-recibir-sueldo-chile-2026" style="text-decoration: none !important;">
+<a class="text-xs !text-slate-400 hover:!text-amber-700 !no-underline transition-colors font-medium inline-flex items-center gap-0.5" href="mejores-cuentas-para-recibir-sueldo-chile-2026" style="text-decoration: none !important;">
 <span>Guía comparativa: ¿Dónde recibir tu sueldo en Chile sin pagar comisiones? (2026)</span>
 <span class="material-icons text-[13px]">chevron_right</span>
 </a>
@@ -1268,7 +1264,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- Aviso Legal -->
 <div class="mt-8 p-4 rounded-lg bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm my-6">
-<p class="!text-xs !text-slate-500 !mb-0 !leading-relaxed">
+<p class="!text-sm !text-slate-500 !mb-0 !leading-relaxed">
 <strong>Aviso legal:</strong> Toda esta guía informativa y la herramienta provista en cálculos se distribuye bajo términos generales y está preparada en el marco general para ayudar con herramientas orientativas de gran utilidad, sin embargo este material se distribuye estrictamente desde visiones de carácter informativo gratuito general, por ende este resumen conceptual laboral legal general referenciado desde informaciones oficiales masivas bajo parámetros teóricos no sustituye directrices propias que deba de otorgar ni ser tomado literalmente obligatoriamente en reemplazo asesorías particulares en reclamos específicos laborales directos correspondientes y que por ende no asume responsabilidad frente a variaciones extraordinarias contractuales estipuladas explícita y singularmente. Para consultar formalidades contactar directamente a la oficial inspección del trabajo estatal.
                     </p>
 </div>
@@ -1316,10 +1312,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>
@@ -1401,7 +1397,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UF</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Fecha</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1419,7 +1415,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UTM</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Período</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1435,7 +1431,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.0.3"></script>
-<script src="/js/indicators.js?v=2.0.3"></script>
+<script src="/js/indicators.js?v=2.9.0"></script>
 <script src="/js/pdf_generator.js?v=2.8.0"></script>
 <script>
         function enviarLead(fuenteCustom) {

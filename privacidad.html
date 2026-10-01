@@ -78,7 +78,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.9.0">
     <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -176,14 +176,14 @@
         }
         .prose-content .callout {
             background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
+            border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
         }
         .prose-content .callout-amber {
             background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
@@ -740,7 +740,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -750,7 +750,7 @@ body { overflow-x: hidden; }
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
             </div>
-            <div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
                 <span class="text-white/20">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -815,7 +815,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
                                     </div>
                                 </a>
 
@@ -825,7 +825,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
                                     </div>
                                 </a>
 
@@ -835,7 +835,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
                                     </div>
                                 </a>
 
@@ -845,7 +845,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
                                     </div>
                                 </a>
 
@@ -855,7 +855,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
                                     </div>
                                 </a>
 
@@ -865,7 +865,7 @@ body { overflow-x: hidden; }
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
                                     </div>
                                 </a>
                             </div>
@@ -953,18 +953,16 @@ body { overflow-x: hidden; }
 
 
 <!-- Main Content -->
-    <main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+    <main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
         
     <div class="w-full pt-2 pb-6">
         <div class="text-center mb-8">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-slate-200 mb-3">
-                <span class="material-icons text-[14px]">verified</span> Cumplimiento Ley N° 19.628, Ley N° 21.719 y Estándar APDP
-            </span>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">Política de Privacidad y Protección de Datos</h1>
+            <p class="cl-meta">Cumplimiento Ley N° 19.628, Ley N° 21.719 y Estándar APDP</p>
             <p class="text-xs text-slate-500 font-medium">Actualizado: Marzo 2026 • República de Chile • Adecuación Anticipada a la Nueva Ley N° 21.719</p>
         </div>
 
-        <article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-10 mb-8 relative">
+        <article class="cl-article mb-8 relative">
             <!-- 30-Second Summary Card -->
             <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-forest-950 mb-8 space-y-3">
                 <div class="flex items-center gap-2 font-bold text-forest-900 text-sm sm:text-base">
@@ -1164,42 +1162,42 @@ body { overflow-x: hidden; }
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">visibility</span> Derecho de Acceso
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Solicitar confirmación de si tratamos tus datos personales, qué categorías tratamos, el origen, finalidades y los destinatarios a quienes se comunican.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">edit</span> Derecho de Rectificación
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Solicitar la modificación o corrección de datos personales que resulten inexactos, desactualizados, equívocos o incompletos.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">delete</span> Derecho de Cancelación / Supresión
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Exigir la supresión o eliminación de tus datos cuando carezcan de fundamento legal, haya cesado su finalidad o hayas revocado tu consentimiento.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">block</span> Derecho de Oposición
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Oponerte al tratamiento de tus datos para fines específicos cuando no exista una causa legal imperiosa que justifique su prosecución.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">swap_horiz</span> Derecho de Portabilidad
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Obtener una copia de los datos personales suministrados en un formato estructurado, genérico, legible por máquina e interoperable.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">pause_circle</span> Derecho de Bloqueo
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed">
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Solicitar la suspensión temporal de cualquier operación de tratamiento mientras se verifica la exactitud de los datos o se resuelve un reclamo.
                             </p>
                         </div>
@@ -1210,12 +1208,12 @@ body { overflow-x: hidden; }
                         <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
                             <span class="material-icons text-forest-600 text-base">send</span> Procedimiento formal y canal oficial de atención
                         </h3>
-                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <p class="text-sm sm:text-sm text-slate-600 leading-relaxed">
                             Para ejercer cualquiera de los Derechos ARCOP descritos, debes remitir una solicitud escrita a nuestro canal oficial de privacidad:
                         </p>
                         <div class="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-forest-700 flex items-center justify-between">
                             <span>contacto@calculolaboral.cl</span>
-                            <span class="text-[11px] font-sans font-semibold text-slate-500">Asunto: "Ejercicio Derechos ARCOP - Ley 21.719"</span>
+                            <span class="text-xs font-sans font-semibold text-slate-500">Asunto: "Ejercicio Derechos ARCOP - Ley 21.719"</span>
                         </div>
                         <ul class="text-xs text-slate-600 space-y-1.5 pt-1">
                             <li>• <strong>Requisitos:</strong> Adjuntar nombre completo, RUT del titular o documento de representación legal, y el derecho específico que solicitas ejercer.</li>
@@ -1304,10 +1302,10 @@ body { overflow-x: hidden; }
                             </div>
                             <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
                         </a>
-                        <p class="text-xs text-white/75 leading-relaxed max-w-xs">
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-                        <div class="pt-1 text-[11px] font-mono-num text-white/50">
+                        <div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
                     </div>
@@ -1398,7 +1396,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UF</caption>
                             <thead>
-                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>
@@ -1416,7 +1414,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UTM</caption>
                             <thead>
-                                <tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Período</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>
@@ -1435,7 +1433,7 @@ body { overflow-x: hidden; }
     
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
-    <script src="/js/indicators.js?v=2.0.3"></script>
+    <script src="/js/indicators.js?v=2.9.0"></script>
     <script src="/js/pdf_generator.js?v=2.8.0"></script>
     <script>
         function enviarLead(fuenteCustom) {

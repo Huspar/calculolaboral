@@ -120,7 +120,7 @@
 
         if (isNaN(start.getTime()) || isNaN(end.getTime())) {
             elements.noticeBadge.textContent = 'Fecha por definir';
-            elements.noticeBadge.className = 'text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200';
+            elements.noticeBadge.className = 'text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200';
             return;
         }
 
@@ -129,16 +129,16 @@
 
         if (diffDays < 0) {
             elements.noticeBadge.textContent = 'La fecha de término no puede ser anterior al aviso';
-            elements.noticeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200';
+            elements.noticeBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200';
         } else if (diffDays === 0) {
             elements.noticeBadge.textContent = 'Renuncia con efecto inmediato (0 días de aviso)';
-            elements.noticeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200';
+            elements.noticeBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200';
         } else if (diffDays >= 30) {
             elements.noticeBadge.textContent = `Preaviso: ${diffDays} días corridos (Conforme al estándar sugerido de 30 días)`;
-            elements.noticeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+            elements.noticeBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
         } else {
             elements.noticeBadge.textContent = `Preaviso: ${diffDays} días corridos (Menor a los 30 días sugeridos por el Art. 159 Nº 2)`;
-            elements.noticeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-forest-50 text-forest-700 border border-forest-200';
+            elements.noticeBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-forest-50 text-forest-700 border border-forest-200';
         }
     }
 

@@ -85,7 +85,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -183,14 +183,14 @@
         }
         .prose-content .callout {
             background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
+            border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
         }
         .prose-content .callout-amber {
             background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
@@ -746,7 +746,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -756,7 +756,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -816,7 +816,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -825,7 +825,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -834,7 +834,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -843,7 +843,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -852,7 +852,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -861,7 +861,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -933,7 +933,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Content -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full pt-2">
 <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
 <a class="hover:text-forest-500 transition-colors font-medium" href="./">Inicio</a>
@@ -942,22 +942,21 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Seguro de Cesantía Chile</span>
 </nav>
-<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="cl-article mb-8 relative">
 <div class="prose-content max-w-none">
 <!-- Article Header -->
 <div class="mb-10 text-center sm:text-left">
-<span class="px-3 py-1 text-xs font-semibold tracking-widest text-primary bg-primary/10 rounded-full uppercase">Guía Práctica Laboral</span>
 <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 tracking-tight mt-4 leading-tight">
                     Seguro de Cesantía en Chile: Requisitos, Cómo Cobrar y Relación con el Finiquito
                 </h1>
 <!-- E-E-A-T Trust Badge -->
-<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-8 mt-2">
-<div class="w-12 h-12 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center flex-shrink-0">
+<div class="cl-trust">
+<div class="cl-trust-icon">
 <span class="material-icons text-emerald-600">verified</span>
 </div>
 <div>
 <p class="text-sm text-slate-800 font-semibold m-0">Contenido Conforme a Normativa Oficial DT (2026)</p>
-<p class="text-xs text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
+<p class="text-sm text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
 </div>
 </div>
 <p class="text-slate-500 text-lg mt-4 leading-relaxed max-w-3xl">
@@ -1051,17 +1050,17 @@ body { overflow-x: hidden; }
 <div class="my-6 p-5 rounded-xl bg-red-50 border border-red-200 shadow-sm">
 <div class="text-sm font-bold text-red-800 mb-2 flex items-center gap-1.5"><span class="material-icons text-red-600 text-sm">warning</span> ¡Importante sobre el Descuento AFC!
                         </div>
-<p class="text-xs text-slate-650 leading-relaxed mb-0">
+<p class="text-sm text-slate-650 leading-relaxed mb-0">
                             Este descuento solo es legal si la causal aplicada es <strong>Art. 161 (Necesidades de la empresa)</strong>. No aplica en casos de renuncia voluntaria, mutuo acuerdo, vencimiento de plazo o despidos disciplinarios. Además, el descuento solo resta sobre el monto final de la <strong>indemnización por años de servicio</strong>, nunca sobre las vacaciones proporcionales ni sobre las remuneraciones pendientes.
                         </p>
 </div>
 <!-- Bloque Publicitario Responsivo Abakos -->
 <div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-forest-50/40 via-white to-slate-50 border border-slate-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-forest-600 bg-forest-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+<span class="text-xs font-extrabold uppercase tracking-wider text-forest-600 bg-forest-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
 <span class="w-1.5 h-1.5 rounded-full bg-[#F8FAF9]0 animate-pulse"></span> Publicidad Patrocinada
                         </span>
-<span class="text-[10px] text-slate-500 font-semibold">Abakos Chile • Préstamos Online</span>
+<span class="text-xs text-slate-500 font-semibold">Abakos Chile • Préstamos Online</span>
 </div>
 <a class="group block overflow-hidden rounded-xl border border-slate-200/90 hover:border-slate-300 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/abakos" rel="sponsored nofollow noopener" target="_blank">
 <picture class="block w-full">
@@ -1070,7 +1069,7 @@ body { overflow-x: hidden; }
 </picture>
 </a>
 <div class="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 px-1 text-xs">
-<span class="text-slate-600 font-medium text-[11px] sm:text-xs text-center sm:text-left">
+<span class="text-slate-600 font-medium text-xs sm:text-xs text-center sm:text-left">
                             ¿Esperando el pago de tu seguro o necesitas liquidez urgente? Simula en minutos <strong>sin pagos por adelantado</strong>.
                         </span>
 <a class="btn-dark-pill w-full sm:w-auto inline-flex items-center justify-center gap-1.5 !text-white !no-underline font-bold text-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/abakos" rel="sponsored nofollow noopener" style="background-color: #0F5E4F !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
@@ -1134,7 +1133,7 @@ body { overflow-x: hidden; }
 <div class="p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden bg-white">
 <div class="text-sm font-bold text-forest-600 uppercase tracking-widest mb-2">Simulador de Finiquito</div>
 <h3 class="text-lg font-bold text-slate-900 mb-3">Revisa tu descuento de la AFC</h3>
-<p class="text-xs text-slate-655 leading-relaxed mb-5">
+<p class="text-sm text-slate-655 leading-relaxed mb-5">
                             ¿Te despidieron por necesidades de la empresa? Usa nuestra calculadora gratuita con el descuento legal AFC actualizado a la normativa 2026.
                         </p>
 <a class="btn-yellow-pill inline-flex items-center justify-center gap-2 !text-white font-bold -500/15 transition-all hover:scale-[1.01] active:scale-95 !no-underline cursor-pointer" href="finiquito_calculator">
@@ -1205,10 +1204,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>
@@ -1290,7 +1289,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UF</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Fecha</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1308,7 +1307,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UTM</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Período</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1324,7 +1323,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.0.3"></script>
-<script src="/js/indicators.js?v=2.0.3"></script>
+<script src="/js/indicators.js?v=2.9.0"></script>
 <script src="/js/pdf_generator.js?v=2.8.0"></script>
 <script>
         function enviarLead(fuenteCustom) {

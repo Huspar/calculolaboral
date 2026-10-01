@@ -90,7 +90,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -188,14 +188,14 @@
         }
         .prose-content .callout {
             background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
+            border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
         }
         .prose-content .callout-amber {
             background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
@@ -751,7 +751,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -761,7 +761,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -821,7 +821,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -830,7 +830,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -839,7 +839,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -848,7 +848,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -857,7 +857,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -866,7 +866,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -938,7 +938,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Content -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full pt-2">
 <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
 <a class="hover:text-forest-500 transition-colors font-medium" href="./">Inicio</a>
@@ -947,14 +947,10 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Despido Art. 161: Indemnización, Plazos y Cómo Reclamar</span>
 </nav>
-<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="cl-article mb-8 relative">
 <div class="prose-content max-w-none">
 <!-- Article Header -->
 <header class="mb-12">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F8FAF9] border border-slate-200 text-forest-600 text-xs font-semibold tracking-wider uppercase mb-4">
-<span class="material-icons text-[14px]">gavel</span>
-                    Guía Laboral
-                </div>
 <h1 class="text-3xl sm:text-4xl font-bold text-slate-800 leading-tight mb-4">Despido por necesidades de la empresa (Art. 161): qué te corresponde</h1>
 <div class="flex items-center gap-4 text-xs text-slate-500 mb-6">
 <span>Actualizado: Febrero 2026</span>
@@ -962,13 +958,13 @@ body { overflow-x: hidden; }
 <span>10 min lectura</span>
 </div>
 <!-- E-E-A-T Trust Badge -->
-<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-8 mt-2">
-<div class="w-12 h-12 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center flex-shrink-0">
+<div class="cl-trust">
+<div class="cl-trust-icon">
 <span class="material-icons text-emerald-600">verified</span>
 </div>
 <div>
 <p class="text-sm text-slate-800 font-semibold m-0">Contenido Conforme a Normativa Oficial DT (2026)</p>
-<p class="text-xs text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
+<p class="text-sm text-slate-500 m-0">Información referencial elaborada estrictamente según el Código del Trabajo y dictámenes públicos de la Dirección del Trabajo de Chile.</p>
 </div>
 </div>
 </header>
@@ -1010,14 +1006,14 @@ body { overflow-x: hidden; }
                     <a href="como-calcular-finiquito-chile">cómo calcular el finiquito en Chile</a>.
                 </p>
 <!-- CTA Lead — ¿Fue injustificado tu despido? -->
-<div class="my-8 p-6 rounded-2xl bg-amber-50/40 border-l-4 border-amber-500 border border-amber-200/60 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 no-print">
+<div class="my-8 p-6 rounded-2xl bg-amber-50/40 border border-amber-200/60 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 no-print">
 <div class="flex items-start gap-4">
 <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600">
 <span class="material-icons text-[24px]">gavel</span>
 </div>
 <div class="space-y-1">
 <div class="text-base font-bold text-slate-800 m-0 !mt-0 !mb-1">¿Crees que tu despido por Art. 161 fue injustificado?</div>
-<p class="text-xs sm:text-sm text-slate-600 m-0 !mb-0 leading-relaxed">Muchas empresas usan el Artículo 161 para despidos que en realidad son injustificados. Si tu empleador contrató a alguien para tu mismo puesto, o la empresa no acreditó realmente las "necesidades", podrías tener derecho al <strong>recargo del 30%</strong> sobre tu indemnización. Un abogado laboral aliado puede orientarte en tu caso.</p>
+<p class="text-sm sm:text-sm text-slate-600 m-0 !mb-0 leading-relaxed">Muchas empresas usan el Artículo 161 para despidos que en realidad son injustificados. Si tu empleador contrató a alguien para tu mismo puesto, o la empresa no acreditó realmente las "necesidades", podrías tener derecho al <strong>recargo del 30%</strong> sobre tu indemnización. Un abogado laboral aliado puede orientarte en tu caso.</p>
 </div>
 </div>
 <a class="cta-lead-btn w-full md:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-amber-500 hover:bg-amber-600 !text-slate-900 font-bold text-sm rounded-xl shadow-md shadow-amber-500/20 transition-all hover:scale-[1.01] active:scale-95 whitespace-nowrap !no-underline cursor-pointer" href="#lead-form-art161">
@@ -1061,7 +1057,7 @@ body { overflow-x: hidden; }
 <h3 class="text-xl font-extrabold tracking-tight text-slate-900 !mt-0 !mb-0">
                                 ¿Eres empleador y necesitas aplicar una desvinculación por Art. 161?
                             </h3>
-<p class="text-xs sm:text-sm leading-relaxed text-slate-600 !mb-0">
+<p class="text-sm sm:text-sm leading-relaxed text-slate-600 !mb-0">
                                 Para proteger a tu empresa ante reclamos laborales y fiscalizaciones, debes mantener tus contratos, anexos de jornada y protocolos obligatorios al día. Obtén la documentación legal y carpeta de inspección DT en el <strong class="text-slate-800">Kit de Blindaje Laboral Pyme 2026 ($19.990)</strong>.
                             </p>
 </div>
@@ -1108,7 +1104,7 @@ body { overflow-x: hidden; }
                     </li>
 </ol>
 <!-- Dedicated Finiquito Callout -->
-<div class="my-8 p-6 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border-l-4 border-emerald-500 bg-white shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 not-prose">
+<div class="border border-slate-200 my-8 p-6 rounded-2xl bg-white shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 not-prose">
 <div>
 <div class="flex items-center gap-2 text-emerald-800 font-bold text-sm mb-1">
 <span class="material-icons text-emerald-600 text-base">receipt_long</span>
@@ -1116,7 +1112,7 @@ body { overflow-x: hidden; }
 </div>
 <p class="text-slate-600 text-xs sm:text-sm m-0">Calcula tus años de servicio con el tope de 11 años y 90 UF, mes de aviso previo y vacaciones proporcionales.</p>
 </div>
-<a class="inline-flex items-center justify-center shrink-0 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 !text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95 text-center whitespace-nowrap !no-underline cursor-pointer" href="finiquito_calculator">
+<a class="inline-flex items-center justify-center shrink-0 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 !text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95 text-center whitespace-nowrap !no-underline cursor-pointer" href="finiquito_calculator">
                         Simular mi Finiquito →
                     </a>
 </div>
@@ -1150,8 +1146,8 @@ body { overflow-x: hidden; }
 <table class="w-full text-xs sm:text-sm border-collapse">
 <thead>
 <tr class="border-b border-slate-200 bg-slate-50/80">
-<th class="text-left py-2.5 px-3 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-[11px]">Concepto Artículo 161</th>
-<th class="text-right py-2.5 px-3 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-[11px]">Estimación del Monto</th>
+<th class="text-left py-2.5 px-3 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-xs">Concepto Artículo 161</th>
+<th class="text-right py-2.5 px-3 sm:px-4 text-slate-700 font-bold uppercase tracking-wider text-xs">Estimación del Monto</th>
 </tr>
 </thead>
 <tbody class="text-slate-600 divide-y divide-slate-100">
@@ -1184,9 +1180,9 @@ body { overflow-x: hidden; }
 <table class="w-full min-w-[500px] text-xs sm:text-sm border-collapse bg-white">
 <thead class="bg-slate-50 border-b border-slate-200">
 <tr>
-<th class="text-left py-3 px-3 sm:px-4 text-slate-800 font-bold uppercase tracking-wider text-[11px]">Aspecto</th>
-<th class="text-center py-3 px-3 sm:px-4 text-emerald-700 font-bold uppercase tracking-wider text-[11px] border-l border-slate-200">Artículo 161 (Necesidades)</th>
-<th class="text-center py-3 px-3 sm:px-4 text-rose-700 font-bold uppercase tracking-wider text-[11px] border-l border-slate-200">Artículo 160 (Faltas graves)</th>
+<th class="text-left py-3 px-3 sm:px-4 text-slate-800 font-bold uppercase tracking-wider text-xs">Aspecto</th>
+<th class="text-center py-3 px-3 sm:px-4 text-emerald-700 font-bold uppercase tracking-wider text-xs border-l border-slate-200">Artículo 161 (Necesidades)</th>
+<th class="text-center py-3 px-3 sm:px-4 text-rose-700 font-bold uppercase tracking-wider text-xs border-l border-slate-200">Artículo 160 (Faltas graves)</th>
 </tr>
 </thead>
 <tbody class="text-slate-600 text-center divide-y divide-slate-100">
@@ -1208,7 +1204,7 @@ body { overflow-x: hidden; }
 </tbody>
 </table>
 </div>
-<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-xs text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
 <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para comparar ambas causales
                     </div>
 </div>
@@ -1259,7 +1255,7 @@ body { overflow-x: hidden; }
 <p>
                         Si crees que alguna de estas situaciones aplica a tu caso, <strong>tienes 60 días hábiles desde el despido</strong> para presentar un reclamo ante la Inspección del Trabajo o los Juzgados de Letras del Trabajo. Un despido injustificado te da derecho a un <strong>recargo del 30% sobre la indemnización legal</strong>.
                     </p>
-<div class="p-5 rounded-xl bg-[#F8FAF9] border-l-4 border-[#00382E] border border-slate-200/60 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+<div class="p-5 rounded-xl bg-[#F8FAF9] border border-slate-200/60 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
 <div class="flex items-start gap-3">
 <div class="w-10 h-10 rounded-lg bg-slate-100 text-[#00382E] flex items-center justify-center flex-shrink-0 text-forest-600">
 <span class="material-icons text-[20px]">verified</span>
@@ -1427,7 +1423,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- Disclaimer -->
 <div class="mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
-<p class="!text-xs !text-slate-500 !mb-0 !leading-relaxed">
+<p class="!text-sm !text-slate-500 !mb-0 !leading-relaxed">
 <strong>Aviso legal:</strong> Esta guía abarca los artículos referenciales del Código laboral en
                         materias de necesidades empresariales de modo informativo. No constituimos un estudio jurídico
                         legal. Ante incertidumbres graves, o querer demandar causales injustificadas, aconsejamos
@@ -1477,10 +1473,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>
@@ -1562,7 +1558,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UF</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Fecha</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1580,7 +1576,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UTM</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Período</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1596,7 +1592,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.0.3"></script>
-<script src="/js/indicators.js?v=2.0.3"></script>
+<script src="/js/indicators.js?v=2.9.0"></script>
 <script src="/js/pdf_generator.js?v=2.8.0"></script>
 <script>
         function enviarLead(fuenteCustom) {

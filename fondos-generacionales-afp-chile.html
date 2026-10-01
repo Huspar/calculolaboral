@@ -135,7 +135,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.9.0" rel="stylesheet"/>
 <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -233,14 +233,14 @@
         }
         .prose-content .callout {
             background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
+            border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
         }
         .prose-content .callout-amber {
             background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
             padding: 1rem 1.25rem;
             border-radius: 0.5rem;
             margin: 1.5rem 0;
@@ -796,7 +796,7 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.1.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -806,7 +806,7 @@ body { overflow-x: hidden; }
 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
 </div>
-<div class="flex items-center gap-4 font-mono-num text-[11.5px] text-slate-300">
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
 <span class="text-white/20">|</span>
 <span>UTM: <strong class="utm-value text-white font-bold">$71.721</strong></span>
@@ -866,7 +866,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+<div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido">
@@ -875,7 +875,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+<div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile">
@@ -884,7 +884,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
+<div class="text-xs text-slate-500 mt-0.5">Recargo 30% y recuperación de AFC.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras">
@@ -893,7 +893,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+<div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones-proporcionales">
@@ -902,7 +902,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+<div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
 </div>
 </a>
 <a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc">
@@ -911,7 +911,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
-<div class="text-[11px] text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+<div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
 </div>
 </a>
 </div>
@@ -983,7 +983,7 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Content -->
-<main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<main class="site-container cl-reading flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full pt-2">
 <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
 <a class="hover:text-forest-500 transition-colors font-medium" href="./">Inicio</a>
@@ -992,14 +992,10 @@ body { overflow-x: hidden; }
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Fondos Generacionales AFP Chile: Qué son, Tabla por Edad y Fin de Multifondos</span>
 </nav>
-<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="cl-article mb-8 relative">
 <div class="prose-content max-w-none">
 <!-- Article Header -->
 <header class="mb-12">
-<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-slate-200 text-xs font-semibold tracking-wider uppercase mb-4 shadow-sm">
-<span class="material-icons text-[14px]">account_balance</span>
-                    Previsión y Pensiones Chile
-                </div>
 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-4 tracking-tight">
                     Fondos Generacionales de las AFP: Qué son, Tabla por Edad y Qué Pasará con los Multifondos
                 </h1>
@@ -1017,7 +1013,7 @@ body { overflow-x: hidden; }
 </div>
 <div>
 <p class="text-sm text-slate-900 font-bold m-0">Marco Regulatorio de Pensiones en Chile</p>
-<p class="text-xs text-slate-600 m-0 leading-relaxed">Información alineada con los informes técnicos de la Superintendencia de Pensiones y las directrices de inversión de la OCDE.</p>
+<p class="text-sm text-slate-600 m-0 leading-relaxed">Información alineada con los informes técnicos de la Superintendencia de Pensiones y las directrices de inversión de la OCDE.</p>
 </div>
 </div>
 </header>
@@ -1040,7 +1036,7 @@ body { overflow-x: hidden; }
                 </p>
 <!-- Infografía comparativa: Multifondos vs Fondos Generacionales -->
 <div class="my-10 p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200 shadow-sm">
-<div class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Comparativa de Modelos Previsionales&gt;</div>
+<div class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Comparativa de Modelos Previsionales</div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <!-- Card 1: Antiguo -->
 <div class="bg-white p-6 rounded-2xl border border-rose-200 shadow-sm space-y-3">
@@ -1126,7 +1122,7 @@ body { overflow-x: hidden; }
 </tbody>
 </table>
 </div>
-<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
+<div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-xs text-slate-400 text-center sm:hidden flex items-center justify-center gap-1">
 <span class="material-icons text-[12px]">swap_horiz</span> Desliza horizontalmente para ver la tabla completa
                     </div>
 </div>
@@ -1146,7 +1142,7 @@ body { overflow-x: hidden; }
 <span class="material-icons text-sm">calculate</span> Simulador Previsional
                         </span>
 <h3 class="text-lg font-bold text-slate-900 m-0">¿Sabes cuánto estás aportando hoy a tu AFP en dinero real?</h3>
-<p class="text-xs text-slate-600 m-0 leading-relaxed max-w-xl">
+<p class="text-sm text-slate-600 m-0 leading-relaxed max-w-xl">
                             Calcula en segundos el descuento del 10% legal más la comisión específica de tu AFP (Modelo, Uno, Habitat, Planvital, Capital, Cuprum o Provida) directamente en tu liquidación mensual.
                         </p>
 </div>
@@ -1157,10 +1153,10 @@ body { overflow-x: hidden; }
 <!-- Banner Patrocinado Itaú -->
 <div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-amber-50/40 via-white to-slate-50 border border-amber-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+<span class="text-xs font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
 <span class="w-1.5 h-1.5 rounded-full bg-forest-700 animate-pulse"></span> Publicidad Patrocinada
                         </span>
-<span class="text-[10px] text-slate-500 font-semibold">Banco Itaú Chile • Cuenta Sueldo &amp; Ahorro</span>
+<span class="text-xs text-slate-500 font-semibold">Banco Itaú Chile • Cuenta Sueldo &amp; Ahorro</span>
 </div>
 <a class="group block overflow-hidden rounded-xl border border-amber-200/90 hover:border-amber-400 shadow-xs hover:shadow-md transition-all duration-200 bg-white" data-partner="itau_cuenta_corriente" data-placement="fondos_afp_in_content" href="/itau" rel="sponsored nofollow noopener" target="_blank">
 <picture class="block w-full">
@@ -1169,7 +1165,7 @@ body { overflow-x: hidden; }
 </picture>
 </a>
 <div class="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 px-1 text-xs">
-<span class="text-slate-600 font-medium text-[11px] sm:text-xs text-center sm:text-left">
+<span class="text-slate-600 font-medium text-xs sm:text-xs text-center sm:text-left">
                             Optimiza tus ingresos y tu capacidad de ahorro recibiendo tu remuneración en tu <strong>Cuenta Corriente Itaú con $0 costo de mantención</strong>.
                         </span>
 <a class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-forest-800 hover:bg-forest-900 !text-white !no-underline font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" data-partner="itau_cuenta_corriente" data-placement="fondos_afp_btn" href="/itau" rel="sponsored nofollow noopener" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
@@ -1184,7 +1180,7 @@ body { overflow-x: hidden; }
                             ¿Tengo que hacer algún trámite presencial o por la web de mi AFP?
                             <span class="material-icons text-slate-500 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+<p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
 <strong>No, en lo absoluto.</strong> El traspaso desde los multifondos hacia tu fondo generacional por año de nacimiento se realiza de manera 100% automática por ley. No requiere ir a sucursales, no tiene costo ni tampoco se cobra ninguna comisión de corretaje o traspaso.
                         </p>
 </details>
@@ -1193,7 +1189,7 @@ body { overflow-x: hidden; }
                             ¿Podré salirme o elegir un fondo distinto al que me toca?
                             <span class="material-icons text-slate-500 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+<p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
                             La experiencia internacional demostró que la libertad absoluta de cambio perjudicó gravemente a los afiliados (comprando caro y vendiendo barato). Por ello, el sistema está pensado para ser la regla general por defecto. No obstante, la ley permite elegir una cohorte adyacente (un paso más conservador o más agresivo) para afiliados que justifiquen una preferencia de riesgo distinta.
                         </p>
 </details>
@@ -1202,7 +1198,7 @@ body { overflow-x: hidden; }
                             ¿Qué pasará con el Ahorro Previsional Voluntario (APV) y la Cuenta 2?
                             <span class="material-icons text-slate-500 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+<p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
                             Los instrumentos de ahorro voluntario (APV y Cuenta de Ahorro Voluntario / Cuenta 2) mantendrán esquemas flexibles donde el trabajador podrá elegir portafolios específicos según su horizonte de ahorro particular (por ejemplo, comprar una vivienda en 3 años vs ahorrar para la vejez).
                         </p>
 </details>
@@ -1211,7 +1207,7 @@ body { overflow-x: hidden; }
                             ¿Cambia el monto de mi sueldo líquido con esta medida?
                             <span class="material-icons text-slate-500 group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+<p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed">
                             No. El descuento previsional en tu liquidación de sueldo sigue calculándose sobre el 10% obligatorio del sueldo imponible más la comisión propia de tu administradora. Los fondos generacionales regulan exclusivamente la <em>gestión de inversiones</em> de ese dinero una vez ingresado a la cuenta individual.
                         </p>
 </details>
@@ -1281,10 +1277,10 @@ body { overflow-x: hidden; }
 </div>
 <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
 </a>
-<p class="text-xs text-white/75 leading-relaxed max-w-xs">
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
-<div class="pt-1 text-[11px] font-mono-num text-white/50">
+<div class="pt-1 text-xs font-mono-num text-white/50">
                             Versión 2.5 · Actualizada Marzo 2026
                         </div>
 </div>
@@ -1366,7 +1362,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UF</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Fecha</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1384,7 +1380,7 @@ body { overflow-x: hidden; }
 <table class="w-full text-left">
 <caption class="sr-only">Historial de valores UTM</caption>
 <thead>
-<tr class="text-[10px] font-bold text-slate-400 uppercase border-b border-slate-100">
+<tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
 <th class="py-1 px-2 font-semibold" scope="col">Período</th>
 <th class="py-1 px-2 text-right font-semibold" scope="col">Valor</th>
 </tr>
@@ -1400,7 +1396,7 @@ body { overflow-x: hidden; }
 </div>
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.0.3"></script>
-<script src="/js/indicators.js?v=2.0.3"></script>
+<script src="/js/indicators.js?v=2.9.0"></script>
 <script src="/js/pdf_generator.js?v=2.8.0"></script>
 <script>
         function enviarLead(fuenteCustom) {
