@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Dos globos de conversación, uno aceptado y otro descartado</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<rect x="238" y="120" width="262" height="132" rx="28" fill="#ADD6C9" stroke="none"/><rect x="222" y="104" width="262" height="132" rx="28" fill="#FFFFFF"/><path d="M268 236 l-10 34 l40 -34" fill="#FFFFFF"/><line x1="256" y1="150" x2="406" y2="150" stroke-width="6"/><line x1="256" y1="188" x2="366" y2="188" stroke-width="6"/><rect x="346" y="242" width="262" height="124" rx="28" fill="#ADD6C9" stroke="none"/><rect x="330" y="226" width="262" height="124" rx="28" fill="#FFFFFF"/><path d="M546 350 l12 32 l-42 -32" fill="#FFFFFF"/><line x1="364" y1="270" x2="524" y2="270" stroke-width="6"/><line x1="364" y1="308" x2="460" y2="308" stroke-width="6"/><circle cx="482" cy="112" r="30" fill="#FFB703"/><path d="M470.0 112 l9.0 9.0 l16.0 -18.0" stroke-width="7"/><circle cx="592" cy="232" r="30" fill="#FFFFFF"/><path d="M581.0 221.0 L603.0 243.0 M603.0 221.0 L581.0 243.0" stroke-width="7"/>
+</g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Liquidación de sueldo con descuentos y total resaltado</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<rect x="278" y="92" width="250" height="300" rx="16" fill="#ADD6C9" stroke="none"/><rect x="262" y="76" width="250" height="300" rx="16" fill="#FFFFFF"/><line x1="294" y1="122" x2="406" y2="122" stroke-width="10"/><line x1="294" y1="170" x2="470" y2="170" stroke-width="6"/><line x1="294" y1="210" x2="310" y2="210" stroke-width="6"/><line x1="328" y1="210" x2="448" y2="210" stroke-width="6"/><line x1="294" y1="244" x2="310" y2="244" stroke-width="6"/><line x1="328" y1="244" x2="424" y2="244" stroke-width="6"/><line x1="294" y1="278" x2="310" y2="278" stroke-width="6"/><line x1="328" y1="278" x2="460" y2="278" stroke-width="6"/><rect x="288" y="317.0" width="194" height="26" rx="4" fill="#FFB703" stroke="none" opacity=".85"/><line x1="294" y1="330" x2="470" y2="330" stroke-width="9"/><path d="M516 380 v14 a44 13 0 0 0 88 0 v-14" fill="#FFFFFF"/><ellipse cx="560" cy="380" rx="44" ry="13" fill="#FFFFFF"/><path d="M516 360 v14 a44 13 0 0 0 88 0 v-14" fill="#FFFFFF"/><ellipse cx="560" cy="360" rx="44" ry="13" fill="#FFB703"/>
+</g>
+</svg>

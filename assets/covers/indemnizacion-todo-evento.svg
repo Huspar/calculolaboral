@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Paraguas que protege monedas</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<path d="M232 228 Q400 60 568 228 Q526 200 484 228 Q442 200 400 228 Q358 200 316 228 Q274 200 232 228 Z" fill="#FFFFFF"/><path d="M400 228 Q378 120 400 82 Q422 120 400 228" fill="#FFB703" stroke-width="5"/><path d="M400 228 V344 a20 20 0 0 1 -40 0"/><path d="M474 372 v16 a46 14 0 0 0 92 0 v-16" fill="#FFFFFF"/><ellipse cx="520" cy="372" rx="46" ry="14" fill="#FFFFFF"/><path d="M474 350 v16 a46 14 0 0 0 92 0 v-16" fill="#FFFFFF"/><ellipse cx="520" cy="350" rx="46" ry="14" fill="#FFFFFF"/><path d="M474 328 v16 a46 14 0 0 0 92 0 v-16" fill="#FFFFFF"/><ellipse cx="520" cy="328" rx="46" ry="14" fill="#FFB703"/>
+</g>
+</svg>

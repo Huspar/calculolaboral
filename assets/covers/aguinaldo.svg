@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Regalo con cinta y estrella de Fiestas Patrias</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<rect x="302" y="222" width="228" height="156" rx="12" fill="#ADD6C9" stroke="none"/><rect x="286" y="206" width="228" height="156" rx="12" fill="#FFFFFF"/><rect x="266" y="166" width="268" height="54" rx="12" fill="#FFFFFF"/><rect x="384" y="166" width="32" height="196" fill="#FFB703" stroke-width="5"/><path d="M400 166 C370 120 330 128 346 154 C356 170 386 168 400 166 Z" fill="#FFFFFF"/><path d="M400 166 C430 120 470 128 454 154 C444 170 414 168 400 166 Z" fill="#FFFFFF"/><polygon points="584.0,88.0 591.9,107.1 612.5,108.7 596.8,122.2 601.6,142.3 584.0,131.5 566.4,142.3 571.2,122.2 555.5,108.7 576.1,107.1" fill="#FFB703" stroke-width="4"/>
+</g>
+</svg>

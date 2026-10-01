@@ -130,6 +130,14 @@ Toda página enlaza, al final del `<head>`, `/assets/css/polish.css` y, antes de
 - **Tipografía.** Piso de 12px (`text-xs`) para cualquier texto; párrafos de más de una línea en 14px (`text-sm`) o más. Sin mayúsculas en botones ni en textos de más de unas pocas palabras.
 - **Avisos.** Sin franjas laterales gruesas (`border-l-4`): borde de 1px en el tono del aviso.
 
+## Ilustraciones (Fase 3)
+
+- Todas las portadas de guías y blog son SVG propios en `assets/covers/`, generados con `python scripts/build_covers.py`. No usar fotos de stock, renders 3D ni imágenes generadas por IA en el contenido.
+- Lenguaje fijo: papel de libro contable `forest-50` con renglones `forest-100`, línea de margen ámbar, motivo dibujado con trazo de 7px redondeado en `#00382E`, papel blanco con sombra desplazada `forest-200` y acentos ámbar (incluido el trazo de resaltador). Formato 800 × 450 (16:9).
+- Para una guía nueva: agregar una función `m_*` y su entrada en `COVERS`, regenerar y usar `<div class="cl-cover-frame"><img class="cl-cover" src="/assets/covers/…svg" width="800" height="450" alt="…"></div>`.
+- Las imágenes `og:image` de redes sociales siguen siendo los JPG/PNG anteriores (los SVG no sirven para vista previa social).
+- Blog: nota destacada (`.cl-feature`) + grilla `.cl-post-grid`; la categoría va como metadato (`.cl-post-meta`), nunca como insignia de color sobre la imagen. Patrocinios siempre como `.cl-sponsor`, fuera de la grilla.
+
 Después de cambiar clases, recompilar con `npm run build:css` y subir el `?v=` de `style.css` en las páginas, porque `/assets/` se sirve con caché inmutable.
 
 ## Do's and Don'ts

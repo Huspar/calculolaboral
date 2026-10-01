@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Gráfico de barras que compara remuneraciones</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<line x1="232" y1="362" x2="576" y2="362"/><rect x="262" y="190" width="52" height="172" rx="10" fill="#FFFFFF"/><rect x="332" y="236" width="52" height="126" rx="10" fill="#FFFFFF"/><rect x="430" y="176" width="52" height="186" rx="10" fill="#FFB703"/><rect x="500" y="176" width="52" height="186" rx="10" fill="#FFB703"/><line x1="428" y1="132" x2="554" y2="132" stroke-width="8"/><line x1="428" y1="152" x2="554" y2="152" stroke-width="8"/><line x1="258" y1="150" x2="316" y2="150" stroke-width="6" opacity=".35"/><line x1="330" y1="150" x2="388" y2="150" stroke-width="6" opacity=".35"/>
+</g>
+</svg>

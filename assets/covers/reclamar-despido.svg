@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Balanza de la justicia y mazo</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<line x1="350" y1="384" x2="450" y2="384" stroke-width="10"/><line x1="372" y1="366" x2="428" y2="366"/><line x1="400" y1="112" x2="400" y2="366"/><path d="M262 160 C300 128 350 120 400 120 S500 128 538 160"/><path d="M262 160 L222 250 H302 Z" stroke-width="4" opacity=".7"/><path d="M210 250 c0 18 22 30 52 30 s52 -12 52 -30 Z" fill="#FFFFFF"/><path d="M538 160 L498 250 H578 Z" stroke-width="4" opacity=".7"/><path d="M486 250 c0 18 22 30 52 30 s52 -12 52 -30 Z" fill="#FFB703"/><circle cx="400" cy="104" r="12" fill="#FFB703"/><g transform="rotate(-35 590 330)"><rect x="548" y="300" width="84" height="40" rx="10" fill="#FFFFFF"/><line x1="590" y1="340" x2="590" y2="410" stroke-width="12"/></g>
+</g>
+</svg>

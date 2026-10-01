@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Carta de despido dentro de un sobre sellado</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<rect x="276" y="92" width="248" height="170" rx="10" fill="#FFFFFF"/><line x1="306" y1="132" x2="456" y2="132" stroke-width="6"/><rect x="300" y="157.0" width="132" height="18" rx="4" fill="#FFB703" stroke="none" opacity=".85"/><line x1="306" y1="166" x2="426" y2="166" stroke-width="6"/><line x1="306" y1="200" x2="476" y2="200" stroke-width="6"/><rect x="252" y="202" width="328" height="196" rx="14" fill="#ADD6C9" stroke="none"/><path d="M236 200 a14 14 0 0 1 14 -14 H550 a14 14 0 0 1 14 14 V368 a14 14 0 0 1 -14 14 H250 a14 14 0 0 1 -14 -14 Z" fill="#FFFFFF"/><path d="M236 200 L400 296 L564 200" stroke-width="6"/><path d="M236 382 L360 280 M564 382 L440 280" stroke-width="5" opacity=".4"/><circle cx="400" cy="296" r="22" fill="#FFB703" stroke-width="5"/>
+</g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Liquidación de sueldo revisada con lupa</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<rect x="250" y="90" width="250" height="304" rx="16" fill="#ADD6C9" stroke="none"/><rect x="234" y="74" width="250" height="304" rx="16" fill="#FFFFFF"/><line x1="266" y1="120" x2="378.5" y2="120" stroke-width="10"/><line x1="266" y1="166" x2="436" y2="166" stroke-width="6"/><line x1="266" y1="200" x2="386" y2="200" stroke-width="6"/><line x1="266" y1="234" x2="416" y2="234" stroke-width="6"/><line x1="266" y1="268" x2="366" y2="268" stroke-width="6"/><line x1="266" y1="302" x2="426" y2="302" stroke-width="6"/><circle cx="500" cy="262" r="72" fill="#FFFFFF" fill-opacity=".92"/><rect x="452" y="251.0" width="120" height="22" rx="4" fill="#FFB703" stroke="none" opacity=".85"/><line x1="458" y1="262" x2="566" y2="262" stroke-width="8"/><circle cx="500" cy="262" r="72"/><line x1="550.4" y1="312.4" x2="597.2" y2="359.2" stroke-width="12"/>
+</g>
+</svg>

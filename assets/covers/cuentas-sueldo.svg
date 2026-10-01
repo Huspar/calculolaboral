@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Tarjeta bancaria y monedas</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<rect x="230" y="148" width="300" height="190" rx="24" fill="#ADD6C9" stroke="none"/><rect x="214" y="132" width="300" height="190" rx="24" fill="#FFFFFF"/><line x1="214" y1="182" x2="514" y2="182" stroke-width="16"/><rect x="248" y="214" width="54" height="40" rx="8" fill="#FFB703"/><line x1="248" y1="288" x2="362" y2="288"/><line x1="382" y1="288" x2="450" y2="288"/><path d="M530 352 v18 a58 17 0 0 0 116 0 v-18" fill="#FFFFFF"/><ellipse cx="588" cy="352" rx="58" ry="17" fill="#FFFFFF"/><path d="M530 328 v18 a58 17 0 0 0 116 0 v-18" fill="#FFFFFF"/><ellipse cx="588" cy="328" rx="58" ry="17" fill="#FFFFFF"/><path d="M530 304 v18 a58 17 0 0 0 116 0 v-18" fill="#FFFFFF"/><ellipse cx="588" cy="304" rx="58" ry="17" fill="#FFFFFF"/><path d="M530 280 v18 a58 17 0 0 0 116 0 v-18" fill="#FFFFFF"/><ellipse cx="588" cy="280" rx="58" ry="17" fill="#FFB703"/>
+</g>
+</svg>
