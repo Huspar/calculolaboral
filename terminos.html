@@ -78,7 +78,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -137,12 +137,12 @@
             font-weight: 600;
         }
         .prose-content a {
-            color: #0ea5e9;
+            color: #0F5E4F;
             text-decoration: underline;
             font-weight: 500;
         }
         .prose-content a:hover {
-            color: #0284c7;
+            color: #0F5E4F;
         }
         .prose-content a.cta-btn,
         .prose-content a.bg-[#F8FAF9]0,
@@ -218,9 +218,9 @@
             flex-shrink: 0;
         }
         .rubro-imponible {
-            background-color: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #e0f2fe;
+            background-color: #EEF6F3;
+            color: #064A3E;
+            border: 1px solid #D6EBE4;
         }
         .rubro-no-imponible {
             background-color: #f0fdf4;
@@ -251,10 +251,10 @@
             transition: all 0.2s ease;
         }
         .timeline-item.active {
-            border-left-color: #0ea5e9;
+            border-left-color: #0F5E4F;
         }
         .timeline-item.active::before {
-            background-color: #0ea5e9;
+            background-color: #0F5E4F;
             left: -7px;
             top: 2px;
             width: 12px;
@@ -276,8 +276,8 @@
         .step-number {
             width: 2.25rem;
             height: 2.25rem;
-            background-color: #e0f2fe;
-            color: #0369a1;
+            background-color: #D6EBE4;
+            color: #064A3E;
             border-radius: 9999px;
             display: flex;
             align-items: center;
@@ -298,7 +298,7 @@
         .prose a.cta-btn, .prose a.cta-btn *,
         .prose a[class*="bg-[#F8FAF9]0"], .prose a[class*="bg-[#F8FAF9]0"] *,
         .prose a[class*="bg-emerald-600"], .prose a[class*="bg-emerald-600"] *,
-        .prose a[class*="bg-blue-600"], .prose a[class*="bg-blue-600"] * {
+        .prose a[class*="bg-forest-600"], .prose a[class*="bg-forest-600"] * {
             color: #ffffff !important;
             text-decoration: none !important;
         }
@@ -343,10 +343,10 @@
             z-index: 10;
         }
         .copy-btn:hover {
-            background: #0ea5e9;
+            background: #0F5E4F;
             color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
+            border-color: #0F5E4F;
+            box-shadow: 0 2px 4px rgba(15, 94, 79,0.2);
         }
         .copy-btn.copied {
             background: #10b981 !important;
@@ -741,8 +741,9 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#F8FAF9]0/20 selection:text-slate-900">
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -964,27 +965,27 @@ body { overflow-x: hidden; }
             <p class="text-xs text-slate-500 font-medium">Actualizado: Marzo 2026 • República de Chile • Conforme a Ley N° 19.496 y Código del Trabajo</p>
         </div>
 
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 sm:p-10 mb-8 relative">
+        <article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-10 mb-8 relative">
             <!-- Summary Box -->
-            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-sky-950 mb-8 space-y-3">
-                <div class="flex items-center gap-2 font-bold text-sky-900 text-sm sm:text-base">
-                    <span class="material-icons text-sky-600 text-base">info</span> Resumen ejecutivo en 30 segundos
+            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-forest-950 mb-8 space-y-3">
+                <div class="flex items-center gap-2 font-bold text-forest-900 text-sm sm:text-base">
+                    <span class="material-icons text-forest-600 text-base">info</span> Resumen ejecutivo en 30 segundos
                 </div>
                 <ul class="space-y-2.5 text-xs sm:text-sm text-slate-700">
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Simuladores gratuitos pedagógicos:</strong> Las calculadoras entregan estimaciones referenciales basadas en el Código del Trabajo; no constituyen patrocinio ni asesoría legal vinculante.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Compraventa de kits y descargas digitales:</strong> La compra de kits para Pymes y generadores se procesa mediante pago electrónico seguro (Flow.cl) con entrega inmediata por correo y pantalla de confirmación.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Exclusión legal de retracto (Ley N° 19.496):</strong> Al tratarse de contenido digital descargable de ejecución instantánea, no aplica el derecho de retracto conforme al Art. 3° bis letra b) de la Ley del Consumidor.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Licencia de uso interno:</strong> Las plantillas se adquieren para uso exclusivo dentro de la propia empresa o persona adquirente, quedando terminantemente prohibida su reventa o redistribución comercial.</div>
                     </li>
                 </ul>
@@ -995,7 +996,7 @@ body { overflow-x: hidden; }
                 <!-- Section 1 -->
                 <section>
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">description</span> 1. Aceptación de los Términos y Ámbito de Aplicación
+                        <span class="material-icons text-forest-500 text-lg">description</span> 1. Aceptación de los Términos y Ámbito de Aplicación
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         El acceso, navegación, uso de las herramientas interactivas y la adquisición de cualquier producto digital en el portal <strong>calculolaboral.cl</strong> (en adelante, "el Sitio" o "la Plataforma") atribuye la condición de Usuario a quien ingrese al mismo, e implica la adhesión plena, informada y sin reservas a todos los términos, condiciones y advertencias legales descritos en este documento.
@@ -1008,7 +1009,7 @@ body { overflow-x: hidden; }
                 <!-- Section 2 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">school</span> 2. Naturaleza de las herramientas gratuitas y ausencia de relación profesional
+                        <span class="material-icons text-forest-500 text-lg">school</span> 2. Naturaleza de las herramientas gratuitas y ausencia de relación profesional
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Cálculo Laboral es una iniciativa de desarrollo tecnológico independiente con propósitos <strong>exclusivamente educativos, informativos y de orientación algorítmica previa</strong>.
@@ -1021,7 +1022,7 @@ body { overflow-x: hidden; }
                 <!-- Section 3 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">calculate</span> 3. Carácter referencial de las estimaciones matemáticas
+                        <span class="material-icons text-forest-500 text-lg">calculate</span> 3. Carácter referencial de las estimaciones matemáticas
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Los resultados arrojados por los simuladores (Finiquito Legal, Sueldo Líquido, Horas Extras, Sueldo Part-Time y Vacaciones Proporcionales) corresponden a simulaciones teóricas estructuradas conforme a la normativa general del Código del Trabajo, topes del Banco Central (UF), UTM e instrucciones de la Dirección del Trabajo (DT).
@@ -1040,7 +1041,7 @@ body { overflow-x: hidden; }
                 <!-- Section 4 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">shopping_cart</span> 4. Contratación electrónica y compraventa de productos digitales
+                        <span class="material-icons text-forest-500 text-lg">shopping_cart</span> 4. Contratación electrónica y compraventa de productos digitales
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Cálculo Laboral pone a disposición de empleadores, microempresarios, contadores y departamentos de recursos humanos diversos productos digitales descargables, tales como el <em>Kit de Blindaje Laboral Pyme ($19.990)</em>, el <em>Kit de Cumplimiento Ley de Datos Personales N° 21.719 ($29.990)</em>, el <em>Generador de Finiquito Notarial ($12.990)</em> y anexos contractuales específicos:
@@ -1070,14 +1071,14 @@ body { overflow-x: hidden; }
                         </p>
                     </div>
                     <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                        <strong>Garantía de Integridad y Soporte Técnico:</strong> Si el comprador experimenta cualquier inconveniente técnico atribuible a la plataforma (enlaces inactivos, archivo corrupto o no recepción del correo transaccional), Cálculo Laboral garantiza la restitución del material o reenvío manual directo en un plazo máximo de <strong>24 horas hábiles</strong> tras el reporte remitido a <a href="mailto:contacto@calculolaboral.cl" class="text-sky-600 font-semibold underline">contacto@calculolaboral.cl</a>.
+                        <strong>Garantía de Integridad y Soporte Técnico:</strong> Si el comprador experimenta cualquier inconveniente técnico atribuible a la plataforma (enlaces inactivos, archivo corrupto o no recepción del correo transaccional), Cálculo Laboral garantiza la restitución del material o reenvío manual directo en un plazo máximo de <strong>24 horas hábiles</strong> tras el reporte remitido a <a href="mailto:contacto@calculolaboral.cl" class="text-forest-600 font-semibold underline">contacto@calculolaboral.cl</a>.
                     </p>
                 </section>
 
                 <!-- Section 6 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">verified_user</span> 6. Licencia de uso de plantillas y propiedad intelectual
+                        <span class="material-icons text-forest-500 text-lg">verified_user</span> 6. Licencia de uso de plantillas y propiedad intelectual
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Todos los documentos, formatos en Word (.docx), protocolos legales (Ley Karin DS 44, Ley 40 Horas, Ley 21.719), modelos de finiquito, manuales de uso y códigos informáticos del portal son de titularidad exclusiva de Cálculo Laboral y se encuentran tutelados por la <strong>Ley N° 17.336 sobre Propiedad Intelectual</strong> de Chile y convenios internacionales.
@@ -1097,7 +1098,7 @@ body { overflow-x: hidden; }
                 <!-- Section 7 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">gavel</span> 7. Servicio voluntario de "Revisión Legal" y remisión profesional
+                        <span class="material-icons text-forest-500 text-lg">gavel</span> 7. Servicio voluntario de "Revisión Legal" y remisión profesional
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Para los usuarios que requieran asistencia profesional letrada ante despidos injustificados o liquidaciones cuestionadas, Cálculo Laboral dispone de formularios de contacto voluntario para conectar al solicitante con abogados laboralistas independientes debidamente habilitados para el ejercicio de la profesión.
@@ -1110,7 +1111,7 @@ body { overflow-x: hidden; }
                 <!-- Section 8 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">campaign</span> 8. Transparencia publicitaria y enlaces de afiliados
+                        <span class="material-icons text-forest-500 text-lg">campaign</span> 8. Transparencia publicitaria y enlaces de afiliados
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         En cumplimiento de los principios de transparencia de la Ley del Consumidor y buenas prácticas de comercio electrónico, se informa que el Sitio contiene enlaces promocionales y banners patrocinados de terceras entidades acreditadas (tales como <strong>Banco Itaú</strong>, <strong>Abakos Chile</strong> y la red de anuncios de <strong>Google AdSense</strong>):
@@ -1124,7 +1125,7 @@ body { overflow-x: hidden; }
                 <!-- Section 9 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">security</span> 9. Uso aceptable del portal y prohibición de scraping abusivo
+                        <span class="material-icons text-forest-500 text-lg">security</span> 9. Uso aceptable del portal y prohibición de scraping abusivo
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Se autoriza al Usuario a consultar libremente las calculadoras para fines individuales o de gestión interna de su negocio. Queda estrictamente vedado:
@@ -1139,7 +1140,7 @@ body { overflow-x: hidden; }
                 <!-- Section 10 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">warning</span> 10. Limitación y exclusión de responsabilidad
+                        <span class="material-icons text-forest-500 text-lg">warning</span> 10. Limitación y exclusión de responsabilidad
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         En el grado máximo permitido por el ordenamiento jurídico de Chile, Cálculo Laboral no será responsable por:
@@ -1154,7 +1155,7 @@ body { overflow-x: hidden; }
                 <!-- Section 11 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">sync</span> 11. Modificaciones a los Términos y Condiciones
+                        <span class="material-icons text-forest-500 text-lg">sync</span> 11. Modificaciones a los Términos y Condiciones
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Cálculo Laboral se reserva el derecho de actualizar, rectificar o complementar las presentes condiciones en cualquier tiempo para adecuarlas a reformas normativas del Código del Trabajo, resoluciones del SERNAC o nuevas modalidades de servicio.
@@ -1167,7 +1168,7 @@ body { overflow-x: hidden; }
                 <!-- Section 12 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">balance</span> 12. Legislación aplicable, domicilio y jurisdicción
+                        <span class="material-icons text-forest-500 text-lg">balance</span> 12. Legislación aplicable, domicilio y jurisdicción
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Los presentes Términos y Condiciones de Uso y Contratación se rigen, interpretan y ejecutan conforme a las leyes de la <strong>República de Chile</strong>, en particular por las normas pertinentes del Código Civil, Código de Comercio, Ley N° 19.496 sobre Protección de los Derechos de los Consumidores y Código del Trabajo.
@@ -1181,7 +1182,7 @@ body { overflow-x: hidden; }
                         <p class="text-xs sm:text-sm text-slate-600 mt-1 mb-3">
                             Para consultas sobre compras realizadas, reposición técnica de enlaces, facturación o aclaraciones sobre estos términos, escríbenos a nuestro canal oficial:
                         </p>
-                        <a href="mailto:contacto@calculolaboral.cl" class="text-sky-600 hover:text-sky-700 font-semibold text-sm underline decoration-sky-300">contacto@calculolaboral.cl</a>
+                        <a href="mailto:contacto@calculolaboral.cl" class="text-forest-600 hover:text-forest-700 font-semibold text-sm underline decoration-forest-300">contacto@calculolaboral.cl</a>
                     </div>
                 </section>
         
@@ -1313,7 +1314,7 @@ body { overflow-x: hidden; }
         <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
+                    <span class="material-icons text-forest-500">history</span>
                     <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
                 </div>
                 <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
@@ -1341,7 +1342,7 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-forest-500"></span> UTM (Últimos 12 meses)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1367,7 +1368,7 @@ body { overflow-x: hidden; }
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.1.1"></script>
+    <script src="/js/pdf_generator.js?v=2.8.0"></script>
     <script>
         function enviarLead(fuenteCustom) {
             var nombre = document.getElementById('lead-nombre').value.trim();
@@ -1579,5 +1580,6 @@ body { overflow-x: hidden; }
         }
     </script>
     
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

@@ -174,14 +174,14 @@
                     Última actualización: ${escapeHtml(fecha)}
                 </p>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     1. IDENTIFICACIÓN DEL RESPONSABLE DEL TRATAMIENTO:
                 </p>
                 <p style="margin-top: 0;">
                     El responsable del tratamiento de los datos personales recopilados a través del sitio web <strong>${escapeHtml(web)}</strong>, canales de venta presencial, WhatsApp corporativo y formularios digitales es <strong>${escapeHtml(empresa)}</strong>, Rol Único Tributario N° <strong>${escapeHtml(rutEmpresa)}</strong>, domiciliada en <strong>${escapeHtml(direccion)}</strong>, correo electrónico de contacto: <strong>${escapeHtml(email)}</strong> (en adelante, la "Empresa").
                 </p>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     2. PRINCIPIOS DE TRATAMIENTO APLICADOS (ARTÍCULO 4 LEY 21.719):
                 </p>
                 <p style="margin-top: 0;">
@@ -195,7 +195,7 @@
                     <li><strong>Seguridad y Confidencialidad:</strong> Aplicación de controles técnicos y organizativos para evitar accesos no autorizados, hackeos, pérdidas o alteraciones.</li>
                 </ul>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     3. DATOS QUE RECOPILAMOS Y FINALIDADES:
                 </p>
                 <p style="margin-top: 0;">
@@ -207,7 +207,7 @@
                     <li><strong>Datos de Navegación (Cookies):</strong> Dirección IP, tipo de navegador y páginas visitadas para fines estadísticos y de rendimiento del sitio web.</li>
                 </ul>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     4. BASES DE LICITUD (LEGITIMACIÓN):
                 </p>
                 <p style="margin-top: 0;">
@@ -219,14 +219,14 @@
                     <li>El consentimiento libre, previo, expreso e informado del usuario para comunicaciones promocionales (revocable en cualquier momento).</li>
                 </ul>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     5. TRANSFERENCIA Y ENCARGADOS DE TRATAMIENTO:
                 </p>
                 <p style="margin-top: 0;">
                     La Empresa no comercializa, arrienda ni vende bases de datos personales a terceros bajo ninguna circunstancia. Los datos podrán comunicarse a proveedores tecnológicos de pasarelas de pago (Transbank, Flow, Mercado Pago), empresas de courier logístico y servicios de facturación, quienes operan en calidad de "Encargados de Tratamiento" sujetos a estrictos contratos de confidencialidad.
                 </p>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     6. DERECHOS DE LOS TITULARES (DERECHOS ARCOP):
                 </p>
                 <p style="margin-top: 0;">
@@ -244,14 +244,14 @@
                     Para ejercer estos derechos, el titular debe enviar su solicitud formal al correo <strong>${escapeHtml(email)}</strong> acreditando fehacientemente su identidad. La Empresa acusará recibo y responderá fundadamente dentro del plazo legal fatal de <strong>treinta (30) días corridos</strong> contado desde su recepción (Artículo 11 Ley N° 19.628).
                 </p>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     7. PLAZOS DE RETENCIÓN DE INFORMACIÓN:
                 </p>
                 <p style="margin-top: 0;">
                     Los datos de clientes se conservarán mientras dure la relación comercial y durante el plazo de 6 años establecido por el Código Tributario para fiscalizaciones contables, tras lo cual serán eliminados o anonimizados.
                 </p>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     8. AGENCIA DE PROTECCIÓN DE DATOS PERSONALES:
                 </p>
                 <p style="margin-top: 0;">
@@ -467,14 +467,14 @@
                     <span style="font-size: 10pt; font-weight: normal;">(Conforme al Artículo 14 sexies de la Ley N° 19.628, modificada por Ley N° 21.719 - Notificación sin dilaciones indebidas y Estándar Operativo de 72 Horas)</span>
                 </p>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     1. OBJETIVO:
                 </p>
                 <p style="margin-top: 0;">
                     Establecer las directrices de acción inmediata ante cualquier violación de seguridad, filtración, robo, pérdida, acceso no autorizado o alteración de datos personales custodiados por <strong>${escapeHtml(empresa)}</strong> (RUT ${escapeHtml(rutEmpresa)}), garantizando la contención del daño y el cumplimiento de la obligación legal de notificar a la Agencia de Protección de Datos Personales a la mayor brevedad posible y sin dilaciones indebidas (Art. 14 sexies), adoptando como estándar operativo interno y mejor práctica internacional recomendada un plazo máximo de <strong>72 horas</strong> desde la detección del incidente.
                 </p>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     2. CLASIFICACIÓN DE INCIDENTES DE SEGURIDAD:
                 </p>
                 <p style="margin-top: 0;">
@@ -486,7 +486,7 @@
                     <li><strong>Error Humano Operativo:</strong> Envío masivo de correos con datos personales sin copia oculta (BCC), o publicación accidental de archivos confidenciales.</li>
                 </ul>
 
-                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0284c7;">
+                <p style="text-align: left; font-weight: bold; margin-top: 16px; margin-bottom: 4px; color: #0F5E4F;">
                     3. PROTOCOLO DE RESPUESTA EN 4 PASOS:
                 </p>
                 <ol style="margin-left: 25px;">
@@ -597,7 +597,7 @@
                     Conforme a la Ley N° 21.719 que reforma la Ley N° 19.628 de Protección de Datos Personales de Chile
                 </p>
 
-                <p style="background-color: #f4f6f8; border-left: 4px solid #0284c7; padding: 10px 14px; margin-bottom: 18px;">
+                <p style="background-color: #f4f6f8; border-left: 4px solid #0F5E4F; padding: 10px 14px; margin-bottom: 18px;">
                     <strong>Empresa Evaluada:</strong> ${escapeHtml(empresa)} &nbsp;|&nbsp; <strong>RUT:</strong> ${escapeHtml(rutEmpresa)} &nbsp;|&nbsp; <strong>Fecha de Evaluación:</strong> ${escapeHtml(fecha)}
                 </p>
 
@@ -663,8 +663,8 @@
                 <p style="font-weight: bold; margin-top: 20px;">
                     3. RESULTADO Y DICTAMEN LEGAL DE LA EVALUACIÓN:
                 </p>
-                <div style="border: 2px solid #0284c7; background-color: #f0f9ff; padding: 14px; border-radius: 6px;">
-                    <p style="margin: 0 0 8px 0; font-weight: bold; color: #0369a1; font-size: 11.5pt;">
+                <div style="border: 2px solid #0F5E4F; background-color: #EEF6F3; padding: 14px; border-radius: 6px;">
+                    <p style="margin: 0 0 8px 0; font-weight: bold; color: #064A3E; font-size: 11.5pt;">
                         [ ✔ ] DICTAMEN: EMPRESA EXENTA DE LA OBLIGACIÓN DE NOMBRAR DPO
                     </p>
                     <p style="margin: 0; font-size: 10.5pt; color: #0f172a;">

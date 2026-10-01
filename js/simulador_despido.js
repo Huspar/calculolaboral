@@ -163,9 +163,9 @@
             nivelColorBarra = 'bg-red-500';
         } else if (totalSentencia > 2000000) {
             nivelRiesgo = 'Alto';
-            nivelClase = 'bg-orange-100 text-orange-800 border-orange-300';
+            nivelClase = 'bg-amber-100 text-amber-900 border-amber-300';
             nivelBarra = '55%';
-            nivelColorBarra = 'bg-orange-500';
+            nivelColorBarra = 'bg-forest-700';
         }
 
         renderResults({

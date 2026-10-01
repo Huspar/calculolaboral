@@ -109,7 +109,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     <style>
         #print-annex-section {
             display: none;
@@ -471,8 +471,9 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#F8FAF9]0/20 selection:text-slate-900">
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -714,22 +715,22 @@ body { overflow-x: hidden; }
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Razón Social o Nombre Empleador</label>
-                            <input type="text" id="company-name" placeholder="Ej: Servicios Integrales SpA" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="company-name" placeholder="Ej: Servicios Integrales SpA" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">RUT Empresa</label>
-                            <input type="text" id="company-rut" placeholder="Ej: 76.123.456-7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="company-rut" placeholder="Ej: 76.123.456-7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Domicilio de la Empresa</label>
-                            <input type="text" id="company-address" placeholder="Ej: Av. Providencia 1234, Of. 502" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="company-address" placeholder="Ej: Av. Providencia 1234, Of. 502" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Representante Legal</label>
-                            <input type="text" id="rep-name" placeholder="Ej: Carlos Gómez Morales" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="rep-name" placeholder="Ej: Carlos Gómez Morales" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
                 </div>
@@ -744,22 +745,22 @@ body { overflow-x: hidden; }
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo Trabajador</label>
-                            <input type="text" id="worker-name" placeholder="Ej: Andrea Valenzuela Ramos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="worker-name" placeholder="Ej: Andrea Valenzuela Ramos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">RUT Trabajador</label>
-                            <input type="text" id="worker-rut" placeholder="Ej: 15.987.654-3" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="worker-rut" placeholder="Ej: 15.987.654-3" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Cargo u Oficio Desempeñado</label>
-                            <input type="text" id="worker-position" placeholder="Ej: Asistente Administrativo" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="worker-position" placeholder="Ej: Asistente Administrativo" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Fecha Contrato Original</label>
-                            <input type="date" id="contract-date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none bg-white">
+                            <input type="date" id="contract-date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                         </div>
                     </div>
                 </div>
@@ -774,14 +775,14 @@ body { overflow-x: hidden; }
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Jornada Semanal Anterior</label>
-                            <select id="prev-hours" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none bg-white">
+                            <select id="prev-hours" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                                 <option value="44">44 horas semanales (hito 2024)</option>
                                 <option value="45">45 horas semanales (jornada antigua)</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Modalidad de Rebaja a 42h</label>
-                            <select id="reduction-modality" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none bg-white">
+                            <select id="reduction-modality" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                                 <option value="5x2-viernes">Lunes a Viernes: Salida anticipada 2 hrs el viernes</option>
                                 <option value="5x2-diaria">Lunes a Viernes: Distribución uniforme (8h 24m diarias)</option>
                                 <option value="6x1-comercio">Lunes a Sábado: Comercio/Gastronomía (turnos 7 hrs)</option>
@@ -793,18 +794,18 @@ body { overflow-x: hidden; }
                     <!-- Campo condicional para horario personalizado -->
                     <div id="custom-schedule-group" class="hidden">
                         <label class="block text-xs font-bold text-slate-700 mb-1">Detalle del Horario Pactado (42 Horas)</label>
-                        <textarea id="custom-schedule" rows="3" placeholder="Ej: Lunes a Jueves de 08:30 a 18:00 y Viernes de 08:30 a 16:30..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none"></textarea>
+                        <textarea id="custom-schedule" rows="3" placeholder="Ej: Lunes a Jueves de 08:30 a 18:00 y Viernes de 08:30 a 16:30..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none"></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Fecha de Entrada en Vigencia</label>
-                            <input type="date" id="effective-date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none bg-white">
+                            <input type="date" id="effective-date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                             <span class="text-[11px] text-slate-500 mt-1 block">Hito legal: 26 de abril de 2026</span>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Ciudad de Otorgamiento</label>
-                            <input type="text" id="city" placeholder="Santiago" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-sky-500 outline-none">
+                            <input type="text" id="city" placeholder="Santiago" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
                 </div>
@@ -872,7 +873,7 @@ body { overflow-x: hidden; }
                             <p class="text-xs text-slate-700 leading-relaxed font-medium">
                                 <strong>¿Tu empresa ya tiene el Protocolo Ley Karin (DS 44)?</strong> El anexo de 40h es solo 1 de los 10 documentos que la DT exige para no cursar multas de hasta 60 UTM.
                             </p>
-                            <a href="kit-cumplimiento-laboral-pymes" class="btn-dark-pill w-full text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98 text-center" style="background-color: #0ea5e9 !important; color: #ffffff !important; text-decoration: none !important;">
+                            <a href="kit-cumplimiento-laboral-pymes" class="btn-dark-pill w-full text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98 text-center" style="background-color: #0F5E4F !important; color: #ffffff !important; text-decoration: none !important;">
                                 <span style="color: #ffffff !important;">Completar Blindaje Pyme ($19.990)</span>
                                 <span class="material-icons text-xs" style="color: #ffffff !important;">arrow_forward</span>
                             </a>
@@ -895,7 +896,7 @@ body { overflow-x: hidden; }
                     Blindaje Laboral DT 2026
                 </div>
                 <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight m-0">
-                    El anexo de 40 horas es solo 1 de los <span class="text-sky-600">10 documentos obligatorios</span>
+                    El anexo de 40 horas es solo 1 de los <span class="text-forest-600">10 documentos obligatorios</span>
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed m-0">
                     ¿Tu empresa ya cuenta con el <strong class="text-slate-800">Protocolo obligatorio de la Ley Karin (DS 44)</strong> y el canal formal de denuncias? Evita sanciones de hasta 60 UTM con nuestro Kit Modular adaptado a tu rubro.
@@ -924,7 +925,7 @@ body { overflow-x: hidden; }
                 </p>
             </div>
             <div class="flex-shrink-0 relative z-10 w-full md:w-auto">
-                <a href="kit-cumplimiento-ley-datos-personales-chile" class="btn-rose-pill shadow-lg shadow-rose-600/25 !no-underline">
+                <a href="kit-cumplimiento-ley-datos-personales-chile" class="btn-dark-pill shadow-lg shadow-rose-600/25 !no-underline">
                     <span style="color: #ffffff !important;">Ver Kit Ley 21.719 ($29.990)</span>
                     <span class="material-icons text-base" style="color: #ffffff !important;">arrow_forward</span>
                 </a>
@@ -954,7 +955,7 @@ body { overflow-x: hidden; }
                         <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
                     </summary>
                     <div class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
-                        Sí. Conforme a las resoluciones exentas de la Dirección del Trabajo, todo empleador debe mantener actualizado el registro electrónico laboral en <a href="https://midt.dirtrab.cl" target="_blank" rel="noopener" class="text-sky-600 underline font-semibold">Mi DT</a> dentro de los 15 días posteriores a la modificación contractual. Además, se debe conservar el ejemplar físico firmado en la carpeta de personal en el lugar de trabajo.
+                        Sí. Conforme a las resoluciones exentas de la Dirección del Trabajo, todo empleador debe mantener actualizado el registro electrónico laboral en <a href="https://midt.dirtrab.cl" target="_blank" rel="noopener" class="text-forest-600 underline font-semibold">Mi DT</a> dentro de los 15 días posteriores a la modificación contractual. Además, se debe conservar el ejemplar físico firmado en la carpeta de personal en el lugar de trabajo.
                     </div>
                 </details>
 
@@ -964,7 +965,7 @@ body { overflow-x: hidden; }
                         <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
                     </summary>
                     <div class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
-                        Al reducirse la jornada semanal a 42 horas manteniendo el mismo sueldo mensual, el valor hora ordinaria sube automáticamente (el factor legal se divide por 42 en lugar de 44 o 45). En consecuencia, <strong>cada hora extraordinaria realizada con recargo del 50% tiene un valor mayor</strong>. Puedes calcular el valor exacto en nuestra <a href="calculadora-horas-extras" class="text-sky-600 underline font-semibold">Calculadora de Horas Extras</a>.
+                        Al reducirse la jornada semanal a 42 horas manteniendo el mismo sueldo mensual, el valor hora ordinaria sube automáticamente (el factor legal se divide por 42 en lugar de 44 o 45). En consecuencia, <strong>cada hora extraordinaria realizada con recargo del 50% tiene un valor mayor</strong>. Puedes calcular el valor exacto en nuestra <a href="calculadora-horas-extras" class="text-forest-600 underline font-semibold">Calculadora de Horas Extras</a>.
                     </div>
                 </details>
             </div>
@@ -1096,7 +1097,7 @@ body { overflow-x: hidden; }
         <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
+                    <span class="material-icons text-forest-500">history</span>
                     <div class="text-base font-bold text-slate-900">Historial de Indicadores</div>
                 </div>
                 <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
@@ -1124,7 +1125,7 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-forest-500"></span> UTM (Últimos 12 meses)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1149,5 +1150,6 @@ body { overflow-x: hidden; }
     <script src="/js/constants.js?v=2.0.4"></script>
     <script src="/js/indicators.js?v=2.1.1"></script>
     <script src="/js/annex_40h_generator.js?v=2.6.0"></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

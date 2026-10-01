@@ -85,7 +85,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.6.1" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
 <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -144,12 +144,12 @@
             font-weight: 600;
         }
         .prose-content a {
-            color: #0ea5e9;
+            color: #0F5E4F;
             text-decoration: underline;
             font-weight: 500;
         }
         .prose-content a:hover {
-            color: #0284c7;
+            color: #0F5E4F;
         }
         .prose-content a.cta-btn,
         .prose-content a.bg-[#F8FAF9]0,
@@ -225,9 +225,9 @@
             flex-shrink: 0;
         }
         .rubro-imponible {
-            background-color: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #e0f2fe;
+            background-color: #EEF6F3;
+            color: #064A3E;
+            border: 1px solid #D6EBE4;
         }
         .rubro-no-imponible {
             background-color: #f0fdf4;
@@ -258,10 +258,10 @@
             transition: all 0.2s ease;
         }
         .timeline-item.active {
-            border-left-color: #0ea5e9;
+            border-left-color: #0F5E4F;
         }
         .timeline-item.active::before {
-            background-color: #0ea5e9;
+            background-color: #0F5E4F;
             left: -7px;
             top: 2px;
             width: 12px;
@@ -283,8 +283,8 @@
         .step-number {
             width: 2.25rem;
             height: 2.25rem;
-            background-color: #e0f2fe;
-            color: #0369a1;
+            background-color: #D6EBE4;
+            color: #064A3E;
             border-radius: 9999px;
             display: flex;
             align-items: center;
@@ -305,7 +305,7 @@
         .prose a.cta-btn, .prose a.cta-btn *,
         .prose a[class*="bg-[#F8FAF9]0"], .prose a[class*="bg-[#F8FAF9]0"] *,
         .prose a[class*="bg-emerald-600"], .prose a[class*="bg-emerald-600"] *,
-        .prose a[class*="bg-blue-600"], .prose a[class*="bg-blue-600"] * {
+        .prose a[class*="bg-forest-600"], .prose a[class*="bg-forest-600"] * {
             color: #ffffff !important;
             text-decoration: none !important;
         }
@@ -350,10 +350,10 @@
             z-index: 10;
         }
         .copy-btn:hover {
-            background: #0ea5e9;
+            background: #0F5E4F;
             color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
+            border-color: #0F5E4F;
+            box-shadow: 0 2px 4px rgba(15, 94, 79,0.2);
         }
         .copy-btn.copied {
             background: #10b981 !important;
@@ -746,8 +746,9 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#F8FAF9]0/20 selection:text-slate-900">
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
 <div class="text-white text-xs py-2 border-b border-white/10 no-print" style="background-color: var(--teal-forest-deep);">
 <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -935,13 +936,13 @@ body { overflow-x: hidden; }
 <main class="site-container flex-grow flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
 <div class="w-full pt-2">
 <nav class="flex items-center gap-2 text-xs text-slate-400 mb-6 max-w-3xl mx-auto">
-<a class="hover:text-sky-500 transition-colors font-medium" href="./">Inicio</a>
+<a class="hover:text-forest-500 transition-colors font-medium" href="./">Inicio</a>
 <span class="material-icons text-xs">chevron_right</span>
-<a class="hover:text-sky-500 transition-colors font-medium" href="blog">Blog</a>
+<a class="hover:text-forest-500 transition-colors font-medium" href="blog">Blog</a>
 <span class="material-icons text-xs">chevron_right</span>
 <span class="text-slate-600 font-semibold">Seguro de Cesantía Chile</span>
 </nav>
-<article class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
+<article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-8 md:p-12 mb-8 relative overflow-hidden">
 <div class="prose-content max-w-none">
 <!-- Article Header -->
 <div class="mb-10 text-center sm:text-left">
@@ -992,7 +993,7 @@ body { overflow-x: hidden; }
 <!-- Pillar 2: CIC Account -->
 <div class="flex-1 text-center relative z-10">
 <div class="w-18 h-18 mx-auto rounded-full bg-[#F8FAF9] border-2 border-slate-200 flex items-center justify-center mb-3 shadow-sm" style="width: 72px; height: 72px;">
-<span class="material-icons text-3xl text-sky-500">savings</span>
+<span class="material-icons text-3xl text-forest-500">savings</span>
 </div>
 <div class="text-slate-800 text-sm font-bold mb-1">Cuenta Individual (CIC)</div>
 <p class="text-slate-500 text-xs max-w-[160px] mx-auto leading-relaxed">Aportes de trabajador (0,6%) y empleador (2,4%)</p>
@@ -1012,13 +1013,13 @@ body { overflow-x: hidden; }
 <!-- Main Grid Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 items-start">
 <!-- ARTICLE CONTENT -->
-<div class="prose prose-slate prose-lg max-w-none text-slate-700 leading-relaxed prose-headings:text-slate-900 font-sans prose-headings:font-bold prose-a:text-sky-500 hover:prose-a:text-sky-600 prose-strong:text-slate-900">
+<div class="prose prose-slate prose-lg max-w-none text-slate-700 leading-relaxed prose-headings:text-slate-900 font-sans prose-headings:font-bold prose-a:text-forest-500 hover:prose-a:text-forest-600 prose-strong:text-slate-900">
 <p>
-                        El **Seguro de Cesantía** es un derecho de seguridad social que protege a todos los trabajadores regidos por el Código del Trabajo en Chile. Este seguro es administrado de manera exclusiva por la **AFC (Administradora de Fondos de Cesantía)** y provee ingresos monetarios periódicos en caso de desempleo.
+                        El <strong>Seguro de Cesantía</strong> es un derecho de seguridad social que protege a todos los trabajadores regidos por el Código del Trabajo en Chile. Este seguro es administrado de manera exclusiva por la <strong>AFC (Administradora de Fondos de Cesantía)</strong> y provee ingresos monetarios periódicos en caso de desempleo.
                     </p>
 <h2>1. ¿Qué es el Seguro de Cesantía y cómo se financia?</h2>
 <p>
-                        El seguro se conforma principalmente a través de depósitos en una **Cuenta Individual de Cesantía (CIC)** y cuenta con un fondo complementario llamado **Fondo de Cesantía Solidario (FCS)** para aquellos casos en que la cuenta individual no cuente con capital suficiente.
+                        El seguro se conforma principalmente a través de depósitos en una <strong>Cuenta Individual de Cesantía (CIC)</strong> y cuenta con un fondo complementario llamado <strong>Fondo de Cesantía Solidario (FCS)</strong> para aquellos casos en que la cuenta individual no cuente con capital suficiente.
                     </p>
 <p>
                         El financiamiento del seguro varía según el tipo de contrato:
@@ -1055,9 +1056,9 @@ body { overflow-x: hidden; }
                         </p>
 </div>
 <!-- Bloque Publicitario Responsivo Abakos -->
-<div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-sky-50/40 via-white to-slate-50 border border-slate-200/90 rounded-2xl shadow-sm no-print text-center">
+<div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-forest-50/40 via-white to-slate-50 border border-slate-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-sky-600 bg-sky-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+<span class="text-[10px] font-extrabold uppercase tracking-wider text-forest-600 bg-forest-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
 <span class="w-1.5 h-1.5 rounded-full bg-[#F8FAF9]0 animate-pulse"></span> Publicidad Patrocinada
                         </span>
 <span class="text-[10px] text-slate-500 font-semibold">Abakos Chile • Préstamos Online</span>
@@ -1072,7 +1073,7 @@ body { overflow-x: hidden; }
 <span class="text-slate-600 font-medium text-[11px] sm:text-xs text-center sm:text-left">
                             ¿Esperando el pago de tu seguro o necesitas liquidez urgente? Simula en minutos <strong>sin pagos por adelantado</strong>.
                         </span>
-<a class="btn-dark-pill w-full sm:w-auto inline-flex items-center justify-center gap-1.5 !text-white !no-underline font-bold text-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/abakos" rel="sponsored nofollow noopener" style="background-color: #0284c7 !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
+<a class="btn-dark-pill w-full sm:w-auto inline-flex items-center justify-center gap-1.5 !text-white !no-underline font-bold text-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/abakos" rel="sponsored nofollow noopener" style="background-color: #0F5E4F !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
 <span class="!text-white">Simular Préstamo</span>
 <span class="material-icons text-sm !text-white">arrow_forward</span>
 </a>
@@ -1087,7 +1088,7 @@ body { overflow-x: hidden; }
 <li>Inicia sesión de forma segura utilizando tu <strong>ClaveÚnica</strong> del Registro Civil o tu clave AFC.</li>
 <li>Haz clic en la pestaña <strong>"Cobrar Seguro de Cesantía"</strong>.</li>
 <li>Completa el formulario en línea e ingresa los datos de tu cuenta bancaria para recibir la transferencia.</li>
-<li>Sube una fotografía o archivo digital legible de tu documento de término (ej. tu **finiquito firmado**).</li>
+<li>Sube una fotografía o archivo digital legible de tu documento de término (ej. tu <strong>finiquito firmado</strong>).</li>
 <li>Una vez enviada, la AFC revisará la solicitud y te enviará un correo con la aprobación y el calendario detallado de giros mensuales.</li>
 </ul>
 <h2>5. Tabla de montos mensuales</h2>
@@ -1131,7 +1132,7 @@ body { overflow-x: hidden; }
 <aside class="space-y-6 lg:sticky lg:top-28">
 <!-- Calculator Promo Card -->
 <div class="p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden bg-white">
-<div class="text-sm font-bold text-sky-600 uppercase tracking-widest mb-2">Simulador de Finiquito</div>
+<div class="text-sm font-bold text-forest-600 uppercase tracking-widest mb-2">Simulador de Finiquito</div>
 <h3 class="text-lg font-bold text-slate-900 mb-3">Revisa tu descuento de la AFC</h3>
 <p class="text-xs text-slate-655 leading-relaxed mb-5">
                             ¿Te despidieron por necesidades de la empresa? Usa nuestra calculadora gratuita con el descuento legal AFC actualizado a la normativa 2026.
@@ -1150,7 +1151,7 @@ body { overflow-x: hidden; }
 </li>
 <li class="flex items-start gap-2">
 <span class="material-icons text-emerald-600 text-sm mt-0.5">link</span>
-<div class="text-slate-700"><strong>Sitio oficial:</strong> <a class="text-sky-600 hover:underline" href="https://www.afc.cl" rel="noopener noreferrer" target="_blank">www.afc.cl</a></div>
+<div class="text-slate-700"><strong>Sitio oficial:</strong> <a class="text-forest-600 hover:underline" href="https://www.afc.cl" rel="noopener noreferrer" target="_blank">www.afc.cl</a></div>
 </li>
 <li class="flex items-start gap-2">
 <span class="material-icons text-emerald-600 text-sm mt-0.5">phone</span>
@@ -1274,7 +1275,7 @@ body { overflow-x: hidden; }
 <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
 <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
 <div class="flex items-center gap-2">
-<span class="material-icons text-sky-500">history</span>
+<span class="material-icons text-forest-500">history</span>
 <div class="text-base font-bold text-slate-900">Historial de Indicadores</div>
 </div>
 <button aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100" id="btn-close-history">
@@ -1301,7 +1302,7 @@ body { overflow-x: hidden; }
 </div>
 </div>
 <div>
-<div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+<div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-forest-500"></span> UTM (Últimos 12 meses)
                     </div>
 <div class="max-h-[250px] overflow-y-auto pr-1">
 <table class="w-full text-left">
@@ -1324,7 +1325,7 @@ body { overflow-x: hidden; }
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.0.3"></script>
 <script src="/js/indicators.js?v=2.0.3"></script>
-<script src="/js/pdf_generator.js?v=2.1.1"></script>
+<script src="/js/pdf_generator.js?v=2.8.0"></script>
 <script>
         function enviarLead(fuenteCustom) {
             var nombre = document.getElementById('lead-nombre').value.trim();
@@ -1535,5 +1536,6 @@ body { overflow-x: hidden; }
             window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
         }
     </script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

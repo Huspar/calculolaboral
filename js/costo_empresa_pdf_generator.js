@@ -175,11 +175,11 @@
                 width: 34px;
                 height: 34px;
                 border-radius: 8px;
-                background-color: #0284c7 !important;
+                background-color: #0F5E4F !important;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+                box-shadow: 0 2px 8px rgba(15, 94, 79, 0.3);
             }
 
             .badge-dt-conforme {
@@ -221,9 +221,9 @@
             }
 
             .tabla-comparativa th.col-indef {
-                background-color: #e0f2fe;
-                color: #0369a1;
-                border-bottom: 2px solid #0284c7;
+                background-color: #D6EBE4;
+                color: #064A3E;
+                border-bottom: 2px solid #0F5E4F;
             }
 
             .tabla-comparativa td {
@@ -243,12 +243,12 @@
 
             .tabla-comparativa tr.fila-destacada td {
                 background-color: #f0fdf4;
-                border-top: 2px solid #0284c7;
-                border-bottom: 2px solid #0284c7;
+                border-top: 2px solid #0F5E4F;
+                border-bottom: 2px solid #0F5E4F;
             }
 
             .tabla-comparativa tr.fila-destacada td:nth-child(2) {
-                background-color: #e0f2fe !important;
+                background-color: #D6EBE4 !important;
             }
 
             .tag-riesgo {
@@ -476,7 +476,7 @@
                     text-align: left !important;
                     padding-left: 0 !important;
                     padding-top: 6px !important;
-                    border-top: 1px dashed #bae6fd !important;
+                    border-top: 1px dashed #ADD6C9 !important;
                     width: 100% !important;
                 }
                 .informe-footer-top {
@@ -572,7 +572,7 @@
                             </svg>
                         </div>
                         <div class="min-w-0">
-                            <span class="font-extrabold text-lg tracking-tight text-slate-900 block leading-tight">Cálculo<span class="text-sky-600">Laboral</span></span>
+                            <span class="font-extrabold text-lg tracking-tight text-slate-900 block leading-tight">Cálculo<span class="text-forest-600">Laboral</span></span>
                             <span class="text-[9px] text-slate-500 uppercase tracking-widest font-mono block truncate">Inteligencia Laboral Pymes</span>
                         </div>
                     </div>
@@ -584,7 +584,7 @@
                 </div>
 
                 <div class="text-center my-2.5 sm:my-3.5">
-                    <span class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-sky-800 bg-sky-100/70 px-2.5 py-1 rounded-full border border-sky-200 inline-block max-w-full">
+                    <span class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-forest-800 bg-forest-100/70 px-2.5 py-1 rounded-full border border-forest-200 inline-block max-w-full">
                         Informe Ejecutivo de Decisión Estratégica & Presupuesto
                     </span>
                     <h1 class="text-lg sm:text-2xl font-black text-slate-900 tracking-tight mt-1.5 sm:mt-2 leading-tight">
@@ -620,18 +620,18 @@
             <div class="my-4">
                 <div class="flex items-center justify-between mb-2">
                     <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-forest-500"></span>
                         Comparativa Estratégica de Contratación (3 Vías Posibles)
                     </h2>
                     <span class="text-[10px] text-slate-500 font-medium hidden sm:inline">Análisis financiero y laboral referencial</span>
                 </div>
 
-                <div class="sm:hidden flex items-center justify-between px-2.5 py-1 mb-2 bg-sky-50/90 border border-sky-200/80 rounded-lg text-[9.5px] text-sky-800 font-medium">
+                <div class="sm:hidden flex items-center justify-between px-2.5 py-1 mb-2 bg-forest-50/90 border border-forest-200/80 rounded-lg text-[9.5px] text-forest-800 font-medium">
                     <span class="flex items-center gap-1">
-                        <span class="material-icons text-xs text-sky-600">swipe</span>
+                        <span class="material-icons text-xs text-forest-600">swipe</span>
                         <span>Desliza para comparar las 3 vías</span>
                     </span>
-                    <span class="font-bold text-sky-600">3 columnas →</span>
+                    <span class="font-bold text-forest-600">3 columnas →</span>
                 </div>
 
                 <div class="tabla-comparativa-wrapper">
@@ -647,49 +647,49 @@
                         <tbody>
                             <tr>
                                 <td class="font-semibold text-slate-700">Líquido que recibe el colaborador</td>
-                                <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.sueldoLiquido)}</td>
+                                <td class="font-mono font-bold text-slate-900 bg-forest-50/50">${formatCLP(ind.sueldoLiquido)}</td>
                                 <td class="font-mono font-bold text-slate-900">${formatCLP(plz.sueldoLiquido)}</td>
                                 <td class="font-mono font-bold text-slate-900">${formatCLP(hon.montoLiquido)}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold text-slate-700">Total Imponible Bruto / Facturado</td>
-                                <td class="font-mono text-slate-800 bg-sky-50/50">${formatCLP(ind.totalImponible)}</td>
+                                <td class="font-mono text-slate-800 bg-forest-50/50">${formatCLP(ind.totalImponible)}</td>
                                 <td class="font-mono text-slate-800">${formatCLP(plz.totalImponible)}</td>
                                 <td class="font-mono text-slate-800">${formatCLP(hon.montoBruto)} <span class="text-[9.5px] text-slate-500">(Ret. 14,5%)</span></td>
                             </tr>
                             <tr>
                                 <td class="font-semibold text-slate-700">Aportes Patronales (SIS, AFC, Mutual)</td>
-                                <td class="font-mono font-semibold text-emerald-700 bg-sky-50/50">+${formatCLP(ind.totalAportesPatronales)}</td>
+                                <td class="font-mono font-semibold text-emerald-700 bg-forest-50/50">+${formatCLP(ind.totalAportesPatronales)}</td>
                                 <td class="font-mono font-semibold text-emerald-700">+${formatCLP(plz.totalAportesPatronales)} <span class="text-[9px] text-slate-400 block">(AFC 3,0%)</span></td>
                                 <td class="font-mono text-slate-400">$0 aparente</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold text-slate-700">Reserva Pasivos (Vacaciones + Finiquito)</td>
-                                <td class="font-mono font-semibold text-amber-700 bg-sky-50/50">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-600 block">(Vac. + IAS 8,33%)</span></td>
+                                <td class="font-mono font-semibold text-amber-700 bg-forest-50/50">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-600 block">(Vac. + IAS 8,33%)</span></td>
                                 <td class="font-mono font-semibold text-amber-700">+${formatCLP(plz.totalProvisiones)} <span class="text-[9px] text-slate-400 block">(Solo Vacaciones)</span></td>
                                 <td class="font-mono text-slate-400">$0 aparente</td>
                             </tr>
                             <tr class="fila-destacada">
                                 <td class="font-black text-slate-900 text-xs">COSTO REAL MENSUAL EMPRESA</td>
-                                <td class="font-mono font-black text-sky-800 text-base">${formatCLP(ind.costoEmpresaTotal)}</td>
+                                <td class="font-mono font-black text-forest-800 text-base">${formatCLP(ind.costoEmpresaTotal)}</td>
                                 <td class="font-mono font-black text-slate-900 text-sm">${formatCLP(plz.costoEmpresaTotal)}</td>
                                 <td class="font-mono font-bold text-slate-600 text-sm">${formatCLP(hon.costoEmpresaMensual)}*</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold text-slate-700">Presupuesto Anual Consolidado (12m)</td>
-                                <td class="font-mono font-bold text-slate-900 bg-sky-50/50">${formatCLP(ind.costoEmpresaAnual)}</td>
+                                <td class="font-mono font-bold text-slate-900 bg-forest-50/50">${formatCLP(ind.costoEmpresaAnual)}</td>
                                 <td class="font-mono font-bold text-slate-900">${formatCLP(plz.costoEmpresaAnual)}</td>
                                 <td class="font-mono text-slate-700">${formatCLP(hon.costoEmpresaAnual)}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold text-slate-700">Factor Multiplicador sobre Líquido</td>
-                                <td class="font-mono font-bold text-sky-700 bg-sky-50/50">${ind.factorMultiplicador.toFixed(2)}x</td>
+                                <td class="font-mono font-bold text-forest-700 bg-forest-50/50">${ind.factorMultiplicador.toFixed(2)}x</td>
                                 <td class="font-mono font-bold text-slate-700">${plz.factorMultiplicador.toFixed(2)}x</td>
                                 <td class="font-mono text-slate-600">${hon.factorMultiplicador.toFixed(2)}x</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold text-slate-700">Semáforo de Riesgo Inspectivo DT</td>
-                                <td class="bg-sky-50/50"><span class="tag-riesgo tag-bajo">BAJO (Estándar Legal)</span></td>
+                                <td class="bg-forest-50/50"><span class="tag-riesgo tag-bajo">BAJO (Estándar Legal)</span></td>
                                 <td><span class="tag-riesgo tag-medio">MEDIO (Máx 2 renovaciones)</span></td>
                                 <td><span class="tag-riesgo tag-alto">CRÍTICO (Riesgo Demanda)</span></td>
                             </tr>
@@ -741,17 +741,17 @@
             </div>
 
             <!-- HOJA DE RUTA Y SIGUIENTE PASO -->
-            <div class="p-3 sm:p-3.5 bg-sky-50 border border-sky-200 rounded-xl my-4 text-xs">
+            <div class="p-3 sm:p-3.5 bg-forest-50 border border-forest-200 rounded-xl my-4 text-xs">
                 <div class="flex items-center justify-between siguiente-paso-flex">
                     <div>
-                        <span class="font-extrabold text-sky-950 block text-xs">Siguiente Paso Obligatorio: Escrituración Formal del Contrato</span>
-                        <p class="text-[11px] text-sky-900 mt-0.5 max-w-lg">
+                        <span class="font-extrabold text-forest-950 block text-xs">Siguiente Paso Obligatorio: Escrituración Formal del Contrato</span>
+                        <p class="text-[11px] text-forest-900 mt-0.5 max-w-lg">
                             El Código del Trabajo otorga un plazo improrrogable de <strong>15 días</strong> desde la incorporación para firmar el contrato (o 5 días si dura menos de 30 días) y debe registrarse obligatoriamente en el portal Mi DT.
                         </p>
                     </div>
                     <div class="text-right shrink-0 pl-3">
                         <span class="text-[10px] text-slate-500 block">Herramienta legal recomendada:</span>
-                        <span class="text-xs font-bold text-sky-700">Pack Contrato Pyme Word ($12.990)</span>
+                        <span class="text-xs font-bold text-forest-700">Pack Contrato Pyme Word ($12.990)</span>
                     </div>
                 </div>
             </div>
@@ -845,7 +845,7 @@
                         <button type="button" id="btn-cerrar-preview-bottom" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] sm:text-xs rounded-lg cursor-pointer shrink-0">
                             Cerrar
                         </button>
-                        <a href="${FLOW_CHECKOUT_URL}" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-sky-600 hover:bg-sky-700 font-bold text-[11px] sm:text-xs rounded-lg shadow-sm text-white flex items-center gap-1 cursor-pointer no-underline !text-white shrink-0" style="color:#fff!important;">
+                        <a href="${FLOW_CHECKOUT_URL}" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-forest-600 hover:bg-forest-700 font-bold text-[11px] sm:text-xs rounded-lg shadow-sm text-white flex items-center gap-1 cursor-pointer no-underline !text-white shrink-0" style="color:#fff!important;">
                             <span class="hidden sm:inline">Comprar Informe ($4.990)</span>
                             <span class="sm:hidden">Comprar ($4.990)</span>
                         </a>
@@ -930,7 +930,7 @@
                     <span class="text-xs text-slate-600 font-medium">Informe generado con éxito para <strong>${data.cargo}</strong></span>
                     <div class="flex gap-2">
                         ${!esVistaPrevia ? `
-                        <button onclick="window.print()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer !text-white" style="color:#fff!important;">
+                        <button onclick="window.print()" class="px-4 py-2 bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer !text-white" style="color:#fff!important;">
                             Guardar como PDF / Imprimir
                         </button>
                         ` : `
@@ -1084,10 +1084,10 @@
                     <div class="my-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-left space-y-1 font-mono">
                         <div class="flex justify-between text-slate-500"><span>Nº de Folio:</span><span class="font-bold text-slate-800">${matriz.folio}</span></div>
                         <div class="flex justify-between text-slate-500"><span>Puesto:</span><span class="font-bold text-slate-800">${matriz.cargo}</span></div>
-                        <div class="flex justify-between text-slate-500"><span>Costo Indefinido:</span><span class="font-bold text-sky-700">${formatCLP(matriz.indefinido.costoEmpresaTotal)}</span></div>
+                        <div class="flex justify-between text-slate-500"><span>Costo Indefinido:</span><span class="font-bold text-forest-700">${formatCLP(matriz.indefinido.costoEmpresaTotal)}</span></div>
                     </div>
                     <div class="space-y-2">
-                        <button id="btn-descargar-ahora" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 font-bold text-xs text-white rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <button id="btn-descargar-ahora" class="w-full py-3 px-4 bg-forest-600 hover:bg-forest-700 font-bold text-xs text-white rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                             <span class="material-icons text-sm">download</span>
                             <span>Abrir / Descargar Informe PDF Limpio</span>
                         </button>

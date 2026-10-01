@@ -272,7 +272,7 @@
 
             if (modo === 'base') {
                 if (btnModoBase) {
-                    btnModoBase.className = 'py-2 px-1.5 rounded-lg text-xs font-bold text-center transition-all bg-white text-sky-700 shadow-xs border border-slate-200 leading-tight';
+                    btnModoBase.className = 'py-2 px-1.5 rounded-lg text-xs font-bold text-center transition-all bg-white text-forest-700 shadow-xs border border-slate-200 leading-tight';
                 }
                 if (btnModoLiquido) {
                     btnModoLiquido.className = 'py-2 px-1.5 rounded-lg text-xs font-semibold text-center transition-all text-slate-600 hover:text-slate-900 leading-tight';
@@ -280,7 +280,7 @@
                 if (labelMonto) labelMonto.innerText = 'Sueldo Base Mensual:';
                 if (badgeModo) {
                     badgeModo.innerText = 'Cálculo Directo DT';
-                    badgeModo.className = 'text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 font-bold border border-sky-200/80';
+                    badgeModo.className = 'text-[10px] px-2 py-0.5 rounded-full bg-forest-100 text-forest-700 font-bold border border-forest-200/80';
                 }
                 if (helpMonto) {
                     helpMonto.innerText = 'Sueldo pactado en contrato individual (cláusula 4). Desmarcar gratificación reduce el costo directamente.';
@@ -289,7 +289,7 @@
                 if (wrapGratifAdicional) wrapGratifAdicional.classList.add('hidden');
             } else {
                 if (btnModoLiquido) {
-                    btnModoLiquido.className = 'py-2 px-1.5 rounded-lg text-xs font-bold text-center transition-all bg-white text-sky-700 shadow-xs border border-slate-200 leading-tight';
+                    btnModoLiquido.className = 'py-2 px-1.5 rounded-lg text-xs font-bold text-center transition-all bg-white text-forest-700 shadow-xs border border-slate-200 leading-tight';
                 }
                 if (btnModoBase) {
                     btnModoBase.className = 'py-2 px-1.5 rounded-lg text-xs font-semibold text-center transition-all text-slate-600 hover:text-slate-900 leading-tight';

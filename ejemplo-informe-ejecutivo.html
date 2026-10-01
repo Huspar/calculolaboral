@@ -61,6 +61,7 @@
     ]
 }
     </script>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="bg-slate-100 py-10 px-4 min-h-screen text-slate-900">
 
@@ -72,7 +73,7 @@
                 <span class="text-[11px] text-slate-500">Documento membretado A4 generado para descarga o impresión directa</span>
             </div>
         </div>
-        <button onclick="window.print()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5 cursor-pointer">
+        <button onclick="window.print()" class="px-4 py-2 bg-[#0F5E4F] hover:bg-[#064A3E] text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5 cursor-pointer">
             <span class="material-icons text-sm">print</span>
             <span>Imprimir / PDF Limpio</span>
         </button>
@@ -82,8 +83,8 @@
     <div id="informe-wrapper" class="max-w-[840px] mx-auto"></div>
 
     <!-- Scripts -->
-    <script src="js/costo_empresa_calculator.js?v=2.6.2"></script>
-    <script src="js/costo_empresa_pdf_generator.js?v=1.0.0"></script>
+    <script src="js/costo_empresa_calculator.js?v=2.8.0"></script>
+    <script src="js/costo_empresa_pdf_generator.js?v=2.8.0"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var opciones = {
@@ -101,5 +102,6 @@
             wrapper.innerHTML = html;
         });
     </script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

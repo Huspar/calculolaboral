@@ -121,7 +121,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     
     <!-- TealHQ Signature Design System Styles -->
     <style>
@@ -142,7 +142,7 @@
 
         body {
             font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--teal-cream);
+            background-color: #F8FAF9;
             color: #1F2937;
         }
 
@@ -412,8 +412,9 @@
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-[#FFB703]/30 selection:text-slate-900">
+<body class="min-h-screen flex flex-col antialiased">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -907,7 +908,7 @@
                                 </div>
                                 <div class="flex items-center justify-between font-medium">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0"></span>
+                                        <span class="w-2.5 h-2.5 rounded-full bg-forest-500 shrink-0"></span>
                                         <span class="text-slate-600">AFP + AFC</span>
                                     </div>
                                     <span id="legend-afp-percent" class="font-bold text-slate-900 font-mono-num">0%</span>
@@ -921,7 +922,7 @@
                                 </div>
                                 <div class="flex items-center justify-between font-medium">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500 shrink-0"></span>
+                                        <span class="w-2.5 h-2.5 rounded-full bg-forest-500 shrink-0"></span>
                                         <span class="text-slate-600">Impuesto SII</span>
                                     </div>
                                     <span id="legend-tax-percent" class="font-bold text-slate-900 font-mono-num">0%</span>
@@ -1703,10 +1704,10 @@
     <!-- Scripts -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/validation.js?v=2.0.5"></script>
+    <script src="/js/validation.js?v=2.8.0"></script>
     <script src="/js/salary_logic.js?v=2.0.3"></script>
     <script src="/js/salary_ui.js?v=3.0.0"></script>
-    <script src="/js/pdf_generator.js?v=2.2.1"></script>
+    <script src="/js/pdf_generator.js?v=2.8.0"></script>
 
     <script>
         function shareSueldoWhatsApp() {
@@ -1782,5 +1783,6 @@
             });
         }
     </script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

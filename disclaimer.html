@@ -78,7 +78,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -137,12 +137,12 @@
             font-weight: 600;
         }
         .prose-content a {
-            color: #0ea5e9;
+            color: #0F5E4F;
             text-decoration: underline;
             font-weight: 500;
         }
         .prose-content a:hover {
-            color: #0284c7;
+            color: #0F5E4F;
         }
         .prose-content a.cta-btn,
         .prose-content a.bg-[#F8FAF9]0,
@@ -218,9 +218,9 @@
             flex-shrink: 0;
         }
         .rubro-imponible {
-            background-color: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #e0f2fe;
+            background-color: #EEF6F3;
+            color: #064A3E;
+            border: 1px solid #D6EBE4;
         }
         .rubro-no-imponible {
             background-color: #f0fdf4;
@@ -251,10 +251,10 @@
             transition: all 0.2s ease;
         }
         .timeline-item.active {
-            border-left-color: #0ea5e9;
+            border-left-color: #0F5E4F;
         }
         .timeline-item.active::before {
-            background-color: #0ea5e9;
+            background-color: #0F5E4F;
             left: -7px;
             top: 2px;
             width: 12px;
@@ -276,8 +276,8 @@
         .step-number {
             width: 2.25rem;
             height: 2.25rem;
-            background-color: #e0f2fe;
-            color: #0369a1;
+            background-color: #D6EBE4;
+            color: #064A3E;
             border-radius: 9999px;
             display: flex;
             align-items: center;
@@ -298,7 +298,7 @@
         .prose a.cta-btn, .prose a.cta-btn *,
         .prose a[class*="bg-[#F8FAF9]0"], .prose a[class*="bg-[#F8FAF9]0"] *,
         .prose a[class*="bg-emerald-600"], .prose a[class*="bg-emerald-600"] *,
-        .prose a[class*="bg-blue-600"], .prose a[class*="bg-blue-600"] * {
+        .prose a[class*="bg-forest-600"], .prose a[class*="bg-forest-600"] * {
             color: #ffffff !important;
             text-decoration: none !important;
         }
@@ -343,10 +343,10 @@
             z-index: 10;
         }
         .copy-btn:hover {
-            background: #0ea5e9;
+            background: #0F5E4F;
             color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
+            border-color: #0F5E4F;
+            box-shadow: 0 2px 4px rgba(15, 94, 79,0.2);
         }
         .copy-btn.copied {
             background: #10b981 !important;
@@ -740,8 +740,9 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#F8FAF9]0/20 selection:text-slate-900">
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -963,27 +964,27 @@ body { overflow-x: hidden; }
             <p class="text-xs text-slate-500 font-medium">Actualizado: Marzo 2026 • República de Chile • Alcance Pedagógico y Transparencia Comercial</p>
         </div>
 
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 sm:p-10 mb-8 relative">
+        <article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-10 mb-8 relative">
             <!-- Summary Box -->
-            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-sky-950 mb-8 space-y-3">
-                <div class="flex items-center gap-2 font-bold text-sky-900 text-sm sm:text-base">
-                    <span class="material-icons text-sky-600 text-base">info</span> Resumen ejecutivo en 30 segundos
+            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-forest-950 mb-8 space-y-3">
+                <div class="flex items-center gap-2 font-bold text-forest-900 text-sm sm:text-base">
+                    <span class="material-icons text-forest-600 text-base">info</span> Resumen ejecutivo en 30 segundos
                 </div>
                 <ul class="space-y-2.5 text-xs sm:text-sm text-slate-700">
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Simulaciones matemáticas pedagógicas:</strong> Las calculadoras entregan aproximaciones teóricas basadas en el Código del Trabajo; no constituyen una liquidación oficial, pericia contable ni dictamen administrativo vinculante.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Responsabilidad del empleador en plantillas:</strong> El uso del Generador de Finiquitos o del Kit Blindaje Pyme no exonera a la empresa de su deber de verificar cotizaciones al día (Ley Bustos) ni de acreditar formalmente la causal de despido.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Deslinde sobre publicidad y productos bancarios:</strong> Cálculo Laboral no es una entidad financiera ni crediticia; los productos de terceros (Banco Itaú, Abakos, etc.) se rigen exclusivamente por las políticas y contratos de cada entidad.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Reserva de derechos del trabajador:</strong> Conforme a la Ley N° 21.361, todo trabajador tiene el derecho legal irrenunciable a estampar reserva de derechos a mano alzada en su finiquito sin que el empleador pueda retener el pago de las sumas líquidas.</div>
                     </li>
                 </ul>
@@ -994,7 +995,7 @@ body { overflow-x: hidden; }
                 <!-- Section 1 -->
                 <section>
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">warning_amber</span> 1. Los cálculos son simulaciones estimativas no vinculantes
+                        <span class="material-icons text-forest-500 text-lg">warning_amber</span> 1. Los cálculos son simulaciones estimativas no vinculantes
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Las herramientas interactivas provistas en <strong>Cálculo Laboral Chile</strong> (<code>calculolaboral.cl</code>) tienen por propósito exclusivo brindar transparencia, agilidad y educación ciudadana sobre los algoritmos habituales de cálculo contemplados en el Código del Trabajo y la normativa previsional chilena.
@@ -1007,7 +1008,7 @@ body { overflow-x: hidden; }
                 <!-- Section 2 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">gavel</span> 2. No sustituye la asesoría profesional ni el dictamen de la DT
+                        <span class="material-icons text-forest-500 text-lg">gavel</span> 2. No sustituye la asesoría profesional ni el dictamen de la DT
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         El contenido del portal <strong>no reemplaza bajo ninguna circunstancia el consejo jurídico personalizado de un abogado laboralista, un contador auditor habilitado ni los dictámenes de la Dirección del Trabajo (DT)</strong>.
@@ -1027,7 +1028,7 @@ body { overflow-x: hidden; }
                 <!-- Section 3 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">business</span> 3. Advertencia legal y responsabilidades para empleadores y Pymes
+                        <span class="material-icons text-forest-500 text-lg">business</span> 3. Advertencia legal y responsabilidades para empleadores y Pymes
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Para los empleadores, representantes legales, jefes de recursos humanos y contadores que utilicen nuestro <em>Generador de Finiquito</em> o adquieran el <em>Kit de Blindaje Laboral Pyme</em>, se advierte expresamente lo siguiente:
@@ -1051,7 +1052,7 @@ body { overflow-x: hidden; }
                 <!-- Section 4 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">history_edu</span> 4. Alcance respecto a las reformas laborales vigentes (2026)
+                        <span class="material-icons text-forest-500 text-lg">history_edu</span> 4. Alcance respecto a las reformas laborales vigentes (2026)
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Nuestras calculadoras y guías integran las reformas laborales vigentes en Chile durante el año 2026:
@@ -1066,7 +1067,7 @@ body { overflow-x: hidden; }
                 <!-- Section 5 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">campaign</span> 5. Deslinde sobre publicidad, servicios bancarios y enlaces de terceros
+                        <span class="material-icons text-forest-500 text-lg">campaign</span> 5. Deslinde sobre publicidad, servicios bancarios y enlaces de terceros
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         En nuestro portal se difunden banners y enlaces patrocinados a soluciones comerciales y financieras ofrecidas por entidades terceras independientes, tales como <strong>Banco Itaú Chile</strong>, <strong>Abakos</strong> y la red publicitaria de <strong>Google AdSense</strong>:
@@ -1084,7 +1085,7 @@ body { overflow-x: hidden; }
                 <!-- Section 6 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">support_agent</span> 6. Alcance del servicio de "Revisión Legal"
+                        <span class="material-icons text-forest-500 text-lg">support_agent</span> 6. Alcance del servicio de "Revisión Legal"
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         El formulario de <strong>"Revisión Legal Inicial"</strong> disponible en el portal tiene como único objeto canalizar consultas preliminares de trabajadores hacia estudios jurídicos o abogados laboralistas independientes habilitados.
@@ -1097,7 +1098,7 @@ body { overflow-x: hidden; }
                 <!-- Section 7 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">edit_note</span> 7. El derecho a estampar reserva de derechos (Ley N° 21.361)
+                        <span class="material-icons text-forest-500 text-lg">edit_note</span> 7. El derecho a estampar reserva de derechos (Ley N° 21.361)
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Recordamos a todos los trabajadores que, conforme a la <strong>Ley N° 21.361</strong> que modificó el artículo 177 del Código del Trabajo, el trabajador tiene el derecho irrenunciable de estampar de su puño y letra una <strong>reserva de derechos</strong> en el finiquito al momento de firmarlo ante Notario público o electrónicamente en el portal Mi DT.
@@ -1110,7 +1111,7 @@ body { overflow-x: hidden; }
                 <!-- Section 8 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">update</span> 8. Frecuencia de actualización de parámetros macroeconómicos
+                        <span class="material-icons text-forest-500 text-lg">update</span> 8. Frecuencia de actualización de parámetros macroeconómicos
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Los indicadores macroeconómicos y previsionales oficiales (UF del Banco Central, UTM del SII, Sueldo Mínimo de $553.553, topes imponibles de AFP de 89.9 UF y tope de indemnizaciones de 90 UF) se actualizan en base a las publicaciones periódicas de los organismos públicos emisores.
@@ -1127,7 +1128,7 @@ body { overflow-x: hidden; }
                         <p class="text-xs sm:text-sm text-slate-600 mt-1 mb-3">
                             Para sugerencias, reporte de errores en fórmulas o aclaraciones normativas, contáctanos a:
                         </p>
-                        <a href="mailto:contacto@calculolaboral.cl" class="text-sky-600 hover:text-sky-700 font-semibold text-sm underline decoration-sky-300">contacto@calculolaboral.cl</a>
+                        <a href="mailto:contacto@calculolaboral.cl" class="text-forest-600 hover:text-forest-700 font-semibold text-sm underline decoration-forest-300">contacto@calculolaboral.cl</a>
                     </div>
                 </section>
         
@@ -1259,7 +1260,7 @@ body { overflow-x: hidden; }
         <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
+                    <span class="material-icons text-forest-500">history</span>
                     <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
                 </div>
                 <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
@@ -1287,7 +1288,7 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-forest-500"></span> UTM (Últimos 12 meses)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1313,7 +1314,7 @@ body { overflow-x: hidden; }
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.1.1"></script>
+    <script src="/js/pdf_generator.js?v=2.8.0"></script>
     <script>
         function enviarLead(fuenteCustom) {
             var nombre = document.getElementById('lead-nombre').value.trim();
@@ -1525,5 +1526,6 @@ body { overflow-x: hidden; }
         }
     </script>
     
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

@@ -128,7 +128,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.7.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     
     <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
@@ -148,7 +148,7 @@
 
         body {
             font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #FFFFFF;
+            background-color: #F8FAF9;
             color: var(--teal-text-dark);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -410,6 +410,7 @@
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="min-h-screen flex flex-col">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -658,7 +659,7 @@
                     <span>Despido Injustificado</span>
                 </a>
                 <a href="sueldo_liquido" class="product-tab">
-                    <span class="material-icons text-sm text-blue-600">payments</span>
+                    <span class="material-icons text-sm text-forest-600">payments</span>
                     <span>Sueldo Líquido</span>
                 </a>
                 <a href="calculadora-horas-extras" class="product-tab active">
@@ -666,7 +667,7 @@
                     <span>Horas Extras 42h</span>
                 </a>
                 <a href="calculadora-sueldo-part-time" class="product-tab">
-                    <span class="material-icons text-sm text-indigo-500">hourglass_bottom</span>
+                    <span class="material-icons text-sm text-forest-500">hourglass_bottom</span>
                     <span>Part-Time</span>
                 </a>
             </div>
@@ -851,18 +852,18 @@
                 <div class="mt-5 p-4 bg-slate-50 border border-slate-200/90 rounded-2xl shadow-xs no-print text-center">
                     <div class="flex items-center justify-between mb-2 px-1 max-w-[300px] mx-auto">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Publicidad Patrocinada
+                            <span class="w-1.5 h-1.5 rounded-full bg-forest-700"></span> Publicidad Patrocinada
                         </span>
                         <span class="text-[10px] text-slate-400 font-medium">Banco Itaú Chile</span>
                     </div>
-                    <a href="/itau" target="_blank" rel="sponsored nofollow noopener" aria-label="Abrir Cuenta Corriente Itaú online" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
+                    <a href="/itau" target="_blank" rel="sponsored nofollow noopener" aria-label="Abrir Cuenta Corriente Itaú online" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_card" class="group block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 hover:border-amber-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white">
                         <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención al recibir sueldo" width="300" height="250" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" loading="lazy">
                     </a>
                     <div class="mt-2.5 max-w-[300px] mx-auto text-left px-1">
                         <p class="text-[11px] text-slate-600 leading-tight mb-2">
                             Recibe tu sueldo y horas extras en tu <strong>Cuenta Corriente Itaú con $0 costo de mantención</strong>.
                         </p>
-                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_btn" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 !text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" style="background-color: #ea580c !important; color: #ffffff !important; text-decoration: none !important;">
+                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="horas_extras_results_btn" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-forest-800 hover:bg-forest-900 !text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important;">
                             <span style="color: #ffffff !important;">Abrir Cuenta Online</span>
                             <span class="material-icons text-xs" style="color: #ffffff !important;">arrow_forward</span>
                         </a>
@@ -1380,5 +1381,6 @@
 
         document.addEventListener('DOMContentLoaded', calculateHorasExtras);
     </script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

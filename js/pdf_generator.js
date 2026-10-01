@@ -140,9 +140,9 @@
     // 7.5 HELPER: BRANDED HEADER WITH OFFICIAL SVG LOGO & PALETTE
     function getBrandedHeaderHTML(reportTitle, dateString, folio) {
         return `
-            <div style="border-bottom: 2px solid #0284c7; padding-bottom: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="border-bottom: 2px solid #0F5E4F; padding-bottom: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 36px; height: 36px; border-radius: 8px; background-color: #0284c7 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(2,132,199,0.25);">
+                    <div style="width: 36px; height: 36px; border-radius: 8px; background-color: #0F5E4F !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(15, 94, 79,0.25);">
                         <svg style="width: 24px; height: 24px;" viewBox="0 0 100 100" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M30 84h40M38 79h24"></path>
                             <path d="M50 22v57"></path>
@@ -158,7 +158,7 @@
                     </div>
                     <div>
                         <div style="margin: 0; font-size: 14pt; font-weight: 800; color: #0f172a; line-height: 1.1; letter-spacing: -0.3px;">
-                            Cálculo<span style="color: #0284c7;">Laboral</span>
+                            Cálculo<span style="color: #0F5E4F;">Laboral</span>
                         </div>
                         <div style="font-size: 6.8pt; font-weight: 600; color: #64748b; letter-spacing: 0.3px; margin-top: 1px;">
                             PLATAFORMA LEGAL Y FINANCIERA · CHILE
@@ -166,7 +166,7 @@
                     </div>
                 </div>
                 <div style="text-align: right;">
-                    <span style="display: inline-block; padding: 3px 9px; background-color: #f0f9ff !important; border: 1px solid #bae6fd; border-radius: 9999px; font-size: 7.5pt; font-weight: 700; color: #0369a1; letter-spacing: 0.5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                    <span style="display: inline-block; padding: 3px 9px; background-color: #EEF6F3 !important; border: 1px solid #ADD6C9; border-radius: 9999px; font-size: 7.5pt; font-weight: 700; color: #064A3E; letter-spacing: 0.5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                         ${reportTitle}
                     </span>
                     <div style="font-size: 7pt; color: #64748b; margin-top: 3px;">
@@ -287,8 +287,8 @@
 
             <!-- Economic Indicators Chips -->
             <div style="display: flex; gap: 6px; margin-bottom: 8px; font-size: 7pt;">
-                <div style="flex: 1; background: #f0f9ff !important; border: 1px solid #bae6fd; border-radius: 5px; padding: 3px 6px; text-align: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
-                    <span style="color: #0369a1; font-weight: 700; text-transform: uppercase; font-size: 6.5pt;">UF:</span>&nbsp;&nbsp;<strong style="color: #0c4a6e; font-size: 7.5pt;">$${typeof uf === 'number' ? formatNumber(uf) : uf}</strong>
+                <div style="flex: 1; background: #EEF6F3 !important; border: 1px solid #ADD6C9; border-radius: 5px; padding: 3px 6px; text-align: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
+                    <span style="color: #064A3E; font-weight: 700; text-transform: uppercase; font-size: 6.5pt;">UF:</span>&nbsp;&nbsp;<strong style="color: #0c4a6e; font-size: 7.5pt;">$${typeof uf === 'number' ? formatNumber(uf) : uf}</strong>
                 </div>
                 <div style="flex: 1; background: #f8fafc !important; border: 1px solid #e2e8f0; border-radius: 5px; padding: 3px 6px; text-align: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
                     <span style="color: #475569; font-weight: 700; text-transform: uppercase; font-size: 6.5pt;">UTM:</span>&nbsp;&nbsp;<strong style="color: #1e293b; font-size: 7.5pt;">$${typeof utm === 'number' ? formatNumber(utm) : utm}</strong>
@@ -299,7 +299,7 @@
             </div>
 
             <!-- Subtitle and Scope -->
-            <div style="border-left: 3px solid #0284c7; padding-left: 8px; margin-bottom: 8px;">
+            <div style="border-left: 3px solid #0F5E4F; padding-left: 8px; margin-bottom: 8px;">
                 <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">
                     Reporte de Liquidación Estimada de Finiquito Laboral
                 </div>
@@ -311,7 +311,7 @@
             <!-- Column Layout: Resumen del Contrato and Bases de Cálculo side by side -->
             <div style="display: flex; gap: 10px; margin-bottom: 6px; width: 100%;">
                 <div style="flex: 1; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0284c7; padding-bottom: 2px;">1. Resumen del Contrato</div>
+                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">1. Resumen del Contrato</div>
                     <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
                         <tr>
                             <td style="font-weight: 600; width: 40%; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Inicio:</td>
@@ -327,7 +327,7 @@
                         </tr>
                         <tr>
                             <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Causal:</td>
-                            <td style="font-size: 6.8pt; padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #0369a1;">${cause}</td>
+                            <td style="font-size: 6.8pt; padding: 2.5px 5px; border: 1px solid #e2e8f0; font-weight: 600; color: #064A3E;">${cause}</td>
                         </tr>
                         <tr>
                             <td style="font-weight: 600; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">¿Aviso previo?:</td>
@@ -336,7 +336,7 @@
                     </table>
                 </div>
                 <div style="width: 46%; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0284c7; padding-bottom: 2px;">2. Bases de Cálculo y Remuneración</div>
+                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">2. Bases de Cálculo y Remuneración</div>
                     <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
                         <tr>
                             <td style="font-weight: 600; width: 50%; color: #475569; padding: 2.5px 5px; border: 1px solid #e2e8f0;">Sueldo Base:</td>
@@ -353,7 +353,7 @@
                 </div>
             </div>
 
-            <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 4px; margin-bottom: 3px; border-bottom: 1.5px solid #0284c7; padding-bottom: 2px;">3. Detalle de Indemnizaciones y Haberes</div>
+            <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 4px; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">3. Detalle de Indemnizaciones y Haberes</div>
             <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt; margin-bottom: 6px;">
                 <thead>
                     <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
@@ -410,20 +410,20 @@
             </table>
 
             <!-- Premium Hero Total Box (Sky Blue Brand Theme) -->
-            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; border: 2px solid #0284c7; border-radius: 7px; padding: 7px 14px; margin-top: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: linear-gradient(135deg, #EEF6F3 0%, #D6EBE4 100%) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; border: 2px solid #0F5E4F; border-radius: 7px; padding: 7px 14px; margin-top: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <span style="font-size: 6.2pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #0284c7; display: block;">✓ CÁLCULO VERIFICADO · VALOR ESTIMADO LÍQUIDO</span>
+                    <span style="font-size: 6.2pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #0F5E4F; display: block;">✓ CÁLCULO VERIFICADO · VALOR ESTIMADO LÍQUIDO</span>
                     <span style="font-size: 9.5pt; font-weight: 800; color: #0f172a;">Total Neto Estimado del Finiquito:</span>
                 </div>
                 <div style="text-align: right;">
-                    <span style="font-size: 18pt; font-weight: 900; color: #0369a1; font-family: monospace; letter-spacing: -0.5px;">${total}</span>
-                    <span style="font-size: 10pt; font-weight: 800; color: #0284c7; margin-left: 2px;">CLP</span>
+                    <span style="font-size: 18pt; font-weight: 900; color: #064A3E; font-family: monospace; letter-spacing: -0.5px;">${total}</span>
+                    <span style="font-size: 10pt; font-weight: 800; color: #0F5E4F; margin-left: 2px;">CLP</span>
                 </div>
             </div>
 
             <!-- Parameters Badges -->
             <div style="display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 5px;">
-                ${optionsItems.map(o => `<span style="font-size: 6pt; padding: 1.5px 5px; border-radius: 3px; border: 1px solid ${o.active ? '#bae6fd' : '#e2e8f0'}; background-color: ${o.active ? '#f0f9ff' : '#f8fafc'} !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; color: ${o.active ? '#0369a1' : '#94a3b8'}; font-weight: 600;">${o.active ? '✓' : '✗'} ${o.label}</span>`).join('')}
+                ${optionsItems.map(o => `<span style="font-size: 6pt; padding: 1.5px 5px; border-radius: 3px; border: 1px solid ${o.active ? '#ADD6C9' : '#e2e8f0'}; background-color: ${o.active ? '#EEF6F3' : '#f8fafc'} !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; color: ${o.active ? '#064A3E' : '#94a3b8'}; font-weight: 600;">${o.active ? '✓' : '✗'} ${o.label}</span>`).join('')}
             </div>
 
             <!-- Amber Legal Alert & Reserva de Derechos -->
@@ -461,10 +461,10 @@
             </div>
 
             <!-- Franja Consejo Financiero Patrocinado Itaú (Diseño Sobrio y Profesional para Impresión/PDF) -->
-            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #ea580c; border-radius: 6px; padding: 5px 10px; margin-top: 5px; margin-bottom: 5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #00382E; border-radius: 6px; padding: 5px 10px; margin-top: 5px; margin-bottom: 5px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
                 <div style="flex: 1; padding-right: 10px;">
                     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #ea580c; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
+                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #00382E; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
                         <strong style="color: #9a3412; font-size: 6.8pt;">¿Dónde recibir o resguardar el pago de tu finiquito?</strong>
                     </div>
                     <p style="font-size: 6.3pt; color: #7c2d12; margin: 0; line-height: 1.3;">
@@ -472,7 +472,7 @@
                     </p>
                 </div>
                 <div style="text-align: right; flex-shrink: 0;">
-                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #ea580c !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
+                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #00382E !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
                         Abrir Online →
                     </a>
                     <div style="font-size: 5.5pt; color: #9a3412; margin-top: 2px; font-family: monospace;">calculolaboral.cl/itau</div>
@@ -482,7 +482,7 @@
             <!-- Footer Disclaimer -->
             <div class="print-disclaimer" style="font-size: 5.8pt; color: #94a3b8; line-height: 1.25; border-top: 1px solid #e2e8f0; padding-top: 3px; text-align: center;">
                 <strong>NOTA INFORMATIVA:</strong> Simulación computacional de carácter referencial conforme a normativas de la Dirección del Trabajo (DT). No constituye asesoría letrada ni sustituye la liquidación formal suscrita por las partes.<br>
-                <strong>CÁLCULO LABORAL CHILE</strong> — <a href="https://calculolaboral.cl" style="color: #0284c7; text-decoration: none;">www.calculolaboral.cl</a> — Documento generado automáticamente
+                <strong>CÁLCULO LABORAL CHILE</strong> — <a href="https://calculolaboral.cl" style="color: #0F5E4F; text-decoration: none;">www.calculolaboral.cl</a> — Documento generado automáticamente
             </div>
         `;
     }
@@ -521,7 +521,7 @@
         return `
             ${getBrandedHeaderHTML('SIMULACIÓN DE SUELDO LÍQUIDO', dateString, null)}
 
-            <div style="border-left: 3px solid #0284c7; padding-left: 8px; margin-bottom: 8px;">
+            <div style="border-left: 3px solid #0F5E4F; padding-left: 8px; margin-bottom: 8px;">
                 <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; letter-spacing: -0.2px;">
                     Reporte de Simulación de Sueldo Líquido Mensual
                 </div>
@@ -533,7 +533,7 @@
             <!-- Column Layout: Haberes and Descuentos Previsionales side by side -->
             <div style="display: flex; gap: 10px; margin-bottom: 6px; width: 100%;">
                 <div style="flex: 1; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0284c7; padding-bottom: 2px;">1. Haberes (Ingresos Brutos)</div>
+                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">1. Haberes (Ingresos Brutos)</div>
                     <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
                         <thead>
                             <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
@@ -564,7 +564,7 @@
                     </table>
                 </div>
                 <div style="flex: 1; min-width: 0;">
-                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0284c7; padding-bottom: 2px;">2. Descuentos Previsionales Obligatorios</div>
+                    <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 0; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">2. Descuentos Previsionales Obligatorios</div>
                     <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt;">
                         <thead>
                             <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
@@ -595,7 +595,7 @@
             </div>
 
             ${parseCleanNumber(ccaf) > 0 || parseCleanNumber(apv) > 0 || parseCleanNumber(prestamos) > 0 || parseCleanNumber(pension) > 0 || parseCleanNumber(sindicato) > 0 || parseCleanNumber(otrosDescuentos) > 0 ? `
-            <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 4px; margin-bottom: 3px; border-bottom: 1.5px solid #0284c7; padding-bottom: 2px;">3. Otros Descuentos Aplicados</div>
+            <div class="print-section-title" style="font-size: 7.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 4px; margin-bottom: 3px; border-bottom: 1.5px solid #0F5E4F; padding-bottom: 2px;">3. Otros Descuentos Aplicados</div>
             <table class="print-table" style="width: 100%; border-collapse: collapse; font-size: 7.2pt; margin-bottom: 6px;">
                 <thead>
                     <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important;">
@@ -615,23 +615,23 @@
             ` : ''}
 
             <!-- Premium Hero Total Box (Sky Blue Brand Theme) -->
-            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; border: 2px solid #0284c7; border-radius: 7px; padding: 7px 14px; margin-top: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: linear-gradient(135deg, #EEF6F3 0%, #D6EBE4 100%) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; border: 2px solid #0F5E4F; border-radius: 7px; padding: 7px 14px; margin-top: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <span style="font-size: 6.2pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #0284c7; display: block;">✓ CÁLCULO PREVISIONAL EXACTO</span>
+                    <span style="font-size: 6.2pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #0F5E4F; display: block;">✓ CÁLCULO PREVISIONAL EXACTO</span>
                     <span style="font-size: 9.5pt; font-weight: 800; color: #0f172a;">Sueldo Líquido Estimado a Percibir:</span>
                     <div style="font-size: 6.5pt; color: #64748b; margin-top: 1px;">Total retenciones previsionales y tributarias: <strong style="color: #991b1b;">${totalDiscounts}</strong></div>
                 </div>
                 <div style="text-align: right;">
-                    <span style="font-size: 18pt; font-weight: 900; color: #0369a1; font-family: monospace; letter-spacing: -0.5px;">${netSalary}</span>
-                    <span style="font-size: 10pt; font-weight: 800; color: #0284c7; margin-left: 2px;">CLP</span>
+                    <span style="font-size: 18pt; font-weight: 900; color: #064A3E; font-family: monospace; letter-spacing: -0.5px;">${netSalary}</span>
+                    <span style="font-size: 10pt; font-weight: 800; color: #0F5E4F; margin-left: 2px;">CLP</span>
                 </div>
             </div>
 
             <!-- Franja Consejo Financiero Patrocinado Itaú (Diseño Sobrio y Profesional para Impresión/PDF) -->
-            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #ea580c; border-radius: 6px; padding: 6px 10px; margin-top: 6px; margin-bottom: 6px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background-color: #fffaf5 !important; border: 1px solid #fed7aa; border-left: 3.5px solid #00382E; border-radius: 6px; padding: 6px 10px; margin-top: 6px; margin-bottom: 6px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; display: flex; justify-content: space-between; align-items: center;">
                 <div style="flex: 1; padding-right: 10px;">
                     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #ea580c; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
+                        <span style="font-size: 5.8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #00382E; background-color: #ffedd5 !important; padding: 1.5px 5px; border-radius: 3px; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">Consejo Financiero</span>
                         <strong style="color: #9a3412; font-size: 6.8pt;">¿Dónde recibir tu remuneración mensual?</strong>
                     </div>
                     <p style="font-size: 6.3pt; color: #7c2d12; margin: 0; line-height: 1.3;">
@@ -639,7 +639,7 @@
                     </p>
                 </div>
                 <div style="text-align: right; flex-shrink: 0;">
-                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #ea580c !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
+                    <a href="https://calculolaboral.cl/itau" target="_blank" rel="sponsored nofollow noopener" style="display: inline-block; background-color: #00382E !important; color: #ffffff !important; font-size: 6.8pt; font-weight: 800; padding: 4px 9px; border-radius: 4px; text-decoration: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; letter-spacing: 0.2px;">
                         Abrir Online →
                     </a>
                     <div style="font-size: 5.5pt; color: #9a3412; margin-top: 2px; font-family: monospace;">calculolaboral.cl/itau</div>
@@ -649,7 +649,7 @@
             <!-- Footer Disclaimer -->
             <div class="print-disclaimer" style="font-size: 5.8pt; color: #94a3b8; line-height: 1.25; border-top: 1px solid #e2e8f0; padding-top: 3px; text-align: center; margin-top: 6px;">
                 <strong>NOTA DE CARÁCTER INFORMATIVO:</strong> Simulación computacional referencial según normativa legal chilena. No tiene validez legal oficial ante el empleador, la DT o tribunales.<br>
-                <strong>CÁLCULO LABORAL CHILE</strong> — <a href="https://calculolaboral.cl" style="color: #0284c7; text-decoration: none;">www.calculolaboral.cl</a> — Documento generado automáticamente
+                <strong>CÁLCULO LABORAL CHILE</strong> — <a href="https://calculolaboral.cl" style="color: #0F5E4F; text-decoration: none;">www.calculolaboral.cl</a> — Documento generado automáticamente
             </div>
         `;
     }

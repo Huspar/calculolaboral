@@ -84,7 +84,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -143,12 +143,12 @@
             font-weight: 600;
         }
         .prose-content a {
-            color: #0ea5e9;
+            color: #0F5E4F;
             text-decoration: underline;
             font-weight: 500;
         }
         .prose-content a:hover {
-            color: #0284c7;
+            color: #0F5E4F;
         }
         .prose-content a.cta-btn,
         .prose-content a.bg-[#F8FAF9]0,
@@ -224,9 +224,9 @@
             flex-shrink: 0;
         }
         .rubro-imponible {
-            background-color: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #e0f2fe;
+            background-color: #EEF6F3;
+            color: #064A3E;
+            border: 1px solid #D6EBE4;
         }
         .rubro-no-imponible {
             background-color: #f0fdf4;
@@ -257,10 +257,10 @@
             transition: all 0.2s ease;
         }
         .timeline-item.active {
-            border-left-color: #0ea5e9;
+            border-left-color: #0F5E4F;
         }
         .timeline-item.active::before {
-            background-color: #0ea5e9;
+            background-color: #0F5E4F;
             left: -7px;
             top: 2px;
             width: 12px;
@@ -282,8 +282,8 @@
         .step-number {
             width: 2.25rem;
             height: 2.25rem;
-            background-color: #e0f2fe;
-            color: #0369a1;
+            background-color: #D6EBE4;
+            color: #064A3E;
             border-radius: 9999px;
             display: flex;
             align-items: center;
@@ -304,7 +304,7 @@
         .prose a.cta-btn, .prose a.cta-btn *,
         .prose a[class*="bg-[#F8FAF9]0"], .prose a[class*="bg-[#F8FAF9]0"] *,
         .prose a[class*="bg-emerald-600"], .prose a[class*="bg-emerald-600"] *,
-        .prose a[class*="bg-blue-600"], .prose a[class*="bg-blue-600"] * {
+        .prose a[class*="bg-forest-600"], .prose a[class*="bg-forest-600"] * {
             color: #ffffff !important;
             text-decoration: none !important;
         }
@@ -349,10 +349,10 @@
             z-index: 10;
         }
         .copy-btn:hover {
-            background: #0ea5e9;
+            background: #0F5E4F;
             color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
+            border-color: #0F5E4F;
+            box-shadow: 0 2px 4px rgba(15, 94, 79,0.2);
         }
         .copy-btn.copied {
             background: #10b981 !important;
@@ -746,8 +746,9 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#F8FAF9]0/20 selection:text-slate-900">
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -963,33 +964,33 @@ body { overflow-x: hidden; }
     <div class="w-full pt-2 pb-6">
         <div class="text-center mb-8">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-slate-200 mb-3">
-                <span class="material-icons text-[14px]">verified</span> Transparencia, Metodología E-E-A-T & Soluciones Pyme
+                <span class="material-icons text-[14px]">verified</span> Transparencia, metodología y soluciones pyme
             </span>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">Sobre Nosotros y Metodología</h1>
             <p class="text-xs text-slate-500 font-medium">Actualizado: Marzo 2026 • República de Chile • Misión Cívica y Cumplimiento Laboral</p>
         </div>
 
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 sm:p-10 mb-8 relative">
+        <article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-10 mb-8 relative">
             <!-- Summary Box -->
-            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-sky-950 mb-8 space-y-3">
-                <div class="flex items-center gap-2 font-bold text-sky-900 text-sm sm:text-base">
-                    <span class="material-icons text-sky-600 text-base">info</span> Resumen ejecutivo en 30 segundos
+            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-forest-950 mb-8 space-y-3">
+                <div class="flex items-center gap-2 font-bold text-forest-900 text-sm sm:text-base">
+                    <span class="material-icons text-forest-600 text-base">info</span> Resumen ejecutivo en 30 segundos
                 </div>
                 <ul class="space-y-2.5 text-xs sm:text-sm text-slate-700">
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Misión dual e independiente:</strong> Democratizar el acceso a la legislación laboral eliminando la asimetría informativa para trabajadores y facilitando cumplimiento preventivo accesible a micro y pequeñas empresas (Pymes).</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Privacidad por diseño (Client-Side):</strong> Todos los cálculos de remuneraciones y finiquitos corren localmente en la memoria de tu navegador. Jamás almacenamos sueldos, RUTs ni datos bancarios en servidores externos.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Normativa 2026 auditada:</strong> Algoritmos actualizados conforme al Código del Trabajo, dictámenes DT, tablas SII, topes oficiales de 89.9 UF y 90 UF, Ley 40 Horas (42h en 2026), Ley Karin (DS 44) y Ley 21.719.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Modelo de sostenibilidad transparente:</strong> Simuladores 100% gratuitos para el público general, financiados mediante publicidad no invasiva, alianzas de valor agregado y venta directa de kits documentales para empleadores.</div>
                     </li>
                 </ul>
@@ -1000,7 +1001,7 @@ body { overflow-x: hidden; }
                 <!-- Section 1 -->
                 <section>
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">flag</span> 1. ¿Por qué existe Cálculo Laboral Chile?
+                        <span class="material-icons text-forest-500 text-lg">flag</span> 1. ¿Por qué existe Cálculo Laboral Chile?
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Comprender una liquidación de sueldo, proyectar una desvinculación o redactar un contrato formal en Chile suele ser un proceso complejo y plagado de tecnicismos. Parámetros como la <strong>gratificación legal con tope de 4,75 IMM (Art. 50)</strong>, los <strong>topes imponibles previsionales en UF</strong>, los tramos progresivos del <strong>Impuesto Único de Segunda Categoría</strong> o los nuevos divisores de jornada para <strong>horas extras bajo la Ley de 40 Horas</strong> generan dudas habituales tanto en trabajadores como en dueños de micro y pequeñas empresas.
@@ -1013,7 +1014,7 @@ body { overflow-x: hidden; }
                 <!-- Section 2 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">groups</span> 2. ¿Quiénes estamos detrás de la plataforma?
+                        <span class="material-icons text-forest-500 text-lg">groups</span> 2. ¿Quiénes estamos detrás de la plataforma?
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Somos un equipo multidisciplinario independiente integrado por <strong>desarrolladores de software, analistas de datos y consultores en derecho laboral chileno</strong> con base en Santiago de Chile. La plataforma no recibe subsidios gubernamentales ni mantiene afiliación política, gremial o sindical, lo que garantiza una total imparcialidad técnica en nuestros algoritmos y publicaciones.
@@ -1026,7 +1027,7 @@ body { overflow-x: hidden; }
                 <!-- Section 3 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">menu_book</span> 3. Fuentes normativas oficiales y rigor metodológico
+                        <span class="material-icons text-forest-500 text-lg">menu_book</span> 3. Fuentes normativas oficiales y rigor metodológico
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Nuestras herramientas no emplean estimaciones arbitrarias. Cada fórmula matemática y regla de cálculo implementada en la plataforma está rigurosamente respaldada por la normativa vigente en la República de Chile:
@@ -1041,13 +1042,13 @@ body { overflow-x: hidden; }
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <h3 class="font-bold text-slate-900 text-sm mb-1 flex items-center gap-1.5">
-                                <span class="material-icons text-sky-600 text-base">account_balance</span> Dirección del Trabajo (DT)
+                                <span class="material-icons text-forest-600 text-base">account_balance</span> Dirección del Trabajo (DT)
                             </h3>
                             <p class="text-xs text-slate-600 leading-relaxed">Dictámenes vinculantes, cómputo de sábados inhábiles en vacaciones, y directrices operativas de la Ley 21.561 (reducción a 42h en 2026).</p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
                             <h3 class="font-bold text-slate-900 text-sm mb-1 flex items-center gap-1.5">
-                                <span class="material-icons text-indigo-600 text-base">receipt_long</span> Servicio de Impuestos Internos
+                                <span class="material-icons text-forest-600 text-base">receipt_long</span> Servicio de Impuestos Internos
                             </h3>
                             <p class="text-xs text-slate-600 leading-relaxed">Tabla mensual oficial de retención del Impuesto Único de Segunda Categoría (Art. 43 LIR), factores de exención en UTM y rebajas por tramo.</p>
                         </div>
@@ -1075,22 +1076,22 @@ body { overflow-x: hidden; }
                 <!-- Section 4 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">storefront</span> 4. Ecosistema de soluciones para Pymes y Empleadores
+                        <span class="material-icons text-forest-500 text-lg">storefront</span> 4. Ecosistema de soluciones para Pymes y Empleadores
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
-                        Más del 98% de las empresas en Chile son micro, pequeñas o medianas, y a menudo no cuentan con los recursos financieros para costear asesorías corporativas de millones de pesos. Para resolver esta brecha, desarrollamos el área de <a href="para-empleadores" class="text-sky-600 font-bold hover:underline">Soluciones para Empleadores</a>:
+                        Más del 98% de las empresas en Chile son micro, pequeñas o medianas, y a menudo no cuentan con los recursos financieros para costear asesorías corporativas de millones de pesos. Para resolver esta brecha, desarrollamos el área de <a href="para-empleadores" class="text-forest-600 font-bold hover:underline">Soluciones para Empleadores</a>:
                     </p>
                     <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm text-slate-600 mb-4">
-                        <li><strong><a href="kit-cumplimiento-laboral-pymes" class="font-bold text-slate-800 hover:text-sky-600">Kit de Blindaje Laboral Pyme ($19.990):</a></strong> Conjunto de 22 plantillas en Word (.docx) 100% editables que incluye el Protocolo Obligatorio Ley Karin (DS 44), el Anexo Ley 40 Horas (42h en 2026), cláusulas sectoriales por rubro y el checklist preventivo de fiscalización de la DT.</li>
-                        <li><strong><a href="kit-cumplimiento-ley-datos-personales-chile" class="font-bold text-slate-800 hover:text-sky-600">Kit Cumplimiento Ley de Datos N° 21.719 ($29.990):</a></strong> Documentación legal para adaptar la empresa a la nueva ley de datos: cláusulas de privacidad laboral, consentimientos para clientes y protocolo de ejercicio de derechos ARCOP.</li>
-                        <li><strong><a href="generador-finiquito-chile" class="font-bold text-slate-800 hover:text-sky-600">Generador de Finiquito Notarial ($12.990):</a></strong> Software web para transformar cálculos en documentos formales listos para firmar ante notario o en Mi DT con cláusulas de resguardo patronal y AFC verificado.</li>
+                        <li><strong><a href="kit-cumplimiento-laboral-pymes" class="font-bold text-slate-800 hover:text-forest-600">Kit de Blindaje Laboral Pyme ($19.990):</a></strong> Conjunto de 22 plantillas en Word (.docx) 100% editables que incluye el Protocolo Obligatorio Ley Karin (DS 44), el Anexo Ley 40 Horas (42h en 2026), cláusulas sectoriales por rubro y el checklist preventivo de fiscalización de la DT.</li>
+                        <li><strong><a href="kit-cumplimiento-ley-datos-personales-chile" class="font-bold text-slate-800 hover:text-forest-600">Kit Cumplimiento Ley de Datos N° 21.719 ($29.990):</a></strong> Documentación legal para adaptar la empresa a la nueva ley de datos: cláusulas de privacidad laboral, consentimientos para clientes y protocolo de ejercicio de derechos ARCOP.</li>
+                        <li><strong><a href="generador-finiquito-chile" class="font-bold text-slate-800 hover:text-forest-600">Generador de Finiquito Notarial ($12.990):</a></strong> Software web para transformar cálculos en documentos formales listos para firmar ante notario o en Mi DT con cláusulas de resguardo patronal y AFC verificado.</li>
                     </ul>
                 </section>
 
                 <!-- Section 5 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">lock</span> 5. Compromiso innegociable: Privacidad por Diseño
+                        <span class="material-icons text-forest-500 text-lg">lock</span> 5. Compromiso innegociable: Privacidad por Diseño
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         A diferencia de otras plataformas web que transmiten los datos que ingresas a bases de datos remotas, <strong>nuestros simuladores funcionan 100% en el lado del cliente (Client-Side)</strong>.
@@ -1103,7 +1104,7 @@ body { overflow-x: hidden; }
                 <!-- Section 6 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">volunteer_activism</span> 6. Gratuidad para trabajadores y modelo de sostenibilidad
+                        <span class="material-icons text-forest-500 text-lg">volunteer_activism</span> 6. Gratuidad para trabajadores y modelo de sostenibilidad
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         El acceso a todas las calculadoras, simuladores de despido, comparadores previsionales y guías didácticas de Cálculo Laboral es y seguirá siendo <strong>completamente libre y gratuito</strong> para todos los trabajadores de Chile.
@@ -1254,7 +1255,7 @@ body { overflow-x: hidden; }
         <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
+                    <span class="material-icons text-forest-500">history</span>
                     <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
                 </div>
                 <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
@@ -1282,7 +1283,7 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-forest-500"></span> UTM (Últimos 12 meses)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1308,7 +1309,7 @@ body { overflow-x: hidden; }
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.1.1"></script>
+    <script src="/js/pdf_generator.js?v=2.8.0"></script>
     <script>
         function enviarLead(fuenteCustom) {
             var nombre = document.getElementById('lead-nombre').value.trim();
@@ -1520,5 +1521,6 @@ body { overflow-x: hidden; }
         }
     </script>
     
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

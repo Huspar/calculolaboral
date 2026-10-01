@@ -1,0 +1,221 @@
+/*
+ * CalculoLaboral · capa compartida de pulido (Fase 1)
+ * Se carga despues del <style> de cada pagina: superficies del navegador,
+ * foco, feedback tactil y el lenguaje de movimiento comun.
+ */
+
+:root {
+    --cl-forest: #00382E;
+    --cl-forest-600: #0F5E4F;
+    --cl-forest-700: #064A3E;
+    --cl-amber: #FFB703;
+    --cl-ink: #111827;
+    --cl-canvas: #F8FAF9;
+    --cl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --cl-ease-ui: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---------- Superficies del navegador ---------- */
+
+::selection {
+    background-color: rgba(255, 183, 3, 0.4);
+    color: var(--cl-ink);
+}
+
+.teal-footer-curve ::selection,
+.cl-forest-panel ::selection {
+    background-color: rgba(255, 183, 3, 0.85);
+    color: var(--cl-forest);
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+    caret-color: var(--cl-forest);
+}
+
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"],
+progress {
+    accent-color: var(--cl-forest);
+}
+
+html {
+    scrollbar-color: #A9BDB6 transparent;
+    -webkit-tap-highlight-color: rgba(0, 56, 46, 0.08);
+}
+
+@media (pointer: fine) {
+    html {
+        scrollbar-width: thin;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #A9BDB6;
+        border: 3px solid transparent;
+        border-radius: 999px;
+        background-clip: content-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #6F8F85;
+    }
+}
+
+/* Cifras financieras alineadas en columna */
+.font-mono,
+.font-mono-num,
+table td,
+table th {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Foco visible (teclado) ---------- */
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+    outline: 2px solid var(--cl-forest-600) !important;
+    outline-offset: 3px !important;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--cl-forest-600) !important;
+    outline-offset: 1px !important;
+}
+
+.teal-footer-curve a:focus-visible,
+.teal-footer-curve button:focus-visible,
+.cl-forest-panel a:focus-visible,
+.cl-forest-panel button:focus-visible {
+    outline-color: var(--cl-amber) !important;
+}
+
+/* ---------- Enlaces de lectura ---------- */
+
+article p a:not([class*="btn"]):not([class*="pill"]),
+article li a:not([class*="btn"]):not([class*="pill"]),
+.prose-content a:not([class*="btn"]):not([class*="pill"]) {
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(15, 94, 79, 0.45);
+    transition: color 150ms var(--cl-ease-ui), text-decoration-color 150ms var(--cl-ease-ui);
+}
+
+article p a:not([class*="btn"]):not([class*="pill"]):hover,
+article li a:not([class*="btn"]):not([class*="pill"]):hover,
+.prose-content a:not([class*="btn"]):not([class*="pill"]):hover {
+    text-decoration-color: currentColor;
+}
+
+/* ---------- Feedback tactil al presionar ---------- */
+
+:is(button, [class*="btn-"], [class*="-pill"]):not(:disabled):not([class*="active:scale"]):active {
+    scale: 0.96;
+}
+
+/* ---------- Momento de autor: marcador sobre el titular ----------
+ * Un trazo de resaltador ambar, como quien marca el dato clave de un
+ * documento legal. El texto siempre es visible; solo el trazo se dibuja. */
+
+.cl-mark {
+    padding: 0 0.08em;
+    margin: 0 -0.08em;
+    background-image: linear-gradient(transparent 60%, rgba(255, 183, 3, 0.55) 60%, rgba(255, 183, 3, 0.55) 90%, transparent 90%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .cl-mark {
+        animation: cl-mark-draw 900ms var(--cl-ease-out) 300ms both;
+    }
+}
+
+@keyframes cl-mark-draw {
+    from {
+        background-size: 0% 100%;
+    }
+
+    to {
+        background-size: 100% 100%;
+    }
+}
+
+/* ---------- Resultado que se asienta tras recalcular ----------
+ * motion.js agrega .cl-settle a las cifras grandes cuando el calculo
+ * termina de cambiar: confirma que el monto es el nuevo. */
+
+.cl-settle {
+    animation: cl-settle 320ms var(--cl-ease-out);
+}
+
+@keyframes cl-settle {
+    from {
+        opacity: 0.45;
+        filter: blur(2px);
+    }
+
+    to {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+/* ---------- Acordeones de preguntas frecuentes ---------- */
+
+main details[open] > :not(summary) {
+    animation: cl-disclose 260ms var(--cl-ease-out);
+}
+
+@keyframes cl-disclose {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---------- Paneles verde bosque (reemplazan degradados) ---------- */
+
+.cl-forest-panel {
+    background-image: radial-gradient(120% 140% at 100% 0%, rgba(255, 183, 3, 0.10), transparent 55%),
+        linear-gradient(160deg, #00382E 0%, #00261F 100%);
+}
+
+/* ---------- Movimiento reducido ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+
+    .cl-settle,
+    main details[open] > :not(summary) {
+        animation: none !important;
+    }
+}

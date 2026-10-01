@@ -117,7 +117,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.7.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     
     <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
@@ -137,7 +137,7 @@
 
         body {
             font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #FFFFFF;
+            background-color: #F8FAF9;
             color: var(--teal-text-dark);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -678,9 +678,9 @@
             border: 1px solid #A7F3D0;
         }
         .audience-badge-pyme {
-            background-color: #F0F9FF;
-            color: #0369A1;
-            border: 1px solid #BAE6FD;
+            background-color: #EEF6F3;
+            color: #064A3E;
+            border: 1px solid #ADD6C9;
         }
         .audience-badge-status {
             display: inline-flex;
@@ -708,7 +708,7 @@
             border-color: #059669;
         }
         .audience-item-link.pyme-item:hover {
-            border-color: #0284C7;
+            border-color: #0F5E4F;
         }
         .audience-item-static {
             padding: 0.875rem 1rem;
@@ -881,6 +881,7 @@
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body>
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -1097,12 +1098,12 @@
 
     <!-- SECTION 1: TEALHQ CENTERED HERO (Clean, No Pill Badges, Massive Typography) -->
     <section class="hero-py text-center">
-        <div class="site-container">
+        <div class="site-container px-4 sm:px-6">
             
             <!-- Confident 2-Line Headline (Exact TealHQ weight & proportion) -->
             <h1 style="color: var(--teal-forest);" class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] max-w-4xl mx-auto">
                 <span class="block">Cálculo laboral</span>
-                <span class="block text-amber-500 mt-1">y previsional en Chile.</span>
+                <span class="block mt-1"><span class="cl-mark">y previsional en Chile.</span></span>
             </h1>
 
             <!-- Professional Sentence Subtitle (No AI fluff) -->
@@ -1165,23 +1166,23 @@
                     <!-- 2. Sueldo Líquido -->
                     <a href="sueldo_liquido" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-blue-100/80 text-blue-800 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <div class="w-6 h-6 rounded-full bg-forest-100/80 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:bg-forest-600 group-hover:text-white transition-colors">
                                 <span class="material-icons text-sm">payments</span>
                             </div>
-                            <span class="font-bold text-slate-800 group-hover:text-blue-950 transition-colors text-xs sm:text-sm">Sueldo Líquido</span>
+                            <span class="font-bold text-slate-800 group-hover:text-forest-950 transition-colors text-xs sm:text-sm">Sueldo Líquido</span>
                         </div>
-                        <span class="material-icons text-slate-400 group-hover:text-blue-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
+                        <span class="material-icons text-slate-400 group-hover:text-forest-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
                     </a>
 
                     <!-- 3. Vacaciones Proporcionales -->
                     <a href="calculadora-vacaciones-proporcionales" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-sky-100/80 text-sky-800 flex items-center justify-center flex-shrink-0 group-hover:bg-sky-600 group-hover:text-white transition-colors">
+                            <div class="w-6 h-6 rounded-full bg-forest-100/80 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:bg-forest-600 group-hover:text-white transition-colors">
                                 <span class="material-icons text-sm">beach_access</span>
                             </div>
-                            <span class="font-bold text-slate-800 group-hover:text-sky-950 transition-colors text-xs sm:text-sm">Vacaciones DT</span>
+                            <span class="font-bold text-slate-800 group-hover:text-forest-950 transition-colors text-xs sm:text-sm">Vacaciones DT</span>
                         </div>
-                        <span class="material-icons text-slate-400 group-hover:text-sky-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
+                        <span class="material-icons text-slate-400 group-hover:text-forest-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
                     </a>
 
                     <!-- 4. Seguro de Cesantía AFC -->
@@ -1203,7 +1204,7 @@
 
     <!-- SECTION 2: TEALHQ INTERACTIVE SHOWCASE SUITE (The Star Feature) -->
     <section id="showcase" class="showcase-py">
-        <div class="site-container">
+        <div class="site-container px-4 sm:px-6">
             
             <!-- Product Navigation Tabs (Emil Kowalski Segmented Control) -->
             <div class="flex justify-center mb-8 sm:mb-10 overflow-x-auto scrollbar-none px-2 py-1">
@@ -1277,7 +1278,7 @@
                                     <button type="button" onclick="setLiveSueldo(1500000)" class="sueldo-chip text-[10px] sm:text-[11px] font-semibold py-1 px-2 sm:px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
                                         $1.500.000
                                     </button>
-                                    <button type="button" onclick="setTopeLegal()" id="chip-tope" class="sueldo-chip text-[10px] sm:text-[11px] font-bold py-1 px-2 sm:px-2.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-all cursor-pointer" title="Tope legal para indemnizaciones por años de servicio (Art. 172 Código del Trabajo)">
+                                    <button type="button" onclick="setTopeLegal()" id="chip-tope" class="sueldo-chip text-[10px] sm:text-[11px] font-bold py-1 px-2 sm:px-2.5 rounded-lg border border-forest-200 bg-forest-50 text-forest-900 hover:bg-forest-100 transition-all cursor-pointer" title="Tope legal para indemnizaciones por años de servicio (Art. 172 Código del Trabajo)">
                                         Tope 90 UF
                                     </button>
                                 </div>
@@ -1655,13 +1656,13 @@
 
                                         <!-- Worker Signature Block with Blue Ink Handwritten Reservation -->
                                         <div class="space-y-1 text-left">
-                                            <div class="p-3 rounded-xl bg-blue-50/80 border border-blue-200 text-blue-950 font-sans italic font-medium text-xs sm:text-[13px] leading-relaxed shadow-2xs">
-                                                <span class="not-italic font-bold text-blue-700 block text-[10px] uppercase tracking-wider mb-1">✍️ Reserva manuscrita del trabajador:</span>
+                                            <div class="p-3 rounded-xl bg-forest-50/80 border border-forest-200 text-forest-950 font-sans italic font-medium text-xs sm:text-[13px] leading-relaxed shadow-2xs">
+                                                <span class="not-italic font-bold text-forest-700 block text-[10px] uppercase tracking-wider mb-1">✍️ Reserva manuscrita del trabajador:</span>
                                                 "Me reservo expresamente el derecho a reclamar la restitución del descuento de AFC y diferencias de feriado proporcional."
                                             </div>
-                                            <div class="w-full border-b-2 border-blue-900 mt-2"></div>
+                                            <div class="w-full border-b-2 border-forest-900 mt-2"></div>
                                             <div class="flex justify-between items-center text-[10px]">
-                                                <span class="font-bold text-blue-950 uppercase">Firma del Trabajador</span>
+                                                <span class="font-bold text-forest-950 uppercase">Firma del Trabajador</span>
                                                 <span class="font-sans font-medium text-stone-400">RUT: 15.892.431-K</span>
                                             </div>
                                         </div>
@@ -1738,7 +1739,7 @@
 
     <!-- SECTION 3: SOLUCIONES FINANCIERAS ALIADAS (Itaú & Abakos) - Posición Estratégica Inmediata -->
     <section class="py-12 sm:py-16 bg-warm-surface border-t border-gray-200/90">
-        <div class="site-container">
+        <div class="site-container px-4 sm:px-6">
             
             <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-10">
                 <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/70 px-3 py-1 rounded-full mb-3">
@@ -1759,8 +1760,8 @@
                 <div class="step-card reveal-on-scroll delay-100 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-5">
-                            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-orange-700 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
-                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full bg-forest-700 animate-pulse"></span>
                                 Recomendado · Cuenta Sueldo
                             </span>
                             <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
@@ -1770,7 +1771,7 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">
                             <div class="sm:col-span-5 flex justify-center">
-                                <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-orange-300 transition-all shadow-xs group">
+                                <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-amber-300 transition-all shadow-xs group">
                                     <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                                 </a>
                             </div>
@@ -1801,7 +1802,7 @@
 
                     <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <span class="text-xs text-gray-400 font-medium">Sujeto a evaluación de antecedentes comerciales</span>
-                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-orange-600 hover:bg-orange-700 active:scale-95" style="background-color: #ea580c !important; color: #ffffff !important;">
+                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-forest-800 hover:bg-forest-900 active:scale-95" style="background-color: #00382E !important; color: #ffffff !important;">
                             <span style="color: #ffffff !important;">Abrir Cuenta Online Gratis</span>
                             <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
                         </a>
@@ -1812,8 +1813,8 @@
                 <div class="step-card reveal-on-scroll delay-200 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-5">
-                            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-full">
-                                <span class="material-icons text-xs text-sky-600">schedule</span>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-forest-700 bg-forest-50 border border-forest-200 px-2.5 py-1 rounded-full">
+                                <span class="material-icons text-xs text-forest-600">schedule</span>
                                 Liquidez Inmediata · Emergencias
                             </span>
                             <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
@@ -1823,7 +1824,7 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">
                             <div class="sm:col-span-5 flex justify-center">
-                                <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-sky-300 transition-all shadow-xs group">
+                                <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-forest-300 transition-all shadow-xs group">
                                     <img src="/assets/abakos-emergencias-app.jpg" alt="Abakos Chile - Apaga tus emergencias financieras con préstamos online" width="270" height="270" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                                 </a>
                             </div>
@@ -1854,7 +1855,7 @@
 
                     <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <span class="text-xs text-gray-400 font-medium">Respuesta rápida desde cualquier punto de Chile</span>
-                        <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-sky-600 hover:bg-sky-700 active:scale-95" style="background-color: #0284c7 !important; color: #ffffff !important;">
+                        <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-forest-600 hover:bg-forest-700 active:scale-95" style="background-color: #0F5E4F !important; color: #ffffff !important;">
                             <span style="color: #ffffff !important;">Simular Préstamo Online</span>
                             <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
                         </a>
@@ -1868,7 +1869,7 @@
 
     <!-- SECTION 4: DIRECTORY OF CALCULATORS & LEGAL TOOLS (#calculadoras) - COMPACT HIGH-DENSITY EDITION -->
     <section id="calculadoras" class="py-12 sm:py-16 bg-slate-50 border-t border-b border-gray-200/90 scroll-mt-14">
-        <div class="site-container">
+        <div class="site-container px-4 sm:px-6">
             
             <!-- Section Header -->
             <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-8">
@@ -1988,14 +1989,14 @@
                 <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <span class="material-icons text-lg">payments</span>
                             </div>
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-100/80 text-blue-800">
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-forest-100/80 text-forest-800">
                                 Bruto a Líquido
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-blue-900 transition-colors leading-snug">
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
                             Calculadora Sueldo Líquido
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
@@ -2004,7 +2005,7 @@
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-[10px] font-mono-num text-gray-400 font-semibold">Art. 42 Nº 1 LIR</span>
-                        <a href="sueldo_liquido" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 group-hover:text-blue-900 transition-colors">
+                        <a href="sueldo_liquido" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-900 transition-colors">
                             <span>Calcular líquido</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -2012,17 +2013,17 @@
                 </div>
 
                 <!-- CARD 5: Horas Extras 42h -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-indigo-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <span class="material-icons text-lg">schedule</span>
                             </div>
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-indigo-100/80 text-indigo-800">
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-forest-100/80 text-forest-800">
                                 Jornada 42h
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-indigo-900 transition-colors leading-snug">
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
                             Horas Extras con Recargo 50%
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
@@ -2031,7 +2032,7 @@
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-[10px] font-mono-num text-gray-400 font-semibold">Art. 30 y 32 CT</span>
-                        <a href="calculadora-horas-extras" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 group-hover:text-indigo-800 transition-colors">
+                        <a href="calculadora-horas-extras" class="inline-flex items-center gap-1 text-xs font-bold text-forest-600 group-hover:text-forest-800 transition-colors">
                             <span>Calcular horas</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -2039,17 +2040,17 @@
                 </div>
 
                 <!-- CARD 6: Vacaciones Proporcionales -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-sky-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <span class="material-icons text-lg">beach_access</span>
                             </div>
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-sky-100/80 text-sky-800">
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-forest-100/80 text-forest-800">
                                 Días Hábiles
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-sky-900 transition-colors leading-snug">
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
                             Vacaciones Proporcionales DT
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
@@ -2058,7 +2059,7 @@
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-[10px] font-mono-num text-gray-400 font-semibold">Art. 67 y 73 CT</span>
-                        <a href="calculadora-vacaciones-proporcionales" class="inline-flex items-center gap-1 text-xs font-bold text-sky-600 group-hover:text-sky-800 transition-colors">
+                        <a href="calculadora-vacaciones-proporcionales" class="inline-flex items-center gap-1 text-xs font-bold text-forest-600 group-hover:text-forest-800 transition-colors">
                             <span>Calcular feriado</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -2071,17 +2072,17 @@
             <div id="extra-catalog-tools" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 mt-3.5 sm:mt-4 transition-all">
 
                 <!-- CARD 7: Sueldo Part-Time -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-purple-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <span class="material-icons text-lg">work_outline</span>
                             </div>
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-purple-100/80 text-purple-800">
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-forest-100/80 text-forest-800">
                                 Hasta 30h
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-purple-900 transition-colors leading-snug">
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
                             Sueldo Contrato Part-Time
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
@@ -2090,7 +2091,7 @@
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-[10px] font-mono-num text-gray-400 font-semibold">Art. 40 bis CT</span>
-                        <a href="calculadora-sueldo-part-time" class="inline-flex items-center gap-1 text-xs font-bold text-purple-600 group-hover:text-purple-800 transition-colors">
+                        <a href="calculadora-sueldo-part-time" class="inline-flex items-center gap-1 text-xs font-bold text-forest-600 group-hover:text-forest-800 transition-colors">
                             <span>Calcular part-time</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -2206,17 +2207,17 @@
                 </div>
 
                 <!-- CARD 12: Kit Blindaje Laboral Pymes -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-sky-600 transition-all group" data-category="pyme">
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-600 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <span class="material-icons text-lg">verified_user</span>
                             </div>
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-sky-100/80 text-sky-900">
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-forest-100/80 text-forest-900">
                                 Kit Pymes DT
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-sky-900 transition-colors leading-snug">
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
                             Kit Blindaje Laboral Pymes
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
@@ -2225,7 +2226,7 @@
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
                         <span class="text-[10px] font-mono-num text-gray-400 font-semibold">Defensa Preventiva</span>
-                        <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center gap-1 text-xs font-bold text-sky-700 group-hover:text-sky-900 transition-colors">
+                        <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-900 transition-colors">
                             <span>Ver kit pymes</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -2328,7 +2329,7 @@
 
     <!-- SECTION 5: PROFILE HUBS (Trabajadores vs Pymes - Authentic Human Design) -->
     <section id="section-audiences" class="py-12 sm:py-16 bg-slate-50/70 border-t border-b border-gray-200/90">
-        <div class="site-container">
+        <div class="site-container px-4 sm:px-6">
             
             <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-10">
                 <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/70 px-3.5 py-1.5 rounded-full mb-3 whitespace-nowrap" style="white-space: nowrap !important; line-height: 1;">
@@ -2428,7 +2429,7 @@
                                 <span>Para Pymes & Empleadores</span>
                             </span>
                             <span class="audience-badge-status">
-                                <span class="w-2 h-2 rounded-full bg-sky-500 inline-block mr-1.5"></span>
+                                <span class="w-2 h-2 rounded-full bg-forest-500 inline-block mr-1.5"></span>
                                 Normativa 2026 DT
                             </span>
                         </div>
@@ -2447,42 +2448,42 @@
                             <a href="generador-finiquito-chile" class="audience-item-link pyme-item group/item">
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-sky-700 transition-colors">
+                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-forest-700 transition-colors">
                                             1. Generador de Finiquito en Word y PDF
                                         </div>
                                         <div class="text-xs text-slate-500 mt-0.5">
                                             Redacción legal con cláusulas de ratificación ante ministro de fe y prevención de nulidad.
                                         </div>
                                     </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-sky-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
+                                    <span class="material-icons text-slate-400 group-hover/item:text-forest-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
                                 </div>
                             </a>
 
                             <a href="generador-anexo-40-horas" class="audience-item-link pyme-item group/item">
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-sky-700 transition-colors">
+                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-forest-700 transition-colors">
                                             2. Anexo de Contrato Ley 40 Horas (42h en 2026)
                                         </div>
                                         <div class="text-xs text-slate-500 mt-0.5">
                                             Modelo en Word para formalizar por escrito la jornada reducida sin contingencias.
                                         </div>
                                     </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-sky-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
+                                    <span class="material-icons text-slate-400 group-hover/item:text-forest-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
                                 </div>
                             </a>
 
                             <a href="kit-cumplimiento-laboral-pymes" class="audience-item-link pyme-item group/item">
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-sky-700 transition-colors">
+                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-forest-700 transition-colors">
                                             3. Kit Blindaje Laboral & Ley 21.719
                                         </div>
                                         <div class="text-xs text-slate-500 mt-0.5">
                                             Checklist preventivo de fiscalización DT y protocolos de datos personales.
                                         </div>
                                     </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-sky-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
+                                    <span class="material-icons text-slate-400 group-hover/item:text-forest-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
                                 </div>
                             </a>
                         </div>
@@ -2503,7 +2504,7 @@
 
     <!-- SECTION: EVALUACIÓN LEGAL LABORAL (TealHQ Architecture with Organic Orange Slab & Tactile Scenario Cards) -->
     <section id="abogados-laborales" class="py-14 sm:py-20 bg-white border-t border-b border-gray-200/90 scroll-mt-12">
-        <div class="site-container">
+        <div class="site-container px-4 sm:px-6">
             
             <div class="reveal-on-scroll text-center max-w-3xl mx-auto mb-10">
                 <span class="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-900 bg-amber-100/90 border border-amber-300/80 px-3.5 py-1.5 rounded-full mb-3 text-center max-w-full" style="line-height: 1.2;">
@@ -2605,10 +2606,10 @@
                             <div class="scenario-tactile-card group" onclick="selectLawyerScenario('Autodespido / Despido Indirecto Art. 171')" id="scenario-card-171">
                                 <div class="flex items-start justify-between gap-2 mb-1.5">
                                     <div class="flex items-center gap-2">
-                                        <span class="w-5 h-5 rounded-md bg-sky-100 text-sky-800 text-[11px] font-bold flex items-center justify-center">4</span>
+                                        <span class="w-5 h-5 rounded-md bg-forest-100 text-forest-800 text-[11px] font-bold flex items-center justify-center">4</span>
                                         <span class="font-bold text-slate-900 text-xs sm:text-sm">Autodespido o Despido Indirecto (Art. 171)</span>
                                     </div>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-sky-50 text-sky-800 border border-sky-200 text-[10px] font-bold whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-forest-50 text-forest-800 border border-forest-200 text-[10px] font-bold whitespace-nowrap">
                                         Asesoría Previa Clave
                                     </span>
                                 </div>
@@ -2766,11 +2767,11 @@
 
     <!-- SECTION 5: GUÍAS LEGALES DE ACCIÓN INMEDIATA & DEFENSA DEL TRABAJADOR -->
     <section class="section-py bg-white border-t border-gray-200/90">
-        <div class="site-container">
+        <div class="site-container px-4 sm:px-6">
             
             <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-14">
-                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-sky-800 bg-sky-100/70 px-3 py-1 rounded-full mb-3">
-                    <span class="material-icons text-sm text-sky-700">menu_book</span>
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-forest-800 bg-forest-100/70 px-3 py-1 rounded-full mb-3">
+                    <span class="material-icons text-sm text-forest-700">menu_book</span>
                     Guías Laborales & Dictámenes DT
                 </span>
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
@@ -2841,10 +2842,10 @@
                 <div class="step-card reveal-on-scroll delay-300 bg-white p-7 sm:p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-all">
                     <div>
                         <div class="flex items-center justify-between mb-5">
-                            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                            <div class="w-11 h-11 rounded-2xl bg-forest-50 text-forest-600 flex items-center justify-center">
                                 <span class="material-icons text-xl">balance</span>
                             </div>
-                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-2.5 py-1 rounded-full">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-forest-700 bg-forest-50 border border-forest-200/80 px-2.5 py-1 rounded-full">
                                 Doctrina Corte Suprema
                             </span>
                         </div>
@@ -2899,7 +2900,7 @@
 
     <!-- SECTION 5: FAQ ACCORDION -->
     <section class="section-py bg-warm-surface border-t border-gray-200/90">
-        <div class="site-container max-w-[850px]">
+        <div class="site-container max-w-[850px] px-4 sm:px-6">
             
             <div class="reveal-on-scroll text-center mb-12">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3">
@@ -3165,9 +3166,9 @@
             }
             if (chipTope) {
                 if (val >= (topeUF - 1000)) {
-                    chipTope.classList.add('ring-2', 'ring-indigo-500', 'font-black');
+                    chipTope.classList.add('ring-2', 'ring-forest-500', 'font-black');
                 } else {
-                    chipTope.classList.remove('ring-2', 'ring-indigo-500', 'font-black');
+                    chipTope.classList.remove('ring-2', 'ring-forest-500', 'font-black');
                 }
             }
         }
@@ -3651,5 +3652,6 @@
             }
         }
     </script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

@@ -457,7 +457,7 @@ window.formatCurrencyInput = function(input) {
         const btn = document.createElement('button');
         btn.id = 'qa-run-btn';
         btn.textContent = '🔬 Run QA';
-        btn.className = 'fixed top-2 right-2 z-[9999] px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono rounded-lg shadow-lg transition-all cursor-pointer';
+        btn.className = 'fixed top-2 right-2 z-[9999] px-3 py-1.5 bg-forest-600 hover:bg-forest-500 text-white text-xs font-mono rounded-lg shadow-lg transition-all cursor-pointer';
         btn.title = 'Dev-only: Run validation test suite';
 
         btn.addEventListener('click', async () => {

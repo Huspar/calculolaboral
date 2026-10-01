@@ -272,13 +272,14 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
    * Valores monetarios, porcentajes, fechas y cifras matemáticas: `font-mono` (**Geist Mono**) para alineación y legibilidad financiera.
 2. **Paleta de Colores:**
    * **Marca:** verde bosque `#00382E` (hover `#002820`, deep `#00261F`) y ámbar `#FFB703`. Definidos como `--teal-forest`, `--teal-yellow` y relacionados en `index.html`.
-   * **Base:** `#FFFFFF` para el fondo del body (con bandas `#F4F7F6`) y `bg-white` para las tarjetas.
+   * **Base:** `bg-canvas` (`#F8FAF9`) para el fondo del body en todas las páginas y `bg-white` para las tarjetas y bandas.
    * **Bordes:** `border-slate-200/90` o `border-slate-200`.
    * **Texto principal:** `text-slate-900` para títulos principales y `text-slate-700` / `text-slate-600` para textos secundarios.
-   * **Acentos:** el verde bosque es el color de marca. `text-sky-500` / `text-sky-600` queda solo para enlaces y acciones secundarias, no para el logo ni el footer.
+   * **Acentos:** el verde bosque es el color de marca, con su escala `forest-50` a `forest-950` en `tailwind.config.js`. Enlaces y acciones secundarias en `text-forest-600`. **Prohibido** usar `sky-*`, `blue-*`, `indigo-*`, `violet-*`, `purple-*` u `orange-*`, y los degradados de color (usar `.cl-forest-panel`).
+   * **Capa compartida:** toda página enlaza `/assets/css/polish.css` al final del `<head>` y `/js/motion.js` con `defer` antes de `</body>` (ver `DESIGN.md`, sección "Capa compartida y movimiento").
    * **Alertas y Riesgo:** `bg-rose-50` / `border-rose-200` / `text-rose-600` para advertencias laborales, nulidad de despido y demandas.
    * **Validación y Éxito:** `bg-emerald-50` / `text-emerald-700` para certificaciones DT y confirmaciones.
-3. **Contraste Accesible:** Todo botón o enlace con fondo de color (`bg-sky-500`, `bg-rose-600`, `bg-slate-900`, `bg-emerald-600`) DEBE incluir explícitamente `!text-white` o `style="color: #ffffff !important;"` para evitar texto oscuro ilegible.
+3. **Contraste Accesible:** Todo botón o enlace con fondo de color (`bg-forest-800`, `bg-rose-600`, `bg-slate-900`, `bg-emerald-600`) DEBE incluir explícitamente `!text-white` o `style="color: #ffffff !important;"` para evitar texto oscuro ilegible.
 
 ---
 
@@ -289,5 +290,6 @@ Antes de dar por terminada la creación de cualquier página o herramienta:
 - [ ] ¿La barra de indicadores tiene `whitespace-nowrap` y CSS responsive de 1 fila en mobile?
 - [ ] ¿El footer es el curvado verde `.teal-footer-curve` (`#00382E`) idéntico al de `index.html`, con las 4 columnas oficiales?
 - [ ] ¿Los botones de pago Flow.cl (`$12.990`, `$19.990` y `$29.990`) tienen los tokens vigentes?
+- [ ] ¿Enlaza `polish.css` y `motion.js`, usa `bg-canvas` en el body y no tiene clases `sky/blue/indigo/violet/purple/orange`?
 - [ ] ¿Se añadió la página a `sitemap.xml` con su respectiva prioridad?
 - [ ] ¿Se verificó en vista desktop (1200px) y móvil (390px)?

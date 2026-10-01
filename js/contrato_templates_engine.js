@@ -773,7 +773,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                             <div style="font-size: 10px; color: #64748b;">
                                 Rep. Legal: ${escapeHtml(d.empresaRepresentante || '')}
                             </div>
-                            <div style="font-size: 9.5px; font-weight: bold; color: #0284c7; text-transform: uppercase; margin-top: 2px;">
+                            <div style="font-size: 9.5px; font-weight: bold; color: #0F5E4F; text-transform: uppercase; margin-top: 2px;">
                                 Firma del Empleador
                             </div>
                         </td>
@@ -785,7 +785,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                             <div style="font-family: monospace; font-size: 11px; color: #475569;">
                                 C.I. Nº: ${escapeHtml(d.trabajadorRut || 'XX.XXX.XXX-X')}
                             </div>
-                            <div style="font-size: 9.5px; font-weight: bold; color: #0284c7; text-transform: uppercase; margin-top: 2px;">
+                            <div style="font-size: 9.5px; font-weight: bold; color: #0F5E4F; text-transform: uppercase; margin-top: 2px;">
                                 Firma y Huella del Trabajador(a)
                             </div>
                         </td>
@@ -829,7 +829,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                                 <div style="font-family: monospace; font-size: 11px; color: #475569;">
                                     RUT: ${escapeHtml(d.empresaRut || 'XX.XXX.XXX-X')}
                                 </div>
-                                <div style="font-size: 9.5px; font-weight: bold; color: #0284c7; text-transform: uppercase; margin-top: 2px;">
+                                <div style="font-size: 9.5px; font-weight: bold; color: #0F5E4F; text-transform: uppercase; margin-top: 2px;">
                                     Firma Entrega Empleador
                                 </div>
                             </td>
@@ -841,7 +841,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                                 <div style="font-family: monospace; font-size: 11px; color: #475569;">
                                     C.I. Nº: ${escapeHtml(d.trabajadorRut || 'XX.XXX.XXX-X')}
                                 </div>
-                                <div style="font-size: 9.5px; font-weight: bold; color: #0284c7; text-transform: uppercase; margin-top: 2px;">
+                                <div style="font-size: 9.5px; font-weight: bold; color: #0F5E4F; text-transform: uppercase; margin-top: 2px;">
                                     Firma y Huella de Recepción
                                 </div>
                             </td>
@@ -1272,7 +1272,7 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
                 <div class="no-print max-w-[820px] mx-auto mb-4 flex justify-between items-center bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
                     <span class="text-xs text-slate-700 font-semibold">Contrato de Trabajo: <strong>${escapeHtml(datos.trabajadorNombre || 'Trabajador')}</strong> (${escapeHtml(datos.cargoNombre || 'Cargo')})</span>
                     <div class="flex gap-2">
-                        <button onclick="window.print()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer !text-white" style="color:#fff!important;">
+                        <button onclick="window.print()" class="px-4 py-2 bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs rounded-lg shadow-sm flex items-center gap-1.5 cursor-pointer !text-white" style="color:#fff!important;">
                             <span class="material-icons text-xs">print</span>
                             <span>Guardar como PDF / Imprimir</span>
                         </button>

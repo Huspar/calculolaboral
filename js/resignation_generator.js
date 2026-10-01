@@ -138,7 +138,7 @@
             elements.noticeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
         } else {
             elements.noticeBadge.textContent = `Preaviso: ${diffDays} días corridos (Menor a los 30 días sugeridos por el Art. 159 Nº 2)`;
-            elements.noticeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200';
+            elements.noticeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-forest-50 text-forest-700 border border-forest-200';
         }
     }
 
@@ -264,13 +264,13 @@
             await navigator.clipboard.writeText(text);
             const originalHTML = elements.copyBtn.innerHTML;
             elements.copyBtn.innerHTML = '<span class="material-icons text-sm">check_circle</span> <span>¡Texto Copiado!</span>';
-            elements.copyBtn.classList.remove('bg-sky-500', 'hover:bg-sky-600');
+            elements.copyBtn.classList.remove('bg-forest-500', 'hover:bg-forest-600');
             elements.copyBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
 
             setTimeout(() => {
                 elements.copyBtn.innerHTML = originalHTML;
                 elements.copyBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
-                elements.copyBtn.classList.add('bg-sky-500', 'hover:bg-sky-600');
+                elements.copyBtn.classList.add('bg-forest-500', 'hover:bg-forest-600');
             }, 2500);
         } catch (err) {
             alert('No se pudo copiar automáticamente. Puedes seleccionar el texto de la vista previa y copiarlo manualmente.');

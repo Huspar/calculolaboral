@@ -138,7 +138,7 @@
         gtag('config', 'G-9Y03F1WB8J');
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=2.6.1" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=2.8.0" rel="stylesheet"/>
 <style>
         .prose-content { line-height: 1.75; color: #334155; }
         .prose-content h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; line-height: 1.25; }
@@ -148,9 +148,9 @@
         .prose-content ul, .prose-content ol { margin: 0.85rem 0; padding-left: 1.5rem; }
         .prose-content li { margin-bottom: 0.45rem; }
         .prose-content strong { color: #0f172a; font-weight: 600; }
-        .prose-content a { color: #0284c7; text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
-        .prose-content a:hover { color: #0369a1; }
-        .callout { background: #f0f9ff; border-left: 4px solid #0284c7; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
+        .prose-content a { color: #0F5E4F; text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
+        .prose-content a:hover { color: #064A3E; }
+        .callout { background: #EEF6F3; border-left: 4px solid #0F5E4F; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
         .callout-amber { background: #fffbeb; border-left: 4px solid #d97706; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
         .callout-emerald { background: #ecfdf5; border-left: 4px solid #059669; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
         .callout-rose { background: #fff1f2; border-left: 4px solid #e11d48; padding: 1.1rem 1.35rem; margin: 1.5rem 0; border-radius: 0 12px 12px 0; }
@@ -161,7 +161,7 @@
         .comparison-table thead th { background: #0f172a; color: #ffffff; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .comparison-table tbody tr { border-bottom: 1px solid #e2e8f0; transition: background 0.15s; }
         .comparison-table tbody tr:hover { background: #f8fafc; }
-        .comparison-table tr.highlight-itau { background: #fffaf5; border: 2px solid #ea580c; }
+        .comparison-table tr.highlight-itau { background: #fffaf5; border: 2px solid #00382E; }
         .comparison-table tr.highlight-itau:hover { background: #fff5eb; }
 
         .copy-box {
@@ -198,10 +198,10 @@
             z-index: 10;
         }
         .copy-btn:hover {
-            background: #0ea5e9;
+            background: #0F5E4F;
             color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
+            border-color: #0F5E4F;
+            box-shadow: 0 2px 4px rgba(15, 94, 79,0.2);
         }
         .copy-btn.copied {
             background: #10b981 !important;
@@ -539,8 +539,9 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#F8FAF9]0/20 selection:text-slate-900">
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
 <div class="text-white text-xs py-2 border-b border-white/10 no-print" style="background-color: var(--teal-forest-deep);">
 <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -727,9 +728,9 @@ body { overflow-x: hidden; }
 <!-- Breadcrumbs -->
 <nav aria-label="Breadcrumb" class="bg-white border-b border-slate-200 py-2.5 px-6 text-xs text-slate-500 no-print">
 <div class="max-w-[1240px] mx-auto flex items-center gap-1.5 flex-wrap">
-<a class="hover:text-sky-600" href="./">Inicio</a>
+<a class="hover:text-forest-600" href="./">Inicio</a>
 <span>/</span>
-<a class="hover:text-sky-600" href="blog">Blog</a>
+<a class="hover:text-forest-600" href="blog">Blog</a>
 <span>/</span>
 <span class="text-slate-900 font-medium truncate">Dónde Recibir tu Sueldo Chile 2026</span>
 </div>
@@ -741,8 +742,8 @@ body { overflow-x: hidden; }
 <article class="lg:col-span-8 prose-content">
 <!-- Badge & Metadata -->
 <div class="flex items-center gap-2 mb-3 flex-wrap">
-<span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider bg-orange-50 text-orange-700 px-3 py-1 rounded-full border border-orange-200/80">
-<span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span> Finanzas del Trabajador 2026
+<span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 px-3 py-1 rounded-full border border-amber-200/80">
+<span class="w-1.5 h-1.5 rounded-full bg-forest-700 animate-pulse"></span> Finanzas del Trabajador 2026
                     </span>
 <span class="text-xs text-slate-400 font-medium">Actualizado: 15 de Septiembre de 2026</span>
 <span class="text-xs text-slate-400">•</span>
@@ -826,9 +827,9 @@ body { overflow-x: hidden; }
 <!-- Itaú Destacado -->
 <tr class="highlight-itau">
 <td class="font-bold text-slate-900 flex items-center gap-1.5">
-<span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
+<span class="w-2 h-2 rounded-full bg-forest-700 shrink-0"></span>
 <div>
-<div class="text-orange-700 font-extrabold text-[13px]">Banco Itaú</div>
+<div class="text-amber-800 font-extrabold text-[13px]">Banco Itaú</div>
 <div class="text-[10px] text-slate-500">Plan Cuenta Corriente</div>
 </div>
 </td>
@@ -837,7 +838,7 @@ body { overflow-x: hidden; }
 <td class="text-emerald-700 font-semibold">Ilimitadas a costo $0</td>
 <td class="text-slate-700 font-medium">Sin tope de saldo</td>
 <td>
-<span class="bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Cuenta Corriente Real</span>
+<span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded text-[10px] whitespace-nowrap">Cuenta Corriente Real</span>
 </td>
 </tr>
 <!-- Cuenta RUT -->
@@ -913,9 +914,9 @@ body { overflow-x: hidden; }
 <li><strong>Línea de sobregiro y cheques opcionales:</strong> Ante cualquier eventualidad médica o desfase temporal de pagos a fin de mes, una cuenta corriente cuenta con línea de crédito de emergencia para evitar que tus pagos automáticos o cuentas de servicios básicos se corten.</li>
 </ol>
 <!-- Tarjeta Destacada de Conversión Banco Itaú -->
-<div class="my-8 p-6 bg-gradient-to-br from-orange-50/60 to-amber-50/40 border-2 border-orange-400/80 rounded-2xl shadow-sm text-slate-800">
+<div class="my-8 p-6 bg-gradient-to-br from-amber-50/60 to-amber-50/40 border-2 border-amber-400/80 rounded-2xl shadow-sm text-slate-800">
 <div class="flex items-center justify-between mb-3">
-<span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-100 px-3 py-1 rounded-full flex items-center gap-1.5">
+<span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100 px-3 py-1 rounded-full flex items-center gap-1.5">
 <span class="material-icons text-sm">workspace_premium</span> Opción Recomendada 2026
                         </span>
 <span class="text-xs font-bold text-slate-500">Banco Itaú Chile</span>
@@ -925,33 +926,33 @@ body { overflow-x: hidden; }
                         Abre tu Cuenta Corriente Itaú 100% online desde tu teléfono en solo 5 minutos. Disfruta de una tarjeta de débito digital lista para usar, transferencias a costo $0 a cualquier banco de Chile y costo de mantención $0 de por vida mientras abones tu sueldo.
                     </p>
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4 text-xs">
-<div class="bg-white p-3 rounded-xl border border-orange-200/60 flex items-center gap-2">
-<span class="material-icons text-orange-600 text-lg">monetization_on</span>
+<div class="bg-white p-3 rounded-xl border border-amber-200/60 flex items-center gap-2">
+<span class="material-icons text-amber-700 text-lg">monetization_on</span>
 <div>
 <strong class="block text-slate-900">$0 Mantención</strong>
 <span class="text-slate-500 text-[10px]">Abonando tu sueldo</span>
 </div>
 </div>
-<div class="bg-white p-3 rounded-xl border border-orange-200/60 flex items-center gap-2">
+<div class="bg-white p-3 rounded-xl border border-amber-200/60 flex items-center gap-2">
 <span class="material-icons text-emerald-600 text-lg">timer</span>
 <div>
 <strong class="block text-slate-900">5 Minutos Online</strong>
 <span class="text-slate-500 text-[10px]">Solo con tu carnet</span>
 </div>
 </div>
-<div class="bg-white p-3 rounded-xl border border-orange-200/60 flex items-center gap-2">
-<span class="material-icons text-sky-600 text-lg">sync_alt</span>
+<div class="bg-white p-3 rounded-xl border border-amber-200/60 flex items-center gap-2">
+<span class="material-icons text-forest-600 text-lg">sync_alt</span>
 <div>
 <strong class="block text-slate-900">Transferencias $0</strong>
 <span class="text-slate-500 text-[10px]">Sin comisiones</span>
 </div>
 </div>
 </div>
-<div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-orange-200/70">
+<div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-amber-200/70">
 <div class="text-xs text-slate-500">
                             ✓ Sin papeleos ni ir a sucursales • 100% digital
                         </div>
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98]" href="/itau" rel="sponsored nofollow noopener" style="background-color: #ea580c !important; color: #ffffff !important; text-decoration: none !important;" target="_blank">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-forest-800 hover:bg-forest-900 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98]" href="/itau" rel="sponsored nofollow noopener" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important;" target="_blank">
 <span>Abrir mi Cuenta Corriente Itaú Gratis</span>
 <span class="material-icons text-base">arrow_forward</span>
 </a>
@@ -989,14 +990,14 @@ body { overflow-x: hidden; }
 <strong>[Tu Nombre y Firma]</strong>
 </div>
 <!-- Bloque Publicitario Responsivo Itaú -->
-<div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-orange-50/40 via-white to-slate-50 border border-orange-200/90 rounded-2xl shadow-sm no-print text-center">
+<div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-amber-50/40 via-white to-slate-50 border border-amber-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
-<span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span> Publicidad Patrocinada
+<span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100/90 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-forest-700 animate-pulse"></span> Publicidad Patrocinada
                         </span>
 <span class="text-[10px] text-slate-500 font-semibold">Banco Itaú • Cuenta Corriente</span>
 </div>
-<a class="group block overflow-hidden rounded-xl border border-orange-200/90 hover:border-orange-400 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/itau" rel="sponsored nofollow noopener" target="_blank">
+<a class="group block overflow-hidden rounded-xl border border-amber-200/90 hover:border-amber-400 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/itau" rel="sponsored nofollow noopener" target="_blank">
 <picture class="block w-full">
 <source height="90" media="(min-width: 768px)" srcset="/assets/itau-cuenta-corriente-banner.jpg" width="728"/>
 <img alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención al recibir sueldo" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" height="250" loading="lazy" src="/assets/itau-cuenta-corriente-app.jpg" width="300"/>
@@ -1006,13 +1007,13 @@ body { overflow-x: hidden; }
 <span class="text-slate-600 font-medium text-[11px] sm:text-xs text-center sm:text-left">
                             ¿Dónde recibir tu remuneración? Ábrela 100% online en 5 min con tu carnet y <strong>$0 costo de mantención</strong>.
                         </span>
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 !text-white !no-underline font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/itau" rel="sponsored nofollow noopener" style="background-color: #ea580c !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-forest-800 hover:bg-forest-900 !text-white !no-underline font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all shrink-0 active:scale-[0.98]" href="/itau" rel="sponsored nofollow noopener" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important; " target="_blank">
 <span class="!text-white">Hazte Cliente Online</span>
 <span class="material-icons text-sm !text-white">arrow_forward</span>
 </a>
 </div>
 <div class="mt-2.5 pt-2 border-t border-slate-100 text-center">
-<a class="text-[11px] !text-slate-400 hover:!text-orange-600 !no-underline transition-colors font-medium inline-flex items-center gap-0.5" href="sueldo_liquido" style="text-decoration: none !important;">
+<a class="text-[11px] !text-slate-400 hover:!text-amber-700 !no-underline transition-colors font-medium inline-flex items-center gap-0.5" href="sueldo_liquido" style="text-decoration: none !important;">
 <span>Calculadora de Sueldo Líquido: Simula tu sueldo neto y cotizaciones 2026</span>
 <span class="material-icons text-[13px]">chevron_right</span>
 </a>
@@ -1054,41 +1055,41 @@ body { overflow-x: hidden; }
 <!-- Quick Navigation Box -->
 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
 <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5">
-<span class="material-icons text-sm text-sky-500">menu_book</span> En esta guía
+<span class="material-icons text-sm text-forest-500">menu_book</span> En esta guía
                     </h3>
 <ul class="text-xs space-y-2 text-slate-600 font-medium">
-<li><a class="hover:text-sky-600" href="#1-la-trampa-de-las-comisiones-silenciosas">1. La trampa de las comisiones</a></li>
-<li><a class="hover:text-sky-600" href="#2-marco-legal">2. ¿Tu empresa puede obligarte a un banco?</a></li>
-<li><a class="hover:text-sky-600" href="#3-gran-tabla-comparativa">3. Tabla Comparativa 2026</a></li>
-<li><a class="hover:text-sky-600" href="#4-por-que-conviene-una-cuenta-corriente">4. Cuenta Corriente vs Prepago</a></li>
-<li><a class="hover:text-sky-600" href="#5-paso-a-paso">5. Paso a paso de apertura en 5 min</a></li>
-<li><a class="hover:text-sky-600" href="#6-como-avisar-a-recursos-humanos">6. Plantilla para RRHH</a></li>
-<li><a class="hover:text-sky-600" href="#7-preguntas-frecuentes">7. Preguntas Frecuentes</a></li>
+<li><a class="hover:text-forest-600" href="#1-la-trampa-de-las-comisiones-silenciosas">1. La trampa de las comisiones</a></li>
+<li><a class="hover:text-forest-600" href="#2-marco-legal">2. ¿Tu empresa puede obligarte a un banco?</a></li>
+<li><a class="hover:text-forest-600" href="#3-gran-tabla-comparativa">3. Tabla Comparativa 2026</a></li>
+<li><a class="hover:text-forest-600" href="#4-por-que-conviene-una-cuenta-corriente">4. Cuenta Corriente vs Prepago</a></li>
+<li><a class="hover:text-forest-600" href="#5-paso-a-paso">5. Paso a paso de apertura en 5 min</a></li>
+<li><a class="hover:text-forest-600" href="#6-como-avisar-a-recursos-humanos">6. Plantilla para RRHH</a></li>
+<li><a class="hover:text-forest-600" href="#7-preguntas-frecuentes">7. Preguntas Frecuentes</a></li>
 </ul>
 </div>
 <!-- Interactive Simulator Card -->
-<div class="bg-gradient-to-br from-sky-500 to-sky-600 text-white p-5 rounded-2xl shadow-sm">
+<div class="bg-[#00382E] cl-forest-panel text-white p-5 rounded-2xl shadow-sm">
 <div class="w-9 h-9 bg-white/15 rounded-xl flex items-center justify-center mb-3">
 <span class="material-icons text-white">calculate</span>
 </div>
 <h3 class="text-sm font-bold mb-1.5">¿Cuánto sueldo líquido recibirás?</h3>
-<p class="text-xs text-sky-100 leading-relaxed mb-4">
+<p class="text-xs text-forest-100 leading-relaxed mb-4">
                         Calcula exactamente cuánto te llegará al bolsillo tras los descuentos obligatorios de AFP, Fonasa o Isapre, cesantía e impuestos 2026.
                     </p>
-<a class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-white hover:bg-slate-50 text-sky-700 font-bold text-xs rounded-xl shadow-xs transition-all" href="sueldo_liquido">
+<a class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-white hover:bg-slate-50 text-forest-700 font-bold text-xs rounded-xl shadow-xs transition-all" href="sueldo_liquido">
 <span>Ir a la Calculadora de Sueldo</span>
 <span class="material-icons text-sm">arrow_forward</span>
 </a>
 </div>
 <!-- Itaú Sidebar Card -->
-<div class="p-4 bg-gradient-to-br from-slate-50 to-orange-50/20 border border-slate-200 rounded-2xl shadow-xs text-center">
+<div class="p-4 bg-gradient-to-br from-slate-50 to-amber-50/20 border border-slate-200 rounded-2xl shadow-xs text-center">
 <div class="flex items-center justify-between mb-2.5 px-1">
-<span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span> Recomendado
+<span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-forest-700 animate-pulse"></span> Recomendado
                         </span>
 <span class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">$0 Mantención</span>
 </div>
-<a class="group block overflow-hidden rounded-xl border border-slate-200 hover:border-orange-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/itau" rel="sponsored nofollow noopener" target="_blank">
+<a class="group block overflow-hidden rounded-xl border border-slate-200 hover:border-amber-400/70 shadow-xs hover:shadow-md transition-all duration-200 bg-white" href="/itau" rel="sponsored nofollow noopener" target="_blank">
 <img alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" class="mx-auto block max-w-full h-auto group-hover:scale-[1.01] transition-transform duration-200" height="250" loading="lazy" src="/assets/itau-cuenta-corriente-app.jpg" width="300"/>
 </a>
 <div class="mt-3 px-1 text-left">
@@ -1110,7 +1111,7 @@ body { overflow-x: hidden; }
 <span>Transferencias a costo $0</span>
 </div>
 </div>
-<a class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" href="/itau" rel="sponsored nofollow noopener" style="background-color: #ea580c !important; color: #ffffff !important; text-decoration: none !important;" target="_blank">
+<a class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow transition-all active:scale-[0.98]" href="/itau" rel="sponsored nofollow noopener" style="background-color: #00382E !important; color: #ffffff !important; text-decoration: none !important;" target="_blank">
 <span>Abrir Cuenta Gratis</span>
 <span class="material-icons text-sm">arrow_forward</span>
 </a>
@@ -1123,15 +1124,15 @@ body { overflow-x: hidden; }
                     </h3>
 <div class="space-y-3 text-xs">
 <a class="block group" href="como-calcular-sueldo-liquido-paso-a-paso">
-<span class="font-bold text-slate-800 group-hover:text-sky-600 transition-colors">Cómo Calcular Sueldo Líquido Paso a Paso</span>
+<span class="font-bold text-slate-800 group-hover:text-forest-600 transition-colors">Cómo Calcular Sueldo Líquido Paso a Paso</span>
 <span class="block text-[11px] text-slate-400">Fórmula 2026 con AFP, Fonasa e impuestos.</span>
 </a>
 <a class="block group" href="como-leer-liquidacion-de-sueldo">
-<span class="font-bold text-slate-800 group-hover:text-sky-600 transition-colors">Cómo Leer tu Liquidación de Sueldo</span>
+<span class="font-bold text-slate-800 group-hover:text-forest-600 transition-colors">Cómo Leer tu Liquidación de Sueldo</span>
 <span class="block text-[11px] text-slate-400">Aprende a detectar errores en tus haberes.</span>
 </a>
 <a class="block group" href="ley-40-horas-chile-2026">
-<span class="font-bold text-slate-800 group-hover:text-sky-600 transition-colors">Ley 40 Horas: Turnos 5x2 y 6x1</span>
+<span class="font-bold text-slate-800 group-hover:text-forest-600 transition-colors">Ley 40 Horas: Turnos 5x2 y 6x1</span>
 <span class="block text-[11px] text-slate-400">Qué cambia en tu jornada laboral y descansos.</span>
 </a>
 </div>
@@ -1290,5 +1291,6 @@ body { overflow-x: hidden; }
         }
     </script>
 <script src="/js/ad_tracker.js?v=1.0.0"></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

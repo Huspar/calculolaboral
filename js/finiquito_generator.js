@@ -1113,11 +1113,11 @@
                         <button type="button" id="quick-pdf" class="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
                             <span class="material-icons text-xs">picture_as_pdf</span> Descargar Finiquito en PDF
                         </button>
-                        <button type="button" id="quick-word" class="px-3.5 py-2 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
+                        <button type="button" id="quick-word" class="px-3.5 py-2 bg-forest-700 hover:bg-forest-800 active:bg-forest-900 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
                             <span class="material-icons text-xs">description</span> Descargar Word (.docx)
                         </button>
                         <button type="button" id="quick-resend-email" class="px-3 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold shadow-sm cursor-pointer flex items-center gap-1.5 transition-colors">
-                            <span class="material-icons text-xs text-sky-600">email</span> ${customerEmail ? 'Reenviar a mi correo' : 'Enviar a mi correo'}
+                            <span class="material-icons text-xs text-forest-600">email</span> ${customerEmail ? 'Reenviar a mi correo' : 'Enviar a mi correo'}
                         </button>
                     </div>
                 </div>

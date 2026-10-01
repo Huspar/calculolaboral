@@ -9,7 +9,11 @@ colors:
   forest-deep: "#00261F"
   amber: "#FFB703"
   amber-hover: "#FFAA00"
-  canvas: "#FFFFFF"
+  canvas: "#F8FAF9"
+  forest-50: "#EEF6F3"
+  forest-100: "#D6EBE4"
+  forest-600: "#0F5E4F"
+  forest-700: "#064A3E"
   mint-bg: "#F4F7F6"
   card: "#FFFFFF"
   border: "#E5E7EB"
@@ -20,7 +24,7 @@ colors:
   risk: "#E11D48"
   risk-bg: "#FFF1F2"
   risk-border: "#FECDD3"
-  info: "#0EA5E9"
+  link: "#0F5E4F"
   on-forest: "#FFFFFF"
   on-amber: "#00382E"
 
@@ -54,14 +58,17 @@ Fuente de verdad en código: variables `--teal-*` en `index.html` y la paleta `b
 | Marca | `#00382E` (forest) | Logo, footer, botones primarios de marca, fondos de énfasis |
 | Marca hover / deep | `#002820` / `#00261F` | Estados hover y degradados oscuros |
 | Acento | `#FFB703` (amber) | Isotipo sobre fondo verde, detalles de CTA, resaltados puntuales |
-| Fondo | `#FFFFFF`, secciones `#F4F7F6` | Body y bandas alternas |
+| Fondo | `#F8FAF9` (`bg-canvas`) en el body de todas las páginas; tarjetas y bandas en `#FFFFFF` | Lienzo único del sitio |
+| Escala de marca | `forest-50` a `forest-950` en `tailwind.config.js` (800 = `#00382E`) | Tintes, enlaces, íconos y estados |
 | Texto | `#111827` / `#4B5563` | Principal / secundario |
 | Borde | `#E5E7EB` | Tarjetas e inputs |
 | Éxito / certificación DT | emerald-700 sobre emerald-50 | Confirmaciones, sellos de conformidad |
-| Riesgo | rose-600 sobre rose-50, borde rose-200 | Nulidad de despido, demandas, multas |
-| Info | sky-500 | Enlaces y acciones secundarias, no la marca |
+| Riesgo | rose-600 sobre rose-50, borde rose-200 | Nulidad de despido, demandas, multas. Nunca en un botón de compra o CTA |
+| Enlaces | `forest-600` (`#0F5E4F`) | Enlaces y acciones secundarias |
 
 Reglas:
+- Prohibidos celeste, azul, índigo, violeta, púrpura y naranja (`sky-*`, `blue-*`, `indigo-*`, `violet-*`, `purple-*`, `orange-*`). El equivalente es el mismo tono de `forest-*` (o `amber-*` para el naranja).
+- Sin degradados de color salvo el panel verde `.cl-forest-panel` (`#00382E` a `#00261F`).
 - No usar negro puro ni gris neutro: el texto va en `ink` y `muted`.
 - Todo botón con fondo de color lleva `!text-white` (o `#ffffff !important`). Excepción: ámbar con `on-amber`.
 - No colocar texto gris sobre fondos de color.
@@ -104,6 +111,19 @@ Reglas:
 
 **Botones de pago Flow.cl.** Mantener los tokens y precios vigentes ($12.990, $19.990, $29.990) sin alterar.
 
+## Capa compartida y movimiento
+
+Toda página enlaza, al final del `<head>`, `/assets/css/polish.css` y, antes de `</body>`, `/js/motion.js` (con `defer`). Ahí viven las superficies del navegador (selección ámbar, caret y foco verde, scrollbar, cifras tabulares) y el lenguaje de movimiento:
+
+- **Marcador del titular** (`.cl-mark`): trazo de resaltador ámbar que se dibuja una vez al cargar, como quien subraya el dato clave de un documento. Es el único momento de autor; no repetirlo en cada sección.
+- **Cifra que se asienta** (`.cl-settle`, automático): cuando un monto grande de resultado (26px o más) termina de cambiar, hace un fundido breve de 320ms para confirmar el nuevo valor.
+- **Acordeones**: el contenido de `details` en `main` aparece con un fundido de 260ms.
+- **Presión**: botones y pills bajan a `scale: 0.96` al presionar.
+- Curvas: `cubic-bezier(0.16, 1, 0.3, 1)` para entradas y `cubic-bezier(0.2, 0, 0, 1)` para estados. Sin rebote.
+- `prefers-reduced-motion: reduce` desactiva el marcador, el asentado y los acordeones animados.
+
+Después de cambiar clases, recompilar con `npm run build:css` y subir el `?v=` de `style.css` en las páginas, porque `/assets/` se sirve con caché inmutable.
+
 ## Do's and Don'ts
 
 Do:
@@ -128,5 +148,4 @@ Don't:
 ## Known Gaps
 
 - `AGENTS.md` contiene reglas desactualizadas que contradicen producción: la sección D describe un footer blanco con logo `bg-sky-500` y `ui_consistency.md` pide logo azul, pero 48 de 49 páginas usan footer y logo verde `#00382E`. Este archivo sigue la implementación real.
-- `tailwind.config.js` define `brand.forest` como `#064E3B`, distinto del `#00382E` usado en el HTML. Conviene unificarlo.
-- `primary` en Tailwind sigue en sky (`#0ea5e9`), pero el color de marca real es el verde bosque.
+- La barra de indicadores (`indicators-carousel`) que exige `AGENTS.md` no está en ninguna página; la reemplaza la barra superior con UF, UTM e IMM. Falta decidir cuál de las dos queda como norma.

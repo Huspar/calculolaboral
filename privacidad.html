@@ -78,7 +78,7 @@
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.6.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -137,12 +137,12 @@
             font-weight: 600;
         }
         .prose-content a {
-            color: #0ea5e9;
+            color: #0F5E4F;
             text-decoration: underline;
             font-weight: 500;
         }
         .prose-content a:hover {
-            color: #0284c7;
+            color: #0F5E4F;
         }
         .prose-content a.cta-btn,
         .prose-content a.bg-[#F8FAF9]0,
@@ -218,9 +218,9 @@
             flex-shrink: 0;
         }
         .rubro-imponible {
-            background-color: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #e0f2fe;
+            background-color: #EEF6F3;
+            color: #064A3E;
+            border: 1px solid #D6EBE4;
         }
         .rubro-no-imponible {
             background-color: #f0fdf4;
@@ -251,10 +251,10 @@
             transition: all 0.2s ease;
         }
         .timeline-item.active {
-            border-left-color: #0ea5e9;
+            border-left-color: #0F5E4F;
         }
         .timeline-item.active::before {
-            background-color: #0ea5e9;
+            background-color: #0F5E4F;
             left: -7px;
             top: 2px;
             width: 12px;
@@ -276,8 +276,8 @@
         .step-number {
             width: 2.25rem;
             height: 2.25rem;
-            background-color: #e0f2fe;
-            color: #0369a1;
+            background-color: #D6EBE4;
+            color: #064A3E;
             border-radius: 9999px;
             display: flex;
             align-items: center;
@@ -298,7 +298,7 @@
         .prose a.cta-btn, .prose a.cta-btn *,
         .prose a[class*="bg-[#F8FAF9]0"], .prose a[class*="bg-[#F8FAF9]0"] *,
         .prose a[class*="bg-emerald-600"], .prose a[class*="bg-emerald-600"] *,
-        .prose a[class*="bg-blue-600"], .prose a[class*="bg-blue-600"] * {
+        .prose a[class*="bg-forest-600"], .prose a[class*="bg-forest-600"] * {
             color: #ffffff !important;
             text-decoration: none !important;
         }
@@ -343,10 +343,10 @@
             z-index: 10;
         }
         .copy-btn:hover {
-            background: #0ea5e9;
+            background: #0F5E4F;
             color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 4px rgba(14,165,233,0.2);
+            border-color: #0F5E4F;
+            box-shadow: 0 2px 4px rgba(15, 94, 79,0.2);
         }
         .copy-btn.copied {
             background: #10b981 !important;
@@ -740,8 +740,9 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen flex flex-col font-sans selection:bg-[#F8FAF9]0/20 selection:text-slate-900">
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -963,28 +964,28 @@ body { overflow-x: hidden; }
             <p class="text-xs text-slate-500 font-medium">Actualizado: Marzo 2026 • República de Chile • Adecuación Anticipada a la Nueva Ley N° 21.719</p>
         </div>
 
-        <article class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 sm:p-10 mb-8 relative">
+        <article class="sm:bg-white sm:border sm:border-slate-200 sm:rounded-3xl sm:shadow-sm p-0 sm:p-10 mb-8 relative">
             <!-- 30-Second Summary Card -->
-            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-sky-950 mb-8 space-y-3">
-                <div class="flex items-center gap-2 font-bold text-sky-900 text-sm sm:text-base">
-                    <span class="material-icons text-sky-600 text-base">info</span> Resumen ejecutivo en 30 segundos
+            <div class="p-5 sm:p-6 rounded-2xl bg-[#F8FAF9] border border-slate-200 text-forest-950 mb-8 space-y-3">
+                <div class="flex items-center gap-2 font-bold text-forest-900 text-sm sm:text-base">
+                    <span class="material-icons text-forest-600 text-base">info</span> Resumen ejecutivo en 30 segundos
                 </div>
                 <ul class="space-y-2.5 text-xs sm:text-sm text-slate-700">
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Simuladores y calculadoras 100% Client-Side:</strong> Los cálculos de sueldos, indemnizaciones, finiquitos y horas extras se procesan exclusivamente en la memoria RAM de tu navegador. Jamás almacenamos ni transmitimos tus remuneraciones ni tu RUT personal.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Compra de Kits y Soluciones Pymes:</strong> Al adquirir kits documentales (Kit Laboral Pyme, Kit Ley Datos, Generador Finiquitos), tratamos tu nombre, RUT comercial, correo y teléfono exclusivamente para emitir tu boleta/factura y remitirte los descargables (base contractual, Art. 13 Ley 21.719).</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
                         <div><strong>Pasarela bancaria certificada:</strong> Los pagos se procesan en los servidores cifrados de Flow.cl bajo estándar internacional PCI-DSS. Cálculo Laboral nunca conoce ni almacena tus claves bancarias o números de tarjeta.</div>
                     </li>
                     <li class="flex items-start gap-2">
-                        <span class="material-icons text-sky-600 text-sm mt-0.5 shrink-0">check_circle</span>
-                        <div><strong>Derechos ARCOP garantizados:</strong> Puedes ejercer tus derechos de Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Bloqueo escribiendo a <a href="mailto:contacto@calculolaboral.cl" class="text-sky-600 font-semibold underline">contacto@calculolaboral.cl</a> con respuesta garantizada en un plazo legal máximo de 30 días corridos.</div>
+                        <span class="material-icons text-forest-600 text-sm mt-0.5 shrink-0">check_circle</span>
+                        <div><strong>Derechos ARCOP garantizados:</strong> Puedes ejercer tus derechos de Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Bloqueo escribiendo a <a href="mailto:contacto@calculolaboral.cl" class="text-forest-600 font-semibold underline">contacto@calculolaboral.cl</a> con respuesta garantizada en un plazo legal máximo de 30 días corridos.</div>
                     </li>
                 </ul>
             </div>
@@ -994,7 +995,7 @@ body { overflow-x: hidden; }
                 <!-- Section 1 -->
                 <section>
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">lock</span> 1. Principio rector: Privacidad por diseño en herramientas gratuitas
+                        <span class="material-icons text-forest-500 text-lg">lock</span> 1. Principio rector: Privacidad por diseño en herramientas gratuitas
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         En <strong>Cálculo Laboral Chile</strong> (<code>calculolaboral.cl</code>) creemos que la privacidad financiera y la información de la relación de trabajo son derechos fundamentales. Por ello, la arquitectura de todas nuestras calculadoras y simuladores laborales está construida bajo el principio técnico de <strong>Privacidad por Diseño y por Defecto (Privacy by Design)</strong>.
@@ -1007,7 +1008,7 @@ body { overflow-x: hidden; }
                 <!-- Section 2 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">shield</span> 2. Marco regulatorio: Ley N° 19.628 y Nueva Ley N° 21.719
+                        <span class="material-icons text-forest-500 text-lg">shield</span> 2. Marco regulatorio: Ley N° 19.628 y Nueva Ley N° 21.719
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Nuestras políticas y operaciones de tratamiento de datos personales se rigen estrictamente por la legislación vigente de la República de Chile:
@@ -1024,7 +1025,7 @@ body { overflow-x: hidden; }
                 <!-- Section 3 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">shopping_cart</span> 3. Tratamiento de datos en la compra de Kits y Herramientas Digitales
+                        <span class="material-icons text-forest-500 text-lg">shopping_cart</span> 3. Tratamiento de datos en la compra de Kits y Herramientas Digitales
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Cuando adquieres voluntariamente productos digitales para empresas en nuestra plataforma (tales como el <em>Kit de Blindaje Laboral Pyme</em>, el <em>Kit de Cumplimiento Ley de Datos N° 21.719</em> o el <em>Generador de Finiquito</em>), recopilamos y tratamos los siguientes datos:
@@ -1073,7 +1074,7 @@ body { overflow-x: hidden; }
                 <!-- Section 4 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">visibility_off</span> 4. Datos que NO recopilamos en el uso general
+                        <span class="material-icons text-forest-500 text-lg">visibility_off</span> 4. Datos que NO recopilamos en el uso general
                     </h2>
                     <ul class="space-y-2 text-sm sm:text-base text-slate-600 pl-2">
                         <li class="flex items-start gap-2">
@@ -1098,7 +1099,7 @@ body { overflow-x: hidden; }
                 <!-- Section 5 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">gavel</span> 5. Solicitud voluntaria de "Revisión Legal" y remisión profesional
+                        <span class="material-icons text-forest-500 text-lg">gavel</span> 5. Solicitud voluntaria de "Revisión Legal" y remisión profesional
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Si decides utilizar de manera voluntaria el formulario de <strong>"Revisión Legal de Despido o Finiquito"</strong>, nos facultas expresamente para comunicar los datos de contacto que ingreses (nombre, email, teléfono/WhatsApp y síntesis del conflicto laboral) a abogados laboralistas o estudios jurídicos aliados independientes en tu región.
@@ -1114,7 +1115,7 @@ body { overflow-x: hidden; }
                 <!-- Section 6 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">analytics</span> 6. Telemetría técnica anonimizada (Google Analytics 4)
+                        <span class="material-icons text-forest-500 text-lg">analytics</span> 6. Telemetría técnica anonimizada (Google Analytics 4)
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Para asegurar la estabilidad técnica del sitio, corregir enlaces caídos y comprender cuáles herramientas son de mayor utilidad pública, utilizamos <strong>Google Analytics 4 (GA4)</strong>.
@@ -1127,7 +1128,7 @@ body { overflow-x: hidden; }
                 <!-- Section 7 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">data_usage</span> 7. Almacenamiento local del navegador (Local Storage)
+                        <span class="material-icons text-forest-500 text-lg">data_usage</span> 7. Almacenamiento local del navegador (Local Storage)
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
                         El sitio web puede utilizar la tecnología estándar <code>localStorage</code> de tu navegador únicamente para guardar tus preferencias de visualización (por ejemplo, el historial temporal de tus últimos cálculos realizados o los indicadores económicos que prefieres consultar). Esta información reside únicamente en el disco o memoria de tu propio dispositivo y puedes eliminarla en cualquier instante borrando los datos de navegación o cookies de tu explorador.
@@ -1137,7 +1138,7 @@ body { overflow-x: hidden; }
                 <!-- Section 8 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">cookie</span> 8. Cookies y publicidad de terceros (Google AdSense)
+                        <span class="material-icons text-forest-500 text-lg">cookie</span> 8. Cookies y publicidad de terceros (Google AdSense)
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Para financiar el mantenimiento permanente y gratuito de nuestras calculadoras y servidores, Cálculo Laboral puede mostrar anuncios a través de la red de <strong>Google AdSense</strong> y socios acreditados:
@@ -1145,15 +1146,15 @@ body { overflow-x: hidden; }
                     <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base text-slate-600 mb-4">
                         <li>Google y sus proveedores asociados utilizan cookies para publicar anuncios basados en visitas anteriores de los usuarios a este u otros sitios web de internet.</li>
                         <li>Las cookies de publicidad permiten mostrar anuncios relevantes según tus intereses generales de navegación.</li>
-                        <li>Puedes <strong>inhabilitar la publicidad personalizada</strong> en cualquier momento ingresando a la <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:text-sky-700 font-semibold underline decoration-sky-300">Configuración de Anuncios de Google</a>.</li>
-                        <li>Asimismo, puedes gestionar el uso de cookies de proveedores externos en portales de autorregulación como <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:text-sky-700 font-semibold underline decoration-sky-300">www.aboutads.info</a> o <a href="https://www.youronlinechoices.eu" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:text-sky-700 font-semibold underline decoration-sky-300">www.youronlinechoices.eu</a>.</li>
+                        <li>Puedes <strong>inhabilitar la publicidad personalizada</strong> en cualquier momento ingresando a la <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-forest-600 hover:text-forest-700 font-semibold underline decoration-forest-300">Configuración de Anuncios de Google</a>.</li>
+                        <li>Asimismo, puedes gestionar el uso de cookies de proveedores externos en portales de autorregulación como <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" class="text-forest-600 hover:text-forest-700 font-semibold underline decoration-forest-300">www.aboutads.info</a> o <a href="https://www.youronlinechoices.eu" target="_blank" rel="noopener noreferrer" class="text-forest-600 hover:text-forest-700 font-semibold underline decoration-forest-300">www.youronlinechoices.eu</a>.</li>
                     </ul>
                 </section>
 
                 <!-- Section 9 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">admin_panel_settings</span> 9. Catálogo y ejercicio de Derechos ARCOP (Ley N° 21.719)
+                        <span class="material-icons text-forest-500 text-lg">admin_panel_settings</span> 9. Catálogo y ejercicio de Derechos ARCOP (Ley N° 21.719)
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
                         En conformidad con el Título II de la <strong>Ley N° 21.719</strong>, todo titular de datos personales respecto de quien mantengamos registros (compradores de kits, usuarios que solicitaron revisión legal o remitieron consultas de contacto) tiene la facultad de ejercer los siguientes derechos:
@@ -1161,42 +1162,42 @@ body { overflow-x: hidden; }
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
-                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-sky-500 text-base">visibility</span> Derecho de Acceso
+                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">visibility</span> Derecho de Acceso
                             </div>
                             <p class="text-xs text-slate-600 leading-relaxed">
                                 Solicitar confirmación de si tratamos tus datos personales, qué categorías tratamos, el origen, finalidades y los destinatarios a quienes se comunican.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
-                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-sky-500 text-base">edit</span> Derecho de Rectificación
+                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">edit</span> Derecho de Rectificación
                             </div>
                             <p class="text-xs text-slate-600 leading-relaxed">
                                 Solicitar la modificación o corrección de datos personales que resulten inexactos, desactualizados, equívocos o incompletos.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
-                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-sky-500 text-base">delete</span> Derecho de Cancelación / Supresión
+                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">delete</span> Derecho de Cancelación / Supresión
                             </div>
                             <p class="text-xs text-slate-600 leading-relaxed">
                                 Exigir la supresión o eliminación de tus datos cuando carezcan de fundamento legal, haya cesado su finalidad o hayas revocado tu consentimiento.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
-                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-sky-500 text-base">block</span> Derecho de Oposición
+                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">block</span> Derecho de Oposición
                             </div>
                             <p class="text-xs text-slate-600 leading-relaxed">
                                 Oponerte al tratamiento de tus datos para fines específicos cuando no exista una causa legal imperiosa que justifique su prosecución.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
-                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-sky-500 text-base">swap_horiz</span> Derecho de Portabilidad
+                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">swap_horiz</span> Derecho de Portabilidad
                             </div>
                             <p class="text-xs text-slate-600 leading-relaxed">
                                 Obtener una copia de los datos personales suministrados en un formato estructurado, genérico, legible por máquina e interoperable.
                             </p>
                         </div>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
-                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-sky-500 text-base">pause_circle</span> Derecho de Bloqueo
+                            <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5 mb-1"><span class="material-icons text-forest-500 text-base">pause_circle</span> Derecho de Bloqueo
                             </div>
                             <p class="text-xs text-slate-600 leading-relaxed">
                                 Solicitar la suspensión temporal de cualquier operación de tratamiento mientras se verifica la exactitud de los datos o se resuelve un reclamo.
@@ -1207,12 +1208,12 @@ body { overflow-x: hidden; }
                     <!-- Procedimiento de Ejercicio -->
                     <div class="p-5 rounded-2xl bg-[#F8FAF9]/60 border border-slate-200 space-y-3">
                         <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
-                            <span class="material-icons text-sky-600 text-base">send</span> Procedimiento formal y canal oficial de atención
+                            <span class="material-icons text-forest-600 text-base">send</span> Procedimiento formal y canal oficial de atención
                         </h3>
                         <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                             Para ejercer cualquiera de los Derechos ARCOP descritos, debes remitir una solicitud escrita a nuestro canal oficial de privacidad:
                         </p>
-                        <div class="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-sky-700 flex items-center justify-between">
+                        <div class="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-forest-700 flex items-center justify-between">
                             <span>contacto@calculolaboral.cl</span>
                             <span class="text-[11px] font-sans font-semibold text-slate-500">Asunto: "Ejercicio Derechos ARCOP - Ley 21.719"</span>
                         </div>
@@ -1227,7 +1228,7 @@ body { overflow-x: hidden; }
                 <!-- Section 10 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">security</span> 10. Seguridad de la información y medidas técnicas
+                        <span class="material-icons text-forest-500 text-lg">security</span> 10. Seguridad de la información y medidas técnicas
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         En cumplimiento del principio de seguridad consagrado en la Ley N° 21.719, Cálculo Laboral implementa medidas técnicas, operativas y organizativas idóneas para prevenir la pérdida, adulteración, acceso no autorizado o divulgación indebida de datos:
@@ -1243,7 +1244,7 @@ body { overflow-x: hidden; }
                 <!-- Section 11 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-sky-500 text-lg">sync_alt</span> 11. Modificaciones a esta Política y Vigencia
+                        <span class="material-icons text-forest-500 text-lg">sync_alt</span> 11. Modificaciones a esta Política y Vigencia
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Cálculo Laboral se reserva la facultad de actualizar periódicamente este documento para adaptarlo a nuevas funcionalidades del sitio, modificaciones legislativas o directrices emitidas por la Agencia de Protección de Datos Personales (APDP).
@@ -1381,7 +1382,7 @@ body { overflow-x: hidden; }
         <div class="bg-white rounded-2xl border border-slate-200 w-full max-w-md shadow-2xl p-6 relative overflow-hidden animate-fade-in">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3.5 mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-icons text-sky-500">history</span>
+                    <span class="material-icons text-forest-500">history</span>
                     <div class="text-base font-bold text-slate-900">Historial de Indicadores</div>
                 </div>
                 <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-500 hover:text-slate-700 hover:bg-slate-100 p-1 rounded-full transition-colors active:scale-95 duration-100">
@@ -1409,7 +1410,7 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> UTM (Últimos 12 meses)
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 border-b border-slate-100 pb-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-forest-500"></span> UTM (Últimos 12 meses)
                     </div>
                     <div class="max-h-[250px] overflow-y-auto pr-1">
                         <table class="w-full text-left">
@@ -1435,7 +1436,7 @@ body { overflow-x: hidden; }
     <!-- Load shared indicators script -->
     <script src="/js/constants.js?v=2.0.3"></script>
     <script src="/js/indicators.js?v=2.0.3"></script>
-    <script src="/js/pdf_generator.js?v=2.1.1"></script>
+    <script src="/js/pdf_generator.js?v=2.8.0"></script>
     <script>
         function enviarLead(fuenteCustom) {
             var nombre = document.getElementById('lead-nombre').value.trim();
@@ -1647,5 +1648,6 @@ body { overflow-x: hidden; }
         }
     </script>
     
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

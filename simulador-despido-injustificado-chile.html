@@ -129,7 +129,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=2.7.1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2.8.0">
     
     <!-- Exact TealHQ Design Tokens & Custom Interaction Rules -->
     <style>
@@ -149,7 +149,7 @@
 
         body {
             font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #FFFFFF;
+            background-color: #F8FAF9;
             color: var(--teal-text-dark);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -410,6 +410,7 @@
             margin-right: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="min-h-screen flex flex-col">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -751,7 +752,7 @@
                             <div class="p-3.5 border border-slate-200 rounded-2xl peer-checked:border-[#00382E] peer-checked:bg-emerald-50/40 peer-checked:text-slate-900 hover:bg-slate-50 transition-all">
                                 <div class="flex items-center justify-between">
                                     <span class="font-bold text-xs">Art. 159: Término de Faena</span>
-                                    <span class="text-[10px] font-extrabold px-2 py-0.5 bg-orange-100 text-orange-900 rounded-full">+50%</span>
+                                    <span class="text-[10px] font-extrabold px-2 py-0.5 bg-amber-100 text-amber-950 rounded-full">+50%</span>
                                 </div>
                                 <span class="block text-[11px] text-slate-500 mt-1">Fin de faena o plazo simulado; recargo del 50% y aviso previo.</span>
                             </div>
@@ -1081,7 +1082,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-3.5 font-bold text-slate-900">Art. 159 (Vencimiento, faena o mutuo acuerdo simulado)</td>
-                                    <td class="p-3.5 font-extrabold text-orange-700">+50% de recargo</td>
+                                    <td class="p-3.5 font-extrabold text-amber-800">+50% de recargo</td>
                                     <td class="p-3.5 text-slate-500">No aplica imputación</td>
                                     <td class="p-3.5 font-semibold text-rose-600">Se condena a pago de 1 mes de aviso</td>
                                 </tr>
@@ -1332,7 +1333,7 @@
     <!-- Scripts -->
     <script src="/js/constants.js?v=2.0.4"></script>
     <script src="/js/indicators.js?v=2.1.1"></script>
-    <script src="js/simulador_despido.js?v=1.0.0"></script>
+    <script src="js/simulador_despido.js?v=2.8.0"></script>
     <script>
         // Helper for quick chip salary selection
         function setSalary(amount) {
@@ -1357,5 +1358,6 @@
             totalSentenciaObserver.observe(targetNode, { childList: true, characterData: true, subtree: true });
         }
     </script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>
