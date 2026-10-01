@@ -108,7 +108,8 @@
                     size: A4 portrait;
                     margin: 10mm 12mm;
                 }
-                /* Una sola hoja: espaciado compacto solo en papel */
+                /* Una sola hoja: espaciado compacto y escala leve solo en papel */
+                .informe-a4-page { zoom: 0.9; }
                 .informe-a4-page .my-4 { margin-top: 7px !important; margin-bottom: 7px !important; }
                 .informe-a4-page .clr-head { margin-bottom: 8px !important; padding-bottom: 7px !important; }
                 .resumen-negociacion-grid { margin: 8px 0 !important; padding: 7px 10px !important; }
@@ -895,7 +896,8 @@
             <head>
                 <meta charset="UTF-8">
                 <title>Informe_Ejecutivo_Contratacion_${data.folio}</title>
-                <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
+                <base href="${window.location.origin}/">
+                <link rel="stylesheet" href="${window.location.origin}/assets/css/style.css?v=3.1.0">
                 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                 ${estilos}

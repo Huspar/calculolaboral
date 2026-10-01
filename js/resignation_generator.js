@@ -303,10 +303,10 @@
         const showFiniquito = elements.includeFiniquitoTerm ? elements.includeFiniquitoTerm.checked : true;
 
         return `
-            <div style="font-family: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif; color: #0f172a; font-size: 11pt; line-height: 1.65; max-width: 100%; margin: 0 auto;">
+            <div style="font-family: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif; color: #0f172a; font-size: 10.5pt; line-height: 1.5; max-width: 100%; margin: 0 auto;">
                 
                 <!-- Ciudad y Fecha alineada a la derecha -->
-                <div style="text-align: right; margin-bottom: 2rem; font-family: 'Geist', system-ui, sans-serif; font-size: 10pt; color: #334155;">
+                <div style="text-align: right; margin-bottom: 1.5rem; font-family: 'Geist', system-ui, sans-serif; font-size: 10pt; color: #334155;">
                     ${city}, ${notifyDate}
                 </div>
 
@@ -344,7 +344,7 @@
 
                 <!-- Despedida y Firma -->
                 <div style="margin-top: 1.75rem; margin-bottom: 0.5rem;">
-                    <p style="margin-bottom: 4.5rem;">Saluda atentamente a ustedes,</p>
+                    <p style="margin-bottom: 3.25rem;">Saluda atentamente a ustedes,</p>
                     
                     <div style="max-width: 300px; font-family: 'Geist', system-ui, sans-serif;">
                         <div style="border-top: 1px solid #334155; padding-top: 6px;">
@@ -356,7 +356,7 @@
                 </div>
 
                 <!-- Casilleros de Formalidades Legales: Recepción y Ministro de Fe -->
-                <div style="margin-top: 2.25rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: 'Geist', system-ui, sans-serif; font-size: 8.5pt; color: #475569;">
+                <div style="margin-top: 1.5rem; padding-top: 0.875rem; border-top: 1px dashed #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: 'Geist', system-ui, sans-serif; font-size: 8.5pt; color: #475569;">
                     <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #ffffff;">
                         <div style="font-weight: 700; color: #0f172a; text-transform: uppercase; font-size: 8pt; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
                             Constancia de Recepción Empleador

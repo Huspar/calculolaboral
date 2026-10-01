@@ -147,6 +147,13 @@ Toda página enlaza, al final del `<head>`, `/assets/css/polish.css` y, antes de
 - Nunca rojo/rose en botones de compra ni en cajas de venta cruzada: el rojo es solo para riesgo (multas, nulidad).
 - No modificar los enlaces ni tokens de Flow.cl al cambiar estilos.
 
+## Documentos imprimibles
+
+- **Informes** (finiquito, sueldo líquido, costo empresa): usan `js/print_brand.js` (`CLPrint.css()` y `CLPrint.header()`): logo oficial, Geist / Geist Mono, filetes finos y el total con trazo de resaltador ámbar. Meta: **una hoja A4**.
+- **Documentos legales** firmados por las partes (finiquito notarial, contrato, anexo 40 h, carta de renuncia): sin logo ni publicidad, solo un pie discreto con calculolaboral.cl. Cuerpo en serif (Newsreader / Times), partes de formulario en Geist. Meta: anexo y carta en **una hoja**, finiquito notarial en **dos**; el contrato es largo por naturaleza (4 hojas con el anexo Ley Karin).
+- Verificar el número de hojas imprimiendo a PDF antes de publicar cambios en estos generadores.
+- Imágenes para redes (`og:image`): PNG de 1200 × 630 en `assets/og/`, con logo, título corto y la ilustración de la guía. Por defecto: `assets/og/default.png`.
+
 Después de cambiar clases, recompilar con `npm run build:css` y subir el `?v=` de `style.css` en las páginas, porque `/assets/` se sirve con caché inmutable.
 
 ## Do's and Don'ts

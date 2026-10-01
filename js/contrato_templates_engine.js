@@ -1150,7 +1150,8 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
             <head>
                 <meta charset="UTF-8">
                 <title>Contrato_Trabajo_${res.folio}</title>
-                <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
+                <base href="${window.location.origin}/">
+                <link rel="stylesheet" href="${window.location.origin}/assets/css/style.css?v=3.1.0">
                 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                 <style>

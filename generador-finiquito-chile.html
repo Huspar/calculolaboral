@@ -21,13 +21,13 @@
     <meta property="og:description" content="Genera finiquitos de trabajo y cartas de despido para notaría en Chile (2026). Plantilla legal editable en Word y PDF con Ley Bustos y descuentos AFC.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://calculolaboral.cl/generador-finiquito-chile">
-    <meta property="og:image" content="https://calculolaboral.cl/assets/og-image.png">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
     <meta property="og:locale" content="es_CL">
     <meta property="og:site_name" content="Cálculo Laboral">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Generador Finiquito Notarial Chile 2026 (Word y PDF)">
     <meta name="twitter:description" content="Genera finiquitos de trabajo y cartas de despido para notaría en Chile (2026). Plantilla legal editable en Word y PDF con Ley Bustos y descuentos AFC.">
-    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og-image.png">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
     
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -414,6 +414,9 @@
                 box-shadow: none !important;
             }
             #notary-print-area table { page-break-inside: avoid; break-inside: avoid; }
+            /* Dos hojas: escala leve e interlineado compacto solo en papel */
+            #notary-print-area { zoom: 0.86; }
+            #notary-document-body p, #notary-document-body div { line-height: 1.5 !important; }
         }
 
 /* TealHQ Required Signature System Tokens & Components */
