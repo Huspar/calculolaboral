@@ -27,7 +27,11 @@ assets/downloads/
 
 
 tools/screenshots/
-*.png
+# Capturas sueltas en la raiz; las imagenes del sitio (assets/, iconos) si se versionan
+/*.png
+!/favicon-*.png
+!/apple-touch-icon.png
 
 # Claude Code local tooling (skills, hooks, agents)
 .claude/
+.mcp.json
