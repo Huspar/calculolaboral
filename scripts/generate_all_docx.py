@@ -1,10 +1,15 @@
 import os
+import sys
 import docx
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
+
+sys.path.insert(0, os.path.dirname(__file__))
+import shutil
+from restyle_kit_docx import restyle_path
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'api', 'assets', 'kit_datos_files')
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'assets')
@@ -48,11 +53,11 @@ def add_header_brand(doc, doc_number_text):
     p.paragraph_format.space_after = Pt(10)
     p.paragraph_format.space_before = Pt(0)
     
-    run_brand = p.add_run("CÁLCULO LABORAL CHILE  |  PLATAFORMA LEGALTECH\n")
+    run_brand = p.add_run("CálculoLaboral.cl\n")
     run_brand.font.name = 'Calibri'
     run_brand.font.size = Pt(8.5)
     run_brand.font.bold = True
-    run_brand.font.color.rgb = RGBColor(2, 132, 199)
+    run_brand.font.color.rgb = RGBColor(0, 56, 46)
 
     run_meta = p.add_run(f"Kit Ley N° 21.719 de Protección de Datos Personales  •  {doc_number_text}")
     run_meta.font.name = 'Calibri'
@@ -96,7 +101,7 @@ def add_heading(doc, text, space_before=10, space_after=3):
     run.font.name = 'Calibri'
     run.font.size = Pt(10.5)
     run.font.bold = True
-    run.font.color.rgb = RGBColor(2, 132, 199)
+    run.font.color.rgb = RGBColor(0, 56, 46)
     return p
 
 def add_body(doc, text, bold_prefix=None, space_after=5, line_spacing=1.15):
@@ -132,7 +137,7 @@ def add_bullet(doc, text, bold_prefix=None):
     run.font.size = Pt(9.5)
     run.font.color.rgb = RGBColor(30, 41, 59)
 
-def add_callout(doc, title, body, bg_hex="F0F9FF"):
+def add_callout(doc, title, body, bg_hex="EEF6F3"):
     table = doc.add_table(rows=1, cols=1)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
@@ -149,7 +154,7 @@ def add_callout(doc, title, body, bg_hex="F0F9FF"):
     r1.font.name = 'Calibri'
     r1.font.size = Pt(9.5)
     r1.font.bold = True
-    r1.font.color.rgb = RGBColor(2, 132, 199)
+    r1.font.color.rgb = RGBColor(0, 56, 46)
     
     r2 = p.add_run(body)
     r2.font.name = 'Calibri'
@@ -173,7 +178,7 @@ def add_signature_block(doc, left_title, left_sub, right_title, right_sub):
     c1 = table.cell(0, 0)
     p1 = c1.paragraphs[0]
     p1.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r1 = p1.add_run("_________________________________________\n")
+    r1 = p1.add_run("__________________________________\n")
     r1.font.color.rgb = RGBColor(100, 116, 139)
     r1_b = p1.add_run(left_title + "\n")
     r1_b.bold = True
@@ -185,7 +190,7 @@ def add_signature_block(doc, left_title, left_sub, right_title, right_sub):
     c2 = table.cell(0, 1)
     p2 = c2.paragraphs[0]
     p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r2 = p2.add_run("_________________________________________\n")
+    r2 = p2.add_run("__________________________________\n")
     r2.font.color.rgb = RGBColor(100, 116, 139)
     r2_b = p2.add_run(right_title + "\n")
     r2_b.bold = True
@@ -206,7 +211,7 @@ def build_doc_0():
     
     add_callout(doc, "PRINCIPIO BÁSICO PARA EL EMPRESARIO PYME (PARA NO ABOGADOS):",
                 "La Ley N° 21.719 y la Dirección del Trabajo (DT) no exigen que una pyme instale costosos servidores ni gaste $2.000.000 en estudios jurídicos. Lo que la ley exige formalmente es el Principio de Responsabilidad y Diligencia Debida: demostrar por escrito que cuidas los datos de tus dependientes y clientes, que los contratos contienen cláusulas de confidencialidad y que sabes qué hacer si ocurre un incidente.",
-                bg_hex="F0FDF4")
+                bg_hex="EEF6F3")
     
     add_heading(doc, "1. LA RUTA DE IMPLEMENTACIÓN EN 3 PASOS (15 MINUTOS)")
     add_body(doc, "Imprime el Documento 1 (Anexo Laboral). Complétalo con el nombre de tu empresa, RUT y los datos de cada trabajador. Fírmalo junto a la entrega de la liquidación de sueldo y archívalo en la carpeta de personal. Con esto cumples la Resolución Exenta N° 38 de 2024 de la Dirección del Trabajo sobre relojes control y blindas la confidencialidad de licencias médicas.", bold_prefix="PASO 1 (HOY MISMO - ÁREA LABORAL): ")
@@ -227,7 +232,7 @@ def build_doc_0():
     headers = ["Rubro / Sector", "¿Qué datos específicos maneja?", "Instrucción de aplicación con el Kit"]
     for i, h in enumerate(headers):
         c = table.cell(0, i)
-        set_cell_background(c, "0F172A")
+        set_cell_background(c, "00382E")
         set_cell_margins(c, top=80, bottom=80, left=90, right=90)
         p = c.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.LEFT
@@ -572,7 +577,7 @@ def build_doc_7():
 
     add_callout(doc, "DATOS DE LA EMPRESA EVALUADA:",
                 "Empresa: [NOMBRE DE LA EMPRESA / RAZÓN SOCIAL]\nRUT: [RUT EMPRESA]\nFecha de Evaluación: [FECHA ACTUAL]",
-                bg_hex="F0F9FF")
+                bg_hex="EEF6F3")
 
     add_heading(doc, "1. MARCO LEGAL Y REGLA GENERAL: ¿ES OBLIGATORIO EL DPO PARA LAS PYMES?")
     add_body(doc, "NO, COMO REGLA GENERAL. La Ley N° 21.719 introduce la figura del Delegado de Protección de Datos (DPO u Oficial de Privacidad) inspirada en el estándar internacional (RGPD Art. 37). Sin embargo, el legislador chileno consagró que para las empresas privadas la designación es VOLUNTARIA, salvo que concurra alguna de las causales taxativas de excepción legal que se evalúan a continuación.")
@@ -590,7 +595,7 @@ def build_doc_7():
     headers = ["Criterio de Evaluación Legal", "SÍ", "NO"]
     for i, h in enumerate(headers):
         c = table.cell(0, i)
-        set_cell_background(c, "0F172A")
+        set_cell_background(c, "00382E")
         set_cell_margins(c, top=80, bottom=80, left=90, right=90)
         p = c.paragraphs[0]
         if i > 0:
@@ -670,8 +675,9 @@ def main():
         print(f"Generated {out_path} ({os.path.getsize(out_path)} bytes)")
 
         # Also copy to assets/ for direct HTTP downloads
+        restyle_path(out_path)  # identidad vigente, Calibri en firmas y orden OOXML
         asset_path = os.path.join(ASSETS_DIR, filename)
-        doc.save(asset_path)
+        shutil.copy2(out_path, asset_path)
         print(f"Copied to {asset_path}")
 
 if __name__ == "__main__":

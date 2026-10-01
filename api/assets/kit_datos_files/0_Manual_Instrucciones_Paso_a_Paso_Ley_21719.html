@@ -4,16 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manual de Implementación Rápida - Kit Ley 21.719 Protección de Datos Personales Chile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         @page {
             size: A4 portrait;
             margin: 14mm 14mm 16mm 14mm;
-            @bottom-right {
-                content: counter(page);
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-                font-size: 8pt;
-                color: #64748b;
-            }
         }
 
         *, *::before, *::after {
@@ -21,7 +16,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Geist', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
             color: #0f172a;
             line-height: 1.45;
             font-size: 9.5pt;
@@ -46,7 +41,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #0284c7;
+            border-bottom: 2px solid #00382E;
             padding-bottom: 12px;
             margin-bottom: 18px;
         }
@@ -60,7 +55,7 @@
         .brand-logo {
             width: 32px;
             height: 32px;
-            background-color: #0ea5e9;
+            background-color: #00382E;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -78,7 +73,7 @@
         }
 
         .brand-text span {
-            color: #0284c7;
+            color: #00382E;
         }
 
         .doc-meta {
@@ -121,7 +116,7 @@
         h2.section-title {
             font-size: 11.5pt;
             font-weight: 800;
-            color: #0369a1;
+            color: #064A3E;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 5px;
             margin: 16px 0 10px 0;
@@ -147,9 +142,9 @@
         }
 
         .callout-blue {
-            background-color: #f0f9ff;
-            border-left: 4px solid #0284c7;
-            color: #0369a1;
+            background-color: #EEF6F3;
+            border-left: 4px solid #00382E;
+            color: #064A3E;
         }
 
         .callout-amber {
@@ -184,7 +179,7 @@
             display: inline-block;
             width: 22px;
             height: 22px;
-            background-color: #0284c7;
+            background-color: #00382E;
             color: #ffffff;
             border-radius: 50%;
             text-align: center;
@@ -216,7 +211,7 @@
         }
 
         table.custom-table th {
-            background-color: #0f172a;
+            background-color: #00382E;
             color: #ffffff;
             font-weight: 700;
             padding: 7px 8px;
@@ -245,7 +240,7 @@
             text-transform: uppercase;
         }
 
-        .tag-blue { background-color: #e0f2fe; color: #0369a1; }
+        .tag-blue { background-color: #D6EBE4; color: #064A3E; }
         .tag-green { background-color: #dcfce7; color: #15803d; }
         .tag-amber { background-color: #fef3c7; color: #b45309; }
         .tag-purple { background-color: #f3e8ff; color: #7e22ce; }
@@ -263,7 +258,7 @@
         .checkbox-box {
             width: 15px;
             height: 15px;
-            border: 1.5px solid #0284c7;
+            border: 1.5px solid #00382E;
             border-radius: 3px;
             flex-shrink: 0;
             margin-top: 2px;
@@ -295,7 +290,7 @@
 
         .doc-row-num {
             font-weight: 800;
-            color: #0284c7;
+            color: #00382E;
             font-size: 9pt;
             width: 55px;
             flex-shrink: 0;
@@ -337,6 +332,16 @@
             justify-content: space-between;
             align-items: center;
         }
+    
+        /* Logo oficial (AGENTS.md 1.A): caja verde bosque, isotipo ambar */
+        .brand-logo, .brand-logo-svg {
+            width: 32px; height: 32px; border-radius: 9px;
+            background-color: #00382E !important;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: none !important;
+        }
+        .brand-logo svg, .brand-logo-svg svg { width: 20px; height: 20px; color: #FFB703 !important; }
+        .brand-text span { color: #00382E !important; }
     </style>
 </head>
 <body>
@@ -346,7 +351,7 @@
     <!-- =================================================================== -->
     <div class="doc-header">
         <div class="brand-box">
-            <div class="brand-logo">CL</div>
+            <div class="brand-logo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path><path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path><path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path><path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path></svg></div>
             <div class="brand-text">Cálculo<span>Laboral</span></div>
         </div>
         <div class="doc-meta">
@@ -366,7 +371,7 @@
         La ley no exige que una pyme tenga sistemas informáticos millonarios. Lo que exige es <strong>Principio de Responsabilidad y Diligencia Debida</strong>: demostrar por escrito que cuidas los datos de tus trabajadores y clientes, que los contratos tienen cláusulas de protección y que sabes qué hacer si ocurre un incidente. Este kit contiene exactamente todo lo exigible.
     </div>
 
-    <h2 class="section-title">🚀 La Ruta de Implementación en 3 Pasos (15 Minutos)</h2>
+    <h2 class="section-title">La Ruta de Implementación en 3 Pasos (15 Minutos)</h2>
     
     <div class="steps-container">
         <div class="step-card">
@@ -392,12 +397,12 @@
         </div>
     </div>
 
-    <h2 class="section-title">📁 Radiografía de los 7 Instrumentos Incluidos</h2>
+    <h2 class="section-title">Radiografía de los 7 Instrumentos Incluidos</h2>
     <div class="docs-list">
         <div class="doc-row">
             <div class="doc-row-num">DOC 1</div>
             <div class="doc-row-body">
-                <strong>Anexo Laboral de Tratamiento de Datos (Formato Word .doc)</strong>
+                <strong>Anexo Laboral de Tratamiento de Datos (Formato Word .docx)</strong>
                 <p>Regula el tratamiento de datos del trabajador: sueldos, Previred, confidencialidad estricta de licencias médicas y la cláusula obligatoria de alternativa no biométrica para reloj control (Res. Ex. N° 38/2024 DT).</p>
             </div>
             <div class="doc-action">Cambiar: [EMPRESA], [RUT], [TRABAJADOR] y firmar</div>
@@ -406,7 +411,7 @@
         <div class="doc-row">
             <div class="doc-row-num">DOC 2</div>
             <div class="doc-row-body">
-                <strong>Política de Privacidad Web y Clientes (Formato Word .doc)</strong>
+                <strong>Política de Privacidad Web y Clientes (Formato Word .docx)</strong>
                 <p>Texto legal obligatorio para informar a clientes y visitantes sobre el uso de sus datos, formularios web, facturación y catálogo de derechos ARCOP con plazo legal de 30 días corridos.</p>
             </div>
             <div class="doc-action">Publicar en web o anexar a cotizaciones</div>
@@ -415,7 +420,7 @@
         <div class="doc-row">
             <div class="doc-row-num">DOC 3</div>
             <div class="doc-row-body">
-                <strong>Cláusula DPA con Proveedores y Encargados (Formato Word .doc)</strong>
+                <strong>Cláusula DPA con Proveedores y Encargados (Formato Word .docx)</strong>
                 <p>Addendum para que tu contador externo, proveedor de software o hosting asuman la responsabilidad de confidencialidad y eximan a tu pyme de responsabilidad solidaria si ellos sufren una fuga de datos.</p>
             </div>
             <div class="doc-action">Firmar con contador o proveedor de software</div>
@@ -433,7 +438,7 @@
         <div class="doc-row">
             <div class="doc-row-num">DOC 5</div>
             <div class="doc-row-body">
-                <strong>Protocolo de Notificación de Brechas de Seguridad 72h (Formato Word .doc)</strong>
+                <strong>Protocolo de Notificación de Brechas de Seguridad 72h (Formato Word .docx)</strong>
                 <p>Manual operativo paso a paso y formulario pre-redactado para comunicar a la Agencia APDP y a los afectados en caso de hackeo, pérdida de un computador o extravío de correos.</p>
             </div>
             <div class="doc-action">Mantener archivado para emergencias</div>
@@ -442,7 +447,7 @@
         <div class="doc-row">
             <div class="doc-row-num">DOC 6</div>
             <div class="doc-row-body">
-                <strong>Formulario Estándar de Solicitud de Derechos ARCOP (Formato Word .doc)</strong>
+                <strong>Formulario Estándar de Solicitud de Derechos ARCOP (Formato Word .docx)</strong>
                 <p>Plantilla con timbraje y acuse de recibo para que si un cliente o extrabajador pide borrar o rectificar sus datos, lo tramites de manera formal dentro del plazo legal de 30 días corridos.</p>
             </div>
             <div class="doc-action">Disponible en recepción o buzón comercial</div>
@@ -451,7 +456,7 @@
         <div class="doc-row">
             <div class="doc-row-num">DOC 7</div>
             <div class="doc-row-body">
-                <strong>Guía de Autodiagnóstico DPO / Delegado de Datos (Formato Word .doc)</strong>
+                <strong>Guía de Autodiagnóstico DPO / Delegado de Datos (Formato Word .docx)</strong>
                 <p>Cuestionario preventivo de 4 preguntas que evalúa y deja por escrito ante cualquier autoridad por qué tu empresa califica como MiPyme y no requiere contratar a un Delegado de Datos (DPO) externo.</p>
             </div>
             <div class="doc-action">Firmar por Gerente/Dueño y archivar</div>
@@ -465,7 +470,7 @@
 
     <div class="doc-header">
         <div class="brand-box">
-            <div class="brand-logo">CL</div>
+            <div class="brand-logo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path><path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path><path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path><path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path></svg></div>
             <div class="brand-text">Cálculo<span>Laboral</span></div>
         </div>
         <div class="doc-meta">
@@ -474,7 +479,7 @@
         </div>
     </div>
 
-    <h2 class="section-title">🏢 ¿Es Estandarizado o Cada Rubro Debe Llenar Cosas Distintas?</h2>
+    <h2 class="section-title">¿Es Estandarizado o Cada Rubro Debe Llenar Cosas Distintas?</h2>
     <p class="lead-text">
         <strong>Respuesta corta:</strong> La ley es <strong>idéntica</strong> para todos. El 85% de las actividades (sueldos, boletas, facturas, contratos y licencias médicas) es exactamente el mismo en cualquier empresa chilena. Solo si perteneces a un sector con particularidades operativas debes revisar las siguientes pautas:
     </p>
@@ -571,7 +576,7 @@
     </table>
 
     <div class="callout callout-blue">
-        <strong>💡 Consejo Práctico para Pymes Chilenas:</strong><br>
+        <strong>Consejo Práctico para Pymes Chilenas:</strong><br>
         Si tu empresa realiza más de una actividad (por ejemplo, tienes un taller mecánico que además vende repuestos por internet), simplemente aplicas ambas pautas: mantienes tus anexos laborales firmados y publicas la política en la página web. La estructura de nuestro kit ya viene diseñada para convivir armónicamente.
     </div>
 
@@ -582,7 +587,7 @@
 
     <div class="doc-header">
         <div class="brand-box">
-            <div class="brand-logo">CL</div>
+            <div class="brand-logo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path><path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path><path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path><path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path></svg></div>
             <div class="brand-text">Cálculo<span>Laboral</span></div>
         </div>
         <div class="doc-meta">
@@ -591,7 +596,7 @@
         </div>
     </div>
 
-    <h2 class="section-title">❓ Preguntas Frecuentes de Dueños y Gerentes de Pymes</h2>
+    <h2 class="section-title">Preguntas Frecuentes de Dueños y Gerentes de Pymes</h2>
 
     <div class="avoid-break">
         <h3 class="subsection-title">1. ¿Tengo que enviar estos documentos a la Dirección del Trabajo o a alguna entidad del gobierno?</h3>
@@ -621,7 +626,7 @@
         </p>
     </div>
 
-    <h2 class="section-title">✅ Lista de Cotejo de Cumplimiento Normativo (Imprimible)</h2>
+    <h2 class="section-title">Lista de Cotejo de Cumplimiento Normativo (Imprimible)</h2>
     <p style="font-size: 8.5pt; color: #475569; margin: 0 0 10px 0;">
         Marca con una cruz cada casilla a medida que completes la implementación en tu empresa:
     </p>

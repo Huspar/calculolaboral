@@ -4,16 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manual de Implementación Rápida - Kit de Blindaje Laboral Pyme Chile 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         @page {
             size: A4 portrait;
             margin: 12mm 13mm 14mm 13mm;
-            @bottom-right {
-                content: "Página " counter(page) " de 5";
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-                font-size: 7.5pt;
-                color: #64748b;
-            }
         }
 
         *, *::before, *::after {
@@ -21,7 +16,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Geist', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
             color: #0f172a;
             line-height: 1.4;
             font-size: 8.8pt;
@@ -46,7 +41,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #0284c7;
+            border-bottom: 2px solid #00382E;
             padding-bottom: 10px;
             margin-bottom: 14px;
         }
@@ -60,12 +55,12 @@
         .brand-logo-svg {
             width: 32px;
             height: 32px;
-            background-color: #0284c7;
+            background-color: #00382E;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+            box-shadow: 0 2px 4px rgba(0, 56, 46, 0.25);
         }
 
         .brand-logo-svg svg {
@@ -83,7 +78,7 @@
         }
 
         .brand-text span {
-            color: #0284c7;
+            color: #00382E;
         }
 
         .doc-meta {
@@ -126,7 +121,7 @@
         h2.section-title {
             font-size: 11pt;
             font-weight: 800;
-            color: #0369a1;
+            color: #064A3E;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 4px;
             margin: 14px 0 8px 0;
@@ -145,9 +140,9 @@
         }
 
         .callout-blue {
-            background-color: #f0f9ff;
-            border-left: 4px solid #0284c7;
-            color: #0369a1;
+            background-color: #EEF6F3;
+            border-left: 4px solid #00382E;
+            color: #064A3E;
         }
 
         .callout-amber {
@@ -195,7 +190,7 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            background-color: #0284c7;
+            background-color: #00382E;
             color: #ffffff;
             border-radius: 50%;
             text-align: center;
@@ -228,7 +223,7 @@
         }
 
         .step-badge-red { background: #fee2e2; color: #991b1b; }
-        .step-badge-blue { background: #e0f2fe; color: #075985; }
+        .step-badge-blue { background: #D6EBE4; color: #075985; }
         .step-badge-green { background: #dcfce7; color: #166534; }
 
         /* Tablas de Alta Precisión */
@@ -240,7 +235,7 @@
         }
 
         table.custom-table th {
-            background-color: #0f172a;
+            background-color: #00382E;
             color: #ffffff;
             font-weight: 700;
             text-align: left;
@@ -275,7 +270,7 @@
         .checkbox-box {
             width: 15px;
             height: 15px;
-            border: 1.5px solid #0284c7;
+            border: 1.5px solid #00382E;
             border-radius: 3px;
             flex-shrink: 0;
             margin-top: 1px;
@@ -292,7 +287,7 @@
         }
 
         .badge-comercio { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .badge-oficina { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-oficina { background: #D6EBE4; color: #064A3E; border: 1px solid #ADD6C9; }
         .badge-logistica { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
         .badge-todos { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
@@ -307,6 +302,16 @@
             justify-content: space-between;
             align-items: center;
         }
+    
+        /* Logo oficial (AGENTS.md 1.A): caja verde bosque, isotipo ambar */
+        .brand-logo, .brand-logo-svg {
+            width: 32px; height: 32px; border-radius: 9px;
+            background-color: #00382E !important;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: none !important;
+        }
+        .brand-logo svg, .brand-logo-svg svg { width: 20px; height: 20px; color: #FFB703 !important; }
+        .brand-text span { color: #00382E !important; }
     </style>
 </head>
 <body>
@@ -345,7 +350,7 @@
     </p>
 
     <div class="callout callout-emerald">
-        <strong>💡 Mensaje de Tranquilidad al Empleador:</strong> Al descomprimir el kit encontrarás 21 documentos organizados en 4 carpetas. <strong>No te asustes por la cantidad de archivos:</strong> tu empresa <u>NO</u> debe firmar todos los documentos. El kit es modular: toda pyme firma la base obligatoria (Ley Karin) y únicamente los 2 o 3 anexos específicos de su horario y rubro. En menos de 15 minutos sabrás exactamente cuáles son.
+        <strong>Mensaje de Tranquilidad al Empleador:</strong> Al descomprimir el kit encontrarás 21 documentos organizados en 4 carpetas. <strong>No te asustes por la cantidad de archivos:</strong> tu empresa <u>NO</u> debe firmar todos los documentos. El kit es modular: toda pyme firma la base obligatoria (Ley Karin) y únicamente los 2 o 3 anexos específicos de su horario y rubro. En menos de 15 minutos sabrás exactamente cuáles son.
     </div>
 
     <h2 class="section-title">
@@ -432,7 +437,7 @@
     </table>
 
     <div class="callout callout-amber" style="margin-top: 6px;">
-        <strong>⚠️ Regla de Oro Inspectiva:</strong> Ante una fiscalización presencial de la Inspección del Trabajo, el fiscalizador <u>NO</u> otorga plazos de gracia para contratos no escriturados o protocolos no difundidos. Mantener las carpetas firmadas evita el inicio de procesos sancionatorios.
+        <strong>Regla de Oro Inspectiva:</strong> Ante una fiscalización presencial de la Inspección del Trabajo, el fiscalizador <u>NO</u> otorga plazos de gracia para contratos no escriturados o protocolos no difundidos. Mantener las carpetas firmadas evita el inicio de procesos sancionatorios.
     </div>
 
     <div class="footer-note">
@@ -491,7 +496,7 @@
                 </td>
                 <td>
                     <strong>Docs 01, 02, 03, 04, 05 y 05B</strong><br>
-                    <span style="font-size: 7.5pt; color: #0284c7;">Carpeta 01: Base Ley Karin</span>
+                    <span style="font-size: 7.5pt; color: #00382E;">Carpeta 01: Base Ley Karin</span>
                 </td>
                 <td>
                     Obligatorio por ley. Imprime el <strong>Doc 01</strong> para consulta de la empresa, haz firmar el <strong>Doc 05</strong> a cada dependiente y realiza la charla de difusión registrando firmas en el <strong>Doc 05B</strong>.
@@ -561,7 +566,7 @@
     </table>
 
     <div class="callout callout-blue">
-        <strong>📌 Si eres Contador o Asesor Laboral:</strong> Este kit te permite blindar a toda tu cartera de clientes pyme. Solo debes abrir la carpeta del giro del cliente, reemplazar los datos de la razón social y emitir los anexos correspondientes, asegurando cumplimiento total ante la DT.
+        <strong>Si eres Contador o Asesor Laboral:</strong> Este kit te permite blindar a toda tu cartera de clientes pyme. Solo debes abrir la carpeta del giro del cliente, reemplazar los datos de la razón social y emitir los anexos correspondientes, asegurando cumplimiento total ante la DT.
     </div>
 
     <div class="footer-note">
@@ -605,7 +610,7 @@
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px;">
-            <strong style="color: #0284c7; font-size: 8pt; text-transform: uppercase;">Campos de la Empresa:</strong>
+            <strong style="color: #00382E; font-size: 8pt; text-transform: uppercase;">Campos de la Empresa:</strong>
             <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 7.8pt; color: #334155; line-height: 1.45;">
                 <li><code>[NOMBRE O RAZÓN SOCIAL]</code>: Nombre legal o fantasía.</li>
                 <li><code>[RUT EMPRESA]</code>: RUT tributario con guion y dígito.</li>
@@ -614,7 +619,7 @@
             </ul>
         </div>
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px;">
-            <strong style="color: #0284c7; font-size: 8pt; text-transform: uppercase;">Campos del Trabajador:</strong>
+            <strong style="color: #00382E; font-size: 8pt; text-transform: uppercase;">Campos del Trabajador:</strong>
             <ul style="margin: 4px 0 0 16px; padding: 0; font-size: 7.8pt; color: #334155; line-height: 1.45;">
                 <li><code>[NOMBRE COMPLETO TRABAJADOR]</code>: Según cédula.</li>
                 <li><code>[RUT TRABAJADOR]</code>: Cédula de identidad.</li>
@@ -705,7 +710,7 @@
 
     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">1</span>
+            <span style="background: #00382E; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">1</span>
             <strong style="font-size: 8.5pt; color: #0f172a;">Paso 1: Ingreso al Portal Mi DT</strong>
         </div>
         <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
@@ -715,7 +720,7 @@
 
     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">2</span>
+            <span style="background: #00382E; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">2</span>
             <strong style="font-size: 8.5pt; color: #0f172a;">Paso 2: Menú Registro Electrónico Laboral (REL)</strong>
         </div>
         <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
@@ -725,7 +730,7 @@
 
     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">3</span>
+            <span style="background: #00382E; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">3</span>
             <strong style="font-size: 8.5pt; color: #0f172a;">Paso 3: Carga del Anexo de Jornada 42 Horas</strong>
         </div>
         <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
@@ -735,7 +740,7 @@
 
     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span style="background: #0284c7; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">4</span>
+            <span style="background: #00382E; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7.5pt; font-weight: bold;">4</span>
             <strong style="font-size: 8.5pt; color: #0f172a;">Paso 4: Carga del Protocolo Ley Karin en Reglamento Interno</strong>
         </div>
         <p style="margin: 0 0 0 26px; font-size: 7.8pt; color: #475569; line-height: 1.35;">
@@ -888,13 +893,13 @@
         </strong>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 8pt; color: #334155;">
             <div>
-                Empresa / Razón Social: _____________________________________<br>
-                RUT Empresa: _______________________________________________<br>
+                Empresa / Razón Social: __________________________<br>
+                RUT Empresa: __________________________<br>
                 Dotación Total de Dependientes: _______ trabajadores
             </div>
             <div>
-                Auditado por: _______________________________________________<br>
-                Cargo o Función: ____________________________________________<br>
+                Auditado por: __________________________<br>
+                Cargo o Función: __________________________<br>
                 Fecha de Auditoría: _____ / _____ / 2026 &nbsp;&nbsp; Firma: _____________
             </div>
         </div>
