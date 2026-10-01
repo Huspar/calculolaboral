@@ -28,3 +28,6 @@ assets/downloads/
 
 tools/screenshots/
 *.png
+
+# Claude Code local tooling (skills, hooks, agents)
+.claude/

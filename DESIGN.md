@@ -1,0 +1,132 @@
+---
+version: alpha
+name: Calculo-Laboral
+description: Sistema de diseño de calculolaboral.cl, herramientas laborales para Chile. Fondo blanco limpio, verde bosque profundo como color de marca, ámbar dorado como acento cálido, y cifras financieras en Geist Mono. Tono sobrio, legal y confiable, no corporativo frío ni decorativo.
+
+colors:
+  forest: "#00382E"
+  forest-hover: "#002820"
+  forest-deep: "#00261F"
+  amber: "#FFB703"
+  amber-hover: "#FFAA00"
+  canvas: "#FFFFFF"
+  mint-bg: "#F4F7F6"
+  card: "#FFFFFF"
+  border: "#E5E7EB"
+  ink: "#111827"
+  muted: "#4B5563"
+  emerald-success: "#047857"
+  emerald-success-bg: "#ECFDF5"
+  risk: "#E11D48"
+  risk-bg: "#FFF1F2"
+  risk-border: "#FECDD3"
+  info: "#0EA5E9"
+  on-forest: "#FFFFFF"
+  on-amber: "#00382E"
+
+typography:
+  sans: "Geist, Inter, system-ui, sans-serif"
+  mono: "Geist Mono, ui-monospace, monospace"
+  weights: [400, 500, 600, 700, 800]
+
+rounded:
+  card: 16px
+  control: 12px
+  logo: 12px
+  footer-top: 40px
+
+spacing:
+  container: 1200px
+  gutter: 24px
+  header-height: 64px
+---
+
+## Overview
+
+CalculoLaboral es una suite de calculadoras y guías laborales chilenas. El diseño debe transmitir **precisión legal y confianza**: mucho blanco, jerarquía clara, cifras legibles. El verde bosque es la marca; el ámbar es un acento puntual, no un color de fondo.
+
+Fuente de verdad en código: variables `--teal-*` en `index.html` y la paleta `brand` de `tailwind.config.js`. Las reglas operativas obligatorias (header, footer, indicadores, checklist) están en `AGENTS.md`; este archivo describe el sistema, `AGENTS.md` lo hace cumplir.
+
+## Colors
+
+| Rol | Valor | Uso |
+|---|---|---|
+| Marca | `#00382E` (forest) | Logo, footer, botones primarios de marca, fondos de énfasis |
+| Marca hover / deep | `#002820` / `#00261F` | Estados hover y degradados oscuros |
+| Acento | `#FFB703` (amber) | Isotipo sobre fondo verde, detalles de CTA, resaltados puntuales |
+| Fondo | `#FFFFFF`, secciones `#F4F7F6` | Body y bandas alternas |
+| Texto | `#111827` / `#4B5563` | Principal / secundario |
+| Borde | `#E5E7EB` | Tarjetas e inputs |
+| Éxito / certificación DT | emerald-700 sobre emerald-50 | Confirmaciones, sellos de conformidad |
+| Riesgo | rose-600 sobre rose-50, borde rose-200 | Nulidad de despido, demandas, multas |
+| Info | sky-500 | Enlaces y acciones secundarias, no la marca |
+
+Reglas:
+- No usar negro puro ni gris neutro: el texto va en `ink` y `muted`.
+- Todo botón con fondo de color lleva `!text-white` (o `#ffffff !important`). Excepción: ámbar con `on-amber`.
+- No colocar texto gris sobre fondos de color.
+- El ámbar nunca cubre grandes superficies.
+
+## Typography
+
+- **Geist** para títulos, cuerpo y botones; Inter como respaldo.
+- **Geist Mono** obligatoria para montos en CLP, porcentajes, fechas y cifras de cálculo, para alinear columnas y facilitar la lectura financiera.
+- Títulos en peso 700 a 800 con `tracking-tight`; cuerpo en 400 a 500.
+- Rótulos pequeños (indicadores): `text-[9px]` a `text-[9.5px]`, `font-semibold`, mayúsculas, `tracking-wider`, `whitespace-nowrap`.
+- No usar tipografías serif ni decorativas.
+
+## Layout
+
+- Contenedor `max-w-[1200px] mx-auto px-6`. Footer interno hasta 1240px.
+- Header sticky de 64px: `bg-white border-b border-slate-200 shadow-sm`, clase `no-print`.
+- Barra de indicadores económicos bajo el header en toda calculadora (ver `AGENTS.md` sección C): carrusel de 1 fila en móvil, 3 columnas en tablet, 5 en escritorio.
+- Verificar siempre en 1200px y 390px.
+
+## Shapes
+
+- Tarjetas `rounded-2xl`, controles `rounded-xl`, logo `rounded-xl` de 36px (`w-9 h-9`) en header.
+- Footer con esquinas superiores curvas de 40px.
+- Sombras suaves (`shadow-sm`); evitar sombras pesadas.
+
+## Components
+
+**Logo.** Isotipo SVG de balanza con monograma C y L (nunca el texto "CL").
+- Header: contenedor `#00382E`, isotipo `#FFB703`, "Cálculo" en `text-slate-900` y "Laboral" en `#00382E`.
+- Footer: contenedor `#FFB703`, isotipo `#00382E`, "Cálculo" en blanco y "Laboral" en `#FFB703`.
+
+**Footer.** Clase `.teal-footer-curve`: fondo `#00382E`, texto blanco, esquinas superiores de 40px, 4 columnas (Marca, Calculadoras, Guías, Para Empresas) y barra legal inferior.
+
+**Tarjetas.** `bg-white border border-slate-200 rounded-2xl`; las de resultado destacan con fondo verde `forest` o degradado `#00261F` a `#00382E`.
+
+**Indicadores.** Micro-tarjetas `indicator-card` con borde `slate-200/90`, `rounded-xl`, rótulo no-wrap.
+
+**Alertas.** Riesgo en rose, éxito o certificación DT en emerald. Siempre con icono y texto, nunca solo color.
+
+**Botones de pago Flow.cl.** Mantener los tokens y precios vigentes ($12.990, $19.990, $29.990) sin alterar.
+
+## Do's and Don'ts
+
+Do:
+- Mantener header, footer y logo idénticos a `index.html` en todas las páginas.
+- Usar Geist Mono en toda cifra de cálculo.
+- Dar contraste AA en texto sobre verde o ámbar.
+- Añadir cada página nueva a `sitemap.xml`.
+
+Don't:
+- No usar una paleta crema, coral ni tipografías serif.
+- No usar degradados morado a azul, Inter como única tipografía ni tarjetas anidadas en tarjetas.
+- No usar iconos en cuadrado redondeado sobre cada título.
+- No cambiar el logo ni inventar variantes.
+- No usar easing con rebote.
+
+## Responsive Behavior
+
+- Móvil primero; menú móvil con `<details class="md:hidden">` igual al de `index.html`.
+- Indicadores: carrusel con `scroll-snap` bajo 640px.
+- Objetivos táctiles de al menos 44px; sin scroll horizontal de página.
+
+## Known Gaps
+
+- `AGENTS.md` contiene reglas desactualizadas que contradicen producción: la sección D describe un footer blanco con logo `bg-sky-500` y `ui_consistency.md` pide logo azul, pero 48 de 49 páginas usan footer y logo verde `#00382E`. Este archivo sigue la implementación real.
+- `tailwind.config.js` define `brand.forest` como `#064E3B`, distinto del `#00382E` usado en el HTML. Conviene unificarlo.
+- `primary` en Tailwind sigue en sky (`#0ea5e9`), pero el color de marca real es el verde bosque.
