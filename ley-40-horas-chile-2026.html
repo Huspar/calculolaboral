@@ -781,6 +781,7 @@ body { overflow-x: hidden; }
         }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.4.0">
+    <link rel="stylesheet" href="/assets/css/valor-hora.css?v=1.0.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -1030,6 +1031,49 @@ body { overflow-x: hidden; }
                         Con la entrada en vigencia de la segunda etapa de la <strong>Ley 21.561 (42 horas semanales)</strong>, el valor por hora subió automáticamente. La legislación laboral prohíbe expresamente cualquier rebaja de sueldos por efecto de la reducción de jornada.
                     </p>
 </div>
+<!-- Calculadora: ¿Cuánto vale tu hora? (js/valor_hora.js) -->
+<section class="cl-vh not-prose" data-valor-hora aria-labelledby="vh-titulo">
+<div class="cl-vh__grid">
+<div class="cl-vh__in">
+<h3 class="cl-vh__titulo" id="vh-titulo">¿Cuánto vale tu hora? Calcúlalo con tu sueldo</h3>
+<p class="cl-vh__sub">La tabla de arriba usa el sueldo mínimo. Escribe el tuyo para ver tu valor hora real.</p>
+<div>
+<label class="cl-vh__lbl" for="vh-sueldo">Sueldo base mensual</label>
+<div class="cl-vh__money"><span>$</span><input id="vh-sueldo" name="vh-sueldo" inputmode="numeric" autocomplete="off" value="553.553"></div>
+</div>
+<div>
+<span class="cl-vh__lbl" id="vh-jornada-lbl">Jornada semanal</span>
+<div class="cl-vh__jornadas" role="group" aria-labelledby="vh-jornada-lbl">
+<button type="button" data-jornada="42" aria-pressed="true">42 h <small>2026</small></button>
+<button type="button" data-jornada="44" aria-pressed="false">44 h <small>anterior</small></button>
+<button type="button" data-jornada="40" aria-pressed="false">40 h <small>2028</small></button>
+<button type="button" data-jornada="30" aria-pressed="false">30 h</button>
+<button type="button" data-jornada="20" aria-pressed="false">20 h</button>
+</div>
+</div>
+<div>
+<label class="cl-vh__lbl" for="vh-extras">Horas extra en el mes (opcional)</label>
+<input class="cl-vh__num" id="vh-extras" name="vh-extras" type="number" min="0" max="200" step="0.5" inputmode="decimal" placeholder="0">
+</div>
+</div>
+<div class="cl-vh__out" aria-live="polite">
+<small>Tu valor hora ordinaria (jornada de <span data-vh="jornada">42</span> h)</small>
+<div class="cl-vh__big" data-vh="hora">$3.075</div>
+<p class="cl-vh__nota">Calculado según la fórmula de la Dirección del Trabajo.</p>
+<dl class="cl-vh__filas">
+<div class="cl-vh__fila"><dt>Hora extra (recargo 50%)</dt><dd data-vh="extra">$4.613</dd></div>
+<div class="cl-vh__fila"><dt>Día de trabajo</dt><dd data-vh="dia">$18.452</dd></div>
+<div class="cl-vh__fila cl-vh__fila--total" data-vh="total-fila" hidden><dt>Pago por <span data-vh="extras-n">0</span> horas extra</dt><dd data-vh="total">—</dd></div>
+</dl>
+<div class="cl-vh__links">
+<a href="calculadora-horas-extras">Calcular horas extra al 100%</a>
+<a href="sueldo_liquido">Ver mi sueldo líquido</a>
+<a href="calculadora-sueldo-part-time">Sueldo part-time</a>
+</div>
+</div>
+</div>
+<p class="cl-vh__formula">Fórmula: <code>(sueldo ÷ 30) × 28 ÷ (jornada × 4)</code>. Hora extra = valor hora × 1,5.</p>
+</section>
 <!-- Callout Tool: Generador de Anexo 40 Horas -->
 <div class="my-6 p-5 rounded-2xl bg-gradient-to-r from-forest-50 to-amber-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
 <div class="flex items-start gap-3">
@@ -1724,5 +1768,6 @@ body { overflow-x: hidden; }
         }
     </script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
+    <script src="/js/valor_hora.js?v=1.0.0" defer></script>
 </body>
 </html>

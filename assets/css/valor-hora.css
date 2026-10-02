@@ -1,0 +1,86 @@
+/* CalculoLaboral · calculadora "¿Cuánto vale tu hora?" (js/valor_hora.js) */
+.cl-vh {
+    --vh-forest: #00382E;
+    --vh-forest-600: #0F5E4F;
+    --vh-forest-50: #EEF6F3;
+    --vh-amber: #FFB703;
+    --vh-ink: #111827;
+    --vh-muted: #4B5563;
+    --vh-rule: #E5E7EB;
+    margin: 28px 0;
+    border: 1px solid var(--vh-rule);
+    border-radius: 24px;
+    background: #fff;
+    overflow: hidden;
+    font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--vh-ink);
+    box-shadow: 0 1px 2px rgba(0, 56, 46, .04), 0 18px 40px -30px rgba(0, 56, 46, .35);
+}
+.cl-vh__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.cl-vh__in { padding: 26px 28px; display: grid; gap: 18px; align-content: start; }
+.cl-vh .cl-vh__titulo { margin: 0; font-size: 20px; line-height: 1.25; letter-spacing: -.02em; font-weight: 800; color: var(--vh-forest); }
+.cl-vh__sub { margin: -10px 0 0; font-size: 14px; color: var(--vh-muted); }
+.cl-vh__lbl { display: block; margin-bottom: 7px; font-size: 12.5px; font-weight: 600; color: #374151; }
+.cl-vh__money { display: flex; align-items: center; gap: 8px; border: 1px solid var(--vh-rule); border-radius: 12px; padding: 0 14px; min-height: 50px; transition: border-color .2s, box-shadow .2s; }
+.cl-vh__money:focus-within { border-color: var(--vh-forest-600); box-shadow: 0 0 0 3px var(--vh-forest-50); }
+.cl-vh__money span { font-family: 'Geist Mono', ui-monospace, monospace; color: #6B7280; }
+.cl-vh__money input,
+.cl-vh__num {
+    border: 0;
+    background: transparent;
+    width: 100%;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--vh-ink);
+    outline: none;
+}
+.cl-vh__num { border: 1px solid var(--vh-rule); border-radius: 12px; min-height: 50px; padding: 0 14px; font-size: 17px; transition: border-color .2s, box-shadow .2s; }
+.cl-vh__num:focus { border-color: var(--vh-forest-600); box-shadow: 0 0 0 3px var(--vh-forest-50); }
+.cl-vh__jornadas { display: flex; flex-wrap: wrap; gap: 6px; }
+.cl-vh__jornadas button {
+    min-height: 40px;
+    padding: 0 13px;
+    border: 1px solid var(--vh-rule);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s, color .15s;
+}
+.cl-vh__jornadas button small { font-weight: 500; color: #6B7280; margin-left: 3px; }
+.cl-vh__jornadas button:hover { border-color: var(--vh-forest-600); }
+.cl-vh__jornadas button[aria-pressed="true"] { background: var(--vh-forest); border-color: var(--vh-forest); color: #fff; }
+.cl-vh__jornadas button[aria-pressed="true"] small { color: #A9C4BC; }
+.cl-vh :focus-visible { outline: 2px solid var(--vh-forest-600); outline-offset: 2px; }
+
+.cl-vh__out { background: #F4F7F6; border-left: 1px solid var(--vh-rule); padding: 26px 28px; display: flex; flex-direction: column; }
+.cl-vh__out > small { font-size: 13px; color: var(--vh-muted); }
+.cl-vh__big { margin: 4px 0 2px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: clamp(34px, 4vw, 44px); font-weight: 600; letter-spacing: -.03em; line-height: 1.05; color: var(--vh-forest); font-variant-numeric: tabular-nums; }
+.cl-vh__nota { margin: 0 0 18px; font-size: 12.5px; color: #6B7280; }
+.cl-vh__filas { margin: 0; padding: 0; display: grid; gap: 10px; }
+.cl-vh__fila { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid #E2E8E5; font-size: 14.5px; }
+.cl-vh__fila[hidden] { display: none; }
+.cl-vh__fila dt { color: #374151; }
+.cl-vh__fila dd { margin: 0; font-family: 'Geist Mono', ui-monospace, monospace; font-weight: 600; white-space: nowrap; }
+.cl-vh__fila--total dd { color: var(--vh-forest); }
+.cl-vh__links { margin-top: auto; padding-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; }
+.cl-vh .cl-vh__links a { color: var(--vh-forest); font-weight: 650; text-decoration: none; border-bottom: 1.5px solid var(--vh-amber); }
+.cl-vh .cl-vh__links a:hover { border-bottom-color: var(--vh-forest); }
+.cl-vh__formula { margin: 0; padding: 12px 28px; border-top: 1px solid var(--vh-rule); font-size: 12.5px; color: #6B7280; }
+.cl-vh__formula code { font-family: 'Geist Mono', ui-monospace, monospace; color: #374151; background: none; padding: 0; }
+
+@media (max-width: 760px) {
+    .cl-vh__grid { grid-template-columns: 1fr; }
+    .cl-vh__out { border-left: 0; border-top: 1px solid var(--vh-rule); }
+    .cl-vh__in, .cl-vh__out { padding: 22px 18px; }
+    .cl-vh__formula { padding: 12px 18px; }
+    .cl-vh__money input, .cl-vh__num { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cl-vh__jornadas button, .cl-vh__money, .cl-vh__num { transition: none; }
+}
+@media print { .cl-vh__links { display: none; } }
