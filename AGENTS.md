@@ -86,7 +86,7 @@ El logotipo oficial está compuesto por un emblema de alto contraste con el **is
     * `generador-finiquito-chile` (Generador Finiquito Word/PDF)
     * `calculadora-horas-extras` (Horas Extras)
     * `calculadora-sueldo-part-time` (Sueldo Part-Time)
-    * `calculadora-vacaciones-proporcionales` (Vacaciones Proporcionales)
+    * `calculadora-vacaciones` (Vacaciones Proporcionales)
     * `calculadora-despido-articulo-160` (Despido Art. 160)
   * Dropdown *Guías*
   * Botón *Para Empleadores* (`bg-slate-100/90 text-slate-700`)
@@ -207,7 +207,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
                             <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
                             <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
                             <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#FFB703] transition-colors">Horas Extras 42h</a></li>
-                            <li><a href="calculadora-vacaciones-proporcionales" class="text-white/80 hover:text-[#FFB703] transition-colors">Vacaciones Proporcionales</a></li>
+                            <li><a href="calculadora-vacaciones" class="text-white/80 hover:text-[#FFB703] transition-colors">Vacaciones Proporcionales</a></li>
                             <li><a href="calculadora-sueldo-part-time" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Part-Time</a></li>
                         </ul>
                     </div>

@@ -1,0 +1,25 @@
+# Archivos internos que no se publican en calculolaboral.cl
+# (siguen en el repositorio; Vercel no los despliega)
+
+# Documentación y notas de trabajo
+*.md
+docs/
+
+# Herramientas de desarrollo
+scripts/
+tools/
+src/
+*.py
+_template.html
+skills-lock.json
+tailwind.config.js
+package-lock.json
+
+# Configuración de agentes y editores
+.agents/
+.claude/
+.impeccable/
+.mcp.json
+
+# Maquetas locales
+propuestas/

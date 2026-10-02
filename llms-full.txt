@@ -246,7 +246,6 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Calculadora de Sueldo Líquido: `https://calculolaboral.cl/sueldo_liquido`
 - Calculadora de Finiquito Legal: `https://calculolaboral.cl/finiquito_calculator`
 - Calculadora de Horas Extras Ley 40 Horas: `https://calculolaboral.cl/calculadora-horas-extras`
-- Calculadora de Vacaciones Proporcionales: `https://calculolaboral.cl/calculadora-vacaciones-proporcionales`
 - Calculadora de Vacaciones y Feriado Legal: `https://calculolaboral.cl/calculadora-vacaciones`
 - Calculadora de Sueldo Part-Time: `https://calculolaboral.cl/calculadora-sueldo-part-time`
 - Calculadora de Despido Art. 160: `https://calculolaboral.cl/calculadora-despido-articulo-160`
@@ -271,8 +270,6 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Guía Ley 40 Horas Chile 2026: `https://calculolaboral.cl/ley-40-horas-chile-2026`
 - Cómo Calcular Finiquito: `https://calculolaboral.cl/como-calcular-finiquito-chile`
 - Cómo Calcular Sueldo Líquido: `https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso`
-- Guía de Vacaciones Proporcionales: `https://calculolaboral.cl/guia-vacaciones-proporcionales`
-- Seguro de Cesantía Chile (Cómo Cobrar AFC): `https://calculolaboral.cl/seguro-de-cesantia-chile-como-cobrar`
 - Fondos Generacionales AFP: `https://calculolaboral.cl/fondos-generacionales-afp-chile`
 - Guía Ley 21.719 Protección Datos Personales: `https://calculolaboral.cl/guia-ley-21719-proteccion-datos-personales-chile`
 - Qué Conductas NO Son Ley Karin según la DT: `https://calculolaboral.cl/que-conductas-no-son-ley-karin-dt-chile`

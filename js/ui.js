@@ -850,7 +850,7 @@ function updateCalculations() {
                 text.textContent = 'Al completar un nuevo año laboral, las vacaciones dejan de ser proporcionales y pasan a considerarse vacaciones del período siguiente. Por eso este ítem puede desaparecer del cálculo. ';
 
                 const guideLink = document.createElement('a');
-                guideLink.href = 'guia-vacaciones-proporcionales.html';
+                guideLink.href = 'calculadora-vacaciones';
                 guideLink.className = 'underline font-bold text-amber-900 hover:text-amber-950 transition-colors ml-1';
                 guideLink.textContent = 'Ver guía completa';
                 text.appendChild(guideLink);
