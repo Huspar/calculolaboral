@@ -17,7 +17,9 @@ module.exports = async (req, res) => {
     try {
         const pay = await paymentStatus(token);
         if (pay.paid) {
-            return redirect(res, `/compra-exitosa?${downloadQuery(pay.product, pay.order)}`);
+            // Kits: pagina de descarga. Generadores: vuelven a su pagina con el desbloqueo firmado.
+            const dest = PRODUCTS[pay.product].unlock ? PRODUCTS[pay.product].page : '/compra-exitosa';
+            return redirect(res, `${dest}?${downloadQuery(pay.product, pay.order)}`);
         }
         if (pay.pending) {
             return redirect(res, `/compra-exitosa?estado=pendiente&p=${pay.product || ''}`);

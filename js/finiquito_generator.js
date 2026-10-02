@@ -16,7 +16,9 @@
 
     // Configuración de Pasarela de Pago Oficial ($12.990 CLP)
     // Botón oficial Flow.cl (Webpay Plus, Servipag, Mach, Tarjetas de Débito y Crédito)
-    const PAYMENT_GATEWAY_URL = 'https://www.flow.cl/btn.php?token=w2204f3d0b4ae200fcd0b91d5e497fc703716a16';
+    // El pago se crea en el servidor (/api/checkout, producto 'finiquito') y Flow lo confirma;
+    // el desbloqueo llega firmado en la URL de retorno (ver js/checkout_consent.js).
+    const unlockApi = () => window.CLCheckout || null;
 
     // Helper: Formateador de RUT chileno (12.345.678-K)
     function formatRut(value) {
@@ -399,20 +401,16 @@
             fechaPagoEl.value = `${yyyy}-${mm}-${dd}`;
         }
 
-        // 3. Verificar si retorna con pago exitoso desde Flow o si tiene token válido para este trabajador
-        const isPaidUrl = params.get('pago') === 'exito' || params.get('status') === 'approved' || params.get('status') === '2' || params.get('paid') === 'true';
-
-        if (isPaidUrl) {
+        // 3. Retorno desde Flow: el servidor firma el desbloqueo solo si el pago está confirmado
+        const vieneDeFlow = params.get('p') === 'finiquito' && params.has('sig');
+        if (unlockApi()) {
+            unlockApi().unlockFromUrl('finiquito').then((u) => {
+                if (u) applyPaymentSuccess(false, vieneDeFlow);
+            });
+        }
+        if (params.get('pago') === 'rechazado') {
             setTimeout(() => {
-                applyPaymentSuccess(false, true);
-            }, 300);
-        } else if (checkUnlockStatus(getRawFormData())) {
-            setTimeout(() => {
-                applyPaymentSuccess(false, false);
-            }, 300);
-        } else if (params.get('pago') === 'fallo' || params.get('status') === 'rejected' || params.get('status') === '3' || params.get('status') === '4') {
-            setTimeout(() => {
-                alert('El pago no fue completado o fue cancelado. Tu borrador de finiquito se encuentra guardado para que puedas volver a intentar cuando lo desees.');
+                alert('El pago no se completó y no se hizo ningún cargo. Tu borrador de finiquito quedó guardado para que lo intentes de nuevo cuando quieras.');
             }, 500);
         }
     }
@@ -420,6 +418,8 @@
     // Comprobar si el finiquito actual está desbloqueado legítimamente (48 horas y mismo RUT)
     function checkUnlockStatus(formData) {
         try {
+            // Sin desbloqueo firmado por el servidor (o ya vencido) no hay documento limpio
+            if (!unlockApi() || !unlockApi().storedUnlock('finiquito')) return false;
             const raw = localStorage.getItem('fini_unlock_payload');
             if (!raw) return false;
             const payload = JSON.parse(raw);
@@ -977,38 +977,28 @@
                 // Guardar borrador completo en el navegador antes de salir a pagar
                 saveDraftToStorage();
 
-                // Si hay URL de pasarela externa configurada (Flow, Webpay, MercadoPago), redirigir directamente
-                if (PAYMENT_GATEWAY_URL && PAYMENT_GATEWAY_URL.trim().length > 0) {
-                    // Aviso de retracto antes de salir a la pasarela
-                    if (window.CLCheckout) {
-                        window.CLCheckout.go(PAYMENT_GATEWAY_URL);
-                        return;
-                    }
-                    confirmPayBtn.disabled = true;
-                    confirmPayBtn.innerHTML = `
-                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Redirigiendo a pasarela segura...
-                    `;
-                    window.location.href = PAYMENT_GATEWAY_URL;
+                if (!unlockApi()) {
+                    alert('No pudimos iniciar el pago. Recarga la página e intenta de nuevo.');
                     return;
                 }
-
-                confirmPayBtn.disabled = true;
-                confirmPayBtn.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Procesando orden...
-                `;
-
-                // Simular validación con éxito inmediato si no hay gateway configurado
-                setTimeout(() => {
-                    applyPaymentSuccess(true, true);
-                }, 1200);
+                const original = confirmPayBtn.innerHTML;
+                const datos = getRawFormData();
+                // Aviso de retracto, pago creado en el servidor y salida a Flow
+                unlockApi().buyKit('finiquito', {
+                    email: emailInput ? emailInput.value.trim() : '',
+                    nombre: datos.empresaRazon || '',
+                    empresa: datos.empresaRazon || ''
+                }, {
+                    onAccept: () => {
+                        confirmPayBtn.disabled = true;
+                        confirmPayBtn.textContent = 'Conectando con Flow...';
+                    },
+                    onError: (mensaje) => {
+                        confirmPayBtn.disabled = false;
+                        confirmPayBtn.innerHTML = original;
+                        alert(mensaje);
+                    }
+                });
             });
         }
     }
@@ -1027,8 +1017,9 @@
         const htmlContent = docBody ? docBody.innerHTML : '';
 
         try {
-            const params = new URLSearchParams(window.location.search);
-            const token = params.get('token') || 'flow';
+            // El servidor solo envía con el desbloqueo firmado tras el pago
+            const unlock = unlockApi() ? unlockApi().storedUnlock('finiquito') : null;
+            if (!unlock) return;
 
             const resp = await fetch('/api/send-finiquito', {
                 method: 'POST',
@@ -1041,7 +1032,8 @@
                     trabajadorRut: formData.trabajadorRut,
                     saldoLiquido: calcData?.saldoLiquidoFinal || 0,
                     htmlContent,
-                    token
+                    token: unlock.o,
+                    unlock
                 })
             });
 
@@ -1066,7 +1058,8 @@
             trabajadorNombre: formData.trabajadorNombre,
             empresaRazon: formData.empresaRazon,
             unlockedAt: Date.now(),
-            expiresAt: Date.now() + (48 * 60 * 60 * 1000) // 48 horas exactas
+            // Mismo vencimiento que el desbloqueo firmado por el servidor (48 horas)
+            expiresAt: (unlockApi() && unlockApi().storedUnlock('finiquito') || {}).expiresAt || Date.now()
         };
         try {
             localStorage.setItem('fini_unlock_payload', JSON.stringify(unlockPayload));

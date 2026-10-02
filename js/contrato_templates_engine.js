@@ -8,8 +8,7 @@
 (function () {
     'use strict';
 
-    var FLOW_TOKEN = 'l9a58c097adddec2d1e2ffe7626f032ab7fd195f';
-    var FLOW_CHECKOUT_URL = 'https://www.flow.cl/btn.php?token=' + FLOW_TOKEN;
+    // Compra: /api/checkout (producto 'contrato') via window.CLCheckout en la pagina del generador.
 
     // Catálogo de Sectores y Cargos con Funciones Tipo
     var SECTORES = {
@@ -1305,7 +1304,6 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
         generarContratoCompleto: generarContratoCompleto,
         generarHTMLVisual: generarHTMLVisual,
         descargarWordDoc: descargarWordDoc,
-        imprimirPDF: imprimirPDF,
-        FLOW_CHECKOUT_URL: FLOW_CHECKOUT_URL
+        imprimirPDF: imprimirPDF
     };
 })();

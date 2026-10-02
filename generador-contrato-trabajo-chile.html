@@ -1469,7 +1469,7 @@
     <!-- SCRIPTS -->
     <script src="/js/constants.js?v=2.0.4"></script>
     <script src="/js/indicators.js?v=2.9.0"></script>
-    <script src="js/contrato_templates_engine.js?v=3.0.1"></script>
+    <script src="js/contrato_templates_engine.js?v=3.0.2"></script>
     <script>
         var pasoActual = 1;
 
@@ -1661,8 +1661,11 @@
                 try {
                     localStorage.setItem('contrato_builder_state', JSON.stringify(datos));
                 } catch(e){}
-                var url = window.ContratoTemplatesEngine.FLOW_CHECKOUT_URL;
-                if (window.CLCheckout) window.CLCheckout.go(url); else window.location.href = url;
+                // Aviso de retracto (pide el correo), pago creado en el servidor y salida a Flow
+                window.CLCheckout.buyKit('contrato', {
+                    nombre: datos.empresaRepresentante || datos.empresaRazonSocial || '',
+                    empresa: datos.empresaRazonSocial || ''
+                }, { askEmail: true, defaultEmail: datos.empresaEmail || '' });
             }
 
             var btnMain = document.getElementById('btn-comprar-contrato-main');
@@ -1680,15 +1683,19 @@
                 });
             }
 
-            // Detección de retorno de pago exitoso de Flow
-            var statusPago = urlParams.get('pago') || urlParams.get('status');
-            if (statusPago === 'exito' || statusPago === 'pago_exitoso') {
-                var stored = null;
-                try {
-                    stored = JSON.parse(localStorage.getItem('contrato_builder_state'));
-                } catch(e){}
-                var datosFinal = stored || recolectarDatos();
-                mostrarModalExitoContrato(datosFinal);
+            // Retorno desde Flow: el servidor firma el desbloqueo solo si el pago está confirmado
+            var vieneDeFlow = urlParams.get('p') === 'contrato' && urlParams.has('sig');
+            if (vieneDeFlow) {
+                window.CLCheckout.unlockFromUrl('contrato').then(function (u) {
+                    if (!u) return;
+                    var stored = null;
+                    try {
+                        stored = JSON.parse(localStorage.getItem('contrato_builder_state'));
+                    } catch(e){}
+                    mostrarModalExitoContrato(stored || recolectarDatos());
+                });
+            } else if (urlParams.get('pago') === 'rechazado') {
+                alert('El pago no se completó y no se hizo ningún cargo. Tu borrador quedó guardado para que lo intentes de nuevo.');
             }
 
             function mostrarModalExitoContrato(datos) {
@@ -1751,7 +1758,7 @@
             }
         });
     </script>
-    <script src="/js/checkout_consent.js?v=1.0.0" defer></script>
+    <script src="/js/checkout_consent.js?v=1.1.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

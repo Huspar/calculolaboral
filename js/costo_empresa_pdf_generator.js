@@ -7,8 +7,7 @@
 (function () {
     'use strict';
 
-    var FLOW_TOKEN = 'a2ebbd799fc71fb07a2caf43814319d6b44715fa';
-    var FLOW_CHECKOUT_URL = 'https://www.flow.cl/btn.php?token=' + FLOW_TOKEN;
+    // Compra: /api/checkout (producto 'informe') via window.CLCheckout; el desbloqueo vuelve firmado.
 
     // Utilidades de formato
     function formatCLP(amount) {
@@ -791,11 +790,11 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                        <a href="${FLOW_CHECKOUT_URL}" class="py-1.5 sm:py-2 px-2 sm:px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-[11px] sm:text-xs rounded-lg sm:rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1 sm:gap-1.5 cursor-pointer no-underline !text-white shrink-0" style="color: #ffffff !important;">
+                        <button type="button" onclick="(window.opener && window.opener.CostoEmpresaPDF ? (window.opener.focus(), window.opener.CostoEmpresaPDF.comprarInforme(), window.close()) : window.CostoEmpresaPDF.comprarInforme())" class="py-1.5 sm:py-2 px-2 sm:px-4 bg-emerald-600 hover:bg-emerald-700 font-bold text-[11px] sm:text-xs rounded-lg sm:rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition-all text-center flex items-center gap-1 sm:gap-1.5 cursor-pointer no-underline !text-white shrink-0" style="color: #ffffff !important;">
                             <span class="material-icons text-xs">download</span>
                             <span class="hidden sm:inline">Descargar Informe en PDF ($4.990)</span>
                             <span class="sm:hidden">Descargar ($4.990)</span>
-                        </a>
+                        </button>
                         <button type="button" id="btn-cerrar-preview-modal" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-700 flex items-center justify-center cursor-pointer transition-colors shrink-0" title="Cerrar vista previa">
                             <span class="material-icons text-xs sm:text-sm">close</span>
                         </button>
@@ -821,10 +820,10 @@
                         <button type="button" id="btn-cerrar-preview-bottom" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] sm:text-xs rounded-lg cursor-pointer shrink-0">
                             Cerrar
                         </button>
-                        <a href="${FLOW_CHECKOUT_URL}" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-forest-600 hover:bg-forest-700 font-bold text-[11px] sm:text-xs rounded-lg shadow-sm text-white flex items-center gap-1 cursor-pointer no-underline !text-white shrink-0" style="color:#fff!important;">
+                        <button type="button" onclick="(window.opener && window.opener.CostoEmpresaPDF ? (window.opener.focus(), window.opener.CostoEmpresaPDF.comprarInforme(), window.close()) : window.CostoEmpresaPDF.comprarInforme())" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-forest-600 hover:bg-forest-700 font-bold text-[11px] sm:text-xs rounded-lg shadow-sm text-white flex items-center gap-1 cursor-pointer no-underline !text-white shrink-0" style="color:#fff!important;">
                             <span class="hidden sm:inline">Comprar Informe ($4.990)</span>
                             <span class="sm:hidden">Comprar ($4.990)</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -900,7 +899,7 @@
                 <link rel="stylesheet" href="${window.location.origin}/assets/css/style.css?v=3.1.0">
                 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-                <script src="${window.location.origin}/js/checkout_consent.js?v=1.0.0" defer></script>
+                <script src="${window.location.origin}/js/checkout_consent.js?v=1.1.0" defer></script>
                 ${estilos}
             </head>
             <body class="bg-slate-100 py-6">
@@ -912,9 +911,9 @@
                             Guardar como PDF / Imprimir
                         </button>
                         ` : `
-                        <a href="${FLOW_CHECKOUT_URL}" class="px-4 py-2 bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer no-underline !text-white" style="color:#fff!important;">
+                        <button type="button" onclick="(window.opener && window.opener.CostoEmpresaPDF ? (window.opener.focus(), window.opener.CostoEmpresaPDF.comprarInforme(), window.close()) : window.CostoEmpresaPDF.comprarInforme())" class="px-4 py-2 bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs rounded-lg shadow-sm cursor-pointer no-underline !text-white" style="color:#fff!important;">
                             Descargar Informe Completo ($4.990)
-                        </a>
+                        </button>
                         `}
                         <button onclick="window.close()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-lg cursor-pointer">
                             Cerrar
@@ -975,18 +974,19 @@
         // 1. Botón COMPRAR INFORME ($4.990 Flow)
         if (btnComprarInforme) {
             btnComprarInforme.addEventListener('click', function (e) {
-                var currentData = getDatosActuales();
-                // Guardar datos en localStorage para restaurar tras el retorno de Flow
-                try {
-                    localStorage.setItem('simulacion_costo_empresa', JSON.stringify(currentData));
-                } catch (err) {
-                    console.error(err);
-                }
-                // Redirigir a Flow (previo aviso de retracto)
-                if (window.CLCheckout) window.CLCheckout.go(FLOW_CHECKOUT_URL);
-                else window.location.href = FLOW_CHECKOUT_URL;
+                comprarInforme();
             });
         }
+
+        // Aviso de retracto (pide el correo), pago creado en el servidor y salida a Flow.
+        // Guarda la simulacion para rearmar el informe al volver.
+        function comprarInforme() {
+            try {
+                localStorage.setItem('simulacion_costo_empresa', JSON.stringify(getDatosActuales()));
+            } catch (err) {}
+            window.CLCheckout.buyKit('informe', {}, { askEmail: true });
+        }
+        window.CostoEmpresaPDF.comprarInforme = comprarInforme;
 
         // 2. Botón VISTA PREVIA GRATIS (Con Marca de Agua en Modal In-Page)
         if (btnPreviewInforme) {
@@ -1016,24 +1016,20 @@
             });
         }
 
-        // 3. DETECCIÓN DE RETORNO DE PAGO EXITOSO (URL query ?pago=exito)
+        // 3. RETORNO DESDE FLOW: el servidor firma el desbloqueo solo si el pago está confirmado
         var urlParams = new URLSearchParams(window.location.search);
-        var statusPago = urlParams.get('pago') || urlParams.get('status');
-
-        if (statusPago === 'exito' || statusPago === 'pago_exitoso') {
-            // Recuperar datos de simulación
-            var stored = null;
-            try {
-                stored = JSON.parse(localStorage.getItem('simulacion_costo_empresa'));
-            } catch (err) {
-                console.error(err);
-            }
-
-            var simData = stored || getDatosActuales();
-            var matrizExito = calcularTresModalidades(simData.monto, simData.modo, simData.opciones);
-
-            // Mostrar modal de felicitación y descarga automática
-            mostrarModalExito(matrizExito);
+        if (urlParams.get('p') === 'informe' && urlParams.has('sig') && window.CLCheckout) {
+            window.CLCheckout.unlockFromUrl('informe').then(function (u) {
+                if (!u) return;
+                var stored = null;
+                try {
+                    stored = JSON.parse(localStorage.getItem('simulacion_costo_empresa'));
+                } catch (err) {}
+                var simData = stored || getDatosActuales();
+                mostrarModalExito(calcularTresModalidades(simData.monto, simData.modo, simData.opciones));
+            });
+        } else if (urlParams.get('pago') === 'rechazado') {
+            alert('El pago no se completó y no se hizo ningún cargo. Puedes intentarlo de nuevo.');
         }
 
         // 4. AUTO-APERTURA DE VISTA PREVIA (Query param ?preview=1)
@@ -1094,6 +1090,5 @@
         generarHTMLInforme: generarHTMLInforme,
         imprimirInforme: imprimirInforme,
         mostrarModalPreviewInforme: mostrarModalPreviewInforme,
-        FLOW_CHECKOUT_URL: FLOW_CHECKOUT_URL
     };
 })();

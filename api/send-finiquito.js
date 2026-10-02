@@ -1,9 +1,11 @@
 /**
  * Vercel Serverless Function: send-finiquito
  * Automatically delivers the Finiquito Notarial Pack (.doc editable)
- * to the buyer via Resend with the document attached,
- * and notifies Jhon (jhonfcj@gmail.com) of the confirmed sale ($12.990 CLP).
+ * to the buyer via Resend with the document attached.
+ * Solo funciona con un desbloqueo firmado tras un pago verificado con Flow
+ * (p, o, e, sig; ver api/_flow.js). La venta ya la avisa /api/flow-confirm.
  */
+const { verifyDownload, SITE_URL } = require('./_flow');
 
 const ALLOWED_ORIGINS = new Set([
     'https://calculolaboral.cl',
@@ -18,7 +20,6 @@ const ipBuckets = new Map();
 
 const FROM_ADDRESS = 'contacto@calculolaboral.cl';
 const FROM_NAME = 'Cálculo Laboral';
-const NOTIFY_JHON = 'jhonfcj@gmail.com';
 
 function getClientIp(req) {
     const xff = req.headers['x-forwarded-for'];
@@ -103,8 +104,22 @@ module.exports = async (req, res) => {
             trabajadorRut,
             saldoLiquido,
             htmlContent,
-            token
+            token,
+            unlock
         } = body;
+
+        // Sin pago verificado no se envia nada (evita usar el dominio para correos arbitrarios)
+        const u = unlock && typeof unlock === 'object' ? unlock : {};
+        let paid = false;
+        try {
+            paid = u.p === 'finiquito' && verifyDownload({ p: u.p, o: u.o, e: u.e, sig: u.sig });
+        } catch (e) {
+            console.error('send-finiquito:', e.message);
+        }
+        if (!paid) {
+            return res.status(403).json({ error: 'Pago no verificado.' });
+        }
+        const relink = `${SITE_URL}/generador-finiquito-chile?` + new URLSearchParams({ p: u.p, o: u.o, e: String(u.e), sig: u.sig }).toString();
 
         const cleanEmail = (typeof email === 'string' ? email.trim().toLowerCase() : '');
         const cleanEmpresa = (typeof empresaRazon === 'string' ? empresaRazon.trim().slice(0, 100) : 'Empresa');
@@ -112,7 +127,6 @@ module.exports = async (req, res) => {
         const cleanTrabajador = (typeof trabajadorNombre === 'string' ? trabajadorNombre.trim().slice(0, 80) : 'Trabajador');
         const cleanTrabajadorRut = (typeof trabajadorRut === 'string' ? trabajadorRut.trim().slice(0, 20) : '—');
         const cleanSaldo = (typeof saldoLiquido === 'string' || typeof saldoLiquido === 'number' ? String(saldoLiquido) : '0');
-        const cleanToken = (typeof token === 'string' ? token.trim().slice(0, 80) : 'Flow-Directo');
 
         if (!cleanEmail || !isValidEmail(cleanEmail)) {
             return res.status(400).json({ error: 'Correo electrónico no válido.' });
@@ -123,11 +137,6 @@ module.exports = async (req, res) => {
             console.error('send-finiquito: missing RESEND_API_KEY env var');
             return res.status(500).json({ error: 'Servicio de correo no configurado.' });
         }
-
-        const fechaLocal = new Date().toLocaleDateString('es-CL', {
-            year: 'numeric', month: 'long', day: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
 
         // Construir archivo Word (.doc compatible con Word y Google Docs)
         const docBodyContent = typeof htmlContent === 'string' && htmlContent.length > 50
@@ -205,7 +214,7 @@ module.exports = async (req, res) => {
 
         <!-- Botón de acceso Web durante 48 horas -->
         <div style="text-align: center; margin: 28px 0;">
-            <a href="https://calculolaboral.cl/generador-finiquito-chile?pago=exito" style="background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 13px; font-weight: bold; border-radius: 10px; display: inline-block;">
+            <a href="${relink}" style="background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 13px; font-weight: bold; border-radius: 10px; display: inline-block;">
                 Ver / Re-descargar en la Web (Acceso 48 Horas)
             </a>
             <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
@@ -221,7 +230,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el Finiquito Notarial de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.doc editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\nhttps://calculolaboral.cl/generador-finiquito-chile?pago=exito\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el Finiquito Notarial de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.doc editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\n${relink}\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {
@@ -266,32 +275,6 @@ module.exports = async (req, res) => {
             console.error('Resend error dispatching finiquito to buyer:', buyerResp.status, errText);
             return res.status(500).json({ error: 'No se pudo enviar el correo al comprador.' });
         }
-
-        // 3. Notificación a Jhon (Alerta de Venta Confirmada de Finiquito)
-        const jhonSubject = `💰 [VENTA FINIQUITO $12.990] ${cleanEmpresa} - ${cleanTrabajador}`;
-        const jhonHtml = `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="font-family: sans-serif; color: #0f172a; padding: 20px;">
-    <h2 style="color: #16a34a; margin-top: 0;">🎉 ¡Nueva Venta de Finiquito Notarial ($12.990 CLP)!</h2>
-    <p>El documento Word ha sido generado y despachado automáticamente al correo del empleador.</p>
-    <table style="width: 100%; font-size: 14px; border-collapse: collapse; margin-top: 15px;">
-        <tr><td style="padding: 6px 0; color: #64748b; width: 150px;">Empresa:</td><td style="padding: 6px 0; font-weight: bold;">${escapeHtml(cleanEmpresa)} (${escapeHtml(cleanEmpresaRut)})</td></tr>
-        <tr><td style="padding: 6px 0; color: #64748b;">Trabajador:</td><td style="padding: 6px 0; font-weight: bold;">${escapeHtml(cleanTrabajador)} (${escapeHtml(cleanTrabajadorRut)})</td></tr>
-        <tr><td style="padding: 6px 0; color: #64748b;">Correo Comprador:</td><td style="padding: 6px 0;"><a href="mailto:${escapeHtml(cleanEmail)}">${escapeHtml(cleanEmail)}</a></td></tr>
-        <tr><td style="padding: 6px 0; color: #64748b;">Saldo Finiquito:</td><td style="padding: 6px 0; font-weight: bold; color: #16a34a;">$${escapeHtml(cleanSaldo)} CLP</td></tr>
-        <tr><td style="padding: 6px 0; color: #64748b;">Token / Orden:</td><td style="padding: 6px 0; font-family: monospace;">${escapeHtml(cleanToken)}</td></tr>
-        <tr><td style="padding: 6px 0; color: #64748b;">Fecha:</td><td style="padding: 6px 0;">${fechaLocal}</td></tr>
-    </table>
-</body>
-</html>`;
-
-        await sendResend(
-            NOTIFY_JHON,
-            jhonSubject,
-            jhonHtml,
-            `Nueva venta de Finiquito Notarial $12.990\nEmpresa: ${cleanEmpresa}\nTrabajador: ${cleanTrabajador}\nEmail: ${cleanEmail}\nToken: ${cleanToken}`
-        ).catch(e => console.error('Error notifying Jhon:', e));
 
         return res.status(200).json({
             success: true,

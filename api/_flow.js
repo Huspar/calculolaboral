@@ -52,8 +52,32 @@ const PRODUCTS = {
             'Reemplaza los campos entre corchetes con los datos de tu empresa.'
         ],
         note: 'La Ley 21.719 rige desde el 1 de diciembre de 2026. Si la Agencia de Protección de Datos dicta normas que cambien estos documentos antes del 31 de diciembre de 2027, te enviaremos la versión actualizada sin costo a este correo.'
+    },
+    // Generadores: el documento se arma en el navegador con los datos del cliente;
+    // el pago confirmado entrega un desbloqueo firmado por UNLOCK_HOURS.
+    finiquito: {
+        code: 'GF',
+        amount: 12990,
+        subject: 'Finiquito para Notaría (Word + PDF)',
+        page: '/generador-finiquito-chile',
+        unlock: true
+    },
+    contrato: {
+        code: 'GC',
+        amount: 12990,
+        subject: 'Contrato de Trabajo a la Medida (Word + PDF)',
+        page: '/generador-contrato-trabajo-chile',
+        unlock: true
+    },
+    informe: {
+        code: 'IC',
+        amount: 4990,
+        subject: 'Informe Ejecutivo de Costo Empresa (PDF)',
+        page: '/calculadora-costo-empresa-chile',
+        unlock: true
     }
 };
+const UNLOCK_HOURS = 48;
 
 function productByCode(code) {
     return Object.keys(PRODUCTS).find(k => PRODUCTS[k].code === code) || null;
@@ -134,8 +158,10 @@ function downloadSignature(product, order, exp) {
     return crypto.createHmac('sha256', secretKey).update(`dl|${product}|${order}|${exp}`).digest('hex');
 }
 
+// Kits: descarga por DOWNLOAD_DAYS. Generadores: desbloqueo por UNLOCK_HOURS.
 function downloadQuery(product, order) {
-    const exp = Math.floor(Date.now() / 1000) + DOWNLOAD_DAYS * 86400;
+    const ttl = PRODUCTS[product].unlock ? UNLOCK_HOURS * 3600 : DOWNLOAD_DAYS * 86400;
+    const exp = Math.floor(Date.now() / 1000) + ttl;
     return new URLSearchParams({ p: product, o: order, e: String(exp), sig: downloadSignature(product, order, exp) }).toString();
 }
 
@@ -167,6 +193,46 @@ async function sendEmail(payload, idempotencyKey) {
         body: JSON.stringify({ from: FROM, ...payload })
     });
     if (!resp.ok) throw new Error(`Resend ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+}
+
+/** Generadores: comprobante con el enlace para volver a desbloquear el documento. */
+async function deliverUnlock(pay) {
+    const p = PRODUCTS[pay.product];
+    const link = `${SITE_URL}${p.page}?${downloadQuery(pay.product, pay.order)}`;
+    await sendEmail({
+        to: [pay.email],
+        reply_to: 'contacto@calculolaboral.cl',
+        subject: `Pago confirmado: ${p.subject}`,
+        html: `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
+<div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+  <p style="margin:0 0 20px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:#00382E">Laboral</span></p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Confirmamos tu pago de <strong>$${p.amount.toLocaleString('es-CL')}</strong> por <strong>${escapeHtml(p.subject)}</strong> (orden Flow ${escapeHtml(pay.order)}).</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Si cerraste la página antes de descargar, abre este enlace <strong>en el mismo navegador</strong> donde completaste los datos. Funciona por ${UNLOCK_HOURS} horas.</p>
+  <p style="margin:0 0 20px"><a href="${link}" style="display:inline-block;background:#00382E;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px">Volver a mi documento</a></p>
+  <p style="margin:0 0 16px;font-size:12px;color:#475569">Es un modelo de referencia basado en la normativa vigente; no constituye asesoría legal.</p>
+  <p style="margin:0;font-size:13px;color:#64748b">¿Dudas? Responde este correo.</p>
+</div></body></html>`
+    }, `unlock-${pay.order}`);
+    await notifyOwner(pay, 'Venta confirmada por Flow; documento desbloqueado.');
+}
+
+async function notifyOwner(pay, lead) {
+    const p = PRODUCTS[pay.product];
+    const o = pay.optional || {};
+    await sendEmail({
+        to: [NOTIFY_OWNER],
+        subject: `[VENTA $${p.amount.toLocaleString('es-CL')}] ${p.subject} - ${o.nombre || pay.email}`,
+        html: `<p>${lead}</p><ul>
+<li>Producto: ${escapeHtml(p.subject)}</li><li>Orden Flow: ${escapeHtml(pay.order)} (${escapeHtml(pay.commerceOrder)})</li>
+<li>Correo: ${escapeHtml(pay.email)}</li><li>Nombre: ${escapeHtml(o.nombre)}</li><li>Empresa: ${escapeHtml(o.empresa)}</li>
+<li>Teléfono: ${escapeHtml(o.telefono)}</li>${o.rubro ? `<li>Rubro: ${escapeHtml(o.rubro)}</li>` : ''}</ul>`
+    }, `notify-${pay.order}`);
+}
+
+/** Entrega segun el producto: kit por correo o desbloqueo del generador. */
+function deliver(pay) {
+    return PRODUCTS[pay.product].unlock ? deliverUnlock(pay) : deliverKit(pay);
 }
 
 /** Envia el kit al comprador (adjunto + enlace) y avisa la venta al dueño. */
@@ -201,15 +267,7 @@ async function deliverKit(pay) {
         attachments: [{ filename: p.filename, content: zip }]
     }, `kit-${pay.order}`);
 
-    const o = pay.optional || {};
-    await sendEmail({
-        to: [NOTIFY_OWNER],
-        subject: `[VENTA $${p.amount.toLocaleString('es-CL')}] ${p.subject} - ${o.nombre || pay.email}`,
-        html: `<p>Venta confirmada por Flow y kit enviado.</p><ul>
-<li>Producto: ${escapeHtml(p.subject)}</li><li>Orden Flow: ${escapeHtml(pay.order)} (${escapeHtml(pay.commerceOrder)})</li>
-<li>Correo: ${escapeHtml(pay.email)}</li><li>Nombre: ${escapeHtml(o.nombre)}</li><li>Empresa: ${escapeHtml(o.empresa)}</li>
-<li>Teléfono: ${escapeHtml(o.telefono)}</li>${o.rubro ? `<li>Rubro: ${escapeHtml(o.rubro)}</li>` : ''}</ul>`
-    }, `notify-${pay.order}`);
+    await notifyOwner(pay, 'Venta confirmada por Flow y kit enviado.');
 }
 
 /** Lee el token que Flow envia por POST (form-urlencoded) o por query. */
@@ -221,6 +279,6 @@ function readToken(req) {
 }
 
 module.exports = {
-    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliverKit,
+    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliver, sendEmail,
     downloadQuery, verifyDownload, readToken, escapeHtml
 };

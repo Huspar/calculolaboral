@@ -45,9 +45,16 @@
         '.clc-primary{background:#00382E;color:#fff!important}' +
         '.clc-primary:hover{background:#002820}' +
         '.clc-primary[aria-disabled="true"]{opacity:.45;cursor:not-allowed}' +
+        '.clc-email{display:grid;gap:6px;margin:0 0 12px}' +
+        '.clc-email label{font-size:13px;font-weight:600;color:#0f172a}' +
+        '.clc-email input{font:inherit;font-size:16px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;color:#0f172a;background:#fff}' +
+        '.clc-email input:focus{outline:2px solid #00382E;outline-offset:1px;border-color:#00382E}' +
+        '.clc-email input[aria-invalid="true"]{border-color:#e11d48}' +
+        '.clc-email small{font-size:12px;color:#64748b}' +
         '@media (max-width:420px){.clc-actions .clc-btn{flex:1 1 100%}}';
 
-    var dialog, checkbox, label, confirmBtn, pending = null;
+    var dialog, checkbox, label, confirmBtn, emailWrap, emailInput, pending = null;
+    var EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 
     function build() {
         var style = document.createElement('style');
@@ -68,6 +75,9 @@
                     '<li>Si un archivo falla o no te llega, te lo reenviamos en un máximo de 24 horas hábiles.</li>' +
                     '<li>Son modelos de referencia basados en la normativa vigente; no reemplazan la asesoría de un abogado.</li>' +
                 '</ul>' +
+                '<div class="clc-email" hidden><label for="clc-email">Correo para el comprobante</label>' +
+                    '<input type="email" id="clc-email" autocomplete="email" inputmode="email" placeholder="tu@empresa.cl">' +
+                    '<small>Ahí te llega la confirmación del pago.</small></div>' +
                 '<label class="clc-check"><input type="checkbox" id="clc-accept">' +
                     '<span>Leí estas condiciones y acepto los <a href="' + TERMS_URL + '" target="_blank" rel="noopener">Términos y condiciones</a>.</span>' +
                 '</label>' +
@@ -81,6 +91,9 @@
         checkbox = dialog.querySelector('#clc-accept');
         label = dialog.querySelector('.clc-check');
         confirmBtn = dialog.querySelector('[data-clc="ok"]');
+        emailWrap = dialog.querySelector('.clc-email');
+        emailInput = dialog.querySelector('#clc-email');
+        emailInput.addEventListener('input', function () { emailInput.removeAttribute('aria-invalid'); });
 
         checkbox.addEventListener('change', function () {
             confirmBtn.setAttribute('aria-disabled', checkbox.checked ? 'false' : 'true');
@@ -93,10 +106,16 @@
                 checkbox.focus();
                 return;
             }
+            var email = emailInput.value.trim();
+            if (pending && pending.askEmail && !EMAIL_RE.test(email)) {
+                emailInput.setAttribute('aria-invalid', 'true');
+                emailInput.focus();
+                return;
+            }
             var job = pending;
             pending = null;
             dialog.close();
-            if (job) job.onAccept();
+            if (job) job.onAccept(email);
         });
         dialog.querySelector('[data-clc="cancel"]').addEventListener('click', function () { dialog.close(); });
         dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
@@ -107,8 +126,8 @@
     }
 
     /**
-     * Muestra el aviso; si el comprador acepta, ejecuta onAccept.
-     * opciones: { onCancel: function }
+     * Muestra el aviso; si el comprador acepta, ejecuta onAccept(correo).
+     * opciones: { onCancel: function, askEmail: boolean (pide el correo en el aviso) }
      */
     function confirm(onAccept, options) {
         options = options || {};
@@ -117,16 +136,20 @@
             // Navegadores sin <dialog>: confirmacion nativa con el mismo contenido
             var ok = window.confirm('Producto digital de entrega inmediata: no aplica el derecho a retracto ' +
                 '(art. 3 bis letra b, Ley 19.496). ¿Aceptas los Términos y condiciones y continúas al pago?');
-            if (ok) onAccept();
+            var mail = options.askEmail ? (window.prompt('Correo para el comprobante:') || '').trim() : '';
+            if (ok && (!options.askEmail || EMAIL_RE.test(mail))) onAccept(mail);
             else if (typeof options.onCancel === 'function') options.onCancel();
             return;
         }
-        pending = { onAccept: onAccept, onCancel: options.onCancel };
+        pending = { onAccept: onAccept, onCancel: options.onCancel, askEmail: !!options.askEmail };
+        emailWrap.hidden = !options.askEmail;
+        if (options.defaultEmail && !emailInput.value) emailInput.value = options.defaultEmail;
+        emailInput.removeAttribute('aria-invalid');
         checkbox.checked = false;
         confirmBtn.setAttribute('aria-disabled', 'true');
         label.classList.remove('clc-nudge');
         if (!dialog.open) dialog.showModal();
-        checkbox.focus();
+        if (options.askEmail) emailInput.focus(); else checkbox.focus();
     }
 
     /** Muestra el aviso y, si el comprador acepta, abre el pago. opciones: { newTab, onCancel } */
@@ -140,6 +163,13 @@
 
     function onLinkClick(e) {
         if (e.defaultPrevented || (e.type === 'auxclick' && e.button !== 1)) return;
+        // Botones de compra declarativos: <button data-clc-buy="informe">
+        var buy = e.target.closest && e.target.closest('[data-clc-buy]');
+        if (buy && e.type === 'click') {
+            e.preventDefault();
+            buyKit(buy.getAttribute('data-clc-buy'), {}, { askEmail: true });
+            return;
+        }
         var a = e.target.closest && e.target.closest('a[href]');
         if (!a || !FLOW_LINK.test(a.href)) return;
         e.preventDefault();
@@ -151,9 +181,9 @@
     document.addEventListener('auxclick', onLinkClick, true);
 
     /**
-     * Compra de un kit: aviso, pago creado en el servidor (/api/checkout) y salida a Flow.
+     * Compra (kit o generador): aviso, pago creado en el servidor (/api/checkout) y salida a Flow.
      * buyer: { email, nombre, empresa, telefono, rubro }
-     * opciones: { onAccept: function, onCancel: function, onError: function(mensaje) }
+     * opciones: { onAccept, onCancel, onError(mensaje), askEmail (si buyer no trae correo), defaultEmail }
      */
     function buyKit(product, buyer, options) {
         options = options || {};
@@ -162,10 +192,11 @@
             if (typeof options.onError === 'function') options.onError(message);
             else window.alert(message);
         }
-        confirm(function () {
+        confirm(function (email) {
             if (typeof options.onAccept === 'function') options.onAccept();
             var payload = { product: product };
             for (var k in buyer) if (Object.prototype.hasOwnProperty.call(buyer, k)) payload[k] = buyer[k];
+            if (options.askEmail) payload.email = email;
             fetch('/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -176,8 +207,44 @@
                 if (res.ok && res.data.url) window.location.href = res.data.url;
                 else fail(res.data && res.data.error);
             }).catch(function () { fail(); });
-        }, { onCancel: options.onCancel });
+        }, { onCancel: options.onCancel, askEmail: options.askEmail, defaultEmail: options.defaultEmail });
     }
 
-    window.CLCheckout = { go: go, confirm: confirm, buyKit: buyKit };
+    /*
+     * Desbloqueo de generadores. Al volver de Flow la URL trae ?p=&o=&e=&sig= firmados por
+     * el servidor; /api/unlock los valida y se guardan hasta que vencen (48 h).
+     * El documento se arma en el navegador, asi que esto cierra el desbloqueo por URL
+     * (?pago=exito), no protege contra quien edite el codigo de la pagina.
+     */
+    function storedUnlock(product) {
+        try {
+            var u = JSON.parse(localStorage.getItem('cl_unlock_' + product) || 'null');
+            if (u && u.p === product && u.expiresAt > Date.now()) return u;
+            localStorage.removeItem('cl_unlock_' + product);
+        } catch (e) {}
+        return null;
+    }
+
+    function unlockFromUrl(product) {
+        var q = new URLSearchParams(window.location.search);
+        if (q.get('p') !== product || !q.get('sig')) return Promise.resolve(storedUnlock(product));
+        var u = { p: product, o: q.get('o'), e: q.get('e'), sig: q.get('sig') };
+        ['p', 'o', 'e', 'sig'].forEach(function (k) { q.delete(k); });
+        try {
+            var rest = q.toString();
+            window.history.replaceState({}, document.title, window.location.pathname + (rest ? '?' + rest : '') + window.location.hash);
+        } catch (e) {}
+        return fetch('/api/unlock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(u)
+        }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+            if (!d || !d.ok) return storedUnlock(product);
+            u.expiresAt = d.expiresAt;
+            try { localStorage.setItem('cl_unlock_' + product, JSON.stringify(u)); } catch (e) {}
+            return u;
+        }).catch(function () { return storedUnlock(product); });
+    }
+
+    window.CLCheckout = { go: go, confirm: confirm, buyKit: buyKit, unlockFromUrl: unlockFromUrl, storedUnlock: storedUnlock };
 })();

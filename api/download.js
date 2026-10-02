@@ -18,6 +18,7 @@ module.exports = (req, res) => {
         return res.status(403).send('Enlace de descarga no válido o vencido. Escríbenos a contacto@calculolaboral.cl con tu número de orden.');
     }
     const p = PRODUCTS[q.p];
+    if (!p.zip) return res.status(404).send('Este producto no tiene archivo descargable.');
     const file = Buffer.from(p.zip(), 'base64');
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${p.filename}"`);

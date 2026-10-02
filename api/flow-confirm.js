@@ -1,10 +1,10 @@
 /**
  * POST /api/flow-confirm  (llamado por Flow, servidor a servidor, con "token")
- * Verifica el pago con Flow y, si esta pagado, envia el kit al comprador.
+ * Verifica el pago con Flow y, si esta pagado, envia el kit (o el desbloqueo del generador).
  * Flow reintenta si no recibe 200; los correos usan una llave de idempotencia
  * por orden, asi un reintento no duplica el envio.
  */
-const { paymentStatus, deliverKit, readToken } = require('./_flow');
+const { paymentStatus, deliver, readToken } = require('./_flow');
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     try {
         const pay = await paymentStatus(token);
         if (pay.paid && pay.email) {
-            await deliverKit(pay);
+            await deliver(pay);
         } else {
             console.info('flow-confirm: pago no confirmado', pay.commerceOrder, 'estado', pay.status);
         }
