@@ -2536,16 +2536,16 @@
                                         <input type="tel" id="lawyer-telefono" name="telefono" required placeholder="+56 9 1234 5678" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
                                     </div>
                                     <div>
-                                        <label for="lawyer-correo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico *</label>
-                                        <input type="email" id="lawyer-correo" name="correo" required placeholder="tu@correo.cl" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                                        <label for="lawyer-correo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Correo (opcional)</label>
+                                        <input type="email" id="lawyer-correo" name="correo" placeholder="tu@correo.cl" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
                                     </div>
                                 </div>
 
                                 <!-- Ciudad / Región & Tipo de Causal -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
-                                        <label for="lawyer-ciudad" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ciudad o Comuna *</label>
-                                        <input type="text" id="lawyer-ciudad" name="ciudad" required placeholder="Ej. Santiago, Concepción..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                                        <label for="lawyer-ciudad" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ciudad o Comuna (opcional)</label>
+                                        <input type="text" id="lawyer-ciudad" name="ciudad" placeholder="Ej. Santiago, Concepción..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
                                     </div>
                                     <div>
                                         <label for="lawyer-motivo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Motivo / Causal *</label>
@@ -2566,7 +2566,7 @@
                                 <!-- Breve detalle del caso -->
                                 <div>
                                     <label for="lawyer-detalle" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Breve resumen de tu situación</label>
-                                    <textarea id="lawyer-detalle" name="detalle" rows="3" placeholder="Ej. Me despidieron el 10 de este mes por necesidades de la empresa, trabajé 4 años, mi sueldo era de $900.000 y me descontaron la AFC..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium resize-none"></textarea>
+                                    <textarea id="lawyer-detalle" name="detalle" rows="3" maxlength="220" placeholder="Ej. Me despidieron el 10 de este mes por necesidades de la empresa, trabajé 4 años, mi sueldo era de $900.000 y me descontaron la AFC..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium resize-none"></textarea>
                                 </div>
 
                                 <!-- Checkbox Consentimiento -->
@@ -3522,8 +3522,26 @@
             var motivo = document.getElementById('lawyer-motivo').value;
             var detalle = document.getElementById('lawyer-detalle').value.trim();
 
-            if (!nombre || !telefono || !correo || !motivo) {
-                alert('Por favor completa todos los campos requeridos (*).');
+            var errorBox = document.getElementById('lawyer-error-box');
+            if (!errorBox) {
+                errorBox = document.createElement('p');
+                errorBox.id = 'lawyer-error-box';
+                errorBox.setAttribute('role', 'alert');
+                errorBox.style.cssText = 'margin:0 0 12px;padding:10px 12px;border-radius:10px;background:#FFF1F2;color:#BE123C;font-size:14px;';
+                submitBtn.parentNode.insertBefore(errorBox, submitBtn);
+            }
+            errorBox.hidden = true;
+            function mostrarErrorAbogado(msg) {
+                errorBox.textContent = msg;
+                errorBox.hidden = false;
+            }
+
+            if (!nombre || !motivo) {
+                mostrarErrorAbogado('Completa tu nombre y el motivo de tu consulta.');
+                return;
+            }
+            if (telefono.replace(/\D/g, '').length < 8) {
+                mostrarErrorAbogado('Escribe un WhatsApp o teléfono válido, por ejemplo +56 9 1234 5678.');
                 return;
             }
 
@@ -3538,7 +3556,7 @@
                 ciudad: ciudad,
                 tipo: 'Consulta Legal',
                 fuente: 'Home Formulario Abogados',
-                detalle: 'Motivo: ' + motivo + ' | Ciudad: ' + ciudad + ' | Detalle: ' + detalle
+                detalle: ('Motivo: ' + motivo + ' | Ciudad: ' + (ciudad || '—') + ' | Detalle: ' + detalle).slice(0, 300)
             };
 
             fetch('/api/send-lead', {
@@ -3546,22 +3564,17 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             }).then(function(res) {
-                if (res.ok) {
-                    form.classList.add('hidden');
-                    successBox.classList.remove('hidden');
-                } else {
-                    return fetch('https://formsubmit.co/ajax/contacto@calculolaboral.cl', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                        body: JSON.stringify(payload)
-                    }).then(function() {
-                        form.classList.add('hidden');
-                        successBox.classList.remove('hidden');
+                if (!res.ok) {
+                    return res.json().catch(function() { return {}; }).then(function(d) {
+                        throw new Error(d && d.error ? d.error : 'No pudimos enviar tu solicitud.');
                     });
                 }
-            }).catch(function() {
                 form.classList.add('hidden');
                 successBox.classList.remove('hidden');
+                if (typeof gtag === 'function') gtag('event', 'generate_lead', { fuente: 'Home Formulario Abogados', tipo: 'abogado', value: 15000, currency: 'CLP' });
+            }).catch(function(err) {
+                mostrarErrorAbogado((err && err.message ? err.message : 'No pudimos enviar tu solicitud.') + ' Intenta de nuevo o escríbenos a contacto@calculolaboral.cl.');
+                if (typeof gtag === 'function') gtag('event', 'lead_error', { fuente: 'Home Formulario Abogados', tipo: 'abogado' });
             }).finally(function() {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnHtml;

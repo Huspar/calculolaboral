@@ -752,6 +752,7 @@ body { overflow-x: hidden; }
         }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.4.0">
+    <link rel="stylesheet" href="/assets/css/lead-abogado.css?v=1.0.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -1068,6 +1069,7 @@ body { overflow-x: hidden; }
 </div>
 </div>
 <!-- =============== 3. ¿QUÉ INDEMNIZACIONES CORRESPONDEN? =============== -->
+<div data-lead-abogado data-fuente="Guía Art. 161 Necesidades de la Empresa" data-variante="161" class="no-print"></div>
 <h2>¿Qué indemnizaciones corresponden por despido de necesidades de empresa?</h2>
 <p>
                     A diferencia de otras causales por faltas graves a las obligaciones legales, el Artículo 161 te
@@ -1696,6 +1698,7 @@ body { overflow-x: hidden; }
                 })
             }).then(function(response) {
                 if (response.ok) {
+                    if (typeof gtag === 'function') gtag('event', 'generate_lead', { fuente: fuente || 'Guía Informativa', tipo: 'abogado', value: 15000, currency: 'CLP' });
                     var successDiv = document.getElementById(formId + '-confirmacion');
                     if (successDiv) {
                         form.classList.add('hidden');
@@ -1707,6 +1710,7 @@ body { overflow-x: hidden; }
                     throw new Error('Error en el servidor');
                 }
             }).catch(function(err) {
+                if (typeof gtag === 'function') gtag('event', 'lead_error', { fuente: fuente || 'Guía Informativa', tipo: 'abogado' });
                 alert('Ocurrió un error al enviar tu consulta. Por favor inténtalo de nuevo.');
                 if (btn) {
                     btn.disabled = false;
@@ -1804,5 +1808,6 @@ body { overflow-x: hidden; }
         }
     </script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
+    <script src="/js/lead_abogado.js?v=1.0.0" defer></script>
 </body>
 </html>

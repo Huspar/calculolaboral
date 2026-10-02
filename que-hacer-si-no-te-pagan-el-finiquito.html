@@ -747,6 +747,7 @@ body { overflow-x: hidden; }
         }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.4.0">
+    <link rel="stylesheet" href="/assets/css/lead-abogado.css?v=1.0.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -1044,6 +1045,7 @@ body { overflow-x: hidden; }
 <li>Cualquier otra deuda del empleador (bonos, comisiones pendientes, etc.)</li>
 </ul>
 <p>¿No sabes cuánto te corresponde? Usa nuestra <a href="finiquito_calculator">calculadora de finiquito</a> para tener una estimación antes de reclamar.</p>
+<div data-lead-abogado data-fuente="Guía No me pagan el finiquito" data-variante="impago" class="no-print"></div>
 <h2>2. ¿Qué pasa si no me pagan en 10 días?</h2>
 <p>Si el empleador no cumple con el plazo, la ley establece consecuencias económicas severas:</p>
 <div class="bg-white border border-slate-200 rounded-xl p-5 my-4 shadow-sm">
@@ -1519,6 +1521,7 @@ body { overflow-x: hidden; }
                 })
             }).then(function(response) {
                 if (response.ok) {
+                    if (typeof gtag === 'function') gtag('event', 'generate_lead', { fuente: fuente || 'Guía Informativa', tipo: 'abogado', value: 15000, currency: 'CLP' });
                     var successDiv = document.getElementById(formId + '-confirmacion');
                     if (successDiv) {
                         form.classList.add('hidden');
@@ -1530,6 +1533,7 @@ body { overflow-x: hidden; }
                     throw new Error('Error en el servidor');
                 }
             }).catch(function(err) {
+                if (typeof gtag === 'function') gtag('event', 'lead_error', { fuente: fuente || 'Guía Informativa', tipo: 'abogado' });
                 alert('Ocurrió un error al enviar tu consulta. Por favor inténtalo de nuevo.');
                 if (btn) {
                     btn.disabled = false;
@@ -1627,5 +1631,6 @@ body { overflow-x: hidden; }
         }
     </script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
+    <script src="/js/lead_abogado.js?v=1.0.0" defer></script>
 </body>
 </html>

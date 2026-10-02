@@ -8,7 +8,7 @@
  *  - In-memory IP rate limit (10 req / 10 min per IP)
  *  - Honeypot field to catch bots
  *  - Input validation: name (1-80), email RFC-lite, phone digits-only (<=20), tipo enum, monto numeric (<=20 chars)
- *  - Body size limit (1KB)
+ *  - Body size limit (4KB)
  *  - No hardcoded credential fallbacks: RESEND_API_KEY must be set in Vercel env or the request fails fast.
  *  - Generic error responses (no internal details leaked)
  *  - HTML-escaped email content
@@ -22,13 +22,16 @@ const ALLOWED_ORIGINS = new Set([
     'http://localhost:5500'
 ]);
 
-const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Otro']);
+const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Demanda Despido Injustificado', 'Despido Art. 160', 'Otro']);
+
+// Leads para abogados: basta un teléfono/WhatsApp válido, el correo es opcional
+const TIPO_ABOGADO = new Set(['Consulta Legal', 'Despido', 'Demanda Despido Injustificado', 'Despido Art. 160']);
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 const RATE_LIMIT_MAX = 10; // max requests per IP per window
 const ipBuckets = new Map(); // ip -> { count, resetAt }
 
-const MAX_BODY_BYTES = 1024;
+const MAX_BODY_BYTES = 4096;
 
 const FROM_ADDRESS = 'contacto@calculolaboral.cl'; // Verified in Resend on 2026-07-01 (Cloudflare DNS)
 const FROM_NAME = 'Cálculo Laboral';
@@ -240,16 +243,24 @@ module.exports = async (req, res) => {
         if (!cleanName) {
             return res.status(400).json({ error: 'Nombre es obligatorio.' });
         }
-        if (!isValidEmail(cleanEmail)) {
-            return res.status(400).json({ error: 'Correo no válido.' });
-        }
-        if (isDisposableEmail(cleanEmail)) {
-            return res.status(400).json({ error: 'Por favor ingresa un correo electrónico corporativo o personal válido.' });
-        }
-
         const cleanPhone = sanitizePhone(telefono);
         const cleanMonto = sanitizeMonto(monto_calculado);
         const cleanTipo = sanitizeTipo(tipo);
+        const phoneDigits = cleanPhone.replace(/\D/g, '');
+        const emailOptional = TIPO_ABOGADO.has(cleanTipo) && phoneDigits.length >= 8;
+        const hasEmail = cleanEmail.length > 0;
+
+        if (TIPO_ABOGADO.has(cleanTipo) && !hasEmail && phoneDigits.length < 8) {
+            return res.status(400).json({ error: 'Ingresa un WhatsApp o teléfono válido.' });
+        }
+        if (hasEmail || !emailOptional) {
+            if (!isValidEmail(cleanEmail)) {
+                return res.status(400).json({ error: 'Correo no válido.' });
+            }
+            if (isDisposableEmail(cleanEmail)) {
+                return res.status(400).json({ error: 'Por favor ingresa un correo electrónico corporativo o personal válido.' });
+            }
+        }
 
         // Resend API key must come from Vercel env. No hardcoded fallbacks.
         const resendApiKey = process.env.RESEND_API_KEY;
@@ -379,7 +390,7 @@ module.exports = async (req, res) => {
             <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
                 <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Origen / Formulario:</td><td style="padding: 6px 0; font-weight: bold; color: #0284c7;">${cleanFuente}</td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Nombre:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;">${cleanName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Correo:</td><td style="padding: 6px 0;"><a href="mailto:${cleanEmail}" style="color: #0ea5e9; font-weight: 600;">${cleanEmail}</a></td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Correo:</td><td style="padding: 6px 0;">${hasEmail ? `<a href="mailto:${cleanEmail}" style="color: #0ea5e9; font-weight: 600;">${cleanEmail}</a>` : '— (solo WhatsApp)'}</td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Teléfono:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;"><a href="tel:${cleanPhone}" style="color: #0f172a; text-decoration: none;">${cleanPhone || '—'}</a></td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Monto / Estimación:</td><td style="padding: 6px 0; font-weight: bold; color: #16a34a;">${cleanMonto && cleanMonto !== '0' ? '$' + cleanMonto + ' CLP' : 'Consulta directa desde guía'}</td></tr>
                 ${cleanDetalle ? `<tr><td style="padding: 6px 0; color: #64748b;">Detalle / Caso:</td><td style="padding: 6px 0; color: #334155; font-style: italic;">${cleanDetalle}</td></tr>` : ''}
@@ -420,7 +431,7 @@ module.exports = async (req, res) => {
             jhonSubject,
             jhonHtml,
             jhonText,
-            cleanEmail // Reply-To set to user's email so Jhon can click "Reply" directly!
+            hasEmail ? cleanEmail : undefined // Reply-To al correo del usuario cuando lo entregó
         );
         if (!jhonResp.ok) {
             console.error('Resend error (jhon email): status', jhonResp.status);
@@ -428,7 +439,7 @@ module.exports = async (req, res) => {
         }
 
         // 2. Try sending confirmation/welcome to the user (non-blocking)
-        try {
+        if (hasEmail) try {
             const userResp = await sendResendEmail(
                 cleanEmail,
                 userSubject,

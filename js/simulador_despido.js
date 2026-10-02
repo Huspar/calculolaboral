@@ -480,10 +480,12 @@
             if (res.ok) {
                 form.classList.add('hidden');
                 success.classList.remove('hidden');
+                if (typeof gtag === 'function') gtag('event', 'generate_lead', { fuente: 'Simulador Despido Injustificado Chile', tipo: 'abogado', value: 15000, currency: 'CLP' });
             } else {
                 throw new Error('Error al enviar');
             }
         }).catch(function () {
+            if (typeof gtag === 'function') gtag('event', 'lead_error', { fuente: 'Simulador Despido Injustificado Chile', tipo: 'abogado' });
             alert('Hubo un inconveniente al enviar tu consulta. Por favor escríbenos directamente a contacto@calculolaboral.cl');
             if (btn) {
                 btn.disabled = false;

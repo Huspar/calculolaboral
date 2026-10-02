@@ -1471,6 +1471,7 @@ body { overflow-x: hidden; }
             var form = document.getElementById('art160-lead-form');
             var btn = document.getElementById('art160-lead-btn');
             var success = document.getElementById('art160-lead-success');
+            var btnOriginal = btn ? btn.innerHTML : '';
 
             var nombre = document.getElementById('art160-lead-nombre').value.trim();
             var correo = document.getElementById('art160-lead-correo').value.trim();
@@ -1507,13 +1508,17 @@ body { overflow-x: hidden; }
                 if (res.ok) {
                     form.classList.add('hidden');
                     success.classList.remove('hidden');
+                    if (typeof gtag === 'function') gtag('event', 'generate_lead', { fuente: 'Calculadora Despido Art. 160', tipo: 'abogado', value: 15000, currency: 'CLP' });
                 } else {
                     throw new Error('Error en el servidor');
                 }
             }).catch(function() {
-                // Fallback gracefully
-                form.classList.add('hidden');
-                success.classList.remove('hidden');
+                if (typeof gtag === 'function') gtag('event', 'lead_error', { fuente: 'Calculadora Despido Art. 160', tipo: 'abogado' });
+                alert('No pudimos enviar tu solicitud. Intenta de nuevo o escríbenos a contacto@calculolaboral.cl.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = btnOriginal;
+                }
             });
         }
 
