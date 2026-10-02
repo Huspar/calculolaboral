@@ -979,6 +979,11 @@
 
                 // Si hay URL de pasarela externa configurada (Flow, Webpay, MercadoPago), redirigir directamente
                 if (PAYMENT_GATEWAY_URL && PAYMENT_GATEWAY_URL.trim().length > 0) {
+                    // Aviso de retracto antes de salir a la pasarela
+                    if (window.CLCheckout) {
+                        window.CLCheckout.go(PAYMENT_GATEWAY_URL);
+                        return;
+                    }
                     confirmPayBtn.disabled = true;
                     confirmPayBtn.innerHTML = `
                         <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

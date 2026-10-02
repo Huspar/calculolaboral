@@ -900,6 +900,7 @@
                 <link rel="stylesheet" href="${window.location.origin}/assets/css/style.css?v=3.1.0">
                 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                <script src="${window.location.origin}/js/checkout_consent.js?v=1.0.0" defer></script>
                 ${estilos}
             </head>
             <body class="bg-slate-100 py-6">
@@ -981,8 +982,9 @@
                 } catch (err) {
                     console.error(err);
                 }
-                // Redirigir a Flow
-                window.location.href = FLOW_CHECKOUT_URL;
+                // Redirigir a Flow (previo aviso de retracto)
+                if (window.CLCheckout) window.CLCheckout.go(FLOW_CHECKOUT_URL);
+                else window.location.href = FLOW_CHECKOUT_URL;
             });
         }
 

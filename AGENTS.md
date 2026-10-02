@@ -283,13 +283,25 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
 
 ---
 
+## 2.1 Contenido Comercial y Legal (Ley 19.496)
+Los kits y generadores son modelos de referencia; los textos de venta no pueden prometer más que eso.
+* **Autoría:** nunca afirmar que un documento fue redactado, revisado o validado por abogados. Ningún documento del sitio lo ha sido.
+* **"Oficial":** no usarlo para productos o herramientas propias (sugiere que los emite la DT o la Agencia). Sí para fuentes o valores de la autoridad ("Diario Oficial", "valor oficial de la UTM").
+* **Promesas:** nada de "evita multas", "garantiza validez", "cumplimiento pleno/total" o "100% conforme". Usar "reduce el riesgo de multas", "basado en el Código del Trabajo".
+* **Precios:** sin precios tachados, "precio normal" ni "ahorras X%": nunca se vendió a otro precio.
+* **Contenido:** describir solo lo que trae el producto. Kit Blindaje: 21 Word + manual PDF (Ley Karin, anexos 42h, pactos y cláusulas por rubro, checklist y guía DT; no trae contratos, finiquitos ni anexo de sala cuna). Kit Ley 21.719: 7 instrumentos + manual; la ley rige desde el 1 de diciembre de 2026.
+* **Pago:** todo enlace o redirección a Flow pasa por `js/checkout_consent.js` (aviso de retracto con casilla). Enlaces `<a href="https://www.flow.cl/btn.php?token=...">` se interceptan solos; las redirecciones por JS llaman a `window.CLCheckout.go(url)`.
+
+---
+
 ## 3. Checklist Pre-Despliegue para Nuevas Páginas
 Antes de dar por terminada la creación de cualquier página o herramienta:
 - [ ] ¿El header tiene el logotipo oficial con el SVG de la balanza?
 - [ ] ¿El header es de fondo blanco y contiene la navegación oficial?
 - [ ] ¿La barra de indicadores tiene `whitespace-nowrap` y CSS responsive de 1 fila en mobile?
 - [ ] ¿El footer es el curvado verde `.teal-footer-curve` (`#00382E`) idéntico al de `index.html`, con las 4 columnas oficiales?
-- [ ] ¿Los botones de pago Flow.cl (`$12.990`, `$19.990` y `$29.990`) tienen los tokens vigentes?
+- [ ] ¿Los botones de pago Flow.cl (`$12.990`, `$19.990` y `$29.990`) tienen los tokens vigentes (el token completo, no truncado) y la página carga `js/checkout_consent.js`?
+- [ ] ¿Los textos de venta cumplen la sección 2.1 (sin "oficial", sin abogados, sin precios tachados, contenido real del kit)?
 - [ ] ¿Enlaza `polish.css` y `motion.js`, usa `bg-canvas` en el body y no tiene clases `sky/blue/indigo/violet/purple/orange`?
 - [ ] ¿Se añadió la página a `sitemap.xml` con su respectiva prioridad?
 - [ ] ¿Se verificó en vista desktop (1200px) y móvil (390px)?

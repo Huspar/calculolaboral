@@ -47,12 +47,32 @@ RGBA_MAP = {r'rgba\(\s*2\s*,\s*132\s*,\s*199': 'rgba(0, 56, 46', r'rgba\(\s*14\s
 
 # Excluye los vistos buenos (U+2713, U+2714): en las listas de control si comunican algo
 EMOJI = re.compile('[\U0001F300-\U0001FAFF☀-✒✕-➿️⭐✅❌]\\s?')
+VERSION_MARK = 'Versión 2026.10'
+TEXT_FIXES = [
+    ('<span class="step-badge step-badge-green">Cumplimiento Pleno</span>',
+     '<span class="step-badge step-badge-green">Carpeta al día</span>'),
+    ('Mantener las carpetas firmadas evita el inicio de procesos sancionatorios.',
+     'Mantener las carpetas firmadas reduce el riesgo de que se inicie un proceso sancionatorio.'),
+    ('asegurando cumplimiento total ante la DT.', 'para mantener la documentación al día ante la DT.'),
+    ('tu empresa se encuentra en estándar de <strong>cumplimiento pleno para prevenir sanciones</strong> de la Inspección del Trabajo.',
+     'tendrás en orden la <strong>documentación base que suele revisar</strong> la Inspección del Trabajo.'),
+    ('<strong>Respaldo Normativo y Validez Legal (Art. 528 C.O.T.):</strong>',
+     '<strong>Alcance de estos modelos (' + VERSION_MARK + ', octubre de 2026):</strong>'),
+    ('confeccionados en conformidad estricta con el Código del Trabajo', 'basados en el Código del Trabajo'),
+    ('reservada a abogados colegiados y habilitados conforme al artículo 528 del Código Orgánico de Tribunales de Chile.',
+     'reservada por la ley chilena a abogados habilitados. Si tu caso tiene particularidades, revisa los documentos con un abogado antes de firmarlos.'),
+    ('<span class="tag tag-green">100% Plug & Play</span>', '<span class="tag tag-green">Uso casi directo</span>'),
+]
+# Linea de vigencia, solo para el manual del Kit Ley 21.719
+DATOS_VERSION = ('<p style="margin:12px 0 0;font-size:7pt;line-height:1.4;color:#64748b">' + VERSION_MARK + ' (octubre de 2026) · La Ley 21.719 rige desde el 1 de diciembre de 2026. '
+                 'Si la Agencia de Protección de Datos dicta normas que cambien estos documentos antes del 31 de diciembre de 2027, '
+                 'te enviamos la versión actualizada sin costo al correo de compra.</p>')
 FONT_LINK = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
              '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800'
              '&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">')
 
 
-def restyle(html):
+def restyle(html, ley_21719=False):
     for old, new in COLOR_MAP.items():
         html = re.sub(re.escape(old), new, html, flags=re.I)
     for old, new in RGBA_MAP.items():
@@ -77,12 +97,20 @@ def restyle(html):
     html = re.sub(r'_{30,}', '_' * 26, html)
     # Formato real de los archivos
     html = html.replace('(Formato Word .doc)', '(Formato Word .docx)')
+    # Promesas que un modelo no puede asegurar y cita de articulo dudosa
+    for old, new in TEXT_FIXES:
+        html = html.replace(old, new)
+    if ley_21719 and 'rige desde el 1 de diciembre' not in html:
+        # La hoja 3 va llena: la linea cierra la hoja 2, antes del segundo salto de pagina
+        breaks = [m.start() for m in re.finditer(r'[ \t]*<div class="page-break"></div>', html)]
+        at = breaks[1]
+        html = html[:at] + '    ' + DATOS_VERSION + '\n' + html[at:]
     return html
 
 
 if __name__ == '__main__':
     for path in MANUALS:
         src = path.read_text(encoding='utf-8')
-        out = restyle(src)
+        out = restyle(src, ley_21719='21719' in path.name)
         path.write_text(out, encoding='utf-8')
         print('restyled', path.name, 'cambios' if out != src else 'sin cambios')

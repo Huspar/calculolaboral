@@ -9,7 +9,7 @@ from docx.oxml.ns import nsdecls
 
 sys.path.insert(0, os.path.dirname(__file__))
 import shutil
-from restyle_kit_docx import restyle_path
+from restyle_kit_docx import NOTE_LEY_21719, restyle_path
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'api', 'assets', 'kit_datos_files')
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'assets')
@@ -243,7 +243,7 @@ def build_doc_0():
         r.font.color.rgb = RGBColor(255, 255, 255)
 
     rows_data = [
-        ("Servicios B2B, Talleres, Fábricas y Oficinas", "Nómina de trabajadores, emisión de facturas a clientes empresa y proveedores.", "100% Plug & Play. No requiere modificar ninguna cláusula. Usa el kit tal cual viene pre-rellenado."),
+        ("Servicios B2B, Talleres, Fábricas y Oficinas", "Nómina de trabajadores, emisión de facturas a clientes empresa y proveedores.", "Uso casi directo: basta con completar los datos de tu empresa en los campos entre corchetes."),
         ("Comercio Online (E-commerce) y Tiendas", "Direcciones de despacho a particulares, teléfonos y pasarelas de pago (Transbank, Flow, etc.).", "Publica el Documento 2 en tu web. En el Excel RAT, mantén activa la fila RAT-05 (Ventas web) y nombra a los couriers en Columna H."),
         ("Transporte, Logística y Fletes", "Geolocalización (GPS) en camiones, furgones o motocicletas asignadas a choferes.", "En el Documento 1 (Anexo), deja constancia de que los vehículos tienen GPS por seguridad de ruta. En el RAT añade la fila RAT-07: Rastreo GPS."),
         ("Salud y Bienestar (Clínicas, Dentistas)", "Fichas clínicas y diagnósticos médicos de pacientes particulares (Datos Sensibles).", "Recaba consentimiento expreso en ficha de ingreso y firma obligatoriamente el Documento 3 (DPA) con tu software médico en la nube."),
@@ -406,7 +406,8 @@ def build_doc_2():
 # DOC 3: CLÁUSULA DPA PROVEEDORES Y ENCARGADOS
 # =========================================================================
 def build_doc_3():
-    doc = create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9)
+    # Margenes de 1,5 cm: con la nota de version al pie, el DPA sigue cabiendo en una hoja
+    doc = create_base_doc(top=0.6, bottom=0.6, left=0.9, right=0.9)
     add_header_brand(doc, "Documento 3  •  Formato Word Editable (.docx)")
     add_title(doc, "ANEXO DE TRATAMIENTO DE DATOS PERSONALES (DPA)\nENTRE RESPONSABLE Y ENCARGADO DEL TRATAMIENTO",
               "(Conforme al Artículo 14 bis y 14 ter de la Ley N° 21.719 de Chile)")
@@ -675,7 +676,7 @@ def main():
         print(f"Generated {out_path} ({os.path.getsize(out_path)} bytes)")
 
         # Also copy to assets/ for direct HTTP downloads
-        restyle_path(out_path)  # identidad vigente, Calibri en firmas y orden OOXML
+        restyle_path(out_path, note=NOTE_LEY_21719)  # identidad vigente, Calibri en firmas y orden OOXML
         asset_path = os.path.join(ASSETS_DIR, filename)
         shutil.copy2(out_path, asset_path)
         print(f"Copied to {asset_path}")

@@ -518,7 +518,7 @@
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
-                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas oficiales Dirección del Trabajo</span>
+                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas según el Código del Trabajo</span>
             </div>
             <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
@@ -1123,7 +1123,7 @@
                                 <span class="text-xs font-mono text-rose-700 font-extrabold">2026</span>
                             </div>
                             <p class="text-sm text-slate-600 leading-snug">
-                                ¿Tu empresa maneja licencias médicas, cuentas bancarias o control biométrico? Conoce el <a href="kit-cumplimiento-ley-datos-personales-chile" class="font-bold text-[#00382E] hover:underline">Kit Ley 21.719 con Anexo Laboral y RAT en Excel</a> para evitar multas de hasta 20.000 UTM.
+                                ¿Tu empresa maneja licencias médicas, cuentas bancarias o control biométrico? Conoce el <a href="kit-cumplimiento-ley-datos-personales-chile" class="font-bold text-[#00382E] hover:underline">Kit Ley 21.719 con Anexo Laboral y RAT en Excel</a> para prepararte ante multas de hasta 20.000 UTM.
                             </p>
                         </div>
 
@@ -1176,7 +1176,6 @@
 
                         <div class="flex items-center justify-between pt-1">
                             <div>
-                                <span class="text-xs text-slate-400 block line-through">Normal $25.000</span>
                                 <span class="text-2xl font-black text-slate-900 font-mono">$12.990 <span class="text-xs font-sans text-slate-500 font-normal">CLP</span></span>
                             </div>
                             <button type="button" id="btn-comprar-contrato-main" class="btn-yellow-pill !py-3 !px-5 !text-xs !shadow-md flex items-center gap-1.5 cursor-pointer">
@@ -1662,7 +1661,8 @@
                 try {
                     localStorage.setItem('contrato_builder_state', JSON.stringify(datos));
                 } catch(e){}
-                window.location.href = window.ContratoTemplatesEngine.FLOW_CHECKOUT_URL;
+                var url = window.ContratoTemplatesEngine.FLOW_CHECKOUT_URL;
+                if (window.CLCheckout) window.CLCheckout.go(url); else window.location.href = url;
             }
 
             var btnMain = document.getElementById('btn-comprar-contrato-main');
@@ -1751,6 +1751,7 @@
             }
         });
     </script>
+    <script src="/js/checkout_consent.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

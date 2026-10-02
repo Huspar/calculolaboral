@@ -10,6 +10,8 @@
 
 Uso:
     python scripts/restyle_kit_docx.py <archivo.docx | kit.zip> [...]
+    python scripts/restyle_kit_docx.py --blindaje api/assets/Kit_Blindaje_Laboral_Pyme_2026.zip
+        (agrega la nota de version y renombra los archivos "Oficial")
 """
 import io
 import re
@@ -132,20 +134,70 @@ def default_font(root):
             rpr.insert(0, f)
 
 
-def restyle_part(xml_bytes, is_body):
+# Frases que prometian mas de lo que un modelo puede asegurar (cada una vive en un solo run)
+TEXT_FIXES = [
+    ('GUIA PRACTICA DE APLICACION Y VALIDEZ LEGAL (DT / SUSESO)', 'GUÍA PRÁCTICA DE APLICACIÓN (DT / SUSESO)'),
+    ('AVISO DE VALIDEZ LEGAL Y DELIMITACIÓN DE RESPONSABILIDAD (ART. 528 C.O.T.)', 'AVISO LEGAL Y LÍMITES DE RESPONSABILIDAD'),
+    ('elaborados con estricta sujeción a la normativa laboral, decretos y circulares oficiales de la',
+     'elaborados con base en la normativa laboral, decretos y circulares de la'),
+    ('legalmente reservadas a abogados colegiados y habilitados conforme al artículo 528 del Código Orgánico de Tribunales de Chile.',
+     'reservadas por la ley chilena a abogados habilitados. Si tu caso tiene particularidades, revisa los documentos con un abogado antes de firmarlos.'),
+]
+
+VERSION_MARK = 'Versión 2026.10'
+
+
+def fix_texts(root):
+    for t in root.iter(w('t')):
+        for old, new in TEXT_FIXES:
+            if t.text and old in t.text:
+                t.text = t.text.replace(old, new)
+
+
+def add_version_note(root, note):
+    """Linea final pequena con version y alcance del modelo (una sola vez)."""
+    body = root.find(w('body'))
+    if body is None or VERSION_MARK in ''.join(t.text or '' for t in root.iter(w('t'))):
+        return
+    p = etree.Element(w('p'))
+    ppr = etree.SubElement(p, w('pPr'))
+    sp = etree.SubElement(ppr, w('spacing'))
+    sp.set(w('before'), '120')
+    sp.set(w('after'), '0')
+    r = etree.SubElement(p, w('r'))
+    rpr = etree.SubElement(r, w('rPr'))
+    f = etree.SubElement(rpr, w('rFonts'))
+    for k in ('ascii', 'hAnsi', 'cs'):
+        f.set(w(k), 'Calibri')
+    etree.SubElement(rpr, w('color')).set(w('val'), '64748B')
+    etree.SubElement(rpr, w('sz')).set(w('val'), '14')
+    t = etree.SubElement(r, w('t'))
+    t.text = note
+    t.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+    sect = body.find(w('sectPr'))
+    if sect is not None:
+        sect.addprevious(p)
+    else:
+        body.append(p)
+
+
+def restyle_part(xml_bytes, is_body, note=None):
     root = etree.fromstring(xml_bytes)
     recolor(root)
     soften_stripes(root)
+    fix_texts(root)
     if is_body:
         dashes_to_rule(root)
         fit_cells_to_grid(root)
+        if note:
+            add_version_note(root, note)
     default_font(root)
     data = etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
     data, _ = fix_part(data)
     return data
 
 
-def restyle_docx_bytes(data):
+def restyle_docx_bytes(data, note=None):
     src = zipfile.ZipFile(io.BytesIO(data))
     out = io.BytesIO()
     with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as dst:
@@ -154,17 +206,22 @@ def restyle_docx_bytes(data):
             name = info.filename
             if name.startswith('word/') and name.endswith('.xml') and (
                     name == 'word/document.xml' or re.match(r'word/(header|footer)\d*\.xml', name)):
-                content = restyle_part(content, is_body=(name == 'word/document.xml'))
+                content = restyle_part(content, is_body=(name == 'word/document.xml'), note=note)
             dst.writestr(info, content)
     return out.getvalue()
 
 
-def restyle_path(path):
+def restyle_path(path, note=None, rename=None):
+    """Reestiliza un .docx o todos los .docx de un .zip.
+
+    note: linea de version que se agrega al final de cada documento.
+    rename: {nombre_viejo: nombre_nuevo} para entradas del zip.
+    """
     if path.lower().endswith('.docx'):
         with open(path, 'rb') as f:
             data = f.read()
         with open(path, 'wb') as f:
-            f.write(restyle_docx_bytes(data))
+            f.write(restyle_docx_bytes(data, note))
         return [path]
     src = zipfile.ZipFile(path)
     out = io.BytesIO()
@@ -173,8 +230,11 @@ def restyle_path(path):
         for info in src.infolist():
             data = src.read(info.filename)
             if info.filename.lower().endswith('.docx'):
-                data = restyle_docx_bytes(data)
+                data = restyle_docx_bytes(data, note)
                 done.append(info.filename)
+            for old, new in (rename or {}).items():
+                if info.filename.endswith('/' + old) or info.filename == old:
+                    info.filename = info.filename[:-len(old)] + new
             dst.writestr(info, data)
     src.close()
     with open(path, 'wb') as f:
@@ -182,7 +242,20 @@ def restyle_path(path):
     return done
 
 
+NOTE_BASE = (VERSION_MARK + ' (octubre de 2026). Modelo de referencia basado en la normativa vigente a esa fecha; '
+             'no constituye asesoría legal. Si tu caso tiene particularidades, revísalo con un abogado antes de firmar.')
+NOTE_LEY_21719 = NOTE_BASE + ' La Ley 21.719 rige desde el 1 de diciembre de 2026.'
+
+# Nombres que sugerian un documento emitido por la autoridad
+BLINDAJE_RENAME = {
+    '03_Formulario_Oficial_Recepcion_Denuncia_Karin.docx': '03_Formulario_Recepcion_Denuncia_Karin.docx',
+    '18_Checklist_Oficial_10_Documentos_Inspeccion_DT.docx': '18_Checklist_10_Documentos_Inspeccion_DT.docx',
+}
+
 if __name__ == '__main__':
-    for p in sys.argv[1:]:
-        for name in restyle_path(p):
+    args = sys.argv[1:]
+    blindaje = '--blindaje' in args
+    for p in [a for a in args if not a.startswith('--')]:
+        kw = {'note': NOTE_BASE, 'rename': BLINDAJE_RENAME} if blindaje else {}
+        for name in restyle_path(p, **kw):
             print('restyled', name)
