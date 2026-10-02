@@ -35,3 +35,6 @@ tools/screenshots/
 # Claude Code local tooling (skills, hooks, agents)
 .claude/
 .mcp.json
+
+# Configuracion local de herramientas de diseno (no se publica)
+/.impeccable/
