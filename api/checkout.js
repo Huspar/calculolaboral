@@ -73,6 +73,10 @@ module.exports = async (req, res) => {
         return res.status(200).json({ url: `${pay.url}?token=${pay.token}` });
     } catch (err) {
         console.error('checkout:', err.message);
+        // Flow valida que la casilla exista y rechaza correos mal escritos o inventados
+        if (/userEmail/i.test(err.message)) {
+            return res.status(400).json({ error: 'Flow no aceptó ese correo. Revisa que esté bien escrito e intenta de nuevo.' });
+        }
         return res.status(502).json({ error: 'No pudimos conectar con Flow. Intenta de nuevo en unos minutos.' });
     }
 };
