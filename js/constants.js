@@ -51,7 +51,7 @@ const CONSTANTS = {
     AFC_INDEFINIDO_EMPLOYER_FCS: 0.008, // 0.8% Fondo de Cesantía Solidario (No imputable)
     AFC_PLAZO_FIJO_WORKER: 0.0,
     AFC_PLAZO_FIJO_EMPLOYER: 0.03,      // 3.0% (2.8% CIC + 0.2% FCS)
-    FACTOR_HORA_EXTRA_42H: 0.0089286, // (1/168 * 1.5)
+    FACTOR_HORA_EXTRA_42H: 0.0083333, // Factor DT 42h: 1,5 × 28 / (30 × 168) = 1,5 / 180
 
     // Income Tax Brackets (Impuesto Segunda Categoría) - Septiembre 2026 (Base UTM $71.721)
     TAX_BRACKETS: [
