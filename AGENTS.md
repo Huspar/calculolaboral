@@ -291,6 +291,7 @@ Los kits y generadores son modelos de referencia; los textos de venta no pueden 
 * **Precios:** sin precios tachados, "precio normal" ni "ahorras X%": nunca se vendió a otro precio.
 * **Contenido:** describir solo lo que trae el producto. Kit Blindaje: 21 Word + manual PDF (Ley Karin, anexos 42h, pactos y cláusulas por rubro, checklist y guía DT; no trae contratos, finiquitos ni anexo de sala cuna). Kit Ley 21.719: 7 instrumentos + manual; la ley rige desde el 1 de diciembre de 2026.
 * **Pago:** todo enlace o redirección a Flow pasa por `js/checkout_consent.js` (aviso de retracto con casilla). Enlaces `<a href="https://www.flow.cl/btn.php?token=...">` se interceptan solos; las redirecciones por JS llaman a `window.CLCheckout.go(url)`.
+* **Kits pagados (Blindaje $19.990 y Ley 21.719 $29.990):** se cobran con la API de Flow, no con botones. La página llama a `window.CLCheckout.buyKit('blindaje' | 'datos', comprador)`; el servidor crea el pago (`/api/checkout`), Flow confirma (`/api/flow-confirm`, que envía el kit por correo) y el comprador vuelve a `/compra-exitosa` con un enlace firmado a `/api/download`. Otras páginas enlazan a `kit-cumplimiento-laboral-pymes#comprar-kit`, nunca a Flow directo. **Prohibido** dejar archivos de los kits en `/assets` u otra ruta pública: viven solo en `api/assets/`. Requiere `FLOW_API_KEY` y `FLOW_SECRET_KEY` en Vercel (ver `api/_flow.js`).
 
 ---
 
@@ -300,7 +301,7 @@ Antes de dar por terminada la creación de cualquier página o herramienta:
 - [ ] ¿El header es de fondo blanco y contiene la navegación oficial?
 - [ ] ¿La barra de indicadores tiene `whitespace-nowrap` y CSS responsive de 1 fila en mobile?
 - [ ] ¿El footer es el curvado verde `.teal-footer-curve` (`#00382E`) idéntico al de `index.html`, con las 4 columnas oficiales?
-- [ ] ¿Los botones de pago Flow.cl (`$12.990`, `$19.990` y `$29.990`) tienen los tokens vigentes (el token completo, no truncado) y la página carga `js/checkout_consent.js`?
+- [ ] ¿Los botones de pago Flow.cl de los generadores (`$4.990`, `$12.990`) tienen el token completo y la página carga `js/checkout_consent.js`? ¿Los kits (`$19.990`, `$29.990`) se compran con `CLCheckout.buyKit` o enlazan al formulario del kit?
 - [ ] ¿Los textos de venta cumplen la sección 2.1 (sin "oficial", sin abogados, sin precios tachados, contenido real del kit)?
 - [ ] ¿Enlaza `polish.css` y `motion.js`, usa `bg-canvas` en el body y no tiene clases `sky/blue/indigo/violet/purple/orange`?
 - [ ] ¿Se añadió la página a `sitemap.xml` con su respectiva prioridad?

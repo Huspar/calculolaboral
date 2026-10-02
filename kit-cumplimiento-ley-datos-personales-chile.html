@@ -1029,6 +1029,7 @@ body { overflow-x: hidden; }
                                 <span style="color: #111827 !important;">Pagar $29.990 con Webpay / Débito</span>
                             </button>
                         </div>
+                        <p id="kit-datos-error" class="hidden text-xs text-rose-600 text-center" role="alert"></p>
                     </form>
 
                     <!-- Mensaje de Redirección -->
@@ -1045,212 +1046,7 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
 
-                <!-- Modal / Panel de Descarga Inmediata para Retorno Exitoso de Pago -->
-                <div id="modal-descarga-postpago" class="hidden bg-emerald-50/80 border-2 border-emerald-400/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl shadow-emerald-500/10">
-                    <div class="text-center space-y-2">
-                        <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-md shadow-emerald-500/30">
-                            <span class="material-icons text-3xl" style="color: #ffffff !important;">verified</span>
-                        </div>
-                        <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs uppercase tracking-wider">
-                            Transacción Verificada Flow & Webpay
-                        </span>
-                        <h3 class="text-2xl sm:text-3xl font-extrabold text-emerald-950">¡Pago Confirmado con Éxito!</h3>
-                        <p class="text-sm sm:text-sm text-emerald-800 max-w-xl mx-auto leading-relaxed">
-                            Gracias por confiar en <strong>Cálculo Laboral</strong>. Tu licencia del <strong>Kit Ley 21.719</strong> está activa. Puedes descargar el paquete completo con un solo clic o guardar cada archivo por separado a continuación:
-                        </p>
-                    </div>
 
-                    <!-- Botón Principal Masivo -->
-                    <div class="text-center pt-1">
-                        <button id="btn-descargar-pack-inmediato" class="w-full sm:w-auto px-8 py-4 bg-forest-700 hover:bg-forest-800 !text-white font-extrabold text-base rounded-2xl shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2.5 cursor-pointer" style="background-color: #059669 !important; color: #ffffff !important;">
-                            <span class="material-icons text-xl" style="color: #ffffff !important;">folder_zip</span>
-                            <span style="color: #ffffff !important;">Descargar Pack Completo (ZIP: Guía PDF + 7 Instrumentos Word/Excel)</span>
-                        </button>
-                    </div>
-
-                    <!-- Cuadrícula de Instrumentos Individuales -->
-                    <div class="pt-4 border-t border-emerald-200/80">
-                        <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-4 text-center">
-                            O descarga cada instrumento individualmente:
-                        </h4>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-left">
-
-                            <!-- Doc 0: Guía Maestra -->
-                            <div class="bg-gradient-to-br from-white to-forest-50/70 border-2 border-slate-300 rounded-2xl p-4 flex flex-col justify-between shadow-xs md:col-span-2">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-forest-600 text-white font-mono font-bold text-xs">DOC 0 • GUÍA MAESTRA (PDF + WORD)</span>
-                                        <span class="text-xs font-bold text-forest-700">Comienza por aquí</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Manual de Uso e Implementación Rápida Paso a Paso</h5>
-                                    <p class="text-sm text-slate-600 mt-1">Ruta en 3 pasos (15 min), tabla de adaptación por rubros (e-commerce, flotas GPS, salud, retail, educación), preguntas frecuentes y checklist imprimible.</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end gap-2">
-                                    <button id="btn-dl-doc0-doc" class="px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-slate-50 font-bold text-xs flex items-center gap-1 border border-slate-300 cursor-pointer">
-                                        <span class="material-icons text-xs">description</span> Descargar Word (.docx)
-                                    </button>
-                                    <button id="btn-dl-doc0" class="btn-dark-pill .5 !text-white font-bold text-xs flex items-center gap-1 cursor-pointer" style="background-color: #0F5E4F !important; color: #ffffff !important;">
-                                        <span class="material-icons text-xs" style="color: #ffffff !important;">picture_as_pdf</span> <span style="color: #ffffff !important;">Descargar Manual PDF</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Doc 1 -->
-                            <div class="bg-white border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono font-bold text-xs">DOC 1 • WORD</span>
-                                        <span class="text-xs font-bold text-emerald-700">Res. Ex. 38 DT</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Anexo Laboral y Control Biométrico</h5>
-                                    <p class="text-xs text-slate-500 mt-1">Autorización laboral de datos, licencias médicas y alternativa no biométrica para reloj control.</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                                    <button id="btn-dl-doc1" class="btn-dark-pill text-forest-700 font-bold text-xs flex items-center gap-1 border border-slate-200 cursor-pointer">
-                                        <span class="material-icons text-xs">download</span> Descargar Word
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Doc 2 -->
-                            <div class="bg-white border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono font-bold text-xs">DOC 2 • WORD</span>
-                                        <span class="text-xs font-bold text-emerald-700">Web & Clientes</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Política de Privacidad Web y Pyme</h5>
-                                    <p class="text-xs text-slate-500 mt-1">Para publicar en tu sitio web y contratos comerciales. Regula cookies y derechos ARCOP (30 días corridos).</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                                    <button id="btn-dl-doc2" class="btn-dark-pill text-forest-700 font-bold text-xs flex items-center gap-1 border border-slate-200 cursor-pointer">
-                                        <span class="material-icons text-xs">download</span> Descargar Word
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Doc 3 -->
-                            <div class="bg-white border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono font-bold text-xs">DOC 3 • WORD</span>
-                                        <span class="text-xs font-bold text-amber-700">Art. 14 bis</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Cláusula DPA Proveedores y Software</h5>
-                                    <p class="text-xs text-slate-500 mt-1">Addendum para contador, software de remuneraciones y hosting. Exención solidaria de multas.</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                                    <button id="btn-dl-doc3" class="btn-dark-pill text-forest-700 font-bold text-xs flex items-center gap-1 border border-slate-200 cursor-pointer">
-                                        <span class="material-icons text-xs">download</span> Descargar Word
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Doc 4 -->
-                            <div class="bg-white border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-mono font-bold text-xs">DOC 4 • EXCEL (.XLSX)</span>
-                                        <span class="text-xs font-bold text-emerald-700">Art. 14 ter APDP</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Registro de Actividades de Tratamiento (RAT)</h5>
-                                    <p class="text-xs text-slate-500 mt-1">Inventario estándar obligatorio formulado en Microsoft Excel (.xlsx) con 6 categorías empresariales listas.</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                                    <button id="btn-dl-doc4" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs flex items-center gap-1 border border-emerald-200 cursor-pointer">
-                                        <span class="material-icons text-xs">download</span> Descargar Excel (.xlsx)
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Doc 5 -->
-                            <div class="bg-white border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 font-mono font-bold text-xs">DOC 5 • WORD</span>
-                                        <span class="text-xs font-bold text-rose-700">Estándar 72h • Art. 14 sexies</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Protocolo y Notificación de Brechas APDP</h5>
-                                    <p class="text-xs text-slate-500 mt-1">Manual de acción ante hackeos o robo de equipos + formulario para reportar a la Agencia sin dilaciones.</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                                    <button id="btn-dl-doc5" class="btn-dark-pill text-forest-700 font-bold text-xs flex items-center gap-1 border border-slate-200 cursor-pointer">
-                                        <span class="material-icons text-xs">download</span> Descargar Word
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Doc 6 -->
-                            <div class="bg-white border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono font-bold text-xs">DOC 6 • WORD</span>
-                                        <span class="text-xs font-bold text-forest-700">Plazo 30 Días Corridos</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Formulario Estándar Derechos ARCOP</h5>
-                                    <p class="text-sm text-slate-500 mt-1">Modelo procedimental para tramitar solicitudes de acceso, rectificación o borrado dentro del plazo fatal del Art. 11.</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                                    <button id="btn-dl-doc6" class="btn-dark-pill text-forest-700 font-bold text-xs flex items-center gap-1 border border-slate-200 cursor-pointer">
-                                        <span class="material-icons text-xs">download</span> Descargar Word
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Doc 7 -->
-                            <div class="bg-white border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-forest-100 text-forest-800 font-mono font-bold text-xs">DOC 7 • WORD</span>
-                                        <span class="text-xs font-bold text-forest-700">Autodiagnóstico Pyme</span>
-                                    </div>
-                                    <h5 class="font-bold text-slate-900 text-xs">Test DPO: Exención de Delegado de Datos</h5>
-                                    <p class="text-sm text-slate-500 mt-1">Checklist preventivo de 4 preguntas que respalda documentalmente por qué tu empresa no está obligada a contratar un DPO.</p>
-                                </div>
-                                <div class="pt-3 mt-3 border-t border-slate-100 flex justify-end">
-                                    <button id="btn-dl-doc7" class="btn-dark-pill text-forest-700 font-bold text-xs flex items-center gap-1 border border-slate-200 cursor-pointer">
-                                        <span class="material-icons text-xs">download</span> Descargar Word
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- Instrucciones de Implementación -->
-                    <div class="p-4 bg-emerald-100/60 rounded-2xl text-xs text-emerald-900 space-y-1.5 text-left border border-emerald-200/80">
-                        <div class="font-bold flex items-center gap-1.5">
-                            <span class="material-icons text-sm text-emerald-700">info</span>
-                            <span>Pasos para implementar en tu empresa:</span>
-                        </div>
-                        <ol class="list-decimal list-inside space-y-1 pl-1 text-xs text-emerald-800">
-                            <li>Abre cada archivo en Word o Excel y personaliza los campos entre corchetes <code>[NOMBRE EMPRESA]</code>, <code>[RUT]</code> y correos de contacto si lo deseas.</li>
-                            <li>Imprime o envía digitalmente el <strong>Anexo Laboral</strong> para firma de tus colaboradores junto con la liquidación de sueldo.</li>
-                            <li>Publica la <strong>Política de Privacidad</strong> en el pie de página de tu sitio web y archiva el <strong>Registro RAT</strong> en tu carpeta legal.</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <!-- Panel de Acceso Denegado (Protección anti-copia de links sin pago) -->
-                <div id="modal-acceso-denegado" class="hidden bg-white border-2 border-slate-300 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm text-center">
-                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center mx-auto shadow-2xs">
-                        <span class="material-icons text-3xl">lock</span>
-                    </div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider">
-                        Acceso Restringido • Compra Requerida
-                    </span>
-                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">No se detectó una compra activa o la sesión expiró</h3>
-                    <p class="text-sm sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
-                        Esta zona de descarga es privada y está reservada exclusivamente para transacciones confirmadas a través de <strong>Flow / Webpay</strong>. Si ya compraste tu kit y necesitas asistencia o reenvío directo a tu correo, contáctanos a <strong>contacto@calculolaboral.cl</strong>.
-                    </p>
-                    <div class="pt-2">
-                        <button type="button" id="btn-volver-comprar" class="btn-yellow-pill !text-white font-extrabold text-xs transition-all inline-flex items-center gap-1.5 cursor-pointer" style="background-color: #0F5E4F !important; color: #ffffff !important;">
-                            <span class="material-icons text-xs" style="color: #ffffff !important;">shopping_cart</span>
-                            <span style="color: #ffffff !important;">Adquirir Kit Ley 21.719 ($29.990)</span>
-                        </button>
-                    </div>
-                </div>
 
                 <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 pt-2">
                     <span class="flex items-center gap-1"><span class="material-icons text-sm text-emerald-500">verified</span> Webpay Plus</span>
@@ -1436,7 +1232,6 @@ body { overflow-x: hidden; }
     <!-- SCRIPTS -->
     <script src="js/constants.js?v=2.0.4"></script>
     <script src="js/indicators.js?v=2.9.0"></script>
-    <script src="js/kit_datos_engine.js?v=2.8.0"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // LÓGICA DEL TEST RÁPIDO DE RIESGO
@@ -1486,6 +1281,8 @@ body { overflow-x: hidden; }
             var btnSubmit = document.getElementById('btn-submit-flow');
             var msgConnecting = document.getElementById('checkout-connecting-msg');
 
+            var errorBox = document.getElementById('kit-datos-error');
+
             if (form) {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -1494,201 +1291,57 @@ body { overflow-x: hidden; }
                     var email = document.getElementById('buyer-email').value.trim();
                     var telefono = document.getElementById('buyer-telefono').value.trim();
 
-                    // Crear sesión criptográfica de compra válida por 45 minutos
-                    var sessionId = 'KD21719-' + Date.now() + '-' + Math.random().toString(36).substring(2, 10);
-                    var buyerSession = {
-                        sessionId: sessionId,
-                        nombre: nombre,
-                        empresa: empresa,
-                        email: email,
-                        correo: email,
-                        telefono: telefono,
-                        initiatedAt: Date.now(),
-                        expiresAt: Date.now() + (45 * 60 * 1000), // 45 minutos de vigencia
-                        dispatched: false
-                    };
-
-                    try {
-                        sessionStorage.setItem('kit_datos_active_session', JSON.stringify(buyerSession));
-                        localStorage.setItem('kit_datos_active_session', JSON.stringify(buyerSession));
-                    } catch(err){}
-
-                    if (btnSubmit) btnSubmit.disabled = true;
-                    form.classList.add('hidden');
-                    if (msgConnecting) msgConnecting.classList.remove('hidden');
-
-                    // Registrar lead en endpoint interno
-                    fetch('/api/send-lead', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            nombre: nombre + ' (' + empresa + ')',
-                            correo: email,
-                            telefono: telefono,
-                            tipo: 'Kit Ley 21.719 Datos Personales',
-                            fuente: 'Landing Kit Ley 21.719 (Flow Checkout)',
-                            detalle: 'Compra Kit Protección de Datos Personales ($29.990) | Empresa: ' + empresa,
-                            monto_calculado: '29990'
-                        })
-                    }).then(function() {
-                        if (typeof gtag === 'function') {
-                            gtag('event', 'begin_checkout', {
-                                currency: 'CLP',
-                                value: 29990,
-                                items: [{ item_name: 'Kit Ley 21.719 Datos Personales Pyme', price: 29990 }]
-                            });
-                        }
-                        setTimeout(irAlPago, 800);
-                    }).catch(irAlPago);
-
-                    // Aviso de retracto antes de Flow; si el comprador vuelve, el formulario reaparece
-                    function irAlPago() {
-                        var url = window.KitDatosEngine.FLOW_CHECKOUT_URL;
-                        if (!window.CLCheckout) { window.location.href = url; return; }
-                        window.CLCheckout.go(url, {
-                            onCancel: function () {
-                                if (msgConnecting) msgConnecting.classList.add('hidden');
-                                form.classList.remove('hidden');
-                                if (btnSubmit) btnSubmit.disabled = false;
-                            }
-                        });
+                    function restaurar() {
+                        if (msgConnecting) msgConnecting.classList.add('hidden');
+                        form.classList.remove('hidden');
+                        if (btnSubmit) btnSubmit.disabled = false;
                     }
+                    if (errorBox) errorBox.classList.add('hidden');
+
+                    // Aviso de retracto, pago creado en el servidor y salida a Flow (js/checkout_consent.js).
+                    // El kit lo entrega el servidor cuando Flow confirma el pago.
+                    window.CLCheckout.buyKit('datos', {
+                        email: email, nombre: nombre, empresa: empresa, telefono: telefono
+                    }, {
+                        onAccept: function () {
+                            if (btnSubmit) btnSubmit.disabled = true;
+                            form.classList.add('hidden');
+                            if (msgConnecting) msgConnecting.classList.remove('hidden');
+                            fetch('/api/send-lead', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    nombre: nombre + ' (' + empresa + ')',
+                                    correo: email,
+                                    telefono: telefono,
+                                    tipo: 'Kit Ley 21.719 Datos Personales',
+                                    fuente: 'Landing Kit Ley 21.719 (Flow Checkout)',
+                                    detalle: 'Compra Kit Protección de Datos Personales ($29.990) | Empresa: ' + empresa,
+                                    monto_calculado: '29990'
+                                })
+                            }).catch(function () {});
+                            if (typeof gtag === 'function') {
+                                gtag('event', 'begin_checkout', {
+                                    currency: 'CLP',
+                                    value: 29990,
+                                    items: [{ item_name: 'Kit Ley 21.719 Datos Personales Pyme', price: 29990 }]
+                                });
+                            }
+                        },
+                        onCancel: restaurar,
+                        onError: function (mensaje) {
+                            restaurar();
+                            if (errorBox) { errorBox.textContent = mensaje; errorBox.classList.remove('hidden'); }
+                        }
+                    });
                 });
             }
 
-            // GATEKEEPER DE SEGURIDAD PARA RETORNO DE PAGO (?pago=exito, ?status=..., ?token=...)
-            var urlParams = new URLSearchParams(window.location.search);
-            var hasPaymentParam = urlParams.has('pago') || urlParams.has('status') || urlParams.has('token') || urlParams.has('order');
-
-            if (hasPaymentParam) {
-                var rawSession = null;
-                try {
-                    rawSession = sessionStorage.getItem('kit_datos_active_session') || localStorage.getItem('kit_datos_active_session');
-                } catch(e){}
-
-                var session = null;
-                if (rawSession) {
-                    try { session = JSON.parse(rawSession); } catch(e){}
-                }
-
-                var now = Date.now();
-                var isAuthorized = session && session.email && session.email.includes('@') && session.expiresAt && (now < session.expiresAt);
-
-                var modalPostpago = document.getElementById('modal-descarga-postpago');
-                var modalDenegado = document.getElementById('modal-acceso-denegado');
-
-                if (isAuthorized) {
-                    // CASO 1: TRANSACCIÓN AUTORIZADA (Comprador que completó el flujo desde el formulario)
-                    if (form) form.classList.add('hidden');
-                    if (modalPostpago) {
-                        modalPostpago.classList.remove('hidden');
-                        modalPostpago.scrollIntoView({ behavior: 'smooth' });
-                    }
-
-                    // Despacho serverless automático del Kit al correo del comprador y alerta a Jhon
-                    if (!session.dispatched) {
-                        session.dispatched = true;
-                        try {
-                            sessionStorage.setItem('kit_datos_active_session', JSON.stringify(session));
-                            localStorage.setItem('kit_datos_active_session', JSON.stringify(session));
-                        } catch(e){}
-
-                        fetch('/api/send-kit-datos', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                email: session.email,
-                                nombre: session.nombre,
-                                empresa: session.empresa,
-                                telefono: session.telefono,
-                                token: urlParams.get('token') || session.sessionId,
-                                sessionId: session.sessionId
-                            })
-                        }).catch(function(err) {
-                            console.warn('Advertencia en despacho serverless:', err);
-                        });
-                    }
-
-                    // Registro de Compra en GA4
-                    if (typeof gtag === 'function' && !window._purchaseTracked) {
-                        window._purchaseTracked = true;
-                        gtag('event', 'purchase', {
-                            transaction_id: session.sessionId || ('KD-' + Date.now()),
-                            value: 29990,
-                            currency: 'CLP',
-                            tax: 0,
-                            shipping: 0,
-                            items: [{
-                                item_id: 'KIT-DATOS-21719-2026',
-                                item_name: 'Kit Ley 21.719 Protección de Datos Personales Pymes Chile',
-                                price: 29990,
-                                quantity: 1
-                            }]
-                        });
-                    }
-
-                    // Limpieza inmediata de la URL para evitar que el parámetro de éxito quede visible o sea compartido
-                    try {
-                        window.history.replaceState({}, document.title, window.location.pathname + '#seccion-comprar');
-                    } catch(e){}
-
-                    // Activación de descargas personalizadas
-                    var btnDescargarPack = document.getElementById('btn-descargar-pack-inmediato');
-                    if (btnDescargarPack) {
-                        btnDescargarPack.addEventListener('click', function() {
-                            window.KitDatosEngine.descargarKitCompleto(session);
-                        });
-                    }
-
-                    var dlDoc0 = document.getElementById('btn-dl-doc0');
-                    if (dlDoc0) { dlDoc0.addEventListener('click', function() { window.KitDatosEngine.descargarManualPDF(); }); }
-
-                    var dlDoc0Doc = document.getElementById('btn-dl-doc0-doc');
-                    if (dlDoc0Doc) { dlDoc0Doc.addEventListener('click', function() { window.KitDatosEngine.descargarManualDoc(); }); }
-
-                    var dlDoc1 = document.getElementById('btn-dl-doc1');
-                    if (dlDoc1) { dlDoc1.addEventListener('click', function() { window.KitDatosEngine.descargarAnexoLaboral(session); }); }
-
-                    var dlDoc2 = document.getElementById('btn-dl-doc2');
-                    if (dlDoc2) { dlDoc2.addEventListener('click', function() { window.KitDatosEngine.descargarPoliticaPrivacidad(session); }); }
-
-                    var dlDoc3 = document.getElementById('btn-dl-doc3');
-                    if (dlDoc3) { dlDoc3.addEventListener('click', function() { window.KitDatosEngine.descargarClausulaDPA(session); }); }
-
-                    var dlDoc4 = document.getElementById('btn-dl-doc4');
-                    if (dlDoc4) { dlDoc4.addEventListener('click', function() { window.KitDatosEngine.descargarRAT(session); }); }
-
-                    var dlDoc5 = document.getElementById('btn-dl-doc5');
-                    if (dlDoc5) { dlDoc5.addEventListener('click', function() { window.KitDatosEngine.descargarProtocoloBrechas(session); }); }
-
-                    var dlDoc6 = document.getElementById('btn-dl-doc6') || document.getElementById('btn-dl-bonus');
-                    if (dlDoc6) { dlDoc6.addEventListener('click', function() { window.KitDatosEngine.descargarFormularioARCOP(session); }); }
-
-                    var dlDoc7 = document.getElementById('btn-dl-doc7');
-                    if (dlDoc7) { dlDoc7.addEventListener('click', function() { window.KitDatosEngine.descargarTestDPO(session); }); }
-
-                } else {
-                    // CASO 2: ACCESO NO AUTORIZADO (Alguien pegó el link directamente, ventana incógnito o sesión vencida)
-                    if (form) form.classList.add('hidden');
-                    if (modalPostpago) modalPostpago.classList.add('hidden');
-                    if (modalDenegado) {
-                        modalDenegado.classList.remove('hidden');
-                        modalDenegado.scrollIntoView({ behavior: 'smooth' });
-                    }
-
-                    // Sanitizar URL de inmediato
-                    try {
-                        window.history.replaceState({}, document.title, window.location.pathname + '#seccion-comprar');
-                    } catch(e){}
-
-                    var btnVolverComprar = document.getElementById('btn-volver-comprar');
-                    if (btnVolverComprar) {
-                        btnVolverComprar.addEventListener('click', function() {
-                            if (modalDenegado) modalDenegado.classList.add('hidden');
-                            if (form) form.classList.remove('hidden');
-                        });
-                    }
-                }
+            // Vuelta desde Flow sin pago completado
+            if (new URLSearchParams(window.location.search).get('pago') === 'rechazado' && errorBox) {
+                errorBox.textContent = 'El pago no se completó y no se hizo ningún cargo. Puedes intentarlo de nuevo.';
+                errorBox.classList.remove('hidden');
+                document.getElementById('seccion-comprar').scrollIntoView();
             }
         });
     </script>

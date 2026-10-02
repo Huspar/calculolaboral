@@ -8,11 +8,9 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 
 sys.path.insert(0, os.path.dirname(__file__))
-import shutil
 from restyle_kit_docx import NOTE_LEY_21719, restyle_path
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'api', 'assets', 'kit_datos_files')
-ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'assets')
 
 def create_base_doc(top=0.8, bottom=0.8, left=0.9, right=0.9):
     doc = docx.Document()
@@ -657,7 +655,6 @@ def build_doc_7():
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    os.makedirs(ASSETS_DIR, exist_ok=True)
 
     builders = [
         ("0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.docx", build_doc_0),
@@ -677,9 +674,7 @@ def main():
 
         # Also copy to assets/ for direct HTTP downloads
         restyle_path(out_path, note=NOTE_LEY_21719)  # identidad vigente, Calibri en firmas y orden OOXML
-        asset_path = os.path.join(ASSETS_DIR, filename)
-        shutil.copy2(out_path, asset_path)
-        print(f"Copied to {asset_path}")
+        # Los kits pagados no se copian a /assets (seria publico): se entregan desde /api/download
 
 if __name__ == "__main__":
     main()

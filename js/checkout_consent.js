@@ -2,8 +2,9 @@
  * CalculoLaboral · aviso antes de pagar
  * Antes de salir a Flow, el comprador confirma que entiende que el producto
  * es digital, de entrega inmediata y sin derecho a retracto (art. 3 bis letra b,
- * Ley 19.496). Cubre los enlaces a flow.cl/btn.php y las redirecciones hechas
- * desde JS, que deben llamar a window.CLCheckout.go(url, opciones).
+ * Ley 19.496). Cubre los enlaces a flow.cl/btn.php, las redirecciones hechas
+ * desde JS con window.CLCheckout.go(url, opciones) y los kits, que crean el
+ * pago en el servidor tras window.CLCheckout.confirm(alAceptar, opciones).
  */
 (function () {
     'use strict';
@@ -95,12 +96,7 @@
             var job = pending;
             pending = null;
             dialog.close();
-            if (!job) return;
-            if (job.newTab) {
-                window.open(job.url, '_blank', 'noopener');
-            } else {
-                window.location.href = job.url;
-            }
+            if (job) job.onAccept();
         });
         dialog.querySelector('[data-clc="cancel"]').addEventListener('click', function () { dialog.close(); });
         dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
@@ -111,29 +107,35 @@
     }
 
     /**
-     * Muestra el aviso y, si el comprador acepta, abre el pago.
-     * opciones: { newTab: boolean, onCancel: function }
+     * Muestra el aviso; si el comprador acepta, ejecuta onAccept.
+     * opciones: { onCancel: function }
      */
-    function go(url, options) {
+    function confirm(onAccept, options) {
         options = options || {};
         if (!dialog) build();
         if (typeof dialog.showModal !== 'function') {
             // Navegadores sin <dialog>: confirmacion nativa con el mismo contenido
             var ok = window.confirm('Producto digital de entrega inmediata: no aplica el derecho a retracto ' +
                 '(art. 3 bis letra b, Ley 19.496). ¿Aceptas los Términos y condiciones y continúas al pago?');
-            if (ok) {
-                if (options.newTab) window.open(url, '_blank', 'noopener'); else window.location.href = url;
-            } else if (typeof options.onCancel === 'function') {
-                options.onCancel();
-            }
+            if (ok) onAccept();
+            else if (typeof options.onCancel === 'function') options.onCancel();
             return;
         }
-        pending = { url: url, newTab: !!options.newTab, onCancel: options.onCancel };
+        pending = { onAccept: onAccept, onCancel: options.onCancel };
         checkbox.checked = false;
         confirmBtn.setAttribute('aria-disabled', 'true');
         label.classList.remove('clc-nudge');
         if (!dialog.open) dialog.showModal();
         checkbox.focus();
+    }
+
+    /** Muestra el aviso y, si el comprador acepta, abre el pago. opciones: { newTab, onCancel } */
+    function go(url, options) {
+        options = options || {};
+        confirm(function () {
+            if (options.newTab) window.open(url, '_blank', 'noopener');
+            else window.location.href = url;
+        }, options);
     }
 
     function onLinkClick(e) {
@@ -148,5 +150,34 @@
     document.addEventListener('click', onLinkClick, true);
     document.addEventListener('auxclick', onLinkClick, true);
 
-    window.CLCheckout = { go: go };
+    /**
+     * Compra de un kit: aviso, pago creado en el servidor (/api/checkout) y salida a Flow.
+     * buyer: { email, nombre, empresa, telefono, rubro }
+     * opciones: { onAccept: function, onCancel: function, onError: function(mensaje) }
+     */
+    function buyKit(product, buyer, options) {
+        options = options || {};
+        function fail(message) {
+            message = message || 'No pudimos conectar con Flow. Intenta de nuevo en unos minutos.';
+            if (typeof options.onError === 'function') options.onError(message);
+            else window.alert(message);
+        }
+        confirm(function () {
+            if (typeof options.onAccept === 'function') options.onAccept();
+            var payload = { product: product };
+            for (var k in buyer) if (Object.prototype.hasOwnProperty.call(buyer, k)) payload[k] = buyer[k];
+            fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function (r) {
+                return r.json().then(function (data) { return { ok: r.ok, data: data }; });
+            }).then(function (res) {
+                if (res.ok && res.data.url) window.location.href = res.data.url;
+                else fail(res.data && res.data.error);
+            }).catch(function () { fail(); });
+        }, { onCancel: options.onCancel });
+    }
+
+    window.CLCheckout = { go: go, confirm: confirm, buyKit: buyKit };
 })();
