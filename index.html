@@ -31,72 +31,56 @@
     <!-- Structured Data -->
     <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@graph": [
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Cálculo Laboral Chile",
+      "url": "https://calculolaboral.cl/",
+      "description": "Simula tu finiquito legal, sueldo líquido y horas extras con normativa DT 2026. Cálculos exactos, gratuitos y con informe desglosado en PDF sin registro."
+    },
+    {
+      "@type": "Organization",
+      "name": "Cálculo Laboral Chile",
+      "url": "https://calculolaboral.cl/",
+      "logo": "https://calculolaboral.cl/assets/og/default.png",
+      "description": "Plataforma gratuita de calculadoras y herramientas laborales basadas en la normativa oficial de Chile conforme al Código del Trabajo y la Dirección del Trabajo (DT).",
+      "areaServed": "CL",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Santiago",
+        "addressRegion": "Región Metropolitana",
+        "addressCountry": "CL"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Support",
+        "email": "contacto@calculolaboral.cl",
+        "availableLanguage": "Spanish"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
         {
-            "@type": "WebSite",
-            "name": "Cálculo Laboral Chile",
-            "url": "https://calculolaboral.cl/",
-            "description": "Simula tu finiquito legal, sueldo líquido y horas extras con normativa DT 2026. Cálculos exactos, gratuitos y con informe desglosado en PDF sin registro."
+          "@type": "Question",
+          "name": "¿Cómo se calcula el sueldo líquido en Chile?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El sueldo líquido se obtiene restando del Sueldo Bruto Imponible los descuentos obligatorios: AFP (10,58% a 11,45%), Salud (7% Fonasa o pactado en Isapre), Seguro de Cesantía (0,6% en contrato indefinido) y el Impuesto Único de Segunda Categoría si la renta imponible supera las 13,5 UTM."
+          }
         },
         {
-            "@type": "Organization",
-            "name": "Cálculo Laboral Chile",
-            "url": "https://calculolaboral.cl/",
-            "logo": "https://calculolaboral.cl/assets/og/default.png",
-            "description": "Plataforma gratuita de calculadoras y herramientas laborales basadas en la normativa oficial de Chile conforme al Código del Trabajo y la Dirección del Trabajo (DT).",
-            "areaServed": "CL",
-            "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Santiago",
-                "addressRegion": "Región Metropolitana",
-                "addressCountry": "CL"
-            },
-            "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "Customer Support",
-                "email": "contacto@calculolaboral.cl",
-                "availableLanguage": "Spanish"
-            }
-        },
-        {
-            "@type": "FAQPage",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "¿Cómo se calcula el sueldo líquido en Chile?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "El sueldo líquido se obtiene restando del Sueldo Bruto Imponible los descuentos obligatorios: AFP (10,58% a 11,45%), Salud (7% Fonasa o pactado en Isapre), Seguro de Cesantía (0,6% en contrato indefinido) y el Impuesto Único de Segunda Categoría si la renta imponible supera las 13,5 UTM."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Cuáles son las comisiones de las AFP vigentes en 2026?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Las tasas totales obligatorias de AFP en 2026 son: AFP Modelo 10,58%, AFP Uno 10,69%, Planvital 11,16%, Habitat 11,27%, Capital 11,44%, Cuprum 11,44% y Provida 11,45%."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Qué conceptos integra un finiquito laboral en Chile?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Un finiquito legal contempla: remuneraciones pendientes de los días trabajados en el mes, indemnización por vacaciones proporcionales y pendientes, indemnización por años de servicio (1 mes por año en despidos por Art. 161) e indemnización sustitutiva de aviso previo (1 mes si no se avisó con 30 días de anticipación)."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Cómo se calcula la indemnización por años de servicio?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Conforme al artículo 163 del Código del Trabajo, si el despido es por Necesidades de la Empresa (Art. 161), corresponde 1 mes de la última remuneración mensual por cada año trabajado (y fracción superior a 6 meses), con un tope legal máximo de 11 años y 90 UF por mes."
-                    }
-                }
-            ]
+          "@type": "Question",
+          "name": "¿Cuáles son las comisiones de las AFP vigentes en 2026?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Las tasas totales obligatorias de AFP en 2026 son: AFP Modelo 10,58%, AFP Uno 10,69%, Planvital 11,16%, Habitat 11,27%, Capital 11,44%, Cuprum 11,44% y Provida 11,45%."
+          }
         }
-    ]
+      ]
+    }
+  ]
 }
 </script>
     
@@ -1293,7 +1277,7 @@
                                     Cálculo rápido de finiquito con topes legales
                                 </h2>
                                 <p class="text-sm sm:text-sm text-gray-600 mt-2 leading-relaxed">
-                                    Simula tus indemnizaciones al peso legal según el Código del Trabajo. Aplica el tope legal de 90 UF (<span class="font-mono-num font-bold">$3.692.938</span>), el mes de aviso sustitutivo y tus vacaciones proporcionales.
+                                    Simula tus indemnizaciones al peso legal según el Código del Trabajo. Aplica el tope legal de 90 UF (<span class="font-mono-num font-bold">$3.692.938</span>), el mes de aviso sustitutivo y tus vacaciones proporcionales. Para fechas exactas, causal y PDF usa la <a href="finiquito_calculator" class="font-semibold text-[#00382E] underline">calculadora de finiquito</a>.
                                 </p>
                             </div>
 
@@ -1394,7 +1378,7 @@
                             </div>
 
                             <a href="finiquito_calculator" class="btn-yellow-pill text-sm py-3 px-6 w-full sm:w-auto justify-center">
-                                <span>Calcular con fechas exactas e historial</span>
+                                <span>Calculadora de finiquito completa</span>
                                 <span class="material-icons text-base">arrow_forward</span>
                             </a>
                         </div>
@@ -2930,15 +2914,6 @@
                     </p>
                 </details>
 
-                <details class="reveal-on-scroll delay-100 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
-                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
-                        <span>¿Cuántos días tiene la empresa para poner a disposición y pagar el finiquito?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
-                    </summary>
-                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
-                        Conforme al artículo 177 del Código del Trabajo, el empleador tiene un plazo legal máximo e improrrogable de <strong>10 días hábiles</strong> siguientes a la separación del trabajador para poner a su disposición el finiquito y el pago total. Si incumple, puedes presentar un reclamo inmediato ante la Inspección del Trabajo.
-                    </p>
-                </details>
 
                 <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
@@ -2960,15 +2935,7 @@
                     </p>
                 </details>
 
-                <details class="reveal-on-scroll delay-300 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
-                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
-                        <span>¿Cómo se calcula el feriado proporcional si trabajé menos de un año?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
-                    </summary>
-                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
-                        Por cada mes trabajado corresponden exactamente <strong>1.25 días hábiles</strong> de vacaciones (15 días anuales divididos en 12 meses). Se contabilizan únicamente de lunes a viernes (sábados y domingos son inhábiles según el Código del Trabajo) y se valorizan según tu sueldo base más los haberes variables promedio.
-                    </p>
-                </details>
+                <p class="text-sm text-gray-600 pt-2">¿Necesitas el monto exacto? La <a href="finiquito_calculator" class="font-semibold text-[#00382E] underline">calculadora de finiquito</a> incluye un ejemplo resuelto, los topes 2026 y el plazo de pago.</p>
             </div>
 
         </div>

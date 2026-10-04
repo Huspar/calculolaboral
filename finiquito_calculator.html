@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Calcula gratis tu finiquito legal en Chile (2026). Indemnización por años de servicio, mes de aviso y vacaciones proporcionales según normativa de la DT.">
-    <title>Calculadora de Finiquito Legal Chile 2026 | Cálculo Laboral</title>
+    <meta name="description" content="Calculadora y simulador de finiquito 2026 gratis: años de servicio (tope 90 UF y 11 años), aviso previo y vacaciones según el Código del Trabajo. Con ejemplo resuelto.">
+    <title>Calculadora de Finiquito Chile 2026: Simulador Gratis</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -16,16 +16,16 @@
     <link rel="canonical" href="https://calculolaboral.cl/finiquito_calculator">
     
     <!-- Open Graph Tags -->
-    <meta property="og:title" content="Calculadora de Finiquito Legal Chile 2026 | Cálculo Laboral">
-    <meta property="og:description" content="Calcula gratis tu finiquito legal en Chile (2026). Indemnización por años de servicio, mes de aviso y vacaciones proporcionales según normativa de la DT.">
+    <meta property="og:title" content="Calculadora de Finiquito Chile 2026: Simulador Gratis">
+    <meta property="og:description" content="Calculadora y simulador de finiquito 2026 gratis: años de servicio (tope 90 UF y 11 años), aviso previo y vacaciones según el Código del Trabajo. Con ejemplo resuelto.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://calculolaboral.cl/finiquito_calculator">
     <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
     <meta property="og:locale" content="es_CL">
     <meta property="og:site_name" content="Cálculo Laboral Chile">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Calculadora de Finiquito Legal Chile 2026 | Cálculo Laboral">
-    <meta name="twitter:description" content="Calcula gratis tu finiquito legal en Chile (2026). Indemnización por años de servicio, mes de aviso y vacaciones proporcionales según normativa de la DT.">
+    <meta name="twitter:title" content="Calculadora de Finiquito Chile 2026: Simulador Gratis">
+    <meta name="twitter:description" content="Calculadora y simulador de finiquito 2026 gratis: años de servicio (tope 90 UF y 11 años), aviso previo y vacaciones según el Código del Trabajo. Con ejemplo resuelto.">
     <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
     
     <!-- Structured Data -->
@@ -725,7 +725,7 @@
     <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
         
         <!-- Breadcrumb & Hero Header (TealHQ Editorial Style) -->
-        <div class="mb-8">
+        <div class="mb-5 sm:mb-8">
             <nav class="text-xs text-slate-500 font-medium mb-3 flex items-center gap-1.5" aria-label="Breadcrumb">
                 <a href="./" class="hover:text-[#00382E] transition-colors">Inicio</a>
                 <span class="text-slate-300">/</span>
@@ -737,8 +737,11 @@
             <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#111827] tracking-tight leading-tight">
                 Calculadora y Simulador de Finiquito Legal en Chile
             </h1>
-            <p class="text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed mt-3">
-                Calcula con rigor legal tus indemnizaciones por años de servicio, aviso previo, feriado proporcional y días pendientes conforme a las causales del Código del Trabajo (Art. 161, 159 y 160). Actualizado con el sueldo mínimo de <strong>$553.553</strong> y topes de <strong>90 UF</strong> para 2026.
+            <p class="sm:hidden text-sm text-slate-600 leading-relaxed mt-2">
+                Años de servicio, aviso previo y vacaciones según el Código del Trabajo. <span class="text-slate-500">Actualizada: octubre 2026.</span>
+            </p>
+            <p class="hidden sm:block text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed mt-3">
+                Calcula con rigor legal tus indemnizaciones por años de servicio, aviso previo, feriado proporcional y días pendientes conforme a las causales del Código del Trabajo (Art. 161, 159 y 160). Actualizado con el sueldo mínimo de <strong>$553.553</strong> y topes de <strong>90 UF</strong> para 2026. <span class="text-slate-500 text-base">Actualizada: octubre 2026.</span>
             </p>
 
             <nav class="cl-calcnav no-print" aria-label="Calculadoras">
@@ -981,7 +984,7 @@
                             <div class="flex justify-between items-start gap-2">
                                 <div>
                                     <span class="font-bold text-slate-800 block">Vacaciones Proporcionales</span>
-                                    <span id="totalVacationDaysOutput" class="text-xs text-slate-500">0 días hábiles</span>
+                                    <span id="totalVacationDaysOutput" class="text-xs text-slate-500">0 días corridos</span>
                                 </div>
                                 <span id="vacationPropAmount" class="font-bold text-slate-900 font-mono-num text-sm text-right">$ - CLP</span>
                             </div>
@@ -1190,6 +1193,66 @@
 
             </div>
 
+
+            <!-- Ejemplo resuelto paso a paso -->
+            <div class="border-t border-slate-100 pt-8 space-y-4">
+                <h3 class="text-lg font-bold text-slate-900">Ejemplo resuelto: finiquito por necesidades de la empresa (Art. 161)</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    María entró a trabajar el <strong>15 de marzo de 2021</strong> y la despidieron por necesidades de la empresa el <strong>15 de noviembre de 2026</strong>, sin aviso previo de 30 días. Ganaba <strong>$1.000.000</strong> al mes (sueldo y gratificación fijos) y ya había tomado todas sus vacaciones de años anteriores.
+                </p>
+                <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600 leading-relaxed">
+                    <li><strong>Antigüedad:</strong> 5 años y 8 meses. Como la fracción supera 6 meses, cuenta como <strong>6 años</strong>.</li>
+                    <li><strong>Tope de 90 UF:</strong> su sueldo está bajo el tope (unos $3,69 millones), así que se usa completo.</li>
+                    <li><strong>Valor de un día:</strong> $1.000.000 ÷ 30 = $33.333.</li>
+                    <li><strong>Vacaciones proporcionales:</strong> desde su último aniversario (15 de marzo de 2026) trabajó 8 meses × 1,25 = <strong>10 días hábiles</strong>. Contados desde el 16 de noviembre, incluyen un fin de semana: <strong>12 días corridos</strong>.</li>
+                    <li><strong>Descuento AFC:</strong> en despidos por Art. 161 el empleador puede descontar lo que aportó a su cuenta de cesantía (1,6% del sueldo por mes). Es una estimación: el monto real es el saldo que informa la AFC.</li>
+                </ol>
+<div class="overflow-x-auto border border-slate-200 rounded-2xl">
+<table class="w-full text-left border-collapse text-xs sm:text-sm text-slate-700">
+<thead><tr class="bg-slate-50 text-slate-900 font-bold border-b border-slate-200"><th class="px-3 py-2.5">Concepto</th><th class="px-3 py-2.5">Cálculo</th><th class="px-3 py-2.5 text-right">Monto</th></tr></thead>
+<tbody>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Indemnización por años de servicio</td><td class="px-3 py-2.5 border-b border-slate-100 text-slate-500">6 × $1.000.000</td><td class="px-3 py-2.5 border-b border-slate-100 text-right font-mono whitespace-nowrap">$6.000.000</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Aviso previo (sin carta con 30 días)</td><td class="px-3 py-2.5 border-b border-slate-100 text-slate-500">1 × $1.000.000</td><td class="px-3 py-2.5 border-b border-slate-100 text-right font-mono whitespace-nowrap">$1.000.000</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Vacaciones proporcionales</td><td class="px-3 py-2.5 border-b border-slate-100 text-slate-500">12 × $33.333</td><td class="px-3 py-2.5 border-b border-slate-100 text-right font-mono whitespace-nowrap">$400.000</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Sueldo de los días trabajados</td><td class="px-3 py-2.5 border-b border-slate-100 text-slate-500">15 × $33.333</td><td class="px-3 py-2.5 border-b border-slate-100 text-right font-mono whitespace-nowrap">$500.000</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Descuento aporte AFC del empleador</td><td class="px-3 py-2.5 border-b border-slate-100 text-slate-500">1,6% × $1.000.000 × 68 meses</td><td class="px-3 py-2.5 border-b border-slate-100 text-right font-mono whitespace-nowrap">− $1.088.000</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100 font-bold text-slate-900">Total estimado</td><td class="px-3 py-2.5 border-b border-slate-100 text-slate-500"></td><td class="px-3 py-2.5 border-b border-slate-100 text-right font-mono whitespace-nowrap font-bold text-slate-900">$6.812.000</td></tr>
+</tbody>
+</table>
+</div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Montos brutos estimados. Puedes reproducir este ejemplo en la calculadora de arriba con las mismas fechas y sueldo. Las indemnizaciones legales por años de servicio y aviso previo no pagan impuesto.
+                </p>
+            </div>
+
+            <!-- Topes legales 2026 -->
+            <div class="border-t border-slate-100 pt-8 space-y-4">
+                <h3 class="text-lg font-bold text-slate-900">Topes y reglas del finiquito en 2026</h3>
+<div class="overflow-x-auto border border-slate-200 rounded-2xl">
+<table class="w-full text-left border-collapse text-xs sm:text-sm text-slate-700">
+<thead><tr class="bg-slate-50 text-slate-900 font-bold border-b border-slate-200"><th class="px-3 py-2.5">Concepto</th><th class="px-3 py-2.5">Regla</th></tr></thead>
+<tbody>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Años de servicio</td><td class="px-3 py-2.5 border-b border-slate-100">Máximo <strong>11 años</strong>; una fracción superior a 6 meses cuenta como un año (Art. 163).</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Remuneración base</td><td class="px-3 py-2.5 border-b border-slate-100">Tope de <strong>90 UF</strong> mensuales para años de servicio y aviso previo (Art. 172). Unos $3,69 millones con la UF de octubre de 2026.</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Aviso previo</td><td class="px-3 py-2.5 border-b border-slate-100"><strong>1 mes</strong> de remuneración si no te avisaron por escrito con 30 días (Art. 161 y 162).</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Vacaciones</td><td class="px-3 py-2.5 border-b border-slate-100"><strong>1,25 días hábiles</strong> por mes trabajado; se pagan en días corridos (Art. 67 y 73).</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Plazo de pago</td><td class="px-3 py-2.5 border-b border-slate-100"><strong>10 días hábiles</strong> desde el término del contrato (Art. 177).</td></tr>
+<tr><td class="px-3 py-2.5 border-b border-slate-100">Despido injustificado</td><td class="px-3 py-2.5 border-b border-slate-100">Recargo de <strong>30% a 100%</strong> sobre los años de servicio, según la causal (Art. 168).</td></tr>
+</tbody>
+</table>
+</div>
+            </div>
+
+            <!-- Fuentes oficiales -->
+            <div class="border-t border-slate-100 pt-8 space-y-3">
+                <h3 class="text-lg font-bold text-slate-900">Fuentes oficiales</h3>
+                <ul class="list-disc pl-5 space-y-1.5 text-sm text-slate-600">
+                    <li><a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" target="_blank" rel="noopener" class="text-forest-700 font-semibold underline">Código del Trabajo</a> (Biblioteca del Congreso Nacional): artículos 67, 73, 159 a 163, 168, 172 y 177.</li>
+                    <li><a href="https://www.dt.gob.cl" target="_blank" rel="noopener" class="text-forest-700 font-semibold underline">Dirección del Trabajo</a>: finiquito, ratificación y plazos.</li>
+                    <li><a href="https://www.bcn.cl/leychile/navegar?idNorma=184979" target="_blank" rel="noopener" class="text-forest-700 font-semibold underline">Ley 19.728</a> sobre seguro de cesantía: descuento del aporte del empleador.</li>
+                </ul>
+                <p class="text-xs text-slate-500">Página revisada y actualizada en octubre de 2026.</p>
+            </div>
             <!-- Reserva de Derechos Highlight Box -->
             <div class="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-6 space-y-4">
                 <div class="flex items-start gap-3">
@@ -1441,7 +1504,7 @@
     <script src="/js/pdf_generator.js?v=3.0.0"></script>
     <script src="/js/validation.js?v=2.9.0"></script>
     <script src="/js/logic.js?v=2.0.3"></script>
-    <script src="/js/ui.js?v=3.0.0"></script>
+    <script src="/js/ui.js?v=3.0.1"></script>
 
     <!-- Page Specific Script Handlers -->
     <script>

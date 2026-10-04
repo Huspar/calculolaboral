@@ -786,10 +786,11 @@ function updateCalculations() {
         }
 
         if (elements.totalVacationDaysOutput) {
+            const fmt = new Intl.NumberFormat('es-CL', { maximumFractionDigits: 2 });
             const vacDays = parseFloat(results.vacationIndemnity.totalCalendarDays);
-            const displayDays = isNaN(vacDays) ? "—" :
-                new Intl.NumberFormat('es-CL', { maximumFractionDigits: 2 }).format(vacDays);
-            elements.totalVacationDaysOutput.textContent = `${displayDays} días hábiles`; // User requested clarity on 'hábiles' vs 'corridos'
+            const busDays = parseFloat(results.vacationIndemnity.totalBusinessDays);
+            elements.totalVacationDaysOutput.textContent = isNaN(vacDays) ? "— días corridos" :
+                `${fmt.format(busDays)} hábiles = ${fmt.format(vacDays)} días corridos`;
             elements.totalVacationDaysOutput.title = results.vacationIndemnity.details;
         }
 
