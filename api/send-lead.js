@@ -382,6 +382,7 @@ module.exports = async (req, res) => {
 
         const cleanFuente = escapeHtml(typeof body === 'object' && body && body.fuente ? body.fuente.trim() : 'Calculadora de Finiquito');
         const cleanDetalle = typeof body === 'object' && body && body.detalle ? escapeHtml(body.detalle.trim().slice(0, 300)) : '';
+        const cleanOrigen = typeof body === 'object' && body && typeof body.origen === 'string' ? escapeHtml(body.origen.trim().slice(0, 160)) : '';
 
         // Notification email to JHON (with all lead details and origin source)
         const jhonSubject = `[Lead - ${cleanFuente}] ${cleanName}`;
@@ -394,6 +395,7 @@ module.exports = async (req, res) => {
                 <tr><td style="padding: 6px 0; color: #64748b;">Teléfono:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;"><a href="tel:${cleanPhone}" style="color: #0f172a; text-decoration: none;">${cleanPhone || '—'}</a></td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Monto / Estimación:</td><td style="padding: 6px 0; font-weight: bold; color: #16a34a;">${cleanMonto && cleanMonto !== '0' ? '$' + cleanMonto + ' CLP' : 'Consulta directa desde guía'}</td></tr>
                 ${cleanDetalle ? `<tr><td style="padding: 6px 0; color: #64748b;">Detalle / Caso:</td><td style="padding: 6px 0; color: #334155; font-style: italic;">${cleanDetalle}</td></tr>` : ''}
+                ${cleanOrigen ? `<tr><td style="padding: 6px 0; color: #64748b;">Llegó desde:</td><td style="padding: 6px 0; color: #334155;">${cleanOrigen}</td></tr>` : ''}
                 <tr><td style="padding: 6px 0; color: #64748b;">Tipo:</td><td style="padding: 6px 0; color: #64748b;">${cleanTipo}</td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Fecha:</td><td style="padding: 6px 0; color: #64748b;">${fechaLocal}</td></tr>
             </table>
