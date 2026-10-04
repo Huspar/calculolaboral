@@ -155,7 +155,7 @@
     }
 
     function sponsorHTML(question, text) {
-        return `<div class="clr-sponsor"><div><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div><span class="url">calculolaboral.cl/itau</span></div>`;
+        return `<div class="clr-sponsor"><div><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div><span class="url">calculolaboral.cl/itau-informe</span></div>`;
     }
 
     // 8. COMPILE FINIQUITO REPORT
