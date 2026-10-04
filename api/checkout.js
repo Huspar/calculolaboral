@@ -1,5 +1,5 @@
 /**
- * POST /api/checkout  { product: 'blindaje' | 'datos', email, nombre, empresa, telefono, rubro }
+ * POST /api/checkout  { product: 'blindaje' | 'datos' | 'despido' | generador, email, nombre, empresa, telefono, rubro }
  * Crea el pago en Flow y devuelve la URL a la que debe ir el comprador.
  */
 const { PRODUCTS, createPayment } = require('./_flow');

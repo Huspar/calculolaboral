@@ -53,6 +53,20 @@ const PRODUCTS = {
         ],
         note: 'La Ley 21.719 rige desde el 1 de diciembre de 2026. Si la Agencia de Protección de Datos dicta normas que cambien estos documentos antes del 31 de diciembre de 2027, te enviaremos la versión actualizada sin costo a este correo.'
     },
+    despido: {
+        code: 'PD',
+        amount: 9990,
+        subject: 'Pack Cartas de Despido por Causal 2026',
+        filename: 'Pack_Cartas_Despido_por_Causal_Chile_2026.zip',
+        zip: () => require('./assets/pack-despido-base64.js'),
+        page: '/pack-cartas-despido-chile',
+        intro: '22 documentos en Word (.docx editable): cartas de término por causal y documentos de apoyo.',
+        steps: [
+            'Descomprime el archivo.',
+            'Abre primero <strong>00_LEEME_Guia_de_Uso_y_Plazos.docx</strong>: te indica qué carta usar según la causal.',
+            'Completa los campos entre corchetes y recuerda el plazo de 3 días hábiles para enviar la carta.'
+        ]
+    },
     // Generadores: el documento se arma en el navegador con los datos del cliente;
     // el pago confirmado entrega un desbloqueo firmado por UNLOCK_HOURS.
     finiquito: {
