@@ -737,8 +737,8 @@ body { overflow-x: hidden; }
                     <span>Comprar el pack ($9.990)</span>
                     <span class="material-icons text-base" style="color: #111827 !important;">arrow_forward</span>
                 </a>
-                <a href="#incluye" class="btn-outline-pill">
-                    <span>Ver los 22 documentos</span>
+                <a href="#muestra" class="btn-outline-pill">
+                    <span>Ver una carta de muestra</span>
                     <span class="material-icons text-base text-slate-400">expand_more</span>
                 </a>
             </div>
@@ -840,6 +840,67 @@ body { overflow-x: hidden; }
                 Cada carta trae instrucciones para el empleador, el texto de la causal, los hechos a describir, el estado de cotizaciones y el aviso del finiquito. El pack no incluye el finiquito: puedes calcularlo gratis en la <a href="finiquito_calculator" class="underline text-forest-700">calculadora de finiquito</a>.
             </p>
         </section>
+
+        <!-- Muestra de una carta -->
+        <style>
+            .cl-m { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
+            @media (min-width: 768px) { .cl-m { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+            .cl-m-btn { display: block; width: 100%; padding: 0; text-align: left; position: relative; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; box-shadow: 0 6px 20px rgba(15, 23, 42, .10); overflow: hidden; cursor: zoom-in; }
+            .cl-m-btn img, .cl-m-dlg img { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+            .cl-m-zoom { position: absolute; right: .75rem; bottom: .75rem; display: inline-flex; align-items: center; gap: .25rem; padding: .375rem .75rem; border-radius: 999px; background: rgba(15, 23, 42, .88); font-size: .75rem; font-weight: 600; color: #ffffff; }
+            .cl-m-zoom .material-icons { font-size: 1rem; color: #ffffff; }
+            .cl-m-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .875rem; }
+            .cl-m-list li { display: flex; gap: .75rem; font-size: .875rem; line-height: 1.5; color: #475569; }
+            .cl-m-list b { color: #1e293b; }
+            .cl-m-n { flex-shrink: 0; width: 1.5rem; height: 1.5rem; border-radius: 999px; background: #00382E; color: #ffffff; font-size: .75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+            .cl-m-dlg { width: min(94vw, 980px); max-height: 92vh; padding: 0; border: 0; border-radius: 1rem; }
+            .cl-m-dlg::backdrop { background: rgba(15, 23, 42, .7); }
+            .cl-m-bar { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .625rem 1rem; background: #fff; border-bottom: 1px solid #e2e8f0; font-size: .75rem; font-weight: 600; color: #334155; }
+            .cl-m-close { border: 0; border-radius: .5rem; padding: .375rem .75rem; background: #00382E; color: #ffffff; font-size: .75rem; font-weight: 700; cursor: pointer; }
+            .cl-m-scroll { overflow: auto; max-height: calc(92vh - 3.25rem); }
+            .cl-m-scroll img { min-width: 640px; }
+        </style>
+        <section id="muestra" class="max-w-5xl mx-auto mb-16 scroll-mt-20">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Así se ve una carta del pack</h2>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1">Primera página de la carta por incumplimiento grave del contrato (Art. 160 N° 7). Todas las cartas tienen el mismo formato.</p>
+            </div>
+            <div class="cl-m">
+                <div>
+                    <button type="button" id="muestra-abrir" class="cl-m-btn" aria-label="Ampliar la muestra de la carta">
+                        <img src="/assets/pack-despido-muestra.webp" width="1224" height="1584" loading="lazy" decoding="async" draggable="false" alt="Primera página de la carta de término de contrato por incumplimiento grave (Art. 160 N° 7): encabezado, instrucciones para el empleador, causal legal, hechos y estado de cotizaciones, con campos para completar entre corchetes">
+                        <span class="cl-m-zoom"><span class="material-icons">zoom_in</span><span>Ampliar</span></span>
+                    </button>
+                    <p class="text-xs text-slate-500 mt-2 text-center">Vista de muestra: el documento real es un archivo Word editable, sin marca de agua.</p>
+                </div>
+                <div style="display: grid; gap: 1.25rem;">
+                    <h3 class="text-base font-bold text-slate-900" style="margin: 0;">Qué trae cada carta</h3>
+                    <ol class="cl-m-list">
+                        <li><span class="cl-m-n">1</span><span><b>Instrucciones para el empleador:</b> plazo de envío, pruebas que conviene reunir y advertencias propias de la causal.</span></li>
+                        <li><span class="cl-m-n">2</span><span><b>Causal legal citada:</b> el texto del artículo del Código del Trabajo que invocas.</span></li>
+                        <li><span class="cl-m-n">3</span><span><b>Hechos con ejemplos:</b> campos entre corchetes que completas con fechas, lugares y personas.</span></li>
+                        <li><span class="cl-m-n">4</span><span><b>Estado de cotizaciones:</b> el párrafo que exige el Art. 162.</span></li>
+                        <li><span class="cl-m-n">5</span><span><b>Finiquito y firmas:</b> aviso del finiquito y acuse de recibo del trabajador.</span></li>
+                    </ol>
+                    <div>
+                        <a href="#comprar-pack" class="btn-yellow-pill !no-underline">
+                            <span style="color: #111827 !important;">Comprar el pack ($9.990)</span>
+                            <span class="material-icons text-base" style="color: #111827 !important;">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <dialog id="muestra-dialog" class="cl-m-dlg" aria-label="Muestra de la carta ampliada">
+            <div class="cl-m-bar">
+                <span>Muestra: carta Art. 160 N° 7</span>
+                <button type="button" id="muestra-cerrar" class="cl-m-close">Cerrar</button>
+            </div>
+            <div class="cl-m-scroll">
+                <img src="/assets/pack-despido-muestra.webp" width="1224" height="1584" draggable="false" alt="Muestra ampliada de la carta de término por incumplimiento grave (Art. 160 N° 7)">
+            </div>
+        </dialog>
 
         <!-- Comprar -->
         <section id="comprar-pack" class="max-w-4xl mx-auto bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-8 md:p-10 shadow-xs mb-16 scroll-mt-20">
@@ -1109,6 +1170,13 @@ body { overflow-x: hidden; }
     <!-- Form Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var dlg = document.getElementById('muestra-dialog');
+            var abrir = document.getElementById('muestra-abrir');
+            if (dlg && abrir && typeof dlg.showModal === 'function') {
+                abrir.addEventListener('click', function () { dlg.showModal(); });
+                document.getElementById('muestra-cerrar').addEventListener('click', function () { dlg.close(); });
+                dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+            }
             var form = document.getElementById('form-comprar-pack');
             var btn = document.getElementById('pack-submit-btn');
             if (!form) return;
