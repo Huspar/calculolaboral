@@ -21,6 +21,153 @@
         // This function is intentionally empty — do not remove to avoid breaking references.
     }
 
+    // 4.5 CORREO OPCIONAL ANTES DE DESCARGAR: guarda el lead (tipo InformePDF) y manda una copia del resultado.
+    // Quien no quiere dejar su correo descarga igual: el PDF nunca depende de este formulario.
+    var NOMBRES = { finiquito: 'Finiquito', sueldo_liquido: 'Sueldo líquido' };
+
+    function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } }
+    function ssGet(k) { try { return window.sessionStorage.getItem(k); } catch (e) { return null; } }
+    function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } }
+
+    function medir(evento, params) {
+        if (typeof window.gtag === 'function') window.gtag('event', evento, params || {});
+    }
+
+    function montoActual(calculatorType) {
+        var el = document.getElementById(calculatorType === 'sueldo_liquido' ? 'headerNetSalary' : 'totalAmount');
+        return el ? el.textContent.trim() : '';
+    }
+
+    function injectModalStyles() {
+        if (document.getElementById('cl-pdfmail-css')) return;
+        var st = document.createElement('style');
+        st.id = 'cl-pdfmail-css';
+        st.textContent =
+            '.cl-pdfmail{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.55)}' +
+            '.cl-pdfmail__box{background:#fff;border-radius:20px;max-width:420px;width:100%;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.25);font-family:inherit;color:#0f172a;position:relative;max-height:92vh;overflow:auto}' +
+            '.cl-pdfmail__x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:26px;line-height:1;color:#64748b;cursor:pointer;padding:4px 8px}' +
+            '.cl-pdfmail h2{font-size:18px;font-weight:800;margin:0 24px 6px 0;color:#00382E}' +
+            '.cl-pdfmail p{font-size:13px;line-height:1.5;color:#475569;margin:0 0 14px}' +
+            '.cl-pdfmail label{display:block;font-size:12px;font-weight:700;color:#334155;margin:0 0 4px}' +
+            '.cl-pdfmail input[type=text],.cl-pdfmail input[type=email]{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font-size:16px;margin:0 0 10px;background:#fff;color:#0f172a}' +
+            '.cl-pdfmail input:focus{outline:2px solid #00382E;outline-offset:1px}' +
+            '.cl-pdfmail__chk{display:flex;gap:8px;align-items:flex-start;margin:2px 0 12px}' +
+            '.cl-pdfmail__chk input{margin-top:2px;flex-shrink:0}' +
+            '.cl-pdfmail__chk label{font-weight:400;margin:0;font-size:12px;color:#475569}' +
+            '.cl-pdfmail__chk a{color:#00382E;text-decoration:underline}' +
+            '.cl-pdfmail__go{width:100%;border:0;border-radius:999px;padding:12px 16px;font-size:14px;font-weight:700;background:#00382E;color:#ffffff!important;cursor:pointer}' +
+            '.cl-pdfmail__go:disabled{opacity:.6;cursor:wait}' +
+            '.cl-pdfmail__skip{display:block;width:100%;margin-top:8px;border:0;background:none;padding:8px;font-size:13px;color:#475569;text-decoration:underline;cursor:pointer}' +
+            '.cl-pdfmail__err{color:#be123c;font-size:12px;margin:0 0 10px}' +
+            '.cl-pdfmail__err[hidden]{display:none}' +
+            '.cl-pdfmail__hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}';
+        document.head.appendChild(st);
+    }
+
+    function askEmailThenPrint(calculatorType) {
+        if (lsGet('cl_pdf_correo') === '1' || ssGet('cl_pdf_sin_correo') === '1') {
+            generatePDFReport();
+            return;
+        }
+        injectModalStyles();
+        var previo = document.getElementById('cl-pdfmail');
+        if (previo) previo.remove();
+        var nombreProducto = NOMBRES[calculatorType] || 'Informe';
+        var modal = document.createElement('div');
+        modal.id = 'cl-pdfmail';
+        modal.className = 'cl-pdfmail no-print';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'cl-pdfmail-t');
+        modal.innerHTML =
+            '<div class="cl-pdfmail__box">' +
+            '<button type="button" class="cl-pdfmail__x" aria-label="Cerrar">&times;</button>' +
+            '<h2 id="cl-pdfmail-t">Tu informe en PDF está listo</h2>' +
+            '<p>Si quieres, te enviamos una copia del resultado a tu correo para tenerla a mano. También puedes descargarlo sin dejar tus datos.</p>' +
+            '<form novalidate>' +
+            '<label for="cl-pdfmail-n">Nombre (opcional)</label>' +
+            '<input type="text" id="cl-pdfmail-n" name="nombre" autocomplete="given-name" maxlength="80">' +
+            '<label for="cl-pdfmail-e">Correo</label>' +
+            '<input type="email" id="cl-pdfmail-e" name="correo" autocomplete="email" inputmode="email" placeholder="tucorreo@ejemplo.cl">' +
+            '<div class="cl-pdfmail__hp" aria-hidden="true"><label>No completar<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' +
+            '<div class="cl-pdfmail__chk"><input type="checkbox" id="cl-pdfmail-c" name="consentimiento"><label for="cl-pdfmail-c">Acepto la <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a> y recibir esta copia por correo.</label></div>' +
+            '<p class="cl-pdfmail__err" role="alert" hidden></p>' +
+            '<button type="submit" class="cl-pdfmail__go" style="color:#ffffff !important;">Descargar y enviarme una copia</button>' +
+            '<button type="button" class="cl-pdfmail__skip">Descargar sin correo</button>' +
+            '</form></div>';
+        document.body.appendChild(modal);
+
+        var form = modal.querySelector('form');
+        var err = modal.querySelector('.cl-pdfmail__err');
+        var go = modal.querySelector('.cl-pdfmail__go');
+        var renderedAt = Date.now();
+        var enviando = false;
+
+        function cerrar() {
+            document.removeEventListener('keydown', onKey);
+            modal.remove();
+        }
+        function onKey(e) { if (e.key === 'Escape') cerrar(); }
+        function imprimir() {
+            cerrar();
+            generatePDFReport();
+        }
+        function mostrarError(msg) { err.textContent = msg; err.hidden = false; }
+
+        document.addEventListener('keydown', onKey);
+        modal.addEventListener('click', function (e) { if (e.target === modal) cerrar(); });
+        modal.querySelector('.cl-pdfmail__x').addEventListener('click', cerrar);
+        modal.querySelector('.cl-pdfmail__skip').addEventListener('click', function () {
+            ssSet('cl_pdf_sin_correo', '1');
+            medir('pdf_sin_correo', { calculadora: calculatorType });
+            imprimir();
+        });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (enviando) return;
+            err.hidden = true;
+            var correo = form.correo.value.trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) return mostrarError('Ingresa un correo válido o elige descargar sin correo.');
+            if (!form.consentimiento.checked) return mostrarError('Marca la casilla para recibir la copia en tu correo.');
+            enviando = true;
+            go.disabled = true;
+            fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: form.nombre.value.trim() || 'Lector',
+                    correo: correo,
+                    tipo: 'InformePDF',
+                    producto: calculatorType,
+                    fuente: 'Informe PDF (' + nombreProducto + ')',
+                    detalle: 'Descarga del informe PDF · ' + nombreProducto,
+                    monto_calculado: montoActual(calculatorType),
+                    website: form.website.value,
+                    form_rendered_at: renderedAt
+                })
+            }).then(function (res) {
+                return res.json().catch(function () { return {}; }).then(function (data) {
+                    if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+                });
+            }).then(function () {
+                lsSet('cl_pdf_correo', '1');
+                medir('generate_lead', { currency: 'CLP', value: 0, lead_type: 'InformePDF_' + calculatorType });
+                imprimir();
+            }).catch(function (error) {
+                enviando = false;
+                go.disabled = false;
+                medir('lead_error', { lead_type: 'InformePDF_' + calculatorType, motivo: String(error.message).slice(0, 80) });
+                if (/correo/i.test(error.message)) return mostrarError(error.message);
+                // Falla del servidor: el informe se entrega igual
+                imprimir();
+            });
+        });
+
+        setTimeout(function () { var i = document.getElementById('cl-pdfmail-e'); if (i) i.focus(); }, 60);
+    }
+
     // 4. SETUP EVENT LISTENERS
     function setupEventListeners() {
         const downloadBtnFini = document.getElementById('download-pdf-btn');
@@ -41,7 +188,7 @@
                 });
             }
 
-            generatePDFReport();
+            askEmailThenPrint(calculatorType);
         };
 
         if (downloadBtnFini) {

@@ -7,6 +7,7 @@
 const DESTINOS = {
     itau: 'https://ad.soicos.com/1163773',
     'itau-informe': 'https://ad.soicos.com/1163773',
+    'itau-correo': 'https://ad.soicos.com/1163773',
     abakos: 'https://ad.soicos.com/1154772',
     'abakos-emergencias': 'https://ad.soicos.com/1154903'
 };

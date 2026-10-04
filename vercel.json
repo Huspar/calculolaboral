@@ -12,6 +12,7 @@
   "rewrites": [
     { "source": "/itau", "destination": "/api/go?p=itau" },
     { "source": "/itau-informe", "destination": "/api/go?p=itau-informe" },
+    { "source": "/itau-correo", "destination": "/api/go?p=itau-correo" },
     { "source": "/abakos", "destination": "/api/go?p=abakos" },
     { "source": "/abakos-emergencias", "destination": "/api/go?p=abakos-emergencias" }
   ],
