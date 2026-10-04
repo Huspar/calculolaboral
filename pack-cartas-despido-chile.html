@@ -55,7 +55,7 @@
                     "name": "¿En qué formato se entregan los documentos?",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Todos son archivos de Microsoft Word (.docx) editables, con los campos por completar entre corchetes. Llegan en un archivo .zip adjunto al correo con el que pagas, y también con un enlace de descarga que funciona por 30 días."
+                        "text": "Todos son archivos de Microsoft Word (.docx) editables, con los campos por completar resaltados en amarillo. Llegan en un archivo .zip adjunto al correo con el que pagas, y también con un enlace de descarga que funciona por 30 días."
                     }
                 },
                 {
@@ -845,6 +845,9 @@ body { overflow-x: hidden; }
         <style>
             .cl-m { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
             @media (min-width: 768px) { .cl-m { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+            .cl-m-tabs { display: flex; gap: .5rem; margin-bottom: .75rem; flex-wrap: wrap; }
+            .cl-m-tab { border: 1px solid #cbd5e1; background: #fff; color: #334155; border-radius: 999px; padding: .375rem .875rem; font-size: .8125rem; font-weight: 600; cursor: pointer; }
+            .cl-m-tab[aria-selected="true"] { background: #00382E; border-color: #00382E; color: #ffffff; }
             .cl-m-btn { display: block; width: 100%; padding: 0; text-align: left; position: relative; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; box-shadow: 0 6px 20px rgba(15, 23, 42, .10); overflow: hidden; cursor: zoom-in; }
             .cl-m-btn img, .cl-m-dlg img { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
             .cl-m-zoom { position: absolute; right: .75rem; bottom: .75rem; display: inline-flex; align-items: center; gap: .25rem; padding: .375rem .75rem; border-radius: 999px; background: rgba(15, 23, 42, .88); font-size: .75rem; font-weight: 600; color: #ffffff; }
@@ -863,23 +866,27 @@ body { overflow-x: hidden; }
         <section id="muestra" class="max-w-5xl mx-auto mb-16 scroll-mt-20">
             <div class="text-center mb-8">
                 <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Así se ve una carta del pack</h2>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1">Primera página de la carta por incumplimiento grave del contrato (Art. 160 N° 7). Todas las cartas tienen el mismo formato.</p>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1">Ejemplo con la carta por incumplimiento grave del contrato (Art. 160 N° 7). Todas las cartas tienen el mismo formato: una hoja de instrucciones y la carta lista para completar.</p>
             </div>
             <div class="cl-m">
                 <div>
-                    <button type="button" id="muestra-abrir" class="cl-m-btn" aria-label="Ampliar la muestra de la carta">
-                        <img src="/assets/pack-despido-muestra.webp" width="1224" height="1584" loading="lazy" decoding="async" draggable="false" alt="Primera página de la carta de término de contrato por incumplimiento grave (Art. 160 N° 7): encabezado, instrucciones para el empleador, causal legal, hechos y estado de cotizaciones, con campos para completar entre corchetes">
+                    <div class="cl-m-tabs" role="tablist" aria-label="Páginas de la muestra">
+                        <button type="button" class="cl-m-tab" role="tab" id="muestra-tab-hoja" aria-selected="true" data-muestra="hoja">Página 1: instrucciones</button>
+                        <button type="button" class="cl-m-tab" role="tab" id="muestra-tab-carta" aria-selected="false" data-muestra="carta">Página 2: la carta</button>
+                    </div>
+                    <button type="button" id="muestra-abrir" class="cl-m-btn" aria-label="Ampliar la muestra">
+                        <img id="muestra-img" src="/assets/pack-despido-muestra-hoja.webp" width="1224" height="1584" loading="lazy" decoding="async" draggable="false" alt="Hoja de instrucciones (página 1) de la carta por incumplimiento grave del contrato, Art. 160 N° 7: encabezado, instrucciones para el empleador con plazo, pruebas y advertencias, y lista de revisión antes de enviar">
                         <span class="cl-m-zoom"><span class="material-icons">zoom_in</span><span>Ampliar</span></span>
                     </button>
                     <p class="text-xs text-slate-500 mt-2 text-center">Vista de muestra: el documento real es un archivo Word editable, sin marca de agua.</p>
                 </div>
                 <div style="display: grid; gap: 1.25rem;">
-                    <h3 class="text-base font-bold text-slate-900" style="margin: 0;">Qué trae cada carta</h3>
+                    <h3 class="text-base font-bold text-slate-900" style="margin: 0;">Cómo viene cada documento</h3>
                     <ol class="cl-m-list">
-                        <li><span class="cl-m-n">1</span><span><b>Instrucciones para el empleador:</b> plazo de envío, pruebas que conviene reunir y advertencias propias de la causal.</span></li>
-                        <li><span class="cl-m-n">2</span><span><b>Causal legal citada:</b> el texto del artículo del Código del Trabajo que invocas.</span></li>
-                        <li><span class="cl-m-n">3</span><span><b>Hechos con ejemplos:</b> campos entre corchetes que completas con fechas, lugares y personas.</span></li>
-                        <li><span class="cl-m-n">4</span><span><b>Estado de cotizaciones:</b> el párrafo que exige el Art. 162.</span></li>
+                        <li><span class="cl-m-n">1</span><span><b>Hoja de instrucciones (página 1):</b> plazo de envío, pruebas que conviene reunir, advertencias de la causal y una lista de revisión. Esta hoja no se envía.</span></li>
+                        <li><span class="cl-m-n">2</span><span><b>Carta limpia (página 2):</b> empieza con la fecha y el nombre del trabajador, sin marca ni notas internas, lista para imprimir.</span></li>
+                        <li><span class="cl-m-n">3</span><span><b>Campos en amarillo:</b> solo completas lo resaltado y, al terminar, le quitas el resaltado.</span></li>
+                        <li><span class="cl-m-n">4</span><span><b>Causal y cotizaciones:</b> el texto de la causal que invocas y el párrafo del estado de cotizaciones que exige el Art. 162.</span></li>
                         <li><span class="cl-m-n">5</span><span><b>Finiquito y firmas:</b> aviso del finiquito y acuse de recibo del trabajador.</span></li>
                     </ol>
                     <div>
@@ -892,13 +899,13 @@ body { overflow-x: hidden; }
             </div>
         </section>
 
-        <dialog id="muestra-dialog" class="cl-m-dlg" aria-label="Muestra de la carta ampliada">
+        <dialog id="muestra-dialog" class="cl-m-dlg" aria-label="Muestra ampliada">
             <div class="cl-m-bar">
-                <span>Muestra: carta Art. 160 N° 7</span>
+                <span id="muestra-titulo">Muestra: página 1, hoja de instrucciones</span>
                 <button type="button" id="muestra-cerrar" class="cl-m-close">Cerrar</button>
             </div>
             <div class="cl-m-scroll">
-                <img src="/assets/pack-despido-muestra.webp" width="1224" height="1584" draggable="false" alt="Muestra ampliada de la carta de término por incumplimiento grave (Art. 160 N° 7)">
+                <img id="muestra-img-grande" src="/assets/pack-despido-muestra-hoja.webp" width="1224" height="1584" draggable="false" alt="Muestra ampliada">
             </div>
         </dialog>
 
@@ -1003,7 +1010,7 @@ body { overflow-x: hidden; }
                         <span>¿En qué formato se entregan los documentos?</span>
                         <span class="material-icons text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
                     </summary>
-                    <p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">Todos son archivos de Microsoft Word (.docx) editables, con los campos por completar entre corchetes. Llegan en un archivo .zip adjunto al correo con el que pagas, y también con un enlace de descarga que funciona por 30 días.</p>
+                    <p class="mt-3 text-sm sm:text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">Todos son archivos de Microsoft Word (.docx) editables, con los campos por completar resaltados en amarillo. Llegan en un archivo .zip adjunto al correo con el que pagas, y también con un enlace de descarga que funciona por 30 días.</p>
                 </details>
 
                 <details class="group bg-white border border-slate-200/90 rounded-2xl p-4 transition-all">
@@ -1172,6 +1179,25 @@ body { overflow-x: hidden; }
         document.addEventListener('DOMContentLoaded', function() {
             var dlg = document.getElementById('muestra-dialog');
             var abrir = document.getElementById('muestra-abrir');
+            var imgs = {
+                hoja: { src: '/assets/pack-despido-muestra-hoja.webp', alt: 'Hoja de instrucciones (página 1) de la carta por incumplimiento grave del contrato, Art. 160 N° 7: encabezado, instrucciones para el empleador con plazo, pruebas y advertencias, y lista de revisión antes de enviar', titulo: 'Muestra: página 1, hoja de instrucciones' },
+                carta: { src: '/assets/pack-despido-muestra-carta.webp', alt: 'Carta limpia (página 2) por incumplimiento grave del contrato, Art. 160 N° 7: fecha, destinatario, causal legal, hechos, estado de cotizaciones, finiquito y firmas, con los campos por completar resaltados en amarillo', titulo: 'Muestra: página 2, la carta lista para enviar' }
+            };
+            var actual = 'hoja';
+            function mostrar(k) {
+                actual = k;
+                var m = imgs[k];
+                var img = document.getElementById('muestra-img');
+                img.src = m.src; img.alt = m.alt;
+                document.getElementById('muestra-img-grande').src = m.src;
+                document.getElementById('muestra-titulo').textContent = m.titulo;
+                document.querySelectorAll('.cl-m-tab').forEach(function (t) {
+                    t.setAttribute('aria-selected', t.getAttribute('data-muestra') === k ? 'true' : 'false');
+                });
+            }
+            document.querySelectorAll('.cl-m-tab').forEach(function (t) {
+                t.addEventListener('click', function () { mostrar(t.getAttribute('data-muestra')); });
+            });
             if (dlg && abrir && typeof dlg.showModal === 'function') {
                 abrir.addEventListener('click', function () { dlg.showModal(); });
                 document.getElementById('muestra-cerrar').addEventListener('click', function () { dlg.close(); });

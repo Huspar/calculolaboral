@@ -46,6 +46,33 @@ def carta(tipo, archivo, titulo, subtitulo, causal, hechos, box=None, finiquito=
 T160 = 'CARTA DE TÉRMINO DE CONTRATO POR CAUSAL DISCIPLINARIA'
 
 CARTAS = [
+    carta('161n', '01_Carta_Art161_Necesidades_de_la_Empresa.docx',
+          'CARTA DE AVISO DE TÉRMINO DE CONTRATO DE TRABAJO',
+          'Artículo 161 inciso primero del Código del Trabajo (Necesidades de la empresa)',
+          "La causal aplicada es la del Artículo 161 inciso primero del Código del Trabajo, esto es, las necesidades de funcionamiento de la empresa, establecimiento o servicio, tales como las derivadas de la racionalización o modernización de los mismos, bajas en la productividad, cambios en las condiciones del mercado o de la economía, que hagan necesaria la separación de uno o más trabajadores.",
+          ['Los hechos concretos que justifican esta decisión son los siguientes: [DESCRIBE CON PRECISIÓN LOS HECHOS OBJETIVOS. EJEMPLO: reestructuración del departamento de operaciones / supresión definitiva del puesto de trabajo / baja sostenida en la demanda del área, respaldada en balance o informes financieros].',
+           'El cargo que usted desempeñaba ya no resulta necesario para el funcionamiento de la empresa porque [TAREAS QUE SE REORGANIZAN, ELIMINAN O EXTERNALIZAN]. La decisión obedece a motivos objetivos de la empresa y no a factores relacionados con la persona del trabajador.'],
+          intro=('Por medio de la presente, y en conformidad con el Artículo 161 inciso primero del Código del Trabajo, comunicamos a usted el término del contrato de trabajo '
+                 'que lo vincula con nuestra empresa [RAZÓN SOCIAL EMPRESA], R.U.T. [RUT EMPRESA], el cual se hará efectivo a contar del día [DÍA DE CESE] de [MES DE CESE] de [AÑO].'),
+          finiquito=('Dentro del plazo de 10 días hábiles contado desde la separación, la empresa pondrá a su disposición en [NOTARÍA / LUGAR DE FIRMA] el finiquito, que incluirá: '
+                     'a) las remuneraciones adeudadas hasta el último día trabajado; b) la indemnización sustitutiva del aviso previo, si no se otorgó con 30 días de anticipación; '
+                     'c) la indemnización por años de servicio, conforme al Art. 163; d) la compensación del feriado legal y proporcional pendiente (Art. 73); y e) las demás prestaciones devengadas a la fecha.'),
+          pasos_propios=[
+              'Completa los campos resaltados en amarillo con datos reales y borra las alternativas que no apliquen.',
+              'PLAZO: o entregas la carta al menos 30 días antes del término, o pagas la indemnización sustitutiva (última remuneración mensual) y la entregas dentro de los 3 DÍAS HÁBILES siguientes a la separación. En ambos casos, con copia a la Inspección del Trabajo en el mismo plazo.',
+              'Adjunta los comprobantes de pago de cotizaciones al día (AFP, salud y seguro de cesantía). Sin ellos el despido no produce efecto (Art. 162).',
+              'En un juicio solo podrás defender los hechos que escribas en la carta (Art. 454 N° 1). Evita frases vagas como "reorganización interna": indica cifras, áreas afectadas o razones técnicas comprobables.'],
+          box=['No puedes invocar esta causal si el trabajador está con licencia médica por enfermedad común, accidente del trabajo o enfermedad profesional (Art. 161).',
+               'Si el trabajador tiene fuero (maternal, sindical u otro), esta causal no lo habilita: el juez solo puede autorizar el término en los casos de los artículos 159 N° 4 y 5 y 160 (Art. 174).']),
+
+    carta('160', '02_Carta_Art160_N3_Inasistencia_Injustificada.docx', T160,
+          'Artículo 160 N° 3 del Código del Trabajo (Inasistencia injustificada)',
+          "La causal aplicada es la del Artículo 160 N° 3 del Código del Trabajo, esto es: 'No concurrencia del trabajador a sus labores sin causa justificada durante dos días seguidos, dos lunes en el mes o un total de tres días durante igual período de tiempo'.",
+          ['Los hechos concretos en que se funda esta decisión consisten en que usted no concurrió a prestar sus servicios los siguientes días: [INDICA LOS DÍAS EXACTOS. EJEMPLO: lunes 12 y martes 13 de julio / lunes 5 y lunes 19 de julio / un total de tres días en el mes: los días 4, 11 y 18], jornadas en las cuales debía cumplir funciones según su horario contractual.',
+           'A la fecha de esta comunicación, usted no ha presentado licencia médica emitida por un organismo de salud competente, ni ha justificado ante la empresa la causa de sus ausencias.'],
+          box=['Conserva el libro de asistencia o el reporte del reloj control, y el comprobante de seguimiento de Correos: son la prueba principal.',
+               'Antes de enviar la carta, confirma que el trabajador no haya presentado una licencia médica ni una justificación que corresponda considerar.']),
+
     carta('160', '03_Carta_Art160_N1a_Falta_de_Probidad.docx', T160,
           'Artículo 160 N° 1 letra a) del Código del Trabajo (Falta de probidad)',
           "La causal aplicada es la del Artículo 160 N° 1 letra a) del Código del Trabajo, esto es: 'Falta de probidad del trabajador en el desempeño de sus funciones'.",
@@ -156,7 +183,7 @@ CARTAS = [
           intro=('Por medio de la presente, comunicamos a usted que el contrato de trabajo a plazo fijo que lo vincula con nuestra empresa [RAZÓN SOCIAL EMPRESA], '
                  'R.U.T. [RUT EMPRESA], termina el día [FECHA DE TÉRMINO] de [MES] de [AÑO], por la causal que se indica a continuación.'),
           pasos_propios=[COMUN_ITEM for COMUN_ITEM in [
-              'Completa los campos entre corchetes [...] y borra las alternativas que no apliquen.',
+              'Completa los campos resaltados en amarillo y borra las alternativas que no apliquen.',
               PLAZO_3,
               'Adjunta los comprobantes de pago de cotizaciones al día (AFP, salud y seguro de cesantía).']],
           box=['Si el trabajador sigue prestando servicios con tu conocimiento después de vencido el plazo, el contrato pasa a ser indefinido. La segunda renovación de un contrato a plazo fijo también lo transforma en indefinido, y la duración máxima es de un año (dos para gerentes o profesionales con título).',
@@ -172,7 +199,7 @@ CARTAS = [
           intro=('Por medio de la presente, comunicamos a usted que el contrato de trabajo que lo vincula con nuestra empresa [RAZÓN SOCIAL EMPRESA], '
                  'R.U.T. [RUT EMPRESA], termina con fecha [FECHA DE TÉRMINO] de [MES] de [AÑO], por la causal que se indica a continuación.'),
           pasos_propios=[
-              'Completa los campos entre corchetes [...] y borra las alternativas que no apliquen.',
+              'Completa los campos resaltados en amarillo y borra las alternativas que no apliquen.',
               PLAZO_3,
               'Adjunta los comprobantes de pago de cotizaciones al día (AFP, salud y seguro de cesantía).'],
           box=['Solo procede si el contrato dice con claridad cuál es la obra, faena o servicio y este realmente terminó. Si el trabajador sigue haciendo tareas habituales de la empresa, se podría entender que el contrato es indefinido.',
@@ -208,7 +235,7 @@ CARTAS = [
               'Si el trabajador es de casa particular, revisa las reglas especiales de indemnización del Art. 163.',
               'No puedes usar esta causal si el trabajador está con licencia médica por enfermedad común, accidente del trabajo o enfermedad profesional (Art. 161).'],
          pasos_propios=[
-             'Completa los campos entre corchetes [...] y borra las alternativas que no apliquen.',
+             'Completa los campos resaltados en amarillo y borra las alternativas que no apliquen.',
              'PLAZO: entrega la carta en mano o envíala por carta certificada al domicilio del contrato dentro de los 3 DÍAS HÁBILES siguientes a la separación del trabajador, con copia a la Inspección del Trabajo, y con 30 días de anticipación si no pagas el mes de aviso.',
              'Adjunta los comprobantes de pago de cotizaciones al día (AFP, salud y seguro de cesantía).']),
 ]
@@ -221,7 +248,7 @@ DOCS_EXTRA = [
     dict(archivo='17_Carta_de_Amonestacion_Escrita.docx',
          titulo='CARTA DE AMONESTACIÓN ESCRITA',
          subtitulo='Constancia previa para respaldar una futura medida disciplinaria',
-         box_titulo='INSTRUCCIÓN PARA EL EMPLEADOR:',
+         box_titulo='INSTRUCCIONES PARA EL EMPLEADOR',
          box=['Úsala cuando haya una falta que aún no justifica el despido. Entrégala en mano y pide la firma del trabajador. Si se niega a firmar, déjalo anotado con dos testigos.',
               'Describe un hecho concreto por carta, con fecha y la norma infringida. Varias amonestaciones por hechos distintos y bien documentados sostienen mejor una causal como el Art. 160 N° 7.',
               'Si tu reglamento interno contempla amonestaciones, cita el artículo y respeta su procedimiento.'],
@@ -237,7 +264,7 @@ DOCS_EXTRA = [
     dict(archivo='18_Citacion_y_Acta_de_Descargos.docx',
          titulo='CITACIÓN Y ACTA DE DESCARGOS',
          subtitulo='Para oír al trabajador antes de decidir una medida disciplinaria o el despido',
-         box_titulo='INSTRUCCIÓN PARA EL EMPLEADOR:',
+         box_titulo='INSTRUCCIONES PARA EL EMPLEADOR',
          box=['La ley no obliga a citar a descargos antes de despedir por causal disciplinaria, pero hacerlo muestra que oíste al trabajador y puede evitar errores.',
               'Entrega la citación con al menos [2] días hábiles de anticipación y guarda constancia de la entrega.',
               'Registra lo que diga el trabajador, aunque lo niegue todo. Si no asiste o se niega a firmar, anótalo con dos testigos.',
@@ -266,7 +293,7 @@ DOCS_EXTRA = [
     dict(archivo='19_Comunicacion_a_la_Inspeccion_del_Trabajo.docx',
          titulo='COMUNICACIÓN A LA INSPECCIÓN DEL TRABAJO',
          subtitulo='Copia de la carta de término del contrato (Art. 162 del Código del Trabajo)',
-         box_titulo='INSTRUCCIÓN PARA EL EMPLEADOR:',
+         box_titulo='INSTRUCCIONES PARA EL EMPLEADOR',
          box=['El Art. 162 exige enviar copia de la carta a la Inspección del Trabajo dentro del mismo plazo de la carta (3 días hábiles; 6 si es el Art. 159 N° 6).',
               'La Dirección del Trabajo tiene un servicio electrónico para informar el término de contrato en su portal (Mi DT). Si lo usas, guarda el comprobante. Este documento sirve para presentarlo en la oficina.',
               'Adjunta copia de la carta enviada y el comprobante de Correos. Guarda el timbre de recepción.'],
@@ -281,10 +308,10 @@ DOCS_EXTRA = [
                ('close', 'Saluda atentamente a usted,'),
                ('sig', 'TIMBRE DE RECEPCIÓN\nInspección del Trabajo\nFecha: ____ / ____ / ________')]),
 
-    dict(archivo='20_Estado_de_Pago_de_Cotizaciones_Previsionales.docx',
+    dict(archivo='20_Estado_de_Pago_de_Cotizaciones_Previsionales.docx', titulo_en_pagina=True,
          titulo='ESTADO DE PAGO DE COTIZACIONES PREVISIONALES',
          subtitulo='Anexo a la carta de término (Art. 162 del Código del Trabajo)',
-         box_titulo='INSTRUCCIÓN PARA EL EMPLEADOR:',
+         box_titulo='INSTRUCCIONES PARA EL EMPLEADOR',
          box=['Si al momento del despido no están pagadas las cotizaciones, el despido no produce el efecto de poner término al contrato y debes seguir pagando las remuneraciones hasta convalidarlo (Art. 162).',
               'Completa una línea por institución con los datos del comprobante de Previred y adjunta los comprobantes.',
               'Revisa que las cotizaciones estén efectivamente pagadas, no solo declaradas.'],
@@ -329,7 +356,7 @@ GUIA = dict(
     archivo='00_LEEME_Guia_de_Uso_y_Plazos.docx',
     titulo='GUÍA DE USO DEL PACK DE CARTAS DE DESPIDO',
     subtitulo='Qué carta usar, plazos y errores frecuentes (Código del Trabajo)',
-    box_titulo='AVISO:',
+    box_titulo='AVISO',
     box=['Son modelos de referencia basados en el Código del Trabajo; no constituyen asesoría legal. Si tu caso tiene particularidades (fuero, denuncias, montos altos), revísalo con un abogado antes de enviar la carta.'],
     body=[('h', '¿QUÉ CARTA USAR?'),
           ('t', '• Necesidades de la empresa (reorganización, baja de productividad): 01.\n• No llegó a trabajar (2 días seguidos, 2 lunes en el mes o 3 días en el mes): 02.\n• Falta de probidad (robo, fraude, falsedad): 03.\n• Acoso sexual o laboral comprobado: 04 (solo después de la investigación Ley Karin).\n• Agresión física: 05.  • Insultos al empleador: 06.  • Conducta inmoral que afecta a la empresa: 07.\n• Negociaciones prohibidas por contrato: 08.  • Abandono del trabajo: 09.\n• Imprudencias graves de seguridad: 10.  • Daño intencional: 11.  • Incumplimiento grave del contrato: 12.\n• Contrato a plazo fijo que vence: 13.  • Obra o faena terminada: 14.  • Caso fortuito o fuerza mayor: 15.\n• Gerentes, apoderados o trabajadores de casa particular (desahucio): 16.'),
@@ -340,5 +367,22 @@ GUIA = dict(
           ('h', 'ERRORES FRECUENTES'),
           ('t', '• Hechos vagos en la carta. En juicio solo puedes defender los hechos escritos (Art. 454 N° 1).\n• Cotizaciones sin pagar al despedir: el despido no produce efecto (Art. 162).\n• Despedir a una persona con fuero sin autorización del juez (Art. 174).\n• Usar necesidades de la empresa con un trabajador con licencia médica (Art. 161).\n• Cambiar de causal después: la carta fija los hechos y la causal.\n• Despedir por acoso sin haber terminado la investigación Ley Karin.'),
           ('h', 'CÓMO COMPLETAR LOS MODELOS'),
-          ('t', 'Completa los campos entre corchetes [...] y borra las alternativas que no apliquen. Mantén los datos de la persona afectada en reserva cuando haya denuncias. Imprime dos copias: una para el trabajador y otra con su firma de recepción para el empleador.')]
+          ('t', 'Completa los campos resaltados en amarillo y borra las alternativas que no apliquen. Mantén los datos de la persona afectada en reserva cuando haya denuncias. Imprime dos copias: una para el trabajador y otra con su firma de recepción para el empleador.')]
+)
+
+
+CHECKLIST_GRATIS = dict(
+    archivo='03_Checklist_Legal_Envio_Carta_Despido_y_Plazos_DT_2026.docx',
+    titulo='CHECKLIST LEGAL Y PROTOCOLO DE DESVINCULACIÓN 2026',
+    body=[('t', 'Este documento resume los 5 pasos críticos que todo empleador o departamento de Recursos Humanos debe cumplir al emitir una carta de despido en Chile, reduciendo el riesgo de multas de la Inspección del Trabajo y de demandas por despido injustificado (Art. 168).'),
+          ('h', 'PASO 1: VERIFICAR LAS COTIZACIONES (LEY BUSTOS)'),
+          ('t', '• Antes de entregar o enviar la carta, obtén las planillas de Previred con timbre electrónico.\n• Todas las cotizaciones previsionales (AFP, Fonasa o Isapre, seguro de cesantía y seguro de accidentes laborales) deben estar pagadas hasta el último día del mes anterior al despido.\n• Riesgo grave: si hay deuda, o solo declaración sin pago, el despido no produce efecto y el empleador debe seguir pagando remuneraciones hasta convalidarlo.'),
+          ('h', 'PASO 2: REDACTAR LOS HECHOS CON PRECISIÓN'),
+          ('t', '• Art. 161 (necesidades de la empresa): expresa cifras, áreas afectadas o razones técnicas comprobables. Evita frases vagas como "reorganización interna".\n• Art. 160 (faltas del trabajador): detalla fechas, horas y conductas exactas, respaldadas en el libro de asistencia o en actas.'),
+          ('h', 'PASO 3: RESPETAR LOS PLAZOS'),
+          ('t', '• Art. 161: aviso con 30 días de anticipación, o de forma inmediata pagando la indemnización sustitutiva del aviso previo.\n• Art. 160: la carta se despacha dentro de 3 días hábiles desde que cesaron los servicios.'),
+          ('h', 'PASO 4: ENVÍO POR CARTA CERTIFICADA Y AVISO A LA DT'),
+          ('t', '• Despacha por carta certificada de Correos de Chile al domicilio del contrato, o entrégala en mano con firma de recepción.\n• Guarda el comprobante de envío con su número de seguimiento.\n• Informa el término a la Inspección del Trabajo dentro del mismo plazo, por el servicio electrónico de la Dirección del Trabajo.'),
+          ('h', 'PASO 5: FINIQUITO EN 10 DÍAS HÁBILES (ART. 177)'),
+          ('t', '• El finiquito debe ponerse a disposición del trabajador y pagarse dentro de 10 días hábiles posteriores al término.\n• Incluye la liquidación de sueldo, el feriado proporcional y los años de servicio, si corresponde.\n• Para tener poder liberatorio, debe firmarse ante un ministro de fe (notario, Inspección del Trabajo u otro que indica el Art. 177) o por la vía electrónica habilitada.')],
 )

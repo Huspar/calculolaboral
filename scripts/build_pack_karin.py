@@ -8,9 +8,13 @@ Uso: python scripts/build_pack_karin.py
 import copy
 import io
 import os
+import sys
 import zipfile
 
 import docx
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import docs_layout as L  # noqa: E402
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KIT = os.path.join(BASE, 'api', 'assets', 'Kit_Blindaje_Laboral_Pyme_2026.zip')
@@ -27,7 +31,7 @@ FILES = {
 
 GUIA = [
     ('Qué es: ', 'la estructura mínima de un protocolo de prevención según la Ley N° 21.643 y la Circular N° 3.813 de la SUSESO, para completar con los datos de tu empresa.'),
-    ('Cómo usarla: ', 'completa cada sección entre corchetes. Pide apoyo a tu mutualidad o al ISL para la evaluación de riesgos psicosociales.'),
+    ('Cómo usarla: ', 'completa cada sección; los campos están resaltados en amarillo. Pide apoyo a tu mutualidad o al ISL para la evaluación de riesgos psicosociales.'),
     ('Versión completa: ', 'el Kit Blindaje Laboral Pyme trae el protocolo ya redactado, la matriz de riesgos y las actas de resguardo y capacitación (calculolaboral.cl/kit-cumplimiento-laboral-pymes).'),
 ]
 
@@ -56,6 +60,20 @@ def set_runs(p, *texts):
         r._r.getparent().remove(r._r)
 
 
+def sect_paragraph(d):
+    """Párrafo que cierra la hoja de instrucciones (ver docs_layout.py)."""
+    for k in d.element.body.iterchildren():
+        if k.tag == L.W_P and k.find('.//' + L.qn('w:sectPr')) is not None:
+            return k
+
+
+def retitle(d, text):
+    """Cambia el título que abre el documento limpio (página 2)."""
+    t = sect_paragraph(d).getnext()
+    node = t.find('.//' + L.W_T)
+    node.text = text
+
+
 def brand(d, title, code):
     t = d.tables[0]
     set_runs(t.cell(0, 0).paragraphs[0], HEADER)
@@ -69,7 +87,9 @@ def brand(d, title, code):
 
 
 def build_estructura(d):
-    brand(d, 'ESTRUCTURA DEL PROTOCOLO DE PREVENCIÓN DEL ACOSO SEXUAL, LABORAL Y LA VIOLENCIA EN EL TRABAJO', 'KARIN-GRATIS-01')
+    TITULO = 'ESTRUCTURA DEL PROTOCOLO DE PREVENCIÓN DEL ACOSO SEXUAL, LABORAL Y LA VIOLENCIA EN EL TRABAJO'
+    brand(d, TITULO, 'KARIN-GRATIS-01')
+    retitle(d, TITULO)
     cell = d.tables[1].cell(0, 0)
     set_runs(cell.paragraphs[0], 'CÓMO USAR ESTA ESTRUCTURA')
     bullets = cell.paragraphs[1:]
@@ -111,6 +131,7 @@ def main():
             set_runs(d.tables[1].cell(0, 0).paragraphs[0], 'GUÍA PRÁCTICA DE APLICACIÓN')
             fix_texts(d)
         path = os.path.join(OUT, out_name)
+        L.highlight_fields(d, after=sect_paragraph(d))
         d.save(path)
         built.append(path)
         print('ok', out_name)
