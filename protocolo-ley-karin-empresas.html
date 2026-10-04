@@ -523,6 +523,7 @@ body { overflow-x: hidden; }
         }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.4.0">
+    <link rel="stylesheet" href="/assets/css/lead-abogado.css?v=1.0.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -831,6 +832,24 @@ body { overflow-x: hidden; }
 <li><strong>Medidas según la naturaleza del servicio</strong>, incluida la violencia de terceros (clientes, usuarios, proveedores).</li>
 <li><strong>Resguardo de la privacidad y la honra</strong> de todas las personas involucradas, y protección de quien denuncia sin importar el resultado.</li>
 </ul>
+<!-- Pack gratuito Ley Karin (js/lead_karin.js) -->
+<section class="cl-lead not-prose no-print" aria-labelledby="lead-karin-titulo">
+<p class="cl-lead__eyebrow">Descarga gratis · Word editable</p>
+<h3 class="cl-lead__titulo" id="lead-karin-titulo">Pack Ley Karin básico para tu empresa</h3>
+<p class="cl-lead__texto">Recibe en Word la <strong>estructura del protocolo</strong> con las secciones que exige la ley para completar con tus datos, el <strong>formulario de recepción de denuncia</strong> y el <strong>comprobante de entrega</strong> que firma cada trabajador.</p>
+<form id="lead-karin" novalidate>
+<div class="cl-lead__campos">
+<label class="cl-lead__campo"><span>Nombre</span><input name="nombre" type="text" autocomplete="name" required></label>
+<label class="cl-lead__campo"><span>Correo</span><input name="correo" type="email" autocomplete="email" required></label>
+<label class="cl-lead__campo cl-lead__campo--full"><span>Empresa <em>(opcional)</em></span><input name="empresa" type="text" autocomplete="organization"></label>
+</div>
+<input class="cl-lead__hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+<label class="cl-lead__consent"><input name="consentimiento" type="checkbox" required><span>Acepto la <a href="privacidad">política de privacidad</a> y recibir el pack en mi correo.</span></label>
+<p class="cl-lead__error" role="alert" hidden></p>
+<button class="cl-lead__enviar" type="submit">Descargar el pack gratis</button>
+</form>
+<div class="cl-lead__ok" id="lead-karin-ok" tabindex="-1" role="status" hidden></div>
+</section>
 <h2>4. Plazos cuando llega una denuncia</h2>
 <p>
                         El procedimiento de investigación se rige por la ley y por el Decreto Supremo 21 de 2024 del Ministerio del Trabajo. Estos son los plazos que la empresa debe cumplir:
@@ -1062,6 +1081,7 @@ body { overflow-x: hidden; }
 </footer>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/puentes.js?v=1.0.0" defer></script>
+    <script src="/js/lead_karin.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

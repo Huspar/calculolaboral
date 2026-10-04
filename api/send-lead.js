@@ -22,7 +22,7 @@ const ALLOWED_ORIGINS = new Set([
     'http://localhost:5500'
 ]);
 
-const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Demanda Despido Injustificado', 'Despido Art. 160', 'Otro']);
+const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'ProtocoloKarin', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Demanda Despido Injustificado', 'Despido Art. 160', 'Otro']);
 
 // Leads para abogados: basta un teléfono/WhatsApp válido, el correo es opcional
 const TIPO_ABOGADO = new Set(['Consulta Legal', 'Despido', 'Demanda Despido Injustificado', 'Despido Art. 160']);
@@ -41,6 +41,13 @@ const DESPIDO_PACK_URL = 'https://calculolaboral.cl/descargas/Pack_Modelos_Carta
 const DESPIDO_DOCX_ART161_URL = 'https://calculolaboral.cl/descargas/01_Modelo_Carta_Despido_Art161_Necesidades_Empresa_2026.docx';
 const DESPIDO_DOCX_ART160_URL = 'https://calculolaboral.cl/descargas/02_Modelo_Carta_Despido_Art160_N3_Inasistencia_Injustificada_2026.docx';
 const DESPIDO_DOCX_CHECKLIST_URL = 'https://calculolaboral.cl/descargas/03_Checklist_Legal_Envio_Carta_Despido_y_Plazos_DT_2026.docx';
+const KARIN_BASE = 'https://calculolaboral.cl/descargas/';
+const KARIN_PACK_URL = KARIN_BASE + 'Pack_Ley_Karin_Basico_2026.zip';
+const KARIN_DOCS = [
+    ['01_Estructura_Protocolo_Ley_Karin_2026.docx', 'Estructura del protocolo de prevención (para completar)'],
+    ['02_Formulario_Recepcion_Denuncia_Ley_Karin_2026.docx', 'Formulario de recepción de denuncia'],
+    ['03_Comprobante_Entrega_Protocolo_Ley_Karin_2026.docx', 'Comprobante de entrega del protocolo al trabajador'],
+];
 
 function getClientIp(req) {
     const xff = req.headers['x-forwarded-for'];
@@ -350,6 +357,27 @@ module.exports = async (req, res) => {
                 </div>
             `;
             userHtml = buildEmailHtml({ title: 'Tus Modelos de Carta de Despido (.docx) 📄', intro: userIntro, body: userBody });
+            userText = buildEmailText({ intro: userIntro, body: userBody });
+        } else if (cleanTipo === 'ProtocoloKarin') {
+            userSubject = 'Tu pack Ley Karin para empresas (Word .docx)';
+            const userIntro = `Hola ${cleanName}, aquí tienes los documentos de Ley Karin en Word, editables con los datos de tu empresa.`;
+            const userBody = `
+                <p style="margin: 0 0 12px;"><strong>Pack Ley Karin básico 2026</strong></p>
+                <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">
+                    ${KARIN_DOCS.map(([file, label]) => `<li style="margin-bottom: 4px;"><a href="${KARIN_BASE}${file}" style="color: #00382E; text-decoration: underline; font-weight: 600;">${label}</a></li>`).join('')}
+                </ul>
+                <p style="margin: 20px 0; text-align: center;">
+                    <a href="${KARIN_PACK_URL}" style="background: #00382E; color: #ffffff !important; padding: 13px 26px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 14px;">Descargar los 3 documentos (.zip)</a>
+                </p>
+                <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; margin: 18px 0; font-size: 12.5px; color: #92400e;">
+                    <strong>Si llega una denuncia:</strong> adopta de inmediato medidas de resguardo, decide en 3 días hábiles si investigas o derivas a la Inspección del Trabajo, y si investigas, termina en 30 días hábiles.
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px;">
+                    ¿Prefieres el protocolo ya redactado? El <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #00382E; font-weight: bold;">Kit Blindaje Laboral Pyme ($19.990)</a> incluye el protocolo completo, la matriz de riesgos psicosociales, las actas de resguardo y capacitación, y anexos de jornada 42 horas.
+                </div>
+                <p style="margin: 12px 0 0; font-size: 12px; color: #64748b;">Son modelos de referencia basados en la Ley 21.643; adáptalos a tu empresa. Guía completa: <a href="https://calculolaboral.cl/protocolo-ley-karin-empresas" style="color: #00382E;">calculolaboral.cl/protocolo-ley-karin-empresas</a></p>
+            `;
+            userHtml = buildEmailHtml({ title: 'Tu pack Ley Karin (.docx)', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'Multa DT') {
             userSubject = 'Evaluación de Multa DT (Art. 511) - Cálculo Laboral';
