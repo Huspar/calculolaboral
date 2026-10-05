@@ -128,30 +128,6 @@
             overflow-x: hidden;
         }
 
-        .hero-py {
-            position: relative;
-            padding-top: 4.5rem;
-            padding-bottom: 3.5rem;
-            background: radial-gradient(1100px 550px at 50% -30px, rgba(255, 183, 3, 0.08), rgba(0, 56, 46, 0.02) 65%, transparent 100%);
-        }
-        @media (min-width: 640px) {
-            .hero-py {
-                padding-top: 6rem;
-                padding-bottom: 4.5rem;
-            }
-        }
-
-        .showcase-py {
-            padding-top: 1rem;
-            padding-bottom: 4.5rem;
-        }
-        @media (min-width: 640px) {
-            .showcase-py {
-                padding-top: 1.5rem;
-                padding-bottom: 6rem;
-            }
-        }
-
         .section-py {
             padding-top: 4.5rem;
             padding-bottom: 4.5rem;
@@ -389,151 +365,6 @@
             box-shadow: 0 4px 14px rgba(0, 56, 46, 0.22);
         }
 
-        /* High-Search Power Tool Buttons in Hero */
-        .power-tool-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 15px;
-            border-radius: 9999px;
-            background-color: #FFFFFF;
-            border: 1.5px solid #CBD5E1;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            font-size: 13px;
-            color: #1E293B !important;
-            text-decoration: none;
-            transition: all 0.2s var(--ease-spring);
-            cursor: pointer;
-        }
-        .power-tool-btn:hover {
-            border-color: #00382E;
-            transform: translateY(-1.5px);
-            box-shadow: 0 6px 16px -4px rgba(0, 56, 46, 0.14);
-            color: #00382E !important;
-        }
-        .power-tool-btn:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        /* Product Showcase Segmented Control (Emil Kowalski Physics & Pill Style) */
-        .scrollbar-none {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .scrollbar-none::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-        }
-        .segmented-control-container {
-            background-color: #F1F5F9;
-            border: 1px solid #E2E8F0;
-            border-radius: 9999px;
-            padding: 5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            max-width: 100%;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .segmented-control-container::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-        }
-        @media (max-width: 640px) {
-            .segmented-control-container {
-                border-radius: 16px;
-                padding: 4px;
-                gap: 2px;
-                width: max-content;
-                min-width: 100%;
-                justify-content: flex-start;
-            }
-        }
-        .product-tab {
-            position: relative;
-            padding: 8px 18px;
-            font-size: 13.5px;
-            font-weight: 600;
-            color: #64748B;
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 9999px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-            white-space: nowrap;
-            user-select: none;
-            text-decoration: none;
-        }
-        @media (max-width: 640px) {
-            .product-tab {
-                padding: 7px 12px;
-                font-size: 12px;
-                gap: 5px;
-                border-radius: 12px;
-                flex-shrink: 0;
-            }
-        }
-        .product-tab:hover {
-            color: #00382E;
-            background-color: rgba(255, 255, 255, 0.55);
-        }
-        .product-tab.active {
-            color: #00382E;
-            background-color: #FFFFFF;
-            font-weight: 700;
-            border-color: rgba(0, 56, 46, 0.08);
-            box-shadow: 0 2px 8px -1px rgba(0, 56, 46, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
-        }
-        .product-tab:active {
-            transform: scale(0.97);
-        }
-
-        /* Showcase Mockup Curved Backdrops (TealHQ Organic Shapes) */
-        .teal-organic-backdrop {
-            position: absolute;
-            right: -40px;
-            top: -40px;
-            bottom: -40px;
-            width: 58%;
-            background-color: #00382E;
-            border-top-left-radius: 90px;
-            border-bottom-left-radius: 90px;
-            z-index: 0;
-            pointer-events: none;
-            transition: background-color 0.45s ease;
-        }
-        @media (max-width: 1024px) {
-            .teal-organic-backdrop {
-                display: none;
-            }
-        }
-
-
-        /* Notary Official Stamp Simulation */
-        .notary-stamp {
-            border: 2px dashed #DC2626;
-            color: #DC2626;
-            transform: rotate(-4deg);
-            border-radius: 8px;
-            padding: 4px 8px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            line-height: 1.2;
-            text-align: center;
-            opacity: 0.85;
-            background-color: rgba(254, 242, 242, 0.4);
-            display: inline-block;
-        }
-
         /* Real UI Mockup Card */
         .saas-window-card {
             background: #FFFFFF;
@@ -542,47 +373,6 @@
             box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
             position: relative;
             z-index: 10;
-        }
-
-        /* Range Slider Track & Thumb */
-        .teal-range {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 8px;
-            border-radius: 9999px;
-            background: #E5E7EB;
-            outline: none;
-            cursor: pointer;
-        }
-        .teal-range::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--teal-forest);
-            border: 3px solid #FFFFFF;
-            box-shadow: 0 4px 10px rgba(0, 56, 46, 0.4);
-            cursor: grab;
-            transition: transform 0.15s ease;
-        }
-        .teal-range::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-        }
-        .teal-range::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--teal-forest);
-            border: 3px solid #FFFFFF;
-            box-shadow: 0 4px 10px rgba(0, 56, 46, 0.4);
-            cursor: grab;
-        }
-
-        /* Number Ticking */
-        .num-ticker {
-            transition: transform 0.15s var(--ease-spring), opacity 0.15s ease;
         }
 
         /* How it works steps pills */
@@ -1128,644 +918,249 @@
 
 
 
-    <!-- SECTION 1: TEALHQ CENTERED HERO (Clean, No Pill Badges, Massive Typography) -->
-    <section class="hero-py text-center">
-        <div class="site-container px-4 sm:px-6">
-            
-            <!-- Confident 2-Line Headline (Exact TealHQ weight & proportion) -->
-            <h1 style="color: var(--teal-forest);" class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] max-w-4xl mx-auto">
-                <span class="block">Cálculo laboral</span>
-                <span class="block mt-1"><span class="cl-mark">y previsional en Chile.</span></span>
-            </h1>
+    <!-- SECTION 1: PORTADA CON ABANICO DE CALCULADORAS (js/home_fan.js) -->
+    <style>
+        /* Portada: texto + abanico de calculadoras (js/home_fan.js). Clases propias: el CSS precompilado de Tailwind no trae las nuevas. */
+        .clf-hero { padding: 2rem 0 2.5rem; overflow-x: clip; background: radial-gradient(1100px 550px at 50% -30px, rgba(255, 183, 3, 0.08), rgba(0, 56, 46, 0.02) 65%, transparent 100%); }
+        .clf-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "fan" "actions"; gap: 1.25rem; }
+        .clf-copy { grid-area: copy; display: grid; gap: 0.875rem; justify-items: start; min-width: 0; }
+        .clf-fanwrap { grid-area: fan; display: grid; gap: 0.625rem; justify-items: center; min-width: 0; }
+        .clf-actions { grid-area: actions; display: grid; gap: 1rem; justify-items: start; min-width: 0; }
+        .clf-eyebrow { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal-forest); }
+        .clf-eyebrow::before { content: ""; width: 18px; height: 2px; background: var(--teal-yellow); }
+        .clf-h1 { margin: 0; color: var(--teal-forest); font-weight: 800; font-size: 2.25rem; line-height: 1.06; letter-spacing: -0.035em; text-wrap: balance; }
+        .clf-lead { margin: 0; font-size: 1.02rem; line-height: 1.55; color: #4B5563; max-width: 36ch; }
+        .clf-ctas { display: flex; flex-wrap: wrap; gap: 0.625rem; width: 100%; }
+        .clf-ctas .btn-yellow-pill { padding: 0.8rem 1.4rem; font-size: 0.95rem; }
+        .clf-cta-t { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .clf-btn-o { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1.3rem; border-radius: 9999px; border: 2px solid #D1D5DB; background: #FFFFFF; color: #1F2937; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: border-color 0.2s; }
+        .clf-btn-o:hover { border-color: #111827; }
+        .clf-btn-o b { font-family: 'Geist Mono', monospace; font-size: 0.72rem; background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 9999px; }
+        .clf-trust { display: flex; flex-wrap: wrap; gap: 0.375rem 1rem; margin: 0; padding: 0; list-style: none; font-size: 0.78rem; font-weight: 500; color: #6B7280; }
+        .clf-trust li { display: inline-flex; align-items: center; gap: 0.3rem; }
+        .clf-trust .material-icons { font-size: 1rem; color: #059669; }
 
-            <!-- Professional Sentence Subtitle (No AI fluff) -->
-            <p class="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Calculadoras y herramientas para trabajadores y pymes. Al día con la normativa 2026.
-            </p>
+        .clf-fan { position: relative; width: 100%; height: 352px; touch-action: pan-y; --step: 7deg; --spread: 1; }
+        .clf-fan.clf-deal { --spread: 0; }
+        .clf-card {
+            position: absolute; left: 50%; top: 22px; width: 226px; height: 296px; margin-left: -113px;
+            display: flex; flex-direction: column; gap: 0.6rem; padding: 1rem;
+            background: #FFFFFF; color: #111827; text-decoration: none; text-align: left;
+            border: 1px solid #E2E8F0; border-radius: 18px;
+            box-shadow: 0 1px 2px rgba(0, 38, 31, 0.06), 0 10px 24px rgba(0, 38, 31, 0.08);
+            transform-origin: 50% 140%;
+            transform: rotate(calc(var(--o, 0) * var(--step) * var(--spread)));
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), translate 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s, box-shadow 0.3s, border-color 0.3s;
+            -webkit-user-select: none; user-select: none; -webkit-user-drag: none; cursor: pointer;
+        }
+        .clf-card:hover { color: #111827; }
+        .clf-card.is-active { border-color: var(--teal-forest); translate: 0 -10px; box-shadow: 0 2px 4px rgba(0, 38, 31, 0.08), 0 24px 48px rgba(0, 38, 31, 0.22); }
+        .clf-card.clf-o3 { opacity: 0; pointer-events: none; }
+        @media (hover: hover) { .clf-card:not(.is-active):hover { translate: 0 -18px; } }
+        .clf-top { display: flex; align-items: center; justify-content: space-between; }
+        .clf-ico { width: 36px; height: 36px; border-radius: 10px; background: #EEF6F3; color: var(--teal-forest); display: flex; align-items: center; justify-content: center; }
+        .clf-ico .material-icons { font-size: 20px; }
+        .clf-tag { font-family: 'Geist Mono', monospace; font-size: 0.62rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #6B7280; border: 1px solid #E2E8F0; border-radius: 9999px; padding: 3px 8px; }
+        .clf-k { display: block; font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: #6B7280; margin-top: 0.25rem; }
+        .clf-n { display: block; margin-top: -0.4rem; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+        .clf-r { font-family: 'Geist Mono', monospace; font-variant-numeric: tabular-nums; font-size: 1.4rem; font-weight: 700; color: var(--teal-forest); letter-spacing: -0.02em; line-height: 1.1; }
+        .clf-r span { background-image: linear-gradient(transparent 58%, rgba(255, 183, 3, 0.5) 58%, rgba(255, 183, 3, 0.5) 92%, transparent 92%); padding: 0 2px; }
+        .clf-r small { display: block; font-family: 'Geist', sans-serif; font-size: 0.7rem; font-weight: 500; color: #6B7280; letter-spacing: 0; margin-bottom: 3px; }
+        .clf-d { margin: 0; font-size: 0.76rem; line-height: 1.45; color: #4B5563; }
+        .clf-go { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 0.375rem; padding: 0.55rem 0.875rem; border-radius: 9999px; background: #EEF6F3; color: var(--teal-forest); font-size: 0.8rem; font-weight: 700; transition: background 0.3s, color 0.3s; }
+        .clf-go .material-icons { font-size: 1rem; }
+        .clf-card.is-active .clf-go { background: var(--teal-forest); color: #FFFFFF; }
+        .clf-bars { display: flex; align-items: flex-end; gap: 7px; height: 64px; padding-top: 4px; }
+        .clf-bars div { display: grid; justify-items: center; gap: 3px; }
+        .clf-bars i { display: block; width: 22px; border-radius: 5px 5px 2px 2px; background: var(--teal-forest); }
+        .clf-bars div:first-child i { background: var(--teal-yellow); }
+        .clf-bars b { font-family: 'Geist Mono', monospace; font-size: 0.62rem; font-weight: 700; color: #4B5563; }
+        .clf-card.clf-all { background: var(--teal-forest); border-color: var(--teal-forest); color: #FFFFFF; }
+        .clf-card.clf-all .clf-ico { background: rgba(255, 255, 255, 0.12); color: var(--teal-yellow); }
+        .clf-card.clf-all .clf-k { color: rgba(255, 255, 255, 0.75); }
+        .clf-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 0.78rem; color: rgba(255, 255, 255, 0.82); }
+        .clf-list li::before { content: "· "; color: var(--teal-yellow); font-weight: 700; }
+        .clf-card.clf-all .clf-go, .clf-card.clf-all.is-active .clf-go { background: var(--teal-yellow); color: #111827; }
 
-            <!-- TealHQ Primary Action Buttons (Twin Actions: Express Simulator & Complete Catalog) -->
-            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-xl mx-auto">
-                <a href="#showcase" class="btn-yellow-pill group text-base px-7 py-3.5 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg transition-all">
-                    <span class="font-bold">Simular Finiquito Rápido</span>
-                    <span class="w-7 h-7 rounded-full bg-black/10 flex items-center justify-center transition-transform duration-200 group-hover:translate-y-0.5">
-                        <span class="material-icons text-base">arrow_downward</span>
-                    </span>
-                </a>
-                <a href="#calculadoras" class="btn-outline-pill group text-base px-6 py-3.5 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold shadow-xs hover:shadow-md transition-all">
-                    <span class="material-icons text-emerald-700 text-lg">apps</span>
-                    <span>Ver Todas las Calculadoras</span>
-                    <span class="px-2 py-0.5 text-xs font-mono font-bold rounded-full bg-emerald-100 text-emerald-800">15</span>
-                </a>
+        .clf-cap { display: flex; align-items: center; gap: 0.75rem; }
+        .clf-cap button { width: 38px; height: 38px; border-radius: 9999px; border: 1px solid #E2E8F0; background: #FFFFFF; color: var(--teal-forest); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s; }
+        .clf-cap button:hover { border-color: var(--teal-forest); }
+        .clf-cap-t { min-width: 170px; text-align: center; display: grid; gap: 1px; }
+        .clf-cap-t b { font-size: 0.9rem; color: #111827; }
+        .clf-cap-t span { font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: #6B7280; }
+        .clf-dots { display: flex; gap: 6px; }
+        .clf-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 9999px; background: #CBD5E1; cursor: pointer; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; }
+        .clf-dots button[aria-current="true"] { width: 22px; background: var(--teal-forest); }
+        .clf-hint { margin: 0; font-size: 0.74rem; color: #6B7280; text-align: center; }
+        .clf-hint-mouse { display: none; }
+        @media (hover: hover) and (pointer: fine) { .clf-hint-mouse { display: inline; } .clf-hint-touch { display: none; } }
+
+        @media (max-width: 1023px) {
+            .clf-ctas > a { flex: 1 1 auto; justify-content: center; }
+        }
+        @media (min-width: 1024px) {
+            .clf-hero { padding: 3.5rem 0 4rem; }
+            .clf-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-areas: "copy fan" "actions fan"; column-gap: 1.5rem; row-gap: 1.75rem; align-items: center; }
+            .clf-copy { align-self: end; gap: 1.125rem; }
+            .clf-actions { align-self: start; }
+            .clf-h1 { font-size: 3.6rem; }
+            .clf-lead { font-size: 1.15rem; }
+            .clf-ctas { width: auto; }
+            .clf-fan { height: 430px; --step: 7.5deg; }
+            .clf-card { width: 250px; height: 330px; margin-left: -125px; padding: 1.125rem; top: 34px; }
+            .clf-r { font-size: 1.6rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .clf-card, .clf-dots button { transition: none; }
+        }
+
+        /* Bloque de la calculadora de finiquito */
+        .clf-fini { padding: 0 0 3rem; }
+        .clf-fini-box { display: grid; gap: 1.5rem; padding: 1.5rem; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 1.5rem; }
+        .clf-fini-box h2 { margin: 0.5rem 0 0.5rem; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #0F172A; text-wrap: balance; }
+        .clf-fini-box p { margin: 0 0 1.25rem; font-size: 0.95rem; line-height: 1.6; color: #4B5563; max-width: 52ch; }
+        .clf-fini-box .btn-yellow-pill { padding: 0.8rem 1.4rem; }
+        .clf-fini-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; align-content: center; }
+        .clf-fini-list li { display: flex; gap: 0.625rem; font-size: 0.9rem; line-height: 1.45; color: #334155; }
+        .clf-fini-list .material-icons { color: #059669; font-size: 1.15rem; }
+        .clf-fini-list small { display: block; font-size: 0.75rem; color: #6B7280; }
+        .clf-fini-alt { margin: 1rem 0 0; font-size: 0.875rem; color: #4B5563; text-align: center; }
+        .clf-fini-alt a { color: var(--teal-forest); font-weight: 600; text-decoration: underline; }
+        @media (min-width: 1024px) {
+            .clf-fini-box { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; padding: 2.5rem 3rem; }
+            .clf-fini-box h2 { font-size: 2rem; }
+        }
+    </style>
+    <section class="clf-hero" aria-labelledby="clf-h1">
+        <div class="site-container px-4 sm:px-6 clf-grid">
+
+            <div class="clf-copy">
+                <p class="clf-eyebrow">Calculadoras laborales · Normativa 2026</p>
+                <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional en Chile.</span></h1>
+                <p class="clf-lead">Calculadoras y herramientas para trabajadores y pymes. Elige una y calcula en menos de un minuto.</p>
             </div>
 
-            <!-- Single Elegant Trust Line (Zero Clutter, Zero Redundancy) -->
-            <div class="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-gray-500 font-medium">
-                <span class="inline-flex items-center gap-1.5">
-                    <span class="material-icons text-emerald-600 text-sm">check_circle</span>
-                    <span>100% gratuito y referencial</span>
-                </span>
-                <span class="text-gray-300">•</span>
-                <span class="inline-flex items-center gap-1.5">
-                    <span class="material-icons text-emerald-600 text-sm">check_circle</span>
-                    <span>Sin registro ni datos bancarios</span>
-                </span>
-                <span class="text-gray-300">•</span>
-                <span class="inline-flex items-center gap-1.5">
-                    <span class="material-icons text-emerald-600 text-sm">check_circle</span>
-                    <span>Fórmulas según el Código del Trabajo</span>
-                </span>
+            <div class="clf-fanwrap">
+                <div class="clf-fan" id="clf-fan" role="group" aria-label="Calculadoras más usadas">
+                    <a class="clf-card is-active" href="finiquito_calculator" data-fan="finiquito" data-name="Finiquito" draggable="false" style="--o: 0; z-index: 20;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">calculate</span></span><span class="clf-tag">Ejemplo</span></span>
+                        <span class="clf-k">La más usada</span>
+                        <span class="clf-n">Calculadora de finiquito</span>
+                        <div class="clf-r"><small>Total estimado</small><span>$11.969.760</span></div>
+                        <p class="clf-d">Despido por necesidades de la empresa, 6 años y 8 meses, sueldo de $1.200.000.</p>
+                        <span class="clf-go">Calcular mi finiquito<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                    <a class="clf-card" href="sueldo_liquido" data-fan="sueldo" data-name="Sueldo líquido" draggable="false" style="--o: 1; z-index: 19;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">payments</span></span><span class="clf-tag">Ejemplo</span></span>
+                        <span class="clf-k">Trabajadores</span>
+                        <span class="clf-n">Sueldo líquido</span>
+                        <div class="clf-r"><small>Líquido a pagar</small><span>$1.153.637</span></div>
+                        <p class="clf-d">Bruto de $1.200.000 con gratificación, AFP Modelo y Fonasa.</p>
+                        <span class="clf-go">Calcular mi sueldo<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                    <a class="clf-card" href="calculadora-vacaciones" data-fan="vacaciones" data-name="Vacaciones" draggable="false" style="--o: 2; z-index: 18;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">beach_access</span></span><span class="clf-tag">Ejemplo</span></span>
+                        <span class="clf-k">Feriado legal</span>
+                        <span class="clf-n">Vacaciones proporcionales</span>
+                        <div class="clf-r"><small>Por 8 meses trabajados</small><span>10 días hábiles</span></div>
+                        <p class="clf-d">1,25 días hábiles por cada mes trabajado (Art. 67 y 73).</p>
+                        <span class="clf-go">Calcular mis días<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                    <a class="clf-card clf-o3" href="simulador-seguro-cesantia-afc" data-fan="afc" data-name="Seguro de cesantía" draggable="false" style="--o: 3; z-index: 17;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">account_balance_wallet</span></span><span class="clf-tag">Ejemplo</span></span>
+                        <span class="clf-k">Seguro AFC</span>
+                        <span class="clf-n">Seguro de cesantía</span>
+                        <div class="clf-bars" role="img" aria-label="Giros: 70%, 55%, 45%, 40%, 35%"><div><i style="height: 43px;"></i><b>70%</b></div><div><i style="height: 34px;"></i><b>55%</b></div><div><i style="height: 28px;"></i><b>45%</b></div><div><i style="height: 25px;"></i><b>40%</b></div><div><i style="height: 22px;"></i><b>35%</b></div></div>
+                        <p class="clf-d">Porcentaje de tu remuneración promedio que recibes en cada uno de los 5 primeros giros.</p>
+                        <span class="clf-go">Simular mis giros<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                    <a class="clf-card clf-all clf-o3" href="#calculadoras" data-fan="todas" data-name="Ver todas" draggable="false" style="--o: -3; z-index: 17;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">apps</span></span></span>
+                        <span class="clf-k">Catálogo</span>
+                        <span class="clf-n">Las 15 herramientas</span>
+                        <ul class="clf-list"><li>Sueldo part-time</li><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>y 5 más</li></ul>
+                        
+                        <span class="clf-go">Ver todas<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                    <a class="clf-card" href="calculadora-horas-extras" data-fan="horas" data-name="Horas extras" draggable="false" style="--o: -2; z-index: 18;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">schedule</span></span><span class="clf-tag">Ejemplo</span></span>
+                        <span class="clf-k">Jornada 42 horas</span>
+                        <span class="clf-n">Horas extras</span>
+                        <div class="clf-r"><small>10 horas extra</small><span>$100.000</span></div>
+                        <p class="clf-d">Sueldo de $1.200.000: cada hora extra con recargo del 50% vale $10.000.</p>
+                        <span class="clf-go">Calcular mis horas<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                    <a class="clf-card" href="simulador-despido-injustificado-chile" data-fan="despido" data-name="Despido injustificado" draggable="false" style="--o: -1; z-index: 19;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">gavel</span></span><span class="clf-tag">Ejemplo</span></span>
+                        <span class="clf-k">Art. 168</span>
+                        <span class="clf-n">Despido injustificado</span>
+                        <div class="clf-r"><small>Recargo del 30%</small><span>+$2.966.250</span></div>
+                        <p class="clf-d">Sobre la indemnización por años de servicio del ejemplo de finiquito.</p>
+                        <span class="clf-go">Simular mi reclamo<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                </div>
+                <script>
+                    // Las tarjetas se abren desde el mazo al cargar (sin esperar a home_fan.js)
+                    (function () {
+                        var f = document.getElementById('clf-fan');
+                        if (!f || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+                        f.classList.add('clf-deal');
+                        setTimeout(function () { f.classList.remove('clf-deal'); }, 350);
+                    })();
+                </script>
+                <div class="clf-cap">
+                    <button type="button" id="clf-prev" aria-label="Calculadora anterior"><span class="material-icons" aria-hidden="true">chevron_left</span></button>
+                    <div class="clf-cap-t" aria-live="polite"><b id="clf-cap-n">Finiquito</b><span id="clf-cap-i">1 de 7</span></div>
+                    <button type="button" id="clf-next" aria-label="Calculadora siguiente"><span class="material-icons" aria-hidden="true">chevron_right</span></button>
+                </div>
+                <div class="clf-dots" id="clf-dots"><button type="button" aria-label="Finiquito" aria-current="true"></button><button type="button" aria-label="Sueldo líquido" aria-current="false"></button><button type="button" aria-label="Vacaciones" aria-current="false"></button><button type="button" aria-label="Seguro de cesantía" aria-current="false"></button><button type="button" aria-label="Ver todas" aria-current="false"></button><button type="button" aria-label="Horas extras" aria-current="false"></button><button type="button" aria-label="Despido injustificado" aria-current="false"></button></div>
+                <p class="clf-hint"><span class="clf-hint-mouse">Pasa el mouse para asomar una tarjeta y haz clic para traerla al frente.</span><span class="clf-hint-touch">Desliza o toca una tarjeta para traerla al frente.</span></p>
             </div>
 
-            <!-- High-Search Power Tool Buttons in Chile -->
-            <div class="mt-8 pt-6 border-t border-slate-200/60 max-w-4xl mx-auto">
-                <div class="flex items-center justify-center gap-1.5 mb-3.5 text-xs sm:text-xs font-bold uppercase tracking-wider text-slate-500 text-center">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
-                    <span>Calculadoras con mayor búsqueda en Chile:</span>
+            <div class="clf-actions">
+                <div class="clf-ctas">
+                    <a id="clf-cta" href="finiquito_calculator" class="btn-yellow-pill" style="color: #111827 !important;">
+                        <span style="color: #111827 !important;">Abrir</span>
+                        <span id="clf-cta-t" class="clf-cta-t" style="color: #111827 !important;">Finiquito</span>
+                        <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">arrow_forward</span>
+                    </a>
+                    <a href="#calculadoras" class="clf-btn-o">
+                        <span class="material-icons" aria-hidden="true" style="color: #047857;">apps</span>
+                        <span>Ver todas</span>
+                        <b>15</b>
+                    </a>
                 </div>
-                <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-3">
-                    
-                    <!-- 1. Finiquito Legal -->
-                    <a href="finiquito_calculator" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-emerald-100/80 text-emerald-800 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                <span class="material-icons text-sm">calculate</span>
-                            </div>
-                            <span class="font-bold text-slate-800 group-hover:text-emerald-950 transition-colors text-xs sm:text-sm">Finiquito Legal</span>
-                        </div>
-                        <span class="material-icons text-slate-400 group-hover:text-emerald-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
-                    </a>
-
-                    <!-- 2. Sueldo Líquido -->
-                    <a href="sueldo_liquido" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-forest-100/80 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:bg-forest-600 group-hover:text-white transition-colors">
-                                <span class="material-icons text-sm">payments</span>
-                            </div>
-                            <span class="font-bold text-slate-800 group-hover:text-forest-950 transition-colors text-xs sm:text-sm">Sueldo Líquido</span>
-                        </div>
-                        <span class="material-icons text-slate-400 group-hover:text-forest-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
-                    </a>
-
-                    <!-- 3. Vacaciones Proporcionales -->
-                    <a href="calculadora-vacaciones" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-forest-100/80 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:bg-forest-600 group-hover:text-white transition-colors">
-                                <span class="material-icons text-sm">beach_access</span>
-                            </div>
-                            <span class="font-bold text-slate-800 group-hover:text-forest-950 transition-colors text-xs sm:text-sm">Vacaciones DT</span>
-                        </div>
-                        <span class="material-icons text-slate-400 group-hover:text-forest-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
-                    </a>
-
-                    <!-- 4. Seguro de Cesantía AFC -->
-                    <a href="simulador-seguro-cesantia-afc" class="power-tool-btn group w-full sm:w-auto justify-between sm:justify-start">
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-amber-100/80 text-amber-800 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                                <span class="material-icons text-sm">account_balance_wallet</span>
-                            </div>
-                            <span class="font-bold text-slate-800 group-hover:text-amber-950 transition-colors text-xs sm:text-sm">Seguro Cesantía</span>
-                        </div>
-                        <span class="material-icons text-slate-400 group-hover:text-amber-700 text-xs group-hover:translate-x-0.5 transition-all">arrow_forward</span>
-                    </a>
-
-                </div>
+                <ul class="clf-trust">
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Gratis y referencial</li>
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Sin registro ni datos bancarios</li>
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Fórmulas según el Código del Trabajo</li>
+                </ul>
             </div>
 
         </div>
     </section>
 
-    <!-- SECTION 2: TEALHQ INTERACTIVE SHOWCASE SUITE (The Star Feature) -->
-    <section id="showcase" class="showcase-py">
+    <!-- SECTION 2: CALCULADORA DE FINIQUITO (enlace a la página propia; el cálculo vive en /finiquito_calculator) -->
+    <section class="clf-fini" aria-labelledby="clf-fini-t">
         <div class="site-container px-4 sm:px-6">
-            
-            <!-- Product Navigation Tabs (Emil Kowalski Segmented Control) -->
-            <div class="flex justify-center mb-8 sm:mb-10 overflow-x-auto scrollbar-none px-2 py-1">
-                <div class="segmented-control-container">
-                    <button type="button" class="product-tab active" onclick="switchProductTab('simulador')" id="tab-btn-simulador">
-                        <span class="material-icons text-base">calculate</span>
-                        <span>Simulador de Finiquito</span>
-                    </button>
-                    <button type="button" class="product-tab" onclick="switchProductTab('despido')" id="tab-btn-despido">
-                        <span class="material-icons text-base">gavel</span>
-                        <span>Despido Injustificado (+30%)</span>
-                    </button>
-                    <button type="button" class="product-tab" onclick="switchProductTab('reserva')" id="tab-btn-reserva">
-                        <span class="material-icons text-base">draw</span>
-                        <span>Reserva Notarial</span>
-                    </button>
-                    <button type="button" class="product-tab" onclick="switchProductTab('horas')" id="tab-btn-horas">
-                        <span class="material-icons text-base">schedule</span>
-                        <span>Horas Extras 42h</span>
-                    </button>
+            <div class="clf-fini-box">
+                <div>
+                    <p class="clf-eyebrow">La más usada</p>
+                    <h2 id="clf-fini-t">Calculadora de finiquito 2026</h2>
+                    <p>Ingresa tus fechas, tu sueldo y la causal de término, y obtén el desglose de cada concepto con un informe en PDF para revisar antes de firmar.</p>
+                    <a href="finiquito_calculator" class="btn-yellow-pill" style="color: #111827 !important;">
+                        <span style="color: #111827 !important;">Abrir la calculadora de finiquito</span>
+                        <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">arrow_forward</span>
+                    </a>
                 </div>
+                <ul class="clf-fini-list">
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Indemnización por años de servicio<small>Con el tope de 90 UF y de 11 años (Art. 163 y 172)</small></span></li>
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Indemnización sustitutiva del aviso previo<small>Un mes de remuneración si no hubo aviso con 30 días (Art. 161)</small></span></li>
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Vacaciones proporcionales y pendientes<small>1,25 días hábiles por mes trabajado (Art. 67 y 73)</small></span></li>
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Descuento del aporte del empleador al seguro de cesantía<small>Lo que pueden descontar y cuándo se puede reclamar (Art. 13 Ley 19.728)</small></span></li>
+                </ul>
             </div>
-
-            <!-- Master Showcase Box with TealHQ Asymmetric Curved Backdrop -->
-            <div class="relative bg-warm-surface border border-gray-200/90 rounded-2xl sm:rounded-[32px] p-4 sm:p-8 lg:p-12 overflow-hidden shadow-sm">
-                
-                <!-- Organic Color Slab behind right side (TealHQ Signature) -->
-                <div class="teal-organic-backdrop"></div>
-
-                <!-- ================= TAB 1: SIMULADOR DE FINIQUITO ================= -->
-                <div id="content-tab-simulador" class="relative z-10">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
-                        
-                        <!-- Left Controls Column -->
-                        <div class="lg:col-span-5 space-y-4 sm:space-y-5 text-left">
-                            <div>
-                                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
-                                    Cálculo rápido de finiquito con topes legales
-                                </h2>
-                                <p class="text-sm sm:text-sm text-gray-600 mt-2 leading-relaxed">
-                                    Simula tus indemnizaciones al peso legal según el Código del Trabajo. Aplica el tope legal de 90 UF (<span class="font-mono-num font-bold">$3.692.938</span>), el mes de aviso sustitutivo y tus vacaciones proporcionales. Para fechas exactas, causal y PDF usa la <a href="finiquito_calculator" class="font-semibold text-[#00382E] underline">calculadora de finiquito</a>.
-                                </p>
-                            </div>
-
-                            <!-- Live Salary Card with Presets & Manual Input -->
-                            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-3">
-                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
-                                    <div class="flex items-center gap-2">
-                                        <label for="live-sueldo-input" class="text-xs font-bold uppercase tracking-wider text-gray-500">Sueldo Bruto Mensual</label>
-                                        <span id="live-tope-badge" class="hidden text-xs font-bold text-amber-800 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md whitespace-nowrap">Tope 90 UF</span>
-                                    </div>
-                                    <div class="relative w-full sm:w-48">
-                                        <input type="text" id="live-sueldo-input" value="$ 1.200.000" aria-label="Sueldo Bruto Mensual" onfocus="this.select()" onblur="handleManualSueldoBlur(this)" oninput="handleManualSueldoInput(this)" class="w-full font-mono-num font-extrabold text-lg sm:text-xl text-right text-emerald-950 bg-slate-50 border border-gray-200 hover:border-gray-300 focus:border-emerald-600 focus:bg-white rounded-xl py-1.5 px-3 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-2xs" title="Haz clic para escribir un sueldo exacto">
-                                    </div>
-                                </div>
-
-                                <!-- Slider (Base limpia de 10.000 con extremo en Sueldo Mínimo) -->
-                                <input type="range" id="slider-sueldo" min="550000" max="4000000" step="10000" value="1200000" class="teal-range" oninput="handleSliderInput()" aria-label="Sueldo Bruto Mensual">
-
-                                <!-- Quick Preset Chips -->
-                                <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
-                                    <button type="button" onclick="setLiveSueldo(553553)" id="chip-imm" class="sueldo-chip text-xs sm:text-xs font-bold py-1 px-2 sm:px-2.5 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 transition-all flex items-center gap-1 cursor-pointer">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Mínimo: $553.553
-                                    </button>
-                                    <button type="button" onclick="setLiveSueldo(800000)" class="sueldo-chip text-xs sm:text-xs font-semibold py-1 px-2 sm:px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
-                                        $800.000
-                                    </button>
-                                    <button type="button" onclick="setLiveSueldo(1000000)" class="sueldo-chip text-xs sm:text-xs font-semibold py-1 px-2 sm:px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
-                                        $1.000.000
-                                    </button>
-                                    <button type="button" onclick="setLiveSueldo(1500000)" class="sueldo-chip text-xs sm:text-xs font-semibold py-1 px-2 sm:px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all cursor-pointer">
-                                        $1.500.000
-                                    </button>
-                                    <button type="button" onclick="setTopeLegal()" id="chip-tope" class="sueldo-chip text-xs sm:text-xs font-bold py-1 px-2 sm:px-2.5 rounded-lg border border-forest-200 bg-forest-50 text-forest-900 hover:bg-forest-100 transition-all cursor-pointer" title="Tope legal para indemnizaciones por años de servicio (Art. 172 Código del Trabajo)">
-                                        Tope 90 UF
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Controls Row 1: Causal & Años de Servicio -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="bg-white p-3.5 rounded-2xl border border-gray-200">
-                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Causal de Término</span>
-                                    <div class="grid grid-cols-2 gap-1.5">
-                                        <button type="button" id="btn-c-161" onclick="setLiveCausal('161')" style="background-color: var(--teal-forest); color: white;" class="py-2 px-2 rounded-xl font-bold text-xs cursor-pointer transition-all">
-                                            Art. 161 (Despido)
-                                        </button>
-                                        <button type="button" id="btn-c-ren" onclick="setLiveCausal('ren')" class="py-2 px-2 rounded-xl font-bold text-xs text-gray-600 bg-gray-100 hover:text-gray-900 cursor-pointer transition-all">
-                                            Renuncia
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="bg-white p-3.5 rounded-2xl border border-gray-200">
-                                    <span class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Años Computables</span>
-                                    <div class="grid grid-cols-5 gap-1" id="live-anos-group">
-                                        <button type="button" onclick="setLiveAnos(1)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">1a</button>
-                                        <button type="button" onclick="setLiveAnos(2)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">2a</button>
-                                        <button type="button" onclick="setLiveAnos(3)" style="background-color: var(--teal-forest); color: white; border-color: var(--teal-forest);" class="live-ano-btn py-1.5 rounded-lg border font-bold text-xs cursor-pointer">3a</button>
-                                        <button type="button" onclick="setLiveAnos(5)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">5a</button>
-                                        <button type="button" onclick="setLiveAnos(8)" class="live-ano-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">8a</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Controls Row 2: Aviso Previo & Vacaciones Pendientes -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="live-adv-controls">
-                                
-                                <!-- Aviso Previo Toggle -->
-                                <div id="live-aviso-box" class="bg-white p-3.5 rounded-2xl border border-gray-200 transition-opacity">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">¿Hubo aviso 30 días?</span>
-                                        <span class="material-icons text-xs text-gray-400" title="Si no hubo carta con 30 días de anticipación, la empresa debe pagar 1 sueldo adicional">help_outline</span>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-1.5">
-                                        <button type="button" id="btn-aviso-no" onclick="setLiveAviso(true)" style="background-color: var(--teal-forest); color: white;" class="py-1.5 px-1.5 rounded-xl font-bold text-xs cursor-pointer transition-all leading-tight">
-                                            No (+1 mes)
-                                        </button>
-                                        <button type="button" id="btn-aviso-si" onclick="setLiveAviso(false)" class="py-1.5 px-1.5 rounded-xl font-bold text-xs text-gray-600 bg-gray-100 hover:text-gray-900 cursor-pointer transition-all leading-tight">
-                                            Sí ($0)
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Vacaciones Stepper / Chips -->
-                                <div class="bg-white p-3.5 rounded-2xl border border-gray-200">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Vacaciones pendientes</span>
-                                        <span id="live-vac-count" class="font-mono-num font-bold text-xs text-emerald-800">15 días</span>
-                                    </div>
-                                    <div class="grid grid-cols-4 gap-1" id="live-vac-group">
-                                        <button type="button" onclick="setLiveVac(5)" class="live-vac-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">5d</button>
-                                        <button type="button" onclick="setLiveVac(10)" class="live-vac-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">10d</button>
-                                        <button type="button" onclick="setLiveVac(15)" style="background-color: var(--teal-forest); color: white; border-color: var(--teal-forest);" class="live-vac-btn py-1.5 rounded-lg border font-bold text-xs cursor-pointer">15d</button>
-                                        <button type="button" onclick="setLiveVac(20)" class="live-vac-btn py-1.5 rounded-lg border border-gray-200 font-bold text-xs text-gray-700 cursor-pointer">20d</button>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <a href="finiquito_calculator" class="btn-yellow-pill text-sm py-3 px-6 w-full sm:w-auto justify-center">
-                                <span>Calculadora de finiquito completa</span>
-                                <span class="material-icons text-base">arrow_forward</span>
-                            </a>
-                        </div>
-
-                        <!-- Right SaaS Application Window Mockup -->
-                        <div class="lg:col-span-7">
-                            <div class="saas-window-card p-4 sm:p-8 space-y-5 sm:space-y-6">
-                                
-                                <div class="flex justify-between items-center pb-4 border-b border-gray-100">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-                                            <span class="material-icons text-lg">receipt_long</span>
-                                        </div>
-                                        <div>
-                                            <div class="font-bold text-sm text-gray-900 leading-tight">Liquidación de Finiquito</div>
-                                            <div class="text-xs text-gray-500 font-medium">Fórmula Art. 177 Código del Trabajo</div>
-                                        </div>
-                                    </div>
-                                    <span class="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                                        Vigente 2026
-                                    </span>
-                                </div>
-
-                                <!-- Grand Total Hero Display -->
-                                <div class="p-6 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center">
-                                    <span class="block text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1">
-                                        Total Estimado a Cobrar
-                                    </span>
-                                    <div id="live-total-display" style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold font-mono-num tracking-tight num-ticker whitespace-nowrap">
-                                        $ 5.400.000
-                                    </div>
-                                    <span class="block text-xs text-gray-500 mt-1">Sujeto a firma con Cláusula de Reserva Notarial</span>
-                                </div>
-
-                                <!-- Itemized Rows -->
-                                <div class="space-y-3 text-xs sm:text-sm">
-                                    <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
-                                        <div>
-                                            <span class="text-gray-600 font-medium">Años de Servicio (<span id="live-anos-label">3</span> años computables):</span>
-                                            <span id="live-anos-tope-note" class="hidden block text-xs text-amber-700 font-semibold">Topado a 90 UF ($3.692.938 por año)</span>
-                                        </div>
-                                        <span id="live-monto-anos" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 3.600.000</span>
-                                    </div>
-                                    <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
-                                        <div>
-                                            <span class="text-gray-600 font-medium">Indemnización Sustitutiva Aviso Previo:</span>
-                                            <span id="live-aviso-tope-note" class="hidden block text-xs text-amber-700 font-semibold">Topado a 90 UF ($3.692.938)</span>
-                                        </div>
-                                        <span id="live-monto-aviso" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 1.200.000</span>
-                                    </div>
-                                    <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
-                                        <div>
-                                            <span class="text-gray-600 font-medium">Feriado Proporcional (<span id="live-vac-label">15</span> días hábiles):</span>
-                                            <span class="block text-xs text-gray-400">1,25 días hábiles por mes</span>
-                                        </div>
-                                        <span id="live-monto-vac" class="font-mono-num font-bold text-gray-900 whitespace-nowrap">$ 600.000</span>
-                                    </div>
-                                </div>
-
-                                <!-- AFC Warning Floating Box -->
-                                <div id="live-afc-box" class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-950">
-                                    <span class="material-icons text-amber-600 text-sm mt-0.5">info</span>
-                                    <div>
-                                        <strong>Alerta Descuento AFC:</strong> Tu empleador intentará retener cerca de <span id="live-monto-afc" class="font-mono-num font-bold whitespace-nowrap">$ 691.200</span> de aporte patronal. Con la reserva notarial puedes recuperarlo.
-                                    </div>
-                                </div>
-
-                                <!-- High-Impact Action Card: Revisión Legal con Abogado (Contrast & Direct Legal Hook) -->
-                                <div class="p-4 sm:p-4.5 rounded-2xl border border-emerald-600/30 shadow-md relative overflow-hidden" style="background: linear-gradient(135deg, #00261F 0%, #00382E 60%, #00382E 100%);">
-                                    <div class="relative z-10 space-y-2">
-                                        <div class="flex items-center justify-between gap-2">
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider" style="color: #6EE7B7 !important; background-color: rgba(0, 56, 46, 0.8) !important; border: 1px solid rgba(110, 231, 183, 0.45) !important;">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                                                ¿Despido Injustificado? Recargo +30%
-                                            </span>
-                                            <span class="text-xs font-bold whitespace-nowrap" style="color: #FDE68A !important;">Plazo fatal 60 días</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-xs sm:text-sm font-extrabold tracking-tight leading-snug" style="color: #FFFFFF !important;">
-                                                ¿Te despidieron mal o no estás conforme con tu monto?
-                                            </h3>
-                                            <p class="text-sm sm:text-xs leading-relaxed mt-0.5" style="color: rgba(255, 255, 255, 0.92) !important;">
-                                                Si la carta es genérica o te descuentan la AFC, podrías recuperar un 30% adicional sobre tus años de servicio y el reintegro de tus fondos.
-                                            </p>
-                                        </div>
-                                        <div class="pt-1.5">
-                                            <a href="#abogados-laborales" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 group hover:scale-[1.01] active:scale-[0.99] cursor-pointer" style="background-color: var(--teal-yellow) !important; color: #111827 !important; box-shadow: 0 4px 14px rgba(255, 183, 3, 0.45);">
-                                                <span class="material-icons text-base transition-transform group-hover:rotate-12" style="color: #111827 !important;">gavel</span>
-                                                <span class="font-extrabold" style="color: #111827 !important;">Revisar mi caso con un abogado laboral</span>
-                                                <span class="w-5 h-5 rounded-full bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform" style="color: #111827 !important;">
-                                                    <span class="material-icons text-xs" style="color: #111827 !important;">arrow_forward</span>
-                                                </span>
-                                            </a>
-                                        </div>
-                                        <div class="flex items-center justify-between text-xs pt-0.5 px-0.5" style="color: #D1FAE5 !important;">
-                                            <span class="inline-flex items-center gap-1">
-                                                <span class="material-icons text-xs" style="color: #34D399 !important;">check_circle</span>
-                                                Evaluación preliminar documental
-                                            </span>
-                                            <span class="inline-flex items-center gap-1">
-                                                <span class="material-icons text-xs" style="color: #34D399 !important;">balance</span>
-                                                Honorarios Cuota Litis habitual
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- ================= TAB 2: DESPIDO INJUSTIFICADO ================= -->
-                <div id="content-tab-despido" class="hidden relative z-10">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                        <div class="lg:col-span-5 space-y-5 text-left">
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
-                                ¿Despido por Necesidades de la Empresa? Recargo legal del +30%
-                            </h3>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                Los tribunales laborales en Chile exigen que la empresa pruebe motivos económicos graves e inevitables. Si la carta es genérica, la ley te otorga un 30% adicional sobre tus años de servicio y la restitución total del descuento de cesantía.
-                            </p>
-                            <div class="p-4 bg-white rounded-2xl border border-gray-200 text-xs text-gray-700 space-y-1.5">
-                                <div class="font-bold text-rose-600 flex items-center gap-1.5">
-                                    <span class="material-icons text-sm">balance</span>
-                                    Jurisprudencia Unificada Corte Suprema
-                                </div>
-                                <p class="text-gray-500">
-                                    El descuento patronal de la AFC solo procede en despidos procedentes. Si se declara injustificado, el empleador debe reintegrarlo íntegramente.
-                                </p>
-                            </div>
-                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                                <a href="simulador-despido-injustificado-chile" class="btn-yellow-pill text-sm py-3 px-6 text-center">
-                                    <span>Simular Demanda (+30%)</span>
-                                    <span class="material-icons text-base">arrow_forward</span>
-                                </a>
-                                <a href="#abogados-laborales" class="px-4 py-3 rounded-full border border-slate-300 hover:border-slate-400 bg-white text-slate-800 hover:text-slate-950 font-bold text-xs inline-flex items-center justify-center gap-1.5 transition-all shadow-2xs">
-                                    <span class="material-icons text-sm text-emerald-700">support_agent</span>
-                                    <span>Evaluar caso con abogado</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Right Battle Card -->
-                        <div class="lg:col-span-7">
-                            <div class="saas-window-card p-4 sm:p-7 space-y-4 sm:space-y-5">
-                                <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Comparación Económica</span>
-                                    <span class="text-xs font-semibold text-gray-500">Caso: Sueldo $1.200.000 • 3 Años</span>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                                    <div class="p-4 sm:p-5 rounded-2xl bg-gray-50 border border-gray-200">
-                                        <span class="text-xs font-bold text-gray-500 uppercase block mb-1">Lo que te ofrece la empresa</span>
-                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-gray-700 whitespace-nowrap">$ 4.708.800</div>
-                                        <p class="text-xs text-gray-400 mt-2">Finiquito estándar con descuento patronal de la AFC (-$691.200).</p>
-                                    </div>
-                                    <div class="p-4 sm:p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-500">
-                                        <span class="text-xs font-bold text-emerald-800 uppercase block mb-1">Si se acoge reclamo o demanda</span>
-                                        <div class="text-2xl sm:text-3xl font-extrabold font-mono-num text-emerald-700 whitespace-nowrap">$ 6.480.000</div>
-                                        <p class="text-xs text-emerald-800 font-medium mt-2">+30% recargo legal Art. 168 y restitución de la AFC.</p>
-                                    </div>
-                                </div>
-
-                                <!-- Forensic Legal Comparative Ledger Table -->
-                                <div class="overflow-hidden rounded-xl border border-gray-200/90 bg-white shadow-2xs">
-                                    <div class="px-3 py-2 bg-slate-50 border-b border-gray-100 flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                        <span>Desglose Comparativo Forense</span>
-                                        <span class="text-xs text-slate-400 font-mono">Art. 161 vs 168</span>
-                                    </div>
-                                    <div class="overflow-x-auto scrollbar-none">
-                                        <table class="w-full text-left text-xs sm:text-xs">
-                                            <thead class="bg-slate-50/80 border-b border-gray-100 text-xs sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                                <tr>
-                                                    <th scope="col" class="py-2 px-2 sm:px-4">Concepto Legal</th>
-                                                    <th scope="col" class="py-2 px-1.5 sm:px-3 text-right text-slate-500 whitespace-nowrap"><span class="sm:hidden">Empresa</span><span class="hidden sm:inline">Oferta Empresa</span></th>
-                                                    <th scope="col" class="py-2 px-2 sm:px-4 text-right text-emerald-800 whitespace-nowrap"><span class="sm:hidden">Demanda</span><span class="hidden sm:inline">Con Demanda DT</span></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-gray-100 text-gray-700">
-                                                <tr>
-                                                    <td class="py-2 px-2 sm:px-4 font-medium text-slate-800">Años de Servicio (3 años)</td>
-                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-500 whitespace-nowrap">$3.600.000</td>
-                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-800 whitespace-nowrap">$3.600.000</td>
-                                                </tr>
-                                                <tr class="bg-emerald-50/40">
-                                                    <td class="py-2 px-2 sm:px-4">
-                                                        <span class="font-bold text-emerald-950">+30% Recargo Art. 168</span>
-                                                        <span class="block text-xs sm:text-xs text-emerald-700 leading-tight">Despido injustificado</span>
-                                                    </td>
-                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-400 whitespace-nowrap">$0</td>
-                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-700 whitespace-nowrap">+$1.080.000</td>
-                                                </tr>
-                                                <tr class="bg-rose-50/30">
-                                                    <td class="py-2 px-2 sm:px-4">
-                                                        <span class="font-medium text-slate-800">Descuento AFC</span>
-                                                        <span class="block text-xs sm:text-xs text-rose-600 leading-tight">Restitución Corte Suprema</span>
-                                                    </td>
-                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-rose-600 font-semibold whitespace-nowrap">-$691.200</td>
-                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-700 whitespace-nowrap">$0</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="py-2 px-2 sm:px-4 font-medium text-slate-800">Mes de Aviso Previo</td>
-                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-500 whitespace-nowrap">$1.200.000</td>
-                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-800 whitespace-nowrap">$1.200.000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="py-2 px-2 sm:px-4 font-medium text-slate-800">Feriado Proporcional (15d)</td>
-                                                    <td class="py-2 px-1.5 sm:px-3 text-right font-mono-num text-slate-500 whitespace-nowrap">$600.000</td>
-                                                    <td class="py-2 px-2 sm:px-4 text-right font-mono-num font-bold text-emerald-800 whitespace-nowrap">$600.000</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <div class="p-3.5 sm:p-4 rounded-xl bg-amber-400 text-gray-950 font-bold text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                                    <span>Diferencia legal reclamable:</span>
-                                    <span class="font-mono-num text-lg sm:text-xl font-extrabold whitespace-nowrap">+ $ 1.771.200</span>
-                                </div>
-                                <div class="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gray-500">
-                                    <span>Por ley, demandas &gt; 15 UTM exigen abogado habilitado.</span>
-                                    <a href="#abogados-laborales" class="font-bold text-emerald-800 hover:underline inline-flex items-center gap-1">
-                                        <span>Solicitar revisión legal</span>
-                                        <span class="material-icons text-xs">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ================= TAB 3: RESERVA NOTARIAL ================= -->
-                <div id="content-tab-reserva" class="hidden relative z-10">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                        <div class="lg:col-span-5 space-y-5 text-left">
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
-                                La frase escrita a mano que salva tu dinero en la notaría
-                            </h3>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                En Chile puedes recibir tu cheque o transferencia de inmediato en la notaría <strong>sin renunciar a tus derechos</strong>. Sólo debes escribir a mano esta fórmula legal exacta sobre tu firma en todas las copias.
-                            </p>
-                            
-                            <div class="bg-white p-5 rounded-2xl border-2 border-amber-300 shadow-sm space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Fórmula a Copiar</span>
-                                    <button type="button" onclick="copyReservaPhrase()" id="btn-copy-phrase" class="btn-yellow-pill text-xs py-1.5 px-3">
-                                        <span class="material-icons text-sm">content_copy</span>
-                                        <span>Copiar</span>
-                                    </button>
-                                </div>
-                                <div id="reserva-text-box" class="p-4 bg-amber-50/70 rounded-xl font-sans text-sm font-medium text-gray-900 leading-relaxed border border-amber-200">
-                                    "Me reservo expresamente el derecho a reclamar judicialmente la improcedencia del descuento del aporte patronal al seguro de cesantía (Art. 13 Ley 19.728) y las diferencias que correspondan por indemnizaciones legales y feriado proporcional."
-                                </div>
-                                <p class="text-xs text-gray-500 italic">
-                                    * El ministro de fe o notario está obligado legalmente a autorizar esta reserva (Circular N° 78 DT).
-                                </p>
-                            </div>
-
-                            <a href="reclamar-despido-injustificado-chile" class="btn-yellow-pill text-sm py-3 px-6">
-                                <span>Ver guía completa para comparendo DT</span>
-                                <span class="material-icons text-base">arrow_forward</span>
-                            </a>
-                        </div>
-
-                        <!-- Right Document Simulation: Hyper-realistic Chilean Notarized Finiquito -->
-                        <div class="lg:col-span-7">
-                            <div class="saas-window-card p-4 sm:p-7 space-y-4 bg-[#FDFBF7] border border-stone-200 shadow-xl relative overflow-hidden text-left">
-                                
-                                <!-- Document Header with Stamp -->
-                                <div class="flex justify-between items-start pb-3 border-b border-stone-300/80">
-                                    <div>
-                                        <span class="text-xs font-bold tracking-widest uppercase text-stone-400 block">INSTRUMENTO LEGAL</span>
-                                        <h4 class="font-extrabold text-sm sm:text-base text-stone-900 tracking-tight">
-                                            FINIQUITO DE CONTRATO DE TRABAJO
-                                        </h4>
-                                        <span class="text-xs text-stone-500 font-medium">CONFORME ART. 177 CÓDIGO DEL TRABAJO</span>
-                                    </div>
-                                    <div class="notary-stamp">
-                                        CERTIFICACIÓN NOTARIAL<br>MINISTRO DE FE
-                                    </div>
-                                </div>
-
-                                <!-- Legal Content Body -->
-                                <div class="space-y-2 text-xs text-stone-700 leading-relaxed pt-1 font-sans">
-                                    <p>
-                                        <strong>PRIMERO:</strong> Con fecha 31 de marzo de 2026 concluye la relación laboral por causal del <em>Artículo 161 (Necesidades de la empresa)</em>.
-                                    </p>
-                                    <p>
-                                        <strong>SEGUNDO:</strong> El empleador paga la suma total de <strong>$5.400.000</strong> mediante vale vista bancario por concepto de indemnización por años de servicio, aviso previo y feriado proporcional.
-                                    </p>
-                                </div>
-
-                                <!-- Realistic Signatures with Blue Ink Pen Handwritten Note -->
-                                <div class="mt-6 pt-5 border-t-2 border-dashed border-stone-300">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 items-end">
-                                        
-                                        <!-- Employer Signature Block -->
-                                        <div class="text-left space-y-1">
-                                            <div class="h-10 flex items-center">
-                                                <span class="font-sans text-xs text-stone-400 italic">[Firma Electrónica Avanzada]</span>
-                                            </div>
-                                            <div class="w-full border-b border-stone-400"></div>
-                                            <div class="text-xs font-bold uppercase text-stone-600">Representante Legal Empleador</div>
-                                            <div class="text-xs text-stone-400">EMPRESA SERVICIOS SPA</div>
-                                        </div>
-
-                                        <!-- Worker Signature Block with Blue Ink Handwritten Reservation -->
-                                        <div class="space-y-1 text-left">
-                                            <div class="p-3 rounded-xl bg-forest-50/80 border border-forest-200 text-forest-950 font-sans italic font-medium text-xs sm:text-[13px] leading-relaxed shadow-2xs">
-                                                <span class="not-italic font-bold text-forest-700 block text-xs uppercase tracking-wider mb-1">✍️ Reserva manuscrita del trabajador:</span>
-                                                "Me reservo expresamente el derecho a reclamar la restitución del descuento de AFC y diferencias de feriado proporcional."
-                                            </div>
-                                            <div class="w-full border-b-2 border-forest-900 mt-2"></div>
-                                            <div class="flex justify-between items-center text-xs">
-                                                <span class="font-bold text-forest-950 uppercase">Firma del Trabajador</span>
-                                                <span class="font-sans font-medium text-stone-400">RUT: 15.892.431-K</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ================= TAB 4: HORAS EXTRAS 42H ================= -->
-                <div id="content-tab-horas" class="hidden relative z-10">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                        <div class="lg:col-span-5 space-y-5 text-left">
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
-                                Nueva Jornada 42h: Tu valor por hora extra aumentó
-                            </h3>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                Al reducirse la jornada legal a 42 horas en 2026, el factor legal para el cálculo del recargo del 50% subió a <strong>0.0083333</strong>. Si la empresa usa el factor antiguo de 44 o 45 horas, te está pagando de menos.
-                            </p>
-                            <a href="calculadora-horas-extras" class="btn-yellow-pill text-sm py-3 px-6">
-                                <span>Abrir Calculadora de Horas Extras</span>
-                                <span class="material-icons text-base">arrow_forward</span>
-                            </a>
-                        </div>
-
-                        <!-- Right Comparison -->
-                        <div class="lg:col-span-7">
-                            <div class="saas-window-card p-4 sm:p-7 space-y-4">
-                                <h4 class="font-bold text-sm text-gray-900">Comparador de Recargo Legal por Hora Extra <span class="font-normal text-gray-500">(sueldo base $1.200.000)</span></h4>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div class="p-4 rounded-xl bg-gray-50 border border-gray-200">
-                                        <span class="text-xs font-bold text-gray-400 uppercase block">Jornada Antigua (44h)</span>
-                                        <div class="text-xl font-mono-num font-bold text-gray-600 mt-1">$ 9.545 / hora</div>
-                                        <span class="text-xs text-gray-400 font-mono-num">Factor 0.0079545</span>
-                                    </div>
-                                    <div class="p-4 rounded-xl bg-emerald-50 border-2 border-emerald-500">
-                                        <span class="text-xs font-bold text-emerald-800 uppercase block">Nueva Jornada 2026 (42h)</span>
-                                        <div class="text-xl font-mono-num font-bold text-emerald-700 mt-1">$ 10.000 / hora</div>
-                                        <span class="text-xs text-emerald-700 font-mono-num font-bold">Factor 0.0083333</span>
-                                    </div>
-                                </div>
-
-                                <!-- Official Statutory DT Mathematical Formula Box -->
-                                <div class="p-3.5 bg-slate-900 text-white rounded-xl space-y-1.5 border border-slate-800 shadow-2xs">
-                                    <div class="flex items-center justify-between text-xs text-slate-400 gap-2">
-                                        <span class="font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 text-xs sm:text-xs">
-                                            <span class="material-icons text-xs">functions</span>
-                                            Fórmula Legal DT (Jornada 42h)
-                                        </span>
-                                        <span class="font-mono text-xs sm:text-xs text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded whitespace-nowrap">Dictamen N° 2354/60</span>
-                                    </div>
-                                    <div class="font-mono text-xs sm:text-[13px] text-emerald-300 py-1 leading-snug">
-                                        (Sueldo Base ÷ 30) × 28 ÷ (42 × 4) × 1,5 = <strong class="text-white font-bold whitespace-nowrap">Factor 0.0083333</strong>
-                                    </div>
-                                    <p class="text-xs sm:text-xs text-slate-400 leading-normal">
-                                        Fórmula legal obligatoria para contratos mensuales con jornada de 42 horas en 2026.
-                                    </p>
-                                </div>
-
-                                <div class="p-3.5 bg-gray-50 rounded-xl text-xs text-gray-600 border border-gray-200">
-                                    💡 <strong>Diferencia acumulativa:</strong> En 15 horas extras mensuales representa más de <span class="font-mono-num font-bold text-emerald-800">+$65.000</span> a tu favor cada mes.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            <p class="clf-fini-alt">¿Te despidieron sin causa justificada? <a href="simulador-despido-injustificado-chile">Simula el recargo legal del 30%</a> o <a href="#abogados-laborales">revisa tu caso con un abogado laboral</a>.</p>
         </div>
     </section>
 
@@ -3062,53 +2457,6 @@
     <script src="/js/constants.js?v=2.0.4"></script>
     <script src="/js/indicators.js?v=2.9.0"></script>
     <script>
-        function formatCLP(val) {
-            return '$\u00A0' + Math.round(val).toLocaleString('es-CL');
-        }
-
-        const liveState = {
-            sueldo: 1200000,
-            causal: '161',
-            anos: 3,
-            aviso: true, // true = no hubo 30 días de aviso -> se paga 1 mes sustitutivo
-            diasVac: 15
-        };
-
-        const backdropColors = {
-            // Variaciones del verde de marca: el cambio de tono acompaña el cambio de pestaña
-            'simulador': '#00382E',
-            'despido': '#002820',
-            'reserva': '#064A3E',
-            'horas': '#0F5E4F'
-        };
-
-        // Tab Switching with Organic Slab Color Morphing & Spring Physics
-        function switchProductTab(tabKey) {
-            const tabs = ['simulador', 'despido', 'reserva', 'horas'];
-            const backdrop = document.querySelector('.teal-organic-backdrop');
-            if (backdrop && backdropColors[tabKey]) {
-                backdrop.style.backgroundColor = backdropColors[tabKey];
-            }
-            tabs.forEach(k => {
-                const btn = document.getElementById('tab-btn-' + k);
-                const content = document.getElementById('content-tab-' + k);
-                if (k === tabKey) {
-                    btn.classList.add('active');
-                    content.classList.remove('hidden');
-                    content.style.opacity = '0';
-                    content.style.transform = 'translateY(12px) scale(0.99)';
-                    content.style.transition = 'opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
-                    requestAnimationFrame(() => {
-                        content.style.opacity = '1';
-                        content.style.transform = 'translateY(0) scale(1)';
-                    });
-                } else {
-                    btn.classList.remove('active');
-                    content.classList.add('hidden');
-                }
-            });
-        }
-
         // Header dynamic elevation on scroll
         window.addEventListener('scroll', () => {
             const header = document.querySelector('header');
@@ -3121,304 +2469,6 @@
                 header.classList.add('bg-white');
             }
         }, { passive: true });
-
-        // Dynamic slider gradient
-        function updateSliderTrack(slider) {
-            const min = parseFloat(slider.min);
-            const max = parseFloat(slider.max);
-            const val = parseFloat(slider.value);
-            const pct = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
-            slider.style.background = `linear-gradient(to right, #00382E 0%, #00382E ${pct}%, #E5E7EB ${pct}%, #E5E7EB 100%)`;
-        }
-
-        function highlightSueldoChips(val) {
-            const chipImm = document.getElementById('chip-imm');
-            const chipTope = document.getElementById('chip-tope');
-            const topeUF = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
-            if (chipImm) {
-                if (val === 553553) {
-                    chipImm.classList.add('ring-2', 'ring-amber-500', 'font-black');
-                } else {
-                    chipImm.classList.remove('ring-2', 'ring-amber-500', 'font-black');
-                }
-            }
-            if (chipTope) {
-                if (val >= (topeUF - 1000)) {
-                    chipTope.classList.add('ring-2', 'ring-forest-500', 'font-black');
-                } else {
-                    chipTope.classList.remove('ring-2', 'ring-forest-500', 'font-black');
-                }
-            }
-        }
-
-        function setTopeLegal() {
-            const tope = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
-            setLiveSueldo(tope);
-        }
-
-        // Chip preset setter
-        function setLiveSueldo(amount) {
-            liveState.sueldo = Math.max(0, parseInt(amount, 10) || 0);
-            const slider = document.getElementById('slider-sueldo');
-            const topeUF = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
-            if (slider) {
-                if (liveState.sueldo === 553553) {
-                    slider.value = 550000; // Coloca la bolita en el extremo inicial
-                } else if (liveState.sueldo >= (topeUF - 1000)) {
-                    slider.value = Math.min(Math.round(topeUF / 10000) * 10000, 4000000);
-                } else {
-                    slider.value = Math.min(Math.max(Math.round(liveState.sueldo / 10000) * 10000, 550000), 4000000);
-                }
-                updateSliderTrack(slider);
-            }
-            const input = document.getElementById('live-sueldo-input');
-            if (input) {
-                input.value = formatCLP(liveState.sueldo);
-            }
-            highlightSueldoChips(liveState.sueldo);
-            calculateLiveFiniquito();
-        }
-
-        // Manual text input
-        function handleManualSueldoInput(input) {
-            const raw = input.value.replace(/[^\d]/g, '');
-            if (!raw) return;
-            const num = parseInt(raw, 10);
-            liveState.sueldo = num;
-            const slider = document.getElementById('slider-sueldo');
-            if (slider) {
-                if (num === 553553) {
-                    slider.value = 550000;
-                } else {
-                    slider.value = Math.min(Math.max(Math.round(num / 10000) * 10000, 550000), 4000000);
-                }
-                updateSliderTrack(slider);
-            }
-            highlightSueldoChips(num);
-            calculateLiveFiniquito();
-        }
-
-        function handleManualSueldoBlur(input) {
-            const raw = input.value.replace(/[^\d]/g, '');
-            let num = parseInt(raw, 10) || 553553;
-            if (num < 100000) num = 553553;
-            liveState.sueldo = num;
-            input.value = formatCLP(num);
-            const slider = document.getElementById('slider-sueldo');
-            if (slider) {
-                if (num === 553553) {
-                    slider.value = 550000;
-                } else {
-                    slider.value = Math.min(Math.max(Math.round(num / 10000) * 10000, 550000), 4000000);
-                }
-                updateSliderTrack(slider);
-            }
-            highlightSueldoChips(num);
-            calculateLiveFiniquito();
-        }
-
-        function handleSliderInput() {
-            const slider = document.getElementById('slider-sueldo');
-            if (!slider) return;
-            let val = parseInt(slider.value, 10);
-            
-            // Si está en el mínimo (550.000), calzamos exactamente con el Sueldo Mínimo oficial
-            if (val <= 550000) {
-                val = 553553;
-            } else {
-                // Al avanzar, salta en números redondos limpios de 10.000 en 10.000
-                val = Math.round(val / 10000) * 10000;
-            }
-            
-            liveState.sueldo = val;
-            updateSliderTrack(slider);
-            
-            const input = document.getElementById('live-sueldo-input');
-            if (input) input.value = formatCLP(liveState.sueldo);
-            
-            highlightSueldoChips(liveState.sueldo);
-            calculateLiveFiniquito();
-        }
-
-        function setLiveAviso(pagaAviso) {
-            liveState.aviso = pagaAviso;
-            const btnNo = document.getElementById('btn-aviso-no');
-            const btnSi = document.getElementById('btn-aviso-si');
-            if (btnNo && btnSi) {
-                if (pagaAviso) {
-                    btnNo.style.backgroundColor = 'var(--teal-forest)';
-                    btnNo.style.color = '#FFFFFF';
-                    btnSi.style.backgroundColor = '#F3F4F6';
-                    btnSi.style.color = '#4B5563';
-                } else {
-                    btnSi.style.backgroundColor = 'var(--teal-forest)';
-                    btnSi.style.color = '#FFFFFF';
-                    btnNo.style.backgroundColor = '#F3F4F6';
-                    btnNo.style.color = '#4B5563';
-                }
-            }
-            calculateLiveFiniquito();
-        }
-
-        function setLiveVac(dias) {
-            liveState.diasVac = dias;
-            const countLabel = document.getElementById('live-vac-count');
-            if (countLabel) countLabel.innerText = dias + ' días';
-            
-            const vacLabelReceipt = document.getElementById('live-vac-label');
-            if (vacLabelReceipt) vacLabelReceipt.innerText = dias;
-
-            const buttons = document.querySelectorAll('.live-vac-btn');
-            buttons.forEach(b => {
-                const val = parseInt(b.innerText, 10);
-                if (val === dias) {
-                    b.style.backgroundColor = 'var(--teal-forest)';
-                    b.style.borderColor = 'var(--teal-forest)';
-                    b.style.color = '#FFFFFF';
-                } else {
-                    b.style.backgroundColor = '#FFFFFF';
-                    b.style.borderColor = '#E5E7EB';
-                    b.style.color = '#374151';
-                }
-            });
-            calculateLiveFiniquito();
-        }
-
-        // Live calculation engine
-        function calculateLiveFiniquito() {
-            const topeUF = typeof CONSTANTS !== 'undefined' ? Math.round(90 * CONSTANTS.UF) : 3693674;
-            const isTopado = liveState.sueldo >= (topeUF - 100);
-            const sueldoTopado = Math.min(liveState.sueldo, topeUF);
-
-            // Alerta visual de Tope 90 UF
-            const topeBadge = document.getElementById('live-tope-badge');
-            if (topeBadge) {
-                if (isTopado) {
-                    topeBadge.classList.remove('hidden');
-                } else {
-                    topeBadge.classList.add('hidden');
-                }
-            }
-
-            const anosTopeNote = document.getElementById('live-anos-tope-note');
-            if (anosTopeNote) {
-                if (isTopado && liveState.causal === '161') {
-                    anosTopeNote.innerText = `Topado a 90 UF (${formatCLP(topeUF)}/año)`;
-                    anosTopeNote.classList.remove('hidden');
-                } else {
-                    anosTopeNote.classList.add('hidden');
-                }
-            }
-
-            const avisoTopeNote = document.getElementById('live-aviso-tope-note');
-            if (avisoTopeNote) {
-                if (isTopado && liveState.causal === '161' && liveState.aviso) {
-                    avisoTopeNote.innerText = `Topado a 90 UF (${formatCLP(topeUF)})`;
-                    avisoTopeNote.classList.remove('hidden');
-                } else {
-                    avisoTopeNote.classList.add('hidden');
-                }
-            }
-
-            let montoAnos = 0;
-            let montoAviso = 0;
-            const diasVac = liveState.diasVac || 15;
-            let montoVac = Math.round((liveState.sueldo / 30) * diasVac);
-
-            if (liveState.causal === '161') {
-                montoAnos = Math.min(liveState.anos, 11) * sueldoTopado;
-                montoAviso = liveState.aviso ? sueldoTopado : 0;
-                
-                const afcBox = document.getElementById('live-afc-box');
-                if (afcBox) afcBox.style.display = 'flex';
-
-                const afcEst = Math.round(sueldoTopado * 0.016 * 12 * Math.min(liveState.anos, 11));
-                const afcDisplay = document.getElementById('live-monto-afc');
-                if (afcDisplay) afcDisplay.innerText = formatCLP(afcEst);
-            } else {
-                montoAnos = 0;
-                montoAviso = 0;
-                const afcBox = document.getElementById('live-afc-box');
-                if (afcBox) afcBox.style.display = 'none';
-            }
-
-            const total = montoAnos + montoAviso + montoVac;
-
-            const totalDisplay = document.getElementById('live-total-display');
-            if (totalDisplay) {
-                totalDisplay.innerText = formatCLP(total);
-            }
-
-            const anosLabel = document.getElementById('live-anos-label');
-            if (anosLabel) anosLabel.innerText = liveState.anos;
-
-            const anosDisplay = document.getElementById('live-monto-anos');
-            if (anosDisplay) {
-                anosDisplay.innerText = (liveState.causal === 'ren') ? '$ 0 (No aplica)' : formatCLP(montoAnos);
-            }
-
-            const avisoDisplay = document.getElementById('live-monto-aviso');
-            if (avisoDisplay) {
-                avisoDisplay.innerText = (liveState.causal === 'ren') ? '$ 0 (No aplica)' : formatCLP(montoAviso);
-            }
-
-            const vacDisplay = document.getElementById('live-monto-vac');
-            if (vacDisplay) vacDisplay.innerText = formatCLP(montoVac);
-
-            const vacLabel = document.getElementById('live-vac-label');
-            if (vacLabel) vacLabel.innerText = diasVac;
-        }
-
-        function setLiveCausal(causal) {
-            liveState.causal = causal;
-            const btn161 = document.getElementById('btn-c-161');
-            const btnRen = document.getElementById('btn-c-ren');
-            const avisoBox = document.getElementById('live-aviso-box');
-
-            if (causal === '161') {
-                btn161.style.backgroundColor = 'var(--teal-forest)';
-                btn161.style.color = '#FFFFFF';
-                btnRen.style.backgroundColor = '#F3F4F6';
-                btnRen.style.color = '#4B5563';
-                if (avisoBox) avisoBox.style.opacity = '1';
-            } else {
-                btnRen.style.backgroundColor = 'var(--teal-forest)';
-                btnRen.style.color = '#FFFFFF';
-                btn161.style.backgroundColor = '#F3F4F6';
-                btn161.style.color = '#4B5563';
-                if (avisoBox) avisoBox.style.opacity = '0.45';
-            }
-            calculateLiveFiniquito();
-        }
-
-        function setLiveAnos(anos) {
-            liveState.anos = anos;
-            const buttons = document.querySelectorAll('.live-ano-btn');
-            buttons.forEach(b => {
-                const val = parseInt(b.innerText, 10);
-                if (val === anos) {
-                    b.style.backgroundColor = 'var(--teal-forest)';
-                    b.style.borderColor = 'var(--teal-forest)';
-                    b.style.color = '#FFFFFF';
-                } else {
-                    b.style.backgroundColor = '#FFFFFF';
-                    b.style.borderColor = '#E5E7EB';
-                    b.style.color = '#374151';
-                }
-            });
-            calculateLiveFiniquito();
-        }
-
-        function copyReservaPhrase() {
-            const texto = document.getElementById('reserva-text-box').innerText;
-            navigator.clipboard.writeText(texto).then(() => {
-                const btn = document.getElementById('btn-copy-phrase');
-                btn.innerHTML = '<span class="material-icons text-xs">check</span> ¡Copiado!';
-                setTimeout(() => {
-                    btn.innerHTML = '<span class="material-icons text-xs">content_copy</span> Copiar';
-                }, 2200);
-            });
-        }
 
         let isCatalogExpanded = false;
 
@@ -3496,14 +2546,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const slider = document.getElementById('slider-sueldo');
-            if (slider) {
-                slider.addEventListener('input', handleSliderInput);
-                updateSliderTrack(slider);
-            }
-            highlightSueldoChips(liveState.sueldo);
-            calculateLiveFiniquito();
-
             // Fluid Scroll Reveal Choreography
             if ('IntersectionObserver' in window) {
                 const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -3643,6 +2685,7 @@
             }
         }
     </script>
+    <script src="/js/home_fan.js?v=1.0.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
