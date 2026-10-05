@@ -390,7 +390,7 @@ module.exports = async (req, res) => {
                 ? `<p style="margin: 0 0 12px;"><strong>${esSueldo ? 'Sueldo líquido estimado' : 'Total estimado del finiquito'}:</strong> <span style="font-size: 18px; font-weight: bold; color: #00382E;">${montoTxt} CLP</span></p>`
                 : '';
             const siguiente = esSueldo
-                ? `<li><a href="https://calculolaboral.cl/como-leer-liquidacion-de-sueldo" style="color: #00382E; font-weight: 600;">Cómo leer tu liquidación de sueldo</a>, para comparar cada descuento con tu liquidación real.</li>
+                ? `<li><a href="https://calculolaboral.cl/liquidacion-de-sueldo" style="color: #00382E; font-weight: 600;">Tu liquidación de sueldo, rubro por rubro</a>, para comparar cada descuento con tu liquidación real.</li>
                    <li><a href="https://calculolaboral.cl/calculadora-horas-extras" style="color: #00382E; font-weight: 600;">Calculadora de horas extras</a>, si trabajas más de tu jornada.</li>`
                 : `<li><a href="https://calculolaboral.cl/finiquito-por-renuncia-voluntaria" style="color: #00382E; font-weight: 600;">Finiquito por renuncia voluntaria</a>: qué te corresponde y qué no.</li>
                    <li><a href="https://calculolaboral.cl/que-hacer-si-no-te-pagan-el-finiquito" style="color: #00382E; font-weight: 600;">Qué hacer si no te pagan el finiquito</a>.</li>`;

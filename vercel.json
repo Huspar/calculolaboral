@@ -7,6 +7,7 @@
     { "source": "/calculadora-vacaciones-proporcionales", "destination": "/calculadora-vacaciones", "permanent": true },
     { "source": "/guia-vacaciones-proporcionales", "destination": "/calculadora-vacaciones", "permanent": true },
     { "source": "/seguro-de-cesantia-chile-como-cobrar", "destination": "/simulador-seguro-cesantia-afc", "permanent": true },
+    { "source": "/como-leer-liquidacion-de-sueldo", "destination": "/liquidacion-de-sueldo", "permanent": true },
     { "source": "/:page.html", "destination": "/:page", "permanent": true }
   ],
   "rewrites": [

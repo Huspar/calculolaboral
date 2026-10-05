@@ -49,6 +49,6 @@ Calculadoras laborales gratuitas, sin registro, con fórmulas matemáticas audit
 - [Ley de Equidad de Género y Brecha Salarial](https://calculolaboral.cl/ley-equidad-genero-brecha-salarial-chile-2026): Estándares del Art. 62 bis para igual remuneración ante funciones de igual valor.
 - [Mejores Cuentas para Recibir Sueldo en Chile (2026)](https://calculolaboral.cl/mejores-cuentas-para-recibir-sueldo-chile-2026): Comparativa de cuentas bancarias remuneradas, comisiones cero y beneficios.
 - [Propuesta Indemnización a Todo Evento](https://calculolaboral.cl/propuesta-indemnizacion-a-todo-evento-chile): Análisis del debate legislativo sobre indemnización por término de contrato independiente de la causal.
-- [Cómo Leer una Liquidación de Sueldo](https://calculolaboral.cl/como-leer-liquidacion-de-sueldo): Guía de lectura de haberes, descuentos y aportes patronales.
+- [Liquidación de Sueldo](https://calculolaboral.cl/liquidacion-de-sueldo): Qué es, ejemplo completo con el sueldo mínimo, cada rubro explicado, formato gratis en Excel y Word, y dónde obtenerla.
 - [Aguinaldo Fiestas Patrias 2026](https://calculolaboral.cl/aguinaldo-fiestas-patrias-chile-2026): Montos oficiales sector público y derechos adquiridos por cláusula tácita en el sector privado.
 - [Blog de Legislación y Novedades Laborales](https://calculolaboral.cl/blog): Artículos y actualizaciones normativas periódicas.
