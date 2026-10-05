@@ -910,3 +910,10 @@ div[style*="teal-forest-deep"] .font-mono-num > span {
         animation: none !important;
     }
 }
+
+/* Pie de página: el texto secundario al 50% de blanco quedaba en 4,43:1 sobre
+ * el verde; al 62% llega a 5,9:1 (AA). Se ajusta aquí para que aplique igual
+ * en todas las páginas sin tocar el bloque del pie. */
+.teal-footer-curve .text-white\/50 {
+    color: rgba(255, 255, 255, 0.62);
+}

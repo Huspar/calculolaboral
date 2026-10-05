@@ -399,7 +399,11 @@
             color: #FFFFFF;
         }
 
-        /* Audience Section (Section 5) - Anti-AI Human Design */
+        /* Encabezado de sección: alineado a la izquierda, como el catálogo */
+        .cl-sec-head { max-width: 48rem; margin-bottom: 2.5rem; text-align: left; }
+        .cl-sec-head p { max-width: 62ch; }
+
+        /* Sección "ambas partes": dos columnas; cada herramienta es una fila con filete, sin tarjetas anidadas */
         .audience-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -414,82 +418,45 @@
         }
         .audience-card {
             background-color: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 1.25rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 16px;
             padding: 1.75rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            gap: 1.5rem;
         }
         @media (min-width: 640px) {
             .audience-card {
                 padding: 2.25rem;
             }
         }
-        .audience-card:hover {
-            box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 8px -4px rgba(15, 23, 42, 0.03);
-            border-color: #CBD5E1;
-        }
-        .audience-badge {
-            display: inline-flex;
+        .audience-meta {
+            display: flex;
             align-items: center;
             gap: 0.375rem;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            white-space: nowrap !important;
-            padding: 5px 12px;
-            border-radius: 9999px;
-            line-height: 1.2;
-            flex-shrink: 0;
-        }
-        .audience-badge-worker {
-            background-color: #ECFDF5;
-            color: #065F46;
-            border: 1px solid #A7F3D0;
-        }
-        .audience-badge-pyme {
-            background-color: #EEF6F3;
+            margin: 0 0 1rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
             color: #064A3E;
-            border: 1px solid #ADD6C9;
         }
-        .audience-badge-status {
-            display: inline-flex;
-            align-items: center;
-            font-size: 11.5px;
-            font-weight: 500;
-            color: #64748B;
-            white-space: nowrap !important;
-        }
-        .audience-item-link {
-            display: block;
-            padding: 0.875rem 1rem;
-            border-radius: 0.875rem;
-            background-color: #F8FAFC;
-            border: 1px solid #E2E8F0;
+        .audience-meta .material-icons { font-size: 1.05rem; }
+        .audience-list { margin: 1.25rem 0 0; padding: 0; list-style: none; }
+        .audience-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.875rem 0;
+            border-top: 1px solid #E5E7EB;
+            color: #111827;
             text-decoration: none;
-            transition: all 0.2s ease;
         }
-        .audience-item-link:hover {
-            background-color: #FFFFFF;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-            transform: translateX(2px);
-        }
-        .audience-item-link.worker-item:hover {
-            border-color: #059669;
-        }
-        .audience-item-link.pyme-item:hover {
-            border-color: #0F5E4F;
-        }
-        .audience-item-static {
-            padding: 0.875rem 1rem;
-            border-radius: 0.875rem;
-            background-color: #FFFBEB;
-            border: 1px solid #FDE68A;
-        }
+        .audience-row b { display: block; font-size: 0.9rem; font-weight: 700; color: #111827; transition: color 0.15s; }
+        .audience-row small { display: block; margin-top: 0.125rem; font-size: 0.8125rem; line-height: 1.45; color: #4B5563; }
+        .audience-row .material-icons { font-size: 1.1rem; color: #6B7280; margin-top: 0.125rem; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s; }
+        a.audience-row:hover b { color: #00382E; }
+        a.audience-row:hover .material-icons { color: #00382E; transform: translateX(2px); }
         .audience-btn {
             display: inline-flex;
             align-items: center;
@@ -499,89 +466,73 @@
             padding: 0.875rem 1.25rem;
             font-size: 0.875rem;
             font-weight: 700;
-            border-radius: 0.75rem;
+            border-radius: 12px;
             text-decoration: none;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .audience-btn-worker {
             background-color: #00382E;
             color: #FFFFFF !important;
-            box-shadow: 0 2px 6px rgba(0, 56, 46, 0.2);
+            transition: background-color 0.2s;
         }
-        .audience-btn-worker:hover {
-            background-color: #047857;
-            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.3);
-            transform: translateY(-1px);
-        }
-        .audience-btn-pyme {
-            background-color: #002820;
-            color: #FFFFFF !important;
-            box-shadow: 0 2px 6px rgba(0, 40, 32, 0.2);
-        }
-        .audience-btn-pyme:hover {
-            background-color: #001A15;
-            box-shadow: 0 4px 12px rgba(0, 40, 32, 0.3);
-            transform: translateY(-1px);
-        }
+        .audience-btn:hover { background-color: #002820; }
 
-        /* Lawyer Section (Section: Abogados Laborales with TealHQ Organic Orange Slab) */
-        .lawyer-organic-backdrop {
-            position: absolute;
-            right: -40px;
-            top: -40px;
-            bottom: -40px;
-            width: 54%;
-            background-color: #00382E;
-            border-top-left-radius: 90px;
-            border-bottom-left-radius: 90px;
-            z-index: 0;
-            pointer-events: none;
-        }
-        @media (max-width: 1024px) {
-            .lawyer-organic-backdrop {
-                display: none;
-            }
-        }
-
-        /* Tactile Legal Scenario Cards (Emil Kowalski micro-elevation & haptic feedback) */
+        /* Sección abogados: sobria, tipo documento. Casos como filas con filete y formulario en una sola tarjeta */
+        .cla-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
+        @media (min-width: 1024px) { .cla-grid { grid-template-columns: 1.05fr 0.95fr; gap: 3.5rem; } }
+        .cla-plazo { padding: 1rem 1.125rem; border: 1px solid #FCD34D; border-radius: 12px; background: #FFFBEB; }
+        .cla-plazo-t { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem 0.5rem; margin: 0; font-size: 0.9rem; font-weight: 700; color: #78350F; }
+        .cla-plazo-t .material-icons { font-size: 1.15rem; color: #B45309; }
+        .cla-art { font-family: 'Geist Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #78350F; }
+        .cla-plazo p { margin: 0.375rem 0 0; font-size: 0.875rem; line-height: 1.55; color: #78350F; }
+        .cla-cases { margin-top: 1.75rem; }
+        .cla-cases-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1rem; margin-bottom: 0.5rem; }
+        .cla-cases-head h3 { margin: 0; font-size: 1rem; font-weight: 700; color: #111827; }
+        .cla-cases-head span { font-size: 0.8125rem; color: #4B5563; }
         .scenario-tactile-card {
-            background-color: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            border-radius: 16px;
-            padding: 14px 16px;
-            transition: all 0.2s var(--ease-spring);
-            cursor: pointer;
+            display: block;
+            width: 100%;
+            padding: 1rem 0.75rem;
+            margin: 0;
+            border: 0;
+            border-top: 1px solid #E5E7EB;
+            border-radius: 0;
+            background: transparent;
+            font: inherit;
+            color: inherit;
             text-align: left;
-            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
-        .scenario-tactile-card:hover {
-            border-color: #D97706;
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px -4px rgba(217, 119, 6, 0.15);
-        }
-        .scenario-tactile-card:active {
-            transform: translateY(0) scale(0.99);
-        }
-        .scenario-tactile-card.is-selected {
-            border-color: #D97706;
-            background-color: #FFFDF9;
-            box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.25);
-        }
+        .scenario-tactile-card:hover { background-color: #F9FAFB; }
+        .scenario-tactile-card:active { scale: 0.99; }
+        .scenario-tactile-card.is-selected { background-color: #EEF6F3; border-top-color: #00382E; }
+        .cla-case-top { display: grid; grid-template-columns: 1.25rem 1fr; column-gap: 0.5rem; row-gap: 0.125rem; align-items: baseline; }
+        .cla-case-m { grid-column: 2; }
+        .cla-n { font-family: 'Geist Mono', monospace; font-size: 0.8125rem; font-weight: 700; color: #00382E; }
+        .cla-case-t { font-size: 0.9375rem; font-weight: 700; color: #111827; }
+        .cla-case-m { font-size: 0.8125rem; font-weight: 600; color: #064A3E; }
+        .cla-case-d { display: block; margin-top: 0.375rem; padding-left: 1.75rem; font-size: 0.875rem; line-height: 1.55; color: #4B5563; }
+        .cla-garant { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #E5E7EB; }
+        .cla-garant h3 { display: flex; align-items: center; gap: 0.375rem; margin: 0 0 0.5rem; font-size: 0.9375rem; font-weight: 700; color: #111827; }
+        .cla-garant h3 .material-icons { font-size: 1.1rem; color: #047857; }
+        .cla-garant ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.375rem; font-size: 0.8125rem; line-height: 1.55; color: #4B5563; }
+        .cla-garant strong { color: #111827; }
+        .cla-form { padding: 1.5rem; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 16px; box-shadow: 0 1px 2px rgba(0, 38, 31, 0.05), 0 8px 24px -12px rgba(0, 38, 31, 0.12); }
+        @media (min-width: 640px) { .cla-form { padding: 2rem; } }
+        .cla-form h3 { margin: 0; font-size: 1.375rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: #111827; }
+        .cla-form-meta { display: flex; align-items: center; gap: 0.375rem; margin: 0.375rem 0 0; font-size: 0.8125rem; font-weight: 600; color: #064A3E; }
+        .cla-form-meta .material-icons { font-size: 1rem; }
+        .cla-form-intro { margin: 0.5rem 0 1.25rem; font-size: 0.875rem; line-height: 1.55; color: #4B5563; }
+        .cla-label { display: block; margin-bottom: 0.25rem; font-size: 0.8125rem; font-weight: 600; color: #374151; }
+        .cla-input { width: 100%; padding: 0.625rem 0.875rem; background: #F9FAFB; border: 1px solid #D1D5DB; border-radius: 12px; font: inherit; font-size: 0.875rem; font-weight: 500; color: #111827; transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s; }
+        .cla-input::placeholder { color: #6B7280; }
+        .cla-input:focus { outline: none; background: #FFFFFF; border-color: #0F5E4F; box-shadow: 0 0 0 3px rgba(0, 56, 46, 0.15); }
+        textarea.cla-input { resize: none; }
+        .cla-consent { display: flex; align-items: flex-start; gap: 0.625rem; font-size: 0.8125rem; line-height: 1.45; color: #4B5563; cursor: pointer; }
+        .cla-consent input { width: 1rem; height: 1rem; margin-top: 0.15rem; accent-color: #00382E; flex-shrink: 0; }
+        .cla-consent a { color: #00382E; font-weight: 600; text-decoration: underline; }
+        .cla-note { display: flex; align-items: center; justify-content: center; gap: 0.375rem; margin: 0; font-size: 0.8125rem; color: #4B5563; }
+        .cla-note .material-icons { font-size: 0.95rem; }
 
-        /* Lawyer Section Grid Layout (Bulletproof 2-Column Responsive) */
-        .lawyer-grid-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            align-items: start;
-        }
-        @media (min-width: 1024px) {
-            .lawyer-grid-layout {
-                grid-template-columns: 1.05fr 0.95fr;
-                gap: 3rem;
-            }
-        }
         /* TealHQ Elevated Curved Dark Footer (#00382E & 96px curve) */
         .teal-footer-curve {
             background-color: #00382E;
@@ -655,7 +606,7 @@
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.5.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.6.0">
 </head>
 <body>
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -926,8 +877,6 @@
         .clf-copy { grid-area: copy; display: grid; gap: 0.875rem; justify-items: start; min-width: 0; }
         .clf-fanwrap { grid-area: fan; display: grid; gap: 0.625rem; justify-items: center; min-width: 0; }
         .clf-actions { grid-area: actions; display: grid; gap: 1rem; justify-items: start; min-width: 0; }
-        .clf-eyebrow { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal-forest); }
-        .clf-eyebrow::before { content: ""; width: 18px; height: 2px; background: var(--teal-yellow); }
         .clf-h1 { margin: 0; color: var(--teal-forest); font-weight: 800; font-size: 2.25rem; line-height: 1.06; letter-spacing: -0.035em; text-wrap: balance; }
         .clf-lead { margin: 0; font-size: 1.02rem; line-height: 1.55; color: #4B5563; max-width: 36ch; }
         .clf-ctas { display: flex; flex-wrap: wrap; gap: 0.625rem; width: 100%; }
@@ -960,13 +909,13 @@
         .clf-top { display: flex; align-items: center; justify-content: space-between; }
         .clf-ico { width: 36px; height: 36px; border-radius: 10px; background: #EEF6F3; color: var(--teal-forest); display: flex; align-items: center; justify-content: center; }
         .clf-ico .material-icons { font-size: 20px; }
-        .clf-tag { font-family: 'Geist Mono', monospace; font-size: 0.62rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #6B7280; border: 1px solid #E2E8F0; border-radius: 9999px; padding: 3px 8px; }
-        .clf-k { display: block; font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: #6B7280; margin-top: 0.25rem; }
+        .clf-tag { font-size: 0.75rem; font-weight: 600; color: #4B5563; border: 1px solid #E2E8F0; border-radius: 9999px; padding: 3px 8px; }
+        .clf-k { display: block; font-size: 0.75rem; font-weight: 600; color: #064A3E; margin-top: 0.25rem; }
         .clf-n { display: block; margin-top: -0.4rem; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
         .clf-r { font-family: 'Geist Mono', monospace; font-variant-numeric: tabular-nums; font-size: 1.4rem; font-weight: 700; color: var(--teal-forest); letter-spacing: -0.02em; line-height: 1.1; }
         .clf-r span { background-image: linear-gradient(transparent 58%, rgba(255, 183, 3, 0.5) 58%, rgba(255, 183, 3, 0.5) 92%, transparent 92%); padding: 0 2px; }
-        .clf-r small { display: block; font-family: 'Geist', sans-serif; font-size: 0.7rem; font-weight: 500; color: #6B7280; letter-spacing: 0; margin-bottom: 3px; }
-        .clf-d { margin: 0; font-size: 0.76rem; line-height: 1.45; color: #4B5563; }
+        .clf-r small { display: block; font-family: 'Geist', sans-serif; font-size: 0.75rem; font-weight: 500; color: #6B7280; letter-spacing: 0; margin-bottom: 3px; }
+        .clf-d { margin: 0; font-size: 0.8rem; line-height: 1.45; color: #4B5563; }
         .clf-go { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 0.375rem; padding: 0.55rem 0.875rem; border-radius: 9999px; background: #EEF6F3; color: var(--teal-forest); font-size: 0.8rem; font-weight: 700; transition: background 0.3s, color 0.3s; }
         .clf-go .material-icons { font-size: 1rem; }
         .clf-card.is-active .clf-go { background: var(--teal-forest); color: #FFFFFF; }
@@ -974,10 +923,10 @@
         .clf-bars div { display: grid; justify-items: center; gap: 3px; }
         .clf-bars i { display: block; width: 22px; border-radius: 5px 5px 2px 2px; background: var(--teal-forest); }
         .clf-bars div:first-child i { background: var(--teal-yellow); }
-        .clf-bars b { font-family: 'Geist Mono', monospace; font-size: 0.62rem; font-weight: 700; color: #4B5563; }
+        .clf-bars b { font-family: 'Geist Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #4B5563; }
         .clf-card.clf-all { background: var(--teal-forest); border-color: var(--teal-forest); color: #FFFFFF; }
         .clf-card.clf-all .clf-ico { background: rgba(255, 255, 255, 0.12); color: var(--teal-yellow); }
-        .clf-card.clf-all .clf-k { color: rgba(255, 255, 255, 0.75); }
+        .clf-card.clf-all .clf-k { color: rgba(255, 255, 255, 0.82); }
         .clf-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 0.78rem; color: rgba(255, 255, 255, 0.82); }
         .clf-list li::before { content: "· "; color: var(--teal-yellow); font-weight: 700; }
         .clf-card.clf-all .clf-go, .clf-card.clf-all.is-active .clf-go { background: var(--teal-yellow); color: #111827; }
@@ -987,11 +936,11 @@
         .clf-cap button:hover { border-color: var(--teal-forest); }
         .clf-cap-t { min-width: 170px; text-align: center; display: grid; gap: 1px; }
         .clf-cap-t b { font-size: 0.9rem; color: #111827; }
-        .clf-cap-t span { font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: #6B7280; }
+        .clf-cap-t span { font-family: 'Geist Mono', monospace; font-size: 0.75rem; color: #6B7280; }
         .clf-dots { display: flex; gap: 6px; }
         .clf-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 9999px; background: #CBD5E1; cursor: pointer; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; }
         .clf-dots button[aria-current="true"] { width: 22px; background: var(--teal-forest); }
-        .clf-hint { margin: 0; font-size: 0.74rem; color: #6B7280; text-align: center; }
+        .clf-hint { margin: 0; font-size: 0.75rem; color: #6B7280; text-align: center; }
         .clf-hint-mouse { display: none; }
         @media (hover: hover) and (pointer: fine) { .clf-hint-mouse { display: inline; } .clf-hint-touch { display: none; } }
 
@@ -1017,7 +966,7 @@
         /* Bloque de la calculadora de finiquito */
         .clf-fini { padding: 0 0 3rem; }
         .clf-fini-box { display: grid; gap: 1.5rem; padding: 1.5rem; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 1.5rem; }
-        .clf-fini-box h2 { margin: 0.5rem 0 0.5rem; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #0F172A; text-wrap: balance; }
+        .clf-fini-box h2 { margin: 0 0 0.5rem; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #0F172A; text-wrap: balance; }
         .clf-fini-box p { margin: 0 0 1.25rem; font-size: 0.95rem; line-height: 1.6; color: #4B5563; max-width: 52ch; }
         .clf-fini-box .btn-yellow-pill { padding: 0.8rem 1.4rem; }
         .clf-fini-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; align-content: center; }
@@ -1035,9 +984,8 @@
         <div class="site-container px-4 sm:px-6 clf-grid">
 
             <div class="clf-copy">
-                <p class="clf-eyebrow">Calculadoras laborales · Normativa 2026</p>
                 <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional en Chile.</span></h1>
-                <p class="clf-lead">Calculadoras y herramientas para trabajadores y pymes. Elige una y calcula en menos de un minuto.</p>
+                <p class="clf-lead">Calculadoras y herramientas para trabajadores y pymes, al día con la normativa 2026. Elige una y calcula en menos de un minuto.</p>
             </div>
 
             <div class="clf-fanwrap">
@@ -1153,7 +1101,6 @@
         <div class="site-container px-4 sm:px-6">
             <div class="clf-fini-box">
                 <div>
-                    <p class="clf-eyebrow">La más usada</p>
                     <h2 id="clf-fini-t">Calculadora de finiquito 2026</h2>
                     <p>Ingresa tus fechas, tu sueldo y la causal de término, y obtén el desglose de cada concepto con un informe en PDF para revisar antes de firmar.</p>
                     <a href="finiquito_calculator" class="btn-yellow-pill" style="color: #111827 !important;">
@@ -1173,7 +1120,7 @@
     </section>
 
     <!-- SECTION 4: DIRECTORY OF CALCULATORS & LEGAL TOOLS (#calculadoras) - COMPACT HIGH-DENSITY EDITION -->
-    <section id="calculadoras" class="py-12 sm:py-16 bg-slate-50 border-t border-b border-gray-200/90 scroll-mt-14">
+    <section id="calculadoras" class="py-12 sm:py-16 bg-gray-50 border-t border-b border-gray-200/90 scroll-mt-14">
         <div class="site-container px-4 sm:px-6">
             
             <!-- Section Header -->
@@ -1182,7 +1129,7 @@
                     Todas nuestras calculadoras y herramientas
                 </h2>
                 <p class="mt-3 text-sm sm:text-base text-gray-600">
-                    Fórmulas laborales y previsionales auditadas según dictámenes de la Dirección del Trabajo (DT) y normativa legal chilena.
+                    Fórmulas laborales y previsionales basadas en el Código del Trabajo, los dictámenes de la Dirección del Trabajo (DT) y la normativa chilena vigente.
                 </p>
 
                 <!-- Interactive Filter Controls -->
@@ -1194,10 +1141,10 @@
                         Trabajadores (9)
                     </button>
                     <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn">
-                        Pymes & Empleadores (5)
+                        Pymes y empleadores (5)
                     </button>
                     <button type="button" onclick="filterCatalog('afp', this)" class="catalog-filter-btn">
-                        Previsión & AFP (1)
+                        Previsión y AFP (1)
                     </button>
                 </div>
             </div>
@@ -1213,19 +1160,19 @@
                                 <span class="material-icons text-lg">calculate</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
-                                Más Utilizada
+                                Más utilizada
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-900 transition-colors leading-snug">
-                            Finiquito Legal Completo
+                            Finiquito legal completo
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Años de servicio, mes de aviso sustitutivo y feriado en días hábiles (lunes a viernes).
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 161, 162 y 163</span>
-                        <a href="finiquito_calculator" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 group-hover:text-emerald-950 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 161, 162 y 163</span>
+                        <a href="finiquito_calculator" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Calcular finiquito</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1244,15 +1191,15 @@
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-rose-900 transition-colors leading-snug">
-                            Despido Injustificado (Art. 168)
+                            Despido injustificado (Art. 168)
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Recargo legal del 30% por necesidades de la empresa y devolución íntegra del descuento AFC.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Demanda Laboral</span>
-                        <a href="simulador-despido-injustificado-chile" class="inline-flex items-center gap-1 text-xs font-bold text-rose-600 group-hover:text-rose-800 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Demanda Laboral</span>
+                        <a href="simulador-despido-injustificado-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Simular demanda</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1271,15 +1218,15 @@
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-amber-900 transition-colors leading-snug">
-                            Seguro de Cesantía AFC
+                            Seguro de cesantía AFC
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Tabla de giros decrecientes (70% al 35%) con fondos de Cuenta Individual o Fondo Solidario.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">AFC Chile Oficial</span>
-                        <a href="simulador-seguro-cesantia-afc" class="inline-flex items-center gap-1 text-xs font-bold text-amber-700 group-hover:text-amber-900 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">AFC Chile Oficial</span>
+                        <a href="simulador-seguro-cesantia-afc" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Calcular giros AFC</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1294,19 +1241,19 @@
                                 <span class="material-icons text-lg">payments</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
-                                Bruto a Líquido
+                                Bruto a líquido
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
-                            Calculadora Sueldo Líquido
+                            Calculadora de sueldo líquido
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Descuentos AFP, Fonasa/Isapre (7%), Seguro Cesantía (0.6%) e Impuesto de Segunda Categoría.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 42 Nº 1 LIR</span>
-                        <a href="sueldo_liquido" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-900 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 42 Nº 1 LIR</span>
+                        <a href="sueldo_liquido" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Calcular líquido</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1325,15 +1272,15 @@
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
-                            Horas Extras con Recargo 50%
+                            Horas extras con recargo del 50%
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Factor legal actualizado (0.0083333) para la jornada ordinaria reducida a 42 horas en 2026.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 30 y 32 CT</span>
-                        <a href="calculadora-horas-extras" class="inline-flex items-center gap-1 text-xs font-bold text-forest-600 group-hover:text-forest-800 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 30 y 32 CT</span>
+                        <a href="calculadora-horas-extras" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Calcular horas</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1348,19 +1295,19 @@
                                 <span class="material-icons text-lg">beach_access</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
-                                Días Hábiles
+                                Días hábiles
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
-                            Vacaciones Proporcionales DT
+                            Vacaciones proporcionales
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Cómputo exacto de feriado devengado (1,25 días por mes) excluyendo fines de semana e inhábiles.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 67 y 73 CT</span>
-                        <a href="calculadora-vacaciones" class="inline-flex items-center gap-1 text-xs font-bold text-forest-600 group-hover:text-forest-800 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 67 y 73 CT</span>
+                        <a href="calculadora-vacaciones" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Calcular feriado</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1384,15 +1331,15 @@
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
-                            Sueldo Contrato Part-Time
+                            Sueldo con contrato part-time
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Valor hora proporcional al sueldo mínimo legal ($553.553) y liquidación de jornada parcial.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 40 bis CT</span>
-                        <a href="calculadora-sueldo-part-time" class="inline-flex items-center gap-1 text-xs font-bold text-forest-600 group-hover:text-forest-800 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 40 bis CT</span>
+                        <a href="calculadora-sueldo-part-time" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Calcular part-time</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1407,19 +1354,19 @@
                                 <span class="material-icons text-lg">warning_amber</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-rose-100/80 text-rose-800">
-                                Sin Indemnización
+                                Sin indemnización
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-rose-900 transition-colors leading-snug">
-                            Despido Art. 160 (Causales Graves)
+                            Despido Art. 160 (causales graves)
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Despidos disciplinarios y cálculo de haberes irrenunciables que deben pagarse sí o sí.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 160 CT</span>
-                        <a href="calculadora-despido-articulo-160" class="inline-flex items-center gap-1 text-xs font-bold text-rose-600 group-hover:text-rose-800 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 160 CT</span>
+                        <a href="calculadora-despido-articulo-160" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Revisar causales</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1434,19 +1381,19 @@
                                 <span class="material-icons text-lg">draw</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
-                                Aviso 30 Días
+                                Aviso de 30 días
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-900 transition-colors leading-snug">
-                            Carta de Renuncia Voluntaria
+                            Carta de renuncia voluntaria
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Asistente automatizado para redactar tu renuncia con formalidades legales lista para legalizar.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 159 Nº 2 CT</span>
-                        <a href="carta-de-renuncia-chile" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 group-hover:text-emerald-900 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 159 Nº 2 CT</span>
+                        <a href="carta-de-renuncia-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Redactar carta</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1457,23 +1404,23 @@
                 <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <span class="material-icons text-lg">description</span>
                             </div>
-                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-teal-100/80 text-teal-900">
-                                Formato para Notaría
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
+                                Formato para notaría
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-teal-900 transition-colors leading-snug">
-                            Generador Finiquito Word/PDF
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Generador de finiquito Word/PDF
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Redacta finiquitos legales para empleadores con cláusulas de ratificación y prevención de demandas.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Art. 177 CT</span>
-                        <a href="generador-finiquito-chile" class="inline-flex items-center gap-1 text-xs font-bold text-teal-800 group-hover:text-teal-950 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 177 CT</span>
+                        <a href="generador-finiquito-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Generar finiquito</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1484,23 +1431,23 @@
                 <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                                 <span class="material-icons text-lg">history_edu</span>
                             </div>
-                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-teal-100/80 text-teal-900">
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
                                 Normativa 2026
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-teal-900 transition-colors leading-snug">
-                            Anexo Contrato Ley 40 Horas
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Anexo de contrato Ley 40 horas
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Plantilla descargable en Word para formalizar por escrito la adecuación horaria (42h) en tu empresa.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Ley 21.561</span>
-                        <a href="generador-anexo-40-horas" class="inline-flex items-center gap-1 text-xs font-bold text-teal-800 group-hover:text-teal-950 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Ley 21.561</span>
+                        <a href="generador-anexo-40-horas" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Generar anexo</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1515,19 +1462,19 @@
                                 <span class="material-icons text-lg">verified_user</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
-                                Kit Pymes DT
+                                Kit para pymes
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
-                            Kit Blindaje Laboral Pymes
+                            Kit Blindaje Laboral para pymes
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Protocolo Ley Karin, anexos de jornada 42 horas y checklist de fiscalización DT.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Defensa Preventiva</span>
-                        <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-900 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Defensa Preventiva</span>
+                        <a href="kit-cumplimiento-laboral-pymes" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Ver kit pymes</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1546,15 +1493,15 @@
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-rose-900 transition-colors leading-snug">
-                            Kit Protección de Datos Pymes
+                            Kit Protección de Datos para pymes
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Protocolos de privacidad laboral y cláusulas de tratamiento de datos personales de trabajadores.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">Agencia de Datos</span>
-                        <a href="kit-cumplimiento-ley-datos-personales-chile" class="inline-flex items-center gap-1 text-xs font-bold text-rose-700 group-hover:text-rose-900 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Agencia de Datos</span>
+                        <a href="kit-cumplimiento-ley-datos-personales-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Ver kit datos</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1569,19 +1516,19 @@
                                 <span class="material-icons text-lg">storefront</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-900">
-                                Portal Central
+                                Portal
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-950 transition-colors leading-snug">
-                            Portal Empleadores & Pymes
+                            Portal para empleadores y pymes
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Soluciones preventivas para administradores: costo de contratación, finiquitos y cumplimiento DT.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">calculolaboral.cl/pymes</span>
-                        <a href="para-empleadores" class="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 group-hover:text-emerald-950 transition-colors">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">calculolaboral.cl/pymes</span>
+                        <a href="para-empleadores" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Ingresar portal</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                         </a>
@@ -1600,14 +1547,14 @@
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-amber-900 transition-colors leading-snug">
-                            Módulo Previsional & AFP
+                            Módulo previsional y AFP
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
                             Simulador en preparación para proyectar rentabilidad histórica Fondos A al E y pensión esperada.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-400 font-semibold">SPensiones</span>
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">SPensiones</span>
                         <span class="inline-flex items-center gap-1 text-xs font-bold text-amber-700">
                             <span>En desarrollo</span>
                             <span class="material-icons text-xs">schedule</span>
@@ -1619,7 +1566,7 @@
 
             <!-- Expandable Catalog Toggle Button (Option 1) -->
             <div class="mt-8 text-center" id="catalog-toggle-wrapper">
-                <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-slate-300 hover:border-slate-800 text-slate-800 font-bold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer">
+                <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer">
                     <span id="toggle-catalog-text">Mostrar las 15 herramientas y kits (9 más)</span>
                     <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon">keyboard_arrow_down</span>
                 </button>
@@ -1629,169 +1576,62 @@
     </section>
 
     <!-- SECTION 5: PROFILE HUBS (Trabajadores vs Pymes - Authentic Human Design) -->
-    <section id="section-audiences" class="py-12 sm:py-16 bg-slate-50/70 border-t border-b border-gray-200/90">
+    <section id="section-audiences" class="py-12 sm:py-16 bg-gray-50 border-t border-b border-gray-200/90">
         <div class="site-container px-4 sm:px-6">
-            
-            <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-10">
+
+            <div class="reveal-on-scroll cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                     Diseñado para ambas partes de la relación laboral
                 </h2>
                 <p class="mt-3 text-sm sm:text-base text-gray-600">
-                    Cálculos exactos para hacer valer tus derechos salariales o herramientas preventivas para blindar la operación de tu empresa ante la Dirección del Trabajo.
+                    Cálculos exactos para hacer valer tus derechos salariales o herramientas preventivas para ordenar la operación de tu empresa ante la Dirección del Trabajo.
                 </p>
             </div>
 
-            <!-- Authentic 2-Column Responsive Editorial Grid -->
             <div class="audience-grid">
-                
-                <!-- Card 1: Para Trabajadores y Personas -->
+
+                <!-- Trabajadores y personas -->
                 <div class="reveal-on-scroll audience-card">
-                    <div class="space-y-5">
-                        <div class="flex flex-wrap items-center justify-between gap-2.5 pb-1">
-                            <span class="audience-badge audience-badge-worker">
-                                <span class="material-icons text-sm" style="font-size: 16px;">shield</span>
-                                <span>Para Trabajadores y Personas</span>
-                            </span>
-                            <span class="audience-badge-status">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5"></span>
-                                100% gratuito · Sin registro
-                            </span>
-                        </div>
-
-                        <div>
-                            <h3 class="font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight leading-snug">
-                                Audita tus indemnizaciones y cobra lo que realmente te corresponde
-                            </h3>
-                            <p class="mt-2 text-sm sm:text-sm text-slate-600 leading-relaxed font-sans">
-                                Frente a una desvinculación, el empleador debe regirse por los topes y fórmulas del Código del Trabajo. Conoce tus montos reales antes de estampar tu firma en notaría o comparecer ante la Dirección del Trabajo.
-                            </p>
-                        </div>
-
-                        <!-- 3 Clear Action Scenarios -->
-                        <div class="space-y-2.5 pt-1">
-                            <a href="finiquito_calculator" class="audience-item-link worker-item group/item">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-emerald-700 transition-colors">
-                                            1. Finiquito Legal con tope 90 UF ($3.692.938/año)
-                                        </div>
-                                        <div class="text-xs text-slate-500 mt-0.5">
-                                            Años de servicio, mes de aviso sustitutivo y feriado proporcional hábil.
-                                        </div>
-                                    </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-emerald-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
-                                </div>
-                            </a>
-
-                            <a href="simulador-despido-injustificado-chile" class="audience-item-link worker-item group/item">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-rose-700 transition-colors">
-                                            2. Despido Injustificado (Art. 168 CT)
-                                        </div>
-                                        <div class="text-xs text-slate-500 mt-0.5">
-                                            Recargo legal del +30% y recuperación total del descuento patronal AFC.
-                                        </div>
-                                    </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-rose-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
-                                </div>
-                            </a>
-
-                            <div class="audience-item-static">
-                                <div class="font-bold text-xs sm:text-sm text-amber-950 flex items-center gap-1.5">
-                                    <span class="material-icons text-amber-700 text-base" style="font-size: 18px;">edit_note</span>
-                                    <span>3. Reserva notarial manuscrita</span>
-                                </div>
-                                <div class="text-xs text-amber-900/80 mt-0.5">
-                                    Fórmula jurídica para estampar en tu finiquito y cobrar en el acto sin renunciar a reclamar.
-                                </div>
-                            </div>
-                        </div>
+                    <div>
+                        <p class="audience-meta"><span class="material-icons" aria-hidden="true">shield</span>Para trabajadores y personas · Gratis y sin registro</p>
+                        <h3 class="font-extrabold text-xl sm:text-2xl text-gray-900 tracking-tight leading-snug">
+                            Audita tus indemnizaciones y cobra lo que realmente te corresponde
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                            Frente a una desvinculación, el empleador debe regirse por los topes y fórmulas del Código del Trabajo. Conoce tus montos reales antes de estampar tu firma en notaría o comparecer ante la Dirección del Trabajo.
+                        </p>
+                        <ul class="audience-list">
+                            <li><a href="finiquito_calculator" class="audience-row"><span><b>Finiquito legal con tope de 90 UF por año</b><small>Años de servicio, mes de aviso sustitutivo y feriado proporcional hábil.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="audience-row"><span><b>Despido injustificado (Art. 168 CT)</b><small>Recargo legal del +30% y recuperación total del descuento patronal AFC.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><div class="audience-row"><span><b>Reserva notarial manuscrita</b><small>Fórmula jurídica para estampar en tu finiquito y cobrar en el acto sin renunciar a reclamar.</small></span></div></li>
+                        </ul>
                     </div>
-
-                    <div class="pt-5 mt-6 border-t border-slate-100">
-                        <a href="#calculadoras" onclick="filterCatalog('trabajador', document.querySelectorAll('.catalog-filter-btn')[1])" class="audience-btn audience-btn-worker">
-                            <span>Ver 9 herramientas para trabajadores</span>
-                            <span class="material-icons text-base">arrow_forward</span>
-                        </a>
-                    </div>
+                    <a href="#calculadoras" onclick="filterCatalog('trabajador', document.querySelectorAll('.catalog-filter-btn')[1])" class="audience-btn">
+                        <span>Ver 9 herramientas para trabajadores</span>
+                        <span class="material-icons text-base" aria-hidden="true">arrow_forward</span>
+                    </a>
                 </div>
 
-                <!-- Card 2: Para Pymes y Empleadores -->
+                <!-- Pymes y empleadores -->
                 <div class="reveal-on-scroll audience-card">
-                    <div class="space-y-5">
-                        <div class="flex flex-wrap items-center justify-between gap-2.5 pb-1">
-                            <span class="audience-badge audience-badge-pyme">
-                                <span class="material-icons text-sm" style="font-size: 16px;">storefront</span>
-                                <span>Para Pymes & Empleadores</span>
-                            </span>
-                            <span class="audience-badge-status">
-                                <span class="w-2 h-2 rounded-full bg-forest-500 inline-block mr-1.5"></span>
-                                Normativa 2026 DT
-                            </span>
-                        </div>
-
-                        <div>
-                            <h3 class="font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight leading-snug">
-                                Blindaje legal preventivo y cumplimiento ante la Dirección del Trabajo
-                            </h3>
-                            <p class="mt-2 text-sm sm:text-sm text-slate-600 leading-relaxed font-sans">
-                                Cartas de despido con causales defectuosas o contratos desactualizados exponen a tu pyme a multas de hasta 60 UTM y demandas con recargo del 30%. Estandariza tus procedimientos con formatos auditados.
-                            </p>
-                        </div>
-
-                        <!-- 3 Clear Compliance Paths -->
-                        <div class="space-y-2.5 pt-1">
-                            <a href="generador-finiquito-chile" class="audience-item-link pyme-item group/item">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-forest-700 transition-colors">
-                                            1. Generador de Finiquito en Word y PDF
-                                        </div>
-                                        <div class="text-xs text-slate-500 mt-0.5">
-                                            Redacción legal con cláusulas de ratificación ante ministro de fe y prevención de nulidad.
-                                        </div>
-                                    </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-forest-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
-                                </div>
-                            </a>
-
-                            <a href="generador-anexo-40-horas" class="audience-item-link pyme-item group/item">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-forest-700 transition-colors">
-                                            2. Anexo de Contrato Ley 40 Horas (42h en 2026)
-                                        </div>
-                                        <div class="text-xs text-slate-500 mt-0.5">
-                                            Modelo en Word para formalizar por escrito la jornada reducida sin contingencias.
-                                        </div>
-                                    </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-forest-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
-                                </div>
-                            </a>
-
-                            <a href="kit-cumplimiento-laboral-pymes" class="audience-item-link pyme-item group/item">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div>
-                                        <div class="font-bold text-xs sm:text-sm text-slate-900 group-hover/item:text-forest-700 transition-colors">
-                                            3. Kit Blindaje Laboral & Ley 21.719
-                                        </div>
-                                        <div class="text-xs text-slate-500 mt-0.5">
-                                            Checklist preventivo de fiscalización DT y protocolos de datos personales.
-                                        </div>
-                                    </div>
-                                    <span class="material-icons text-slate-400 group-hover/item:text-forest-600 text-sm mt-0.5 group-hover/item:translate-x-0.5 transition-transform">arrow_forward</span>
-                                </div>
-                            </a>
-                        </div>
+                    <div>
+                        <p class="audience-meta"><span class="material-icons" aria-hidden="true">storefront</span>Para pymes y empleadores · Normativa 2026</p>
+                        <h3 class="font-extrabold text-xl sm:text-2xl text-gray-900 tracking-tight leading-snug">
+                            Prevención legal y orden ante la Dirección del Trabajo
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                            Cartas de despido con causales defectuosas o contratos desactualizados exponen a tu pyme a multas de hasta 60 UTM y demandas con recargo del 30%. Estandariza tus procedimientos con modelos basados en el Código del Trabajo.
+                        </p>
+                        <ul class="audience-list">
+                            <li><a href="generador-finiquito-chile" class="audience-row"><span><b>Generador de finiquito en Word y PDF</b><small>Redacción legal con cláusulas de ratificación ante ministro de fe y prevención de nulidad.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="generador-anexo-40-horas" class="audience-row"><span><b>Anexo de contrato Ley 40 horas (42 h en 2026)</b><small>Modelo en Word para formalizar por escrito la jornada reducida sin contingencias.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="audience-row"><span><b>Kit Blindaje Laboral</b><small>Protocolo Ley Karin, anexos de jornada y checklist de fiscalización DT.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                        </ul>
                     </div>
-
-                    <div class="pt-5 mt-6 border-t border-slate-100">
-                        <a href="para-empleadores" class="audience-btn audience-btn-pyme">
-                            <span>Ingresar al Portal para Pymes</span>
-                            <span class="material-icons text-base">arrow_forward</span>
-                        </a>
-                    </div>
+                    <a href="para-empleadores" class="audience-btn">
+                        <span>Ingresar al portal para pymes</span>
+                        <span class="material-icons text-base" aria-hidden="true">arrow_forward</span>
+                    </a>
                 </div>
 
             </div>
@@ -1802,190 +1642,88 @@
     <!-- SECTION: EVALUACIÓN LEGAL LABORAL (TealHQ Architecture with Organic Orange Slab & Tactile Scenario Cards) -->
     <section id="abogados-laborales" class="py-14 sm:py-20 bg-white border-t border-b border-gray-200/90 scroll-mt-12">
         <div class="site-container px-4 sm:px-6">
-            
-            <div class="reveal-on-scroll text-center max-w-3xl mx-auto mb-10">
+
+            <div class="reveal-on-scroll cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
-                    ¿Cuándo necesitas un Abogado Laboral para tu caso?
+                    ¿Cuándo necesitas un abogado laboral para tu caso?
                 </h2>
-                <p class="mt-3 text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                <p class="mt-3 text-sm sm:text-base text-gray-600 leading-relaxed">
                     En Chile rige un <strong>plazo fatal de 60 días hábiles</strong> para reclamar judicialmente un despido. Conoce los 4 escenarios legales donde se justifica demandar y solicita la evaluación preliminar de tus antecedentes con un profesional colaborador.
                 </p>
             </div>
 
-            <!-- Master Showcase Box with TealHQ Asymmetric Curved Backdrop (Orange #D97706) -->
-            <div class="relative bg-warm-surface border border-gray-200/90 rounded-2xl sm:rounded-[32px] p-5 sm:p-8 lg:p-12 overflow-hidden shadow-sm">
-                
-                <!-- Organic Orange Slab behind right side (TealHQ Signature in #D97706) -->
-                <div class="lawyer-organic-backdrop"></div>
+            <div class="cla-grid">
 
-                <!-- 2-Column Responsive Grid (Z-Index 10 above backdrop) -->
-                <div class="relative z-10 lawyer-grid-layout">
-                    
-                    <!-- Left Column: Criterios Legales & Compromisos Éticos -->
-                    <div class="space-y-4 text-left">
-                        
-                        <!-- Callout Plazo Fatal 60 días (Judicial Countdown Anchor) -->
-                        <div class="p-4 sm:p-5 rounded-2xl bg-white/95 border border-amber-300/90 shadow-2xs flex items-start gap-3.5">
-                            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
-                                <span class="material-icons text-xl">event_busy</span>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <p class="text-xs sm:text-sm font-bold text-amber-950 tracking-wide">Plazo Legal Fatal: 60 Días Hábiles</p>
-                                    <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300/60">Art. 168 CT</span>
-                                </div>
-                                <p class="text-sm text-amber-950/90 mt-1 leading-relaxed">
-                                    El cómputo rige desde la fecha del despido. El reclamo formal ante la Inspección del Trabajo suspende el plazo, pero nunca más allá de 30 días hábiles extra. Vencido este plazo, expira el derecho a demandar judicialmente.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- 4 Tactile Scenario Cards (Emil Kowalski micro-elevation + connected selection) -->
-                        <div class="space-y-2.5">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Situaciones Laborales Frecuentes</span>
-                                <span class="text-xs text-amber-800 font-medium">Toca un caso para autocompletar</span>
-                            </div>
-
-                            <!-- Escenario 1: Despido Art. 161 -->
-                            <div class="scenario-tactile-card group" onclick="selectLawyerScenario('Despido Art. 161 (Necesidades de la empresa)')" id="scenario-card-161">
-                                <div class="flex items-start justify-between gap-2 mb-1.5">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center">1</span>
-                                        <span class="font-bold text-slate-900 text-xs sm:text-sm">Despido Art. 161 (Necesidades de la Empresa)</span>
-                                    </div>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold whitespace-nowrap">
-                                        Recargo +30% y AFC
-                                    </span>
-                                </div>
-                                <p class="text-sm text-slate-600 leading-relaxed pl-7">
-                                    Si la carta de despido invoca causales genéricas ("baja de ventas", "reestructuración") sin balances o la empresa contrató reemplazos: se demanda judicialmente el <strong>recargo del +30%</strong> y la <strong>devolución íntegra del descuento patronal AFC</strong>.
-                                </p>
-                            </div>
-
-                            <!-- Escenario 2: Juicio sobre 15 UTM -->
-                            <div class="scenario-tactile-card group" onclick="selectLawyerScenario('Despido Injustificado / Causal cuestionable')" id="scenario-card-15utm">
-                                <div class="flex items-start justify-between gap-2 mb-1.5">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-5 h-5 rounded-md bg-rose-100 text-rose-800 text-xs font-bold flex items-center justify-center">2</span>
-                                        <span class="font-bold text-slate-900 text-xs sm:text-sm">Juicios sobre 15 UTM (~$1.075.000)</span>
-                                    </div>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold whitespace-nowrap">
-                                        Obligatorio por Ley
-                                    </span>
-                                </div>
-                                <p class="text-sm text-slate-600 leading-relaxed pl-7">
-                                    Bajo el Código del Trabajo (Art. 498), las causas superiores a 15 UTM se tramitan en Juzgados del Trabajo bajo procedimiento de aplicación general, siendo <strong>estrictamente obligatorio contar con abogado habilitado</strong> para litigar.
-                                </p>
-                            </div>
-
-                            <!-- Escenario 3: Despido Disciplinario Art. 160 -->
-                            <div class="scenario-tactile-card group" onclick="selectLawyerScenario('Despido sin indemnización Art. 160')" id="scenario-card-160">
-                                <div class="flex items-start justify-between gap-2 mb-1.5">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-5 h-5 rounded-md bg-amber-100 text-amber-900 text-xs font-bold flex items-center justify-center">3</span>
-                                        <span class="font-bold text-slate-900 text-xs sm:text-sm">Despido Disciplinario (Art. 160 sin finiquito)</span>
-                                    </div>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-300 text-xs font-bold whitespace-nowrap">
-                                        Recargo 80% o 100%
-                                    </span>
-                                </div>
-                                <p class="text-sm text-slate-600 leading-relaxed pl-7">
-                                    Si el empleador te acusa de faltas de probidad, inasistencias injustificadas o incumplimiento contractual sin pruebas concluyentes. Al impugnarlo con éxito en juicio, el juez ordena pagar indemnizaciones completas con recargo judicial legal.
-                                </p>
-                            </div>
-
-                            <!-- Escenario 4: Autodespido Art. 171 -->
-                            <div class="scenario-tactile-card group" onclick="selectLawyerScenario('Autodespido / Despido Indirecto Art. 171')" id="scenario-card-171">
-                                <div class="flex items-start justify-between gap-2 mb-1.5">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-5 h-5 rounded-md bg-forest-100 text-forest-800 text-xs font-bold flex items-center justify-center">4</span>
-                                        <span class="font-bold text-slate-900 text-xs sm:text-sm">Autodespido o Despido Indirecto (Art. 171)</span>
-                                    </div>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-forest-50 text-forest-800 border border-forest-200 text-xs font-bold whitespace-nowrap">
-                                        Asesoría Previa Clave
-                                    </span>
-                                </div>
-                                <p class="text-sm text-slate-600 leading-relaxed pl-7">
-                                    Por no pago continuado de cotizaciones previsionales (Ley Bustos), hostigamiento laboral o cambios unilaterales en tus condiciones de trabajo. Requiere redacción técnica de carta formal antes de desvincularte voluntariamente.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- 3 Professional Trust Commitments (Impecable Ethical Clarity) -->
-                        <div class="p-4 rounded-2xl bg-white/90 border border-gray-200/90 text-xs text-slate-600 space-y-2">
-                            <div class="font-bold text-slate-900 flex items-center gap-1.5">
-                                <span class="material-icons text-sm text-emerald-700">verified</span>
-                                <span>Garantías de Transparencia Profesional</span>
-                            </div>
-                            <ul class="space-y-1.5 text-slate-600 list-disc list-inside text-xs sm:text-xs leading-relaxed">
-                                <li><strong>Evaluación preliminar sin costo inicial:</strong> Un abogado colaborador examina tu carta y finiquito para certificar si existe fundamento legal antes de iniciar acciones.</li>
-                                <li><strong>Modalidad Cuota Litis habitual:</strong> En los juicios de trabajadores, los honorarios se pactan habitualmente a porcentaje sobre el monto efectivamente recuperado.</li>
-                                <li><strong>Sin promesas ficticias de resultado:</strong> Ningún abogado ético garantiza fallos; el juez resuelve en audiencia según el mérito de la prueba aportada.</li>
-                            </ul>
-                        </div>
-
+                <!-- Casos y plazo -->
+                <div>
+                    <div class="cla-plazo" role="note">
+                        <p class="cla-plazo-t"><span class="material-icons" aria-hidden="true">event_busy</span>Plazo fatal: 60 días hábiles <span class="cla-art">Art. 168 CT</span></p>
+                        <p>El cómputo rige desde la fecha del despido. El reclamo formal ante la Inspección del Trabajo suspende el plazo, pero nunca más allá de 30 días hábiles extra. Vencido este plazo, expira el derecho a demandar judicialmente.</p>
                     </div>
 
-                    <!-- Right Column: Floating SaaS Window Card on top of Orange Slab -->
-                    <div class="relative z-10">
-                        <div class="saas-window-card p-6 sm:p-8 text-left bg-white border border-gray-200 rounded-[28px] shadow-xl">
-                            
-                            <!-- Window Titlebar (macOS style dots + secure badge) -->
-                            <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
-                                <div class="flex items-center gap-1.5">
-                                    <span style="display:inline-block;width:9px;height:9px;border-radius:9999px;background-color:#EF4444;"></span>
-                                    <span style="display:inline-block;width:9px;height:9px;border-radius:9999px;background-color:#F59E0B;"></span>
-                                    <span style="display:inline-block;width:9px;height:9px;border-radius:9999px;background-color:#10B981;"></span>
-                                    <span class="text-xs font-mono text-slate-400 ml-2">evaluacion-caso.cl</span>
+                    <div class="cla-cases">
+                        <div class="cla-cases-head">
+                            <h3>Situaciones laborales frecuentes</h3>
+                            <span>Toca un caso para completar el motivo del formulario</span>
+                        </div>
+                            <button type="button" class="scenario-tactile-card" onclick="selectLawyerScenario('Despido Art. 161 (Necesidades de la empresa)')" id="scenario-card-161">
+                                <span class="cla-case-top"><span class="cla-n">1</span><span class="cla-case-t">Despido Art. 161 (necesidades de la empresa)</span><span class="cla-case-m">Recargo +30% y AFC</span></span>
+                                <span class="cla-case-d">Si la carta de despido invoca causales genéricas ("baja de ventas", "reestructuración") sin balances o la empresa contrató reemplazos: se demanda judicialmente el <strong>recargo del +30%</strong> y la <strong>devolución íntegra del descuento patronal AFC</strong>.</span>
+                            </button>
+                            <button type="button" class="scenario-tactile-card" onclick="selectLawyerScenario('Despido Injustificado / Causal cuestionable')" id="scenario-card-15utm">
+                                <span class="cla-case-top"><span class="cla-n">2</span><span class="cla-case-t">Juicios sobre 15 UTM</span><span class="cla-case-m">Abogado obligatorio por ley</span></span>
+                                <span class="cla-case-d">Bajo el Código del Trabajo (Art. 498), las causas superiores a 15 UTM se tramitan en Juzgados del Trabajo bajo procedimiento de aplicación general, siendo <strong>estrictamente obligatorio contar con abogado habilitado</strong> para litigar.</span>
+                            </button>
+                            <button type="button" class="scenario-tactile-card" onclick="selectLawyerScenario('Despido sin indemnización Art. 160')" id="scenario-card-160">
+                                <span class="cla-case-top"><span class="cla-n">3</span><span class="cla-case-t">Despido disciplinario (Art. 160 sin finiquito)</span><span class="cla-case-m">Recargo 80% o 100%</span></span>
+                                <span class="cla-case-d">Si el empleador te acusa de faltas de probidad, inasistencias injustificadas o incumplimiento contractual sin pruebas concluyentes. Al impugnarlo con éxito en juicio, el juez ordena pagar indemnizaciones completas con recargo judicial legal.</span>
+                            </button>
+                            <button type="button" class="scenario-tactile-card" onclick="selectLawyerScenario('Autodespido / Despido Indirecto Art. 171')" id="scenario-card-171">
+                                <span class="cla-case-top"><span class="cla-n">4</span><span class="cla-case-t">Autodespido o despido indirecto (Art. 171)</span><span class="cla-case-m">Asesoría previa clave</span></span>
+                                <span class="cla-case-d">Por no pago continuado de cotizaciones previsionales (Ley Bustos), hostigamiento laboral o cambios unilaterales en tus condiciones de trabajo. Requiere redacción técnica de carta formal antes de desvincularte voluntariamente.</span>
+                            </button>
+                    </div>
+
+                    <div class="cla-garant">
+                        <h3><span class="material-icons" aria-hidden="true">verified</span>Garantías de transparencia profesional</h3>
+                        <ul>
+                            <li><strong>Evaluación preliminar sin costo inicial:</strong> Un abogado colaborador examina tu carta y finiquito para certificar si existe fundamento legal antes de iniciar acciones.</li>
+                            <li><strong>Modalidad cuota litis habitual:</strong> En los juicios de trabajadores, los honorarios se pactan habitualmente a porcentaje sobre el monto efectivamente recuperado.</li>
+                            <li><strong>Sin promesas ficticias de resultado:</strong> Ningún abogado ético garantiza fallos; el juez resuelve en audiencia según el mérito de la prueba aportada.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <div class="cla-form">
+                    <h3>Solicitar revisión legal de mi caso</h3>
+                    <p class="cla-form-meta"><span class="material-icons" aria-hidden="true">schedule</span>Atención en horario hábil</p>
+                    <p class="cla-form-intro">Ingresa tus antecedentes para coordinar una evaluación preliminar con un abogado laboralista colaborador y resguardar tus plazos legales.</p>
+
+                    <form id="home-lawyer-form" class="space-y-3.5" onsubmit="handleLawyerFormSubmit(event)">
+                        <div>
+                                    <label for="lawyer-nombre" class="cla-label">Nombre completo *</label>
+                                    <input type="text" id="lawyer-nombre" name="nombre" required autocomplete="name" placeholder="Ej. Camila Morales Silva" class="cla-input">
                                 </div>
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    Atención Hábil
-                                </span>
-                            </div>
-
-                            <!-- Header Text -->
-                            <div class="mb-5">
-                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                                    Solicitar Revisión Legal de mi Caso
-                                </h3>
-                                <p class="text-sm text-slate-600 mt-1 leading-relaxed">
-                                    Ingresa tus antecedentes para coordinar una evaluación preliminar con un abogado laboralista colaborador y resguardar tus plazos legales.
-                                </p>
-                            </div>
-
-                            <!-- Form -->
-                            <form id="home-lawyer-form" class="space-y-3.5" onsubmit="handleLawyerFormSubmit(event)">
-                                
-                                <!-- Nombre Completo -->
-                                <div>
-                                    <label for="lawyer-nombre" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nombre Completo *</label>
-                                    <input type="text" id="lawyer-nombre" name="nombre" required placeholder="Ej. Camila Morales Silva" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                    <label for="lawyer-telefono" class="cla-label">WhatsApp o teléfono *</label>
+                                    <input type="tel" id="lawyer-telefono" name="telefono" required autocomplete="tel" placeholder="+56 9 1234 5678" class="cla-input">
                                 </div>
-
-                                <!-- Teléfono / WhatsApp & Correo -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                        <label for="lawyer-telefono" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">WhatsApp / Teléfono *</label>
-                                        <input type="tel" id="lawyer-telefono" name="telefono" required placeholder="+56 9 1234 5678" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
-                                    </div>
-                                    <div>
-                                        <label for="lawyer-correo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Correo (opcional)</label>
-                                        <input type="email" id="lawyer-correo" name="correo" placeholder="tu@correo.cl" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
-                                    </div>
+                            <div>
+                                    <label for="lawyer-correo" class="cla-label">Correo (opcional)</label>
+                                    <input type="email" id="lawyer-correo" name="correo" autocomplete="email" placeholder="tu@correo.cl" class="cla-input">
                                 </div>
-
-                                <!-- Ciudad / Región & Tipo de Causal -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                        <label for="lawyer-ciudad" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ciudad o Comuna (opcional)</label>
-                                        <input type="text" id="lawyer-ciudad" name="ciudad" placeholder="Ej. Santiago, Concepción..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
-                                    </div>
-                                    <div>
-                                        <label for="lawyer-motivo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Motivo / Causal *</label>
-                                        <select id="lawyer-motivo" name="motivo" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium">
-                                            <option value="" disabled selected>Selecciona tu situación...</option>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                    <label for="lawyer-ciudad" class="cla-label">Ciudad o comuna (opcional)</label>
+                                    <input type="text" id="lawyer-ciudad" name="ciudad" placeholder="Ej. Santiago, Concepción..." class="cla-input">
+                                </div>
+                            <div>
+                                <label for="lawyer-motivo" class="cla-label">Motivo o causal *</label>
+                                <select id="lawyer-motivo" name="motivo" required class="cla-input">
+                                    <option value="" disabled selected>Selecciona tu situación...</option>
                                             <option value="Despido Art. 161 (Necesidades de la empresa)">Despido Art. 161 (Necesidades de la empresa)</option>
                                             <option value="Despido Injustificado / Causal cuestionable">Despido Injustificado / Causal cuestionable</option>
                                             <option value="Retención indebida Aporte Patronal AFC">Retención indebida Aporte Patronal AFC</option>
@@ -1994,63 +1732,35 @@
                                             <option value="No pago de cotizaciones (Ley Bustos)">No pago de cotizaciones (Ley Bustos)</option>
                                             <option value="Finiquito impago o mal calculado">Finiquito impago o mal calculado</option>
                                             <option value="Otra consulta legal laboral">Otra consulta legal laboral</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- Breve detalle del caso -->
-                                <div>
-                                    <label for="lawyer-detalle" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Breve resumen de tu situación</label>
-                                    <textarea id="lawyer-detalle" name="detalle" rows="3" maxlength="220" placeholder="Ej. Me despidieron el 10 de este mes por necesidades de la empresa, trabajé 4 años, mi sueldo era de $900.000 y me descontaron la AFC..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all font-medium resize-none"></textarea>
-                                </div>
-
-                                <!-- Checkbox Consentimiento -->
-                                <div class="pt-0.5">
-                                    <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
-                                        <input type="checkbox" id="lawyer-consent" name="consentimiento" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
-                                        <span class="leading-snug text-xs text-slate-500">
-                                            Autorizo el tratamiento confidencial de mis datos y su remisión a un abogado laboralista colaborador para la evaluación preliminar de mi caso según la <a href="privacidad" target="_blank" class="underline font-semibold text-slate-700 hover:text-emerald-700">Política de Privacidad</a>.
-                                        </span>
-                                    </label>
-                                </div>
-
-                                <!-- Botón Submit: Yellow Pill with button-in-button trailing icon -->
-                                <div class="pt-2">
-                                    <button type="submit" id="lawyer-submit-btn" class="w-full py-3.5 px-6 rounded-full font-extrabold text-sm transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer" style="background-color: var(--teal-yellow) !important; color: #111827 !important; box-shadow: 0 4px 16px rgba(255, 183, 3, 0.4);">
-                                        <span class="material-icons text-base" style="color: #111827 !important;">gavel</span>
-                                        <span style="color: #111827 !important;">Enviar antecedentes para revisión legal</span>
-                                        <span class="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform ml-1" style="color: #111827 !important;">
-                                            <span class="material-icons text-xs" style="color: #111827 !important;">arrow_forward</span>
-                                        </span>
-                                    </button>
-                                </div>
-
-                                <div class="pt-1 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-                                    <span class="material-icons text-xs">lock</span>
-                                    <span>Tus antecedentes están protegidos por el secreto profesional legal.</span>
-                                </div>
-                            </form>
-
-                            <!-- Mensaje de Éxito Interactivo -->
-                            <div id="lawyer-success-box" class="hidden p-6 bg-emerald-50/90 border border-emerald-200 rounded-2xl text-center space-y-3">
-                                <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
-                                    <span class="material-icons text-2xl text-emerald-700">check_circle</span>
-                                </div>
-                                <h4 class="text-base font-bold text-emerald-950">¡Antecedentes Recibidos con Éxito!</h4>
-                                <p class="text-sm text-emerald-900/90 max-w-sm mx-auto leading-relaxed">
-                                    Un abogado laboralista colaborador revisará la información enviada y se pondrá en contacto contigo en horario hábil a través de WhatsApp o correo electrónico para evaluar la viabilidad de tu reclamo y orientarte en los plazos fatales.
-                                </p>
-                                <div class="pt-2">
-                                    <button type="button" onclick="resetLawyerForm()" class="text-xs font-semibold text-emerald-800 hover:underline inline-flex items-center gap-1 cursor-pointer">
-                                        <span class="material-icons text-xs">refresh</span>
-                                        <span>Enviar otra consulta</span>
-                                    </button>
-                                </div>
+                                </select>
                             </div>
-
                         </div>
-                    </div>
+                        <div>
+                            <label for="lawyer-detalle" class="cla-label">Breve resumen de tu situación</label>
+                            <textarea id="lawyer-detalle" name="detalle" rows="3" maxlength="220" placeholder="Ej. Me despidieron el 10 de este mes por necesidades de la empresa, trabajé 4 años, mi sueldo era de $900.000 y me descontaron la AFC..." class="cla-input"></textarea>
+                        </div>
+                        <label class="cla-consent">
+                            <input type="checkbox" id="lawyer-consent" name="consentimiento" required>
+                            <span>Autorizo el tratamiento confidencial de mis datos y su remisión a un abogado laboralista colaborador para la evaluación preliminar de mi caso según la <a href="privacidad" target="_blank" rel="noopener">Política de Privacidad</a>.</span>
+                        </label>
+                        <button type="submit" id="lawyer-submit-btn" class="w-full py-3.5 px-6 rounded-full font-extrabold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer" style="background-color: var(--teal-yellow) !important; color: #111827 !important;">
+                            <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">gavel</span>
+                            <span style="color: #111827 !important;">Enviar antecedentes para revisión legal</span>
+                        </button>
+                        <p class="cla-note"><span class="material-icons" aria-hidden="true">lock</span>Tus antecedentes están protegidos por el secreto profesional legal.</p>
+                    </form>
 
+                    <div id="lawyer-success-box" class="hidden p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-3" role="status">
+                        <span class="material-icons text-3xl text-emerald-700" aria-hidden="true">check_circle</span>
+                        <h4 class="text-base font-bold text-emerald-950">Recibimos tus antecedentes</h4>
+                        <p class="text-sm text-emerald-900 max-w-sm mx-auto leading-relaxed">
+                            Un abogado laboralista colaborador revisará la información enviada y se pondrá en contacto contigo en horario hábil a través de WhatsApp o correo electrónico para evaluar la viabilidad de tu reclamo y orientarte en los plazos fatales.
+                        </p>
+                        <button type="button" onclick="resetLawyerForm()" class="text-sm font-semibold text-emerald-800 hover:underline inline-flex items-center gap-1 cursor-pointer">
+                            <span class="material-icons text-base" aria-hidden="true">refresh</span>
+                            <span>Enviar otra consulta</span>
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -2078,7 +1788,7 @@
                     <div>
                         <figure class="cl-card-cover"><img src="/assets/covers/reclamar-despido.svg" alt="Balanza de la justicia y mazo" width="800" height="450" class="cl-cover" loading="lazy" decoding="async"></figure>
                         <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
-                            Cómo Reclamar un Despido Injustificado
+                            Cómo reclamar un despido injustificado
                         </h3>
                         <p class="cl-meta">Trámite DT • Plazo 60 Días</p>
                         <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
@@ -2086,7 +1796,7 @@
                         </p>
                     </div>
                     <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs text-gray-400 font-medium">Lectura: 4 min</span>
+                        <span class="text-xs text-gray-500 font-medium">Lectura: 4 min</span>
                         <a href="reclamar-despido-injustificado-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
                             <span>Ver paso a paso</span>
                             <span class="material-icons text-base">arrow_forward</span>
@@ -2099,7 +1809,7 @@
                     <div>
                         <figure class="cl-card-cover"><img src="/assets/covers/renuncia-voluntaria.svg" alt="Puerta de salida con carta de renuncia" width="800" height="450" class="cl-cover" loading="lazy" decoding="async"></figure>
                         <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
-                            Carta de Renuncia Voluntaria
+                            Carta de renuncia voluntaria
                         </h3>
                         <p class="cl-meta">Asistente • Art. 159 N° 2</p>
                         <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
@@ -2107,7 +1817,7 @@
                         </p>
                     </div>
                     <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs text-gray-400 font-medium">Herramienta Gratuita</span>
+                        <span class="text-xs text-gray-500 font-medium">Herramienta gratuita</span>
                         <a href="carta-de-renuncia-chile" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
                             <span>Redactar carta gratis</span>
                             <span class="material-icons text-base">arrow_forward</span>
@@ -2120,7 +1830,7 @@
                     <div>
                         <figure class="cl-card-cover"><img src="/assets/covers/despido-161.svg" alt="Edificio de empresa y carta de despido sellada" width="800" height="450" class="cl-cover" loading="lazy" decoding="async"></figure>
                         <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
-                            Art. 161: Necesidades de la Empresa
+                            Art. 161: necesidades de la empresa
                         </h3>
                         <p class="cl-meta">Doctrina Corte Suprema</p>
                         <p class="text-sm text-gray-600 leading-relaxed font-sans mb-4">
@@ -2128,7 +1838,7 @@
                         </p>
                     </div>
                     <div class="pt-5 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs text-gray-400 font-medium">Lectura: 5 min</span>
+                        <span class="text-xs text-gray-500 font-medium">Lectura: 5 min</span>
                         <a href="despido-necesidades-empresa-articulo-161" class="text-sm font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1.5 transition-colors">
                             <span>Leer análisis legal</span>
                             <span class="material-icons text-base">arrow_forward</span>
@@ -2141,7 +1851,7 @@
             <!-- Link to All Guides in Blog -->
             <div class="reveal-on-scroll text-center mb-12">
                 <a href="blog" class="inline-flex items-center gap-2 text-sm font-bold text-emerald-800 hover:text-emerald-950 hover:underline">
-                    <span>Ver todas las guías, jurisprudencia y dictámenes DT en nuestro Blog</span>
+                    <span>Ver todas las guías, jurisprudencia y dictámenes DT en el blog</span>
                     <span class="material-icons text-base">arrow_forward</span>
                 </a>
             </div>
@@ -2150,18 +1860,16 @@
             <div style="background-color: var(--teal-forest);" class="reveal-on-scroll delay-200 rounded-3xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl text-left">
                 <div class="space-y-3.5 max-w-xl">
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                        ¿Tienes una Pyme? Genera finiquitos y anexos 40h con respaldo legal
+                        ¿Tienes una pyme? Genera finiquitos y anexos de 40 horas basados en el Código del Trabajo
                     </h3>
-                    <p class="text-sm sm:text-base text-slate-200 leading-relaxed font-sans">
-                        Kit de cumplimiento laboral para empleadores con modelos editables Word, checklist de fiscalización DT y cláusulas de blindaje conformes a la Ley 21.561.
+                    <p class="text-sm sm:text-base text-white/80 leading-relaxed font-sans">
+                        Kit de cumplimiento laboral para empleadores con modelos editables Word, checklist de fiscalización DT y cláusulas basadas en la Ley 21.561.
                     </p>
                 </div>
                 <div>
                     <a href="para-empleadores" class="btn-yellow-pill group text-sm px-7 py-4 whitespace-nowrap inline-flex items-center gap-2.5 shadow-lg">
-                        <span>Ver Portal Empleadores</span>
-                        <span class="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center transition-transform duration-200 group-hover:translate-x-1">
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </span>
+                        <span>Ver portal para empleadores</span>
+                        <span class="material-icons text-base" aria-hidden="true">arrow_forward</span>
                     </a>
                 </div>
             </div>
@@ -2173,12 +1881,12 @@
     <section class="py-12 sm:py-16 bg-warm-surface border-t border-gray-200/90">
         <div class="site-container px-4 sm:px-6">
             
-            <div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-10">
+            <div class="reveal-on-scroll cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                     Herramientas para gestionar tu dinero
                 </h2>
                 <p class="mt-3 text-base text-gray-600">
-                    Opciones verificadas para recibir tu liquidación sin comisiones o solventar contingencias de liquidez durante tu transición laboral.
+                    Opciones para recibir tu liquidación sin comisiones o enfrentar gastos imprevistos durante tu transición laboral.
                 </p>
             </div>
 
@@ -2188,19 +1896,14 @@
                 <div class="step-card reveal-on-scroll delay-100 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-5">
-                            <span class="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
-                                <span class="w-1.5 h-1.5 rounded-full bg-forest-700 animate-pulse"></span>
-                                Recomendado · Cuenta Sueldo
-                            </span>
-                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                Patrocinado · Banco Itaú
-                            </span>
+                            <span class="text-sm font-semibold text-forest-700">Cuenta para recibir tu sueldo</span>
+                            <span class="text-xs font-semibold text-gray-500">Patrocinado · Banco Itaú</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">
                             <div class="sm:col-span-5 flex justify-center">
                                 <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-amber-300 transition-all shadow-xs group">
-                                    <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                                    <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover" loading="lazy">
                                 </a>
                             </div>
                             <div class="sm:col-span-7 space-y-2.5">
@@ -2229,9 +1932,9 @@
                     </div>
 
                     <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <span class="text-xs text-gray-400 font-medium">Sujeto a evaluación de antecedentes comerciales</span>
+                        <span class="text-xs text-gray-500 font-medium">Sujeto a evaluación de antecedentes comerciales</span>
                         <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-forest-800 hover:bg-forest-900 active:scale-95" style="background-color: #00382E !important; color: #ffffff !important;">
-                            <span style="color: #ffffff !important;">Abrir Cuenta Online Gratis</span>
+                            <span style="color: #ffffff !important;">Abrir cuenta online gratis</span>
                             <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
                         </a>
                     </div>
@@ -2241,19 +1944,14 @@
                 <div class="step-card reveal-on-scroll delay-200 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-5">
-                            <span class="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-forest-700 bg-forest-50 border border-forest-200 px-2.5 py-1 rounded-full">
-                                <span class="material-icons text-xs text-forest-600">schedule</span>
-                                Liquidez Inmediata · Emergencias
-                            </span>
-                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                Patrocinado · Abakos Chile
-                            </span>
+                            <span class="text-sm font-semibold text-forest-700">Préstamos para emergencias</span>
+                            <span class="text-xs font-semibold text-gray-500">Patrocinado · Abakos Chile</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">
                             <div class="sm:col-span-5 flex justify-center">
                                 <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-forest-300 transition-all shadow-xs group">
-                                    <img src="/assets/abakos-emergencias-app.jpg" alt="Abakos Chile - Apaga tus emergencias financieras con préstamos online" width="270" height="270" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                                    <img src="/assets/abakos-emergencias-app.jpg" alt="Abakos Chile - Apaga tus emergencias financieras con préstamos online" width="270" height="270" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover" loading="lazy">
                                 </a>
                             </div>
                             <div class="sm:col-span-7 space-y-2.5">
@@ -2282,9 +1980,9 @@
                     </div>
 
                     <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <span class="text-xs text-gray-400 font-medium">Respuesta rápida desde cualquier punto de Chile</span>
+                        <span class="text-xs text-gray-500 font-medium">Respuesta rápida desde cualquier punto de Chile</span>
                         <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-forest-600 hover:bg-forest-700 active:scale-95" style="background-color: #0F5E4F !important; color: #ffffff !important;">
-                            <span style="color: #ffffff !important;">Simular Préstamo Online</span>
+                            <span style="color: #ffffff !important;">Simular préstamo online</span>
                             <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
                         </a>
                     </div>
@@ -2299,9 +1997,9 @@
     <section class="section-py bg-warm-surface border-t border-gray-200/90">
         <div class="site-container max-w-[850px] px-4 sm:px-6">
             
-            <div class="reveal-on-scroll text-center mb-12">
+            <div class="reveal-on-scroll cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3">
-                    Preguntas Frecuentes
+                    Preguntas frecuentes
                 </h2>
                 <p class="text-gray-600 text-sm sm:text-base">Todo lo que necesitas saber antes de acudir a la notaría o firmar en Chile.</p>
             </div>
@@ -2310,7 +2008,7 @@
                 <details class="reveal-on-scroll delay-100 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿El empleador puede obligarme a firmar el finiquito si no estoy de acuerdo?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
+                        <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
                     <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         No. El finiquito es un acto voluntario. Nadie puede forzarte a firmar. Si no estás conforme con los montos o la causal, puedes negarte a firmar o estampar de tu puño y letra la <strong>Cláusula de Reserva de Derechos</strong> sobre tu firma para recibir el pago de inmediato y reclamar las diferencias posteriormente.
@@ -2321,7 +2019,7 @@
                 <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Es legal que me descuenten el aporte patronal de la AFC?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
+                        <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
                     <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         La Corte Suprema ha establecido en doctrina reiterada y unificada que si el despido por necesidades de la empresa es injustificado, dicho descuento resulta improcedente y la empresa debe devolvértelo en su totalidad. Por eso es vital estampar la reserva de derechos antes de firmar.
@@ -2331,7 +2029,7 @@
                 <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Puedo cobrar el dinero de inmediato en la notaría y reclamar después?</span>
-                        <span class="material-icons text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
+                        <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
                     <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
                         Sí, exactamente para eso existe la reserva de derechos. Puedes recibir tu cheque o vale vista en el mismo acto notarial y escribir sobre tu firma que te reservas el derecho a reclamar diferencias de indemnizaciones, vacaciones o descuento de AFC. El notario está instruido por la Circular N° 78 de la DT para no impedir esta anotación.
