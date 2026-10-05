@@ -204,6 +204,24 @@ class ForensicSalaryCalculator {
     }
 }
 
+/**
+ * Cálculo inverso (líquido -> bruto): busca el sueldo base mínimo que entrega
+ * al menos el líquido pedido, con los mismos haberes y descuentos de `data`.
+ * El líquido crece con el sueldo base, así que basta una búsqueda binaria.
+ */
+ForensicSalaryCalculator.solveBaseForNet = function (data, targetNet) {
+    const netFor = (base) => new ForensicSalaryCalculator(Object.assign({}, data, { baseSalary: base })).calculate().details.netSalary;
+    targetNet = Math.max(0, Math.round(targetNet || 0));
+    if (netFor(0) >= targetNet) return 0;
+    let lo = 0, hi = Math.max(1000000, targetNet * 2);
+    while (netFor(hi) < targetNet && hi < 1e10) hi *= 2;
+    while (hi - lo > 1) {
+        const mid = Math.floor((lo + hi) / 2);
+        if (netFor(mid) >= targetNet) hi = mid; else lo = mid;
+    }
+    return hi;
+};
+
 // Export
 if (typeof window !== 'undefined') {
     window.ForensicSalaryCalculator = ForensicSalaryCalculator;

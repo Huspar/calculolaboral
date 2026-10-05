@@ -13,6 +13,7 @@ Qué cambia:
        data-iusc-neto="N"    -> renta tributable menos su impuesto (sueldo líquido sin no imponibles)
        data-utm-mes          -> el texto pasa a "<mes> de <año>"
        data-iu-bruto-exento  -> sueldo bruto desde el que se paga impuesto (AFP Modelo, Fonasa)
+       data-l2b="N tipo"     -> sueldo base para recibir N líquido (gratificación none o legal_tope; usa node)
   4. impuesto-unico-segunda-categoria.html: las tablas entre los marcadores
      <!-- TABLA-IUSC:INICIO/FIN --> y <!-- SUELDOS-IUSC:INICIO/FIN -->, y el mes del título.
 
@@ -21,6 +22,7 @@ calcula con los tramos del artículo 43 de la Ley de la Renta, expresados en UTM
 """
 import glob
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -62,6 +64,17 @@ def tramo_de(rli, utm):
         if hi is None or rli <= hi * utm:
             return i
     return len(TRAMOS) - 1
+
+
+def liquido_a_bruto(neto, gratificacion):
+    """Sueldo base para un líquido dado, con el motor del sitio (js/salary_logic.js) y la UTM ya aplicada."""
+    js = (
+        "global.CONSTANTS=require('./js/constants.js');"
+        "const {ForensicSalaryCalculator:F}=require('./js/salary_logic.js');"
+        f"process.stdout.write(String(F.solveBaseForNet({{afpName:'Modelo',healthSystem:'fonasa',"
+        f"contractType:'indefinido',gratificationType:'{gratificacion}'}},{neto})));"
+    )
+    return int(subprocess.run(["node", "-e", js], cwd=ROOT, capture_output=True, text=True, check=True).stdout)
 
 
 def leer_uf():
@@ -169,6 +182,9 @@ def main():
         bruto_exento = pesos(round(13.5 * utm / (1 - AFP_MODELO - 0.07 - 0.006), -3))
         t = re.sub(r'(<(\w+)[^>]*\bdata-iu-bruto-exento\b[^>]*>)\$[\d.]+(</\2>)', rf"\g<1>{bruto_exento}\3", t)
 
+        if 'data-l2b="' in t:
+            t = re.sub(r'(<(\w+)[^>]*\bdata-l2b="(\d+) (\w+)"[^>]*>)\$[\d.]+(</\2>)',
+                       lambda m: m.group(1) + pesos(liquido_a_bruto(int(m.group(3)), m.group(4))) + m.group(5), t)
         if Path(f).name == "impuesto-unico-segunda-categoria.html":
             t = reemplazar_bloque(t, "TABLA-IUSC", tabla_tramos(utm))
             t = reemplazar_bloque(t, "SUELDOS-IUSC", tabla_sueldos(utm, uf))

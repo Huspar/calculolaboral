@@ -189,6 +189,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        document.querySelectorAll('input[name="calcMode"]').forEach(r => r.addEventListener('change', () => {
+            updateModeUI();
+            calculate();
+        }));
+        try {
+            const modoUrl = new URLSearchParams(window.location.search).get('modo');
+            const liquidoRadio = getEl('calc-mode-liquido');
+            if (modoUrl === 'liquido' && liquidoRadio) liquidoRadio.checked = true;
+        } catch (e) { /* URL no disponible */ }
+        updateModeUI();
+
         if (healthRadios.length > 0) {
             healthRadios.forEach(r => r.addEventListener('change', () => {
                 toggleIsapre();
@@ -398,6 +409,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return valid;
     };
 
+    // ===== MODO LÍQUIDO -> BRUTO ===== //
+    const getCalcMode = () => {
+        const r = document.querySelector('input[name="calcMode"]:checked');
+        return r ? r.value : 'bruto';
+    };
+
+    const setInverseResult = (base, targetNet) => {
+        const box = getEl('inverse-result');
+        if (!box) return;
+        box.classList.remove('hidden');
+        const val = getEl('inverse-base');
+        if (val) val.textContent = formatCLP(base);
+        const txt = getEl('inverse-target');
+        if (txt) txt.textContent = formatCLP(targetNet);
+    };
+
+    const updateModeUI = () => {
+        const inverse = getCalcMode() === 'liquido';
+        const label = getEl('salary-label');
+        const help = getEl('salary-help');
+        if (label) label.textContent = inverse ? '1. Sueldo líquido que quieres recibir' : '1. Sueldo Base Mensual';
+        if (help) help.textContent = inverse
+            ? 'Calculamos el sueldo base bruto que debes pactar para recibir este líquido, con los haberes y descuentos de abajo.'
+            : 'Remuneración fija mensual acordada en el contrato de trabajo.';
+        if (!inverse) getEl('inverse-result')?.classList.add('hidden');
+    };
+
     const calculate = () => {
         // Reset PDF section visibility
         document.querySelector('#sueldo-calc-container #pdf-section')?.classList.add('hidden');
@@ -452,6 +490,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (typeof ForensicSalaryCalculator !== 'undefined') {
             try {
+                // Modo líquido -> bruto: el monto ingresado es el líquido que se quiere recibir
+                const inverse = getCalcMode() === 'liquido';
+                const inverseBox = getEl('inverse-result');
+                if (inverse) {
+                    const targetNet = data.baseSalary;
+                    data.baseSalary = ForensicSalaryCalculator.solveBaseForNet(data, targetNet);
+                    setInverseResult(data.baseSalary, targetNet);
+                } else if (inverseBox) {
+                    inverseBox.classList.add('hidden');
+                }
                 const calculator = new ForensicSalaryCalculator(data);
                 const result = calculator.calculate();
                 updateUI(result, data);
