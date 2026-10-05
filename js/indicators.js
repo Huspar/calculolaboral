@@ -50,6 +50,7 @@ const IndicatorsService = {
             {"fecha": "2026-08-22", "valor": 40861.91}
         ],
         utm: [
+            {"fecha": "2026-10-01", "valor": 72151.0},
             {"fecha": "2026-09-01", "valor": 71721.0},
             {"fecha": "2026-08-01", "valor": 71649.0},
             {"fecha": "2026-07-01", "valor": 71649.0},
