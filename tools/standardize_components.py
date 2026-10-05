@@ -99,6 +99,16 @@ CANONICAL_TICKER_AND_HEADER = """
                                     </div>
                                 </a>
 
+                                <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">receipt_long</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Impuesto Único</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Tabla del mes y cálculo por tramo.</div>
+                                    </div>
+                                </a>
+
                                 <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
                                         <span class="material-icons text-lg">gavel</span>
@@ -205,6 +215,7 @@ CANONICAL_TICKER_AND_HEADER = """
             <a href="finiquito_calculator" class="block text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
             <a href="sueldo_liquido" class="block text-sm font-semibold text-slate-700">Sueldo Líquido</a>
             <a href="gratificacion-legal-chile" class="block text-sm font-semibold text-slate-700">Gratificación Legal</a>
+            <a href="impuesto-unico-segunda-categoria" class="block text-sm font-semibold text-slate-700">Impuesto Único</a>
             <a href="simulador-despido-injustificado-chile" class="block text-sm font-semibold text-slate-700">Despido Injustificado</a>
             <a href="calculadora-horas-extras" class="block text-sm font-semibold text-slate-700">Horas Extras 42h</a>
             <a href="para-empleadores" class="block text-sm font-semibold text-slate-700">Portal Empleadores</a>
