@@ -638,14 +638,20 @@ main h3 {
 
 /* ---------- Home: catalogo como indice editorial ----------
  * Sin tarjetas ni iconos en cuadritos: cada herramienta es una entrada
- * abierta con un filete que se tiñe de ambar al pasar el cursor. */
+ * abierta con un filete que se tiñe de ambar al pasar el cursor.
+ * Aplica tambien a las 9 entradas que aparecen al pulsar "Mostrar las 15
+ * herramientas y kits" (#extra-catalog-tools), para que no cambien de formato. */
 
-#catalog-grid {
+:is(#catalog-grid, #extra-catalog-tools) {
     column-gap: 2.5rem !important;
     row-gap: 0 !important;
 }
 
-#catalog-grid .catalog-card {
+#extra-catalog-tools {
+    margin-top: 0 !important;
+}
+
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card {
     position: relative;
     background: transparent !important;
     border: 0 !important;
@@ -655,7 +661,7 @@ main h3 {
     padding: 1.25rem 0 1.5rem !important;
 }
 
-#catalog-grid .catalog-card::before {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card::before {
     content: "";
     position: absolute;
     top: -1px;
@@ -668,20 +674,20 @@ main h3 {
     transition: transform 350ms var(--cl-ease-out);
 }
 
-#catalog-grid .catalog-card:hover::before,
-#catalog-grid .catalog-card:focus-within::before {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card:hover::before,
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card:focus-within::before {
     transform: scaleX(1);
 }
 
-#catalog-grid .catalog-card > div:first-child > div:first-child > div:first-child {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card > div:first-child > div:first-child > div:first-child {
     display: none;
 }
 
-#catalog-grid .catalog-card > div:first-child > div:first-child {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card > div:first-child > div:first-child {
     justify-content: flex-start;
 }
 
-#catalog-grid .catalog-card > div:first-child > div:first-child > span {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card > div:first-child > div:first-child > span {
     padding: 0 !important;
     background: none !important;
     border: 0 !important;
@@ -689,27 +695,27 @@ main h3 {
     font-weight: 600 !important;
 }
 
-#catalog-grid .catalog-card h3 {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card h3 {
     font-size: 1.0625rem;
     transition: color 150ms var(--cl-ease-ui);
 }
 
-#catalog-grid .catalog-card:hover h3 {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card:hover h3 {
     color: var(--cl-forest) !important;
 }
 
-#catalog-grid .catalog-card p {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card p {
     font-size: 0.875rem;
     line-height: 1.5;
 }
 
-#catalog-grid .catalog-card > div:last-child {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card > div:last-child {
     border-top: 0 !important;
     padding-top: 0 !important;
 }
 
 /* Toda la entrada es clicable a traves de su enlace */
-#catalog-grid .catalog-card a::after {
+:is(#catalog-grid, #extra-catalog-tools) .catalog-card a::after {
     content: "";
     position: absolute;
     inset: 0;

@@ -655,7 +655,7 @@
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.4.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.5.0">
 </head>
 <body>
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -1058,7 +1058,15 @@
                         <p class="clf-d">Bruto de $1.200.000 con gratificación, AFP Modelo y Fonasa.</p>
                         <span class="clf-go">Calcular mi sueldo<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
                     </a>
-                    <a class="clf-card" href="calculadora-vacaciones" data-fan="vacaciones" data-name="Vacaciones" draggable="false" style="--o: 2; z-index: 18;">
+                    <a class="clf-card" href="calculadora-sueldo-part-time" data-fan="parttime" data-name="Sueldo part-time" draggable="false" style="--o: 2; z-index: 18;">
+                        <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">timelapse</span></span><span class="clf-tag">Ejemplo</span></span>
+                        <span class="clf-k">Jornada parcial</span>
+                        <span class="clf-n">Sueldo part-time</span>
+                        <div class="clf-r"><small>Mínimo para 30 horas semanales</small><span>$395.395</span></div>
+                        <p class="clf-d">Proporcional al sueldo mínimo de $553.553 por jornada de 42 horas (Art. 40 bis).</p>
+                        <span class="clf-go">Calcular mi sueldo<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+                    </a>
+                    <a class="clf-card clf-o3" href="calculadora-vacaciones" data-fan="vacaciones" data-name="Vacaciones" draggable="false" style="--o: 3; z-index: 17;">
                         <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">beach_access</span></span><span class="clf-tag">Ejemplo</span></span>
                         <span class="clf-k">Feriado legal</span>
                         <span class="clf-n">Vacaciones proporcionales</span>
@@ -1066,7 +1074,7 @@
                         <p class="clf-d">1,25 días hábiles por cada mes trabajado (Art. 67 y 73).</p>
                         <span class="clf-go">Calcular mis días<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
                     </a>
-                    <a class="clf-card clf-o3" href="simulador-seguro-cesantia-afc" data-fan="afc" data-name="Seguro de cesantía" draggable="false" style="--o: 3; z-index: 17;">
+                    <a class="clf-card clf-o3" href="simulador-seguro-cesantia-afc" data-fan="afc" data-name="Seguro de cesantía" draggable="false" style="--o: 4; z-index: 16;">
                         <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">account_balance_wallet</span></span><span class="clf-tag">Ejemplo</span></span>
                         <span class="clf-k">Seguro AFC</span>
                         <span class="clf-n">Seguro de cesantía</span>
@@ -1078,7 +1086,7 @@
                         <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">apps</span></span></span>
                         <span class="clf-k">Catálogo</span>
                         <span class="clf-n">Las 15 herramientas</span>
-                        <ul class="clf-list"><li>Sueldo part-time</li><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>y 5 más</li></ul>
+                        <ul class="clf-list"><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>Anexo Ley 40 horas</li><li>y 4 más</li></ul>
                         
                         <span class="clf-go">Ver todas<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
                     </a>
@@ -1110,10 +1118,10 @@
                 </script>
                 <div class="clf-cap">
                     <button type="button" id="clf-prev" aria-label="Calculadora anterior"><span class="material-icons" aria-hidden="true">chevron_left</span></button>
-                    <div class="clf-cap-t" aria-live="polite"><b id="clf-cap-n">Finiquito</b><span id="clf-cap-i">1 de 7</span></div>
+                    <div class="clf-cap-t" aria-live="polite"><b id="clf-cap-n">Finiquito</b><span id="clf-cap-i">1 de 8</span></div>
                     <button type="button" id="clf-next" aria-label="Calculadora siguiente"><span class="material-icons" aria-hidden="true">chevron_right</span></button>
                 </div>
-                <div class="clf-dots" id="clf-dots"><button type="button" aria-label="Finiquito" aria-current="true"></button><button type="button" aria-label="Sueldo líquido" aria-current="false"></button><button type="button" aria-label="Vacaciones" aria-current="false"></button><button type="button" aria-label="Seguro de cesantía" aria-current="false"></button><button type="button" aria-label="Ver todas" aria-current="false"></button><button type="button" aria-label="Horas extras" aria-current="false"></button><button type="button" aria-label="Despido injustificado" aria-current="false"></button></div>
+                <div class="clf-dots" id="clf-dots"><button type="button" aria-label="Finiquito" aria-current="true"></button><button type="button" aria-label="Sueldo líquido" aria-current="false"></button><button type="button" aria-label="Sueldo part-time" aria-current="false"></button><button type="button" aria-label="Vacaciones" aria-current="false"></button><button type="button" aria-label="Seguro de cesantía" aria-current="false"></button><button type="button" aria-label="Ver todas" aria-current="false"></button><button type="button" aria-label="Horas extras" aria-current="false"></button><button type="button" aria-label="Despido injustificado" aria-current="false"></button></div>
                 <p class="clf-hint"><span class="clf-hint-mouse">Pasa el mouse para asomar una tarjeta y haz clic para traerla al frente.</span><span class="clf-hint-touch">Desliza o toca una tarjeta para traerla al frente.</span></p>
             </div>
 
