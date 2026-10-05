@@ -64,6 +64,30 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "¿El empleador puede obligarme a firmar el finiquito si no estoy de acuerdo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. El finiquito es un acto voluntario. Nadie puede forzarte a firmar. Si no estás conforme con los montos o la causal, puedes negarte a firmar o estampar de tu puño y letra la Cláusula de Reserva de Derechos sobre tu firma para recibir el pago de inmediato y reclamar las diferencias posteriormente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Es legal que me descuenten el aporte patronal de la AFC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "La Corte Suprema ha establecido en doctrina reiterada y unificada que si el despido por necesidades de la empresa es injustificado, dicho descuento resulta improcedente y la empresa debe devolvértelo en su totalidad. Por eso es vital estampar la reserva de derechos antes de firmar."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo cobrar el dinero de inmediato en la notaría y reclamar después?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, exactamente para eso existe la reserva de derechos. Puedes recibir tu cheque o vale vista en el mismo acto notarial y escribir sobre tu firma que te reservas el derecho a reclamar diferencias de indemnizaciones, vacaciones o descuento de AFC. El notario está instruido por la Circular N° 78 de la DT para no impedir esta anotación."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "¿Cómo se calcula el sueldo líquido en Chile?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -178,22 +202,6 @@
             transform: scale(1.1) rotate(3deg);
         }
 
-        /* Timeline Connector between Steps on Desktop */
-        .timeline-connector {
-            position: absolute;
-            top: 52px;
-            left: 10%;
-            right: 10%;
-            height: 2px;
-            background: repeating-linear-gradient(to right, #CBD5E1 0, #CBD5E1 6px, transparent 6px, transparent 12px);
-            z-index: 0;
-            pointer-events: none;
-        }
-        @media (max-width: 1023px) {
-            .timeline-connector {
-                display: none;
-            }
-        }
 
         .partner-grid,
         .bento-dual-grid {
@@ -365,15 +373,6 @@
             box-shadow: 0 4px 14px rgba(0, 56, 46, 0.22);
         }
 
-        /* Real UI Mockup Card */
-        .saas-window-card {
-            background: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            border-radius: 24px;
-            box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
-            position: relative;
-            z-index: 10;
-        }
 
         /* How it works steps pills */
         .how-step-pill {
@@ -903,7 +902,7 @@
             -webkit-user-select: none; user-select: none; -webkit-user-drag: none; cursor: pointer;
         }
         .clf-card:hover { color: #111827; }
-        .clf-card.is-active { border-color: var(--teal-forest); translate: 0 -10px; box-shadow: 0 2px 4px rgba(0, 38, 31, 0.08), 0 24px 48px rgba(0, 38, 31, 0.22); }
+        .clf-card.is-active { border-color: var(--teal-forest); translate: 0 -10px; box-shadow: 0 2px 4px rgba(0, 38, 31, 0.08), 0 14px 28px -8px rgba(0, 38, 31, 0.28); }
         .clf-card.clf-o3 { opacity: 0; pointer-events: none; }
         @media (hover: hover) { .clf-card:not(.is-active):hover { translate: 0 -18px; } }
         .clf-top { display: flex; align-items: center; justify-content: space-between; }
@@ -1033,8 +1032,8 @@
                     <a class="clf-card clf-all clf-o3" href="#calculadoras" data-fan="todas" data-name="Ver todas" draggable="false" style="--o: -3; z-index: 17;">
                         <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">apps</span></span></span>
                         <span class="clf-k">Catálogo</span>
-                        <span class="clf-n">Las 15 herramientas</span>
-                        <ul class="clf-list"><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>Anexo Ley 40 horas</li><li>y 4 más</li></ul>
+                        <span class="clf-n">Las 14 herramientas</span>
+                        <ul class="clf-list"><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>Anexo Ley 40 horas</li><li>y 3 más</li></ul>
                         
                         <span class="clf-go">Ver todas<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
                     </a>
@@ -1083,7 +1082,7 @@
                     <a href="#calculadoras" class="clf-btn-o">
                         <span class="material-icons" aria-hidden="true" style="color: #047857;">apps</span>
                         <span>Ver todas</span>
-                        <b>15</b>
+                        <b>14</b>
                     </a>
                 </div>
                 <ul class="clf-trust">
@@ -1135,7 +1134,7 @@
                 <!-- Interactive Filter Controls -->
                 <div class="mt-6 flex flex-wrap items-center justify-start gap-2">
                     <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter">
-                        Todas las herramientas (15)
+                        Todas las herramientas (14)
                     </button>
                     <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn">
                         Trabajadores (9)
@@ -1144,7 +1143,7 @@
                         Pymes y empleadores (5)
                     </button>
                     <button type="button" onclick="filterCatalog('afp', this)" class="catalog-filter-btn">
-                        Previsión y AFP (1)
+                        Previsión y AFP (próximamente)
                     </button>
                 </div>
             </div>
@@ -1567,7 +1566,7 @@
             <!-- Expandable Catalog Toggle Button (Option 1) -->
             <div class="mt-8 text-center" id="catalog-toggle-wrapper">
                 <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer">
-                    <span id="toggle-catalog-text">Mostrar las 15 herramientas y kits (9 más)</span>
+                    <span id="toggle-catalog-text">Mostrar las 14 herramientas y kits (8 más)</span>
                     <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon">keyboard_arrow_down</span>
                 </button>
             </div>
@@ -2001,7 +2000,7 @@
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3">
                     Preguntas frecuentes
                 </h2>
-                <p class="text-gray-600 text-sm sm:text-base">Todo lo que necesitas saber antes de acudir a la notaría o firmar en Chile.</p>
+                <p class="text-gray-600 text-sm sm:text-base">Lo que más nos preguntan sobre el finiquito, la notaría, el sueldo líquido y las AFP.</p>
             </div>
 
             <div class="space-y-4 text-left">
@@ -2036,23 +2035,34 @@
                     </p>
                 </details>
 
-                <p class="text-sm text-gray-600 pt-2">¿Necesitas el monto exacto? La <a href="finiquito_calculator" class="font-semibold text-[#00382E] underline">calculadora de finiquito</a> incluye un ejemplo resuelto, los topes 2026 y el plazo de pago.</p>
+                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
+                        <span>¿Cómo se calcula el sueldo líquido en Chile?</span>
+                        <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
+                    </summary>
+                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
+                        El sueldo líquido se obtiene restando del Sueldo Bruto Imponible los descuentos obligatorios: AFP (10,58% a 11,45%), Salud (7% Fonasa o pactado en Isapre), Seguro de Cesantía (0,6% en contrato indefinido) y el Impuesto Único de Segunda Categoría si la renta imponible supera las 13,5 UTM.
+                    </p>
+                </details>
+
+                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                    <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
+                        <span>¿Cuáles son las comisiones de las AFP vigentes en 2026?</span>
+                        <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
+                    </summary>
+                    <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
+                        Las tasas totales obligatorias de AFP en 2026 son: AFP Modelo 10,58%, AFP Uno 10,69%, Planvital 11,16%, Habitat 11,27%, Capital 11,44%, Cuprum 11,44% y Provida 11,45%.
+                    </p>
+                </details>
+
+                <p class="text-sm text-gray-600 pt-2">¿Necesitas el monto exacto? La <a href="finiquito_calculator" class="font-semibold text-[#00382E] underline">calculadora de finiquito</a> incluye un ejemplo resuelto, los topes 2026 y el plazo de pago. Para tu sueldo mensual, usa la <a href="sueldo_liquido" class="font-semibold text-[#00382E] underline">calculadora de sueldo líquido</a>.</p>
             </div>
 
         </div>
     </section>
 
-    <!-- SECTION 6: EXACT TEALHQ ASYMMETRIC CURVED FOOTER (rounded-tl-[96px] + Pine Forest #00382E) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
         </main>
 
-<!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
-    <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->
     <footer class="no-print mt-16">
         <div class="teal-footer-curve">
             <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
@@ -2139,7 +2149,7 @@
                 <!-- Bottom Bar -->
                 <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
                     <div>
-                        &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
+                        &copy; 2026 Cálculo Laboral Chile. Fórmulas basadas en el Código del Trabajo y los dictámenes de la Dirección del Trabajo.
                     </div>
                     <div class="flex flex-wrap items-center justify-center gap-4">
                         <a href="terminos" class="hover:text-white transition-colors">Términos</a>
@@ -2149,8 +2159,8 @@
                         <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
                         <span>·</span>
                         <span class="inline-flex items-center gap-1 text-emerald-400 font-medium">
-                            <span class="material-icons text-xs" aria-hidden="true">verified</span>
-                            Fórmulas Conforme a DT
+                            <span class="material-icons text-xs" aria-hidden="true">menu_book</span>
+                            Basado en el Código del Trabajo
                         </span>
                     </div>
                 </div>
@@ -2190,7 +2200,7 @@
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_up';
             } else {
                 if (extraContainer) extraContainer.classList.add('hidden');
-                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 15 herramientas y kits (9 más)';
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 14 herramientas y kits (8 más)';
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_down';
                 
                 const catSection = document.getElementById('calculadoras');

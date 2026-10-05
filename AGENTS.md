@@ -153,7 +153,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
 * **Logo del footer:** contenedor ámbar `#FFB703`, isotipo `#00382E`, "Cálculo" en blanco y "Laboral" en `#FFB703` (ver sección 1.A).
 * **Estructura:** cuadrícula de 4 columnas (`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4`): Marca, Calculadoras (6 enlaces), Guías Legales (5 enlaces + "Ver todas las guías →") y Para Empresas (6 enlaces).
 * **Enlaces:** `text-white/80` con `hover:text-[#FFB703]`; enlaces destacados en `text-white` o `text-[#FFB703]`.
-* **Barra inferior:** `border-t border-white/10`, con leyenda legal, Términos, Privacidad, Disclaimer y el sello `Fórmulas Conforme a DT` en `text-emerald-400`.
+* **Barra inferior:** `border-t border-white/10`, con leyenda legal, Términos, Privacidad, Disclaimer y el sello `Basado en el Código del Trabajo` en `text-emerald-400`.
 * **Prohibido:** fondos `bg-slate-900` u otros oscuros distintos a `#00382E`, y el footer blanco antiguo. Copiar siempre el bloque de `index.html`.
 
 ```html
@@ -243,7 +243,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
                 <!-- Bottom Bar -->
                 <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
                     <div>
-                        &copy; 2026 Cálculo Laboral Chile. Fórmulas conformes al Código del Trabajo y dictámenes de la Dirección del Trabajo.
+                        &copy; 2026 Cálculo Laboral Chile. Fórmulas basadas en el Código del Trabajo y los dictámenes de la Dirección del Trabajo.
                     </div>
                     <div class="flex flex-wrap items-center justify-center gap-4">
                         <a href="terminos" class="hover:text-white transition-colors">Términos</a>
@@ -253,8 +253,8 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
                         <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
                         <span>·</span>
                         <span class="inline-flex items-center gap-1 text-emerald-400 font-medium">
-                            <span class="material-icons text-xs" aria-hidden="true">verified</span>
-                            Fórmulas Conforme a DT
+                            <span class="material-icons text-xs" aria-hidden="true">menu_book</span>
+                            Basado en el Código del Trabajo
                         </span>
                     </div>
                 </div>
