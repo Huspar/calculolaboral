@@ -82,6 +82,7 @@ El logotipo oficial está compuesto por un emblema de alto contraste con el **is
   * Dropdown *Calculadoras*: Debe incluir todas las herramientas vigentes:
     * `simulador-despido-injustificado-chile` (Simulador Despido Injustificado)
     * `sueldo_liquido` (Sueldo Líquido)
+    * `gratificacion-legal-chile` (Gratificación Legal)
     * `finiquito_calculator` (Finiquito)
     * `generador-finiquito-chile` (Generador Finiquito Word/PDF)
     * `calculadora-horas-extras` (Horas Extras)
