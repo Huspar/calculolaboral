@@ -20,7 +20,7 @@
     function css() {
         return [
             '@page { size: A4; margin: 13mm 14mm 12mm; }',
-            '.clr { font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; color: #111827; font-size: 9pt; line-height: 1.42; -webkit-print-color-adjust: exact; print-color-adjust: exact; }',
+            '.clr { font-family: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; color: #111827; font-size: 9pt; line-height: 1.42; -webkit-print-color-adjust: exact; print-color-adjust: exact; zoom: 0.93; }',
             '.clr *, .clr *::before, .clr *::after { box-sizing: border-box; }',
             '.clr .mono { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }',
             /* Encabezado */
@@ -64,9 +64,12 @@
             '.clr-note b.t { display: block; font-size: 7.6pt; color: #92400E; margin-bottom: 2pt; }',
             '.clr-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10pt; margin-top: 9pt; font-size: 7.5pt; color: #4B5563; }',
             '.clr-steps b { color: #111827; }',
-            '.clr-sponsor { display: flex; justify-content: space-between; align-items: center; gap: 10pt; margin-top: 10pt; padding-top: 7pt; border-top: 0.5pt dashed #D1D5DB; font-size: 7.3pt; color: #4B5563; }',
+            '.clr-sponsor { margin-top: 10pt; padding-top: 7pt; border-top: 0.5pt dashed #D1D5DB; font-size: 7.3pt; color: #4B5563; break-inside: avoid; }',
             '.clr-sponsor b { color: #111827; }',
-            '.clr-sponsor .url { font-family: "Geist Mono", ui-monospace, monospace; color: #00382E; white-space: nowrap; }',
+            '.clr-sponsor .clr-sp-txt { margin-bottom: 4pt; }',
+            '.clr-sponsor .clr-sp-banner { display: block; }',
+            '.clr-sponsor .clr-sp-banner img { display: block; width: 100%; height: auto; border: 0.5pt solid #E5E7EB; border-radius: 4pt; }',
+            '.clr-sponsor .url { display: block; margin-top: 3pt; text-align: right; font-family: "Geist Mono", ui-monospace, monospace; color: #00382E; text-decoration: underline; }',
             '.clr-foot { margin-top: 10pt; padding-top: 6pt; border-top: 0.5pt solid #E5E7EB; font-size: 7pt; color: #6B7280; line-height: 1.4; }',
             '.clr-foot .brand { color: #00382E; font-weight: 600; }'
         ].join('\n');

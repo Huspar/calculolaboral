@@ -273,15 +273,21 @@
         printSection.innerHTML = htmlContent;
         document.body.appendChild(printSection);
 
-        // Wait a tiny bit for render, then print
-        setTimeout(() => {
+        // Espera a que cargue el banner (máx. 2 s) y luego imprime
+        const imgs = Array.from(printSection.querySelectorAll('img')).map((img) => new Promise((ok) => {
+            if (img.complete) return ok();
+            img.addEventListener('load', ok);
+            img.addEventListener('error', ok);
+        }));
+        const tope = new Promise((ok) => setTimeout(ok, 2000));
+        Promise.race([Promise.all(imgs), tope]).then(() => setTimeout(() => {
             window.print();
             // Clean up print section after dialog close
             setTimeout(() => {
                 const sec = document.getElementById('print-section');
                 if (sec) sec.remove();
             }, 1000);
-        }, 100);
+        }, 100));
     }
 
     // 7.5 HELPER: envoltorio con la identidad de los informes (js/print_brand.js)
@@ -301,8 +307,13 @@
         return `<div class="clr-ind"><span>UF <b class="mono">${fmt(c.UF)}</b></span><span>UTM <b class="mono">${fmt(c.UTM)}</b></span><span>Sueldo mínimo <b class="mono">${fmt(c.IMM)}</b></span></div>`;
     }
 
+    // Banner de Itaú del informe: imagen clicable. Las URLs son absolutas para que la
+    // imagen cargue al imprimir y el enlace funcione en el PDF guardado.
     function sponsorHTML(question, text) {
-        return `<div class="clr-sponsor"><div><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div><span class="url">calculolaboral.cl/itau-informe</span></div>`;
+        const url = 'https://calculolaboral.cl/itau-informe';
+        return `<div class="clr-sponsor"><div class="clr-sp-txt"><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div>` +
+            `<a class="clr-sp-banner" href="${url}"><img src="https://calculolaboral.cl/assets/itau-cuenta-corriente-banner.jpg" width="728" height="90" alt="Banco Itaú: Plan Cuenta Corriente $0 costo de mantención"></a>` +
+            `<a class="url" href="${url}">Abre tu cuenta en calculolaboral.cl/itau-informe</a></div>`;
     }
 
     // 8. COMPILE FINIQUITO REPORT
