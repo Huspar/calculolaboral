@@ -26,7 +26,6 @@ OUT_XLSX = ROOT / "descargas" / "formato-liquidacion-de-sueldo.xlsx"
 OUT_DOCX = ROOT / "descargas" / "formato-liquidacion-de-sueldo.docx"
 
 FOREST = "00382E"
-AMBER = "FFB703"
 SLATE = "475569"
 
 IMM = 553553
@@ -95,7 +94,6 @@ def build_xlsx():
     tint = PatternFill("solid", fgColor="E8F0EE")
     soft = PatternFill("solid", fgColor="F1F5F4")
     entry_fill = PatternFill("solid", fgColor="FFFBEA")
-    forest_fill = PatternFill("solid", fgColor=FOREST)
     right = Alignment(horizontal="right", vertical="center")
     left = Alignment(horizontal="left", vertical="center")
 
@@ -232,18 +230,26 @@ def build_xlsx():
     for i, (label, f) in enumerate(bases, start=rb + 1):
         put(f"A{i}", label, size=9, color=ink, border=Border(bottom=hair))
         put(f"B{i}", f, size=9, align=right, fmt=MONEY, border=Border(bottom=hair))
+    # Recuadro del líquido: fondo casi blanco y borde grueso, para imprimir en blanco y negro
+    pale = PatternFill("solid", fgColor="F4F6F5")
     ws.merge_cells(f"D{rb}:E{rb}")
-    put(f"D{rb}", "LÍQUIDO A PAGAR", size=9, bold=True, color=AMBER, fill=forest_fill, align=Alignment(horizontal="left", vertical="center", indent=1))
-    ws[f"E{rb}"].fill = forest_fill
+    put(f"D{rb}", "LÍQUIDO A PAGAR", size=9, bold=True, color=ink, fill=pale,
+        align=Alignment(horizontal="left", vertical="center", indent=1))
     ws.merge_cells(f"D{rb + 1}:E{rb + 3}")
-    liquido = put(f"D{rb + 1}", f"={haberes}-{descuentos}", size=22, bold=True, color="FFFFFF",
-                  fill=forest_fill, align=Alignment(horizontal="center", vertical="center"), fmt=MONEY)
-    for r in range(rb + 1, rb + 5):
-        for c in "DE":
-            ws[f"{c}{r}"].fill = forest_fill
+    liquido = put(f"D{rb + 1}", f"={haberes}-{descuentos}", size=22, bold=True, color="000000",
+                  fill=pale, align=Alignment(horizontal="center", vertical="center"), fmt=MONEY)
     ws.merge_cells(f"D{rb + 4}:E{rb + 4}")
-    put(f"D{rb + 4}", "Son: ____________________________ pesos", size=8, color="D9E6E3", fill=forest_fill,
+    put(f"D{rb + 4}", "Son: ____________________________ pesos", size=8, color=ink, fill=pale,
         align=Alignment(horizontal="center", vertical="center"))
+    thick = Side(style="thick", color="1E293B")
+    for r in range(rb, rb + 5):
+        for c in "DE":
+            cell = ws[f"{c}{r}"]
+            cell.fill = pale
+            cell.border = Border(
+                top=thick if r == rb else None, bottom=thick if r == rb + 4 else None,
+                left=thick if c == "D" else None, right=thick if c == "E" else None,
+            )
 
     # Certificación, firmas y nota
     rc = rb + 7
@@ -492,10 +498,13 @@ def build_docx():
     _text(bases, "Bases de cálculo", size=6.5, bold=True, color=MUTED, caps=True)
     for line in ("Base imponible AFP y salud:  $", "Base seguro de cesantía:  $", "Base tributable (impuesto único):  $", "Valor UF: $                    Valor UTM: $"):
         _text(bases, line, size=8, color=INK, first=False).paragraph_format.space_before = Pt(3)
-    _shade(liq, FOREST)
-    _text(liq, "Líquido a pagar", size=7, bold=True, color=AMBER, caps=True)
-    _text(liq, "$", size=18, bold=True, color="FFFFFF", first=False).paragraph_format.space_before = Pt(4)
-    _text(liq, "Son: _______________________________ pesos", size=7.5, color="D9E6E3", first=False).paragraph_format.space_before = Pt(6)
+    # fondo casi blanco y borde grueso: se imprime bien en blanco y negro
+    _shade(liq, "F4F6F5")
+    edge = (24, INK)
+    _borders(liq, top=edge, bottom=edge, left=edge, right=edge)
+    _text(liq, "Líquido a pagar", size=7.5, bold=True, color=INK, caps=True)
+    _text(liq, "$", size=18, bold=True, color="000000", first=False).paragraph_format.space_before = Pt(4)
+    _text(liq, "Son: _______________________________ pesos", size=7.5, color=INK, first=False).paragraph_format.space_before = Pt(6)
     _text(k.rows[0].cells[1], "")
     _gap(doc, 8)
 
