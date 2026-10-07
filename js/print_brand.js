@@ -69,6 +69,10 @@
             '.clr-sponsor .clr-sp-txt { margin-bottom: 4pt; }',
             '.clr-sponsor .clr-sp-banner { display: block; }',
             '.clr-sponsor .clr-sp-banner img { display: block; width: 100%; height: auto; border: 0.5pt solid #E5E7EB; border-radius: 4pt; }',
+            '.clr-sponsor .clr-sp-alt { display: flex; align-items: center; gap: 10pt; padding: 8pt 11pt; border: 0.75pt solid #E5E7EB; border-radius: 4pt; font-size: 8.5pt; color: #111827; }',
+            '.clr-sponsor .clr-sp-alt b { font-size: 13pt; font-weight: 800; letter-spacing: -0.03em; color: #111827; }',
+            '.clr-sponsor .clr-sp-alt span { flex: 1; }',
+            '.clr-sponsor .clr-sp-alt em { font-style: normal; font-weight: 700; color: #00382E; white-space: nowrap; }',
             '.clr-sponsor .url { display: block; margin-top: 3pt; text-align: right; font-family: "Geist Mono", ui-monospace, monospace; color: #00382E; text-decoration: underline; }',
             '.clr-foot { margin-top: 10pt; padding-top: 6pt; border-top: 0.5pt solid #E5E7EB; font-size: 7pt; color: #6B7280; line-height: 1.4; }',
             '.clr-foot .brand { color: #00382E; font-weight: 600; }'
