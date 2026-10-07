@@ -173,7 +173,13 @@
         const downloadBtnFini = document.getElementById('download-pdf-btn');
         const downloadBtnSueldo = document.getElementById('download-pdf-btn-sueldo');
 
+        [downloadBtnFini, downloadBtnSueldo].forEach((btn) => {
+            if (btn) ['pointerenter', 'focus', 'touchstart'].forEach((ev) => btn.addEventListener(ev, preloadSponsor, { passive: true }));
+        });
+
         const downloadHandler = (calculatorType) => {
+            preloadSponsor();
+
             // Verify that calculator is calculated
             if (!isCalculated()) {
                 alert("Por favor, realiza una simulación primero ingresando tus datos para generar el reporte.");
@@ -273,14 +279,23 @@
         printSection.innerHTML = htmlContent;
         document.body.appendChild(printSection);
 
-        // Espera a que cargue el banner (máx. 2 s) y luego imprime
-        const imgs = Array.from(printSection.querySelectorAll('img')).map((img) => new Promise((ok) => {
-            if (img.complete) return ok();
-            img.addEventListener('load', ok);
-            img.addEventListener('error', ok);
-        }));
-        const tope = new Promise((ok) => setTimeout(ok, 2000));
-        Promise.race([Promise.all(imgs), tope]).then(() => setTimeout(() => {
+        // El banner se incrusta como data: URL (ya descargado al pulsar Descargar) y se
+        // decodifica antes de imprimir: así el diálogo de impresión, sobre todo en el
+        // celular, no deja el hueco vacío. Si no cargó (bloqueador, sin red), se cambia
+        // por un aviso de texto para que el PDF no muestre una imagen rota.
+        const tope = (ms) => new Promise((ok) => setTimeout(() => ok(null), ms));
+        const banners = Array.from(printSection.querySelectorAll('.clr-aviso-img img'));
+        Promise.race([preloadSponsor(), tope(3000)]).then((dataUrl) => Promise.all(banners.map((img) => {
+            if (dataUrl) img.src = dataUrl;
+            const listo = img.decode ? img.decode() : new Promise((ok, ko) => {
+                if (img.complete) return ok();
+                img.addEventListener('load', ok);
+                img.addEventListener('error', ko);
+            });
+            return Promise.race([listo, tope(2000)]).catch(() => {}).then(() => {
+                if (!img.complete || !img.naturalWidth) img.parentNode.innerHTML = sponsorFallbackHTML();
+            });
+        }))).then(() => setTimeout(() => {
             window.print();
             // Clean up print section after dialog close
             setTimeout(() => {
@@ -307,13 +322,37 @@
         return `<div class="clr-ind"><span>UF <b class="mono">${fmt(c.UF)}</b></span><span>UTM <b class="mono">${fmt(c.UTM)}</b></span><span>Sueldo mínimo <b class="mono">${fmt(c.IMM)}</b></span></div>`;
     }
 
-    // Banner de Itaú del informe: imagen clicable. Las URLs son absolutas para que la
-    // imagen cargue al imprimir y el enlace funcione en el PDF guardado.
+    // Banner de Itaú del informe: imagen clicable. La imagen sale del mismo dominio que la
+    // página y se precarga como data: URL al acercarse al botón Descargar; el enlace es
+    // absoluto para que funcione en el PDF guardado.
+    const SPONSOR_IMG = '/assets/informe-cuenta-itau.jpg';
+
+    function preloadSponsor() {
+        if (!preloadSponsor.p) {
+            preloadSponsor.p = fetch(SPONSOR_IMG)
+                .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
+                .then((blob) => new Promise((ok) => {
+                    const fr = new FileReader();
+                    fr.onload = () => ok(fr.result);
+                    fr.onerror = () => ok(null);
+                    fr.readAsDataURL(blob);
+                }))
+                .catch(() => null)
+                .then((dataUrl) => { if (!dataUrl) preloadSponsor.p = null; return dataUrl; });
+        }
+        return preloadSponsor.p;
+    }
+
     function sponsorHTML(question, text) {
         const url = 'https://calculolaboral.cl/itau-informe';
-        return `<div class="clr-sponsor"><div class="clr-sp-txt"><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div>` +
-            `<a class="clr-sp-banner" href="${url}"><img src="https://calculolaboral.cl/assets/itau-cuenta-corriente-banner.jpg" width="728" height="90" alt="Banco Itaú: Plan Cuenta Corriente $0 costo de mantención"></a>` +
+        const src = new URL(SPONSOR_IMG, window.location.href).href;
+        return `<div class="clr-aviso"><div class="clr-aviso-txt"><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div>` +
+            `<a class="clr-aviso-img" href="${url}"><img src="${src}" alt="Banco Itaú: Plan Cuenta Corriente $0 costo de mantención"></a>` +
             `<a class="url" href="${url}">Abre tu cuenta en calculolaboral.cl/itau-informe</a></div>`;
+    }
+
+    function sponsorFallbackHTML() {
+        return '<span class="clr-aviso-alt"><b>itaú</b><span>Cuenta Corriente <strong>$0 mantención</strong> · Ábrela en minutos, 100% online</span><em>Hazte cliente &rsaquo;</em></span>';
     }
 
     // 8. COMPILE FINIQUITO REPORT
