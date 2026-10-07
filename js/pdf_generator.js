@@ -279,19 +279,23 @@
         printSection.innerHTML = htmlContent;
         document.body.appendChild(printSection);
 
-        // Espera a que cargue el banner (máx. 3 s). Si no cargó (bloqueador, red lenta),
-        // lo reemplaza por un aviso de texto para que el PDF no muestre una imagen rota.
-        const imgs = Array.from(printSection.querySelectorAll('img')).map((img) => new Promise((ok) => {
-            if (img.complete) return ok();
-            img.addEventListener('load', ok);
-            img.addEventListener('error', ok);
-        }));
-        const tope = new Promise((ok) => setTimeout(ok, 3000));
-        Promise.race([Promise.all(imgs), tope]).then(() => {
-            printSection.querySelectorAll('.clr-sp-banner img').forEach((img) => {
+        // El banner se incrusta como data: URL (ya descargado al pulsar Descargar) y se
+        // decodifica antes de imprimir: así el diálogo de impresión, sobre todo en el
+        // celular, no deja el hueco vacío. Si no cargó (bloqueador, sin red), se cambia
+        // por un aviso de texto para que el PDF no muestre una imagen rota.
+        const tope = (ms) => new Promise((ok) => setTimeout(() => ok(null), ms));
+        const banners = Array.from(printSection.querySelectorAll('.clr-sp-banner img'));
+        Promise.race([preloadSponsor(), tope(3000)]).then((dataUrl) => Promise.all(banners.map((img) => {
+            if (dataUrl) img.src = dataUrl;
+            const listo = img.decode ? img.decode() : new Promise((ok, ko) => {
+                if (img.complete) return ok();
+                img.addEventListener('load', ok);
+                img.addEventListener('error', ko);
+            });
+            return Promise.race([listo, tope(2000)]).catch(() => {}).then(() => {
                 if (!img.complete || !img.naturalWidth) img.parentNode.innerHTML = sponsorFallbackHTML();
             });
-        }).then(() => setTimeout(() => {
+        }))).then(() => setTimeout(() => {
             window.print();
             // Clean up print section after dialog close
             setTimeout(() => {
@@ -319,15 +323,24 @@
     }
 
     // Banner de Itaú del informe: imagen clicable. La imagen sale del mismo dominio que la
-    // página (ya precargada al pulsar Descargar); el enlace es absoluto para que funcione
-    // en el PDF guardado.
+    // página y se precarga como data: URL al acercarse al botón Descargar; el enlace es
+    // absoluto para que funcione en el PDF guardado.
     const SPONSOR_IMG = '/assets/itau-cuenta-corriente-banner.jpg';
 
     function preloadSponsor() {
-        if (preloadSponsor.done) return;
-        preloadSponsor.done = true;
-        const img = new Image();
-        img.src = SPONSOR_IMG;
+        if (!preloadSponsor.p) {
+            preloadSponsor.p = fetch(SPONSOR_IMG)
+                .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
+                .then((blob) => new Promise((ok) => {
+                    const fr = new FileReader();
+                    fr.onload = () => ok(fr.result);
+                    fr.onerror = () => ok(null);
+                    fr.readAsDataURL(blob);
+                }))
+                .catch(() => null)
+                .then((dataUrl) => { if (!dataUrl) preloadSponsor.p = null; return dataUrl; });
+        }
+        return preloadSponsor.p;
     }
 
     function sponsorHTML(question, text) {
