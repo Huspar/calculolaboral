@@ -138,6 +138,11 @@ module.exports = async (req, res) => {
             return res.status(500).json({ error: 'Servicio de correo no configurado.' });
         }
 
+        // El documento real pesa ~30 KB; un cuerpo mucho mayor no viene del generador
+        if (typeof htmlContent === 'string' && htmlContent.length > 300000) {
+            return res.status(413).json({ error: 'Documento demasiado grande.' });
+        }
+
         // Construir archivo Word (.doc compatible con Word y Google Docs)
         const docBodyContent = typeof htmlContent === 'string' && htmlContent.length > 50
             ? htmlContent
@@ -167,7 +172,7 @@ module.exports = async (req, res) => {
         const filenameSafe = `Finiquito_${cleanTrabajador.replace(/[^a-zA-Z0-9]/g, '_')}_${cleanTrabajadorRut.replace(/[^a-zA-Z0-9]/g, '')}.doc`;
 
         // 1. Email para el Comprador
-        const buyerSubject = `Tu Finiquito Notarial Completo [${cleanTrabajador}] - Pack Legal ($12.990)`;
+        const buyerSubject = `Tu finiquito para notaría: ${cleanTrabajador}`;
         const buyerHtml = `<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8"></head>
@@ -175,19 +180,19 @@ module.exports = async (req, res) => {
     <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
         
         <div style="margin-bottom: 24px; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px;">
-            <h1 style="color: #0284c7; font-size: 22px; font-weight: 800; margin: 0 0 4px;">Cálculo<span style="color: #0ea5e9;">Laboral</span></h1>
-            <p style="color: #64748b; font-size: 13px; margin: 0;">Generador de Finiquitos y Pack de Despido Notarial Chile 2026</p>
+            <h1 style="color: #0f172a; font-size: 22px; font-weight: 800; margin: 0 0 4px;">Cálculo<span style="color: #00382E;">Laboral</span></h1>
+            <p style="color: #64748b; font-size: 13px; margin: 0;">Generador de finiquitos para notaría · Chile 2026</p>
         </div>
 
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Estimado(a) empleador(a) de ${escapeHtml(cleanEmpresa)},</p>
         
         <p style="font-size: 14px; color: #334155; margin: 0 0 18px;">
-            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Pack Finiquito Notarial Completo</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.doc editable)</strong> listo para imprimir o personalizar.
+            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría (Word + PDF)</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.doc editable)</strong> listo para imprimir o personalizar.
         </p>
 
         <!-- Tarjeta de Resumen del Documento -->
         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
-            <h2 style="color: #0369a1; font-size: 14px; font-weight: 700; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <h2 style="color: #00382E; font-size: 14px; font-weight: 700; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.05em;">
                 📄 Datos del Finiquito Emitido:
             </h2>
             <table style="width: 100%; font-size: 13px; color: #334155; border-collapse: collapse;">
@@ -214,7 +219,7 @@ module.exports = async (req, res) => {
 
         <!-- Botón de acceso Web durante 48 horas -->
         <div style="text-align: center; margin: 28px 0;">
-            <a href="${relink}" style="background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 13px; font-weight: bold; border-radius: 10px; display: inline-block;">
+            <a href="${relink}" style="background-color: #00382E; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 13px; font-weight: bold; border-radius: 10px; display: inline-block;">
                 Ver / Re-descargar en la Web (Acceso 48 Horas)
             </a>
             <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
@@ -223,14 +228,17 @@ module.exports = async (req, res) => {
         </div>
 
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0 16px;">
+        <p style="font-size: 12px; color: #475569; margin: 0 0 12px;">
+            Es un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal. Si tu caso tiene particularidades, revísalo con un abogado antes de firmar.
+        </p>
         <p style="font-size: 11px; color: #94a3b8; margin: 0; text-align: center;">
-            Cálculo Laboral Chile · calculolaboral.cl · Documento referencial tipo conforme al Artículo 177 del Código del Trabajo.
+            Cálculo Laboral Chile · calculolaboral.cl
         </p>
     </div>
 </body>
 </html>`;
 
-        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el Finiquito Notarial de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.doc editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\n${relink}\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.doc editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {
@@ -249,7 +257,9 @@ module.exports = async (req, res) => {
                 headers: {
                     'Authorization': `Bearer ${resendApiKey}`,
                     'Content-Type': 'application/json',
-                    'User-Agent': 'calculolaboral-cl/1.0'
+                    'User-Agent': 'calculolaboral-cl/1.0',
+                    // Un solo envío por orden: el desbloqueo no sirve para mandar correos a terceros
+                    'Idempotency-Key': `finiquito-${u.o}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -270,6 +280,10 @@ module.exports = async (req, res) => {
             ]
         );
 
+        if (buyerResp.status === 409) {
+            // Misma orden con otro destinatario o contenido: ya se envió una vez
+            return res.status(409).json({ error: 'Este finiquito ya se envió por correo. Usa el enlace del correo o descárgalo desde la página.' });
+        }
         if (!buyerResp.ok) {
             const errText = await buyerResp.text();
             console.error('Resend error dispatching finiquito to buyer:', buyerResp.status, errText);

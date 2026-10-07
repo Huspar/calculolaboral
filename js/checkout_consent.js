@@ -225,6 +225,28 @@
         return null;
     }
 
+    // Venta del generador en Analytics, una vez por orden (los kits la cuentan en /compra-exitosa)
+    var GENERADORES = {
+        finiquito: { precio: 12990, nombre: 'Finiquito para Notaría (Word + PDF)' },
+        contrato: { precio: 12990, nombre: 'Contrato de Trabajo a la Medida (Word + PDF)' },
+        informe: { precio: 4990, nombre: 'Informe Ejecutivo de Costo Empresa (PDF)' }
+    };
+
+    function trackPurchase(u) {
+        var g = GENERADORES[u.p];
+        if (!g || typeof window.gtag !== 'function') return;
+        try {
+            if (localStorage.getItem('cl_purchase_' + u.o) === '1') return;
+            localStorage.setItem('cl_purchase_' + u.o, '1');
+        } catch (e) {}
+        window.gtag('event', 'purchase', {
+            transaction_id: u.o,
+            value: g.precio,
+            currency: 'CLP',
+            items: [{ item_id: u.p, item_name: g.nombre, price: g.precio, quantity: 1 }]
+        });
+    }
+
     function unlockFromUrl(product) {
         var q = new URLSearchParams(window.location.search);
         if (q.get('p') !== product || !q.get('sig')) return Promise.resolve(storedUnlock(product));
@@ -242,6 +264,7 @@
             if (!d || !d.ok) return storedUnlock(product);
             u.expiresAt = d.expiresAt;
             try { localStorage.setItem('cl_unlock_' + product, JSON.stringify(u)); } catch (e) {}
+            trackPurchase(u);
             return u;
         }).catch(function () { return storedUnlock(product); });
     }

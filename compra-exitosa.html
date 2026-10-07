@@ -895,13 +895,19 @@ body { overflow-x: hidden; }
             }
 
             var estado = q.get('estado');
+            // Los generadores no envían un kit: llega un correo con el enlace para volver al documento
+            var GENERADORES = { finiquito: 'tu finiquito', contrato: 'tu contrato', informe: 'tu informe' };
+            var doc = GENERADORES[q.get('p')];
+            var entrega = doc
+                ? 'te enviaremos un correo con el enlace para volver a ' + doc + ' y descargarlo'
+                : PRODUCTOS[q.get('p')] ? 'te enviaremos el kit por correo' : 'te enviaremos tu compra por correo';
             if (estado === 'pendiente') {
                 return sinCompra('Tu pago está en proceso',
-                    'Flow aún no confirma el pago. Apenas lo haga, te enviaremos el kit por correo. Si en una hora no te llega, escríbenos a <strong>contacto@calculolaboral.cl</strong>.');
+                    'Flow aún no confirma el pago. Apenas lo haga, ' + entrega + '. Si en una hora no te llega, escríbenos a <strong>contacto@calculolaboral.cl</strong>.');
             }
             if (estado === 'error') {
                 return sinCompra('No pudimos confirmar tu pago',
-                    'Si el cargo aparece en tu banco, el kit te llegará por correo en unos minutos. Si no, escríbenos a <strong>contacto@calculolaboral.cl</strong> y lo revisamos.');
+                    'Si el cargo aparece en tu banco, en unos minutos ' + entrega + '. Si no, escríbenos a <strong>contacto@calculolaboral.cl</strong> y lo revisamos.');
             }
 
             var p = PRODUCTOS[q.get('p')];

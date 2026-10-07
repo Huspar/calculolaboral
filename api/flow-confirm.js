@@ -4,7 +4,7 @@
  * Flow reintenta si no recibe 200; los correos usan una llave de idempotencia
  * por orden, asi un reintento no duplica el envio.
  */
-const { paymentStatus, deliver, readToken } = require('./_flow');
+const { paymentStatus, deliver, notifyOwner, readToken } = require('./_flow');
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -18,6 +18,10 @@ module.exports = async (req, res) => {
         const pay = await paymentStatus(token);
         if (pay.paid && pay.email) {
             await deliver(pay);
+        } else if (pay.paid) {
+            // Pagado pero sin correo al que entregar: el dueño lo entrega a mano
+            console.error('flow-confirm: pago confirmado sin correo', pay.commerceOrder);
+            await notifyOwner(pay, 'Venta confirmada por Flow, pero sin correo del comprador: entrégala a mano.');
         } else {
             console.info('flow-confirm: pago no confirmado', pay.commerceOrder, 'estado', pay.status);
         }
