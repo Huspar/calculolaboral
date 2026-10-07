@@ -284,7 +284,7 @@
         // celular, no deja el hueco vacío. Si no cargó (bloqueador, sin red), se cambia
         // por un aviso de texto para que el PDF no muestre una imagen rota.
         const tope = (ms) => new Promise((ok) => setTimeout(() => ok(null), ms));
-        const banners = Array.from(printSection.querySelectorAll('.clr-sp-banner img'));
+        const banners = Array.from(printSection.querySelectorAll('.clr-aviso-img img'));
         Promise.race([preloadSponsor(), tope(3000)]).then((dataUrl) => Promise.all(banners.map((img) => {
             if (dataUrl) img.src = dataUrl;
             const listo = img.decode ? img.decode() : new Promise((ok, ko) => {
@@ -325,7 +325,7 @@
     // Banner de Itaú del informe: imagen clicable. La imagen sale del mismo dominio que la
     // página y se precarga como data: URL al acercarse al botón Descargar; el enlace es
     // absoluto para que funcione en el PDF guardado.
-    const SPONSOR_IMG = '/assets/itau-cuenta-corriente-banner.jpg';
+    const SPONSOR_IMG = '/assets/informe-cuenta-itau.jpg';
 
     function preloadSponsor() {
         if (!preloadSponsor.p) {
@@ -346,13 +346,13 @@
     function sponsorHTML(question, text) {
         const url = 'https://calculolaboral.cl/itau-informe';
         const src = new URL(SPONSOR_IMG, window.location.href).href;
-        return `<div class="clr-sponsor"><div class="clr-sp-txt"><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div>` +
-            `<a class="clr-sp-banner" href="${url}"><img src="${src}" width="728" height="90" alt="Banco Itaú: Plan Cuenta Corriente $0 costo de mantención"></a>` +
+        return `<div class="clr-aviso"><div class="clr-aviso-txt"><b>Publicidad · Banco Itaú.</b> ${question} ${text}</div>` +
+            `<a class="clr-aviso-img" href="${url}"><img src="${src}" alt="Banco Itaú: Plan Cuenta Corriente $0 costo de mantención"></a>` +
             `<a class="url" href="${url}">Abre tu cuenta en calculolaboral.cl/itau-informe</a></div>`;
     }
 
     function sponsorFallbackHTML() {
-        return '<span class="clr-sp-alt"><b>itaú</b><span>Cuenta Corriente <strong>$0 mantención</strong> · Ábrela en minutos, 100% online</span><em>Hazte cliente &rsaquo;</em></span>';
+        return '<span class="clr-aviso-alt"><b>itaú</b><span>Cuenta Corriente <strong>$0 mantención</strong> · Ábrela en minutos, 100% online</span><em>Hazte cliente &rsaquo;</em></span>';
     }
 
     // 8. COMPILE FINIQUITO REPORT
