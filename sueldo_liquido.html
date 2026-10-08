@@ -416,7 +416,7 @@
         /* Modo líquido -> bruto (prefijo sl-) */
         .sl-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; padding: .3rem; background: #f1f5f4; border-radius: 1rem; }
         .sl-mode { display: block; text-align: center; padding: .6rem .5rem; border-radius: .8rem; font-size: .8rem; font-weight: 700; color: #475569; transition: background-color .15s ease, color .15s ease; }
-        .sl-mode span { display: block; font-size: .68rem; font-weight: 500; color: #64748b; margin-top: .1rem; }
+        .sl-mode span { display: block; font-size: .68rem; font-weight: 500; color: #475569; margin-top: .1rem; }
         input:checked + .sl-mode { background: #ffffff; color: #00382E; box-shadow: 0 1px 3px rgba(15,23,42,.12); }
         input:focus-visible + .sl-mode { outline: 2px solid #00382E; outline-offset: 2px; }
         .sl-inverse { border: 1.5px solid #00382E; background: #ecf5f2; border-radius: 1rem; padding: .9rem 1rem; }
@@ -437,9 +437,9 @@
             </div>
             <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
-                <span class="text-white/20">|</span>
+                <span class="text-white/50">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$72.151</strong></span>
-                <span class="text-white/20">|</span>
+                <span class="text-white/50">|</span>
                 <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
             </div>
         </div>
@@ -713,9 +713,9 @@
         <div class="mb-8">
             <nav class="text-xs text-slate-500 font-medium mb-3 flex items-center gap-1.5" aria-label="Breadcrumb">
                 <a href="./" class="hover:text-[#00382E] transition-colors">Inicio</a>
-                <span class="text-slate-300">/</span>
+                <span class="text-slate-500">/</span>
                 <span class="text-slate-500">Herramientas</span>
-                <span class="text-slate-300">/</span>
+                <span class="text-slate-500">/</span>
                 <span class="text-slate-900 font-semibold">Calculadora de Sueldo Líquido</span>
             </nav>
 
@@ -822,7 +822,7 @@
                                     <button type="button" id="btn-indefinido" class="flex-1 py-1.5 px-3 rounded-lg bg-primary text-white text-xs font-bold transition-all outline-none cursor-pointer">
                                         Indefinido
                                     </button>
-                                    <button type="button" id="btn-plazo" class="flex-1 py-1.5 px-3 rounded-lg text-slate-500 hover:text-slate-900 bg-transparent text-xs font-bold transition-all outline-none cursor-pointer">
+                                    <button type="button" id="btn-plazo" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 hover:text-slate-900 bg-transparent text-xs font-bold transition-all outline-none cursor-pointer">
                                         Plazo Fijo
                                     </button>
                                 </div>
@@ -967,7 +967,7 @@
                             </div>
                             <div class="flex items-center justify-between pt-2 text-xs">
                                 <span class="text-slate-500 font-medium">Total descuentos aplicados:</span>
-                                <span id="headerTotalDiscounts" class="font-bold text-rose-600 font-mono-num">-$0</span>
+                                <span id="headerTotalDiscounts" class="font-bold text-rose-700 font-mono-num">-$0</span>
                             </div>
                         </div>
 
@@ -1362,15 +1362,15 @@
                                     <span class="text-slate-600">Sueldo Bruto:</span>
                                     <span class="font-mono-num font-bold text-slate-900">$553.553</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>AFP Modelo (10,58%):</span>
                                     <span class="font-mono-num">-$58.566</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>Fonasa (7,00%):</span>
                                     <span class="font-mono-num">-$38.749</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>AFC Indefinido (0,60%):</span>
                                     <span class="font-mono-num">-$3.321</span>
                                 </div>
@@ -1404,15 +1404,15 @@
                                     <span class="text-slate-600">Sueldo Bruto Imponible:</span>
                                     <span class="font-mono-num font-bold text-slate-900">$1.000.000</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>AFP Habitat (11,27%):</span>
                                     <span class="font-mono-num">-$112.700</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>Salud 7%:</span>
                                     <span class="font-mono-num">-$70.000</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>AFC Indefinido (0,60%):</span>
                                     <span class="font-mono-num">-$6.000</span>
                                 </div>
@@ -1443,19 +1443,19 @@
                                     <span class="text-slate-600">Sueldo Bruto Imponible:</span>
                                     <span class="font-mono-num font-bold text-slate-900">$2.200.000</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>AFP Capital (11,44%):</span>
                                     <span class="font-mono-num">-$251.680</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>Salud 7%:</span>
                                     <span class="font-mono-num">-$154.000</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600">
+                                <div class="flex justify-between items-center pt-2 text-rose-700">
                                     <span>AFC Indefinido (0,60%):</span>
                                     <span class="font-mono-num">-$13.200</span>
                                 </div>
-                                <div class="flex justify-between items-center pt-2 text-rose-600 font-semibold">
+                                <div class="flex justify-between items-center pt-2 text-rose-700 font-semibold">
                                     <span>Impuesto Único (SII):</span>
                                     <span class="font-mono-num" data-iusc="1781120">-$32.283</span>
                                 </div>
@@ -1750,43 +1750,43 @@
           <tbody class="divide-y divide-slate-100 text-slate-700 font-mono-num">
             <tr>
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Cotización Previsional Obligatoria (AFP)</td>
-              <td id="print-row-salary-afp" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-afp" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr>
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Cotización Legal de Salud (7% Fonasa / Isapre)</td>
-              <td id="print-row-salary-health" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-health" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr>
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Seguro de Cesantía (AFC Trabajador)</td>
-              <td id="print-row-salary-afc" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-afc" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr>
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Impuesto de Segunda Categoría (SII)</td>
-              <td id="print-row-salary-tax" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-tax" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr id="print-row-salary-ccaf-container" class="hidden bg-slate-50">
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Descuento CCAF (Caja de Compensación)</td>
-              <td id="print-row-salary-ccaf" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-ccaf" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr id="print-row-salary-apv-container" class="hidden bg-slate-50">
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Descuento APV (Ahorro Previsional Voluntario)</td>
-              <td id="print-row-salary-apv" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-apv" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr id="print-row-salary-loans-container" class="hidden bg-slate-50">
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Descuento por Préstamos / Mutuales</td>
-              <td id="print-row-salary-loans" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-loans" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr id="print-row-salary-pension-container" class="hidden bg-slate-50">
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Descuento por Pensión Alimenticia</td>
-              <td id="print-row-salary-pension" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-pension" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr id="print-row-salary-sindicato-container" class="hidden bg-slate-50">
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Cuota Sindical</td>
-              <td id="print-row-salary-sindicato" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-sindicato" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
             <tr id="print-row-salary-other-container" class="hidden bg-slate-50">
               <td class="py-3 px-4 font-semibold font-sans text-slate-700">Otros Descuentos Autorizados</td>
-              <td id="print-row-salary-other" class="py-3 px-4 text-right font-bold text-rose-600">-$ —</td>
+              <td id="print-row-salary-other" class="py-3 px-4 text-right font-bold text-rose-700">-$ —</td>
             </tr>
           </tbody>
           <tfoot>

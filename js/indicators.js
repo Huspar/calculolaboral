@@ -349,7 +349,7 @@ const IndicatorsService = {
             html += `
                 <tr class="border-b border-slate-100 hover:bg-slate-50/90 transition-colors">
                     <td class="py-1.5 px-1 sm:px-2 text-slate-700 font-medium text-xs sm:text-xs whitespace-nowrap">${dateStr}</td>
-                    <td class="py-1.5 px-1 sm:px-2 text-emerald-600 font-bold font-mono text-xs sm:text-xs text-right whitespace-nowrap">${valStr}</td>
+                    <td class="py-1.5 px-1 sm:px-2 text-emerald-700 font-bold font-mono text-xs sm:text-xs text-right whitespace-nowrap">${valStr}</td>
                 </tr>
             `;
         });

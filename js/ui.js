@@ -844,7 +844,7 @@ function updateCalculations() {
 
                 const icon = document.createElement('span');
                 icon.textContent = '⚠️';
-                icon.className = 'flex-shrink-0 text-sm mt-0.5 text-amber-600';
+                icon.className = 'flex-shrink-0 text-sm mt-0.5 text-amber-700';
 
                 const text = document.createElement('p');
                 text.className = 'text-xs text-amber-950 leading-relaxed font-normal m-0';

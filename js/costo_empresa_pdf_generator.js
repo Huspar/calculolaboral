@@ -640,7 +640,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold text-slate-700">Reserva Pasivos (Vacaciones + Finiquito)</td>
-                                <td class="font-mono font-semibold text-amber-700 bg-forest-50/50">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-600 block">(Vac. + IAS 8,33%)</span></td>
+                                <td class="font-mono font-semibold text-amber-700 bg-forest-50/50">+${formatCLP(ind.totalProvisiones)} <span class="text-[9px] text-amber-700 block">(Vac. + IAS 8,33%)</span></td>
                                 <td class="font-mono font-semibold text-amber-700">+${formatCLP(plz.totalProvisiones)} <span class="text-[9px] text-slate-400 block">(Solo Vacaciones)</span></td>
                                 <td class="font-mono text-slate-400">$0 aparente</td>
                             </tr>

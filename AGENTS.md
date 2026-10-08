@@ -279,7 +279,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
    * **Texto principal:** `text-slate-900` para títulos principales y `text-slate-700` / `text-slate-600` para textos secundarios.
    * **Acentos:** el verde bosque es el color de marca, con su escala `forest-50` a `forest-950` en `tailwind.config.js`. Enlaces y acciones secundarias en `text-forest-600`. **Prohibido** usar `sky-*`, `blue-*`, `indigo-*`, `violet-*`, `purple-*` u `orange-*`, y los degradados de color (usar `.cl-forest-panel`).
    * **Capa compartida:** toda página enlaza `/assets/css/polish.css` al final del `<head>` y `/js/motion.js` con `defer` antes de `</body>` (ver `DESIGN.md`, sección "Capa compartida y movimiento").
-   * **Alertas y Riesgo:** `bg-rose-50` / `border-rose-200` / `text-rose-600` para advertencias laborales, nulidad de despido y demandas.
+   * **Alertas y Riesgo:** `bg-rose-50` / `border-rose-200` / `text-rose-700` (el 600 no llega al contraste AA sobre fondos con tinte) para advertencias laborales, nulidad de despido y demandas.
    * **Validación y Éxito:** `bg-emerald-50` / `text-emerald-700` para certificaciones DT y confirmaciones.
 3. **Contraste Accesible:** Todo botón o enlace con fondo de color (`bg-forest-800`, `bg-rose-600`, `bg-slate-900`, `bg-emerald-600`) DEBE incluir explícitamente `!text-white` o `style="color: #ffffff !important;"` para evitar texto oscuro ilegible.
 

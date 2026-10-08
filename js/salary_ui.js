@@ -287,15 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateContractUI = () => {
         if (!inputs.btnIndefinido || !inputs.btnPlazo) return;
         if (contractType === 'indefinido') {
-            inputs.btnIndefinido.classList.remove('text-slate-500', 'bg-transparent');
+            inputs.btnIndefinido.classList.remove('text-slate-600', 'bg-transparent');
             inputs.btnIndefinido.classList.add('bg-primary', 'text-white', 'shadow-xs');
             inputs.btnPlazo.classList.remove('bg-primary', 'text-white', 'shadow-xs');
-            inputs.btnPlazo.classList.add('text-slate-500', 'bg-transparent');
+            inputs.btnPlazo.classList.add('text-slate-600', 'bg-transparent');
         } else {
-            inputs.btnPlazo.classList.remove('text-slate-500', 'bg-transparent');
+            inputs.btnPlazo.classList.remove('text-slate-600', 'bg-transparent');
             inputs.btnPlazo.classList.add('bg-primary', 'text-white', 'shadow-xs');
             inputs.btnIndefinido.classList.remove('bg-primary', 'text-white', 'shadow-xs');
-            inputs.btnIndefinido.classList.add('text-slate-500', 'bg-transparent');
+            inputs.btnIndefinido.classList.add('text-slate-600', 'bg-transparent');
         }
     };
 
