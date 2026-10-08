@@ -180,6 +180,24 @@
     document.addEventListener('click', onLinkClick, true);
     document.addEventListener('auxclick', onLinkClick, true);
 
+    /*
+     * Medicion del embudo de los generadores pagados (GA4). Los kits miden begin_checkout en
+     * su propia pagina; aqui quedan los generadores. Los precios deben coincidir con api/_flow.js.
+     */
+    var GA_ITEMS = {
+        finiquito: { item_id: 'GF', item_name: 'Generador de Finiquito', price: 12990 },
+        contrato: { item_id: 'GC', item_name: 'Generador de Contrato de Trabajo', price: 12990 },
+        informe: { item_id: 'IC', item_name: 'Informe Ejecutivo de Costo Empresa', price: 4990 }
+    };
+
+    function track(eventName, product) {
+        var item = GA_ITEMS[product];
+        if (!item || typeof window.gtag !== 'function') return;
+        try {
+            window.gtag('event', eventName, { currency: 'CLP', value: item.price, items: [item] });
+        } catch (e) {}
+    }
+
     /**
      * Compra (kit o generador): aviso, pago creado en el servidor (/api/checkout) y salida a Flow.
      * buyer: { email, nombre, empresa, telefono, rubro }
@@ -194,6 +212,7 @@
         }
         confirm(function (email) {
             if (typeof options.onAccept === 'function') options.onAccept();
+            track('begin_checkout', product);
             var payload = { product: product };
             for (var k in buyer) if (Object.prototype.hasOwnProperty.call(buyer, k)) payload[k] = buyer[k];
             if (options.askEmail) payload.email = email;
@@ -246,5 +265,5 @@
         }).catch(function () { return storedUnlock(product); });
     }
 
-    window.CLCheckout = { go: go, confirm: confirm, buyKit: buyKit, unlockFromUrl: unlockFromUrl, storedUnlock: storedUnlock };
+    window.CLCheckout = { go: go, confirm: confirm, buyKit: buyKit, track: track, unlockFromUrl: unlockFromUrl, storedUnlock: storedUnlock };
 })();

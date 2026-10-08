@@ -42,3 +42,9 @@ Este documento registra todas las intervenciones SEO realizadas en la plataforma
 | 2026-09-18 | `/compra-exitosa`, `/index.html`, `/calculadora-horas-extras`, `/sueldo_liquido`, `/finiquito_calculator`, `/generador-anexo-40-horas` | Activación integral del Funnel B2B Kit Blindaje Pyme ($19.990 CLP): tracking e-commerce `purchase` en GA4, callout cards de blindaje laboral en calculadoras principales, enlaces permanentes en menú/footer y upsell post-generación de anexo 40h. | Romper la barrera de 0 conversiones canalizando a empleadores, contadores y encargados de RRHH que utilizan las calculadoras directamente a la solución comercial de blindaje DT sin intrusión ni impacto en SEO/CLS. |
 
 
+
+## Octubre 2026 - Medición del embudo de los generadores pagados
+
+| Fecha | URL/Recurso | Cambio Específico | Hipótesis / Métrica Esperada a Mover |
+| :--- | :--- | :--- | :--- |
+| 2026-10-08 | `/generador-finiquito-chile`, `/generador-contrato-trabajo-chile`, `/js/checkout_consent.js` | Eventos GA4 `view_item` (al cargar la página) y `begin_checkout` (al aceptar el aviso de retracto, en `CLCheckout.buyKit`) para los generadores de finiquito, contrato e informe de costo empresa. Antes solo medían `purchase`. | Sin cambio de tráfico ni ventas: es medición. Métrica: embudo `view_item` → `begin_checkout` → `purchase` por producto en GA4 (línea base 90 días: 11 sesiones a `generador-finiquito-chile`; 1 venta en el sitio, el Kit Ley 21.719). |
