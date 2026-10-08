@@ -202,6 +202,31 @@
         try { window.gtag('event', eventName, data); } catch (e) {}
     }
 
+    /*
+     * Clic en un llamado a la accion de una calculadora o guia: <a data-cta="producto" data-cta-slot="lugar">.
+     * "producto" es el item_id de GA_ITEMS (blindaje, finiquito...) o un identificador libre (anexo-40h,
+     * costo-empresa, portal-empleadores) con data-cta-name. Se envia select_promotion de GA4.
+     */
+    function onCtaClick(e) {
+        if (e.defaultPrevented || (e.type === 'auxclick' && e.button !== 1)) return;
+        var a = e.target.closest && e.target.closest('a[data-cta]');
+        if (!a || typeof window.gtag !== 'function') return;
+        var slug = a.getAttribute('data-cta');
+        var item = GA_ITEMS[slug];
+        var data = {
+            promotion_id: slug,
+            promotion_name: item ? item.item_name : (a.getAttribute('data-cta-name') || slug),
+            creative_slot: a.getAttribute('data-cta-slot') || '',
+            location_id: window.location.pathname,
+            transport_type: 'beacon'
+        };
+        if (item) data.items = [{ item_id: item.item_id, item_name: item.item_name, price: item.price, quantity: 1 }];
+        try { window.gtag('event', 'select_promotion', data); } catch (err) {}
+    }
+
+    document.addEventListener('click', onCtaClick, true);
+    document.addEventListener('auxclick', onCtaClick, true);
+
     /**
      * Compra (kit o generador): aviso, pago creado en el servidor (/api/checkout) y salida a Flow.
      * buyer: { email, nombre, empresa, telefono, rubro }
