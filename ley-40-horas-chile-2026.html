@@ -1187,7 +1187,7 @@ body { overflow-x: hidden; }
 <p class="text-sm text-slate-600 m-0 leading-relaxed">Genera gratis en línea el anexo legal obligatorio para reducir la jornada de tu personal a 42 horas conforme al Art. 11 del Código del Trabajo.</p>
 </div>
 </div>
-<a class="btn-dark-pill inline-flex items-center justify-center gap-2 !text-white font-bold -500/15 transition-all hover:scale-[1.01] active:scale-95 !no-underline cursor-pointer" href="generador-anexo-40-horas" style="background-color: #0F5E4F !important; color: #ffffff !important; box-shadow: 0 4px 14px 0 rgba(15, 94, 79, 0.35) !important;">
+<a class="btn-dark-pill inline-flex items-center justify-center gap-2 !text-white font-bold -500/15 transition-all hover:scale-[1.01] active:scale-95 !no-underline cursor-pointer" href="generador-anexo-40-horas" data-cta="anexo-40h" data-cta-name="Anexo de jornada 42 horas (gratis)" data-cta-slot="guia-cabecera" style="background-color: #0F5E4F !important; color: #ffffff !important; box-shadow: 0 4px 14px 0 rgba(15, 94, 79, 0.35) !important;">
 <span style="color: #ffffff !important;">Crear Anexo Gratis</span>
 <span class="material-icons text-sm" style="color: #ffffff !important;">arrow_forward</span>
 </a>
@@ -1321,7 +1321,7 @@ body { overflow-x: hidden; }
 <p class="text-sm text-slate-600 m-0 mt-1 leading-relaxed">Genera automáticamente el anexo legal obligatorio para adecuar los contratos a la jornada de 42 horas conforme al Código del Trabajo (descarga en PDF o Word gratis).</p>
 </div>
 </div>
-<a class="btn-dark-pill shrink-0 inline-flex items-center justify-center gap-2 !text-white font-bold text-xs -600/20 transition-all whitespace-nowrap active:scale-95 cursor-pointer" href="generador-anexo-40-horas" style="background-color: #0F5E4F !important; color: #ffffff !important; text-decoration: none !important;">
+<a class="btn-dark-pill shrink-0 inline-flex items-center justify-center gap-2 !text-white font-bold text-xs -600/20 transition-all whitespace-nowrap active:scale-95 cursor-pointer" href="generador-anexo-40-horas" data-cta="anexo-40h" data-cta-name="Anexo de jornada 42 horas (gratis)" data-cta-slot="guia-seccion-1" style="background-color: #0F5E4F !important; color: #ffffff !important; text-decoration: none !important;">
 <span style="color: #ffffff !important;">Crear Anexo 42h (Gratis)</span>
 <span class="material-icons text-xs" style="color: #ffffff;">arrow_forward</span>
 </a>
@@ -1416,9 +1416,22 @@ body { overflow-x: hidden; }
 <strong>¿Vas a pactar la jornada 4×3 o el horario de 42 horas?</strong> El acuerdo debe constar en un anexo firmado.
                         </p>
 </div>
-<a class="btn-dark-pill shrink-0 text-xs font-bold text-forest-700 hover:text-forest-800 bg-white border border-slate-200 .5 transition-colors flex items-center gap-1.5" href="generador-anexo-40-horas">
+<a class="btn-dark-pill shrink-0 text-xs font-bold text-forest-700 hover:text-forest-800 bg-white border border-slate-200 .5 transition-colors flex items-center gap-1.5" href="generador-anexo-40-horas" data-cta="anexo-40h" data-cta-name="Anexo de jornada 42 horas (gratis)" data-cta-slot="guia-seccion-4">
 <span>Generar Anexo en Línea</span>
 <span class="material-icons text-xs">arrow_forward</span>
+</a>
+</div>
+<!-- CTA B2B: de los pactos y anexos de jornada al Kit Blindaje -->
+<div class="my-5 p-4 sm:p-5 rounded-xl bg-white border border-slate-200 not-prose flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 no-print">
+<div class="flex items-start gap-3">
+<span class="material-icons text-xl shrink-0" style="color: #00382E;" aria-hidden="true">verified_user</span>
+<p class="text-xs sm:text-sm text-slate-700 m-0 leading-relaxed">
+<strong class="text-slate-900">¿Tienes personas a cargo?</strong> El Kit de Blindaje Laboral Pyme trae 21 documentos en Word editable: anexos de jornada de 42 horas, pactos y cláusulas por rubro, protocolo Ley Karin y checklist de fiscalización de la DT, con un manual de uso en PDF.
+</p>
+</div>
+<a href="kit-cumplimiento-laboral-pymes#comprar-kit" class="btn-yellow-pill shrink-0 !text-xs" data-cta="blindaje" data-cta-slot="guia-seccion-4">
+<span style="color: #111827 !important;">Ver el Kit ($19.990)</span>
+<span class="material-icons text-sm" style="color: #111827 !important;" aria-hidden="true">arrow_forward</span>
 </a>
 </div>
 <h3>Bandas horarias para padres y cuidadores</h3>
@@ -1883,6 +1896,7 @@ body { overflow-x: hidden; }
             window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
         }
     </script>
+    <script src="/js/checkout_consent.js?v=1.3.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
     <script src="/js/valor_hora.js?v=1.0.0" defer></script>
