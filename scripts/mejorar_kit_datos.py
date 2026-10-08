@@ -89,6 +89,10 @@ WORD = {
          'Datos designado es: [NOMBRE Y CARGO DEL DELEGADO].'),
     ],
     '3_Clausula_DPA_Proveedores_Encargados_Ley_21719.docx': [
+        ('comprometiéndose a no utilizarlos para ninguna otra finalidad propia ni de terceros.',
+         'comprometiéndose a no utilizarlos para ninguna otra finalidad propia ni de terceros. Conforme al Art. 15 bis de la Ley N° 19.628, las partes dejan establecido: '
+         'tipo de datos tratados: [TIPO DE DATOS]; categorías de titulares: [CATEGORÍAS DE TITULARES, p. ej. trabajadores o clientes]; '
+         'finalidad del tratamiento: [FINALIDAD]; duración del encargo: [DURACIÓN DEL ENCARGO].'),
         ('datos afectados y medidas correctivas inmediatas, a fin de que el Responsable pueda cumplir con la obligación de '
          'notificar a la Agencia de Protección de Datos Personales sin dilaciones indebidas (conforme al Art. 14 sexies de la '
          'Ley N° 19.628 reformada), adoptando el estándar operativo y mejor práctica internacional recomendada de un plazo '
