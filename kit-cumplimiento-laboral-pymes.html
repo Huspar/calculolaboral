@@ -1299,13 +1299,6 @@ body { overflow-x: hidden; }
                                 monto_calculado: '19990'
                             })
                         }).catch(function () {});
-                        if (typeof gtag === 'function') {
-                            gtag('event', 'begin_checkout', {
-                                currency: 'CLP',
-                                value: 19990,
-                                items: [{ item_name: 'Kit Blindaje Pyme 2026', price: 19990 }]
-                            });
-                        }
                     },
                     onCancel: restaurar,
                     onError: function (mensaje) {
@@ -1326,7 +1319,7 @@ body { overflow-x: hidden; }
             }
         });
     </script>
-    <script src="/js/checkout_consent.js?v=1.1.0" defer></script>
+    <script src="/js/checkout_consent.js?v=1.2.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

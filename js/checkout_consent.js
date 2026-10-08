@@ -180,6 +180,28 @@
     document.addEventListener('click', onLinkClick, true);
     document.addEventListener('auxclick', onLinkClick, true);
 
+    /*
+     * Medicion del embudo en GA4 para los seis productos de pago. Una sola tabla, para que
+     * view_item, begin_checkout y purchase lleguen con el mismo item_id e item_name.
+     * Precios y nombres deben coincidir con api/_flow.js.
+     */
+    var GA_ITEMS = {
+        blindaje: { item_id: 'blindaje', item_name: 'Kit Blindaje Laboral Pyme 2026', price: 19990 },
+        datos: { item_id: 'datos', item_name: 'Kit Ley 21.719 Protección de Datos 2026', price: 29990 },
+        despido: { item_id: 'despido', item_name: 'Pack Cartas de Despido por Causal 2026', price: 9990 },
+        finiquito: { item_id: 'finiquito', item_name: 'Finiquito para Notaría (Word + PDF)', price: 12990 },
+        contrato: { item_id: 'contrato', item_name: 'Contrato de Trabajo a la Medida (Word + PDF)', price: 12990 },
+        informe: { item_id: 'informe', item_name: 'Informe Ejecutivo de Costo Empresa (PDF)', price: 4990 }
+    };
+
+    function track(eventName, product, extra) {
+        var item = GA_ITEMS[product];
+        if (!item || typeof window.gtag !== 'function') return;
+        var data = { currency: 'CLP', value: item.price, items: [{ item_id: item.item_id, item_name: item.item_name, price: item.price, quantity: 1 }] };
+        for (var k in extra) if (Object.prototype.hasOwnProperty.call(extra, k)) data[k] = extra[k];
+        try { window.gtag('event', eventName, data); } catch (e) {}
+    }
+
     /**
      * Compra (kit o generador): aviso, pago creado en el servidor (/api/checkout) y salida a Flow.
      * buyer: { email, nombre, empresa, telefono, rubro }
@@ -194,6 +216,7 @@
         }
         confirm(function (email) {
             if (typeof options.onAccept === 'function') options.onAccept();
+            track('begin_checkout', product);
             var payload = { product: product };
             for (var k in buyer) if (Object.prototype.hasOwnProperty.call(buyer, k)) payload[k] = buyer[k];
             if (options.askEmail) payload.email = email;
@@ -225,26 +248,13 @@
         return null;
     }
 
-    // Venta del generador en Analytics, una vez por orden (los kits la cuentan en /compra-exitosa)
-    var GENERADORES = {
-        finiquito: { precio: 12990, nombre: 'Finiquito para Notaría (Word + PDF)' },
-        contrato: { precio: 12990, nombre: 'Contrato de Trabajo a la Medida (Word + PDF)' },
-        informe: { precio: 4990, nombre: 'Informe Ejecutivo de Costo Empresa (PDF)' }
-    };
-
+    // Venta de un generador en GA4, una vez por orden (los kits la cuentan en /compra-exitosa)
     function trackPurchase(u) {
-        var g = GENERADORES[u.p];
-        if (!g || typeof window.gtag !== 'function') return;
         try {
             if (localStorage.getItem('cl_purchase_' + u.o) === '1') return;
             localStorage.setItem('cl_purchase_' + u.o, '1');
         } catch (e) {}
-        window.gtag('event', 'purchase', {
-            transaction_id: u.o,
-            value: g.precio,
-            currency: 'CLP',
-            items: [{ item_id: u.p, item_name: g.nombre, price: g.precio, quantity: 1 }]
-        });
+        track('purchase', u.p, { transaction_id: u.o });
     }
 
     function unlockFromUrl(product) {
@@ -269,5 +279,5 @@
         }).catch(function () { return storedUnlock(product); });
     }
 
-    window.CLCheckout = { go: go, confirm: confirm, buyKit: buyKit, unlockFromUrl: unlockFromUrl, storedUnlock: storedUnlock };
+    window.CLCheckout = { go: go, confirm: confirm, buyKit: buyKit, track: track, unlockFromUrl: unlockFromUrl, storedUnlock: storedUnlock };
 })();

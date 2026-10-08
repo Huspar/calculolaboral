@@ -1592,7 +1592,8 @@ body { overflow-x: hidden; }
     <script src="/js/indicators.js?v=2.9.0"></script>
     <script src="/js/logic.js"></script>
     <script src="/js/finiquito_generator.js?v=2.10.0"></script>
-    <script src="/js/checkout_consent.js?v=1.1.0" defer></script>
+    <script src="/js/checkout_consent.js?v=1.2.0" defer></script>
+    <script>window.addEventListener("load", function () { if (window.CLCheckout) window.CLCheckout.track("view_item", "finiquito"); });</script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
