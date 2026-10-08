@@ -1392,13 +1392,6 @@ body { overflow-x: hidden; }
                                     monto_calculado: '29990'
                                 })
                             }).catch(function () {});
-                            if (typeof gtag === 'function') {
-                                gtag('event', 'begin_checkout', {
-                                    currency: 'CLP',
-                                    value: 29990,
-                                    items: [{ item_name: 'Kit Ley 21.719 Datos Personales Pyme', price: 29990 }]
-                                });
-                            }
                         },
                         onCancel: restaurar,
                         onError: function (mensaje) {

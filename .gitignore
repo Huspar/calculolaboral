@@ -38,3 +38,6 @@ tools/screenshots/
 
 # Configuracion local de herramientas de diseno (no se publica)
 /.impeccable/
+
+# Grafo local de graphify
+graphify-out/

@@ -675,8 +675,8 @@ body { overflow-x: hidden; }
                         <span class="material-icons text-2xl">mark_email_read</span>
                     </div>
                     <div class="space-y-1.5 flex-1">
-                        <div id="delivery-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-slate-200 text-xs font-semibold">
-                            <span class="material-icons text-xs animate-spin">sync</span>
+                        <div id="delivery-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-emerald-50 text-emerald-800 text-xs font-semibold">
+                            <span class="material-icons text-xs" aria-hidden="true">check_circle</span>
                             <span>Pago confirmado por Flow</span>
                         </div>
                         <h2 id="delivery-heading" class="text-base sm:text-lg font-bold text-slate-900">
@@ -689,7 +689,7 @@ body { overflow-x: hidden; }
                 </div>
 
                 <!-- Instant Direct Download Button (Triggered via In-Memory Package) -->
-                <div id="direct-download-box" class="hidden bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 sm:p-5 text-center space-y-3">
+                <div id="direct-download-box" class="hidden bg-emerald-50/70 rounded-2xl p-4 sm:p-5 text-center space-y-3">
                     <div class="flex items-center justify-center gap-2 text-emerald-800 font-bold text-xs sm:text-sm">
                         <span class="material-icons text-emerald-600 text-base">cloud_download</span>
                         <span>Descarga Inmediata Habilitada</span>
@@ -697,7 +697,7 @@ body { overflow-x: hidden; }
                     <p class="text-xs text-emerald-900/80">
                         Para tu comodidad, también puedes descargar el archivo comprimido directamente en este equipo ahora mismo:
                     </p>
-                    <button id="btn-download-zip" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-forest-700 hover:bg-forest-800 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 mx-auto active:scale-[0.99] cursor-pointer">
+                    <button id="btn-download-zip" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-forest-700 hover:bg-forest-800 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2 mx-auto active:scale-[0.99] cursor-pointer">
                         <span class="material-icons text-base">download</span>
                         <span id="download-label">Descargar el kit (.zip)</span>
                     </button>
@@ -705,7 +705,7 @@ body { overflow-x: hidden; }
                 </div>
 
                 <!-- Practical Steps -->
-                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 sm:p-5 space-y-3 text-xs text-slate-700">
+                <div class="border-t border-slate-100 pt-5 space-y-3 text-xs text-slate-700">
                     <h3 class="font-bold text-slate-900 flex items-center gap-1.5 text-xs sm:text-sm">
                         <span class="material-icons text-sm text-forest-500">schedule</span>
                         Instrucciones de Recepción y Uso:
@@ -713,7 +713,7 @@ body { overflow-x: hidden; }
                     <ul class="space-y-2.5 text-slate-600">
                         <li class="flex items-start gap-2">
                             <span class="material-icons text-emerald-600 text-xs mt-0.5">check_circle</span>
-                            <span><strong>Bandeja de Entrada:</strong> Busca el correo remitido por <code>contacto@calculolaboral.cl</code> con el asunto <em id="mail-subject">"Tu Kit Blindaje Laboral Pyme 2026"</em>.</span>
+                            <span><strong>Bandeja de Entrada:</strong> Busca el correo remitido por <code style="overflow-wrap: anywhere;">contacto@calculolaboral.cl</code> con el asunto <em id="mail-subject">"Tu Kit Blindaje Laboral Pyme 2026"</em>.</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="material-icons text-amber-500 text-xs mt-0.5">info</span>
@@ -721,7 +721,7 @@ body { overflow-x: hidden; }
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="material-icons text-forest-500 text-xs mt-0.5">arrow_forward</span>
-                            <span><strong>Por dónde partir:</strong> Abre primero el archivo <code id="start-file">00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf</code>. En la <strong>página 2</strong> encontrarás el <em>Árbol de Decisión Rápido</em> para activar solo los anexos de tu rubro en 10 minutos.</span>
+                            <span><strong>Por dónde partir:</strong> Abre primero el archivo <code id="start-file" style="overflow-wrap: anywhere;">00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf</code>. En la <strong>página 2</strong> encontrarás el <em>Árbol de Decisión Rápido</em> para activar solo los anexos de tu rubro en 10 minutos.</span>
                         </li>
                     </ul>
                 </div>
@@ -895,13 +895,19 @@ body { overflow-x: hidden; }
             }
 
             var estado = q.get('estado');
+            // Los generadores no envían un kit: llega un correo con el enlace para volver al documento
+            var GENERADORES = { finiquito: 'tu finiquito', contrato: 'tu contrato', informe: 'tu informe' };
+            var doc = GENERADORES[q.get('p')];
+            var entrega = doc
+                ? 'te enviaremos un correo con el enlace para volver a ' + doc + ' y descargarlo'
+                : PRODUCTOS[q.get('p')] ? 'te enviaremos el kit por correo' : 'te enviaremos tu compra por correo';
             if (estado === 'pendiente') {
                 return sinCompra('Tu pago está en proceso',
-                    'Flow aún no confirma el pago. Apenas lo haga, te enviaremos el kit por correo. Si en una hora no te llega, escríbenos a <strong>contacto@calculolaboral.cl</strong>.');
+                    'Flow aún no confirma el pago. Apenas lo haga, ' + entrega + '. Si en una hora no te llega, escríbenos a <strong>contacto@calculolaboral.cl</strong>.');
             }
             if (estado === 'error') {
                 return sinCompra('No pudimos confirmar tu pago',
-                    'Si el cargo aparece en tu banco, el kit te llegará por correo en unos minutos. Si no, escríbenos a <strong>contacto@calculolaboral.cl</strong> y lo revisamos.');
+                    'Si el cargo aparece en tu banco, en unos minutos ' + entrega + '. Si no, escríbenos a <strong>contacto@calculolaboral.cl</strong> y lo revisamos.');
             }
 
             var p = PRODUCTOS[q.get('p')];

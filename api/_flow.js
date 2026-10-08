@@ -136,7 +136,8 @@ function createPayment({ product, email, optional }) {
         currency: 'CLP',
         amount: String(p.amount),
         email,
-        optional: JSON.stringify(optional || {}),
+        // El correo va tambien en optional: respaldo si getStatus no trae "payer"
+        optional: JSON.stringify({ ...(optional || {}), correo: email }),
         urlConfirmation: `${SITE_URL}/api/flow-confirm`,
         urlReturn: `${SITE_URL}/api/flow-return`
     });
@@ -154,6 +155,8 @@ async function paymentStatus(token) {
         try { optional = JSON.parse(optional); } catch (e) { optional = {}; }
     }
     const amountOk = product && Number(st.amount) === PRODUCTS[product].amount;
+    const payer = typeof st.payer === 'string' ? st.payer : '';
+    const respaldo = typeof optional.correo === 'string' ? optional.correo : '';
     return {
         paid: Number(st.status) === FLOW_STATUS_PAID && !!amountOk,
         pending: Number(st.status) === 1,
@@ -161,7 +164,7 @@ async function paymentStatus(token) {
         status: Number(st.status),
         order: String(st.flowOrder || ''),
         commerceOrder: String(st.commerceOrder || ''),
-        email: typeof st.payer === 'string' ? st.payer.trim().toLowerCase() : '',
+        email: (payer || respaldo).trim().toLowerCase(),
         optional
     };
 }
@@ -236,7 +239,7 @@ async function notifyOwner(pay, lead) {
     const o = pay.optional || {};
     await sendEmail({
         to: [NOTIFY_OWNER],
-        subject: `[VENTA $${p.amount.toLocaleString('es-CL')}] ${p.subject} - ${o.nombre || pay.email}`,
+        subject: `[VENTA $${p.amount.toLocaleString('es-CL')}] ${p.subject} - ${o.nombre || pay.email || 'orden ' + pay.order}`,
         html: `<p>${lead}</p><ul>
 <li>Producto: ${escapeHtml(p.subject)}</li><li>Orden Flow: ${escapeHtml(pay.order)} (${escapeHtml(pay.commerceOrder)})</li>
 <li>Correo: ${escapeHtml(pay.email)}</li><li>Nombre: ${escapeHtml(o.nombre)}</li><li>Empresa: ${escapeHtml(o.empresa)}</li>
@@ -293,6 +296,6 @@ function readToken(req) {
 }
 
 module.exports = {
-    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliver, sendEmail,
+    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliver, notifyOwner, sendEmail,
     downloadQuery, verifyDownload, readToken, escapeHtml
 };

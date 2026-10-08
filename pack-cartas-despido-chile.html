@@ -1250,13 +1250,6 @@ body { overflow-x: hidden; }
                             btn.disabled = true;
                             btn.innerHTML = '<span class="material-icons text-base animate-spin">sync</span> <span>Conectando con Flow...</span>';
                         }
-                        if (typeof gtag === 'function') {
-                            gtag('event', 'begin_checkout', {
-                                currency: 'CLP',
-                                value: 9990,
-                                items: [{ item_name: 'Pack Cartas de Despido por Causal 2026', price: 9990 }]
-                            });
-                        }
                     },
                     onCancel: restaurar,
                     onError: function (mensaje) {
