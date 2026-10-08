@@ -498,6 +498,8 @@ body { overflow-x: hidden; }
             margin-left: auto !important;
             margin-right: auto !important;
         }
+        /* subtitulo de las tarjetas de recargo: el span no es hermano del input, por eso peer-checked: no le llegaba */
+        .peer:checked + div > span.block { color: rgba(0, 56, 46, .8); }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.6.0">
 </head>
@@ -915,21 +917,21 @@ body { overflow-x: hidden; }
                                 <input type="radio" name="art160-recargo" value="50" onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     50%
-                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Mínimo legal</span>
+                                    <span class="block text-xs font-normal text-slate-600">Mínimo legal</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="art160-recargo" value="80" checked onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     80%
-                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Promedio Jueces</span>
+                                    <span class="block text-xs font-normal text-slate-600">Promedio Jueces</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="art160-recargo" value="100" onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     100%
-                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Máximo legal</span>
+                                    <span class="block text-xs font-normal text-slate-600">Máximo legal</span>
                                 </div>
                             </label>
                         </div>
