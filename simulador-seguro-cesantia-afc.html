@@ -854,18 +854,18 @@ body { overflow-x: hidden; }
                                 <input type="radio" name="afc-tipo-contrato" value="indefinido" checked onchange="calculateSeguroCesantia()" class="peer sr-only">
                                 <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     Indefinido
-                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Mín. 10 cotiz.</span>
+                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Mín. 10 cotiz.</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="afc-tipo-contrato" value="plazofijo" onchange="calculateSeguroCesantia()" class="peer sr-only">
                                 <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     Plazo Fijo u Obra
-                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Mín. 5 cotiz.</span>
+                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Mín. 5 cotiz.</span>
                                 </div>
                             </label>
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">La Ley 21.628 flexibilizó el acceso a 10 cotizaciones para indefinido y 5 para plazo fijo.</p>
+                        <p class="text-xs text-slate-600 mt-1">La Ley 21.628 flexibilizó el acceso a 10 cotizaciones para indefinido y 5 para plazo fijo.</p>
                     </div>
 
                     <!-- 2. Sueldo Imponible Promedio -->
@@ -881,7 +881,7 @@ body { overflow-x: hidden; }
                         <div class="relative rounded-2xl shadow-2xs">
                             <input type="text" id="afc-sueldo-base" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatAFCInput(this); calculateSeguroCesantia();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">Promedio de tus últimos sueldos brutos imponibles (tope legal AFC: 135,1 UF).</p>
+                        <p class="text-xs text-slate-600 mt-1">Promedio de tus últimos sueldos brutos imponibles (tope legal AFC: 135,1 UF).</p>
                     </div>
 
                     <!-- 3. Tiempo Trabajado / Cotizaciones -->
@@ -894,7 +894,7 @@ body { overflow-x: hidden; }
                             <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">meses</span>
                         </div>
                         <div class="flex items-center gap-1.5 pt-2">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider mr-1">Rápido:</span>
+                            <span class="text-xs text-slate-600 font-bold uppercase tracking-wider mr-1">Rápido:</span>
                             <button type="button" onclick="setAFCMonths(6)" class="px-2.5 py-1 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">6 Meses</button>
                             <button type="button" onclick="setAFCMonths(12)" class="px-2.5 py-1 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">1 Año</button>
                             <button type="button" onclick="setAFCMonths(24)" class="px-2.5 py-1 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">2 Años</button>
@@ -914,7 +914,7 @@ body { overflow-x: hidden; }
                             <option value="mutuo">Mutuo Acuerdo entre las partes (Art. 159 N° 1)</option>
                             <option value="disciplinario">Despido Disciplinario o Sin Derecho (Art. 160)</option>
                         </select>
-                        <p class="text-xs text-slate-400 mt-1">El despido por Art. 161 permite al empleador descontar el 1,6% patronal en tu finiquito.</p>
+                        <p class="text-xs text-slate-600 mt-1">El despido por Art. 161 permite al empleador descontar el 1,6% patronal en tu finiquito.</p>
                     </div>
 
                     <!-- 5. Saldo Real Opcional en Cartola AFC -->
@@ -929,7 +929,7 @@ body { overflow-x: hidden; }
                                     Ingresa el saldo total de tu Cuenta Individual (CIC):
                                 </label>
                                 <input type="text" id="afc-saldo-manual" placeholder="Ej: $ 1.250.000" inputmode="numeric" oninput="formatAFCSaldoManual(this); calculateSeguroCesantia();" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E]">
-                                <p class="text-xs text-slate-400">Si lo dejas en blanco, el simulador proyectará tu saldo acumulado automáticamente.</p>
+                                <p class="text-xs text-slate-600">Si lo dejas en blanco, el simulador proyectará tu saldo acumulado automáticamente.</p>
                             </div>
                         </details>
                     </div>
@@ -978,7 +978,7 @@ body { overflow-x: hidden; }
                     <div class="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-xs space-y-4">
                         <div class="flex justify-between items-center pb-2 border-b border-slate-100">
                             <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Calendario de Pagos Mensuales</h3>
-                            <span class="text-xs text-slate-400 font-medium">Porcentajes Ley 21.628</span>
+                            <span class="text-xs text-slate-600 font-medium">Porcentajes Ley 21.628</span>
                         </div>
 
                         <div class="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-2xs">
@@ -1375,7 +1375,7 @@ body { overflow-x: hidden; }
                     <span class="material-icons text-[#00382E]">history</span>
                     <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
                 </div>
-                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-full transition-colors cursor-pointer">
+                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-600 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-full transition-colors cursor-pointer">
                     <span class="material-icons">close</span>
                 </button>
             </div>
@@ -1389,7 +1389,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UF</caption>
                             <thead>
-                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-600 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>
@@ -1408,7 +1408,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UTM</caption>
                             <thead>
-                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-600 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Período</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>

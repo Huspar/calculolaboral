@@ -884,7 +884,7 @@ body { overflow-x: hidden; }
                         <div class="relative rounded-2xl shadow-2xs">
                             <input type="text" id="art160-sueldo" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatArt160Input(this); calculateArt160();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">Sueldo base + gratificación + comisiones (tope legal 90 UF: ~$3.690.000).</p>
+                        <p class="text-xs text-slate-600 mt-1">Sueldo base + gratificación + comisiones (tope legal 90 UF: ~$3.690.000).</p>
                     </div>
 
                     <!-- 4. Días trabajados del mes y Vacaciones Pendientes -->
@@ -894,14 +894,14 @@ body { overflow-x: hidden; }
                                 Días trabajados del mes
                             </label>
                             <input type="number" id="art160-dias-mes" value="15" min="1" max="30" oninput="calculateArt160()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
-                            <span class="text-xs text-slate-400 mt-1 block">Días del mes de despido</span>
+                            <span class="text-xs text-slate-600 mt-1 block">Días del mes de despido</span>
                         </div>
                         <div>
                             <label for="art160-dias-vac" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                                 Vacaciones Pendientes
                             </label>
                             <input type="number" id="art160-dias-vac" value="8" min="0" step="0.5" oninput="calculateArt160()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
-                            <span class="text-xs text-slate-400 mt-1 block">Días hábiles acumulados</span>
+                            <span class="text-xs text-slate-600 mt-1 block">Días hábiles acumulados</span>
                         </div>
                     </div>
 
@@ -915,25 +915,25 @@ body { overflow-x: hidden; }
                                 <input type="radio" name="art160-recargo" value="50" onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     50%
-                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Mínimo legal</span>
+                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Mínimo legal</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="art160-recargo" value="80" checked onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     80%
-                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Promedio Jueces</span>
+                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Promedio Jueces</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="art160-recargo" value="100" onchange="calculateArt160()" class="peer sr-only">
                                 <div class="p-2.5 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
                                     100%
-                                    <span class="block text-xs font-normal text-slate-400 peer-checked:text-[#00382E]/80">Máximo legal</span>
+                                    <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Máximo legal</span>
                                 </div>
                             </label>
                         </div>
-                        <p class="text-xs text-slate-400 mt-1.5">El recargo legal para despidos Art. 160 improcedentes va del 50% al 100% sobre los años de servicio.</p>
+                        <p class="text-xs text-slate-600 mt-1.5">El recargo legal para despidos Art. 160 improcedentes va del 50% al 100% sobre los años de servicio.</p>
                     </div>
 
                 </div>
@@ -970,11 +970,11 @@ body { overflow-x: hidden; }
                                 <span class="text-slate-600">Vacaciones proporcionales y pendientes (<span id="art160-lbl-dias-vac" class="font-bold">8</span> días):</span>
                                 <span class="font-mono font-bold text-slate-900" id="art160-subtotal-vac">$ 0</span>
                             </div>
-                            <div class="flex justify-between items-center pt-2 text-slate-400">
+                            <div class="flex justify-between items-center pt-2 text-slate-600">
                                 <span>Indemnización por Años de Servicio (Finiquito):</span>
                                 <span class="font-mono font-semibold">$ 0 (Excluida por Art. 160)</span>
                             </div>
-                            <div class="flex justify-between items-center pt-2 text-slate-400">
+                            <div class="flex justify-between items-center pt-2 text-slate-600">
                                 <span>Indemnización Sustitutiva de Aviso Previo:</span>
                                 <span class="font-mono font-semibold">$ 0 (Excluida por Art. 160)</span>
                             </div>
@@ -1316,7 +1316,7 @@ body { overflow-x: hidden; }
                     <span class="material-icons text-[#00382E]">history</span>
                     <h3 class="text-base font-bold text-slate-900">Historial de Indicadores</h3>
                 </div>
-                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-full transition-colors cursor-pointer">
+                <button id="btn-close-history" aria-label="Cerrar modal" class="text-slate-600 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-full transition-colors cursor-pointer">
                     <span class="material-icons">close</span>
                 </button>
             </div>
@@ -1330,7 +1330,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UF</caption>
                             <thead>
-                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-600 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Fecha</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>
@@ -1349,7 +1349,7 @@ body { overflow-x: hidden; }
                         <table class="w-full text-left">
                             <caption class="sr-only">Historial de valores UTM</caption>
                             <thead>
-                                <tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100">
+                                <tr class="text-xs font-bold text-slate-600 uppercase border-b border-slate-100">
                                     <th scope="col" class="py-1 px-2 font-semibold">Período</th>
                                     <th scope="col" class="py-1 px-2 text-right font-semibold">Valor</th>
                                 </tr>

@@ -772,7 +772,7 @@
                         <div class="relative">
                             <input id="salary" name="salary" value="$ 553.553" placeholder="$ 553.553" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:bg-white transition-all outline-none text-right font-mono-num text-lg" />
                         </div>
-                        <p class="text-xs text-slate-400" id="salary-help">Remuneración fija mensual acordada en el contrato de trabajo.</p>
+                        <p class="text-xs text-slate-600" id="salary-help">Remuneración fija mensual acordada en el contrato de trabajo.</p>
                         <div id="inverse-result" class="sl-inverse hidden" aria-live="polite">
                             <div class="sl-inverse-label">Sueldo base bruto a pactar</div>
                             <div class="sl-inverse-value" id="inverse-base">$0</div>
@@ -879,7 +879,7 @@
                     <div class="space-y-3 pt-2 border-t border-slate-100">
                         <label class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center justify-between">
                             <span>5. Haberes No Imponibles</span>
-                            <span class="text-xs text-slate-400 font-normal font-sans">Exentos de previsión e impuestos</span>
+                            <span class="text-xs text-slate-600 font-normal font-sans">Exentos de previsión e impuestos</span>
                         </label>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                             <div>
@@ -952,7 +952,7 @@
                         
                         <!-- Top Total Amount Box -->
                         <div class="border-b border-slate-100 pb-5">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                            <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1">
                                 Tu Sueldo Líquido Estimado
                             </span>
                             <div class="flex items-baseline justify-between gap-2">
@@ -961,7 +961,7 @@
                                         $0
                                     </span>
                                 </div>
-                                <span id="headerPercentage" class="text-sm font-bold text-slate-400 font-mono-num">
+                                <span id="headerPercentage" class="text-sm font-bold text-slate-600 font-mono-num">
                                     0%
                                 </span>
                             </div>
@@ -976,7 +976,7 @@
                             <div id="distribution-chart" class="w-36 h-36 rounded-full border border-slate-100 flex items-center justify-center relative shadow-inner shrink-0" style="background: conic-gradient(#10b981 0% 100%);">
                                 <div class="w-24 h-24 rounded-full bg-white flex flex-col items-center justify-center z-10 shadow-xs">
                                     <span id="chart-liquid-percent" class="text-xl font-black text-slate-900 font-mono-num">0%</span>
-                                    <span class="text-[8.5px] text-slate-400 font-bold uppercase tracking-wider">Líquido</span>
+                                    <span class="text-[8.5px] text-slate-600 font-bold uppercase tracking-wider">Líquido</span>
                                 </div>
                             </div>
 
@@ -1140,10 +1140,10 @@
         <!-- 5. FLOATING MOBILE RESULT BAR (Only on small viewports) -->
         <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-4 py-3 flex items-center justify-between shadow-2xl translate-y-full transition-transform duration-300 no-print">
             <div>
-                <span id="mobile-result-label" class="block text-xs font-bold text-slate-400 uppercase tracking-widest">Líquido a pago</span>
+                <span id="mobile-result-label" class="block text-xs font-bold text-slate-600 uppercase tracking-widest">Líquido a pago</span>
                 <div class="flex items-baseline gap-1.5">
                     <span id="mobile-result-value" style="color: var(--teal-forest);" class="text-xl font-black tracking-tight font-mono-num">$0</span>
-                    <span id="mobile-result-percentage" class="text-xs font-bold text-slate-400 font-mono-num">0%</span>
+                    <span id="mobile-result-percentage" class="text-xs font-bold text-slate-600 font-mono-num">0%</span>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -1334,7 +1334,7 @@
                         </table>
                     </div>
                 </div>
-                <p class="text-xs text-slate-400">
+                <p class="text-xs text-slate-600">
                     * El tope imponible mensual para cotizaciones previsionales en 2026 es de <strong>89,9 UF</strong>.
                 </p>
             </section>
@@ -1692,12 +1692,12 @@
           </div>
           <div>
             <span class="font-bold text-xl tracking-tight text-slate-900">cálculolaboral.</span>
-            <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Simulación Legal de Sueldo Líquido</span>
+            <span class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Simulación Legal de Sueldo Líquido</span>
           </div>
         </div>
         <div class="text-right">
           <h2 class="text-base font-bold text-slate-800 uppercase tracking-wider">Detalle de Liquidación</h2>
-          <p class="text-xs text-slate-400 font-semibold mt-0.5">Fecha de emisión: <span id="print-date-sueldo" class="font-mono-num">—</span></p>
+          <p class="text-xs text-slate-600 font-semibold mt-0.5">Fecha de emisión: <span id="print-date-sueldo" class="font-mono-num">—</span></p>
         </div>
       </div>
 
@@ -1705,35 +1705,35 @@
         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Haberes e Ingresos</h3>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">Sueldo Base Mensual:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">Sueldo Base Mensual:</span>
             <span id="print-input-salary-base" class="font-bold text-slate-700 font-mono-num">—</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">Horas Extraordinarias:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">Horas Extraordinarias:</span>
             <span id="print-input-salary-ot" class="font-bold text-slate-700 font-mono-num">—</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">Gratificación Legal:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">Gratificación Legal:</span>
             <span id="print-input-salary-grat" class="font-bold text-slate-700 font-mono-num">—</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">Bonos Imponibles:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">Bonos Imponibles:</span>
             <span id="print-input-salary-bonuses" class="font-bold text-slate-700 font-mono-num">—</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">Asignación Colación:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">Asignación Colación:</span>
             <span id="print-input-salary-colacion" class="font-bold text-slate-700 font-mono-num">—</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">Asignación Movilización:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">Asignación Movilización:</span>
             <span id="print-input-salary-movilizacion" class="font-bold text-slate-700 font-mono-num">—</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">Viáticos / Otros No Imp:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">Viáticos / Otros No Imp:</span>
             <span id="print-input-salary-viaticos" class="font-bold text-slate-700 font-mono-num">—</span>
           </div>
           <div>
-            <span class="block text-slate-400 font-semibold mb-0.5">AFP Seleccionada:</span>
+            <span class="block text-slate-600 font-semibold mb-0.5">AFP Seleccionada:</span>
             <span id="print-input-salary-afp-name" class="font-bold text-slate-700">—</span>
           </div>
         </div>
@@ -1798,7 +1798,7 @@
         </table>
       </div>
 
-      <div class="text-xs text-slate-400 space-y-2 mt-8 leading-relaxed border-t border-slate-100 pt-4">
+      <div class="text-xs text-slate-600 space-y-2 mt-8 leading-relaxed border-t border-slate-100 pt-4">
         <p><strong>Nota legal informativa:</strong> Este informe es una simulación referencial de sueldo líquido conforme a la normativa vigente en Chile (2026). No constituye comprobante legal de pago formal ante la Dirección del Trabajo o el Servicio de Impuestos Internos.</p>
         <p>&copy; 2026 Cálculo Laboral Chile (calculolaboral.cl) · Herramientas gratuitas para el trabajador.</p>
       </div>

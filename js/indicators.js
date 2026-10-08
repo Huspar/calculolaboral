@@ -330,7 +330,7 @@ const IndicatorsService = {
         if (!body) return;
 
         if (!Array.isArray(serie) || serie.length === 0) {
-            body.innerHTML = '<tr><td colspan="2" class="p-3 text-center text-slate-400 text-xs italic">No disponible</td></tr>';
+            body.innerHTML = '<tr><td colspan="2" class="p-3 text-center text-slate-600 text-xs italic">No disponible</td></tr>';
             return;
         }
 
@@ -370,7 +370,7 @@ const IndicatorsService = {
             } else {
                 const body = document.getElementById(`${ind}-history-body`);
                 if (body) {
-                    body.innerHTML = '<tr><td colspan="2" class="p-4 text-center text-slate-400 text-xs animate-pulse">Cargando datos...</td></tr>';
+                    body.innerHTML = '<tr><td colspan="2" class="p-4 text-center text-slate-600 text-xs animate-pulse">Cargando datos...</td></tr>';
                 }
             }
         });
