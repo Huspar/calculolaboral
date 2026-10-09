@@ -410,7 +410,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const calculated = Math.min(Math.round(base * 0.25), legalCap);
 
             elements.gratification.value = '$ ' + new Intl.NumberFormat('es-CL').format(calculated);
-            // updateCalculations() is already called by the generic input listener
+            // El listener genérico corre antes de actualizar la gratificación: se recalcula con el valor nuevo
+            updateCalculations();
         });
 
         // Enforce Hard Cap on Manual Input

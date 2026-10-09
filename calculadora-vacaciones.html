@@ -29,87 +29,85 @@
     <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
     
     <!-- Structured Data -->
-    <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@graph": [
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Calculadora de Vacaciones Chile 2026",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "url": "https://calculolaboral.cl/calculadora-vacaciones",
+      "description": "Calculadora laboral interactiva para simular vacaciones legales acumuladas, vacaciones proporcionales en finiquito con proyección de inhábiles DT y feriado progresivo según el Código del Trabajo.",
+      "browserRequirements": "Requires JavaScript. Modern browser.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CLP"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
         {
-            "@type": "SoftwareApplication",
-            "name": "Calculadora de Vacaciones Chile 2026",
-            "applicationCategory": "BusinessApplication",
-            "operatingSystem": "All",
-            "url": "https://calculolaboral.cl/calculadora-vacaciones",
-            "description": "Calculadora laboral interactiva para simular vacaciones legales acumuladas, vacaciones proporcionales en finiquito con proyección de inhábiles DT y feriado progresivo según el Código del Trabajo.",
-            "browserRequirements": "Requires JavaScript. Modern browser.",
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "CLP"
-            }
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
         },
         {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Inicio",
-                    "item": "https://calculolaboral.cl/"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Calculadoras",
-                    "item": "https://calculolaboral.cl/#calculadoras"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 3,
-                    "name": "Calculadora de Vacaciones",
-                    "item": "https://calculolaboral.cl/calculadora-vacaciones"
-                }
-            ]
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Calculadoras",
+          "item": "https://calculolaboral.cl/#calculadoras"
         },
         {
-            "@type": "FAQPage",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "¿Cuántos días de vacaciones acumulo por cada mes trabajado en Chile?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Conforme al artículo 67 del Código del Trabajo, en régimen general todo trabajador acumula 1,25 días hábiles de vacaciones por cada mes trabajado (lo que totaliza 15 días hábiles al cumplir un año). En zonas extremas (Aysén, Magallanes y Palena), se acumulan 1,67 días hábiles mensuales (20 días hábiles anuales)."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Cómo se calculan las vacaciones proporcionales en el finiquito?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Se multiplica el número de meses y días trabajados por 1,25 días hábiles al mes. Al total de días hábiles pendientes se les descuentan los días ya disfrutados, y luego se proyectan en el calendario a partir del día siguiente al despido o renuncia para sumar los días inhábiles (sábados, domingos y festivos) conforme al Dictamen DT N° 4535/209. Los días corridos totales se multiplican por el sueldo diario (Sueldo Mensual / 30)."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Las vacaciones en finiquito pagan descuentos de AFP o Fonasa?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "No. La compensación en dinero de las vacaciones proporcionales tiene naturaleza indemnizatoria y no remuneratoria, por lo que está legalmente exenta de cotizaciones previsionales de AFP, Fonasa/Isapre y Seguro de Cesantía (Dictamen DT N° 2399/112)."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Qué es el feriado progresivo y quién tiene derecho a él?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "El feriado progresivo (Art. 68 del Código del Trabajo) otorga días de vacaciones adicionales a los trabajadores con antigüedad laboral. El requisito legal es haber cotizado al menos 10 años en el sistema previsional (con cualquier empleador); una vez acreditado esto, el trabajador suma 1 día hábil adicional de descanso por cada 3 años trabajados con su empleador actual."
-                    }
-                }
-            ]
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Calculadora de Vacaciones",
+          "item": "https://calculolaboral.cl/calculadora-vacaciones"
         }
-    ]
-}
-</script>
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Las vacaciones proporcionales pagan cotizaciones de AFP y Salud?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. La indemnización por feriado legal y proporcional no constituye remuneración imponible conforme al artículo 41 del Código del Trabajo y al Dictamen DT N° 2399/112. Se paga el monto bruto íntegro sin descuentos de previsión ni de salud."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué pasa con mis vacaciones si renuncio voluntariamente?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El empleador está obligado por ley a pagarte en el finiquito el 100% de los días de vacaciones acumulados que no hayas utilizado, sin importar que hayas renunciado voluntariamente o que el contrato haya terminado por mutuo acuerdo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo acumular más de dos períodos de vacaciones?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Según el artículo 70 del Código del Trabajo, las vacaciones deben otorgarse de preferencia en primavera o verano y solo pueden acumularse hasta por dos períodos consecutivos de común acuerdo. El empleador debe otorgar al menos el primer período antes de que se cumpla el tercero."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo se calcula el sueldo diario en remuneraciones variables o comisiones?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Si tienes un sueldo variable o comisiones, según el artículo 71 del Código del Trabajo, el sueldo diario se determina calculando el promedio de lo ganado en los últimos tres meses trabajados y dividiéndolo por la cantidad de días correspondientes."
+          }
+        }
+      ]
+    }
+  ]
+}</script>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
@@ -1344,7 +1342,14 @@
             </article>
 
         </div>
-    </main>
+    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
+<h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
+<ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+<li><a href="/como-calcular-finiquito-chile" class="font-semibold text-[#00382E] underline">Vacaciones proporcionales dentro del finiquito</a></li>
+<li><a href="/ley-40-horas-chile-2026" class="font-semibold text-[#00382E] underline">Jornada laboral 2026</a></li>
+</ul>
+</section>
+</main>
 
     <!-- 7. FLOATING MOBILE RESULTS BAR -->
     <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3.5 z-40 no-print">

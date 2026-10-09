@@ -25,73 +25,71 @@
     <meta property="og:site_name" content="Cálculo Laboral">
     
     <!-- Structured Data -->
-    <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@graph": [
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Generador de Anexo Ley 40 Horas Chile",
+      "url": "https://calculolaboral.cl/generador-anexo-40-horas",
+      "description": "Herramienta online para generar el anexo de contrato de trabajo obligatorio por la Ley 21.561 de 40 Horas (42 horas en 2026).",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Modern browser.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CLP"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
         {
-            "@type": "WebApplication",
-            "name": "Generador de Anexo Ley 40 Horas Chile",
-            "url": "https://calculolaboral.cl/generador-anexo-40-horas",
-            "description": "Herramienta online para generar el anexo de contrato de trabajo obligatorio por la Ley 21.561 de 40 Horas (42 horas en 2026).",
-            "applicationCategory": "BusinessApplication",
-            "operatingSystem": "All",
-            "browserRequirements": "Requires JavaScript. Modern browser.",
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "CLP"
-            }
+          "@type": "Question",
+          "name": "¿Qué pasa si un trabajador se niega a firmar el anexo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "La reducción de la jornada es un mandato legal imperativo e irrenunciable establecido por la Ley Nº 21.561. Si el trabajador no firma por desacuerdo con la distribución, el empleador puede aplicar unilateralmente la reducción anticipando la hora de salida de conformidad con las directrices de la Dirección del Trabajo (Dictamen 213/08 de la DT). No obstante, es altamente recomendable dejar constancia de la entrega de la minuta por carta certificada o ante la DT para dejar constancia de la escrituración y reducir el riesgo de multas."
+          }
         },
         {
-            "@type": "FAQPage",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "¿Es obligatorio escriturar un anexo de contrato por la Ley 40 Horas?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Sí. De conformidad con el artículo 11 del Código del Trabajo, toda modificación a las cláusulas del contrato individual de trabajo (incluyendo la jornada y su distribución) debe consignarse por escrito al dorso del documento o en una hoja anexa firmada en duplicado por el empleador y el trabajador."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Puede el empleador rebajar el sueldo con la reducción a 42 horas?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "No. El artículo tercero transitorio de la Ley Nº 21.561 prohíbe de forma taxativa cualquier disminución de las remuneraciones pactadas producto de la reducción legal de la jornada laboral."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Qué modalidades existen para aplicar la reducción a 42 horas?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "En jornadas de lunes a viernes (5x2), la alternativa más común es anticipar la salida 2 horas el día viernes, o 24 minutos diarios de lunes a viernes. En comercio o gastronomía (6x1), se puede convenir una rebaja de 30 a 40 minutos diarios o fijar turnos de 7 horas efectivas por día."
-                    }
-                }
-            ]
+          "@type": "Question",
+          "name": "¿Es obligatorio registrar este anexo en el portal Mi DT?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Conforme a las resoluciones exentas de la Dirección del Trabajo, todo empleador debe mantener actualizado el registro electrónico laboral en Mi DT dentro de los 15 días posteriores a la modificación contractual. Además, se debe conservar el ejemplar físico firmado en la carpeta de personal en el lugar de trabajo."
+          }
         },
         {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Inicio",
-                    "item": "https://calculolaboral.cl/"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Generador Anexo 40 Horas",
-                    "item": "https://calculolaboral.cl/generador-anexo-40-horas"
-                }
-            ]
+          "@type": "Question",
+          "name": "¿Cómo afecta la rebaja a 42 horas el cálculo de horas extras?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Al reducirse la jornada semanal a 42 horas manteniendo el mismo sueldo mensual, el valor hora ordinaria sube automáticamente (el factor legal se divide por 42 en lugar de 44 o 45). En consecuencia, cada hora extraordinaria realizada con recargo del 50% tiene un valor mayor . Puedes calcular el valor exacto en nuestra Calculadora de Horas Extras ."
+          }
         }
-    ]
-}
-</script>
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Generador Anexo 40 Horas",
+          "item": "https://calculolaboral.cl/generador-anexo-40-horas"
+        }
+      ]
+    }
+  ]
+}</script>
     
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1049,7 +1047,14 @@ body { overflow-x: hidden; }
             </div>
         </section>
 
-    </main>
+    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
+<h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
+<ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+<li><a href="/ley-40-horas-chile-2026" class="font-semibold text-[#00382E] underline">Calendario de la Ley 40 horas</a></li>
+<li><a href="/generador-contrato-trabajo-chile" class="font-semibold text-[#00382E] underline">Generador de contrato de trabajo</a></li>
+</ul>
+</section>
+</main>
 
         <!-- Elevated Curved Dark Footer (TealHQ Architecture) -->
     <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->

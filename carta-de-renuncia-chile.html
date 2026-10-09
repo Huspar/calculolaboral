@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-CL">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,80 +25,86 @@
     <meta property="og:site_name" content="Cálculo Laboral">
     
     <!-- Structured Data: SoftwareApplication + HowTo + FAQPage -->
-    <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@graph": [
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Generador de Carta de Renuncia Voluntaria Chile",
+      "operatingSystem": "All",
+      "applicationCategory": "BusinessApplication",
+      "description": "Herramienta gratuita para redactar, copiar y descargar en PDF una carta formal de renuncia voluntaria en Chile según el artículo 159 Nº 2 del Código del Trabajo.",
+      "browserRequirements": "Requires JavaScript. Modern browser.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CLP"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
         {
-            "@type": "SoftwareApplication",
-            "name": "Generador de Carta de Renuncia Voluntaria Chile",
-            "operatingSystem": "All",
-            "applicationCategory": "BusinessApplication",
-            "description": "Herramienta gratuita para redactar, copiar y descargar en PDF una carta formal de renuncia voluntaria en Chile según el artículo 159 Nº 2 del Código del Trabajo.",
-            "browserRequirements": "Requires JavaScript. Modern browser.",
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "CLP"
-            }
+          "@type": "Question",
+          "name": "¿Qué pasa si no aviso con 30 días de anticipación al renunciar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El artículo 159 Nº 2 del Código del Trabajo establece que el aviso debe darse con 30 días de anticipación. Sin embargo, la jurisprudencia uniforme de la Dirección del Trabajo (Dictamen 2919/165) determina que el empleador NO puede descontar dinero de tus remuneraciones ni de tu finiquito por no cumplir los 30 días. Tu renuncia es 100% válida. El empleador solo podría demandar perjuicios en tribunales civiles ordinarios demostrando un daño real e irreparable, lo cual prácticamente nunca ocurre."
+          }
         },
         {
-            "@type": "FAQPage",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "¿Qué pasa si no aviso con 30 días de anticipación al renunciar en Chile?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "El artículo 159 Nº 2 del Código del Trabajo establece que el trabajador debe avisar con al menos 30 días de anticipación. Sin embargo, la Dirección del Trabajo ha reiterado que el empleador NO puede descontar dinero de tu finiquito ni retener remuneraciones por no cumplir este plazo. Tu renuncia sigue siendo plenamente válida."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Es obligatorio ir a una notaría para que la carta de renuncia sea válida?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Si presentas una carta en papel, el artículo 177 exige que esté ratificada ante un ministro de fe (Notario Público, Inspector del Trabajo o dirigente sindical). No obstante, si realizas el trámite de forma digital en el portal Mi DT con ClaveÚnica, el sistema actúa automáticamente como ministro de fe y NO necesitas ir a la notaría ni pagar aranceles."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Qué dinero me corresponde recibir en el finiquito si renuncio voluntariamente?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Al renunciar no te corresponde indemnización por años de servicio ni mes de aviso previo. Sin embargo, mantienes el derecho irrenunciable al pago de: 1) Los días trabajados en el mes hasta tu último día, y 2) La compensación en dinero del feriado proporcional y vacaciones acumuladas pendientes."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Cuánto plazo tiene el empleador para pagar el finiquito por renuncia?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Conforme al artículo 177 del Código del Trabajo, el empleador tiene un plazo máximo de 10 días hábiles (lunes a sábado, excluyendo domingos y festivos) contados desde el cese efectivo de funciones para poner a disposición el finiquito y su pago."
-                    }
-                }
-            ]
+          "@type": "Question",
+          "name": "¿Es obligatorio ir a una notaría para ratificar la renuncia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Solo si presentas una carta física en papel ante la empresa. En ese caso, el artículo 177 del Código del Trabajo exige que la firma esté ratificada ante un ministro de fe (Notario Público, Inspector del Trabajo o dirigente sindical). Si haces el trámite online en Mi DT con ClaveÚnica, el portal estatal actúa automáticamente como ministro de fe y no tienes que ir a la notaría ni pagar aranceles ."
+          }
         },
         {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Inicio",
-                    "item": "https://calculolaboral.cl/"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Carta de Renuncia",
-                    "item": "https://calculolaboral.cl/carta-de-renuncia-chile"
-                }
-            ]
+          "@type": "Question",
+          "name": "¿Cuánto plazo tiene el empleador para pagarme el finiquito tras renunciar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Conforme al artículo 177 del Código del Trabajo, el empleador cuenta con un plazo fatal de 10 días hábiles (se cuentan de lunes a sábado, excluyendo domingos y feriados) contados desde la fecha de separación efectiva de las funciones. Si vence este plazo y no te han pagado, puedes interponer un reclamo ante la Inspección del Trabajo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Pierdo mis vacaciones acumuladas si decido renunciar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Las vacaciones acumuladas y el feriado proporcional devengado son un derecho irrenunciable reconocido por el Código del Trabajo. El empleador está obligado por ley a calcular todos los días adeudados (incluyendo sábados inhábiles según el criterio de la DT) y pagarlos íntegramente en dinero en tu finiquito."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo arrepentirme o retractarme después de presentar mi renuncia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "La renuncia voluntaria es un acto unilateral. Una vez que es notificada válidamente a la empresa o ratificada en Mi DT, el trabajador no puede retractarse por sí solo. Solo podrás anularla si existe un acuerdo mutuo explícito por escrito con tu empleador antes de que se cumpla la fecha efectiva de término."
+          }
         }
-    ]
-}
-</script>
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Carta de Renuncia",
+          "item": "https://calculolaboral.cl/carta-de-renuncia-chile"
+        }
+      ]
+    }
+  ]
+}</script>
     
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1304,7 +1310,13 @@
             </div>
         </section>
 
-    </main>
+    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
+<h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
+<ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+<li><a href="/simulador-seguro-cesantia-afc" class="font-semibold text-[#00382E] underline">Cuánto recibes del seguro de cesantía</a></li>
+</ul>
+</section>
+</main>
 
     <!-- Elevated Curved Dark Footer (TealHQ Architecture) -->
     <!-- EXACT TEALHQ ASYMMETRIC CURVED DARK FOOTER (#00382E) -->

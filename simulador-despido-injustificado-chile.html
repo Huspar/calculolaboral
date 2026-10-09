@@ -31,86 +31,47 @@
     <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
     
     <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@graph": [
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Simulador de Despido Injustificado y Riesgo de Demanda Laboral Chile",
+      "operatingSystem": "All",
+      "applicationCategory": "BusinessApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CLP"
+      },
+      "description": "Calculadora forense para estimar la contingencia económica por despido improcedente, recargos del Art. 168, restitución de seguro de cesantía y nulidad del despido por Ley Bustos.",
+      "browserRequirements": "Requires JavaScript. Modern browser."
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
         {
-            "@type": "SoftwareApplication",
-            "name": "Simulador de Despido Injustificado y Riesgo de Demanda Laboral Chile",
-            "operatingSystem": "All",
-            "applicationCategory": "BusinessApplication",
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "CLP"
-            },
-            "description": "Calculadora forense para estimar la contingencia económica por despido improcedente, recargos del Art. 168, restitución de seguro de cesantía y nulidad del despido por Ley Bustos.",
-            "browserRequirements": "Requires JavaScript. Modern browser."
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
         },
         {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Inicio",
-                    "item": "https://calculolaboral.cl/"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Calculadoras",
-                    "item": "https://calculolaboral.cl/#calculadoras"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 3,
-                    "name": "Simulador de Despido Injustificado",
-                    "item": "https://calculolaboral.cl/simulador-despido-injustificado-chile"
-                }
-            ]
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Calculadoras",
+          "item": "https://calculolaboral.cl/#calculadoras"
         },
         {
-            "@type": "FAQPage",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "¿Qué recargo se aplica si el despido por necesidades de la empresa es declarado injustificado?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Conforme al Artículo 168 letra a) del Código del Trabajo, si el juez declara que el despido por necesidades de la empresa (Art. 161) fue injustificado o improcedente, se aplica un recargo legal del 30% sobre la indemnización por años de servicio (IAS)."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿El empleador debe devolver el descuento del seguro de cesantía (AFC) si pierde el juicio?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Sí. Conforme a la doctrina unificada y vinculante de la Corte Suprema de Chile, si el despido es declarado improcedente o injustificado, el empleador pierde el beneficio de imputar el 1,6% patronal a la indemnización, por lo que la sentencia le ordena restituir íntegramente dicho monto al trabajador con reajustes e intereses."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Cómo opera la nulidad del despido por Ley Bustos si hay cotizaciones impagas?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Según el Artículo 162 del Código del Trabajo (Ley Bustos), si existen cotizaciones previsionales adeudadas (AFP, Salud o AFC) al momento del despido, éste no produce el efecto de poner término al contrato. El empleador queda obligado a pagar todas las remuneraciones íntegras devengadas desde el despido hasta la convalidación formal ante la DT o el tribunal."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "¿Cuál es el plazo fatal para interponer una demanda por despido injustificado?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "El plazo legal fatal es de 60 días hábiles judiciales contados desde la separación del trabajador. Si se interpuso reclamo previo ante la Inspección del Trabajo, el plazo se suspende pero en ningún caso puede superar los 90 días hábiles en total."
-                    }
-                }
-            ]
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Simulador de Despido Injustificado",
+          "item": "https://calculolaboral.cl/simulador-despido-injustificado-chile"
         }
-    ]
-}
-</script>
+      ]
+    }
+  ]
+}</script>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
@@ -1267,7 +1228,14 @@
             </div>
         </section>
 
-    </main>
+    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
+<h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
+<ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+<li><a href="/reclamar-despido-injustificado-chile" class="font-semibold text-[#00382E] underline">Cómo reclamar un despido injustificado</a></li>
+<li><a href="/despido-necesidades-empresa-articulo-161" class="font-semibold text-[#00382E] underline">Indemnización por Art. 161</a></li>
+</ul>
+</section>
+</main>
 
     <!-- MOBILE FLOATING RESULT BAR -->
     <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between no-print">
@@ -1399,7 +1367,7 @@
     <!-- Scripts -->
     <script src="/js/constants.js?v=2.0.4"></script>
     <script src="/js/indicators.js?v=2.9.0"></script>
-    <script src="js/simulador_despido.js?v=2.8.0"></script>
+    <script src="/js/simulador_despido.js?v=2.8.0"></script>
     <script>
         // Helper for quick chip salary selection
         function setSalary(amount) {
