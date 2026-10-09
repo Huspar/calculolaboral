@@ -347,14 +347,14 @@ module.exports = async (req, res) => {
                 </div>
                 <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; margin: 18px 0; font-size: 12.5px; color: #92400e;">
                     <strong>⚠️ Plazo Legal Obligatorio (Art. 177):</strong><br>
-                    Recuerda que una vez entregada o despachada la carta, tienes un plazo legal máximo de <strong>10 días hábiles</strong> para poner a disposición del trabajador su finiquito notarial ratificado.
+                    Recuerda que una vez entregada o despachada la carta, tienes un plazo legal máximo de <strong>10 días hábiles</strong> para poner a disposición del trabajador su finiquito para firma ante ministro de fe.
                 </div>
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px;">
                     <strong>Soluciones complementarias para tu empresa:</strong><br>
                     • <a href="https://calculolaboral.cl/pack-cartas-despido-chile" style="color: #0284c7; font-weight: bold;">Pack de Cartas de Despido por Causal ($9.990)</a>: 22 documentos Word con una carta para cada causal de los artículos 159, 160 y 161, amonestación, descargos y aviso a la Inspección.<br>
                     • <a href="https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile" style="color: #e11d48; font-weight: bold;">Kit Ley 21.719 Protección de Datos ($29.990)</a>: 7 instrumentos en Word para adecuar tu pyme a la nueva ley de datos personales, que rige desde el 1 de diciembre de 2026. Reduce el riesgo de multas de la Agencia de Protección de Datos.<br>
                     • <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #0284c7; font-weight: bold;">Kit de Blindaje Pyme ($19.990)</a>: Protocolo Ley Karin (DS 44), anexos Ley 40 Horas y carpeta de fiscalización DT.<br>
-                    • <a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #0284c7; font-weight: bold;">Generador de Finiquito Notarial ($12.990)</a>: Cálculo exacto de indemnizaciones, feriado proporcional y documento listo para notaría.
+                    • <a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #0284c7; font-weight: bold;">Generador de Finiquito Notarial ($12.990)</a>: Cálculo referencial de indemnizaciones y feriado proporcional, y documento para firmar ante ministro de fe.
                 </div>
             `;
             userHtml = buildEmailHtml({ title: 'Tus Modelos de Carta de Despido (.docx) 📄', intro: userIntro, body: userBody });

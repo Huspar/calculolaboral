@@ -101,7 +101,7 @@
             causalNombre = 'Art. 160 (Falta de probidad / Conducta indebida)';
         } else if (state.causal === 'art160_100') {
             porcentajeRecargo = 100;
-            causalNombre = 'Art. 160 Temerario o carente de motivo plausible';
+            causalNombre = 'Art. 160 (Nº 1, 5 o 6) y carente de motivo plausible';
         }
 
         const montoRecargoJudicial = Math.round(iasBase * (porcentajeRecargo / 100));

@@ -19,7 +19,7 @@
         },
         '160': {
             titulo: '¿Te despidieron por Art. 160 sin pruebas claras?',
-            texto: 'Si la falta grave no se acredita en juicio, el juez ordena pagar las indemnizaciones completas con un recargo del 80% sobre los años de servicio, que puede llegar al 100% según el caso.',
+            texto: 'Si la falta grave no se acredita en juicio, el juez ordena pagar las indemnizaciones completas con un recargo del 80% sobre los años de servicio, o del 100% si se invocaron los números 1, 5 o 6 del Art. 160 y el despido carece de motivo plausible.',
             recargo: 0.8,
             motivo: 'Despido sin indemnización Art. 160'
         },

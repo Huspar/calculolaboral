@@ -1099,7 +1099,7 @@
                             <span class="material-icons text-emerald-600 text-2xl">verified</span>
                             <div>
                                 <span class="text-xs font-bold block text-emerald-950">¡Finiquito Notarial Desbloqueado!</span>
-                                <span class="text-xs text-emerald-700">Garantía activa de 48 horas para don(ña) <strong>${escapeHtml(formData.trabajadorNombre)}</strong> (RUT: ${escapeHtml(formData.trabajadorRut)}).</span>
+                                <span class="text-xs text-emerald-700">Acceso activo por 48 horas para don(ña) <strong>${escapeHtml(formData.trabajadorNombre)}</strong> (RUT: ${escapeHtml(formData.trabajadorRut)}).</span>
                             </div>
                         </div>
                         <button type="button" id="btn-reset-new-finiquito" class="text-xs text-slate-500 hover:text-slate-800 underline self-start sm:self-auto cursor-pointer">
