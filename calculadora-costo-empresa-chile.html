@@ -431,11 +431,12 @@ window.addEventListener('load', function () {
     </style>
     
     <!-- Structured Data (SoftwareApplication, BreadcrumbList & FAQ) -->
-    <script type="application/ld+json">{
+    <script type="application/ld+json">
+{
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "SoftwareApplication",
+      "@type": "WebApplication",
       "name": "Calculadora de Costo Empresa Chile 2026",
       "operatingSystem": "All",
       "applicationCategory": "BusinessApplication",
@@ -445,7 +446,9 @@ window.addEventListener('load', function () {
         "priceCurrency": "CLP"
       },
       "description": "Herramienta gratuita para calcular el costo real de contratar a un trabajador en Chile, incluyendo aportes patronales (cotización adicional del empleador, AFC, Mutual) y provisiones legales.",
-      "browserRequirements": "Requires JavaScript. Modern browser."
+      "browserRequirements": "Requires JavaScript. Modern browser.",
+      "url": "https://calculolaboral.cl/calculadora-costo-empresa-chile",
+      "inLanguage": "es-CL"
     },
     {
       "@type": "BreadcrumbList",
@@ -459,19 +462,14 @@ window.addEventListener('load', function () {
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Calculadoras",
-          "item": "https://calculolaboral.cl/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
           "name": "Calculadora Costo Empresa",
           "item": "https://calculolaboral.cl/calculadora-costo-empresa-chile"
         }
       ]
     }
   ]
-}</script>
+}
+</script>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 </head>
 <body class="min-h-screen flex flex-col">
@@ -1379,7 +1377,15 @@ window.addEventListener('load', function () {
             </section>
 
         </div>
-    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
+    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="fuentes-titulo">
+<h2 id="fuentes-titulo" class="text-lg font-bold text-slate-900 mb-3">Fuentes</h2>
+<p class="text-sm text-slate-600 mb-2">Contenido referencial elaborado con apoyo de IA a partir de estas fuentes públicas. No fue revisado por abogados.</p>
+<ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+<li><a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Código del Trabajo (BCN)</a></li>
+<li><a href="https://www.spensiones.cl/" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Superintendencia de Pensiones</a></li>
+</ul>
+</section>
+<section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
 <h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
 <ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
 <li><a href="/liquidacion-de-sueldo" class="font-semibold text-[#00382E] underline">Formato de liquidación de sueldo</a></li>

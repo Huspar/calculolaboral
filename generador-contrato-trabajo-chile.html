@@ -476,41 +476,41 @@ window.addEventListener('load', function () {
     <!-- Structured Data -->
     <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@graph": [
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Generador de Contratos de Trabajo Pyme Chile 2026",
+      "url": "https://calculolaboral.cl/generador-contrato-trabajo-chile",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "description": "Generador dinámico de contratos de trabajo individuales para micro y pequeñas empresas en Chile. Ajustado a 11 sectores económicos, Ley 40 Horas (42h en 2026) y protocolo Ley Karin (DS 44).",
+      "offers": {
+        "@type": "Offer",
+        "price": "12990",
+        "priceCurrency": "CLP"
+      },
+      "browserRequirements": "Requires JavaScript. Modern browser.",
+      "inLanguage": "es-CL"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
         {
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "name": "Generador de Contratos de Trabajo Pyme Chile 2026",
-            "url": "https://calculolaboral.cl/generador-contrato-trabajo-chile",
-            "applicationCategory": "BusinessApplication",
-            "operatingSystem": "All",
-            "description": "Generador dinámico de contratos de trabajo individuales para micro y pequeñas empresas en Chile. Ajustado a 11 sectores económicos, Ley 40 Horas (42h en 2026) y protocolo Ley Karin (DS 44).",
-            "offers": {
-                "@type": "Offer",
-                "price": "12990",
-                "priceCurrency": "CLP"
-            },
-            "browserRequirements": "Requires JavaScript. Modern browser."
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
         },
         {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Inicio",
-                    "item": "https://calculolaboral.cl/"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Generador Contrato de Trabajo",
-                    "item": "https://calculolaboral.cl/generador-contrato-trabajo-chile"
-                }
-            ]
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Generador Contrato de Trabajo",
+          "item": "https://calculolaboral.cl/generador-contrato-trabajo-chile"
         }
-    ]
+      ]
+    }
+  ]
 }
 </script>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
@@ -1367,7 +1367,15 @@ window.addEventListener('load', function () {
             </section>
 
         </div>
-    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
+    <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="fuentes-titulo">
+<h2 id="fuentes-titulo" class="text-lg font-bold text-slate-900 mb-3">Fuentes</h2>
+<p class="text-sm text-slate-600 mb-2">Contenido referencial elaborado con apoyo de IA a partir de estas fuentes públicas. No fue revisado por abogados.</p>
+<ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+<li><a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Código del Trabajo (BCN)</a></li>
+<li><a href="https://www.dt.gob.cl/" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Dirección del Trabajo</a></li>
+</ul>
+</section>
+<section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
 <h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
 <ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
 <li><a href="/calculadora-costo-empresa-chile" class="font-semibold text-[#00382E] underline">Costo empresa del sueldo pactado</a></li>

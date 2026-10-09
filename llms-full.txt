@@ -1,6 +1,6 @@
-# Cálculo Laboral Chile - Especificación Técnica y Fórmulas Matemáticas Oficiales (2026)
+# Cálculo Laboral Chile - Especificación técnica y fórmulas (2026)
 
-> Este documento contiene la base de conocimiento normativa, matemática y jurisprudencial completa utilizada por los simuladores, calculadoras y herramientas de https://calculolaboral.cl conforme al Código del Trabajo de Chile, leyes complementarias y dictámenes de la Dirección del Trabajo (DT).
+> Este documento resume las normas, fórmulas y criterios que usan las calculadoras de https://calculolaboral.cl, basados en el Código del Trabajo, leyes complementarias y criterios de la Dirección del Trabajo (DT). Es una referencia elaborada con apoyo de IA, sin revisión de abogados: verifica siempre con la norma vigente y, ante un caso concreto, consulta a la DT o a un profesional.
 
 ---
 
@@ -18,18 +18,18 @@
 - **Ley sobre Impuesto a la Renta (Art. 42 N° 1 y Art. 43 N° 1)**: Impuesto Único de Segunda Categoría (IUSC).
 
 ### 1.2 Topes Imponibles Vigentes (2026)
-- **Tope Imponible Previsional (AFP y Salud)**: 84.3 UF (Unidades de Fomento al último día del mes correspondiente).
-- **Tope Imponible Seguro de Cesantía (AFC)**: 126.6 UF.
+- **Tope Imponible Previsional (AFP y Salud)**: 90 UF (Unidades de Fomento al último día del mes correspondiente), vigente desde el 1 de febrero de 2026 (Superintendencia de Pensiones).
+- **Tope Imponible Seguro de Cesantía (AFC)**: 135.2 UF, vigente desde el 1 de febrero de 2026.
 
 ### 1.3 Cotizaciones Obligatorias y Descuentos Legales
 
 #### A. Administradora de Fondos de Pensiones (AFP)
-El descuento previsional obligatorio se calcula sobre la remuneración imponible con tope previsional (84.3 UF):
-$$\text{Base Imponible AFP} = \min(\text{Remuneración Imponible}, 84.3\text{ UF})$$
+El descuento previsional obligatorio se calcula sobre la remuneración imponible con tope previsional (90 UF):
+$$\text{Base Imponible AFP} = \min(\text{Remuneración Imponible}, 90\text{ UF})$$
 $$\text{Descuento AFP} = \text{Base Imponible AFP} \times (10\% + \text{Comisión AFP})$$
 
 Comisiones vigentes de las Administradoras:
-- AFP Uno: 10% + 0.49% = 10.49%
+- AFP Uno: 10% + 0.46% = 10.46%
 - AFP Modelo: 10% + 0.58% = 10.58%
 - AFP Planvital: 10% + 1.10% = 11.10%
 - AFP Habitat: 10% + 1.27% = 11.27%
@@ -38,15 +38,15 @@ Comisiones vigentes de las Administradoras:
 - AFP Provida: 10% + 1.45% = 11.45%
 
 #### B. Cotización de Salud
-- **Fonasa**: 7% legal sobre la remuneración imponible sujeta al tope de 84.3 UF:
-  $$\text{Descuento Fonasa} = \min(\text{Remuneración Imponible}, 84.3\text{ UF}) \times 7\%$$
+- **Fonasa**: 7% legal sobre la remuneración imponible sujeta al tope de 90 UF:
+  $$\text{Descuento Fonasa} = \min(\text{Remuneración Imponible}, 90\text{ UF}) \times 7\%$$
 - **Isapre**: Cotización pactada en Unidades de Fomento (UF) en el plan de salud.
   $$\text{Plan en Pesos} = \text{Plan en UF} \times \text{Valor UF último día del mes}$$
   $$\text{Descuento Isapre} = \max(\text{Plan en Pesos}, \text{Base Imponible Salud} \times 7\%)$$
 
 #### C. Seguro de Cesantía (AFC - Ley N° 19.728)
-Calculado sobre la remuneración imponible sujeta al tope de cesantía (126.6 UF):
-$$\text{Base Imponible AFC} = \min(\text{Remuneración Imponible}, 126.6\text{ UF})$$
+Calculado sobre la remuneración imponible sujeta al tope de cesantía (135.2 UF):
+$$\text{Base Imponible AFC} = \min(\text{Remuneración Imponible}, 135.2\text{ UF})$$
 - **Contrato Indefinido**:
   - Aporte cargo trabajador: 0.6% de la Base Imponible AFC.
   - Aporte cargo empleador: 2.4% (1.6% a la Cuenta Individual CIC + 0.8% al Fondo Solidario FCS).
@@ -56,10 +56,13 @@ $$\text{Base Imponible AFC} = \min(\text{Remuneración Imponible}, 126.6\text{ U
 - **Trabajador de Casa Particular o Jubilado activo**:
   - Retención trabajador: 0.0%.
 
+#### D. Cotización adicional del empleador (reforma previsional, Ley N° 21.735)
+Desde las remuneraciones de agosto de 2026 el empleador cotiza 3.5% de la remuneración imponible (hasta el tope de 90 UF): 0.1% a la cuenta individual, 0.9% a la rentabilidad protegida y 2.5% al seguro social, que incluye el SIS. Por eso la calculadora de costo empresa ya no suma un 1.49% de SIS aparte. La cotización sube de forma gradual hasta 8.5% en 2033.
+
 ### 1.4 Impuesto Único de Segunda Categoría (IUSC)
 
 #### Base Imponible Tributable:
-$$\text{Base Tributable} = \text{Remuneración Imponible} - \text{Descuento AFP} - \text{Descuento Salud (tope legal 7\% o hasta 5.795 UF)} - \text{Descuento AFC trabajador}$$
+$$\text{Base Tributable} = \text{Remuneración Imponible} - \text{Descuento AFP} - \text{Descuento Salud (7\% legal)} - \text{Descuento AFC trabajador}$$
 
 #### Escala Progresiva Mensual por Tramos de UTM:
 El impuesto se calcula aplicando el factor del tramo a la base tributable y restando la cantidad a rebajar en pesos (equivalente en UTM al valor de la UTM del período):
@@ -95,14 +98,14 @@ $$\text{Sueldo Líquido} = \text{Total Haberes (Imponibles + No Imponibles)} - \
   - **42 horas semanales a partir del 26 de abril de 2026**.
   - 40 horas semanales a partir del 26 de abril de 2028.
 
-### 2.2 Fórmulas Matemáticas de la Dirección del Trabajo (DT)
-La DT determina el valor de la hora ordinaria mensualizando la jornada semanal mediante la relación de 30 días del mes civil dividido por 7 días de la semana:
+### 2.2 Fórmulas usadas por la calculadora
+Para el valor de la hora ordinaria se mensualiza la jornada semanal mediante la relación de 30 días del mes civil dividido por 7 días de la semana:
 $$\text{Horas Mensuales de la Jornada} = \frac{\text{Jornada Semanal} \times 30}{7}$$
 
 Para sueldo mensual con jornada convenida:
 $$\text{Valor Hora Ordinaria} = \frac{\text{Sueldo Base Mensual}}{\text{Horas Mensuales de la Jornada}} = \text{Sueldo Base Mensual} \times \left(\frac{7}{\text{Jornada Semanal} \times 30}\right) = \text{Sueldo Base} \times \text{Factor DT}$$
 
-#### Factores Oficiales por Jornada:
+#### Factores por jornada:
 - **Jornada de 42 Horas Semanales (Vigente 2026)**:
   - Horas mensuales divisor: $\frac{42 \times 30}{7} = 180\text{ horas mensuales}$.
   - Factor Hora Ordinaria: $\frac{1}{180} = 0.0055555...$
@@ -123,8 +126,10 @@ $$\text{Valor Hora Ordinaria} = \frac{\text{Sueldo Base Mensual}}{\text{Horas Me
 ### 2.3 Fórmula Operativa de Horas Extras:
 $$\text{Monto Horas Extras} = \text{Sueldo Base} \times \text{Factor DT} \times \text{Número de Horas Extras} \times 1.5$$
 
-En términos directos con el factor simplificado tradicional (45h base):
-$$\text{Monto Horas Extras} = \text{Sueldo Base} \times 0.0077777 \times \text{Horas Extras} \times 1.5$$
+En términos directos con el factor de la jornada de 45 horas (sin recargo):
+$$\text{Monto Horas Extras} = \text{Sueldo Base} \times 0.0051851 \times \text{Horas Extras} \times 1.5$$
+
+El recargo de 1.5 se aplica una sola vez: los factores "con recargo" de la sección 2.2 ya lo incluyen.
 
 ---
 
@@ -146,8 +151,8 @@ $$\text{Factor Día} = \frac{1.25}{30} = 0.041666...\text{ días hábiles por d�
 Fórmula de Días Hábiles Acumulados:
 $$\text{Días Hábiles Proporcionales} = \left(\frac{\text{Días Trabajados en el Período}}{30}\right) \times 1.25$$
 
-#### B. Integración de Días Inhábiles Inherentes (Doctrina Obligatoria de la DT):
-Conforme a la jurisprudencia administrativa de la Dirección del Trabajo (Dictamen Ord. N° 544/30 y complementarios):
+#### B. Integración de Días Inhábiles Inherentes (criterio de la DT):
+Según criterios de la Dirección del Trabajo:
 1. Se toma el número de días hábiles devengados.
 2. Se contabilizan cronológicamente a partir del primer día hábil siguiente a la fecha de término del contrato de trabajo.
 3. Se añaden todos los sábados, domingos y días festivos que queden comprendidos dentro de ese recorrido en el calendario civil hasta completar los días hábiles.
@@ -179,7 +184,7 @@ $$\text{Total Días a Pagar} = \text{Días Hábiles Proporcionales} + \text{Día
 - Sin tope de años para trabajadores contratados con anterioridad al 14 de agosto de 1981.
 
 #### B. Tope de Remuneración Mensual:
-- **Tope de 90 Unidades de Fomento (UF)**: Artículo 172 inciso 3 del Código del Trabajo establece que la remuneración mensual no podrá exceder de noventa UF del último día del mes anterior al del pago o despido, salvo estipulación en contrario en contrato individual o instrumento colectivo donde se haya pactado indemnización a todo evento o sin tope.
+- **Tope de 90 Unidades de Fomento (UF)**: el Artículo 172 del Código del Trabajo establece que la remuneración mensual no podrá exceder de noventa UF del último día del mes anterior al del pago o despido, salvo estipulación en contrario en contrato individual o instrumento colectivo donde se haya pactado indemnización a todo evento o sin tope.
 
 $$\text{Remuneración Base Indemnización} = \min(\text{Última Remuneración Mensual Devengada}, 90\text{ UF})$$
 
@@ -210,9 +215,9 @@ $$\text{IAS a Pagar en Finiquito} = \text{IAS Bruta} - \text{Aporte Patronal CIC
 | Causal Invocada por el Empleador | Calificación Judicial | Recargo Legal sobre IAS | Base Legal |
 |---|---|---|---|
 | **Artículo 161** (Necesidades de la empresa / Desahucio) | Injustificado, indebido o improcedente | **30% de recargo** | Art. 168 letra a) |
-| **Artículo 159** (Vencimiento plazo, conclusión de obra, caso fortuito) | Aplicación injustificada | **50% de recargo** | Art. 168 letra b) |
-| **Artículo 160 N° 1 a 6** (Faltas de probidad, injurias, abandono, actos temerarios) | Causal indebida o improcedente | **80% de recargo** | Art. 168 letra c) |
-| **Artículo 160 N° 1, 5 o 6** | Carece de motivo plausible (temerario o arbitrario) | **100% de recargo** | Art. 168 letra c) inciso 2 |
+| **Artículo 159** (Vencimiento plazo, conclusión de obra, caso fortuito) o ninguna causal invocada | Aplicación injustificada | **50% de recargo** | Art. 168 letra b) |
+| **Artículo 160** (conductas imputables al trabajador) | Aplicación indebida de la causal | **80% de recargo** | Art. 168 letra c) |
+| **Artículo 160 N° 1, 5 o 6** | Además declarado carente de motivo plausible | Incremento de **100%** | Art. 168, inciso siguiente a la letra c) |
 
 ### 5.3 Fórmula del Recargo Legal por Despido Injustificado (Art. 161):
 Fórmula directa:
@@ -221,7 +226,7 @@ Fórmula directa:
 $$\text{Recargo Legal 30\%} = 0.30 \times \text{Indemnización por Años de Servicio}$$
 
 ### 5.4 Devolución Obligatoria del Descuento Patronal AFC (Jurisprudencia Unificada):
-Conforme a la jurisprudencia de la Corte Suprema (Causas Rol N° 2.778-2015, Rol N° 23.348-2018 y unificación consolidada), si el tribunal declara que el despido por necesidades de la empresa fue improcedente o injustificado, **cesa el derecho legal del empleador a descontar el aporte patronal a la AFC**. En consecuencia, la sentencia condena al empleador a restituir íntegramente al trabajador dicho monto deducido en el finiquito con reajustes e intereses:
+Según los fallos de unificación de jurisprudencia de la Corte Suprema, si el tribunal declara que el despido por necesidades de la empresa fue improcedente o injustificado, **cesa el derecho legal del empleador a descontar el aporte patronal a la AFC**. En consecuencia, la sentencia condena al empleador a restituir íntegramente al trabajador dicho monto deducido en el finiquito con reajustes e intereses:
 $$\text{Total Judicialmente Recuperable} = \text{Recargo Legal 30\%} + \text{Restitución Descuento Patronal AFC} + \text{Costas y Reajustes}$$
 
 ---
@@ -252,9 +257,9 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Calculadora de Costo Empresa: `https://calculolaboral.cl/calculadora-costo-empresa-chile`
 - Simulador Seguro de Cesantía AFC: `https://calculolaboral.cl/simulador-seguro-cesantia-afc`
 
-### Kits y Documentos para Empleadores:
-- Kit Cumplimiento Ley 21.719 Datos Personales ($29.990): `https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile`
-- Kit Blindaje Laboral Pymes ($19.990): `https://calculolaboral.cl/kit-cumplimiento-laboral-pymes`
+### Kits y documentos para empleadores (modelos de referencia, sin revisión de abogados):
+- Kit Ley 21.719 Datos Personales (7 instrumentos y manual, $29.990; la ley rige desde el 1 de diciembre de 2026): `https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile`
+- Kit Blindaje Laboral Pymes (21 documentos Word y manual PDF, $19.990): `https://calculolaboral.cl/kit-cumplimiento-laboral-pymes`
 - Generador de Finiquito Legal Word/PDF ($12.990): `https://calculolaboral.cl/generador-finiquito-chile`
 - Generador de Contrato de Trabajo: `https://calculolaboral.cl/generador-contrato-trabajo-chile`
 - Generador de Anexo 40 Horas: `https://calculolaboral.cl/generador-anexo-40-horas`
@@ -262,8 +267,8 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Checklist Fiscalización DT Pymes: `https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile`
 - Solicitud Reconsideración Multas DT: `https://calculolaboral.cl/reconsideracion-multas-dt-art-511`
 
-### Asistentes y Guías Doctrinales:
-- Asistente Carta de Renuncia Voluntaria: `https://calculolaboral.cl/carta-de-renuncia-chile`
+### Guías:
+- Carta de Renuncia Voluntaria (Art. 159 N° 2): `https://calculolaboral.cl/carta-de-renuncia-chile`
 - Carta de Despido: `https://calculolaboral.cl/carta-de-despido-chile`
 - Reclamar Despido Injustificado: `https://calculolaboral.cl/reclamar-despido-injustificado-chile`
 - Despido por Necesidades de la Empresa (Art. 161): `https://calculolaboral.cl/despido-necesidades-empresa-articulo-161`
@@ -275,9 +280,9 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Pack de Cartas de Despido por Causal (Word, $9.990): `https://calculolaboral.cl/pack-cartas-despido-chile`
 - Protocolo Ley Karin para Empresas: `https://calculolaboral.cl/protocolo-ley-karin-empresas`
 - Qué Conductas NO Son Ley Karin según la DT: `https://calculolaboral.cl/que-conductas-no-son-ley-karin-dt-chile`
-- Sala Cuna Universal (Art. 203): `https://calculolaboral.cl/sala-cuna-universal-articulo-203-codigo-del-trabajo-chile`
-- Ley de Equidad de Género y Brecha Salarial: `https://calculolaboral.cl/ley-equidad-genero-brecha-salarial-chile-2026`
-- Mejores Cuentas para Recibir Sueldo: `https://calculolaboral.cl/mejores-cuentas-para-recibir-sueldo-chile-2026`
+- Sala Cuna (Art. 203) y estado del proyecto de Sala Cuna Universal: `https://calculolaboral.cl/sala-cuna-universal-articulo-203-codigo-del-trabajo-chile`
+- Ley de Equidad Salarial (Ley 21.828, Art. 62 bis): `https://calculolaboral.cl/ley-equidad-genero-brecha-salarial-chile-2026`
+- Mejores Cuentas para Recibir Sueldo (incluye contenido patrocinado): `https://calculolaboral.cl/mejores-cuentas-para-recibir-sueldo-chile-2026`
 - Finiquito por Renuncia Voluntaria: `https://calculolaboral.cl/finiquito-por-renuncia-voluntaria`
 - Qué Hacer si No te Pagan el Finiquito: `https://calculolaboral.cl/que-hacer-si-no-te-pagan-el-finiquito`
 - Propuesta Indemnización a Todo Evento: `https://calculolaboral.cl/propuesta-indemnizacion-a-todo-evento-chile`
@@ -285,7 +290,7 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Sueldo Mínimo Chile 2026 ($553.553 bruto, $452.917 líquido): `https://calculolaboral.cl/sueldo-minimo-chile-2026`
 - Gratificación Legal 2026 (calculadora art. 47 y 50, tope $219.115): `https://calculolaboral.cl/gratificacion-legal-chile`
 - Liquidación de Sueldo (qué es, ejemplo y formato Excel/Word): `https://calculolaboral.cl/liquidacion-de-sueldo`
-- Aguinaldo Fiestas Patrias 2026: `https://calculolaboral.cl/aguinaldo-fiestas-patrias-chile-2026`
+- Aguinaldo de Fiestas Patrias 2026 (sector público Ley 21.724; sector privado por contrato o costumbre): `https://calculolaboral.cl/aguinaldo-fiestas-patrias-chile-2026`
 - Blog: `https://calculolaboral.cl/blog`
 - Sobre Nosotros: `https://calculolaboral.cl/sobre-nosotros`
 - Contacto: `https://calculolaboral.cl/contacto`

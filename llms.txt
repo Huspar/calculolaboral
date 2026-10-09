@@ -1,57 +1,60 @@
 # Cálculo Laboral Chile
 
-> Plataforma de referencia en Chile para simuladores salariales, calculadoras de liquidación de finiquito y herramientas de cumplimiento legal conforme a la Dirección del Trabajo (DT) y el Código del Trabajo (actualizado a 2026).
+> Sitio independiente con calculadoras, simuladores y guías de derecho laboral chileno, basados en el Código del Trabajo y en información pública (Dirección del Trabajo, Superintendencia de Pensiones, SII, Biblioteca del Congreso). No es un organismo público ni un estudio jurídico.
 
-Calculadoras laborales gratuitas, sin registro, con fórmulas matemáticas auditadas y generación de informes ejecutivos en PDF. Soluciones y kits normativos profesionales para trabajadores, contadores y empleadores pymes.
+Calculadoras gratuitas y sin registro. Los resultados son referenciales y no reemplazan la asesoría de un profesional. Los textos y las guías se elaboran con apoyo de IA y no han sido revisados por abogados; cada guía enlaza sus fuentes. Las cifras previsionales y tributarias se actualizan con los valores vigentes (UF, UTM, topes imponibles, comisiones AFP).
 
-- [Base de Conocimiento y Fórmulas Matemáticas (llms-full.txt)](https://calculolaboral.cl/llms-full.txt): Especificación técnica exhaustiva con fórmulas legales, parámetros tributarios, factores de jornada y jurisprudencia administrativa de la DT.
+- [Base de conocimiento y fórmulas (llms-full.txt)](https://calculolaboral.cl/llms-full.txt): Fórmulas, parámetros, factores de jornada y criterios que usan las calculadoras.
 
-## Calculadoras Laborales y Simuladores Oficiales
+## Calculadoras y simuladores
 
-- [Simulador de Despido Injustificado](https://calculolaboral.cl/simulador-despido-injustificado-chile): Simula el monto reclamable ante tribunales laborales por despidos indebidos (Art. 168). Calcula el recargo legal del 30% sobre la indemnización por años de servicio (en caso de Art. 161) y la restitución del descuento indebido del aporte patronal AFC.
-- [Calculadora de Sueldo Líquido](https://calculolaboral.cl/sueldo_liquido): Conversor exacto de sueldo bruto a líquido mensual para 2026. Desglosa cotizaciones previsionales obligatorias de AFP (Modelo, Uno, Habitat, Capital, Cuprum, Provida, Planvital), Salud Fonasa (7%) o Isapre en UF, Seguro de Cesantía (AFC 0.6%) e Impuesto Único de Segunda Categoría en tramos de UTM.
-- [Calculadora de Finiquito Legal](https://calculolaboral.cl/finiquito_calculator): Liquidación completa de término laboral por causales legales (Art. 161 necesidades de la empresa, Art. 159 renuncia, mutuo acuerdo o vencimiento de plazo). Determina indemnización por años de servicio (tope 90 UF), indemnización sustitutiva de aviso previo y feriado proporcional.
-- [Calculadora de Horas Extras (Ley 40 Horas / 42h)](https://calculolaboral.cl/calculadora-horas-extras): Valor de horas extraordinarias con recargo mínimo legal del 50%. Incorpora los factores actualizados para la jornada ordinaria legal vigente de 42 horas semanales conforme a la Ley N° 21.561.
-- [Calculadora de Vacaciones y Feriado Legal](https://calculolaboral.cl/calculadora-vacaciones): Control integral de vacaciones legales acumuladas, feriado progresivo (años cotizados) y feriado proporcional.
-- [Calculadora de Sueldo Part-Time](https://calculolaboral.cl/calculadora-sueldo-part-time): Simulación salarial y proporcionalidad de cotizaciones para contratos de jornada parcial de 30 y 20 horas semanales según el Art. 40 bis del Código del Trabajo.
-- [Calculadora de Despido Art. 160](https://calculolaboral.cl/calculadora-despido-articulo-160): Simulación de finiquito por causales disciplinarias e imputables al trabajador, con detalle exclusivo de días laborados pendientes y feriado proporcional devengado sin derecho a indemnizaciones por término.
-- [Calculadora Costo Empresa](https://calculolaboral.cl/calculadora-costo-empresa-chile): Cálculo del costo total empleador (Total Remuneración Bruta + SIS 1.49% + Mutual de Seguridad accidentes del trabajo + Aporte patronal AFC 2.4%/3.0% + Sala cuna eventual).
-- [Simulador Seguro de Cesantía AFC](https://calculolaboral.cl/simulador-seguro-cesantia-afc): Proyección de giros mensuales con cargo a la Cuenta Individual de Cesantía (CIC) y Fondo de Cesantía Solidario (FCS) conforme a los porcentajes decrecientes legales.
+- [Simulador de Despido Injustificado](https://calculolaboral.cl/simulador-despido-injustificado-chile): Estima el monto reclamable por un despido improcedente: indemnizaciones del Art. 163 y recargos del Art. 168 según la causal (30%, 50%, 80% o 100%), más la devolución del aporte del empleador al seguro de cesantía cuando corresponde.
+- [Calculadora de Sueldo Líquido](https://calculolaboral.cl/sueldo_liquido): Pasa de sueldo bruto a líquido para 2026. Descuenta AFP (con la comisión de cada administradora), salud (7% Fonasa o plan Isapre), seguro de cesantía (0,6% en contrato indefinido) e Impuesto Único de Segunda Categoría. Topes imponibles: 90 UF (AFP y salud) y 135,2 UF (seguro de cesantía).
+- [Calculadora de Finiquito](https://calculolaboral.cl/finiquito_calculator): Finiquito por causal (Art. 159, 160 y 161): indemnización por años de servicio (tope de 90 UF y 11 años), indemnización sustitutiva del aviso previo y feriado proporcional.
+- [Calculadora de Horas Extras (jornada de 42 horas)](https://calculolaboral.cl/calculadora-horas-extras): Valor de la hora extraordinaria con recargo del 50% (Art. 32) y los factores de la jornada ordinaria vigente de 42 horas semanales (Ley 21.561).
+- [Calculadora de Vacaciones y Feriado](https://calculolaboral.cl/calculadora-vacaciones): Días de vacaciones, feriado progresivo y feriado proporcional.
+- [Calculadora de Sueldo Part-Time](https://calculolaboral.cl/calculadora-sueldo-part-time): Sueldo y cotizaciones de una jornada parcial (Art. 40 bis y siguientes).
+- [Calculadora de Despido Art. 160](https://calculolaboral.cl/calculadora-despido-articulo-160): Finiquito cuando el despido es por causales imputables al trabajador (Art. 160): días trabajados y feriado proporcional, y los recargos del Art. 168 si el despido es declarado indebido o injustificado.
+- [Calculadora de Costo Empresa](https://calculolaboral.cl/calculadora-costo-empresa-chile): Costo total de un trabajador para el empleador: remuneración, gratificación, cotización adicional del empleador (3,5% desde agosto de 2026, Ley 21.735, que incluye el SIS), aporte del empleador al seguro de cesantía (2,4% o 3%), mutual y provisiones.
+- [Simulador del Seguro de Cesantía](https://calculolaboral.cl/simulador-seguro-cesantia-afc): Giros mensuales con cargo a la Cuenta Individual y al Fondo de Cesantía Solidario.
+- [Impuesto Único de Segunda Categoría](https://calculolaboral.cl/impuesto-unico-segunda-categoria): Tabla del mes (tramos, factor y cantidad a rebajar), calculadora desde sueldo bruto o renta tributable.
+- [Liquidación de Sueldo](https://calculolaboral.cl/liquidacion-de-sueldo): Qué es, ejemplo con el sueldo mínimo, cada rubro explicado y formato descargable.
+- [Gratificación Legal](https://calculolaboral.cl/gratificacion-legal-chile): Gratificación del Art. 50 (25% con tope de 4,75 ingresos mínimos mensuales) y del Art. 47.
 
-## Soluciones y Productos para Empleadores y Pymes
+## Documentos y herramientas para empleadores y pymes
 
-- [Kit Blindaje Laboral para Pymes](https://calculolaboral.cl/kit-cumplimiento-laboral-pymes): Paquete integral de plantillas editables Word/Excel ($19.990 CLP) para prevención de multas DT. Incluye Reglamento Interno de Orden, Higiene y Seguridad (RIOHS) adaptado a Ley Karin, contratos tipo, actas de entrega de EPP y protocolos de investigación.
-- [Kit Cumplimiento Ley 21.719 Protección de Datos Personales](https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile): Sistema documental ($29.990 CLP) para adaptar empresas chilenas a la nueva legislación de datos y la Agencia de Protección de Datos Personales. Manual de cumplimiento, políticas de privacidad, cláusulas laborales de confidencialidad y registro de actividades de tratamiento.
-- [Generador de Finiquito Legal Word/PDF](https://calculolaboral.cl/generador-finiquito-chile): Herramienta profesional automatizada ($12.990 CLP) para redactar y exportar finiquitos laborales blindados con cláusulas de reserva de derechos y validaciones ante notario o portal Mi DT.
-- [Generador de Contrato de Trabajo Chile](https://calculolaboral.cl/generador-contrato-trabajo-chile): Asistente de redacción para contratos indefinidos, a plazo fijo y por obra/faena con todas las estipulaciones mínimas del Art. 10 del Código del Trabajo.
-- [Generador de Anexo Ley 40 Horas](https://calculolaboral.cl/generador-anexo-40-horas): Generador asistido del pacto modificatorio de jornada ordinaria conforme a los dictámenes vinculantes de la Dirección del Trabajo.
-- [Portal Para Empleadores](https://calculolaboral.cl/para-empleadores): Centro de recursos, auditorías preventivas y herramientas normativas para gerencias de recursos humanos y micro, pequeñas y medianas empresas.
-- [Checklist Fiscalización DT Pymes](https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile): Auditoría preventiva interactiva sobre las 22 materias más sancionadas por la Inspección del Trabajo, con detalle de multas en UTM según dotación.
-- [Asistente de Reconsideración de Multas DT (Art. 511)](https://calculolaboral.cl/reconsideracion-multas-dt-art-511): Guía técnica y asistente para interponer descargos administrativos y solicitar la rebaja o sustitución de multas laborales ante la Dirección del Trabajo.
+Son modelos de referencia basados en el Código del Trabajo; no fueron redactados ni revisados por abogados.
 
-## Asistentes y Guías Clave
+- [Kit Blindaje Laboral para Pymes](https://calculolaboral.cl/kit-cumplimiento-laboral-pymes): 21 documentos Word editables y un manual en PDF ($19.990): Ley Karin, anexos de jornada de 40 horas, pactos y cláusulas por rubro, checklist y guía de fiscalización de la DT. No incluye contratos, finiquitos ni anexo de sala cuna.
+- [Kit Ley 21.719 de Protección de Datos Personales](https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile): 7 instrumentos y un manual ($29.990). La Ley 21.719 rige desde el 1 de diciembre de 2026.
+- [Generador de Finiquito Word/PDF](https://calculolaboral.cl/generador-finiquito-chile): Redacta y exporta un finiquito ($12.990). Para que tenga poder liberatorio debe firmarse ante un ministro de fe (Art. 177).
+- [Generador de Contrato de Trabajo](https://calculolaboral.cl/generador-contrato-trabajo-chile): Contratos indefinidos, a plazo fijo y por obra o faena con las menciones mínimas del Art. 10 ($12.990).
+- [Generador de Anexo de Jornada de 40 Horas](https://calculolaboral.cl/generador-anexo-40-horas): Anexo de modificación de jornada basado en el Código del Trabajo y en criterios de la DT.
+- [Portal para Empleadores](https://calculolaboral.cl/para-empleadores): Recursos, modelos y herramientas para pymes.
+- [Checklist de Fiscalización DT](https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile): Checklist interactivo de autocontrol sobre materias que suele fiscalizar la Dirección del Trabajo, con multas referenciales en UTM.
+- [Reconsideración de Multas DT (Arts. 511 y 512)](https://calculolaboral.cl/reconsideracion-multas-dt-art-511): Guía y asistente para solicitar la reconsideración de una multa administrativa dentro de plazo.
+- [Pack de Cartas de Despido por Causal](https://calculolaboral.cl/pack-cartas-despido-chile): 22 documentos Word editables (16 cartas de término según los artículos 159, 160 y 161 del Código del Trabajo y 6 documentos de apoyo), $9.990.
 
-- [Asistente Carta de Renuncia Voluntaria](https://calculolaboral.cl/carta-de-renuncia-chile): Redacción guiada con formalidades del Art. 159 N° 1 y recomendaciones sobre ratificación ante ministro de fe o portal Mi DT.
-- [Modelos de Carta de Despido](https://calculolaboral.cl/carta-de-despido-chile): Formatos formales de notificación de término de contrato por causales del Art. 161 y Art. 160 con acreditación de pago de cotizaciones (Ley Bustos).
-- [Cómo Reclamar Despido Injustificado](https://calculolaboral.cl/reclamar-despido-injustificado-chile): Plazos perentorios de 60 y 90 días hábiles, conciliación ante la DT y procedimiento en tribunales del trabajo.
-- [Despido por Necesidades de la Empresa (Art. 161)](https://calculolaboral.cl/despido-necesidades-empresa-articulo-161): Causales objetivas de procedencia, preaviso de 30 días, carta formal y tope de 90 UF.
-- [Ley de 40 Horas Chile (42h en 2026)](https://calculolaboral.cl/ley-40-horas-chile-2026): Calendario de vigencia (Ley 21.561), distribución en 5x2 y 6x1, y efectos en la hora de trabajo.
-- [Cómo Calcular Sueldo Líquido Paso a Paso](https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso): Manual de haberes imponibles y no imponibles, descuentos previsionales y cálculo manual de impuesto único.
-- [Cómo Calcular Finiquito en Chile](https://calculolaboral.cl/como-calcular-finiquito-chile): Base de última remuneración mensual, feriado proporcional y tope legal de 90 UF.
-- [Finiquito por Renuncia Voluntaria](https://calculolaboral.cl/finiquito-por-renuncia-voluntaria): Qué derechos económicos se mantienen y qué indemnizaciones no corresponden.
-- [Qué Hacer si No te Pagan el Finiquito](https://calculolaboral.cl/que-hacer-si-no-te-pagan-el-finiquito): Plazo legal de 10 días hábiles (Art. 177) y sanciones por incumplimiento del empleador.
-- [Fondos Generacionales AFP Chile](https://calculolaboral.cl/fondos-generacionales-afp-chile): Estructura del nuevo sistema previsional de fondos generacionales por ciclo de vida.
-- [Guía Ley 21.719 Protección Datos Personales](https://calculolaboral.cl/guia-ley-21719-proteccion-datos-personales-chile): Alcance, derechos ARCOP, multas de hasta 20.000 UTA y régimen para empresas en Chile.
-- [Pack de Cartas de Despido por Causal](https://calculolaboral.cl/pack-cartas-despido-chile): 22 documentos Word editables (16 cartas de término según los artículos 159, 160 y 161 del Código del Trabajo y 6 documentos de apoyo). $9.990.
-- [Protocolo Ley Karin para Empresas](https://calculolaboral.cl/protocolo-ley-karin-empresas): Obligaciones del empleador, contenido mínimo del protocolo, plazos de investigación (3 y 30 días hábiles) y multas según tamaño de empresa.
-- [Qué Conductas NO Son Ley Karin según la DT](https://calculolaboral.cl/que-conductas-no-son-ley-karin-dt-chile): Criterios de la Dirección del Trabajo sobre legítimas instrucciones operacionales y diferenciación con el acoso laboral o sexual.
-- [Sala Cuna Universal (Art. 203 del Código del Trabajo)](https://calculolaboral.cl/sala-cuna-universal-articulo-203-codigo-del-trabajo-chile): Obligaciones empresariales y proyectos de ley de corresponsabilidad.
-- [Ley de Equidad de Género y Brecha Salarial](https://calculolaboral.cl/ley-equidad-genero-brecha-salarial-chile-2026): Estándares del Art. 62 bis para igual remuneración ante funciones de igual valor.
-- [Mejores Cuentas para Recibir Sueldo en Chile (2026)](https://calculolaboral.cl/mejores-cuentas-para-recibir-sueldo-chile-2026): Comparativa de cuentas bancarias remuneradas, comisiones cero y beneficios.
-- [Propuesta Indemnización a Todo Evento](https://calculolaboral.cl/propuesta-indemnizacion-a-todo-evento-chile): Análisis del debate legislativo sobre indemnización por término de contrato independiente de la causal.
-- [Impuesto Único de Segunda Categoría](https://calculolaboral.cl/impuesto-unico-segunda-categoria): Tabla del mes (tramos, factor y cantidad a rebajar en pesos), calculadora desde sueldo bruto o renta tributable y cuánto se paga según el sueldo.
-- [Sueldo Mínimo Chile 2026](https://calculolaboral.cl/sueldo-minimo-chile-2026): $553.553 bruto desde mayo de 2026 (Ley 21.830), líquido por AFP, valores por edad, part-time, historial y reajuste de enero de 2027.
-- [Gratificación Legal 2026](https://calculolaboral.cl/gratificacion-legal-chile): Calculadora del artículo 50 (25% con tope de 4,75 ingresos mínimos, $219.115 al mes) y del artículo 47, con la reliquidación 2026.
-- [Liquidación de Sueldo](https://calculolaboral.cl/liquidacion-de-sueldo): Qué es, ejemplo completo con el sueldo mínimo, cada rubro explicado, formato gratis en Excel y Word, y dónde obtenerla.
-- [Aguinaldo Fiestas Patrias 2026](https://calculolaboral.cl/aguinaldo-fiestas-patrias-chile-2026): Montos oficiales sector público y derechos adquiridos por cláusula tácita en el sector privado.
-- [Blog de Legislación y Novedades Laborales](https://calculolaboral.cl/blog): Artículos y actualizaciones normativas periódicas.
+## Guías
+
+- [Carta de Renuncia Voluntaria](https://calculolaboral.cl/carta-de-renuncia-chile): Modelo y formalidades del Art. 159 N° 2 y ratificación del finiquito.
+- [Carta de Despido](https://calculolaboral.cl/carta-de-despido-chile): Contenido de la carta de término por los artículos 160 y 161 y acreditación del pago de cotizaciones (Ley Bustos).
+- [Cómo Reclamar un Despido Injustificado](https://calculolaboral.cl/reclamar-despido-injustificado-chile): Plazo de 60 días hábiles desde la separación, conciliación en la Inspección del Trabajo y demanda en el tribunal laboral.
+- [Despido por Necesidades de la Empresa (Art. 161)](https://calculolaboral.cl/despido-necesidades-empresa-articulo-161): Requisitos, aviso de 30 días, carta e indemnizaciones.
+- [Ley de 40 Horas (42 horas en 2026)](https://calculolaboral.cl/ley-40-horas-chile-2026): Gradualidad de la Ley 21.561, distribución de la jornada y efectos en las horas extra.
+- [Cómo Calcular el Sueldo Líquido Paso a Paso](https://calculolaboral.cl/como-calcular-sueldo-liquido-paso-a-paso): Haberes imponibles y no imponibles, descuentos previsionales e impuesto único.
+- [Cómo Calcular el Finiquito](https://calculolaboral.cl/como-calcular-finiquito-chile): Base de cálculo, feriado proporcional y tope de 90 UF.
+- [Finiquito por Renuncia Voluntaria](https://calculolaboral.cl/finiquito-por-renuncia-voluntaria): Qué se paga y qué indemnizaciones no corresponden.
+- [Qué Hacer si No te Pagan el Finiquito](https://calculolaboral.cl/que-hacer-si-no-te-pagan-el-finiquito): Reajuste e intereses de lo adeudado (Art. 63), multa del Art. 506 y vías de reclamo.
+- [Protocolo Ley Karin para Empresas](https://calculolaboral.cl/protocolo-ley-karin-empresas): Obligaciones del empleador, contenido del protocolo, plazos de investigación y multas.
+- [Qué Conductas No Son Ley Karin según la DT](https://calculolaboral.cl/que-conductas-no-son-ley-karin-dt-chile): Criterios de la Dirección del Trabajo sobre instrucciones legítimas y acoso.
+- [Guía de la Ley 21.719 de Protección de Datos Personales](https://calculolaboral.cl/guia-ley-21719-proteccion-datos-personales-chile): Alcance, derechos ARCOP, la Agencia de Protección de Datos y multas de hasta 20.000 UTM.
+- [Sala Cuna (Art. 203 del Código del Trabajo)](https://calculolaboral.cl/sala-cuna-universal-articulo-203-codigo-del-trabajo-chile): Obligación vigente para empresas con 20 o más trabajadoras, cuándo se admite un bono compensatorio y estado del proyecto de Sala Cuna Universal (aún no es ley).
+- [Ley de Equidad Salarial (Ley 21.828)](https://calculolaboral.cl/ley-equidad-genero-brecha-salarial-chile-2026): Art. 62 bis del Código del Trabajo y Ley 20.348 sobre igualdad de remuneraciones.
+- [Propuesta de Indemnización a Todo Evento](https://calculolaboral.cl/propuesta-indemnizacion-a-todo-evento-chile): Qué se ha propuesto y en qué etapa está.
+- [Sueldo Mínimo 2026](https://calculolaboral.cl/sueldo-minimo-chile-2026): $553.553 bruto desde mayo de 2026 (Ley 21.830), líquido por AFP, valores por edad y part-time.
+- [Aguinaldo de Fiestas Patrias 2026](https://calculolaboral.cl/aguinaldo-fiestas-patrias-chile-2026): Montos del sector público (Ley 21.724), pensionados y derecho adquirido por cláusula tácita en el sector privado.
+- [Fondos Generacionales de AFP](https://calculolaboral.cl/fondos-generacionales-afp-chile): Cómo se estructuran los fondos por ciclo de vida.
+- [Mejores Cuentas para Recibir el Sueldo (2026)](https://calculolaboral.cl/mejores-cuentas-para-recibir-sueldo-chile-2026): Comparativa de cuentas; incluye contenido patrocinado.
+- [Blog](https://calculolaboral.cl/blog): Todas las guías.
+- [Sobre nosotros](https://calculolaboral.cl/sobre-nosotros): Quién está detrás del sitio, cómo se elaboran los contenidos y sus límites.
