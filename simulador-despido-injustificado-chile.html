@@ -74,7 +74,12 @@
 }</script>
     
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -84,10 +89,9 @@
     </script>
     
     <!-- Fonts and Icons (Geist & Material Icons) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Precompiled Base CSS -->
     <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
@@ -1365,9 +1369,9 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.9.0"></script>
-    <script src="/js/simulador_despido.js?v=2.8.0"></script>
+    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/simulador_despido.js?v=2.8.2"></script>
     <script>
         // Helper for quick chip salary selection
         function setSalary(amount) {

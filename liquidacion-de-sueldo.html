@@ -130,12 +130,16 @@
   ]
 }</script>
 <!-- Fonts and Icons -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Geist+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <!-- Google tag (gtag.js) -->
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+<script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
 <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -1345,7 +1349,7 @@ body { overflow-x: hidden; }
 
 <h3>Descuentos legales</h3>
 <ul class="ls-rubros">
-<li><span class="ls-pill ls-pill-desc">Descuento</span><div><strong>AFP: 10% más la comisión.</strong> El 10% va a tu cuenta de pensión y la comisión la cobra tu AFP. En 2026 el total va de 10,58% (Modelo) a 11,45% (Provida). Se calcula con un tope imponible de 89,9 UF.</div></li>
+<li><span class="ls-pill ls-pill-desc">Descuento</span><div><strong>AFP: 10% más la comisión.</strong> El 10% va a tu cuenta de pensión y la comisión la cobra tu AFP. En 2026 el total va de 10,46% (Uno) a 11,45% (Provida). Se calcula con un tope imponible de 90 UF.</div></li>
 <li><span class="ls-pill ls-pill-desc">Descuento</span><div><strong>Salud: 7%.</strong> Fonasa descuenta el 7%. En Isapre pagas el precio de tu plan: si cuesta más que ese 7%, la diferencia también se descuenta.</div></li>
 <li><span class="ls-pill ls-pill-desc">Descuento</span><div><strong>Seguro de cesantía: 0,6%.</strong> Solo con contrato indefinido. Si tu contrato es a plazo fijo o por obra, no pagas nada: el empleador pone el 3%.</div></li>
 <li><span class="ls-pill ls-pill-desc">Descuento</span><div><strong>Impuesto único de segunda categoría.</strong> Se calcula con la <a href="impuesto-unico-segunda-categoria">tabla del impuesto único</a> sobre la renta tributable (lo imponible menos AFP, salud y cesantía), no sobre el sueldo bruto. Bajo 13,5 UTM (<span data-utm-x="13.5">$974.039</span> en <span data-utm-mes>octubre de 2026</span>) estás exento y esta línea queda en $0.</div></li>
@@ -1662,8 +1666,8 @@ body { overflow-x: hidden; }
 </div>
 </div>
 <!-- Load shared indicators script -->
-<script src="/js/constants.js?v=2.0.3"></script>
-<script src="/js/indicators.js?v=2.9.0"></script>
+<script src="/js/constants.js?v=2.1.2"></script>
+<script src="/js/indicators.js?v=2.9.2"></script>
 <script src="/js/print_brand.js?v=1.2.0"></script>
 <script src="/js/pdf_generator.js?v=3.2.0"></script>
 <script>

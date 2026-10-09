@@ -128,7 +128,12 @@
 </script>
     
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -138,10 +143,9 @@
     </script>
     
     <!-- Fonts and Icons (Geist & Material Icons) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Precompiled Base CSS -->
     <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
@@ -847,7 +851,7 @@
                         <label for="iu-afp" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">AFP</label>
                         <select id="iu-afp" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#00382E]">
                             <option value="0.1058" selected>Modelo (10,58%)</option>
-                            <option value="0.1069">Uno (10,69%)</option>
+                            <option value="0.1046">Uno (10,46%)</option>
                             <option value="0.1116">PlanVital (11,16%)</option>
                             <option value="0.1127">Habitat (11,27%)</option>
                             <option value="0.1144">Capital (11,44%)</option>
@@ -970,7 +974,7 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="iu-note">Sobre 89,9 UF de sueldo, la AFP y la salud se calculan con ese tope, por eso la renta tributable crece más rápido. Para tu caso exacto, con bonos y no imponibles, usa la <a href="sueldo_liquido">calculadora de sueldo líquido</a>.</p>
+                <p class="iu-note">Sobre 90 UF de sueldo, la AFP y la salud se calculan con ese tope, por eso la renta tributable crece más rápido. Para tu caso exacto, con bonos y no imponibles, usa la <a href="sueldo_liquido">calculadora de sueldo líquido</a>.</p>
             </section>
 
             <section id="exento">
@@ -1152,8 +1156,8 @@
 
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.9.0"></script>
+    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
     <script>
     (function () {
         var $ = function (id) { return document.getElementById(id); };
@@ -1166,7 +1170,7 @@
         var BASE = main ? parseInt(main.getAttribute('data-utm-base'), 10) : 72151;
         var summary = '';
         function utm() { return (window.CONSTANTS && CONSTANTS.UTM > 50000) ? CONSTANTS.UTM : BASE; }
-        function uf() { return (window.CONSTANTS && CONSTANTS.UF > 20000) ? CONSTANTS.UF : 40975.41; }
+        function uf() { return (window.CONSTANTS && CONSTANTS.UF > 20000) ? CONSTANTS.UF : 41130.94; }
         function tramo(rli, u) { for (var i = 0; i < TRAMOS.length; i++) { if (TRAMOS[i][1] === null || rli <= TRAMOS[i][1] * u) return i; } return TRAMOS.length - 1; }
         function modo() { var r = document.querySelector('input[name="iu-modo"]:checked'); return r ? r.value : 'bruto'; }
 
@@ -1200,14 +1204,14 @@
                 : 'Sueldo imponible menos AFP, salud (hasta 7%) y seguro de cesantía.';
             var steps = [], rli = monto;
             if (m === 'bruto') {
-                var topeAfp = 89.9 * uf(), topeCes = 135.1 * uf();
+                var topeAfp = 90 * uf(), topeCes = 135.2 * uf();
                 var base = Math.min(monto, topeAfp);
                 var afp = Math.round(base * parseFloat($('iu-afp').value));
                 var salud = Math.round(base * 0.07);
                 var ces = $('iu-contrato').value === 'indefinido' ? Math.round(Math.min(monto, topeCes) * 0.006) : 0;
                 rli = Math.max(0, monto - afp - salud - ces);
                 steps.push(['Sueldo bruto imponible', money(monto)]);
-                steps.push(['AFP' + (monto > topeAfp ? ' (con tope de 89,9 UF)' : ''), '−' + money(afp)]);
+                steps.push(['AFP' + (monto > topeAfp ? ' (con tope de 90 UF)' : ''), '−' + money(afp)]);
                 steps.push(['Salud 7%' + ($('iu-salud').value === 'isapre' ? ' (máximo que rebaja)' : ''), '−' + money(salud)]);
                 steps.push(['Seguro de cesantía', ces ? '−' + money(ces) : '$0']);
                 steps.push(['Renta tributable', money(rli), true]);

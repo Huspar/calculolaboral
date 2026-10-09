@@ -137,7 +137,12 @@
 </script>
     
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -147,10 +152,9 @@
     </script>
     
     <!-- Fonts and Icons (Geist & Material Icons) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Precompiled Base CSS -->
     <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
@@ -824,8 +828,8 @@
                     <table class="sm-table sm-num">
                         <thead><tr><th scope="col">AFP</th><th scope="col" class="sm-r">Descuento AFP</th><th scope="col" class="sm-r">Líquido indefinido</th><th scope="col" class="sm-r">Líquido plazo fijo</th></tr></thead>
                         <tbody>
-                            <tr><th scope="row">Modelo (10,58%)</th><td class="sm-r">$58.566</td><td class="sm-r sm-strong">$452.917</td><td class="sm-r">$456.238</td></tr>
-                            <tr><th scope="row">Uno (10,69%)</th><td class="sm-r">$59.175</td><td class="sm-r sm-strong">$452.308</td><td class="sm-r">$455.629</td></tr>
+                            <tr><th scope="row">Uno (10,46%)</th><td class="sm-r">$57.902</td><td class="sm-r sm-strong">$453.581</td><td class="sm-r">$456.902</td></tr><tr><th scope="row">Modelo (10,58%)</th><td class="sm-r">$58.566</td><td class="sm-r sm-strong">$452.917</td><td class="sm-r">$456.238</td></tr>
+                            
                             <tr><th scope="row">PlanVital (11,16%)</th><td class="sm-r">$61.777</td><td class="sm-r sm-strong">$449.706</td><td class="sm-r">$453.027</td></tr>
                             <tr><th scope="row">Habitat (11,27%)</th><td class="sm-r">$62.385</td><td class="sm-r sm-strong">$449.098</td><td class="sm-r">$452.419</td></tr>
                             <tr><th scope="row">Capital (11,44%)</th><td class="sm-r">$63.326</td><td class="sm-r sm-strong">$448.157</td><td class="sm-r">$451.478</td></tr>
@@ -1062,8 +1066,8 @@
 
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.9.0"></script>
+    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
     <script>
     (function () {
         var IMM = 553553;

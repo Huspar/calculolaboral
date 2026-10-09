@@ -110,13 +110,17 @@
 }</script>
     
     <!-- Fonts and Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -871,7 +875,7 @@ body { overflow-x: hidden; }
                         <div class="relative rounded-2xl shadow-2xs">
                             <input type="text" id="afc-sueldo-base" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatAFCInput(this); calculateSeguroCesantia();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                         </div>
-                        <p class="text-xs text-slate-600 mt-1">Promedio de tus últimos sueldos brutos imponibles (tope legal AFC: 135,1 UF).</p>
+                        <p class="text-xs text-slate-600 mt-1">Promedio de tus últimos sueldos brutos imponibles (tope legal AFC: 135,2 UF).</p>
                     </div>
 
                     <!-- 3. Tiempo Trabajado / Cotizaciones -->
@@ -1050,7 +1054,7 @@ body { overflow-x: hidden; }
                         El <strong>Seguro de Cesantía</strong> es un derecho de seguridad social obligatorio para todos los trabajadores dependientes protegidos por el Código del Trabajo en Chile. Su administración está a cargo exclusivo de la <strong>AFC (Administradora de Fondos de Cesantía)</strong> y tiene como propósito entregar estabilidad financiera mediante pagos mensuales sucesivos tras la pérdida del empleo.
                     </p>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
-                        El financiamiento del sistema se realiza mensualmente mediante cotizaciones sobre la remuneración imponible del trabajador, con un tope mensual legal de <strong>135,1 UF</strong>:
+                        El financiamiento del sistema se realiza mensualmente mediante cotizaciones sobre la remuneración imponible del trabajador, con un tope mensual legal de <strong>135,2 UF</strong>:
                     </p>
                     <ul class="list-disc list-inside text-xs sm:text-sm text-slate-600 space-y-2 mb-4 leading-relaxed">
                         <li><strong>Contratos Indefinidos:</strong> Se financia con un aporte del trabajador del <strong>0,6%</strong> de su sueldo imponible y un aporte patronal del empleador del <strong>2,4%</strong> (un 1,6% se abona directamente en la Cuenta Individual CIC y un 0,8% va al Fondo de Cesantía Solidario FCS).</li>
@@ -1421,8 +1425,8 @@ body { overflow-x: hidden; }
     </div>
 
     <!-- Centralized Constants & Live Indicators Scripts -->
-    <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.9.0"></script>
+    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
     
     <!-- AFC Calculation Engine -->
     <script>
@@ -1465,7 +1469,7 @@ body { overflow-x: hidden; }
 
         function calculateSeguroCesantia() {
             var ufActual = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41049.01;
-            var topeImponibleAFC = (typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? (CONSTANTS.TOPE_IMPONIBLE_CESANTIA * ufActual) : (135.1 * ufActual);
+            var topeImponibleAFC = (typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? (CONSTANTS.TOPE_IMPONIBLE_CESANTIA * ufActual) : (135.2 * ufActual);
             var sueldoRaw = parseCleanNumber(document.getElementById('afc-sueldo-base')?.value) || 553553;
             var sueldo = Math.min(sueldoRaw, Math.round(topeImponibleAFC));
             var tipoContratoEl = document.querySelector('input[name="afc-tipo-contrato"]:checked');

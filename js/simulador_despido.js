@@ -10,7 +10,7 @@
 
     // Constantes Oficiales 2026
     function getUF() {
-        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 40975.41;
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41130.94;
     }
     const TOPE_IAS_UF = 90; // Art. 172 Código del Trabajo
     function getTopeIASPesos() {
@@ -114,7 +114,7 @@
             } else {
                 // Estimación aproximada: 1.6% mensual acumulado sobre el sueldo imponible por los meses trabajados
                 const mesesTotales = (state.anios * 12) + state.meses;
-                const topeAfcImponible = Math.min(sueldo, Math.round(135.1 * getUF())); // Tope AFC 135.1 UF (Previred 2026)
+                const topeAfcImponible = Math.min(sueldo, Math.round(((typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? CONSTANTS.TOPE_IMPONIBLE_CESANTIA : 135.2) * getUF())); // Tope seguro de cesantía (UF)
                 montoReintegroAFC = Math.round(topeAfcImponible * 0.016 * mesesTotales);
             }
         }

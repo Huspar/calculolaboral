@@ -9,7 +9,7 @@
 
     // Constantes e Indicadores Oficiales 2026 (SUSESO, Previred, SII, DT)
     function getUF() {
-        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 40975.41;
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41130.94;
     }
     function getUTM() {
         return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UTM) ? CONSTANTS.UTM : 72151;
@@ -17,15 +17,17 @@
     function getIMM() {
         return (typeof CONSTANTS !== 'undefined' && CONSTANTS.IMM) ? CONSTANTS.IMM : 553553;
     }
-    const TOPE_PREV_UF = 89.9; // Tope Imponible AFP/Salud/SIS/Mutual (UF)
-    const TOPE_AFC_UF = 135.1; // Tope Imponible Cesantía AFC oficial Previred (UF)
+    const TOPE_PREV_UF = 90.0; // Tope Imponible AFP/Salud/Mutual (UF), vigente desde el 1-feb-2026
+    const TOPE_AFC_UF = 135.2; // Tope Imponible Seguro de Cesantía (UF), vigente desde el 1-feb-2026
     const TOPE_GRATIF_FACTOR = 4.75; // 4.75 IMM anual / 12 mensual (Art. 50 Código del Trabajo)
     function getTopeGratifMensual() {
         return Math.round((getIMM() * TOPE_GRATIF_FACTOR) / 12);
     }
 
     // Tasas Patronales Legales
-    const TASA_SIS = 0.0149; // 1.49% Seguro Invalidez y Sobrevivencia (cargo empleador)
+    // Desde las remuneraciones de agosto de 2026 el empleador cotiza 3,5% (Ley 21.735): 0,1% cuenta individual + 0,9% rentabilidad protegida
+    // + 2,5% seguro social (que incluye el SIS, por lo que ya no se suma aparte). Sube gradualmente hasta 8,5% en 2033.
+    const TASA_SIS = 0.035;
     const TASA_AFC_EMP_INDEF = 0.024; // 2.4% AFC empleador en contrato indefinido (1.6% CIC + 0.8% FSC)
     const TASA_AFC_EMP_PLAZO = 0.030; // 3.0% AFC empleador en contrato a plazo fijo / obra
     const TASA_AFC_TRAB_INDEF = 0.006; // 0.6% AFC trabajador en indefinido

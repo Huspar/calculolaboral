@@ -633,7 +633,7 @@
                                 <td class="font-mono text-slate-800">${formatCLP(hon.montoBruto)} <span class="text-[9.5px] text-slate-500">(Ret. 14,5%)</span></td>
                             </tr>
                             <tr>
-                                <td class="font-semibold text-slate-700">Aportes Patronales (SIS, AFC, Mutual)</td>
+                                <td class="font-semibold text-slate-700">Aportes Patronales (cotización adicional, AFC, Mutual)</td>
                                 <td class="font-mono font-semibold text-emerald-700 bg-forest-50/50">+${formatCLP(ind.totalAportesPatronales)}</td>
                                 <td class="font-mono font-semibold text-emerald-700">+${formatCLP(plz.totalAportesPatronales)} <span class="text-[9px] text-slate-400 block">(AFC 3,0%)</span></td>
                                 <td class="font-mono text-slate-400">$0 aparente</td>
@@ -701,7 +701,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-[11px] desglose-contable-grid">
                     <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
                         <span class="font-bold text-slate-900 block text-[10px] uppercase tracking-wider mb-1">Aportes Patronales Obligatorios (Costo Directo)</span>
-                        <div class="flex justify-between text-slate-700"><span>Seguro Invalidez y Sobrevivencia (SIS 1,49%):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoSis)}</span></div>
+                        <div class="flex justify-between text-slate-700"><span>Cotización adicional del empleador (3,5%, incluye SIS):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoSis)}</span></div>
                         <div class="flex justify-between text-slate-700"><span>Seguro Cesantía AFC Empleador (2,40%):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoAfcEmp)}</span></div>
                         <div class="flex justify-between text-slate-700"><span>Mutualidad y Ley SANNA (Ley 16.744):</span><span class="font-mono font-semibold text-slate-900">${formatCLP(ind.costoMutual)}</span></div>
                         <div class="flex justify-between pt-1.5 border-t border-slate-200 font-bold text-emerald-800"><span>Total Leyes Sociales Empresa:</span><span class="font-mono text-emerald-700">${formatCLP(ind.totalAportesPatronales)}</span></div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Calcula el costo real de contratar un trabajador en Chile (2026). Simula SIS, seguro de cesantía, mutual y gratificación legal sobre el sueldo bruto.">
+    <meta name="description" content="Calcula el costo real de contratar un trabajador en Chile (2026). Simula la cotización adicional del empleador, seguro de cesantía, mutual y gratificación legal sobre el sueldo bruto.">
     <title>Calculadora Costo Empresa Chile 2026 | Costo Contratar</title>
     
     <!-- Favicon -->
@@ -17,7 +17,7 @@
     
     <!-- Open Graph -->
     <meta property="og:title" content="Calculadora Costo Empresa Chile 2026 | Costo Contratar">
-    <meta property="og:description" content="Calcula el costo real de contratar un trabajador en Chile (2026). Simula SIS, seguro de cesantía, mutual y gratificación legal sobre el sueldo bruto.">
+    <meta property="og:description" content="Calcula el costo real de contratar un trabajador en Chile (2026). Simula la cotización adicional del empleador, seguro de cesantía, mutual y gratificación legal sobre el sueldo bruto.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://calculolaboral.cl/calculadora-costo-empresa-chile">
     <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
@@ -25,17 +25,21 @@
     <meta property="og:site_name" content="Cálculo Laboral">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Calculadora Costo Empresa Chile 2026 | Costo Contratar">
-    <meta name="twitter:description" content="Calcula el costo real de contratar un trabajador en Chile (2026). Simula SIS, seguro de cesantía, mutual y gratificación legal sobre el sueldo bruto.">
+    <meta name="twitter:description" content="Calcula el costo real de contratar un trabajador en Chile (2026). Simula la cotización adicional del empleador, seguro de cesantía, mutual y gratificación legal sobre el sueldo bruto.">
     <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
     
     <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Google Tag Manager / Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -440,7 +444,7 @@
         "price": "0",
         "priceCurrency": "CLP"
       },
-      "description": "Herramienta gratuita para calcular el costo real de contratar a un trabajador en Chile, incluyendo aportes patronales SIS, AFC, Mutual y provisiones legales.",
+      "description": "Herramienta gratuita para calcular el costo real de contratar a un trabajador en Chile, incluyendo aportes patronales (cotización adicional del empleador, AFC, Mutual) y provisiones legales.",
       "browserRequirements": "Requires JavaScript. Modern browser."
     },
     {
@@ -777,7 +781,7 @@
                     Calculadora Costo Empresa Chile 2026
                 </h1>
                 <p class="text-slate-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto leading-relaxed">
-                    Descubre el <strong>costo real de contratar a un trabajador</strong>. Simula desde el sueldo líquido o base pactado, aportes patronales obligatorios (SIS, AFC, Mutual) y provisiones contables para proyectar el flujo de caja de tu empresa.
+                    Descubre el <strong>costo real de contratar a un trabajador</strong>. Simula desde el sueldo líquido o base pactado, aportes patronales obligatorios (cotización adicional, AFC, Mutual) y provisiones contables para proyectar el flujo de caja de tu empresa.
                 </p>
                 <div class="mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs text-slate-600 font-medium">
                     <span class="flex items-center gap-1">
@@ -947,7 +951,7 @@
                         <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden flex gap-0.5">
                             <div id="bar-liquido" class="bg-[#00382E] transition-all duration-300" title="Sueldo Líquido" style="width: 65%;"></div>
                             <div id="bar-descuentos" class="bg-slate-400 transition-all duration-300" title="Descuentos Trabajador (AFP/Salud)" style="width: 15%;"></div>
-                            <div id="bar-aportes" class="bg-emerald-600 transition-all duration-300" title="Aportes Patronales (SIS/AFC/Mutual)" style="width: 8%;"></div>
+                            <div id="bar-aportes" class="bg-emerald-600 transition-all duration-300" title="Aportes Patronales (cotización adicional/AFC/Mutual)" style="width: 8%;"></div>
                             <div id="bar-provisiones" class="bg-[#FFB703] transition-all duration-300" title="Provisiones Vacaciones y Despido" style="width: 12%;"></div>
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 text-xs">
@@ -1007,7 +1011,7 @@
                                 <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block mb-1">2. Aportes Patronales Directos (Cargo 100% Empresa)</span>
                                 <div class="divide-y divide-slate-100 border border-emerald-200 bg-emerald-50/20 rounded-2xl overflow-hidden">
                                     <div class="flex justify-between items-center py-2 px-3.5 gap-2">
-                                        <span class="text-slate-600">Seguro Invalidez (SIS 1,49%)</span>
+                                        <span class="text-slate-600">Cotización adicional empleador (3,5%, incluye SIS)</span>
                                         <span id="det-sis" class="font-mono font-semibold text-slate-800 shrink-0">$0</span>
                                     </div>
                                     <div class="flex justify-between items-center py-2 px-3.5 gap-2">
@@ -1249,9 +1253,9 @@
                         </p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
                             <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
-                                <span class="font-bold text-sm text-slate-900 block mb-1">1. SIS (1,49%)</span>
+                                <span class="font-bold text-sm text-slate-900 block mb-1">1. Cotización adicional del empleador (3,5%)</span>
                                 <p class="text-sm text-slate-600 leading-relaxed">
-                                    Seguro de Invalidez y Sobrevivencia. Es 100% de cargo patronal sobre la renta imponible (hasta el tope de 89,9 UF).
+                                    Desde las remuneraciones de agosto de 2026 el empleador cotiza 3,5% de la remuneración imponible (hasta el tope de 90 UF): 0,1% a la cuenta individual, 0,9% a la rentabilidad protegida y 2,5% al seguro social, que incluye el SIS. Sube de forma gradual hasta 8,5% en 2033 (Ley 21.735).
                                 </p>
                             </div>
                             <div class="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
@@ -1555,11 +1559,11 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.9.0"></script>
-    <script src="/js/costo_empresa_calculator.js?v=2.9.0"></script>
+    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/costo_empresa_calculator.js?v=2.9.2"></script>
     <script src="/js/print_brand.js?v=1.2.0"></script>
-    <script src="/js/costo_empresa_pdf_generator.js?v=3.2.0"></script>
+    <script src="/js/costo_empresa_pdf_generator.js?v=3.2.2"></script>
     <script src="/js/checkout_consent.js?v=1.3.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>

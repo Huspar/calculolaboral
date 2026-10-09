@@ -79,7 +79,7 @@
           "name": "¿Cuál es el tope imponible para cotizaciones en 2026?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Para el año 2026, el tope imponible mensual fijado por la Superintendencia de Pensiones para cotizaciones de AFP y Salud es de 89,9 UF . Para el Seguro de Cesantía (AFC), el tope máximo es de 135,1 UF ."
+            "text": "Para el año 2026, el tope imponible mensual fijado por la Superintendencia de Pensiones para cotizaciones de AFP y Salud es de 90 UF (desde el 1 de febrero de 2026). Para el Seguro de Cesantía (AFC), el tope máximo es de 135,2 UF ."
           }
         },
         {
@@ -96,13 +96,17 @@
 }</script>
     
     <!-- Fonts and Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -830,7 +834,7 @@
                                 <label for="afpSelect" class="block text-xs font-medium text-slate-500 mb-1">AFP (Administradora)</label>
                                 <select id="afpSelect" class="block w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:bg-white transition-all outline-none text-xs cursor-pointer">
                                     <option value="Modelo" selected>AFP Modelo (10,58%)</option>
-                                    <option value="Uno">AFP Uno (10,69%)</option>
+                                    <option value="Uno">AFP Uno (10,46%)</option>
                                     <option value="Planvital">AFP Planvital (11,16%)</option>
                                     <option value="Habitat">AFP Habitat (11,27%)</option>
                                     <option value="Capital">AFP Capital (11,44%)</option>
@@ -1085,7 +1089,7 @@
                                 <span class="text-xs text-slate-500 font-semibold font-mono-num">Aportes Patronales</span>
                             </div>
                             <p class="text-sm text-slate-600 leading-snug">
-                                Además del sueldo bruto, la empresa debe abonar el <strong class="text-slate-800">SIS (1,49%), Mutual de Seguridad y AFC patronal (2,4% o 3%)</strong>.
+                                Además del sueldo bruto, la empresa debe abonar la <strong class="text-slate-800">cotización adicional del empleador (3,5% desde agosto de 2026, que incluye el SIS), la Mutual de Seguridad y el AFC patronal (2,4% o 3%)</strong>.
                             </p>
                             <div class="flex flex-col sm:flex-row gap-2 pt-1">
                                 <a href="calculadora-costo-empresa-chile" class="btn-dark-pill flex-1 !py-2 !px-3 !text-xs text-center justify-center" data-cta="costo-empresa" data-cta-name="Calculadora costo empresa (gratis)" data-cta-slot="empleadores-bajo-resultado">
@@ -1194,7 +1198,7 @@
                     <div>
                         <h4 class="text-sm font-bold text-slate-900 mb-1">Normativa DT & SII 2026</h4>
                         <p class="text-sm text-slate-500 leading-relaxed">
-                            Cálculos calibrados con las <a href="impuesto-unico-segunda-categoria" class="font-semibold text-[#00382E] underline">tablas mensuales de impuesto único</a> del SII, tasas oficiales de la SP y topes de 89,9 UF.
+                            Cálculos calibrados con las <a href="impuesto-unico-segunda-categoria" class="font-semibold text-[#00382E] underline">tablas mensuales de impuesto único</a> del SII, tasas oficiales de la SP y topes de 90 UF.
                         </p>
                     </div>
                 </div>
@@ -1287,8 +1291,8 @@
                                 <tr>
                                     <td class="py-2.5 px-4 font-sans font-semibold text-slate-800">AFP Uno</td>
                                     <td class="py-2.5 px-4 text-center">10,00%</td>
-                                    <td class="py-2.5 px-4 text-center font-bold text-slate-800">0,69%</td>
-                                    <td class="py-2.5 px-4 text-center font-bold text-slate-800">10,69%</td>
+                                    <td class="py-2.5 px-4 text-center font-bold text-slate-800">0,46%</td>
+                                    <td class="py-2.5 px-4 text-center font-bold text-slate-800">10,46%</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-4 font-sans font-semibold text-slate-800">AFP Planvital</td>
@@ -1325,7 +1329,7 @@
                     </div>
                 </div>
                 <p class="text-xs text-slate-600">
-                    * El tope imponible mensual para cotizaciones previsionales en 2026 es de <strong>89,9 UF</strong>.
+                    * El tope imponible mensual para cotizaciones previsionales en 2026 es de <strong>90 UF</strong>.
                 </p>
             </section>
 
@@ -1479,7 +1483,7 @@
                         <span class="material-icons transition-transform group-open:rotate-180 text-slate-400">expand_more</span>
                     </summary>
                     <div class="px-4 pb-4 pt-1 text-xs text-slate-600 leading-relaxed border-t border-slate-100">
-                        Para el año 2026, el tope imponible mensual fijado por la Superintendencia de Pensiones para cotizaciones de AFP y Salud es de <strong>89,9 UF</strong>. Para el Seguro de Cesantía (AFC), el tope máximo es de <strong>135,1 UF</strong>.
+                        Para el año 2026, el tope imponible mensual fijado por la Superintendencia de Pensiones para cotizaciones de AFP y Salud es de <strong>90 UF</strong> (desde el 1 de febrero de 2026). Para el Seguro de Cesantía (AFC), el tope máximo es de <strong>135,2 UF</strong>.
                     </div>
                 </details>
 
@@ -1804,10 +1808,10 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.0.5"></script>
-    <script src="/js/indicators.js?v=2.9.0"></script>
+    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/validation.js?v=2.9.0"></script>
-    <script src="/js/salary_logic.js?v=2.1.0"></script>
+    <script src="/js/salary_logic.js?v=2.1.2"></script>
     <script src="/js/salary_ui.js?v=3.1.0"></script>
     <script src="/js/print_brand.js?v=1.2.0"></script>
     <script src="/js/pdf_generator.js?v=3.2.0"></script>

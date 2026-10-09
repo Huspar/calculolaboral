@@ -120,7 +120,7 @@ class ForensicSalaryCalculator {
             // AFC
             let afcAmount = 0;
             if (this.contractType === 'indefinido') {
-                // AFC worker part is calculated on taxableForAFC (usually max 122.6 or 135.1 UF)
+                // AFC worker part is calculated on taxableForAFC (tope vigente: ver CONSTANTS.TOPE_IMPONIBLE_CESANTIA)
                 // If taxableForTax is reduced by CCAF, should AFC be reduced? Usually no. AFC is on contractual taxable.
                 // I will use totalTaxable for AFC cap check, to be safer/standard.
                 afcAmount = Math.round(Math.min(totalTaxable, capValueAFC) * C.AFC_INDEFINIDO_WORKER);

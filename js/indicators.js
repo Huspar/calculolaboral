@@ -18,7 +18,8 @@ const IndicatorsService = {
     // Dataset base offline de contingencia (UF 30 días, UTM 12 meses)
     BASELINE_DATA: {
         uf: [
-            {"fecha": "2026-09-20", "valor": 40975.41},
+            {"fecha": "2026-10-09", "valor": 41130.94},
+{"fecha": "2026-09-20", "valor": 40975.41},
             {"fecha": "2026-09-19", "valor": 40967.24},
             {"fecha": "2026-09-18", "valor": 40959.08},
             {"fecha": "2026-09-17", "valor": 40950.91},

@@ -10,14 +10,14 @@
  */
 
 const CONSTANTS = {
-    // Economic Indicators (Actualizados Septiembre 2026 - Banco Central & SII)
-    UF: 40975.41,
+    // Economic Indicators (respaldo sin conexión: UF del 9-oct-2026 según el SII; la UF del día se carga en vivo)
+    UF: 41130.94,
     UTM: 72151,
     IMM: 553553,
 
     // Legal Caps (Topes Imponibles)
-    TOPE_IMPONIBLE_AFP: 89.9,      // UF
-    TOPE_IMPONIBLE_CESANTIA: 135.1, // UF
+    TOPE_IMPONIBLE_AFP: 90.0,      // UF (Res. Ex. SP 237/2026, vigente desde el 1-feb-2026)
+    TOPE_IMPONIBLE_CESANTIA: 135.2, // UF (Res. Ex. SP 236/2026, vigente desde el 1-feb-2026)
     TOPE_INDEMNIZACION: 90,        // UF
     TOPE_GRATIFICACION: 4.75,      // IMM
 
@@ -88,7 +88,7 @@ const CONSTANTS = {
         'Modelo': 0.1058,
         'Planvital': 0.1116,
         'Provida': 0.1145,
-        'Uno': 0.1069
+        'Uno': 0.1046 // comisión 0,46% desde el 1-oct-2025
     }
 };
 

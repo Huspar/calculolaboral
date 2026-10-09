@@ -152,8 +152,8 @@ class FiniquitoCalculator {
             };
         }
 
-        // Estimación legal: 1.6% de remuneración imponible mensual (tope 135.1 UF) por el tiempo trabajado
-        const topeCesantiaUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_IMPONIBLE_CESANTIA : 135.1;
+        // Estimación legal: 1.6% de remuneración imponible mensual (tope 135,2 UF) por el tiempo trabajado
+        const topeCesantiaUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_IMPONIBLE_CESANTIA : 135.2;
         const salaryCapCesantia = this.ufValue * topeCesantiaUF;
         const cappedCesantiaSalary = Math.min(this.taxableSalary, salaryCapCesantia);
 

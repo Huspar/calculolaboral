@@ -99,7 +99,7 @@
           "name": "¿Cuáles son las comisiones de las AFP vigentes en 2026?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Las tasas totales obligatorias de AFP en 2026 son: AFP Modelo 10,58%, AFP Uno 10,69%, Planvital 11,16%, Habitat 11,27%, Capital 11,44%, Cuprum 11,44% y Provida 11,45%."
+            "text": "Las tasas totales obligatorias de AFP en 2026 son: AFP Uno 10,46%, AFP Modelo 10,58%, Planvital 11,16%, Habitat 11,27%, Capital 11,44%, Cuprum 11,44% y Provida 11,45%."
           }
         }
       ]
@@ -109,7 +109,12 @@
 </script>
     
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J"></script>
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -119,10 +124,9 @@
     </script>
     
     <!-- Fonts and Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Precompiled Base CSS -->
     <link rel="stylesheet" href="/assets/css/style.css?v=3.1.0">
@@ -2073,7 +2077,7 @@
                         <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
                     <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
-                        Las tasas totales obligatorias de AFP en 2026 son: AFP Modelo 10,58%, AFP Uno 10,69%, Planvital 11,16%, Habitat 11,27%, Capital 11,44%, Cuprum 11,44% y Provida 11,45%.
+                        Las tasas totales obligatorias de AFP en 2026 son: AFP Uno 10,46%, AFP Modelo 10,58%, Planvital 11,16%, Habitat 11,27%, Capital 11,44%, Cuprum 11,44% y Provida 11,45%.
                     </p>
                 </details>
 
@@ -2192,8 +2196,8 @@
     </footer>
 
     <!-- INTERACTIVITY ENGINE (Pure vanilla JavaScript) -->
-    <script src="/js/constants.js?v=2.0.4"></script>
-    <script src="/js/indicators.js?v=2.9.0"></script>
+    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
     <script>
         // Header dynamic elevation on scroll
         window.addEventListener('scroll', () => {
