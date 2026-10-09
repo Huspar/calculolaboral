@@ -917,3 +917,34 @@ div[style*="teal-forest-deep"] .font-mono-num > span {
 .teal-footer-curve .text-white\/50 {
     color: rgba(255, 255, 255, 0.62);
 }
+
+/* ---------- Objetivos tactiles de 44px (WCAG 2.5.8) ---------- */
+
+button[aria-label="Abrir menú"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+@media (pointer: coarse) {
+    nav[aria-label="Breadcrumb"] a {
+        display: inline-block;
+        padding: 0.7rem 0.25rem;
+        margin: -0.7rem -0.25rem;
+    }
+
+    .teal-footer-curve li > a {
+        display: inline-block;
+        padding-block: 0.6rem;
+        margin-block: -0.4rem;
+    }
+}
+
+/* Barra de resultado fija en movil: deja espacio al final para que no tape el pie */
+@media (max-width: 1023px) {
+    body:has(#mobile-result-bar) .teal-footer-curve {
+        padding-bottom: 5.5rem;
+    }
+}

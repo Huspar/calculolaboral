@@ -491,18 +491,18 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.6.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div class="flex items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas según el Código del Trabajo</span>
             </div>
             <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
-                <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
+                <span>UF: <strong class="uf-value text-white font-bold">$41.130,94</strong></span>
                 <span class="text-white/50">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$72.151</strong></span>
                 <span class="text-white/50">|</span>
@@ -801,22 +801,22 @@ body { overflow-x: hidden; }
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Razón Social o Nombre Empleador</label>
+                            <label for="company-name" class="block text-xs font-bold text-slate-700 mb-1">Razón Social o Nombre Empleador</label>
                             <input type="text" id="company-name" placeholder="Ej: Servicios Integrales SpA" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">RUT Empresa</label>
+                            <label for="company-rut" class="block text-xs font-bold text-slate-700 mb-1">RUT Empresa</label>
                             <input type="text" id="company-rut" placeholder="Ej: 76.123.456-7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Domicilio de la Empresa</label>
+                            <label for="company-address" class="block text-xs font-bold text-slate-700 mb-1">Domicilio de la Empresa</label>
                             <input type="text" id="company-address" placeholder="Ej: Av. Providencia 1234, Of. 502" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Representante Legal</label>
+                            <label for="rep-name" class="block text-xs font-bold text-slate-700 mb-1">Nombre Representante Legal</label>
                             <input type="text" id="rep-name" placeholder="Ej: Carlos Gómez Morales" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
@@ -831,22 +831,22 @@ body { overflow-x: hidden; }
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo Trabajador</label>
+                            <label for="worker-name" class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo Trabajador</label>
                             <input type="text" id="worker-name" placeholder="Ej: Andrea Valenzuela Ramos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">RUT Trabajador</label>
+                            <label for="worker-rut" class="block text-xs font-bold text-slate-700 mb-1">RUT Trabajador</label>
                             <input type="text" id="worker-rut" placeholder="Ej: 15.987.654-3" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Cargo u Oficio Desempeñado</label>
+                            <label for="worker-position" class="block text-xs font-bold text-slate-700 mb-1">Cargo u Oficio Desempeñado</label>
                             <input type="text" id="worker-position" placeholder="Ej: Asistente Administrativo" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha Contrato Original</label>
+                            <label for="contract-date" class="block text-xs font-bold text-slate-700 mb-1">Fecha Contrato Original</label>
                             <input type="date" id="contract-date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                         </div>
                     </div>
@@ -861,14 +861,14 @@ body { overflow-x: hidden; }
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Jornada Semanal Anterior</label>
+                            <label for="prev-hours" class="block text-xs font-bold text-slate-700 mb-1">Jornada Semanal Anterior</label>
                             <select id="prev-hours" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                                 <option value="44">44 horas semanales (hito 2024)</option>
                                 <option value="45">45 horas semanales (jornada antigua)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Modalidad de Rebaja a 42h</label>
+                            <label for="reduction-modality" class="block text-xs font-bold text-slate-700 mb-1">Modalidad de Rebaja a 42h</label>
                             <select id="reduction-modality" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                                 <option value="5x2-viernes">Lunes a Viernes: Salida anticipada 2 hrs el viernes</option>
                                 <option value="5x2-diaria">Lunes a Viernes: Distribución uniforme (8h 24m diarias)</option>
@@ -880,18 +880,18 @@ body { overflow-x: hidden; }
 
                     <!-- Campo condicional para horario personalizado -->
                     <div id="custom-schedule-group" class="hidden">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Detalle del Horario Pactado (42 Horas)</label>
+                        <label for="custom-schedule" class="block text-xs font-bold text-slate-700 mb-1">Detalle del Horario Pactado (42 Horas)</label>
                         <textarea id="custom-schedule" rows="3" placeholder="Ej: Lunes a Jueves de 08:30 a 18:00 y Viernes de 08:30 a 16:30..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none"></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha de Entrada en Vigencia</label>
+                            <label for="effective-date" class="block text-xs font-bold text-slate-700 mb-1">Fecha de Entrada en Vigencia</label>
                             <input type="date" id="effective-date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none bg-white">
                             <span class="text-xs text-slate-500 mt-1 block">Hito legal: 26 de abril de 2026</span>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Ciudad de Otorgamiento</label>
+                            <label for="city" class="block text-xs font-bold text-slate-700 mb-1">Ciudad de Otorgamiento</label>
                             <input type="text" id="city" placeholder="Santiago" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00382E] focus:border-forest-500 outline-none">
                         </div>
                     </div>
@@ -943,8 +943,8 @@ body { overflow-x: hidden; }
                     </p>
 
                     <form id="form-lead-checklist" class="space-y-2 pt-1">
-                        <input type="text" id="lead-checklist-nombre" placeholder="Tu nombre o cargo" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none">
-                        <input type="email" id="lead-checklist-email" required placeholder="tu-correo@empresa.cl" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none">
+                        <input aria-label="Tu nombre o cargo" type="text" id="lead-checklist-nombre" placeholder="Tu nombre o cargo" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none">
+                        <input aria-label="tu-correo@empresa.cl" type="email" id="lead-checklist-email" required placeholder="tu-correo@empresa.cl" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none">
                         <button type="submit" id="lead-checklist-btn" class="w-full btn-yellow-pill !py-2.5 !text-xs sm:!text-sm shadow-md shadow-amber-500/25 cursor-pointer">
                             <span style="color: #111827 !important;">Recibir anexo Word y checklist por correo</span>
                             <span class="material-icons text-sm" style="color: #111827 !important;">arrow_forward</span>
@@ -1106,7 +1106,7 @@ body { overflow-x: hidden; }
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
                         <div class="pt-1 text-xs font-mono-num text-white/50">
-                            Versión 2.5 · Actualizada Marzo 2026
+                            Versión 2.6 · Actualizada Octubre 2026
                         </div>
                     </div>
 

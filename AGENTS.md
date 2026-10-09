@@ -97,61 +97,19 @@ El logotipo oficial está compuesto por un emblema de alto contraste con el **is
 
 ---
 
-### C. Barra de Indicadores Económicos Oficiales (Sub-header)
-Toda página de calculadora o herramienta debe incluir la barra de indicadores micro-tarjetas con las clases de protección contra saltos de línea:
-* **Clases:** `indicators-carousel sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5`
-* **Tarjetas:** `indicator-card bg-white border border-slate-200/90 rounded-xl py-2 px-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all`
-* **Rótulos con no-wrap:** `block text-[9px] sm:text-[9.5px] font-semibold text-slate-500 uppercase tracking-wider mb-0.5 leading-tight whitespace-nowrap`
-* **CSS Responsive obligatorio:**
-```css
-@media (max-width: 639px) {
-    .indicators-carousel {
-        display: flex !important;
-        overflow-x: auto !important;
-        scroll-snap-type: x mandatory !important;
-        -webkit-overflow-scrolling: touch !important;
-        gap: 0.5rem !important;
-    }
-    .indicator-card {
-        min-width: 125px !important;
-        max-width: 125px !important;
-        width: 125px !important;
-        flex-shrink: 0 !important;
-        scroll-snap-align: start !important;
-    }
-}
-@media (min-width: 640px) and (max-width: 1023px) {
-    .indicators-carousel {
-        display: grid !important;
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        gap: 0.5rem !important;
-    }
-    .indicator-card {
-        width: 100% !important;
-        min-width: 0 !important;
-        flex-shrink: 1 !important;
-    }
-}
-@media (min-width: 1024px) {
-    .indicators-carousel {
-        display: grid !important;
-        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-        gap: 0.625rem !important;
-    }
-    .indicator-card {
-        width: 100% !important;
-        min-width: 0 !important;
-        flex-shrink: 1 !important;
-    }
-}
-```
+### C. Barra de Indicadores Económicos (franja superior)
+Toda página lleva, sobre el header, la franja de indicadores de `index.html` (la antigua cuadrícula de micro-tarjetas `.indicators-carousel` ya no existe en el sitio):
+* **Contenedor:** `div` con `style="background-color: var(--teal-forest-deep);"` y clases `text-white text-xs py-2 border-b border-white/10 no-print`.
+* **Contenido:** a la izquierda el eslogan (`hidden sm:flex`, oculto en móvil para que la franja quede en una sola fila) y a la derecha `UF`, `UTM` e `IMM` con las clases `uf-value` y `utm-value`.
+* **Datos en vivo:** la página carga `/js/constants.js` y `/js/indicators.js`, que reemplazan los valores estáticos por los del día. Los valores estáticos deben quedar al día al publicar (UF del SII, UTM e IMM vigentes).
+* **Móvil:** `polish.css` impide el salto de línea (`white-space: nowrap`) y baja el tamaño a 11px.
 
 ---
 
 ### D. Pie de Página Oficial (Footer Curvado Verde Bosque, Invariable)
 > **Fuente de verdad: `index.html` (producción).** Este bloque reemplaza la versión anterior de footer blanco con logo `bg-sky-500`, que ya no se usa en el sitio.
 
-* **Contenedor:** `<footer class="no-print mt-16">` con un `div.teal-footer-curve` interno. La clase `.teal-footer-curve` (definida en el CSS de cada página) aplica `background-color: #00382E`, texto blanco y `border-top-left-radius` y `border-top-right-radius` de 40px.
+* **Contenedor:** `<footer class="no-print mt-16">` con un `div.teal-footer-curve` interno. La clase `.teal-footer-curve` (definida en el CSS de cada página) aplica `background-color: #00382E`, texto blanco y `border-top-left-radius` y `border-top-right-radius` de 40px (96px desde 1024px de ancho, como en `index.html`).
 * **Logo del footer:** contenedor ámbar `#FFB703`, isotipo `#00382E`, "Cálculo" en blanco y "Laboral" en `#FFB703` (ver sección 1.A).
 * **Estructura:** cuadrícula de 4 columnas (`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4`): Marca, Calculadoras (6 enlaces), Guías Legales (5 enlaces + "Ver todas las guías →") y Para Empresas (6 enlaces).
 * **Enlaces:** `text-white/80` con `hover:text-[#FFB703]`; enlaces destacados en `text-white` o `text-[#FFB703]`.
@@ -197,7 +155,7 @@ Toda página de calculadora o herramienta debe incluir la barra de indicadores m
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
                         <div class="pt-1 text-[11px] font-mono-num text-white/50">
-                            Versión 2.5 · Actualizada Marzo 2026
+                            Versión 2.6 · Actualizada Octubre 2026
                         </div>
                     </div>
 
@@ -302,7 +260,7 @@ Los kits y generadores son modelos de referencia; los textos de venta no pueden 
 Antes de dar por terminada la creación de cualquier página o herramienta:
 - [ ] ¿El header tiene el logotipo oficial con el SVG de la balanza?
 - [ ] ¿El header es de fondo blanco y contiene la navegación oficial?
-- [ ] ¿La barra de indicadores tiene `whitespace-nowrap` y CSS responsive de 1 fila en mobile?
+- [ ] ¿La franja superior de indicadores es la de `index.html` (eslogan `hidden sm:flex`, `uf-value`/`utm-value` y `indicators.js` cargado)?
 - [ ] ¿El footer es el curvado verde `.teal-footer-curve` (`#00382E`) idéntico al de `index.html`, con las 4 columnas oficiales?
 - [ ] ¿Todo cobro pasa por `CLCheckout.buyKit` (API de Flow, sin botones `flow.cl/btn.php`) y la página carga `js/checkout_consent.js`? ¿Ningún contenido pagado se desbloquea o descarga sin firma del servidor?
 - [ ] ¿Los textos de venta cumplen la sección 2.1 (sin "oficial", sin abogados, sin precios tachados, contenido real del kit)?

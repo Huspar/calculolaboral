@@ -513,18 +513,18 @@ window.addEventListener('load', function () {
     ]
 }
 </script>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.6.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 </head>
 <body class="min-h-screen flex flex-col">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div class="flex items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas según el Código del Trabajo</span>
             </div>
             <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
-                <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
+                <span>UF: <strong class="uf-value text-white font-bold">$41.130,94</strong></span>
                 <span class="text-white/50">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$72.151</strong></span>
                 <span class="text-white/50">|</span>
@@ -890,7 +890,7 @@ window.addEventListener('load', function () {
                         <!-- Campos condicionales plazo / obra -->
                         <div id="campo-plazo-fijo" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-amber-50/70 border border-amber-200 rounded-2xl text-xs">
                             <div>
-                                <label class="block font-bold text-amber-900 mb-1">Fecha de Término del Plazo Fijo:</label>
+                                <label for="input-fecha-termino-plazo" class="block font-bold text-amber-900 mb-1">Fecha de Término del Plazo Fijo:</label>
                                 <input type="date" id="input-fecha-termino-plazo" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs" onchange="actualizarContrato()">
                             </div>
                             <div class="flex items-center text-xs text-amber-800">
@@ -900,7 +900,7 @@ window.addEventListener('load', function () {
 
                         <div id="campo-obra-faena" class="hidden p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-2xl text-xs space-y-2">
                             <div>
-                                <label class="block font-bold text-[#00382E] mb-1">Nombre de la Obra o Proyecto:</label>
+                                <label for="input-nombre-obra" class="block font-bold text-[#00382E] mb-1">Nombre de la Obra o Proyecto:</label>
                                 <input type="text" id="input-nombre-obra" placeholder="Ej: Construcción Edificio Los Robles / Proyecto Minero" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs" oninput="actualizarContrato()">
                             </div>
                         </div>
@@ -910,23 +910,23 @@ window.addEventListener('load', function () {
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">A. Datos del Empleador (Empresa o Persona Natural)</span>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">Razón Social o Nombre Empleador:</label>
+                                    <label for="input-empresa-nombre" class="block font-semibold text-slate-700 mb-1">Razón Social o Nombre Empleador:</label>
                                     <input type="text" id="input-empresa-nombre" placeholder="Ej: Comercial y Servicios SpA" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">RUT Empresa / Empleador:</label>
+                                    <label for="input-empresa-rut" class="block font-semibold text-slate-700 mb-1">RUT Empresa / Empleador:</label>
                                     <input type="text" id="input-empresa-rut" placeholder="77.123.456-7" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">Nombre Representante Legal:</label>
+                                    <label for="input-empresa-rep" class="block font-semibold text-slate-700 mb-1">Nombre Representante Legal:</label>
                                     <input type="text" id="input-empresa-rep" placeholder="Ej: Juan Carlos Pérez Soto" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">RUT Representante Legal:</label>
+                                    <label for="input-empresa-rep-rut" class="block font-semibold text-slate-700 mb-1">RUT Representante Legal:</label>
                                     <input type="text" id="input-empresa-rep-rut" placeholder="15.678.901-2" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <label class="block font-semibold text-slate-700 mb-1">Dirección Comercial Completa y Comuna:</label>
+                                    <label for="input-empresa-direccion" class="block font-semibold text-slate-700 mb-1">Dirección Comercial Completa y Comuna:</label>
                                     <input type="text" id="input-empresa-direccion" placeholder="Ej: Av. Providencia 1234, Oficina 601, Providencia, Santiago" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                             </div>
@@ -937,26 +937,26 @@ window.addEventListener('load', function () {
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">B. Datos del Trabajador(a)</span>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">Nombre Completo del Trabajador:</label>
+                                    <label for="input-trabajador-nombre" class="block font-semibold text-slate-700 mb-1">Nombre Completo del Trabajador:</label>
                                     <input type="text" id="input-trabajador-nombre" placeholder="Ej: María José Morales Valenzuela" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">RUT del Trabajador:</label>
+                                    <label for="input-trabajador-rut" class="block font-semibold text-slate-700 mb-1">RUT del Trabajador:</label>
                                     <input type="text" id="input-trabajador-rut" placeholder="18.345.678-9" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">Nacionalidad y Estado Civil:</label>
+                                    <label for="input-trabajador-nacionalidad" class="block font-semibold text-slate-700 mb-1">Nacionalidad y Estado Civil:</label>
                                     <div class="grid grid-cols-2 gap-2">
                                         <input type="text" id="input-trabajador-nacionalidad" value="chilena" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs outline-none" oninput="actualizarContrato()">
-                                        <input type="text" id="input-trabajador-estado-civil" value="soltero(a)" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs outline-none" oninput="actualizarContrato()">
+                                        <input type="text" id="input-trabajador-estado-civil" aria-label="Estado civil" value="soltero(a)" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs outline-none" oninput="actualizarContrato()">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-slate-700 mb-1">Fecha de Nacimiento:</label>
+                                    <label for="input-trabajador-fecha-nac" class="block font-semibold text-slate-700 mb-1">Fecha de Nacimiento:</label>
                                     <input type="date" id="input-trabajador-fecha-nac" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs outline-none" onchange="actualizarContrato()">
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <label class="block font-semibold text-slate-700 mb-1">Domicilio Particular y Comuna del Trabajador:</label>
+                                    <label for="input-trabajador-direccion" class="block font-semibold text-slate-700 mb-1">Domicilio Particular y Comuna del Trabajador:</label>
                                     <input type="text" id="input-trabajador-direccion" placeholder="Ej: Los Plátanos 456, Maipú, Región Metropolitana" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 </div>
                             </div>
@@ -979,7 +979,7 @@ window.addEventListener('load', function () {
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                             <div>
-                                <label class="block font-bold text-slate-800 mb-1">1. Sector o Rubro de la Empresa:</label>
+                                <label for="select-sector-empresa" class="block font-bold text-slate-800 mb-1">1. Sector o Rubro de la Empresa:</label>
                                 <select id="select-sector-empresa" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-semibold bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="cambiarSector()">
                                     <option value="oficina">🏢 Oficinas, Administración & Tecnología</option>
                                     <option value="comercio">🛍️ Comercio, Retail & Tiendas</option>
@@ -996,7 +996,7 @@ window.addEventListener('load', function () {
                             </div>
 
                             <div>
-                                <label class="block font-bold text-slate-800 mb-1">2. Cargo Sugerido o Personalizado:</label>
+                                <label for="select-cargos-sugeridos" class="block font-bold text-slate-800 mb-1">2. Cargo Sugerido o Personalizado:</label>
                                 <select id="select-cargos-sugeridos" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="seleccionarCargoSugerido()">
                                     <!-- Llenado por JS -->
                                 </select>
@@ -1004,13 +1004,13 @@ window.addEventListener('load', function () {
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-800 mb-1">Nombre Exacto del Cargo a Estipular en Contrato:</label>
+                            <label for="input-cargo-nombre" class="block text-xs font-bold text-slate-800 mb-1">Nombre Exacto del Cargo a Estipular en Contrato:</label>
                             <input type="text" id="input-cargo-nombre" placeholder="Ej: Jefe de Operaciones & Logística" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-900" oninput="actualizarContrato()">
                         </div>
 
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
-                                <label class="block text-xs font-bold text-slate-800">Funciones Específicas del Trabajador (Cláusula 1):</label>
+                                <label for="textarea-funciones" class="block text-xs font-bold text-slate-800">Funciones Específicas del Trabajador (Cláusula 1):</label>
                                 <span class="text-xs text-slate-500">Editables directamente</span>
                             </div>
                             <textarea id="textarea-funciones" rows="5" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-2xl text-xs font-mono leading-relaxed text-slate-800 focus:ring-2 focus:ring-[#00382E]" placeholder="Una función por línea..." oninput="actualizarContrato()"></textarea>
@@ -1036,7 +1036,7 @@ window.addEventListener('load', function () {
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-800 mb-1.5">Selecciona la Estructura de Horario Conforme a la DT:</label>
+                            <label for="select-jornada-clave" class="block text-xs font-bold text-slate-800 mb-1.5">Selecciona la Estructura de Horario Conforme a la DT:</label>
                             <select id="select-jornada-clave" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-semibold bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="cambiarJornada()">
                                 <option value="5x2_viernes_corto">🕒 Jornada 5x2 Oficina: Lunes a Viernes (42h - Salida Viernes Corto)</option>
                                 <option value="5x2_uniforme">🕒 Jornada 5x2 Uniforme: Lunes a Viernes (42h - 8h 24m diarias)</option>
@@ -1088,12 +1088,12 @@ window.addEventListener('load', function () {
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                             <div>
-                                <label class="block font-bold text-slate-800 mb-1">Sueldo Base Mensual Pactado (CLP):</label>
+                                <label for="input-sueldo-base" class="block font-bold text-slate-800 mb-1">Sueldo Base Mensual Pactado (CLP):</label>
                                 <input type="number" id="input-sueldo-base" value="850000" step="5000" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:ring-2 focus:ring-[#00382E]" oninput="actualizarContrato()">
                                 <span class="text-xs text-slate-500 mt-0.5 block">Sueldo Mínimo legal 2026: $553.553</span>
                             </div>
                             <div>
-                                <label class="block font-bold text-slate-800 mb-1">Modalidad de Gratificación Legal:</label>
+                                <label for="select-tipo-gratif" class="block font-bold text-slate-800 mb-1">Modalidad de Gratificación Legal:</label>
                                 <select id="select-tipo-gratif" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-xs bg-white text-slate-800 focus:ring-2 focus:ring-[#00382E]" onchange="actualizarContrato()">
                                     <option value="art50">Artículo 50 (25% mensual con tope 4,75 IMM - Recomendado)</option>
                                     <option value="art47">Artículo 47 (30% de utilidades líquidas en balance anual)</option>
@@ -1109,7 +1109,7 @@ window.addEventListener('load', function () {
                                 <span>¿El trabajador devengará Comisiones o Metas Variables?</span>
                             </label>
                             <div id="campo-detalle-comisiones" class="hidden space-y-1.5 pt-1">
-                                <input type="text" id="input-detalle-comision" placeholder="Ej: Comisión del 3% sobre ventas netas mensuales efectivamente cobradas" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs" oninput="actualizarContrato()">
+                                <input aria-label="Comisión del 3% sobre ventas netas mensuales efectivamente cobradas" type="text" id="input-detalle-comision" placeholder="Ej: Comisión del 3% sobre ventas netas mensuales efectivamente cobradas" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs" oninput="actualizarContrato()">
                                 <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
                                     <strong>Art. 45 del Código del Trabajo:</strong> El contrato incorporará automáticamente la fórmula legal de cálculo de la <strong>Semana Corrida</strong> conforme a dictámenes vigentes.
                                 </div>
@@ -1121,15 +1121,15 @@ window.addEventListener('load', function () {
                             <span class="font-bold text-slate-800 block">Asignaciones Compensatorias No Imponibles (Art. 41):</span>
                             <div class="grid grid-cols-3 gap-2">
                                 <div>
-                                    <label class="block text-xs text-slate-500 mb-0.5">Colación:</label>
+                                    <label for="input-asig-colacion" class="block text-xs text-slate-500 mb-0.5">Colación:</label>
                                     <input type="number" id="input-asig-colacion" value="30000" step="5000" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs font-mono" oninput="actualizarContrato()">
                                 </div>
                                 <div>
-                                    <label class="block text-xs text-slate-500 mb-0.5">Movilización:</label>
+                                    <label for="input-asig-movilizacion" class="block text-xs text-slate-500 mb-0.5">Movilización:</label>
                                     <input type="number" id="input-asig-movilizacion" value="30000" step="5000" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs font-mono" oninput="actualizarContrato()">
                                 </div>
                                 <div>
-                                    <label class="block text-xs text-slate-500 mb-0.5">Teletrabajo (Luz/Net):</label>
+                                    <label for="input-asig-teletrabajo" class="block text-xs text-slate-500 mb-0.5">Teletrabajo (Luz/Net):</label>
                                     <input type="number" id="input-asig-teletrabajo" value="0" step="5000" class="w-full px-2.5 py-2 border border-slate-200 rounded-xl text-xs font-mono" oninput="actualizarContrato()">
                                 </div>
                             </div>
@@ -1422,7 +1422,7 @@ window.addEventListener('load', function () {
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
                         <div class="pt-1 text-xs font-mono-num text-white/50">
-                            Versión 2.5 · Actualizada Marzo 2026
+                            Versión 2.6 · Actualizada Octubre 2026
                         </div>
                     </div>
 

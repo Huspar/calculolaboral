@@ -422,18 +422,18 @@ body { overflow-x: hidden; }
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.6.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div class="flex items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
                 <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas según el Código del Trabajo</span>
             </div>
             <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
-                <span>UF: <strong class="uf-value text-white font-bold">$41.032,64</strong></span>
+                <span>UF: <strong class="uf-value text-white font-bold">$41.130,94</strong></span>
                 <span class="text-white/50">|</span>
                 <span>UTM: <strong class="utm-value text-white font-bold">$72.151</strong></span>
                 <span class="text-white/50">|</span>
@@ -1410,29 +1410,29 @@ body { overflow-x: hidden; }
             <form id="form-lead-pyme" class="max-w-xl mx-auto space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre Encargado</label>
+                        <label for="pyme-nombre" class="block text-xs font-semibold text-slate-700 mb-1">Nombre Encargado</label>
                         <input type="text" id="pyme-nombre" required placeholder="Ej: Marcela Soto" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Razón Social o Empresa</label>
+                        <label for="pyme-empresa" class="block text-xs font-semibold text-slate-700 mb-1">Razón Social o Empresa</label>
                         <input type="text" id="pyme-empresa" required placeholder="Ej: Comercial Andina SpA" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none transition-all">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                        <label for="pyme-correo" class="block text-xs font-semibold text-slate-700 mb-1">Correo Electrónico</label>
                         <input type="email" id="pyme-correo" required placeholder="contacto@tuempresa.cl" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Teléfono WhatsApp</label>
+                        <label for="pyme-telefono" class="block text-xs font-semibold text-slate-700 mb-1">Teléfono WhatsApp</label>
                         <input type="tel" id="pyme-telefono" required placeholder="+56 9 1234 5678" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none transition-all">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Dotación de Trabajadores</label>
+                        <label for="pyme-dotacion" class="block text-xs font-semibold text-slate-700 mb-1">Dotación de Trabajadores</label>
                         <select id="pyme-dotacion" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none bg-white">
                             <option value="1-9">Microempresa (1 a 9 trabajadores)</option>
                             <option value="10-49">Pequeña empresa (10 a 49 trabajadores)</option>
@@ -1441,7 +1441,7 @@ body { overflow-x: hidden; }
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Principal Necesidad</label>
+                        <label for="pyme-necesidad" class="block text-xs font-semibold text-slate-700 mb-1">Principal Necesidad</label>
                         <select id="pyme-necesidad" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none bg-white">
                             <option value="Kit Ley 21.719 Datos Personales" selected>Kit Ley 21.719 Protección de Datos ($29.990)</option>
                             <option value="Kit Laboral Completo">Kit Blindaje Laboral Completo ($19.990)</option>
@@ -1454,7 +1454,7 @@ body { overflow-x: hidden; }
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Comentarios o Situación Actual (Opcional)</label>
+                    <label for="pyme-detalle" class="block text-xs font-semibold text-slate-700 mb-1">Comentarios o Situación Actual (Opcional)</label>
                     <textarea id="pyme-detalle" rows="3" placeholder="Describe brevemente tus dudas o si tienes una fiscalización en curso..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none transition-all"></textarea>
                 </div>
 
@@ -1545,7 +1545,7 @@ body { overflow-x: hidden; }
                             Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).
                         </p>
                         <div class="pt-1 text-xs font-mono-num text-white/50">
-                            Versión 2.5 · Actualizada Marzo 2026
+                            Versión 2.6 · Actualizada Octubre 2026
                         </div>
                     </div>
 
