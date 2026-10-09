@@ -5,43 +5,34 @@ Disallow: /abakos
 Disallow: /abakos-emergencias
 Disallow: /api/
 Disallow: /descargas/
-Content-Signal: ai-train=yes, search=yes
+Content-Signal: search=yes, ai-input=no, ai-train=no
 
-# AI Crawlers & LLM Agents (RFC 9309 Compliant)
+# Bots de IA (entrenamiento, asistentes y buscadores de IA): sin acceso.
+# Googlebot y Bingbot (buscadores) siguen permitidos por la regla anterior.
 User-agent: GPTBot
-Allow: /
-Disallow: /itau
-Disallow: /abakos
-Disallow: /abakos-emergencias
-Disallow: /api/
-Disallow: /descargas/
-Content-Signal: ai-train=yes, search=yes
-
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
 User-agent: ClaudeBot
-Allow: /
-Disallow: /itau
-Disallow: /abakos
-Disallow: /abakos-emergencias
-Disallow: /api/
-Disallow: /descargas/
-Content-Signal: ai-train=yes, search=yes
-
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
 User-agent: PerplexityBot
-Allow: /
-Disallow: /itau
-Disallow: /abakos
-Disallow: /abakos-emergencias
-Disallow: /api/
-Disallow: /descargas/
-Content-Signal: ai-train=yes, search=yes
-
+User-agent: Perplexity-User
 User-agent: Google-Extended
-Allow: /
-Disallow: /itau
-Disallow: /abakos
-Disallow: /abakos-emergencias
-Disallow: /api/
-Disallow: /descargas/
-Content-Signal: ai-train=yes, search=yes
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: meta-externalagent
+User-agent: cohere-ai
+User-agent: Diffbot
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+User-agent: YouBot
+User-agent: ImagesiftBot
+User-agent: Timpibot
+User-agent: omgili
+Disallow: /
 
 Sitemap: https://calculolaboral.cl/sitemap.xml
