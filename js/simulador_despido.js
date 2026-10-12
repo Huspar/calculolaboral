@@ -489,7 +489,7 @@
             alert('Hubo un inconveniente al enviar tu consulta. Por favor escríbenos directamente a contacto@calculolaboral.cl');
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="material-icons text-sm text-white">gavel</span> <span class="text-white font-bold">Solicitar Evaluación Gratuita con Abogado</span>';
+                btn.innerHTML = '<span class="material-icons text-sm text-white">gavel</span> <span class="text-white font-bold">Solicitar Evaluación con Abogado</span>';
             }
         });
     }

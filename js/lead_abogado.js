@@ -82,16 +82,16 @@
         root.classList.add('cl-lead');
         root.setAttribute('aria-labelledby', uid + '-titulo');
         root.innerHTML =
-            '<p class="cl-lead__eyebrow">Revisión gratuita de tu caso</p>' +
+            '<p class="cl-lead__eyebrow">Revisión de tu caso</p>' +
             '<h3 class="cl-lead__titulo" id="' + uid + '-titulo">' + esc(v.titulo) + '</h3>' +
             '<p class="cl-lead__texto">' + esc(v.texto) + '</p>' +
             '<p class="cl-lead__monto" data-lead-monto hidden></p>' +
             '<ul class="cl-lead__puntos">' +
-                '<li>Evaluación preliminar sin costo inicial</li>' +
+                '<li>Evaluación preliminar de tu caso</li>' +
                 '<li>Honorarios habituales a porcentaje de lo recuperado (cuota litis)</li>' +
                 '<li>Intentamos derivar tu caso a un abogado laboralista independiente</li>' +
             '</ul>' +
-            '<button type="button" class="cl-lead__abrir" aria-expanded="false" aria-controls="' + uid + '-form">Revisar mi caso gratis</button>' +
+            '<button type="button" class="cl-lead__abrir" aria-expanded="false" aria-controls="' + uid + '-form">Revisar mi caso</button>' +
             '<form class="cl-lead__form" id="' + uid + '-form" hidden novalidate>' +
                 '<div class="cl-lead__campos">' +
                     '<label class="cl-lead__campo"><span>Nombre</span><input name="nombre" autocomplete="name" required maxlength="80"></label>' +
