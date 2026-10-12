@@ -29,6 +29,7 @@ Son modelos de referencia basados en el Código del Trabajo; no fueron redactado
 - [Kit Ley 21.719 de Protección de Datos Personales](https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile): 7 instrumentos y un manual ($29.990). La Ley 21.719 rige desde el 1 de diciembre de 2026.
 - [Generador de Finiquito Word/PDF](https://calculolaboral.cl/generador-finiquito-chile): Redacta y exporta un finiquito ($12.990). Para que tenga poder liberatorio debe firmarse ante un ministro de fe (Art. 177).
 - [Generador de Contrato de Trabajo](https://calculolaboral.cl/generador-contrato-trabajo-chile): Contratos indefinidos, a plazo fijo y por obra o faena con las menciones mínimas del Art. 10 ($12.990).
+- [Generador de Liquidaciones de Sueldo](https://calculolaboral.cl/generador-liquidacion-sueldo): Liquidación mensual en PDF con AFP, salud, seguro de cesantía e impuesto único calculados con los valores oficiales del mes; los datos quedan en el navegador del empleador ($2.990 por liquidación, vista previa gratis).
 - [Generador de Anexo de Jornada de 40 Horas](https://calculolaboral.cl/generador-anexo-40-horas): Anexo de modificación de jornada basado en el Código del Trabajo y en criterios de la DT.
 - [Portal para Empleadores](https://calculolaboral.cl/para-empleadores): Recursos, modelos y herramientas para pymes.
 - [Checklist de Fiscalización DT](https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile): Checklist interactivo de autocontrol sobre materias que suele fiscalizar la Dirección del Trabajo, con multas referenciales en UTM.

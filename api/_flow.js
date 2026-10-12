@@ -89,6 +89,14 @@ const PRODUCTS = {
         subject: 'Informe Ejecutivo de Costo Empresa (PDF)',
         page: '/calculadora-costo-empresa-chile',
         unlock: true
+    },
+    // El desbloqueo cubre la liquidación de un trabajador y un mes; el navegador asocia la orden a ese RUT y período
+    liquidacion: {
+        code: 'GL',
+        amount: 2990,
+        subject: 'Liquidación de Sueldo en PDF',
+        page: '/generador-liquidacion-sueldo',
+        unlock: true
     }
 };
 const UNLOCK_HOURS = 48;

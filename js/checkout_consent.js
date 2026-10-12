@@ -181,7 +181,7 @@
     document.addEventListener('auxclick', onLinkClick, true);
 
     /*
-     * Medicion del embudo en GA4 para los seis productos de pago. Una sola tabla, para que
+     * Medicion del embudo en GA4 para los siete productos de pago. Una sola tabla, para que
      * view_item, begin_checkout y purchase lleguen con el mismo item_id e item_name.
      * Precios y nombres deben coincidir con api/_flow.js.
      */
@@ -191,7 +191,8 @@
         despido: { item_id: 'despido', item_name: 'Pack Cartas de Despido por Causal 2026', price: 9990 },
         finiquito: { item_id: 'finiquito', item_name: 'Finiquito para Notaría (Word + PDF)', price: 12990 },
         contrato: { item_id: 'contrato', item_name: 'Contrato de Trabajo a la Medida (Word + PDF)', price: 12990 },
-        informe: { item_id: 'informe', item_name: 'Informe Ejecutivo de Costo Empresa (PDF)', price: 4990 }
+        informe: { item_id: 'informe', item_name: 'Informe Ejecutivo de Costo Empresa (PDF)', price: 4990 },
+        liquidacion: { item_id: 'liquidacion', item_name: 'Liquidación de Sueldo en PDF', price: 2990 }
     };
 
     function track(eventName, product, extra) {

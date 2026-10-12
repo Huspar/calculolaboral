@@ -22,7 +22,7 @@ const ALLOWED_ORIGINS = new Set([
     'http://localhost:5500'
 ]);
 
-const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'ProtocoloKarin', 'InformePDF', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Demanda Despido Injustificado', 'Despido Art. 160', 'InteresProducto', 'Otro']);
+const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'ProtocoloKarin', 'InformePDF', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Demanda Despido Injustificado', 'Despido Art. 160', 'Otro']);
 
 // Leads para abogados: basta un teléfono/WhatsApp válido, el correo es opcional
 const TIPO_ABOGADO = new Set(['Consulta Legal', 'Despido', 'Demanda Despido Injustificado', 'Despido Art. 160']);
@@ -428,16 +428,6 @@ module.exports = async (req, res) => {
                 <p style="margin: 0; color: #64748b; font-size: 13px;">Cálculo Laboral · calculolaboral.cl</p>
             `;
             userHtml = buildEmailHtml({ title: 'Solicitud para Empresas Registrada', intro: userIntro, body: userBody });
-            userText = buildEmailText({ intro: userIntro, body: userBody });
-        } else if (cleanTipo === 'InteresProducto') {
-            // Prueba de interés de un producto que aún no existe: no se vendió nada, solo se avisa si se lanza
-            userSubject = 'Te avisaremos si lanzamos el generador de liquidaciones';
-            const userIntro = `Hola ${cleanName}, gracias por tu interés en el generador de liquidaciones de sueldo para pymes.`;
-            const userBody = `
-                <p style="margin: 0 0 12px;">El generador todavía no está disponible: estamos midiendo cuántas empresas lo necesitan antes de construirlo. No se te cobró nada.</p>
-                <p style="margin: 0 0 12px;">Si lo lanzamos, te escribiremos a este correo. Si prefieres no recibir ese aviso, responde este mensaje y te sacamos de la lista.</p>
-            `;
-            userHtml = buildEmailHtml({ title: 'Registramos tu interés', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else {
             // Other tipos: only the user gets a confirmation, no resource attached

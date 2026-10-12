@@ -1089,6 +1089,47 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
 
+                <!-- Tool: Generador de Liquidaciones de Sueldo -->
+                <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
+                    <div class="p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="cl-tag">Remuneraciones</span>
+                            <span class="text-xs text-slate-600 font-mono font-medium">Art. 54 CT</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 leading-snug">Generador de Liquidaciones de Sueldo</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Arma la liquidación mensual de cada trabajador en PDF, con AFP, salud, seguro de cesantía e impuesto único calculados con los valores oficiales del mes.
+                        </p>
+                        <ul class="space-y-1.5 text-xs text-slate-700">
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-emerald-600 text-xs">check</span>
+                                <span>Topes en UF y tabla del impuesto del mes</span>
+                            </li>
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-emerald-600 text-xs">check</span>
+                                <span>Horas extra, bonos, gratificación y descuentos</span>
+                            </li>
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-emerald-600 text-xs">check</span>
+                                <span>Trabajadores guardados en tu navegador</span>
+                            </li>
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-emerald-600 text-xs">check</span>
+                                <span>Vista previa gratis antes de pagar</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-5 bg-slate-50 border-t border-slate-100">
+                        <div class="flex items-baseline justify-between mb-2">
+                            <span class="text-base font-bold text-slate-900 font-mono-num">$2.990 CLP <span class="text-xs font-medium text-slate-600">por liquidación</span></span>
+                        </div>
+                        <a href="generador-liquidacion-sueldo" class="btn-outline-pill w-full !py-2.5 !text-xs" data-cta="liquidacion" data-cta-slot="portal-empleadores">
+                            <span>Generar Liquidación ($2.990)</span>
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Tool 4: Generador de Finiquito Notarial -->
                 <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
                     <div class="p-5 space-y-3">
@@ -1693,6 +1734,7 @@ body { overflow-x: hidden; }
     <script src="/js/constants.js?v=2.1.2"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
+    <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
 </html>

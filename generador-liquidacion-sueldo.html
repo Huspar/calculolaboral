@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Generador de Liquidaciones de Sueldo para Pymes (en preparación)</title>
-<meta content="noindex, follow" name="robots"/>
-<meta content="Generador de liquidaciones de sueldo en PDF para pymes, en evaluación: datos de la empresa y del trabajador, descuentos legales del mes y espacio para firma." name="description"/>
+<title>Generador de Liquidaciones de Sueldo en PDF (2026)</title>
+<meta content="Genera la liquidación de sueldo de tus trabajadores en PDF con los valores oficiales del mes: AFP, salud, cesantía e impuesto único. Vista previa gratis; $2.990." name="description"/>
 <!-- Favicon -->
 <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
@@ -14,40 +13,62 @@
 <!-- Canonical URL -->
 <link href="https://calculolaboral.cl/generador-liquidacion-sueldo" rel="canonical"/>
 <!-- Open Graph Tags -->
-<meta content="Generador de Liquidaciones de Sueldo para Pymes (en preparación)" property="og:title"/>
-<meta content="Generador de liquidaciones de sueldo en PDF para pymes, en evaluación: datos de la empresa y del trabajador, descuentos legales del mes y espacio para firma." property="og:description"/>
+<meta content="Generador de Liquidaciones de Sueldo en PDF (2026)" property="og:title"/>
+<meta content="Genera la liquidación de sueldo de tus trabajadores en PDF con los valores oficiales del mes: AFP, salud, cesantía e impuesto único. Vista previa gratis; $2.990." property="og:description"/>
 <meta content="website" property="og:type"/>
 <meta content="https://calculolaboral.cl/generador-liquidacion-sueldo" property="og:url"/>
 <meta content="https://calculolaboral.cl/assets/og/liquidacion.png" property="og:image"/>
 <meta content="es_CL" property="og:locale"/>
 <meta content="Cálculo Laboral" property="og:site_name"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<meta content="Generador de Liquidaciones de Sueldo para Pymes (en preparación)" name="twitter:title"/>
-<meta content="Generador de liquidaciones de sueldo en PDF para pymes, en evaluación: datos de la empresa y del trabajador, descuentos legales del mes y espacio para firma." name="twitter:description"/>
+<meta content="Generador de Liquidaciones de Sueldo en PDF (2026)" name="twitter:title"/>
+<meta content="Genera la liquidación de sueldo de tus trabajadores en PDF con los valores oficiales del mes: AFP, salud, cesantía e impuesto único. Vista previa gratis; $2.990." name="twitter:description"/>
 <meta content="https://calculolaboral.cl/assets/og/liquidacion.png" name="twitter:image"/>
 <!-- Structured Data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
+  "@graph": [
     {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Inicio",
-      "item": "https://calculolaboral.cl/"
+      "@type": "WebApplication",
+      "@id": "https://calculolaboral.cl/generador-liquidacion-sueldo#app",
+      "name": "Generador de liquidaciones de sueldo",
+      "url": "https://calculolaboral.cl/generador-liquidacion-sueldo",
+      "description": "Genera la liquidación de sueldo de tus trabajadores en PDF con los valores oficiales del mes: AFP, salud, cesantía e impuesto único. Vista previa gratis; $2.990.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "es-CL",
+      "offers": {
+        "@type": "Offer",
+        "price": "2990",
+        "priceCurrency": "CLP"
+      },
+      "publisher": {
+        "@id": "https://calculolaboral.cl/#organization"
+      }
     },
     {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Para empleadores",
-      "item": "https://calculolaboral.cl/para-empleadores"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Generador de liquidaciones",
-      "item": "https://calculolaboral.cl/generador-liquidacion-sueldo"
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Para empleadores",
+          "item": "https://calculolaboral.cl/para-empleadores"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Generador de liquidaciones",
+          "item": "https://calculolaboral.cl/generador-liquidacion-sueldo"
+        }
+      ]
     }
   ]
 }
@@ -886,33 +907,144 @@ body { overflow-x: hidden; }
         }
     </style>
     <style>
-        .hm-aviso { display: flex; gap: .75rem; align-items: flex-start; background: #fffbeb; border: 1px solid #fde68a; border-radius: .9rem; padding: .9rem 1.1rem; margin-top: 1.25rem; }
-        .hm-aviso .material-icons { color: #92400e; font-size: 1.3rem; }
-        .hm-aviso p { margin: 0; font-size: .93rem; color: #78350f; }
-        .hm-oferta { display: grid; gap: 1.25rem; }
-        .hm-precio { background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 1rem; padding: 1.4rem; text-align: center; }
-        .hm-precio-label { margin: 0 !important; font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #475569; }
-        .hm-precio-monto { margin: .25rem 0 0 !important; font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1.1; }
-        .hm-precio-nota { margin: .2rem 0 1rem !important; font-size: .9rem; color: #475569; }
-        .hm-btn { width: 100%; max-width: 22rem; border: 0; cursor: pointer; }
-        .hm-interes { background: #e8f0ee; border-radius: 1rem; padding: 1.25rem 1.4rem; }
-        .hm-interes:focus, .hm-ok:focus { outline: 2px solid #00382E; outline-offset: 3px; }
-        .hm-interes-titulo { font-weight: 750; color: #0f172a; font-size: 1.05rem; margin: 0 0 .35rem !important; }
-        .hm-form { display: grid; gap: .45rem; margin-top: .9rem; max-width: 28rem; }
-        .hm-form label { font-size: .85rem; font-weight: 600; color: #334155; }
-        .hm-form input[type="text"], .hm-form input[type="email"], .hm-form select { width: 100%; border: 1px solid #cbd5e1; border-radius: .6rem; padding: .65rem .75rem; font-size: 1rem; background: #ffffff; color: #0f172a; }
-        .hm-form input:focus, .hm-form select:focus { outline: 2px solid #00382E; outline-offset: 1px; border-color: #00382E; }
-        .hm-opcional { font-weight: 400; color: #475569; }
-        .hm-check { display: flex; gap: .5rem; align-items: flex-start; font-weight: 400 !important; margin-top: .35rem; }
-        .hm-check input { margin-top: .2rem; width: 1.05rem; height: 1.05rem; flex: 0 0 auto; }
-        .hm-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; opacity: 0; }
-        .hm-error { margin: 0 !important; color: #be123c; font-size: .88rem; font-weight: 600; }
-        .hm-form .ls-btn { border: 0; cursor: pointer; margin-top: .4rem; justify-self: start; }
-        .hm-ok { margin: .9rem 0 0 !important; font-weight: 700; color: #065f46; }
-        .hm-lista { list-style: none; padding: 0; margin: 0; display: grid; gap: .85rem; }
-        .hm-lista li { display: flex; gap: .75rem; align-items: flex-start; }
-        .hm-lista .material-icons { color: #00382E; font-size: 1.35rem; margin-top: .1rem; }
-        @media (min-width: 768px) { .hm-oferta { grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); align-items: start; } }
+        /* Generador de liquidaciones: formulario a la izquierda, documento a la derecha (una columna en móvil) */
+        .lq-wrap { max-width: 1180px; margin: 0 auto; }
+        .lq-wrap [hidden] { display: none !important; }
+        .lq-hero { padding-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 1.75rem; max-width: 48rem; }
+        .lq-pros { list-style: none; padding: 0; margin: 1rem 0 0; display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
+        .lq-pros li { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: #334155; }
+        .lq-pros .material-icons { font-size: 1.15rem; color: #00382E; }
+        .lq-tool { display: grid; gap: 1.5rem; align-items: start; }
+        @media (min-width: 1100px) { .lq-tool { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 2rem; } .lq-sticky { position: sticky; top: 1rem; } }
+        .lq-form { display: grid; gap: 1rem; min-width: 0; }
+        .lq-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.15rem 1.2rem 1.25rem; margin: 0; min-width: 0; }
+        .lq-legend { display: flex; align-items: center; gap: .6rem; font-size: 1.05rem; font-weight: 750; color: #0f172a; padding: 0; margin-bottom: .9rem; float: left; width: 100%; }
+        .lq-legend + * { clear: both; }
+        .lq-step { width: 1.75rem; height: 1.75rem; border-radius: 999px; background: #00382E; color: #ffffff; display: inline-grid; place-items: center; font-size: .85rem; font-weight: 700; font-family: "Geist Mono", ui-monospace, monospace; }
+        .lq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .8rem 1rem; }
+        .lq-span2 { grid-column: 1 / -1; }
+        .lq-field { display: grid; gap: .3rem; min-width: 0; }
+        .lq-field label, .lq-label { font-size: .84rem; font-weight: 600; color: #334155; }
+        .lq-opt { font-weight: 400; color: #64748b; }
+        .lq-form input[type="text"], .lq-form input[type="date"], .lq-form select { width: 100%; min-width: 0; border: 1px solid #cbd5e1; border-radius: .6rem; padding: .6rem .7rem; font-size: 1rem; background: #ffffff; color: #0f172a; font-family: inherit; }
+        .lq-form input[data-tipo="pesos"], .lq-form input[data-tipo="uf"], .lq-form input[data-tipo="num"], .lq-form input[data-tipo="dec"], .lq-row input[data-campo="monto"] { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+        .lq-form input:focus, .lq-form select:focus { outline: 2px solid #00382E; outline-offset: 1px; border-color: #00382E; }
+        .lq-worker-bar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px dashed #e2e8f0; }
+        .lq-worker-bar select { flex: 1 1 12rem; width: auto !important; font-weight: 600; }
+        .lq-btn-sec { display: inline-flex; align-items: center; gap: .35rem; border: 1.5px solid #cbd5e1; background: #ffffff; color: #00382E; font-weight: 700; font-size: .88rem; border-radius: 999px; padding: .5rem .95rem; cursor: pointer; font-family: inherit; }
+        .lq-btn-sec:hover { border-color: #00382E; }
+        .lq-btn-sec .material-icons { font-size: 1.1rem; }
+        .lq-link { background: none; border: 0; padding: .25rem 0; color: #0f5e4f; font-weight: 700; font-size: .88rem; cursor: pointer; font-family: inherit; text-decoration: underline; text-underline-offset: 2px; justify-self: start; }
+        .lq-danger { color: #be123c; }
+        .lq-sub { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px dashed #e2e8f0; display: grid; gap: .6rem; }
+        .lq-subtitle { margin: 0 !important; font-size: .9rem; font-weight: 750; color: #0f172a; }
+        .lq-help { margin: 0 !important; font-size: .84rem; color: #475569; }
+        .lq-center { text-align: center; }
+        .lq-list { display: grid; gap: .5rem; }
+        .lq-list:empty { display: none; }
+        .lq-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 9rem) 2.25rem; gap: .5rem; align-items: center; }
+        .lq-x { width: 2.25rem; height: 2.25rem; border: 0; border-radius: .5rem; background: #f1f5f9; color: #475569; cursor: pointer; display: grid; place-items: center; }
+        .lq-x:hover { background: #fde2e7; color: #be123c; }
+        .lq-x .material-icons { font-size: 1.1rem; }
+        .lq-logo-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+        .lq-file { display: inline-flex; align-items: center; gap: .4rem; border: 1.5px dashed #cbd5e1; border-radius: .7rem; padding: .55rem .9rem; font-weight: 600; font-size: .88rem; color: #334155; cursor: pointer; }
+        .lq-file:hover { border-color: #00382E; color: #00382E; }
+        #lq-logo-prev { max-height: 48px; max-width: 160px; border: 1px solid #e2e8f0; border-radius: .4rem; padding: 2px; background: #fff; }
+        .lq-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .lq-backup-row { display: flex; flex-wrap: wrap; gap: .6rem; margin: .7rem 0 .4rem; }
+        .lq-side { min-width: 0; }
+        .lq-avisos { display: grid; gap: .5rem; margin-bottom: .75rem; }
+        .lq-avisos:empty { display: none; }
+        .lq-aviso { display: flex; gap: .6rem; align-items: flex-start; border-radius: .75rem; padding: .65rem .85rem; font-size: .88rem; }
+        .lq-aviso p { margin: 0; }
+        .lq-aviso .material-icons { font-size: 1.15rem; margin-top: .05rem; }
+        .lq-aviso a { color: inherit; font-weight: 700; text-decoration: underline; }
+        .lq-aviso-falta, .lq-aviso-info { background: #eef6f3; color: #0f3f35; }
+        .lq-aviso-aviso { background: #fffbeb; color: #78350f; }
+        .lq-aviso-error { background: #fff1f2; color: #9f1239; }
+        .lq-doc-frame { background: #e9eeec; border-radius: 1rem; padding: 1rem; overflow-x: auto; }
+        .lq-actions { display: grid; gap: .55rem; justify-items: center; margin-top: 1rem; }
+        .lq-btn-main { width: 100%; max-width: 26rem; border: 0; cursor: pointer; font-size: 1rem; padding: .95rem 1.4rem; }
+        .lq-btn-main:disabled { opacity: .45; cursor: not-allowed; }
+        .lq-estado { margin: 0; min-height: 1.3em; font-size: .9rem; color: #334155; text-align: center; display: flex; align-items: center; gap: .35rem; justify-content: center; }
+        .lq-estado .material-icons { font-size: 1.15rem; }
+        .lq-estado-ok { color: #065f46; font-weight: 600; }
+        .lq-estado-error { color: #9f1239; font-weight: 600; }
+        .lq-info { margin-top: 3rem; max-width: 48rem; }
+        .lq-bullets { display: grid; gap: .45rem; padding-left: 1.1rem; }
+        .lq-tabla { overflow-x: auto; margin-top: 1rem; border: 1px solid #e2e8f0; border-radius: .8rem; background: #fff; }
+        .lq-tabla table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+        .lq-tabla caption { text-align: left; padding: .7rem .85rem 0; font-weight: 700; color: #0f172a; }
+        .lq-tabla th, .lq-tabla td { padding: .55rem .85rem; border-bottom: 1px solid #eef2f1; text-align: left; white-space: nowrap; }
+        .lq-tabla td { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+        .lq-tabla .lq-help { padding: .6rem .85rem .8rem; }
+        .lq-faq { border-bottom: 1px solid #e2e8f0; padding: .85rem 0; }
+        .lq-faq summary { cursor: pointer; font-weight: 700; color: #0f172a; }
+        .lq-faq p { margin: .5rem 0 0; color: #334155; }
+
+        /* Documento */
+        .lq-doc { position: relative; background: #ffffff; color: #0f172a; border-radius: .35rem; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 10px 30px -18px rgba(15,23,42,.35); padding: 1.6rem 1.6rem 1.4rem; font-size: 12.5px; line-height: 1.45; min-width: 34rem; overflow: hidden; }
+        .lq-doc:not(.lqd-pagada) { user-select: none; -webkit-user-select: none; }
+        .lqd-ejemplo { margin: -0.4rem 0 .9rem; background: #fff6dc; color: #6b4a00; font-weight: 700; font-size: 11.5px; border-radius: .4rem; padding: .35rem .6rem; text-align: center; }
+        .lqd-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding-bottom: .8rem; border-bottom: 2px solid #00382E; }
+        .lqd-emp { display: flex; gap: .75rem; align-items: center; min-width: 0; }
+        .lqd-emp img { max-height: 46px; max-width: 120px; object-fit: contain; }
+        .lqd-emp div { display: grid; gap: .1rem; }
+        .lqd-emp strong { font-size: 14px; }
+        .lqd-emp span { color: #475569; font-size: 11.5px; }
+        .lqd-title { text-align: right; flex: 0 0 auto; }
+        .lqd-title h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; color: #00382E; }
+        .lqd-title p { margin: .15rem 0 0; font-weight: 600; color: #334155; }
+        .lqd-datos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem 1rem; margin: .9rem 0; padding: .7rem .8rem; background: #f6f8f7; border-radius: .4rem; }
+        .lqd-datos div { min-width: 0; }
+        .lqd-datos dt { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+        .lqd-datos dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+        .lqd-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+        .lqd-cols h3 { margin: 0 0 .35rem; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: #00382E; }
+        .lqd-cols table { width: 100%; border-collapse: collapse; }
+        .lqd-cols th, .lqd-cols td { padding: .28rem 0; border-bottom: 1px solid #eef2f1; vertical-align: top; text-align: left; font-weight: 400; }
+        .lqd-cols td { text-align: right; font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: .5rem; }
+        .lqd-cols th small { display: block; color: #64748b; font-size: 10.5px; }
+        .lqd-grupo th { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; padding-top: .55rem; border-bottom: 0; }
+        .lqd-sub th, .lqd-sub td { font-weight: 700; }
+        .lqd-cols tfoot th, .lqd-cols tfoot td { font-weight: 800; border-top: 1.5px solid #0f172a; border-bottom: 0; padding-top: .45rem; }
+        .lqd-total { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1rem; padding: .8rem 1rem; background: #00382E; color: #ffffff; border-radius: .45rem; }
+        .lqd-total span { display: block; font-weight: 700; font-size: 13px; }
+        .lqd-total small { display: block; font-size: 11px; opacity: .85; }
+        .lqd-total strong { font-family: "Geist Mono", ui-monospace, monospace; font-size: 18px; white-space: nowrap; }
+        .lqd-bases { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem .8rem; margin: .8rem 0 0; font-size: 11px; color: #475569; }
+        .lqd-bases dt { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+        .lqd-bases dd { margin: 0; font-family: "Geist Mono", ui-monospace, monospace; color: #0f172a; }
+        .lqd-recibi { margin: 1.1rem 0 0; font-size: 11.5px; color: #334155; }
+        .lqd-firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 2.6rem; font-size: 11px; color: #475569; text-align: center; }
+        .lqd-firmas span { display: block; border-top: 1px solid #0f172a; margin-bottom: .3rem; }
+        .lqd-marca { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+        .lqd-marca span { transform: rotate(-28deg); font-size: 64px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(0, 56, 46, .1); border: 6px solid rgba(0, 56, 46, .1); border-radius: 1rem; padding: .2rem 1.2rem; white-space: nowrap; }
+        .lqd-error { color: #9f1239; font-weight: 600; margin: 0; }
+        @media screen and (max-width: 640px) {
+            .lq-row { grid-template-columns: minmax(0, 1fr) minmax(0, 7.5rem) 2.25rem; }
+            .lq-doc-frame { padding: .5rem; }
+            .lq-doc { min-width: 0; padding: 1.1rem 1rem; }
+            .lqd-head { flex-direction: column; gap: .6rem; }
+            .lqd-title { text-align: left; }
+            .lqd-datos, .lqd-bases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .lqd-cols { grid-template-columns: 1fr; }
+            .lqd-firmas { gap: 1.25rem; }
+            .lqd-marca span { font-size: 40px; border-width: 4px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .lq-btn-main, .lq-btn-sec { transition: none; } }
+        @media print {
+            @page { size: letter; margin: 12mm; }
+            body { background: #ffffff !important; }
+            body > *:not(main), .lq-hero, .lq-form, .lq-info, .lq-avisos, .lq-actions, .ls-crumbs, .no-print { display: none !important; }
+            body > main#lq-main { display: block !important; padding: 0 !important; margin: 0 !important; max-width: none !important; }
+            .lq-tool { display: block !important; }
+            .lq-sticky { position: static !important; }
+            .lq-doc-frame { background: none !important; padding: 0 !important; border-radius: 0 !important; overflow: visible !important; }
+            .lq-doc { box-shadow: none !important; min-width: 0 !important; padding: 0 !important; font-size: 11.5px; }
+            .lqd-ejemplo { display: none; }
+            .lqd-total, .lqd-datos, .lqd-title h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 </head>
@@ -1169,126 +1301,178 @@ body { overflow-x: hidden; }
 </div>
 </header>
 <!-- Main Content -->
-<main class="site-container flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
-<div class="ls-wrap">
-<nav class="ls-crumbs" aria-label="Ruta">
+<main id="lq-main" class="site-container flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<div class="lq-wrap">
+<nav class="ls-crumbs no-print" aria-label="Ruta">
 <a href="./">Inicio</a><span aria-hidden="true">/</span><a href="para-empleadores">Para empleadores</a><span aria-hidden="true">/</span><span aria-current="page">Generador de liquidaciones</span>
 </nav>
 
-<!-- HERO -->
-<header class="ls-hero">
-<p class="ls-kicker">En preparación · Para empleadores</p>
-<h1 class="ls-h1">Las liquidaciones de sueldo de tus trabajadores, listas en PDF</h1>
-<p class="ls-lead">Escribes los datos de tu empresa y de cada trabajador, y el generador calcula la AFP, la salud, el seguro de cesantía y el impuesto único con los valores del mes. Te entrega la liquidación lista para imprimir y firmar.</p>
-<div class="hm-aviso" role="note">
-<span class="material-icons" aria-hidden="true">construction</span>
-<p><strong>Todavía no está disponible.</strong> Antes de construirlo queremos saber cuántas empresas lo necesitan. Si te interesa, pulsa el botón: no se cobra nada.</p>
-</div>
+<header class="lq-hero no-print">
+<p class="ls-kicker">Para empleadores · $2.990 por liquidación</p>
+<h1 class="ls-h1">Generador de liquidaciones de sueldo</h1>
+<p class="ls-lead">Completa los datos de tu empresa, del trabajador y del mes. El generador calcula la AFP, la salud, el seguro de cesantía y el impuesto único con los valores oficiales del mes, y arma la liquidación en PDF lista para firmar.</p>
+<ul class="lq-pros">
+<li><span class="material-icons" aria-hidden="true">verified</span>Valores oficiales del mes (UF, UTM y topes)</li>
+<li><span class="material-icons" aria-hidden="true">lock</span>Tus datos quedan en tu computador</li>
+<li><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Vista previa gratis; pagas solo al descargar</li>
+</ul>
 </header>
 
-<article class="ls-article">
+<div class="lq-tool">
+<form id="lq-form" class="lq-form no-print" novalidate autocomplete="off">
 
-<section class="ls-section hm-oferta" aria-labelledby="hm-precio-titulo">
-<div class="hm-precio">
-<p id="hm-precio-titulo" class="hm-precio-label">Precio previsto</p>
-<p class="hm-precio-monto font-mono-num">$2.990</p>
-<p class="hm-precio-nota">por liquidación · pago único, sin suscripción</p>
-<button type="button" id="hm-quiero" class="ls-btn ls-btn-primary hm-btn" style="color:#ffffff !important;">
-<span>Quiero usarlo</span><span class="material-icons" aria-hidden="true">arrow_forward</span>
-</button>
+<fieldset class="lq-card">
+<legend class="lq-legend"><span class="lq-step">1</span>Empresa</legend>
+<div class="lq-grid">
+<div class="lq-field lq-span2"><label for="lq-emp-razon">Razón social o nombre del empleador</label><input id="lq-emp-razon" data-k="empresa.razonSocial" type="text" maxlength="100" placeholder="Comercial Los Aromos SpA"></div>
+<div class="lq-field"><label for="lq-emp-rut">RUT</label><input id="lq-emp-rut" data-k="empresa.rut" data-tipo="rut" type="text" maxlength="12" inputmode="text" placeholder="76.123.456-7"></div>
+<div class="lq-field"><label for="lq-emp-dir">Dirección <span class="lq-opt">(opcional)</span></label><input id="lq-emp-dir" data-k="empresa.direccion" type="text" maxlength="120" placeholder="Av. Principal 123, Temuco"></div>
+<div class="lq-field lq-span2">
+<span class="lq-label" id="lq-logo-label">Logo <span class="lq-opt">(opcional)</span></span>
+<div class="lq-logo-row">
+<label class="lq-file" for="lq-logo"><span class="material-icons" aria-hidden="true">image</span><span>Elegir imagen</span></label>
+<input id="lq-logo" type="file" accept="image/png,image/jpeg,image/webp" class="lq-sr" aria-labelledby="lq-logo-label">
+<img id="lq-logo-prev" alt="Logo de la empresa" hidden>
+<button type="button" id="lq-logo-quitar" class="lq-link" hidden>Quitar logo</button>
 </div>
-<div id="hm-interes" class="hm-interes" hidden tabindex="-1">
-<p class="hm-interes-titulo">Gracias por tu interés</p>
-<p>El generador aún no existe: con tu clic medimos si vale la pena construirlo, y no se te cobró nada. Si quieres que te avisemos cuando esté listo, déjanos tu correo.</p>
-<form id="hm-form" class="hm-form" novalidate>
-<label for="hm-nombre">Nombre</label>
-<input id="hm-nombre" name="nombre" type="text" autocomplete="name" maxlength="80" required>
-<label for="hm-correo">Correo</label>
-<input id="hm-correo" name="correo" type="email" autocomplete="email" maxlength="120" required>
-<label for="hm-trabajadores">¿Cuántos trabajadores tienes? <span class="hm-opcional">(opcional)</span></label>
-<select id="hm-trabajadores" name="trabajadores">
-<option value="">Prefiero no decir</option>
-<option value="1 (casa particular)">1 (trabajadora de casa particular)</option>
-<option value="1 a 5">1 a 5</option>
-<option value="6 a 20">6 a 20</option>
-<option value="Más de 20">Más de 20</option>
-<option value="Soy contador o asesor">Soy contador o asesor</option>
-</select>
-<input type="text" name="website" class="hm-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-<label class="hm-check"><input type="checkbox" name="consentimiento" required> <span>Acepto la <a href="privacidad" target="_blank" rel="noopener">política de privacidad</a> y que me escriban solo para avisarme del lanzamiento.</span></label>
-<p class="hm-error" role="alert" hidden></p>
-<button type="submit" class="ls-btn ls-btn-amber">Avísame cuando esté listo</button>
+</div>
+</div>
+</fieldset>
+
+<fieldset class="lq-card">
+<legend class="lq-legend"><span class="lq-step">2</span>Trabajador</legend>
+<div class="lq-worker-bar">
+<label for="lq-sel" class="lq-sr">Trabajador</label>
+<select id="lq-sel"></select>
+<button type="button" id="lq-nuevo" class="lq-btn-sec"><span class="material-icons" aria-hidden="true">person_add</span>Nuevo</button>
+<button type="button" id="lq-borrar" class="lq-link lq-danger">Eliminar</button>
+</div>
+<div class="lq-grid">
+<div class="lq-field lq-span2"><label for="lq-t-nombre">Nombre completo</label><input id="lq-t-nombre" data-k="t.nombre" type="text" maxlength="80" placeholder="María Pérez Soto"></div>
+<div class="lq-field"><label for="lq-t-rut">RUT</label><input id="lq-t-rut" data-k="t.rut" data-tipo="rut" type="text" maxlength="12" placeholder="12.345.678-5"></div>
+<div class="lq-field"><label for="lq-t-cargo">Cargo <span class="lq-opt">(opcional)</span></label><input id="lq-t-cargo" data-k="t.cargo" type="text" maxlength="60" placeholder="Vendedora"></div>
+<div class="lq-field"><label for="lq-t-ingreso">Fecha de ingreso <span class="lq-opt">(opcional)</span></label><input id="lq-t-ingreso" data-k="t.fechaIngreso" type="date"></div>
+<div class="lq-field"><label for="lq-t-contrato">Contrato</label>
+<select id="lq-t-contrato" data-k="t.contrato"><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="obra">Por obra o faena</option></select></div>
+<div class="lq-field"><label for="lq-t-jornada">Jornada semanal (horas)</label><input id="lq-t-jornada" data-k="t.jornadaHoras" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="42"></div>
+<div class="lq-field"><label for="lq-t-sueldo">Sueldo base mensual</label><input id="lq-t-sueldo" data-k="t.sueldoBase" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$650.000"></div>
+<div class="lq-field"><label for="lq-t-afp">AFP</label><select id="lq-t-afp" data-k="t.afp"></select></div>
+<div class="lq-field"><label for="lq-t-salud">Salud</label>
+<select id="lq-t-salud" data-k="t.salud"><option value="fonasa">Fonasa</option><option value="isapre">Isapre</option></select></div>
+<div class="lq-field" data-si="isapre"><label for="lq-t-isapre">Isapre</label><input id="lq-t-isapre" data-k="t.isapreNombre" type="text" maxlength="40" placeholder="Colmena"></div>
+<div class="lq-field" data-si="isapre"><label for="lq-t-plan">Plan pactado (UF)</label><input id="lq-t-plan" data-k="t.isaprePlanUF" data-tipo="uf" type="text" inputmode="decimal" placeholder="4,2"></div>
+<div class="lq-field"><label for="lq-t-colacion">Colación mensual <span class="lq-opt">(no imponible)</span></label><input id="lq-t-colacion" data-k="t.colacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="lq-t-movil">Movilización mensual <span class="lq-opt">(no imponible)</span></label><input id="lq-t-movil" data-k="t.movilizacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+</fieldset>
+
+<fieldset class="lq-card">
+<legend class="lq-legend"><span class="lq-step">3</span>El mes</legend>
+<div class="lq-grid">
+<div class="lq-field"><label for="lq-periodo">Mes de la remuneración</label><select id="lq-periodo" data-k="periodo"></select></div>
+<div class="lq-field"><label for="lq-m-dias">Días trabajados (de 30)</label><input id="lq-m-dias" data-k="m.diasTrabajados" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="30"></div>
+<div class="lq-field"><label for="lq-m-lic">Días de licencia médica <span class="lq-opt">(informativo)</span></label><input id="lq-m-lic" data-k="m.diasLicencia" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="0"></div>
+<div class="lq-field"><label for="lq-m-he">Horas extra del mes</label><input id="lq-m-he" data-k="m.horasExtra" data-tipo="dec" type="text" inputmode="decimal" placeholder="0"></div>
+<div class="lq-field"><label for="lq-m-grat">Gratificación</label>
+<select id="lq-m-grat" data-k="m.gratificacion"><option value="legal">Legal mensual (25%, art. 50)</option><option value="manual">Monto fijo pactado</option><option value="ninguna">No se paga este mes</option></select></div>
+<div class="lq-field" data-si="grat-manual"><label for="lq-m-gratmonto">Monto de la gratificación</label><input id="lq-m-gratmonto" data-k="m.gratificacionMonto" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="lq-m-com">Comisiones <span class="lq-opt">(imponible)</span></label><input id="lq-m-com" data-k="m.comisiones" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+
+<div class="lq-sub">
+<p class="lq-subtitle">Bonos imponibles</p>
+<div class="lq-list" data-lista="m.bonosImponibles" data-ph="Bono de producción"></div>
+<button type="button" class="lq-link" data-agregar="m.bonosImponibles">+ Agregar bono</button>
+</div>
+
+<div class="lq-sub">
+<p class="lq-subtitle">Haberes no imponibles del mes</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="lq-m-viat">Viáticos</label><input id="lq-m-viat" data-k="m.viaticos" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="lq-m-asig">Asignación familiar</label><input id="lq-m-asig" data-k="m.asignacionFamiliar" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<div class="lq-list" data-lista="m.otrosNoImponibles" data-ph="Aguinaldo de Fiestas Patrias"></div>
+<button type="button" class="lq-link" data-agregar="m.otrosNoImponibles">+ Agregar otro no imponible</button>
+</div>
+
+<div class="lq-sub">
+<p class="lq-subtitle">Descuentos</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="lq-m-apv">APV <span class="lq-opt">(ahorro voluntario)</span></label><input id="lq-m-apv" data-k="m.apvMonto" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field" data-si="apv"><label for="lq-m-apvreg">Régimen del APV</label>
+<select id="lq-m-apvreg" data-k="m.apvRegimen"><option value="B">Régimen B (rebaja el impuesto)</option><option value="A">Régimen A (bonificación fiscal)</option></select></div>
+<div class="lq-field"><label for="lq-m-ant">Anticipo de sueldo</label><input id="lq-m-ant" data-k="m.anticipo" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="lq-m-ccaf">Crédito caja de compensación</label><input id="lq-m-ccaf" data-k="m.creditoCCAF" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="lq-m-sind">Cuota sindical</label><input id="lq-m-sind" data-k="m.cuotaSindical" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<p class="lq-help">Otros descuentos pactados por escrito con el trabajador (máximo 15% de la remuneración, art. 58):</p>
+<div class="lq-list" data-lista="m.otrosDescuentos" data-ph="Préstamo de la empresa"></div>
+<button type="button" class="lq-link" data-agregar="m.otrosDescuentos">+ Agregar descuento</button>
+</div>
+</fieldset>
+
+<div class="lq-card lq-backup">
+<p class="lq-subtitle">Respaldo de tus datos</p>
+<p class="lq-help">Los datos se guardan solo en este navegador. Descarga un respaldo para usarlos en otro equipo o si borras el historial.</p>
+<div class="lq-backup-row">
+<button type="button" id="lq-exportar" class="lq-btn-sec"><span class="material-icons" aria-hidden="true">download</span>Descargar respaldo</button>
+<label class="lq-btn-sec" for="lq-importar"><span class="material-icons" aria-hidden="true">upload</span>Cargar respaldo</label>
+<input id="lq-importar" type="file" accept="application/json,.json" class="lq-sr">
+</div>
+<p id="lq-backup-msg" class="lq-help" role="status"></p>
+</div>
 </form>
-<p id="hm-ok" class="hm-ok" hidden tabindex="-1"></p>
-</div>
-</section>
 
-<section class="ls-section" aria-labelledby="hm-incluye">
-<h2 id="hm-incluye">Qué tendrá el generador</h2>
-<ul class="hm-lista">
-<li><span class="material-icons" aria-hidden="true">badge</span><div><strong>Datos de la empresa y del trabajador.</strong> Razón social, RUT, cargo, fecha de ingreso, período y días trabajados.</div></li>
-<li><span class="material-icons" aria-hidden="true">add_circle</span><div><strong>Haberes imponibles y no imponibles.</strong> Sueldo base, gratificación, horas extra, bonos y comisiones, colación y movilización.</div></li>
-<li><span class="material-icons" aria-hidden="true">remove_circle</span><div><strong>Descuentos legales con los valores del mes.</strong> AFP según la que elijas, Fonasa o Isapre, seguro de cesantía e impuesto único, con la UF, la UTM y los topes vigentes.</div></li>
-<li><span class="material-icons" aria-hidden="true">receipt_long</span><div><strong>Otros descuentos.</strong> Anticipos y préstamos de la caja de compensación, con aviso cuando superen el 15% de la remuneración (artículo 58 del Código del Trabajo).</div></li>
-<li><span class="material-icons" aria-hidden="true">picture_as_pdf</span><div><strong>PDF de una página</strong> con el detalle del cálculo y espacio para la firma del trabajador.</div></li>
+<aside class="lq-side" aria-label="Vista previa de la liquidación">
+<div class="lq-sticky">
+<div id="lq-avisos" class="lq-avisos no-print" aria-live="polite"></div>
+<div class="lq-doc-frame">
+<article id="lq-doc" class="lq-doc" aria-label="Liquidación de sueldo"></article>
+</div>
+<div class="lq-actions no-print">
+<p id="lq-estado" class="lq-estado"></p>
+<button type="button" id="lq-descargar" class="ls-btn ls-btn-primary lq-btn-main" style="color:#ffffff !important;"><span class="material-icons" aria-hidden="true">picture_as_pdf</span><span id="lq-descargar-txt">Descargar PDF · $2.990</span></button>
+<p class="lq-help lq-center">Pago único con Flow. Tienes 48 horas para corregir y volver a descargar esta liquidación.</p>
+</div>
+</div>
+</aside>
+</div>
+
+<article class="ls-article lq-info no-print">
+<section class="ls-section" id="como-calcula">
+<h2>Cómo calcula</h2>
+<ul class="lq-bullets">
+<li><strong>Valores del mes:</strong> los topes imponibles y el plan de Isapre usan la UF del último día del mes de la remuneración; el impuesto único usa la UTM del mes.</li>
+<li><strong>AFP y salud:</strong> sobre lo imponible, con tope de 90 UF. Si el plan de Isapre cuesta más que el 7%, la diferencia aparece como adicional de salud.</li>
+<li><strong>Seguro de cesantía:</strong> 0,6% de cargo del trabajador solo con contrato indefinido, con tope de 135,2 UF.</li>
+<li><strong>Impuesto único:</strong> sobre lo imponible menos AFP, seguro de cesantía, salud (con tope conjunto de 7% de 90 UF) y APV régimen B.</li>
+<li><strong>Gratificación legal:</strong> 25% de lo devengado en el mes, con tope mensual de 4,75 ingresos mínimos dividido en 12.</li>
+<li><strong>Mes incompleto:</strong> sueldo base, gratificación legal y topes se calculan por los días trabajados sobre 30.</li>
+<li><strong>Horas extra:</strong> sueldo base ÷ 30 × 28 ÷ (4 × jornada semanal) × 1,5.</li>
 </ul>
-<p class="ls-note">¿Solo quieres saber cuánto te pagarán? La <a href="sueldo_liquido">calculadora de sueldo líquido</a> es gratis y te da un informe en PDF. Este generador es para quien emite la liquidación: arma el documento con los datos de la empresa y del trabajador.</p>
+<div class="table-scroll lq-tabla" id="lq-valores"></div>
 </section>
 
-<section class="ls-section" aria-labelledby="hm-vista">
-<h2 id="hm-vista">Así se vería</h2>
-<figure class="ls-doc" aria-labelledby="hm-doc-cap">
-<div class="ls-doc-head">
-<div>
-<p class="ls-doc-title">Liquidación de sueldo</p>
-<p class="ls-doc-period">Período: septiembre 2026</p>
-</div>
-<span class="ls-doc-tag">Ejemplo</span>
-</div>
-<dl class="ls-doc-data">
-<div><dt>Empleador</dt><dd>Empresa de Ejemplo SpA</dd></div>
-<div><dt>RUT empleador</dt><dd class="ls-num">76.XXX.XXX-X</dd></div>
-<div><dt>Trabajador</dt><dd>Persona de ejemplo</dd></div>
-<div><dt>Cargo</dt><dd>Vendedora</dd></div>
-<div><dt>Contrato</dt><dd>Indefinido · 42 h</dd></div>
-<div><dt>Días trabajados</dt><dd class="ls-num">30</dd></div>
-<div><dt>AFP</dt><dd>Modelo</dd></div>
-<div><dt>Salud</dt><dd>Fonasa</dd></div>
-</dl>
-<table class="ls-doc-table">
-<caption class="ls-sr">Haberes y descuentos del ejemplo</caption>
-<tbody>
-<tr class="ls-row-head"><th scope="rowgroup" colspan="2">Haberes imponibles</th></tr>
-<tr><th scope="row">Sueldo base</th><td class="ls-num">$553.553</td></tr>
-<tr class="ls-row-sub"><th scope="row">Total imponible</th><td class="ls-num">$553.553</td></tr>
-<tr class="ls-row-head"><th scope="rowgroup" colspan="2">Descuentos legales</th></tr>
-<tr><th scope="row">AFP Modelo (10,58%)</th><td class="ls-num ls-neg">−$58.566</td></tr>
-<tr><th scope="row">Salud Fonasa (7%)</th><td class="ls-num ls-neg">−$38.749</td></tr>
-<tr><th scope="row">Seguro de cesantía (0,6%)</th><td class="ls-num ls-neg">−$3.321</td></tr>
-<tr><th scope="row">Impuesto único (exento)</th><td class="ls-num">$0</td></tr>
-<tr class="ls-row-sub"><th scope="row">Total descuentos</th><td class="ls-num ls-neg">−$100.636</td></tr>
-</tbody>
-<tfoot>
-<tr class="ls-row-total"><th scope="row">Alcance líquido a pagar</th><td class="ls-num">$452.917</td></tr>
-</tfoot>
-</table>
-<p class="ls-doc-sign">Recibí conforme el alcance líquido de la presente liquidación. <span>Firma del trabajador: ____________________</span></p>
-<figcaption id="hm-doc-cap" class="ls-doc-cap">Vista de ejemplo con el ingreso mínimo de 2026. El diseño final puede cambiar.</figcaption>
-</figure>
-</section>
-
-<section class="ls-section" aria-labelledby="hm-limites">
-<h2 id="hm-limites">Lo que no hará</h2>
-<p>El generador arma el documento; no reemplaza las obligaciones del empleador:</p>
-<ul>
-<li>No declara ni paga las cotizaciones en Previred.</li>
+<section class="ls-section" id="no-hace">
+<h2>Lo que no hace</h2>
+<ul class="lq-bullets">
+<li>No declara ni paga las cotizaciones en Previred: eso lo sigue haciendo el empleador.</li>
 <li>No reemplaza el Libro de Remuneraciones Electrónico de la Dirección del Trabajo.</li>
-<li>Quien emite la liquidación sigue siendo responsable de revisar los montos con el contrato de cada trabajador.</li>
+<li>No calcula semana corrida, subsidios por licencia ni la asignación familiar por tramo: esos montos se ingresan a mano.</li>
+<li>Quien emite la liquidación es responsable de revisar los montos con el contrato de cada trabajador.</li>
 </ul>
-<p class="ls-note">Mientras tanto, puedes usar gratis el <a href="liquidacion-de-sueldo#formato">formato de liquidación en Excel y Word</a>.</p>
 </section>
 
-<p class="ls-legal"><strong>Aviso:</strong> esta página describe un producto en evaluación; no se vende ni se cobra nada en ella. Si el generador se lanza, será un modelo de referencia basado en el Código del Trabajo, no revisado por abogados.</p>
+<section class="ls-section" id="preguntas">
+<h2>Preguntas frecuentes</h2>
+<details class="lq-faq"><summary>¿Qué pasa con mis datos y los de mis trabajadores?</summary><p>Se guardan solo en tu navegador. Cálculo Laboral no recibe nombres, RUT ni sueldos: el cálculo y la vista previa ocurren en tu computador. Al pagar, Flow recibe solo tu correo y el nombre de la empresa para el comprobante.</p></details>
+<details class="lq-faq"><summary>¿Qué incluye el pago de $2.990?</summary><p>La liquidación de un trabajador para el mes elegido. Durante 48 horas puedes corregirla y volver a descargarla las veces que necesites. Cada trabajador y cada mes se pagan por separado.</p></details>
+<details class="lq-faq"><summary>¿Cómo guardo el PDF?</summary><p>Al pulsar «Descargar PDF» se abre la ventana de impresión de tu navegador: elige «Guardar como PDF». En el celular, usa la opción de imprimir y luego guardar o compartir el PDF.</p></details>
+<details class="lq-faq"><summary>¿Qué meses están disponibles?</summary><p>Los meses cuyos valores oficiales ya revisamos con su fuente. Agregamos cada mes nuevo cuando el SII publica la UF del último día de ese mes.</p></details>
+<details class="lq-faq"><summary>¿La liquidación tiene que ir firmada?</summary><p>El artículo 54 del Código del Trabajo exige entregar junto con el pago un comprobante con el detalle de lo pagado y los descuentos. El documento incluye espacio para la firma del trabajador y del empleador.</p></details>
+</section>
+
+<p class="ls-legal"><strong>Aviso:</strong> el generador entrega un modelo de referencia basado en el Código del Trabajo y en los valores oficiales del mes; fue elaborado con apoyo de IA y no fue revisado por abogados. No constituye asesoría legal ni contable.</p>
 </article>
 </div>
 </main>
@@ -1452,7 +1636,10 @@ body { overflow-x: hidden; }
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.1.2"></script>
 <script src="/js/indicators.js?v=2.9.2"></script>
-<script src="/js/prueba_liquidacion.js?v=1.0.0"></script>
+<script src="/js/liquidacion_parametros.js?v=1.0.0"></script>
+<script src="/js/liquidacion_engine.js?v=1.0.0"></script>
+<script src="/js/checkout_consent.js?v=1.4.0" defer></script>
+<script src="/js/liquidacion_app.js?v=1.0.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

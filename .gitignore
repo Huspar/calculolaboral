@@ -41,3 +41,6 @@ tools/screenshots/
 
 # Grafo local de graphify
 graphify-out/
+
+# Capturas locales de Playwright
+/.playwright-mcp/
