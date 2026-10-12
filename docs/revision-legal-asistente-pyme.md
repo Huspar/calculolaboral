@@ -30,6 +30,19 @@ El correo con el enlace de acceso (`correoAcceso` en el mismo archivo) no contie
 7. **Obligaciones formales.** ¿Hay registros, inscripciones, designaciones o evaluaciones que Cálculo Laboral deba tener como encargado (por ejemplo, registro de actividades de tratamiento)?
 8. **Responsabilidad.** ¿Están bien las cláusulas de modelos de referencia, la ausencia de garantía de disponibilidad y la recomendación de revisar documentos con un abogado?
 
+## 3 bis. Lo que se alcanzó a contrastar con fuentes (12-oct-2026) y lo que NO está verificado
+
+Se buscó el texto de la ley, pero **no se pudo leer el texto oficial** (BCN / Diario Oficial): solo fuentes secundarias (blogs y documentos de terceros). Lo siguiente es orientación, no confirmación:
+
+| Tema | Lo que dicen las fuentes secundarias | Efecto en los textos |
+| :--- | :--- | :--- |
+| Vigencia | Las modificaciones a la Ley 19.628 rigen desde el 1 de diciembre de 2026 | Los textos ya lo indican |
+| Encargo (art. 15 bis, según blogs) | El tratamiento por un encargado debe regirse por un contrato que defina objeto, duración, naturaleza del tratamiento y obligaciones de seguridad; el encargado actúa según las instrucciones del responsable; el responsable sigue siendo responsable ante el titular y la Agencia | Se agregó a los Términos el "objeto y duración" y que se trata solo según instrucciones. **Duda abierta:** si una casilla aceptada basta como contrato, y qué otro contenido mínimo falta (por ejemplo, el registro de actividades de tratamiento que algunas plantillas atribuyen al encargado) |
+| Incidentes de seguridad (art. 14 sexies, según fuentes) | Se informa a la Agencia "sin dilaciones indebidas", sin un número de horas; una fuente aislada menciona 72 horas y no coincide con las demás. No se encontró qué debe hacer el encargado frente al responsable | Los textos pasaron de "cuando detecte y confirme" a "sin dilaciones indebidas desde que tome conocimiento". **Duda abierta:** plazo y forma exactos |
+| Transferencia internacional (arts. 27 y 28, según fuentes) | Es lícita en los casos que fija el artículo 27, entre ellos el uso de cláusulas contractuales tipo; mientras no existan países declarados "adecuados" se apoya en esas cláusulas. La Subsecretaría de Economía aprobó cláusulas modelo en diciembre de 2025 (publicadas en el Diario Oficial el 19-dic-2025) | **No es solo un problema de redacción.** La Política informa de la transferencia a Brasil y EE. UU., pero puede que se necesite además un mecanismo contractual con Neon, Vercel y Resend. Pendiente de confirmar con el abogado y de revisar qué acuerdos de tratamiento de datos (DPA) ofrece cada proveedor |
+
+Fuentes consultadas (todas secundarias): [Prey Project sobre DPA y Ley 21.719](https://preyproject.com/es/blog/data-processing-agreement-dpa-chile-ley-21719), [Informe de Transferencias Internacionales (Minsegpres)](https://www.minsegpres.gob.cl/wp-content/uploads/2025/09/Informe-2-Transferencias-Internacionales-FINAL.pdf), [Cláusulas contractuales tipo (Guerrero Olivos)](https://guerrero.cl/wp-content/uploads/2026/01/DOC_Aprobacion-Clausulas-Contractuales-Tipo.pdf), [Prey Project sobre notificación de brechas](https://preyproject.com/es/blog/notificacion-de-brechas-de-datos-personales).
+
 ## 4. Aparte: antes de vender el Pase (no antes de abrir cuentas)
 
 - **Retracto y reembolso.** Los Términos vigentes excluyen el retracto para bienes digitales descargables. El Pase es un servicio con duración (3 o 12 meses): el abogado debe indicar qué corresponde y cómo informarlo antes de pagar. No quedó escrito en los Términos.
