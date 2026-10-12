@@ -1,16 +1,21 @@
 /*
- * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.0.0)
+ * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.1.0)
  * Datos en localStorage (nunca se envían al servidor), vista previa en vivo, respaldo en JSON y cobro con
  * CLCheckout.buyKit('liquidacion'). El pago desbloquea por 48 h la liquidación de ese trabajador y ese mes.
- * Requiere: liquidacion_parametros.js, liquidacion_engine.js y checkout_consent.js (antes que este archivo).
+ * La UF y la UTM del mes se consultan a la API (liquidacion_valores.js); el resto viene de liquidacion_parametros.js.
+ * Requiere: liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js y checkout_consent.js (antes que este archivo).
  */
 (function () {
     'use strict';
 
     var P = window.CLLiquidacionParametros;
     var E = window.CLLiquidacionEngine;
+    var VAL_LIB = window.CLLiquidacionValores;
     var form = document.getElementById('lq-form');
-    if (!P || !E || !form) return;
+    if (!P || !E || !VAL_LIB || !form) return;
+    var almacen = null;
+    try { almacen = window.localStorage; } catch (e) { almacen = null; }
+    var VALORES = VAL_LIB.crear({ parametros: P, fetch: function (u, o) { return window.fetch(u, o); }, storage: almacen });
 
     var KEY = 'cl_liq_v1';
     var KEY_PAGOS = 'cl_liq_pagos';
@@ -18,8 +23,19 @@
     var PRODUCTO = 'liquidacion';
     var PRECIO = '$2.990';
     var MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    var PERIODOS = Object.keys(P.MESES).sort().reverse();
-    var AFPS = Object.keys(P.MESES[PERIODOS[0]].afp);
+    var PERIODOS = P.periodos().slice().reverse();
+    var AFPS = Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp);
+    var VAL = {}; // valores por mes: { estado: 'cargando' | 'ok' | 'error', ok, mes, fuentes, avisos, vigencia, mensaje }
+
+    // Mes que se propone al abrir: el anterior hasta el día 10 y el actual desde el 11 (dentro de los meses disponibles)
+    function periodoPorDefecto() {
+        var hoy = new Date(), y = hoy.getFullYear(), m = hoy.getMonth() + 1;
+        if (hoy.getDate() <= 10) { m--; if (m < 1) { m = 12; y--; } }
+        var p = y + '-' + (m < 10 ? '0' : '') + m;
+        if (p < P.PRIMER_MES) p = P.PRIMER_MES;
+        if (p > P.ULTIMO_MES) p = P.ULTIMO_MES;
+        return p;
+    }
 
     var $ = function (id) { return document.getElementById(id); };
     var doc = $('lq-doc');
@@ -44,12 +60,12 @@
     }
     function estadoInicial() {
         var t = nuevoTrabajador();
-        return { v: 1, empresa: { razonSocial: '', rut: '', direccion: '', logo: '' }, trabajadores: [t], sel: t.id, periodo: PERIODOS[0], meses: {} };
+        return { v: 1, empresa: { razonSocial: '', rut: '', direccion: '', logo: '' }, trabajadores: [t], sel: t.id, periodo: periodoPorDefecto(), meses: {} };
     }
 
     var S = leer(KEY, null);
     if (!S || S.v !== 1 || !Array.isArray(S.trabajadores) || !S.trabajadores.length) S = estadoInicial();
-    if (PERIODOS.indexOf(S.periodo) < 0) S.periodo = PERIODOS[0];
+    if (PERIODOS.indexOf(S.periodo) < 0) S.periodo = periodoPorDefecto();
     if (!S.trabajadores.some(function (t) { return t.id === S.sel; })) S.sel = S.trabajadores[0].id;
 
     var guardarPend = null;
@@ -211,7 +227,11 @@
             var o = objetivo(el.getAttribute('data-k'));
             o[0][o[1]] = leerValor(el);
             if (el.getAttribute('data-k') === 'periodo' || el.getAttribute('data-k') === 't.nombre') llenarTrabajadores();
-            if (el.getAttribute('data-k') === 'periodo') pintarFormulario();
+            if (el.getAttribute('data-k') === 'periodo') {
+                pintarFormulario();
+                // Si la consulta de ese mes había fallado, se reintenta al elegirlo de nuevo
+                if (VAL[S.periodo] && VAL[S.periodo].estado === 'error') cargarValores(S.periodo, true);
+            }
         } else if (el.hasAttribute('data-campo')) {
             var cont = el.closest('[data-lista]'), path = cont.getAttribute('data-lista');
             var filas = Array.prototype.slice.call(cont.querySelectorAll('.lq-row'));
@@ -344,7 +364,7 @@
                 if (!d || d.v !== 1 || !Array.isArray(d.trabajadores) || !d.trabajadores.length || !d.empresa) throw new Error('formato');
                 if (!window.confirm('Esto reemplaza los datos de este navegador por los del respaldo. ¿Continuar?')) return;
                 S = d;
-                if (PERIODOS.indexOf(S.periodo) < 0) S.periodo = PERIODOS[0];
+                if (PERIODOS.indexOf(S.periodo) < 0) S.periodo = periodoPorDefecto();
                 if (!S.trabajadores.some(function (t) { return t.id === S.sel; })) S.sel = S.trabajadores[0].id;
                 S.meses = S.meses || {};
                 escribir(KEY, S);
@@ -387,6 +407,7 @@
 
     function documento(em, t, m, res, opciones) {
         var b = res.bases;
+        var fu = opciones.fuentes || {};
         var datos = [
             ['Trabajador', esc(t.nombre)], ['RUT', esc(formatoRut(t.rut))],
             ['Cargo', esc(t.cargo || '—')], ['Fecha de ingreso', esc(fecha(t.fechaIngreso) || '—')],
@@ -421,12 +442,36 @@
             '<dl class="lqd-bases">' +
                 '<div><dt>Tope imponible AFP y salud</dt><dd>' + pesos(b.topeAfp) + '</dd></div>' +
                 '<div><dt>Base tributable</dt><dd>' + pesos(b.baseTributable) + '</dd></div>' +
-                '<div><dt>UF al cierre del mes</dt><dd>' + b.uf.toLocaleString('es-CL', { minimumFractionDigits: 2 }) + '</dd></div>' +
-                '<div><dt>UTM del mes</dt><dd>' + pesos(b.utm) + '</dd></div>' +
+                '<div><dt>UF al ' + VAL_LIB.fechaLarga(opciones.periodo) + '</dt><dd>' + b.uf.toLocaleString('es-CL', { minimumFractionDigits: 2 }) + (fu.uf ? '<small>' + esc(fu.uf) + '</small>' : '') + '</dd></div>' +
+                '<div><dt>UTM del mes</dt><dd>' + pesos(b.utm) + (fu.utm ? '<small>' + esc(fu.utm) + '</small>' : '') + '</dd></div>' +
             '</dl>' +
             '<p class="lqd-recibi">Recibí conforme el alcance líquido de la presente liquidación y copia de ella.</p>' +
             '<div class="lqd-firmas"><div><span></span>Firma del trabajador</div><div><span></span>Firma y timbre del empleador</div></div>' +
             (opciones.pagada ? '' : '<div class="lqd-marca" aria-hidden="true"><span>Vista previa</span></div>');
+    }
+
+    // ---------- valores del mes (UF y UTM desde la API) ----------
+    function marcarPeriodos() {
+        var sel = $('lq-periodo');
+        if (!sel) return;
+        PERIODOS.forEach(function (p) {
+            var op = sel.querySelector('option[value="' + p + '"]');
+            if (op) op.textContent = capital(nombreMes(p)) + (VAL[p] && VAL[p].estado === 'error' ? ' · aún no disponible' : '');
+        });
+    }
+    function cargarValores(periodo, forzar) {
+        var actual = VAL[periodo];
+        if (actual && (actual.estado === 'cargando' || (actual.estado === 'ok' && !forzar))) return;
+        VAL[periodo] = { estado: 'cargando', ok: false };
+        VALORES.obtener(periodo, !!forzar).then(function (r) {
+            VAL[periodo] = Object.assign({ estado: r.ok ? 'ok' : 'error' }, r);
+        }, function () {
+            VAL[periodo] = { estado: 'error', ok: false, mensaje: 'No pudimos consultar la UF y la UTM de ese mes. Intenta de nuevo en unos minutos.' };
+        }).then(function () {
+            marcarPeriodos();
+            tablaValores();
+            if (periodo === S.periodo) render();
+        });
     }
 
     function render() {
@@ -435,21 +480,50 @@
         var t = ejemplo ? EJEMPLO.trabajador : trabajador();
         var m = ejemplo ? Object.assign(nuevoMes(), EJEMPLO.mes) : mes();
         var pago = ejemplo ? null : pagoActual();
+
+        var val = VAL[S.periodo];
+        if (!val) { cargarValores(S.periodo); val = VAL[S.periodo]; }
+        if (val.estado === 'cargando') {
+            doc.innerHTML = '<p class="lqd-cargando">Consultando la UF y la UTM de ' + esc(nombreMes(S.periodo)) + '…</p>';
+            doc.classList.remove('lqd-pagada');
+            $('lq-avisos').innerHTML = '';
+            btn.disabled = true;
+            btnTxt.textContent = 'Descargar PDF · ' + PRECIO;
+            estado.textContent = 'Consultando los valores del mes…';
+            estado.className = 'lq-estado';
+            return;
+        }
+        if (!val.ok) {
+            doc.innerHTML = '<p class="lqd-error">' + esc(val.mensaje || 'No se pudieron obtener los valores del mes.') + '</p>';
+            doc.classList.remove('lqd-pagada');
+            $('lq-avisos').innerHTML = '';
+            btn.disabled = true;
+            btnTxt.textContent = 'Descargar PDF · ' + PRECIO;
+            estado.textContent = 'Elige otro mes o vuelve a intentarlo más tarde.';
+            estado.className = 'lq-estado lq-estado-error';
+            return;
+        }
+
         var res;
         try {
-            res = E.calcular({ trabajador: t, mes: m }, P.MESES[S.periodo]);
+            res = E.calcular({ trabajador: t, mes: m }, val.mes);
         } catch (err) {
             doc.innerHTML = '<p class="lqd-error">' + esc(err.message) + '</p>';
             btn.disabled = true;
             return;
         }
         ultimo = res;
-        doc.innerHTML = documento(em, t, m, res, { periodo: S.periodo, pagada: !!pago, ejemplo: ejemplo });
+        doc.innerHTML = documento(em, t, m, res, { periodo: S.periodo, pagada: !!pago, ejemplo: ejemplo, fuentes: val.fuentes });
         doc.classList.toggle('lqd-pagada', !!pago);
 
         // Avisos y datos que faltan
         var falta = ejemplo ? [] : faltantes();
-        var avisos = ejemplo ? [] : res.avisos.slice();
+        var avisos = [];
+        (val.avisos || []).forEach(function (texto) { avisos.push({ nivel: 'aviso', texto: texto }); });
+        if (val.vigencia && val.vigencia.verificado.slice(0, 7) < S.periodo) {
+            avisos.push({ nivel: 'info', texto: 'El ingreso mínimo, los topes y las comisiones AFP son los vigentes al ' + val.vigencia.verificado.split('-').reverse().join('-') + '. Confirma que no cambiaron antes de emitir esta liquidación.' });
+        }
+        if (!ejemplo) avisos = avisos.concat(res.avisos);
         var html = '';
         if (falta.length) {
             html += '<div class="lq-aviso lq-aviso-falta"><span class="material-icons" aria-hidden="true">edit_note</span><p>Para descargar falta ' +
@@ -520,16 +594,35 @@
         if (!cont) return;
         cont.innerHTML = '<table><caption>Valores oficiales usados por el generador</caption><thead><tr><th scope="col">Mes</th><th scope="col">UF al cierre</th><th scope="col">UTM</th><th scope="col">Ingreso mínimo</th><th scope="col">Tope AFP y salud</th><th scope="col">Tope cesantía</th></tr></thead><tbody>' +
             PERIODOS.map(function (p) {
-                var v = P.MESES[p];
+                var r = VAL[p];
+                if (!r || !r.ok) {
+                    var txt = !r || r.estado === 'cargando' ? 'Consultando…' : 'Aún no disponible';
+                    return '<tr><th scope="row">' + capital(nombreMes(p)) + '</th><td colspan="5">' + txt + '</td></tr>';
+                }
+                var v = r.mes;
                 return '<tr><th scope="row">' + capital(nombreMes(p)) + '</th><td>' + v.uf.toLocaleString('es-CL', { minimumFractionDigits: 2 }) + '</td><td>' + pesos(v.utm) + '</td><td>' + pesos(v.imm) + '</td><td>' + pesos(v.topeAfpUF * v.uf) + '</td><td>' + pesos(v.topeAfcUF * v.uf) + '</td></tr>';
-            }).join('') + '</tbody></table><p class="lq-help">Fuentes: ' + P.FUENTES.join(' · ') + '.</p>';
+            }).join('') + '</tbody></table><p class="lq-help">La UF y la UTM se consultan en línea al elegir el mes; el ingreso mínimo, los topes y las comisiones AFP los mantiene el sitio. Fuentes: ' + P.FUENTES.join(' · ') + '.</p>';
     }
 
     // ---------- inicio ----------
     llenarSelects();
     pintarFormulario();
     tablaValores();
+    cargarValores(S.periodo);
     render();
+    // Los demás meses, uno tras otro y en segundo plano, para llenar la tabla informativa sin saturar a los proveedores
+    (function precargar() {
+        var resto = PERIODOS.filter(function (p) { return p !== S.periodo; });
+        (function siguiente() {
+            var p = resto.shift();
+            if (!p) return;
+            VALORES.obtener(p).then(function (r) {
+                if (!VAL[p] || VAL[p].estado === 'cargando') VAL[p] = Object.assign({ estado: r.ok ? 'ok' : 'error' }, r);
+            }, function () {
+                if (!VAL[p]) VAL[p] = { estado: 'error', ok: false, mensaje: 'No pudimos consultar la UF y la UTM de ese mes. Intenta de nuevo en unos minutos.' };
+            }).then(function () { marcarPeriodos(); tablaValores(); siguiente(); });
+        })();
+    })();
 
     var q = new URLSearchParams(window.location.search);
     if (window.CLCheckout) {
@@ -543,6 +636,7 @@
                 S.periodo = p.periodo;
                 escribir(KEY, S);
                 pintarFormulario();
+                cargarValores(S.periodo);
             }
             render();
             estado.scrollIntoView({ block: 'center' });
