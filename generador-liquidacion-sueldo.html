@@ -1353,7 +1353,7 @@ body { overflow-x: hidden; }
 <div class="lq-field lq-span2"><label for="lq-t-nombre">Nombre completo</label><input id="lq-t-nombre" data-k="t.nombre" type="text" maxlength="80" placeholder="María Pérez Soto"></div>
 <div class="lq-field"><label for="lq-t-rut">RUT</label><input id="lq-t-rut" data-k="t.rut" data-tipo="rut" type="text" maxlength="12" placeholder="12.345.678-5"></div>
 <div class="lq-field"><label for="lq-t-cargo">Cargo <span class="lq-opt">(opcional)</span></label><input id="lq-t-cargo" data-k="t.cargo" type="text" maxlength="60" placeholder="Vendedora"></div>
-<div class="lq-field"><label for="lq-t-ingreso">Fecha de ingreso <span class="lq-opt">(opcional)</span></label><input id="lq-t-ingreso" data-k="t.fechaIngreso" type="date"></div>
+<div class="lq-field"><label for="lq-t-ingreso">Fecha de ingreso <span class="lq-opt">(opcional; a los 11 años el seguro de cesantía deja de descontarse)</span></label><input id="lq-t-ingreso" data-k="t.fechaIngreso" type="date"></div>
 <div class="lq-field"><label for="lq-t-contrato">Contrato</label>
 <select id="lq-t-contrato" data-k="t.contrato"><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="obra">Por obra o faena</option></select></div>
 <div class="lq-field"><label for="lq-t-jornada">Jornada semanal (horas)</label><input id="lq-t-jornada" data-k="t.jornadaHoras" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="42"></div>
@@ -1446,11 +1446,11 @@ body { overflow-x: hidden; }
 <ul class="lq-bullets">
 <li><strong>Valores del mes:</strong> los topes imponibles y el plan de Isapre usan la UF del último día del mes de la remuneración; el impuesto único usa la UTM del mes. Ambas se consultan en línea y la liquidación indica la fuente.</li>
 <li><strong>AFP y salud:</strong> sobre lo imponible, con tope de 90 UF. Si el plan de Isapre cuesta más que el 7%, la diferencia aparece como adicional de salud.</li>
-<li><strong>Seguro de cesantía:</strong> 0,6% de cargo del trabajador solo con contrato indefinido, con tope de 135,2 UF.</li>
+<li><strong>Seguro de cesantía:</strong> 0,6% de cargo del trabajador solo con contrato indefinido, con tope de 135,2 UF (135,1 UF en enero) y durante los primeros 11 años con el mismo empleador (art. 9 de la Ley 19.728), si indicas la fecha de ingreso.</li>
 <li><strong>Impuesto único:</strong> sobre lo imponible menos AFP, seguro de cesantía, salud (con tope conjunto de 7% de 90 UF) y APV régimen B.</li>
 <li><strong>Gratificación legal:</strong> 25% de lo devengado en el mes, con tope mensual de 4,75 ingresos mínimos dividido en 12.</li>
 <li><strong>Mes incompleto:</strong> sueldo base, gratificación legal y topes se calculan por los días trabajados sobre 30.</li>
-<li><strong>Horas extra:</strong> sueldo base ÷ 30 × 28 ÷ (4 × jornada semanal) × 1,5.</li>
+<li><strong>Horas extra:</strong> sueldo base ÷ 30 × 28 ÷ (4 × jornada semanal) × 1,5. La jornada máxima legal fue de 44 horas hasta el 25 de abril de 2026 y es de 42 desde el 26 de abril (Ley 21.561); el generador lo considera según el mes.</li>
 </ul>
 <div class="table-scroll lq-tabla" id="lq-valores"></div>
 </section>
@@ -1470,7 +1470,7 @@ body { overflow-x: hidden; }
 <details class="lq-faq"><summary>¿Qué pasa con mis datos y los de mis trabajadores?</summary><p>Se guardan solo en tu navegador. Cálculo Laboral no recibe nombres, RUT ni sueldos: el cálculo y la vista previa ocurren en tu computador. Al pagar, Flow recibe solo tu correo y el nombre de la empresa para el comprobante.</p></details>
 <details class="lq-faq"><summary>¿Qué incluye el pago de $2.990?</summary><p>La liquidación de un trabajador para el mes elegido. Durante 48 horas puedes corregirla y volver a descargarla las veces que necesites. Cada trabajador y cada mes se pagan por separado.</p></details>
 <details class="lq-faq"><summary>¿Cómo guardo el PDF?</summary><p>Al pulsar «Descargar PDF» se abre la ventana de impresión de tu navegador: elige «Guardar como PDF». En el celular, usa la opción de imprimir y luego guardar o compartir el PDF.</p></details>
-<details class="lq-faq"><summary>¿Qué meses están disponibles?</summary><p>De septiembre a diciembre de 2026. La UF y la UTM de cada mes se consultan en línea, a partir de los datos del SII, cuando eliges el mes. La UF del último día de un mes se publica alrededor del día 9 de ese mes, así que un mes puede no estar disponible hasta entonces; en ese caso la página te lo avisa.</p></details>
+<details class="lq-faq"><summary>¿Qué meses están disponibles?</summary><p>De enero a diciembre de 2026. La UF y la UTM de cada mes se consultan en línea, a partir de los datos del SII, cuando eliges el mes. La UF del último día de un mes se publica alrededor del día 9 de ese mes, así que un mes puede no estar disponible hasta entonces; en ese caso la página te lo avisa.</p></details>
 <details class="lq-faq"><summary>¿Y si la consulta de la UF o la UTM falla?</summary><p>Probamos con dos proveedores. Si ninguno responde y el mes ya está confirmado en el SII en nuestra tabla, usamos ese valor y lo indicamos en la liquidación; si no, no se puede emitir y la página te lo avisa. Cada liquidación muestra de qué fuente salió la UF y la UTM.</p></details>
 <details class="lq-faq"><summary>¿La liquidación tiene que ir firmada?</summary><p>El artículo 54 del Código del Trabajo exige entregar junto con el pago un comprobante con el detalle de lo pagado y los descuentos. El documento incluye espacio para la firma del trabajador y del empleador.</p></details>
 </section>
@@ -1639,11 +1639,11 @@ body { overflow-x: hidden; }
 <!-- Load shared indicators script -->
 <script src="/js/constants.js?v=2.1.2"></script>
 <script src="/js/indicators.js?v=2.9.2"></script>
-<script src="/js/liquidacion_parametros.js?v=2.0.0"></script>
-<script src="/js/liquidacion_valores.js?v=1.0.2"></script>
-<script src="/js/liquidacion_engine.js?v=1.0.0"></script>
+<script src="/js/liquidacion_parametros.js?v=3.0.0"></script>
+<script src="/js/liquidacion_valores.js?v=1.1.0"></script>
+<script src="/js/liquidacion_engine.js?v=1.1.0"></script>
 <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
-<script src="/js/liquidacion_app.js?v=1.1.1" defer></script>
+<script src="/js/liquidacion_app.js?v=1.2.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

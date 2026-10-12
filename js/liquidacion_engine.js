@@ -1,16 +1,20 @@
 /*
- * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.0.0)
+ * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.1.0)
  *
  * Función pura: calcular(datos, mes) devuelve las líneas de la liquidación, las bases de cálculo y los avisos.
- * "mes" son los valores oficiales de js/liquidacion_parametros.js. No usa valores del día ni APIs externas.
+ * "datos": { trabajador, mes, periodo "AAAA-MM" }. "mes" son los valores oficiales del mes (UF, UTM, ingreso
+ * mínimo, topes, jornada máxima y AFP). No usa valores del día ni APIs externas.
  *
  * Criterios (revisados el 12-oct-2026):
  * - Sueldo base, gratificación legal y topes imponibles proporcionales a los días trabajados (base 30).
  * - Hora extra: sueldo base / 30 × 28 / (4 × jornada semanal) × 1,5 (con 42 horas da el factor DT 1,5/180).
+ * - Jornada máxima legal del mes: 44 horas hasta el 25-abr-2026 y 42 desde el 26-abr-2026 (Ley 21.561).
  * - Gratificación legal (art. 50): 25% de lo devengado en el mes con tope mensual de 4,75 ingresos mínimos / 12.
  * - Topes imponibles en pesos con la UF del último día del mes; plan de Isapre con esa misma UF.
- * - AFP y salud sobre lo imponible con tope de 90 UF; seguro de cesantía del trabajador (0,6%) solo en contrato
- *   indefinido, con tope de 135,2 UF.
+ * - AFP y salud sobre lo imponible con tope de 90 UF (89,9 UF en enero de 2026); seguro de cesantía del trabajador
+ *   (0,6%) solo en contrato indefinido, con tope de 135,2 UF (135,1 UF en enero), y solo durante los primeros 11 años de
+ *   la relación laboral (art. 9 de la Ley 19.728): desde el mes siguiente a aquel en que se cumplen 11 años, el
+ *   trabajador deja de cotizar. En el mes del aniversario se mantiene el descuento y se avisa.
  * - Base del impuesto único: imponible menos AFP, seguro de cesantía, salud (7% más adicional de Isapre, con tope
  *   conjunto del 7% de 90 UF, según el SII) y APV régimen B. Créditos de caja, anticipos y otros descuentos no la rebajan.
  * - Tramos del impuesto con la UTM del mes.
@@ -18,8 +22,9 @@
 (function (root) {
     'use strict';
 
-    var JORNADA_MAXIMA = 42;   // horas semanales en 2026 (Ley 21.561)
-    var JORNADA_PARCIAL = 30;  // jornada parcial: hasta 30 horas semanales (art. 40 bis)
+    var JORNADA_MAXIMA_DEFECTO = 42; // si el mes no trae jornada máxima (la normal desde el 26-abr-2026)
+    var JORNADA_PARCIAL = 30;        // jornada parcial: hasta 30 horas semanales (art. 40 bis)
+    var ANIOS_AFC = 11;              // años de cotización del trabajador al seguro de cesantía (art. 9 Ley 19.728)
     var TASA_SALUD = 0.07;
     var TASA_AFC_TRABAJADOR = 0.006;
     var TOPE_GRATIFICACION_IMM = 4.75;
@@ -52,6 +57,17 @@
             .filter(function (l) { return l.concepto && l.monto > 0; });
     }
 
+    // Años de cotización al seguro de cesantía: 'cumplidos' si los 11 años se cumplieron en un mes anterior,
+    // 'aniversario' si se cumplen durante el mes, 'no' en los demás casos (o sin fecha de ingreso).
+    function estadoAfc11(fechaIngreso, periodo) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(fechaIngreso || '')) || !/^\d{4}-\d{2}$/.test(String(periodo || ''))) return 'no';
+        var aniversario = (+fechaIngreso.slice(0, 4) + ANIOS_AFC) + fechaIngreso.slice(4);
+        var ult = new Date(Date.UTC(+periodo.slice(0, 4), +periodo.slice(5, 7), 0)).getUTCDate();
+        if (aniversario < periodo + '-01') return 'cumplidos';
+        if (aniversario <= periodo + '-' + (ult < 10 ? '0' : '') + ult) return 'aniversario';
+        return 'no';
+    }
+
     function impuestoUnico(base, utm) {
         for (var i = 0; i < TRAMOS.length; i++) {
             if (base <= TRAMOS[i][0] * utm) {
@@ -69,7 +85,12 @@
 
         var dias = Math.min(30, Math.max(0, Math.round(n(m.diasTrabajados))));
         var f = dias / 30;
-        var jornada = Math.min(JORNADA_MAXIMA, Math.max(1, n(t.jornadaHoras) || JORNADA_MAXIMA));
+        var JORNADA_MAXIMA = mes.jornadaMaxima || JORNADA_MAXIMA_DEFECTO;
+        var jornadaIndicada = n(t.jornadaHoras) || JORNADA_MAXIMA;
+        var jornada = Math.min(JORNADA_MAXIMA, Math.max(1, jornadaIndicada));
+        if (jornadaIndicada > JORNADA_MAXIMA) {
+            avisos.push({ nivel: 'aviso', texto: 'La jornada indicada (' + jornadaIndicada + ' horas) supera la jornada máxima legal de ese mes (' + JORNADA_MAXIMA + ' horas semanales): se calculó con ' + JORNADA_MAXIMA + '.' });
+        }
         var sueldoBase = r(n(t.sueldoBase));
         var indefinido = (t.contrato || 'indefinido') === 'indefinido';
         var tasaAfp = mes.afp[t.afp];
@@ -138,8 +159,17 @@
             legales.push({ concepto: 'Salud Fonasa', detalle: '7%', monto: salud7 });
         }
 
-        var afc = indefinido ? r(baseAfc * TASA_AFC_TRABAJADOR) : 0;
-        if (indefinido) legales.push({ concepto: 'Seguro de cesantía', detalle: '0,6%', monto: afc });
+        var antig = indefinido ? estadoAfc11(t.fechaIngreso, datos.periodo) : 'no';
+        var afc = indefinido && antig !== 'cumplidos' ? r(baseAfc * TASA_AFC_TRABAJADOR) : 0;
+        if (indefinido && antig === 'cumplidos') {
+            legales.push({ concepto: 'Seguro de cesantía', detalle: 'Sin descuento: 11 años con el mismo empleador', monto: 0 });
+            avisos.push({ nivel: 'info', texto: 'No se descontó el seguro de cesantía del trabajador porque ya cumplió 11 años con este empleador (art. 9 de la Ley 19.728). Si la fecha de ingreso no corresponde a una relación laboral continua, corrígela.' });
+        } else if (indefinido) {
+            legales.push({ concepto: 'Seguro de cesantía', detalle: '0,6%', monto: afc });
+            if (antig === 'aniversario') {
+                avisos.push({ nivel: 'aviso', texto: 'El trabajador cumple 11 años con este empleador durante el mes. Se mantuvo el descuento del seguro de cesantía: desde el mes siguiente deja de corresponder (art. 9 de la Ley 19.728). Confírmalo con la AFC si necesitas el detalle del mes del aniversario.' });
+            }
+        }
 
         var apv = r(n(m.apvMonto));
         var apvB = apv > 0 && m.apvRegimen === 'B';
@@ -203,7 +233,7 @@
         };
     }
 
-    var api = { calcular: calcular, impuestoUnico: impuestoUnico, version: '1.0.0' };
+    var api = { calcular: calcular, impuestoUnico: impuestoUnico, version: '1.1.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLLiquidacionEngine = api;
 })(typeof window !== 'undefined' ? window : this);

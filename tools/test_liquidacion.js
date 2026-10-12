@@ -15,7 +15,7 @@ function chequear(nombre, errores) {
 // ---------- Parte 1: motor ----------
 function mesDe(periodo) {
     const v = P.vigenciaDe(periodo), r = P.RESPALDO[periodo];
-    return { uf: r.uf, utm: r.utm, imm: v.imm, topeAfpUF: v.topeAfpUF, topeAfcUF: v.topeAfcUF, afp: v.afp };
+    return { uf: r.uf, utm: r.utm, imm: v.imm, topeAfpUF: v.topeAfpUF, topeAfcUF: v.topeAfcUF, jornadaMaxima: v.jornadaMaxima, afp: v.afp };
 }
 const base = (t, m) => ({
     trabajador: Object.assign({ contrato: 'indefinido', jornadaHoras: 42, afp: 'Modelo', salud: 'fonasa' }, t),
@@ -37,10 +37,27 @@ const casos = [
     { nombre: 'Isapre sobre el 7% y sobre el tope de rebaja tributaria', datos: base({ sueldoBase: 3000000, afp: 'Provida', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: 8 }), mes: '2026-10',
       esperado: { AFP: 343500, 'Salud Colmena': 210000, 'Adicional de salud': 119981, 'Impuesto único': 64748, liquido: 2243771 } },
     { nombre: 'Jornada parcial de 20 horas bajo el mínimo proporcional', datos: base({ sueldoBase: 200000, jornadaHoras: 20 }), mes: '2026-10',
-      esperado: {}, aviso: 'ingreso mínimo para 20 horas' }
+      esperado: {}, aviso: 'ingreso mínimo para 20 horas' },
+    // Enero a agosto: valores de Previred (ingreso mínimo $539.000 hasta abril, 44 horas hasta el 25-abr-2026, 89,9 UF en enero)
+    { nombre: 'Enero 2026: ingreso mínimo $539.000, Modelo, Fonasa', datos: base({ sueldoBase: 539000, jornadaHoras: 44 }), mes: '2026-01',
+      esperado: { AFP: 57026, 'Salud Fonasa': 37730, 'Seguro de cesantía': 3234, 'Impuesto único': 0, liquido: 441010 }, sinAviso: 'ingreso mínimo' },
+    { nombre: 'Enero 2026: hora extra con jornada de 44 horas', datos: base({ sueldoBase: 600000, jornadaHoras: 44 }, { horasExtra: 10 }), mes: '2026-01',
+      esperado: { 'Horas extra': 47727 } },
+    { nombre: 'Septiembre 2026: una jornada de 44 horas se limita a 42 y avisa', datos: base({ sueldoBase: 600000, jornadaHoras: 44 }, { horasExtra: 10 }), mes: '2026-09',
+      esperado: { 'Horas extra': 50000 }, aviso: 'supera la jornada máxima legal' },
+    { nombre: 'Enero 2026: tope proporcional de media jornada usa 44 horas', datos: base({ sueldoBase: 250000, jornadaHoras: 22 }), mes: '2026-01',
+      esperado: {}, aviso: 'ingreso mínimo para 22 horas semanales ($269.500)' },
+    { nombre: 'Seguro de cesantía: 11 años cumplidos en un mes anterior, no se descuenta', datos: Object.assign(base({ sueldoBase: 553553, fechaIngreso: '2014-03-01' }), {}), mes: '2026-10',
+      esperado: { AFP: 58566, 'Salud Fonasa': 38749, 'Seguro de cesantía': 0, liquido: 456238 }, aviso: 'cumplió 11 años' },
+    { nombre: 'Seguro de cesantía: los 11 años se cumplen dentro del mes, se mantiene y avisa', datos: base({ sueldoBase: 553553, fechaIngreso: '2015-10-15' }), mes: '2026-10',
+      esperado: { 'Seguro de cesantía': 3321, liquido: 452917 }, aviso: 'cumple 11 años' },
+    { nombre: 'Seguro de cesantía: 10 años y 11 meses, se descuenta sin avisos de aniversario', datos: base({ sueldoBase: 553553, fechaIngreso: '2015-11-20' }), mes: '2026-10',
+      esperado: { 'Seguro de cesantía': 3321 }, sinAviso: '11 años' },
+    { nombre: 'Seguro de cesantía: plazo fijo no se descuenta y no hay aviso de 11 años', datos: base({ sueldoBase: 553553, contrato: 'plazo_fijo', fechaIngreso: '2010-01-01' }), mes: '2026-10',
+      esperado: { 'Seguro de cesantía': undefined }, sinAviso: '11 años' }
 ];
 for (const c of casos) {
-    const res = calcular(c.datos, mesDe(c.mes));
+    const res = calcular(Object.assign({}, c.datos, { periodo: c.mes }), mesDe(c.mes));
     const todas = res.haberesImponibles.concat(res.descuentosLegales, res.otrosDescuentos);
     const errores = [];
     for (const [clave, valor] of Object.entries(c.esperado)) {
@@ -48,7 +65,29 @@ for (const c of casos) {
         if (real !== valor) errores.push(`${clave}: esperado ${valor}, obtenido ${real}`);
     }
     if (c.aviso && !res.avisos.some(a => a.texto.includes(c.aviso))) errores.push(`falta el aviso "${c.aviso}"`);
+    if (c.sinAviso && res.avisos.some(a => a.texto.includes(c.sinAviso))) errores.push(`no debía haber un aviso con "${c.sinAviso}"`);
     chequear('Motor · ' + c.nombre, errores);
+}
+
+// Topes imponibles en pesos de cada mes contra lo que publica Previred (UF de respaldo × tope en UF de la vigencia)
+const PREVIRED_TOPES = {
+    '2026-01': [3569576, 5364290], '2026-02': [3581157, 5379693], '2026-03': [3585755, 5386601], '2026-04': [3610818, 5424251],
+    '2026-05': [3654962, 5490565], '2026-06': [3673828, 5518906], '2026-07': [3676031, 5522216], '2026-08': [3678639, 5526134],
+    '2026-09': [3695148, 5550933]
+};
+{
+    const errores = [];
+    for (const [p, [afp, afc]] of Object.entries(PREVIRED_TOPES)) {
+        const m = mesDe(p);
+        const calcAfp = Math.round(m.topeAfpUF * m.uf), calcAfc = Math.round(m.topeAfcUF * m.uf);
+        if (calcAfp !== afp) errores.push(`${p}: tope AFP ${calcAfp} ≠ Previred ${afp}`);
+        if (calcAfc !== afc) errores.push(`${p}: tope cesantía ${calcAfc} ≠ Previred ${afc}`);
+    }
+    const imm = ['2026-01', '2026-04', '2026-05', '2026-12'].map(p => P.vigenciaDe(p).imm).join(',');
+    if (imm !== '539000,539000,553553,553553') errores.push('ingreso mínimo por mes: ' + imm);
+    const jm = ['2026-03', '2026-04', '2026-05'].map(p => P.vigenciaDe(p).jornadaMaxima).join(',');
+    if (jm !== '44,44,42') errores.push('jornada máxima por mes: ' + jm);
+    chequear('Parámetros · topes de enero a septiembre coinciden con Previred; ingreso mínimo y jornada por mes', errores);
 }
 
 // ---------- Parte 2: valores desde la API ----------
@@ -154,8 +193,27 @@ function crear(config, almacen = almacenFalso()) {
     chequear('Valores · dos consultas simultáneas comparten una sola petición', [a === b || t.registro.length <= 2 ? '' : 'duplicó peticiones (' + t.registro.length + ')'].filter(Boolean));
 
     t = crear({ mindicador: SERIE_OK, findic: SERIE_OK });
-    const fuera = await Promise.all([t.v.obtener('2026-08'), t.v.obtener('2027-01')]);
+    const fuera = await Promise.all([t.v.obtener('2025-12'), t.v.obtener('2027-01')]);
     chequear('Valores · meses fuera del rango disponible', [fuera.every(x => !x.ok) && t.registro.length === 0 ? '' : 'debía rechazar sin consultar'].filter(Boolean));
+
+    // Enero a agosto: sin API, cada mes usa su respaldo y su vigencia (ingreso mínimo, topes y jornada)
+    t = crear({ mindicador: 'caido', findic: 'caido' });
+    const esperado = { '2026-01': [539000, 89.9, 44], '2026-03': [539000, 90, 44], '2026-04': [539000, 90, 44], '2026-05': [553553, 90, 42], '2026-08': [553553, 90, 42] };
+    const errMeses = [];
+    for (const [p, [imm, topeAfp, jornada]] of Object.entries(esperado)) {
+        const x = await t.v.obtener(p);
+        if (!x.ok || x.mes.imm !== imm || x.mes.topeAfpUF !== topeAfp || x.mes.jornadaMaxima !== jornada) errMeses.push(p + ': ' + JSON.stringify(x.mes));
+        if (x.ok && x.mes.uf !== P.RESPALDO[p].uf) errMeses.push(p + ': UF');
+    }
+    chequear('Valores · enero a agosto con respaldo: ingreso mínimo, topes y jornada de cada mes', errMeses);
+
+    t = crear({ mindicador: 'caido', findic: 'caido' });
+    const [ene, abr, may] = await Promise.all([t.v.obtener('2026-01'), t.v.obtener('2026-04'), t.v.obtener('2026-05')]);
+    chequear('Valores · notas de los meses con cambios (jornada, ingreso mínimo retroactivo)', [
+        ene.notas.some(n => /44 horas/.test(n)) ? '' : 'enero sin nota de 44 h',
+        abr.notas.some(n => /26 de abril/.test(n)) ? '' : 'abril sin nota del cambio de jornada',
+        may.notas.length === 1 && /553\.553/.test(may.notas[0]) ? '' : 'mayo sin nota de ingreso mínimo'
+    ].filter(Boolean));
 
     console.log(fallas ? `\n${fallas} de ${total} caso(s) con diferencias` : `\nTodos los casos coinciden (${total})`);
     process.exit(fallas ? 1 : 0);

@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.1.0)
+ * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.2.0)
  * Datos en localStorage (nunca se envían al servidor), vista previa en vivo, respaldo en JSON y cobro con
  * CLCheckout.buyKit('liquidacion'). El pago desbloquea por 48 h la liquidación de ese trabajador y ese mes.
  * La UF y la UTM del mes se consultan a la API (liquidacion_valores.js); el resto viene de liquidacion_parametros.js.
@@ -506,7 +506,7 @@
 
         var res;
         try {
-            res = E.calcular({ trabajador: t, mes: m }, val.mes);
+            res = E.calcular({ trabajador: t, mes: m, periodo: S.periodo }, val.mes);
         } catch (err) {
             doc.innerHTML = '<p class="lqd-error">' + esc(err.message) + '</p>';
             btn.disabled = true;
@@ -520,6 +520,7 @@
         var falta = ejemplo ? [] : faltantes();
         var avisos = [];
         (val.avisos || []).forEach(function (texto) { avisos.push({ nivel: 'aviso', texto: texto }); });
+        (val.notas || []).forEach(function (texto) { avisos.push({ nivel: 'info', texto: texto }); });
         if (val.vigencia && val.vigencia.verificado.slice(0, 7) < S.periodo) {
             avisos.push({ nivel: 'info', texto: 'El ingreso mínimo, los topes y las comisiones AFP son los vigentes al ' + val.vigencia.verificado.split('-').reverse().join('-') + '. Confirma que no cambiaron antes de emitir esta liquidación.' });
         }

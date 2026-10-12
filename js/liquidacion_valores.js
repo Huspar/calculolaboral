@@ -110,7 +110,11 @@
         }
 
         function armar(periodo, uf, utm, vig) {
-            return { uf: uf, utm: utm, imm: vig.imm, topeAfpUF: vig.topeAfpUF, topeAfcUF: vig.topeAfcUF, afp: vig.afp };
+            return { uf: uf, utm: utm, imm: vig.imm, topeAfpUF: vig.topeAfpUF, topeAfcUF: vig.topeAfcUF, jornadaMaxima: vig.jornadaMaxima, afp: vig.afp };
+        }
+        // Notas informativas del mes (cambio de jornada, reajuste retroactivo del ingreso mínimo, etc.)
+        function notasDe(periodo, vig) {
+            return [vig.nota, (P.NOTAS_MES || {})[periodo]].filter(Boolean);
         }
 
         function calcular(periodo) {
@@ -121,7 +125,7 @@
             var cache = almacen ? leerCache(periodo) : null;
             var respaldo = P.RESPALDO[periodo] || null;
             if (cache) {
-                return Promise.resolve({ ok: true, mes: armar(periodo, cache.uf, cache.utm, vig), fuentes: cache.fuentes, avisos: cache.avisos || [], vigencia: vig });
+                return Promise.resolve({ ok: true, mes: armar(periodo, cache.uf, cache.utm, vig), fuentes: cache.fuentes, avisos: cache.avisos || [], notas: notasDe(periodo, vig), vigencia: vig });
             }
             return Promise.all([pedirUf(periodo), pedirUtm(periodo)]).then(function (r) {
                 var uf = resolver('UF del ' + fechaLarga(periodo), r[0], respaldo && respaldo.uf, function (a, b) { return Math.abs(a - b) < 0.005; }, function (x) { return '$' + x.toLocaleString('es-CL', { minimumFractionDigits: 2 }); });
@@ -136,7 +140,7 @@
                 var fuentes = { uf: uf.fuente, utm: utm.fuente };
                 // Un mes cerrado no cambia: se guarda para repetir los mismos montos. Con respaldo de emergencia no se guarda.
                 if (almacen && !avisos.length) guardarCache(periodo, { uf: uf.valor, utm: utm.valor, fuentes: fuentes, avisos: [], guardado: new Date().toISOString() });
-                return { ok: true, mes: armar(periodo, uf.valor, utm.valor, vig), fuentes: fuentes, avisos: avisos, vigencia: vig };
+                return { ok: true, mes: armar(periodo, uf.valor, utm.valor, vig), fuentes: fuentes, avisos: avisos, notas: notasDe(periodo, vig), vigencia: vig };
             });
         }
 
