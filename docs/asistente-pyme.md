@@ -13,7 +13,7 @@ Un panel con cuenta donde la pyme (hasta 5 trabajadores) ingresa **una vez** su 
 
 **Decisiones de fondo (tomadas el 12-oct-2026):**
 
-1. **Base de datos Neon (Postgres), plan Launch, región São Paulo (`aws-sa-east-1`).** La región no se puede cambiar después de crear el proyecto. Confirmado en la consola: organización "Calculo Laboral", plan Launch, sin proyectos aún.
+1. **Base de datos Neon (Postgres 18), plan Launch, región São Paulo (`aws-sa-east-1`).** La región no se puede cambiar después de crear el proyecto. Creado el 12-oct-2026: organización "Calculo Laboral", proyecto `asistente-pyme` (`small-frost-55850621`), base `asistente`, ramas `production` (por defecto) y `pruebas` (sin borrado automático).
 2. **Cuentas sin contraseña:** enlace de acceso por correo (Resend). Sin contraseñas que guardar ni filtrar.
 3. **Datos sensibles cifrados por la aplicación** antes de llegar a la base (AES-256-GCM, clave en Vercel). Quien vea la base sin la clave no lee RUT, nombres ni sueldos.
 4. **Pase Pyme de 3 y 12 meses** con el pago único de Flow ya construido. El pase queda **asociado a la cuenta** y lo valida el servidor. Cobro recurrente automático queda para más adelante.
@@ -74,8 +74,8 @@ asistente-pyme.html               api/pyme.js  (UNA función         tablas (sec
 - **Una sola función `api/pyme.js`** con enrutador interno (`?r=estado`, `?r=empresa`…). El proyecto tiene hoy 8 funciones; el plan Hobby de Vercel permite 12, y una sola función evita acercarse al límite.
 - **Módulos puros** (sin DOM ni red): `pyme_docs`, `pyme_pendientes`, `pyme_vacaciones`, `feriados_cl`, y en el servidor `cifrado`, `tokens` y validaciones. Se prueban con Node.
 - **Conexión a la base:** paquete `@neondatabase/serverless` (consultas por HTTP, pensado para funciones sin estado). Primera dependencia de ejecución del proyecto; se agrega a `package.json`.
-- **Variables en Vercel** (las pone el propio dueño, nunca pasan por el chat): `DATABASE_URL` (la crea la integración de Neon con Vercel), `PYME_DATA_KEY` (clave de cifrado, 32 bytes en base64) y `PYME_SESSION_SECRET`. Existentes: `FLOW_*`, `RESEND_API_KEY`.
-- **Entornos:** la rama `main` usa la rama de Neon `produccion`; las pruebas y las vistas previas usan una rama `pruebas` (el plan Launch incluye 10 ramas por proyecto), con datos ficticios.
+- **Variables en Vercel** (las pone el propio dueño, nunca pasan por el chat): `DATABASE_URL` (la crea la integración de Vercel que se instala desde la consola de Neon, en el proyecto existente; no la del Marketplace de Vercel, que crearía otra cuenta de Neon facturada por Vercel), `PYME_DATA_KEY` (clave de cifrado, 32 bytes en base64) y `PYME_SESSION_SECRET`. Existentes: `FLOW_*`, `RESEND_API_KEY`.
+- **Entornos:** la rama `main` del sitio usa la rama de Neon `production`; las pruebas usan la rama `pruebas` (el plan Launch incluye 10 ramas por proyecto), con datos ficticios. La integración puede crear una rama por cada vista previa de Vercel: se desactiva o se limita para no pasar de las 10 ramas incluidas.
 - **PDF por impresión del navegador; Word** con el mismo método de los generadores actuales. Sin librerías de interfaz nuevas.
 
 ### 3.1 Cuenta y sesión
