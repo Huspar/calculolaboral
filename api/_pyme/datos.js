@@ -15,7 +15,8 @@ const V = require('./validar');
 const MAX_SIN_PASE = 1;
 const MAX_CON_PASE = 5;
 const MAX_TOTAL = 50;
-const VERSION_EXPORTACION = 1;
+const MAX_MESES_POR_TRABAJADOR = 120;
+const VERSION_EXPORTACION = 2;
 
 function fallo(estado, codigo, error, errores) {
     const r = { ok: false, estado, codigo, error };
@@ -28,6 +29,7 @@ function crear({ almacen, cifrado, ahora }) {
     const iso = () => new Date(reloj()).toISOString();
     const ctxEmpresa = (cuentaId) => `empresas:${cuentaId}`;
     const ctxTrabajador = (cuentaId, id) => `trabajadores:${cuentaId}:${id}`;
+    const ctxMes = (cuentaId, id, periodo) => `meses:${cuentaId}:${id}:${periodo}`;
 
     async function limites(cuentaId) {
         const vence = await almacen.paseVigente(cuentaId, iso());
@@ -121,6 +123,44 @@ function crear({ almacen, cifrado, ahora }) {
         return salida;
     }
 
+    /** Meses guardados de todos los trabajadores (o solo de un periodo), descifrados. */
+    async function leerMeses(cuentaId, empresaId, periodo) {
+        const filas = await almacen.listarMeses(empresaId, periodo);
+        return filas.map(f => ({ trabajadorId: f.trabajadorId, periodo: f.periodo, mes: cifrado.descifrar(f.datos, f.version, ctxMes(cuentaId, f.trabajadorId, f.periodo)) }));
+    }
+
+    async function meses(cuenta, periodo) {
+        if (!V.validarPeriodo(periodo)) return fallo(400, 'periodo', 'El periodo debe tener el formato AAAA-MM.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila) return { ok: true, periodo, meses: [] };
+        return { ok: true, periodo, meses: await leerMeses(cuenta.cuentaId, fila.id, periodo) };
+    }
+
+    async function guardarMes(cuenta, trabajadorId, periodo, entrada) {
+        if (!esUuid(trabajadorId)) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        if (!V.validarPeriodo(periodo)) return fallo(400, 'periodo', 'El periodo debe tener el formato AAAA-MM.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila || !(await almacen.trabajadorDeEmpresa(trabajadorId, fila.id))) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const v = V.validarMes(entrada);
+        if (!v.ok) return fallo(400, 'validacion', 'Revisa los datos del mes.', v.errores);
+        const c = cifrado.cifrar(v.valor, ctxMes(cuenta.cuentaId, trabajadorId, periodo));
+        const ok = await almacen.guardarMes({ trabajadorId, empresaId: fila.id, periodo, datos: c.datos, version: c.version, ahoraIso: iso(), maxMeses: MAX_MESES_POR_TRABAJADOR });
+        if (!ok) return fallo(409, 'limite_meses', `Cada trabajador puede tener hasta ${MAX_MESES_POR_TRABAJADOR} meses guardados. Elimina los más antiguos.`);
+        return { ok: true, trabajadorId, periodo, mes: v.valor };
+    }
+
+    async function borrarMes(cuenta, trabajadorId, periodo) {
+        if (!esUuid(trabajadorId) || !V.validarPeriodo(periodo)) return fallo(404, 'no_existe', 'No encontramos ese mes.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila || !(await almacen.borrarMes(trabajadorId, fila.id, periodo))) return fallo(404, 'no_existe', 'No encontramos ese mes.');
+        return { ok: true };
+    }
+
+    async function leerMesesExport(cuenta) {
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        return fila ? leerMeses(cuenta.cuentaId, fila.id, null) : [];
+    }
+
     /** Todo lo guardado, descifrado, para que la persona lo descargue. */
     async function exportar(cuenta) {
         const e = await estado(cuenta);
@@ -132,7 +172,8 @@ function crear({ almacen, cifrado, ahora }) {
                 exportado: iso(),
                 cuenta: { email: cuenta.email },
                 empresa: e.empresa,
-                trabajadores: e.trabajadores
+                trabajadores: e.trabajadores,
+                meses: await leerMesesExport(cuenta)
             }
         };
     }
@@ -145,7 +186,7 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, borrarTrabajador, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, borrarTrabajador, meses, guardarMes, borrarMes, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {
@@ -156,4 +197,4 @@ function limiteTexto(lim) {
 
 function esUuid(s) { return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
 
-module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, VERSION_EXPORTACION };
+module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, VERSION_EXPORTACION };

@@ -974,6 +974,83 @@ body { overflow-x: hidden; }
         .pm-peligro form { margin-top: .8rem; display: grid; gap: .6rem; max-width: 26rem; }
         .pm-btn-peligro { border: 0; border-radius: 999px; background: #be123c; color: #ffffff !important; font-weight: 700; font-size: .9rem; padding: .6rem 1.1rem; cursor: pointer; font-family: inherit; }
         .pm-btn-peligro:disabled { opacity: .5; cursor: not-allowed; }
+        /* Documento */
+        .lq-doc { position: relative; background: #ffffff; color: #0f172a; border-radius: .35rem; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 10px 30px -18px rgba(15,23,42,.35); padding: 1.6rem 1.6rem 1.4rem; font-size: 12.5px; line-height: 1.45; min-width: 34rem; overflow: hidden; }
+        .lq-doc:not(.lqd-pagada) { user-select: none; -webkit-user-select: none; }
+        .lqd-ejemplo { margin: -0.4rem 0 .9rem; background: #fff6dc; color: #6b4a00; font-weight: 700; font-size: 11.5px; border-radius: .4rem; padding: .35rem .6rem; text-align: center; }
+        .lqd-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding-bottom: .8rem; border-bottom: 2px solid #00382E; }
+        .lqd-emp { display: flex; gap: .75rem; align-items: center; min-width: 0; }
+        .lqd-emp img { max-height: 46px; max-width: 120px; object-fit: contain; }
+        .lqd-emp div { display: grid; gap: .1rem; }
+        .lqd-emp strong { font-size: 14px; }
+        .lqd-emp span { color: #475569; font-size: 11.5px; }
+        .lqd-title { text-align: right; flex: 0 0 auto; }
+        .lqd-title h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; color: #00382E; }
+        .lqd-title p { margin: .15rem 0 0; font-weight: 600; color: #334155; }
+        .lqd-datos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem 1rem; margin: .9rem 0; padding: .7rem .8rem; background: #f6f8f7; border-radius: .4rem; }
+        .lqd-datos div { min-width: 0; }
+        .lqd-datos dt { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+        .lqd-datos dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+        .lqd-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+        .lqd-cols h3 { margin: 0 0 .35rem; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: #00382E; }
+        .lqd-cols table { width: 100%; border-collapse: collapse; }
+        .lqd-cols th, .lqd-cols td { padding: .28rem 0; border-bottom: 1px solid #eef2f1; vertical-align: top; text-align: left; font-weight: 400; }
+        .lqd-cols td { text-align: right; font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: .5rem; }
+        .lqd-cols th small { display: block; color: #64748b; font-size: 11px; }
+        .lqd-grupo th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; padding-top: .55rem; border-bottom: 0; }
+        .lqd-sub th, .lqd-sub td { font-weight: 700; }
+        .lqd-cols tfoot th, .lqd-cols tfoot td { font-weight: 800; border-top: 1.5px solid #0f172a; border-bottom: 0; padding-top: .45rem; }
+        .lqd-total { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1rem; padding: .8rem 1rem; background: #00382E; color: #ffffff; border-radius: .45rem; }
+        .lqd-total span { display: block; font-weight: 700; font-size: 13px; }
+        .lqd-total small { display: block; font-size: 11px; opacity: .85; }
+        .lqd-total strong { font-family: "Geist Mono", ui-monospace, monospace; font-size: 18px; white-space: nowrap; }
+        .lqd-bases { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem .8rem; margin: .8rem 0 0; font-size: 11px; color: #475569; }
+        .lqd-bases dt { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+        .lqd-bases dd { margin: 0; font-family: "Geist Mono", ui-monospace, monospace; color: #0f172a; }
+        .lqd-recibi { margin: 1.1rem 0 0; font-size: 11.5px; color: #334155; }
+        .lqd-firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 2.6rem; font-size: 11px; color: #475569; text-align: center; }
+        .lqd-firmas span { display: block; border-top: 1px solid #0f172a; margin-bottom: .3rem; }
+        .lqd-marca { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+        .lqd-marca span { transform: rotate(-28deg); font-size: 64px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(0, 56, 46, .1); border: 6px solid rgba(0, 56, 46, .1); border-radius: 1rem; padding: .2rem 1.2rem; white-space: nowrap; }
+        .lqd-error { color: #9f1239; font-weight: 600; margin: 0; }
+        .lqd-cargando { margin: 0; color: #475569; font-weight: 600; text-align: center; padding: 3rem 1rem; }
+        .lqd-bases small { display: block; font-family: inherit; font-size: 11px; color: #64748b; }
+        @media screen and (max-width: 640px) {
+            .lq-row { grid-template-columns: minmax(0, 1fr) minmax(0, 7.5rem) 2.25rem; }
+            .lq-doc-frame { padding: .5rem; }
+            .lq-doc { min-width: 0; padding: 1.1rem 1rem; }
+            .lqd-head { flex-direction: column; gap: .6rem; }
+            .lqd-title { text-align: left; }
+            .lqd-datos, .lqd-bases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .lqd-cols { grid-template-columns: 1fr; }
+            .lqd-firmas { gap: 1.25rem; }
+            .lqd-marca span { font-size: 40px; border-width: 4px; }
+        }
+
+        /* Liquidaciones del Asistente Pyme */
+        .pm-liq-barra { max-width: 22rem; margin-bottom: .6rem; }
+        .pm-liq-lista { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .6rem; }
+        .pm-liq-lista:empty { display: none; }
+        .pm-liq { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between; padding: .8rem 1rem; border: 1px solid #e2e8f0; border-radius: .8rem; background: #fbfdfc; }
+        .pm-liq-datos { min-width: 0; display: grid; gap: .15rem; }
+        .pm-liq-nombre { font-weight: 750; color: #0f172a; overflow-wrap: anywhere; }
+        .pm-liq-meta { font-size: .85rem; color: #475569; overflow-wrap: anywhere; }
+        .pm-liq-meta .pm-mono { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+        .pm-liq-acc { display: flex; flex-wrap: wrap; gap: .4rem .9rem; align-items: center; }
+        .pm-liq-sello { display: inline-block; margin-right: .4rem; padding: .1rem .5rem; border-radius: 999px; font-size: .75rem; font-weight: 700; background: #eef2f1; color: #475569; }
+        .pm-liq-sello-ok { background: #e3f3ec; color: #065f46; }
+        .pm-liq-editor { margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px dashed #cbd5e1; display: grid; gap: 1rem; }
+        .pm-liq-editor[hidden] { display: none !important; }
+        .pm-liq-nota { margin-top: .4rem !important; }
+        .pm-wrap [data-si][hidden] { display: none !important; }
+        .pm-wrap .lq-row input[type="text"] { font-size: 1rem; }
+        #print-section .pm-hoja { position: relative; break-after: page; page-break-after: always; }
+        #print-section .pm-hoja:last-child { break-after: auto; page-break-after: auto; }
+        @media print {
+            @page { size: letter; margin: 12mm; }
+            #print-section .lq-doc { box-shadow: none !important; min-width: 0 !important; padding: 0 !important; font-size: 11.5px !important; overflow: hidden; }
+            #print-section .lqd-total, #print-section .lqd-datos, #print-section .lqd-title h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
         .pm-wrap [data-si-contrato][hidden], .pm-wrap [data-si-salud][hidden] { display: none !important; }
         @media (prefers-reduced-motion: reduce) { .pm-wrap * { transition: none !important; } }
     </style>
@@ -1369,8 +1446,73 @@ body { overflow-x: hidden; }
 </section>
 
 <section class="lq-card" id="pm-sec-liquidaciones" aria-labelledby="pm-liq-titulo">
-<h2 id="pm-liq-titulo" class="pm-titulo"><span class="lq-step">3</span>Liquidaciones y documentos</h2>
-<p class="lq-help">Por ahora puedes emitir liquidaciones con el <a href="generador-liquidacion-sueldo">generador de liquidaciones</a>. Pronto lo hará con los datos que guardaste aquí, y se sumarán certificados y otros documentos laborales.</p>
+<h2 id="pm-liq-titulo" class="pm-titulo"><span class="lq-step">3</span>Liquidaciones de sueldo</h2>
+<p class="lq-help" id="pm-liq-intro">Elige el mes, revisa o completa lo de cada trabajador y guarda: queda en tu cuenta, cifrado, para el mes siguiente. Después puedes imprimir todas las liquidaciones del mes de una vez.</p>
+<div class="lq-grid pm-liq-barra">
+<div class="lq-field"><label for="pm-liq-periodo">Mes de la remuneración</label><select id="pm-liq-periodo"></select></div>
+</div>
+<div id="pm-liq-valores" class="lq-avisos" role="status"></div>
+<p id="pm-liq-vacio" class="lq-help" hidden>Agrega primero a un trabajador activo para preparar su liquidación.</p>
+<ul id="pm-liq-lista" class="pm-liq-lista"></ul>
+<div class="pm-fila" id="pm-liq-acciones" hidden>
+<button type="button" id="pm-liq-preparar" class="lq-btn-sec"><span class="material-icons" aria-hidden="true">playlist_add</span>Preparar el mes con valores base</button>
+<button type="button" id="pm-liq-imprimir-todas" class="lq-btn-sec"><span class="material-icons" aria-hidden="true">print</span>Imprimir todas del mes</button>
+<button type="button" id="pm-liq-marcar" class="lq-link" hidden>Marcar como emitidas</button>
+</div>
+<p id="pm-liq-estado" class="lq-estado pm-estado" role="status"></p>
+<p class="lq-help pm-liq-nota" id="pm-liq-nota-marca"></p>
+
+<div id="pm-liq-editor" class="pm-liq-editor" hidden>
+<h3 id="pm-liq-editor-titulo" class="lq-subtitle">Liquidación</h3>
+<form id="pm-liq-form" novalidate autocomplete="off">
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-m-dias">Días trabajados (de 30)</label><input id="pm-m-dias" data-k="diasTrabajados" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="30"></div>
+<div class="lq-field"><label for="pm-m-lic">Días de licencia médica <span class="lq-opt">(informativo)</span></label><input id="pm-m-lic" data-k="diasLicencia" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="0"></div>
+<div class="lq-field"><label for="pm-m-he">Horas extra del mes</label><input id="pm-m-he" data-k="horasExtra" data-tipo="dec" type="text" inputmode="decimal" placeholder="0"></div>
+<div class="lq-field"><label for="pm-m-grat">Gratificación</label>
+<select id="pm-m-grat" data-k="gratificacion"><option value="legal">Legal mensual (25%, art. 50)</option><option value="manual">Monto fijo pactado</option><option value="ninguna">No se paga este mes</option></select></div>
+<div class="lq-field" data-si="grat-manual"><label for="pm-m-gratmonto">Monto de la gratificación</label><input id="pm-m-gratmonto" data-k="gratificacionMonto" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-com">Comisiones <span class="lq-opt">(imponible)</span></label><input id="pm-m-com" data-k="comisiones" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<div class="lq-sub">
+<p class="lq-subtitle">Bonos imponibles</p>
+<div class="lq-list" data-lista="bonosImponibles" data-ph="Bono de producción"></div>
+<button type="button" class="lq-link" data-agregar="bonosImponibles">+ Agregar bono</button>
+</div>
+<div class="lq-sub">
+<p class="lq-subtitle">Haberes no imponibles del mes</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-m-viat">Viáticos</label><input id="pm-m-viat" data-k="viaticos" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-asig">Asignación familiar</label><input id="pm-m-asig" data-k="asignacionFamiliar" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<div class="lq-list" data-lista="otrosNoImponibles" data-ph="Aguinaldo de Fiestas Patrias"></div>
+<button type="button" class="lq-link" data-agregar="otrosNoImponibles">+ Agregar otro no imponible</button>
+</div>
+<div class="lq-sub">
+<p class="lq-subtitle">Descuentos</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-m-apv">APV <span class="lq-opt">(ahorro voluntario)</span></label><input id="pm-m-apv" data-k="apvMonto" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field" data-si="apv"><label for="pm-m-apvreg">Régimen del APV</label>
+<select id="pm-m-apvreg" data-k="apvRegimen"><option value="B">Régimen B (rebaja el impuesto)</option><option value="A">Régimen A (bonificación fiscal)</option></select></div>
+<div class="lq-field"><label for="pm-m-ant">Anticipo de sueldo</label><input id="pm-m-ant" data-k="anticipo" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-ccaf">Crédito caja de compensación</label><input id="pm-m-ccaf" data-k="creditoCCAF" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-sind">Cuota sindical</label><input id="pm-m-sind" data-k="cuotaSindical" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<p class="lq-help">Otros descuentos pactados por escrito con el trabajador (máximo 15% de la remuneración, art. 58):</p>
+<div class="lq-list" data-lista="otrosDescuentos" data-ph="Préstamo de la empresa"></div>
+<button type="button" class="lq-link" data-agregar="otrosDescuentos">+ Agregar descuento</button>
+</div>
+</form>
+<div id="pm-liq-avisos" class="lq-avisos" role="status"></div>
+<div class="lq-doc-frame"><article id="pm-liq-doc" class="lq-doc" aria-label="Vista previa de la liquidación"></article></div>
+<div class="pm-fila">
+<button type="button" id="pm-liq-guardar" class="lq-btn-sec"><span class="material-icons" aria-hidden="true">save</span>Guardar el mes</button>
+<button type="button" id="pm-liq-imprimir" class="lq-btn-sec"><span class="material-icons" aria-hidden="true">print</span>Imprimir esta</button>
+<button type="button" id="pm-liq-quitar" class="lq-link pm-danger" hidden>Quitar este mes</button>
+<button type="button" id="pm-liq-cerrar" class="lq-link">Cerrar</button>
+</div>
+<p id="pm-liq-editor-estado" class="lq-estado pm-estado" role="status"></p>
+</div>
 </section>
 
 <section class="lq-card" id="pm-sec-importar" aria-labelledby="pm-imp-titulo" hidden>
@@ -1560,13 +1702,18 @@ body { overflow-x: hidden; }
 </div>
 </div>
 <!-- Load shared indicators script -->
+<div id="print-section" aria-hidden="true"></div>
 <script src="/js/constants.js?v=2.1.2"></script>
 <script src="/js/indicators.js?v=2.9.2"></script>
 <script src="/js/liquidacion_parametros.js?v=3.0.0"></script>
+<script src="/js/liquidacion_valores.js?v=1.1.0"></script>
+<script src="/js/liquidacion_engine.js?v=1.1.0"></script>
+<script src="/js/liquidacion_documento.js?v=1.0.0"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
-<script src="/js/pyme_pendientes.js?v=1.0.0"></script>
-<script src="/js/pyme_app.js?v=1.0.0" defer></script>
+<script src="/js/pyme_pendientes.js?v=1.1.0"></script>
+<script src="/js/pyme_liquidaciones.js?v=1.0.0"></script>
+<script src="/js/pyme_app.js?v=1.1.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

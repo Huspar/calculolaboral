@@ -131,4 +131,74 @@ function validarTrabajador(entrada) {
     return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor: v };
 }
 
-module.exports = { validarEmpresa, validarTrabajador, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, AFPS, MAX_LOGO };
+// ---------- meses de liquidacion ----------
+// Lo que cambia de un mes a otro (el "mes" del generador de liquidaciones). El sueldo base y la AFP vienen de la ficha.
+const PERIODO_FORMATO = /^\d{4}-(0[1-9]|1[0-2])$/;
+const PERIODO_MIN = '2020-01', PERIODO_MAX = '2100-12';
+const MAX_LISTA = 8;
+const MONTO_MAX = 50000000;
+
+const CAMPOS_MES = {
+    diasTrabajados: { t: 'entero', min: 0, max: 30, def: 30 },
+    diasLicencia: { t: 'entero', min: 0, max: 30, def: 0 },
+    horasExtra: { t: 'decimal', min: 0, max: 300, def: 0 },
+    gratificacion: { t: 'enum', valores: ['legal', 'manual', 'ninguna'], def: 'legal' },
+    gratificacionMonto: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    comisiones: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    viaticos: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    asignacionFamiliar: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    apvMonto: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    apvRegimen: { t: 'enum', valores: ['A', 'B'], def: 'B' },
+    anticipo: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    creditoCCAF: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    cuotaSindical: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    emitida: { t: 'fecha' }
+};
+const LISTAS_MES = ['bonosImponibles', 'otrosNoImponibles', 'otrosDescuentos'];
+
+function listaMes(nombre, v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_LISTA) { errores[nombre] = `Máximo ${MAX_LISTA} conceptos.`; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const n = normalizar('nombre', { t: 'texto', max: 60 }, it && it.nombre, e);
+        const m = normalizar('monto', { t: 'entero', min: 0, max: MONTO_MAX, def: 0 }, it && it.monto, e);
+        if (e.nombre || e.monto) { errores[nombre] = 'Revisa el nombre (hasta 60 caracteres) y el monto de cada concepto.'; return undefined; }
+        if (n && m > 0) salida.push({ nombre: n, monto: m });
+    }
+    return salida;
+}
+
+// Resultado calculado en el navegador al guardar: sirve para el certificado de remuneraciones y para mostrar el mes sin recalcular.
+function calculoMes(v, errores) {
+    if (vacio(v)) return null;
+    if (typeof v !== 'object' || Array.isArray(v)) { errores.calculo = 'El resultado del cálculo no tiene el formato esperado.'; return undefined; }
+    const e = {}, c = {};
+    ['liquido', 'totalHaberes', 'totalImponible', 'totalDescuentos'].forEach(function (k) {
+        c[k] = normalizar(k, { t: 'entero', min: 0, max: 200000000, def: 0 }, v[k], e);
+    });
+    c.uf = normalizar('uf', { t: 'decimal', min: 30000, max: 70000, req: true }, v.uf, e);
+    c.utm = normalizar('utm', { t: 'entero', min: 50000, max: 150000, req: true }, v.utm, e);
+    if (Object.keys(e).length) { errores.calculo = 'El resultado del cálculo no tiene el formato esperado.'; return undefined; }
+    return c;
+}
+
+function validarPeriodo(p) { return typeof p === 'string' && PERIODO_FORMATO.test(p) && p >= PERIODO_MIN && p <= PERIODO_MAX; }
+
+function validarMes(entrada) {
+    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos no tienen el formato esperado.' } };
+    const r = validar(CAMPOS_MES, entrada);
+    const errores = r.ok ? {} : Object.assign({}, r.errores);
+    const valor = r.ok ? r.valor : {};
+    LISTAS_MES.forEach(function (k) {
+        const l = listaMes(k, entrada[k], errores);
+        if (l !== undefined) valor[k] = l;
+    });
+    const c = calculoMes(entrada.calculo, errores);
+    if (c !== undefined) valor.calculo = c;
+    if (valor.apvMonto === 0) valor.apvRegimen = 'B';
+    return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor };
+}
+
+module.exports = { validarMes, validarPeriodo, validarEmpresa, validarTrabajador, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO };

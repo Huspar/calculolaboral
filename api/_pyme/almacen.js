@@ -149,6 +149,52 @@ function crearAlmacenSql(sql) {
             return r.length === 1;
         },
 
+        // ---------- meses de liquidacion (cifrados; el periodo AAAA-MM va en claro) ----------
+
+        async trabajadorDeEmpresa(id, empresaId) {
+            const r = await filas('SELECT 1 FROM trabajadores WHERE id = $1::uuid AND empresa_id = $2::uuid', [id, empresaId]);
+            return r.length === 1;
+        },
+
+        /** Meses guardados de la empresa; con `periodo` solo ese. */
+        async listarMeses(empresaId, periodo) {
+            const r = await filas(
+                'SELECT m.trabajador_id, m.periodo, m.datos_cifrados, m.version_clave FROM meses m JOIN trabajadores t ON t.id = m.trabajador_id ' +
+                'WHERE t.empresa_id = $1::uuid AND ($2::text IS NULL OR m.periodo = $2::text) ORDER BY m.periodo, t.creado, t.id',
+                [empresaId, periodo || null]
+            );
+            return r.map(x => ({ trabajadorId: x.trabajador_id, periodo: x.periodo, datos: Buffer.from(x.datos_cifrados), version: Number(x.version_clave) }));
+        },
+
+        async obtenerMes(trabajadorId, empresaId, periodo) {
+            const r = await filas(
+                'SELECT m.datos_cifrados, m.version_clave FROM meses m JOIN trabajadores t ON t.id = m.trabajador_id ' +
+                'WHERE m.trabajador_id = $1::uuid AND t.empresa_id = $2::uuid AND m.periodo = $3',
+                [trabajadorId, empresaId, periodo]
+            );
+            return r[0] ? { datos: Buffer.from(r[0].datos_cifrados), version: Number(r[0].version_clave) } : null;
+        },
+
+        /** Crea o reemplaza el mes de un trabajador de esa empresa, sin pasar de `maxMeses` por trabajador. Devuelve true o false. */
+        async guardarMes({ trabajadorId, empresaId, periodo, datos, version, ahoraIso, maxMeses }) {
+            const r = await filas(
+                'INSERT INTO meses (trabajador_id, periodo, datos_cifrados, version_clave, actualizado) ' +
+                'SELECT t.id, $3, $4::bytea, $5::smallint, $6::timestamptz FROM trabajadores t WHERE t.id = $1::uuid AND t.empresa_id = $2::uuid ' +
+                'AND ((SELECT count(*) FROM meses m WHERE m.trabajador_id = t.id) < $7::int OR EXISTS (SELECT 1 FROM meses m WHERE m.trabajador_id = t.id AND m.periodo = $3)) ' +
+                'ON CONFLICT (trabajador_id, periodo) DO UPDATE SET datos_cifrados = EXCLUDED.datos_cifrados, version_clave = EXCLUDED.version_clave, actualizado = EXCLUDED.actualizado RETURNING id',
+                [trabajadorId, empresaId, periodo, datos, version, ahoraIso, maxMeses]
+            );
+            return r.length === 1;
+        },
+
+        async borrarMes(trabajadorId, empresaId, periodo) {
+            const r = await filas(
+                'DELETE FROM meses m USING trabajadores t WHERE m.trabajador_id = t.id AND m.trabajador_id = $1::uuid AND t.empresa_id = $2::uuid AND m.periodo = $3 RETURNING m.id',
+                [trabajadorId, empresaId, periodo]
+            );
+            return r.length === 1;
+        },
+
         /** Fecha en que vence el pase vigente mas largo de la cuenta, en milisegundos, o null si no tiene. */
         async paseVigente(cuentaId, ahoraIso) {
             const r = await filas('SELECT max(vence) AS vence FROM pases WHERE cuenta_id = $1::uuid AND desde <= $2::timestamptz AND vence > $2::timestamptz', [cuentaId, ahoraIso]);

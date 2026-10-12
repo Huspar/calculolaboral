@@ -1,7 +1,8 @@
 /*
- * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.0.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
+ * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.1.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
  *
- *   pendientes(estado, { hoy: 'AAAA-MM-DD', P: parametros, F: feriados, ultimoRespaldo: 'ISO' | null })
+ *   pendientes(estado, { hoy: 'AAAA-MM-DD', P: parametros, F: feriados, ultimoRespaldo: 'ISO' | null, liquidaciones: { periodo, registros: [{ trabajadorId, emitida }] } })
+ *   periodoLiquidacion(hoy) → { periodo, cuando: 'anterior' | 'actual' } | null   (el mes cuyas liquidaciones se cargan para el aviso)
  *     → [{ id, nivel: 'urgente' | 'aviso' | 'info', titulo, texto, accion? }]   (ordenados: urgente, aviso, info)
  *
  * Solo avisos que se pueden calcular con certeza a partir de la ficha: nada de montos de Previred ni de decisiones legales.
@@ -28,6 +29,19 @@
         if (h[1] < d[1] || (h[1] === d[1] && h[2] < d[2])) n--;
         return Math.max(0, n);
     }
+
+    // Mes de remuneración que toca preparar: hasta el día 10 el mes anterior; desde el 25 el mes en curso; entre medio, ninguno.
+    function periodoLiquidacion(hoy) {
+        var a = hoy.split('-').map(Number);
+        if (a[2] <= 10) {
+            var m = a[1] - 1, y = a[0];
+            if (m < 1) { m = 12; y--; }
+            return { periodo: y + '-' + dos(m), cuando: 'anterior' };
+        }
+        if (a[2] >= 25) return { periodo: hoy.slice(0, 7), cuando: 'actual' };
+        return null;
+    }
+    function nombreMes(p) { var a = p.split('-'); return MESES[+a[1] - 1] + ' ' + a[0]; }
 
     function pendientes(estado, opciones) {
         var hoy = opciones.hoy, P = opciones.P, F = opciones.F;
@@ -85,6 +99,19 @@
             }
         });
 
+        // Liquidaciones del mes sin emitir (solo si el panel cargó los meses de ese periodo)
+        var liq = opciones.liquidaciones, toca = periodoLiquidacion(hoy);
+        if (liq && toca && liq.periodo === toca.periodo && P && toca.periodo >= P.PRIMER_MES && toca.periodo <= P.ULTIMO_MES) {
+            var finMes = toca.periodo + '-31';
+            var emitidas = {};
+            (liq.registros || []).forEach(function (r) { if (r.emitida) emitidas[r.trabajadorId] = true; });
+            var sin = activos.filter(function (t) { return (!t.fechaIngreso || t.fechaIngreso <= finMes) && !emitidas[t.id]; });
+            if (sin.length) {
+                agregar('liquidaciones', toca.cuando === 'anterior' ? 'aviso' : 'info', 'Liquidaciones de ' + nombreMes(toca.periodo) + ' sin emitir',
+                    plural(sin.length, 'trabajador', 'trabajadores') + ' sin liquidación emitida: ' + sin.map(function (t) { return t.nombre; }).join(', ') + '.', { tipo: 'liquidaciones', periodo: toca.periodo });
+            }
+        }
+
         // Cotizaciones del mes anterior: del día 1 al 13 de cada mes
         var diaHoy = +hoy.slice(8, 10);
         if (diaHoy <= 13 && activos.length) {
@@ -127,7 +154,7 @@
             .map(function (e) { return e.x; });
     }
 
-    var api = { pendientes: pendientes, anios: anios, dias: dias, version: '1.0.0' };
+    var api = { pendientes: pendientes, periodoLiquidacion: periodoLiquidacion, anios: anios, dias: dias, version: '1.1.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymePendientes = api;
 })(typeof window !== 'undefined' ? window : this);

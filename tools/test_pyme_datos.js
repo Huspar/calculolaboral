@@ -240,7 +240,8 @@ caso('exportar entrega todo descifrado, con versión y fecha; el archivo no incl
     await m.datos.crearTrabajador(cuenta, TRAB(1));
     const x = (await m.datos.exportar(cuenta)).archivo;
     assert.strictEqual(x.formato, 'calculolaboral-asistente-pyme');
-    assert.strictEqual(x.version, 1);
+    assert.strictEqual(x.version, 2);
+    assert.deepStrictEqual(x.meses, []);
     assert.strictEqual(x.cuenta.email, 'ana@ejemplo.cl');
     assert.strictEqual(x.empresa.razonSocial, 'Panadería La Espiga Ltda.');
     assert.strictEqual(x.trabajadores[0].nombre, 'Trabajador 1');
@@ -261,7 +262,7 @@ caso('borrar la cuenta exige escribir el correo exacto y borra todo', async () =
 console.log('Rutas de datos');
 caso('sin sesión: todas las rutas de datos responden 401', async () => {
     const m = montar();
-    for (const [ruta, metodo] of [['estado', 'GET'], ['exportar', 'GET'], ['empresa', 'PUT'], ['trabajador', 'POST'], ['importar', 'POST'], ['borrar-cuenta', 'POST']]) {
+    for (const [ruta, metodo] of [['estado', 'GET'], ['exportar', 'GET'], ['empresa', 'PUT'], ['trabajador', 'POST'], ['meses', 'GET'], ['mes', 'PUT'], ['mes', 'DELETE'], ['importar', 'POST'], ['borrar-cuenta', 'POST']]) {
         const r = await pedir(m.rutas, { query: { ruta }, metodo, headers: metodo === 'GET' ? {} : JSON_OK, body: {} });
         assert.strictEqual(r.statusCode, 401, ruta);
         assert.strictEqual(r.json.codigo, 'sin_sesion');
@@ -362,6 +363,135 @@ caso('la respuesta de importar entrega lo importado y lo omitido', async () => {
     const r = await escribir(m, { query: { ruta: 'importar' }, metodo: 'POST', cookie, body: { empresa: EMPRESA, trabajadores: [TRAB(1), TRAB(2)] } });
     assert.strictEqual(r.statusCode, 200);
     assert.deepStrictEqual([r.json.importados, r.json.omitidos.length], [1, 1]);
+});
+
+// ---------- meses de liquidacion ----------
+console.log('Meses de liquidación');
+const CALC = { liquido: 612345, totalHaberes: 800000, totalImponible: 720000, totalDescuentos: 187655, uf: 41130.94, utm: 72151 };
+const MES = (extra) => Object.assign({ diasTrabajados: 30, horasExtra: 4, gratificacion: 'legal', bonosImponibles: [{ nombre: 'Bono de producción', monto: 50000 }], calculo: CALC }, extra);
+async function conTrabajador(extra) {
+    const m = montar();
+    const sesion = await m.entrar('ana@ejemplo.cl');
+    await m.datos.guardarEmpresa(sesion.cuenta, EMPRESA);
+    const t = await m.datos.crearTrabajador(sesion.cuenta, TRAB(1, extra));
+    return Object.assign({ m, tid: t.trabajador.id }, sesion);
+}
+caso('validarMes: completa los valores por defecto, normaliza y descarta campos inesperados', () => {
+    const r = V.validarMes({ horasExtra: '4,5', sistema: 'x', bonosImponibles: [{ nombre: '  Bono  ', monto: '50000', extra: 1 }, { nombre: '', monto: 0 }] });
+    assert.ok(r.ok);
+    assert.strictEqual(r.valor.diasTrabajados, 30);
+    assert.strictEqual(r.valor.horasExtra, 4.5);
+    assert.strictEqual(r.valor.gratificacion, 'legal');
+    assert.deepStrictEqual(r.valor.bonosImponibles, [{ nombre: 'Bono', monto: 50000 }]);
+    assert.ok(!('sistema' in r.valor));
+    assert.strictEqual(r.valor.calculo, null);
+});
+caso('validarMes: rechaza días, montos, opciones y listas fuera de rango', () => {
+    const malos = [{ diasTrabajados: 31 }, { diasTrabajados: -1 }, { horasExtra: 301 }, { gratificacion: 'otra' }, { anticipo: 50000001 }, { comisiones: 'mucho' },
+        { bonosImponibles: new Array(9).fill({ nombre: 'a', monto: 1 }) }, { otrosDescuentos: [{ nombre: 'x'.repeat(61), monto: 1 }] }, { emitida: '2026-13-40' },
+        { calculo: { liquido: 1 } }, { calculo: { ...CALC, uf: 5 } }, { calculo: 'x' }];
+    malos.forEach(m => assert.ok(!V.validarMes(m).ok, JSON.stringify(m)));
+    assert.ok(!V.validarMes(null).ok && !V.validarMes([]).ok);
+});
+caso('validarPeriodo acepta AAAA-MM reales y rechaza el resto', () => {
+    ['2026-10', '2020-01', '2100-12'].forEach(p => assert.ok(V.validarPeriodo(p), p));
+    ['2026-13', '2026-00', '2026-1', '2019-12', '2101-01', '20261', '', null, undefined, '2026-10-01'].forEach(p => assert.ok(!V.validarPeriodo(p), String(p)));
+});
+caso('guardar un mes lo cifra: la base no contiene el texto, y se lee de vuelta igual', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    const r = await m.datos.guardarMes(cuenta, tid, '2026-09', MES());
+    assert.ok(r.ok);
+    const fila = m.almacen._estado.meses[0];
+    assert.ok(!fila.datos.toString('latin1').includes('Bono de producci') && !fila.datos.toString('utf8').includes('liquido'));
+    const l = await m.datos.meses(cuenta, '2026-09');
+    assert.strictEqual(l.meses.length, 1);
+    assert.strictEqual(l.meses[0].trabajadorId, tid);
+    assert.strictEqual(l.meses[0].mes.calculo.liquido, 612345);
+    assert.strictEqual(l.meses[0].mes.bonosImponibles[0].nombre, 'Bono de producción');
+    assert.deepStrictEqual((await m.datos.meses(cuenta, '2026-08')).meses, []);
+});
+caso('guardar de nuevo el mismo mes lo reemplaza (no lo duplica)', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    await m.datos.guardarMes(cuenta, tid, '2026-09', MES());
+    await m.datos.guardarMes(cuenta, tid, '2026-09', MES({ diasTrabajados: 20, emitida: '2026-10-05' }));
+    const l = (await m.datos.meses(cuenta, '2026-09')).meses;
+    assert.strictEqual(l.length, 1);
+    assert.strictEqual(l[0].mes.diasTrabajados, 20);
+    assert.strictEqual(l[0].mes.emitida, '2026-10-05');
+});
+caso('un mes copiado a otro periodo o a otro trabajador no se puede leer (cifrado atado a su lugar)', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    await m.datos.guardarMes(cuenta, tid, '2026-09', MES());
+    const E = m.almacen._estado;
+    E.meses.push({ ...E.meses[0], periodo: '2026-08' });
+    await assert.rejects(() => m.datos.meses(cuenta, '2026-08'));
+    E.meses.pop();
+    E.meses[0].trabajadorId = crypto.randomUUID();
+    E.trabajadores.push({ id: E.meses[0].trabajadorId, empresaId: E.empresas[0].id, activo: false, datos: E.trabajadores[0].datos, version: E.trabajadores[0].version });
+    await assert.rejects(() => m.datos.meses(cuenta, '2026-09'));
+});
+caso('otra cuenta no puede guardar, leer ni borrar meses de un trabajador ajeno', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    await m.datos.guardarMes(cuenta, tid, '2026-09', MES());
+    const otra = (await m.entrar('beto@ejemplo.cl')).cuenta;
+    assert.deepStrictEqual((await m.datos.meses(otra, '2026-09')).meses, []);
+    await m.datos.guardarEmpresa(otra, { ...EMPRESA, rut: rutValido(76111222) });
+    assert.strictEqual((await m.datos.guardarMes(otra, tid, '2026-09', MES())).estado, 404);
+    assert.strictEqual((await m.datos.borrarMes(otra, tid, '2026-09')).estado, 404);
+    assert.strictEqual((await m.datos.meses(cuenta, '2026-09')).meses.length, 1);
+});
+caso('guardarMes valida trabajador, periodo y datos', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    assert.strictEqual((await m.datos.guardarMes(cuenta, 'no-es-uuid', '2026-09', MES())).estado, 404);
+    assert.strictEqual((await m.datos.guardarMes(cuenta, crypto.randomUUID(), '2026-09', MES())).estado, 404);
+    assert.strictEqual((await m.datos.guardarMes(cuenta, tid, '2026-9', MES())).codigo, 'periodo');
+    const mala = await m.datos.guardarMes(cuenta, tid, '2026-09', MES({ diasTrabajados: 40 }));
+    assert.deepStrictEqual([mala.estado, mala.codigo, Object.keys(mala.errores)], [400, 'validacion', ['diasTrabajados']]);
+    assert.strictEqual((await m.datos.meses(cuenta, 'x')).codigo, 'periodo');
+    assert.strictEqual((await m.datos.borrarMes(cuenta, tid, '2026-09')).estado, 404);
+});
+caso('hay un máximo de meses guardados por trabajador, pero reemplazar un mes existente siempre se puede', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    for (let i = 0; i < D.MAX_MESES_POR_TRABAJADOR; i++) {
+        const periodo = (2020 + Math.floor(i / 12)) + '-' + String(i % 12 + 1).padStart(2, '0');
+        assert.ok((await m.datos.guardarMes(cuenta, tid, periodo, MES())).ok, periodo);
+    }
+    assert.strictEqual((await m.datos.guardarMes(cuenta, tid, '2031-01', MES())).codigo, 'limite_meses');
+    assert.ok((await m.datos.guardarMes(cuenta, tid, '2020-01', MES({ diasTrabajados: 10 }))).ok);
+});
+caso('borrar un mes, un trabajador o la cuenta borra los meses que dependen de ellos', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    await m.datos.guardarMes(cuenta, tid, '2026-08', MES());
+    await m.datos.guardarMes(cuenta, tid, '2026-09', MES());
+    assert.ok((await m.datos.borrarMes(cuenta, tid, '2026-08')).ok);
+    assert.strictEqual(m.almacen._estado.meses.length, 1);
+    assert.ok((await m.datos.borrarTrabajador(cuenta, tid)).ok);
+    assert.strictEqual(m.almacen._estado.meses.length, 0);
+    const c2 = await conTrabajador();
+    await c2.m.datos.guardarMes(c2.cuenta, c2.tid, '2026-09', MES());
+    await c2.m.datos.borrarCuenta(c2.cuenta, 'ana@ejemplo.cl');
+    assert.strictEqual(c2.m.almacen._estado.meses.length, 0);
+});
+caso('exportar incluye los meses guardados descifrados', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    await m.datos.guardarMes(cuenta, tid, '2026-09', MES());
+    const x = (await m.datos.exportar(cuenta)).archivo;
+    assert.strictEqual(x.meses.length, 1);
+    assert.deepStrictEqual([x.meses[0].trabajadorId, x.meses[0].periodo, x.meses[0].mes.calculo.uf], [tid, '2026-09', 41130.94]);
+});
+caso('rutas de meses: guardar, listar, borrar; escribir exige encabezado y origen', async () => {
+    const { m, cookie, tid } = await conTrabajador();
+    const q = { ruta: 'mes', trabajador: tid, periodo: '2026-09' };
+    assert.strictEqual((await pedir(m.rutas, { query: q, metodo: 'PUT', headers: { cookie }, body: { mes: MES() } })).statusCode, 403);
+    const g = await escribir(m, { query: q, metodo: 'PUT', cookie, body: { mes: MES() } });
+    assert.strictEqual(g.statusCode, 200);
+    const l = await leer(m, { query: { ruta: 'meses', periodo: '2026-09' }, cookie });
+    assert.strictEqual(l.json.meses[0].mes.calculo.liquido, 612345);
+    assert.strictEqual((await leer(m, { query: { ruta: 'meses' }, cookie })).statusCode, 400);
+    assert.strictEqual((await escribir(m, { query: { ...q, periodo: 'mal' }, metodo: 'PUT', cookie, body: { mes: MES() } })).statusCode, 400);
+    assert.strictEqual((await escribir(m, { query: q, metodo: 'POST', cookie, body: {} })).statusCode, 405);
+    assert.strictEqual((await escribir(m, { query: q, metodo: 'DELETE', cookie })).statusCode, 200);
+    assert.strictEqual((await leer(m, { query: { ruta: 'meses', periodo: '2026-09' }, cookie })).json.meses.length, 0);
 });
 
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

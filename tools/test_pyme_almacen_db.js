@@ -153,13 +153,53 @@ async function main() {
         assert.ok(exportado.trabajadores.length === 5 && exportado.empresa.razonSocial.indexOf('editada') > 0);
         paso('en la base los trabajadores son bytes ilegibles y la exportacion los devuelve completos');
 
+        // ---- Meses de liquidacion contra la base real ----
+        const empresaId = (await almacen.obtenerEmpresa(cuentaId)).id;
+        const tid = (await srv.estado(cuentaObj)).trabajadores[0].id;
+        const CALC = { liquido: 612345, totalHaberes: 800000, totalImponible: 720000, totalDescuentos: 187655, uf: 41130.94, utm: 72151 };
+        const mesEj = (extra) => Object.assign({ diasTrabajados: 30, horasExtra: 4, bonosImponibles: [{ nombre: 'Bono de producción', monto: 50000 }], calculo: CALC }, extra);
+        assert.ok((await srv.guardarMes(cuentaObj, tid, '2026-09', mesEj())).ok);
+        assert.ok((await srv.guardarMes(cuentaObj, tid, '2026-09', mesEj({ diasTrabajados: 20 }))).ok);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id = $1', [tid]))[0].n, 1);
+        const leidos = (await srv.meses(cuentaObj, '2026-09')).meses;
+        assert.ok(leidos.length === 1 && leidos[0].mes.diasTrabajados === 20 && leidos[0].mes.calculo.liquido === 612345);
+        paso('guardar el mismo mes dos veces reemplaza la fila (restriccion unica) y se descifra bien');
+
+        const crudoMes = await sql.query("SELECT encode(datos_cifrados, 'escape') AS t FROM meses WHERE trabajador_id = $1", [tid]);
+        assert.ok(crudoMes.every(f => f.t.indexOf('Bono') < 0 && f.t.indexOf('612345') < 0));
+        paso('en la base los meses son bytes ilegibles');
+
+        assert.ok((await srv.guardarMes(cuentaObj, tid, '2026-08', mesEj())).ok);
+        assert.strictEqual((await almacen.guardarMes({ trabajadorId: tid, empresaId, periodo: '2026-07', datos: Buffer.from('x'), version: 1, ahoraIso: new Date().toISOString(), maxMeses: 2 })), false);
+        assert.strictEqual((await almacen.guardarMes({ trabajadorId: tid, empresaId, periodo: '2026-08', datos: Buffer.from('x'), version: 1, ahoraIso: new Date().toISOString(), maxMeses: 2 })), true);
+        await srv.guardarMes(cuentaObj, tid, '2026-08', mesEj());
+        paso('el maximo de meses por trabajador lo aplica la sentencia SQL, y reemplazar un mes existente siempre se puede');
+
+        const otraC = (await sql.query('INSERT INTO cuentas (email) VALUES ($1) RETURNING id', ['otra2-' + marca + '@ejemplo.invalid']))[0].id;
+        const cuentaOtra2 = { cuentaId: otraC, email: 'otra2-' + marca + '@ejemplo.invalid' };
+        await srv.guardarEmpresa(cuentaOtra2, { razonSocial: 'Otra', rut: rutDe(76111112) });
+        assert.strictEqual((await srv.guardarMes(cuentaOtra2, tid, '2026-09', mesEj())).codigo, 'no_existe');
+        assert.strictEqual((await srv.borrarMes(cuentaOtra2, tid, '2026-09')).codigo, 'no_existe');
+        assert.deepStrictEqual((await srv.meses(cuentaOtra2, '2026-09')).meses, []);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id = $1', [tid]))[0].n, 2);
+        await sql.query('DELETE FROM cuentas WHERE id = $1', [otraC]);
+        paso('una cuenta no puede guardar, leer ni borrar meses de un trabajador de otra');
+
+        assert.strictEqual((await srv.exportar(cuentaObj)).archivo.meses.length, 2);
+        assert.ok((await srv.borrarMes(cuentaObj, tid, '2026-08')).ok);
+        assert.strictEqual((await srv.borrarMes(cuentaObj, tid, '2026-08')).codigo, 'no_existe');
+        await srv.guardarMes(cuentaObj, tid, '2026-08', mesEj());
+        paso('exportar incluye los meses; borrar un mes lo elimina');
+
         assert.strictEqual((await srv.borrarCuenta(cuentaObj, 'otro@ejemplo.invalid')).codigo, 'confirmacion');
         assert.ok((await srv.borrarCuenta(cuentaObj, correo)).ok);
         for (const [t, col] of [['sesiones', 'cuenta_id'], ['empresas', 'cuenta_id'], ['pases', 'cuenta_id']]) {
             assert.strictEqual((await sql.query(`SELECT count(*)::int AS n FROM ${t} WHERE ${col} = $1`, [cuentaId]))[0].n, 0, t);
         }
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM trabajadores WHERE empresa_id NOT IN (SELECT id FROM empresas)'))[0].n, 0);
-        paso('borrar la cuenta borra sesiones, empresa, trabajadores y pases en cascada');
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id NOT IN (SELECT id FROM trabajadores)'))[0].n, 0);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id = $1', [tid]))[0].n, 0);
+        paso('borrar la cuenta borra sesiones, empresa, trabajadores, meses y pases en cascada');
         cuentaId = null;
         console.log('\n' + ok + ' pruebas correctas contra la base real');
     } finally {

@@ -1,9 +1,9 @@
 /*
- * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.2.0)
+ * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.3.0)
  * Datos en localStorage (nunca se envían al servidor), vista previa en vivo, respaldo en JSON y cobro con
  * CLCheckout.buyKit('liquidacion'). El pago desbloquea por 48 h la liquidación de ese trabajador y ese mes.
  * La UF y la UTM del mes se consultan a la API (liquidacion_valores.js); el resto viene de liquidacion_parametros.js.
- * Requiere: liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js y checkout_consent.js (antes que este archivo).
+ * Requiere: liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js y checkout_consent.js (antes que este archivo).
  */
 (function () {
     'use strict';
@@ -11,8 +11,9 @@
     var P = window.CLLiquidacionParametros;
     var E = window.CLLiquidacionEngine;
     var VAL_LIB = window.CLLiquidacionValores;
+    var DOC = window.CLLiquidacionDocumento;
     var form = document.getElementById('lq-form');
-    if (!P || !E || !VAL_LIB || !form) return;
+    if (!P || !E || !VAL_LIB || !DOC || !form) return;
     var almacen = null;
     try { almacen = window.localStorage; } catch (e) { almacen = null; }
     var VALORES = VAL_LIB.crear({ parametros: P, fetch: function (u, o) { return window.fetch(u, o); }, storage: almacen });
@@ -67,6 +68,7 @@
     if (!S || S.v !== 1 || !Array.isArray(S.trabajadores) || !S.trabajadores.length) S = estadoInicial();
     if (PERIODOS.indexOf(S.periodo) < 0) S.periodo = periodoPorDefecto();
     if (!S.trabajadores.some(function (t) { return t.id === S.sel; })) S.sel = S.trabajadores[0].id;
+    if (!S.meses || typeof S.meses !== 'object') S.meses = {};
 
     var guardarPend = null;
     function guardar() {
@@ -108,27 +110,6 @@
         for (var i = cuerpo.length - 1; i >= 0; i--) { s += +cuerpo[i] * m; m = m === 7 ? 2 : m + 1; }
         var r = 11 - (s % 11);
         return dv === (r === 11 ? '0' : r === 10 ? 'K' : String(r));
-    }
-
-    // Monto en palabras para la línea "Son:"
-    var UNI = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte', 'veintiún', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
-    var DEC = ['', '', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
-    var CEN = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
-    function cientos(n) {
-        if (n === 100) return 'cien';
-        var c = Math.floor(n / 100), r = n % 100, t = [];
-        if (c) t.push(CEN[c]);
-        if (r) t.push(r < 30 ? UNI[r] : DEC[Math.floor(r / 10)] + (r % 10 ? ' y ' + UNI[r % 10] : ''));
-        return t.join(' ');
-    }
-    function enPalabras(n) {
-        n = Math.round(Math.abs(n));
-        if (!n) return 'cero pesos';
-        var mill = Math.floor(n / 1e6), miles = Math.floor((n % 1e6) / 1000), resto = n % 1000, t = [];
-        if (mill) t.push(mill === 1 ? 'un millón' : cientos(mill) + ' millones');
-        if (miles) t.push(miles === 1 ? 'mil' : cientos(miles) + ' mil');
-        if (resto) t.push(cientos(resto));
-        return t.join(' ') + (mill && !miles && !resto ? ' de pesos' : ' pesos');
     }
 
     // ---------- pagos ----------
@@ -398,58 +379,6 @@
         return !t.sueldoBase && !String(t.nombre || '').trim() && !String(S.empresa.razonSocial || '').trim();
     }
 
-    function tablaLineas(lineas) {
-        return lineas.map(function (l) {
-            return '<tr><th scope="row">' + esc(l.concepto) + (l.detalle ? '<small>' + esc(l.detalle) + '</small>' : '') + '</th><td>' + pesos(l.monto) + '</td></tr>';
-        }).join('');
-    }
-    function contrato(c) { return c === 'plazo_fijo' ? 'Plazo fijo' : c === 'obra' ? 'Por obra o faena' : 'Indefinido'; }
-
-    function documento(em, t, m, res, opciones) {
-        var b = res.bases;
-        var fu = opciones.fuentes || {};
-        var datos = [
-            ['Trabajador', esc(t.nombre)], ['RUT', esc(formatoRut(t.rut))],
-            ['Cargo', esc(t.cargo || '—')], ['Fecha de ingreso', esc(fecha(t.fechaIngreso) || '—')],
-            ['Contrato', contrato(t.contrato)], ['Jornada', b.jornada + ' h semanales'],
-            ['AFP', esc(t.afp)], ['Salud', t.salud === 'isapre' ? esc(t.isapreNombre || 'Isapre') : 'Fonasa'],
-            ['Días trabajados', String(b.dias)]
-        ];
-        if (m.diasLicencia) datos.push(['Días de licencia', String(Math.round(m.diasLicencia))]);
-        return '' +
-            (opciones.ejemplo ? '<p class="lqd-ejemplo">Ejemplo · completa el formulario para ver tu liquidación</p>' : '') +
-            '<header class="lqd-head">' +
-                '<div class="lqd-emp">' + (em.logo ? '<img src="' + em.logo + '" alt="">' : '') +
-                    '<div><strong>' + esc(em.razonSocial) + '</strong><span>RUT ' + esc(formatoRut(em.rut)) + '</span>' + (em.direccion ? '<span>' + esc(em.direccion) + '</span>' : '') + '</div></div>' +
-                '<div class="lqd-title"><h2>Liquidación de sueldo</h2><p>' + capital(nombreMes(opciones.periodo)) + '</p></div>' +
-            '</header>' +
-            '<dl class="lqd-datos">' + datos.map(function (d) { return '<div><dt>' + d[0] + '</dt><dd>' + d[1] + '</dd></div>'; }).join('') + '</dl>' +
-            '<div class="lqd-cols">' +
-                '<section><h3>Haberes</h3><table><tbody>' +
-                    '<tr class="lqd-grupo"><th colspan="2">Imponibles</th></tr>' + tablaLineas(res.haberesImponibles) +
-                    '<tr class="lqd-sub"><th scope="row">Total imponible</th><td>' + pesos(res.totalImponible) + '</td></tr>' +
-                    (res.haberesNoImponibles.length ? '<tr class="lqd-grupo"><th colspan="2">No imponibles</th></tr>' + tablaLineas(res.haberesNoImponibles) +
-                    '<tr class="lqd-sub"><th scope="row">Total no imponible</th><td>' + pesos(res.totalNoImponible) + '</td></tr>' : '') +
-                    '</tbody><tfoot><tr><th scope="row">Total haberes</th><td>' + pesos(res.totalHaberes) + '</td></tr></tfoot></table></section>' +
-                '<section><h3>Descuentos</h3><table><tbody>' +
-                    '<tr class="lqd-grupo"><th colspan="2">Legales</th></tr>' + tablaLineas(res.descuentosLegales) +
-                    '<tr class="lqd-sub"><th scope="row">Total descuentos legales</th><td>' + pesos(res.totalLegales) + '</td></tr>' +
-                    (res.otrosDescuentos.length ? '<tr class="lqd-grupo"><th colspan="2">Otros descuentos</th></tr>' + tablaLineas(res.otrosDescuentos) +
-                    '<tr class="lqd-sub"><th scope="row">Total otros descuentos</th><td>' + pesos(res.totalOtros) + '</td></tr>' : '') +
-                    '</tbody><tfoot><tr><th scope="row">Total descuentos</th><td>' + pesos(res.totalDescuentos) + '</td></tr></tfoot></table></section>' +
-            '</div>' +
-            '<div class="lqd-total"><div><span>Alcance líquido a pagar</span><small>Son: ' + capital(enPalabras(res.liquido)) + '</small></div><strong>' + pesos(res.liquido) + '</strong></div>' +
-            '<dl class="lqd-bases">' +
-                '<div><dt>Tope imponible AFP y salud</dt><dd>' + pesos(b.topeAfp) + '</dd></div>' +
-                '<div><dt>Base tributable</dt><dd>' + pesos(b.baseTributable) + '</dd></div>' +
-                '<div><dt>UF al ' + VAL_LIB.fechaLarga(opciones.periodo) + '</dt><dd>' + b.uf.toLocaleString('es-CL', { minimumFractionDigits: 2 }) + (fu.uf ? '<small>' + esc(fu.uf) + '</small>' : '') + '</dd></div>' +
-                '<div><dt>UTM del mes</dt><dd>' + pesos(b.utm) + (fu.utm ? '<small>' + esc(fu.utm) + '</small>' : '') + '</dd></div>' +
-            '</dl>' +
-            '<p class="lqd-recibi">Recibí conforme el alcance líquido de la presente liquidación y copia de ella.</p>' +
-            '<div class="lqd-firmas"><div><span></span>Firma del trabajador</div><div><span></span>Firma y timbre del empleador</div></div>' +
-            (opciones.pagada ? '' : '<div class="lqd-marca" aria-hidden="true"><span>Vista previa</span></div>');
-    }
-
     // ---------- valores del mes (UF y UTM desde la API) ----------
     function marcarPeriodos() {
         var sel = $('lq-periodo');
@@ -513,7 +442,7 @@
             return;
         }
         ultimo = res;
-        doc.innerHTML = documento(em, t, m, res, { periodo: S.periodo, pagada: !!pago, ejemplo: ejemplo, fuentes: val.fuentes });
+        doc.innerHTML = DOC.documento(em, t, m, res, { periodo: S.periodo, pagada: !!pago, ejemplo: ejemplo, fuentes: val.fuentes });
         doc.classList.toggle('lqd-pagada', !!pago);
 
         // Avisos y datos que faltan

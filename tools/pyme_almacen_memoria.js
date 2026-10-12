@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -89,7 +89,35 @@ function crearAlmacenMemoria() {
         async borrarTrabajador(id, empresaId) {
             const i = E.trabajadores.findIndex(x => x.id === id && x.empresaId === empresaId);
             if (i < 0) return false;
+            E.meses = E.meses.filter(m => m.trabajadorId !== id);
             E.trabajadores.splice(i, 1);
+            return true;
+        },
+        // ---- meses de liquidacion ----
+        async trabajadorDeEmpresa(id, empresaId) { return E.trabajadores.some(x => x.id === id && x.empresaId === empresaId); },
+        async listarMeses(empresaId, periodo) {
+            const ids = E.trabajadores.filter(x => x.empresaId === empresaId).map(x => x.id);
+            return E.meses.filter(m => ids.indexOf(m.trabajadorId) >= 0 && (!periodo || m.periodo === periodo))
+                .map(m => ({ trabajadorId: m.trabajadorId, periodo: m.periodo, datos: Buffer.from(m.datos), version: m.version }));
+        },
+        async obtenerMes(trabajadorId, empresaId, periodo) {
+            if (!E.trabajadores.some(x => x.id === trabajadorId && x.empresaId === empresaId)) return null;
+            const m = E.meses.find(x => x.trabajadorId === trabajadorId && x.periodo === periodo);
+            return m ? { datos: Buffer.from(m.datos), version: m.version } : null;
+        },
+        async guardarMes({ trabajadorId, empresaId, periodo, datos, version, maxMeses }) {
+            if (!E.trabajadores.some(x => x.id === trabajadorId && x.empresaId === empresaId)) return false;
+            const m = E.meses.find(x => x.trabajadorId === trabajadorId && x.periodo === periodo);
+            if (m) { m.datos = Buffer.from(datos); m.version = version; return true; }
+            if (E.meses.filter(x => x.trabajadorId === trabajadorId).length >= maxMeses) return false;
+            E.meses.push({ trabajadorId, periodo, datos: Buffer.from(datos), version });
+            return true;
+        },
+        async borrarMes(trabajadorId, empresaId, periodo) {
+            if (!E.trabajadores.some(x => x.id === trabajadorId && x.empresaId === empresaId)) return false;
+            const i = E.meses.findIndex(x => x.trabajadorId === trabajadorId && x.periodo === periodo);
+            if (i < 0) return false;
+            E.meses.splice(i, 1);
             return true;
         },
         async paseVigente(cuentaId, ahoraIso) {
@@ -98,6 +126,8 @@ function crearAlmacenMemoria() {
         },
         async borrarCuenta(cuentaId) {
             const emp = E.empresas.filter(x => x.cuentaId === cuentaId).map(x => x.id);
+            const tids = E.trabajadores.filter(x => emp.indexOf(x.empresaId) >= 0).map(x => x.id);
+            E.meses = E.meses.filter(m => tids.indexOf(m.trabajadorId) < 0);
             E.trabajadores = E.trabajadores.filter(x => emp.indexOf(x.empresaId) < 0);
             E.empresas = E.empresas.filter(x => x.cuentaId !== cuentaId);
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);

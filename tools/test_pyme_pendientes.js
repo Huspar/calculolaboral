@@ -126,4 +126,30 @@ caso('orden: urgentes primero, luego avisos y por último información, sin perd
     assert.strictEqual(l[0].id, 'plazo-b');
 });
 
+caso('periodoLiquidacion: hasta el día 10 el mes anterior, desde el 25 el actual, entre medio ninguno', () => {
+    assert.deepStrictEqual(M.periodoLiquidacion('2026-10-05'), { periodo: '2026-09', cuando: 'anterior' });
+    assert.deepStrictEqual(M.periodoLiquidacion('2026-10-10'), { periodo: '2026-09', cuando: 'anterior' });
+    assert.deepStrictEqual(M.periodoLiquidacion('2027-01-03'), { periodo: '2026-12', cuando: 'anterior' });
+    assert.strictEqual(M.periodoLiquidacion('2026-10-11'), null);
+    assert.strictEqual(M.periodoLiquidacion('2026-10-24'), null);
+    assert.deepStrictEqual(M.periodoLiquidacion('2026-10-25'), { periodo: '2026-10', cuando: 'actual' });
+});
+caso('liquidaciones sin emitir: avisa con los nombres, y se calla cuando todas están emitidas', () => {
+    const e = est([T({ id: 'a', nombre: 'Ana' }), T({ id: 'b', nombre: 'Beto', rut: '11.111.111-1' })]);
+    const l = pend(correr(e, '2026-10-06', { liquidaciones: { periodo: '2026-09', registros: [{ trabajadorId: 'a', emitida: '' }, { trabajadorId: 'b', emitida: '2026-10-01' }] } }), 'liquidaciones');
+    assert.strictEqual(l.nivel, 'aviso');
+    assert.ok(l.titulo.indexOf('septiembre 2026') >= 0 && l.texto.indexOf('Ana') >= 0 && l.texto.indexOf('Beto') < 0);
+    assert.deepStrictEqual(l.accion, { tipo: 'liquidaciones', periodo: '2026-09' });
+    assert.ok(!pend(correr(e, '2026-10-06', { liquidaciones: { periodo: '2026-09', registros: [{ trabajadorId: 'a', emitida: '2026-10-01' }, { trabajadorId: 'b', emitida: '2026-10-01' }] } }), 'liquidaciones'));
+});
+caso('liquidaciones: a fin de mes es solo información; sin los datos cargados, de otro periodo o con ingreso posterior, no avisa', () => {
+    const e = est([T({ id: 'a', nombre: 'Ana' })]);
+    assert.strictEqual(pend(correr(e, '2026-10-27', { liquidaciones: { periodo: '2026-10', registros: [] } }), 'liquidaciones').nivel, 'info');
+    assert.ok(!pend(correr(e, '2026-10-06'), 'liquidaciones'));
+    assert.ok(!pend(correr(e, '2026-10-06', { liquidaciones: { periodo: '2026-08', registros: [] } }), 'liquidaciones'));
+    assert.ok(!pend(correr(e, '2026-10-15', { liquidaciones: { periodo: '2026-10', registros: [] } }), 'liquidaciones'));
+    assert.ok(!pend(correr(est([T({ fechaIngreso: '2026-10-02' })]), '2026-10-06', { liquidaciones: { periodo: '2026-09', registros: [] } }), 'liquidaciones'));
+    assert.ok(!pend(correr(est([T({ activo: false })]), '2026-10-06', { liquidaciones: { periodo: '2026-09', registros: [] } }), 'liquidaciones'));
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

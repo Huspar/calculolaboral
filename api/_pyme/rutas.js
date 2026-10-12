@@ -9,6 +9,8 @@
  *   GET  /api/pyme/estado                          empresa, trabajadores y limites de la cuenta
  *   PUT  /api/pyme/empresa            { empresa }  guarda la empresa (cifrada)
  *   POST|PUT|DELETE /api/pyme/trabajador[?id=]  { trabajador }   crea, actualiza o borra un trabajador
+ *   GET  /api/pyme/meses?periodo=AAAA-MM           liquidaciones guardadas de ese mes (todos los trabajadores)
+ *   PUT|DELETE /api/pyme/mes?trabajador=ID&periodo=AAAA-MM  { mes }   guarda o elimina el mes de un trabajador
  *   POST /api/pyme/importar           { empresa, trabajadores }  trae datos de otro lugar (el generador de liquidaciones)
  *   GET  /api/pyme/exportar                        descarga todos los datos en un archivo JSON
  *   POST /api/pyme/borrar-cuenta      { confirmar }  elimina la cuenta y todo lo que contiene
@@ -132,6 +134,24 @@ function crearRutas({ auth, datos, env, siteUrl }) {
         return responder(res, await datos.borrarTrabajador(s, id));
     }
 
+    async function meses(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        const s = await conSesion(req, res);
+        if (!s) return;
+        return responder(res, await datos.meses(s, typeof req.query?.periodo === 'string' ? req.query.periodo : ''));
+    }
+
+    async function mes(req, res) {
+        const m = req.method;
+        if (m !== 'PUT' && m !== 'DELETE') { res.setHeader('Allow', 'PUT, DELETE'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        const id = typeof req.query?.trabajador === 'string' ? req.query.trabajador : '';
+        const periodo = typeof req.query?.periodo === 'string' ? req.query.periodo : '';
+        if (m === 'PUT') return responder(res, await datos.guardarMes(s, id, periodo, H.cuerpoDe(req).mes));
+        return responder(res, await datos.borrarMes(s, id, periodo));
+    }
+
     async function importar(req, res) {
         if (!metodo(req, res, 'POST')) return;
         const s = await sesionParaEscribir(req, res);
@@ -161,7 +181,7 @@ function crearRutas({ auth, datos, env, siteUrl }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, meses, mes, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

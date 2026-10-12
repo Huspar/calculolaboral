@@ -1,15 +1,17 @@
 /*
- * CalculoLaboral · interfaz del Asistente Laboral Pyme (v1.0.0)
+ * CalculoLaboral · interfaz del Asistente Laboral Pyme (v1.1.0)
  * Entrar con enlace al correo, ficha de empresa y trabajadores (guardada cifrada en el servidor), pendientes del mes,
- * traer datos del generador de liquidaciones, descargar y eliminar los datos.
- * Requiere: rut_cl.js, liquidacion_parametros.js, feriados_cl.js y pyme_pendientes.js (antes que este archivo).
+ * liquidaciones de sueldo guardadas por mes (vista previa, imprimir todas), traer datos del generador, descargar y eliminar los datos.
+ * Requiere: rut_cl.js, liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js, feriados_cl.js,
+ * pyme_pendientes.js y pyme_liquidaciones.js (antes que este archivo).
  * La API es /api/pyme/* (api/_pyme/rutas.js). Todo texto de usuario se escapa antes de mostrarse.
  */
 (function () {
     'use strict';
 
     var Rut = window.CLRut, P = window.CLLiquidacionParametros, F = window.CLFeriados, PEND = window.CLPymePendientes;
-    if (!Rut || !P || !F || !PEND || !document.getElementById('pm-panel')) return;
+    var L = window.CLPymeLiquidaciones, E = window.CLLiquidacionEngine, VL = window.CLLiquidacionValores, DOC = window.CLLiquidacionDocumento;
+    if (!Rut || !P || !F || !PEND || !L || !E || !VL || !DOC || !document.getElementById('pm-panel')) return;
 
     var KEY_RESPALDO = 'cl_pyme_respaldo';
     var KEY_GENERADOR = 'cl_liq_v1';
@@ -91,7 +93,7 @@
         var tipo = el.getAttribute('data-tipo');
         if (v === undefined || v === null || v === '') { el.value = ''; return; }
         if (tipo === 'pesos') el.value = v > 0 ? pesos(v) : '';
-        else if (tipo === 'uf') el.value = v ? String(v).replace('.', ',') : '';
+        else if (tipo === 'uf' || tipo === 'dec') el.value = v ? String(v).replace('.', ',') : '';
         else el.value = String(v);
     }
     function recoger(form) {
@@ -125,7 +127,7 @@
         form.addEventListener('input', function (e) {
             var el = e.target, tipo = el.getAttribute && el.getAttribute('data-tipo');
             if (tipo === 'num') el.value = el.value.replace(/\D/g, '');
-            else if (tipo === 'uf') el.value = el.value.replace(/[^\d,.]/g, '');
+            else if (tipo === 'uf' || tipo === 'dec') el.value = el.value.replace(/[^\d,.]/g, '');
         });
     }
     function condicionales() {
@@ -153,8 +155,15 @@
         $('pm-entrar-form').hidden = false; $('pm-entrar-listo').hidden = true; $('pm-email').value = ''; $('pm-email').focus();
     });
     $('pm-salir').addEventListener('click', function () {
-        api('salir', { metodo: 'POST' }).then(function () { estado = null; mostrar('entrada'); });
+        api('salir', { metodo: 'POST' }).then(function () { reiniciar(); mostrar('entrada'); });
     });
+
+    // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
+    function reiniciar() {
+        estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = [];
+        $('print-section').innerHTML = '';
+        $('pm-liq-editor').hidden = true;
+    }
 
     // ---------- carga del estado ----------
     function cargar() {
@@ -162,8 +171,10 @@
             if (sinSesion(r)) return;
             if (!r.ok) { mostrar('entrada', r.datos.error || 'No pudimos cargar tus datos.'); return; }
             estado = r.datos;
+            mesesCache = {};
             dibujar();
             mostrar('panel');
+            cargarLiquidaciones();
         });
     }
 
@@ -300,11 +311,16 @@
     // ---------- pendientes ----------
     var ICONO = { urgente: 'error', aviso: 'warning', info: 'info' };
     function dibujarPendientes() {
-        var lista = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO) });
+        var toca = PEND.periodoLiquidacion(hoyIso()), liq = null;
+        if (toca && mesesCache[toca.periodo]) {
+            var mapa = mesesCache[toca.periodo];
+            liq = { periodo: toca.periodo, registros: Object.keys(mapa).map(function (id) { return { trabajadorId: id, emitida: mapa[id].emitida || '' }; }) };
+        }
+        var lista = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO), liquidaciones: liq });
         $('pm-pend').innerHTML = lista.length ? lista.map(function (p, i) {
             var accion = '';
             if (p.accion) {
-                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Editar ficha', respaldo: 'Descargar respaldo' }[p.accion.tipo];
+                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Editar ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver liquidaciones' }[p.accion.tipo];
                 accion = '<div class="pm-p-accion"><button type="button" class="lq-link" data-pend="' + i + '">' + esc(etiqueta) + '</button></div>';
             }
             return '<li class="pm-p-' + p.nivel + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><div class="pm-p-cuerpo"><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p>' + accion + '</div></li>';
@@ -320,6 +336,11 @@
         else if (a.tipo === 'trabajador-nuevo') abrirTrabajador(null);
         else if (a.tipo === 'trabajador') abrirTrabajador((estado.trabajadores || []).filter(function (t) { return t.id === a.id; })[0]);
         else if (a.tipo === 'respaldo') exportar();
+        else if (a.tipo === 'liquidaciones') {
+            periodoSel = a.periodo; ultimasImpresas = []; cerrarMes();
+            cargarLiquidaciones();
+            $('pm-sec-liquidaciones').scrollIntoView({ behavior: 'smooth' });
+        }
     });
 
     // ---------- traer datos del generador de liquidaciones ----------
@@ -369,6 +390,391 @@
         });
     });
 
+    // ---------- liquidaciones de sueldo ----------
+    var PERIODOS = P.periodos().slice().reverse();
+    var ALMACEN_LOCAL = null;
+    try { ALMACEN_LOCAL = window.localStorage; } catch (e) { ALMACEN_LOCAL = null; }
+    var VALORES = VL.crear({ parametros: P, fetch: function (u, o) { return window.fetch(u, o); }, storage: ALMACEN_LOCAL });
+    var VAL = {};            // valores por mes: { estado: 'cargando' | 'ok' | 'error', ok, mes, fuentes, avisos, notas, mensaje }
+    var mesesCache = {};     // periodo → { trabajadorId: mes guardado }
+    var periodoSel = null;   // mes que se está viendo
+    var editando = null;     // { id, t, mes, nota, guardado } mientras el editor está abierto
+    var ultimasImpresas = [];
+    var MONTO_MAX = 50000000;
+
+    function periodoPorDefecto() {
+        var a = hoyIso().split('-').map(Number), y = a[0], m = a[1];
+        if (a[2] <= 10) { m--; if (m < 1) { m = 12; y--; } }
+        var p = y + '-' + dos(m);
+        if (p < P.PRIMER_MES) p = P.PRIMER_MES;
+        if (p > P.ULTIMO_MES) p = P.ULTIMO_MES;
+        return p;
+    }
+    function nombrePeriodo(p) { var a = p.split('-'); return MESES[+a[1] - 1] + ' ' + a[0]; }
+    function mayuscula(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function tienePase() { return !!(estado && estado.limites && estado.limites.paseVence && Date.parse(estado.limites.paseVence) > Date.now()); }
+    function activos() { return ((estado && estado.trabajadores) || []).filter(function (t) { return t.activo; }); }
+    function trabajadorPorId(id) { return ((estado && estado.trabajadores) || []).filter(function (t) { return t.id === id; })[0]; }
+    function mesesDe(periodo) { return mesesCache[periodo] || {}; }
+    function numero(v) { return v === '' || v == null ? 0 : v; }
+    function decimal(v) { var x = parseFloat(String(v == null ? '' : v).replace(/\./g, '').replace(',', '.')); return isFinite(x) && x > 0 ? x : 0; }
+
+    function cargarMeses(periodo) {
+        return api('meses', { query: { periodo: periodo } }).then(function (r) {
+            if (sinSesion(r)) return false;
+            if (r.ok) {
+                var mapa = {};
+                (r.datos.meses || []).forEach(function (x) { mapa[x.trabajadorId] = x.mes; });
+                mesesCache[periodo] = mapa;
+            }
+            return r.ok;
+        });
+    }
+
+    function cargarValores(periodo, forzar) {
+        var actual = VAL[periodo];
+        if (actual && (actual.estado === 'cargando' || (actual.estado === 'ok' && !forzar))) return;
+        VAL[periodo] = { estado: 'cargando', ok: false };
+        VALORES.obtener(periodo, !!forzar).then(function (r) {
+            VAL[periodo] = Object.assign({ estado: r.ok ? 'ok' : 'error' }, r);
+        }, function () {
+            VAL[periodo] = { estado: 'error', ok: false, mensaje: 'No pudimos consultar la UF y la UTM de ese mes. Intenta de nuevo en unos minutos.' };
+        }).then(function () {
+            if (!estado) return;
+            if (periodo === periodoSel) { dibujarLiquidaciones(); if (editando) vistaPrevia(); }
+        });
+    }
+
+    // Carga los meses guardados que el panel necesita (el que se ve y el de los avisos) y vuelve a dibujar
+    function cargarLiquidaciones() {
+        if (!periodoSel) periodoSel = periodoPorDefecto();
+        var toca = PEND.periodoLiquidacion(hoyIso());
+        var periodos = [periodoSel];
+        if (toca && toca.periodo !== periodoSel && toca.periodo >= P.PRIMER_MES && toca.periodo <= P.ULTIMO_MES) periodos.push(toca.periodo);
+        dibujarLiquidaciones();
+        cargarValores(periodoSel);
+        return Promise.all(periodos.map(cargarMeses)).then(function () {
+            if (!estado) return;
+            dibujarLiquidaciones();
+            dibujarPendientes();
+        });
+    }
+
+    function valoresAviso() {
+        var caja = $('pm-liq-valores'), v = VAL[periodoSel], html = '';
+        function aviso(nivel, icono, texto) { html += '<div class="lq-aviso lq-aviso-' + nivel + '"><span class="material-icons" aria-hidden="true">' + icono + '</span><p>' + esc(texto) + '</p></div>'; }
+        if (!v || v.estado === 'cargando') aviso('info', 'hourglass_empty', 'Consultando la UF y la UTM de ' + nombrePeriodo(periodoSel) + '…');
+        else if (!v.ok) aviso('error', 'error', v.mensaje || 'No se pudieron obtener los valores del mes.');
+        else {
+            (v.avisos || []).forEach(function (t) { aviso('aviso', 'warning', t); });
+            (v.notas || []).forEach(function (t) { aviso('info', 'info', t); });
+            if (v.vigencia && v.vigencia.verificado.slice(0, 7) < periodoSel) {
+                aviso('info', 'info', 'El ingreso mínimo, los topes y las comisiones AFP son los vigentes al ' + v.vigencia.verificado.split('-').reverse().join('-') + '. Confirma que no cambiaron antes de emitir las liquidaciones.');
+            }
+        }
+        caja.innerHTML = html;
+    }
+
+    function dibujarLiquidaciones() {
+        if (!estado) return;
+        var sel = $('pm-liq-periodo');
+        if (!sel.options.length) sel.innerHTML = PERIODOS.map(function (p) { return '<option value="' + p + '">' + esc(mayuscula(nombrePeriodo(p))) + '</option>'; }).join('');
+        sel.value = periodoSel;
+        valoresAviso();
+
+        var lista = activos(), guardados = mesesDe(periodoSel);
+        $('pm-liq-vacio').hidden = lista.length > 0;
+        $('pm-liq-acciones').hidden = !lista.length;
+        $('pm-liq-nota-marca').textContent = tienePase()
+            ? 'Con tu pase vigente las liquidaciones salen sin marca de agua. Revisa cada una antes de entregarla.'
+            : 'Sin Pase Pyme las liquidaciones llevan la marca «Vista previa». El Pase Pyme aún no está a la venta. Revisa cada liquidación antes de entregarla.';
+
+        var porPreparar = 0, guardadas = 0;
+        $('pm-liq-lista').innerHTML = lista.map(function (t) {
+            var reg = guardados[t.id], dias = L.diasBase(t, periodoSel), est = L.estadoDe(reg), sello, meta, acciones = '';
+            if (!reg && dias === 0) {
+                sello = '<span class="pm-liq-sello">No corresponde</span>';
+                meta = t.fechaIngreso && t.fechaIngreso > periodoSel + '-31' ? 'Ingresa el ' + fechaLarga(t.fechaIngreso) + '.' : 'Su contrato a plazo fijo terminó antes de este mes.';
+            } else {
+                if (est === 'sin_datos') { porPreparar++; sello = '<span class="pm-liq-sello">Sin preparar</span>'; meta = 'Aún no hay datos de este mes.'; }
+                else {
+                    guardadas++;
+                    sello = '<span class="pm-liq-sello pm-liq-sello-ok">' + (est === 'emitida' ? 'Emitida el ' + esc(fechaLarga(reg.emitida)) : 'Guardada') + '</span>';
+                    meta = reg.calculo ? 'Líquido a pagar <span class="pm-mono">' + pesos(reg.calculo.liquido) + '</span>' : 'Guardada sin cálculo: ábrela para calcularla.';
+                }
+                acciones = '<button type="button" class="lq-btn-sec" data-liq="editar" data-id="' + esc(t.id) + '"><span class="material-icons" aria-hidden="true">' + (reg ? 'edit' : 'playlist_add') + '</span>' + (reg ? 'Editar' : 'Preparar') + '</button>';
+                if (reg) {
+                    acciones += '<button type="button" class="lq-link" data-liq="imprimir" data-id="' + esc(t.id) + '">Imprimir</button>' +
+                        '<button type="button" class="lq-link" data-liq="' + (est === 'emitida' ? 'desmarcar' : 'marcar') + '" data-id="' + esc(t.id) + '">' + (est === 'emitida' ? 'Quitar marca de emitida' : 'Marcar emitida') + '</button>';
+                }
+            }
+            return '<li class="pm-liq"><div class="pm-liq-datos"><span class="pm-liq-nombre">' + esc(t.nombre) + '</span><span class="pm-liq-meta">' + sello + meta + '</span></div><div class="pm-liq-acc">' + acciones + '</div></li>';
+        }).join('');
+        $('pm-liq-preparar').hidden = porPreparar === 0;
+        $('pm-liq-imprimir-todas').disabled = guardadas === 0;
+        $('pm-liq-marcar').hidden = !ultimasImpresas.length;
+        $('pm-liq-marcar').textContent = 'Marcar ' + (ultimasImpresas.length === 1 ? 'la liquidación impresa como emitida' : 'las ' + ultimasImpresas.length + ' impresas como emitidas');
+    }
+
+    $('pm-liq-periodo').addEventListener('change', function (e) {
+        periodoSel = e.target.value;
+        ultimasImpresas = [];
+        cerrarMes();
+        mensaje($('pm-liq-estado'), '', '');
+        cargarLiquidaciones();
+    });
+
+    // --- editor de un mes ---
+    function listaFilas(path) {
+        var ph = document.querySelector('[data-lista="' + path + '"]').getAttribute('data-ph');
+        return (editando.mes[path] || []).map(function (it) {
+            return '<div class="lq-row"><input type="text" maxlength="60" aria-label="Concepto" placeholder="' + esc(ph) + '" data-campo="nombre" value="' + esc(it.nombre) + '">' +
+                '<input type="text" inputmode="numeric" aria-label="Monto" placeholder="$0" data-campo="monto" value="' + (it.monto ? pesos(it.monto) : '') + '">' +
+                '<button type="button" class="lq-x" aria-label="Quitar" data-quitar><span class="material-icons" aria-hidden="true">close</span></button></div>';
+        }).join('');
+    }
+    function pintarListas() {
+        Array.prototype.forEach.call($('pm-liq-form').querySelectorAll('[data-lista]'), function (c) { c.innerHTML = listaFilas(c.getAttribute('data-lista')); });
+    }
+    function leerLista(cont) {
+        return Array.prototype.map.call(cont.querySelectorAll('.lq-row'), function (f) {
+            return { nombre: f.querySelector('[data-campo="nombre"]').value, monto: Math.min(MONTO_MAX, parseInt(f.querySelector('[data-campo="monto"]').value.replace(/\D/g, ''), 10) || 0) };
+        });
+    }
+    function leerMesForm() {
+        var o = recoger($('pm-liq-form')), m = editando.mes;
+        // Los topes son los que acepta el servidor: así un error de tipeo no impide guardar
+        ['diasTrabajados', 'diasLicencia'].forEach(function (k) { m[k] = Math.min(30, numero(o[k])); });
+        ['gratificacionMonto', 'comisiones', 'viaticos', 'asignacionFamiliar', 'apvMonto', 'anticipo', 'creditoCCAF', 'cuotaSindical'].forEach(function (k) { m[k] = Math.min(MONTO_MAX, numero(o[k])); });
+        m.horasExtra = Math.min(300, decimal(o.horasExtra));
+        m.gratificacion = o.gratificacion;
+        m.apvRegimen = o.apvRegimen;
+    }
+    function visibilidadMes() {
+        var m = editando.mes;
+        Array.prototype.forEach.call($('pm-liq-form').querySelectorAll('[data-si]'), function (el) {
+            var c = el.getAttribute('data-si');
+            el.hidden = !((c === 'grat-manual' && m.gratificacion === 'manual') || (c === 'apv' && m.apvMonto > 0));
+        });
+    }
+
+    function abrirMes(id) {
+        var t = trabajadorPorId(id);
+        if (!t) return;
+        var guardado = mesesDe(periodoSel)[id], nota = '';
+        var mes = guardado ? JSON.parse(JSON.stringify(guardado)) : L.mesBase(t, periodoSel);
+        if (!guardado && mes.diasTrabajados < 30) nota = 'Pusimos ' + mes.diasTrabajados + ' días trabajados según su fecha de ingreso o de término de contrato (mes de 30 días). Confírmalo.';
+        editando = { id: id, t: t, mes: mes, nota: nota, guardado: !!guardado };
+        llenar($('pm-liq-form'), mes);
+        pintarListas();
+        visibilidadMes();
+        $('pm-liq-editor-titulo').textContent = 'Liquidación de ' + mayuscula(nombrePeriodo(periodoSel)) + ' · ' + t.nombre;
+        $('pm-liq-quitar').hidden = !guardado;
+        mensaje($('pm-liq-editor-estado'), '', '');
+        $('pm-liq-editor').hidden = false;
+        vistaPrevia();
+        $('pm-liq-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function cerrarMes() { editando = null; $('pm-liq-editor').hidden = true; }
+
+    // Calcula con el motor del generador de liquidaciones; devuelve { res, val } o null si faltan los valores del mes
+    function calcularMes(t, mes, periodo) {
+        var val = VAL[periodo];
+        if (!val) { cargarValores(periodo); return null; }
+        if (val.estado !== 'ok') return null;
+        try { return { res: E.calcular({ trabajador: t, mes: mes, periodo: periodo }, val.mes), val: val }; } catch (err) { return { error: err.message }; }
+    }
+
+    function vistaPrevia() {
+        if (!editando || !estado || !estado.empresa) return;
+        var doc = $('pm-liq-doc'), avisos = $('pm-liq-avisos'), m = editando.mes, val = VAL[periodoSel];
+        var r = calcularMes(editando.t, m, periodoSel);
+        if (!r || r.error) {
+            doc.innerHTML = '<p class="' + (r && r.error ? 'lqd-error' : 'lqd-cargando') + '">' + esc(r && r.error ? r.error : val && val.estado === 'error' ? (val.mensaje || 'No se pudieron obtener los valores del mes.') : 'Consultando la UF y la UTM de ' + nombrePeriodo(periodoSel) + '…') + '</p>';
+            doc.classList.remove('lqd-pagada');
+            avisos.innerHTML = '';
+            $('pm-liq-imprimir').disabled = true;
+            return;
+        }
+        var pagada = tienePase();
+        doc.innerHTML = DOC.documento(estado.empresa, editando.t, m, r.res, { periodo: periodoSel, pagada: pagada, fuentes: r.val.fuentes });
+        doc.classList.toggle('lqd-pagada', pagada);
+        var lista = [];
+        if (editando.nota) lista.push({ nivel: 'aviso', texto: editando.nota });
+        if (m.gratificacion === 'manual' && !m.gratificacionMonto) lista.push({ nivel: 'aviso', texto: 'La gratificación es de monto fijo pactado: indica el monto, o cambia a «Legal mensual» o «No se paga este mes».' });
+        r.res.avisos.forEach(function (a) { lista.push(a); });
+        avisos.innerHTML = lista.map(function (a) {
+            var icono = a.nivel === 'error' ? 'error' : a.nivel === 'aviso' ? 'warning' : 'info';
+            return '<div class="lq-aviso lq-aviso-' + a.nivel + '"><span class="material-icons" aria-hidden="true">' + icono + '</span><p>' + esc(a.texto) + '</p></div>';
+        }).join('');
+        $('pm-liq-imprimir').disabled = !r.res.listo;
+    }
+
+    $('pm-liq-form').addEventListener('input', function (e) {
+        if (!editando) return;
+        var el = e.target;
+        if (el.hasAttribute('data-campo')) { var c = el.closest('[data-lista]'); editando.mes[c.getAttribute('data-lista')] = leerLista(c); }
+        else if (el.hasAttribute('data-k')) leerMesForm();
+        else return;
+        visibilidadMes();
+        vistaPrevia();
+    });
+    $('pm-liq-form').addEventListener('change', function (e) {
+        var el = e.target;
+        if (el.getAttribute('data-campo') === 'monto') { var v = parseInt(el.value.replace(/\D/g, ''), 10) || 0; el.value = v ? pesos(v) : ''; }
+    });
+    $('pm-liq-form').addEventListener('click', function (e) {
+        if (!editando) return;
+        var add = e.target.closest('[data-agregar]');
+        if (add) {
+            var path = add.getAttribute('data-agregar');
+            editando.mes[path] = (editando.mes[path] || []).concat([{ nombre: '', monto: 0 }]).slice(0, 8);
+            pintarListas();
+            var ult = $('pm-liq-form').querySelector('[data-lista="' + path + '"] .lq-row:last-child input');
+            if (ult) ult.focus();
+            return;
+        }
+        var quitar = e.target.closest('[data-quitar]');
+        if (quitar) {
+            var fila = quitar.closest('.lq-row'), cont = fila.parentNode, p = cont.getAttribute('data-lista');
+            editando.mes[p].splice(Array.prototype.indexOf.call(cont.children, fila), 1);
+            pintarListas();
+            vistaPrevia();
+        }
+    });
+    $('pm-liq-form').addEventListener('submit', function (e) { e.preventDefault(); });
+    $('pm-liq-cerrar').addEventListener('click', cerrarMes);
+
+    // Guarda un mes (con el resultado calculado si hay valores del mes) y actualiza la memoria local
+    function guardarRegistro(id, mes) {
+        var t = trabajadorPorId(id), c = t ? calcularMes(t, mes, periodoSel) : null;
+        var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes) : null) : (mes.calculo || null) });
+        return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodoSel }, cuerpo: { mes: cuerpo } }).then(function (r) {
+            if (r.ok) { mesesCache[periodoSel] = mesesCache[periodoSel] || {}; mesesCache[periodoSel][id] = r.datos.mes; }
+            return r;
+        });
+    }
+
+    $('pm-liq-guardar').addEventListener('click', function () {
+        if (!editando) return;
+        var id = editando.id, est = $('pm-liq-editor-estado');
+        mensaje(est, '', 'Guardando…');
+        guardarRegistro(id, editando.mes).then(function (r) {
+            if (sinSesion(r)) return;
+            if (!r.ok) { mensaje(est, 'error', (r.datos.errores ? Object.keys(r.datos.errores).map(function (k) { return r.datos.errores[k]; }).join(' ') : r.datos.error) || 'No pudimos guardar.'); return; }
+            editando.mes = JSON.parse(JSON.stringify(r.datos.mes));
+            editando.guardado = true;
+            $('pm-liq-quitar').hidden = false;
+            mensaje(est, 'ok', 'Guardado.');
+            dibujarLiquidaciones();
+            dibujarPendientes();
+        });
+    });
+    $('pm-liq-quitar').addEventListener('click', function () {
+        if (!editando || !window.confirm('¿Quitar la liquidación de ' + nombrePeriodo(periodoSel) + ' de ' + editando.t.nombre + '? Se borran los datos guardados de ese mes.')) return;
+        var id = editando.id;
+        api('mes', { metodo: 'DELETE', query: { trabajador: id, periodo: periodoSel } }).then(function (r) {
+            if (sinSesion(r)) return;
+            if (!r.ok) { mensaje($('pm-liq-editor-estado'), 'error', r.datos.error || 'No pudimos quitarla.'); return; }
+            if (mesesCache[periodoSel]) delete mesesCache[periodoSel][id];
+            cerrarMes();
+            dibujarLiquidaciones();
+            dibujarPendientes();
+            mensaje($('pm-liq-estado'), 'ok', 'Quitamos esa liquidación.');
+        });
+    });
+
+    // --- lista del mes ---
+    $('pm-liq-lista').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-liq]');
+        if (!b) return;
+        var id = b.getAttribute('data-id'), accion = b.getAttribute('data-liq');
+        if (accion === 'editar') return abrirMes(id);
+        if (accion === 'imprimir') return imprimirMeses([id]);
+        var reg = mesesDe(periodoSel)[id];
+        if (!reg) return;
+        marcarEmitidas([id], accion === 'marcar' ? hoyIso() : '');
+    });
+
+    $('pm-liq-preparar').addEventListener('click', function () {
+        var est = $('pm-liq-estado'), pendientes = activos().filter(function (t) { return !mesesDe(periodoSel)[t.id] && L.diasBase(t, periodoSel) > 0; });
+        if (!pendientes.length) return;
+        if (!VAL[periodoSel] || VAL[periodoSel].estado === 'cargando') { mensaje(est, 'error', 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return; }
+        mensaje(est, '', 'Preparando ' + pendientes.length + (pendientes.length === 1 ? ' liquidación…' : ' liquidaciones…'));
+        var hechas = 0, fallo = null;
+        pendientes.reduce(function (p, t) {
+            return p.then(function () {
+                if (fallo) return;
+                return guardarRegistro(t.id, L.mesBase(t, periodoSel)).then(function (r) { if (r.ok) hechas++; else fallo = r; });
+            });
+        }, Promise.resolve()).then(function () {
+            if (fallo && sinSesion(fallo)) return;
+            dibujarLiquidaciones();
+            dibujarPendientes();
+            if (fallo) mensaje(est, 'error', 'Preparamos ' + hechas + ' y paramos: ' + (fallo.datos.error || 'no pudimos guardar.'));
+            else mensaje(est, 'ok', 'Preparamos ' + hechas + (hechas === 1 ? ' liquidación' : ' liquidaciones') + ' con los valores base (días según el ingreso, gratificación según la ficha, sin horas extra ni descuentos). Ábrelas para agregar lo del mes antes de imprimir.');
+        });
+    });
+
+    function marcarEmitidas(ids, fecha) {
+        var est = $('pm-liq-estado'), hechas = 0, fallo = null;
+        mensaje(est, '', 'Guardando…');
+        ids.reduce(function (p, id) {
+            return p.then(function () {
+                var reg = mesesDe(periodoSel)[id];
+                if (fallo || !reg) return;
+                return guardarRegistro(id, Object.assign({}, reg, { emitida: fecha })).then(function (r) { if (r.ok) hechas++; else fallo = r; });
+            });
+        }, Promise.resolve()).then(function () {
+            if (fallo && sinSesion(fallo)) return;
+            if (!fecha) ultimasImpresas = []; else ultimasImpresas = ultimasImpresas.filter(function (x) { return ids.indexOf(x) < 0; });
+            dibujarLiquidaciones();
+            dibujarPendientes();
+            mensaje(est, fallo ? 'error' : 'ok', fallo ? (fallo.datos.error || 'No pudimos guardar.') : (fecha ? 'Marcamos ' + hechas + (hechas === 1 ? ' liquidación' : ' liquidaciones') + ' como emitida' + (hechas === 1 ? '.' : 's.') : 'Quitamos la marca de emitida.'));
+        });
+    }
+    $('pm-liq-marcar').addEventListener('click', function () { marcarEmitidas(ultimasImpresas.slice(), hoyIso()); });
+
+    // --- impresión ---
+    function imprimirHojas(htmls, titulo) {
+        var cont = $('print-section'), pagada = tienePase();
+        cont.innerHTML = htmls.map(function (h) { return '<section class="pm-hoja"><article class="lq-doc' + (pagada ? ' lqd-pagada' : '') + '">' + h + '</article></section>'; }).join('');
+        var anterior = document.title;
+        document.title = titulo;
+        var restaurar = function () { document.title = anterior; window.removeEventListener('afterprint', restaurar); };
+        window.addEventListener('afterprint', restaurar);
+        window.print();
+        setTimeout(restaurar, 2000);
+    }
+    // Imprime los meses guardados de esos trabajadores (en el orden de la ficha); avisa los que no se pudieron calcular
+    function imprimirMeses(ids) {
+        var est = $('pm-liq-estado'), val = VAL[periodoSel];
+        if (!val || val.estado !== 'ok') { mensaje(est, 'error', val && val.estado === 'error' ? (val.mensaje || 'No se pudieron obtener los valores del mes.') : 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return; }
+        var hojas = [], impresas = [], omitidas = [];
+        activos().forEach(function (t) {
+            var reg = mesesDe(periodoSel)[t.id];
+            if (ids.indexOf(t.id) < 0 || !reg) return;
+            var r = calcularMes(t, reg, periodoSel);
+            if (!r || r.error || !r.res.listo) { omitidas.push(t.nombre); return; }
+            hojas.push(DOC.documento(estado.empresa, t, reg, r.res, { periodo: periodoSel, pagada: tienePase(), fuentes: r.val.fuentes }));
+            impresas.push(t.id);
+        });
+        if (!hojas.length) { mensaje(est, 'error', omitidas.length ? 'Revisa los datos de ' + omitidas.join(', ') + ': la liquidación tiene errores y no se puede imprimir.' : 'No hay liquidaciones guardadas para imprimir.'); return; }
+        ultimasImpresas = impresas;
+        dibujarLiquidaciones();
+        mensaje(est, omitidas.length ? 'error' : '', omitidas.length ? 'No se imprimieron las de ' + omitidas.join(', ') + ' porque tienen errores: ábrelas y corrígelas.' : '');
+        imprimirHojas(hojas, impresas.length === 1 ? 'Liquidacion ' + trabajadorPorId(impresas[0]).nombre + ' ' + periodoSel : 'Liquidaciones ' + periodoSel);
+    }
+    $('pm-liq-imprimir-todas').addEventListener('click', function () {
+        imprimirMeses(activos().map(function (t) { return t.id; }));
+    });
+    $('pm-liq-imprimir').addEventListener('click', function () {
+        if (!editando || $('pm-liq-imprimir').disabled) return;
+        var r = calcularMes(editando.t, editando.mes, periodoSel);
+        if (!r || r.error || !r.res.listo) return;
+        imprimirHojas([DOC.documento(estado.empresa, editando.t, editando.mes, r.res, { periodo: periodoSel, pagada: tienePase(), fuentes: r.val.fuentes })], 'Liquidacion ' + editando.t.nombre + ' ' + periodoSel);
+    });
+
     // ---------- mis datos ----------
     function exportar() {
         var est = $('pm-exportar-estado');
@@ -399,7 +805,7 @@
         api('borrar-cuenta', { metodo: 'POST', cuerpo: { confirmar: correo } }).then(function (r) {
             if (sinSesion(r)) return;
             if (!r.ok) { err.textContent = r.datos.error || 'No pudimos eliminar la cuenta.'; err.hidden = false; return; }
-            estado = null;
+            reiniciar();
             $('pm-borrar-email').value = '';
             mostrar('entrada', 'Tu cuenta y todos sus datos fueron eliminados.');
         });
