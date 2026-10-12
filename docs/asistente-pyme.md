@@ -210,6 +210,20 @@ Cada valor se confirma en la fuente y queda anotado en el código con su fecha d
 | Amonestación | Requisito del reglamento interno | CT art. 154 N°10 |
 | Protección de datos | Obligaciones del encargado, transferencia internacional, aviso de filtraciones, plazos de retención | Ley 21.719 (a confirmar con un abogado) |
 
+### Estado de las verificaciones (12-oct-2026)
+
+| Tema | Estado | Detalle |
+| :--- | :--- | :--- |
+| Feriados 2026 | Confirmado | 16 feriados (10 en día de semana, 6 en fin de semana); listado coincidente en varios medios y en Chileestuyo.cl |
+| Feriados 2027 | Calculado por ley; **confirmar el 20 o 21 de junio** | 17 feriados. Traslados de la Ley 19.668 (lunes 28-jun y 11-oct) y Ley 20.983 (viernes 17-sep, porque el 18 y 19 caen sábado y domingo). El solsticio de 2027 cae el 21-jun a las 14:11 UTC (10:11 en Chile) y por eso el día de los Pueblos Indígenas queda el lunes 21-jun; Calendario Chile publica el 20-jun, que no coincide con el cálculo. Confirmar con el calendario oficial del Gobierno cuando se publique. |
+| Reglas de traslado de leyes | Comprobadas en años ya ocurridos | 2018, 2019, 2021, 2022, 2023, 2024 y 2025 (ver `tools/test_feriados.js`). La regla de las Iglesias Evangélicas (Ley 20.299) no se usa en 2026 ni 2027. |
+| Plazo de pago de cotizaciones | Parcial, con fuentes secundarias | Declaración hasta el día 10 (si cae sábado, domingo o feriado, pasa al primer día hábil siguiente); pago electrónico hasta el día 13, que según AFP Habitat no se prorroga. Falta confirmarlo en Previred y en el D.L. 3.500, art. 19, antes de mostrarlo en el panel. |
+| Arts. 67, 68, 69 y 70 del Código del Trabajo | Pendiente de cotejar el texto literal | Se usa el contenido conocido (15 días hábiles, 20 en zona extrema, progresivo, sábado inhábil, acumulación de dos períodos); falta citarlo desde la BCN o la DT. |
+| Art. 159 N°4, 161, 162, 169 y 154 N°10 | Pendiente | Se verifican al construir las plantillas de la fase 4. |
+| Ley 21.719 | Pendiente | Revisión con un abogado antes del lanzamiento. |
+
+`js/feriados_cl.js` (24 pruebas en `tools/test_feriados.js`) solo calcula los años verificados (2026 y 2027) y falla para otros, para no tratar un feriado como día hábil por falta de datos. No incluye feriados locales ni los que una ley especial agregue.
+
 ## 9. Costos y medición
 
 - **Neon Launch:** por uso, sin mínimo mensual (cómputo US$0,106 por CU-hora, almacenamiento US$0,35 por GB-mes). Con pocas cuentas, unos pocos dólares al mes (estimación; no hay consumo real aún). En la consola se activa la alerta de gasto mensual.
