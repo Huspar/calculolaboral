@@ -13,6 +13,8 @@ const C = require('../_pyme/correo');
 const { crearAlmacenSql } = require('../_pyme/almacen');
 const { crear, MINUTOS_ENLACE } = require('../_pyme/auth');
 const { crearRutas } = require('../_pyme/rutas');
+const D = require('../_pyme/datos');
+const Cifrado = require('../_pyme/cifrado');
 
 let manejador = null; // se arma una vez por instancia de la funcion
 
@@ -30,7 +32,15 @@ function armar() {
     }
 
     const auth = crear({ almacen, enviarCorreo, secreto, siteUrl: SITE_URL });
-    return crearRutas({ auth, env: process.env, siteUrl: SITE_URL });
+    // El servicio de datos (y con el la clave de cifrado) se arma recien al primer uso: entrar y salir no la necesitan
+    let datosReal = null;
+    const datos = new Proxy({}, {
+        get: (_, nombre) => (...args) => {
+            if (!datosReal) datosReal = D.crear({ almacen, cifrado: Cifrado.crear() });
+            return datosReal[nombre](...args);
+        }
+    });
+    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL });
 }
 
 module.exports = async (req, res) => {

@@ -20,6 +20,7 @@ const DIAS_SESION = 30;
 const RENOVAR_CUANDO_QUEDAN_DIAS = 15;
 const LIMITE_CORREO_POR_HORA = 5;
 const LIMITE_IP_POR_HORA = 20;
+const LIMITE_ESCRITURAS_POR_HORA = 300;
 const MAX_LARGO_CORREO = 254;
 const FORMATO_CORREO = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
 
@@ -152,10 +153,16 @@ function crear(deps) {
         return { ok: true };
     }
 
-    return { solicitarAcceso, previsualizar, completar, leerSesion, cerrar };
+    /** Limite de escrituras por cuenta: 300 por hora (protege la base de un uso abusivo o de un error en bucle). */
+    async function permitirEscritura(cuentaId) {
+        const n = await almacen.sumarIntento('escritura:' + cuentaId, inicioDeHora(ahora()));
+        return n <= LIMITE_ESCRITURAS_POR_HORA;
+    }
+
+    return { solicitarAcceso, previsualizar, completar, leerSesion, cerrar, auditar, permitirEscritura };
 }
 
 module.exports = {
     crear, normalizarCorreo, enmascarar,
-    MINUTOS_ENLACE, DIAS_SESION, LIMITE_CORREO_POR_HORA, LIMITE_IP_POR_HORA
+    MINUTOS_ENLACE, DIAS_SESION, LIMITE_CORREO_POR_HORA, LIMITE_IP_POR_HORA, LIMITE_ESCRITURAS_POR_HORA
 };

@@ -101,10 +101,66 @@ async function main() {
         assert.strictEqual(busca[0].n, 0);
         paso('bytea: lo cifrado se guarda y se descifra igual; la base no contiene el texto');
 
-        // Borrar la cuenta borra todo lo suyo
-        await sql.query('DELETE FROM cuentas WHERE id = $1', [cuentaId]);
-        for (const t of ['sesiones', 'empresas']) assert.strictEqual((await sql.query(`SELECT count(*)::int AS n FROM ${t} WHERE cuenta_id = $1`, [cuentaId]))[0].n, 0, t);
-        paso('borrar la cuenta borra sesiones y empresa en cascada');
+        // ---- Servicio de datos contra la base real ----
+        await sql.query('DELETE FROM empresas WHERE cuenta_id = $1', [cuentaId]);
+        const srv = require('../api/_pyme/datos').crear({ almacen, cifrado: cif });
+        const cuentaObj = { cuentaId, email: correo };
+        const rutDe = (n) => { let s = 0, m = 2; for (let i = String(n).length - 1; i >= 0; i--) { s += +String(n)[i] * m; m = m === 7 ? 2 : m + 1; } const r = 11 - (s % 11); return require('../js/rut_cl').formatear(n + (r === 11 ? '0' : r === 10 ? 'K' : String(r))); };
+        const trab = (n) => ({ nombre: 'Trabajador ' + n, rut: rutDe(10000000 + n), fechaIngreso: '2022-03-15', sueldoBase: 650000 });
+
+        const e1 = await srv.guardarEmpresa(cuentaObj, { razonSocial: 'Panadería La Espiga Ltda.', rut: rutDe(76845123) });
+        assert.ok(e1.ok);
+        await srv.guardarEmpresa(cuentaObj, { razonSocial: 'Panadería La Espiga Ltda. (editada)', rut: rutDe(76845123) });
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM empresas WHERE cuenta_id = $1', [cuentaId]))[0].n, 1);
+        assert.strictEqual((await srv.estado(cuentaObj)).empresa.razonSocial, 'Panadería La Espiga Ltda. (editada)');
+        paso('guardar la empresa dos veces actualiza la misma fila (upsert) y se descifra bien');
+
+        assert.ok((await srv.crearTrabajador(cuentaObj, trab(1))).ok);
+        assert.strictEqual((await srv.crearTrabajador(cuentaObj, trab(2))).codigo, 'limite');
+        paso('sin pase solo entra 1 trabajador activo');
+
+        await sql.query("INSERT INTO pases (cuenta_id, producto, orden_flow, desde, vence) VALUES ($1, 'pyme3', $2, now() - interval '1 day', now() + interval '30 days')", [cuentaId, 'TEST-' + marca]);
+        assert.strictEqual((await srv.estado(cuentaObj)).limites.maxActivos, 5);
+        const resultados = await Promise.all([2, 3, 4, 5, 6, 7, 8].map(n => srv.crearTrabajador(cuentaObj, trab(n))));
+        const entraron = resultados.filter(r => r.ok).length;
+        assert.strictEqual(entraron, 4, 'con pase y 1 existente deben entrar exactamente 4 mas, entraron ' + entraron);
+        const activos = (await sql.query('SELECT count(*)::int AS n FROM trabajadores t JOIN empresas e ON e.id = t.empresa_id WHERE e.cuenta_id = $1 AND t.activo', [cuentaId]))[0].n;
+        assert.strictEqual(activos, 5);
+        paso('con pase: 7 altas simultaneas dejan exactamente 5 activos (el limite lo aplica la propia sentencia SQL)');
+
+        const lista = (await srv.estado(cuentaObj)).trabajadores;
+        const { id: idPrimero, ...resto } = lista[0];
+        assert.ok((await srv.actualizarTrabajador(cuentaObj, idPrimero, { ...resto, activo: false })).ok);
+        assert.ok((await srv.crearTrabajador(cuentaObj, trab(9))).ok);
+        assert.strictEqual((await srv.actualizarTrabajador(cuentaObj, idPrimero, { ...resto, activo: true })).codigo, 'limite');
+        assert.ok((await srv.borrarTrabajador(cuentaObj, lista[1].id)).ok);
+        assert.ok((await srv.actualizarTrabajador(cuentaObj, idPrimero, { ...resto, activo: true })).ok);
+        paso('desactivar, reactivar con el limite y borrar funcionan');
+
+        // Un trabajador de otra cuenta no se puede tocar con un id ajeno
+        const otra = (await sql.query('INSERT INTO cuentas (email) VALUES ($1) RETURNING id', ['otra-' + marca + '@ejemplo.invalid']))[0].id;
+        const cuentaOtra = { cuentaId: otra, email: 'otra-' + marca + '@ejemplo.invalid' };
+        await srv.guardarEmpresa(cuentaOtra, { razonSocial: 'Otra', rut: rutDe(76111111) });
+        assert.strictEqual((await srv.actualizarTrabajador(cuentaOtra, idPrimero, trab(1))).codigo, 'no_existe');
+        assert.strictEqual((await srv.borrarTrabajador(cuentaOtra, idPrimero)).codigo, 'no_existe');
+        assert.strictEqual((await srv.estado(cuentaOtra)).trabajadores.length, 0);
+        await sql.query('DELETE FROM cuentas WHERE id = $1', [otra]);
+        paso('una cuenta no puede editar ni borrar trabajadores de otra');
+
+        const crudo = await sql.query('SELECT encode(datos_cifrados, \'escape\') AS t FROM trabajadores t JOIN empresas e ON e.id = t.empresa_id WHERE e.cuenta_id = $1', [cuentaId]);
+        assert.ok(crudo.every(f => f.t.indexOf('Trabajador') < 0 && f.t.indexOf('650000') < 0));
+        const exportado = (await srv.exportar(cuentaObj)).archivo;
+        assert.ok(exportado.trabajadores.length === 5 && exportado.empresa.razonSocial.indexOf('editada') > 0);
+        paso('en la base los trabajadores son bytes ilegibles y la exportacion los devuelve completos');
+
+        assert.strictEqual((await srv.borrarCuenta(cuentaObj, 'otro@ejemplo.invalid')).codigo, 'confirmacion');
+        assert.ok((await srv.borrarCuenta(cuentaObj, correo)).ok);
+        for (const [t, col] of [['sesiones', 'cuenta_id'], ['empresas', 'cuenta_id'], ['pases', 'cuenta_id']]) {
+            assert.strictEqual((await sql.query(`SELECT count(*)::int AS n FROM ${t} WHERE ${col} = $1`, [cuentaId]))[0].n, 0, t);
+        }
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM trabajadores WHERE empresa_id NOT IN (SELECT id FROM empresas)'))[0].n, 0);
+        paso('borrar la cuenta borra sesiones, empresa, trabajadores y pases en cascada');
+        cuentaId = null;
         console.log('\n' + ok + ' pruebas correctas contra la base real');
     } finally {
         // Limpieza de todo lo creado por esta prueba

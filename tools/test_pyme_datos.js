@@ -1,0 +1,367 @@
+// Pruebas de validacion, datos cifrados y rutas de datos del Asistente Pyme (sin base ni correo): node tools/test_pyme_datos.js
+'use strict';
+const assert = require('assert');
+const crypto = require('crypto');
+const A = require('../api/_pyme/auth');
+const T = require('../api/_pyme/tokens');
+const Cif = require('../api/_pyme/cifrado');
+const D = require('../api/_pyme/datos');
+const V = require('../api/_pyme/validar');
+const Rut = require('../js/rut_cl');
+const { crearRutas } = require('../api/_pyme/rutas');
+const { crearAlmacenMemoria } = require('./pyme_almacen_memoria');
+
+let ok = 0, pendientes = Promise.resolve();
+function caso(nombre, fn) {
+    pendientes = pendientes.then(async () => {
+        try { await fn(); ok++; console.log('  ok  ' + nombre); } catch (e) { console.error('  FALLA  ' + nombre + '\n         ' + (e.stack || e.message).split('\n').slice(0, 4).join('\n         ')); process.exitCode = 1; }
+    });
+}
+
+const SITIO = 'https://calculolaboral.cl';
+const MIN = 60000, DIA = 86400000;
+const JSON_OK = { 'content-type': 'application/json', 'x-cl-pyme': '1', origin: SITIO };
+let RUT_EMPRESA; const rutValido = (cuerpo) => { // genera un RUT con digito verificador correcto
+    let s = 0, m = 2;
+    for (let i = String(cuerpo).length - 1; i >= 0; i--) { s += +String(cuerpo)[i] * m; m = m === 7 ? 2 : m + 1; }
+    const r = 11 - (s % 11);
+    return Rut.formatear(cuerpo + (r === 11 ? '0' : r === 10 ? 'K' : String(r)));
+};
+RUT_EMPRESA = rutValido(76845123);
+const EMPRESA = { razonSocial: 'Panadería La Espiga Ltda.', rut: rutValido(76845123), representante: 'Manuel Lagos', direccion: 'Av. Principal 123', comuna: 'Temuco' };
+const TRAB = (n, extra) => Object.assign({ nombre: 'Trabajador ' + n, rut: rutValido(10000000 + n), cargo: 'Panadero', fechaIngreso: '2022-03-15', sueldoBase: 650000, afp: 'Habitat' }, extra);
+
+function montar() {
+    const reloj = { t: Date.parse('2026-10-12T15:00:00Z') };
+    const almacen = crearAlmacenMemoria();
+    const secreto = T.secretoDesdeEntorno({ PYME_SESSION_SECRET: crypto.randomBytes(32).toString('base64') });
+    const cifrado = Cif.crear(Cif.clavesDesdeEntorno({ PYME_DATA_KEY: crypto.randomBytes(32).toString('base64') }));
+    const enviados = [];
+    const auth = A.crear({ almacen, secreto, siteUrl: SITIO, ahora: () => reloj.t, enviarCorreo: async m => { enviados.push(m); } });
+    const datos = D.crear({ almacen, cifrado, ahora: () => reloj.t });
+    const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'production' }, siteUrl: SITIO });
+    let ipN = 0;
+    async function entrar(correo) {
+        await auth.solicitarAcceso({ email: correo, ip: '10.0.0.' + (++ipN) });
+        const token = new URL(enviados[enviados.length - 1].enlace).searchParams.get('t');
+        const r = await auth.completar({ token, acepto: true, ip: '10.0.0.1' });
+        const cuenta = await auth.leerSesion(r.sesion.token);
+        return { cookie: 'cl_pyme=' + r.sesion.token, sesion: cuenta, cuenta: { cuentaId: cuenta.cuentaId, email: cuenta.email } };
+    }
+    return { reloj, almacen, cifrado, auth, datos, rutas, entrar, enviados };
+}
+
+function pedir(rutas, o) {
+    const req = { method: o.metodo || 'GET', query: o.query || {}, headers: o.headers || {}, body: o.body };
+    const res = { statusCode: 0, headers: {}, cuerpo: '', setHeader(k, v) { this.headers[k.toLowerCase()] = v; }, end(c) { this.cuerpo = c || ''; } };
+    return Promise.resolve(rutas(req, res)).then(() => { try { res.json = JSON.parse(res.cuerpo); } catch (e) { res.json = null; } return res; });
+}
+const escribir = (m, o) => pedir(m.rutas, { ...o, headers: { ...JSON_OK, cookie: o.cookie, ...(o.headers || {}) } });
+const leer = (m, o) => pedir(m.rutas, { ...o, headers: { cookie: o.cookie } });
+
+// ---------- RUT ----------
+console.log('RUT');
+caso('valida el dígito verificador y da formato estándar', () => {
+    assert.ok(Rut.valido('12.345.678-5') && Rut.valido('123456785') && Rut.valido(RUT_EMPRESA) && !Rut.valido('76845123k'));
+    assert.ok(!Rut.valido('12.345.678-9') && !Rut.valido('') && !Rut.valido('1-9') && !Rut.valido('abc') && !Rut.valido(null));
+    assert.strictEqual(Rut.formatear('123456785'), '12.345.678-5');
+    assert.strictEqual(Rut.limpiar(' 12.345.678-k '), '12345678K');
+    assert.ok(!Rut.valido('1K345678-5'), 'la K solo puede ser el verificador');
+});
+
+// ---------- validacion ----------
+console.log('Validación');
+caso('empresa: normaliza, exige razón social y RUT válido, y descarta campos desconocidos', () => {
+    const r = V.validarEmpresa({ ...EMPRESA, rut: Rut.limpiar(RUT_EMPRESA).toLowerCase(), razonSocial: '  Panadería   La Espiga  ', admin: true, __proto__x: 1 });
+    assert.ok(r.ok);
+    assert.strictEqual(r.valor.rut, RUT_EMPRESA);
+    assert.strictEqual(r.valor.razonSocial, 'Panadería La Espiga');
+    assert.ok(!('admin' in r.valor));
+    const mala = V.validarEmpresa({ razonSocial: '', rut: '11.111.111-2' });
+    assert.ok(!mala.ok && mala.errores.razonSocial && mala.errores.rut);
+    assert.ok(!V.validarEmpresa(null).ok && !V.validarEmpresa([]).ok && !V.validarEmpresa('x').ok);
+});
+caso('empresa: largo máximo y logo (solo imagen base64 pequeña)', () => {
+    assert.ok(!V.validarEmpresa({ ...EMPRESA, razonSocial: 'x'.repeat(101) }).ok);
+    const logo = 'data:image/png;base64,' + Buffer.from('imagen').toString('base64');
+    assert.ok(V.validarEmpresa({ ...EMPRESA, logo }).ok);
+    ['data:text/html;base64,PHNjcmlwdD4=', 'javascript:alert(1)', 'data:image/svg+xml;base64,PHN2Zz4=', 'http://x.cl/a.png', 'data:image/png;base64,' + 'A'.repeat(V.MAX_LOGO)].forEach(l => assert.ok(!V.validarEmpresa({ ...EMPRESA, logo: l }).ok, l.slice(0, 30)));
+});
+caso('trabajador: valores por defecto y conversión de números escritos como texto', () => {
+    const r = V.validarTrabajador({ nombre: 'Ana', rut: '12.345.678-5', sueldoBase: '650000', jornadaHoras: '42' });
+    assert.ok(r.ok);
+    assert.deepStrictEqual([r.valor.contrato, r.valor.afp, r.valor.salud, r.valor.gratificacion, r.valor.activo, r.valor.sueldoBase, r.valor.jornadaHoras], ['indefinido', 'Modelo', 'fonasa', 'legal', true, 650000, 42]);
+});
+caso('trabajador: rangos, opciones y fechas se rechazan con un mensaje por campo', () => {
+    const casos = [['sueldoBase', -1], ['sueldoBase', 1.5], ['sueldoBase', '12abc'], ['sueldoBase', 60000000], ['jornadaHoras', 0], ['jornadaHoras', 60], ['afp', 'Inventada'], ['salud', 'otra'],
+        ['contrato', 'honorarios'], ['fechaIngreso', '2022-02-30'], ['fechaIngreso', '15-03-2022'], ['zonaExtrema', 'si'], ['activo', 1], ['aniosOtrosEmpleadores', 11], ['isaprePlanUF', 200]];
+    casos.forEach(([campo, valor]) => {
+        const r = V.validarTrabajador({ nombre: 'Ana', rut: '12.345.678-5', ...(campo === 'isaprePlanUF' ? { salud: 'isapre' } : {}), [campo]: valor });
+        assert.ok(!r.ok && r.errores[campo], campo + '=' + valor);
+    });
+});
+caso('trabajador: plazo fijo exige fecha de término posterior al ingreso; los demás contratos la borran', () => {
+    const base = { nombre: 'Ana', rut: '12.345.678-5', fechaIngreso: '2026-03-01' };
+    assert.ok(!V.validarTrabajador({ ...base, contrato: 'plazo_fijo' }).ok);
+    assert.ok(!V.validarTrabajador({ ...base, contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-02-01' }).ok);
+    assert.ok(V.validarTrabajador({ ...base, contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-12-01', renovaciones: 1 }).ok);
+    const ind = V.validarTrabajador({ ...base, contrato: 'indefinido', fechaTerminoPlazo: '2026-12-01', renovaciones: 2 });
+    assert.ok(ind.ok && ind.valor.fechaTerminoPlazo === '' && ind.valor.renovaciones === 0);
+});
+caso('trabajador: con Fonasa se borran los datos de Isapre; el ingreso no puede ser anterior al nacimiento', () => {
+    const r = V.validarTrabajador({ nombre: 'Ana', rut: '12.345.678-5', salud: 'fonasa', isapreNombre: 'Colmena', isaprePlanUF: 4.2 });
+    assert.ok(r.ok && r.valor.isapreNombre === '' && r.valor.isaprePlanUF === 0);
+    assert.ok(V.validarTrabajador({ nombre: 'Ana', rut: '12.345.678-5', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: '4,25' }).valor.isaprePlanUF === 4.25);
+    assert.ok(!V.validarTrabajador({ nombre: 'Ana', rut: '12.345.678-5', fechaNacimiento: '2000-01-01', fechaIngreso: '1999-01-01' }).ok);
+});
+caso('la lista de AFP sale de los parámetros del generador de liquidaciones', () => {
+    assert.ok(['Capital', 'Cuprum', 'Habitat', 'Modelo', 'Planvital', 'Provida', 'Uno'].every(a => V.AFPS.indexOf(a) >= 0));
+});
+
+// ---------- servicio de datos ----------
+console.log('Datos cifrados');
+caso('la empresa se guarda cifrada: la base no contiene el texto y se recupera igual', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    assert.ok((await m.datos.guardarEmpresa(cuenta, EMPRESA)).ok);
+    const crudo = JSON.stringify(m.almacen._estado.empresas);
+    ['Espiga', '76.845.12', 'Lagos', 'Temuco'].forEach(s => assert.ok(crudo.indexOf(s) < 0 && Buffer.from(m.almacen._estado.empresas[0].datos).toString('latin1').indexOf(s) < 0, s));
+    const e = await m.datos.estado(cuenta);
+    assert.strictEqual(e.empresa.razonSocial, 'Panadería La Espiga Ltda.');
+    assert.strictEqual(e.empresa.rut, RUT_EMPRESA);
+});
+caso('los trabajadores se guardan cifrados y se recuperan con sus ids', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    await m.datos.guardarEmpresa(cuenta, EMPRESA);
+    const r = await m.datos.crearTrabajador(cuenta, TRAB(1, { nombre: 'María José Núñez' }));
+    assert.ok(r.ok && /^[0-9a-f-]{36}$/.test(r.trabajador.id));
+    const bytes = Buffer.from(m.almacen._estado.trabajadores[0].datos);
+    ['María', 'Núñez', 'Panadero', '650000'].forEach(s => assert.ok(bytes.toString('utf8').indexOf(s) < 0 && bytes.toString('latin1').indexOf(s) < 0, s));
+    const e = await m.datos.estado(cuenta);
+    assert.strictEqual(e.trabajadores.length, 1);
+    assert.strictEqual(e.trabajadores[0].nombre, 'María José Núñez');
+    assert.strictEqual(e.trabajadores[0].id, r.trabajador.id);
+});
+caso('un dato cifrado copiado a otra cuenta o a otro registro no se puede leer', async () => {
+    const m = montar();
+    const a = (await m.entrar('a@ejemplo.cl')).cuenta, b = (await m.entrar('b@ejemplo.cl')).cuenta;
+    await m.datos.guardarEmpresa(a, EMPRESA); await m.datos.guardarEmpresa(b, { ...EMPRESA, razonSocial: 'Otra Empresa' });
+    await m.datos.crearTrabajador(a, TRAB(1));
+    const E = m.almacen._estado;
+    const empA = E.empresas.find(x => x.cuentaId === a.cuentaId), empB = E.empresas.find(x => x.cuentaId === b.cuentaId);
+    empB.datos = Buffer.from(empA.datos); // alguien con acceso a la base copia el contenido de A en B
+    await assert.rejects(() => m.datos.estado(b), Cif.ErrorCifrado);
+    E.trabajadores[0].empresaId = empB.id; // y mueve un trabajador de A a la empresa de B
+    empB.datos = Buffer.from((await m.cifrado.cifrar(EMPRESA, 'empresas:' + b.cuentaId)).datos);
+    await assert.rejects(() => m.datos.estado(b), Cif.ErrorCifrado);
+});
+caso('no se puede agregar un trabajador sin empresa', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    const r = await m.datos.crearTrabajador(cuenta, TRAB(1));
+    assert.deepStrictEqual([r.ok, r.estado, r.codigo], [false, 409, 'sin_empresa']);
+});
+caso('límite de trabajadores activos: 1 sin pase, 5 con pase vigente; al vencer el pase no se pueden activar más', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    await m.datos.guardarEmpresa(cuenta, EMPRESA);
+    assert.ok((await m.datos.crearTrabajador(cuenta, TRAB(1))).ok);
+    const sin = await m.datos.crearTrabajador(cuenta, TRAB(2));
+    assert.deepStrictEqual([sin.ok, sin.estado, sin.codigo], [false, 409, 'limite']);
+    assert.ok(/Pase Pyme/.test(sin.error));
+    m.almacen._estado.pases.push({ cuentaId: cuenta.cuentaId, desde: new Date(m.reloj.t - DIA).toISOString(), vence: new Date(m.reloj.t + 30 * DIA).toISOString() });
+    for (let n = 2; n <= 5; n++) assert.ok((await m.datos.crearTrabajador(cuenta, TRAB(n))).ok, 'trabajador ' + n);
+    assert.strictEqual((await m.datos.crearTrabajador(cuenta, TRAB(6))).codigo, 'limite');
+    assert.strictEqual((await m.datos.estado(cuenta)).limites.maxActivos, 5);
+    // un inactivo no cuenta y reactivarlo respeta el máximo
+    const e = await m.datos.estado(cuenta);
+    const t1 = e.trabajadores[0], { id, ...sinId } = t1;
+    assert.ok((await m.datos.actualizarTrabajador(cuenta, id, { ...sinId, activo: false })).ok);
+    assert.ok((await m.datos.crearTrabajador(cuenta, TRAB(6))).ok);
+    assert.strictEqual((await m.datos.actualizarTrabajador(cuenta, id, { ...sinId, activo: true })).codigo, 'limite');
+    // el pase vence: los que ya están siguen, pero no se agregan más
+    m.reloj.t += 31 * DIA;
+    assert.strictEqual((await m.datos.estado(cuenta)).limites.maxActivos, 1);
+    assert.strictEqual((await m.datos.crearTrabajador(cuenta, TRAB(7))).codigo, 'limite');
+});
+caso('RUT repetido en la misma empresa se rechaza al crear y al editar; otra empresa sí puede usarlo', async () => {
+    const m = montar();
+    const a = (await m.entrar('a@ejemplo.cl')).cuenta, b = (await m.entrar('b@ejemplo.cl')).cuenta;
+    m.almacen._estado.pases.push({ cuentaId: a.cuentaId, desde: new Date(m.reloj.t - DIA).toISOString(), vence: new Date(m.reloj.t + 30 * DIA).toISOString() });
+    await m.datos.guardarEmpresa(a, EMPRESA); await m.datos.guardarEmpresa(b, EMPRESA);
+    const t1 = (await m.datos.crearTrabajador(a, TRAB(1))).trabajador;
+    const dup = await m.datos.crearTrabajador(a, TRAB(2, { rut: t1.rut }));
+    assert.deepStrictEqual([dup.ok, dup.codigo], [false, 'rut_repetido']);
+    const t2 = (await m.datos.crearTrabajador(a, TRAB(2))).trabajador;
+    const { id, ...d2 } = t2;
+    assert.strictEqual((await m.datos.actualizarTrabajador(a, id, { ...d2, rut: t1.rut })).codigo, 'rut_repetido');
+    assert.ok((await m.datos.crearTrabajador(b, TRAB(1, { rut: t1.rut }))).ok);
+});
+caso('editar y borrar: ids que no son UUID o que no existen dan 404', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    await m.datos.guardarEmpresa(cuenta, EMPRESA);
+    const t = (await m.datos.crearTrabajador(cuenta, TRAB(1))).trabajador;
+    for (const id of ['', 'abc', "' OR 1=1", '00000000-0000-0000-0000-000000000000', undefined, 5]) {
+        assert.strictEqual((await m.datos.actualizarTrabajador(cuenta, id, TRAB(1))).estado, 404, String(id));
+        assert.strictEqual((await m.datos.borrarTrabajador(cuenta, id)).estado, 404, String(id));
+    }
+    const { id, ...d } = t;
+    const r = await m.datos.actualizarTrabajador(cuenta, id, { ...d, sueldoBase: 700000 });
+    assert.ok(r.ok && r.trabajador.sueldoBase === 700000);
+    assert.strictEqual((await m.datos.estado(cuenta)).trabajadores[0].sueldoBase, 700000);
+    assert.ok((await m.datos.borrarTrabajador(cuenta, id)).ok);
+    assert.strictEqual((await m.datos.estado(cuenta)).trabajadores.length, 0);
+});
+caso('tope total de 50 trabajadores (activos más inactivos)', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    await m.datos.guardarEmpresa(cuenta, EMPRESA);
+    for (let n = 1; n <= 50; n++) assert.ok((await m.datos.crearTrabajador(cuenta, TRAB(n, { activo: false }))).ok, 'trabajador ' + n);
+    assert.strictEqual((await m.datos.crearTrabajador(cuenta, TRAB(51, { activo: false }))).codigo, 'limite_total');
+});
+caso('importar: guarda la empresa, salta repetidos y avisa los que no entran por el límite o por datos inválidos', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    const r = await m.datos.importar(cuenta, { empresa: EMPRESA, trabajadores: [TRAB(1), TRAB(1), TRAB(2), { nombre: 'Sin RUT' }] });
+    assert.ok(r.ok && r.empresa === true && r.importados === 1);
+    assert.deepStrictEqual(r.omitidos.map(o => o.motivo).sort(), ['invalido', 'limite', 'repetido']);
+    const mala = await m.datos.importar(cuenta, { empresa: { razonSocial: '' }, trabajadores: [TRAB(9)] });
+    assert.ok(!mala.ok && mala.estado === 400);
+    assert.strictEqual((await m.datos.estado(cuenta)).trabajadores.length, 1);
+    const sinEmpresa = await montar().datos.importar({ cuentaId: crypto.randomUUID(), email: 'x@y.cl' }, { trabajadores: [TRAB(1)] });
+    assert.strictEqual(sinEmpresa.codigo, 'sin_empresa');
+});
+caso('exportar entrega todo descifrado, con versión y fecha; el archivo no incluye ids internos de la base de datos', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    await m.datos.guardarEmpresa(cuenta, EMPRESA);
+    await m.datos.crearTrabajador(cuenta, TRAB(1));
+    const x = (await m.datos.exportar(cuenta)).archivo;
+    assert.strictEqual(x.formato, 'calculolaboral-asistente-pyme');
+    assert.strictEqual(x.version, 1);
+    assert.strictEqual(x.cuenta.email, 'ana@ejemplo.cl');
+    assert.strictEqual(x.empresa.razonSocial, 'Panadería La Espiga Ltda.');
+    assert.strictEqual(x.trabajadores[0].nombre, 'Trabajador 1');
+    assert.ok(!('cuentaId' in x.cuenta));
+});
+caso('borrar la cuenta exige escribir el correo exacto y borra todo', async () => {
+    const m = montar();
+    const { cuenta } = await m.entrar('ana@ejemplo.cl');
+    await m.datos.guardarEmpresa(cuenta, EMPRESA);
+    await m.datos.crearTrabajador(cuenta, TRAB(1));
+    for (const c of [undefined, '', 'otro@ejemplo.cl', 'ana@ejemplo', 5]) assert.strictEqual((await m.datos.borrarCuenta(cuenta, c)).codigo, 'confirmacion');
+    assert.ok((await m.datos.borrarCuenta(cuenta, ' ANA@ejemplo.cl ')).ok);
+    const E = m.almacen._estado;
+    assert.deepStrictEqual([E.cuentas.length, E.empresas.length, E.trabajadores.length, E.sesiones.length], [0, 0, 0, 0]);
+});
+
+// ---------- rutas ----------
+console.log('Rutas de datos');
+caso('sin sesión: todas las rutas de datos responden 401', async () => {
+    const m = montar();
+    for (const [ruta, metodo] of [['estado', 'GET'], ['exportar', 'GET'], ['empresa', 'PUT'], ['trabajador', 'POST'], ['importar', 'POST'], ['borrar-cuenta', 'POST']]) {
+        const r = await pedir(m.rutas, { query: { ruta }, metodo, headers: metodo === 'GET' ? {} : JSON_OK, body: {} });
+        assert.strictEqual(r.statusCode, 401, ruta);
+        assert.strictEqual(r.json.codigo, 'sin_sesion');
+    }
+});
+caso('las escrituras exigen el encabezado propio y el origen del sitio (antes de mirar la sesión)', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('ana@ejemplo.cl');
+    for (const headers of [{ cookie }, { cookie, 'content-type': 'application/json' }, { ...JSON_OK, cookie, origin: 'https://otro.com' }]) {
+        assert.strictEqual((await pedir(m.rutas, { query: { ruta: 'empresa' }, metodo: 'PUT', headers, body: { empresa: EMPRESA } })).statusCode, 403);
+    }
+    assert.strictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).json.empresa, null);
+});
+caso('flujo completo por la API: empresa, trabajador, estado, edición y borrado', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('ana@ejemplo.cl');
+    assert.deepStrictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).json, { ok: true, cuenta: { email: 'ana@ejemplo.cl' }, empresa: null, trabajadores: [], limites: { maxActivos: 1, paseVence: null }, maxTotal: 50 });
+    const e = await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: EMPRESA } });
+    assert.strictEqual(e.statusCode, 200);
+    const t = await escribir(m, { query: { ruta: 'trabajador' }, metodo: 'POST', cookie, body: { trabajador: TRAB(1) } });
+    assert.strictEqual(t.statusCode, 200);
+    const id = t.json.trabajador.id;
+    const est = (await leer(m, { query: { ruta: 'estado' }, cookie })).json;
+    assert.strictEqual(est.empresa.razonSocial, 'Panadería La Espiga Ltda.');
+    assert.strictEqual(est.trabajadores[0].id, id);
+    const { id: _, ...d } = t.json.trabajador;
+    assert.strictEqual((await escribir(m, { query: { ruta: 'trabajador', id }, metodo: 'PUT', cookie, body: { trabajador: { ...d, cargo: 'Maestro' } } })).json.trabajador.cargo, 'Maestro');
+    assert.strictEqual((await escribir(m, { query: { ruta: 'trabajador', id }, metodo: 'DELETE', cookie, body: {} })).statusCode, 200);
+    assert.strictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).json.trabajadores.length, 0);
+});
+caso('errores de validación llegan con un mensaje por campo (400); el límite es 409', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('ana@ejemplo.cl');
+    const mala = await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: { razonSocial: '', rut: 'x' } } });
+    assert.strictEqual(mala.statusCode, 400);
+    assert.ok(mala.json.errores.razonSocial && mala.json.errores.rut);
+    await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: EMPRESA } });
+    await escribir(m, { query: { ruta: 'trabajador' }, metodo: 'POST', cookie, body: { trabajador: TRAB(1) } });
+    const lim = await escribir(m, { query: { ruta: 'trabajador' }, metodo: 'POST', cookie, body: { trabajador: TRAB(2) } });
+    assert.strictEqual(lim.statusCode, 409);
+    assert.strictEqual(lim.json.codigo, 'limite');
+});
+caso('una cuenta no puede ver, editar ni borrar los trabajadores de otra', async () => {
+    const m = montar();
+    const a = await m.entrar('a@ejemplo.cl'), b = await m.entrar('b@ejemplo.cl');
+    await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie: a.cookie, body: { empresa: EMPRESA } });
+    await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie: b.cookie, body: { empresa: { ...EMPRESA, razonSocial: 'Empresa B' } } });
+    const idA = (await escribir(m, { query: { ruta: 'trabajador' }, metodo: 'POST', cookie: a.cookie, body: { trabajador: TRAB(1, { nombre: 'Secreto de A' }) } })).json.trabajador.id;
+    const verB = await leer(m, { query: { ruta: 'estado' }, cookie: b.cookie });
+    assert.ok(verB.cuerpo.indexOf('Secreto de A') < 0 && verB.json.trabajadores.length === 0);
+    assert.strictEqual((await escribir(m, { query: { ruta: 'trabajador', id: idA }, metodo: 'PUT', cookie: b.cookie, body: { trabajador: TRAB(1, { nombre: 'Hackeado' }) } })).statusCode, 404);
+    assert.strictEqual((await escribir(m, { query: { ruta: 'trabajador', id: idA }, metodo: 'DELETE', cookie: b.cookie, body: {} })).statusCode, 404);
+    assert.strictEqual((await leer(m, { query: { ruta: 'estado' }, cookie: a.cookie })).json.trabajadores[0].nombre, 'Secreto de A');
+});
+caso('exportar: descarga como archivo, deja registro en la auditoría y no incluye datos de otras cuentas', async () => {
+    const m = montar();
+    const a = await m.entrar('a@ejemplo.cl'), b = await m.entrar('b@ejemplo.cl');
+    await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie: a.cookie, body: { empresa: EMPRESA } });
+    await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie: b.cookie, body: { empresa: { ...EMPRESA, razonSocial: 'Empresa B' } } });
+    const r = await leer(m, { query: { ruta: 'exportar' }, cookie: a.cookie });
+    assert.strictEqual(r.statusCode, 200);
+    assert.ok(/^attachment; filename="calculolaboral-datos-\d{4}-\d{2}-\d{2}\.json"$/.test(r.headers['content-disposition']));
+    assert.ok(r.cuerpo.indexOf('Empresa B') < 0 && r.json.empresa.razonSocial === 'Panadería La Espiga Ltda.');
+    assert.ok(m.almacen._estado.auditoria.some(x => x.evento === 'datos_exportados' && x.cuentaId === a.sesion.cuentaId));
+});
+caso('borrar la cuenta por la API: borra todo, cierra la sesión y deja un registro sin datos personales', async () => {
+    const m = montar();
+    const a = await m.entrar('a@ejemplo.cl');
+    await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie: a.cookie, body: { empresa: EMPRESA } });
+    const mal = await escribir(m, { query: { ruta: 'borrar-cuenta' }, metodo: 'POST', cookie: a.cookie, body: { confirmar: 'otro@ejemplo.cl' } });
+    assert.strictEqual(mal.statusCode, 400);
+    const bien = await escribir(m, { query: { ruta: 'borrar-cuenta' }, metodo: 'POST', cookie: a.cookie, body: { confirmar: 'a@ejemplo.cl' } });
+    assert.strictEqual(bien.statusCode, 200);
+    assert.ok(/Max-Age=0/.test(bien.headers['set-cookie']));
+    assert.strictEqual((await leer(m, { query: { ruta: 'estado' }, cookie: a.cookie })).statusCode, 401);
+    const E = m.almacen._estado;
+    assert.deepStrictEqual([E.cuentas.length, E.empresas.length], [0, 0]);
+    const ev = E.auditoria.filter(x => x.evento === 'cuenta_borrada');
+    assert.strictEqual(ev.length, 1);
+    assert.ok(JSON.stringify(E.auditoria).indexOf('a@ejemplo.cl') < 0);
+});
+caso('límite de escrituras: 300 por hora por cuenta, y se reinicia a la hora siguiente', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('ana@ejemplo.cl');
+    let ultimo;
+    for (let i = 0; i < 300; i++) ultimo = await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: EMPRESA } });
+    assert.strictEqual(ultimo.statusCode, 200);
+    const excede = await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: EMPRESA } });
+    assert.strictEqual(excede.statusCode, 429);
+    assert.strictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).statusCode, 200, 'leer no cuenta como escritura');
+    m.reloj.t += 61 * MIN;
+    const sesion = (await m.entrar('ana@ejemplo.cl')).cookie;
+    assert.strictEqual((await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie: sesion, body: { empresa: EMPRESA } })).statusCode, 200);
+});
+caso('la respuesta de importar entrega lo importado y lo omitido', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('ana@ejemplo.cl');
+    const r = await escribir(m, { query: { ruta: 'importar' }, metodo: 'POST', cookie, body: { empresa: EMPRESA, trabajadores: [TRAB(1), TRAB(2)] } });
+    assert.strictEqual(r.statusCode, 200);
+    assert.deepStrictEqual([r.json.importados, r.json.omitidos.length], [1, 1]);
+});
+
+pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

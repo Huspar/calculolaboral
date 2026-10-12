@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -58,7 +58,52 @@ function crearAlmacenMemoria() {
             const s = E.sesiones.find(x => x.tokenHash === tokenHash && !x.revocada);
             if (s) s.revocada = ahoraIso;
         },
-        async registrarAuditoria(a) { E.auditoria.push(a); }
+        async registrarAuditoria(a) { E.auditoria.push(a); },
+
+        // ---- empresa y trabajadores ----
+        async obtenerEmpresa(cuentaId) {
+            const e = E.empresas.find(x => x.cuentaId === cuentaId);
+            return e ? { id: e.id, datos: Buffer.from(e.datos), version: e.version } : null;
+        },
+        async guardarEmpresa(cuentaId, datos, version) {
+            let e = E.empresas.find(x => x.cuentaId === cuentaId);
+            if (!e) { e = { id: crypto.randomUUID(), cuentaId }; E.empresas.push(e); }
+            e.datos = Buffer.from(datos); e.version = version;
+            return { id: e.id };
+        },
+        async listarTrabajadores(empresaId) {
+            return E.trabajadores.filter(x => x.empresaId === empresaId).map(x => ({ id: x.id, activo: x.activo, datos: Buffer.from(x.datos), version: x.version }));
+        },
+        async crearTrabajador({ id, empresaId, activo, datos, version, maxActivos }) {
+            if (activo && E.trabajadores.filter(x => x.empresaId === empresaId && x.activo).length >= maxActivos) return false;
+            E.trabajadores.push({ id, empresaId, activo, datos: Buffer.from(datos), version });
+            return true;
+        },
+        async actualizarTrabajador({ id, empresaId, activo, datos, version, maxActivos }) {
+            const t = E.trabajadores.find(x => x.id === id && x.empresaId === empresaId);
+            if (!t) return false;
+            if (activo && !t.activo && E.trabajadores.filter(x => x.empresaId === empresaId && x.activo).length >= maxActivos) return false;
+            t.activo = activo; t.datos = Buffer.from(datos); t.version = version;
+            return true;
+        },
+        async borrarTrabajador(id, empresaId) {
+            const i = E.trabajadores.findIndex(x => x.id === id && x.empresaId === empresaId);
+            if (i < 0) return false;
+            E.trabajadores.splice(i, 1);
+            return true;
+        },
+        async paseVigente(cuentaId, ahoraIso) {
+            const v = E.pases.filter(p => p.cuentaId === cuentaId && t(p.desde) <= t(ahoraIso) && t(p.vence) > t(ahoraIso)).map(p => t(p.vence));
+            return v.length ? Math.max.apply(null, v) : null;
+        },
+        async borrarCuenta(cuentaId) {
+            const emp = E.empresas.filter(x => x.cuentaId === cuentaId).map(x => x.id);
+            E.trabajadores = E.trabajadores.filter(x => emp.indexOf(x.empresaId) < 0);
+            E.empresas = E.empresas.filter(x => x.cuentaId !== cuentaId);
+            E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);
+            E.pases = E.pases.filter(x => x.cuentaId !== cuentaId);
+            E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
+        }
     };
 }
 

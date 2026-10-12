@@ -99,6 +99,65 @@ function crearAlmacenSql(sql) {
 
         async registrarAuditoria({ cuentaId, evento, ipHash, cuando }) {
             await filas('INSERT INTO auditoria (cuenta_id, evento, ip_hash, cuando) VALUES ($1, $2, $3, $4::timestamptz)', [cuentaId, evento, ipHash, cuando]);
+        },
+
+        // ---------- datos de la empresa y de los trabajadores (siempre cifrados: la base solo ve bytes) ----------
+
+        async obtenerEmpresa(cuentaId) {
+            const r = await filas('SELECT id, datos_cifrados, version_clave FROM empresas WHERE cuenta_id = $1::uuid', [cuentaId]);
+            return r[0] ? { id: r[0].id, datos: Buffer.from(r[0].datos_cifrados), version: Number(r[0].version_clave) } : null;
+        },
+
+        async guardarEmpresa(cuentaId, datos, version, ahoraIso) {
+            const r = await filas(
+                'INSERT INTO empresas (cuenta_id, datos_cifrados, version_clave, actualizada) VALUES ($1::uuid, $2::bytea, $3::smallint, $4::timestamptz) ' +
+                'ON CONFLICT (cuenta_id) DO UPDATE SET datos_cifrados = EXCLUDED.datos_cifrados, version_clave = EXCLUDED.version_clave, actualizada = EXCLUDED.actualizada RETURNING id',
+                [cuentaId, datos, version, ahoraIso]
+            );
+            return { id: r[0].id };
+        },
+
+        async listarTrabajadores(empresaId) {
+            const r = await filas('SELECT id, activo, datos_cifrados, version_clave FROM trabajadores WHERE empresa_id = $1::uuid ORDER BY creado, id', [empresaId]);
+            return r.map(x => ({ id: x.id, activo: !!x.activo, datos: Buffer.from(x.datos_cifrados), version: Number(x.version_clave) }));
+        },
+
+        /** Inserta solo si no se pasa del maximo de activos (la comprobacion y el INSERT son una sola sentencia). Devuelve true o false. */
+        async crearTrabajador({ id, empresaId, activo, datos, version, ahoraIso, maxActivos }) {
+            const r = await filas(
+                'INSERT INTO trabajadores (id, empresa_id, activo, datos_cifrados, version_clave, creado, actualizado) ' +
+                'SELECT $1::uuid, $2::uuid, $3::boolean, $4::bytea, $5::smallint, $6::timestamptz, $6::timestamptz ' +
+                'WHERE $3::boolean = false OR (SELECT count(*) FROM trabajadores WHERE empresa_id = $2::uuid AND activo) < $7::int RETURNING id',
+                [id, empresaId, activo, datos, version, ahoraIso, maxActivos]
+            );
+            return r.length === 1;
+        },
+
+        /** Actualiza un trabajador de esa empresa. Reactivar a uno inactivo tambien respeta el maximo. Devuelve true o false. */
+        async actualizarTrabajador({ id, empresaId, activo, datos, version, ahoraIso, maxActivos }) {
+            const r = await filas(
+                'UPDATE trabajadores SET activo = $3::boolean, datos_cifrados = $4::bytea, version_clave = $5::smallint, actualizado = $6::timestamptz ' +
+                'WHERE id = $1::uuid AND empresa_id = $2::uuid AND ($3::boolean = false OR activo OR ' +
+                '(SELECT count(*) FROM trabajadores WHERE empresa_id = $2::uuid AND activo) < $7::int) RETURNING id',
+                [id, empresaId, activo, datos, version, ahoraIso, maxActivos]
+            );
+            return r.length === 1;
+        },
+
+        async borrarTrabajador(id, empresaId) {
+            const r = await filas('DELETE FROM trabajadores WHERE id = $1::uuid AND empresa_id = $2::uuid RETURNING id', [id, empresaId]);
+            return r.length === 1;
+        },
+
+        /** Fecha en que vence el pase vigente mas largo de la cuenta, en milisegundos, o null si no tiene. */
+        async paseVigente(cuentaId, ahoraIso) {
+            const r = await filas('SELECT max(vence) AS vence FROM pases WHERE cuenta_id = $1::uuid AND desde <= $2::timestamptz AND vence > $2::timestamptz', [cuentaId, ahoraIso]);
+            return r[0] && r[0].vence ? new Date(r[0].vence).getTime() : null;
+        },
+
+        /** Borra la cuenta y, en cascada, sesiones, empresa, trabajadores, vacaciones, meses, documentos y pases. */
+        async borrarCuenta(cuentaId) {
+            await filas('DELETE FROM cuentas WHERE id = $1::uuid', [cuentaId]);
         }
     };
 }
