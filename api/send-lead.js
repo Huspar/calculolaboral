@@ -279,7 +279,12 @@ module.exports = async (req, res) => {
 
         const fechaLocal = new Date().toLocaleDateString('es-CL');
 
-        // Email body builder: small helper, escapes HTML, returns safe HTML and text versions
+        // Nombre y correo los escribe el visitante: escapados para todo lo que va al HTML.
+        // Los asuntos son texto plano y usan cleanName.
+        const safeName = escapeHtml(cleanName);
+        const safeEmail = escapeHtml(cleanEmail);
+
+        // Email body builders: callers pass already-escaped HTML; the text version strips tags and decodes entities
         function buildEmailHtml({ title, intro, body }) {
             return `<!DOCTYPE html>
 <html lang="es">
@@ -294,8 +299,18 @@ module.exports = async (req, res) => {
 </html>`;
         }
 
+        function htmlToText(html) {
+            return html
+                .replace(/<[^>]+>/g, '')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/&amp;/g, '&');
+        }
+
         function buildEmailText({ intro, body }) {
-            return `${intro}\n\n${body.replace(/<[^>]+>/g, '')}\n\n--\nCálculo Laboral · calculolaboral.cl`;
+            return `${htmlToText(intro)}\n\n${htmlToText(body)}\n\n--\nCálculo Laboral · calculolaboral.cl`;
         }
 
         let userSubject, userHtml, userText;
@@ -303,7 +318,7 @@ module.exports = async (req, res) => {
         if (cleanTipo === 'LeadMagnet') {
             // LeadMagnet: send a welcome email to the user with the guide link
             userSubject = 'Tu guía "Qué hago con mi finiquito" está lista';
-            const userIntro = `Hola ${cleanName}, gracias por descargar la guía. Aquí tienes el enlace de descarga.`;
+            const userIntro = `Hola ${safeName}, gracias por descargar la guía. Aquí tienes el enlace de descarga.`;
             const userBody = `
                 <p style="margin: 0 0 12px;"><strong>📘 Guía: Qué hago con mi finiquito</strong></p>
                 <p style="margin: 0 0 12px;">6 páginas · lectura de 6 minutos · 3 escenarios de inversión + plan de 90 días.</p>
@@ -316,7 +331,7 @@ module.exports = async (req, res) => {
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'CartaDespido') {
             userSubject = 'Tus Modelos de Carta de Despido 2026 (Word .docx)';
-            const userIntro = `Hola ${cleanName}, gracias por solicitar los modelos de carta de despido en formato Word (.docx).`;
+            const userIntro = `Hola ${safeName}, gracias por solicitar los modelos de carta de despido en formato Word (.docx).`;
             const userBody = `
                 <p style="margin: 0 0 12px;"><strong>📄 Pack de Cartas de Despido Chile 2026</strong></p>
                 <p style="margin: 0 0 12px;">Incluye formatos Word (.docx totalmente editables para incorporar membrete y razón social):</p>
@@ -363,7 +378,7 @@ module.exports = async (req, res) => {
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'ProtocoloKarin') {
             userSubject = 'Tu pack Ley Karin para empresas (Word .docx)';
-            const userIntro = `Hola ${cleanName}, aquí tienes los documentos de Ley Karin en Word, editables con los datos de tu empresa.`;
+            const userIntro = `Hola ${safeName}, aquí tienes los documentos de Ley Karin en Word, editables con los datos de tu empresa.`;
             const userBody = `
                 <p style="margin: 0 0 12px;"><strong>Pack Ley Karin básico 2026</strong></p>
                 <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">
@@ -384,7 +399,7 @@ module.exports = async (req, res) => {
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'InformePDF') {
             const esSueldo = body.producto === 'sueldo_liquido';
-            const saludo = cleanName && cleanName !== 'Lector' ? `Hola ${cleanName},` : 'Hola,';
+            const saludo = cleanName && cleanName !== 'Lector' ? `Hola ${safeName},` : 'Hola,';
             const montoTxt = cleanMonto && cleanMonto !== '0' ? '$' + cleanMonto : '';
             userSubject = esSueldo ? 'Tu cálculo de sueldo líquido - Cálculo Laboral' : 'Tu cálculo de finiquito - Cálculo Laboral';
             const userIntro = `${saludo} aquí tienes una copia del resultado que calculaste en calculolaboral.cl. El informe en PDF lo descargaste desde la página.`;
@@ -413,7 +428,7 @@ module.exports = async (req, res) => {
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'Multa DT') {
             userSubject = 'Recibimos los antecedentes de tu multa DT - Cálculo Laboral';
-            const userIntro = `Hola ${cleanName}, recibimos los antecedentes de la multa de tu empresa.`;
+            const userIntro = `Hola ${safeName}, recibimos los antecedentes de la multa de tu empresa.`;
             const userBody = `
                 <p style="margin: 0 0 12px;"><strong>Reconsideración de multas DT (Art. 511 y 512)</strong></p>
                 <p style="margin: 0 0 12px;">Los plazos corren desde la notificación y no se detienen mientras revisamos tu caso:</p>
@@ -422,7 +437,7 @@ module.exports = async (req, res) => {
                     <li style="margin-bottom: 4px;">La solicitud de reconsideración se presenta dentro de los <strong>30 días</strong> siguientes a la notificación (Art. 512).</li>
                     <li>También existe la sustitución de la multa por capacitación (Art. 506 ter).</li>
                 </ul>
-                <p style="margin: 0 0 12px; font-size: 13px; color: #475569;">Revisaremos lo que nos enviaste y te responderemos a este correo (${cleanEmail}). No esperes nuestra respuesta para hacer el trámite: preséntalo ante la Inspección del Trabajo dentro del plazo. Cálculo Laboral entrega información referencial y no representa a empresas ante la Dirección del Trabajo.</p>
+                <p style="margin: 0 0 12px; font-size: 13px; color: #475569;">Revisaremos lo que nos enviaste y te responderemos a este correo (${safeEmail}). No esperes nuestra respuesta para hacer el trámite: preséntalo ante la Inspección del Trabajo dentro del plazo. Cálculo Laboral entrega información referencial y no representa a empresas ante la Dirección del Trabajo.</p>
                 <p style="margin: 0; font-size: 12px; color: #475569;">Guía completa: <a href="https://calculolaboral.cl/reconsideracion-multas-dt-art-511" style="color: #00382E;">calculolaboral.cl/reconsideracion-multas-dt-art-511</a></p>
             `;
             userHtml = buildEmailHtml({ title: 'Recibimos los antecedentes de tu multa', intro: userIntro, body: userBody });
@@ -430,7 +445,7 @@ module.exports = async (req, res) => {
         } else if (cleanTipo === 'Kit Laboral') {
             // Se envía al aceptar el aviso de retracto, antes de pagar en Flow: el kit llega en otro correo (api/flow-confirm)
             userSubject = 'Tu compra del Kit Blindaje Laboral - Cálculo Laboral';
-            const userIntro = `Hola ${cleanName}, iniciaste la compra del Kit Blindaje Laboral ($19.990) en Flow.`;
+            const userIntro = `Hola ${safeName}, iniciaste la compra del Kit Blindaje Laboral ($19.990) en Flow.`;
             const userBody = `
                 <p style="margin: 0 0 12px;">Cuando Flow confirma el pago, te enviamos el kit en un correo aparte con el enlace de descarga. Si no terminaste el pago, puedes retomarlo en <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes#comprar-kit" style="color: #00382E; font-weight: 600;">calculolaboral.cl/kit-cumplimiento-laboral-pymes</a>.</p>
                 <p style="margin: 0 0 12px;"><strong>Qué trae el kit:</strong> 21 modelos en Word y un manual en PDF con protocolo Ley Karin, anexos de jornada 42 horas, pactos y cláusulas por rubro, y checklist y guía de fiscalización DT. Son modelos de referencia basados en el Código del Trabajo para completar con los datos de tu empresa.</p>
@@ -440,9 +455,9 @@ module.exports = async (req, res) => {
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'Pyme') {
             userSubject = 'Recibimos tu consulta para empresas - Cálculo Laboral';
-            const userIntro = `Hola ${cleanName}, recibimos tu consulta sobre tu empresa.`;
+            const userIntro = `Hola ${safeName}, recibimos tu consulta sobre tu empresa.`;
             const userBody = `
-                <p style="margin: 0 0 12px;">La revisaremos y te responderemos a este correo (${cleanEmail}). Mientras tanto, estos son los modelos que puedes descargar hoy:</p>
+                <p style="margin: 0 0 12px;">La revisaremos y te responderemos a este correo (${safeEmail}). Mientras tanto, estos son los modelos que puedes descargar hoy:</p>
                 <ul style="margin: 0 0 12px; padding-left: 20px; font-size: 13px; color: #334155;">
                     <li style="margin-bottom: 4px;"><a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #00382E; font-weight: 600;">Kit Blindaje Laboral ($19.990)</a>: 21 modelos en Word y un manual en PDF con protocolo Ley Karin, anexos de jornada 42 horas, pactos y cláusulas por rubro, y checklist y guía de fiscalización DT.</li>
                     <li><a href="https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile" style="color: #00382E; font-weight: 600;">Kit Ley 21.719 Protección de Datos ($29.990)</a>: 7 instrumentos en Word y un manual para preparar tu pyme para la ley de datos personales, que rige desde el 1 de diciembre de 2026.</li>
@@ -454,8 +469,8 @@ module.exports = async (req, res) => {
         } else {
             // Other tipos: only the user gets a confirmation, no resource attached
             userSubject = 'Recibimos tu consulta en Cálculo Laboral';
-            const userIntro = `Hola ${cleanName}, recibimos tu mensaje.`;
-            const userBody = `<p style="margin: 0;">Lo revisaremos y te responderemos al correo ${cleanEmail}.</p>`;
+            const userIntro = `Hola ${safeName}, recibimos tu mensaje.`;
+            const userBody = `<p style="margin: 0;">Lo revisaremos y te responderemos al correo ${safeEmail}.</p>`;
             userHtml = buildEmailHtml({ title: 'Recibimos tu consulta', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         }
@@ -465,13 +480,13 @@ module.exports = async (req, res) => {
         const cleanOrigen = typeof body === 'object' && body && typeof body.origen === 'string' ? escapeHtml(body.origen.trim().slice(0, 160)) : '';
 
         // Notification email to JHON (with all lead details and origin source)
-        const jhonSubject = `[Lead - ${cleanFuente}] ${cleanName}`;
+        const jhonSubject = `[Lead - ${htmlToText(cleanFuente)}] ${cleanName}`;
         const jhonIntro = `Nuevo lead capturado desde <strong>${cleanFuente}</strong> en calculolaboral.cl.`;
         const jhonBody = `
             <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
                 <tr><td style="padding: 6px 0; color: #475569; width: 140px;">Origen / Formulario:</td><td style="padding: 6px 0; font-weight: bold; color: #00382E;">${cleanFuente}</td></tr>
-                <tr><td style="padding: 6px 0; color: #475569;">Nombre:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;">${cleanName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #475569;">Correo:</td><td style="padding: 6px 0;">${hasEmail ? `<a href="mailto:${cleanEmail}" style="color: #00382E; font-weight: 600;">${cleanEmail}</a>` : '— (solo WhatsApp)'}</td></tr>
+                <tr><td style="padding: 6px 0; color: #475569;">Nombre:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;">${safeName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #475569;">Correo:</td><td style="padding: 6px 0;">${hasEmail ? `<a href="mailto:${safeEmail}" style="color: #00382E; font-weight: 600;">${safeEmail}</a>` : '— (solo WhatsApp)'}</td></tr>
                 <tr><td style="padding: 6px 0; color: #475569;">Teléfono:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;"><a href="tel:${cleanPhone}" style="color: #0f172a; text-decoration: none;">${cleanPhone || '—'}</a></td></tr>
                 <tr><td style="padding: 6px 0; color: #475569;">Monto / Estimación:</td><td style="padding: 6px 0; font-weight: bold; color: #047857;">${cleanMonto && cleanMonto !== '0' ? '$' + cleanMonto + ' CLP' : 'Consulta directa desde guía'}</td></tr>
                 ${cleanDetalle ? `<tr><td style="padding: 6px 0; color: #475569;">Detalle / Caso:</td><td style="padding: 6px 0; color: #334155; font-style: italic;">${cleanDetalle}</td></tr>` : ''}
@@ -480,7 +495,7 @@ module.exports = async (req, res) => {
                 <tr><td style="padding: 6px 0; color: #475569;">Fecha:</td><td style="padding: 6px 0; color: #475569;">${fechaLocal}</td></tr>
             </table>
         `;
-        const jhonHtml = buildEmailHtml({ title: `Nuevo Lead: ${cleanName}`, intro: jhonIntro, body: jhonBody });
+        const jhonHtml = buildEmailHtml({ title: `Nuevo Lead: ${safeName}`, intro: jhonIntro, body: jhonBody });
         const jhonText = buildEmailText({ intro: jhonIntro, body: jhonBody });
 
         // Send BOTH emails via Resend (user first, then jhon)
