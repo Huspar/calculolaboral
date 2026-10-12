@@ -47,6 +47,17 @@ caso('servidorDe no devuelve usuario ni clave', () => {
     assert.ok(s.indexOf('secreta') < 0 && s.indexOf('usuario') < 0);
     assert.strictEqual(M.servidorDe('no es una url'), null);
 });
+caso('conSslEstricto fija verify-full y conserva el resto de la direccion', () => {
+    const u = M.conSslEstricto('postgresql://usuario:clave@ep-algo.sa-east-1.aws.neon.tech/asistente?sslmode=require&channel_binding=require');
+    const x = new URL(u);
+    assert.strictEqual(x.searchParams.get('sslmode'), 'verify-full');
+    assert.strictEqual(x.searchParams.get('channel_binding'), 'require');
+    assert.strictEqual(x.username, 'usuario');
+    assert.strictEqual(x.password, 'clave');
+    assert.strictEqual(x.host, 'ep-algo.sa-east-1.aws.neon.tech');
+    assert.strictEqual(x.pathname, '/asistente');
+    assert.strictEqual(new URL(M.conSslEstricto('postgresql://u:p@h.neon.tech/db')).searchParams.get('sslmode'), 'verify-full');
+});
 caso('produccion exige --confirmar-produccion para aplicar, no para ver el estado', () => {
     assert.throws(() => M.leerArgumentos(['--entorno=produccion']), /confirmar-produccion/);
     assert.doesNotThrow(() => M.leerArgumentos(['--entorno=produccion', '--estado']));

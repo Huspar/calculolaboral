@@ -64,6 +64,14 @@ function servidorDe(url) {
     try { return new URL(url).host; } catch (e) { return null; }
 }
 
+// Neon entrega sslmode=require; pg lo trata como verify-full y avisa que eso cambiara. Se fija explicito para conservar
+// la verificacion completa del certificado y evitar el aviso.
+function conSslEstricto(url) {
+    const u = new URL(url);
+    u.searchParams.set('sslmode', 'verify-full');
+    return u.toString();
+}
+
 function leerArgumentos(argv) {
     const a = { entorno: null, estado: false, dry: false, confirmarProduccion: false };
     argv.forEach(function (x) {
@@ -92,7 +100,7 @@ async function main() {
     console.log('Entorno: ' + args.entorno + ' | servidor: ' + servidor + ' | migraciones en disco: ' + migraciones.length);
 
     const { Client } = require('pg');
-    const cliente = new Client({ connectionString: url, ssl: { rejectUnauthorized: true } });
+    const cliente = new Client({ connectionString: conSslEstricto(url) });
     await cliente.connect();
     try {
         await cliente.query('SELECT pg_advisory_lock($1)', [BLOQUEO]);
@@ -140,4 +148,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { huella, listarMigraciones, planear, servidorDe, leerArgumentos, NOMBRE_VALIDO };
+module.exports = { huella, listarMigraciones, planear, servidorDe, conSslEstricto, leerArgumentos, NOMBRE_VALIDO };
