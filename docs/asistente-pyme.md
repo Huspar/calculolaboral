@@ -90,6 +90,7 @@ asistente-pyme.html               api/pyme.js  (UNA función         tablas (sec
 ### 3.2 Cifrado de datos
 
 - Los datos personales de cada trabajador y de la empresa van en una columna `datos_cifrados` (JSON cifrado con AES-256-GCM, con vector aleatorio por registro y número de versión de la clave). Las columnas sin cifrar son solo identificadores, fechas de control y banderas (`activo`).
+- **Implementado en `api/_pyme/cifrado.js` (23 pruebas en `tools/test_pyme_cifrado.js`).** Cada dato se cifra atado a un contexto (`trabajadores:<id>`): copiar el contenido cifrado a otro registro o a otra cuenta hace fallar el descifrado. Formato: vector de 12 bytes + etiqueta de 16 + texto cifrado; la versión de la clave va en `version_clave`. Claves de versiones siguientes: `PYME_DATA_KEY_2`…`_9` y `PYME_DATA_KEY_VERSION` para elegir con cuál se cifra. Los tokens y huellas están en `api/_pyme/tokens.js` (HMAC-SHA256 con `PYME_SESSION_SECRET`).
 - Como cada cuenta tiene máximo 5 trabajadores, no hay búsquedas por RUT en la base: se descifra la lista de la cuenta en el servidor y se busca en memoria.
 - **Rotación de clave:** `PYME_DATA_KEY` lleva versión; un script (`tools/pyme_rotar_clave.js`) recifra todo. La pérdida de la clave haría ilegibles los datos: se respalda fuera de Vercel (lo hace el dueño, un gestor de contraseñas).
 - Los registros (logs) de las funciones no incluyen datos personales: solo identificadores internos y códigos de error.
