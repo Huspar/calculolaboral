@@ -41,7 +41,7 @@ label{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:#334155;m
 
 function pagina(titulo, cuerpo) {
     return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><title>${escapeHtml(titulo)} · Cálculo Laboral</title>${ESTILO}</head>
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="origin"><title>${escapeHtml(titulo)} · Cálculo Laboral</title>${ESTILO}</head>
 <body><div class="t">${cuerpo}</div></body></html>`;
 }
 

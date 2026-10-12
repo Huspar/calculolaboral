@@ -89,7 +89,9 @@ function html(res, estado, cuerpo, extras) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-    res.setHeader('Referrer-Policy', 'no-referrer');
+    // "origin": el navegador manda el Origin correcto en el formulario (con "no-referrer" lo manda como "null" y se rechazaria)
+    // y a otras paginas solo llega el origen, nunca la direccion con el token del enlace.
+    res.setHeader('Referrer-Policy', 'origin');
     if (extras && extras.cookie) res.setHeader('Set-Cookie', extras.cookie);
     res.end(cuerpo);
 }

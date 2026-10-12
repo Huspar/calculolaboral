@@ -256,7 +256,7 @@ caso('verificar (GET): muestra la confirmación con casilla, escapa el token y n
     assert.ok(r.cuerpo.indexOf('a***@e***.cl') >= 0);
     assert.ok(r.cuerpo.indexOf('name="acepto"') >= 0 && r.cuerpo.indexOf('required') >= 0);
     assert.ok(r.cuerpo.indexOf('ana.perez') < 0, 'no debe mostrar el correo completo');
-    assert.ok(/noindex/.test(r.cuerpo) && r.headers['x-robots-tag'] === 'noindex, nofollow' && r.headers['referrer-policy'] === 'no-referrer');
+    assert.ok(/noindex/.test(r.cuerpo) && r.headers['x-robots-tag'] === 'noindex, nofollow' && r.headers['referrer-policy'] === 'origin' && /name="referrer" content="origin"/.test(r.cuerpo));
     assert.strictEqual((await pedir(m.rutas, { query: { ruta: 'verificar', t: token } })).statusCode, 200);
     const mala = await pedir(m.rutas, { query: { ruta: 'verificar', t: '"><script>alert(1)</script>' } });
     assert.strictEqual(mala.statusCode, 400);
