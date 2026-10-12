@@ -285,11 +285,11 @@ module.exports = async (req, res) => {
 <html lang="es">
 <head><meta charset="UTF-8"></head>
 <body style="font-family: -apple-system, system-ui, sans-serif; color: #0f172a; line-height: 1.5; max-width: 560px; margin: 0 auto; padding: 24px;">
-<h1 style="color: #0ea5e9; font-size: 22px; margin: 0 0 16px;">${title}</h1>
+<h1 style="color: #00382E; font-size: 22px; margin: 0 0 16px;">${title}</h1>
 <p style="margin: 0 0 16px;">${intro}</p>
-<div style="background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 14px 18px; margin: 0 0 16px; font-size: 14px;">${body}</div>
+<div style="background: #e8f0ee; border-left: 4px solid #00382E; padding: 14px 18px; margin: 0 0 16px; font-size: 14px;">${body}</div>
 <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
-<p style="font-size: 12px; color: #64748b; margin: 0;">Cálculo Laboral · calculolaboral.cl</p>
+<p style="font-size: 12px; color: #475569; margin: 0;">Cálculo Laboral · calculolaboral.cl</p>
 </body>
 </html>`;
         }
@@ -303,15 +303,17 @@ module.exports = async (req, res) => {
         if (cleanTipo === 'LeadMagnet') {
             // LeadMagnet: send a welcome email to the user with the guide link
             userSubject = 'Tu guía "Qué hago con mi finiquito" está lista';
-            const userIntro = `Hola ${cleanName}, gracias por descargar la guía. Te la adjuntamos a continuación.`;
+            const userIntro = `Hola ${cleanName}, gracias por descargar la guía. Aquí tienes el enlace de descarga.`;
             const userBody = `
                 <p style="margin: 0 0 12px;"><strong>📘 Guía: Qué hago con mi finiquito</strong></p>
                 <p style="margin: 0 0 12px;">6 páginas · lectura de 6 minutos · 3 escenarios de inversión + plan de 90 días.</p>
                 <p style="margin: 16px 0; text-align: center;">
-                    <a href="${GUIDE_URL}" style="background: #0ea5e9; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Descargar la guía (PDF)</a>
+                    <a href="${GUIDE_URL}" style="background: #00382E; color: #ffffff !important; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Descargar la guía (PDF)</a>
                 </p>
-                <p style="margin: 16px 0 0; font-size: 13px; color: #64748b;">El link de descarga funciona en cualquier dispositivo. Puedes compartirla con quien quieras.</p>
+                <p style="margin: 16px 0 0; font-size: 13px; color: #475569;">El enlace de descarga funciona en cualquier dispositivo. Puedes compartir la guía con quien quieras. Es material informativo y no constituye asesoría financiera ni legal.</p>
             `;
+            userHtml = buildEmailHtml({ title: 'Tu guía está lista 📘', intro: userIntro, body: userBody });
+            userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'CartaDespido') {
             userSubject = 'Tus Modelos de Carta de Despido 2026 (Word .docx)';
             const userIntro = `Hola ${cleanName}, gracias por solicitar los modelos de carta de despido en formato Word (.docx).`;
@@ -324,7 +326,7 @@ module.exports = async (req, res) => {
                     <li><strong>Checklist Legal:</strong> Plazos fatales de envío a Correos de Chile y comunicación a la Dirección del Trabajo (DT).</li>
                 </ul>
                 <p style="margin: 20px 0; text-align: center;">
-                    <a href="${DESPIDO_PACK_URL}" style="background: #0284c7; color: #ffffff !important; padding: 13px 26px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 14px;">Descargar Pack Completo (.zip)</a>
+                    <a href="${DESPIDO_PACK_URL}" style="background: #00382E; color: #ffffff !important; padding: 13px 26px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 14px;">Descargar Pack Completo (.zip)</a>
                 </p>
                 <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin: 18px 0;">
                     <p style="margin: 0 0 8px; font-size: 13px; font-weight: bold; color: #0f172a;">
@@ -335,26 +337,26 @@ module.exports = async (req, res) => {
                     </p>
                     <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.7;">
                         <li style="margin-bottom: 4px;">
-                            <a href="${DESPIDO_DOCX_ART161_URL}" style="color: #0284c7; text-decoration: underline; font-weight: 600;">Descargar Modelo 1: Art. 161 Necesidades de la Empresa (.docx)</a>
+                            <a href="${DESPIDO_DOCX_ART161_URL}" style="color: #00382E; text-decoration: underline; font-weight: 600;">Descargar Modelo 1: Art. 161 Necesidades de la Empresa (.docx)</a>
                         </li>
                         <li style="margin-bottom: 4px;">
-                            <a href="${DESPIDO_DOCX_ART160_URL}" style="color: #0284c7; text-decoration: underline; font-weight: 600;">Descargar Modelo 2: Art. 160 Nº 3 Inasistencia Injustificada (.docx)</a>
+                            <a href="${DESPIDO_DOCX_ART160_URL}" style="color: #00382E; text-decoration: underline; font-weight: 600;">Descargar Modelo 2: Art. 160 Nº 3 Inasistencia Injustificada (.docx)</a>
                         </li>
                         <li style="margin-bottom: 0;">
-                            <a href="${DESPIDO_DOCX_CHECKLIST_URL}" style="color: #0284c7; text-decoration: underline; font-weight: 600;">Descargar Checklist: Plazos y Trámites DT (.docx)</a>
+                            <a href="${DESPIDO_DOCX_CHECKLIST_URL}" style="color: #00382E; text-decoration: underline; font-weight: 600;">Descargar Checklist: Plazos y Trámites DT (.docx)</a>
                         </li>
                     </ul>
                 </div>
                 <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; margin: 18px 0; font-size: 12.5px; color: #92400e;">
-                    <strong>⚠️ Plazo Legal Obligatorio (Art. 177):</strong><br>
-                    Recuerda que una vez entregada o despachada la carta, tienes un plazo legal máximo de <strong>10 días hábiles</strong> para poner a disposición del trabajador su finiquito para firma ante ministro de fe.
+                    <strong>⚠️ Plazo legal (Art. 177):</strong><br>
+                    Dentro de los <strong>10 días hábiles</strong> siguientes a la separación del trabajador debes otorgar el finiquito y poner el pago a su disposición, para firmarlo ante ministro de fe.
                 </div>
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px;">
                     <strong>Soluciones complementarias para tu empresa:</strong><br>
-                    • <a href="https://calculolaboral.cl/pack-cartas-despido-chile" style="color: #0284c7; font-weight: bold;">Pack de Cartas de Despido por Causal ($9.990)</a>: 22 documentos Word con una carta para cada causal de los artículos 159, 160 y 161, amonestación, descargos y aviso a la Inspección.<br>
-                    • <a href="https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile" style="color: #e11d48; font-weight: bold;">Kit Ley 21.719 Protección de Datos ($29.990)</a>: 7 instrumentos en Word para adecuar tu pyme a la nueva ley de datos personales, que rige desde el 1 de diciembre de 2026. Reduce el riesgo de multas de la Agencia de Protección de Datos.<br>
-                    • <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #0284c7; font-weight: bold;">Kit de Blindaje Pyme ($19.990)</a>: Protocolo Ley Karin (DS 44), anexos Ley 40 Horas y carpeta de fiscalización DT.<br>
-                    • <a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #0284c7; font-weight: bold;">Generador de Finiquito Notarial ($12.990)</a>: Cálculo referencial de indemnizaciones y feriado proporcional, y documento para firmar ante ministro de fe.
+                    • <a href="https://calculolaboral.cl/pack-cartas-despido-chile" style="color: #00382E; font-weight: bold;">Pack de Cartas de Despido por Causal ($9.990)</a>: 22 documentos Word con una carta para cada causal de los artículos 159, 160 y 161, amonestación, descargos y aviso a la Inspección.<br>
+                    • <a href="https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile" style="color: #00382E; font-weight: bold;">Kit Ley 21.719 Protección de Datos ($29.990)</a>: 7 instrumentos en Word para adecuar tu pyme a la nueva ley de datos personales, que rige desde el 1 de diciembre de 2026. Reduce el riesgo de multas de la Agencia de Protección de Datos.<br>
+                    • <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #00382E; font-weight: bold;">Kit Blindaje Laboral ($19.990)</a>: 21 modelos en Word y un manual en PDF con protocolo Ley Karin, anexos de jornada 42 horas, pactos y cláusulas por rubro, y checklist y guía de fiscalización DT.<br>
+                    • <a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #00382E; font-weight: bold;">Generador de Finiquito ($12.990)</a>: cálculo referencial de indemnizaciones y feriado proporcional, y un documento de finiquito para firmar ante ministro de fe.
                 </div>
             `;
             userHtml = buildEmailHtml({ title: 'Tus Modelos de Carta de Despido (.docx) 📄', intro: userIntro, body: userBody });
@@ -374,9 +376,9 @@ module.exports = async (req, res) => {
                     <strong>Si llega una denuncia:</strong> adopta de inmediato medidas de resguardo, decide en 3 días hábiles si investigas o derivas a la Inspección del Trabajo, y si investigas, termina en 30 días hábiles.
                 </div>
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px;">
-                    ¿Prefieres el protocolo ya redactado? El <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #00382E; font-weight: bold;">Kit Blindaje Laboral Pyme ($19.990)</a> incluye el protocolo completo, la matriz de riesgos psicosociales, las actas de resguardo y capacitación, y anexos de jornada 42 horas.
+                    ¿Prefieres el protocolo ya redactado? El <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #00382E; font-weight: bold;">Kit Blindaje Laboral ($19.990)</a> incluye un modelo de protocolo para completar con los datos de tu empresa, la matriz de riesgos psicosociales, el registro de medidas de resguardo, el acta de entrega del protocolo y anexos de jornada 42 horas.
                 </div>
-                <p style="margin: 12px 0 0; font-size: 12px; color: #64748b;">Son modelos de referencia basados en la Ley 21.643; adáptalos a tu empresa. Guía completa: <a href="https://calculolaboral.cl/protocolo-ley-karin-empresas" style="color: #00382E;">calculolaboral.cl/protocolo-ley-karin-empresas</a></p>
+                <p style="margin: 12px 0 0; font-size: 12px; color: #475569;">Son modelos de referencia basados en la Ley 21.643; adáptalos a tu empresa. Guía completa: <a href="https://calculolaboral.cl/protocolo-ley-karin-empresas" style="color: #00382E;">calculolaboral.cl/protocolo-ley-karin-empresas</a></p>
             `;
             userHtml = buildEmailHtml({ title: 'Tu pack Ley Karin (.docx)', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
@@ -401,39 +403,59 @@ module.exports = async (req, res) => {
                 <p style="margin: 14px 0 6px;"><strong>Para seguir:</strong></p>
                 <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">${siguiente}</ul>
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px; color: #334155;">
-                    <span style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em;">Publicidad · Banco Itaú</span><br>
+                    <span style="font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Publicidad · Banco Itaú</span><br>
                     ${esSueldo ? '¿Dónde recibirás tu sueldo?' : '¿Dónde recibirás tu pago?'} Abre una Cuenta Corriente Itaú 100% online, con $0 de mantención al transferir tu remuneración mensual. Sujeto a evaluación de antecedentes comerciales.<br>
                     <a href="https://calculolaboral.cl/itau-correo" style="color: #00382E; font-weight: bold;">Ver la cuenta corriente</a>
                 </div>
-                <p style="margin: 12px 0 0; font-size: 12px; color: #64748b;">Recibes este correo porque pediste una copia del cálculo en calculolaboral.cl. No te enviaremos otros mensajes por este motivo.</p>
+                <p style="margin: 12px 0 0; font-size: 12px; color: #475569;">Recibes este correo porque pediste una copia del cálculo en calculolaboral.cl. No te enviaremos otros mensajes por este motivo.</p>
             `;
             userHtml = buildEmailHtml({ title: esSueldo ? 'Tu cálculo de sueldo líquido' : 'Tu cálculo de finiquito', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'Multa DT') {
-            userSubject = 'Evaluación de Multa DT (Art. 511) - Cálculo Laboral';
-            const userIntro = `Hola ${cleanName}, hemos recibido los antecedentes de la multa de tu empresa.`;
+            userSubject = 'Recibimos los antecedentes de tu multa DT - Cálculo Laboral';
+            const userIntro = `Hola ${cleanName}, recibimos los antecedentes de la multa de tu empresa.`;
             const userBody = `
-                <p style="margin: 0 0 12px;"><strong>Reconsideración Administrativa de Multa DT (Art. 511)</strong></p>
-                <p style="margin: 0 0 12px;">Considerando que el plazo legal ante la Dirección del Trabajo es perentorio (<strong>15 días hábiles</strong> desde la notificación), un especialista revisará la viabilidad de solicitar la rebaja de hasta el 80% o sustitución por capacitación.</p>
-                <p style="margin: 0; color: #64748b; font-size: 13px;">Te contactaremos a la mayor brevedad a tu correo (${cleanEmail}) o teléfono de contacto.</p>
+                <p style="margin: 0 0 12px;"><strong>Reconsideración de multas DT (Art. 511 y 512)</strong></p>
+                <p style="margin: 0 0 12px;">Los plazos corren desde la notificación y no se detienen mientras revisamos tu caso:</p>
+                <ul style="margin: 0 0 12px; padding-left: 20px; font-size: 13px; color: #334155;">
+                    <li style="margin-bottom: 4px;">Si corriges la infracción dentro de <strong>15 días hábiles</strong>, la multa se rebaja al menos en un 50% (al menos en un 80% en micro y pequeña empresa).</li>
+                    <li style="margin-bottom: 4px;">La solicitud de reconsideración se presenta dentro de los <strong>30 días</strong> siguientes a la notificación (Art. 512).</li>
+                    <li>También existe la sustitución de la multa por capacitación (Art. 506 ter).</li>
+                </ul>
+                <p style="margin: 0 0 12px; font-size: 13px; color: #475569;">Revisaremos lo que nos enviaste y te responderemos a este correo (${cleanEmail}). No esperes nuestra respuesta para hacer el trámite: preséntalo ante la Inspección del Trabajo dentro del plazo. Cálculo Laboral entrega información referencial y no representa a empresas ante la Dirección del Trabajo.</p>
+                <p style="margin: 0; font-size: 12px; color: #475569;">Guía completa: <a href="https://calculolaboral.cl/reconsideracion-multas-dt-art-511" style="color: #00382E;">calculolaboral.cl/reconsideracion-multas-dt-art-511</a></p>
             `;
-            userHtml = buildEmailHtml({ title: 'Solicitud Recibida - Multa DT', intro: userIntro, body: userBody });
+            userHtml = buildEmailHtml({ title: 'Recibimos los antecedentes de tu multa', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
-        } else if (cleanTipo === 'Pyme' || cleanTipo === 'Kit Laboral') {
-            userSubject = 'Confirmación de Solicitud para Empresas - Cálculo Laboral';
-            const userIntro = `Hola ${cleanName}, hemos recibido tu consulta sobre soluciones laborales para tu empresa.`;
+        } else if (cleanTipo === 'Kit Laboral') {
+            // Se envía al aceptar el aviso de retracto, antes de pagar en Flow: el kit llega en otro correo (api/flow-confirm)
+            userSubject = 'Tu compra del Kit Blindaje Laboral - Cálculo Laboral';
+            const userIntro = `Hola ${cleanName}, iniciaste la compra del Kit Blindaje Laboral ($19.990) en Flow.`;
             const userBody = `
-                <p style="margin: 0 0 12px;"><strong>Kit de Blindaje y Cumplimiento Laboral Pyme 2026</strong></p>
-                <p style="margin: 0 0 12px;">Tu solicitud ha sido registrada correctamente. Un ejecutivo de atención para empleadores revisará los requerimientos de tu rubro y te contactará a la brevedad.</p>
-                <p style="margin: 0; color: #64748b; font-size: 13px;">Cálculo Laboral · calculolaboral.cl</p>
+                <p style="margin: 0 0 12px;">Cuando Flow confirma el pago, te enviamos el kit en un correo aparte con el enlace de descarga. Si no terminaste el pago, puedes retomarlo en <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes#comprar-kit" style="color: #00382E; font-weight: 600;">calculolaboral.cl/kit-cumplimiento-laboral-pymes</a>.</p>
+                <p style="margin: 0 0 12px;"><strong>Qué trae el kit:</strong> 21 modelos en Word y un manual en PDF con protocolo Ley Karin, anexos de jornada 42 horas, pactos y cláusulas por rubro, y checklist y guía de fiscalización DT. Son modelos de referencia basados en el Código del Trabajo para completar con los datos de tu empresa.</p>
+                <p style="margin: 0; font-size: 13px; color: #475569;">Si pagaste y el correo con el kit no llega en unos minutos, revisa la carpeta de spam o responde este mensaje.</p>
             `;
-            userHtml = buildEmailHtml({ title: 'Solicitud para Empresas Registrada', intro: userIntro, body: userBody });
+            userHtml = buildEmailHtml({ title: 'Tu compra del Kit Blindaje Laboral', intro: userIntro, body: userBody });
+            userText = buildEmailText({ intro: userIntro, body: userBody });
+        } else if (cleanTipo === 'Pyme') {
+            userSubject = 'Recibimos tu consulta para empresas - Cálculo Laboral';
+            const userIntro = `Hola ${cleanName}, recibimos tu consulta sobre tu empresa.`;
+            const userBody = `
+                <p style="margin: 0 0 12px;">La revisaremos y te responderemos a este correo (${cleanEmail}). Mientras tanto, estos son los modelos que puedes descargar hoy:</p>
+                <ul style="margin: 0 0 12px; padding-left: 20px; font-size: 13px; color: #334155;">
+                    <li style="margin-bottom: 4px;"><a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #00382E; font-weight: 600;">Kit Blindaje Laboral ($19.990)</a>: 21 modelos en Word y un manual en PDF con protocolo Ley Karin, anexos de jornada 42 horas, pactos y cláusulas por rubro, y checklist y guía de fiscalización DT.</li>
+                    <li><a href="https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile" style="color: #00382E; font-weight: 600;">Kit Ley 21.719 Protección de Datos ($29.990)</a>: 7 instrumentos en Word y un manual para preparar tu pyme para la ley de datos personales, que rige desde el 1 de diciembre de 2026.</li>
+                </ul>
+                <p style="margin: 0; font-size: 12px; color: #475569;">Son modelos de referencia basados en la normativa vigente; adáptalos a tu empresa.</p>
+            `;
+            userHtml = buildEmailHtml({ title: 'Recibimos tu consulta', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else {
             // Other tipos: only the user gets a confirmation, no resource attached
             userSubject = 'Recibimos tu consulta en Cálculo Laboral';
-            const userIntro = `Hola ${cleanName}, recibimos tu mensaje. Te contactaremos pronto.`;
-            const userBody = `<p>Nuestro equipo revisará tu caso y te responderá a la brevedad al correo ${cleanEmail}.</p>`;
+            const userIntro = `Hola ${cleanName}, recibimos tu mensaje.`;
+            const userBody = `<p style="margin: 0;">Lo revisaremos y te responderemos al correo ${cleanEmail}.</p>`;
             userHtml = buildEmailHtml({ title: 'Recibimos tu consulta', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         }
@@ -447,15 +469,15 @@ module.exports = async (req, res) => {
         const jhonIntro = `Nuevo lead capturado desde <strong>${cleanFuente}</strong> en calculolaboral.cl.`;
         const jhonBody = `
             <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Origen / Formulario:</td><td style="padding: 6px 0; font-weight: bold; color: #0284c7;">${cleanFuente}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Nombre:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;">${cleanName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Correo:</td><td style="padding: 6px 0;">${hasEmail ? `<a href="mailto:${cleanEmail}" style="color: #0ea5e9; font-weight: 600;">${cleanEmail}</a>` : '— (solo WhatsApp)'}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Teléfono:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;"><a href="tel:${cleanPhone}" style="color: #0f172a; text-decoration: none;">${cleanPhone || '—'}</a></td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Monto / Estimación:</td><td style="padding: 6px 0; font-weight: bold; color: #16a34a;">${cleanMonto && cleanMonto !== '0' ? '$' + cleanMonto + ' CLP' : 'Consulta directa desde guía'}</td></tr>
-                ${cleanDetalle ? `<tr><td style="padding: 6px 0; color: #64748b;">Detalle / Caso:</td><td style="padding: 6px 0; color: #334155; font-style: italic;">${cleanDetalle}</td></tr>` : ''}
-                ${cleanOrigen ? `<tr><td style="padding: 6px 0; color: #64748b;">Llegó desde:</td><td style="padding: 6px 0; color: #334155;">${cleanOrigen}</td></tr>` : ''}
-                <tr><td style="padding: 6px 0; color: #64748b;">Tipo:</td><td style="padding: 6px 0; color: #64748b;">${cleanTipo}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Fecha:</td><td style="padding: 6px 0; color: #64748b;">${fechaLocal}</td></tr>
+                <tr><td style="padding: 6px 0; color: #475569; width: 140px;">Origen / Formulario:</td><td style="padding: 6px 0; font-weight: bold; color: #00382E;">${cleanFuente}</td></tr>
+                <tr><td style="padding: 6px 0; color: #475569;">Nombre:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;">${cleanName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #475569;">Correo:</td><td style="padding: 6px 0;">${hasEmail ? `<a href="mailto:${cleanEmail}" style="color: #00382E; font-weight: 600;">${cleanEmail}</a>` : '— (solo WhatsApp)'}</td></tr>
+                <tr><td style="padding: 6px 0; color: #475569;">Teléfono:</td><td style="padding: 6px 0; font-weight: bold; color: #0f172a;"><a href="tel:${cleanPhone}" style="color: #0f172a; text-decoration: none;">${cleanPhone || '—'}</a></td></tr>
+                <tr><td style="padding: 6px 0; color: #475569;">Monto / Estimación:</td><td style="padding: 6px 0; font-weight: bold; color: #047857;">${cleanMonto && cleanMonto !== '0' ? '$' + cleanMonto + ' CLP' : 'Consulta directa desde guía'}</td></tr>
+                ${cleanDetalle ? `<tr><td style="padding: 6px 0; color: #475569;">Detalle / Caso:</td><td style="padding: 6px 0; color: #334155; font-style: italic;">${cleanDetalle}</td></tr>` : ''}
+                ${cleanOrigen ? `<tr><td style="padding: 6px 0; color: #475569;">Llegó desde:</td><td style="padding: 6px 0; color: #334155;">${cleanOrigen}</td></tr>` : ''}
+                <tr><td style="padding: 6px 0; color: #475569;">Tipo:</td><td style="padding: 6px 0; color: #475569;">${cleanTipo}</td></tr>
+                <tr><td style="padding: 6px 0; color: #475569;">Fecha:</td><td style="padding: 6px 0; color: #475569;">${fechaLocal}</td></tr>
             </table>
         `;
         const jhonHtml = buildEmailHtml({ title: `Nuevo Lead: ${cleanName}`, intro: jhonIntro, body: jhonBody });
