@@ -954,28 +954,10 @@ window.addEventListener('load', function () {
                             <p class="text-xs text-slate-600 mt-1">Aplica a Regiones de Aysén, Magallanes y Provincia de Palena.</p>
                         </div>
 
-                        <!-- 5. Jornada Semanal -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                                Distribución de Jornada
-                            </label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="vac-jornada" value="5" checked onchange="calculateVacaciones()" class="peer sr-only">
-                                    <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
-                                        Lunes a Viernes
-                                        <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Sábado inhábil DT</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="vac-jornada" value="6" onchange="calculateVacaciones()" class="peer sr-only">
-                                    <div class="p-3 text-center border border-slate-200 rounded-xl peer-checked:border-[#00382E] peer-checked:bg-[#00382E]/5 peer-checked:text-[#00382E] font-bold text-xs hover:bg-slate-50 transition-all">
-                                        Lunes a Sábado
-                                        <span class="block text-xs font-normal text-slate-600 peer-checked:text-[#00382E]/80">Sábado hábil laboral</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
+                        <!-- 5. Días inhábiles (art. 69 CT) -->
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong class="text-slate-700">Sábados, domingos y festivos son siempre inhábiles</strong> en el cálculo del feriado, aunque trabajes de lunes a sábado (art. 69 del Código del Trabajo).
+                        </p>
                     </div>
 
                     <!-- MODE 2: DÍAS ACUMULADOS (TRABAJADOR ACTIVO) -->
@@ -1540,10 +1522,13 @@ window.addEventListener('load', function () {
 
     <!-- Scripts -->
     <script>
+        // Feriados nacionales. Pueblos Indígenas = solsticio de invierno (Ley 21.357): 20-jun-2025, 21-jun-2026, 21-jun-2027
         const CHILE_HOLIDAYS = [
             '2025-01-01', '2025-04-18', '2025-04-19', '2025-05-01', '2025-05-21', '2025-06-20', '2025-06-29', '2025-07-16', '2025-08-15', '2025-09-18', '2025-09-19', '2025-10-12', '2025-10-31', '2025-11-01', '2025-12-08', '2025-12-25',
             '2026-01-01', '2026-04-03', '2026-04-04', '2026-05-01', '2026-05-21', '2026-06-21', '2026-06-29', '2026-07-16', '2026-08-15', '2026-09-18', '2026-09-19', '2026-10-12', '2026-10-31', '2026-11-01', '2026-12-08', '2026-12-25',
-            '2027-01-01', '2027-03-26', '2027-03-27', '2027-05-01', '2027-05-21', '2027-06-21', '2027-06-29', '2027-07-16', '2027-08-15', '2027-09-18', '2027-09-19', '2027-10-12', '2027-10-31', '2027-11-01', '2027-12-08', '2027-12-25'
+            // 2027: 29-jun y 12-oct caen martes y pasan al lunes 28-jun y 11-oct (Ley 19.668);
+            // 18 y 19-sep caen sábado y domingo, así que el viernes 17-sep es feriado (Ley 20.983)
+            '2027-01-01', '2027-03-26', '2027-03-27', '2027-05-01', '2027-05-21', '2027-06-21', '2027-06-28', '2027-07-16', '2027-08-15', '2027-09-17', '2027-09-18', '2027-09-19', '2027-10-11', '2027-10-31', '2027-11-01', '2027-12-08', '2027-12-25'
         ];
 
         let currentVacMode = 'proporcionales';
@@ -1658,7 +1643,6 @@ window.addEventListener('load', function () {
             var sueldoBase = parseVacCurrency(document.getElementById('vac-sueldo-base').value) || 0;
             var diasTomados = parseFloat(document.getElementById('vac-dias-tomados').value) || 0;
             var regimen = document.querySelector('input[name="vac-regimen"]:checked')?.value || 'general';
-            var jornada = document.querySelector('input[name="vac-jornada"]:checked')?.value || '5';
 
             var heroCard = document.getElementById('results-hero-card');
             if (heroCard) heroCard.className = 'p-6 bg-slate-50 border border-slate-200/90 rounded-3xl relative overflow-hidden transition-all shadow-2xs';
@@ -1729,12 +1713,8 @@ window.addEventListener('load', function () {
                 var dateKey = curr.getFullYear() + '-' + mm + '-' + dd;
                 var isHoliday = CHILE_HOLIDAYS.includes(dateKey);
 
-                var isWorkDay = true;
-                if (jornada === '5') {
-                    if (isSat || isSun || isHoliday) isWorkDay = false;
-                } else {
-                    if (isSun || isHoliday) isWorkDay = false;
-                }
+                // Art. 69 CT: para el feriado, el sábado es siempre inhábil, sea cual sea la jornada
+                var isWorkDay = !(isSat || isSun || isHoliday);
 
                 if (isWorkDay) {
                     if (habilesRemaining >= 1.0) {
