@@ -201,7 +201,7 @@ Con datos de terceros en nuestros servidores, el sitio pasa a actuar como **enca
 | 1. Cuentas | Hecho en código; 29 pruebas sin base y 11 contra la base real de `pruebas` (consultas SQL, consumo atómico del enlace con dos solicitudes simultáneas, cifrado en `bytea`, borrado en cascada), todas correctas. Textos legales como **borrador** en `terminos.html` (sección 12) y `privacidad.html` (sección 10). **Falta:** revisión de los textos por un abogado, decidir la región de Vercel y la página `/asistente-pyme` con el formulario de entrada (fase 2). |
 
 Pendientes que bloquean el lanzamiento de la fase 1:
-- **Región de las funciones de Vercel.** Por defecto se ejecutan en Washington D.C. (`iad1`); la base está en São Paulo, así que cada consulta cruzaría de EE. UU. a Brasil. Revisar en Vercel (Settings → Functions → Function Region) y, de ser así, fijar `gru1` (São Paulo). Cambia todas las funciones del sitio, no solo el Asistente.
+- **Región de las funciones de Vercel: resuelto el 12-oct-2026.** Estaban en Washington D.C. (`iad1`); se fijó `gru1` (São Paulo) en la configuración del proyecto y se volvió a desplegar el mismo commit de producción (`2517516`). Comprobado con el encabezado `x-vercel-id: gru1::gru1` en `calculolaboral.cl`.
 - **Retracto y reembolso del Pase.** Los Términos actuales excluyen el retracto para bienes digitales descargables. El Pase es un servicio con duración: qué corresponde lo debe definir un abogado antes de la fase 5. No quedó escrito en los Términos.
 - **Revisión de los textos por un abogado** (Ley 21.719): rol de encargado, subencargados, transferencia a Brasil, aviso de incidentes y plazos de conservación (7 días de respaldo de Neon y 90 días en modo lectura tras vencer el pase).
 
