@@ -88,7 +88,7 @@
             '<p class="cl-lead__monto" data-lead-monto hidden></p>' +
             '<ul class="cl-lead__puntos">' +
                 '<li>Evaluación preliminar de tu caso</li>' +
-                '<li>Honorarios habituales a porcentaje de lo recuperado (cuota litis)</li>' +
+                '<li>Los honorarios los acuerdas directamente con el abogado</li>' +
                 '<li>Intentamos derivar tu caso a un abogado laboralista independiente</li>' +
             '</ul>' +
             '<button type="button" class="cl-lead__abrir" aria-expanded="false" aria-controls="' + uid + '-form">Revisar mi caso</button>' +
