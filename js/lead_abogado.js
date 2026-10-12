@@ -89,7 +89,7 @@
             '<ul class="cl-lead__puntos">' +
                 '<li>Evaluación preliminar sin costo inicial</li>' +
                 '<li>Honorarios habituales a porcentaje de lo recuperado (cuota litis)</li>' +
-                '<li>Te contacta un abogado laboralista colaborador</li>' +
+                '<li>Intentamos derivar tu caso a un abogado laboralista independiente</li>' +
             '</ul>' +
             '<button type="button" class="cl-lead__abrir" aria-expanded="false" aria-controls="' + uid + '-form">Revisar mi caso gratis</button>' +
             '<form class="cl-lead__form" id="' + uid + '-form" hidden novalidate>' +
@@ -195,7 +195,7 @@
                     });
                 }
                 form.hidden = true;
-                ok.innerHTML = '<strong>Listo, ' + esc(nombre.split(' ')[0]) + '.</strong> Recibimos tus datos. Un abogado laboralista colaborador te contactará al ' + esc(telefono) + ' en horario hábil.';
+                ok.innerHTML = '<strong>Listo, ' + esc(nombre.split(' ')[0]) + '.</strong> Recibimos tus datos. Los revisaremos e intentaremos derivar tu caso a un abogado laboralista independiente, que podría contactarte al ' + esc(telefono) + '. No podemos asegurar un plazo de respuesta ni que tu caso sea aceptado.';
                 ok.hidden = false;
                 ok.focus();
                 track('generate_lead', { fuente: fuente, tipo: 'abogado', value: 15000, currency: 'CLP' });
