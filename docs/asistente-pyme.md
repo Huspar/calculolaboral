@@ -197,8 +197,8 @@ Con datos de terceros en nuestros servidores, el sitio pasa a actuar como **enca
 
 | Fase | Estado |
 | :--- | :--- |
-| 0. Base | Hecho en código: proyecto Neon y ramas, integración con Vercel, claves, migración `001`, `tools/db_migrate.js`, cifrado, `feriados_cl.js`. **Falta:** que el dueño aplique la migración a la rama `pruebas` y la pruebe con `tools/test_pyme_almacen_db.js`. |
-| 1. Cuentas | Hecho en código y probado sin base (29 pruebas): `api/pyme/[ruta].js` con `entrar`, `verificar`, `sesion` y `salir`; correo con enlace; página intermedia que no consume el enlace; límites; sesiones; auditoría. Textos legales redactados como **borrador** en `terminos.html` (sección 12) y `privacidad.html` (sección 10). **Falta:** prueba contra la base real, revisión de los textos por un abogado y la página `/asistente-pyme` con el formulario de entrada (fase 2). |
+| 0. Base | **Hecho.** Proyecto Neon y ramas, integración con Vercel, claves, migración `001` aplicada a la rama `pruebas` el 12-oct-2026 (12 tablas: las 11 más `schema_migraciones`; `production` sigue vacía a propósito), `tools/db_migrate.js`, cifrado, `feriados_cl.js`. |
+| 1. Cuentas | Hecho en código; 29 pruebas sin base y 11 contra la base real de `pruebas` (consultas SQL, consumo atómico del enlace con dos solicitudes simultáneas, cifrado en `bytea`, borrado en cascada), todas correctas. Textos legales como **borrador** en `terminos.html` (sección 12) y `privacidad.html` (sección 10). **Falta:** revisión de los textos por un abogado, decidir la región de Vercel y la página `/asistente-pyme` con el formulario de entrada (fase 2). |
 
 Pendientes que bloquean el lanzamiento de la fase 1:
 - **Región de las funciones de Vercel.** Por defecto se ejecutan en Washington D.C. (`iad1`); la base está en São Paulo, así que cada consulta cruzaría de EE. UU. a Brasil. Revisar en Vercel (Settings → Functions → Function Region) y, de ser así, fijar `gru1` (São Paulo). Cambia todas las funciones del sitio, no solo el Asistente.
