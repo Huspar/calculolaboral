@@ -193,6 +193,18 @@ Con datos de terceros en nuestros servidores, el sitio pasa a actuar como **enca
 | 5. Pase Pyme | Productos Flow, vigencia en la cuenta, límite de trabajadores, correo, GA4, AGENTS.md 2.1; compra de prueba real | Sí |
 | 6. Página y SEO | Contenido indexable, FAQ, JSON-LD, sitemap, enlaces desde `para-empleadores` y generadores, IndexNow | Sí |
 
+### Estado al 12-oct-2026
+
+| Fase | Estado |
+| :--- | :--- |
+| 0. Base | Hecho en código: proyecto Neon y ramas, integración con Vercel, claves, migración `001`, `tools/db_migrate.js`, cifrado, `feriados_cl.js`. **Falta:** que el dueño aplique la migración a la rama `pruebas` y la pruebe con `tools/test_pyme_almacen_db.js`. |
+| 1. Cuentas | Hecho en código y probado sin base (29 pruebas): `api/pyme/[ruta].js` con `entrar`, `verificar`, `sesion` y `salir`; correo con enlace; página intermedia que no consume el enlace; límites; sesiones; auditoría. Textos legales redactados como **borrador** en `terminos.html` (sección 12) y `privacidad.html` (sección 10). **Falta:** prueba contra la base real, revisión de los textos por un abogado y la página `/asistente-pyme` con el formulario de entrada (fase 2). |
+
+Pendientes que bloquean el lanzamiento de la fase 1:
+- **Región de las funciones de Vercel.** Por defecto se ejecutan en Washington D.C. (`iad1`); la base está en São Paulo, así que cada consulta cruzaría de EE. UU. a Brasil. Revisar en Vercel (Settings → Functions → Function Region) y, de ser así, fijar `gru1` (São Paulo). Cambia todas las funciones del sitio, no solo el Asistente.
+- **Retracto y reembolso del Pase.** Los Términos actuales excluyen el retracto para bienes digitales descargables. El Pase es un servicio con duración: qué corresponde lo debe definir un abogado antes de la fase 5. No quedó escrito en los Términos.
+- **Revisión de los textos por un abogado** (Ley 21.719): rol de encargado, subencargados, transferencia a Brasil, aviso de incidentes y plazos de conservación (7 días de respaldo de Neon y 90 días en modo lectura tras vencer el pase).
+
 Cada fase: rama propia, `node tools/test_pyme.js` y `node tools/test_liquidacion.js` en verde, pruebas de la API contra la rama `pruebas`, revisión en 1200 px y 390 px, y publicación solo tras "Sí, súbelo y mézclalo directo a main".
 
 ## 8. Verificaciones normativas antes de programar (fase 0)
