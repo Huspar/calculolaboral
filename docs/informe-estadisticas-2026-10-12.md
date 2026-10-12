@@ -14,7 +14,7 @@
 2. **Las dos últimas semanas siguen la misma tendencia.** Clics de Google +43% (362 → 517) e impresiones +66% (27.221 → 45.159). Las sesiones de GA4 suben +78% (1.079 → 1.921).
 3. **El CTR de Google baja** (1,33% → 1,14%) porque las impresiones crecen más que los clics. La causa principal es una sola página: `/ley-40-horas-chile-2026` tiene el 53% de las impresiones del sitio pero solo el 22% de los clics.
 4. **Bing y Yahoo ya pesan más que Google en sesiones.** Bing orgánico (1.038) y Yahoo (unos 400) suman cerca de 1.440 sesiones, frente a 1.222 de Google orgánico. Hoy no hay forma de medir Bing en Search Console, porque no está configurado Bing Webmaster Tools.
-5. **Hay tráfico "ruido" que infla las cifras de GA4**: visitas directas con muchas páginas por sesión y 350 sesiones sin página de entrada (`(not set)`). Parte coincide con días de auditoría y pruebas. Conviene filtrar el tráfico interno antes de sacar conclusiones finas.
+5. **Hay "ruido" que infla las cifras de GA4.** El tráfico Directo (333 sesiones) es en su mayoría pruebas propias (44%) y bots de centros de datos de Singapur, EE. UU. y China (32%). Las 350 sesiones `(not set)` son personas reales (Chile, computador, desde buscadores) que vuelven a una pestaña antigua: no suman usuarios (ver 3.5).
 6. **Los cambios de la auditoría (publicados el 9 de octubre) todavía no se pueden evaluar.** Los datos de Search Console llegan solo hasta el 9-oct. La primera lectura útil es hacia el 5 de noviembre.
 
 ---
@@ -162,11 +162,28 @@ Tiempo medio de interacción: 98 segundos (+1,9 s). Páginas por sesión: 1,65.
 | `/guia-vacaciones-proporcionales` | 46 | −74 | 87% | Cayó por la redirección a la calculadora. |
 | `/carta-de-despido-chile` | 30 | −25 | 67% | En descenso. |
 
-### 3.5 Calidad de los datos
+### 3.5 Calidad de los datos (revisión del 12-oct)
 
-- **`(not set)`: 350 sesiones (11%)** con 0 páginas vistas. Es tráfico que no ejecutó bien la medición (por ejemplo, bloqueadores o rastreadores).
-- **Directo con 5,5 páginas por sesión y 34% de interacción**, y **`/index.html` con 18 sesiones y 744 páginas vistas** (41 por sesión): patrón de rastreador o de auditoría automática, no de personas.
-- **Recomendación:** crear en GA4 un filtro de tráfico interno y de desarrollador, y revisar los dominios y agentes que generan `(not set)`. Hasta entonces, las "páginas vistas" y el "directo" no sirven para decidir.
+**Tráfico "Directo" (333 sesiones, 5,5 páginas por sesión, 34% de interacción).** No es tráfico de personas; se reparte así (estimación):
+
+| Origen | Sesiones | Cómo se reconoce |
+| :--- | ---: | :--- |
+| **Pruebas y auditorías propias** | unas 146 (44%) | 90% de las páginas vistas son de Santiago y Windows. Tres días concentran 1.408 de las 1.827 páginas vistas: 30-sep (384), 1-oct (544) y 8-oct (480). Entran por `/index.html` (18 sesiones y 744 páginas vistas, 41 por sesión) y por direcciones con `.html`, que ninguna persona usa. |
+| **Bots desde centros de datos** | unas 105 (32%) | Singapur (40), EE. UU. (41, en Council Bluffs, Ashburn, Boardman, San José y Des Moines, ciudades de nubes de Google y Amazon), China (18) e India (3). Casi sin interacción (0 a 27%) y 0,7 segundos de tiempo medio en Singapur. |
+| **Personas reales** | unas 80 (25%) | Visitas que escriben la dirección, usan un favorito o llegan por mensajes (WhatsApp). |
+
+**Sesiones sin página de entrada `(not set)` (350, el 11%).** Corrección a lo dicho antes: **no son rastreadores**. Son personas reales:
+- El 99% es de Chile y el 95% en computador (Chrome 51%, Edge 46%).
+- Llegan por Bing (163), Google (104) y Yahoo (71): vienen de buscadores.
+- **Ningún usuario nuevo** (0 de 350) y 0 páginas vistas: son sesiones que GA4 abre sin registrar la página, típicamente cuando alguien vuelve a una pestaña que dejó abierta más de 30 minutos. No son visitantes adicionales: son los mismos usuarios contados otra vez.
+- Cantidad estable desde el 15-sep (5 a 37 por día), así que **no la causó** el cambio del 9-oct (Analytics ahora carga en reposo).
+- Efecto: suben las sesiones en un 11% y bajan la tasa de interacción (87% de rebote), pero no cambian los usuarios.
+
+**Qué hacer**
+1. Tus visitas ya se marcan como internas (`?interno=1`) y el filtro está en Pruebas: pasarlo a Activo cuando confirmes que funciona.
+2. Las auditorías automáticas (rastreos, capturas) deben entrar con el modo interno activado, o se repetirán los días de 400 a 500 páginas vistas.
+3. Bots: son el 3% de las sesiones. Si molestan, una regla de Cloudflare con "desafío administrado" para Singapur y China (el sitio es solo para Chile). No bloquear EE. UU., porque Googlebot y Bingbot salen de ahí.
+4. Al analizar, ignorar `(not set)` y mirar los usuarios, no las sesiones.
 
 ### 3.6 Dispositivos
 
