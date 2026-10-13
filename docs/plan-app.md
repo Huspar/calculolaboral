@@ -89,6 +89,11 @@ Lo que este diseño rechaza: el tablero genérico de tarjetas con números y gr�
 
 Cada etapa se prueba en el navegador en 1280 px y 390 px, con las pruebas automáticas en verde, y se revisa contigo antes de seguir.
 
+## Estado
+
+- **Etapa 1: hecha en código y probada en el navegador (13-oct-2026), sin publicar.** `app.html`, `assets/css/app.css` y `js/app_pyme.js` reemplazan a `asistente-pyme.html` y `js/pyme_app.js` (borrados; `/asistente-pyme` redirige a `/app` en `vercel.json`). El enlace de acceso, la vuelta desde Flow (`/app/cuenta?pase=`), el comprobante, el prellenado de los generadores y la página pública ya apuntan a `/app`. Probado con datos de demostración: cierre del mes (preparar, marcar emitida, detalle, cifras, avisos), trabajadores y carpeta (ficha y liquidaciones), editor de liquidaciones, documentos (carta 159 N°4 con la advertencia de cotizaciones), contratos, empresa y cuenta, en 1440 px y 390 px sin desborde horizontal. En celular el menú es un cajón lateral; la barra inferior queda para la etapa 3.
+- Etapa 2 (vacaciones, calendario, historial): pendiente.
+
 ## 8. Decisiones abiertas
 
 - **Costo empleador:** fuera de esta versión (ver sección 4). Se puede sumar más adelante si se amplía el motor y se valida.

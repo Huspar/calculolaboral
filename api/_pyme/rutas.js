@@ -24,7 +24,7 @@ const H = require('./http');
 const C = require('./correo');
 const T = require('./tokens');
 
-const DESTINO_PANEL = '/asistente-pyme';
+const DESTINO_PANEL = '/app';
 const MENSAJE_ENLACE_INVALIDO = 'El enlace venció o ya se usó. Pide uno nuevo desde el asistente.';
 
 function crearRutas({ auth, datos, env, siteUrl, pase }) {

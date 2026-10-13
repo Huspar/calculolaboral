@@ -271,7 +271,7 @@ caso('verificar (POST): sin aceptar vuelve a pedirlo; aceptando redirige al pane
     assert.ok(sin.cuerpo.indexOf('debes aceptar') >= 0 && !sin.headers['set-cookie']);
     const con = await pedir(m.rutas, { query: { ruta: 'verificar' }, metodo: 'POST', headers: { origin: SITIO }, body: { t: token, acepto: '1' } });
     assert.strictEqual(con.statusCode, 303);
-    assert.strictEqual(con.headers.location, '/asistente-pyme');
+    assert.strictEqual(con.headers.location, '/app');
     const ck = con.headers['set-cookie'];
     assert.ok(/^cl_pyme=[A-Za-z0-9_-]{43};/.test(ck) && /HttpOnly/.test(ck) && /Secure/.test(ck) && /SameSite=Lax/.test(ck) && /Path=\//.test(ck));
     assert.ok(/Max-Age=\d+/.test(ck) && Number(/Max-Age=(\d+)/.exec(ck)[1]) > 29 * 86400 - 5);

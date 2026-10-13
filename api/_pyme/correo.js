@@ -61,7 +61,7 @@ ${aceptar}
 }
 
 function paginaMensaje(titulo, texto) {
-    return pagina(titulo, `<h1>${escapeHtml(titulo)}</h1><p>${escapeHtml(texto)}</p><p><a href="/asistente-pyme">Volver al asistente</a></p>`);
+    return pagina(titulo, `<h1>${escapeHtml(titulo)}</h1><p>${escapeHtml(texto)}</p><p><a href="/app">Volver al asistente</a></p>`);
 }
 
 module.exports = { correoAcceso, paginaConfirmar, paginaMensaje };

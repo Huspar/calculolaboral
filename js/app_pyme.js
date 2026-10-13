@@ -1,12 +1,13 @@
 /*
- * CalculoLaboral · interfaz del Asistente Laboral Pyme (v1.3.0)
- * Entrar con enlace al correo, ficha de empresa y trabajadores (guardada cifrada en el servidor), pendientes del mes,
- * liquidaciones de sueldo guardadas por mes (vista previa, imprimir todas), documentos laborales (certificados, cartas, anexos),
- * enlaces a los generadores con los datos cargados, Pase Pyme (compra con Flow, vigencia y desbloqueo de generadores),
- * traer datos del generador, descargar y eliminar los datos.
+ * CalculoLaboral · software del Asistente Laboral Pyme en /app (v1.0.0)
+ * Marco con menú lateral y rutas propias (/app, /app/trabajadores, /app/trabajadores/<id>/<pestaña>, /app/liquidaciones[/<id>],
+ * /app/documentos?t=&d=, /app/contratos, /app/empresa, /app/cuenta). Inicio es el cierre del mes: una fila por trabajador con el
+ * estado de su liquidación, la franja de cifras, el panel de detalle y los avisos del mes.
+ * Hereda del panel anterior (js/pyme_app.js) la entrada por correo, la ficha de empresa y trabajadores, las liquidaciones por mes,
+ * los documentos, los generadores con los datos cargados, el Pase Pyme y los datos de la cuenta.
  * Requiere: rut_cl.js, liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js, feriados_cl.js,
- * pyme_pendientes.js, pyme_liquidaciones.js y pyme_docs.js (antes que este archivo).
- * La API es /api/pyme/* (api/_pyme/rutas.js). Todo texto de usuario se escapa antes de mostrarse.
+ * pyme_pendientes.js, pyme_liquidaciones.js y pyme_docs.js (antes que este archivo). La API es /api/pyme/*.
+ * Todo texto de usuario se escapa antes de mostrarse.
  */
 (function () {
     'use strict';
@@ -19,12 +20,15 @@
     var KEY_GENERADOR = 'cl_liq_v1';
     var KEY_IMPORTADO = 'cl_pyme_importado';
     var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic'];
     var AFPS = Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp).sort();
 
-    var estado = null;      // lo último que dijo el servidor
+    var estado = null;        // lo último que dijo el servidor
     var volvioDePago = false; // el aviso de ?pase= se atiende una sola vez
-    var editandoId = null;  // id del trabajador que se edita (null = nuevo)
-    var logoActual = '';    // data URL del logo en el formulario de la empresa
+    var editandoId = null;    // id del trabajador cuya ficha está abierta (null = nuevo)
+    var logoActual = '';      // data URL del logo en el formulario de la empresa
+    var inicioSel = null;     // trabajador elegido en la grilla del cierre
+    var genSel = null;        // trabajador elegido en Contratos y finiquitos
 
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -32,12 +36,16 @@
     function dos(n) { return n < 10 ? '0' + n : String(n); }
     function hoyIso() { var d = new Date(); return d.getFullYear() + '-' + dos(d.getMonth() + 1) + '-' + dos(d.getDate()); }
     function fechaLarga(iso) { var a = String(iso).slice(0, 10).split('-'); return +a[2] + ' de ' + MESES[+a[1] - 1] + ' de ' + a[0]; }
+    function fechaCorta(iso) { var a = String(iso).slice(0, 10).split('-'); return +a[2] + ' ' + MESES_CORTOS[+a[1] - 1]; }
+    function fechaCortaAnio(iso) { var a = String(iso).slice(0, 10).split('-'); return +a[2] + ' ' + MESES_CORTOS[+a[1] - 1] + ' ' + a[0]; }
     // Fecha de un instante (vencimiento del pase) en hora de Chile, para que de noche no se corra un día
-    function fechaVence(iso) {
-        try { return fechaLarga(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso))); } catch (e) { return fechaLarga(iso); }
+    function isoChile(iso) {
+        try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso)); } catch (e) { return String(iso).slice(0, 10); }
     }
+    function fechaVence(iso) { return fechaLarga(isoChile(iso)); }
     function guardado(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
     function guardar(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } }
+    function plural(n, uno, varios) { return n + ' ' + (n === 1 ? uno : varios); }
 
     // ---------- API ----------
     function api(ruta, o) {
@@ -56,7 +64,7 @@
         });
     }
 
-    // Confirmación o error visible arriba del panel
+    // Confirmación o error visible arriba del contenido
     function avisoGlobal(tipo, texto) {
         var icono = { ok: 'check_circle', info: 'info', error: 'error' }[tipo];
         $('pm-aviso-global').innerHTML = texto ? '<div class="lq-aviso lq-aviso-' + (tipo === 'error' ? 'error' : 'info') + '"><span class="material-icons" aria-hidden="true">' + icono + '</span><p>' + esc(texto) + '</p></div>' : '';
@@ -68,12 +76,13 @@
         return false;
     }
 
-    // ---------- vistas ----------
+    // ---------- pantallas generales ----------
     function mostrar(vista, nota) {
         $('pm-cargando').hidden = vista !== 'cargando';
         $('pm-entrada').hidden = vista !== 'entrada';
         $('pm-panel').hidden = vista !== 'panel';
         if (vista === 'entrada') {
+            document.title = 'Entrar · Asistente Laboral Pyme';
             $('pm-entrar-form').hidden = false;
             $('pm-entrar-listo').hidden = true;
             $('pm-entrar-error').hidden = true;
@@ -84,9 +93,72 @@
     }
 
     function mensaje(el, tipo, texto) {
-        el.className = 'lq-estado pm-estado' + (tipo === 'ok' ? ' lq-estado-ok' : tipo === 'error' ? ' lq-estado-error' : '');
+        el.className = 'lq-estado' + (tipo === 'ok' ? ' lq-estado-ok' : tipo === 'error' ? ' lq-estado-error' : '');
         el.textContent = texto || '';
     }
+
+    // ---------- rutas ----------
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', liquidaciones: 'liquidaciones', documentos: 'documentos', contratos: 'contratos', empresa: 'empresa', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', liquidaciones: 'Liquidaciones', documentos: 'Documentos', contratos: 'Contratos y finiquitos', empresa: 'Empresa', cuenta: 'Mi cuenta' };
+    var vistaActual = null;
+
+    function rutaActual() { return window.location.pathname.replace(/^\/app\/?/, '').replace(/\/+$/, ''); }
+    function navegar(ruta, opciones) {
+        opciones = opciones || {};
+        var url = '/app' + (ruta ? '/' + ruta : '') + (opciones.query ? '?' + opciones.query : '');
+        try {
+            if (opciones.reemplazar) window.history.replaceState({}, '', url); else window.history.pushState({}, '', url);
+        } catch (e) { window.location.href = url; return; }
+        cerrarMenu();
+        dibujarRuta();
+        if (!opciones.sinScroll) window.scrollTo(0, 0);
+    }
+    window.addEventListener('popstate', function () { if (estado) dibujarRuta(); });
+
+    document.addEventListener('click', function (e) {
+        var a = e.target.closest('a[data-ruta]');
+        if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        navegar(a.getAttribute('data-ruta'), { query: a.getAttribute('data-query') || '' });
+    });
+
+    function dibujarRuta() {
+        if (!estado) return;
+        var partes = rutaActual().split('/'), base = partes[0] || '';
+        var vista = VISTAS.hasOwnProperty(base) ? VISTAS[base] : null;
+        if (vista === null) { navegar('', { reemplazar: true }); return; }
+        if (base === 'trabajadores' && partes[1]) vista = 'trabajador';
+        if (vista !== vistaActual) avisoGlobal('', '');
+        vistaActual = vista;
+        Array.prototype.forEach.call(document.querySelectorAll('.vista'), function (s) { s.hidden = s.getAttribute('data-vista') !== vista; });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
+            if (a.getAttribute('data-nav') === base) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+        });
+        document.title = TITULOS[vista] + ' · Asistente Laboral Pyme';
+        if (vista === 'inicio') dibujarInicio();
+        else if (vista === 'trabajadores') dibujarTrabajadores();
+        else if (vista === 'trabajador') abrirCarpeta(partes[1], partes[2] || 'ficha');
+        else if (vista === 'liquidaciones') rutaLiquidaciones(partes[1]);
+        else if (vista === 'documentos') rutaDocumentos();
+        else if (vista === 'contratos') dibujarContratos();
+        else if (vista === 'empresa') dibujarEmpresa();
+        else if (vista === 'cuenta') dibujarCuenta();
+        contarVista(vista === 'trabajador' ? 'trabajadores/' + (partes[1] === 'nuevo' ? 'nuevo' : 'carpeta/' + (partes[2] || 'ficha')) : base);
+    }
+
+    // Visitas en GA4 con rutas genéricas: nunca se envían ids de trabajadores
+    function contarVista(ruta) {
+        try { if (window.gtag) window.gtag('event', 'page_view', { page_title: document.title, page_location: window.location.origin + '/app' + (ruta ? '/' + ruta : '') }); } catch (e) { /* sin analítica */ }
+    }
+
+    // Menú en pantallas chicas
+    function cerrarMenu() { $('pm-panel').classList.remove('menu-abierto'); $('app-menu').setAttribute('aria-expanded', 'false'); }
+    $('app-menu').addEventListener('click', function () {
+        var abierto = $('pm-panel').classList.toggle('menu-abierto');
+        $('app-menu').setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+    $('app-velo').addEventListener('click', cerrarMenu);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarMenu(); });
 
     // ---------- campos de formulario ----------
     function valorDe(el) {
@@ -167,7 +239,7 @@
 
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
-        estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = [];
+        estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; genSel = null; vistaActual = null;
         docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
         $('print-section').innerHTML = '';
         $('pm-liq-editor').hidden = true;
@@ -179,23 +251,33 @@
             if (sinSesion(r)) return;
             if (!r.ok) { mostrar('entrada', r.datos.error || 'No pudimos cargar tus datos.'); return; }
             estado = r.datos;
-            mesesCache = {};
-            dibujar();
+            if (!periodoSel) periodoSel = periodoPorDefecto();
+            dibujarMarco();
             mostrar('panel');
-            cargarLiquidaciones();
             if (!volvioDePago) { volvioDePago = true; volverDePago(); }
+            dibujarRuta();
+            return cargarLiquidaciones();
         });
     }
 
-    function dibujar() {
+    // Lo que se ve en todas las pantallas: empresa en el menú, cuenta y pase en la barra
+    function dibujarMarco() {
+        var e = estado.empresa;
+        $('app-empresa-nombre').textContent = e ? e.razonSocial : 'Tu empresa';
+        $('app-empresa-rut').textContent = e ? 'RUT ' + Rut.formatear(e.rut) : 'Faltan los datos de la empresa';
         $('pm-correo').textContent = estado.cuenta.email;
-        dibujarEmpresa();
-        dibujarTrabajadores();
-        dibujarPendientes();
+        $('cuenta-correo').textContent = estado.cuenta.email;
+        var lim = estado.limites, caja = $('app-pase'), txt = $('app-pase-texto');
+        caja.classList.remove('vigente', 'porvencer');
+        if (lim.paseVence && Date.parse(lim.paseVence) > Date.now()) {
+            var dias = PEND.dias(hoyIso(), isoChile(lim.paseVence));
+            caja.classList.add(dias <= 15 ? 'porvencer' : 'vigente');
+            txt.textContent = 'Pase vigente hasta el ' + fechaCortaAnio(isoChile(lim.paseVence));
+        } else {
+            txt.textContent = 'Sin Pase Pyme';
+        }
         dibujarImportar();
-        dibujarDocumentos();
         dibujarPase();
-        dibujarNotaGeneradores();
     }
 
     // ---------- empresa ----------
@@ -208,9 +290,9 @@
         mensaje($('pm-emp-estado'), '', '');
     }
     function dibujarLogo() {
-        var img = $('pm-logo-prev');
-        img.hidden = !logoActual;
-        if (logoActual) img.src = logoActual; else img.removeAttribute('src');
+        var caja = $('pm-logo-prev');
+        caja.hidden = !logoActual;
+        caja.innerHTML = logoActual ? '<img class="pm-logo-prev" src="' + esc(logoActual) + '" alt="Logo de la empresa">' : '';
         $('pm-logo-quitar').hidden = !logoActual;
     }
     $('pm-logo').addEventListener('change', function (e) {
@@ -236,36 +318,99 @@
         mensaje(est, '', 'Guardando…');
         api('empresa', { metodo: 'PUT', cuerpo: { empresa: datos } }).then(function (r) {
             if (sinSesion(r)) return;
-            if (r.ok) { cargar().then(function () { mensaje(est, 'ok', 'Guardado.'); }); return; }
+            if (r.ok) { cargar().then(function () { mensaje($('pm-emp-estado'), 'ok', 'Guardado.'); }); return; }
             mostrarErrores(f, r.datos.errores);
             mensaje(est, 'error', r.datos.error || 'No pudimos guardar.');
         });
     });
 
-    // ---------- trabajadores ----------
-    function resumenTrabajador(t) {
-        var partes = [];
-        if (t.cargo) partes.push(esc(t.cargo));
-        partes.push('<span class="pm-mono">' + esc(t.rut) + '</span>');
-        if (t.sueldoBase) partes.push('sueldo base <span class="pm-mono">' + pesos(t.sueldoBase) + '</span>');
-        partes.push(esc(t.jornadaHoras) + ' h semanales');
-        partes.push(t.contrato === 'plazo_fijo' ? 'plazo fijo' : t.contrato === 'obra' ? 'por obra' : 'indefinido');
-        return partes.join(' · ');
+    // ---------- trabajadores: lista ----------
+    function textoContrato(t) { return t.contrato === 'plazo_fijo' ? 'Plazo fijo' : t.contrato === 'obra' ? 'Por obra o faena' : 'Indefinido'; }
+    // Vencimiento del plazo fijo con su tono: ámbar a 30 días o menos, rose si ya venció
+    function vencePlazo(t) {
+        if (t.contrato !== 'plazo_fijo' || !t.fechaTerminoPlazo) return null;
+        var faltan = PEND.dias(hoyIso(), t.fechaTerminoPlazo);
+        return { texto: (faltan < 0 ? 'venció el ' : 'hasta el ') + fechaCorta(t.fechaTerminoPlazo), clase: faltan < 0 ? 'vencido' : faltan <= 30 ? 'vence-pronto' : '' };
+    }
+    function celdaContrato(t) {
+        var v = vencePlazo(t);
+        return '<td class="celda-contrato ocultar-movil">' + esc(textoContrato(t)) + (v ? '<small class="' + v.clase + '">' + esc(v.texto) + '</small>' : '') + '</td>';
     }
 
     function dibujarTrabajadores() {
-        var lista = estado.trabajadores || [], activos = lista.filter(function (t) { return t.activo; }).length, lim = estado.limites;
+        var lista = estado.trabajadores || [], activosN = lista.filter(function (t) { return t.activo; }).length, lim = estado.limites;
+        $('trab-panel').hidden = !lista.length;
+        $('trab-vacio').hidden = !!lista.length;
+        $('trab-vacio-txt').textContent = estado.empresa ? 'Con sus datos guardados, cada liquidación y documento se arma solo.' : 'Primero guarda los datos de la empresa: van en el membrete de cada documento.';
         $('pm-trab-lista').innerHTML = lista.map(function (t) {
-            return '<li class="pm-trab"><div class="pm-trab-datos"><span class="pm-trab-nombre">' + esc(t.nombre) +
-                (t.activo ? '' : '<span class="pm-insignia">Inactivo</span>') + '</span><span class="pm-trab-meta">' + resumenTrabajador(t) + '</span></div>' +
-                '<div class="pm-trab-acciones"><button type="button" class="lq-btn-sec" data-accion="editar" data-id="' + esc(t.id) + '"><span class="material-icons" aria-hidden="true">edit</span>Editar</button>' +
-                '<button type="button" class="lq-link pm-danger" data-accion="borrar" data-id="' + esc(t.id) + '">Eliminar</button></div></li>';
+            var v = vencePlazo(t);
+            return '<tr class="fila" tabindex="0" data-id="' + esc(t.id) + '">' +
+                '<td class="celda-nombre"><strong>' + esc(t.nombre) + '</strong><span>' + esc(t.cargo || 'Sin cargo registrado') + '</span></td>' +
+                '<td class="fecha ocultar-movil">' + esc(Rut.formatear(t.rut)) + '</td>' +
+                '<td class="celda-contrato">' + esc(textoContrato(t)) + (v ? '<small class="' + v.clase + '">' + esc(v.texto) + '</small>' : '') + '</td>' +
+                '<td class="num ocultar-movil">' + (t.sueldoBase ? pesos(t.sueldoBase) : '<span class="vacio">Falta</span>') + '</td>' +
+                '<td>' + (t.activo ? '<span class="sello sello-guardada">Activo</span>' : '<span class="sello sello-inactivo">Inactivo</span>') + '</td>' +
+                '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
         }).join('');
-        var txt = 'Trabajadores activos: ' + activos + ' de ' + lim.maxActivos + '. ';
-        txt += lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme son hasta 5. ' + textoPaseVenta();
+        var txt = activosN + ' de ' + lim.maxActivos + ' trabajadores activos. ';
+        txt += lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme, hasta 5.';
         $('pm-trab-limite').textContent = txt;
         $('pm-trab-nuevo').disabled = !estado.empresa;
         $('pm-trab-nuevo').title = estado.empresa ? '' : 'Primero guarda los datos de la empresa';
+    }
+    $('pm-trab-nuevo').addEventListener('click', function () { navegar('trabajadores/nuevo'); });
+    function abrirFilaTrabajador(e) {
+        var fila = e.target.closest('tr[data-id]');
+        if (fila) navegar('trabajadores/' + fila.getAttribute('data-id'));
+    }
+    $('pm-trab-lista').addEventListener('click', abrirFilaTrabajador);
+    $('pm-trab-lista').addEventListener('keydown', function (e) { if (e.key === 'Enter') abrirFilaTrabajador(e); });
+
+    // ---------- carpeta del trabajador ----------
+    function abrirCarpeta(id, tab) {
+        var nuevo = id === 'nuevo', t = nuevo ? null : trabajadorPorId(id);
+        if (!nuevo && !t) { navegar('trabajadores', { reemplazar: true }); return; }
+        if (nuevo && !estado.empresa) { navegar('empresa', { reemplazar: true }); avisoGlobal('info', 'Primero guarda los datos de la empresa.'); return; }
+        if (['ficha', 'liquidaciones', 'documentos'].indexOf(tab) < 0) tab = 'ficha';
+        if (nuevo) tab = 'ficha';
+        $('carp-miga').textContent = nuevo ? 'Nuevo trabajador' : t.nombre;
+        document.title = (nuevo ? 'Nuevo trabajador' : t.nombre) + ' · Asistente Laboral Pyme';
+        $('carp-nombre').textContent = nuevo ? 'Nuevo trabajador' : t.nombre;
+        $('carp-tabs').hidden = nuevo;
+        $('carp-acciones').hidden = nuevo;
+        $('carp-resumen').innerHTML = nuevo ? '<span>Completa la ficha: sus datos llegan solos a cada liquidación y documento.</span>' : resumenCarpeta(t);
+        if (!nuevo) {
+            Array.prototype.forEach.call($('carp-tabs').querySelectorAll('a'), function (a) {
+                var k = a.getAttribute('data-tab');
+                a.href = '/app/trabajadores/' + t.id + (k === 'ficha' ? '' : '/' + k);
+                a.setAttribute('data-ruta', 'trabajadores/' + t.id + (k === 'ficha' ? '' : '/' + k));
+                if (k === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+            });
+            $('carp-ir-liq-txt').textContent = 'Liquidación de ' + nombrePeriodo(periodoSel || periodoPorDefecto());
+            $('carp-ir-liq').setAttribute('data-ruta', 'liquidaciones/' + t.id);
+            $('carp-ir-liq').href = '/app/liquidaciones/' + t.id;
+            $('carp-ir-doc').setAttribute('data-ruta', 'documentos');
+            $('carp-ir-doc').setAttribute('data-query', 't=' + encodeURIComponent(t.id));
+            $('carp-ir-doc').href = '/app/documentos?t=' + encodeURIComponent(t.id);
+        }
+        $('carp-ficha').hidden = tab !== 'ficha';
+        $('carp-liq').hidden = tab !== 'liquidaciones';
+        $('carp-docs').hidden = tab !== 'documentos';
+        if (tab === 'ficha') abrirTrabajador(t);
+        else if (tab === 'liquidaciones') dibujarCarpetaLiq(t);
+        else dibujarCarpetaDocs(t);
+    }
+
+    function resumenCarpeta(t) {
+        var partes = [];
+        if (t.cargo) partes.push('<span>' + esc(t.cargo) + '</span>');
+        partes.push('<span class="mono">' + esc(Rut.formatear(t.rut)) + '</span>');
+        if (t.fechaIngreso) partes.push('<span>Ingresó el <span class="mono">' + esc(fechaCortaAnio(t.fechaIngreso)) + '</span></span>');
+        var v = vencePlazo(t);
+        partes.push('<span' + (v && v.clase ? ' class="' + v.clase + '"' : '') + '>' + esc(textoContrato(t)) + (v ? ', ' + esc(v.texto) : '') + '</span>');
+        if (t.sueldoBase) partes.push('<span>Sueldo base <span class="mono">' + pesos(t.sueldoBase) + '</span></span>');
+        if (!t.activo) partes.push('<span class="sello sello-inactivo">Inactivo</span>');
+        return partes.join('');
     }
 
     function abrirTrabajador(t) {
@@ -276,29 +421,38 @@
         mensaje($('pm-trab-estado'), '', '');
         var base = { contrato: 'indefinido', jornadaHoras: 42, distribucion: '5', gratificacion: 'legal', afp: 'Modelo', salud: 'fonasa', renovaciones: 0, aniosOtrosEmpleadores: 0, activo: true };
         llenar(f, t || base);
-        $('pm-trab-form-titulo').textContent = t ? 'Editar a ' + t.nombre : 'Nuevo trabajador';
         $('pm-t-activo-campo').hidden = !t;
+        $('carp-borrar').hidden = !t;
+        $('pm-trab-cancelar').textContent = t ? 'Descartar cambios' : 'Cancelar';
+        $('pm-trab-guardar').lastChild.textContent = t ? 'Guardar cambios' : 'Guardar trabajador';
         condicionales();
-        f.hidden = false;
-        f.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        $('pm-t-nombre').focus();
+        if (!t) $('pm-t-nombre').focus();
     }
-    function cerrarTrabajador() { $('pm-trab-form').hidden = true; editandoId = null; }
 
-    $('pm-trab-nuevo').addEventListener('click', function () { abrirTrabajador(null); });
-    $('pm-trab-cancelar').addEventListener('click', cerrarTrabajador);
+    $('pm-trab-cancelar').addEventListener('click', function () {
+        if (!editandoId) { navegar('trabajadores'); return; }
+        abrirTrabajador(trabajadorPorId(editandoId));
+        mensaje($('pm-trab-estado'), '', 'Volvimos a los datos guardados.');
+    });
     $('pm-trab-form').addEventListener('change', function (e) { if (e.target.matches('[data-k="contrato"],[data-k="salud"]')) condicionales(); });
 
     $('pm-trab-form').addEventListener('submit', function (e) {
         e.preventDefault();
-        var f = $('pm-trab-form'), datos = recoger(f), err = $('pm-trab-error');
+        var f = $('pm-trab-form'), datos = recoger(f), err = $('pm-trab-error'), id = editandoId;
         limpiarErrores(f);
         err.hidden = true;
         mensaje($('pm-trab-estado'), '', 'Guardando…');
-        var llamada = editandoId ? api('trabajador', { metodo: 'PUT', query: { id: editandoId }, cuerpo: { trabajador: datos } }) : api('trabajador', { metodo: 'POST', cuerpo: { trabajador: datos } });
+        var llamada = id ? api('trabajador', { metodo: 'PUT', query: { id: id }, cuerpo: { trabajador: datos } }) : api('trabajador', { metodo: 'POST', cuerpo: { trabajador: datos } });
         llamada.then(function (r) {
             if (sinSesion(r)) return;
-            if (r.ok) { var nombre = r.datos.trabajador && r.datos.trabajador.nombre; cerrarTrabajador(); cargar().then(function () { avisoGlobal('ok', 'Guardamos los datos de ' + nombre + '.'); }); return; }
+            if (r.ok) {
+                var tr = r.datos.trabajador || {};
+                cargar().then(function () {
+                    if (!id && tr.id) navegar('trabajadores/' + tr.id, { reemplazar: true });
+                    avisoGlobal('ok', (id ? 'Guardamos los cambios de ' : 'Agregamos a ') + (tr.nombre || 'la persona') + '.');
+                });
+                return;
+            }
             mensaje($('pm-trab-estado'), '', '');
             mostrarErrores(f, r.datos.errores);
             err.textContent = r.datos.error || 'No pudimos guardar.';
@@ -306,54 +460,279 @@
         });
     });
 
-    $('pm-trab-lista').addEventListener('click', function (e) {
-        var b = e.target.closest('[data-accion]');
-        if (!b) return;
-        var id = b.getAttribute('data-id'), t = (estado.trabajadores || []).filter(function (x) { return x.id === id; })[0];
-        if (!t) return;
-        if (b.getAttribute('data-accion') === 'editar') return abrirTrabajador(t);
-        if (!window.confirm('¿Eliminar a ' + t.nombre + '? Sus datos se borran de forma definitiva.')) return;
-        api('trabajador', { metodo: 'DELETE', query: { id: id } }).then(function (r) {
+    $('carp-borrar').addEventListener('click', function () {
+        var t = trabajadorPorId(editandoId);
+        if (!t || !window.confirm('¿Eliminar a ' + t.nombre + '? Sus datos, liquidaciones y documentos registrados se borran de forma definitiva.')) return;
+        api('trabajador', { metodo: 'DELETE', query: { id: t.id } }).then(function (r) {
             if (sinSesion(r)) return;
             if (!r.ok) { avisoGlobal('error', r.datos.error || 'No pudimos eliminar.'); return; }
-            cargar().then(function () { avisoGlobal('ok', 'Eliminamos a ' + t.nombre + '.'); });
+            mesesCache = {};
+            cargar().then(function () { navegar('trabajadores', { reemplazar: true }); avisoGlobal('ok', 'Eliminamos a ' + t.nombre + '.'); });
         });
     });
 
-    // ---------- pendientes ----------
+    // Últimos 12 meses del trabajador (desde su ingreso), con el estado de cada liquidación
+    function periodosDe(t) {
+        var limite = periodoPorDefecto();
+        return PERIODOS.filter(function (p) { return p <= limite && (!t.fechaIngreso || p >= t.fechaIngreso.slice(0, 7)); }).slice(0, 12);
+    }
+    function dibujarCarpetaLiq(t) {
+        var periodos = periodosDe(t), cuerpo = $('carp-liq-filas');
+        if (!periodos.length) { cuerpo.innerHTML = '<tr><td colspan="5" class="vacio">Todavía no hay meses de remuneración desde su ingreso.</td></tr>'; return; }
+        var faltan = periodos.filter(function (p) { return !mesesCache[p]; });
+        if (faltan.length) cuerpo.innerHTML = '<tr><td colspan="5" class="vacio">Cargando sus liquidaciones…</td></tr>';
+        Promise.all(faltan.map(cargarMeses)).then(function () {
+            if (vistaActual !== 'trabajador' || $('carp-liq').hidden || rutaActual().split('/')[1] !== t.id) return;
+            cuerpo.innerHTML = periodos.map(function (p) {
+                var reg = mesesDe(p)[t.id], est = L.estadoDe(reg);
+                return '<tr class="fila" tabindex="0" data-periodo="' + p + '">' +
+                    '<td><strong style="font-weight:600">' + esc(mayuscula(nombrePeriodo(p))) + '</strong></td>' +
+                    '<td>' + selloLiq(reg, est, L.diasBase(t, p)) + '</td>' +
+                    '<td class="num">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</td>' +
+                    '<td class="fecha ocultar-movil">' + (reg && reg.emitida ? esc(fechaCorta(reg.emitida)) : '<span class="vacio">—</span>') + '</td>' +
+                    '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
+            }).join('');
+            cuerpo.setAttribute('data-trabajador', t.id);
+        });
+    }
+    function abrirMesDeCarpeta(e) {
+        var fila = e.target.closest('tr[data-periodo]'), id = $('carp-liq-filas').getAttribute('data-trabajador');
+        if (!fila || !id) return;
+        cambiarPeriodo(fila.getAttribute('data-periodo'), true);
+        navegar('liquidaciones/' + id);
+    }
+    $('carp-liq-filas').addEventListener('click', abrirMesDeCarpeta);
+    $('carp-liq-filas').addEventListener('keydown', function (e) { if (e.key === 'Enter') abrirMesDeCarpeta(e); });
+
+    function dibujarCarpetaDocs(t) {
+        $('carp-docs-lista').innerHTML = PD.TIPOS.map(function (d) {
+            var q = 't=' + encodeURIComponent(t.id) + '&d=' + encodeURIComponent(d.id);
+            return '<a class="gen-item" href="/app/documentos?' + q + '" data-ruta="documentos" data-query="' + esc(q) + '"><strong>' + esc(d.titulo) + '<span class="material-icons" aria-hidden="true">chevron_right</span></strong><span>' + esc(d.descripcion) + '</span></a>';
+        }).join('');
+    }
+
+    // ---------- avisos del mes ----------
     var ICONO = { urgente: 'error', aviso: 'warning', info: 'info' };
-    function dibujarPendientes() {
+    var pendientesActuales = [];
+    function calcularPendientes() {
         var toca = PEND.periodoLiquidacion(hoyIso()), liq = null;
         if (toca && mesesCache[toca.periodo]) {
             var mapa = mesesCache[toca.periodo];
             liq = { periodo: toca.periodo, registros: Object.keys(mapa).map(function (id) { return { trabajadorId: id, emitida: mapa[id].emitida || '' }; }) };
         }
-        var lista = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO), liquidaciones: liq });
+        pendientesActuales = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO), liquidaciones: liq });
+        return pendientesActuales;
+    }
+    function dibujarPendientes() {
+        if (!estado) return;
+        var lista = calcularPendientes();
         $('pm-pend').innerHTML = lista.length ? lista.map(function (p, i) {
             var accion = '';
             if (p.accion) {
-                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Editar ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver liquidaciones' }[p.accion.tipo];
-                accion = '<div class="pm-p-accion"><button type="button" class="lq-link" data-pend="' + i + '">' + esc(etiqueta) + '</button></div>';
+                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes' }[p.accion.tipo];
+                accion = '<button type="button" class="btn-texto" data-pend="' + i + '">' + esc(etiqueta) + '</button>';
             }
-            return '<li class="pm-p-' + p.nivel + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><div class="pm-p-cuerpo"><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p>' + accion + '</div></li>';
-        }).join('') : '<li class="pm-p-info"><span class="material-icons" aria-hidden="true">check_circle</span><div class="pm-p-cuerpo"><strong>No tienes pendientes por ahora.</strong></div></li>';
-        $('pm-pend')._lista = lista;
+            return '<li class="n-' + p.nivel + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><div><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p></div>' + accion + '</li>';
+        }).join('') : '<li class="n-info"><span class="material-icons" aria-hidden="true">check_circle</span><div><strong>No tienes avisos este mes.</strong></div></li>';
+        if (vistaActual === 'inicio' && inicioSel) dibujarDetalle(inicioSel, false);
     }
     $('pm-pend').addEventListener('click', function (e) {
         var b = e.target.closest('[data-pend]');
         if (!b) return;
-        var p = $('pm-pend')._lista[+b.getAttribute('data-pend')], a = p && p.accion;
+        var p = pendientesActuales[+b.getAttribute('data-pend')], a = p && p.accion;
         if (!a) return;
-        if (a.tipo === 'empresa') { $('pm-sec-empresa').scrollIntoView({ behavior: 'smooth' }); $('pm-e-razon').focus(); }
-        else if (a.tipo === 'trabajador-nuevo') abrirTrabajador(null);
-        else if (a.tipo === 'trabajador') abrirTrabajador((estado.trabajadores || []).filter(function (t) { return t.id === a.id; })[0]);
+        if (a.tipo === 'empresa') navegar('empresa');
+        else if (a.tipo === 'trabajador-nuevo') navegar('trabajadores/nuevo');
+        else if (a.tipo === 'trabajador') navegar('trabajadores/' + a.id);
         else if (a.tipo === 'respaldo') exportar();
-        else if (a.tipo === 'liquidaciones') {
-            periodoSel = a.periodo; ultimasImpresas = []; cerrarMes();
-            cargarLiquidaciones();
-            $('pm-sec-liquidaciones').scrollIntoView({ behavior: 'smooth' });
+        else if (a.tipo === 'liquidaciones') { cambiarPeriodo(a.periodo); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    });
+
+    // ---------- Inicio: cierre del mes ----------
+    function filasDelMes() {
+        var guardados = mesesDe(periodoSel);
+        return activos().map(function (t) {
+            var reg = guardados[t.id], dias = L.diasBase(t, periodoSel), est = L.estadoDe(reg);
+            return { t: t, reg: reg, est: est, corresponde: !!reg || dias > 0 };
+        });
+    }
+    function selloLiq(reg, est, dias) {
+        if (!reg && dias === 0) return '<span class="sello sello-no">No corresponde</span>';
+        if (est === 'emitida') return '<span class="sello sello-emitida">Emitida</span>';
+        if (est === 'guardada') return '<span class="sello sello-guardada">Preparada</span>';
+        return '<span class="sello sello-sin">Sin preparar</span>';
+    }
+
+    // Próximo vencimiento a la vista: cotizaciones (día 10 o el hábil siguiente), plazos fijos y el pase
+    function proximoVencimiento() {
+        var hoy = hoyIso(), lista = [], a = hoy.split('-').map(Number);
+        if (activos().length) {
+            var y = a[0], m = a[1];
+            if (a[2] > 13) { m++; if (m > 12) { m = 1; y++; } }
+            var dia10 = y + '-' + dos(m) + '-10', plazo = dia10;
+            try { plazo = F.siguienteDiaHabil(dia10); } catch (e) { /* año sin feriados verificados */ }
+            var mesCot = m === 1 ? 12 : m - 1;
+            if (plazo >= hoy) lista.push({ fecha: plazo, texto: 'Cotizaciones de ' + MESES[mesCot - 1] });
+        }
+        activos().forEach(function (t) {
+            if (t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo && t.fechaTerminoPlazo >= hoy) lista.push({ fecha: t.fechaTerminoPlazo, texto: 'Plazo fijo de ' + t.nombre.split(' ')[0] });
+        });
+        if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= hoy) lista.push({ fecha: pv, texto: 'Vence tu Pase Pyme' }); }
+        lista.sort(function (x, z) { return x.fecha < z.fecha ? -1 : x.fecha > z.fecha ? 1 : 0; });
+        return lista[0] || null;
+    }
+
+    function dibujarInicio() {
+        if (!estado) return;
+        var nombreMes = nombrePeriodo(periodoSel);
+        $('ini-titulo').textContent = 'Cierre de ' + nombreMes;
+        $('ini-caption').textContent = 'Trabajadores y estado de su liquidación de ' + nombreMes;
+        var sinEmpresa = !estado.empresa, sinTrabajadores = !(estado.trabajadores || []).length;
+        var arranque = sinEmpresa || sinTrabajadores;
+        $('ini-primeros').hidden = !arranque;
+        $('ini-cierre').hidden = arranque;
+        $('ini-acciones').hidden = arranque;
+        $('ini-avance').hidden = arranque;
+        if (arranque) {
+            $('ini-sub').textContent = 'Tres pasos y tu primer cierre de mes queda listo.';
+            $('ini-cifras').innerHTML = '';
+            $('ini-cifras').hidden = true;
+            var pasos = [
+                { hecho: !sinEmpresa, bloqueado: false, titulo: 'Datos de la empresa', texto: 'Razón social y RUT para el membrete de cada documento.', ruta: 'empresa', boton: sinEmpresa ? 'Completar' : 'Revisar' },
+                { hecho: !sinTrabajadores, bloqueado: sinEmpresa, titulo: 'Tu primer trabajador', texto: 'Su ficha: contrato, jornada, sueldo, AFP y salud.', ruta: 'trabajadores/nuevo', boton: 'Agregar' },
+                { hecho: false, bloqueado: true, titulo: 'Liquidaciones del mes', texto: 'Con la empresa y un trabajador guardados, preparas el mes en un clic.', ruta: '', boton: '' }
+            ];
+            $('ini-primeros-lista').innerHTML = pasos.map(function (p) {
+                return '<li class="' + (p.hecho ? 'hecho' : p.bloqueado ? 'bloqueado' : '') + '"><div><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p></div>' +
+                    (p.boton && !p.bloqueado ? '<a class="btn btn-chico' + (p.hecho ? '' : ' btn-primario') + '" href="/app/' + p.ruta + '" data-ruta="' + p.ruta + '">' + esc(p.boton) + '</a>' : '<span></span>') + '</li>';
+            }).join('');
+            return;
+        }
+        $('ini-cifras').hidden = false;
+
+        var filas = filasDelMes(), cuentan = filas.filter(function (f) { return f.corresponde; });
+        var emitidas = cuentan.filter(function (f) { return f.est === 'emitida'; }).length;
+        var preparadas = cuentan.filter(function (f) { return f.est === 'guardada'; }).length;
+        var sin = cuentan.length - emitidas - preparadas;
+        var sub = cuentan.length ? emitidas + ' de ' + plural(cuentan.length, 'liquidación emitida', 'liquidaciones emitidas') : 'Ningún trabajador activo tiene liquidación en este mes.';
+        if (cuentan.length && preparadas) sub += ' · ' + plural(preparadas, 'preparada', 'preparadas') + ' sin emitir';
+        if (cuentan.length && sin) sub += ' · ' + sin + ' sin preparar';
+        $('ini-sub').textContent = sub;
+        $('ini-avance').innerHTML = cuentan.map(function (f) { return '<i class="' + (f.est === 'emitida' ? 'ok' : f.est === 'guardada' ? 'guardada' : '') + '"></i>'; }).join('');
+
+        var paraPreparar = filas.filter(function (f) { return f.corresponde && f.est === 'sin_datos'; }).length;
+        $('ini-preparar').hidden = paraPreparar === 0;
+        $('ini-preparar-txt').textContent = 'Preparar las que faltan (' + paraPreparar + ')';
+        $('ini-imprimir').disabled = (emitidas + preparadas) === 0;
+        $('ini-marcar-fila').hidden = !ultimasImpresas.length;
+        $('ini-marcar').textContent = textoMarcar();
+
+        // Franja de cifras
+        var conCalculo = cuentan.filter(function (f) { return f.reg && f.reg.calculo; });
+        var total = conCalculo.reduce(function (s, f) { return s + (f.reg.calculo.liquido || 0); }, 0);
+        var lim = estado.limites, prox = proximoVencimiento();
+        var proxClase = prox && PEND.dias(hoyIso(), prox.fecha) <= 3 ? ' vence-pronto' : '';
+        $('ini-cifras').innerHTML =
+            '<div><dt>Líquido a pagar en ' + esc(MESES[+periodoSel.slice(5) - 1]) + '</dt><dd>' + pesos(total) + '<small>' + esc(conCalculo.length + ' de ' + cuentan.length) + '</small></dd></div>' +
+            '<div><dt>Trabajadores activos</dt><dd>' + activos().length + '<small>de ' + lim.maxActivos + (lim.paseVence ? '' : ', sin Pase') + '</small></dd></div>' +
+            '<div><dt>Próximo vencimiento</dt><dd class="texto' + proxClase + '">' + (prox ? '<span class="mono">' + esc(fechaCorta(prox.fecha)) + '</span> · ' + esc(prox.texto) : 'Nada en los próximos días') + '</dd></div>';
+
+        // Grilla
+        if (!inicioSel || !filas.some(function (f) { return f.t.id === inicioSel; })) {
+            var pendiente = filas.filter(function (f) { return f.corresponde && f.est !== 'emitida'; })[0];
+            inicioSel = (pendiente || filas[0] || {}).t ? (pendiente || filas[0]).t.id : null;
+        }
+        $('ini-filas').innerHTML = filas.length ? filas.map(function (f) {
+            var sel = f.t.id === inicioSel, reg = f.reg;
+            return '<tr class="fila" data-id="' + esc(f.t.id) + '" aria-selected="' + sel + '" tabindex="' + (sel ? '0' : '-1') + '">' +
+                '<td class="celda-nombre"><strong>' + esc(f.t.nombre) + '</strong><span>' + esc(f.t.cargo || textoContrato(f.t)) + '</span></td>' +
+                celdaContrato(f.t) +
+                '<td>' + selloLiq(reg, f.est, f.corresponde ? 1 : 0) + '</td>' +
+                '<td class="num">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</td>' +
+                '<td class="fecha ocultar-movil">' + (reg && reg.emitida ? esc(fechaCorta(reg.emitida)) : '<span class="vacio">—</span>') + '</td>' +
+                '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
+        }).join('') : '<tr><td colspan="6" class="vacio">No tienes trabajadores activos. Actívalos desde su ficha.</td></tr>';
+        if (inicioSel) dibujarDetalle(inicioSel, false); else $('ini-detalle-cuerpo').innerHTML = '<p class="detalle-vacio">Elige a un trabajador para ver el detalle.</p>';
+    }
+
+    function elegirFila(id, enfocar) {
+        if (!id) return;
+        inicioSel = id;
+        Array.prototype.forEach.call($('ini-filas').querySelectorAll('tr[data-id]'), function (tr) {
+            var sel = tr.getAttribute('data-id') === id;
+            tr.setAttribute('aria-selected', sel ? 'true' : 'false');
+            tr.tabIndex = sel ? 0 : -1;
+            if (sel && enfocar) tr.focus();
+        });
+        dibujarDetalle(id, true);
+    }
+    $('ini-filas').addEventListener('click', function (e) {
+        var tr = e.target.closest('tr[data-id]');
+        if (tr) elegirFila(tr.getAttribute('data-id'), false);
+    });
+    $('ini-filas').addEventListener('keydown', function (e) {
+        var filas = Array.prototype.slice.call($('ini-filas').querySelectorAll('tr[data-id]'));
+        var i = filas.findIndex(function (tr) { return tr.getAttribute('data-id') === inicioSel; });
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            var j = Math.max(0, Math.min(filas.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)));
+            if (filas[j]) elegirFila(filas[j].getAttribute('data-id'), true);
+        } else if (e.key === 'Enter' && inicioSel) {
+            navegar('liquidaciones/' + inicioSel);
         }
     });
+
+    function dibujarDetalle(id, animar) {
+        var cuerpo = $('ini-detalle-cuerpo'), t = trabajadorPorId(id);
+        if (!t) { cuerpo.innerHTML = '<p class="detalle-vacio">Elige a un trabajador para ver el detalle.</p>'; return; }
+        var reg = mesesDe(periodoSel)[id], est = L.estadoDe(reg), dias = L.diasBase(t, periodoSel), nombreMes = nombrePeriodo(periodoSel);
+        var corresponde = !!reg || dias > 0, v = vencePlazo(t);
+        var html = '<h2>' + esc(t.nombre) + '</h2><p class="detalle-meta">' + esc(t.cargo || 'Sin cargo registrado') + ' · <span class="mono">' + esc(Rut.formatear(t.rut)) + '</span></p>';
+        html += '<dl class="detalle-dl">' +
+            '<div><dt>Liquidación de ' + esc(nombreMes) + '</dt><dd>' + selloLiq(reg, est, corresponde ? 1 : 0) + '</dd></div>' +
+            '<div><dt>Líquido a pagar</dt><dd class="mono">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '—') + '</dd></div>' +
+            '<div><dt>Emitida</dt><dd class="mono">' + (reg && reg.emitida ? esc(fechaCortaAnio(reg.emitida)) : '—') + '</dd></div>' +
+            '<div><dt>Contrato</dt><dd' + (v && v.clase ? ' class="' + v.clase + '"' : '') + '>' + esc(textoContrato(t)) + (v ? ', ' + esc(v.texto) : '') + '</dd></div>' +
+            '<div><dt>Sueldo base</dt><dd class="mono">' + (t.sueldoBase ? pesos(t.sueldoBase) : '—') + '</dd></div></dl>';
+        var suyos = pendientesActuales.filter(function (p) { return p.accion && p.accion.tipo === 'trabajador' && p.accion.id === id; });
+        if (suyos.length) {
+            html += '<div class="detalle-avisos">' + suyos.map(function (p) {
+                var clase = p.nivel === 'urgente' ? 'error' : p.nivel === 'aviso' ? 'aviso' : 'info';
+                return '<div class="lq-aviso lq-aviso-' + clase + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><p>' + esc(mayuscula(p.titulo.replace(t.nombre + ': ', ''))) + '</p></div>';
+            }).join('') + '</div>';
+        }
+        html += '<div class="detalle-acciones">';
+        if (!corresponde) {
+            html += '<p class="texto-ayuda">' + esc(t.fechaIngreso && t.fechaIngreso > periodoSel + '-31' ? 'No corresponde liquidación: ingresa el ' + fechaLarga(t.fechaIngreso) + '.' : 'No corresponde liquidación: su contrato terminó antes de este mes.') + '</p>';
+        } else if (est === 'sin_datos') {
+            html += '<a class="btn btn-primario" href="/app/liquidaciones/' + esc(id) + '" data-ruta="liquidaciones/' + esc(id) + '"><span class="material-icons" aria-hidden="true">playlist_add</span>Preparar su liquidación</a>';
+        } else if (est === 'guardada') {
+            html += '<a class="btn btn-primario" href="/app/liquidaciones/' + esc(id) + '" data-ruta="liquidaciones/' + esc(id) + '"><span class="material-icons" aria-hidden="true">edit_note</span>Revisar la liquidación</a>' +
+                '<button type="button" class="btn" data-det="imprimir" data-id="' + esc(id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir</button>' +
+                '<button type="button" class="btn" data-det="marcar" data-id="' + esc(id) + '"><span class="material-icons" aria-hidden="true">task_alt</span>Marcar como emitida</button>';
+        } else {
+            html += '<button type="button" class="btn btn-primario" data-det="imprimir" data-id="' + esc(id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir de nuevo</button>' +
+                '<a class="btn" href="/app/liquidaciones/' + esc(id) + '" data-ruta="liquidaciones/' + esc(id) + '"><span class="material-icons" aria-hidden="true">visibility</span>Ver la liquidación</a>';
+        }
+        html += '</div><div class="detalle-enlaces">' +
+            '<a class="btn-texto" href="/app/trabajadores/' + esc(id) + '" data-ruta="trabajadores/' + esc(id) + '">Ver su carpeta</a>' +
+            '<a class="btn-texto" href="/app/documentos?t=' + encodeURIComponent(id) + '" data-ruta="documentos" data-query="t=' + esc(encodeURIComponent(id)) + '">Emitir un documento</a>' +
+            (est === 'emitida' ? '<button type="button" class="btn-texto" data-det="desmarcar" data-id="' + esc(id) + '">Quitar la marca de emitida</button>' : '') + '</div>';
+        if (!animar) { cuerpo.innerHTML = html; return; }
+        cuerpo.classList.add('cambiando');
+        window.setTimeout(function () { cuerpo.innerHTML = html; cuerpo.classList.remove('cambiando'); }, 90);
+    }
+    $('ini-detalle').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-det]');
+        if (!b) return;
+        var id = b.getAttribute('data-id'), accion = b.getAttribute('data-det');
+        if (accion === 'imprimir') imprimirMeses([id], $('ini-estado'));
+        else if (accion === 'marcar') marcarEmitidas([id], hoyIso(), $('ini-estado'));
+        else if (accion === 'desmarcar') marcarEmitidas([id], '', $('ini-estado'));
+    });
+    $('ini-preparar').addEventListener('click', function () { prepararMes($('ini-estado')); });
+    $('ini-imprimir').addEventListener('click', function () { imprimirMeses(activos().map(function (t) { return t.id; }), $('ini-estado')); });
+    $('ini-marcar').addEventListener('click', function () { marcarEmitidas(ultimasImpresas.slice(), hoyIso(), $('ini-estado')); });
 
     // ---------- documentos ----------
     var docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
@@ -368,18 +747,25 @@
         return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F };
     }
 
-    function dibujarDocumentos() {
+    // /app/documentos?t=<trabajador>&d=<tipo>: deja elegidos a la persona y el documento
+    function rutaDocumentos() {
+        var q = new URLSearchParams(window.location.search), t = q.get('t'), d = q.get('d'), forzar = false;
+        if (t && trabajadorPorId(t) && t !== docSel.trabajadorId) { docSel.trabajadorId = t; forzar = true; }
+        if (d && PD.TIPOS.some(function (x) { return x.id === d; }) && d !== docSel.tipo) { docSel.tipo = d; forzar = true; }
+        dibujarDocumentos(forzar);
+    }
+
+    function dibujarDocumentos(forzar) {
         if (!estado) return;
         var lista = estado.trabajadores || [], hay = lista.length > 0 && !!estado.empresa;
-        $('pm-doc-vacio').hidden = hay;
-        $('pm-doc-vacio').textContent = !estado.empresa ? 'Primero guarda los datos de la empresa y agrega a un trabajador para preparar sus documentos.' : 'Agrega primero a un trabajador para preparar sus documentos.';
-        $('pm-doc-selectores').hidden = !hay;
-        $('pm-gen').hidden = !hay;
-        if (!hay) { $('pm-doc-descripcion').textContent = ''; $('pm-doc-avisos').innerHTML = ''; $('pm-doc-form').hidden = true; $('pm-doc-marco').hidden = true; $('pm-doc-acciones').hidden = true; return; }
+        $('pm-doc-vacio-panel').hidden = hay;
+        $('pm-doc-vacio').textContent = !estado.empresa ? 'Primero guarda los datos de la empresa y agrega a un trabajador.' : 'Agrega primero a un trabajador para preparar sus documentos.';
+        $('doc-editor').hidden = !hay;
+        if (!hay) return;
         var selT = $('pm-doc-trab'), selD = $('pm-doc-tipo');
         selT.innerHTML = lista.map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.nombre) + (t.activo ? '' : ' (inactivo)') + '</option>'; }).join('');
         if (!selD.options.length) selD.innerHTML = PD.TIPOS.map(function (t) { return '<option value="' + t.id + '">' + esc(t.titulo) + '</option>'; }).join('');
-        var cambio = !trabajadorPorId(docSel.trabajadorId) || !docSel.tipo;
+        var cambio = forzar || !trabajadorPorId(docSel.trabajadorId) || !docSel.tipo;
         if (!trabajadorPorId(docSel.trabajadorId)) docSel.trabajadorId = lista[0].id;
         if (!docSel.tipo) docSel.tipo = PD.TIPOS[0].id;
         selT.value = docSel.trabajadorId;
@@ -387,15 +773,7 @@
         $('pm-doc-nota-marca').textContent = tienePase()
             ? 'Con tu pase vigente los documentos salen sin marca de agua. Revisa cada documento antes de entregarlo.'
             : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada documento antes de entregarlo.';
-        enlacesGeneradores();
         if (cambio) abrirDoc(); else vistaDoc();
-    }
-
-    function enlacesGeneradores() {
-        var q = '?desde=pyme&t=' + encodeURIComponent(docSel.trabajadorId || '');
-        $('pm-gen-contrato').href = 'generador-contrato-trabajo-chile' + q;
-        $('pm-gen-anexo42').href = 'generador-anexo-40-horas' + q;
-        $('pm-gen-finiquito').href = 'generador-finiquito-chile' + q;
     }
 
     // Cambia de persona o de documento: carga lo que haga falta y propone los valores iniciales
@@ -453,6 +831,7 @@
         if (el.getAttribute('data-tipo') === 'pesos') el.value = docSel.datos[el.getAttribute('data-dk')] > 0 ? pesos(docSel.datos[el.getAttribute('data-dk')]) : '';
         vistaDoc();
     });
+    $('pm-doc-form').addEventListener('submit', function (e) { e.preventDefault(); });
 
     function vistaDoc() {
         var c = ctxDoc();
@@ -462,18 +841,18 @@
         // Los errores de campos vacíos solo se muestran después de intentar imprimir; los demás, apenas hay un valor
         Array.prototype.forEach.call($('pm-doc-form').querySelectorAll('[data-derror]'), function (p) {
             var k = p.getAttribute('data-derror'), msg = v.errores[k], valor = docSel.datos[k];
-            var mostrar = !!msg && (docSel.intento || (valor !== '' && valor !== undefined && valor !== false && valor !== 0));
-            p.textContent = mostrar ? msg : '';
-            p.hidden = !mostrar;
+            var ver = !!msg && (docSel.intento || (valor !== '' && valor !== undefined && valor !== false && valor !== 0));
+            p.textContent = ver ? msg : '';
+            p.hidden = !ver;
             var campo = $('pm-d-' + k);
-            if (campo) { if (mostrar) campo.setAttribute('aria-invalid', 'true'); else campo.removeAttribute('aria-invalid'); }
+            if (campo) { if (ver) campo.setAttribute('aria-invalid', 'true'); else campo.removeAttribute('aria-invalid'); }
         });
         var html = '';
         function aviso(nivel, icono, texto, extra) { html += '<div class="lq-aviso lq-aviso-' + nivel + '"><span class="material-icons" aria-hidden="true">' + icono + '</span><p>' + esc(texto) + (extra || '') + '</p></div>'; }
         if (v.faltaFicha.length) {
             var conT = v.faltaFicha.filter(function (x) { return x.de === 't'; }), conE = v.faltaFicha.filter(function (x) { return x.de === 'e'; });
             var texto = 'Falta en la ficha: ' + v.faltaFicha.map(function (x) { return x.etiqueta; }).join(', ') + '. ';
-            var botones = (conT.length ? ' <button type="button" class="lq-link" data-doc-ficha="t">Editar ficha del trabajador</button>' : '') + (conE.length ? ' <button type="button" class="lq-link" data-doc-ficha="e">Completar empresa</button>' : '');
+            var botones = (conT.length ? ' <button type="button" class="lq-link" data-doc-ficha="t">Completar la ficha del trabajador</button>' : '') + (conE.length ? ' <button type="button" class="lq-link" data-doc-ficha="e">Completar la empresa</button>' : '');
             aviso('aviso', 'edit_note', texto, botones);
         }
         v.bloqueos.forEach(function (t) { aviso('error', 'error', t); });
@@ -500,10 +879,10 @@
     $('pm-doc-avisos').addEventListener('click', function (e) {
         var b = e.target.closest('[data-doc-ficha]');
         if (!b) return;
-        if (b.getAttribute('data-doc-ficha') === 'e') { $('pm-sec-empresa').scrollIntoView({ behavior: 'smooth' }); $('pm-e-razon').focus(); }
-        else abrirTrabajador(trabajadorPorId(docSel.trabajadorId));
+        if (b.getAttribute('data-doc-ficha') === 'e') navegar('empresa');
+        else navegar('trabajadores/' + docSel.trabajadorId);
     });
-    $('pm-doc-trab').addEventListener('change', function (e) { docSel.trabajadorId = e.target.value; enlacesGeneradores(); abrirDoc(); });
+    $('pm-doc-trab').addEventListener('change', function (e) { docSel.trabajadorId = e.target.value; abrirDoc(); });
     $('pm-doc-tipo').addEventListener('change', function (e) { docSel.tipo = e.target.value; abrirDoc(); });
 
     $('pm-doc-imprimir').addEventListener('click', function () {
@@ -527,14 +906,61 @@
         });
     });
 
-    // ---------- Pase Pyme ----------
+    // ---------- contratos y finiquitos ----------
+    var DESBLOQUEOS = { 'pm-gen-contrato': 'contrato', 'pm-gen-finiquito': 'finiquito' };
+    function cubiertoPorPase(producto) {
+        var cob = estado && estado.pase && estado.pase.cobertura, lim = estado && estado.limites;
+        return !!(cob && lim && lim.paseVence && cob[producto] && cob[producto].indexOf(lim.paseProducto) >= 0);
+    }
+    function dibujarContratos() {
+        var lista = estado.trabajadores || [], hay = lista.length > 0 && !!estado.empresa;
+        $('gen-vacio').hidden = hay;
+        $('pm-gen').hidden = !hay;
+        if (!hay) return;
+        if (!trabajadorPorId(genSel)) genSel = (lista.filter(function (t) { return t.activo; })[0] || lista[0]).id;
+        $('gen-trab').innerHTML = lista.map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.nombre) + (t.activo ? '' : ' (inactivo)') + '</option>'; }).join('');
+        $('gen-trab').value = genSel;
+        enlacesGeneradores();
+        $('gen-contrato-precio').textContent = cubiertoPorPase('contrato') ? 'Incluido en tu Pase' : '$12.990 por contrato, o incluido con el Pase Pyme';
+        $('gen-finiquito-precio').textContent = cubiertoPorPase('finiquito') ? 'Incluido en tu Pase' : '$12.990 por finiquito, o incluido con el Pase de 12 meses';
+        var partes = [];
+        if (cubiertoPorPase('contrato')) partes.push('el contrato');
+        if (cubiertoPorPase('finiquito')) partes.push('el finiquito');
+        $('pm-gen-nota').textContent = partes.length ? 'Con tu pase vigente, ' + partes.join(' y ') + ' se ' + (partes.length > 1 ? 'abren' : 'abre') + ' desbloqueado' + (partes.length > 1 ? 's' : '') + ' por 48 horas cada vez que lo abras desde aquí.' : '';
+    }
+    function enlacesGeneradores() {
+        var q = '?desde=pyme&t=' + encodeURIComponent(genSel || '');
+        $('pm-gen-contrato').href = '/generador-contrato-trabajo-chile' + q;
+        $('pm-gen-anexo42').href = '/generador-anexo-40-horas' + q;
+        $('pm-gen-finiquito').href = '/generador-finiquito-chile' + q;
+    }
+    $('gen-trab').addEventListener('change', function (e) { genSel = e.target.value; enlacesGeneradores(); });
+    // Generadores incluidos en el pase: se pide un desbloqueo firmado y se abre en otra pestaña (abierta al hacer clic, para que el navegador no la bloquee)
+    $('pm-gen').addEventListener('click', function (e) {
+        var a = e.target.closest('a[id]');
+        var producto = a && DESBLOQUEOS[a.id];
+        if (!producto || !cubiertoPorPase(producto) || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        var destino = a.href, ventana = window.open('', '_blank');
+        if (ventana) ventana.opener = null;
+        api('desbloqueo', { metodo: 'POST', cuerpo: { producto: producto } }).then(function (r) {
+            // El desbloqueo firmado viaja en la dirección, como al volver de un pago: el generador lo valida con /api/unlock
+            if (r.ok && r.datos.desbloqueo) {
+                var d = r.datos.desbloqueo;
+                destino += '&' + new URLSearchParams({ p: d.p, o: d.o, e: d.e, sig: d.sig }).toString();
+            }
+            if (ventana) ventana.location.href = destino; else window.location.href = destino;
+        });
+    });
+
+    // ---------- Pase Pyme y cuenta ----------
     var KEY_COMPRA_GA = 'cl_pyme_compra_ga';
     var NOMBRE_PASE = { pyme3: '3 meses', pyme12: '12 meses' };
 
     function ventaPase() { return !!(estado && estado.pase && estado.pase.venta); }
-    // Dónde se habla del pase en otros textos: si se vende, se señala la tarjeta; si no, se dice que aún no está a la venta
-    function textoPaseVenta() { return ventaPase() ? 'Puedes comprarlo en la sección «Pase Pyme».' : 'El Pase Pyme aún no está a la venta.'; }
+    function textoPaseVenta() { return ventaPase() ? 'Puedes comprarlo en «Mi cuenta».' : 'El Pase Pyme aún no está a la venta.'; }
 
+    function dibujarCuenta() { dibujarPase(); dibujarImportar(); }
     function dibujarPase() {
         if (!estado) return;
         var lim = estado.limites, cat = (estado.pase && estado.pase.productos) || [];
@@ -543,12 +969,12 @@
             ? 'Tu Pase Pyme (' + (NOMBRE_PASE[lim.paseProducto] || '') + ') está vigente hasta el ' + fechaVence(lim.paseVence) + '. Si compras otro, empieza cuando termina este.'
             : 'Tu cuenta no tiene un pase vigente: puedes tener 1 trabajador activo y los documentos salen con marca de agua.';
         var caja = $('pm-pase-opciones');
-        if (!ventaPase()) { caja.innerHTML = '<p class="lq-help">El Pase Pyme aún no está a la venta.</p>'; return; }
+        if (!ventaPase()) { caja.innerHTML = '<p class="texto-ayuda">El Pase Pyme aún no está a la venta.</p>'; return; }
         caja.innerHTML = cat.map(function (p) {
-            return '<div class="pm-pase-op"><div><strong>' + esc(NOMBRE_PASE[p.id] || p.titulo) + '</strong>' +
+            return '<div class="pm-pase-op"><div><strong>Pase de ' + esc(NOMBRE_PASE[p.id] || p.titulo) + '</strong>' +
                 '<span class="pm-pase-precio">' + pesos(p.monto) + '</span>' +
-                '<span class="pm-pase-mes">equivale a ' + pesos(p.porMes) + ' al mes</span></div>' +
-                '<button type="button" class="lq-btn-sec" data-comprar="' + esc(p.id) + '"><span class="material-icons" aria-hidden="true">shopping_cart</span>' + (vigente ? 'Agregar ' : 'Comprar ') + esc(NOMBRE_PASE[p.id] || p.titulo) + '</button></div>';
+                '<span class="pm-pase-mes">Equivale a ' + pesos(p.porMes) + ' al mes</span></div>' +
+                '<button type="button" class="btn" data-comprar="' + esc(p.id) + '"><span class="material-icons" aria-hidden="true">shopping_cart</span>' + (vigente ? 'Agregar ' : 'Comprar ') + esc(NOMBRE_PASE[p.id] || p.titulo) + '</button></div>';
         }).join('');
     }
 
@@ -571,7 +997,7 @@
     function volverDePago() {
         var q = new URLSearchParams(window.location.search), res = q.get('pase'), orden = q.get('o') || '';
         if (!res) return;
-        try { window.history.replaceState({}, document.title, window.location.pathname + window.location.hash); } catch (e) { /* sin historial */ }
+        navegar('cuenta', { reemplazar: true });
         var est = $('pm-pase-msg');
         if (res === 'rechazado') { mensaje(est, 'error', 'El pago no se completó y no se hizo ningún cargo.'); return; }
         if (res === 'pendiente') { mensaje(est, '', 'Tu pago está pendiente en Flow. Cuando se confirme, tu pase aparecerá aquí.'); return; }
@@ -585,17 +1011,17 @@
                 var antes = estado && estado.limites && estado.limites.paseVence;
                 if (vence && (!antes || vence !== antes || intentos > 0)) {
                     estado = r.datos;
-                    dibujar();
-                    mensaje(est, 'ok', 'Tu pase está activo hasta el ' + fechaVence(vence) + '. Te enviamos el comprobante por correo.');
-                    registrarCompraGA(producto3(r.datos), orden);
+                    dibujarMarco();
+                    dibujarRuta();
+                    mensaje($('pm-pase-msg'), 'ok', 'Tu pase está activo hasta el ' + fechaVence(vence) + '. Te enviamos el comprobante por correo.');
+                    registrarCompraGA(r.datos.limites && r.datos.limites.paseProducto, orden);
                     return;
                 }
                 if (++intentos < 8) { window.setTimeout(consultar, 2500); return; }
-                mensaje(est, '', 'Tu pago está en proceso. Si en unos minutos no ves tu pase, escríbenos a contacto@calculolaboral.cl con el número de orden ' + orden + '.');
+                mensaje($('pm-pase-msg'), '', 'Tu pago está en proceso. Si en unos minutos no ves tu pase, escríbenos a contacto@calculolaboral.cl con el número de orden ' + orden + '.');
             });
         })();
     }
-    function producto3(datos) { return datos.limites && datos.limites.paseProducto; }
     // La venta se cuenta una vez por orden en GA4
     function registrarCompraGA(producto, orden) {
         if (!producto || !orden || !window.CLCheckout) return;
@@ -605,34 +1031,6 @@
         } catch (e) { /* sin almacenamiento */ }
         window.CLCheckout.track('purchase', producto, { transaction_id: orden });
     }
-
-    // Generadores incluidos en el pase: se pide un desbloqueo firmado al servidor y se deja guardado antes de abrir el generador
-    var DESBLOQUEOS = { 'pm-gen-contrato': 'contrato', 'pm-gen-finiquito': 'finiquito' };
-    function cubiertoPorPase(producto) {
-        var cob = estado && estado.pase && estado.pase.cobertura, lim = estado && estado.limites;
-        return !!(cob && lim && lim.paseVence && cob[producto] && cob[producto].indexOf(lim.paseProducto) >= 0);
-    }
-    function dibujarNotaGeneradores() {
-        var partes = [];
-        if (cubiertoPorPase('contrato')) partes.push('el contrato se abre desbloqueado con tu pase');
-        if (cubiertoPorPase('finiquito')) partes.push('el finiquito se abre desbloqueado con tu pase');
-        $('pm-gen-nota').textContent = partes.length ? 'Con tu pase vigente: ' + partes.join(' y ') + ' (por 48 horas cada vez que lo abras desde aquí).' : '';
-    }
-    $('pm-gen').addEventListener('click', function (e) {
-        var a = e.target.closest('a[id]');
-        var producto = a && DESBLOQUEOS[a.id];
-        if (!producto || !cubiertoPorPase(producto) || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
-        e.preventDefault();
-        var destino = a.href;
-        api('desbloqueo', { metodo: 'POST', cuerpo: { producto: producto } }).then(function (r) {
-            // El desbloqueo firmado viaja en la dirección, como al volver de un pago: el generador lo valida con /api/unlock
-            if (r.ok && r.datos.desbloqueo) {
-                var d = r.datos.desbloqueo;
-                destino += '&' + new URLSearchParams({ p: d.p, o: d.o, e: d.e, sig: d.sig }).toString();
-            }
-            window.location.href = destino;
-        });
-    });
 
     // ---------- traer datos del generador de liquidaciones ----------
     function leerGenerador() {
@@ -682,13 +1080,13 @@
     });
 
     // ---------- liquidaciones de sueldo ----------
-    var PERIODOS = P.periodos().slice().reverse();
+    var PERIODOS = P.periodos().slice().reverse(); // del más nuevo al más antiguo
     var ALMACEN_LOCAL = null;
     try { ALMACEN_LOCAL = window.localStorage; } catch (e) { ALMACEN_LOCAL = null; }
     var VALORES = VL.crear({ parametros: P, fetch: function (u, o) { return window.fetch(u, o); }, storage: ALMACEN_LOCAL });
     var VAL = {};            // valores por mes: { estado: 'cargando' | 'ok' | 'error', ok, mes, fuentes, avisos, notas, mensaje }
     var mesesCache = {};     // periodo → { trabajadorId: mes guardado }
-    var periodoSel = null;   // mes que se está viendo
+    var periodoSel = null;   // mes que se está viendo (el de la barra superior)
     var editando = null;     // { id, t, mes, nota, guardado } mientras el editor está abierto
     var ultimasImpresas = [];
     var MONTO_MAX = 50000000;
@@ -709,6 +1107,7 @@
     function mesesDe(periodo) { return mesesCache[periodo] || {}; }
     function numero(v) { return v === '' || v == null ? 0 : v; }
     function decimal(v) { var x = parseFloat(String(v == null ? '' : v).replace(/\./g, '').replace(',', '.')); return isFinite(x) && x > 0 ? x : 0; }
+    function textoMarcar() { return 'Marcar ' + (ultimasImpresas.length === 1 ? 'la liquidación impresa como emitida' : 'las ' + ultimasImpresas.length + ' impresas como emitidas'); }
 
     function cargarMeses(periodo) {
         return api('meses', { query: { periodo: periodo } }).then(function (r) {
@@ -736,7 +1135,7 @@
         });
     }
 
-    // Carga los meses guardados que el panel necesita (el que se ve y el de los avisos) y vuelve a dibujar
+    // Carga los meses guardados que hacen falta (el que se ve y el de los avisos) y vuelve a dibujar
     function cargarLiquidaciones() {
         if (!periodoSel) periodoSel = periodoPorDefecto();
         var toca = PEND.periodoLiquidacion(hoyIso());
@@ -744,12 +1143,36 @@
         if (toca && toca.periodo !== periodoSel && toca.periodo >= P.PRIMER_MES && toca.periodo <= P.ULTIMO_MES) periodos.push(toca.periodo);
         dibujarLiquidaciones();
         cargarValores(periodoSel);
-        return Promise.all(periodos.map(cargarMeses)).then(function () {
+        return Promise.all(periodos.map(function (p) { return mesesCache[p] ? true : cargarMeses(p); })).then(function () {
             if (!estado) return;
             dibujarLiquidaciones();
             dibujarPendientes();
         });
     }
+
+    // Selector de mes de la barra superior
+    function dibujarSelectorMes() {
+        var sel = $('app-mes');
+        if (!sel.options.length) sel.innerHTML = PERIODOS.map(function (p) { return '<option value="' + p + '">' + esc(mayuscula(nombrePeriodo(p))) + '</option>'; }).join('');
+        sel.value = periodoSel;
+        var i = PERIODOS.indexOf(periodoSel);
+        $('app-mes-ant').disabled = i < 0 || i >= PERIODOS.length - 1;
+        $('app-mes-sig').disabled = i <= 0;
+    }
+    function cambiarPeriodo(p, sinCargar) {
+        if (!p || p === periodoSel || PERIODOS.indexOf(p) < 0) return;
+        periodoSel = p;
+        ultimasImpresas = [];
+        cerrarMes();
+        mensaje($('pm-liq-estado'), '', '');
+        mensaje($('ini-estado'), '', '');
+        if (vistaActual === 'liquidaciones' && rutaActual() !== 'liquidaciones') navegar('liquidaciones', { reemplazar: true, sinScroll: true });
+        if (!sinCargar) cargarLiquidaciones(); else dibujarSelectorMes();
+        if (vistaActual === 'trabajador') dibujarRuta();
+    }
+    $('app-mes').addEventListener('change', function (e) { cambiarPeriodo(e.target.value); });
+    $('app-mes-ant').addEventListener('click', function () { cambiarPeriodo(PERIODOS[PERIODOS.indexOf(periodoSel) + 1]); });
+    $('app-mes-sig').addEventListener('click', function () { cambiarPeriodo(PERIODOS[PERIODOS.indexOf(periodoSel) - 1]); });
 
     function valoresAviso() {
         var caja = $('pm-liq-valores'), v = VAL[periodoSel], html = '';
@@ -768,52 +1191,60 @@
 
     function dibujarLiquidaciones() {
         if (!estado) return;
-        var sel = $('pm-liq-periodo');
-        if (!sel.options.length) sel.innerHTML = PERIODOS.map(function (p) { return '<option value="' + p + '">' + esc(mayuscula(nombrePeriodo(p))) + '</option>'; }).join('');
-        sel.value = periodoSel;
+        dibujarSelectorMes();
+        $('liq-titulo').textContent = 'Liquidaciones de ' + nombrePeriodo(periodoSel);
         valoresAviso();
 
         var lista = activos(), guardados = mesesDe(periodoSel);
         $('pm-liq-vacio').hidden = lista.length > 0;
+        $('liq-panel').hidden = !lista.length;
         $('pm-liq-acciones').hidden = !lista.length;
         $('pm-liq-nota-marca').textContent = tienePase()
             ? 'Con tu pase vigente las liquidaciones salen sin marca de agua. Revisa cada una antes de entregarla.'
             : 'Sin Pase Pyme las liquidaciones llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada liquidación antes de entregarla.';
 
-        var porPreparar = 0, guardadas = 0;
+        var porPreparar = 0, guardadas = 0, porEmitir = 0;
         $('pm-liq-lista').innerHTML = lista.map(function (t) {
-            var reg = guardados[t.id], dias = L.diasBase(t, periodoSel), est = L.estadoDe(reg), sello, meta, acciones = '';
+            var reg = guardados[t.id], dias = L.diasBase(t, periodoSel), est = L.estadoDe(reg), meta = '', acciones = '';
             if (!reg && dias === 0) {
-                sello = '<span class="pm-liq-sello">No corresponde</span>';
                 meta = t.fechaIngreso && t.fechaIngreso > periodoSel + '-31' ? 'Ingresa el ' + fechaLarga(t.fechaIngreso) + '.' : 'Su contrato a plazo fijo terminó antes de este mes.';
             } else {
-                if (est === 'sin_datos') { porPreparar++; sello = '<span class="pm-liq-sello">Sin preparar</span>'; meta = 'Aún no hay datos de este mes.'; }
+                if (est === 'sin_datos') { porPreparar++; porEmitir++; }
                 else {
                     guardadas++;
-                    sello = '<span class="pm-liq-sello pm-liq-sello-ok">' + (est === 'emitida' ? 'Emitida el ' + esc(fechaLarga(reg.emitida)) : 'Guardada') + '</span>';
-                    meta = reg.calculo ? 'Líquido a pagar <span class="pm-mono">' + pesos(reg.calculo.liquido) + '</span>' : 'Guardada sin cálculo: ábrela para calcularla.';
+                    if (est !== 'emitida') porEmitir++;
+                    if (est === 'emitida') meta = 'Emitida el ' + fechaLarga(reg.emitida) + '.';
+                    else if (!reg.calculo) meta = 'Guardada sin cálculo: ábrela para calcularla.';
                 }
-                acciones = '<button type="button" class="lq-btn-sec" data-liq="editar" data-id="' + esc(t.id) + '"><span class="material-icons" aria-hidden="true">' + (reg ? 'edit' : 'playlist_add') + '</span>' + (reg ? 'Editar' : 'Preparar') + '</button>';
+                acciones = '<button type="button" class="btn btn-chico" data-liq="editar" data-id="' + esc(t.id) + '"><span class="material-icons" aria-hidden="true">' + (reg ? 'edit' : 'playlist_add') + '</span>' + (reg ? 'Abrir' : 'Preparar') + '</button>';
                 if (reg) {
-                    acciones += '<button type="button" class="lq-link" data-liq="imprimir" data-id="' + esc(t.id) + '">Imprimir</button>' +
-                        '<button type="button" class="lq-link" data-liq="' + (est === 'emitida' ? 'desmarcar' : 'marcar') + '" data-id="' + esc(t.id) + '">' + (est === 'emitida' ? 'Quitar marca de emitida' : 'Marcar emitida') + '</button>';
+                    acciones += ' <button type="button" class="lq-link" data-liq="imprimir" data-id="' + esc(t.id) + '">Imprimir</button>' +
+                        ' <button type="button" class="lq-link" data-liq="' + (est === 'emitida' ? 'desmarcar' : 'marcar') + '" data-id="' + esc(t.id) + '">' + (est === 'emitida' ? 'Quitar marca' : 'Marcar emitida') + '</button>';
                 }
             }
-            return '<li class="pm-liq"><div class="pm-liq-datos"><span class="pm-liq-nombre">' + esc(t.nombre) + '</span><span class="pm-liq-meta">' + sello + meta + '</span></div><div class="pm-liq-acc">' + acciones + '</div></li>';
+            var abierta = editando && editando.id === t.id;
+            return '<tr' + (abierta ? ' aria-selected="true" class="fila"' : '') + '><td class="celda-nombre"><strong>' + esc(t.nombre) + '</strong><span>' + esc(meta || t.cargo || textoContrato(t)) + '</span></td>' +
+                '<td>' + selloLiq(reg, est, dias) + '</td>' +
+                '<td class="num">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</td>' +
+                '<td style="text-align:right;white-space:nowrap">' + acciones + '</td></tr>';
         }).join('');
         $('pm-liq-preparar').hidden = porPreparar === 0;
         $('pm-liq-imprimir-todas').disabled = guardadas === 0;
         $('pm-liq-marcar').hidden = !ultimasImpresas.length;
-        $('pm-liq-marcar').textContent = 'Marcar ' + (ultimasImpresas.length === 1 ? 'la liquidación impresa como emitida' : 'las ' + ultimasImpresas.length + ' impresas como emitidas');
+        $('pm-liq-marcar').textContent = textoMarcar();
+        $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
+        $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
+        if (vistaActual === 'inicio') dibujarInicio();
     }
 
-    $('pm-liq-periodo').addEventListener('change', function (e) {
-        periodoSel = e.target.value;
-        ultimasImpresas = [];
-        cerrarMes();
-        mensaje($('pm-liq-estado'), '', '');
-        cargarLiquidaciones();
-    });
+    // /app/liquidaciones/<id>: abre el editor de esa persona en el mes de la barra
+    function rutaLiquidaciones(id) {
+        dibujarLiquidaciones();
+        if (!id) { if (editando) cerrarMes(); return; }
+        if (!trabajadorPorId(id)) { navegar('liquidaciones', { reemplazar: true }); return; }
+        var abrir = function () { if (vistaActual === 'liquidaciones' && rutaActual() === 'liquidaciones/' + id) abrirMes(id); };
+        if (mesesCache[periodoSel]) abrir(); else cargarMeses(periodoSel).then(function () { dibujarLiquidaciones(); abrir(); });
+    }
 
     // --- editor de un mes ---
     function listaFilas(path) {
@@ -852,17 +1283,18 @@
     function abrirMes(id) {
         var t = trabajadorPorId(id);
         if (!t) return;
-        var guardado = mesesDe(periodoSel)[id], nota = '';
-        var mes = guardado ? JSON.parse(JSON.stringify(guardado)) : L.mesBase(t, periodoSel);
-        if (!guardado && mes.diasTrabajados < 30) nota = 'Pusimos ' + mes.diasTrabajados + ' días trabajados según su fecha de ingreso o de término de contrato (mes de 30 días). Confírmalo.';
-        editando = { id: id, t: t, mes: mes, nota: nota, guardado: !!guardado };
+        var reg = mesesDe(periodoSel)[id], nota = '';
+        var mes = reg ? JSON.parse(JSON.stringify(reg)) : L.mesBase(t, periodoSel);
+        if (!reg && mes.diasTrabajados < 30) nota = 'Pusimos ' + mes.diasTrabajados + ' días trabajados según su fecha de ingreso o de término de contrato (mes de 30 días). Confírmalo.';
+        editando = { id: id, t: t, mes: mes, nota: nota, guardado: !!reg };
         llenar($('pm-liq-form'), mes);
         pintarListas();
         visibilidadMes();
-        $('pm-liq-editor-titulo').textContent = 'Liquidación de ' + mayuscula(nombrePeriodo(periodoSel)) + ' · ' + t.nombre;
-        $('pm-liq-quitar').hidden = !guardado;
+        $('pm-liq-editor-titulo').textContent = t.nombre + ' · ' + mayuscula(nombrePeriodo(periodoSel));
+        $('pm-liq-quitar').hidden = !reg;
         mensaje($('pm-liq-editor-estado'), '', '');
         $('pm-liq-editor').hidden = false;
+        dibujarLiquidaciones();
         vistaPrevia();
         $('pm-liq-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -934,14 +1366,14 @@
         }
     });
     $('pm-liq-form').addEventListener('submit', function (e) { e.preventDefault(); });
-    $('pm-liq-cerrar').addEventListener('click', cerrarMes);
+    $('pm-liq-cerrar').addEventListener('click', function () { cerrarMes(); navegar('liquidaciones', { reemplazar: true, sinScroll: true }); });
 
     // Guarda un mes (con el resultado calculado si hay valores del mes) y actualiza la memoria local
     function guardarRegistro(id, mes) {
-        var t = trabajadorPorId(id), c = t ? calcularMes(t, mes, periodoSel) : null;
+        var t = trabajadorPorId(id), c = t ? calcularMes(t, mes, periodoSel) : null, periodo = periodoSel;
         var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes) : null) : (mes.calculo || null) });
-        return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodoSel }, cuerpo: { mes: cuerpo } }).then(function (r) {
-            if (r.ok) { mesesCache[periodoSel] = mesesCache[periodoSel] || {}; mesesCache[periodoSel][id] = r.datos.mes; }
+        return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodo }, cuerpo: { mes: cuerpo } }).then(function (r) {
+            if (r.ok) { mesesCache[periodo] = mesesCache[periodo] || {}; mesesCache[periodo][id] = r.datos.mes; }
             return r;
         });
     }
@@ -969,7 +1401,7 @@
             if (!r.ok) { mensaje($('pm-liq-editor-estado'), 'error', r.datos.error || 'No pudimos quitarla.'); return; }
             if (mesesCache[periodoSel]) delete mesesCache[periodoSel][id];
             cerrarMes();
-            dibujarLiquidaciones();
+            navegar('liquidaciones', { reemplazar: true, sinScroll: true });
             dibujarPendientes();
             mensaje($('pm-liq-estado'), 'ok', 'Quitamos esa liquidación.');
         });
@@ -980,18 +1412,17 @@
         var b = e.target.closest('[data-liq]');
         if (!b) return;
         var id = b.getAttribute('data-id'), accion = b.getAttribute('data-liq');
-        if (accion === 'editar') return abrirMes(id);
-        if (accion === 'imprimir') return imprimirMeses([id]);
-        var reg = mesesDe(periodoSel)[id];
-        if (!reg) return;
-        marcarEmitidas([id], accion === 'marcar' ? hoyIso() : '');
+        if (accion === 'editar') return navegar('liquidaciones/' + id, { sinScroll: true });
+        if (accion === 'imprimir') return imprimirMeses([id], $('pm-liq-estado'));
+        if (!mesesDe(periodoSel)[id]) return;
+        marcarEmitidas([id], accion === 'marcar' ? hoyIso() : '', $('pm-liq-estado'));
     });
 
-    $('pm-liq-preparar').addEventListener('click', function () {
-        var est = $('pm-liq-estado'), pendientes = activos().filter(function (t) { return !mesesDe(periodoSel)[t.id] && L.diasBase(t, periodoSel) > 0; });
+    function prepararMes(est) {
+        var pendientes = activos().filter(function (t) { return !mesesDe(periodoSel)[t.id] && L.diasBase(t, periodoSel) > 0; });
         if (!pendientes.length) return;
         if (!VAL[periodoSel] || VAL[periodoSel].estado === 'cargando') { mensaje(est, 'error', 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return; }
-        mensaje(est, '', 'Preparando ' + pendientes.length + (pendientes.length === 1 ? ' liquidación…' : ' liquidaciones…'));
+        mensaje(est, '', 'Preparando ' + plural(pendientes.length, 'liquidación', 'liquidaciones') + '…');
         var hechas = 0, fallo = null;
         pendientes.reduce(function (p, t) {
             return p.then(function () {
@@ -1003,12 +1434,13 @@
             dibujarLiquidaciones();
             dibujarPendientes();
             if (fallo) mensaje(est, 'error', 'Preparamos ' + hechas + ' y paramos: ' + (fallo.datos.error || 'no pudimos guardar.'));
-            else mensaje(est, 'ok', 'Preparamos ' + hechas + (hechas === 1 ? ' liquidación' : ' liquidaciones') + ' con los valores base (días según el ingreso, gratificación según la ficha, sin horas extra ni descuentos). Ábrelas para agregar lo del mes antes de imprimir.');
+            else mensaje(est, 'ok', 'Preparamos ' + plural(hechas, 'liquidación', 'liquidaciones') + ' con los valores base (días según el ingreso, gratificación según la ficha, sin horas extra ni descuentos). Ábrelas para agregar lo del mes antes de imprimir.');
         });
-    });
+    }
+    $('pm-liq-preparar').addEventListener('click', function () { prepararMes($('pm-liq-estado')); });
 
-    function marcarEmitidas(ids, fecha) {
-        var est = $('pm-liq-estado'), hechas = 0, fallo = null;
+    function marcarEmitidas(ids, fecha, est) {
+        var hechas = 0, fallo = null;
         mensaje(est, '', 'Guardando…');
         ids.reduce(function (p, id) {
             return p.then(function () {
@@ -1021,10 +1453,10 @@
             if (!fecha) ultimasImpresas = []; else ultimasImpresas = ultimasImpresas.filter(function (x) { return ids.indexOf(x) < 0; });
             dibujarLiquidaciones();
             dibujarPendientes();
-            mensaje(est, fallo ? 'error' : 'ok', fallo ? (fallo.datos.error || 'No pudimos guardar.') : (fecha ? 'Marcamos ' + hechas + (hechas === 1 ? ' liquidación' : ' liquidaciones') + ' como emitida' + (hechas === 1 ? '.' : 's.') : 'Quitamos la marca de emitida.'));
+            mensaje(est, fallo ? 'error' : 'ok', fallo ? (fallo.datos.error || 'No pudimos guardar.') : (fecha ? 'Marcamos ' + plural(hechas, 'liquidación', 'liquidaciones') + ' como emitida' + (hechas === 1 ? '.' : 's.') : 'Quitamos la marca de emitida.'));
         });
     }
-    $('pm-liq-marcar').addEventListener('click', function () { marcarEmitidas(ultimasImpresas.slice(), hoyIso()); });
+    $('pm-liq-marcar').addEventListener('click', function () { marcarEmitidas(ultimasImpresas.slice(), hoyIso(), $('pm-liq-estado')); });
 
     // --- impresión ---
     function imprimirHojas(htmls, titulo) {
@@ -1038,8 +1470,8 @@
         setTimeout(restaurar, 2000);
     }
     // Imprime los meses guardados de esos trabajadores (en el orden de la ficha); avisa los que no se pudieron calcular
-    function imprimirMeses(ids) {
-        var est = $('pm-liq-estado'), val = VAL[periodoSel];
+    function imprimirMeses(ids, est) {
+        var val = VAL[periodoSel];
         if (!val || val.estado !== 'ok') { mensaje(est, 'error', val && val.estado === 'error' ? (val.mensaje || 'No se pudieron obtener los valores del mes.') : 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return; }
         var hojas = [], impresas = [], omitidas = [];
         activos().forEach(function (t) {
@@ -1050,15 +1482,13 @@
             hojas.push(DOC.documento(estado.empresa, t, reg, r.res, { periodo: periodoSel, pagada: tienePase(), fuentes: r.val.fuentes }));
             impresas.push(t.id);
         });
-        if (!hojas.length) { mensaje(est, 'error', omitidas.length ? 'Revisa los datos de ' + omitidas.join(', ') + ': la liquidación tiene errores y no se puede imprimir.' : 'No hay liquidaciones guardadas para imprimir.'); return; }
-        ultimasImpresas = impresas;
+        if (!hojas.length) { mensaje(est, 'error', omitidas.length ? 'Revisa los datos de ' + omitidas.join(', ') + ': la liquidación tiene errores y no se puede imprimir.' : 'No hay liquidaciones preparadas para imprimir.'); return; }
+        ultimasImpresas = impresas.filter(function (id) { var reg = mesesDe(periodoSel)[id]; return reg && !reg.emitida; });
         dibujarLiquidaciones();
         mensaje(est, omitidas.length ? 'error' : '', omitidas.length ? 'No se imprimieron las de ' + omitidas.join(', ') + ' porque tienen errores: ábrelas y corrígelas.' : '');
         imprimirHojas(hojas, impresas.length === 1 ? 'Liquidacion ' + trabajadorPorId(impresas[0]).nombre + ' ' + periodoSel : 'Liquidaciones ' + periodoSel);
     }
-    $('pm-liq-imprimir-todas').addEventListener('click', function () {
-        imprimirMeses(activos().map(function (t) { return t.id; }));
-    });
+    $('pm-liq-imprimir-todas').addEventListener('click', function () { imprimirMeses(activos().map(function (t) { return t.id; }), $('pm-liq-estado')); });
     $('pm-liq-imprimir').addEventListener('click', function () {
         if (!editando || $('pm-liq-imprimir').disabled) return;
         var r = calcularMes(editando.t, editando.mes, periodoSel);
@@ -1083,8 +1513,9 @@
             setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
             guardar(KEY_RESPALDO, new Date().toISOString());
             mensaje(est, 'ok', 'Archivo descargado.');
+            avisoGlobal('ok', 'Descargamos el respaldo con todos tus datos.');
             dibujarPendientes();
-        }).catch(function () { mensaje(est, 'error', 'No pudimos preparar el archivo. Intenta de nuevo.'); });
+        }).catch(function () { mensaje(est, 'error', 'No pudimos preparar el archivo. Intenta de nuevo.'); avisoGlobal('error', 'No pudimos preparar el respaldo. Intenta de nuevo.'); });
     }
     $('pm-exportar').addEventListener('click', exportar);
 

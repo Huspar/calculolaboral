@@ -103,7 +103,7 @@
             (tipo === 'error' ? 'background:#fff1f2;color:#9f1239;' : 'background:#eef6f3;color:#0f3f35;');
         caja.textContent = texto + ' ';
         var enlace = document.createElement('a');
-        enlace.href = '/asistente-pyme';
+        enlace.href = '/app';
         enlace.textContent = 'Volver al asistente';
         enlace.style.cssText = 'font-weight:700;text-decoration:underline;color:inherit;';
         caja.appendChild(enlace);

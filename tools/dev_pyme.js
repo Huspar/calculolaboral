@@ -2,9 +2,9 @@
 /*
  * Servidor local para probar el Asistente Pyme de punta a punta SIN base de datos ni correo (solo desarrollo).
  *
- *   node tools/dev_pyme.js [puerto]        (por defecto 3000)  →  http://localhost:3000/asistente-pyme
+ *   node tools/dev_pyme.js [puerto]        (por defecto 3000)  →  http://localhost:3000/app
  *
- * - Sirve los archivos del sitio (con URLs limpias: /asistente-pyme → asistente-pyme.html).
+ * - Sirve los archivos del sitio (con URLs limpias) y el software en /app y sus subrutas (todas sirven app.html).
  * - /api/pyme/* usa el mismo enrutador de produccion con una base EN MEMORIA (se borra al apagarlo) y claves aleatorias.
  * - No envia correos: el enlace de acceso se imprime en la terminal y queda en http://localhost:3000/__dev/ultimo-enlace
  * - http://localhost:3000/__dev/pase?email=ana@ejemplo.cl[&producto=pyme12]  da un pase de 30 dias a esa cuenta (para probar el limite de 5).
@@ -102,6 +102,9 @@ function leerCuerpo(req) {
 function estatico(url, res) {
     let ruta = decodeURIComponent(url.pathname);
     if (ruta === '/') ruta = '/index.html';
+    // Como la regla de vercel.json: /app y sus subrutas sirven el software
+    if (ruta === '/app' || ruta.indexOf('/app/') === 0) ruta = '/app.html';
+    if (ruta === '/asistente-pyme') { res.statusCode = 301; res.setHeader('Location', '/app'); return res.end(); }
     let archivo = path.join(RAIZ, ruta);
     if (!archivo.startsWith(RAIZ)) { res.statusCode = 403; return res.end('Prohibido'); }
     if (!fs.existsSync(archivo) || fs.statSync(archivo).isDirectory()) {
@@ -142,7 +145,7 @@ http.createServer(async (req, res) => {
             const p = pagosDev[url.searchParams.get('token')];
             if (!p) { res.statusCode = 404; return res.end('Pago simulado desconocido'); }
             const resultado = url.searchParams.get('resultado') || 'ok';
-            const destino = '/asistente-pyme?pase=' + (resultado === 'ok' ? 'ok&o=' + p.order : resultado);
+            const destino = '/app/cuenta?pase=' + (resultado === 'ok' ? 'ok&o=' + p.order : resultado);
             if (resultado === 'ok') {
                 const r = await pase.confirmar({ paid: true, product: p.product, order: p.order, optional: p.optional });
                 console.log('[flow simulado] ' + p.product + ' -> ' + JSON.stringify(r));
@@ -161,4 +164,4 @@ http.createServer(async (req, res) => {
         res.statusCode = 500;
         res.end('Error');
     }
-}).listen(PUERTO, () => console.log('Asistente Pyme (desarrollo, base en memoria): ' + SITIO + '/asistente-pyme'));
+}).listen(PUERTO, () => console.log('Asistente Pyme (desarrollo, base en memoria): ' + SITIO + '/app'));

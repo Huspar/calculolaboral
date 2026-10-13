@@ -327,7 +327,7 @@ caso('api/flow-confirm ignora un pago de pase con monto distinto o sin pagar', a
 });
 caso('api/flow-return lleva de vuelta al asistente según el resultado del pago de un pase', async () => {
     const volver = require('../api/flow-return');
-    const casos = [[{ status: 2, amount: 59990, commerceOrder: 'P12-1-a', flowOrder: 123 }, '/asistente-pyme?pase=ok&o=123'], [{ status: 1, amount: 59990, commerceOrder: 'P12-1-a', flowOrder: 123 }, '/asistente-pyme?pase=pendiente'], [{ status: 3, amount: 59990, commerceOrder: 'P12-1-a', flowOrder: 123 }, '/asistente-pyme?pase=rechazado']];
+    const casos = [[{ status: 2, amount: 59990, commerceOrder: 'P12-1-a', flowOrder: 123 }, '/app/cuenta?pase=ok&o=123'], [{ status: 1, amount: 59990, commerceOrder: 'P12-1-a', flowOrder: 123 }, '/app/cuenta?pase=pendiente'], [{ status: 3, amount: 59990, commerceOrder: 'P12-1-a', flowOrder: 123 }, '/app/cuenta?pase=rechazado']];
     for (const [st, destino] of casos) {
         const env = entorno(st);
         try { const res = respuesta(); await volver({ method: 'POST', body: 'token=TOKENDEFLOW1234', query: {}, headers: {} }, res); assert.deepStrictEqual([res.statusCode, res.headers.Location], [303, 'https://calculolaboral.cl' + destino]); } finally { env.restaurar(); }

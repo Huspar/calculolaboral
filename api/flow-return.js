@@ -18,8 +18,8 @@ module.exports = async (req, res) => {
         const pay = await paymentStatus(token);
         if (pay.product && PRODUCTS[pay.product].pase) {
             // Pase Pyme: de vuelta al asistente, que consulta su cuenta para mostrar la vigencia
-            if (pay.paid) return redirect(res, `/asistente-pyme?pase=ok&o=${encodeURIComponent(pay.order)}`);
-            return redirect(res, `/asistente-pyme?pase=${pay.pending ? 'pendiente' : 'rechazado'}`);
+            if (pay.paid) return redirect(res, `/app/cuenta?pase=ok&o=${encodeURIComponent(pay.order)}`);
+            return redirect(res, `/app/cuenta?pase=${pay.pending ? 'pendiente' : 'rechazado'}`);
         }
         if (pay.paid) {
             // Kits: pagina de descarga. Generadores: vuelven a su pagina con el desbloqueo firmado.

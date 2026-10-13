@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Asistente Laboral Pyme · Cálculo Laboral</title>
+<meta name="description" content="Software para pymes: liquidaciones de sueldo por mes, documentos laborales y plazos a la vista, con los datos de tu empresa y tus trabajadores guardados cifrados.">
+<meta name="theme-color" content="#00261F">
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+<link href="/favicon.ico" rel="icon">
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+<script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+(function () {
+    var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    try { if (localStorage.getItem('cl_interno') === '1') esInterno = true; } catch (e) {}
+    // Las vistas se cuentan desde js/app_pyme.js con rutas genéricas (nunca con ids de trabajadores)
+    gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
+})();
+</script>
+<link rel="stylesheet" href="/assets/css/app.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+</head>
+<body class="app-body">
+
+<div id="pm-cargando" class="cargando" role="status"><p>Cargando tu cuenta…</p></div>
+
+<!-- Entrada -->
+<main id="pm-entrada" class="entrada" hidden>
+<div class="entrada-caja">
+<a class="app-logo app-logo-claro" href="/" aria-label="Cálculo Laboral, ir al sitio">
+<span class="app-logo-isotipo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 84h40M38 79h24"/><path d="M50 22v57"/><path d="M50 14l-2 4h4l-2-4v8"/><path d="M18 36c10-9 22-12 32-12s22 3 32 12"/><path d="M18 36l-8 18h16Z"/><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M82 36l-8 18h16Z"/><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M41 43.5a10 10 0 1 0 0 20h6"/><path d="M58 43.5v20h10"/></svg></span>
+<span class="app-logo-texto">Cálculo<span>Laboral</span></span>
+</a>
+<h1 id="pm-entrada-titulo">Entra al Asistente Laboral Pyme</h1>
+<p class="texto-ayuda">Te enviamos un enlace de un solo uso, válido por 15 minutos. No necesitas contraseña.</p>
+<div id="pm-entrada-nota" class="lq-aviso lq-aviso-info" role="status" hidden><span class="material-icons" aria-hidden="true">info</span><p></p></div>
+<form id="pm-entrar-form" novalidate>
+<div class="lq-field">
+<label for="pm-email">Correo electrónico</label>
+<input id="pm-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="tucorreo@empresa.cl" required>
+</div>
+<p id="pm-entrar-error" class="pm-error" role="alert" hidden></p>
+<button type="submit" id="pm-entrar-btn" class="btn btn-primario">Enviarme el enlace</button>
+</form>
+<div id="pm-entrar-listo" class="lq-aviso lq-aviso-info" role="status" hidden>
+<span class="material-icons" aria-hidden="true">mark_email_read</span>
+<p><strong>Revisa tu correo.</strong> Si el correo es correcto, te enviamos un enlace para entrar. Revisa también la carpeta de spam. <button type="button" id="pm-otro-correo" class="lq-link">Usar otro correo</button></p>
+</div>
+<p class="entrada-legal">La primera vez te pediremos aceptar los <a href="/terminos#asistente-pyme">Términos</a> y la cláusula de encargo de tratamiento de datos. Más información en la <a href="/privacidad#asistente-pyme">Política de Privacidad</a>.</p>
+<p class="entrada-volver"><a href="/asistente-laboral-pyme">Qué incluye y cuánto cuesta</a> · <a href="/">Volver a calculolaboral.cl</a></p>
+</div>
+</main>
+
+<!-- Software -->
+<div id="pm-panel" class="app" hidden>
+
+<aside class="app-side" id="app-side" aria-label="Menú del asistente">
+<a class="app-logo" href="/app" data-ruta="" aria-label="Cálculo Laboral, ir al inicio del asistente">
+<span class="app-logo-isotipo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 84h40M38 79h24"/><path d="M50 22v57"/><path d="M50 14l-2 4h4l-2-4v8"/><path d="M18 36c10-9 22-12 32-12s22 3 32 12"/><path d="M18 36l-8 18h16Z"/><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M82 36l-8 18h16Z"/><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M41 43.5a10 10 0 1 0 0 20h6"/><path d="M58 43.5v20h10"/></svg></span>
+<span class="app-logo-texto">Cálculo<span>Laboral</span></span>
+</a>
+<div class="app-empresa">
+<strong id="app-empresa-nombre">Tu empresa</strong>
+<span id="app-empresa-rut" class="mono"></span>
+</div>
+<nav class="app-nav" aria-label="Secciones">
+<a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span>Cierre del mes</a>
+<p class="app-nav-grupo">Personas</p>
+<a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span>Trabajadores</a>
+<p class="app-nav-grupo">Mes</p>
+<a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span>Liquidaciones<span class="app-nav-cuenta" id="nav-liq-n"></span></a>
+<a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos</a>
+<p class="app-nav-grupo">Herramientas</p>
+<a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
+<p class="app-nav-grupo">Configuración</p>
+<a href="/app/empresa" data-ruta="empresa" data-nav="empresa"><span class="material-icons" aria-hidden="true">apartment</span>Empresa</a>
+<a href="/app/cuenta" data-ruta="cuenta" data-nav="cuenta"><span class="material-icons" aria-hidden="true">person</span>Mi cuenta</a>
+</nav>
+<div class="app-nav app-side-pie">
+<a href="/asistente-laboral-pyme" target="_blank" rel="noopener"><span class="material-icons" aria-hidden="true">help_outline</span>Qué incluye el asistente</a>
+<a href="/"><span class="material-icons" aria-hidden="true">arrow_back</span>Ir a calculolaboral.cl</a>
+</div>
+</aside>
+<div class="app-velo" id="app-velo"></div>
+
+<div class="app-main">
+<header class="app-top">
+<button type="button" class="app-icono-btn app-menu-btn" id="app-menu" aria-label="Abrir el menú" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">menu</span></button>
+<div class="app-mes">
+<button type="button" class="app-icono-btn" id="app-mes-ant" aria-label="Mes anterior"><span class="material-icons" aria-hidden="true">chevron_left</span></button>
+<label class="sr-only" for="app-mes">Mes de trabajo</label>
+<select id="app-mes"></select>
+<button type="button" class="app-icono-btn" id="app-mes-sig" aria-label="Mes siguiente"><span class="material-icons" aria-hidden="true">chevron_right</span></button>
+</div>
+<div class="app-top-der">
+<a class="app-pase" id="app-pase" href="/app/cuenta" data-ruta="cuenta"><i aria-hidden="true"></i><span id="app-pase-texto"></span></a>
+<div class="app-cuenta">
+<span id="pm-correo"></span>
+<button type="button" id="pm-salir" class="btn btn-chico">Salir</button>
+</div>
+</div>
+</header>
+
+<main class="app-content" id="app-content">
+<div id="pm-aviso-global" class="lq-avisos aviso-global" role="status"></div>
+
+<!-- Cierre del mes -->
+<section class="vista" data-vista="inicio" aria-labelledby="ini-titulo">
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="ini-titulo">Cierre del mes</h1>
+<p class="v-sub" id="ini-sub"></p>
+<div class="avance" id="ini-avance" aria-hidden="true"></div>
+</div>
+<div class="v-acciones" id="ini-acciones">
+<button type="button" class="btn" id="ini-preparar"><span class="material-icons" aria-hidden="true">playlist_add</span><span id="ini-preparar-txt">Preparar las que faltan</span></button>
+<button type="button" class="btn btn-primario" id="ini-imprimir"><span class="material-icons" aria-hidden="true">print</span>Imprimir todas</button>
+</div>
+</div>
+<p id="ini-marcar-fila" class="lq-estado" hidden><button type="button" id="ini-marcar" class="btn-texto"></button></p>
+<p id="ini-estado" class="lq-estado" role="status"></p>
+<dl class="cifras" id="ini-cifras"></dl>
+
+<div class="panel" id="ini-primeros" hidden>
+<div class="panel-head"><h2>Para empezar</h2></div>
+<ol class="primeros" id="ini-primeros-lista"></ol>
+</div>
+
+<div class="cierre" id="ini-cierre">
+<div>
+<div class="panel">
+<div class="tabla-wrap">
+<table class="tabla" id="ini-tabla">
+<caption class="sr-only" id="ini-caption">Trabajadores y estado de su liquidación del mes</caption>
+<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="ocultar-movil">Emitida</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
+<tbody id="ini-filas"></tbody>
+</table>
+</div>
+</div>
+</div>
+<aside class="detalle panel" id="ini-detalle" aria-label="Detalle del trabajador elegido"><div class="detalle-cuerpo" id="ini-detalle-cuerpo"></div></aside>
+</div>
+
+<div class="panel" id="ini-avisos" style="margin-top: 20px">
+<div class="panel-head"><h2>Avisos del mes</h2></div>
+<ul class="avisos-mes" id="pm-pend"></ul>
+</div>
+</section>
+
+<!-- Trabajadores -->
+<section class="vista" data-vista="trabajadores" aria-labelledby="trab-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="trab-titulo">Trabajadores</h1>
+<p class="v-sub" id="pm-trab-limite"></p>
+</div>
+<div class="v-acciones">
+<button type="button" class="btn btn-primario" id="pm-trab-nuevo"><span class="material-icons" aria-hidden="true">person_add</span>Agregar trabajador</button>
+</div>
+</div>
+<div class="panel" id="trab-panel">
+<div class="tabla-wrap">
+<table class="tabla">
+<caption class="sr-only">Trabajadores de la empresa</caption>
+<thead><tr><th scope="col">Nombre</th><th scope="col" class="ocultar-movil">RUT</th><th scope="col">Contrato</th><th scope="col" class="num ocultar-movil">Sueldo base</th><th scope="col">Estado</th><th scope="col" class="chev"><span class="sr-only">Abrir</span></th></tr></thead>
+<tbody id="pm-trab-lista"></tbody>
+</table>
+</div>
+</div>
+<div class="panel" id="trab-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Aún no agregas trabajadores</p><p class="texto-ayuda" id="trab-vacio-txt">Con sus datos guardados, cada liquidación y documento se arma solo.</p></div></div>
+</section>
+
+<!-- Carpeta del trabajador -->
+<section class="vista" data-vista="trabajador" aria-labelledby="carp-nombre" hidden>
+<nav class="migas" aria-label="Ruta"><a href="/app/trabajadores" data-ruta="trabajadores">Trabajadores</a><span class="material-icons" aria-hidden="true">chevron_right</span><span id="carp-miga"></span></nav>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="carp-nombre">Trabajador</h1>
+<p class="ficha-resumen" id="carp-resumen"></p>
+</div>
+<div class="v-acciones" id="carp-acciones">
+<a class="btn" id="carp-ir-liq" href="/app/liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span id="carp-ir-liq-txt">Liquidación del mes</span></a>
+<a class="btn" id="carp-ir-doc" href="/app/documentos"><span class="material-icons" aria-hidden="true">description</span>Emitir documento</a>
+</div>
+</div>
+<nav class="pestanas" id="carp-tabs" aria-label="Carpeta del trabajador">
+<a href="#" data-tab="ficha">Ficha</a>
+<a href="#" data-tab="liquidaciones">Liquidaciones</a>
+<a href="#" data-tab="documentos">Documentos</a>
+</nav>
+
+<div id="carp-ficha">
+<div class="panel"><div class="panel-cuerpo">
+<form id="pm-trab-form" novalidate autocomplete="off">
+<h2 id="pm-trab-form-titulo" class="sr-only">Datos del trabajador</h2>
+<div class="form-bloque">
+<p class="h-seccion">Identificación</p>
+<div class="lq-grid">
+<div class="lq-field lq-span2"><label for="pm-t-nombre">Nombre completo</label><input id="pm-t-nombre" data-k="nombre" type="text" maxlength="80" placeholder="María Pérez Soto"><p class="pm-error" data-error="nombre" hidden></p></div>
+<div class="lq-field"><label for="pm-t-rut">RUT</label><input id="pm-t-rut" data-k="rut" data-tipo="rut" type="text" maxlength="12" placeholder="12.345.678-5"><p class="pm-error" data-error="rut" hidden></p></div>
+<div class="lq-field"><label for="pm-t-cargo">Cargo <span class="lq-opt">(opcional)</span></label><input id="pm-t-cargo" data-k="cargo" type="text" maxlength="60" placeholder="Vendedora"></div>
+<div class="lq-field"><label for="pm-t-nac">Fecha de nacimiento <span class="lq-opt">(opcional)</span></label><input id="pm-t-nac" data-k="fechaNacimiento" type="date"><p class="pm-error" data-error="fechaNacimiento" hidden></p></div>
+<div class="lq-field"><label for="pm-t-nacion">Nacionalidad <span class="lq-opt">(opcional)</span></label><input id="pm-t-nacion" data-k="nacionalidad" type="text" maxlength="40" placeholder="Chilena"></div>
+<div class="lq-field lq-span2"><label for="pm-t-dom">Domicilio <span class="lq-opt">(opcional)</span></label><input id="pm-t-dom" data-k="domicilio" type="text" maxlength="120" placeholder="Calle 123, Temuco"></div>
+<div class="lq-field"><label for="pm-t-comuna">Comuna <span class="lq-opt">(opcional)</span></label><input id="pm-t-comuna" data-k="comuna" type="text" maxlength="60" placeholder="Temuco"></div>
+</div>
+</div>
+<div class="form-bloque">
+<p class="h-seccion">Contrato y jornada</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-t-ingreso">Fecha de ingreso</label><input id="pm-t-ingreso" data-k="fechaIngreso" type="date"><p class="pm-error" data-error="fechaIngreso" hidden></p></div>
+<div class="lq-field"><label for="pm-t-contrato">Contrato</label>
+<select id="pm-t-contrato" data-k="contrato"><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="obra">Por obra o faena</option></select></div>
+<div class="lq-field" data-si-contrato="plazo_fijo"><label for="pm-t-termino">Vence el contrato a plazo fijo</label><input id="pm-t-termino" data-k="fechaTerminoPlazo" type="date"><p class="pm-error" data-error="fechaTerminoPlazo" hidden></p></div>
+<div class="lq-field" data-si-contrato="plazo_fijo"><label for="pm-t-reno">Renovaciones que lleva</label><input id="pm-t-reno" data-k="renovaciones" data-tipo="num" type="text" inputmode="numeric" maxlength="1" placeholder="0"><p class="pm-error" data-error="renovaciones" hidden></p></div>
+<div class="lq-field"><label for="pm-t-jornada">Jornada semanal (horas)</label><input id="pm-t-jornada" data-k="jornadaHoras" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="42"><p class="pm-error" data-error="jornadaHoras" hidden></p></div>
+<div class="lq-field"><label for="pm-t-dist">Días de trabajo a la semana</label>
+<select id="pm-t-dist" data-k="distribucion"><option value="5">5 días (lunes a viernes)</option><option value="6">6 días (lunes a sábado)</option></select></div>
+<div class="lq-field"><label for="pm-t-otros">Años con otros empleadores <span class="lq-opt">(feriado progresivo, hasta 10)</span></label><input id="pm-t-otros" data-k="aniosOtrosEmpleadores" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="0"><p class="pm-error" data-error="aniosOtrosEmpleadores" hidden></p></div>
+<div class="lq-field pm-check lq-span2"><label><input id="pm-t-zona" data-k="zonaExtrema" type="checkbox"> Trabaja en zona extrema <span class="lq-opt">(feriado de 20 días hábiles)</span></label></div>
+</div>
+</div>
+<div class="form-bloque">
+<p class="h-seccion">Remuneración y previsión</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-t-sueldo">Sueldo base mensual</label><input id="pm-t-sueldo" data-k="sueldoBase" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$650.000"><p class="pm-error" data-error="sueldoBase" hidden></p></div>
+<div class="lq-field"><label for="pm-t-grat">Gratificación</label>
+<select id="pm-t-grat" data-k="gratificacion"><option value="legal">Legal (art. 50)</option><option value="ninguna">Ninguna</option><option value="pactada">Pactada</option></select></div>
+<div class="lq-field"><label for="pm-t-colacion">Colación mensual <span class="lq-opt">(opcional)</span></label><input id="pm-t-colacion" data-k="colacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"><p class="pm-error" data-error="colacion" hidden></p></div>
+<div class="lq-field"><label for="pm-t-movil">Movilización mensual <span class="lq-opt">(opcional)</span></label><input id="pm-t-movil" data-k="movilizacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"><p class="pm-error" data-error="movilizacion" hidden></p></div>
+<div class="lq-field"><label for="pm-t-afp">AFP</label><select id="pm-t-afp" data-k="afp"></select></div>
+<div class="lq-field"><label for="pm-t-salud">Salud</label>
+<select id="pm-t-salud" data-k="salud"><option value="fonasa">Fonasa</option><option value="isapre">Isapre</option></select></div>
+<div class="lq-field" data-si-salud="isapre"><label for="pm-t-isapre">Isapre</label><input id="pm-t-isapre" data-k="isapreNombre" type="text" maxlength="40" placeholder="Colmena"></div>
+<div class="lq-field" data-si-salud="isapre"><label for="pm-t-plan">Plan pactado (UF)</label><input id="pm-t-plan" data-k="isaprePlanUF" data-tipo="uf" type="text" inputmode="decimal" placeholder="4,2"><p class="pm-error" data-error="isaprePlanUF" hidden></p></div>
+</div>
+</div>
+<div class="form-bloque" id="pm-t-activo-campo" hidden>
+<div class="lq-field pm-check"><label><input id="pm-t-activo" data-k="activo" type="checkbox" checked> Trabajador activo <span class="lq-opt">(cuenta para el límite de trabajadores de tu plan)</span></label></div>
+</div>
+<p id="pm-trab-error" class="pm-error" role="alert" hidden></p>
+<div class="form-acciones">
+<button type="submit" id="pm-trab-guardar" class="btn btn-primario"><span class="material-icons" aria-hidden="true">save</span>Guardar</button>
+<button type="button" id="pm-trab-cancelar" class="btn">Descartar cambios</button>
+<p id="pm-trab-estado" class="lq-estado" role="status"></p>
+<button type="button" id="carp-borrar" class="lq-link lq-danger" style="margin-left:auto" hidden>Eliminar trabajador</button>
+</div>
+</form>
+</div></div>
+</div>
+
+<div id="carp-liq" hidden>
+<div class="panel">
+<div class="tabla-wrap">
+<table class="tabla">
+<caption class="sr-only">Liquidaciones del trabajador por mes</caption>
+<thead><tr><th scope="col">Mes</th><th scope="col">Estado</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="ocultar-movil">Emitida</th><th scope="col" class="chev"><span class="sr-only">Abrir</span></th></tr></thead>
+<tbody id="carp-liq-filas"></tbody>
+</table>
+</div>
+</div>
+<p class="texto-ayuda" style="margin-top:10px">Se muestran los meses desde su ingreso, hasta 12. Cada liquidación queda guardada y cifrada en tu cuenta.</p>
+</div>
+
+<div id="carp-docs" hidden>
+<p class="texto-ayuda">Elige un documento: se arma con la ficha de esta persona y los datos de tu empresa.</p>
+<div class="gen-lista" id="carp-docs-lista"></div>
+</div>
+</section>
+
+<!-- Liquidaciones -->
+<section class="vista" data-vista="liquidaciones" aria-labelledby="liq-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="liq-titulo">Liquidaciones</h1>
+<p class="v-sub" id="pm-liq-intro">Revisa o completa lo de cada trabajador y guarda: queda en tu cuenta, cifrado. Después imprimes todas las del mes de una vez.</p>
+</div>
+<div class="v-acciones" id="pm-liq-acciones">
+<button type="button" id="pm-liq-preparar" class="btn"><span class="material-icons" aria-hidden="true">playlist_add</span>Preparar el mes con valores base</button>
+<button type="button" id="pm-liq-imprimir-todas" class="btn btn-primario"><span class="material-icons" aria-hidden="true">print</span>Imprimir todas</button>
+</div>
+</div>
+<div id="pm-liq-valores" class="lq-avisos" role="status" style="margin-bottom:14px"></div>
+<div class="panel" id="pm-liq-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">No hay trabajadores activos</p><p class="texto-ayuda">Agrega primero a un trabajador activo para preparar su liquidación.</p></div></div>
+<div class="panel" id="liq-panel">
+<div class="tabla-wrap">
+<table class="tabla">
+<caption class="sr-only">Liquidaciones del mes</caption>
+<thead><tr><th scope="col">Trabajador</th><th scope="col">Estado</th><th scope="col" class="num">Líquido a pagar</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+<tbody id="pm-liq-lista"></tbody>
+</table>
+</div>
+</div>
+<div class="mes-acciones">
+<button type="button" id="pm-liq-marcar" class="btn-texto" hidden>Marcar como emitidas</button>
+<p id="pm-liq-estado" class="lq-estado" role="status"></p>
+</div>
+<p class="texto-ayuda" id="pm-liq-nota-marca" style="margin-top:6px"></p>
+
+<div id="pm-liq-editor" class="editor" hidden>
+<div class="editor-izq">
+<div class="panel"><div class="panel-cuerpo">
+<div class="editor-titulo"><h2 id="pm-liq-editor-titulo">Liquidación</h2><button type="button" id="pm-liq-cerrar" class="app-icono-btn" aria-label="Cerrar el editor"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<form id="pm-liq-form" novalidate autocomplete="off">
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-m-dias">Días trabajados (de 30)</label><input id="pm-m-dias" data-k="diasTrabajados" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="30"></div>
+<div class="lq-field"><label for="pm-m-lic">Días de licencia médica <span class="lq-opt">(informativo)</span></label><input id="pm-m-lic" data-k="diasLicencia" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="0"></div>
+<div class="lq-field"><label for="pm-m-he">Horas extra del mes</label><input id="pm-m-he" data-k="horasExtra" data-tipo="dec" type="text" inputmode="decimal" placeholder="0"></div>
+<div class="lq-field"><label for="pm-m-grat">Gratificación</label>
+<select id="pm-m-grat" data-k="gratificacion"><option value="legal">Legal mensual (25%, art. 50)</option><option value="manual">Monto fijo pactado</option><option value="ninguna">No se paga este mes</option></select></div>
+<div class="lq-field" data-si="grat-manual"><label for="pm-m-gratmonto">Monto de la gratificación</label><input id="pm-m-gratmonto" data-k="gratificacionMonto" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-com">Comisiones <span class="lq-opt">(imponible)</span></label><input id="pm-m-com" data-k="comisiones" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<div class="lq-sub">
+<p class="lq-subtitle">Bonos imponibles</p>
+<div class="lq-list" data-lista="bonosImponibles" data-ph="Bono de producción"></div>
+<button type="button" class="lq-link" data-agregar="bonosImponibles" style="justify-self:start">+ Agregar bono</button>
+</div>
+<div class="lq-sub">
+<p class="lq-subtitle">Haberes no imponibles del mes</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-m-viat">Viáticos</label><input id="pm-m-viat" data-k="viaticos" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-asig">Asignación familiar</label><input id="pm-m-asig" data-k="asignacionFamiliar" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<div class="lq-list" data-lista="otrosNoImponibles" data-ph="Aguinaldo de Fiestas Patrias"></div>
+<button type="button" class="lq-link" data-agregar="otrosNoImponibles" style="justify-self:start">+ Agregar otro no imponible</button>
+</div>
+<div class="lq-sub">
+<p class="lq-subtitle">Descuentos</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-m-apv">APV <span class="lq-opt">(ahorro voluntario)</span></label><input id="pm-m-apv" data-k="apvMonto" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field" data-si="apv"><label for="pm-m-apvreg">Régimen del APV</label>
+<select id="pm-m-apvreg" data-k="apvRegimen"><option value="B">Régimen B (rebaja el impuesto)</option><option value="A">Régimen A (bonificación fiscal)</option></select></div>
+<div class="lq-field"><label for="pm-m-ant">Anticipo de sueldo</label><input id="pm-m-ant" data-k="anticipo" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-ccaf">Crédito caja de compensación</label><input id="pm-m-ccaf" data-k="creditoCCAF" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+<div class="lq-field"><label for="pm-m-sind">Cuota sindical</label><input id="pm-m-sind" data-k="cuotaSindical" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"></div>
+</div>
+<p class="lq-help">Otros descuentos pactados por escrito con el trabajador (máximo 15% de la remuneración, art. 58):</p>
+<div class="lq-list" data-lista="otrosDescuentos" data-ph="Préstamo de la empresa"></div>
+<button type="button" class="lq-link" data-agregar="otrosDescuentos" style="justify-self:start">+ Agregar descuento</button>
+</div>
+</form>
+<div class="form-acciones">
+<button type="button" id="pm-liq-guardar" class="btn btn-primario"><span class="material-icons" aria-hidden="true">save</span>Guardar el mes</button>
+<button type="button" id="pm-liq-imprimir" class="btn"><span class="material-icons" aria-hidden="true">print</span>Imprimir esta</button>
+<button type="button" id="pm-liq-quitar" class="lq-link lq-danger" hidden>Quitar este mes</button>
+</div>
+<p id="pm-liq-editor-estado" class="lq-estado" role="status" style="margin-top:8px"></p>
+</div></div>
+</div>
+<div class="editor-der">
+<div id="pm-liq-avisos" class="lq-avisos" role="status"></div>
+<div class="lq-doc-frame"><article id="pm-liq-doc" class="lq-doc" aria-label="Vista previa de la liquidación"></article></div>
+</div>
+</div>
+</section>
+
+<!-- Documentos -->
+<section class="vista" data-vista="documentos" aria-labelledby="doc-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="doc-titulo">Documentos</h1>
+<p class="v-sub">Se arman con los datos que ya guardaste. Son modelos de referencia basados en la normativa vigente: no constituyen asesoría legal y no han sido revisados por un abogado.</p>
+</div>
+</div>
+<div class="panel" id="pm-doc-vacio-panel" hidden><div class="panel-cuerpo"><p class="h-seccion">Faltan datos para preparar documentos</p><p class="texto-ayuda" id="pm-doc-vacio"></p></div></div>
+<div class="editor" id="doc-editor" style="margin-top:0">
+<div class="editor-izq">
+<div class="panel"><div class="panel-cuerpo">
+<div id="pm-doc-selectores" class="lq-grid">
+<div class="lq-field"><label for="pm-doc-trab">Trabajador</label><select id="pm-doc-trab"></select></div>
+<div class="lq-field"><label for="pm-doc-tipo">Documento</label><select id="pm-doc-tipo"></select></div>
+</div>
+<p id="pm-doc-descripcion" class="texto-ayuda" style="margin-top:10px"></p>
+<div id="pm-doc-avisos" class="lq-avisos" role="status" style="margin-top:14px"></div>
+<form id="pm-doc-form" class="lq-grid" novalidate autocomplete="off" style="margin-top:16px"></form>
+<div class="form-acciones" id="pm-doc-acciones" hidden>
+<button type="button" id="pm-doc-imprimir" class="btn btn-primario"><span class="material-icons" aria-hidden="true">print</span>Imprimir o guardar en PDF</button>
+<p id="pm-doc-estado" class="lq-estado" role="status"></p>
+</div>
+<p class="texto-ayuda" id="pm-doc-nota-marca" style="margin-top:10px"></p>
+</div></div>
+</div>
+<div class="editor-der">
+<div class="lq-doc-frame" id="pm-doc-marco" hidden><article id="pm-doc-doc" class="lq-doc dc-doc" aria-label="Vista previa del documento"></article></div>
+</div>
+</div>
+</section>
+
+<!-- Contratos y finiquitos -->
+<section class="vista" data-vista="contratos" aria-labelledby="gen-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="gen-titulo">Contratos y finiquitos</h1>
+<p class="v-sub">Abre un generador con tu empresa y la ficha del trabajador ya escritas. Se abre en otra pestaña y mantiene su forma de uso y de pago.</p>
+</div>
+</div>
+<div class="panel" id="gen-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">Los generadores se llenan con la ficha de la persona y los datos de tu empresa.</p></div></div>
+<div id="pm-gen">
+<div class="lq-field" style="max-width:22rem"><label for="gen-trab">Trabajador</label><select id="gen-trab"></select></div>
+<p id="pm-gen-nota" class="texto-ayuda" style="margin-top:10px"></p>
+<div class="gen-lista">
+<a class="gen-item" id="pm-gen-contrato" href="/generador-contrato-trabajo-chile" target="_blank" rel="noopener"><strong>Contrato de trabajo<span class="material-icons" aria-hidden="true">open_in_new</span></strong><span>Contrato individual con la jornada, la remuneración y las cláusulas de la ficha.</span><em id="gen-contrato-precio"></em></a>
+<a class="gen-item" id="pm-gen-anexo42" href="/generador-anexo-40-horas" target="_blank" rel="noopener"><strong>Anexo de jornada de 42 horas<span class="material-icons" aria-hidden="true">open_in_new</span></strong><span>Anexo para ajustar la jornada a la Ley 40 horas.</span><em>Gratis</em></a>
+<a class="gen-item" id="pm-gen-finiquito" href="/generador-finiquito-chile" target="_blank" rel="noopener"><strong>Finiquito<span class="material-icons" aria-hidden="true">open_in_new</span></strong><span>Finiquito con las indemnizaciones y el feriado proporcional.</span><em id="gen-finiquito-precio"></em></a>
+</div>
+</div>
+</section>
+
+<!-- Empresa -->
+<section class="vista" data-vista="empresa" aria-labelledby="emp-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="emp-titulo">Empresa</h1>
+<p class="v-sub">Se usan en el membrete de las liquidaciones y de los documentos.</p>
+</div>
+</div>
+<div class="panel"><div class="panel-cuerpo">
+<form id="pm-emp-form" novalidate autocomplete="off">
+<div class="lq-grid">
+<div class="lq-field lq-span2"><label for="pm-e-razon">Razón social o nombre del empleador</label><input id="pm-e-razon" data-k="razonSocial" type="text" maxlength="100" placeholder="Comercial Los Aromos SpA"><p class="pm-error" data-error="razonSocial" hidden></p></div>
+<div class="lq-field"><label for="pm-e-rut">RUT</label><input id="pm-e-rut" data-k="rut" data-tipo="rut" type="text" maxlength="12" placeholder="76.123.456-7"><p class="pm-error" data-error="rut" hidden></p></div>
+<div class="lq-field"><label for="pm-e-giro">Giro <span class="lq-opt">(opcional)</span></label><input id="pm-e-giro" data-k="giro" type="text" maxlength="100" placeholder="Panadería y pastelería"></div>
+<div class="lq-field"><label for="pm-e-rep">Representante legal <span class="lq-opt">(opcional)</span></label><input id="pm-e-rep" data-k="representante" type="text" maxlength="80" placeholder="Manuel Lagos Rojas"></div>
+<div class="lq-field"><label for="pm-e-reprut">RUT del representante <span class="lq-opt">(opcional)</span></label><input id="pm-e-reprut" data-k="rutRepresentante" data-tipo="rut" type="text" maxlength="12" placeholder="12.345.678-5"><p class="pm-error" data-error="rutRepresentante" hidden></p></div>
+<div class="lq-field lq-span2"><label for="pm-e-dir">Dirección <span class="lq-opt">(opcional)</span></label><input id="pm-e-dir" data-k="direccion" type="text" maxlength="120" placeholder="Av. Principal 123"></div>
+<div class="lq-field"><label for="pm-e-comuna">Comuna <span class="lq-opt">(opcional)</span></label><input id="pm-e-comuna" data-k="comuna" type="text" maxlength="60" placeholder="Temuco"></div>
+<div class="lq-field"><label for="pm-e-ciudad">Ciudad <span class="lq-opt">(opcional)</span></label><input id="pm-e-ciudad" data-k="ciudad" type="text" maxlength="60" placeholder="Temuco"></div>
+<div class="lq-field lq-span2">
+<span class="lq-label" id="pm-logo-label">Logo <span class="lq-opt">(opcional, PNG, JPG o WebP de hasta 100 KB)</span></span>
+<div class="lq-logo-row">
+<label class="lq-file" for="pm-logo"><span class="material-icons" aria-hidden="true">image</span><span>Elegir imagen</span></label>
+<input id="pm-logo" type="file" accept="image/png,image/jpeg,image/webp" class="lq-sr" aria-labelledby="pm-logo-label">
+<span id="pm-logo-prev" hidden></span>
+<button type="button" id="pm-logo-quitar" class="lq-link" hidden>Quitar logo</button>
+</div>
+<p class="pm-error" data-error="logo" hidden></p>
+</div>
+</div>
+<div class="form-acciones">
+<button type="submit" id="pm-emp-guardar" class="btn btn-primario"><span class="material-icons" aria-hidden="true">save</span>Guardar empresa</button>
+<p id="pm-emp-estado" class="lq-estado" role="status"></p>
+</div>
+</form>
+</div></div>
+</section>
+
+<!-- Mi cuenta -->
+<section class="vista" data-vista="cuenta" aria-labelledby="cta-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="cta-titulo">Mi cuenta</h1>
+<p class="v-sub">Sesión de <span id="cuenta-correo" class="mono"></span></p>
+</div>
+</div>
+<div class="panel" id="pm-sec-pase">
+<div class="panel-head"><h2>Pase Pyme</h2></div>
+<div class="panel-cuerpo">
+<p id="pm-pase-estado" class="pase-estado"></p>
+<ul class="pase-incluye">
+<li>Hasta 5 trabajadores activos (sin pase, 1).</li>
+<li>Liquidaciones y documentos sin la marca «Vista previa».</li>
+<li>El generador de contrato incluido mientras el pase esté vigente; el de finiquito, con el pase de 12 meses.</li>
+<li>Se paga una vez y no se renueva solo.</li>
+<li>Si no quedas conforme, reembolso total dentro de 14 días corridos desde la compra.</li>
+</ul>
+<div id="pm-pase-opciones" class="pm-pase-opciones"></div>
+<p id="pm-pase-msg" class="lq-estado" role="status" style="margin-top:12px"></p>
+</div>
+</div>
+<div class="panel" id="pm-sec-importar" hidden>
+<div class="panel-head"><h2>Traer mis datos del generador de liquidaciones</h2></div>
+<div class="panel-cuerpo">
+<p class="texto-ayuda">Encontramos en este navegador datos que ingresaste en el generador: <strong id="pm-imp-resumen"></strong>. Puedes copiarlos a tu cuenta (se guardan cifrados). Los datos del generador siguen en tu navegador.</p>
+<div class="form-acciones">
+<button type="button" id="pm-imp-btn" class="btn"><span class="material-icons" aria-hidden="true">download_done</span>Copiar a mi cuenta</button>
+<p id="pm-imp-estado" class="lq-estado" role="status"></p>
+</div>
+</div>
+</div>
+<div class="panel" id="pm-sec-datos">
+<div class="panel-head"><h2>Tus datos</h2></div>
+<div class="panel-cuerpo">
+<p class="texto-ayuda">Puedes llevarte todo lo que guardaste o eliminar tu cuenta cuando quieras. Más detalles en la <a href="/privacidad#asistente-pyme">Política de Privacidad</a>.</p>
+<div class="form-acciones">
+<button type="button" id="pm-exportar" class="btn"><span class="material-icons" aria-hidden="true">download</span>Descargar mis datos</button>
+<p id="pm-exportar-estado" class="lq-estado" role="status"></p>
+</div>
+<details class="pm-peligro">
+<summary>Eliminar mi cuenta</summary>
+<p class="texto-ayuda" style="margin-top:8px">Se borran de forma definitiva tu cuenta, los datos de la empresa y de todos tus trabajadores. No se puede deshacer. Descarga antes tus datos si quieres conservarlos.</p>
+<form id="pm-borrar-form" novalidate>
+<div class="lq-field"><label for="pm-borrar-email">Escribe tu correo para confirmar</label><input id="pm-borrar-email" type="email" autocomplete="off" maxlength="254"></div>
+<p id="pm-borrar-error" class="pm-error" role="alert" hidden></p>
+<div><button type="submit" class="pm-btn-peligro">Eliminar mi cuenta definitivamente</button></div>
+</form>
+</details>
+</div>
+</div>
+<p class="texto-ayuda" style="margin-top:16px"><a href="/terminos#asistente-pyme">Términos</a> · <a href="/privacidad#asistente-pyme">Privacidad</a> · ¿Dudas? Escribe a <a href="mailto:contacto@calculolaboral.cl">contacto@calculolaboral.cl</a></p>
+</section>
+
+</main>
+</div>
+</div>
+
+<div id="print-section" aria-hidden="true"></div>
+
+<script src="/js/constants.js?v=2.1.2"></script>
+<script src="/js/indicators.js?v=2.9.2"></script>
+<script src="/js/liquidacion_parametros.js?v=3.0.0"></script>
+<script src="/js/liquidacion_valores.js?v=1.1.0"></script>
+<script src="/js/liquidacion_engine.js?v=1.1.0"></script>
+<script src="/js/liquidacion_documento.js?v=1.3.0"></script>
+<script src="/js/rut_cl.js?v=1.0.0"></script>
+<script src="/js/feriados_cl.js?v=1.0.0"></script>
+<script src="/js/pyme_pendientes.js?v=1.1.1"></script>
+<script src="/js/pyme_liquidaciones.js?v=1.0.0"></script>
+<script src="/js/pyme_docs.js?v=1.1.0"></script>
+<script src="/js/checkout_consent.js?v=1.6.0" defer></script>
+<script src="/js/app_pyme.js?v=1.0.0" defer></script>
+</body>
+</html>

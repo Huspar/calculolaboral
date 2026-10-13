@@ -130,7 +130,7 @@
             var faltaPase = dias(hoy, estado.limites.paseVence.slice(0, 10));
             if (faltaPase >= 0 && faltaPase <= 15) {
                 agregar('pase', faltaPase <= 3 ? 'urgente' : 'aviso', 'Tu pase vence ' + (faltaPase === 0 ? 'hoy' : 'en ' + plural(faltaPase, 'día', 'días')),
-                    'Al vencer, tu cuenta queda en solo lectura y puedes descargar tus datos durante 90 días.');
+                    'Al vencer, tu cuenta vuelve a las funciones gratuitas (1 trabajador activo y documentos con marca de agua). Tus datos se conservan.');
             }
         }
 
