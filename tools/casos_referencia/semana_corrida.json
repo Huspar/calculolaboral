@@ -1,0 +1,74 @@
+{
+  "modulo": "semana_corrida",
+  "descripcion": "Semana corrida (art. 45 CT). Criterio DT: Ord. 833 de 05-dic-2024 (dictámenes 0110/001 de 2009 y 1983/82). Cada caso dice de dónde sale el resultado esperado.",
+  "casos": [
+    {
+      "id": "buk-mayo-2022-licencia",
+      "fuente": "Buk, centro de ayuda «Semana corrida - Chile» (supportcenter.buk.cl, artículo 36494819382043), ejemplo publicado: jornada de 42 h de lunes a viernes, licencia del 1 al 10 de mayo, comisión $200.000 → 22 hábiles y 5 inhábiles; licencia con 7 hábiles, 2 inhábiles y 1 fuera de jornada; $200.000 / 15 × 3 = $40.000. El mes cuadra con mayo de 2022 (1-may domingo, 21-may sábado).",
+      "comparado": "Buk: mismo resultado.",
+      "entrada": { "periodo": "2022-05", "distribucion": "5", "variable": 200000, "ausencias": [{ "desde": "2022-05-01", "hasta": "2022-05-10" }], "feriados": ["2022-05-01", "2022-05-21"] },
+      "esperado": { "monto": 40000, "habiles": 22, "descanso": 5, "habilesAusencia": 7, "descansoAusencia": 2, "divisor": 15, "multiplicador": 3, "festivosSabado": ["2022-05-21"] }
+    },
+    {
+      "id": "calcular-cl-semana-festivo-miercoles",
+      "fuente": "calcular.cl/semana-corrida, ejemplo publicado: lunes a viernes, $100.000 de comisiones en la semana, festivo el miércoles → 4 días que debió laborar, 2 días a pagar (domingo y festivo): $100.000 / 4 × 2 = $50.000. Se reproduce con una semana de lunes a domingo y un festivo ficticio el miércoles.",
+      "comparado": "calcular.cl: mismo resultado.",
+      "entrada": { "periodo": "2026-11", "distribucion": "5", "variable": 100000, "desde": "2026-11-02", "hasta": "2026-11-08", "feriados": ["2026-11-04"] },
+      "esperado": { "monto": 50000, "habiles": 4, "descanso": 2, "divisor": 4, "multiplicador": 2 }
+    },
+    {
+      "id": "oct-2026-lun-vie",
+      "fuente": "Conteo propio con el calendario de octubre de 2026 (feriados nacionales: lunes 12 y sábado 31). Lunes a viernes: 22 días de semana menos el 12 = 21 hábiles; 4 domingos + el 12 = 5. El 31 cae en sábado, fuera de la jornada (criterio de Buk y calcular.cl). $600.000 / 21 × 5 = $142.857,14.",
+      "entrada": { "periodo": "2026-10", "distribucion": "5", "variable": 600000 },
+      "esperado": { "monto": 142857, "habiles": 21, "descanso": 5, "divisor": 21, "multiplicador": 5, "festivosSabado": ["2026-10-31"] }
+    },
+    {
+      "id": "oct-2026-lun-sab",
+      "fuente": "Conteo propio, octubre de 2026 con jornada de lunes a sábado: 27 días de lunes a sábado menos los festivos 12 y 31 = 25 hábiles; 4 domingos + 2 festivos = 6. $600.000 / 25 × 6 = $144.000.",
+      "entrada": { "periodo": "2026-10", "distribucion": "6", "variable": 600000 },
+      "esperado": { "monto": 144000, "habiles": 25, "descanso": 6, "divisor": 25, "multiplicador": 6, "festivosSabado": [] }
+    },
+    {
+      "id": "oct-2026-vacaciones",
+      "fuente": "Ord. 833/2024: los días en que una causa legal eximía de trabajar no van en el divisor. Feriado anual del lunes 19 al viernes 23 de octubre de 2026 (5 hábiles, sin domingos ni festivos dentro): divisor 21 − 5 = 16; $600.000 / 16 × 5 = $187.500.",
+      "entrada": { "periodo": "2026-10", "distribucion": "5", "variable": 600000, "ausencias": [{ "desde": "2026-10-19", "hasta": "2026-10-23" }] },
+      "esperado": { "monto": 187500, "divisor": 16, "multiplicador": 5, "habilesAusencia": 5, "descansoAusencia": 0 }
+    },
+    {
+      "id": "oct-2026-ingreso-15",
+      "fuente": "Conteo propio: ingreso el jueves 15 de octubre de 2026. Del 15 al 31 hay 12 días hábiles de lunes a viernes y 2 domingos (18 y 25). $600.000 / 12 × 2 = $100.000.",
+      "entrada": { "periodo": "2026-10", "distribucion": "5", "variable": 600000, "desde": "2026-10-15" },
+      "esperado": { "monto": 100000, "habiles": 12, "descanso": 2 }
+    },
+    {
+      "id": "sep-2026-fiestas-patrias-lun-vie",
+      "fuente": "Conteo propio, septiembre de 2026 (feriados: viernes 18 y sábado 19). Lunes a viernes: 22 días de semana menos el 18 = 21; 4 domingos + el 18 = 5; el 19 es sábado. $500.000 / 21 × 5 = $119.047,62.",
+      "entrada": { "periodo": "2026-09", "distribucion": "5", "variable": 500000 },
+      "esperado": { "monto": 119048, "habiles": 21, "descanso": 5, "festivosSabado": ["2026-09-19"] }
+    },
+    {
+      "id": "sep-2026-fiestas-patrias-lun-sab",
+      "fuente": "Conteo propio, septiembre de 2026 con jornada de lunes a sábado: 26 días menos los festivos 18 y 19 = 24; 4 domingos + 2 festivos = 6. $500.000 / 24 × 6 = $125.000.",
+      "entrada": { "periodo": "2026-09", "distribucion": "6", "variable": 500000 },
+      "esperado": { "monto": 125000, "habiles": 24, "descanso": 6 }
+    },
+    {
+      "id": "nov-2026-festivo-en-domingo",
+      "fuente": "Conteo propio, noviembre de 2026: el 1 (Todos los Santos) cae en domingo y se paga una sola vez. 21 días hábiles, 5 domingos. $420.000 / 21 × 5 = $100.000.",
+      "entrada": { "periodo": "2026-11", "distribucion": "5", "variable": 420000 },
+      "esperado": { "monto": 100000, "habiles": 21, "descanso": 5 }
+    },
+    {
+      "id": "licencia-todo-el-mes",
+      "fuente": "Sin días que debió trabajar no hay promedio: no corresponde semana corrida.",
+      "entrada": { "periodo": "2026-10", "distribucion": "5", "variable": 300000, "ausencias": [{ "desde": "2026-10-01", "hasta": "2026-10-31" }] },
+      "esperado": { "monto": 0, "divisor": 0 }
+    },
+    {
+      "id": "falta-injustificada-no-cambia",
+      "fuente": "Ord. 833/2024: las faltas sin causa legal sí se cuentan en el divisor. Se ingresan sin ausencias: el resultado es el de octubre de 2026 de lunes a viernes.",
+      "entrada": { "periodo": "2026-10", "distribucion": "5", "variable": 600000, "ausencias": [] },
+      "esperado": { "monto": 142857, "divisor": 21 }
+    }
+  ]
+}

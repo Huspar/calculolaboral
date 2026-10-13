@@ -1855,16 +1855,19 @@
         var o = recoger($('pm-liq-form')), m = editando.mes;
         // Los topes son los que acepta el servidor: así un error de tipeo no impide guardar
         ['diasTrabajados', 'diasLicencia'].forEach(function (k) { m[k] = Math.min(30, numero(o[k])); });
-        ['gratificacionMonto', 'comisiones', 'viaticos', 'asignacionFamiliar', 'apvMonto', 'anticipo', 'creditoCCAF', 'cuotaSindical'].forEach(function (k) { m[k] = Math.min(MONTO_MAX, numero(o[k])); });
+        ['gratificacionMonto', 'comisiones', 'tratos', 'viaticos', 'asignacionFamiliar', 'apvMonto', 'anticipo', 'creditoCCAF', 'cuotaSindical'].forEach(function (k) { m[k] = Math.min(MONTO_MAX, numero(o[k])); });
         m.horasExtra = Math.min(300, decimal(o.horasExtra));
         m.gratificacion = o.gratificacion;
         m.apvRegimen = o.apvRegimen;
+        m.scModo = o.scModo === 'no' ? 'no' : 'calcular';
     }
     function visibilidadMes() {
         var m = editando.mes;
         Array.prototype.forEach.call($('pm-liq-form').querySelectorAll('[data-si]'), function (el) {
             var c = el.getAttribute('data-si');
-            el.hidden = !((c === 'grat-manual' && m.gratificacion === 'manual') || (c === 'apv' && m.apvMonto > 0));
+            var variable = (m.comisiones || 0) + (m.tratos || 0) > 0;
+            el.hidden = !((c === 'grat-manual' && m.gratificacion === 'manual') || (c === 'apv' && m.apvMonto > 0) ||
+                (c === 'sc' && variable) || (c === 'sc-calcular' && variable && m.scModo !== 'no'));
         });
     }
 
@@ -1878,6 +1881,7 @@
         editando = { id: id, t: t, mes: mes, nota: nota, guardado: !!reg };
         llenar($('pm-liq-form'), mes);
         pintarListas();
+        pintarAusencias();
         dibujarCuotasMes();
         visibilidadMes();
         $('pm-liq-editor-titulo').textContent = t.nombre + ' · ' + mayuscula(nombrePeriodo(periodoSel));
@@ -1935,19 +1939,111 @@
         });
     });
 
-    // Calcula con el motor del generador de liquidaciones; devuelve { res, val } o null si faltan los valores del mes
+    // Vacaciones registradas que tocan el mes (para la semana corrida no cuentan como días que debió trabajar)
+    function vacacionesDelMes(id, periodo) {
+        var ini = periodo + '-01', fin = periodo + '-31';
+        return vacDe(id).filter(function (v) { return v.tipo === 'periodo' && v.desde && v.hasta && v.desde <= fin && v.hasta >= ini; });
+    }
+    // El mes con la semana corrida calculada (art. 45). Una liquidación emitida queda con el monto con que se emitió.
+    function conSemanaCorrida(t, mes, periodo) {
+        if (mes.emitida) return { mes: mes, sc: null };
+        var sc = L.semanaCorridaMes(t, mes, periodo, { esFeriado: F.esFeriado, vacaciones: vacacionesDelMes(t.id, periodo) });
+        return { mes: Object.assign({}, mes, { semanaCorrida: sc.monto, semanaCorridaDetalle: sc.detalle }), sc: sc };
+    }
+
+    // Calcula con el motor del generador de liquidaciones; devuelve { res, val, sc } o null si faltan los valores del mes
     function calcularMes(t, mes, periodo) {
         var val = VAL[periodo];
         if (!val) { cargarValores(periodo); return null; }
         if (val.estado !== 'ok') return null;
         var tasaMutual = estado && estado.empresa ? estado.empresa.tasaMutual : 0;
-        try { return { res: E.calcular({ trabajador: t, mes: mes, periodo: periodo, tasaMutual: tasaMutual }, val.mes), val: val }; } catch (err) { return { error: err.message }; }
+        var c = conSemanaCorrida(t, mes, periodo);
+        try {
+            var res = E.calcular({ trabajador: t, mes: c.mes, periodo: periodo, tasaMutual: tasaMutual }, val.mes);
+            if (c.sc && c.sc.error) {
+                res.avisos.push({ nivel: 'error', texto: 'No pudimos calcular la semana corrida: ' + c.sc.error });
+                res.listo = false;
+            }
+            return { res: res, val: val, sc: c.sc };
+        } catch (err) { return { error: err.message }; }
+    }
+
+    // --- licencias y permisos del mes (semana corrida) ---
+    function pintarAusencias() {
+        var p = periodoSel, ini = p + '-01', fin = p + '-' + dos(new Date(Date.UTC(+p.slice(0, 4), +p.slice(5, 7), 0)).getUTCDate());
+        $('pm-liq-aus').innerHTML = (editando.mes.ausencias || []).map(function (a) {
+            return '<div class="lq-row lq-row-aus"><select aria-label="Tipo" data-aus="tipo"><option value="licencia"' + (a.tipo === 'permiso' ? '' : ' selected') + '>Licencia médica</option><option value="permiso"' + (a.tipo === 'permiso' ? ' selected' : '') + '>Permiso</option></select>' +
+                '<label class="aus-fecha aus-desde">Desde<input type="date" data-aus="desde" min="' + ini + '" max="' + fin + '" value="' + esc(a.desde || '') + '"></label>' +
+                '<label class="aus-fecha aus-hasta">Hasta<input type="date" data-aus="hasta" min="' + ini + '" max="' + fin + '" value="' + esc(a.hasta || '') + '"></label>' +
+                '<button type="button" class="lq-x" aria-label="Quitar" data-aus-quitar><span class="material-icons" aria-hidden="true">close</span></button></div>';
+        }).join('');
+        $('pm-liq-aus-agregar').hidden = (editando.mes.ausencias || []).length >= 10;
+    }
+    // Solo se guardan las filas con las dos fechas y en orden; las incompletas quedan en pantalla hasta completarlas
+    function leerAusencias() {
+        var filas = $('pm-liq-aus').querySelectorAll('.lq-row-aus');
+        editando.mes.ausencias = Array.prototype.map.call(filas, function (f) {
+            return { tipo: f.querySelector('[data-aus="tipo"]').value, desde: f.querySelector('[data-aus="desde"]').value, hasta: f.querySelector('[data-aus="hasta"]').value };
+        });
+    }
+    // Días corridos de licencia médica dentro del mes (sin repetir días si dos licencias se cruzan)
+    function diasLicenciaEnMes(lista, periodo) {
+        var dias = {};
+        ausenciasValidas(lista).forEach(function (a) {
+            if (a.tipo === 'permiso') return;
+            for (var d = a.desde; d <= a.hasta; d = sumarDiasIso(d, 1)) if (d.slice(0, 7) === periodo) dias[d] = true;
+        });
+        return Math.min(30, Object.keys(dias).length);
+    }
+    function ausenciasValidas(lista) { return (lista || []).filter(function (a) { return a.desde && a.hasta && a.desde <= a.hasta; }); }
+    $('pm-liq-aus').addEventListener('input', function () { if (!editando) return; leerAusencias(); vistaPrevia(); });
+    $('pm-liq-aus').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-aus-quitar]');
+        if (!b || !editando) return;
+        var fila = b.closest('.lq-row-aus');
+        editando.mes.ausencias.splice(Array.prototype.indexOf.call($('pm-liq-aus').children, fila), 1);
+        pintarAusencias();
+        vistaPrevia();
+    });
+    $('pm-liq-aus-agregar').addEventListener('click', function () {
+        if (!editando) return;
+        editando.mes.ausencias = (editando.mes.ausencias || []).concat([{ tipo: 'licencia', desde: '', hasta: '' }]).slice(0, 10);
+        pintarAusencias();
+        var ult = $('pm-liq-aus').querySelector('.lq-row-aus:last-child select');
+        if (ult) ult.focus();
+    });
+
+    // Resumen de la semana corrida bajo sus campos: de dónde sale el monto
+    function dibujarSemanaCorrida(sc, m) {
+        var caja = $('pm-liq-sc');
+        if (m && m.emitida) {
+            caja.innerHTML = '<p>La liquidación está emitida: la semana corrida queda como se emitió' + (m.semanaCorrida ? ', <strong>' + pesos(m.semanaCorrida) + '</strong>' + (m.semanaCorridaDetalle ? ' (' + esc(m.semanaCorridaDetalle) + ')' : '') : ' (sin semana corrida)') + '. Quita la marca de emitida para recalcularla.</p>';
+            return;
+        }
+        if (!sc || !sc.aplica) { caja.innerHTML = ''; return; }
+        if (sc.error) { caja.innerHTML = '<p>' + esc('No pudimos calcularla: ' + sc.error) + '</p>'; return; }
+        var r = sc.calculo, html = '';
+        if (r.divisor > 0) {
+            html += '<p>Semana corrida: <strong>' + pesos(r.monto) + '</strong></p>' +
+                '<p class="sc-nota">' + pesos(r.variable) + ' de comisiones y tratos ÷ ' + plural(r.divisor, 'día', 'días') + ' que debió trabajar = <span class="mono">' + pesos(r.promedioDiario) + '</span> por día, × ' + plural(r.multiplicador, 'domingo o festivo', 'domingos y festivos') + '.</p>';
+        } else {
+            html += '<p>No corresponde semana corrida este mes: no hubo días que debiera trabajar (licencia, permiso o vacaciones todo el período).</p>';
+        }
+        var fuera = [];
+        if (r.habilesAusencia) fuera.push(plural(r.habilesAusencia, 'día hábil', 'días hábiles'));
+        if (r.descansoAusencia) fuera.push(plural(r.descansoAusencia, 'domingo o festivo', 'domingos o festivos'));
+        if (fuera.length) html += '<p class="sc-nota">No se contaron ' + fuera.join(' ni ') + ' de licencias, permisos o vacaciones.</p>';
+        if (r.festivosSabado.length) html += '<p class="sc-nota">El festivo del ' + r.festivosSabado.map(fechaCorta).join(' y del ') + ' cae en sábado, fuera de una jornada de lunes a viernes: no se paga como semana corrida.</p>';
+        html += '<p class="sc-nota">Se usa el promedio del mes, como lo hacen los software de remuneraciones. La Dirección del Trabajo la calcula semana a semana (Ord. 833 de 2024): si las comisiones cambian mucho entre semanas, revisa el cálculo semanal con tu contador.</p>';
+        caja.innerHTML = html;
     }
 
     function vistaPrevia() {
         if (!editando || !estado || !estado.empresa) return;
         var doc = $('pm-liq-doc'), avisos = $('pm-liq-avisos'), m = editando.mes, val = VAL[periodoSel];
         var r = calcularMes(editando.t, m, periodoSel);
+        // La semana corrida no depende de la UF ni la UTM: se muestra aunque esos valores aún se estén consultando
+        dibujarSemanaCorrida(r && !r.error ? r.sc : conSemanaCorrida(editando.t, m, periodoSel).sc, m);
         if (!r || r.error) {
             doc.innerHTML = '<p class="' + (r && r.error ? 'lqd-error' : 'lqd-cargando') + '">' + esc(r && r.error ? r.error : val && val.estado === 'error' ? (val.mensaje || 'No se pudieron obtener los valores del mes.') : 'Consultando la UF y la UTM de ' + nombrePeriodo(periodoSel) + '…') + '</p>';
             doc.classList.remove('lqd-pagada');
@@ -1960,6 +2056,8 @@
         doc.classList.toggle('lqd-pagada', pagada);
         var lista = [];
         if (editando.nota) lista.push({ nivel: 'aviso', texto: editando.nota });
+        var diasLic = diasLicenciaEnMes(m.ausencias, periodoSel), diasBaseMes = L.diasBase(editando.t, periodoSel);
+        if (diasLic && !m.emitida && m.diasTrabajados > Math.max(0, diasBaseMes - diasLic)) lista.push({ nivel: 'aviso', texto: 'Anotaste ' + plural(diasLic, 'día', 'días') + ' de licencia médica: el empleador no paga esos días (los cubre el subsidio de la Compin, la Isapre o la caja). Revisa «Días trabajados» (hoy dice ' + m.diasTrabajados + ').' });
         if (m.gratificacion === 'manual' && !m.gratificacionMonto) lista.push({ nivel: 'aviso', texto: 'La gratificación es de monto fijo pactado: indica el monto, o cambia a «Legal mensual» o «No se paga este mes».' });
         r.res.avisos.forEach(function (a) { lista.push(a); });
         if (r.res.empleador) r.res.empleador.avisos.forEach(function (a) { lista.push(a); });
@@ -2023,6 +2121,8 @@
         var t = trabajadorPorId(id), periodo = periodoSel, previo = mesesDe(periodo)[id];
         // Las cuotas se toman de la ficha, salvo al editar una liquidación que ya estaba emitida (quedan las emitidas)
         if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { cuotasPrestamo: L.cuotasDelMes(t, periodo) });
+        mes = Object.assign({}, mes, { ausencias: ausenciasValidas(mes.ausencias) });
+        if (t) mes = conSemanaCorrida(t, mes, periodo).mes;
         var c = t ? calcularMes(t, mes, periodo) : null;
         var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes, t) : null) : (mes.calculo || null) });
         return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodo }, cuerpo: { mes: cuerpo } }).then(function (r) {

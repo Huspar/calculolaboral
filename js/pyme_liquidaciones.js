@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · valores base de las liquidaciones del Asistente Pyme (v1.3.0). Funciona en el navegador (window.CLPymeLiquidaciones) y en Node.
+ * CalculoLaboral · valores base de las liquidaciones del Asistente Pyme (v1.4.0). Funciona en el navegador (window.CLPymeLiquidaciones) y en Node.
  *
  *   diasBase(trabajador, 'AAAA-MM')  → días a pagar según ingreso y término de plazo fijo (mes comercial de 30 días); 0 si aún no ingresaba o ya terminó
  *   mesBase(trabajador, 'AAAA-MM')   → el mes con los valores por defecto (lo que se guarda al "preparar el mes")
@@ -7,6 +7,10 @@
  *   previred(registros)              → lo que se paga en Previred agrupado por institución, con los registros que traen desglose
  *   (desglose: montos retenidos al trabajador, cotizaciones del empleador y costo total; conDesglose: true)
  *   estadoDe(registro)               → 'sin_datos' | 'guardada' | 'emitida'
+ *   semanaCorridaMes(t, mes, 'AAAA-MM', { esFeriado, vacaciones }) → { aplica, monto, detalle, calculo, error }
+ *                                      semana corrida (art. 45) sobre comisiones y tratos del mes, sin contar en el promedio
+ *                                      las licencias y permisos del mes (mes.ausencias) ni las vacaciones registradas.
+ *                                      Necesita js/semana_corrida.js. Con mes.scModo 'no' no se calcula.
  *
  * Préstamos con cuotas (lista "prestamos" de la ficha: { id, concepto, fecha, monto, cuotas, desde 'AAAA-MM', pausas [] }):
  *   cuotasDe(prestamo)               → [{ periodo, numero, monto }]: una cuota por mes desde "desde", saltando los meses de "pausas"
@@ -41,7 +45,8 @@
         var grat = t && t.gratificacion === 'ninguna' ? 'ninguna' : t && t.gratificacion === 'pactada' ? 'manual' : 'legal';
         return {
             diasTrabajados: diasBase(t, periodo), diasLicencia: 0, horasExtra: 0,
-            gratificacion: grat, gratificacionMonto: 0, comisiones: 0, bonosImponibles: [],
+            gratificacion: grat, gratificacionMonto: 0, comisiones: 0, tratos: 0, bonosImponibles: [],
+            scModo: 'calcular', ausencias: [], semanaCorrida: 0, semanaCorridaDetalle: '',
             viaticos: 0, asignacionFamiliar: 0, otrosNoImponibles: [],
             apvMonto: 0, apvRegimen: 'B', anticipo: (t && t.anticipoMensual) || 0, creditoCCAF: 0, cuotaSindical: 0, otrosDescuentos: [],
             cuotasPrestamo: cuotasDelMes(t, periodo),
@@ -161,6 +166,26 @@
         return { filas: lista, total: lista.reduce(function (s, f) { return s + f.monto; }, 0), impuesto: impuesto, costo: costo, incluidos: incluidos };
     }
 
+    // ---------- semana corrida ----------
+    var SC = typeof module !== 'undefined' && module.exports ? require('./semana_corrida.js') : root.CLSemanaCorrida;
+
+    function semanaCorridaMes(t, mes, periodo, opc) {
+        opc = opc || {};
+        var variable = Math.max(0, Number(mes && mes.comisiones) || 0) + Math.max(0, Number(mes && mes.tratos) || 0);
+        var vacio = { aplica: false, monto: 0, detalle: '', calculo: null, error: '' };
+        if (!variable || (mes && mes.scModo === 'no')) return vacio;
+        var ausencias = ((mes && mes.ausencias) || []).concat(opc.vacaciones || []).map(function (a) { return { desde: a.desde, hasta: a.hasta }; });
+        try {
+            var r = SC.calcular({
+                periodo: periodo, distribucion: (t && t.distribucion) || '5', variable: variable, ausencias: ausencias,
+                desde: t && t.fechaIngreso, hasta: t && t.contrato === 'plazo_fijo' ? t.fechaTerminoPlazo : '', esFeriado: opc.esFeriado
+            });
+            return { aplica: true, monto: r.monto, detalle: r.detalle, calculo: r, error: '' };
+        } catch (err) {
+            return { aplica: true, monto: 0, detalle: '', calculo: null, error: err.message || String(err) };
+        }
+    }
+
     function estadoDe(registro) {
         if (!registro) return 'sin_datos';
         return registro.emitida ? 'emitida' : 'guardada';
@@ -169,7 +194,8 @@
     var api = {
         diasBase: diasBase, mesBase: mesBase, resumen: resumen, previred: previred, estadoDe: estadoDe,
         cuotasDe: cuotasDe, cuotasDelMes: cuotasDelMes, estadoPrestamo: estadoPrestamo, saldoPrestamos: saldoPrestamos, sumarMes: sumarMes,
-        version: '1.3.0'
+        semanaCorridaMes: semanaCorridaMes,
+        version: '1.4.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeLiquidaciones = api;

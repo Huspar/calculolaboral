@@ -168,6 +168,59 @@ caso('validación de préstamos: ids nuevos, meses postergados limpios y mensaje
     assert.strictEqual(V.validarTrabajador({ nombre: 'Ana', rut: '111111111' }).valor.prestamos, undefined);
 });
 
+caso('semana corrida del mes: comisiones y tratos, sin vacaciones, licencias ni permisos en el promedio (art. 45, Ord. 833/2024)', () => {
+    const F = require('../js/feriados_cl');
+    const t = T({ distribucion: '5' });
+    const mes = (extra) => Object.assign(L.mesBase(t, '2026-10'), { comisiones: 600000 }, extra);
+    const sc = (m, opc) => L.semanaCorridaMes(t, m, '2026-10', Object.assign({ esFeriado: F.esFeriado }, opc));
+    // octubre de 2026, lunes a viernes: 21 hábiles, 5 domingos y festivos (el 31 cae en sábado)
+    let r = sc(mes());
+    assert.strictEqual(r.monto, 142857);
+    assert.strictEqual(r.detalle, '5 domingos y festivos × $28.571');
+    // vacaciones registradas (19 al 23) y una licencia del 5 al 6: 21 - 5 - 2 = 14 días
+    r = sc(mes({ ausencias: [{ tipo: 'licencia', desde: '2026-10-05', hasta: '2026-10-06' }] }), { vacaciones: [{ desde: '2026-10-19', hasta: '2026-10-23' }] });
+    assert.strictEqual(r.calculo.divisor, 14);
+    assert.strictEqual(r.monto, 214286);
+    // los tratos también son base; con jornada de lunes a sábado cambia el divisor
+    assert.strictEqual(sc(mes({ comisiones: 0, tratos: 600000 })).monto, 142857);
+    assert.strictEqual(L.semanaCorridaMes(T({ distribucion: '6' }), mes(), '2026-10', { esFeriado: F.esFeriado }).monto, 144000);
+    // ingreso a mitad de mes: solo desde ese día
+    assert.strictEqual(L.semanaCorridaMes(T({ fechaIngreso: '2026-10-15' }), mes(), '2026-10', { esFeriado: F.esFeriado }).monto, 100000);
+    // no corresponde o sin variable: nada
+    assert.deepStrictEqual([sc(mes({ scModo: 'no' })).aplica, sc(mes({ scModo: 'no' })).monto], [false, 0]);
+    assert.strictEqual(sc(mes({ comisiones: 0 })).aplica, false);
+    // sin feriados verificados para el año no se inventa: error visible
+    const e = L.semanaCorridaMes(t, Object.assign(L.mesBase(t, '2028-03'), { comisiones: 100000 }), '2028-03', { esFeriado: F.esFeriado });
+    assert.ok(e.error && /2028/.test(e.error), e.error);
+    assert.strictEqual(e.monto, 0);
+});
+caso('motor: semana corrida y tratos son imponibles y entran en la gratificación legal', () => {
+    const v = { uf: 41130.94, utm: 72151, imm: 553553, topeAfpUF: 90, topeAfcUF: 135.2, jornadaMaxima: 42, afp: { Modelo: 0.0058 } };
+    const t = { contrato: 'indefinido', jornadaHoras: 42, afp: 'Modelo', salud: 'fonasa', sueldoBase: 553553 };
+    const mes = Object.assign(L.mesBase(T(), '2026-10'), { comisiones: 60000, tratos: 40000, semanaCorrida: 23810, semanaCorridaDetalle: '5 domingos y festivos × $4.762' });
+    const res = E.calcular({ trabajador: t, mes, periodo: '2026-10' }, v);
+    const linea = (txt) => res.haberesImponibles.find(l => l.concepto === txt) || {};
+    assert.strictEqual(linea('Semana corrida').monto, 23810);
+    assert.strictEqual(linea('Semana corrida').detalle, '5 domingos y festivos × $4.762');
+    assert.strictEqual(linea('Tratos y producción').monto, 40000);
+    assert.strictEqual(linea('Gratificación legal').monto, Math.round((553553 + 60000 + 40000 + 23810) * 0.25));
+    // sin semana corrida no aparece la línea
+    const sin = E.calcular({ trabajador: t, mes: L.mesBase(T(), '2026-10'), periodo: '2026-10' }, v);
+    assert.ok(!sin.haberesImponibles.some(l => l.concepto === 'Semana corrida'));
+});
+caso('servidor: acepta tratos, semana corrida y licencias o permisos con fechas; rechaza fechas al revés o de más', () => {
+    const base = Object.assign(L.mesBase(T(), '2026-10'), { comisiones: 600000, tratos: 1000, semanaCorrida: 142857, semanaCorridaDetalle: '5 domingos y festivos × $28.571', ausencias: [{ tipo: 'permiso', desde: '2026-10-05', hasta: '2026-10-06' }] });
+    const r = V.validarMes(base);
+    assert.ok(r.ok, JSON.stringify(r.errores));
+    assert.deepStrictEqual(r.valor.ausencias, [{ tipo: 'permiso', desde: '2026-10-05', hasta: '2026-10-06' }]);
+    assert.strictEqual(r.valor.semanaCorrida, 142857);
+    assert.strictEqual(r.valor.scModo, 'calcular');
+    assert.strictEqual(V.validarMes(Object.assign({}, base, { ausencias: [{ tipo: 'licencia', desde: '2026-10-09', hasta: '2026-10-02' }] })).ok, false);
+    assert.strictEqual(V.validarMes(Object.assign({}, base, { ausencias: Array.from({ length: 11 }, () => ({ desde: '2026-10-01', hasta: '2026-10-01' })) })).ok, false);
+    assert.strictEqual(V.validarMes(Object.assign({}, base, { ausencias: [{ tipo: 'diagnostico', desde: '2026-10-01', hasta: '2026-10-01' }] })).ok, false);
+    assert.strictEqual(V.validarMes(Object.assign({}, base, { scModo: 'otro' })).ok, false);
+});
+
 caso('estadoDe', () => {
     assert.strictEqual(L.estadoDe(null), 'sin_datos');
     assert.strictEqual(L.estadoDe({ emitida: '' }), 'guardada');

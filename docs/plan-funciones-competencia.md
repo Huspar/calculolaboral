@@ -31,6 +31,13 @@ Se arma un **banco de casos de referencia** (`tools/casos_referencia/*.json` + `
 
 **Criterio de aceptación:** cero diferencias, o diferencias de $1 por redondeo explicadas en el caso. Si otro software da distinto, se investiga cuál sigue la norma; el resultado y la razón quedan anotados en el caso (no se copia al otro software si está mal).
 
+## Estado
+
+| Paso | Estado | Detalle |
+|---|---|---|
+| Fase 0 · banco de casos | Hecho (13-oct-2026) | `tools/casos_referencia/*.json` + `node tools/test_casos_referencia.js` |
+| 1.1 · Semana corrida | Hecho (13-oct-2026) | `js/semana_corrida.js`; 11 casos de referencia, entre ellos el ejemplo publicado por Buk (mayo de 2022 con licencia → $40.000) y el de calcular.cl ($50.000), ambos iguales. Licencias y permisos con fechas en el mes; vacaciones registradas se descuentan solas. Festivo en sábado con jornada de lunes a viernes: no se paga (criterio de Buk y calcular.cl; sin dictamen específico, se informa en pantalla). Método mensual como Buk/Talana; la pantalla advierte que la DT lo calcula semana a semana. Pendiente: el generador público de liquidaciones aún no la calcula. |
+
 ## 3. Fases y funciones
 
 ### Fase 1: esfuerzo bajo, antes del lanzamiento

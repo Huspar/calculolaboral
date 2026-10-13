@@ -198,6 +198,11 @@ const CAMPOS_MES = {
     gratificacion: { t: 'enum', valores: ['legal', 'manual', 'ninguna'], def: 'legal' },
     gratificacionMonto: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
     comisiones: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    tratos: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    // Semana corrida (art. 45): se calcula en el navegador con js/semana_corrida.js y se guarda el monto usado
+    scModo: { t: 'enum', valores: ['calcular', 'no'], def: 'calcular' },
+    semanaCorrida: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    semanaCorridaDetalle: { t: 'texto', max: 80 },
     viaticos: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
     asignacionFamiliar: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
     apvMonto: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
@@ -243,6 +248,23 @@ function cuotasMes(v, errores) {
     return salida;
 }
 
+// Licencias médicas y permisos del mes (fechas): no cuentan en el promedio de la semana corrida. Sin diagnóstico ni otro dato de salud.
+const MAX_AUSENCIAS_MES = 10;
+function ausenciasMes(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_AUSENCIAS_MES) { errores.ausencias = `Máximo ${MAX_AUSENCIAS_MES} licencias o permisos en el mes.`; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const tipo = normalizar('tipo', { t: 'enum', valores: ['licencia', 'permiso'], def: 'licencia' }, it && it.tipo, e);
+        const desde = normalizar('desde', { t: 'fecha', req: true }, it && it.desde, e);
+        const hasta = normalizar('hasta', { t: 'fecha', req: true }, it && it.hasta, e);
+        if (Object.keys(e).length || hasta < desde) { errores.ausencias = 'Revisa las fechas de cada licencia o permiso (desde y hasta).'; return undefined; }
+        salida.push({ tipo, desde, hasta });
+    }
+    return salida;
+}
+
 // Resultado calculado en el navegador al guardar: sirve para el certificado de remuneraciones y para mostrar el mes sin recalcular.
 function calculoMes(v, errores) {
     if (vacio(v)) return null;
@@ -283,6 +305,8 @@ function validarMes(entrada) {
     });
     const cuotas = cuotasMes(entrada.cuotasPrestamo, errores);
     if (cuotas !== undefined) valor.cuotasPrestamo = cuotas;
+    const aus = ausenciasMes(entrada.ausencias, errores);
+    if (aus !== undefined) valor.ausencias = aus;
     const c = calculoMes(entrada.calculo, errores);
     if (c !== undefined) valor.calculo = c;
     if (valor.apvMonto === 0) valor.apvRegimen = 'B';

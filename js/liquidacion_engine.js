@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.3.0)
+ * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.4.0)
  *
  * Función pura: calcular(datos, mes) devuelve las líneas de la liquidación, las bases de cálculo y los avisos.
  * "datos": { trabajador, mes, periodo "AAAA-MM" }. "mes" son los valores oficiales del mes (UF, UTM, ingreso
@@ -20,6 +20,8 @@
  * - Descuentos pactados por escrito (art. 58): otros descuentos y cuotas de préstamos del empleador (mes.cuotasPrestamo, del
  *   Asistente Pyme). Juntos no pueden pasar del 15% de la remuneración total: si pasan, se avisa. El anticipo no cuenta.
  * - Tramos del impuesto con la UTM del mes.
+ * - Semana corrida (art. 45): el monto llega calculado en mes.semanaCorrida (js/semana_corrida.js, que necesita el
+ *   calendario de feriados) y entra como haber imponible antes de la gratificación. Tratos (mes.tratos): imponibles.
  *
  * Costo del empleador (resultado.empleador, solo si el mes trae "empleador" en sus valores): no cambia el líquido.
  * - AFP 0,1%, SIS y seguro social (Ley 21.735) sobre lo imponible con el tope de la AFP, con las tasas de cada mes.
@@ -120,7 +122,11 @@
         }
         var comisiones = r(n(m.comisiones));
         if (comisiones > 0) imponibles.push({ concepto: 'Comisiones', detalle: '', monto: comisiones });
+        var tratos = r(n(m.tratos));
+        if (tratos > 0) imponibles.push({ concepto: 'Tratos y producción', detalle: '', monto: tratos });
         lineasLibres(m.bonosImponibles).forEach(function (b) { imponibles.push({ concepto: b.concepto, detalle: 'Bono imponible', monto: b.monto }); });
+        var semanaCorrida = r(n(m.semanaCorrida));
+        if (semanaCorrida > 0) imponibles.push({ concepto: 'Semana corrida', detalle: String(m.semanaCorridaDetalle || '').slice(0, 80), monto: semanaCorrida });
 
         var devengado = suma(imponibles);
         var tipoGrat = m.gratificacion || 'legal';
@@ -296,7 +302,7 @@
         return { lineas: lineas, total: total, costoTotal: (res.totalHaberes || 0) + total, tasaMutual: tasaMutual, avisos: avisos };
     }
 
-    var api = { calcular: calcular, impuestoUnico: impuestoUnico, aportesEmpleador: aportesEmpleador, TOPE_DESCUENTOS_PACTADOS: TOPE_DESCUENTOS_PACTADOS, version: '1.3.0' };
+    var api = { calcular: calcular, impuestoUnico: impuestoUnico, aportesEmpleador: aportesEmpleador, TOPE_DESCUENTOS_PACTADOS: TOPE_DESCUENTOS_PACTADOS, version: '1.4.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLLiquidacionEngine = api;
 })(typeof window !== 'undefined' ? window : this);
