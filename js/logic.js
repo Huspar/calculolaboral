@@ -28,26 +28,33 @@ class FiniquitoCalculator {
         this.enableNotice = data.enableNotice !== undefined ? data.enableNotice : true;
         this.enablePending = data.enablePending !== undefined ? data.enablePending : true;
         this.simulateAFC = data.simulateAFC !== undefined ? data.simulateAFC : true;
-        this.afcExactAmount = data.afcExactAmount !== undefined ? parseFloat(data.afcExactAmount) : null;
-        this.holidays = Array.isArray(data.holidays) ? data.holidays : (typeof CONSTANTS !== 'undefined' ? CONSTANTS.HOLIDAYS_2026 : []);
+        this.afcExactAmount = (data.afcExactAmount === undefined || data.afcExactAmount === null || data.afcExactAmount === '')
+            ? null : (parseFloat(data.afcExactAmount) || 0);
+        // Feriados de todos los años cargados (el feriado proporcional puede cruzar al año siguiente)
+        const known = typeof CONSTANTS !== 'undefined'
+            ? [].concat(CONSTANTS.HOLIDAYS_2026 || [], CONSTANTS.HOLIDAYS_2027 || []) : [];
+        this.holidays = Array.from(new Set((Array.isArray(data.holidays) ? data.holidays : []).concat(known)));
+        // Contrato con fechas invertidas o vacías: no se calcula nada
+        this.invalidDates = isNaN(this.startDate) || isNaN(this.endDate) || this.endDate < this.startDate;
 
         // Toggle: incluir asignaciones en cálculo de indemnización (IAS / Aviso)
         this.includeAssignmentsInIndemnity = data.includeAssignmentsInIndemnity !== undefined ?
             data.includeAssignmentsInIndemnity : true;
 
-        // Toggle: incluir asignaciones en cálculo de vacaciones
+        // Toggle: incluir asignaciones en cálculo de vacaciones. Por defecto no: colación y movilización
+        // no son remuneración (art. 41 inc. 2 CT) y el feriado se paga con la remuneración íntegra (art. 71)
         this.includeAssignmentsInVacation = data.includeAssignmentsInVacation !== undefined ?
-            data.includeAssignmentsInVacation : true;
+            data.includeAssignmentsInVacation : false;
 
         // Totales calculados
-        // Base de cálculo IAS (Indemnización por Años de Servicio - Topada 90 UF)
-        // Por defecto NO incluye asignaciones (colación/movilización) para IAS/Aviso
+        // Base de cálculo IAS y aviso (art. 172, tope 90 UF): incluye por defecto colación y movilización
+        // regulares, según la jurisprudencia de la Corte Suprema
         this.taxableSalary = this.baseSalary + this.gratification + this.variableAverage +
             (this.includeAssignmentsInIndemnity ? this.assignments : 0);
 
-        // Base de cálculo Feriado (Remuneración Íntegra)
-        // Por defecto SÍ las incluye según criterio común/judicial
-        this.fullSalary = this.baseSalary + this.gratification + this.variableAverage +
+        // Base de cálculo Feriado (remuneración íntegra): sin la gratificación mensual, que el trabajador
+        // conserva por el mes del término (DT Ord. 836/46 de 2004)
+        this.fullSalary = this.baseSalary + this.variableAverage +
             (this.includeAssignmentsInVacation ? this.assignments : 0);
 
         this.vacationDaysPending = parseFloat(data.vacationDaysPending) || 0; // Días hábiles pendientes
@@ -62,6 +69,21 @@ class FiniquitoCalculator {
         const factorExtrema = typeof CONSTANTS !== 'undefined' ? CONSTANTS.FACTOR_VACACIONES_EXTREMA : 1.67;
 
         this.vacationFactor = this.isExtremeZone ? factorExtrema : factorNormal;
+
+        // Remuneración imponible (sin colación ni movilización): base del aporte al seguro de cesantía
+        this.imponibleSalary = this.baseSalary + this.gratification + this.variableAverage;
+    }
+
+    /**
+     * Fecha de la UF para el tope de 90 UF: último día del mes anterior al pago (art. 172 inc. final)
+     * @param {string} paymentDate - YYYY-MM-DD
+     * @returns {string} YYYY-MM-DD
+     */
+    static ufCapDate(paymentDate) {
+        const d = new Date(paymentDate);
+        if (isNaN(d)) return null;
+        const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 0));
+        return last.toISOString().slice(0, 10);
     }
 
     /**
@@ -69,12 +91,14 @@ class FiniquitoCalculator {
      * @returns {Object} Resultado completo del finiquito
      */
     calculate() {
+        if (this.invalidDates) return this.emptyResult('La fecha de término es anterior a la de inicio.');
+
         // 1. Calcular tiempo de servicio
         const serviceTime = this.calculateServiceTime();
 
-        // 2. Calcular sueldo base con tope 90 UF
+        // 2. Calcular sueldo base con tope 90 UF (redondeado al peso)
         const topeIndemnizacion = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_INDEMNIZACION : 90;
-        const salaryCap = this.ufValue * topeIndemnizacion;
+        const salaryCap = Math.round(this.ufValue * topeIndemnizacion);
         const cappedSalary = Math.min(this.taxableSalary, salaryCap);
         const isCapped = this.taxableSalary > salaryCap;
 
@@ -88,8 +112,8 @@ class FiniquitoCalculator {
             ? this.calculatePendingRemuneration() 
             : { daysWorked: 0, propBase: 0, propGrat: 0, propAssign: 0, propVariable: 0, total: 0 };
 
-        // 5. Calcular total
-        const afc = this.calculateAFCDeduction(serviceTime, cappedSalary);
+        // 5. Calcular total (el aporte AFC solo se imputa a la indemnización por años de servicio)
+        const afc = this.calculateAFCDeduction(serviceTime, yearsOfServiceAmount.total);
 
         let total = yearsOfServiceAmount.total +
             noticeAmount.total +
@@ -126,47 +150,85 @@ class FiniquitoCalculator {
             noticeIndemnity: noticeAmount,
             vacationIndemnity: vacationAmount,
             pendingRemuneration,
-            afc: this.calculateAFCDeduction(serviceTime, cappedSalary),
+            afc,
             total
+        };
+    }
+
+    emptyResult(error) {
+        const zero = { total: 0, applied: false };
+        const serviceTime = { years: 0, months: 0, days: 0, indemnityYears: 0, cappedIndemnityYears: 0 };
+        const vacation = {
+            total: 0, proportionalTotal: 0, pendingTotal: 0, proportionalDays: '0.00', pendingDays: 0,
+            totalBusinessDays: '0.00', nonBusinessDays: 0, totalCalendarDays: '0.00', salaryPerDay: '0.00', details: ''
+        };
+        const pending = { daysWorked: 0, propBase: 0, propGrat: 0, propAssign: 0, propVariable: 0, total: 0 };
+        return {
+            error,
+            serviceTime,
+            economics: {
+                baseSalary: this.baseSalary, gratification: this.gratification, assignments: this.assignments,
+                variableAverage: this.variableAverage, fullSalary: this.fullSalary, cappedSalary: 0,
+                isCapped: false, salaryCap: 0, ufValue: this.ufValue
+            },
+            indemnities: { yearsOfService: zero, notice: zero, vacation },
+            yearsOfServiceIndemnity: zero,
+            noticeIndemnity: zero,
+            vacationIndemnity: vacation,
+            pendingRemuneration: pending,
+            afc: zero,
+            total: 0
         };
     }
 
     /**
      * Calcula descuento AFC (Simulación)
      * @param {Object} serviceTime - Información de tiempo servido
-     * @param {Number} cappedSalary - Sueldo base topado
+     * @param {Number} iasTotal - Indemnización por años de servicio: el aporte solo se imputa a ella
+     *                            y nunca la supera (art. 13 inc. 2 Ley 19.728)
      * @returns {Object} Monto y detalles
      */
-    calculateAFCDeduction(serviceTime, cappedSalary) {
-        if (!this.simulateAFC || this.cause !== '161') {
+    calculateAFCDeduction(serviceTime, iasTotal) {
+        if (!this.simulateAFC || this.cause !== '161' || !(iasTotal > 0)) {
             return { total: 0, applied: false };
         }
+        const cap = (n) => Math.max(0, Math.min(Math.round(n), Math.round(iasTotal)));
 
-        // Si se provee monto exacto según certificado oficial de AFC Chile
-        if (this.afcExactAmount !== null && !isNaN(this.afcExactAmount) && this.afcExactAmount > 0) {
+        // Monto según el certificado de la AFC (si se eligió certificado y no se ingresó, no se descuenta)
+        if (this.afcExactAmount !== null) {
+            const exact = isNaN(this.afcExactAmount) ? 0 : this.afcExactAmount;
             return {
-                total: Math.round(this.afcExactAmount),
-                applied: true,
+                total: cap(exact),
+                applied: cap(exact) > 0,
                 percentage: "Certificado",
-                reason: "Aporte empleador a CIC según Certificado AFC (Art. 13 Ley 19.728)"
+                reason: "Aporte del empleador a la cuenta individual según certificado de la AFC (art. 13 Ley 19.728)"
             };
         }
 
-        // Estimación legal: 1.6% de remuneración imponible mensual (tope 135,2 UF) por el tiempo trabajado
+        // Estimación: 1,6% de la remuneración imponible actual (sin colación ni movilización, tope 135,2 UF)
+        // por cada mes cotizado, con máximo 11 años por relación laboral. Los contratos anteriores al
+        // 2-oct-2002 solo cotizan si se afiliaron voluntariamente: ahí se usa solo el certificado.
+        if (this.startDate < new Date(Date.UTC(2002, 9, 2))) {
+            return { total: 0, applied: false, reason: "Contrato anterior al seguro de cesantía: ingresa el monto del certificado de la AFC" };
+        }
         const topeCesantiaUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_IMPONIBLE_CESANTIA : 135.2;
         const salaryCapCesantia = this.ufValue * topeCesantiaUF;
-        const cappedCesantiaSalary = Math.min(this.taxableSalary, salaryCapCesantia);
+        const cappedCesantiaSalary = Math.min(this.imponibleSalary, salaryCapCesantia);
 
         const afcRate = (typeof CONSTANTS !== 'undefined' && CONSTANTS.AFC_INDEFINIDO_EMPLOYER_CIC) 
             ? CONSTANTS.AFC_INDEFINIDO_EMPLOYER_CIC 
             : 0.016; // 1.6% aporte empleador a CIC para contratos indefinidos
         const estimatedContributionPerMonth = cappedCesantiaSalary * afcRate;
-        const totalMonths = (serviceTime.years * 12) + serviceTime.months;
-        const total = Math.round(estimatedContributionPerMonth * totalMonths);
+        const from = this.startDate;
+        const totalMonths = Math.min(132, Math.max(0,
+            (this.endDate.getUTCFullYear() - from.getUTCFullYear()) * 12 +
+            (this.endDate.getUTCMonth() - from.getUTCMonth()) +
+            (this.endDate.getUTCDate() >= from.getUTCDate() ? 0 : -1)));
+        const total = cap(estimatedContributionPerMonth * totalMonths);
 
         return {
             total,
-            applied: true,
+            applied: total > 0,
             percentage: `${(afcRate * 100).toFixed(1)}%`,
             reason: "Aporte empleador a CIC 1,6% (Estimado según Art. 13 Ley 19.728)"
         };
@@ -177,10 +239,17 @@ class FiniquitoCalculator {
      * @returns {Object} Desglose de remuneración pendiente
      */
     calculatePendingRemuneration() {
-        // Días trabajados en el mes de término
-        // Ej: Si termina el 9 de febrero = 9 días trabajados
-        // Se usa divisor comercial de 30 días para cálculo proporcional
-        const daysWorked = Math.min(this.endDate.getUTCDate(), 30);
+        // Días trabajados en el mes de término, con mes comercial de 30 días:
+        // desde el 1 (o desde el ingreso, si fue ese mes) hasta el término. Si trabajó hasta
+        // el último día del mes, son 30 (también en febrero o en meses de 31).
+        const y = this.endDate.getUTCFullYear(), m = this.endDate.getUTCMonth();
+        const monthStart = Date.UTC(y, m, 1);
+        const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+        const startedThisMonth = this.startDate.getTime() > monthStart;
+        const fromDay = startedThisMonth ? this.startDate.getUTCDate() : 1;
+        let daysWorked = this.endDate.getUTCDate() - fromDay + 1;
+        if (this.endDate.getUTCDate() === lastDay) daysWorked = startedThisMonth ? 30 - fromDay + 1 : 30;
+        daysWorked = Math.max(0, Math.min(daysWorked, 30));
 
         const propBase = Math.round((this.baseSalary / 30) * daysWorked);
         const propGrat = Math.round((this.gratification / 30) * daysWorked);
@@ -202,9 +271,11 @@ class FiniquitoCalculator {
      * @returns {Object} Años, meses, días de servicio
      */
     calculateServiceTime() {
-        let years = this.endDate.getUTCFullYear() - this.startDate.getUTCFullYear();
-        let months = this.endDate.getUTCMonth() - this.startDate.getUTCMonth();
-        let days = this.endDate.getUTCDate() - this.startDate.getUTCDate();
+        // El día de término se cuenta como trabajado: del 01-03-2023 al 28-02-2026 son 3 años justos
+        const end = new Date(this.endDate.getTime() + 86400000);
+        let years = end.getUTCFullYear() - this.startDate.getUTCFullYear();
+        let months = end.getUTCMonth() - this.startDate.getUTCMonth();
+        let days = end.getUTCDate() - this.startDate.getUTCDate();
 
         // Ajuste de días negativos
         if (days < 0) {
@@ -218,10 +289,14 @@ class FiniquitoCalculator {
             months += 12;
         }
 
-        // Cálculo de años para indemnización (fracción ≥ 6 meses redondea arriba)
+        // Años para indemnización (art. 163): exige al menos 1 año; la fracción superior
+        // a 6 meses cuenta como un año más (6 meses exactos no)
         let indemnityYears = years;
-        if (months >= 6) {
+        if (months > 6 || (months === 6 && days > 0)) {
             indemnityYears += 1;
+        }
+        if (years < 1) {
+            indemnityYears = 0;
         }
 
         // Tope 11 años (Art. 163 - contratos post 1981)
@@ -267,11 +342,11 @@ class FiniquitoCalculator {
         }
 
         // Fórmula: 1 mes de sueldo por cada año trabajado (tope definido en calculateServiceTime)
-        const total = serviceTime.cappedIndemnityYears * cappedSalary;
+        const total = Math.round(serviceTime.cappedIndemnityYears * cappedSalary);
 
         return {
             total,
-            applied: true,
+            applied: total > 0,
             yearsUsed: serviceTime.cappedIndemnityYears,
             salaryUsed: cappedSalary,
             reason: `${serviceTime.cappedIndemnityYears} años × $${cappedSalary.toLocaleString()}`
@@ -303,7 +378,7 @@ class FiniquitoCalculator {
 
         // Si no se dio aviso: 1 mes de indemnización (topado 90 UF)
         return {
-            total: cappedSalary,
+            total: Math.round(cappedSalary),
             applied: true,
             reason: "Falta de aviso previo (30 días)"
         };
@@ -317,18 +392,19 @@ class FiniquitoCalculator {
     calculateVacationIndemnity() {
         // A. Calcular días hábiles proporcionales acumulados este año
 
-        // Encontrar último aniversario antes del término
+        // Tiempo desde el último aniversario, contando el día de término como trabajado
+        const end = new Date(this.endDate.getTime() + 86400000);
         const lastAnniversary = new Date(this.startDate);
-        lastAnniversary.setUTCFullYear(this.endDate.getUTCFullYear());
+        lastAnniversary.setUTCFullYear(end.getUTCFullYear());
 
         // Si el aniversario aún no llegó este año, retroceder 1 año
-        if (lastAnniversary > this.endDate) {
-            lastAnniversary.setUTCFullYear(this.endDate.getUTCFullYear() - 1);
+        if (lastAnniversary > end) {
+            lastAnniversary.setUTCFullYear(end.getUTCFullYear() - 1);
         }
 
         // Calcular meses trabajados desde último aniversario
-        let propMonths = this.endDate.getUTCMonth() - lastAnniversary.getUTCMonth();
-        let propDays = this.endDate.getUTCDate() - lastAnniversary.getUTCDate();
+        let propMonths = end.getUTCMonth() - lastAnniversary.getUTCMonth();
+        let propDays = end.getUTCDate() - lastAnniversary.getUTCDate();
 
         // Ajustar días negativos
         if (propDays < 0) {
@@ -344,7 +420,7 @@ class FiniquitoCalculator {
         // Convertir a meses totales (con fracción de días)
         const totalPropMonths = propMonths + (propDays / 30);
 
-        // Calcular días hábiles acumulados (1.25 días/mes normal, 1.67 zonas extremas)
+        // Calcular días hábiles acumulados (1,25 días/mes normal, 20/12 en zonas extremas)
         const businessDaysAccrued = totalPropMonths * this.vacationFactor;
 
         // Sumar días hábiles pendientes de años anteriores
@@ -385,8 +461,8 @@ class FiniquitoCalculator {
 
         // C. Valorización del Feriado
 
-        // Base de cálculo: Remuneración íntegra (puede incluir o no asignaciones)
-        let vacationBaseSalary = this.baseSalary + this.gratification + this.variableAverage;
+        // Base de cálculo: remuneración íntegra (sin gratificación mensual; asignaciones solo si se pide)
+        let vacationBaseSalary = this.baseSalary + this.variableAverage;
 
         if (this.includeAssignmentsInVacation) {
             vacationBaseSalary += this.assignments;

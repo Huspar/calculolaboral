@@ -141,6 +141,15 @@
             return words.join(' ');
         }
 
+        // Hasta 999.999 (sirve también para contar millones: "mil doscientos millones")
+        function belowMillion(x) {
+            const th = Math.floor(x / 1000), u = x % 1000, w = [];
+            if (th === 1) w.push('mil');
+            else if (th > 1) w.push(`${convertGroup(th)} mil`);
+            if (u > 0) w.push(convertGroup(u));
+            return w.join(' ');
+        }
+
         const millions = Math.floor(n / 1000000);
         const remainder = n % 1000000;
         const thousands = Math.floor(remainder / 1000);
@@ -151,7 +160,7 @@
             if (millions === 1) {
                 parts.push('un millón');
             } else {
-                parts.push(`${convertGroup(millions)} millones`);
+                parts.push(`${belowMillion(millions)} millones`);
             }
         }
 
@@ -167,7 +176,7 @@
             parts.push(convertGroup(unitsGroup));
         }
 
-        const text = parts.join(' ').trim();
+        const text = (Number(num) < 0 ? 'menos ' : '') + parts.join(' ').trim();
 
         // En español, si termina en 'millón' o 'millones' exactos, se agrega la preposición 'de pesos'
         if (millions > 0 && thousands === 0 && unitsGroup === 0) {
@@ -182,6 +191,8 @@
         bindInputs();
         loadFromUrlOrStorage();
         updateAll();
+        // Recalcular cuando llegan los indicadores del día (UF y UTM para el impuesto)
+        window.addEventListener('indicatorsUpdated', () => updateAll());
         setupPaymentModal();
         setupCopyProtection();
     }
@@ -195,7 +206,7 @@
             'trabajador-domicilio', 'trabajador-ciudad',
             'fecha-inicio', 'fecha-termino', 'fecha-pago', 'causal-select',
             'sueldo-base', 'gratificacion', 'asignaciones', 'promedio-variables',
-            'vacaciones-pendientes', 'aviso-previo', 'zona-extrema',
+            'vacaciones-pendientes', 'aviso-previo', 'zona-extrema', 'incluir-dias', 'afp-select',
             'afc-tipo', 'afc-monto-exacto', 'descuento-anticipos',
             'descuento-prestamos', 'descuento-alimentos',
             'forma-pago', 'banco-detalle'
@@ -488,6 +499,13 @@
     // Recalcular montos y actualizar la plantilla notarial
     function updateAll() {
         const rawData = getRawFormData();
+        const is161 = rawData.causal === '161';
+        const avisoBox = document.getElementById('aviso-previo-box');
+        const afcBox = document.getElementById('afc-config-box');
+        if (avisoBox) avisoBox.style.display = is161 ? 'block' : 'none';
+        if (afcBox) afcBox.style.display = is161 ? 'block' : 'none';
+        const prevBox = document.getElementById('prevision-box');
+        if (prevBox) prevBox.style.display = rawData.incluirDias ? '' : 'none';
         const displayData = getDisplayFormData(rawData);
         const calcData = calculateFiniquito(rawData);
         state.calcResult = calcData;
@@ -547,6 +565,8 @@
             vacacionesPendientes: parseFloat(document.getElementById('vacaciones-pendientes')?.value) || 0,
             avisoPrevio: getChecked('aviso-previo'),
             isExtremeZone: getChecked('zona-extrema'),
+            incluirDias: document.getElementById('incluir-dias') ? getChecked('incluir-dias') : true,
+            afp: getV('afp-select') || 'Modelo',
 
             afcTipo: getV('afc-tipo') || 'estimado',
             afcMontoExacto: getN('afc-monto-exacto'),
@@ -591,6 +611,60 @@
         return getDisplayFormData(getRawFormData());
     }
 
+    // UF del último día del mes anterior al pago, para el tope de 90 UF (art. 172 inc. final).
+    // Se busca en el historial de indicators.js; si no está, se pide a mindicador.cl y se recalcula.
+    const ufCache = {};
+    function ufParaTope(fechaPago) {
+        const fecha = (typeof FiniquitoCalculator !== 'undefined' && FiniquitoCalculator.ufCapDate)
+            ? FiniquitoCalculator.ufCapDate(fechaPago) : null;
+        const actual = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) || 0;
+        if (!fecha) return actual;
+        if (ufCache[fecha]) return ufCache[fecha];
+        const series = [];
+        try {
+            if (typeof IndicatorsService !== 'undefined' && IndicatorsService.BASELINE_DATA) series.push(...IndicatorsService.BASELINE_DATA.uf);
+            const hist = JSON.parse(localStorage.getItem('econIndicatorsHistory.v1') || 'null');
+            if (hist && Array.isArray(hist.uf)) series.push(...hist.uf);
+        } catch (e) {}
+        const hit = series.find(x => x && String(x.fecha).slice(0, 10) === fecha);
+        if (hit) return (ufCache[fecha] = Number(hit.valor));
+        if (ufCache[fecha] === undefined && fecha <= new Date().toISOString().slice(0, 10)) {
+            ufCache[fecha] = 0;
+            const [y, m, d] = fecha.split('-');
+            fetch(`https://mindicador.cl/api/uf/${d}-${m}-${y}`)
+                .then(r => r.json())
+                .then(j => {
+                    const v = j && j.serie && j.serie[0] && Number(j.serie[0].valor);
+                    if (v) { ufCache[fecha] = v; updateAll(); }
+                })
+                .catch(() => {});
+        }
+        return actual;
+    }
+
+    // Cotizaciones e impuesto del sueldo de los días trabajados (paga el trabajador; los retiene el empleador)
+    function descuentosLegalesDias(pend, formData) {
+        const vacio = { afp: 0, salud: 0, cesantia: 0, impuesto: 0, total: 0, afpNombre: formData.afp || 'Modelo' };
+        if (!pend || !pend.total || typeof ForensicSalaryCalculator === 'undefined') return vacio;
+        const plazoFijo = formData.causal === '159-4' || formData.causal === '159-5';
+        const d = new ForensicSalaryCalculator({
+            baseSalary: pend.propBase,
+            gratificationType: 'manual',
+            gratificationManual: pend.propGrat,
+            bonusAmount: pend.propVariable,
+            afpName: formData.afp || 'Modelo',
+            healthSystem: 'fonasa',
+            contractType: plazoFijo ? 'plazo_fijo' : 'indefinido'
+        }).calculate();
+        if (!d || !d.details) return vacio;
+        const x = d.details;
+        return {
+            afp: x.afpAmount, salud: x.healthAmount, cesantia: x.afcAmount, impuesto: x.taxAmount,
+            total: x.afpAmount + x.healthAmount + x.afcAmount + x.taxAmount,
+            afpNombre: formData.afp || 'Modelo'
+        };
+    }
+
     // Ejecutar motor de cálculo legal usando FiniquitoCalculator
     function calculateFiniquito(formData) {
         if (typeof FiniquitoCalculator === 'undefined') {
@@ -600,6 +674,7 @@
 
         const afcExact = formData.afcTipo === 'certificado' ? formData.afcMontoExacto : null;
         const simulateAfc = formData.afcTipo !== 'ninguno';
+        const fechaPago = formData.fechaPago || formData.fechaTermino || '2026-09-19';
 
         const calculator = new FiniquitoCalculator({
             startDate: formData.fechaInicio || '2023-03-01',
@@ -613,19 +688,23 @@
             noticeGiven: !!formData.avisoPrevio,
             simulateAFC: simulateAfc,
             afcExactAmount: afcExact,
-            isExtremeZone: !!formData.isExtremeZone
+            isExtremeZone: !!formData.isExtremeZone,
+            enablePending: formData.incluirDias !== false,
+            // Tope de 90 UF con la UF del último día del mes anterior al pago (art. 172)
+            ufValue: ufParaTope(fechaPago)
         });
 
         const res = calculator.calculate();
+        const prevision = descuentosLegalesDias(res.pendingRemuneration, formData);
 
         // Descuentos adicionales voluntarios o judiciales
         const totalDescuentosAdicionales = (formData.descuentoAnticipos || 0) +
             (formData.descuentoPrestamos || 0) +
             (formData.descuentoAlimentos || 0);
 
-        // Descuento AFC aplicado
+        // Imputación del aporte AFC (solo a la indemnización por años de servicio)
         const afcDescuento = res.afc && res.afc.applied ? res.afc.total : 0;
-        const totalDescuentos = afcDescuento + totalDescuentosAdicionales;
+        const totalDescuentos = afcDescuento + prevision.total + totalDescuentosAdicionales;
 
         // Total haberes brutos
         const totalHaberes = (res.yearsOfServiceIndemnity?.total || 0) +
@@ -633,12 +712,15 @@
             (res.vacationIndemnity?.total || 0) +
             (res.pendingRemuneration?.total || 0);
 
-        // Saldo líquido final a pagar
-        const saldoLiquidoFinal = Math.max(0, totalHaberes - totalDescuentos);
+        // Saldo líquido final a pagar (si los descuentos superan los haberes se avisa en pantalla)
+        const saldoBruto = totalHaberes - totalDescuentos;
+        const saldoLiquidoFinal = Math.max(0, saldoBruto);
 
         return {
             ...res,
             totalHaberes,
+            saldoNegativo: saldoBruto < 0,
+            prevision,
             afcDescuento,
             totalDescuentosAdicionales,
             totalDescuentos,
@@ -658,13 +740,20 @@
         setT('resumen-ias', formatMoney(calc.yearsOfServiceIndemnity?.total || 0));
         setT('resumen-aviso', formatMoney(calc.noticeIndemnity?.total || 0));
         setT('resumen-vacaciones', formatMoney(calc.vacationIndemnity?.total || 0));
-        setT('resumen-dias-pendientes', formatMoney(calc.pendingRemuneration?.total || 0));
-        setT('resumen-total-haberes', formatMoney(calc.totalHaberes || 0));
-        setT('resumen-descuentos', formatMoney(calc.totalDescuentos || 0));
+        setT('resumen-descuentos', '-' + formatMoney(calc.totalDescuentos || 0));
         setT('resumen-liquido-pagar', formatMoney(calc.saldoLiquidoFinal || 0));
 
         // Letras resumen
         setT('resumen-liquido-palabras', numberToWords(calc.saldoLiquidoFinal || 0));
+
+        const alerta = document.getElementById('calc-alert');
+        if (alerta) {
+            const msg = calc.error
+                ? calc.error + ' Revisa las fechas.'
+                : (calc.saldoNegativo ? 'Los descuentos superan los haberes: revisa los montos antes de firmar.' : '');
+            alerta.textContent = msg;
+            alerta.classList.toggle('hidden', !msg);
+        }
     }
 
     // Renderizar la plantilla notarial viva
@@ -732,7 +821,7 @@
         if (c.pendingRemuneration && c.pendingRemuneration.total > 0) {
             haberesRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Remuneración por Días Trabajados en el Mes (${c.pendingRemuneration.daysWorked} días)</td>
+                    <td class="py-1 px-2 border border-gray-300">Remuneración bruta por días trabajados en el mes (${c.pendingRemuneration.daysWorked} días)</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono">${formatMoney(c.pendingRemuneration.total)}</td>
                 </tr>
             `;
@@ -749,11 +838,27 @@
         if (c.afcDescuento > 0) {
             descuentosRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Deducción Aporte Empleador CIC AFC (Art. 13 Ley Nº 19.728)</td>
+                    <td class="py-1 px-2 border border-gray-300">Imputación del aporte del empleador a la cuenta individual de cesantía (art. 13 Ley Nº 19.728)</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono text-red-700">-${formatMoney(c.afcDescuento)}</td>
                 </tr>
             `;
         }
+        const pv = c.prevision || {};
+        [
+            [pv.afp, `Cotización AFP ${escapeHtml(pv.afpNombre || '')} sobre los días trabajados`],
+            [pv.salud, 'Cotización de salud (7%) sobre los días trabajados'],
+            [pv.cesantia, 'Seguro de cesantía del trabajador (0,6%) sobre los días trabajados'],
+            [pv.impuesto, 'Impuesto único de segunda categoría sobre los días trabajados']
+        ].forEach(([monto, texto]) => {
+            if (monto > 0) {
+                descuentosRows += `
+                <tr>
+                    <td class="py-1 px-2 border border-gray-300">${texto}</td>
+                    <td class="py-1 px-2 border border-gray-300 text-right font-mono text-red-700">-${formatMoney(monto)}</td>
+                </tr>
+            `;
+            }
+        });
         if (f.descuentoAnticipos > 0) {
             descuentosRows += `
                 <tr>

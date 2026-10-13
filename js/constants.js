@@ -23,7 +23,7 @@ const CONSTANTS = {
 
     // Vacation Factors
     FACTOR_VACACIONES_NORMAL: 1.25, // Days per month (15 días / 12 meses)
-    FACTOR_VACACIONES_EXTREMA: 1.67, // Days per month (20 días / 12 meses - Zonas Extremas)
+    FACTOR_VACACIONES_EXTREMA: 20 / 12, // Days per month (20 días / 12 meses - Zonas Extremas)
 
     // Feriados 2026 Chile (días inhábiles)
     HOLIDAYS_2026: [
@@ -42,6 +42,14 @@ const CONSTANTS = {
         "2026-11-01", // Día de Todos los Santos
         "2026-12-08", // Inmaculada Concepción
         "2026-12-25"  // Navidad
+    ],
+
+    // Feriados 2027: San Pedro y San Pablo y Encuentro de Dos Mundos pasan al lunes (Ley 19.668);
+    // el viernes 17-sep es feriado porque el 18 cae sábado (Ley 20.983); Pueblos Indígenas 21-jun (Ley 21.357)
+    HOLIDAYS_2027: [
+        "2027-01-01", "2027-03-26", "2027-03-27", "2027-05-01", "2027-05-21", "2027-06-21",
+        "2027-06-28", "2027-07-16", "2027-08-15", "2027-09-17", "2027-09-18", "2027-09-19",
+        "2027-10-11", "2027-10-31", "2027-11-01", "2027-12-08", "2027-12-25"
     ],
 
     // Rates
