@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -122,6 +122,25 @@ function crearAlmacenMemoria() {
             E.meses.splice(i, 1);
             return true;
         },
+        // ---- boletas de honorarios ----
+        async listarHonorarios(empresaId, periodo) {
+            return E.honorarios.filter(h => h.empresaId === empresaId && (!periodo || h.periodo === periodo)).sort((a, b) => a.periodo < b.periodo ? -1 : 1)
+                .map(h => ({ periodo: h.periodo, datos: Buffer.from(h.datos), version: h.version }));
+        },
+        async guardarHonorarios({ empresaId, periodo, datos, version, maxPeriodos }) {
+            if (!E.empresas.some(x => x.id === empresaId)) return false;
+            const h = E.honorarios.find(x => x.empresaId === empresaId && x.periodo === periodo);
+            if (h) { h.datos = Buffer.from(datos); h.version = version; return true; }
+            if (E.honorarios.filter(x => x.empresaId === empresaId).length >= maxPeriodos) return false;
+            E.honorarios.push({ empresaId, periodo, datos: Buffer.from(datos), version });
+            return true;
+        },
+        async borrarHonorarios(empresaId, periodo) {
+            const i = E.honorarios.findIndex(x => x.empresaId === empresaId && x.periodo === periodo);
+            if (i < 0) return false;
+            E.honorarios.splice(i, 1);
+            return true;
+        },
         // ---- documentos emitidos ----
         async registrarDocumento({ trabajadorId, empresaId, tipo, ahoraIso, maximo }) {
             if (!E.trabajadores.some(x => x.id === trabajadorId && x.empresaId === empresaId)) return false;
@@ -182,6 +201,7 @@ function crearAlmacenMemoria() {
             E.documentos = E.documentos.filter(m => tids.indexOf(m.trabajadorId) < 0);
             E.vacaciones = E.vacaciones.filter(m => tids.indexOf(m.trabajadorId) < 0);
             E.trabajadores = E.trabajadores.filter(x => emp.indexOf(x.empresaId) < 0);
+            E.honorarios = E.honorarios.filter(x => emp.indexOf(x.empresaId) < 0);
             E.empresas = E.empresas.filter(x => x.cuentaId !== cuentaId);
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);
             E.pases = E.pases.filter(x => x.cuentaId !== cuentaId);

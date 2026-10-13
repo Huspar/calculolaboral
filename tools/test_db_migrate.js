@@ -77,8 +77,8 @@ function tablas(sql) {
 }
 const T = tablas(sqlTodo);
 
-caso('el esquema define las 11 tablas del plan', () => {
-    const esperadas = ['cuentas', 'enlaces_acceso', 'sesiones', 'empresas', 'trabajadores', 'vacaciones', 'meses', 'documentos', 'pases', 'intentos', 'auditoria'];
+caso('el esquema define las 11 tablas del plan y la de honorarios (002)', () => {
+    const esperadas = ['cuentas', 'enlaces_acceso', 'sesiones', 'empresas', 'trabajadores', 'vacaciones', 'meses', 'documentos', 'pases', 'intentos', 'auditoria', 'honorarios'];
     esperadas.forEach(n => assert.ok(T.some(t => t.nombre === n), 'falta la tabla ' + n));
 });
 caso('toda tabla con datos_cifrados tiene version_clave', () => {
@@ -99,7 +99,7 @@ caso('los tokens se guardan solo como hash', () => {
 });
 caso('borrar la cuenta borra todo (cascada) y la auditoria no depende de la cuenta', () => {
     ['sesiones', 'empresas', 'pases'].forEach(n => assert.ok(new RegExp(n + ' \\([\\s\\S]*?REFERENCES cuentas \\(id\\) ON DELETE CASCADE').test(sqlTodo), n));
-    ['trabajadores', 'vacaciones', 'meses', 'documentos'].forEach(n => {
+    ['trabajadores', 'vacaciones', 'meses', 'documentos', 'honorarios'].forEach(n => {
         const t = T.find(x => x.nombre === n);
         assert.ok(/ON DELETE CASCADE/.test(t.cuerpo), n + ' sin cascada');
     });

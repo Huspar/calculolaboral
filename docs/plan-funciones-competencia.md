@@ -38,6 +38,9 @@ Se arma un **banco de casos de referencia** (`tools/casos_referencia/*.json` + `
 | Fase 0 · banco de casos | Hecho (13-oct-2026) | `tools/casos_referencia/*.json` + `node tools/test_casos_referencia.js` |
 | 1.1 · Semana corrida | Hecho (13-oct-2026) | `js/semana_corrida.js`; 11 casos de referencia, entre ellos el ejemplo publicado por Buk (mayo de 2022 con licencia → $40.000) y el de calcular.cl ($50.000), ambos iguales. Licencias y permisos con fechas en el mes; vacaciones registradas se descuentan solas. Festivo en sábado con jornada de lunes a viernes: no se paga (criterio de Buk y calcular.cl; sin dictamen específico, se informa en pantalla). Método mensual como Buk/Talana; la pantalla advierte que la DT lo calcula semana a semana. Pendiente: el generador público de liquidaciones aún no la calcula. |
 | 1.2 · Bonos fijos en la ficha | Hecho (13-oct-2026) | Hasta 8 por trabajador; imponibles con nombre libre y como no imponibles solo pérdida de caja y desgaste de herramientas (art. 41 inc. 2). Se proponen en cada mes nuevo; editar la ficha sin la lista (anexo) los conserva. |
+| 1.3 · F29 y boletas de honorarios | Hecho (13-oct-2026) | Panel «Para el Formulario 29» en Liquidaciones: código 48 (impuesto único de las liquidaciones guardadas; el motor ya coincide con la calculadora del sitio en 35 casos) y código 151 (retención de boletas). `js/pyme_honorarios.js` con 6 casos de referencia (SII: $100.000 en 2026 → $15.250). Boletas cifradas por empresa y mes en la tabla nueva `honorarios` (**migración 002: aplicarla en `pruebas` y correr `test_pyme_almacen_db.js` antes de producción**). |
+
+**Pendiente al cerrar la Fase 1:** Privacidad debe decir que el asistente guarda nombre y RUT de quienes emiten boletas a la empresa (terceros) y fechas de licencias médicas sin diagnóstico; actualizar la página pública con lo construido.
 
 ## 3. Fases y funciones
 

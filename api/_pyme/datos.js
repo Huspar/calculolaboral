@@ -7,6 +7,7 @@
  *  - Limite de trabajadores activos: 1 sin pase y 5 con pase vigente. Lo aplica el servidor en la misma sentencia SQL del INSERT.
  *  - No puede haber dos trabajadores con el mismo RUT en una empresa, y se permiten hasta 50 en total (activos + inactivos).
  *  - Los préstamos con cuotas van dentro de la ficha (cifrados con ella). Guardar la ficha sin la lista los conserva.
+ *  - Las boletas de honorarios van en una fila cifrada por empresa y mes (tabla honorarios, migración 002).
  *
  * Todas las funciones devuelven { ok: true, ... } o { ok: false, estado, codigo, error, errores? } (estado = codigo HTTP).
  */
@@ -20,7 +21,8 @@ const MAX_MESES_POR_TRABAJADOR = 120;
 const MAX_DOCUMENTOS_POR_TRABAJADOR = 500;
 const TIPOS_DOCUMENTO = ['anexo_contrato', 'pacto_horas_extra', 'cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
 const MAX_VACACIONES_POR_TRABAJADOR = 200;
-const VERSION_EXPORTACION = 4;
+const MAX_MESES_HONORARIOS = 120;
+const VERSION_EXPORTACION = 5;
 
 function fallo(estado, codigo, error, errores) {
     const r = { ok: false, estado, codigo, error };
@@ -35,6 +37,7 @@ function crear({ almacen, cifrado, ahora }) {
     const ctxTrabajador = (cuentaId, id) => `trabajadores:${cuentaId}:${id}`;
     const ctxMes = (cuentaId, id, periodo) => `meses:${cuentaId}:${id}:${periodo}`;
     const ctxVacacion = (cuentaId, trabajadorId, id) => `vacaciones:${cuentaId}:${trabajadorId}:${id}`;
+    const ctxHonorarios = (cuentaId, periodo) => `honorarios:${cuentaId}:${periodo}`;
 
     async function limites(cuentaId) {
         const vence = await almacen.paseVigente(cuentaId, iso());
@@ -237,6 +240,37 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
+    // ---------- boletas de honorarios ----------
+    async function leerHonorarios(cuentaId, empresaId, periodo) {
+        const filas = await almacen.listarHonorarios(empresaId, periodo);
+        return filas.map(f => ({ periodo: f.periodo, boletas: cifrado.descifrar(f.datos, f.version, ctxHonorarios(cuentaId, f.periodo)) }));
+    }
+
+    async function honorarios(cuenta, periodo) {
+        if (!V.validarPeriodo(periodo)) return fallo(400, 'periodo', 'El periodo debe tener el formato AAAA-MM.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila) return { ok: true, periodo, boletas: [] };
+        const r = await leerHonorarios(cuenta.cuentaId, fila.id, periodo);
+        return { ok: true, periodo, boletas: r[0] ? r[0].boletas : [] };
+    }
+
+    /** Reemplaza las boletas del mes; una lista vacía borra el mes. */
+    async function guardarHonorarios(cuenta, periodo, entrada) {
+        if (!V.validarPeriodo(periodo)) return fallo(400, 'periodo', 'El periodo debe tener el formato AAAA-MM.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila) return fallo(409, 'sin_empresa', 'Primero guarda los datos de la empresa.');
+        const v = V.validarHonorarios(entrada, periodo);
+        if (!v.ok) return fallo(400, 'validacion', v.errores.boletas, v.errores);
+        if (!v.valor.length) {
+            await almacen.borrarHonorarios(fila.id, periodo);
+            return { ok: true, periodo, boletas: [] };
+        }
+        const c = cifrado.cifrar(v.valor, ctxHonorarios(cuenta.cuentaId, periodo));
+        const ok = await almacen.guardarHonorarios({ empresaId: fila.id, periodo, datos: c.datos, version: c.version, ahoraIso: iso(), maxPeriodos: MAX_MESES_HONORARIOS });
+        if (!ok) return fallo(409, 'limite_honorarios', `Puedes guardar boletas de hasta ${MAX_MESES_HONORARIOS} meses. Elimina las de los meses más antiguos.`);
+        return { ok: true, periodo, boletas: v.valor };
+    }
+
     async function leerDocumentosExport(cuenta) {
         const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
         return fila ? almacen.listarDocumentos(fila.id) : [];
@@ -245,6 +279,11 @@ function crear({ almacen, cifrado, ahora }) {
     async function leerMesesExport(cuenta) {
         const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
         return fila ? leerMeses(cuenta.cuentaId, fila.id, null) : [];
+    }
+
+    async function leerHonorariosExport(cuenta) {
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        return fila ? leerHonorarios(cuenta.cuentaId, fila.id, null) : [];
     }
 
     /** Todo lo guardado, descifrado, para que la persona lo descargue. */
@@ -261,7 +300,8 @@ function crear({ almacen, cifrado, ahora }) {
                 trabajadores: e.trabajadores,
                 meses: await leerMesesExport(cuenta),
                 documentos: await leerDocumentosExport(cuenta),
-                vacaciones: (await vacaciones(cuenta)).vacaciones
+                vacaciones: (await vacaciones(cuenta)).vacaciones,
+                honorarios: await leerHonorariosExport(cuenta)
             }
         };
     }
@@ -274,7 +314,7 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {
@@ -285,4 +325,4 @@ function limiteTexto(lim) {
 
 function esUuid(s) { return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
 
-module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_DOCUMENTOS_POR_TRABAJADOR, MAX_VACACIONES_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };
+module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_MESES_HONORARIOS, MAX_DOCUMENTOS_POR_TRABAJADOR, MAX_VACACIONES_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };

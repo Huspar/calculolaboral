@@ -240,8 +240,8 @@ caso('exportar entrega todo descifrado, con versión y fecha; el archivo no incl
     await m.datos.crearTrabajador(cuenta, TRAB(1));
     const x = (await m.datos.exportar(cuenta)).archivo;
     assert.strictEqual(x.formato, 'calculolaboral-asistente-pyme');
-    assert.strictEqual(x.version, 4);
-    assert.deepStrictEqual([x.meses, x.documentos, x.vacaciones], [[], [], []]);
+    assert.strictEqual(x.version, 5);
+    assert.deepStrictEqual([x.meses, x.documentos, x.vacaciones, x.honorarios], [[], [], [], []]);
     assert.strictEqual(x.cuenta.email, 'ana@ejemplo.cl');
     assert.strictEqual(x.empresa.razonSocial, 'Panadería La Espiga Ltda.');
     assert.strictEqual(x.trabajadores[0].nombre, 'Trabajador 1');
@@ -644,6 +644,38 @@ caso('bonos fijos: se guardan en la ficha, editarla sin la lista los conserva y 
     // y se vacía con una lista vacía
     assert.ok((await m.datos.actualizarTrabajador(cuenta, tid, Object.assign({}, ficha, { bonosFijos: [] }))).ok);
     assert.deepStrictEqual((await m.datos.estado(cuenta)).trabajadores[0].bonosFijos, []);
+});
+
+caso('boletas de honorarios: se guardan cifradas por mes, se validan, se exportan y se borran con la cuenta', async () => {
+    const { m, cookie, cuenta } = await conTrabajador();
+    const B = (extra) => Object.assign({ fecha: '2026-10-05', nombre: 'Rosa Fuentes, contadora', rut: rutValido(12345678), numero: 154, bruto: 100000 }, extra);
+    // sin el encabezado del navegador no se escribe
+    assert.strictEqual((await pedir(m.rutas, { query: { ruta: 'honorarios', periodo: '2026-10' }, metodo: 'PUT', headers: { cookie }, body: { boletas: [B()] } })).statusCode, 403);
+    const r = await escribir(m, { query: { ruta: 'honorarios', periodo: '2026-10' }, metodo: 'PUT', cookie, body: { boletas: [B({ fecha: '2026-10-20' }), B({ retiene: 'prestador', bruto: '50000' })] } });
+    assert.strictEqual(r.statusCode, 200, JSON.stringify(r.json));
+    assert.deepStrictEqual(r.json.boletas.map(b => [b.fecha, b.bruto, b.retiene]), [['2026-10-05', 50000, 'prestador'], ['2026-10-20', 100000, 'empresa']]);
+    const bytes = Buffer.from(m.almacen._estado.honorarios[0].datos).toString('utf8');
+    assert.ok(bytes.indexOf('Rosa') < 0, 'el nombre del prestador debe ir cifrado');
+    const l = await leer(m, { query: { ruta: 'honorarios', periodo: '2026-10' }, cookie });
+    assert.strictEqual(l.json.boletas.length, 2);
+    assert.deepStrictEqual((await leer(m, { query: { ruta: 'honorarios', periodo: '2026-09' }, cookie })).json.boletas, []);
+    // validación
+    const malo = async (b) => (await m.datos.guardarHonorarios(cuenta, '2026-10', [b])).error;
+    assert.match(await malo(B({ fecha: '2026-09-30' })), /de este mes/);
+    assert.match(await malo(B({ rut: '12.345.678-0' })), /RUT/);
+    assert.match(await malo(B({ nombre: '' })), /nombre/);
+    assert.match(await malo(B({ bruto: 0 })), /monto/);
+    assert.strictEqual((await m.datos.guardarHonorarios(cuenta, '2026-10', Array.from({ length: 61 }, () => B()))).estado, 400);
+    assert.strictEqual((await m.datos.guardarHonorarios(cuenta, '2026-1', [B()])).codigo, 'periodo');
+    // exportar
+    const x = (await m.datos.exportar(cuenta)).archivo;
+    assert.deepStrictEqual(x.honorarios.map(h => [h.periodo, h.boletas.length]), [['2026-10', 2]]);
+    // lista vacía borra el mes; borrar la cuenta borra todo
+    await m.datos.guardarHonorarios(cuenta, '2026-11', [B({ fecha: '2026-11-02' })]);
+    assert.ok((await m.datos.guardarHonorarios(cuenta, '2026-10', [])).ok);
+    assert.deepStrictEqual(m.almacen._estado.honorarios.map(h => h.periodo), ['2026-11']);
+    assert.ok((await m.datos.borrarCuenta(cuenta, 'ana@ejemplo.cl')).ok);
+    assert.strictEqual(m.almacen._estado.honorarios.length, 0);
 });
 
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

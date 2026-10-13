@@ -1,0 +1,43 @@
+{
+  "modulo": "honorarios",
+  "descripcion": "Retención de boletas de honorarios (Ley 21.133; art. 42 N°2 y 74 N°2 LIR). Tasas publicadas por el SII.",
+  "casos": [
+    {
+      "id": "sii-2026-100000",
+      "fuente": "SII, página «Boletas de honorarios» y noticia del 26-dic-2025: desde el 1-ene-2026 la retención pasa de 14,5% a 15,25%. Ejemplo difundido con esa tasa (24horas.cl, monedario.cl): boleta de $100.000 → retención $15.250 y líquido $84.750.",
+      "comparado": "Mismo resultado que el ejemplo publicado.",
+      "entrada": { "fecha": "2026-10-05", "bruto": 100000, "retiene": "empresa" },
+      "esperado": { "tasa": 0.1525, "retencion": 15250, "liquido": 84750, "retieneEmpresa": 15250 }
+    },
+    {
+      "id": "sii-2025-14-5",
+      "fuente": "SII: hasta el 31-dic-2025 la tasa era 14,5%. $250.000 × 14,5% = $36.250.",
+      "entrada": { "fecha": "2025-12-15", "bruto": 250000 },
+      "esperado": { "tasa": 0.145, "retencion": 36250, "liquido": 213750 }
+    },
+    {
+      "id": "sii-2027-16",
+      "fuente": "SII (comunicado de dic-2025, calendario de la Ley 21.133): 16% en 2027. $80.000 × 16% = $12.800.",
+      "entrada": { "fecha": "2027-03-01", "bruto": 80000 },
+      "esperado": { "tasa": 0.16, "retencion": 12800, "liquido": 67200 }
+    },
+    {
+      "id": "sii-2028-17-y-siguientes",
+      "fuente": "SII: 17% en 2028, tasa final de la Ley 21.133. $80.000 × 17% = $13.600; en 2030 sigue el 17%.",
+      "entrada": { "fecha": "2030-01-10", "bruto": 80000 },
+      "esperado": { "tasa": 0.17, "retencion": 13600, "liquido": 66400 }
+    },
+    {
+      "id": "retiene-el-prestador",
+      "fuente": "Art. 74 N°2 LIR: si quien paga no está obligado a retener, la boleta se emite sin retención y la empresa paga el total; no declara nada en el código 151.",
+      "entrada": { "fecha": "2026-10-05", "bruto": 100000, "retiene": "prestador" },
+      "esperado": { "retencion": 15250, "liquido": 100000, "retieneEmpresa": 0 }
+    },
+    {
+      "id": "sin-tasa-verificada",
+      "fuente": "Antes de 2025 no hay tasas cargadas: no se inventa una retención.",
+      "entrada": { "fecha": "2024-06-01", "bruto": 100000 },
+      "esperado": { "tasa": null, "retencion": 0 }
+    }
+  ]
+}

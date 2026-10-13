@@ -286,7 +286,7 @@
 
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
-        estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; vistaActual = null;
+        estado = null; mesesCache = {}; honCache = {}; honEdit = null; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; vistaActual = null;
         vacSel = null; vacCache = []; docsCache = []; docPrefill = null;
         docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
         $('print-section').innerHTML = '';
@@ -1845,6 +1845,7 @@
         $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
         dibujarPrevired();
+        dibujarF29();
         if (vistaActual === 'inicio') dibujarInicio();
     }
 
@@ -1869,6 +1870,109 @@
         pie += '<p>Es una estimación con las tasas de Previred de ' + esc(nombrePeriodo(periodoSel)) + '. El monto exacto lo calcula Previred al declarar. Si tu empresa está afiliada a una caja de compensación, parte del 7% de Fonasa se paga a la caja.</p>';
         $('liq-previred-pie').innerHTML = pie;
     }
+
+    // ---------- Formulario 29: impuesto único retenido (código 48) y boletas de honorarios (código 151) ----------
+    var HON = window.CLPymeHonorarios;
+    var honCache = {};       // boletas guardadas por periodo
+    var honEdit = null;      // { periodo, boletas, cambios } lo que se está editando
+    function cargarHonorarios(periodo) {
+        return api('honorarios', { query: { periodo: periodo } }).then(function (r) {
+            if (sinSesion(r)) return false;
+            if (r.ok) honCache[periodo] = r.datos.boletas || [];
+            return r.ok;
+        });
+    }
+    function dibujarF29() {
+        var caja = $('liq-f29');
+        caja.hidden = !(estado && estado.empresa);
+        if (caja.hidden) return;
+        var p = periodoSel;
+        if (!honCache[p]) { cargarHonorarios(p).then(function (ok) { if (ok && periodoSel === p && honCache[p]) dibujarF29(); }); }
+        if (!honEdit || honEdit.periodo !== p || !honEdit.cambios) honEdit = { periodo: p, boletas: JSON.parse(JSON.stringify(honCache[p] || [])), cambios: false };
+        $('liq-f29-titulo').textContent = 'Para el Formulario 29 de ' + nombrePeriodo(p);
+        var guardados = mesesDe(p), regs = Object.keys(guardados).map(function (id) { return guardados[id] && guardados[id].calculo; });
+        var imp = L.previred(regs), hon = HON.resumen(honCache[p] || []);
+        $('liq-f29-filas').innerHTML =
+            '<tr><td>Código 48 · Impuesto único retenido a los trabajadores<small class="bloque-chico">' + (imp.incluidos ? 'De ' + plural(imp.incluidos, 'liquidación guardada', 'liquidaciones guardadas') : 'Guarda las liquidaciones del mes para sumarlo') + '</small></td><td class="num">' + pesos(imp.impuesto) + '</td></tr>' +
+            '<tr><td>Código 151 · Retención de boletas de honorarios<small class="bloque-chico">' + (hon.cantidad ? plural(hon.cantidad, 'boleta guardada', 'boletas guardadas') + ', ' + pesos(hon.bruto) + ' brutos' : 'Sin boletas guardadas este mes') + '</small></td><td class="num">' + pesos(hon.retenidoEmpresa) + '</td></tr>';
+        $('liq-f29-pie').innerHTML = '<p>Es una ayuda para revisar tu F29, no lo reemplaza: confirma los montos en sii.cl antes de declarar. El F29 se declara y paga hasta el día 12 del mes siguiente, o hasta el 20 si lo haces por internet y emites facturas electrónicas.</p>' +
+            (hon.sinTasa ? '<p>Hay boletas de años sin tasa de retención cargada: no se sumaron.</p>' : '');
+        pintarBoletas();
+    }
+    function pintarBoletas() {
+        var p = honEdit.periodo, ini = p + '-01', fin = p + '-' + dos(new Date(Date.UTC(+p.slice(0, 4), +p.slice(5, 7), 0)).getUTCDate());
+        $('liq-hon-lista').innerHTML = honEdit.boletas.map(function (b, i) {
+            return '<div class="lq-row lq-row-hon" data-i="' + i + '">' +
+                '<label class="campo-mini hon-nombre">Emitida por<input type="text" maxlength="80" data-hon="nombre" value="' + esc(b.nombre || '') + '" placeholder="Nombre de quien emitió la boleta"></label>' +
+                '<label class="campo-mini hon-rut">RUT<input type="text" maxlength="12" data-hon="rut" value="' + esc(b.rut || '') + '" placeholder="12.345.678-9"></label>' +
+                '<button type="button" class="lq-x" aria-label="Quitar boleta" data-hon-quitar><span class="material-icons" aria-hidden="true">close</span></button>' +
+                '<label class="campo-mini hon-fecha">Fecha<input type="date" data-hon="fecha" min="' + ini + '" max="' + fin + '" value="' + esc(b.fecha || '') + '"></label>' +
+                '<label class="campo-mini hon-numero">N° de boleta<input type="text" inputmode="numeric" maxlength="10" data-hon="numero" value="' + (b.numero || '') + '"></label>' +
+                '<label class="campo-mini hon-bruto">Monto bruto<input type="text" inputmode="numeric" data-hon="bruto" value="' + (b.bruto ? pesos(b.bruto) : '') + '" placeholder="$0"></label>' +
+                '<label class="campo-mini hon-retiene">¿Quién paga la retención?<select data-hon="retiene"><option value="empresa"' + (b.retiene === 'prestador' ? '' : ' selected') + '>Mi empresa (la retengo)</option><option value="prestador"' + (b.retiene === 'prestador' ? ' selected' : '') + '>Quien emitió la boleta</option></select></label>' +
+                '<p class="hon-calculo">' + textoBoleta(b) + '</p></div>';
+        }).join('');
+        $('liq-hon-guardar').hidden = !honEdit.cambios;
+        $('liq-hon-agregar').hidden = honEdit.boletas.length >= 60;
+    }
+    function textoBoleta(b) {
+        if (!b.bruto) return '';
+        var c = HON.boleta(b);
+        if (c.tasa === null) return 'Sin tasa de retención cargada para ese año.';
+        if (b.retiene === 'prestador') return 'Pagas <strong>' + pesos(c.liquido) + '</strong>; la retención la paga quien emitió la boleta.';
+        return 'Retención ' + pct(c.tasa) + ': <strong>' + pesos(c.retencion) + '</strong> · pagas <strong>' + pesos(c.liquido) + '</strong>';
+    }
+    function pct(x) { return (Math.round(x * 10000) / 100).toLocaleString('es-CL') + '%'; }
+    function leerBoleta(fila) {
+        var v = function (k) { return fila.querySelector('[data-hon="' + k + '"]').value; };
+        return { fecha: v('fecha'), nombre: v('nombre'), rut: v('rut'), numero: parseInt(v('numero').replace(/\D/g, ''), 10) || 0, bruto: Math.min(MONTO_MAX, parseInt(v('bruto').replace(/\D/g, ''), 10) || 0), retiene: v('retiene') };
+    }
+    $('liq-hon-lista').addEventListener('input', function (e) {
+        var fila = e.target.closest('.lq-row-hon');
+        if (!fila || !honEdit) return;
+        var i = +fila.getAttribute('data-i');
+        honEdit.boletas[i] = leerBoleta(fila);
+        honEdit.cambios = true;
+        fila.querySelector('.hon-calculo').innerHTML = textoBoleta(honEdit.boletas[i]);
+        $('liq-hon-guardar').hidden = false;
+    });
+    $('liq-hon-lista').addEventListener('change', function (e) {
+        var k = e.target.getAttribute('data-hon');
+        if (k === 'bruto') { var n = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0; e.target.value = n ? pesos(n) : ''; }
+        if (k === 'rut' && Rut && Rut.valido(e.target.value)) e.target.value = Rut.formatear(e.target.value);
+        if (k === 'retiene') { var fila = e.target.closest('.lq-row-hon'); fila.querySelector('.hon-calculo').innerHTML = textoBoleta(honEdit.boletas[+fila.getAttribute('data-i')]); }
+    });
+    $('liq-hon-lista').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-hon-quitar]');
+        if (!b || !honEdit) return;
+        honEdit.boletas.splice(+b.closest('.lq-row-hon').getAttribute('data-i'), 1);
+        honEdit.cambios = true;
+        pintarBoletas();
+    });
+    $('liq-hon-agregar').addEventListener('click', function () {
+        if (!honEdit) return;
+        var hoy = hoyIso(), fecha = hoy.slice(0, 7) === honEdit.periodo ? hoy : honEdit.periodo + '-01';
+        honEdit.boletas.push({ fecha: fecha, nombre: '', rut: '', numero: 0, bruto: 0, retiene: 'empresa' });
+        honEdit.cambios = true;
+        pintarBoletas();
+        var ult = $('liq-hon-lista').querySelector('.lq-row-hon:last-child input[data-hon="nombre"]');
+        if (ult) ult.focus();
+    });
+    $('liq-hon-guardar').addEventListener('click', function () {
+        if (!honEdit) return;
+        var p = honEdit.periodo, est = $('liq-hon-estado'), boton = this;
+        mensaje(est, '', 'Guardando…');
+        boton.disabled = true;
+        api('honorarios', { metodo: 'PUT', query: { periodo: p }, cuerpo: { boletas: honEdit.boletas } }).then(function (r) {
+            boton.disabled = false;
+            if (sinSesion(r)) return;
+            if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos guardar las boletas.'); return; }
+            honCache[p] = r.datos.boletas || [];
+            honEdit = null;
+            dibujarF29();
+            mensaje(est, 'ok', 'Guardamos las boletas de ' + nombrePeriodo(p) + '.');
+        });
+    });
 
     // /app/liquidaciones/<id>: abre el editor de esa persona en el mes de la barra
     function rutaLiquidaciones(id) {

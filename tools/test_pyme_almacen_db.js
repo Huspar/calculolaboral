@@ -220,6 +220,23 @@ async function main() {
         assert.strictEqual((await srv.documentos(cuentaObj)).documentos.length, 2);
         paso('vacaciones: días hábiles del servidor, cifradas, sin cruces, con máximo y borrado; historial de documentos');
 
+        // ---- Boletas de honorarios contra la base real (migración 002) ----
+        const boleta = (extra) => Object.assign({ fecha: '2026-10-05', nombre: 'Prestador de prueba Ñuñoa', rut: '11.111.111-1', numero: 7, bruto: 100000 }, extra);
+        const h1 = await srv.guardarHonorarios(cuentaObj, '2026-10', [boleta(), boleta({ fecha: '2026-10-20', retiene: 'prestador' })]);
+        assert.ok(h1.ok, JSON.stringify(h1));
+        assert.ok((await srv.guardarHonorarios(cuentaObj, '2026-10', [boleta({ bruto: 120000 })])).ok, 'reemplaza la lista del mes');
+        assert.deepStrictEqual((await srv.honorarios(cuentaObj, '2026-10')).boletas.map(b => b.bruto), [120000]);
+        const crudoHon = await sql.query("SELECT encode(datos_cifrados, 'escape') AS t FROM honorarios WHERE empresa_id = $1", [empresaId]);
+        assert.ok(crudoHon.length === 1 && crudoHon[0].t.indexOf('Prestador') < 0, 'el prestador va cifrado');
+        assert.ok((await srv.guardarHonorarios(cuentaObj, '2026-11', [boleta({ fecha: '2026-11-03' })])).ok);
+        assert.strictEqual(await almacen.guardarHonorarios({ empresaId, periodo: '2026-12', datos: Buffer.from('x'), version: 1, ahoraIso: new Date().toISOString(), maxPeriodos: 2 }), false, 'el máximo de meses lo aplica la sentencia');
+        assert.strictEqual(await almacen.guardarHonorarios({ empresaId, periodo: '2026-11', datos: Buffer.from('x'), version: 1, ahoraIso: new Date().toISOString(), maxPeriodos: 2 }), true, 'reemplazar un mes existente sí se puede');
+        await srv.guardarHonorarios(cuentaObj, '2026-11', [boleta({ fecha: '2026-11-03' })]);
+        assert.ok((await srv.guardarHonorarios(cuentaObj, '2026-11', [])).ok);
+        assert.deepStrictEqual((await srv.exportar(cuentaObj)).archivo.honorarios.map(h => h.periodo), ['2026-10']);
+        await assert.rejects(() => sql.query("INSERT INTO honorarios (empresa_id, periodo, datos_cifrados, version_clave) VALUES ($1, '2026-13', 'x', 1)", [empresaId]), 'la base rechaza un período inválido');
+        paso('honorarios: boletas cifradas por mes, se reemplazan, con máximo de meses, se borran con lista vacía y se exportan');
+
         // ---- Pase: vigencia en la base real ----
         const ahoraPase = new Date().toISOString();
         const vigenteAntes = await almacen.paseVigente(cuentaId, ahoraPase);
@@ -250,7 +267,8 @@ async function main() {
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id NOT IN (SELECT id FROM trabajadores)'))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id = $1', [tid]))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM documentos WHERE trabajador_id = $1', [tid]))[0].n, 0);
-        paso('borrar la cuenta borra sesiones, empresa, trabajadores, meses y pases en cascada');
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM honorarios WHERE empresa_id = $1', [empresaId]))[0].n, 0);
+        paso('borrar la cuenta borra sesiones, empresa, trabajadores, meses, honorarios y pases en cascada');
         cuentaId = null;
         console.log('\n' + ok + ' pruebas correctas contra la base real');
     } finally {

@@ -17,7 +17,8 @@ const MODULOS = {
         const lista = e.feriados;
         const esFeriado = lista ? function (iso) { return lista.indexOf(iso) >= 0; } : F.esFeriado;
         return SC.calcular(Object.assign({}, e, { esFeriado }));
-    }
+    },
+    honorarios: function (e) { return require('../js/pyme_honorarios.js').boleta(e); }
 };
 
 const carpeta = path.join(__dirname, 'casos_referencia');

@@ -13,6 +13,7 @@
  *   GET  /api/pyme/meses?periodo=AAAA-MM           liquidaciones guardadas de ese mes (todos los trabajadores)
  *   PUT|DELETE /api/pyme/mes?trabajador=ID&periodo=AAAA-MM  { mes }   guarda o elimina el mes de un trabajador
  *   POST /api/pyme/documento?trabajador=ID  { tipo }   anota que se emitió un documento (solo tipo y fecha)
+ *   GET|PUT /api/pyme/honorarios?periodo=AAAA-MM  { boletas }   boletas de honorarios recibidas en el mes (PUT reemplaza la lista)
  *   POST /api/pyme/comprar     { product }       crea el pago del Pase Pyme en Flow para esta cuenta y devuelve { url } (cerrado por defecto)
  *   POST /api/pyme/desbloqueo  { producto }      desbloqueo firmado del generador de contrato o finiquito para quien tiene pase
  *   POST /api/pyme/importar           { empresa, trabajadores }  trae datos de otro lugar (el generador de liquidaciones)
@@ -165,6 +166,16 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return responder(res, await datos.borrarMes(s, id, periodo));
     }
 
+    async function honorarios(req, res) {
+        const m = req.method;
+        if (m !== 'GET' && m !== 'PUT') { res.setHeader('Allow', 'GET, PUT'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = m === 'GET' ? await conSesion(req, res) : await sesionParaEscribir(req, res);
+        if (!s) return;
+        const periodo = typeof req.query?.periodo === 'string' ? req.query.periodo : '';
+        if (m === 'GET') return responder(res, await datos.honorarios(s, periodo));
+        return responder(res, await datos.guardarHonorarios(s, periodo, H.cuerpoDe(req).boletas));
+    }
+
     async function documento(req, res) {
         if (!metodo(req, res, 'POST')) return;
         const s = await sesionParaEscribir(req, res);
@@ -244,7 +255,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, meses, mes, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, meses, mes, honorarios, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

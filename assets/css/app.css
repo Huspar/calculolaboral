@@ -342,6 +342,22 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .lq-row-aus .aus-desde { grid-column: 1; }
 .lq-row-aus .aus-hasta { grid-column: 2; }
 .lq-sub-interno { display: grid; gap: 10px; }
+.hon-bloque { display: grid; gap: 10px; border-top: 1px solid var(--line); }
+#liq-f29 .tabla td { height: auto; padding-top: 10px; padding-bottom: 10px; }
+.tabla td small.bloque-chico { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.hon-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.campo-mini { display: grid; gap: 3px; font-size: 12px; color: var(--muted); min-width: 0; }
+.lq-row.lq-row-hon { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 36px; align-items: end; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.lq-row-hon .hon-nombre { grid-column: 1 / 3; grid-row: 1; }
+.lq-row-hon .hon-rut { grid-column: 3; grid-row: 1; }
+.lq-row-hon .lq-x { grid-column: 4; grid-row: 1; }
+.lq-row-hon .hon-fecha { grid-column: 1; grid-row: 2; }
+.lq-row-hon .hon-numero { grid-column: 2; grid-row: 2; }
+.lq-row-hon .hon-bruto { grid-column: 3; grid-row: 2; }
+.lq-row-hon .hon-retiene { grid-column: 1 / 3; grid-row: 3; }
+.lq-row-hon .hon-calculo { grid-column: 3 / 5; grid-row: 3; font-size: 13px; color: var(--muted); align-self: center; }
+.lq-row-hon .hon-calculo strong { color: var(--ink); font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 600; }
+.lq-row-hon input[data-hon="bruto"], .lq-row-hon input[data-hon="numero"], .lq-row-hon input[data-hon="rut"] { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .lq-row.lq-row-bono { grid-template-columns: minmax(0, 1fr) minmax(0, 9rem) 36px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
 .lq-row-bono select { grid-column: 1 / 3; grid-row: 1; }
 .lq-row-bono .lq-x { grid-column: 3; grid-row: 1; }
@@ -666,6 +682,15 @@ a.cal-ev:hover { filter: brightness(0.97); }
     .lq-row { grid-template-columns: minmax(0, 1fr) minmax(0, 7.5rem) 44px; }
     .lq-row.lq-row-aus { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px; }
     .lq-row.lq-row-bono { grid-template-columns: minmax(0, 1fr) minmax(0, 7.5rem) 44px; }
+    .lq-row.lq-row-hon { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px; }
+    .lq-row-hon .hon-nombre { grid-column: 1 / 3; grid-row: 1; }
+    .lq-row-hon .lq-x { grid-column: 3; grid-row: 1; }
+    .lq-row-hon .hon-rut { grid-column: 1 / -1; grid-row: 2; }
+    .lq-row-hon .hon-fecha { grid-column: 1 / -1; grid-row: 3; }
+    .lq-row-hon .hon-numero { grid-column: 1; grid-row: 4; }
+    .lq-row-hon .hon-bruto { grid-column: 2 / -1; grid-row: 4; }
+    .lq-row-hon .hon-retiene { grid-column: 1 / -1; grid-row: 5; }
+    .lq-row-hon .hon-calculo { grid-column: 1 / -1; grid-row: 6; }
     .lq-row-aus .aus-desde { grid-column: 1 / -1; grid-row: 2; }
     .lq-row-aus .aus-hasta { grid-column: 1 / -1; grid-row: 3; }
     .btn-texto, .lq-link { min-height: 44px; display: inline-flex; align-items: center; padding: 0 6px; }

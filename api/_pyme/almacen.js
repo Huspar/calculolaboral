@@ -210,6 +210,33 @@ function crearAlmacenSql(sql) {
             return r.length === 1;
         },
 
+        // ---------- boletas de honorarios (una fila cifrada por empresa y mes; migración 002) ----------
+
+        async listarHonorarios(empresaId, periodo) {
+            const r = await filas(
+                'SELECT periodo, datos_cifrados, version_clave FROM honorarios WHERE empresa_id = $1::uuid AND ($2::text IS NULL OR periodo = $2::text) ORDER BY periodo',
+                [empresaId, periodo || null]
+            );
+            return r.map(x => ({ periodo: x.periodo, datos: Buffer.from(x.datos_cifrados), version: Number(x.version_clave) }));
+        },
+
+        /** Crea o reemplaza las boletas del mes, sin pasar de `maxPeriodos` meses por empresa. Devuelve true o false. */
+        async guardarHonorarios({ empresaId, periodo, datos, version, ahoraIso, maxPeriodos }) {
+            const r = await conCandado('honorarios:' + empresaId,
+                'INSERT INTO honorarios (empresa_id, periodo, datos_cifrados, version_clave, actualizado) ' +
+                'SELECT $1::uuid, $2::text, $3::bytea, $4::smallint, $5::timestamptz ' +
+                'WHERE (SELECT count(*) FROM honorarios h WHERE h.empresa_id = $1::uuid) < $6::int OR EXISTS (SELECT 1 FROM honorarios h WHERE h.empresa_id = $1::uuid AND h.periodo = $2::text) ' +
+                'ON CONFLICT (empresa_id, periodo) DO UPDATE SET datos_cifrados = EXCLUDED.datos_cifrados, version_clave = EXCLUDED.version_clave, actualizado = EXCLUDED.actualizado RETURNING id',
+                [empresaId, periodo, datos, version, ahoraIso, maxPeriodos]
+            );
+            return r.length === 1;
+        },
+
+        async borrarHonorarios(empresaId, periodo) {
+            const r = await filas('DELETE FROM honorarios WHERE empresa_id = $1::uuid AND periodo = $2 RETURNING id', [empresaId, periodo]);
+            return r.length === 1;
+        },
+
         // ---------- registro de documentos emitidos (solo el tipo y la fecha, nunca el texto) ----------
 
         /** Registra un documento emitido para un trabajador de esa empresa, sin pasar de `maximo` registros por trabajador. Devuelve true o false. */
@@ -307,7 +334,7 @@ function crearAlmacenSql(sql) {
             return r[0] ? { id: r[0].id, email: r[0].email } : null;
         },
 
-        /** Borra la cuenta y, en cascada, sesiones, empresa, trabajadores, vacaciones, meses, documentos y pases. */
+        /** Borra la cuenta y, en cascada, sesiones, empresa, trabajadores, vacaciones, meses, documentos, honorarios y pases. */
         async borrarCuenta(cuentaId) {
             await filas('DELETE FROM cuentas WHERE id = $1::uuid', [cuentaId]);
         }

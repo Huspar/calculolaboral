@@ -340,6 +340,32 @@ function validarMes(entrada) {
     return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor };
 }
 
+// Boletas de honorarios del mes: el nombre y el RUT del prestador van cifrados; la retención se calcula con js/pyme_honorarios.js
+const MAX_BOLETAS_MES = 60;
+function validarHonorarios(entrada, periodo) {
+    if (vacio(entrada)) return { ok: true, valor: [] };
+    if (!Array.isArray(entrada) || entrada.length > MAX_BOLETAS_MES) return { ok: false, errores: { boletas: `Puedes registrar hasta ${MAX_BOLETAS_MES} boletas en un mes.` } };
+    const salida = [];
+    for (let i = 0; i < entrada.length; i++) {
+        const it = entrada[i], e = {}, n = i + 1;
+        if (!it || typeof it !== 'object' || Array.isArray(it)) return { ok: false, errores: { boletas: 'Las boletas no tienen el formato esperado.' } };
+        const fecha = normalizar('fecha', { t: 'fecha', req: true }, it.fecha, e);
+        const nombre = normalizar('nombre', { t: 'texto', max: 80, req: true }, it.nombre, e);
+        const rut = normalizar('rut', { t: 'rut', req: true }, it.rut, e);
+        const numero = normalizar('numero', { t: 'entero', min: 0, max: 9999999999, def: 0 }, it.numero, e);
+        const bruto = normalizar('bruto', { t: 'entero', min: 1, max: MONTO_MAX, req: true }, it.bruto, e);
+        const retiene = normalizar('retiene', { t: 'enum', valores: ['empresa', 'prestador'], def: 'empresa' }, it.retiene, e);
+        if (e.fecha || (fecha && fecha.slice(0, 7) !== periodo)) return { ok: false, errores: { boletas: `Boleta ${n}: la fecha debe ser de este mes.` } };
+        if (e.nombre) return { ok: false, errores: { boletas: `Boleta ${n}: indica el nombre de quien la emitió (hasta 80 caracteres).` } };
+        if (e.rut) return { ok: false, errores: { boletas: `Boleta ${n}: el RUT no es válido.` } };
+        if (e.bruto) return { ok: false, errores: { boletas: `Boleta ${n}: indica el monto bruto (hasta $50.000.000).` } };
+        if (Object.keys(e).length) return { ok: false, errores: { boletas: `Boleta ${n}: revisa los datos.` } };
+        salida.push({ fecha, nombre, rut, numero, bruto, retiene });
+    }
+    salida.sort((a, b) => a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0);
+    return { ok: true, valor: salida };
+}
+
 // Vacaciones: un período (desde, hasta; los días hábiles los cuenta el servidor) o un ajuste con los días tomados antes de usar el asistente
 function textoNota(v, errores) {
     if (v === undefined || v === null || v === '') return '';
@@ -370,4 +396,4 @@ function validarVacacion(entrada, hoy) {
     return { ok: true, valor: { tipo: 'periodo', desde: entrada.desde, hasta: entrada.hasta, dias: r.dias, nota } };
 }
 
-module.exports = { validarMes, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };
+module.exports = { validarMes, validarHonorarios, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };
