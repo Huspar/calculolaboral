@@ -204,6 +204,12 @@ async function main() {
         assert.strictEqual((await srv.registrarDocumento(cuentaOtra3, tid, 'carta_161')).codigo, 'no_existe');
         await sql.query('DELETE FROM cuentas WHERE id = $1', [otraD]);
         assert.strictEqual((await srv.exportar(cuentaObj)).archivo.documentos.length, 2);
+        // La base admite todos los tipos que registra el servidor (migración 003: anexo de contrato y pacto de horas extra)
+        const { TIPOS_DOCUMENTO } = require('../api/_pyme/datos.js');
+        const idsTipos = [];
+        for (const tipo of TIPOS_DOCUMENTO) idsTipos.push((await sql.query('INSERT INTO documentos (trabajador_id, tipo) VALUES ($1, $2) RETURNING id', [tid, tipo]))[0].id);
+        await sql.query('DELETE FROM documentos WHERE id = ANY($1::uuid[])', [idsTipos]);
+        assert.strictEqual((await srv.exportar(cuentaObj)).archivo.documentos.length, 2);
         assert.ok(!JSON.stringify(await sql.query('SELECT * FROM documentos WHERE trabajador_id = $1', [tid])).includes('Panadería'));
         paso('el registro de documentos guarda solo tipo y fecha, respeta el tipo permitido y el máximo, y no cruza cuentas');
 

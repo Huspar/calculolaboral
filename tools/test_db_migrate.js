@@ -114,6 +114,13 @@ caso('el correo se guarda en minusculas y es unico', () => {
     assert.ok(/email = lower\(email\)/.test(sqlTodo));
     assert.ok(/CREATE UNIQUE INDEX IF NOT EXISTS cuentas_email_idx ON cuentas \(email\)/.test(sqlTodo));
 });
+caso('los tipos de documento de la base (última regla documentos_tipo) son los mismos que registra el servidor', () => {
+    const reglas = [...sqlTodo.matchAll(/CONSTRAINT documentos_tipo CHECK \(tipo IN \(([\s\S]*?)\)\)/g)];
+    assert.ok(reglas.length >= 1);
+    const enBase = reglas[reglas.length - 1][1].match(/'([a-z0-9_]+)'/g).map(s => s.slice(1, -1)).sort();
+    const { TIPOS_DOCUMENTO } = require('../api/_pyme/datos.js');
+    assert.deepStrictEqual(enBase, TIPOS_DOCUMENTO.slice().sort());
+});
 caso('la migracion se puede repetir sin error (todo es IF NOT EXISTS)', () => {
     assert.ok(!/CREATE TABLE (?!IF NOT EXISTS)/.test(sqlTodo));
     assert.ok(!/CREATE (UNIQUE )?INDEX (?!IF NOT EXISTS)/.test(sqlTodo));
