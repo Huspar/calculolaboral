@@ -335,6 +335,18 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .lq-list { display: grid; gap: 8px; }
 .lq-list:empty { display: none; }
 .lq-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 9rem) 36px; gap: 8px; align-items: center; }
+/* Cuotas de préstamos en el editor del mes y avance en la carpeta */
+.cuotas-mes { display: grid; gap: 8px; margin-bottom: 14px; }
+.cuotas-lista { display: grid; gap: 6px; }
+.cuota-fila { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); }
+.cuota-fila strong { display: block; font-weight: 600; font-size: 14px; color: var(--ink); overflow-wrap: anywhere; }
+.cuota-fila small { display: block; font-size: 12.5px; color: var(--muted); }
+.cuota-fila .mono { font-variant-numeric: tabular-nums; }
+.cuota-pausada { background: var(--surface); border-style: dashed; }
+.cuota-pausada .mono { color: var(--faint); }
+.prest-pila { display: grid; gap: 16px; }
+.prest-pila > .panel + .panel { margin-top: 0; }
+.celda-cuotas small { display: block; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .lq-x { width: 36px; height: 36px; border: 0; border-radius: var(--radius-sm); background: var(--surface-2); color: var(--muted); cursor: pointer; display: grid; place-items: center; }
 .lq-x:hover { background: var(--risk-bg); color: var(--risk); }
 .lq-x .material-icons { font-size: 18px; }
@@ -643,7 +655,7 @@ a.cal-ev:hover { filter: brightness(0.97); }
     #pm-liq-lista tr:last-child { border-bottom: 0; }
     #pm-liq-lista td { display: block; height: auto; padding: 0; border: 0; }
     #pm-liq-lista .celda-nombre { grid-column: 1; grid-row: 1; max-width: none; width: auto; }
-    #pm-liq-lista .celda-nombre strong, #pm-liq-lista .celda-nombre span { white-space: normal; overflow: visible; text-overflow: clip; }
+    #pm-liq-lista .celda-nombre strong, #pm-liq-lista .celda-nombre span, #carp-prest-filas .celda-nombre strong, #carp-prest-filas .celda-nombre span { white-space: normal; overflow: visible; text-overflow: clip; }
     #pm-liq-lista td.num { grid-column: 2; grid-row: 1; }
     #pm-liq-lista td:nth-child(2) { grid-column: 1; grid-row: 2; }
     #pm-liq-lista td.celda-acciones { grid-column: 1 / -1; grid-row: 3; text-align: left; }

@@ -87,6 +87,72 @@ caso('el servidor rechaza un desglose con montos inválidos y acepta la tasa de 
     assert.strictEqual(V.validarEmpresa({ razonSocial: 'Panadería', rut: '111111111' }).valor.tasaMutual, 0.93);
     assert.strictEqual(V.validarEmpresa({ razonSocial: 'Panadería', rut: '111111111', tasaMutual: '0,5' }).ok, false);
 });
+// ---------- préstamos con cuotas ----------
+const PREST = (extra) => Object.assign({ id: 'abc123', concepto: 'Préstamo auto', fecha: '2026-10-05', monto: 300001, cuotas: 3, desde: '2026-10', pausas: [] }, extra);
+
+caso('préstamo: cuotas iguales desde el primer mes y la última ajusta el redondeo', () => {
+    assert.deepStrictEqual(L.cuotasDe(PREST()), [
+        { periodo: '2026-10', numero: 1, monto: 100000 }, { periodo: '2026-11', numero: 2, monto: 100000 }, { periodo: '2026-12', numero: 3, monto: 100001 }
+    ]);
+    assert.deepStrictEqual(L.cuotasDe(PREST({ cuotas: 1 })), [{ periodo: '2026-10', numero: 1, monto: 300001 }]);
+    assert.deepStrictEqual(L.cuotasDe(PREST({ desde: '' })), []);
+});
+caso('préstamo: una cuota postergada pasa al final y cruza el año', () => {
+    const c = L.cuotasDe(PREST({ pausas: ['2026-11'] }));
+    assert.deepStrictEqual(c.map(x => x.periodo), ['2026-10', '2026-12', '2027-01']);
+    assert.strictEqual(L.cuotasDelMes({ prestamos: [PREST({ pausas: ['2026-11'] })] }, '2026-11').length, 0);
+    assert.deepStrictEqual(L.cuotasDelMes({ prestamos: [PREST({ pausas: ['2026-11'] })] }, '2027-01'), [{ id: 'abc123', nombre: 'Préstamo auto', monto: 100001, numero: 3, de: 3 }]);
+});
+caso('préstamo: avance y saldo al cierre de cada mes', () => {
+    const p = PREST();
+    assert.deepStrictEqual([L.estadoPrestamo(p, '2026-09').saldo, L.estadoPrestamo(p, '2026-10').saldo, L.estadoPrestamo(p, '2026-12').saldo], [300001, 200001, 0]);
+    assert.strictEqual(L.estadoPrestamo(p, '2026-11').pagadas, 2);
+    assert.strictEqual(L.estadoPrestamo(p, '2026-10').proxima.periodo, '2026-11');
+    assert.strictEqual(L.estadoPrestamo(p, '2026-12').proxima, null);
+    assert.strictEqual(L.saldoPrestamos({ prestamos: [p, PREST({ id: 'xyz789', monto: 50000, cuotas: 1, desde: '2026-11' })] }, '2026-10'), 250001);
+});
+caso('mesBase: trae el anticipo fijo y las cuotas del mes; el servidor lo acepta', () => {
+    const t = T({ anticipoMensual: 120000, prestamos: [PREST()] });
+    const m = L.mesBase(t, '2026-11');
+    assert.strictEqual(m.anticipo, 120000);
+    assert.deepStrictEqual(m.cuotasPrestamo, [{ id: 'abc123', nombre: 'Préstamo auto', monto: 100000, numero: 2, de: 3 }]);
+    const v = V.validarMes(m);
+    assert.ok(v.ok, JSON.stringify(v.errores));
+    assert.deepStrictEqual(v.valor.cuotasPrestamo, m.cuotasPrestamo);
+    assert.strictEqual(V.validarMes(Object.assign({}, m, { cuotasPrestamo: [{ id: 'abc123', nombre: 'X', monto: 5, numero: 4, de: 3 }] })).ok, false);
+    assert.strictEqual(V.validarMes(Object.assign({}, m, { cuotasPrestamo: [{ nombre: 'X', monto: 5, numero: 1, de: 3 }] })).ok, false);
+});
+caso('motor: la cuota es un descuento pactado que cuenta para el 15% del art. 58; el anticipo no', () => {
+    const vig = P.vigenciaDe('2026-10');
+    const mv = { uf: 41247.63, utm: 72151, imm: vig.imm, topeAfpUF: vig.topeAfpUF, topeAfcUF: vig.topeAfcUF, jornadaMaxima: vig.jornadaMaxima, afp: vig.afp };
+    const t = { fechaIngreso: '2022-03-15', contrato: 'indefinido', jornadaHoras: 42, sueldoBase: 600000, afp: 'Modelo', salud: 'fonasa' };
+    const mes = (extra) => Object.assign(L.mesBase(t, '2026-10'), { gratificacion: 'ninguna' }, extra);
+    let r = E.calcular({ trabajador: t, mes: mes({ cuotasPrestamo: [{ id: 'abc123', nombre: 'Préstamo auto', monto: 80000, numero: 1, de: 3 }] }), periodo: '2026-10' }, mv);
+    const linea = r.otrosDescuentos.find(l => l.concepto === 'Préstamo auto');
+    assert.ok(linea && linea.monto === 80000 && linea.detalle === 'Cuota 1 de 3');
+    assert.ok(!r.avisos.some(a => /15%/.test(a.texto)), '80.000 es menos del 15% de 600.000');
+    r = E.calcular({ trabajador: t, mes: mes({ cuotasPrestamo: [{ id: 'abc123', nombre: 'Préstamo auto', monto: 80000, numero: 1, de: 3 }], otrosDescuentos: [{ nombre: 'Compra', monto: 20000 }] }), periodo: '2026-10' }, mv);
+    assert.ok(r.avisos.some(a => /15%/.test(a.texto) && /\$100\.000/.test(a.texto)), 'cuota más descuento pasa de $90.000');
+    r = E.calcular({ trabajador: t, mes: mes({ anticipo: 300000 }), periodo: '2026-10' }, mv);
+    assert.ok(!r.avisos.some(a => /15%/.test(a.texto)), 'el anticipo no cuenta para el 15%');
+});
+caso('validación de préstamos: ids nuevos, meses postergados limpios y mensajes claros', () => {
+    const e = {};
+    const v = V.validarPrestamos([PREST({ id: '' , pausas: ['2026-12', '2026-09', '2026-12'] }), PREST({ id: 'abc123' }), PREST({ id: 'abc123' })], e);
+    assert.ok(v, JSON.stringify(e));
+    assert.strictEqual(new Set(v.map(p => p.id)).size, 3);
+    assert.deepStrictEqual(v[0].pausas, ['2026-12']);
+    const err = (x) => { const o = {}; V.validarPrestamos([PREST(x)], o); return o.prestamos || ''; };
+    assert.match(err({ monto: 500 }), /monto/);
+    assert.match(err({ cuotas: 49 }), /cuotas/);
+    assert.match(err({ desde: '2026-09' }), /antes del mes/);
+    assert.match(err({ fecha: '' }), /fecha/);
+    const muchos = {}; V.validarPrestamos(Array.from({ length: 13 }, () => PREST({ id: '' })), muchos);
+    assert.match(muchos.prestamos, /hasta 12/);
+    assert.ok(V.validarTrabajador({ nombre: 'Ana', rut: '111111111', anticipoMensual: '100000' }).valor.anticipoMensual === 100000);
+    assert.strictEqual(V.validarTrabajador({ nombre: 'Ana', rut: '111111111' }).valor.prestamos, undefined);
+});
+
 caso('estadoDe', () => {
     assert.strictEqual(L.estadoDe(null), 'sin_datos');
     assert.strictEqual(L.estadoDe({ emitida: '' }), 'guardada');

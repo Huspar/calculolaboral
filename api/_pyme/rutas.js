@@ -9,6 +9,7 @@
  *   GET  /api/pyme/estado                          empresa, trabajadores y limites de la cuenta
  *   PUT  /api/pyme/empresa            { empresa }  guarda la empresa (cifrada)
  *   POST|PUT|DELETE /api/pyme/trabajador[?id=]  { trabajador }   crea, actualiza o borra un trabajador
+ *   PUT  /api/pyme/prestamos?trabajador=ID  { prestamos }   reemplaza los préstamos con cuotas de un trabajador
  *   GET  /api/pyme/meses?periodo=AAAA-MM           liquidaciones guardadas de ese mes (todos los trabajadores)
  *   PUT|DELETE /api/pyme/mes?trabajador=ID&periodo=AAAA-MM  { mes }   guarda o elimina el mes de un trabajador
  *   POST /api/pyme/documento?trabajador=ID  { tipo }   anota que se emitió un documento (solo tipo y fecha)
@@ -139,6 +140,13 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return responder(res, await datos.borrarTrabajador(s, id));
     }
 
+    async function prestamos(req, res) {
+        if (!metodo(req, res, 'PUT')) return;
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        return responder(res, await datos.guardarPrestamos(s, typeof req.query?.trabajador === 'string' ? req.query.trabajador : '', H.cuerpoDe(req).prestamos));
+    }
+
     async function meses(req, res) {
         if (!metodo(req, res, 'GET')) return;
         const s = await conSesion(req, res);
@@ -236,7 +244,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, meses, mes, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, meses, mes, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.3.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
+ * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.4.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
  *
  *   pendientes(estado, { hoy: 'AAAA-MM-DD', P: parametros, F: feriados, ultimoRespaldo: 'ISO' | null, liquidaciones: { periodo, registros: [{ trabajadorId, emitida }] } })
  *   periodoLiquidacion(hoy) → { periodo, cuando: 'anterior' | 'actual' } | null   (el mes cuyas liquidaciones se cargan para el aviso)
@@ -118,7 +118,7 @@
 
         // Liquidaciones del mes sin emitir (solo si el panel cargó los meses de ese periodo)
         var liq = opciones.liquidaciones, toca = periodoLiquidacion(hoy);
-        if (liq && toca && liq.periodo === toca.periodo && P && toca.periodo >= P.PRIMER_MES && toca.periodo <= P.ULTIMO_MES) {
+        if (liq && toca && liq.periodo === toca.periodo && P && toca.periodo >= P.PRIMER_MES && toca.periodo <= (P.ULTIMO_MES_EXTENDIDO || P.ULTIMO_MES)) {
             var finMes = toca.periodo + '-31';
             var emitidas = {};
             (liq.registros || []).forEach(function (r) { if (r.emitida) emitidas[r.trabajadorId] = true; });

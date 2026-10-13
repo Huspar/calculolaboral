@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · valores base de las liquidaciones del Asistente Pyme (v1.1.0). Funciona en el navegador (window.CLPymeLiquidaciones) y en Node.
+ * CalculoLaboral · valores base de las liquidaciones del Asistente Pyme (v1.2.0). Funciona en el navegador (window.CLPymeLiquidaciones) y en Node.
  *
  *   diasBase(trabajador, 'AAAA-MM')  → días a pagar según ingreso y término de plazo fijo (mes comercial de 30 días); 0 si aún no ingresaba o ya terminó
  *   mesBase(trabajador, 'AAAA-MM')   → el mes con los valores por defecto (lo que se guarda al "preparar el mes")
@@ -7,6 +7,14 @@
  *   previred(registros)              → lo que se paga en Previred agrupado por institución, con los registros que traen desglose
  *   (desglose: montos retenidos al trabajador, cotizaciones del empleador y costo total; conDesglose: true)
  *   estadoDe(registro)               → 'sin_datos' | 'guardada' | 'emitida'
+ *
+ * Préstamos con cuotas (lista "prestamos" de la ficha: { id, concepto, fecha, monto, cuotas, desde 'AAAA-MM', pausas [] }):
+ *   cuotasDe(prestamo)               → [{ periodo, numero, monto }]: una cuota por mes desde "desde", saltando los meses de "pausas"
+ *                                      (la cuota postergada pasa al final). Cuotas iguales; la última ajusta el redondeo.
+ *   cuotasDelMes(t, 'AAAA-MM')       → [{ id, nombre, monto, numero, de }] lo que se descuenta ese mes (va en mes.cuotasPrestamo)
+ *   estadoPrestamo(prestamo, 'AAAA-MM') → { descontado, saldo, pagadas, cuotas, proxima, ultima, pausado } al cierre de ese mes
+ *   saldoPrestamos(t, 'AAAA-MM')     → saldo total de los préstamos al cierre de ese mes (para el finiquito)
+ *   El anticipo fijo de la ficha (anticipoMensual) se descuenta completo cada mes y no cuenta para el 15% del art. 58.
  *
  * Son valores iniciales: la persona los revisa y corrige antes de guardar o imprimir.
  */
@@ -35,9 +43,56 @@
             diasTrabajados: diasBase(t, periodo), diasLicencia: 0, horasExtra: 0,
             gratificacion: grat, gratificacionMonto: 0, comisiones: 0, bonosImponibles: [],
             viaticos: 0, asignacionFamiliar: 0, otrosNoImponibles: [],
-            apvMonto: 0, apvRegimen: 'B', anticipo: 0, creditoCCAF: 0, cuotaSindical: 0, otrosDescuentos: [],
+            apvMonto: 0, apvRegimen: 'B', anticipo: (t && t.anticipoMensual) || 0, creditoCCAF: 0, cuotaSindical: 0, otrosDescuentos: [],
+            cuotasPrestamo: cuotasDelMes(t, periodo),
             emitida: '', calculo: null
         };
+    }
+
+    // ---------- préstamos con cuotas ----------
+    function sumarMes(periodo, n) {
+        var a = periodo.split('-').map(Number), x = a[0] * 12 + (a[1] - 1) + n;
+        return Math.floor(x / 12) + '-' + dos(x % 12 + 1);
+    }
+
+    function cuotasDe(p) {
+        var lista = [];
+        if (!p || !(p.monto > 0) || !(p.cuotas >= 1) || !/^\d{4}-\d{2}$/.test(String(p.desde || ''))) return lista;
+        var pausas = {};
+        (p.pausas || []).forEach(function (x) { pausas[x] = true; });
+        var base = Math.floor(p.monto / p.cuotas), periodo = p.desde, guarda = 0;
+        while (lista.length < p.cuotas && guarda++ < 600) {
+            if (!pausas[periodo]) {
+                var k = lista.length + 1;
+                lista.push({ periodo: periodo, numero: k, monto: k === p.cuotas ? p.monto - base * (p.cuotas - 1) : base });
+            }
+            periodo = sumarMes(periodo, 1);
+        }
+        return lista;
+    }
+
+    function cuotasDelMes(t, periodo) {
+        var salida = [];
+        ((t && t.prestamos) || []).forEach(function (p) {
+            var c = cuotasDe(p).filter(function (x) { return x.periodo === periodo; })[0];
+            if (c) salida.push({ id: p.id, nombre: p.concepto || 'Préstamo', monto: c.monto, numero: c.numero, de: p.cuotas });
+        });
+        return salida;
+    }
+
+    function estadoPrestamo(p, periodo) {
+        var lista = cuotasDe(p), hechas = lista.filter(function (c) { return c.periodo <= periodo; });
+        var descontado = hechas.reduce(function (s, c) { return s + c.monto; }, 0);
+        var proxima = lista.filter(function (c) { return c.periodo > periodo; })[0] || null;
+        return {
+            descontado: descontado, saldo: Math.max(0, (p.monto || 0) - descontado), pagadas: hechas.length, cuotas: p.cuotas || 0,
+            proxima: proxima, ultima: lista.length ? lista[lista.length - 1].periodo : null,
+            pausado: (p.pausas || []).indexOf(periodo) >= 0
+        };
+    }
+
+    function saldoPrestamos(t, periodo) {
+        return ((t && t.prestamos) || []).reduce(function (s, p) { return s + estadoPrestamo(p, periodo).saldo; }, 0);
     }
 
     function resumen(res, mesValores, t) {
@@ -99,7 +154,11 @@
         return registro.emitida ? 'emitida' : 'guardada';
     }
 
-    var api = { diasBase: diasBase, mesBase: mesBase, resumen: resumen, previred: previred, estadoDe: estadoDe, version: '1.1.0' };
+    var api = {
+        diasBase: diasBase, mesBase: mesBase, resumen: resumen, previred: previred, estadoDe: estadoDe,
+        cuotasDe: cuotasDe, cuotasDelMes: cuotasDelMes, estadoPrestamo: estadoPrestamo, saldoPrestamos: saldoPrestamos, sumarMes: sumarMes,
+        version: '1.2.0'
+    };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeLiquidaciones = api;
 })(typeof window !== 'undefined' ? window : this);

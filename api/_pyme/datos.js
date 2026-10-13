@@ -6,6 +6,7 @@
  *  - Cada dato se cifra atado a su cuenta (y a su id en el caso de los trabajadores): copiarlo a otra fila o cuenta lo inutiliza.
  *  - Limite de trabajadores activos: 1 sin pase y 5 con pase vigente. Lo aplica el servidor en la misma sentencia SQL del INSERT.
  *  - No puede haber dos trabajadores con el mismo RUT en una empresa, y se permiten hasta 50 en total (activos + inactivos).
+ *  - Los préstamos con cuotas van dentro de la ficha (cifrados con ella). Guardar la ficha sin la lista los conserva.
  *
  * Todas las funciones devuelven { ok: true, ... } o { ok: false, estado, codigo, error, errores? } (estado = codigo HTTP).
  */
@@ -88,11 +89,32 @@ function crear({ almacen, cifrado, ahora }) {
         const v = V.validarTrabajador(entrada);
         if (!v.ok) return fallo(400, 'validacion', 'Revisa los datos del trabajador.', v.errores);
         const existentes = await leerTrabajadores(cuenta.cuentaId, fila.id);
-        if (!existentes.some(t => t.id === id)) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const actual = existentes.find(t => t.id === id);
+        if (!actual) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
         if (existentes.some(t => t.id !== id && t.rut === v.valor.rut)) return fallo(409, 'rut_repetido', 'Ya existe un trabajador con este RUT.', { rut: 'Ya existe un trabajador con este RUT.' });
+        if (v.valor.prestamos === undefined && Array.isArray(actual.prestamos)) v.valor.prestamos = actual.prestamos;
         const lim = await limites(cuenta.cuentaId);
         const { activo, ...datos } = v.valor;
         const c = cifrado.cifrar(datos, ctxTrabajador(cuenta.cuentaId, id));
+        const ok = await almacen.actualizarTrabajador({ id, empresaId: fila.id, activo, datos: c.datos, version: c.version, ahoraIso: iso(), maxActivos: lim.maxActivos });
+        if (!ok) return fallo(409, 'limite', limiteTexto(lim));
+        return { ok: true, trabajador: Object.assign({ id }, datos, { activo }) };
+    }
+
+    /** Reemplaza la lista de préstamos de un trabajador (agregar, eliminar o postergar una cuota). */
+    async function guardarPrestamos(cuenta, id, lista) {
+        if (!esUuid(id)) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const t = (await leerTrabajadores(cuenta.cuentaId, fila.id)).find(x => x.id === id);
+        if (!t) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const errores = {};
+        const prestamos = V.validarPrestamos(lista, errores);
+        if (prestamos === undefined) return fallo(400, 'validacion', errores.prestamos, errores);
+        const { id: _id, activo, ...datos } = t;
+        datos.prestamos = prestamos;
+        const c = cifrado.cifrar(datos, ctxTrabajador(cuenta.cuentaId, id));
+        const lim = await limites(cuenta.cuentaId);
         const ok = await almacen.actualizarTrabajador({ id, empresaId: fila.id, activo, datos: c.datos, version: c.version, ahoraIso: iso(), maxActivos: lim.maxActivos });
         if (!ok) return fallo(409, 'limite', limiteTexto(lim));
         return { ok: true, trabajador: Object.assign({ id }, datos, { activo }) };
@@ -251,7 +273,7 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {

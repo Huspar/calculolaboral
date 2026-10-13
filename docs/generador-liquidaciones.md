@@ -64,6 +64,7 @@ Los datos de trabajadores nunca se envían al servidor. Flow recibe solo el corr
 - El ingreso mínimo se reajusta según el IPC acumulado entre el 1-may y el 31-dic-2026 (según la ley de reajuste de 2026): agregar la vigencia cuando se publique el monto.
 - Los topes imponibles se actualizan cada febrero con una resolución de la Superintendencia de Pensiones (en enero rige el valor anterior).
 - Para ofrecer 2027, ampliar `ULTIMO_MES` y agregar esas vigencias; antes confirmar las comisiones AFP vigentes.
+- Mientras tanto, el Asistente Pyme (no este generador) sigue calculando los meses de 2027 con la última vigencia: `valores.crear({ extender: true })` usa `vigenciaEstimada`, con las tasas del empleador «por confirmar» y un aviso visible, hasta `ULTIMO_MES_EXTENDIDO` (12 meses después de `ULTIMO_MES`). Desde agosto de 2027 avisa además que el aporte del empleador de la Ley 21.735 sube a 4,25%. Al cargar las vigencias reales y ampliar `ULTIMO_MES`, los avisos desaparecen solos.
 
 Los meses posteriores a la fecha `verificado` de la vigencia muestran un aviso para confirmar que esos valores no cambiaron (hoy: noviembre y diciembre de 2026).
 

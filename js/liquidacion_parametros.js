@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · parámetros del generador de liquidaciones (v3.0.0)
+ * CalculoLaboral · parámetros del generador de liquidaciones (v3.2.0)
  *
  * Dos tipos de valores:
  * 1) UF al cierre del mes y UTM del mes: se piden a la API (js/liquidacion_valores.js). Aquí solo hay un RESPALDO
@@ -20,6 +20,11 @@
  * - Cambio de la tasa del SIS (la Superintendencia la fija por períodos) o nueva etapa de la Ley 21.735 (4,25% desde las
  *   remuneraciones de agosto de 2027): agregar una vigencia con el nuevo objeto "empleador". Si un mes usa una tasa aún
  *   no publicada, su vigencia lleva empleador.porConfirmar y el asistente lo avisa.
+ *
+ * Meses después de ULTIMO_MES (solo el Asistente Pyme, que lo pide con valores.crear({ extender: true })): hasta
+ * MESES_EXTENSION meses más se calculan con la última vigencia, marcada como estimada (vigenciaEstimada) y con aviso
+ * visible. Así un cliente con pase no se queda sin liquidaciones mientras se cargan los valores del año siguiente.
+ * La UF y la UTM de esos meses siguen viniendo de la API. El generador de liquidaciones del sitio no los ofrece.
  */
 (function (root) {
     'use strict';
@@ -131,6 +136,13 @@
     // Primer y último mes que ofrece el generador. El último se amplía al confirmar las vigencias siguientes.
     var PRIMER_MES = '2026-01';
     var ULTIMO_MES = '2026-12';
+    var MESES_EXTENSION = 12;
+
+    function sumarMeses(periodo, n) {
+        var a = periodo.split('-').map(Number), t = a[0] * 12 + (a[1] - 1) + n, m = t % 12 + 1;
+        return Math.floor(t / 12) + '-' + (m < 10 ? '0' : '') + m;
+    }
+    var ULTIMO_MES_EXTENDIDO = sumarMeses(ULTIMO_MES, MESES_EXTENSION);
 
     // Respaldo (UF del último día del mes y UTM del mes), confirmado con Previred y con la API el 12-oct-2026.
     var RESPALDO = {
@@ -159,8 +171,24 @@
         return v;
     }
 
-    function periodos() {
-        var lista = [], a = PRIMER_MES.split('-').map(Number), z = ULTIMO_MES.split('-').map(Number);
+    function esEstimado(periodo) { return periodo > ULTIMO_MES && periodo <= ULTIMO_MES_EXTENDIDO; }
+
+    // Vigencia de un mes posterior a ULTIMO_MES: la última conocida, marcada como estimada y con las tasas del empleador por confirmar
+    function vigenciaEstimada(periodo) {
+        if (!esEstimado(periodo)) return null;
+        var base = VIGENCIAS[VIGENCIAS.length - 1], v = {};
+        Object.keys(base).forEach(function (k) { v[k] = base[k]; });
+        v.estimada = true;
+        v.base = ULTIMO_MES;
+        v.empleador = Object.assign({}, base.empleador, { porConfirmar: true });
+        v.nota = periodo >= '2027-08' ? 'Desde las remuneraciones de agosto de 2027 el aporte del empleador de la Ley 21.735 sube de 3,5% a 4,25%. Mientras no carguemos los valores de ese mes, el costo para la empresa se calcula con la tasa anterior.' : '';
+        return v;
+    }
+
+    // Lista de meses desde PRIMER_MES hasta "hasta" (por defecto ULTIMO_MES; nunca después de ULTIMO_MES_EXTENDIDO)
+    function periodos(hasta) {
+        var fin = hasta && hasta > ULTIMO_MES ? (hasta < ULTIMO_MES_EXTENDIDO ? hasta : ULTIMO_MES_EXTENDIDO) : ULTIMO_MES;
+        var lista = [], a = PRIMER_MES.split('-').map(Number), z = fin.split('-').map(Number);
         var y = a[0], m = a[1];
         while (y < z[0] || (y === z[0] && m <= z[1])) {
             lista.push(y + '-' + (m < 10 ? '0' : '') + m);
@@ -170,7 +198,11 @@
         return lista;
     }
 
-    var api = { VIGENCIAS: VIGENCIAS, NOTAS_MES: NOTAS_MES, RESPALDO: RESPALDO, FUENTES: FUENTES, PRIMER_MES: PRIMER_MES, ULTIMO_MES: ULTIMO_MES, vigenciaDe: vigenciaDe, periodos: periodos };
+    var api = {
+        VIGENCIAS: VIGENCIAS, NOTAS_MES: NOTAS_MES, RESPALDO: RESPALDO, FUENTES: FUENTES, PRIMER_MES: PRIMER_MES, ULTIMO_MES: ULTIMO_MES,
+        ULTIMO_MES_EXTENDIDO: ULTIMO_MES_EXTENDIDO, vigenciaDe: vigenciaDe, vigenciaEstimada: vigenciaEstimada, esEstimado: esEstimado,
+        sumarMeses: sumarMeses, periodos: periodos
+    };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLLiquidacionParametros = api;
 })(typeof window !== 'undefined' ? window : this);

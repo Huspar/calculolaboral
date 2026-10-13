@@ -452,7 +452,7 @@
         var nuevo = id === 'nuevo', t = nuevo ? null : trabajadorPorId(id);
         if (!nuevo && !t) { navegar('trabajadores', { reemplazar: true }); return; }
         if (nuevo && !estado.empresa) { navegar('empresa', { reemplazar: true }); avisoGlobal('info', 'Primero guarda los datos de la empresa.'); return; }
-        if (['ficha', 'liquidaciones', 'vacaciones', 'documentos'].indexOf(tab) < 0) tab = 'ficha';
+        if (['ficha', 'liquidaciones', 'vacaciones', 'prestamos', 'documentos'].indexOf(tab) < 0) tab = 'ficha';
         if (nuevo) tab = 'ficha';
         $('carp-miga').textContent = nuevo ? 'Nuevo trabajador' : t.nombre;
         document.title = (nuevo ? 'Nuevo trabajador' : t.nombre) + ' · Asistente Laboral Pyme';
@@ -477,10 +477,12 @@
         $('carp-ficha').hidden = tab !== 'ficha';
         $('carp-liq').hidden = tab !== 'liquidaciones';
         $('carp-vac').hidden = tab !== 'vacaciones';
+        $('carp-prest').hidden = tab !== 'prestamos';
         $('carp-docs').hidden = tab !== 'documentos';
         if (tab === 'ficha') abrirTrabajador(t);
         else if (tab === 'liquidaciones') dibujarCarpetaLiq(t);
         else if (tab === 'vacaciones') dibujarCarpetaVac(t);
+        else if (tab === 'prestamos') dibujarCarpetaPrest(t);
         else dibujarCarpetaDocs(t);
     }
 
@@ -600,6 +602,117 @@
             return '<tr><td>' + esc(v.tipo === 'periodo' ? rangoCorto(v.desde, v.hasta) + ' ' + v.hasta.slice(0, 4) : 'Antes de usar el asistente') + '</td><td class="num">' + v.dias + '</td><td class="ocultar-movil">' + esc(v.nota || '—') + '</td></tr>';
         }).join('') : '<tr><td colspan="3" class="vacio">Aún no registras vacaciones de esta persona.</td></tr>';
     }
+
+    // ---------- préstamos con cuotas (van en la ficha; las cuotas se descuentan solas en cada liquidación) ----------
+    var prestSel = null; // trabajador cuya pestaña de préstamos está abierta
+    function datosPrest() {
+        return {
+            concepto: $('pm-p-concepto').value.replace(/\s+/g, ' ').trim() || 'Préstamo', fecha: $('pm-p-fecha').value,
+            monto: parseInt($('pm-p-monto').value.replace(/\D/g, ''), 10) || 0, cuotas: parseInt($('pm-p-cuotas').value.replace(/\D/g, ''), 10) || 0,
+            desde: $('pm-p-desde').value, pausas: []
+        };
+    }
+    // Remuneración mensual aproximada (sueldo, gratificación legal, colación y movilización) para el tope del 15% del art. 58
+    function remuneracionEstimada(t) {
+        var vig = P.vigenciaDe(hoyIso().slice(0, 7)) || P.VIGENCIAS[P.VIGENCIAS.length - 1], base = t.sueldoBase || 0;
+        var grat = t.gratificacion === 'legal' ? Math.min(Math.round(base * 0.25), Math.round(4.75 * vig.imm / 12)) : 0;
+        return base + grat + (t.colacion || 0) + (t.movilizacion || 0);
+    }
+    function sumaCuotas(lista) { return lista.reduce(function (s, c) { return s + c.monto; }, 0); }
+    function calcPrest() {
+        var t = trabajadorPorId(prestSel), p = datosPrest(), caja = $('pm-prest-calc'), html = '';
+        function aviso(nivel, icono, texto) { html += '<div class="lq-aviso lq-aviso-' + nivel + '"><span class="material-icons" aria-hidden="true">' + icono + '</span><p>' + esc(texto) + '</p></div>'; }
+        if (t && p.monto > 0 && p.cuotas >= 1 && p.cuotas <= 48 && p.desde) {
+            var c = L.cuotasDe(p), ult = c[c.length - 1];
+            aviso('info', 'event_repeat', (p.cuotas === 1 ? 'Una cuota de ' + pesos(c[0].monto) + ' en la liquidación de ' + nombrePeriodo(p.desde) + '.'
+                : plural(p.cuotas, 'cuota', 'cuotas') + ' de ' + pesos(c[0].monto) + (ult.monto !== c[0].monto ? ' (la última de ' + pesos(ult.monto) + ')' : '') + ', de ' + nombrePeriodo(c[0].periodo) + ' a ' + nombrePeriodo(ult.periodo) + '.'));
+            var rem = remuneracionEstimada(t), tope = Math.floor(rem * E.TOPE_DESCUENTOS_PACTADOS), otras = sumaCuotas(L.cuotasDelMes(t, p.desde));
+            if (rem > 0 && c[0].monto + otras > tope) {
+                var libre = tope - otras, minimo = libre > 0 ? Math.ceil(p.monto / libre) : 0;
+                aviso('aviso', 'warning', 'La cuota' + (otras ? ', sumada a las de otros préstamos (' + pesos(otras) + '),' : '') + ' pasa del 15% de su remuneración aproximada (' + pesos(tope) + ' de ' + pesos(rem) + ', art. 58). ' +
+                    (minimo && minimo <= 48 ? 'Con ' + minimo + ' cuotas o más queda dentro del límite.' : 'Reduce el monto o reparte el préstamo en más cuotas.'));
+            }
+        }
+        caja.innerHTML = html;
+    }
+    function opcionesDesde() {
+        var hoy = hoyIso().slice(0, 7), sel = $('pm-p-desde'), lista = [];
+        for (var i = -2; i <= 12; i++) lista.push(L.sumarMes(hoy, i));
+        sel.innerHTML = lista.map(function (p) { return '<option value="' + p + '">' + esc(mayuscula(nombrePeriodo(p))) + '</option>'; }).join('');
+        sel.value = periodoSel && lista.indexOf(periodoSel) >= 0 ? periodoSel : hoy;
+    }
+    function limpiarFormPrest() {
+        ['pm-p-concepto', 'pm-p-monto', 'pm-p-cuotas'].forEach(function (id) { $(id).value = ''; });
+        $('pm-p-fecha').value = hoyIso();
+        opcionesDesde();
+        $('pm-prest-error').hidden = true;
+        $('pm-prest-calc').innerHTML = '';
+    }
+    function dibujarCarpetaPrest(t) {
+        if (prestSel !== t.id) { prestSel = t.id; limpiarFormPrest(); mensaje($('pm-prest-estado'), '', ''); }
+        var ref = periodoSel || periodoPorDefecto(), lista = (t.prestamos || []).slice().sort(function (a, b) { return a.desde < b.desde ? 1 : a.desde > b.desde ? -1 : 0; });
+        $('carp-prest-filas').innerHTML = lista.length ? lista.map(function (p) {
+            var e = L.estadoPrestamo(p, ref), primera = L.cuotasDe(p)[0];
+            var detalle = (p.cuotas > 1 ? nombrePeriodo(p.desde) + ' a ' + nombrePeriodo(e.ultima) : nombrePeriodo(p.desde)) + ((p.pausas || []).length ? ' · ' + plural(p.pausas.length, 'cuota postergada', 'cuotas postergadas') : '');
+            return '<tr><td class="celda-nombre"><strong>' + esc(p.concepto) + '</strong><span>' + esc(detalle) + '</span></td>' +
+                '<td class="num ocultar-movil">' + pesos(p.monto) + '</td>' +
+                '<td class="celda-cuotas">' + (e.saldo === 0 ? 'Pagado' : e.pagadas + ' de ' + p.cuotas) + (p.cuotas > 1 && primera ? '<small class="mono">' + pesos(primera.monto) + ' c/u</small>' : '') + '</td>' +
+                '<td class="num">' + pesos(e.saldo) + '</td>' +
+                '<td><button type="button" class="btn-texto" data-prest-borrar="' + esc(p.id) + '">Eliminar</button></td></tr>';
+        }).join('') : '<tr><td colspan="5" class="vacio">Sin préstamos registrados. Cuando registres uno, cada cuota se descuenta sola en su liquidación.</td></tr>';
+        var pie = '';
+        if (lista.length) pie += '<p class="texto-ayuda">Avance y saldo al cierre de ' + esc(nombrePeriodo(ref)) + ' (el mes elegido arriba). Si en una liquidación postergas una cuota, pasa al final del préstamo.</p>';
+        pie += '<p class="texto-ayuda">' + (t.anticipoMensual ? 'Anticipo fijo de cada mes: <span class="mono">' + pesos(t.anticipoMensual) + '</span>. Se cambia en la ficha.' : 'Si le pagas un anticipo fijo cada mes, indícalo en la ficha: se descuenta solo.') + '</p>';
+        $('carp-prest-pie').innerHTML = pie;
+    }
+    // Reemplaza la lista de préstamos en el servidor y en la memoria local; devuelve true si se guardó
+    function guardarPrestamos(t, lista, est) {
+        mensaje(est, '', 'Guardando…');
+        return api('prestamos', { metodo: 'PUT', query: { trabajador: t.id }, cuerpo: { prestamos: lista } }).then(function (r) {
+            if (sinSesion(r)) return false;
+            if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos guardar.'); return false; }
+            var tr = r.datos.trabajador;
+            estado.trabajadores = estado.trabajadores.map(function (x) { return x.id === tr.id ? tr : x; });
+            if (editando && editando.id === tr.id) editando.t = tr;
+            mensaje(est, '', '');
+            return true;
+        });
+    }
+    $('pm-prest-form').addEventListener('input', calcPrest);
+    $('pm-prest-form').addEventListener('change', calcPrest);
+    $('pm-prest-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var t = trabajadorPorId(prestSel), p = datosPrest(), err = $('pm-prest-error');
+        if (!t) return;
+        err.hidden = true;
+        var falta = p.concepto.length > 60 ? 'El concepto puede tener hasta 60 caracteres.'
+            : !p.fecha ? 'Indica la fecha en que entregaste el préstamo.'
+            : !(p.monto >= 1000) ? 'Indica el monto prestado (desde $1.000).'
+            : !(p.cuotas >= 1 && p.cuotas <= 48) ? 'Indica entre 1 y 48 cuotas.'
+            : p.desde < p.fecha.slice(0, 7) ? 'La primera cuota no puede ser antes del mes en que entregaste el préstamo.' : '';
+        if (falta) { err.textContent = falta; err.hidden = false; return; }
+        guardarPrestamos(t, (t.prestamos || []).concat([p]), $('pm-prest-estado')).then(function (ok) {
+            if (!ok) return;
+            var nuevo = trabajadorPorId(t.id);
+            limpiarFormPrest();
+            dibujarCarpetaPrest(nuevo);
+            mensaje($('pm-prest-estado'), 'ok', 'Registramos el préstamo. La primera cuota se descuenta en la liquidación de ' + nombrePeriodo(p.desde) + '.');
+        });
+    });
+    $('carp-prest-filas').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-prest-borrar]'), t = trabajadorPorId(prestSel);
+        if (!b || !t) return;
+        var id = b.getAttribute('data-prest-borrar'), p = (t.prestamos || []).filter(function (x) { return x.id === id; })[0];
+        if (!p) return;
+        confirmar('¿Eliminar «' + p.concepto + '»?', 'Deja de descontarse en las liquidaciones que aún no emites. Las ya emitidas no cambian.', 'Eliminar préstamo').then(function (si) {
+            if (!si) return;
+            guardarPrestamos(t, t.prestamos.filter(function (x) { return x.id !== id; }), $('pm-prest-estado')).then(function (ok) {
+                if (!ok) return;
+                dibujarCarpetaPrest(trabajadorPorId(t.id));
+                mensaje($('pm-prest-estado'), 'ok', 'Eliminamos el préstamo.');
+            });
+        });
+    });
 
     function dibujarCarpetaDocs(t) {
         var hist = docsCache.filter(function (d) { return d.trabajadorId === t.id; }).slice().reverse();
@@ -867,7 +980,7 @@
         if (!t || !estado || !estado.empresa) return null;
         var meses = {};
         PD.periodosPromedio(hoyIso()).forEach(function (p) { var m = mesesCache[p] && mesesCache[p][t.id]; if (m) meses[p] = m; });
-        return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F, vac: vacDe(t.id) };
+        return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F, vac: vacDe(t.id), saldoPrestamos: function (p) { return L.saldoPrestamos(t, p); } };
     }
 
     // /app/documentos?t=<trabajador>&d=<tipo>: deja elegidos a la persona y el documento
@@ -1441,10 +1554,11 @@
     });
 
     // ---------- liquidaciones de sueldo ----------
-    var PERIODOS = P.periodos().slice().reverse(); // del más nuevo al más antiguo
+    // Del más nuevo al más antiguo, hasta el mes en curso aunque pase del último mes con valores cargados (esos van con valores estimados y aviso)
+    var PERIODOS = P.periodos(hoyIso().slice(0, 7)).slice().reverse();
     var ALMACEN_LOCAL = null;
     try { ALMACEN_LOCAL = window.localStorage; } catch (e) { ALMACEN_LOCAL = null; }
-    var VALORES = VL.crear({ parametros: P, fetch: function (u, o) { return window.fetch(u, o); }, storage: ALMACEN_LOCAL });
+    var VALORES = VL.crear({ parametros: P, fetch: function (u, o) { return window.fetch(u, o); }, storage: ALMACEN_LOCAL, extender: true });
     var VAL = {};            // valores por mes: { estado: 'cargando' | 'ok' | 'error', ok, mes, fuentes, avisos, notas, mensaje }
     var mesesCache = {};     // periodo → { trabajadorId: mes guardado }
     var periodoSel = null;   // mes que se está viendo (el de la barra superior)
@@ -1457,7 +1571,7 @@
         if (a[2] <= 10) { m--; if (m < 1) { m = 12; y--; } }
         var p = y + '-' + dos(m);
         if (p < P.PRIMER_MES) p = P.PRIMER_MES;
-        if (p > P.ULTIMO_MES) p = P.ULTIMO_MES;
+        if (p > PERIODOS[0]) p = PERIODOS[0];
         return p;
     }
     function nombrePeriodo(p) { var a = p.split('-'); return MESES[+a[1] - 1] + ' ' + a[0]; }
@@ -1501,7 +1615,7 @@
         if (!periodoSel) periodoSel = periodoPorDefecto();
         var toca = PEND.periodoLiquidacion(hoyIso());
         var periodos = [periodoSel];
-        if (toca && toca.periodo !== periodoSel && toca.periodo >= P.PRIMER_MES && toca.periodo <= P.ULTIMO_MES) periodos.push(toca.periodo);
+        if (toca && toca.periodo !== periodoSel && PERIODOS.indexOf(toca.periodo) >= 0) periodos.push(toca.periodo);
         dibujarLiquidaciones();
         cargarValores(periodoSel);
         return Promise.all(periodos.map(function (p) { return mesesCache[p] ? true : cargarMeses(p); })).then(function () {
@@ -1543,7 +1657,7 @@
         else {
             (v.avisos || []).forEach(function (t) { aviso('aviso', 'warning', t); });
             (v.notas || []).forEach(function (t) { aviso('info', 'info', t); });
-            if (v.vigencia && v.vigencia.verificado.slice(0, 7) < periodoSel) {
+            if (v.vigencia && !v.estimado && v.vigencia.verificado.slice(0, 7) < periodoSel) {
                 aviso('info', 'info', 'El ingreso mínimo, los topes y las comisiones AFP son los vigentes al ' + v.vigencia.verificado.split('-').reverse().join('-') + '. Confirma que no cambiaron antes de emitir las liquidaciones.');
             }
         }
@@ -1669,10 +1783,12 @@
         if (!t) return;
         var reg = mesesDe(periodoSel)[id], nota = '';
         var mes = reg ? JSON.parse(JSON.stringify(reg)) : L.mesBase(t, periodoSel);
+        mes.cuotasPrestamo = cuotasVigentes(t, reg, periodoSel);
         if (!reg && mes.diasTrabajados < 30) nota = 'Pusimos ' + mes.diasTrabajados + ' días trabajados según su fecha de ingreso o de término de contrato (mes de 30 días). Confírmalo.';
         editando = { id: id, t: t, mes: mes, nota: nota, guardado: !!reg };
         llenar($('pm-liq-form'), mes);
         pintarListas();
+        dibujarCuotasMes();
         visibilidadMes();
         $('pm-liq-editor-titulo').textContent = t.nombre + ' · ' + mayuscula(nombrePeriodo(periodoSel));
         $('pm-liq-quitar').hidden = !reg;
@@ -1683,6 +1799,51 @@
         $('pm-liq-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     function cerrarMes() { editando = null; $('pm-liq-editor').hidden = true; }
+
+    // Cuotas del mes: las de la ficha mientras la liquidación no esté emitida; una vez emitida, las que se guardaron con ella
+    function cuotasVigentes(t, reg, periodo) { return reg && reg.emitida ? (reg.cuotasPrestamo || []) : L.cuotasDelMes(t, periodo); }
+    function conCuotas(t, reg, periodo) { return Object.assign({}, reg, { cuotasPrestamo: cuotasVigentes(t, reg, periodo) }); }
+
+    function dibujarCuotasMes() {
+        var caja = $('pm-liq-cuotas'), t = editando.t, m = editando.mes, emitida = !!m.emitida, p = periodoSel;
+        var cuotas = m.cuotasPrestamo || [];
+        var pausados = emitida ? [] : (t.prestamos || []).filter(function (x) { return (x.pausas || []).indexOf(p) >= 0; });
+        if (!cuotas.length && !pausados.length) { caja.hidden = true; caja.innerHTML = ''; return; }
+        var ruta = 'trabajadores/' + t.id + '/prestamos';
+        var html = '<p class="lq-help">Cuotas de préstamos de este mes (<a href="/app/' + esc(ruta) + '" data-ruta="' + esc(ruta) + '">ver préstamos</a>):</p><div class="cuotas-lista">';
+        cuotas.forEach(function (c) {
+            html += '<div class="cuota-fila"><span><strong>' + esc(c.nombre) + '</strong><small>Cuota ' + c.numero + ' de ' + c.de + '</small></span><span class="mono">' + pesos(c.monto) + '</span>' +
+                (emitida ? '' : '<button type="button" class="btn-texto" data-cuota="pausar" data-id="' + esc(c.id) + '">Postergar</button>') + '</div>';
+        });
+        pausados.forEach(function (x) {
+            html += '<div class="cuota-fila cuota-pausada"><span><strong>' + esc(x.concepto) + '</strong><small>Postergada: pasa al final del préstamo</small></span><span class="mono">$0</span>' +
+                '<button type="button" class="btn-texto" data-cuota="reanudar" data-id="' + esc(x.id) + '">Descontar</button></div>';
+        });
+        html += '</div>';
+        if (emitida) html += '<p class="lq-help">La liquidación está emitida: las cuotas quedan como se emitieron.</p>';
+        caja.innerHTML = html;
+        caja.hidden = false;
+    }
+    $('pm-liq-cuotas').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-cuota]');
+        if (!b || !editando) return;
+        var t = editando.t, id = b.getAttribute('data-id'), p = periodoSel, pausar = b.getAttribute('data-cuota') === 'pausar', est = $('pm-liq-editor-estado');
+        var lista = (t.prestamos || []).map(function (x) {
+            if (x.id !== id) return x;
+            var pz = (x.pausas || []).filter(function (y) { return y !== p; });
+            if (pausar) pz.push(p);
+            return Object.assign({}, x, { pausas: pz });
+        });
+        b.disabled = true;
+        guardarPrestamos(t, lista, est).then(function (ok) {
+            if (!editando || periodoSel !== p) return;
+            if (!ok) { b.disabled = false; return; }
+            editando.mes.cuotasPrestamo = L.cuotasDelMes(editando.t, p);
+            dibujarCuotasMes();
+            vistaPrevia();
+            mensaje(est, '', (pausar ? 'Postergamos la cuota al final del préstamo.' : 'La cuota vuelve a descontarse este mes.') + (editando.guardado ? ' Guarda el mes para que la liquidación quede con el cambio.' : ''));
+        });
+    });
 
     // Calcula con el motor del generador de liquidaciones; devuelve { res, val } o null si faltan los valores del mes
     function calcularMes(t, mes, periodo) {
@@ -1769,7 +1930,10 @@
 
     // Guarda un mes (con el resultado calculado si hay valores del mes) y actualiza la memoria local
     function guardarRegistro(id, mes) {
-        var t = trabajadorPorId(id), c = t ? calcularMes(t, mes, periodoSel) : null, periodo = periodoSel;
+        var t = trabajadorPorId(id), periodo = periodoSel, previo = mesesDe(periodo)[id];
+        // Las cuotas se toman de la ficha, salvo al editar una liquidación que ya estaba emitida (quedan las emitidas)
+        if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { cuotasPrestamo: L.cuotasDelMes(t, periodo) });
+        var c = t ? calcularMes(t, mes, periodo) : null;
         var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes, t) : null) : (mes.calculo || null) });
         return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodo }, cuerpo: { mes: cuerpo } }).then(function (r) {
             if (r.ok) { mesesCache[periodo] = mesesCache[periodo] || {}; mesesCache[periodo][id] = r.datos.mes; }
@@ -1786,6 +1950,7 @@
             if (!r.ok) { mensaje(est, 'error', (r.datos.errores ? Object.keys(r.datos.errores).map(function (k) { return r.datos.errores[k]; }).join(' ') : r.datos.error) || 'No pudimos guardar.'); return; }
             editando.mes = JSON.parse(JSON.stringify(r.datos.mes));
             editando.guardado = true;
+            dibujarCuotasMes();
             $('pm-liq-quitar').hidden = false;
             mensaje(est, 'ok', 'Guardado.');
             dibujarLiquidaciones();
@@ -1879,6 +2044,7 @@
         activos().forEach(function (t) {
             var reg = mesesDe(periodoSel)[t.id];
             if (ids.indexOf(t.id) < 0 || !reg) return;
+            reg = conCuotas(t, reg, periodoSel);
             var r = calcularMes(t, reg, periodoSel);
             if (!r || r.error || !r.res.listo) { omitidas.push(t.nombre); return; }
             hojas.push(DOC.documento(estado.empresa, t, reg, r.res, { periodo: periodoSel, pagada: tienePase(), fuentes: r.val.fuentes }));
@@ -1939,6 +2105,7 @@
     $('pm-t-afp').innerHTML = AFPS.map(function (a) { return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
     aplicarMascaras($('pm-emp-form'));
     aplicarMascaras($('pm-trab-form'));
+    aplicarMascaras($('pm-prest-form'));
     function arrancar() {
         api('sesion').then(function (r) {
             if (r.estado === 0 || r.estado >= 500) { mostrar('fallo'); return; }

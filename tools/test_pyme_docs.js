@@ -293,5 +293,14 @@ caso('finiquito: validaciones (fechas, causal, descuentos y plazo fijo)', () => 
     assert.ok(D.validar('finiquito', pf, fin(pf, { causal: '159_4' })).bloqueos.some(b => /indefinida/.test(b)));
     assert.ok(!D.validar('finiquito', c, fin(c, { causal: '159_2', cotizaciones: false })).puedeEmitir);
 });
+caso('finiquito: avisa el saldo de préstamos al mes de término, sin descontarlo solo', () => {
+    const L = require('../js/pyme_liquidaciones');
+    const t = ANA({ prestamos: [{ id: 'abc123', concepto: 'Préstamo', fecha: '2026-09-01', monto: 300000, cuotas: 6, desde: '2026-09', pausas: [] }] });
+    const c = ctx(t, { vac: VAC_ANA, saldoPrestamos: p => L.saldoPrestamos(t, p) });
+    const v = D.validar('finiquito', c, fin(c, { causal: '159_2' }));
+    assert.ok(v.avisos.some(a => /saldo de \$200\.000/.test(a.texto) && /por escrito/.test(a.texto)), JSON.stringify(v.avisos.map(a => a.texto)));
+    const sin = ctx(ANA(), { vac: VAC_ANA, saldoPrestamos: () => 0 });
+    assert.ok(!D.validar('finiquito', sin, fin(sin, { causal: '159_2' })).avisos.some(a => /saldo de/.test(a.texto)));
+});
 
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

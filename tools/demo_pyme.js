@@ -3,7 +3,7 @@
 //   node tools/demo_pyme.js [http://localhost:3000]
 //
 // Crea la cuenta demo@ejemplo.cl con Pase de 12 meses, la empresa ficticia "Panadería Los Aromos", tres trabajadores,
-// vacaciones y las liquidaciones de septiembre y octubre de 2026 (calculadas con el mismo motor y la UF de respaldo).
+// vacaciones, un préstamo en cuotas, un anticipo fijo y las liquidaciones de septiembre y octubre de 2026 (calculadas con el mismo motor y la UF de respaldo).
 // Al final imprime un enlace de acceso para entrar desde el navegador. Solo para desarrollo: nunca contra la base real.
 'use strict';
 const E = require('../js/liquidacion_engine');
@@ -44,7 +44,7 @@ const EMPRESA = { razonSocial: 'Panadería Los Aromos SpA', rut: '76.543.210-3',
 const TRABAJADORES = [
     { nombre: 'Ana Pérez González', rut: '15.234.567-4', cargo: 'Panadera', fechaNacimiento: '1988-06-12', nacionalidad: 'Chilena', domicilio: 'Los Aromos 123', comuna: 'Temuco', fechaIngreso: '2022-03-15', contrato: 'indefinido', jornadaHoras: 42, distribucion: '6', sueldoBase: 650000, gratificacion: 'legal', colacion: 40000, movilizacion: 30000, afp: 'Modelo', salud: 'fonasa' },
     { nombre: 'Bruno Castillo Muñoz', rut: '19.876.543-0', cargo: 'Vendedor', fechaNacimiento: '1999-11-03', nacionalidad: 'Chilena', domicilio: 'Pasaje Ñielol 45', comuna: 'Temuco', fechaIngreso: '2026-05-04', contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-31', renovaciones: 1, jornadaHoras: 42, distribucion: '6', sueldoBase: 560000, gratificacion: 'legal', afp: 'Uno', salud: 'fonasa' },
-    { nombre: 'Carla Rojas Vidal', rut: '13.456.789-9', cargo: 'Encargada de local', fechaNacimiento: '1979-02-21', nacionalidad: 'Chilena', domicilio: 'Caupolicán 980', comuna: 'Temuco', fechaIngreso: '2014-08-01', contrato: 'indefinido', jornadaHoras: 42, distribucion: '5', sueldoBase: 900000, gratificacion: 'legal', colacion: 50000, movilizacion: 40000, afp: 'Habitat', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: 3.2, aniosOtrosEmpleadores: 6 }
+    { nombre: 'Carla Rojas Vidal', rut: '13.456.789-9', cargo: 'Encargada de local', fechaNacimiento: '1979-02-21', nacionalidad: 'Chilena', domicilio: 'Caupolicán 980', comuna: 'Temuco', fechaIngreso: '2014-08-01', contrato: 'indefinido', jornadaHoras: 42, distribucion: '5', sueldoBase: 900000, gratificacion: 'legal', colacion: 50000, movilizacion: 40000, afp: 'Habitat', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: 3.2, aniosOtrosEmpleadores: 6, anticipoMensual: 150000 }
 ];
 
 function mesValores(periodo) {
@@ -62,6 +62,9 @@ function mesValores(periodo) {
     await api('empresa', 'PUT', { empresa: EMPRESA });
     const ids = [];
     for (const tr of TRABAJADORES) ids.push((await api('trabajador', 'POST', { trabajador: tr })).trabajador.id);
+
+    const prest = await api('prestamos', 'PUT', { prestamos: [{ concepto: 'Préstamo para reparar el techo', fecha: '2026-10-02', monto: 360000, cuotas: 6, desde: '2026-10' }] }, { trabajador: ids[0] });
+    TRABAJADORES[0].prestamos = prest.trabajador.prestamos;
 
     await api('vacacion', 'POST', { vacacion: { tipo: 'ajuste', dias: 18, nota: 'Tomados antes de usar el asistente' } }, { trabajador: ids[0] });
     await api('vacacion', 'POST', { vacacion: { tipo: 'periodo', desde: '2026-10-19', hasta: '2026-10-23', nota: 'Vacaciones de primavera' } }, { trabajador: ids[0] });

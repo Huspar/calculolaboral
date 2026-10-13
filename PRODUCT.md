@@ -38,6 +38,8 @@ Construido (rama `claude/asistente-pyme-plan`, sin publicar, 13-oct-2026):
 - Ocho documentos: certificado de antigüedad, certificado de remuneraciones, comprobante de feriado, carta 159 N°4, carta 161, amonestación, anexo de datos y finiquito (feriado desde el registro de vacaciones; sin marca solo con el Pase de 12 meses). El registro guarda solo tipo y fecha, nunca el texto.
 - Costo del empleador por trabajador (aporte de la Ley 21.735, SIS, cesantía y mutual con las tasas de Previred de cada mes) y resumen estimado de lo que se paga en Previred por institución (13-oct-2026).
 - Avisos del registro del contrato en Mi DT (arts. 9 y 9 bis) y del término de plazo fijo.
+- Préstamos con cuotas en la carpeta del trabajador (pestaña Préstamos): cada cuota se descuenta sola en su liquidación, se puede postergar al final y cuenta para el 15% del art. 58; el saldo se avisa en el finiquito. Anticipo fijo mensual en la ficha (no cuenta para el 15%). La liquidación emitida guarda sus cuotas (13-oct-2026).
+- Meses después del último con valores cargados (hoy, desde enero de 2027): el asistente sigue calculando con los últimos valores conocidos, con aviso visible, hasta 12 meses (13-oct-2026).
 - Prellenado de los generadores de contrato, anexo 42 h y finiquito desde la ficha.
 - Pase Pyme: $19.990 (3 meses) y $59.990 (12 meses) por Flow, reembolso total de 14 días corridos; venta cerrada hasta `PYME_PASE_VENTA=1`.
 - Pendientes del mes: plazos fijos por vencer, fecha de cotizaciones, liquidaciones sin emitir, respaldo.

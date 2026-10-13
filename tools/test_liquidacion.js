@@ -249,6 +249,22 @@ function crear(config, almacen = almacenFalso()) {
     const fuera = await Promise.all([t.v.obtener('2025-12'), t.v.obtener('2027-01')]);
     chequear('Valores · meses fuera del rango disponible', [fuera.every(x => !x.ok) && t.registro.length === 0 ? '' : 'debía rechazar sin consultar'].filter(Boolean));
 
+    // Asistente Pyme (extender: true): después de diciembre de 2026 sigue con la última vigencia, estimada y con aviso; nunca pasado el tope
+    const SERIE_2027 = { uf: { '2027-01-31': 41612.4, '2027-09-30': 42300.1 }, utm: { '2027-01': 72880, '2027-09': 73900 } };
+    const regExt = [];
+    const vExt = V.crear({ parametros: P, fetch: fetchFalso({ registro: regExt, mindicador: SERIE_2027, findic: SERIE_2027 }), storage: almacenFalso(), extender: true });
+    const [e1, e9, e28, e25, e10] = await Promise.all(['2027-01', '2027-09', '2028-01', '2025-12', '2026-10'].map(p => vExt.obtener(p)));
+    chequear('Valores · meses después del último cargado: con valores estimados y aviso (solo el asistente)', [
+        e1.ok && e1.estimado && e1.mes.uf === 41612.4 && e1.mes.utm === 72880 ? '' : 'enero de 2027 no se calculó con la UF y la UTM de la API',
+        e1.ok && e1.mes.imm === P.vigenciaDe('2026-12').imm && e1.mes.topeAfpUF === 90 ? '' : 'no usó la última vigencia',
+        e1.ok && e1.mes.empleador.porConfirmar && e1.mes.empleador.sis === 0.0178 ? '' : 'tasas del empleador sin "por confirmar"',
+        e1.ok && e1.avisos.some(a => /aún no están cargados/.test(a) && /diciembre de 2026/.test(a)) ? '' : 'sin aviso de valores estimados',
+        e1.ok && !e1.notas.some(n => /4,25%/.test(n)) && e9.ok && e9.notas.some(n => /4,25%/.test(n)) ? '' : 'nota del aporte de agosto de 2027',
+        !e28.ok && !e25.ok ? '' : 'aceptó un mes fuera del tope de extensión',
+        e10.ok && !e10.estimado && !e10.avisos.some(a => /aún no están cargados/.test(a)) ? '' : 'octubre de 2026 no debe ser estimado',
+        P.periodos().length === 12 && P.periodos('2027-03').slice(-1)[0] === '2027-03' && P.periodos('2031-01').slice(-1)[0] === P.ULTIMO_MES_EXTENDIDO ? '' : 'lista de meses'
+    ].filter(Boolean));
+
     // Enero a agosto: sin API, cada mes usa su respaldo y su vigencia (ingreso mínimo, topes y jornada)
     t = crear({ mindicador: 'caido', findic: 'caido' });
     const esperado = { '2026-01': [539000, 89.9, 44], '2026-03': [539000, 90, 44], '2026-04': [539000, 90, 44], '2026-05': [553553, 90, 42], '2026-08': [553553, 90, 42] };

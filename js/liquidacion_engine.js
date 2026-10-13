@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.2.0)
+ * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.3.0)
  *
  * Función pura: calcular(datos, mes) devuelve las líneas de la liquidación, las bases de cálculo y los avisos.
  * "datos": { trabajador, mes, periodo "AAAA-MM" }. "mes" son los valores oficiales del mes (UF, UTM, ingreso
@@ -17,6 +17,8 @@
  *   trabajador deja de cotizar. En el mes del aniversario se mantiene el descuento y se avisa.
  * - Base del impuesto único: imponible menos AFP, seguro de cesantía, salud (7% más adicional de Isapre, con tope
  *   conjunto del 7% de 90 UF, según el SII) y APV régimen B. Créditos de caja, anticipos y otros descuentos no la rebajan.
+ * - Descuentos pactados por escrito (art. 58): otros descuentos y cuotas de préstamos del empleador (mes.cuotasPrestamo, del
+ *   Asistente Pyme). Juntos no pueden pasar del 15% de la remuneración total: si pasan, se avisa. El anticipo no cuenta.
  * - Tramos del impuesto con la UTM del mes.
  *
  * Costo del empleador (resultado.empleador, solo si el mes trae "empleador" en sus valores): no cambia el líquido.
@@ -198,6 +200,13 @@
         });
         var pactados = lineasLibres(m.otrosDescuentos);
         pactados.forEach(function (d) { otros.push({ concepto: d.concepto, detalle: 'Pactado por escrito', monto: d.monto }); });
+        (Array.isArray(m.cuotasPrestamo) ? m.cuotasPrestamo : []).forEach(function (c) {
+            var monto = r(n(c && c.monto)), nombre = String((c && c.nombre) || 'Préstamo').trim().slice(0, 60) || 'Préstamo';
+            if (monto <= 0) return;
+            var detalle = c.numero && c.de ? 'Cuota ' + c.numero + ' de ' + c.de : 'Cuota de préstamo';
+            otros.push({ concepto: nombre, detalle: detalle, monto: monto });
+            pactados.push({ concepto: nombre, monto: monto });
+        });
         var totalOtros = suma(otros);
         var totalDescuentos = totalLegales + totalOtros;
         var liquido = totalHaberes - totalDescuentos;
@@ -209,7 +218,7 @@
         }
         var totalPactados = suma(pactados);
         if (totalPactados > TOPE_DESCUENTOS_PACTADOS * totalHaberes) {
-            avisos.push({ nivel: 'aviso', texto: 'Los descuentos pactados (' + pesos(totalPactados) + ') superan el 15% de la remuneración total, el máximo del artículo 58 del Código del Trabajo.' });
+            avisos.push({ nivel: 'aviso', texto: 'Los descuentos pactados y las cuotas de préstamos (' + pesos(totalPactados) + ') superan el 15% de la remuneración total (' + pesos(TOPE_DESCUENTOS_PACTADOS * totalHaberes) + '), el máximo del artículo 58 del Código del Trabajo. Posterga una cuota o reduce un descuento.' });
         }
         if (totalImponible > topeAfp && dias > 0) {
             avisos.push({ nivel: 'info', texto: 'Lo imponible supera el tope de ' + mes.topeAfpUF + ' UF: AFP y salud se calculan sobre ' + pesos(topeAfp) + '.' });
@@ -287,7 +296,7 @@
         return { lineas: lineas, total: total, costoTotal: (res.totalHaberes || 0) + total, tasaMutual: tasaMutual, avisos: avisos };
     }
 
-    var api = { calcular: calcular, impuestoUnico: impuestoUnico, aportesEmpleador: aportesEmpleador, version: '1.2.0' };
+    var api = { calcular: calcular, impuestoUnico: impuestoUnico, aportesEmpleador: aportesEmpleador, TOPE_DESCUENTOS_PACTADOS: TOPE_DESCUENTOS_PACTADOS, version: '1.3.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLLiquidacionEngine = api;
 })(typeof window !== 'undefined' ? window : this);

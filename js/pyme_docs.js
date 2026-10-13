@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · documentos laborales del Asistente Pyme (v1.1.0). Funciona en el navegador (window.CLPymeDocs) y en Node.
+ * CalculoLaboral · documentos laborales del Asistente Pyme (v1.2.0). Funciona en el navegador (window.CLPymeDocs) y en Node.
  *
  * Ocho modelos de referencia que se arman con los datos guardados de la empresa y del trabajador:
  *   cert_antiguedad, cert_remuneraciones, comprobante_feriado, carta_159_4, carta_161, amonestacion, anexo_datos, finiquito
@@ -452,6 +452,8 @@
             avisos.push({ nivel: 'aviso', texto: 'El aporte del empleador al seguro de cesantía solo se descuenta de la indemnización por años de servicio del art. 161 (art. 13 de la Ley 19.728). Si el despido se declara injustificado, este descuento puede ser cuestionado: consulta antes de aplicarlo.' });
         }
         if (c.otros > 0) avisos.push({ nivel: 'info', texto: 'Descuenta solo anticipos o préstamos que el trabajador autorizó por escrito, y guarda ese documento.' });
+        var saldo = typeof ctx.saldoPrestamos === 'function' ? ctx.saldoPrestamos(d.fechaTermino.slice(0, 7)) : 0;
+        if (saldo > 0) avisos.push({ nivel: 'aviso', texto: 'Según los préstamos registrados, después de la cuota de la última liquidación queda un saldo de ' + pesos(saldo) + '. Solo puedes descontarlo del finiquito si el trabajador lo autorizó por escrito: en ese caso, súmalo en «Otros descuentos».' });
         if (c.total < 0) errores.otrosDescuentos = 'Los descuentos superan lo que se paga.';
         if (d.causal === '159_2') avisos.push({ nivel: 'info', texto: 'La renuncia debe constar por escrito y estar firmada por el trabajador y ratificada ante un ministro de fe (o hecha en el sitio de la Dirección del Trabajo): si no, no puede invocarse (art. 177). Adjúntala al finiquito.' });
         if (d.causal === '159_1') avisos.push({ nivel: 'info', texto: 'El mutuo acuerdo debe constar por escrito y ratificarse ante ministro de fe (art. 177). Este finiquito lo deja por escrito al firmarlo ante el ministro de fe.' });

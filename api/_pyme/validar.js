@@ -5,6 +5,7 @@
  * normaliza: textos recortados y con largo maximo, RUT con digito verificador y formato estandar, fechas AAAA-MM-DD reales,
  * numeros enteros dentro de un rango. Devuelve { ok: true, valor } o { ok: false, errores: { campo: mensaje } }.
  */
+const crypto = require('crypto');
 const Rut = require('../../js/rut_cl');
 const P = require('../../js/liquidacion_parametros');
 const F = require('../../js/feriados_cl');
@@ -59,6 +60,8 @@ const CAMPOS_TRABAJADOR = {
     isaprePlanUF: { t: 'decimal', min: 0, max: 99.99, def: 0 },
     zonaExtrema: { t: 'bool', def: false },
     aniosOtrosEmpleadores: { t: 'entero', min: 0, max: 10, def: 0 },
+    // Anticipo que se paga todos los meses (quincena): se propone en cada liquidación nueva
+    anticipoMensual: { t: 'entero', min: 0, max: 50000000, def: 0 },
     activo: { t: 'bool', def: true }
 };
 
@@ -119,10 +122,56 @@ function validar(campos, entrada) {
 
 function validarEmpresa(entrada) { return validar(CAMPOS_EMPRESA, entrada); }
 
+// ---------- préstamos con cuotas (van en la ficha del trabajador) ----------
+const MAX_PRESTAMOS = 12, MAX_CUOTAS = 48, MAX_PAUSAS = 24;
+const ID_PRESTAMO = /^[a-z0-9]{6,20}$/;
+const MENSAJES_PRESTAMO = {
+    concepto: 'El concepto puede tener hasta 60 caracteres.',
+    fecha: 'Indica la fecha en que entregaste el préstamo.',
+    monto: 'El monto debe estar entre $1.000 y $50.000.000.',
+    cuotas: `Las cuotas deben ser entre 1 y ${MAX_CUOTAS}.`,
+    desde: 'Indica el mes de la primera cuota.',
+    pausas: 'Los meses postergados no son válidos.'
+};
+
+// Devuelve la lista normalizada o undefined (con errores.prestamos). Los préstamos nuevos (sin id) reciben uno.
+function validarPrestamos(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_PRESTAMOS) { errores.prestamos = `Puedes registrar hasta ${MAX_PRESTAMOS} préstamos por trabajador. Elimina los que ya terminaron.`; return undefined; }
+    const salida = [], usados = {};
+    for (const it of v) {
+        if (!it || typeof it !== 'object' || Array.isArray(it)) { errores.prestamos = 'Los préstamos no tienen el formato esperado.'; return undefined; }
+        const e = {};
+        let id = typeof it.id === 'string' && ID_PRESTAMO.test(it.id) ? it.id : '';
+        while (!id || usados[id]) id = crypto.randomBytes(6).toString('hex');
+        usados[id] = true;
+        const concepto = normalizar('concepto', { t: 'texto', max: 60, def: 'Préstamo' }, it.concepto, e) || 'Préstamo';
+        const fecha = normalizar('fecha', { t: 'fecha', req: true }, it.fecha, e);
+        const monto = normalizar('monto', { t: 'entero', min: 1000, max: MONTO_MAX, req: true }, it.monto, e);
+        const cuotas = normalizar('cuotas', { t: 'entero', min: 1, max: MAX_CUOTAS, req: true }, it.cuotas, e);
+        const desde = validarPeriodo(it.desde) ? it.desde : (e.desde = true, '');
+        let pausas = [];
+        if (!vacio(it.pausas)) {
+            if (!Array.isArray(it.pausas) || it.pausas.length > MAX_PAUSAS || !it.pausas.every(validarPeriodo)) e.pausas = true;
+            else pausas = Array.from(new Set(it.pausas)).filter(p => !desde || p >= desde).sort();
+        }
+        const primero = Object.keys(MENSAJES_PRESTAMO).find(k => e[k]);
+        if (primero) { errores.prestamos = MENSAJES_PRESTAMO[primero]; return undefined; }
+        if (desde < fecha.slice(0, 7)) { errores.prestamos = 'La primera cuota no puede ser antes del mes en que entregaste el préstamo.'; return undefined; }
+        salida.push({ id, concepto, fecha, monto, cuotas, desde, pausas });
+    }
+    return salida;
+}
+
 function validarTrabajador(entrada) {
     const r = validar(CAMPOS_TRABAJADOR, entrada);
     if (!r.ok) return r;
     const v = r.valor, errores = {};
+    // Sin "prestamos" en la entrada se conservan los guardados (lo resuelve datos.js); con la lista, se valida y reemplaza
+    if (entrada.prestamos !== undefined) {
+        const p = validarPrestamos(entrada.prestamos, errores);
+        if (p !== undefined) v.prestamos = p;
+    }
     if (v.contrato === 'plazo_fijo') {
         if (!v.fechaTerminoPlazo) errores.fechaTerminoPlazo = 'Indica la fecha en que vence el contrato a plazo fijo.';
         else if (v.fechaIngreso && v.fechaTerminoPlazo <= v.fechaIngreso) errores.fechaTerminoPlazo = 'Debe ser posterior a la fecha de ingreso.';
@@ -159,6 +208,7 @@ const CAMPOS_MES = {
     emitida: { t: 'fecha' }
 };
 const LISTAS_MES = ['bonosImponibles', 'otrosNoImponibles', 'otrosDescuentos'];
+const MAX_CUOTAS_MES = 12;
 const DESGLOSE_MES = ['afp', 'salud', 'afcTrabajador', 'impuesto', 'apv', 'creditoCCAF', 'empAfp', 'empSis', 'empSeguroSocial', 'empAfc', 'empMutual', 'costoEmpleador'];
 
 function listaMes(nombre, v, errores) {
@@ -171,6 +221,24 @@ function listaMes(nombre, v, errores) {
         const m = normalizar('monto', { t: 'entero', min: 0, max: MONTO_MAX, def: 0 }, it && it.monto, e);
         if (e.nombre || e.monto) { errores[nombre] = 'Revisa el nombre (hasta 60 caracteres) y el monto de cada concepto.'; return undefined; }
         if (n && m > 0) salida.push({ nombre: n, monto: m });
+    }
+    return salida;
+}
+
+// Cuotas de préstamos descontadas en el mes (copia de lo que había en la ficha al guardar: el mes emitido no cambia si después se edita el préstamo)
+function cuotasMes(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_CUOTAS_MES) { errores.cuotasPrestamo = 'Las cuotas de préstamos no tienen el formato esperado.'; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const id = it && typeof it.id === 'string' && ID_PRESTAMO.test(it.id) ? it.id : '';
+        const nombre = normalizar('nombre', { t: 'texto', max: 60, def: 'Préstamo' }, it && it.nombre, e) || 'Préstamo';
+        const monto = normalizar('monto', { t: 'entero', min: 0, max: MONTO_MAX, def: 0 }, it && it.monto, e);
+        const numero = normalizar('numero', { t: 'entero', min: 1, max: MAX_CUOTAS, req: true }, it && it.numero, e);
+        const de = normalizar('de', { t: 'entero', min: 1, max: MAX_CUOTAS, req: true }, it && it.de, e);
+        if (!id || Object.keys(e).length || numero > de) { errores.cuotasPrestamo = 'Las cuotas de préstamos no tienen el formato esperado.'; return undefined; }
+        if (monto > 0) salida.push({ id, nombre, monto, numero, de });
     }
     return salida;
 }
@@ -208,6 +276,8 @@ function validarMes(entrada) {
         const l = listaMes(k, entrada[k], errores);
         if (l !== undefined) valor[k] = l;
     });
+    const cuotas = cuotasMes(entrada.cuotasPrestamo, errores);
+    if (cuotas !== undefined) valor.cuotasPrestamo = cuotas;
     const c = calculoMes(entrada.calculo, errores);
     if (c !== undefined) valor.calculo = c;
     if (valor.apvMonto === 0) valor.apvRegimen = 'B';
@@ -244,4 +314,4 @@ function validarVacacion(entrada, hoy) {
     return { ok: true, valor: { tipo: 'periodo', desde: entrada.desde, hasta: entrada.hasta, dias: r.dias, nota } };
 }
 
-module.exports = { validarMes, validarPeriodo, validarEmpresa, validarTrabajador, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO };
+module.exports = { validarMes, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };

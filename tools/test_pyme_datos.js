@@ -594,4 +594,31 @@ caso('rutas de vacaciones e historial de documentos', async () => {
     assert.strictEqual((await leer(m, { query: { ruta: 'documentos' } })).statusCode, 401);
 });
 
+caso('préstamos: se guardan cifrados en la ficha, editar la ficha no los borra y otra cuenta no los toca', async () => {
+    const { m, cookie, tid, cuenta } = await conTrabajador();
+    const p = { concepto: 'Préstamo para el auto', fecha: '2026-10-05', monto: 300000, cuotas: 6, desde: '2026-10' };
+    assert.strictEqual((await pedir(m.rutas, { query: { ruta: 'prestamos', trabajador: tid }, metodo: 'PUT', headers: { cookie }, body: { prestamos: [p] } })).statusCode, 403);
+    const r = await escribir(m, { query: { ruta: 'prestamos', trabajador: tid }, metodo: 'PUT', cookie, body: { prestamos: [p] } });
+    assert.strictEqual(r.statusCode, 200);
+    assert.ok(/^[a-z0-9]{6,20}$/.test(r.json.trabajador.prestamos[0].id));
+    const bytes = Buffer.from(m.almacen._estado.trabajadores[0].datos).toString('utf8');
+    assert.ok(bytes.indexOf('auto') < 0);
+    // guardar la ficha sin la lista conserva los préstamos
+    const actual = (await m.datos.estado(cuenta)).trabajadores[0];
+    const { id, prestamos, ...ficha } = actual;
+    assert.ok((await m.datos.actualizarTrabajador(cuenta, tid, Object.assign(ficha, { cargo: 'Maestro panadero' }))).ok);
+    const despues = (await m.datos.estado(cuenta)).trabajadores[0];
+    assert.strictEqual(despues.cargo, 'Maestro panadero');
+    assert.strictEqual(despues.prestamos.length, 1);
+    // errores y otra cuenta
+    const malo = await escribir(m, { query: { ruta: 'prestamos', trabajador: tid }, metodo: 'PUT', cookie, body: { prestamos: [{ ...p, cuotas: 0 }] } });
+    assert.strictEqual(malo.statusCode, 400);
+    assert.match(malo.json.error, /cuotas/);
+    const { cuenta: otra } = await m.entrar('otra@ejemplo.cl');
+    await m.datos.guardarEmpresa(otra, { ...EMPRESA, rut: rutValido(76111333) });
+    assert.strictEqual((await m.datos.guardarPrestamos(otra, tid, [p])).estado, 404);
+    // eliminar
+    assert.deepStrictEqual((await m.datos.guardarPrestamos(cuenta, tid, [])).trabajador.prestamos, []);
+});
+
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));
