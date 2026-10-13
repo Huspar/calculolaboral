@@ -1169,6 +1169,7 @@
 
     // Despacho del finiquito (.docx) al correo electrónico del comprador
     let hasSentEmail = false;
+    const MAX_ENVIOS_CORREO = 3; // mismo tope que api/send-finiquito.js
 
     async function dispatchFiniquitoEmail(formData, calcData, forceEmail = null) {
         const email = forceEmail || localStorage.getItem('fini_customer_email') || document.getElementById('checkout-email')?.value?.trim();
@@ -1199,6 +1200,18 @@
             const unlock = unlockApi() ? unlockApi().storedUnlock('finiquito') : null;
             if (!unlock) return;
 
+            // Envíos ya hechos con este pago: el automático sale una sola vez (aunque se reabra el enlace)
+            // y cada reenvío usa el número siguiente, hasta el tope del servidor
+            const llaveEnvios = 'fini_envios_correo_' + unlock.o;
+            let enviados = 0;
+            try { enviados = parseInt(localStorage.getItem(llaveEnvios) || '0', 10) || 0; } catch (e) {}
+            if (!forceEmail && enviados >= 1) return;
+            if (forceEmail && enviados >= MAX_ENVIOS_CORREO) {
+                alert(`Ya enviaste este finiquito ${MAX_ENVIOS_CORREO} veces por correo. Descarga el Word desde esta página.`);
+                return;
+            }
+            const intento = enviados + 1;
+
             const resp = await fetch('/api/send-finiquito', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1212,12 +1225,14 @@
                     htmlContent,
                     docxBase64,
                     filename: wordFilename(formData),
+                    intento,
                     token: unlock.o,
                     unlock
                 })
             });
 
             if (resp.ok) {
+                try { localStorage.setItem(llaveEnvios, String(intento)); } catch (e) {}
                 alert(`Enviamos el finiquito en Word a ${email}.`);
             } else {
                 let msg = 'No pudimos enviar el correo. Descarga el Word desde esta página.';

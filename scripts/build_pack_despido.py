@@ -24,7 +24,7 @@ from docx.table import Table
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import docs_layout as L  # noqa: E402
-from pack_despido_content import CARTAS, DOCS_EXTRA, CHECKLIST_GRATIS, FINIQ_159, FINIQ_160, COTIZ, GUIA, PLAZO_3  # noqa: E402
+from pack_despido_content import CARTAS, DOCS_EXTRA, CHECKLIST_GRATIS, FINIQ_159, FINIQ_160, COTIZ, GUIA, PLAZO_3, AVISO_FINIQUITO, NOTA_AVISO_FINIQUITO  # noqa: E402
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FREE = os.path.join(BASE, 'descargas')
@@ -214,6 +214,7 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     else:
         pasos = list(COMUN)
     pasos += c.get('box', [])
+    pasos.append(NOTA_AVISO_FINIQUITO)
     b.head(c['titulo'], c['subtitulo'], codigo(c['archivo'], prefijo))
     b.box('INSTRUCCIONES PARA EL EMPLEADOR', pasos)
     b.revisa()
@@ -232,6 +233,7 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     b.text(COTIZ)
     b.heading('IV. FINIQUITO:')
     b.text(c['finiquito'])
+    b.text(AVISO_FINIQUITO)
     b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))
     b.sig()
     return b

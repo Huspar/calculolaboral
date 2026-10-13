@@ -5,8 +5,10 @@
  * Solo funciona con un desbloqueo firmado tras un pago verificado con Flow
  * (p, o, e, sig; ver api/_flow.js). La venta ya la avisa /api/flow-confirm.
  */
-const crypto = require('crypto');
 const { verifyDownload, SITE_URL } = require('./_flow');
+
+// Correos permitidos por orden de pago (el original y hasta dos reenvíos con datos corregidos)
+const MAX_ENVIOS = 3;
 
 const ALLOWED_ORIGINS = new Set([
     'https://calculolaboral.cl',
@@ -106,9 +108,16 @@ module.exports = async (req, res) => {
             saldoLiquido,
             htmlContent,
             docxBase64,
+            intento: intentoRaw,
             token,
             unlock
         } = body;
+
+        // Número de envío de esta orden (1 a MAX_ENVIOS); cualquier otro valor se rechaza
+        const intento = intentoRaw === undefined ? 1 : Number(intentoRaw);
+        if (!Number.isInteger(intento) || intento < 1 || intento > MAX_ENVIOS) {
+            return res.status(429).json({ error: `Ya enviaste este finiquito ${MAX_ENVIOS} veces por correo. Descarga el Word desde la página.` });
+        }
 
         // Sin pago verificado no se envia nada (evita usar el dominio para correos arbitrarios)
         const u = unlock && typeof unlock === 'object' ? unlock : {};
@@ -270,9 +279,10 @@ module.exports = async (req, res) => {
                     'Authorization': `Bearer ${resendApiKey}`,
                     'Content-Type': 'application/json',
                     'User-Agent': 'calculolaboral-cl/1.0',
-                    // Un solo envío por orden: el desbloqueo no sirve para mandar correos a terceros
-                    // Un envío por orden y contenido: reenviar con datos corregidos genera otra llave
-                    'Idempotency-Key': `finiquito-${u.o}-${crypto.createHash('sha256').update(cleanEmail + '|' + wordBufferBase64).digest('hex').slice(0, 16)}`
+                    // Tope de MAX_ENVIOS correos por orden (Resend recuerda la llave 24 horas): el desbloqueo
+                    // no sirve para mandar correos en cantidad. Cada reenvío con datos corregidos usa el
+                    // número siguiente; repetir el mismo número con el mismo contenido no duplica el correo.
+                    'Idempotency-Key': `finiquito-${u.o}-${intento}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -294,8 +304,8 @@ module.exports = async (req, res) => {
         );
 
         if (buyerResp.status === 409) {
-            // Misma orden con otro destinatario o contenido: ya se envió una vez
-            return res.status(409).json({ error: 'Este finiquito ya se envió por correo. Usa el enlace del correo o descárgalo desde la página.' });
+            // Este número de envío ya se usó con otro destinatario o contenido
+            return res.status(409).json({ error: 'Ese envío ya se hizo con otros datos. Pulsa «Reenviar a mi correo» para mandar la versión corregida.' });
         }
         if (!buyerResp.ok) {
             const errText = await buyerResp.text();
