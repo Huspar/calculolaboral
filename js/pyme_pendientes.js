@@ -8,6 +8,7 @@
  * Solo avisos que se pueden calcular con certeza a partir de la ficha: nada de montos de Previred ni de decisiones legales.
  * Ingreso mínimo (art. 44): proporcional solo en jornada parcial de hasta 30 horas (art. 40 bis), como el motor de
  * liquidaciones. Se avisa también cuando el mínimo de uno de los dos meses siguientes ya está cargado y sube.
+ * Ley Karin (art. 211-A, Ley 21.643): un aviso agrupado con quienes no tienen anotada la entrega del protocolo de prevención.
  * Reajuste por IPC pactado en el contrato (ficha: reajusteIPC 'semestral' | 'anual' y reajusteMes 1-12): aviso en el mes que
  * corresponde, sin calcular el IPC (lo publica el INE).
  * Cada aviso dice en qué norma se apoya. Los plazos de cotizaciones se muestran con la advertencia de confirmarlos en Previred
@@ -160,6 +161,14 @@
                 }
             }
         });
+
+        // Ley Karin: protocolo de prevención dado a conocer a cada trabajador (art. 211-A)
+        var sinKarin = activos.filter(function (t) { return !t.karinEntrega; });
+        if (sinKarin.length) {
+            agregar('karin', 'info', 'Ley Karin: anota la entrega del protocolo',
+                'Falta registrar cuándo diste a conocer el protocolo de prevención del acoso y la violencia en el trabajo a ' + sinKarin.map(function (t) { return t.nombre; }).join(', ') +
+                ' (art. 211-A del Código del Trabajo). Se anota en la ficha de cada persona.', { tipo: 'trabajador', id: sinKarin[0].id });
+        }
 
         // Liquidaciones del mes sin emitir (solo si el panel cargó los meses de ese periodo)
         var liq = opciones.liquidaciones, toca = periodoLiquidacion(hoy);

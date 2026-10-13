@@ -9,7 +9,7 @@ let ok = 0;
 function caso(nombre, fn) { try { fn(); ok++; console.log('  ok  ' + nombre); } catch (e) { console.error('  FALLA  ' + nombre + '\n         ' + e.message); process.exitCode = 1; } }
 
 const EMPRESA = { razonSocial: 'La Espiga', rut: '76.845.123-0' };
-const T = (extra) => Object.assign({ id: 't1', nombre: 'Ana Pérez', rut: '12.345.678-5', activo: true, contrato: 'indefinido', jornadaHoras: 42, sueldoBase: 650000, fechaIngreso: '2022-03-15', aniosOtrosEmpleadores: 0, renovaciones: 0 }, extra);
+const T = (extra) => Object.assign({ id: 't1', nombre: 'Ana Pérez', rut: '12.345.678-5', activo: true, contrato: 'indefinido', jornadaHoras: 42, sueldoBase: 650000, fechaIngreso: '2022-03-15', aniosOtrosEmpleadores: 0, renovaciones: 0, karinEntrega: '2024-08-01' }, extra);
 const est = (trabajadores, extra) => Object.assign({ empresa: EMPRESA, trabajadores, limites: { maxActivos: 1, paseVence: null } }, extra);
 const RESP = '2026-10-01T10:00:00Z'; // respaldo reciente para que no moleste en las pruebas que no lo miran
 const correr = (e, hoy, extra) => M.pendientes(e, Object.assign({ hoy, P, F, ultimoRespaldo: RESP }, extra));
@@ -91,6 +91,13 @@ caso('reajuste por IPC pactado: aviso en su mes (y seis meses después si es sem
     assert.ok(pend(correr(est([T({ reajusteIPC: 'semestral', reajusteMes: 9 })]), '2026-03-02'), 'reajuste-t1'), 'septiembre + 6 = marzo');
     assert.ok(!pend(correr(est([T({ reajusteIPC: 'no', reajusteMes: 1 })]), '2027-01-10'), 'reajuste-t1'));
     assert.ok(!pend(correr(est([T({ reajusteIPC: 'anual', reajusteMes: 10, fechaIngreso: '2026-10-01' })]), '2026-10-10'), 'reajuste-t1'), 'recién ingresado no');
+});
+caso('Ley Karin: un solo aviso con quienes no tienen anotada la entrega del protocolo', () => {
+    const a = T({ id: 'a', nombre: 'Ana', karinEntrega: '' }), b = T({ id: 'b', nombre: 'Bruno', karinEntrega: '2026-08-01' }), c = T({ id: 'c', nombre: 'Carla', karinEntrega: '' });
+    const p = pend(correr(est([a, b, c]), '2026-10-20'), 'karin');
+    assert.ok(p && /Ana, Carla/.test(p.texto) && !/Bruno/.test(p.texto) && /211-A/.test(p.texto), JSON.stringify(p));
+    assert.deepStrictEqual(p.accion, { tipo: 'trabajador', id: 'a' });
+    assert.ok(!pend(correr(est([b]), '2026-10-20'), 'karin'));
 });
 caso('el mínimo usa el valor del mes: en enero de 2026 era $539.000 y la jornada máxima 44 horas', () => {
     assert.ok(!pend(correr(est([T({ jornadaHoras: 44, sueldoBase: 539000 })]), '2026-01-20'), 'minimo-t1'));

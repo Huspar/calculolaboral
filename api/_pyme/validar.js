@@ -65,6 +65,9 @@ const CAMPOS_TRABAJADOR = {
     // Reajuste por IPC pactado en el contrato: el asistente avisa en el mes que corresponde
     reajusteIPC: { t: 'enum', valores: ['no', 'semestral', 'anual'], def: 'no' },
     reajusteMes: { t: 'entero', min: 1, max: 12, def: 1 },
+    // Ley Karin (art. 211-A): fecha en que se dio a conocer el protocolo de prevención y si hay constancia firmada
+    karinEntrega: { t: 'fecha' },
+    karinConstancia: { t: 'bool', def: false },
     activo: { t: 'bool', def: true }
 };
 
