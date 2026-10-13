@@ -204,7 +204,7 @@
             'empresa-domicilio', 'empresa-ciudad',
             'trabajador-nombre', 'trabajador-rut', 'trabajador-cargo',
             'trabajador-domicilio', 'trabajador-ciudad',
-            'fecha-inicio', 'fecha-termino', 'fecha-pago', 'causal-select',
+            'fecha-inicio', 'fecha-termino', 'fecha-pago', 'causal-select', 'causal-160',
             'sueldo-base', 'gratificacion', 'asignaciones', 'promedio-variables',
             'vacaciones-pendientes', 'aviso-previo', 'zona-extrema', 'incluir-dias', 'afp-select',
             'afc-tipo', 'afc-monto-exacto', 'descuento-anticipos',
@@ -335,6 +335,7 @@
             setText('fecha-termino', data.fechaTermino);
             setText('fecha-pago', data.fechaPago);
             setText('causal-select', data.causal);
+            setText('causal-160', data.causal160);
 
             setMoney('sueldo-base', data.sueldoBase);
             setMoney('gratificacion', data.gratificacion);
@@ -359,6 +360,11 @@
                 const el = document.getElementById('zona-extrema');
                 if (el) el.checked = !!data.isExtremeZone;
             }
+            if (data.incluirDias !== undefined) {
+                const el = document.getElementById('incluir-dias');
+                if (el) el.checked = !!data.incluirDias;
+            }
+            setText('afp-select', data.afp);
         } catch (e) {
             console.warn('No se pudo cargar borrador local', e);
         }
@@ -398,8 +404,16 @@
         setTextIfPresent('vacaciones-pendientes', getVal('vacationDaysPending'));
         
         if (params.get('cause')) {
+            // La calculadora manda 159_2; el selector usa 159-2. Si no existe, se avisa en vez de usar 161.
             const causalEl = document.getElementById('causal-select');
-            if (causalEl) causalEl.value = params.get('cause');
+            const valor = String(params.get('cause')).replace('_', '-');
+            if (causalEl) {
+                if (Array.from(causalEl.options).some(o => o.value === valor)) {
+                    causalEl.value = valor;
+                } else {
+                    alert('No reconocimos la causal de término que venía de la calculadora. Elígela en el paso 3.');
+                }
+            }
         }
 
         // Default fecha-pago to today if empty
@@ -500,6 +514,8 @@
     function updateAll() {
         const rawData = getRawFormData();
         const is161 = rawData.causal === '161';
+        const box160 = document.getElementById('causal-160-box');
+        if (box160) box160.style.display = rawData.causal === '160' ? '' : 'none';
         const avisoBox = document.getElementById('aviso-previo-box');
         const afcBox = document.getElementById('afc-config-box');
         if (avisoBox) avisoBox.style.display = is161 ? 'block' : 'none';
@@ -557,6 +573,7 @@
             fechaTermino: getV('fecha-termino') || '2026-09-19',
             fechaPago: getV('fecha-pago') || '2026-09-19',
             causal: getV('causal-select') || '161',
+            causal160: getV('causal-160'),
 
             sueldoBase: getN('sueldo-base'),
             gratificacion: getN('gratificacion'),
@@ -760,44 +777,65 @@
     function renderNotaryDocument(f, c) {
         if (!c) return;
 
-        // Título de Causal Legal
+        // Causal legal y su fundamento (los hechos quedan en la carta de aviso, no se inventan aquí)
+        const CAUSALES_160 = {
+            '160-1a': 'Nº 1 letra a) (falta de probidad del trabajador en el desempeño de sus funciones)',
+            '160-1b': 'Nº 1 letra b) (conductas de acoso sexual)',
+            '160-1c': 'Nº 1 letra c) (vías de hecho ejercidas por el trabajador)',
+            '160-1d': 'Nº 1 letra d) (injurias proferidas por el trabajador al empleador)',
+            '160-1e': 'Nº 1 letra e) (conducta inmoral del trabajador que afecta a la empresa)',
+            '160-1f': 'Nº 1 letra f) (conductas de acoso laboral)',
+            '160-2': 'Nº 2 (negociaciones dentro del giro del negocio prohibidas por escrito en el contrato)',
+            '160-3': 'Nº 3 (no concurrencia a sus labores sin causa justificada)',
+            '160-4': 'Nº 4 (abandono del trabajo)',
+            '160-5': 'Nº 5 (actos, omisiones o imprudencias temerarias que afectan la seguridad o la salud)',
+            '160-6': 'Nº 6 (perjuicio material causado intencionalmente)',
+            '160-7': 'Nº 7 (incumplimiento grave de las obligaciones que impone el contrato)'
+        };
+        const tt = 'el(la) Trabajador(a)';
         let causalTexto = '';
         let causalFundamento = '';
         if (f.causal === '161') {
-            causalTexto = 'Artículo 161 inciso 1º del Código del Trabajo (Necesidades de la Empresa)';
-            causalFundamento = 'motivos de índole económica y de modernización o racionalización de los servicios de la empresa que hacen necesaria e impostergable la desvinculación';
+            causalTexto = 'artículo 161 inciso primero del Código del Trabajo (necesidades de la empresa, establecimiento o servicio)';
+            causalFundamento = `conforme a los hechos expresados en la comunicación escrita de término entregada a ${tt}`;
+        } else if (f.causal === '159-1') {
+            causalTexto = 'artículo 159 Nº 1 del Código del Trabajo (mutuo acuerdo de las partes)';
+            causalFundamento = 'en virtud del acuerdo de ambas partes';
         } else if (f.causal === '159-2') {
-            causalTexto = 'Artículo 159 Nº 2 del Código del Trabajo (Renuncia Voluntaria del Trabajador)';
-            causalFundamento = 'determinación personal y voluntaria del propio trabajador debidamente comunicada a la empleadora';
+            causalTexto = 'artículo 159 Nº 2 del Código del Trabajo (renuncia del trabajador)';
+            causalFundamento = `en virtud de la renuncia presentada por ${tt}`;
         } else if (f.causal === '159-4') {
-            causalTexto = 'Artículo 159 Nº 4 del Código del Trabajo (Vencimiento del Plazo Convenido)';
-            causalFundamento = 'llegada del plazo expresamente convenido por las partes en el respectivo contrato de trabajo';
+            causalTexto = 'artículo 159 Nº 4 del Código del Trabajo (vencimiento del plazo convenido en el contrato)';
+            causalFundamento = 'por haber llegado el plazo convenido por las partes';
         } else if (f.causal === '159-5') {
-            causalTexto = 'Artículo 159 Nº 5 del Código del Trabajo (Conclusión del Trabajo o Servicio que dio Origen al Contrato)';
-            causalFundamento = 'haber concluido de manera íntegra y efectiva la obra, faena o servicio para el cual fue contratado el trabajador';
+            causalTexto = 'artículo 159 Nº 5 del Código del Trabajo (conclusión del trabajo o servicio que dio origen al contrato)';
+            causalFundamento = 'por haber concluido la obra, faena o servicio que dio origen al contrato';
         } else {
-            causalTexto = 'Artículo 160 del Código del Trabajo';
-            causalFundamento = 'las causales subjetivas e imputables previstas expresamente en la ley';
+            causalTexto = `artículo 160 ${CAUSALES_160[f.causal160] || '[Nº y letra de la causal]'} del Código del Trabajo`;
+            causalFundamento = `conforme a los hechos expresados en la carta de despido entregada a ${tt}`;
         }
+        const esDespido = !(f.causal === '159-1' || f.causal === '159-2');
 
         // Forma de pago texto legal
+        const banco = escapeHtml(f.bancoDetalle);
         let formaPagoTexto = '';
         if (f.formaPago === 'transferencia') {
-            formaPagoTexto = `mediante transferencia electrónica de fondos a la cuenta bancaria del trabajador (${f.bancoDetalle})`;
+            formaPagoTexto = `mediante transferencia electrónica de fondos a la cuenta del(de la) Trabajador(a) (${banco})`;
         } else if (f.formaPago === 'cheque') {
-            formaPagoTexto = `mediante cheque nominativo y cruzado a nombre del trabajador (${f.bancoDetalle})`;
+            formaPagoTexto = `mediante cheque nominativo a nombre del(de la) Trabajador(a) (${banco})`;
         } else if (f.formaPago === 'vale-vista') {
-            formaPagoTexto = `mediante Vale Vista bancario a nombre del trabajador emitido por entidad bancaria de la plaza`;
+            formaPagoTexto = 'mediante vale vista bancario a nombre del(de la) Trabajador(a)';
         } else {
-            formaPagoTexto = `en dinero efectivo y moneda de curso legal al contado en este mismo acto`;
+            formaPagoTexto = 'en dinero efectivo';
         }
+        const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 
         // Construir tabla de Haberes HTML
         let haberesRows = '';
         if (c.yearsOfServiceIndemnity && c.yearsOfServiceIndemnity.applied) {
             haberesRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Indemnización Legal por Años de Servicio (${c.serviceTime.cappedIndemnityYears} años - Art. 163)</td>
+                    <td class="py-1 px-2 border border-gray-300">Indemnización por años de servicio (${plural(c.serviceTime.cappedIndemnityYears, 'año', 'años')}, art. 163)</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono">${formatMoney(c.yearsOfServiceIndemnity.total)}</td>
                 </tr>
             `;
@@ -805,7 +843,7 @@
         if (c.noticeIndemnity && c.noticeIndemnity.applied) {
             haberesRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Indemnización Sustitutiva de Aviso Previo (Art. 161 inc. 2º / 162)</td>
+                    <td class="py-1 px-2 border border-gray-300">Indemnización sustitutiva del aviso previo (art. 161 inc. 2º y art. 162)</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono">${formatMoney(c.noticeIndemnity.total)}</td>
                 </tr>
             `;
@@ -813,7 +851,7 @@
         if (c.vacationIndemnity && c.vacationIndemnity.total > 0) {
             haberesRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Indemnización por Feriado Legal y Proporcional (${c.vacationIndemnity.details} - Art. 67 y 73)</td>
+                    <td class="py-1 px-2 border border-gray-300">Feriado legal y proporcional (${String(c.vacationIndemnity.totalCalendarDays).replace('.', ',')} días corridos, arts. 67 y 73)</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono">${formatMoney(c.vacationIndemnity.total)}</td>
                 </tr>
             `;
@@ -828,7 +866,7 @@
         }
         haberesRows += `
             <tr class="bg-gray-50 font-semibold">
-                <td class="py-1.5 px-2 border border-gray-300">TOTAL HABERES BRUTOS</td>
+                <td class="py-1.5 px-2 border border-gray-300">TOTAL HABERES</td>
                 <td class="py-1.5 px-2 border border-gray-300 text-right font-mono">${formatMoney(c.totalHaberes)}</td>
             </tr>
         `;
@@ -862,7 +900,7 @@
         if (f.descuentoAnticipos > 0) {
             descuentosRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Descuento por Anticipos de Remuneración Otorgados</td>
+                    <td class="py-1 px-2 border border-gray-300">Descuento por anticipos de remuneración</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono text-red-700">-${formatMoney(f.descuentoAnticipos)}</td>
                 </tr>
             `;
@@ -870,7 +908,7 @@
         if (f.descuentoPrestamos > 0) {
             descuentosRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Descuento Préstamo Caja de Compensación (CCAF)</td>
+                    <td class="py-1 px-2 border border-gray-300">Descuento de crédito social de Caja de Compensación (CCAF)</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono text-red-700">-${formatMoney(f.descuentoPrestamos)}</td>
                 </tr>
             `;
@@ -878,7 +916,7 @@
         if (f.descuentoAlimentos > 0) {
             descuentosRows += `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300">Retención Judicial Pensión de Alimentos (Ley Nº 21.389)</td>
+                    <td class="py-1 px-2 border border-gray-300">Retención judicial de pensión de alimentos (art. 13 Ley Nº 14.908)</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono text-red-700">-${formatMoney(f.descuentoAlimentos)}</td>
                 </tr>
             `;
@@ -887,14 +925,14 @@
         if (c.totalDescuentos === 0) {
             descuentosRows = `
                 <tr>
-                    <td class="py-1 px-2 border border-gray-300 italic text-gray-500">Sin descuentos convencionales o judiciales que deducir</td>
+                    <td class="py-1 px-2 border border-gray-300 italic text-gray-500">Sin descuentos</td>
                     <td class="py-1 px-2 border border-gray-300 text-right font-mono">$0</td>
                 </tr>
             `;
         }
         descuentosRows += `
             <tr class="bg-gray-50 font-semibold">
-                <td class="py-1.5 px-2 border border-gray-300">TOTAL DESCUENTOS DEDUCIBLES</td>
+                <td class="py-1.5 px-2 border border-gray-300">TOTAL DESCUENTOS</td>
                 <td class="py-1.5 px-2 border border-gray-300 text-right font-mono text-red-700">-${formatMoney(c.totalDescuentos)}</td>
             </tr>
         `;
@@ -903,38 +941,44 @@
         const docEl = document.getElementById('notary-document-body');
         if (!docEl) return;
 
+        const st = c.serviceTime || { years: 0, months: 0, days: 0 };
+        const montoAlimentos = f.descuentoAlimentos || 0;
+        const clausulaSexto = esDespido
+            ? `<strong><u>SEXTO:</u> COTIZACIONES PREVISIONALES.</strong> Para los efectos del artículo 162, inciso quinto y siguientes, del Código del Trabajo, la Empleadora declara que se encuentran íntegramente pagadas las cotizaciones previsionales y de seguridad social del(de la) Trabajador(a) devengadas hasta el último día del mes anterior al del término de los servicios, lo que acredita con los certificados de las instituciones respectivas, que se adjuntan y se exhiben al ministro de fe.`
+            : `<strong><u>SEXTO:</u> COTIZACIONES PREVISIONALES.</strong> La Empleadora declara que se encuentran íntegramente pagadas las cotizaciones previsionales y de seguridad social del(de la) Trabajador(a) devengadas hasta el último día del mes anterior al del término de los servicios, lo que acredita con los certificados de las instituciones respectivas, que se adjuntan.`;
+        const clausulaSeptimo = montoAlimentos > 0
+            ? `<strong><u>SÉPTIMO:</u> PENSIÓN DE ALIMENTOS.</strong> Para los efectos del artículo 13 de la Ley Nº 14.908, modificado por la Ley Nº 21.389, la Empleadora declara que se encuentra sujeta a una orden judicial de retención de pensión de alimentos respecto del(de la) Trabajador(a), y que retuvo de las sumas de este finiquito <strong>${formatMoney(montoAlimentos)}</strong>, que entera en la cuenta ordenada por el tribunal, según los comprobantes que exhibe al ministro de fe.`
+            : `<strong><u>SÉPTIMO:</u> PENSIÓN DE ALIMENTOS.</strong> Para los efectos del artículo 13 de la Ley Nº 14.908, modificado por la Ley Nº 21.389, la Empleadora declara que consultó el Registro Nacional de Deudores de Pensiones de Alimentos respecto del(de la) Trabajador(a) y que no se encuentra sujeta a una orden judicial de retención de pensión de alimentos respecto de él(ella).`;
+
         docEl.innerHTML = `
-            <!-- Encabezado Notarial -->
+            <!-- Encabezado -->
             <div class="text-center pb-6 border-b border-gray-400">
                 <h2 class="text-xl font-bold uppercase tracking-wider text-gray-900 font-serif">FINIQUITO DE CONTRATO DE TRABAJO</h2>
-                <p class="text-xs uppercase text-gray-600 mt-1 font-serif">RATIFICADO ANTE MINISTRO DE FE — ARTÍCULO 177 CÓDIGO DEL TRABAJO DE CHILE</p>
+                <p class="text-xs uppercase text-gray-600 mt-1 font-serif">ARTÍCULO 177 DEL CÓDIGO DEL TRABAJO</p>
             </div>
 
             <!-- Comparecencia -->
             <div class="mt-6 text-justify text-sm leading-relaxed font-serif text-gray-900 space-y-4">
                 <p>
-                    En la ciudad de <strong>${escapeHtml(f.empresaCiudad)}</strong>, República de Chile, a <strong>${formatLegalDate(f.fechaPago)}</strong>, comparecen por una parte, como empleadora, la sociedad <strong>${escapeHtml(f.empresaRazon)}</strong>, Rol Único Tributario Nº <strong>${escapeHtml(f.empresaRut)}</strong>, domiciliada para estos efectos en <strong>${escapeHtml(f.empresaDomicilio)}</strong>, de la ciudad de ${escapeHtml(f.empresaCiudad)}, en adelante e indistintamente denominada <em>"la Empleadora"</em>, representada legalmente por don(ña) <strong>${escapeHtml(f.empresaRepNombre)}</strong>, cédula nacional de identidad Nº <strong>${escapeHtml(f.empresaRepRut)}</strong>; y por la otra parte, como trabajador(a), don(ña) <strong>${escapeHtml(f.trabajadorNombre)}</strong>, cédula nacional de identidad Nº <strong>${escapeHtml(f.trabajadorRut)}</strong>, domiciliado(a) en <strong>${escapeHtml(f.trabajadorDomicilio)}</strong>, de la ciudad de ${escapeHtml(f.trabajadorCiudad)}, en adelante <em>"el(la) Trabajador(a)"</em>; quienes declaran y acuerdan otorgar el siguiente <strong>FINIQUITO DE CONTRATO DE TRABAJO</strong>:
+                    En <strong>${escapeHtml(f.empresaCiudad)}</strong>, a <strong>${formatLegalDate(f.fechaPago)}</strong>, comparecen, por una parte, como empleadora, <strong>${escapeHtml(f.empresaRazon)}</strong>, RUT Nº <strong>${escapeHtml(f.empresaRut)}</strong>, con domicilio en <strong>${escapeHtml(f.empresaDomicilio)}</strong>, ${escapeHtml(f.empresaCiudad)}, representada por don/doña <strong>${escapeHtml(f.empresaRepNombre)}</strong>, cédula de identidad Nº <strong>${escapeHtml(f.empresaRepRut)}</strong>, en adelante <em>"la Empleadora"</em>; y, por la otra, don/doña <strong>${escapeHtml(f.trabajadorNombre)}</strong>, cédula de identidad Nº <strong>${escapeHtml(f.trabajadorRut)}</strong>, con domicilio en <strong>${escapeHtml(f.trabajadorDomicilio)}</strong>, ${escapeHtml(f.trabajadorCiudad)}, en adelante <em>"el(la) Trabajador(a)"</em>; quienes acuerdan el siguiente finiquito de contrato de trabajo:
                 </p>
 
-                <!-- Cláusula Primera -->
                 <p>
-                    <strong><u>PRIMERO:</u> ANTECEDENTES Y RELACIÓN LABORAL.</strong> Las partes dejan expresa y formal constancia de que don(ña) ${escapeHtml(f.trabajadorNombre)} prestó servicios continuos e ininterrumpidos para la Empleadora desde el <strong>${formatLegalDate(f.fechaInicio)}</strong> hasta el <strong>${formatLegalDate(f.fechaTermino)}</strong>, desempeñándose como <strong>${escapeHtml(f.trabajadorCargo)}</strong>, bajo régimen de subordinación y dependencia. La relación laboral tuvo una vigencia efectiva y continua de <strong>${c.serviceTime.years} años, ${c.serviceTime.months} meses y ${c.serviceTime.days} días</strong>.
+                    <strong><u>PRIMERO:</u> RELACIÓN LABORAL.</strong> El(la) Trabajador(a) prestó servicios para la Empleadora desde el <strong>${formatLegalDate(f.fechaInicio)}</strong> hasta el <strong>${formatLegalDate(f.fechaTermino)}</strong>, como <strong>${escapeHtml(f.trabajadorCargo)}</strong>. La relación laboral tuvo una duración de <strong>${plural(st.years, 'año', 'años')}, ${plural(st.months, 'mes', 'meses')} y ${plural(st.days, 'día', 'días')}</strong>.
                 </p>
 
-                <!-- Cláusula Segunda -->
                 <p>
-                    <strong><u>SEGUNDO:</u> TÉRMINO DE LA RELACIÓN Y CAUSAL LEGAL.</strong> Las partes declaran que la relación laboral habida entre ellas ha terminado en forma definitiva e irrevocable el día <strong>${formatLegalDate(f.fechaTermino)}</strong>, por la causal legal consagrada en el <strong>${causalTexto}</strong>, fundamentada en ${causalFundamento}.
+                    <strong><u>SEGUNDO:</u> TÉRMINO Y CAUSAL.</strong> El contrato de trabajo terminó el <strong>${formatLegalDate(f.fechaTermino)}</strong> por la causal del <strong>${causalTexto}</strong>, ${causalFundamento}.
                 </p>
 
-                <!-- Cláusula Tercera: Liquidación -->
                 <div>
                     <p class="mb-2">
-                        <strong><u>TERCERO:</u> LIQUIDACIÓN DE HABERES E INDEMNIZACIONES.</strong> Con ocasión del término de la relación laboral precedentemente señalada, la Empleadora practica la liquidación pormenorizada de todos y cada uno de los haberes e indemnizaciones que en derecho corresponden al(a la) Trabajador(a), conforme al siguiente detalle específico:
+                        <strong><u>TERCERO:</u> HABERES E INDEMNIZACIONES.</strong> Con motivo del término del contrato, la Empleadora liquida los siguientes haberes e indemnizaciones:
                     </p>
                     <table class="w-full text-xs border-collapse border border-gray-400 mt-2 mb-3 font-sans">
                         <thead>
                             <tr class="bg-gray-100 text-gray-800">
-                                <th class="py-1 px-2 border border-gray-300 text-left">CONCEPTO / RUBRO LIQUIDADO</th>
+                                <th class="py-1 px-2 border border-gray-300 text-left">CONCEPTO</th>
                                 <th class="py-1 px-2 border border-gray-300 text-right w-36">MONTO (CLP)</th>
                             </tr>
                         </thead>
@@ -944,15 +988,14 @@
                     </table>
                 </div>
 
-                <!-- Cláusula Cuarta: Descuentos -->
                 <div>
                     <p class="mb-2">
-                        <strong><u>CUARTO:</u> DESCUENTOS Y DEDUCCIONES LEGALES.</strong> De las sumas devengadas detalladas en la cláusula anterior, se deducen los siguientes rubros legal y convencionalmente procedentes:
+                        <strong><u>CUARTO:</u> DESCUENTOS.</strong> De las sumas anteriores se descuentan los siguientes conceptos:
                     </p>
                     <table class="w-full text-xs border-collapse border border-gray-400 mt-2 mb-3 font-sans">
                         <thead>
                             <tr class="bg-gray-100 text-gray-800">
-                                <th class="py-1 px-2 border border-gray-300 text-left">DETALLE DEL DESCUENTO</th>
+                                <th class="py-1 px-2 border border-gray-300 text-left">DESCUENTO</th>
                                 <th class="py-1 px-2 border border-gray-300 text-right w-36">MONTO (CLP)</th>
                             </tr>
                         </thead>
@@ -962,47 +1005,42 @@
                     </table>
                 </div>
 
-                <!-- Cláusula Quinta: Saldo Líquido -->
                 <div data-docx="recuadro" class="p-3 bg-gray-50 border border-gray-300 rounded">
                     <p>
-                        <strong><u>QUINTO:</u> SALDO LÍQUIDO A PAGAR Y FORMA DE PAGO.</strong> Deducidos los descuentos individualizados, resulta la suma líquida, neta y única a favor del(de la) Trabajador(a) ascendente a <strong>${formatMoney(c.saldoLiquidoFinal)} (${numberToWords(c.saldoLiquidoFinal)})</strong>, monto que la Empleadora paga ${formaPagoTexto}, recibiéndolo el(la) Trabajador(a) a su entera satisfacción, declarando no tener reclamo alguno respecto de su cuantía.
+                        <strong><u>QUINTO:</u> SALDO Y FORMA DE PAGO.</strong> Deducidos los descuentos, resulta un saldo líquido a favor del(de la) Trabajador(a) de <strong>${formatMoney(c.saldoLiquidoFinal)} (${numberToWords(c.saldoLiquidoFinal)})</strong>, que la Empleadora paga ${formaPagoTexto}, y que el(la) Trabajador(a) declara recibir en este acto, sin perjuicio de la reserva de derechos que formule.
                     </p>
                 </div>
 
-                <!-- Cláusula Sexta: Ley Bustos -->
+                <p>${clausulaSexto}</p>
+
+                <p>${clausulaSeptimo}</p>
+
                 <p>
-                    <strong><u>SEXTO:</u> DECLARACIÓN JURADA DE COTIZACIONES PREVISIONALES (LEY Nº 19.631).</strong> Para dar estricto cumplimiento a lo prescrito en los incisos 5º al 9º del artículo 162 del Código del Trabajo (Ley Bustos), la Empleadora acredita y declara bajo juramento que tiene íntegramente pagadas y enteradas todas las imposiciones y cotizaciones previsionales del(de la) Trabajador(a) correspondientes a fondos de pensiones (AFP), salud (Fonasa/Isapre) y seguro de cesantía (AFC), devengadas hasta el último día del mes inmediatamente anterior al término de los servicios, adjuntándose al presente instrumento los certificados de cotizaciones correspondientes.
+                    <strong><u>OCTAVO:</u> PODER LIBERATORIO.</strong> Sin perjuicio de la reserva de derechos que el(la) Trabajador(a) formule en este instrumento, la que tendrá pleno valor, las partes declaran que con el pago del saldo señalado en la cláusula quinta quedan íntegramente pagados los conceptos detallados en las cláusulas tercera y cuarta, y que nada se adeudan por remuneraciones, feriado, horas extraordinarias ni indemnizaciones derivadas del contrato de trabajo y de su término, por lo que se otorgan el más amplio finiquito respecto de dichas materias. Este finiquito no comprende las cotizaciones previsionales y de seguridad social ni los derechos que la ley declara irrenunciables.
                 </p>
 
-                <!-- Cláusula Séptima: Ley 21.389 (Pensión Alimentos) -->
                 <p>
-                    <strong><u>SÉPTIMO:</u> CUMPLIMIENTO LEY Nº 21.389 (REGISTRO NACIONAL DE DEUDORES DE PENSIONES DE ALIMENTOS).</strong> En conformidad a lo establecido en los artículos 32 y 33 de la Ley Nº 21.389, la Empleadora deja constancia de haber consultado el Registro Nacional de Deudores de Pensiones de Alimentos del Servicio de Registro Civil e Identificación respecto del(de la) Trabajador(a). Se deja constancia de que no existen retenciones judiciales pendientes, o bien se ha practicado la retención y entero respectivo en la cuenta bancaria ordenada por el tribunal competente.
-                </p>
-
-                <!-- Cláusula Octava: Finiquito Amplio y Reserva -->
-                <p>
-                    <strong><u>OCTAVO:</u> FINIQUITO AMPLIO, PODER LIBERATORIO Y RESERVA DE DERECHOS.</strong> Salvas las reservas de derechos que el(la) Trabajador(a) estampe de su propio puño y letra o de conformidad con la Ley Nº 21.361, las partes declaran que con el pago de la suma antes señalada, la Empleadora nada le adeuda al(a la) Trabajador(a) por concepto de remuneraciones, horas extraordinarias, feriado legal o proporcional, asignaciones, indemnizaciones legales o convencionales, ni por ningún otro concepto de origen legal, contractual o extracontractual. Por consiguiente, el(la) Trabajador(a) otorga a la Empleadora el más amplio, total, completo e irrevocable finiquito, renunciando a toda acción judicial o administrativa posterior, salvo las excepciones legales ya referidas.
-                </p>
-
-                <!-- Cláusula Novena: Ejemplares -->
-                <p>
-                    <strong><u>NOVENO:</u> EJEMPLARES Y RATIFICACIÓN.</strong> El presente finiquito se extiende en 3 (tres) ejemplares de idéntico tenor, validez y fecha, quedando 1 en poder de la Empleadora, 1 en poder del(de la) Trabajador(a) y 1 en la Notaría actuante, siendo ratificado ante el Ministro de Fe que autoriza al pie.
+                    <strong><u>NOVENO:</u> EJEMPLARES.</strong> El presente finiquito se firma en tres ejemplares de igual tenor y fecha, quedando uno en poder del(de la) Trabajador(a), uno en poder de la Empleadora y el tercero a disposición del ministro de fe ante quien se ratifica, conforme al artículo 177 del Código del Trabajo.
                 </p>
             </div>
 
-            <!-- Sección de Firmas Notariales -->
-            <div class="mt-12 pt-8 border-t border-gray-400 font-serif">
+            <!-- Reserva de derechos: antes de las firmas, con firma propia del trabajador -->
+            <div data-docx="recuadro" class="mt-8 p-3 border border-dashed border-gray-400 text-xs text-gray-700 bg-gray-50/50 font-serif">
+                <p class="font-bold uppercase text-gray-800 text-xs mb-1">Reserva de derechos del(de la) Trabajador(a) (artículo 177 del Código del Trabajo):</p>
+                <p class="italic text-xs text-gray-500">[Escriba aquí de su puño y letra, antes de firmar, las materias que reserva. La reserva no impide recibir el pago de las sumas no discutidas. Si no formula reserva, cruce este espacio con una línea.]</p>
+                <p class="text-xs text-gray-700 mt-6">Firma del(de la) Trabajador(a): ________________________________</p>
+            </div>
+
+            <!-- Firmas -->
+            <div class="mt-12 pt-8 font-serif">
                 <div data-docx="firmas" class="grid grid-cols-2 gap-8 text-center text-xs">
-                    <!-- Firma Empleador -->
                     <div class="flex flex-col items-center">
                         <div class="w-48 border-b border-gray-900 mb-2"></div>
                         <p class="font-bold uppercase text-gray-900">${escapeHtml(f.empresaRazon)}</p>
                         <p class="text-gray-600">RUT: ${escapeHtml(f.empresaRut)}</p>
-                        <p class="text-gray-600">Por don(ña) ${escapeHtml(f.empresaRepNombre)}</p>
+                        <p class="text-gray-600">p.p. ${escapeHtml(f.empresaRepNombre)}</p>
                         <p class="text-gray-500 text-xs">EMPLEADORA</p>
                     </div>
-
-                    <!-- Firma Trabajador -->
                     <div class="flex flex-col items-center">
                         <div class="w-48 border-b border-gray-900 mb-2"></div>
                         <p class="font-bold uppercase text-gray-900">${escapeHtml(f.trabajadorNombre)}</p>
@@ -1011,24 +1049,16 @@
                     </div>
                 </div>
 
-                <!-- Recuadro Reserva de Derechos -->
-                <div data-docx="recuadro" class="mt-8 p-3 border border-dashed border-gray-400 text-xs text-gray-700 bg-gray-50/50">
-                    <p class="font-bold uppercase text-gray-800 text-xs mb-1">Espacio Exclusivo para Reserva de Derechos del Trabajador(a) (Ley Nº 21.361):</p>
-                    <p class="italic text-xs text-gray-500 h-8 flex items-center">
-                        [Si no formula reserva, cruzar con una línea. El trabajador conserva el derecho a reservar acciones laborales].
-                    </p>
-                </div>
-
-                <!-- Ratificación Notarial -->
+                <!-- Ratificación ante ministro de fe -->
                 <div class="mt-8 pt-4 border-t border-gray-300 text-center text-xs text-gray-600">
-                    <p class="font-bold uppercase tracking-wider text-gray-800">AUTORIZACIÓN ANTE MINISTRO DE FE</p>
+                    <p class="font-bold uppercase tracking-wider text-gray-800">RATIFICACIÓN ANTE MINISTRO DE FE</p>
                     <p class="mt-1">
-                        Autorizo las firmas estampadas precedentemente de don(ña) <strong>${escapeHtml(f.empresaRepNombre)}</strong> y de don(ña) <strong>${escapeHtml(f.trabajadorNombre)}</strong>, quienes previa exhibición de sus respectivas cédulas de identidad manifestaron haber leído y aceptado el contenido del presente instrumento.
+                        Ratificó ante mí el presente finiquito don/doña <strong>${escapeHtml(f.trabajadorNombre)}</strong>, cédula de identidad Nº <strong>${escapeHtml(f.trabajadorRut)}</strong>, y lo firmó en representación de la Empleadora don/doña <strong>${escapeHtml(f.empresaRepNombre)}</strong>, cédula de identidad Nº <strong>${escapeHtml(f.empresaRepRut)}</strong>, quienes acreditaron su identidad. Doy fe.
                     </p>
                     <div class="mt-8 flex justify-center">
                         <div data-docx="linea" class="w-64 border-b border-gray-900 pb-1"></div>
                     </div>
-                    <p class="text-gray-700 font-semibold mt-1">MINISTRO DE FE / NOTARIO PÚBLICO</p>
+                    <p class="text-gray-700 font-semibold mt-1">MINISTRO DE FE (artículo 177 del Código del Trabajo)</p>
                 </div>
             </div>
         `;
