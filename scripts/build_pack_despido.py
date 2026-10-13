@@ -79,7 +79,6 @@ class Builder:
             body.remove(k)
         self.doc.sections[0].footer.paragraphs[0].runs[0].text = pie
         self.sect_p = None
-        self.compacto = False  # hoja de la carta: menos espacio entre párrafos para que quepa en una página
 
     # --- piezas -------------------------------------------------------------
     def _add(self, el):
@@ -93,8 +92,6 @@ class Builder:
         proto = runs[0]._r
         for r in runs[1:]:
             r._r.getparent().remove(r._r)
-        if self.compacto and name == 'body':
-            p.paragraph_format.space_after = Pt(3)
         for i, (text, bold) in enumerate(segments):
             if i == 0:
                 r = runs[0]
@@ -225,23 +222,27 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     b.revisa()
     b.nota()
     b.page_break()
-    # La carta ocupa una hoja: márgenes laterales de 1,5 cm y 3 pt entre párrafos (la hoja de instrucciones no cambia)
+    # La carta ocupa una hoja: márgenes laterales de 1,5 cm (la hoja de instrucciones no cambia)
     sec = b.doc.sections[-1]
     sec.left_margin = sec.right_margin = Cm(1.5)
-    b.compacto = True
     b.date()
     b.addr()
     b.salut()
     b.text(c['intro'])
-    # Títulos dentro del párrafo (sin línea aparte): la carta cabe en una sola hoja
-    b.lead('I. CAUSAL LEGAL INVOCADA:  ', c['causal'])
+    # Títulos dentro del párrafo (sin línea aparte), con 6 pt de aire arriba: la carta cabe en una sola hoja
+    def seccion(titulo, texto):
+        el = b.lead(titulo + '  ', texto)
+        docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.space_before = Pt(6)
+        return el
+
+    seccion('I. CAUSAL LEGAL INVOCADA:', c['causal'])
     hechos = list(c['hechos'])
-    b.lead(c.get('h2', 'II. HECHOS EN QUE SE FUNDA:') + '  ', hechos[0])
+    seccion(c.get('h2', 'II. HECHOS EN QUE SE FUNDA:'), hechos[0])
     for h in hechos[1:]:
         b.text(h)
-    b.lead('III. ESTADO DE PAGO DE COTIZACIONES PREVISIONALES:  ', COTIZ)
+    seccion('III. ESTADO DE PAGO DE COTIZACIONES PREVISIONALES:', COTIZ)
     # Si la carta pasa a otra hoja, el apartado IV, el cierre y la firma viajan juntos
-    for el in (b.lead('IV. FINIQUITO:  ', c['finiquito']), b.text(AVISO_FINIQUITO),
+    for el in (seccion('IV. FINIQUITO:', c['finiquito']), b.text(AVISO_FINIQUITO),
                b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))):
         docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.keep_with_next = True
     b.sig()
