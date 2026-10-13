@@ -37,6 +37,15 @@ caso('registro del contrato en Mi DT: desde el ingreso hasta 30 días después, 
     assert.ok(!pend(correr(est([nuevo]), '2026-09-20'), 'registro-t1'), 'más de una semana antes del ingreso no aparece');
     assert.strictEqual(M.plazoRegistroDT('2026-12-20'), '2027-01-04');
 });
+caso('registro en Mi DT: si no se emitió el contrato en el asistente, la acción lleva a emitirlo', () => {
+    const nuevo = T({ fechaIngreso: '2026-10-05' });
+    let p = pend(correr(est([nuevo]), '2026-10-08', { documentos: [] }), 'registro-t1');
+    assert.deepStrictEqual(p.accion, { tipo: 'documento', id: 't1', doc: 'contrato' });
+    assert.ok(/contrato y registro/.test(p.titulo));
+    p = pend(correr(est([nuevo]), '2026-10-08', { documentos: [{ trabajadorId: 't1', tipo: 'contrato', emitido: '2026-10-06T12:00:00Z' }] }), 'registro-t1');
+    assert.strictEqual(p.accion.tipo, 'trabajador');
+    assert.strictEqual(pend(correr(est([nuevo]), '2026-10-08'), 'registro-t1').accion.tipo, 'trabajador', 'sin la lista de documentos no se asume nada');
+});
 caso('plazo fijo por vencer: recuerda la carta y el registro del término en Mi DT', () => {
     const p = pend(correr(est([T({ contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-31' })]), '2026-10-20'), 'plazo-t1');
     assert.ok(p.texto.indexOf('3 días hábiles') >= 0 && p.texto.indexOf('Mi DT') >= 0);

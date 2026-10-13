@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.4.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
+ * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.5.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
  *
  *   pendientes(estado, { hoy: 'AAAA-MM-DD', P: parametros, F: feriados, ultimoRespaldo: 'ISO' | null, liquidaciones: { periodo, registros: [{ trabajadorId, emitida }] } })
  *   periodoLiquidacion(hoy) → { periodo, cuando: 'anterior' | 'actual' } | null   (el mes cuyas liquidaciones se cargan para el aviso)
@@ -98,11 +98,14 @@
                 var desdeIngreso = dias(t.fechaIngreso, hoy);
                 if (desdeIngreso >= -7 && desdeIngreso <= 30) {
                     var limite = plazoRegistroDT(t.fechaIngreso), restanReg = dias(hoy, limite);
-                    agregar('registro-' + t.id, restanReg <= 5 ? 'aviso' : 'info', t.nombre + ': registra su contrato en Mi DT',
+                    // Si el panel pasó los documentos emitidos y aún no hay contrato, la acción lleva a emitirlo
+                    var docs = opciones.documentos, sinContrato = Array.isArray(docs) && !docs.some(function (d) { return d.trabajadorId === t.id && d.tipo === 'contrato'; });
+                    agregar('registro-' + t.id, restanReg <= 5 ? 'aviso' : 'info', t.nombre + ': ' + (sinContrato ? 'contrato y registro en Mi DT' : 'registra su contrato en Mi DT'),
                         (restanReg >= 0
                             ? 'Si el contrato se firmó el día de ingreso (' + fechaLarga(t.fechaIngreso) + '), el plazo para registrarlo en el portal Mi DT de la Dirección del Trabajo vence el ' + fechaLarga(limite) + (restanReg === 0 ? ' (hoy).' : '.')
                             : 'Si el contrato se firmó el día de ingreso, el plazo para registrarlo en Mi DT venció el ' + fechaLarga(limite) + '.') +
-                        ' El contrato se firma dentro de 15 días desde el ingreso y se registra dentro de 15 días desde la firma (arts. 9 y 9 bis). Si ya lo registraste, no necesitas hacer nada.', acc);
+                        ' El contrato se firma dentro de 15 días desde el ingreso y se registra dentro de 15 días desde la firma (arts. 9 y 9 bis).' +
+                        (sinContrato ? ' Puedes emitir el contrato desde el asistente con su ficha.' : ' Si ya lo registraste, no necesitas hacer nada.'), sinContrato ? { tipo: 'documento', id: t.id, doc: 'contrato' } : acc);
                 }
             }
 

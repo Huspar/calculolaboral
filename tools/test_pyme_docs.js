@@ -14,9 +14,9 @@ const MES = (liquido) => ({ calculo: { liquido, totalHaberes: liquido + 100000, 
 const valido = (tipo, c, extra) => Object.assign(D.valoresIniciales(tipo, c), extra);
 const HECHOS = 'Desde marzo las ventas de la sucursal cayeron un 40% respecto del año anterior y se cerró el turno de tarde, por lo que el cargo de vendedora de ese turno dejó de ser necesario.';
 
-caso('hay ocho tipos y todos tienen campos y generador', () => {
-    assert.strictEqual(D.TIPOS.length, 8);
-    D.TIPOS.forEach(t => assert.ok(D.campos(t.id).length > 0, t.id));
+caso('hay once tipos en tres grupos y todos tienen campos y generador', () => {
+    assert.strictEqual(D.TIPOS.length, 11);
+    D.TIPOS.forEach(t => assert.ok(D.campos(t.id).length > 0 && D.GRUPOS.some(g => g[0] === t.grupo), t.id));
 });
 caso('sin completar los datos obligatorios no se puede emitir ni generar', () => {
     const c = ctx();
@@ -301,6 +301,91 @@ caso('finiquito: avisa el saldo de préstamos al mes de término, sin descontarl
     assert.ok(v.avisos.some(a => /saldo de \$200\.000/.test(a.texto) && /por escrito/.test(a.texto)), JSON.stringify(v.avisos.map(a => a.texto)));
     const sin = ctx(ANA(), { vac: VAC_ANA, saldoPrestamos: () => 0 });
     assert.ok(!D.validar('finiquito', sin, fin(sin, { causal: '159_2' })).avisos.some(a => /saldo de/.test(a.texto)));
+});
+
+// ---------- contrato, anexo y pacto de horas extra ----------
+const FICHA_CONTRATO = (extra) => TRAB(Object.assign({ nacionalidad: 'Chilena', fechaNacimiento: '1990-05-20', fechaIngreso: '2026-10-05', jornadaHoras: 42 }, extra));
+const FUNCIONES = 'Atender a los clientes en el local\n- Ordenar y reponer la mercadería\n3. Cerrar la caja al final del turno';
+
+caso('montos en palabras', () => {
+    assert.strictEqual(D.pesosEnLetras(650000), 'seiscientos cincuenta mil pesos');
+    assert.strictEqual(D.pesosEnLetras(1000000), 'un millón de pesos');
+    assert.strictEqual(D.pesosEnLetras(1521000), 'un millón quinientos veintiún mil pesos');
+    assert.strictEqual(D.pesosEnLetras(100000), 'cien mil pesos');
+    assert.strictEqual(D.pesosEnLetras(553553), 'quinientos cincuenta y tres mil quinientos cincuenta y tres pesos');
+});
+caso('contrato: exige los datos del art. 10 en la ficha y arma las cláusulas con la ficha', () => {
+    const sinNac = ctx(FICHA_CONTRATO({ nacionalidad: '', fechaNacimiento: '' }));
+    const f = D.validar('contrato', sinNac, valido('contrato', sinNac, { funciones: FUNCIONES })).faltaFicha.map(x => x.k);
+    assert.deepStrictEqual(f.sort(), ['fechaNacimiento', 'nacionalidad']);
+    const c = ctx(FICHA_CONTRATO());
+    const d = valido('contrato', c, { funciones: FUNCIONES, confidencialidad: true });
+    assert.strictEqual(d.horario, 'de lunes a viernes, de 08:30 a 17:54 horas, con un descanso de 60 minutos para colación, que no se considera trabajado');
+    assert.strictEqual(d.lugarTrabajo, 'Av. Principal 123, Temuco');
+    const v = D.validar('contrato', c, d);
+    assert.ok(v.puedeEmitir, JSON.stringify(v));
+    const h = D.generar('contrato', c, d, { pagada: true }).html;
+    ['seiscientos cincuenta mil pesos', 'de nacionalidad chilena', 'nacido/a el 20 de mayo de 1990', '42 horas semanales', '4,75 ingresos mínimos', 'colación por $40.000', 'duración indefinida', 'Ley N° 21.643', 'SÉPTIMO: Confidencialidad.', '<li>Ordenar y reponer la mercadería</li>', '<li>Cerrar la caja al final del turno</li>', 'Panadería &lt;La Espiga&gt; Ltda.'].forEach(s => assert.ok(h.indexOf(s) >= 0, s));
+    assert.ok(h.indexOf('[') < 0 && h.indexOf('undefined') < 0);
+    assert.ok(v.avisos.some(a => /Mi DT/.test(a.texto)));
+});
+caso('contrato: plazo fijo, obra, jornada parcial, gratificación pactada y avisos', () => {
+    const pf = ctx(FICHA_CONTRATO({ contrato: 'plazo_fijo', fechaTerminoPlazo: '' }));
+    assert.ok(D.validar('contrato', pf, valido('contrato', pf, { funciones: FUNCIONES })).faltaFicha.some(x => x.k === 'fechaTerminoPlazo'));
+    const pf2 = ctx(FICHA_CONTRATO({ contrato: 'plazo_fijo', fechaTerminoPlazo: '2027-01-04' }));
+    assert.ok(D.generar('contrato', pf2, valido('contrato', pf2, { funciones: FUNCIONES }), { pagada: true }).html.indexOf('hasta el 4 de enero de 2027') >= 0);
+    const ob = ctx(FICHA_CONTRATO({ contrato: 'obra' }));
+    assert.ok(D.validar('contrato', ob, valido('contrato', ob, { funciones: FUNCIONES })).errores.nombreObra);
+    const pa = ctx(FICHA_CONTRATO({ gratificacion: 'pactada', jornadaHoras: 20 }));
+    const vpa = D.validar('contrato', pa, valido('contrato', pa, { funciones: FUNCIONES }));
+    assert.ok(vpa.errores.gratificacionPactada);
+    assert.ok(vpa.avisos.some(a => /jornada parcial/.test(a.texto)));
+    assert.ok(!D.campoVisible(D.campos('contrato').find(x => x.k === 'gratificacionPactada'), c0(), {}));
+    const tarde = ctx(FICHA_CONTRATO({ fechaIngreso: '2026-09-01' }));
+    assert.ok(D.validar('contrato', tarde, valido('contrato', tarde, { funciones: FUNCIONES, fecha: '2026-10-12' })).avisos.some(a => /dentro de 15 días/.test(a.texto)));
+    const larga = ctx(FICHA_CONTRATO({ jornadaHoras: 44 }));
+    assert.ok(D.validar('contrato', larga, valido('contrato', larga, { funciones: FUNCIONES })).bloqueos.length);
+    const sinKarin = ctx(FICHA_CONTRATO());
+    assert.ok(D.validar('contrato', sinKarin, valido('contrato', sinKarin, { funciones: FUNCIONES, protocolo: false })).avisos.some(a => /Ley Karin/.test(a.texto)));
+});
+function c0() { return ctx(FICHA_CONTRATO()); }
+caso('anexo: sueldo, jornada, cargo, prórroga e indefinido', () => {
+    const c = ctx(TRAB());
+    let d = valido('anexo_contrato', c, { materia: 'sueldo', nuevoSueldo: 700000 });
+    assert.strictEqual(d.vigencia, '2026-11-01');
+    assert.ok(D.validar('anexo_contrato', c, d).puedeEmitir);
+    assert.ok(D.generar('anexo_contrato', c, d, { pagada: true }).html.indexOf('setecientos mil pesos') >= 0);
+    assert.ok(D.validar('anexo_contrato', c, Object.assign({}, d, { nuevoSueldo: 600000 })).avisos.some(a => /rebaja/.test(a.texto)));
+    assert.ok(D.validar('anexo_contrato', c, Object.assign({}, d, { nuevoSueldo: '' })).errores.nuevoSueldo);
+    d = valido('anexo_contrato', c, { materia: 'jornada', nuevaJornada: '43', nuevoHorario: 'de lunes a viernes' });
+    assert.ok(/42 horas/.test(D.validar('anexo_contrato', c, d).errores.nuevaJornada));
+    d = valido('anexo_contrato', c, { materia: 'cargo', nuevoCargo: 'Encargada de local', nuevasFunciones: 'Abrir y cerrar el local' });
+    assert.ok(D.generar('anexo_contrato', c, d, { pagada: true }).html.indexOf('Encargada de local') >= 0);
+    // prórroga
+    const pf = ctx(TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-05-04', fechaTerminoPlazo: '2026-10-31', renovaciones: 0 }));
+    d = valido('anexo_contrato', pf, { nuevoTermino: '2027-01-31', fecha: '2026-10-20' });
+    assert.strictEqual(d.materia, 'prorroga');
+    let v = D.validar('anexo_contrato', pf, d);
+    assert.ok(v.puedeEmitir, JSON.stringify(v));
+    assert.ok(v.avisos.some(a => /más de un año/.test(a.texto)) === false);
+    assert.ok(D.generar('anexo_contrato', pf, d, { pagada: true }).html.indexOf('hasta el <strong>31 de enero de 2027</strong>') >= 0);
+    assert.ok(D.validar('anexo_contrato', pf, Object.assign({}, d, { nuevoTermino: '2027-06-30' })).avisos.some(a => /más de un año/.test(a.texto)));
+    assert.ok(D.validar('anexo_contrato', pf, Object.assign({}, d, { nuevoTermino: '2026-10-15' })).errores.nuevoTermino);
+    assert.ok(D.validar('anexo_contrato', pf, Object.assign({}, d, { fecha: '2026-11-03' })).avisos.some(a => /ya es indefinido/.test(a.texto)));
+    const pf2 = ctx(TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-05-04', fechaTerminoPlazo: '2026-10-31', renovaciones: 1 }));
+    assert.ok(D.validar('anexo_contrato', pf2, valido('anexo_contrato', pf2, { nuevoTermino: '2027-01-31' })).bloqueos.some(b => /segunda renovación/.test(b)));
+    assert.ok(D.validar('anexo_contrato', c, valido('anexo_contrato', c, { materia: 'indefinido' })).bloqueos.length, 'ya es indefinido');
+    assert.ok(D.validar('anexo_contrato', pf, valido('anexo_contrato', pf, { materia: 'indefinido' })).puedeEmitir);
+});
+caso('pacto de horas extra: hasta 3 meses y 2 horas por día', () => {
+    const c = ctx(TRAB());
+    const d = valido('pacto_horas_extra', c, { motivo: 'Aumento de pedidos por las fiestas de fin de año.' });
+    assert.deepStrictEqual([d.desde, d.hasta], ['2026-10-12', '2027-01-11']);
+    assert.ok(D.validar('pacto_horas_extra', c, d).puedeEmitir);
+    assert.ok(D.validar('pacto_horas_extra', c, Object.assign({}, d, { hasta: '2027-01-12' })).errores.hasta);
+    assert.ok(D.validar('pacto_horas_extra', c, Object.assign({}, d, { maxDiarias: '3' })).errores.maxDiarias);
+    const h = D.generar('pacto_horas_extra', c, d, { pagada: true }).html;
+    assert.ok(h.indexOf('máximo de 2 horas por día') >= 0 && h.indexOf('cincuenta por ciento') >= 0);
 });
 
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

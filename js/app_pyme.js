@@ -4,7 +4,7 @@
  * /app/documentos?t=&d=, /app/vacaciones?t=, /app/calendario, /app/contratos, /app/empresa, /app/cuenta). Inicio es el cierre del mes: una fila por trabajador con el
  * estado de su liquidación, la franja de cifras, el panel de detalle y los avisos del mes.
  * Hereda del panel anterior (js/pyme_app.js) la entrada por correo, la ficha de empresa y trabajadores, las liquidaciones por mes,
- * los documentos, los generadores con los datos cargados, el Pase Pyme y los datos de la cuenta.
+ * los documentos (contrato, anexos y finiquito incluidos, sin salir del asistente), el Pase Pyme y los datos de la cuenta.
  * Requiere: rut_cl.js, liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js, feriados_cl.js,
  * pyme_pendientes.js, pyme_liquidaciones.js, pyme_docs.js y pyme_vacaciones.js (antes que este archivo). La API es /api/pyme/*.
  * Todo texto de usuario se escapa antes de mostrarse.
@@ -29,7 +29,6 @@
     var editandoId = null;    // id del trabajador cuya ficha está abierta (null = nuevo)
     var logoActual = '';      // data URL del logo en el formulario de la empresa
     var inicioSel = null;     // trabajador elegido en la grilla del cierre
-    var genSel = null;        // trabajador elegido en Contratos y finiquitos
     var vacSel = null;        // trabajador elegido en Vacaciones
     var vacCache = [];        // registros de vacaciones de la empresa (descifrados por el servidor)
     var docsCache = [];       // historial de documentos emitidos (tipo y fecha)
@@ -287,7 +286,7 @@
 
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
-        estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; genSel = null; vistaActual = null;
+        estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; vistaActual = null;
         vacSel = null; vacCache = []; docsCache = []; docPrefill = null;
         docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
         $('print-section').innerHTML = '';
@@ -328,6 +327,7 @@
         else if (vistaActual === 'vacaciones') dibujarVacaciones();
         else if (vistaActual === 'calendario') dibujarCalendario();
         else if (vistaActual === 'documentos') dibujarHistorialDocs();
+        else if (vistaActual === 'contratos') dibujarContratos();
         else if (vistaActual === 'trabajador') {
             var p = rutaActual().split('/');
             if (p[2] === 'vacaciones' || p[2] === 'documentos') abrirCarpeta(p[1], p[2]);
@@ -732,7 +732,7 @@
             var mapa = mesesCache[toca.periodo];
             liq = { periodo: toca.periodo, registros: Object.keys(mapa).map(function (id) { return { trabajadorId: id, emitida: mapa[id].emitida || '' }; }) };
         }
-        pendientesActuales = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO), liquidaciones: liq });
+        pendientesActuales = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO), liquidaciones: liq, documentos: docsCache });
         return pendientesActuales;
     }
     function dibujarPendientes() {
@@ -741,7 +741,7 @@
         $('pm-pend').innerHTML = lista.length ? lista.map(function (p, i) {
             var accion = '';
             if (p.accion) {
-                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes' }[p.accion.tipo];
+                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes', documento: 'Emitir contrato' }[p.accion.tipo];
                 accion = '<button type="button" class="btn-texto" data-pend="' + i + '">' + esc(etiqueta) + '</button>';
             }
             return '<li class="n-' + p.nivel + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><div><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p></div>' + accion + '</li>';
@@ -756,6 +756,7 @@
         if (a.tipo === 'empresa') navegar('empresa');
         else if (a.tipo === 'trabajador-nuevo') navegar('trabajadores/nuevo');
         else if (a.tipo === 'trabajador') navegar('trabajadores/' + a.id);
+        else if (a.tipo === 'documento') navegar('documentos', { query: 't=' + encodeURIComponent(a.id) + '&d=' + encodeURIComponent(a.doc) });
         else if (a.tipo === 'respaldo') exportar();
         else if (a.tipo === 'liquidaciones') { cambiarPeriodo(a.periodo); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     });
@@ -1004,7 +1005,9 @@
         if (!hay) return;
         var selT = $('pm-doc-trab'), selD = $('pm-doc-tipo');
         selT.innerHTML = lista.map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.nombre) + (t.activo ? '' : ' (inactivo)') + '</option>'; }).join('');
-        if (!selD.options.length) selD.innerHTML = PD.TIPOS.map(function (t) { return '<option value="' + t.id + '">' + esc(t.titulo) + '</option>'; }).join('');
+        if (!selD.options.length) selD.innerHTML = PD.GRUPOS.map(function (g) {
+            return '<optgroup label="' + esc(g[1]) + '">' + PD.TIPOS.filter(function (t) { return t.grupo === g[0]; }).map(function (t) { return '<option value="' + t.id + '">' + esc(t.titulo) + '</option>'; }).join('') + '</optgroup>';
+        }).join('');
         var cambio = forzar || !trabajadorPorId(docSel.trabajadorId) || !docSel.tipo;
         if (!trabajadorPorId(docSel.trabajadorId)) docSel.trabajadorId = lista[0].id;
         if (!docSel.tipo) docSel.tipo = PD.TIPOS[0].id;
@@ -1013,19 +1016,23 @@
         notaMarcaDoc();
         if (cambio) abrirDoc(); else vistaDoc();
         dibujarHistorialDocs();
+        // Si se cargaron los documentos emitidos después, los avisos del contrato se actualizan
+        dibujarPendientes();
     }
 
-    // El finiquito sale sin marca solo con el Pase de 12 meses (igual que el generador de finiquitos); los demás, con cualquier pase
-    function docPagado(tipo) { return tipo === 'finiquito' ? cubiertoPorPase('finiquito') : tienePase(); }
+    // El finiquito sale sin marca solo con el Pase de 12 meses (igual que el generador de finiquitos); el contrato según la cobertura del pase; los demás, con cualquier pase
+    function docPagado(tipo) { return tipo === 'finiquito' || tipo === 'contrato' ? cubiertoPorPase(tipo) : tienePase(); }
     function notaMarcaDoc() {
         var tipo = docSel.tipo, texto;
-        if (docPagado(tipo)) texto = 'Con tu pase vigente ' + (tipo === 'finiquito' ? 'el finiquito sale' : 'los documentos salen') + ' sin marca de agua. Revisa cada documento antes de entregarlo.';
+        var w = $('pm-doc-word');
+        if (w) { w.disabled = !docPagado(tipo); w.title = docPagado(tipo) ? '' : 'Disponible con el Pase Pyme' + (tipo === 'finiquito' ? ' de 12 meses' : ''); }
+        if (docPagado(tipo)) texto = 'Con tu pase vigente ' + (tipo === 'finiquito' ? 'el finiquito sale' : 'los documentos salen') + ' sin marca de agua y puedes descargarlos en Word para editarlos. Revisa cada documento antes de entregarlo.';
         else if (tipo === 'finiquito') texto = 'El finiquito lleva la marca «Vista previa» salvo con el Pase Pyme de 12 meses. ' + textoPaseVenta() + ' Revisa el documento antes de firmarlo.';
         else texto = 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada documento antes de entregarlo.';
         $('pm-doc-nota-marca').textContent = texto;
     }
 
-    var NOMBRES_DOC = { contrato: 'Contrato de trabajo', anexo_42h: 'Anexo de 42 horas', finiquito: 'Finiquito', liquidacion: 'Liquidación de sueldo' };
+    var NOMBRES_DOC = { anexo_42h: 'Anexo de 42 horas', liquidacion: 'Liquidación de sueldo' };
     function nombreDoc(tipo) { var x = PD.TIPOS.filter(function (d) { return d.id === tipo; })[0]; return x ? x.titulo : (NOMBRES_DOC[tipo] || tipo); }
     function filaHistorial(d, conNombre) {
         var t = trabajadorPorId(d.trabajadorId), puede = t && PD.TIPOS.some(function (x) { return x.id === d.tipo; });
@@ -1042,6 +1049,8 @@
     function abrirDoc() {
         var tipo = docSel.tipo, id = docSel.trabajadorId;
         docSel.intento = false;
+        $('pm-doc-post').hidden = true;
+        $('pm-doc-post').innerHTML = '';
         var info = PD.TIPOS.filter(function (x) { return x.id === tipo; })[0];
         $('pm-doc-descripcion').textContent = info ? info.descripcion : '';
         notaMarcaDoc();
@@ -1063,9 +1072,24 @@
         var form = $('pm-doc-form'), campos = PD.campos(docSel.tipo);
         form.hidden = false;
         form.innerHTML = campos.map(function (c) {
+            return campoDocHtml(c);
+        }).join('');
+        visibilidadDoc();
+    }
+    // Muestra solo los campos que corresponden a la ficha y a lo elegido (por ejemplo, el nuevo sueldo en un anexo de sueldo)
+    function visibilidadDoc() {
+        var c = ctxDoc();
+        if (!c) return;
+        PD.campos(docSel.tipo).forEach(function (campo) {
+            var el = $('pm-doc-form').querySelector('[data-campo-doc="' + campo.k + '"]');
+            if (el) el.hidden = !PD.campoVisible(campo, c, docSel.datos);
+        });
+    }
+    function campoDocHtml(c) {
+        {
             var id = 'pm-d-' + c.k, v = docSel.datos[c.k], ayuda = c.ayuda ? '<p class="lq-help">' + esc(c.ayuda) + '</p>' : '', err = '<p class="pm-error" data-derror="' + c.k + '" hidden></p>';
             var opc = c.req || c.tipo === 'check' ? '' : ' <span class="lq-opt">(opcional)</span>';
-            if (c.tipo === 'check') return '<div class="lq-field pm-check lq-span2"><label><input type="checkbox" id="' + id + '" data-dk="' + c.k + '"' + (v === true ? ' checked' : '') + '> <span>' + esc(c.etiqueta) + '</span></label>' + ayuda + err + '</div>';
+            if (c.tipo === 'check') return '<div class="lq-field pm-check lq-span2" data-campo-doc="' + c.k + '"><label><input type="checkbox" id="' + id + '" data-dk="' + c.k + '"' + (v === true ? ' checked' : '') + '> <span>' + esc(c.etiqueta) + '</span></label>' + ayuda + err + '</div>';
             var ctrl;
             if (c.tipo === 'select') ctrl = '<select id="' + id + '" data-dk="' + c.k + '">' + c.opciones.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (v === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select>';
             else if (c.tipo === 'textarea') ctrl = '<textarea id="' + id + '" data-dk="' + c.k + '" rows="5" maxlength="' + c.max + '">' + esc(v) + '</textarea>';
@@ -1075,8 +1099,8 @@
             else if (c.tipo === 'decimal') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" type="text" inputmode="decimal" maxlength="6" value="' + esc(v) + '" placeholder="Cálculo del asistente">';
             else ctrl = '<input id="' + id + '" data-dk="' + c.k + '" type="text" maxlength="' + (c.max || 100) + '" value="' + esc(v) + '">';
             var ancho = c.tipo === 'textarea' ? ' lq-span2' : '';
-            return '<div class="lq-field' + ancho + '"><label for="' + id + '">' + esc(c.etiqueta) + opc + '</label>' + ctrl + ayuda + err + '</div>';
-        }).join('');
+            return '<div class="lq-field' + ancho + '" data-campo-doc="' + c.k + '"><label for="' + id + '">' + esc(c.etiqueta) + opc + '</label>' + ctrl + ayuda + err + '</div>';
+        }
     }
 
     function valorCampoDoc(el) {
@@ -1086,9 +1110,19 @@
         if (tipo === 'num') return v.replace(/\D/g, '');
         return v;
     }
+    var horarioAnexo = '';   // última distribución propuesta en el anexo de jornada (se reemplaza mientras nadie la edite)
     $('pm-doc-form').addEventListener('input', function (e) {
         if (!e.target.hasAttribute('data-dk')) return;
-        docSel.datos[e.target.getAttribute('data-dk')] = valorCampoDoc(e.target);
+        var k = e.target.getAttribute('data-dk');
+        docSel.datos[k] = valorCampoDoc(e.target);
+        if (docSel.tipo === 'anexo_contrato' && k === 'nuevaJornada' && +docSel.datos.nuevaJornada > 0) {
+            var t = trabajadorPorId(docSel.trabajadorId), h = $('pm-d-nuevoHorario');
+            if (t && h && (!docSel.datos.nuevoHorario || docSel.datos.nuevoHorario === horarioAnexo)) {
+                horarioAnexo = PD.horarioPropuesto({ jornadaHoras: +docSel.datos.nuevaJornada, distribucion: t.distribucion });
+                docSel.datos.nuevoHorario = horarioAnexo;
+                h.value = horarioAnexo;
+            }
+        }
         vistaDoc();
     });
     $('pm-doc-form').addEventListener('change', function (e) {
@@ -1096,6 +1130,7 @@
         if (!el.hasAttribute('data-dk')) return;
         docSel.datos[el.getAttribute('data-dk')] = valorCampoDoc(el);
         if (el.getAttribute('data-tipo') === 'pesos') el.value = docSel.datos[el.getAttribute('data-dk')] > 0 ? pesos(docSel.datos[el.getAttribute('data-dk')]) : '';
+        if (el.tagName === 'SELECT') visibilidadDoc();
         vistaDoc();
     });
     $('pm-doc-form').addEventListener('submit', function (e) { e.preventDefault(); });
@@ -1165,13 +1200,83 @@
         }
         var d;
         try { d = PD.generar(docSel.tipo, c, docSel.datos, { pagada: docPagado(docSel.tipo) }); } catch (err) { mensaje($('pm-doc-estado'), 'error', err.message); return; }
-        var id = docSel.trabajadorId, tipo = docSel.tipo;
         imprimirHojas([d.html], d.titulo + ' ' + c.t.nombre);
+        anotarEmision(c, 'Enviado a imprimir.');
+    });
+
+    // Anota la emisión (solo tipo y fecha) y, tras un anexo, ofrece pasar el cambio a la ficha
+    function anotarEmision(c, inicio) {
+        var id = docSel.trabajadorId, tipo = docSel.tipo, datos = Object.assign({}, docSel.datos);
         api('documento', { metodo: 'POST', query: { trabajador: id }, cuerpo: { tipo: tipo } }).then(function (r) {
             if (sinSesion(r)) return;
-            if (r.ok) { docsCache.push({ trabajadorId: id, tipo: tipo, emitido: new Date().toISOString() }); dibujarHistorialDocs(); }
-            mensaje($('pm-doc-estado'), r.ok ? 'ok' : 'error', r.ok ? 'Enviado a imprimir. Anotamos que lo emitiste (solo el tipo de documento y la fecha, nunca su texto).' : 'Se envió a imprimir, pero no pudimos anotar la emisión: ' + (r.datos.error || 'intenta de nuevo.'));
+            if (r.ok) { docsCache.push({ trabajadorId: id, tipo: tipo, emitido: new Date().toISOString() }); dibujarHistorialDocs(); dibujarPendientes(); }
+            mensaje($('pm-doc-estado'), r.ok ? 'ok' : 'error', r.ok ? inicio + ' Anotamos que lo emitiste (solo el tipo de documento y la fecha, nunca su texto).' : inicio + ' No pudimos anotar la emisión: ' + (r.datos.error || 'intenta de nuevo.'));
         });
+        if (tipo === 'anexo_contrato') ofrecerActualizarFicha(c.t, datos);
+    }
+
+    // Cambios del anexo que se pueden pasar a la ficha
+    function cambiosDeAnexo(t, d) {
+        switch (d.materia) {
+            case 'sueldo': return { campos: { sueldoBase: Number(d.nuevoSueldo) }, texto: 'el sueldo base a ' + pesos(Number(d.nuevoSueldo)) };
+            case 'jornada': return { campos: { jornadaHoras: Number(d.nuevaJornada) }, texto: 'la jornada a ' + Number(d.nuevaJornada) + ' horas semanales' };
+            case 'cargo': return { campos: { cargo: String(d.nuevoCargo || '').trim().slice(0, 60) }, texto: 'el cargo a «' + String(d.nuevoCargo || '').trim() + '»' };
+            case 'prorroga': return { campos: { fechaTerminoPlazo: d.nuevoTermino, renovaciones: Math.min(5, (t.renovaciones || 0) + 1) }, texto: 'el vencimiento al ' + fechaLarga(d.nuevoTermino) + ' y sumar la renovación' };
+            case 'indefinido': return { campos: { contrato: 'indefinido' }, texto: 'el contrato a indefinido' };
+            default: return null;
+        }
+    }
+    function ofrecerActualizarFicha(t, d) {
+        var cambio = cambiosDeAnexo(t, d), caja = $('pm-doc-post');
+        if (!cambio) { caja.hidden = true; return; }
+        var cuando = d.materia !== 'prorroga' && d.vigencia > hoyIso() ? ' Como rige desde el ' + fechaLarga(d.vigencia) + ', puedes hacerlo ahora o volver cuando empiece.' : '';
+        caja.innerHTML = '<div class="lq-aviso lq-aviso-info"><span class="material-icons" aria-hidden="true">sync</span><p>Cuando el anexo esté firmado, actualiza la ficha de ' + esc(t.nombre) + ': cambia ' + esc(cambio.texto) + ' para las próximas liquidaciones y documentos.' + esc(cuando) +
+            ' <button type="button" class="lq-link" id="pm-doc-actualizar">Actualizar la ficha</button></p></div>';
+        caja.hidden = false;
+        $('pm-doc-actualizar').addEventListener('click', function () {
+            var actual = trabajadorPorId(t.id);
+            if (!actual) return;
+            var datos = Object.assign({}, actual, cambio.campos);
+            delete datos.id; delete datos.prestamos;
+            this.disabled = true;
+            api('trabajador', { metodo: 'PUT', query: { id: t.id }, cuerpo: { trabajador: datos } }).then(function (r) {
+                if (sinSesion(r)) return;
+                if (!r.ok) { caja.innerHTML = '<div class="lq-aviso lq-aviso-error"><span class="material-icons" aria-hidden="true">error</span><p>' + esc(r.datos.error || 'No pudimos actualizar la ficha.') + ' Revísala en la carpeta del trabajador.</p></div>'; return; }
+                cargar().then(function () { caja.innerHTML = '<div class="lq-aviso lq-aviso-info"><span class="material-icons" aria-hidden="true">check_circle</span><p>Actualizamos la ficha de ' + esc(t.nombre) + '.</p></div>'; });
+            });
+        });
+    }
+
+    // Word: el mismo documento como archivo .doc para editarlo (solo sin marca de agua, es decir, con el pase que lo cubre)
+    var ESTILO_WORD = 'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.4;color:#111}' +
+        '.dc-head{border-bottom:2px solid #00382E;padding-bottom:6pt;margin-bottom:12pt}.dc-head strong{font-size:12pt}.dc-head span{color:#475569;font-size:9pt}' +
+        '.dc-titulo{text-align:center;font-size:13pt;text-transform:uppercase;color:#00382E;margin:6pt 0 12pt}.dc-lugar{text-align:right;margin:0 0 10pt}' +
+        '.dc-p{text-align:justify;margin:0 0 8pt}.dc-lista{margin:0 0 8pt 18pt}.dc-tabla{width:100%;border-collapse:collapse;margin:0 0 10pt}' +
+        '.dc-tabla th,.dc-tabla td{border-bottom:1px solid #ddd;padding:3pt;text-align:left;font-weight:normal}.dc-tabla td{text-align:right}' +
+        '.dc-firma{text-align:center;margin-top:30pt;font-weight:bold}.dc-firma small{color:#475569;font-weight:normal}.dc-recibi,.dc-copia{font-size:9.5pt;margin-top:14pt}' +
+        '.dc-pie{font-size:8pt;color:#64748b;border-top:1px solid #ddd;margin-top:18pt;padding-top:4pt}';
+    function htmlParaWord(html) {
+        return html.replace(/<img[^>]*>/g, '')
+            .replace(/<div class="dc-firma"><span><\/span>/g, '<div class="dc-firma"><p>_______________________________</p>')
+            .replace(/<small>/g, '<br><small>')
+            .replace(/<\/strong><span>/g, '</strong><br><span>')
+            .replace(/<\/span><span>/g, '</span><br><span>');
+    }
+    $('pm-doc-word').addEventListener('click', function () {
+        var c = ctxDoc();
+        if (!c || !docPagado(docSel.tipo)) return;
+        if (!docSel.listo) { docSel.intento = true; vistaDoc(); mensaje($('pm-doc-estado'), 'error', 'Faltan datos para emitir el documento.'); return; }
+        var d;
+        try { d = PD.generar(docSel.tipo, c, docSel.datos, { pagada: true }); } catch (err) { mensaje($('pm-doc-estado'), 'error', err.message); return; }
+        var archivo = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' + esc(d.titulo) + '</title><style>' + ESTILO_WORD + '</style></head><body>' + htmlParaWord(d.html) + '</body></html>';
+        var blob = new Blob(['\ufeff', archivo], { type: 'application/msword' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (d.titulo + ' ' + c.t.nombre).replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ').trim() + '.doc';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+        anotarEmision(c, 'Descargamos el documento en Word.');
     });
 
     // ---------- vacaciones ----------
@@ -1380,52 +1485,37 @@
         $('cal-nota').textContent = r.sinFeriados ? 'Este año aún no tiene los feriados verificados: no aparecen en el calendario.' : 'Los feriados son los nacionales; no incluye feriados regionales ni locales.';
     }
 
-    // ---------- contratos y finiquitos ----------
-    var DESBLOQUEOS = { 'pm-gen-contrato': 'contrato', 'pm-gen-finiquito': 'finiquito' };
+    // ---------- contratos y finiquitos: contrato, anexos y término de cada persona (documentos del asistente) ----------
     function cubiertoPorPase(producto) {
         var cob = estado && estado.pase && estado.pase.cobertura, lim = estado && estado.limites;
         return !!(cob && lim && lim.paseVence && cob[producto] && cob[producto].indexOf(lim.paseProducto) >= 0);
     }
+    var ANEXOS_DOC = ['anexo_contrato', 'pacto_horas_extra', 'anexo_datos', 'anexo_42h'];
+    function docsDe(id, tipos) { return docsCache.filter(function (d) { return d.trabajadorId === id && tipos.indexOf(d.tipo) >= 0; }); }
     function dibujarContratos() {
-        var lista = estado.trabajadores || [], hay = lista.length > 0 && !!estado.empresa;
+        var lista = (estado.trabajadores || []).slice().sort(function (a, b) { return (b.activo ? 1 : 0) - (a.activo ? 1 : 0); });
+        var hay = lista.length > 0 && !!estado.empresa;
         $('gen-vacio').hidden = hay;
         $('pm-gen').hidden = !hay;
         if (!hay) return;
-        if (!trabajadorPorId(genSel)) genSel = (lista.filter(function (t) { return t.activo; })[0] || lista[0]).id;
-        $('gen-trab').innerHTML = lista.map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.nombre) + (t.activo ? '' : ' (inactivo)') + '</option>'; }).join('');
-        $('gen-trab').value = genSel;
-        enlacesGeneradores();
-        $('gen-contrato-precio').textContent = cubiertoPorPase('contrato') ? 'Incluido en tu Pase' : '$12.990 por contrato, o incluido con el Pase Pyme';
-        $('gen-finiquito-precio').textContent = cubiertoPorPase('finiquito') ? 'Incluido en tu Pase' : '$12.990 por finiquito, o incluido con el Pase de 12 meses';
-        var partes = [];
-        if (cubiertoPorPase('contrato')) partes.push('el contrato');
-        if (cubiertoPorPase('finiquito')) partes.push('el finiquito');
-        $('pm-gen-nota').textContent = partes.length ? 'Con tu pase vigente, ' + partes.join(' y ') + ' se ' + (partes.length > 1 ? 'abren' : 'abre') + ' desbloqueado' + (partes.length > 1 ? 's' : '') + ' por 48 horas cada vez que lo abras desde aquí.' : '';
-    }
-    function enlacesGeneradores() {
-        var q = '?desde=pyme&t=' + encodeURIComponent(genSel || '');
-        $('pm-gen-contrato').href = '/generador-contrato-trabajo-chile' + q;
-        $('pm-gen-anexo42').href = '/generador-anexo-40-horas' + q;
-        $('pm-gen-finiquito').href = '/generador-finiquito-chile' + q;
-    }
-    $('gen-trab').addEventListener('change', function (e) { genSel = e.target.value; enlacesGeneradores(); });
-    // Generadores incluidos en el pase: se pide un desbloqueo firmado y se abre en otra pestaña (abierta al hacer clic, para que el navegador no la bloquee)
-    $('pm-gen').addEventListener('click', function (e) {
-        var a = e.target.closest('a[id]');
-        var producto = a && DESBLOQUEOS[a.id];
-        if (!producto || !cubiertoPorPase(producto) || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
-        e.preventDefault();
-        var destino = a.href, ventana = window.open('', '_blank');
-        if (ventana) ventana.opener = null;
-        api('desbloqueo', { metodo: 'POST', cuerpo: { producto: producto } }).then(function (r) {
-            // El desbloqueo firmado viaja en la dirección, como al volver de un pago: el generador lo valida con /api/unlock
-            if (r.ok && r.datos.desbloqueo) {
-                var d = r.datos.desbloqueo;
-                destino += '&' + new URLSearchParams({ p: d.p, o: d.o, e: d.e, sig: d.sig }).toString();
+        $('gen-filas').innerHTML = lista.map(function (t) {
+            var contratos = docsDe(t.id, ['contrato']), anexos = docsDe(t.id, ANEXOS_DOC), c = contratos[contratos.length - 1], v = vencePlazo(t);
+            function enlace(tipo, texto, primario) {
+                var q = 't=' + encodeURIComponent(t.id) + '&d=' + tipo;
+                return '<a class="' + (primario ? 'btn btn-chico' : 'btn-texto') + '" href="/app/documentos?' + esc(q) + '" data-ruta="documentos" data-query="' + esc(q) + '">' + esc(texto) + '</a>';
             }
-            if (ventana) ventana.location.href = destino; else window.location.href = destino;
-        });
-    });
+            var meta = textoContrato(t) + (v ? ', ' + v.texto : '') + (t.activo ? '' : ' · inactivo');
+            return '<tr><td class="celda-nombre"><strong>' + esc(t.nombre) + '</strong><span>' + esc(meta) + '</span></td>' +
+                '<td>' + (c ? '<span class="sello sello-emitida">Emitido · ' + esc(fechaCortaAnio(isoChile(c.emitido))) + '</span>' : '<span class="sello sello-sin">Sin emitir aquí</span>') + '</td>' +
+                '<td class="ocultar-movil celda-cuotas">' + (anexos.length ? plural(anexos.length, 'documento', 'documentos') + '<small>último el ' + esc(fechaCortaAnio(isoChile(anexos[anexos.length - 1].emitido))) + '</small>' : '<span class="vacio">—</span>') + '</td>' +
+                '<td class="celda-acciones"><div class="gen-acciones">' +
+                enlace('contrato', c ? 'Contrato' : 'Emitir contrato', !c) + enlace('anexo_contrato', 'Anexo') + enlace('pacto_horas_extra', 'Horas extra') + enlace('finiquito', 'Finiquito') +
+                '</div></td></tr>';
+        }).join('');
+        var nota = cubiertoPorPase('contrato') ? 'Con tu pase vigente el contrato, los anexos y el pacto de horas extra salen sin marca de agua y en Word.' : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta();
+        nota += cubiertoPorPase('finiquito') ? ' El finiquito también está incluido.' : ' El finiquito sin marca viene con el Pase de 12 meses.';
+        $('pm-gen-nota').textContent = nota + ' «Sin emitir aquí» solo significa que no se emitió desde el asistente.';
+    }
 
     // ---------- Pase Pyme y cuenta ----------
     var KEY_COMPRA_GA = 'cl_pyme_compra_ga';

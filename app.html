@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.6.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.7.2">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -462,8 +462,10 @@ gtag('js', new Date());
 <form id="pm-doc-form" class="lq-grid" novalidate autocomplete="off" style="margin-top:16px"></form>
 <div class="form-acciones" id="pm-doc-acciones" hidden>
 <button type="button" id="pm-doc-imprimir" class="btn btn-primario"><span class="material-icons" aria-hidden="true">print</span>Imprimir o guardar en PDF</button>
+<button type="button" id="pm-doc-word" class="btn"><span class="material-icons" aria-hidden="true">description</span>Descargar en Word</button>
 <p id="pm-doc-estado" class="lq-estado" role="status"></p>
 </div>
+<div id="pm-doc-post" class="lq-avisos" role="status" style="margin-top:12px" hidden></div>
 <p class="texto-ayuda" id="pm-doc-nota-marca" style="margin-top:10px"></p>
 </div></div>
 </div>
@@ -548,17 +550,21 @@ gtag('js', new Date());
 <div class="v-head">
 <div>
 <h1 class="v-titulo" id="gen-titulo">Contratos y finiquitos</h1>
-<p class="v-sub">Abre un generador con tu empresa y la ficha del trabajador ya escritas. Se abre en otra pestaña y mantiene su forma de uso y de pago.</p>
+<p class="v-sub">El contrato, sus cambios y el término de cada persona, en un solo lugar. Cada documento se arma aquí mismo con la ficha y los datos de tu empresa.</p>
 </div>
 </div>
-<div class="panel" id="gen-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">Los generadores se llenan con la ficha de la persona y los datos de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
+<div class="panel" id="gen-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">El contrato y los demás documentos se llenan con la ficha de la persona y los datos de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
 <div id="pm-gen">
-<div class="lq-field" style="max-width:22rem"><label for="gen-trab">Trabajador</label><select id="gen-trab"></select></div>
+<div class="panel">
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Contrato, anexos y término de cada trabajador</caption>
+<thead><tr><th scope="col">Trabajador</th><th scope="col">Contrato</th><th scope="col" class="ocultar-movil">Anexos y pactos</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+<tbody id="gen-filas"></tbody></table></div>
+</div>
 <p id="pm-gen-nota" class="texto-ayuda" style="margin-top:10px"></p>
-<div class="gen-lista">
-<a class="gen-item" id="pm-gen-contrato" href="/generador-contrato-trabajo-chile" target="_blank" rel="noopener"><strong>Contrato de trabajo<span class="material-icons" aria-hidden="true">open_in_new</span></strong><span>Contrato individual con la jornada, la remuneración y las cláusulas de la ficha.</span><em id="gen-contrato-precio"></em></a>
-<a class="gen-item" id="pm-gen-anexo42" href="/generador-anexo-40-horas" target="_blank" rel="noopener"><strong>Anexo de jornada de 42 horas<span class="material-icons" aria-hidden="true">open_in_new</span></strong><span>Anexo para ajustar la jornada a la Ley 40 horas.</span><em>Gratis</em></a>
-<a class="gen-item" id="pm-gen-finiquito" href="/generador-finiquito-chile" target="_blank" rel="noopener"><strong>Finiquito<span class="material-icons" aria-hidden="true">open_in_new</span></strong><span>Finiquito con las indemnizaciones y el feriado proporcional.</span><em id="gen-finiquito-precio"></em></a>
+<div class="gen-guia">
+<div><p class="h-seccion">Al contratar</p><p class="texto-ayuda">Contrato de trabajo dentro de 15 días desde el ingreso y registro en Mi DT dentro de 15 días desde la firma. Si hará horas extra, el pacto escrito antes de trabajarlas.</p></div>
+<div><p class="h-seccion">Si algo cambia</p><p class="texto-ayuda">Un anexo firmado por ambos para el nuevo sueldo, la jornada, el cargo, la prórroga del plazo fijo o el paso a indefinido. Después actualizas la ficha con un clic.</p></div>
+<div><p class="h-seccion">Al terminar</p><p class="texto-ayuda">La carta de término cuando corresponde y el finiquito, con el feriado calculado desde el registro de vacaciones y el saldo de préstamos a la vista.</p></div>
 </div>
 </div>
 </section>
@@ -617,7 +623,7 @@ gtag('js', new Date());
 <ul class="pase-incluye">
 <li>Hasta 5 trabajadores activos (sin pase, 1).</li>
 <li>Liquidaciones y documentos sin la marca «Vista previa».</li>
-<li>El generador de contrato incluido mientras el pase esté vigente; el finiquito (en Documentos y en el generador), con el pase de 12 meses.</li>
+<li>Contrato, anexos y pacto de horas extra sin marca de agua y en Word mientras el pase esté vigente; el finiquito, con el pase de 12 meses.</li>
 <li>Se paga una vez y no se renueva solo.</li>
 <li>Si no quedas conforme, reembolso total dentro de 14 días corridos desde la compra.</li>
 </ul>
@@ -687,11 +693,11 @@ gtag('js', new Date());
 <script src="/js/liquidacion_documento.js?v=1.3.0"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
-<script src="/js/pyme_pendientes.js?v=1.4.0"></script>
+<script src="/js/pyme_pendientes.js?v=1.5.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.2.0"></script>
-<script src="/js/pyme_docs.js?v=1.4.0"></script>
+<script src="/js/pyme_docs.js?v=1.5.1"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.6.0" defer></script>
+<script src="/js/app_pyme.js?v=1.7.1" defer></script>
 </body>
 </html>

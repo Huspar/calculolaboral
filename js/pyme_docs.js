@@ -1,10 +1,15 @@
 /*
- * CalculoLaboral · documentos laborales del Asistente Pyme (v1.2.0). Funciona en el navegador (window.CLPymeDocs) y en Node.
+ * CalculoLaboral · documentos laborales del Asistente Pyme (v1.3.0). Funciona en el navegador (window.CLPymeDocs) y en Node.
  *
- * Ocho modelos de referencia que se arman con los datos guardados de la empresa y del trabajador:
- *   cert_antiguedad, cert_remuneraciones, comprobante_feriado, carta_159_4, carta_161, amonestacion, anexo_datos, finiquito
+ * Once modelos de referencia que se arman con los datos guardados de la empresa y del trabajador:
+ *   contratación: contrato, anexo_contrato, pacto_horas_extra, anexo_datos
+ *   durante la relación: cert_antiguedad, cert_remuneraciones, comprobante_feriado, amonestacion
+ *   término: carta_159_4, carta_161, finiquito
  *
- *   TIPOS                                  lista { id, titulo, descripcion }
+ *   TIPOS                                  lista { id, titulo, descripcion, grupo }
+ *   GRUPOS                                 [[id, nombre]] en el orden en que se muestran
+ *   pesosEnLetras(n)                       monto en palabras ("seiscientos cincuenta mil pesos")
+ *   horarioPropuesto(t)                    distribución de la jornada propuesta según la ficha (horas y días)
  *   campos(tipo)                           campos que se piden además de la ficha
  *   valoresIniciales(tipo, ctx)            valores propuestos para esos campos
  *   validar(tipo, ctx, datos)              { errores, faltaFicha, bloqueos, avisos, puedeEmitir }
@@ -21,6 +26,9 @@
  * Reglas
  *  - Un documento solo se emite con todos sus campos obligatorios: no quedan corchetes ni espacios en blanco.
  *  - Lo que escribe la persona se escapa antes de entrar al HTML.
+ *  - Contrato (art. 10): lugar y fecha, partes con nacionalidad y fechas de nacimiento e ingreso, cargo y funciones, lugar, jornada,
+ *    remuneración y su pago, duración y beneficios adicionales. Anexo (art. 11): modificación por escrito firmada por ambas partes.
+ *    Pacto de horas extra (arts. 31 y 32): hasta 2 horas por día, por escrito, por necesidades temporales y hasta por 3 meses.
  *  - Normas citadas (texto vigente verificado el 12-oct-2026 en la edición de octubre de 2026 del Código del Trabajo que publica la
  *    Dirección del Trabajo): art. 67 a 70 (feriado), 154 N°10 (sanciones del reglamento), 159 N°4 (plazo fijo), 161 (necesidades de la
  *    empresa), 162 (comunicación de término), 163 y 172 (indemnización y su base), 169 (efectos de la carta del art. 161).
@@ -36,15 +44,21 @@
     var MIN_HECHOS_161 = 80, MIN_HECHOS_AMON = 40;
     var TOPE_UF_INDEMNIZACION = 90, TOPE_ANIOS_INDEMNIZACION = 11;
 
+    var GRUPOS = [['contratacion', 'Contratación y cambios de contrato'], ['relacion', 'Durante la relación laboral'], ['termino', 'Término del contrato']];
+    var JORNADA_MAXIMA = 42, JORNADA_PARCIAL = 30, MAX_HE_DIARIAS = 2;
+
     var TIPOS = [
-        { id: 'cert_antiguedad', titulo: 'Certificado de antigüedad', descripcion: 'Acredita desde cuándo trabaja la persona en la empresa y cuánto tiempo lleva.' },
-        { id: 'cert_remuneraciones', titulo: 'Certificado de remuneraciones', descripcion: 'Sueldo y asignaciones registrados; con el promedio líquido de los últimos 3 meses si están guardados.' },
-        { id: 'comprobante_feriado', titulo: 'Comprobante de feriado', descripcion: 'Fecha de inicio, días hábiles, reintegro y saldo, con firma de ambas partes.' },
-        { id: 'carta_159_4', titulo: 'Carta de término por vencimiento del plazo fijo (art. 159 N°4)', descripcion: 'Comunica el término de un contrato a plazo fijo e informa el estado de las cotizaciones.' },
-        { id: 'carta_161', titulo: 'Carta de término por necesidades de la empresa (art. 161)', descripcion: 'Con los hechos, las indemnizaciones, el estado de las cotizaciones y la copia a la Inspección.' },
-        { id: 'amonestacion', titulo: 'Amonestación escrita', descripcion: 'Deja constancia de un incumplimiento y de la obligación que se incumplió.' },
-        { id: 'anexo_datos', titulo: 'Anexo de protección de datos personales', descripcion: 'Anexo al contrato sobre el tratamiento de los datos del trabajador (Ley 21.719, rige desde el 1-dic-2026).' },
-        { id: 'finiquito', titulo: 'Finiquito', descripcion: 'Con el feriado pendiente y proporcional calculado desde el registro de vacaciones, las indemnizaciones si corresponden y los descuentos. Se firma ante ministro de fe.' }
+        { id: 'contrato', grupo: 'contratacion', titulo: 'Contrato de trabajo', descripcion: 'Contrato individual con el cargo, la jornada, la remuneración y la duración de la ficha (art. 10). Se registra en Mi DT dentro de 15 días desde la firma.' },
+        { id: 'anexo_contrato', grupo: 'contratacion', titulo: 'Anexo de contrato (cambio de sueldo, jornada, cargo o plazo)', descripcion: 'Deja por escrito un cambio del contrato firmado por ambas partes (art. 11): nuevo sueldo, nueva jornada, nuevo cargo, prórroga del plazo fijo o paso a indefinido.' },
+        { id: 'pacto_horas_extra', grupo: 'contratacion', titulo: 'Pacto de horas extraordinarias', descripcion: 'Acuerdo escrito para trabajar horas extra por una necesidad temporal, hasta 2 horas por día y por un máximo de 3 meses (arts. 31 y 32).' },
+        { id: 'cert_antiguedad', grupo: 'relacion', titulo: 'Certificado de antigüedad', descripcion: 'Acredita desde cuándo trabaja la persona en la empresa y cuánto tiempo lleva.' },
+        { id: 'cert_remuneraciones', grupo: 'relacion', titulo: 'Certificado de remuneraciones', descripcion: 'Sueldo y asignaciones registrados; con el promedio líquido de los últimos 3 meses si están guardados.' },
+        { id: 'comprobante_feriado', grupo: 'relacion', titulo: 'Comprobante de feriado', descripcion: 'Fecha de inicio, días hábiles, reintegro y saldo, con firma de ambas partes.' },
+        { id: 'carta_159_4', grupo: 'termino', titulo: 'Carta de término por vencimiento del plazo fijo (art. 159 N°4)', descripcion: 'Comunica el término de un contrato a plazo fijo e informa el estado de las cotizaciones.' },
+        { id: 'carta_161', grupo: 'termino', titulo: 'Carta de término por necesidades de la empresa (art. 161)', descripcion: 'Con los hechos, las indemnizaciones, el estado de las cotizaciones y la copia a la Inspección.' },
+        { id: 'amonestacion', grupo: 'relacion', titulo: 'Amonestación escrita', descripcion: 'Deja constancia de un incumplimiento y de la obligación que se incumplió.' },
+        { id: 'anexo_datos', grupo: 'contratacion', titulo: 'Anexo de protección de datos personales', descripcion: 'Anexo al contrato sobre el tratamiento de los datos del trabajador (Ley 21.719, rige desde el 1-dic-2026).' },
+        { id: 'finiquito', grupo: 'termino', titulo: 'Finiquito', descripcion: 'Con el feriado pendiente y proporcional calculado desde el registro de vacaciones, las indemnizaciones si corresponden y los descuentos. Se firma ante ministro de fe.' }
     ];
 
     var CAUSALES_FINIQUITO = {
@@ -78,6 +92,42 @@
     }
     function contratoTxt(c) { return c === 'plazo_fijo' ? 'a plazo fijo' : c === 'obra' ? 'por obra o faena determinada' : 'indefinido'; }
     function lugar(ctx, datos) { return (datos.ciudad ? datos.ciudad + ', ' : '') + fechaLarga(datos.fecha || ctx.hoy); }
+
+    // Monto en palabras para los contratos y anexos ("seiscientos cincuenta mil pesos", "un millón de pesos")
+    var UNIDADES = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve',
+        'veinte', 'veintiún', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
+    var DECENAS = ['', '', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+    var CENTENAS = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+    function grupoLetras(n) {
+        if (n === 100) return 'cien';
+        var c = Math.floor(n / 100), r = n % 100, p = [];
+        if (c) p.push(CENTENAS[c]);
+        if (r) p.push(r < 30 ? UNIDADES[r] : DECENAS[Math.floor(r / 10)] + (r % 10 ? ' y ' + UNIDADES[r % 10] : ''));
+        return p.join(' ');
+    }
+    function pesosEnLetras(monto) {
+        var n = Math.round(Math.abs(Number(monto) || 0));
+        if (n === 0) return 'cero pesos';
+        var mill = Math.floor(n / 1000000), miles = Math.floor(n / 1000) % 1000, resto = n % 1000, p = [];
+        if (mill) p.push(mill === 1 ? 'un millón' : grupoLetras(mill) + ' millones');
+        if (miles) p.push(miles === 1 ? 'mil' : grupoLetras(miles) + ' mil');
+        if (resto) p.push(grupoLetras(resto));
+        return p.join(' ') + (mill && !miles && !resto ? ' de pesos' : n === 1 ? ' peso' : ' pesos');
+    }
+    function montoTxt(n) { return pesos(n) + ' (' + pesosEnLetras(n) + ')'; }
+    function horaTxt(min) { return dos(Math.floor(min / 60) % 24) + ':' + dos(min % 60); }
+    // Distribución propuesta: jornada de la ficha repartida en partes iguales entre 5 o 6 días, desde las 08:30, con colación de 60 minutos si el día pasa de 5 horas
+    function horarioPropuesto(t) {
+        var horas = Math.min(JORNADA_MAXIMA, Math.max(1, Number(t && t.jornadaHoras) || JORNADA_MAXIMA)), seis = t && t.distribucion === '6';
+        var diaria = Math.round(horas * 60 / (seis ? 6 : 5)), colacion = diaria > 300 ? 60 : 0, inicio = 8 * 60 + 30;
+        return (seis ? 'de lunes a sábado' : 'de lunes a viernes') + ', de ' + horaTxt(inicio) + ' a ' + horaTxt(inicio + diaria + colacion) + ' horas' +
+            (colacion ? ', con un descanso de ' + colacion + ' minutos para colación, que no se considera trabajado' : '');
+    }
+    function sumarMesesIso(iso, n) {
+        var a = iso.split('-').map(Number), x = a[0] * 12 + (a[1] - 1) + n, y = Math.floor(x / 12), m = x % 12;
+        var ult = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+        return y + '-' + dos(m + 1) + '-' + dos(Math.min(a[2], ult));
+    }
 
     // Años, meses y días completos entre dos fechas
     function antiguedad(desde, hasta) {
@@ -122,6 +172,44 @@
 
     // ---------- campos pedidos por cada documento ----------
     var CAMPOS = {
+        contrato: [
+            { k: 'fechaInicio', tipo: 'fecha', etiqueta: 'Fecha de ingreso (inicio de los servicios)', req: true, ayuda: 'La de la ficha. El contrato se firma dentro de 15 días desde el ingreso (5 días si es por obra o a plazo de menos de 30 días: art. 9).' },
+            { k: 'funciones', tipo: 'textarea', etiqueta: 'Funciones del cargo', req: true, max: 1500, ayuda: 'Una función por línea, con verbos concretos. Por ejemplo: «Elaborar pan y productos de pastelería según las recetas de la empresa».' },
+            { k: 'lugarTrabajo', tipo: 'texto', etiqueta: 'Lugar donde se prestan los servicios', req: true, max: 160 },
+            { k: 'horario', tipo: 'textarea', etiqueta: 'Distribución de la jornada (días y horario)', req: true, max: 600, ayuda: 'Propuesta con la jornada y los días de la ficha. Ajústala al horario real; la jornada semanal sale de la ficha.' },
+            { k: 'gratificacionPactada', tipo: 'texto', etiqueta: 'Gratificación convencional pactada', max: 200, ayuda: 'Solo si en la ficha la gratificación es «Pactada». Por ejemplo: «$80.000 mensuales». No puede ser inferior a la legal (art. 46).', si: { ficha: 'gratificacion', v: ['pactada'] } },
+            { k: 'comisiones', tipo: 'texto', etiqueta: 'Comisiones', max: 200, ayuda: 'Si gana comisiones: cómo se calculan (por ejemplo, «3% de las ventas netas del mes»). Con comisiones corresponde además la semana corrida (art. 45).' },
+            { k: 'nombreObra', tipo: 'texto', etiqueta: 'Obra o faena para la que se contrata', max: 160, si: { ficha: 'contrato', v: ['obra'] } },
+            { k: 'pago', tipo: 'select', etiqueta: 'Cuándo se paga el sueldo', req: true, opciones: [['ultimo', 'El último día hábil de cada mes'], ['primeros5', 'Dentro de los primeros 5 días hábiles del mes siguiente']] },
+            { k: 'formaPago', tipo: 'select', etiqueta: 'Cómo se paga', req: true, opciones: [['transferencia', 'Transferencia electrónica'], ['vale_vista', 'Vale vista'], ['cheque', 'Cheque nominativo'], ['efectivo', 'Efectivo']] },
+            { k: 'beneficios', tipo: 'textarea', etiqueta: 'Beneficios adicionales', max: 600, ayuda: 'Solo si entregas habitación, alimentación, uniforme u otras prestaciones en especie (art. 10 N°6).' },
+            { k: 'reglamento', tipo: 'check', etiqueta: 'La empresa tiene reglamento interno de orden, higiene y seguridad y le entrega una copia', ayuda: 'Obligatorio desde 10 trabajadores (art. 153).' },
+            { k: 'protocolo', tipo: 'check', etiqueta: 'La empresa tiene protocolo de prevención del acoso y la violencia en el trabajo (Ley Karin) y se lo informa', ayuda: 'Todo empleador debe tenerlo desde el 1 de agosto de 2024 (Ley 21.643).' },
+            { k: 'confidencialidad', tipo: 'check', etiqueta: 'Agregar una cláusula de confidencialidad', ayuda: 'Reserva sobre la información de la empresa y sus clientes durante el contrato.' },
+            { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
+            { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de firma', req: true }
+        ],
+        anexo_contrato: [
+            { k: 'materia', tipo: 'select', etiqueta: 'Qué cambia', req: true, opciones: [['sueldo', 'El sueldo base'], ['jornada', 'La jornada de trabajo'], ['cargo', 'El cargo y las funciones'], ['prorroga', 'Se prorroga el plazo fijo'], ['indefinido', 'Pasa a contrato indefinido'], ['otro', 'Otro cambio (lo escribo yo)']] },
+            { k: 'vigencia', tipo: 'fecha', etiqueta: 'Desde cuándo rige el cambio', ayuda: 'Para el sueldo, conviene que sea el primer día de un mes.', si: { k: 'materia', v: ['sueldo', 'jornada', 'cargo', 'indefinido', 'otro'] } },
+            { k: 'nuevoSueldo', tipo: 'pesos', etiqueta: 'Nuevo sueldo base mensual', si: { k: 'materia', v: ['sueldo'] } },
+            { k: 'nuevaJornada', tipo: 'numero', etiqueta: 'Nueva jornada semanal (horas)', min: 1, max: 45, si: { k: 'materia', v: ['jornada'] } },
+            { k: 'nuevoHorario', tipo: 'textarea', etiqueta: 'Nueva distribución de la jornada (días y horario)', max: 600, si: { k: 'materia', v: ['jornada'] } },
+            { k: 'nuevoCargo', tipo: 'texto', etiqueta: 'Nuevo cargo', max: 60, si: { k: 'materia', v: ['cargo'] } },
+            { k: 'nuevasFunciones', tipo: 'textarea', etiqueta: 'Nuevas funciones', max: 1500, ayuda: 'Una función por línea.', si: { k: 'materia', v: ['cargo'] } },
+            { k: 'nuevoTermino', tipo: 'fecha', etiqueta: 'Nueva fecha de vencimiento del contrato', si: { k: 'materia', v: ['prorroga'] } },
+            { k: 'textoLibre', tipo: 'textarea', etiqueta: 'Cambio que se acuerda', max: 1500, ayuda: 'Escribe la cláusula tal como debe quedar. Por ejemplo, un bono permanente o un cambio del lugar de trabajo.', si: { k: 'materia', v: ['otro'] } },
+            { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
+            { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de firma', req: true }
+        ],
+        pacto_horas_extra: [
+            { k: 'desde', tipo: 'fecha', etiqueta: 'Rige desde', req: true },
+            { k: 'hasta', tipo: 'fecha', etiqueta: 'Rige hasta', req: true, ayuda: 'Máximo 3 meses. Se puede renovar con otro pacto escrito.' },
+            { k: 'maxDiarias', tipo: 'numero', etiqueta: 'Máximo de horas extra por día', req: true, min: 1, max: MAX_HE_DIARIAS },
+            { k: 'motivo', tipo: 'textarea', etiqueta: 'Necesidad o situación temporal que las justifica', req: true, max: 600, ayuda: 'Por ejemplo: «Aumento de pedidos por las fiestas de fin de año». Las horas extra no pueden ser permanentes.' },
+            { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
+            { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de firma', req: true }
+        ],
         cert_antiguedad: [
             { k: 'destinatario', tipo: 'texto', etiqueta: 'Para presentar ante', max: 100, ayuda: 'Por ejemplo: una caja de compensación, un banco o «los fines que estime convenientes».' },
             { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
@@ -207,6 +295,16 @@
         var e = ctx.empresa, t = ctx.t;
         var v = { ciudad: e.ciudad || e.comuna || '', fecha: ctx.hoy };
         switch (tipo) {
+            case 'contrato': Object.assign(v, {
+                fechaInicio: t.fechaIngreso || '', funciones: '', lugarTrabajo: [e.direccion, e.comuna].filter(Boolean).join(', '), horario: horarioPropuesto(t),
+                gratificacionPactada: '', comisiones: '', nombreObra: '', pago: 'ultimo', formaPago: 'transferencia', beneficios: '', reglamento: false, protocolo: true, confidencialidad: false,
+                fecha: t.fechaIngreso && t.fechaIngreso > ctx.hoy ? t.fechaIngreso : ctx.hoy
+            }); break;
+            case 'anexo_contrato': Object.assign(v, {
+                materia: t.contrato === 'plazo_fijo' ? 'prorroga' : 'sueldo', vigencia: (function () { var p = ctx.hoy.slice(0, 7).split('-').map(Number), m = p[1] + 1, y = p[0]; if (m > 12) { m = 1; y++; } return y + '-' + dos(m) + '-01'; })(),
+                nuevoSueldo: '', nuevaJornada: '', nuevoHorario: '', nuevoCargo: '', nuevasFunciones: '', nuevoTermino: '', textoLibre: ''
+            }); break;
+            case 'pacto_horas_extra': Object.assign(v, { desde: ctx.hoy, hasta: sumarDiasIso(sumarMesesIso(ctx.hoy, 3), -1), maxDiarias: '2', motivo: '' }); break;
             case 'cert_antiguedad': Object.assign(v, { destinatario: '', fechaTermino: '' }); break;
             case 'cert_remuneraciones': Object.assign(v, { destinatario: '', incluirPromedio: false }); break;
             case 'comprobante_feriado': Object.assign(v, { fechaInicio: '', diasHabiles: '', saldoAntes: '' }); break;
@@ -232,6 +330,13 @@
         { de: 't', k: 'nombre', etiqueta: 'el nombre del trabajador' }, { de: 't', k: 'rut', etiqueta: 'el RUT del trabajador' }
     ];
     var FICHA = {
+        contrato: BASE_FICHA.concat([
+            { de: 't', k: 'nacionalidad', etiqueta: 'la nacionalidad' }, { de: 't', k: 'fechaNacimiento', etiqueta: 'la fecha de nacimiento' },
+            { de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }, { de: 't', k: 'cargo', etiqueta: 'el cargo' },
+            { de: 't', k: 'sueldoBase', etiqueta: 'el sueldo base', num: true }, { de: 't', k: 'jornadaHoras', etiqueta: 'la jornada semanal', num: true }
+        ]),
+        anexo_contrato: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }]),
+        pacto_horas_extra: BASE_FICHA,
         cert_antiguedad: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }, { de: 't', k: 'cargo', etiqueta: 'el cargo' }]),
         cert_remuneraciones: BASE_FICHA.concat([{ de: 't', k: 'sueldoBase', etiqueta: 'el sueldo base', num: true }]),
         comprobante_feriado: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }]),
@@ -251,6 +356,7 @@
         // Campos obligatorios y formatos
         CAMPOS[tipo].forEach(function (c) {
             var v = d[c.k];
+            if (!campoVisible(c, ctx, d)) return;
             if (c.tipo === 'check') { if (c.req && v !== true) errores[c.k] = 'Debes confirmarlo para emitir el documento.'; return; }
             if (vacio(v)) { if (c.req) errores[c.k] = 'Este dato es obligatorio.'; return; }
             if (c.tipo === 'fecha' && !esFecha(v)) errores[c.k] = 'La fecha no es válida.';
@@ -272,6 +378,9 @@
             var faltan = periodosPromedio(f('fecha') && esFecha(f('fecha')) ? f('fecha') : ctx.hoy).filter(function (p) { var m = ctx.meses && ctx.meses[p]; return !(m && m.calculo && m.calculo.liquido > 0); });
             if (faltan.length) bloqueos.push('Para incluir el promedio faltan las liquidaciones guardadas (con su cálculo) de: ' + faltan.map(mesAnio).join(', ') + '. Guárdalas en la sección de liquidaciones o desmarca el promedio.');
         }
+        if (tipo === 'contrato') validarContrato(ctx, d, errores, bloqueos, avisos, falta);
+        if (tipo === 'anexo_contrato') validarAnexo(ctx, d, errores, bloqueos, avisos);
+        if (tipo === 'pacto_horas_extra') validarPactoHE(ctx, d, errores, bloqueos, avisos);
         if (tipo === 'comprobante_feriado') validarFeriado(ctx, d, errores, bloqueos, avisos);
         if (tipo === 'carta_159_4') validar1594(ctx, d, errores, bloqueos, avisos);
         if (tipo === 'carta_161') validar161(ctx, d, errores, bloqueos, avisos);
@@ -287,6 +396,84 @@
 
         var puedeEmitir = !Object.keys(errores).length && !bloqueos.length && !falta.length;
         return { errores: errores, faltaFicha: falta, bloqueos: bloqueos, avisos: avisos, puedeEmitir: puedeEmitir };
+    }
+
+    // Un campo con "si" solo se pide (y se muestra) cuando la ficha o otro campo tienen uno de esos valores
+    function campoVisible(c, ctx, d) {
+        if (!c.si) return true;
+        var valor = c.si.ficha ? ctx.t[c.si.ficha] : (d || {})[c.si.k];
+        return c.si.v.indexOf(valor) >= 0;
+    }
+
+    function validarContrato(ctx, d, errores, bloqueos, avisos, falta) {
+        var t = ctx.t, e = ctx.empresa;
+        if (t.contrato === 'plazo_fijo' && !t.fechaTerminoPlazo) falta.push({ k: 'fechaTerminoPlazo', de: 't', etiqueta: 'la fecha de vencimiento del plazo fijo' });
+        if (t.contrato === 'obra' && vacio(d.nombreObra)) errores.nombreObra = 'Indica la obra o faena.';
+        if (t.gratificacion === 'pactada' && vacio(d.gratificacionPactada)) errores.gratificacionPactada = 'Indica la gratificación pactada.';
+        if (t.jornadaHoras > JORNADA_MAXIMA) bloqueos.push('La jornada de la ficha (' + t.jornadaHoras + ' horas) supera la jornada máxima legal de ' + JORNADA_MAXIMA + ' horas semanales vigente desde el 26 de abril de 2026 (Ley 21.561). Corrígela en la ficha.');
+        if (esFecha(d.fechaInicio) && t.fechaIngreso && d.fechaInicio !== t.fechaIngreso) avisos.push({ nivel: 'aviso', texto: 'La fecha de ingreso del contrato (' + fechaLarga(d.fechaInicio) + ') no coincide con la de la ficha (' + fechaLarga(t.fechaIngreso) + '). Corrige la que esté mal: se usa para las vacaciones, la antigüedad y el finiquito.' });
+        if (t.contrato === 'plazo_fijo' && esFecha(d.fechaInicio) && esFecha(t.fechaTerminoPlazo)) {
+            if (t.fechaTerminoPlazo <= d.fechaInicio) errores.fechaInicio = 'Debe ser anterior al vencimiento del plazo fijo de la ficha.';
+            else if (t.fechaTerminoPlazo > sumarDiasIso(sumarMesesIso(d.fechaInicio, 12), -1)) avisos.push({ nivel: 'aviso', texto: 'El plazo fijo no puede exceder de un año (dos para gerentes o personas con título profesional o técnico de educación superior: art. 159 N°4). Revisa el vencimiento de la ficha.' });
+        }
+        if (esFecha(d.fecha) && esFecha(d.fechaInicio)) {
+            var plazo = t.contrato === 'obra' ? 5 : 15;
+            var atraso = dias(d.fechaInicio, d.fecha);
+            if (atraso > 60) avisos.push({ nivel: 'aviso', texto: 'Esta persona ingresó hace ' + plural(atraso, 'día', 'días') + '. Si ya tiene un contrato firmado, no firmes uno nuevo: deja los cambios en un anexo. Si nunca lo tuvo, fírmenlo cuanto antes con su fecha real de ingreso: la ley pide el contrato escrito dentro de ' + plazo + ' días desde la incorporación (art. 9).' });
+            else if (atraso > plazo) avisos.push({ nivel: 'aviso', texto: 'El contrato se firma ' + plural(atraso, 'día', 'días') + ' después del ingreso. La ley pide firmarlo dentro de ' + plazo + ' días desde la incorporación (art. 9; 5 días en los contratos por obra o de menos de 30 días). Fírmenlo cuanto antes.' });
+        }
+        if (t.jornadaHoras > 0 && t.jornadaHoras <= JORNADA_PARCIAL) avisos.push({ nivel: 'info', texto: 'Con ' + t.jornadaHoras + ' horas semanales es un contrato de jornada parcial (art. 40 bis). El sueldo no puede ser menor que el ingreso mínimo proporcional a esas horas.' });
+        if (t.gratificacion === 'ninguna') avisos.push({ nivel: 'aviso', texto: 'La ficha dice que no se paga gratificación. Si la empresa tiene utilidades, la ley obliga a gratificar (arts. 47 y 50): el contrato remite a esas normas.' });
+        if (!vacio(d.comisiones)) avisos.push({ nivel: 'info', texto: 'Con comisiones, el trabajador tiene derecho a la semana corrida: domingos y festivos pagados según el promedio de lo variable (art. 45). Recuerda agregarla en las liquidaciones.' });
+        if (d.protocolo !== true) avisos.push({ nivel: 'aviso', texto: 'Todo empleador debe tener un protocolo de prevención del acoso sexual, laboral y de la violencia en el trabajo e informarlo a sus trabajadores (Ley 21.643, Ley Karin). El Kit Blindaje Laboral del sitio trae uno.' });
+        if (!e.direccion) avisos.push({ nivel: 'info', texto: 'Falta la dirección de la empresa: el contrato sale sin el domicilio del empleador. Puedes agregarla en «Empresa».' });
+        if (!t.domicilio) avisos.push({ nivel: 'info', texto: 'Falta el domicilio del trabajador en su ficha: conviene que el contrato lo indique (es donde se envían las cartas certificadas).' });
+        avisos.push({ nivel: 'info', texto: 'Después de firmarlo, entrega un ejemplar al trabajador y registra el contrato en el portal Mi DT de la Dirección del Trabajo dentro de 15 días desde la firma (art. 9 bis).' });
+    }
+
+    function validarAnexo(ctx, d, errores, bloqueos, avisos) {
+        var t = ctx.t, m = d.materia;
+        if (m !== 'prorroga') { if (vacio(d.vigencia)) errores.vigencia = 'Indica desde cuándo rige el cambio.'; else if (!esFecha(d.vigencia)) errores.vigencia = 'La fecha no es válida.'; }
+        if (m === 'sueldo') {
+            if (!(Number(d.nuevoSueldo) > 0)) errores.nuevoSueldo = 'Indica el nuevo sueldo base.';
+            else if (t.sueldoBase && Number(d.nuevoSueldo) < t.sueldoBase) avisos.push({ nivel: 'aviso', texto: 'El nuevo sueldo es menor que el actual (' + pesos(t.sueldoBase) + '). Una rebaja solo es válida con el acuerdo del trabajador, que lo firma en este anexo, y nunca bajo el ingreso mínimo.' });
+        }
+        if (m === 'jornada') {
+            var h = Number(d.nuevaJornada);
+            if (vacio(d.nuevaJornada)) errores.nuevaJornada = 'Indica la nueva jornada semanal.';
+            else if (!Number.isInteger(h) || h < 1) errores.nuevaJornada = 'Debe ser un número entero de horas.';
+            else if (h > JORNADA_MAXIMA) errores.nuevaJornada = 'La jornada máxima legal es de ' + JORNADA_MAXIMA + ' horas semanales (baja a 40 el 26 de abril de 2028).';
+            if (vacio(d.nuevoHorario)) errores.nuevoHorario = 'Indica los días y el horario.';
+            if (h > 0 && h <= JORNADA_PARCIAL && t.jornadaHoras > JORNADA_PARCIAL) avisos.push({ nivel: 'info', texto: 'Pasa a jornada parcial (art. 40 bis): revisa que el sueldo sea al menos el ingreso mínimo proporcional a las nuevas horas.' });
+        }
+        if (m === 'cargo') {
+            if (vacio(d.nuevoCargo)) errores.nuevoCargo = 'Indica el nuevo cargo.';
+            if (vacio(d.nuevasFunciones)) errores.nuevasFunciones = 'Indica las nuevas funciones.';
+        }
+        if (m === 'prorroga') {
+            if (t.contrato !== 'plazo_fijo' || !t.fechaTerminoPlazo) bloqueos.push('La ficha no tiene un contrato a plazo fijo con fecha de vencimiento: no hay plazo que prorrogar.');
+            else if (t.renovaciones >= 1) bloqueos.push('Este contrato ya fue renovado una vez: una segunda renovación lo convierte en indefinido por ley (art. 159 N°4). Elige «Pasa a contrato indefinido».');
+            if (vacio(d.nuevoTermino)) errores.nuevoTermino = 'Indica la nueva fecha de vencimiento.';
+            else if (!esFecha(d.nuevoTermino)) errores.nuevoTermino = 'La fecha no es válida.';
+            else if (t.fechaTerminoPlazo && d.nuevoTermino <= t.fechaTerminoPlazo) errores.nuevoTermino = 'Debe ser posterior al vencimiento actual (' + fechaLarga(t.fechaTerminoPlazo) + ').';
+            else if (t.fechaIngreso && d.nuevoTermino > sumarDiasIso(sumarMesesIso(t.fechaIngreso, 12), -1)) avisos.push({ nivel: 'aviso', texto: 'Con la prórroga, el contrato a plazo fijo suma más de un año desde el ingreso. El plazo fijo no puede exceder de un año (dos para gerentes o personas con título profesional o técnico); si lo excede, se entiende indefinido (art. 159 N°4).' });
+            if (t.fechaTerminoPlazo && esFecha(d.fecha) && d.fecha > t.fechaTerminoPlazo) avisos.push({ nivel: 'aviso', texto: 'La prórroga se firma después del vencimiento (' + fechaLarga(t.fechaTerminoPlazo) + '). Si el trabajador siguió trabajando después de esa fecha con conocimiento del empleador, el contrato ya es indefinido (art. 159 N°4).' });
+        }
+        if (m === 'indefinido' && t.contrato === 'indefinido') bloqueos.push('El contrato de la ficha ya es indefinido.');
+        if (m === 'indefinido' && t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo && esFecha(d.vigencia) && d.vigencia > sumarDiasIso(t.fechaTerminoPlazo, 1)) avisos.push({ nivel: 'aviso', texto: 'El plazo fijo vence el ' + fechaLarga(t.fechaTerminoPlazo) + ': el paso a indefinido debe regir a más tardar desde el día siguiente (' + fechaLarga(sumarDiasIso(t.fechaTerminoPlazo, 1)) + '). Si sigue trabajando después del vencimiento, ya es indefinido por ley.' });
+        if (m === 'otro' && vacio(d.textoLibre)) errores.textoLibre = 'Escribe el cambio que se acuerda.';
+        avisos.push({ nivel: 'info', texto: 'El anexo se firma por ambas partes y se guarda junto al contrato (art. 11). Si registraste el contrato en Mi DT, registra también este anexo.' });
+    }
+
+    function validarPactoHE(ctx, d, errores, bloqueos, avisos) {
+        var t = ctx.t;
+        if (esFecha(d.desde) && esFecha(d.hasta)) {
+            if (d.hasta < d.desde) errores.hasta = 'Debe ser posterior a la fecha de inicio.';
+            else if (d.hasta > sumarDiasIso(sumarMesesIso(d.desde, 3), -1)) errores.hasta = 'El pacto puede durar hasta 3 meses (art. 32): termina a más tardar el ' + fechaLarga(sumarDiasIso(sumarMesesIso(d.desde, 3), -1)) + '.';
+        }
+        if (esFecha(d.fecha) && esFecha(d.desde) && d.fecha > d.desde) avisos.push({ nivel: 'aviso', texto: 'El pacto se firma después de la fecha en que empieza a regir. Las horas extra deben pactarse por escrito antes de trabajarse.' });
+        if (t.jornadaHoras > 0 && t.jornadaHoras <= JORNADA_PARCIAL) avisos.push({ nivel: 'info', texto: 'En jornada parcial, la jornada ordinaria más las horas extra no puede superar la jornada máxima legal (art. 40 bis).' });
+        avisos.push({ nivel: 'info', texto: 'Las horas extra se pagan con un recargo del 50% sobre el sueldo convenido, junto con la remuneración del mes, y deben quedar en el registro de asistencia. Se ingresan en la liquidación del mes.' });
     }
 
     function feriadosOk(ctx, bloqueos, fn) {
@@ -481,6 +668,87 @@
     function destinatarioTxt(d) { return d.destinatario ? esc(textoUsuario(d.destinatario)) : 'los fines que estime convenientes'; }
     function estaEnTiempo(f1, f2) { return f1 > f2 ? 'terminó' : 'terminará'; }
 
+    // Comparecencia del contrato y de los anexos
+    function partes(ctx, completa) {
+        var e = ctx.empresa, t = ctx.t;
+        var rep = e.representante ? ', representada por don/doña ' + esc(e.representante) + (e.rutRepresentante ? ', cédula de identidad N° ' + esc(rutFmt(e.rutRepresentante)) : '') : '';
+        var domE = e.direccion ? ', con domicilio en ' + esc([e.direccion, e.comuna].filter(Boolean).join(', ')) : '';
+        var datosT = completa ? ', de nacionalidad ' + esc(textoUsuario(t.nacionalidad).toLowerCase()) + ', nacido/a el ' + esc(fechaLarga(t.fechaNacimiento)) : '';
+        var domT = t.domicilio ? ', con domicilio en ' + esc([t.domicilio, t.comuna].filter(Boolean).join(', ')) : '';
+        return 'entre <strong>' + esc(e.razonSocial) + '</strong>, RUT ' + esc(rutFmt(e.rut)) + rep + domE + ', en adelante el «Empleador», y don/doña <strong>' + esc(t.nombre) + '</strong>' + datosT + ', cédula de identidad N° ' + esc(rutFmt(t.rut)) + domT + ', en adelante el «Trabajador»';
+    }
+    function listaFunciones(texto) {
+        var l = String(texto || '').split(/\n+/).map(function (x) { return textoUsuario(x).replace(/^[-•*\d.)\s]+/, ''); }).filter(Boolean);
+        return '<ol class="dc-lista">' + l.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>';
+    }
+    var ORD_M = ['PRIMERO', 'SEGUNDO', 'TERCERO', 'CUARTO', 'QUINTO', 'SEXTO', 'SÉPTIMO', 'OCTAVO', 'NOVENO', 'DÉCIMO', 'UNDÉCIMO', 'DUODÉCIMO'];
+    function numerador() { var n = 0; return function (titulo) { return '<p class="dc-p"><strong>' + ORD_M[n++] + ': ' + esc(titulo) + '.</strong></p>'; }; }
+    var PAGO_TXT = { ultimo: 'por mes vencido, el último día hábil de cada mes', primeros5: 'por mes vencido, dentro de los primeros cinco días hábiles del mes siguiente' };
+    function jornadaTxt(horas) { return horas + ' horas semanales' + (horas <= JORNADA_PARCIAL ? ', en régimen de jornada parcial (art. 40 bis del Código del Trabajo)' : ''); }
+
+    function generarContrato(ctx, d, pagada) {
+        var e = ctx.empresa, t = ctx.t, cl = numerador(), cuerpo = '';
+        cuerpo += '<p class="dc-p">En ' + esc(textoUsuario(d.ciudad)) + ', a ' + esc(fechaLarga(d.fecha)) + ', ' + partes(ctx, true) + ', se ha convenido el siguiente contrato individual de trabajo:</p>';
+        cuerpo += cl('Naturaleza de los servicios') + '<p class="dc-p">El Trabajador se obliga a prestar servicios personales bajo subordinación y dependencia del Empleador en el cargo de <strong>' + esc(t.cargo) + '</strong>, con las siguientes funciones:</p>' + listaFunciones(d.funciones) +
+            '<p class="dc-p">Además, realizará otras labores similares que se relacionen directamente con su cargo.</p>';
+        cuerpo += cl('Lugar de trabajo') + '<p class="dc-p">Los servicios se prestarán en ' + esc(textoUsuario(d.lugarTrabajo)) + '.</p>';
+        cuerpo += cl('Jornada de trabajo') + '<p class="dc-p">La jornada ordinaria de trabajo será de ' + esc(jornadaTxt(t.jornadaHoras)) + ', distribuida ' + esc(textoUsuario(d.horario).replace(/\.$/, '')) + '.</p>' +
+            '<p class="dc-p">Solo podrán trabajarse horas extraordinarias para atender necesidades o situaciones temporales de la empresa, con un máximo de dos por día y previo pacto escrito de vigencia no superior a tres meses. Se pagarán con un recargo del 50% sobre el sueldo convenido (arts. 31 y 32 del Código del Trabajo).</p>';
+        var rem = '<p class="dc-p">El Empleador pagará al Trabajador un sueldo base mensual de <strong>' + esc(montoTxt(t.sueldoBase)) + '</strong>.</p>';
+        if (t.gratificacion === 'legal') rem += '<p class="dc-p">Además, pagará mensualmente una gratificación equivalente al 25% de lo devengado en el mes por remuneraciones mensuales, con un tope anual de 4,75 ingresos mínimos mensuales, conforme al artículo 50 del Código del Trabajo.</p>';
+        else if (t.gratificacion === 'pactada') rem += '<p class="dc-p">Las partes acuerdan una gratificación convencional consistente en ' + esc(textoUsuario(d.gratificacionPactada)) + ', que no podrá ser inferior a la que resulte de aplicar las normas legales (art. 46 del Código del Trabajo).</p>';
+        else rem += '<p class="dc-p">La gratificación, si correspondiere, se regirá por los artículos 46 y siguientes del Código del Trabajo.</p>';
+        if (!vacio(d.comisiones)) rem += '<p class="dc-p">El Trabajador percibirá también comisiones, consistentes en ' + esc(textoUsuario(d.comisiones)) + ', y la semana corrida que corresponda conforme al artículo 45 del Código del Trabajo.</p>';
+        var asig = [];
+        if (t.colacion > 0) asig.push('colación por ' + montoTxt(t.colacion));
+        if (t.movilizacion > 0) asig.push('movilización por ' + montoTxt(t.movilizacion));
+        if (asig.length) rem += '<p class="dc-p">El Empleador pagará además mensualmente una asignación de ' + esc(asig.join(' y una asignación de ')) + ', que no constituyen remuneración (art. 41 del Código del Trabajo).</p>';
+        rem += '<p class="dc-p">Las remuneraciones se pagarán ' + esc(PAGO_TXT[d.pago] || PAGO_TXT.ultimo) + ', mediante ' + esc(FORMAS_PAGO[d.formaPago] || FORMAS_PAGO.transferencia) + ', previa deducción de los impuestos y las cotizaciones de seguridad social que correspondan y de los demás descuentos que autorice la ley (art. 58). Junto con el pago se entregará al Trabajador un comprobante con el detalle de lo pagado y de los descuentos (art. 54).</p>';
+        cuerpo += cl('Remuneración') + rem;
+        if (!vacio(d.beneficios)) cuerpo += cl('Beneficios adicionales') + parrafos(d.beneficios);
+        var duracion;
+        if (t.contrato === 'plazo_fijo') duracion = 'El Trabajador ingresó al servicio del Empleador el ' + fechaLarga(d.fechaInicio) + '. El presente contrato es a plazo fijo y durará hasta el ' + fechaLarga(t.fechaTerminoPlazo) + ' (art. 159 N°4 del Código del Trabajo).';
+        else if (t.contrato === 'obra') duracion = 'El Trabajador ingresó al servicio del Empleador el ' + fechaLarga(d.fechaInicio) + '. El presente contrato se celebra para la obra o faena «' + textoUsuario(d.nombreObra) + '» y terminará al concluir el trabajo o servicio que le dio origen (art. 159 N°5 del Código del Trabajo).';
+        else duracion = 'El Trabajador ingresó al servicio del Empleador el ' + fechaLarga(d.fechaInicio) + '. El presente contrato es de duración indefinida.';
+        cuerpo += cl('Duración') + '<p class="dc-p">' + esc(duracion) + '</p>';
+        var normas = '<p class="dc-p">El Trabajador se obliga a cumplir las instrucciones que le imparta el Empleador en relación con su trabajo' + (d.reglamento === true ? ' y el Reglamento Interno de Orden, Higiene y Seguridad de la empresa, del que declara recibir una copia gratuita en este acto (art. 156 del Código del Trabajo)' : '') + '.</p>';
+        if (d.protocolo === true) normas += '<p class="dc-p">El Empleador declara contar con un protocolo de prevención del acoso sexual, del acoso laboral y de la violencia en el trabajo, que el Trabajador declara conocer, y se compromete a promover un trato digno y respetuoso (Ley N° 21.643).</p>';
+        cuerpo += cl('Obligaciones y normas internas') + normas;
+        if (d.confidencialidad === true) cuerpo += cl('Confidencialidad') + '<p class="dc-p">El Trabajador se obliga a guardar reserva, durante la vigencia de este contrato, sobre la información de la empresa, de sus clientes y de sus proveedores a la que acceda con motivo de su trabajo, y a no usarla para fines ajenos a sus funciones.</p>';
+        cuerpo += cl('Registro y ejemplares') + '<p class="dc-p">El Empleador registrará este contrato en el sitio electrónico de la Dirección del Trabajo (art. 9 bis del Código del Trabajo). En lo no previsto, rigen las normas del Código del Trabajo. El presente contrato se firma en dos ejemplares del mismo tenor y fecha, quedando uno en poder de cada parte; el Trabajador declara recibir el suyo en este acto.</p>';
+        cuerpo += '<div class="dc-firmas">' + firmaEmpleador(e) + firmaTrabajador(t) + '</div>';
+        return envolver(e, 'Contrato individual de trabajo', cuerpo, pagada);
+    }
+
+    function generarAnexoContrato(ctx, d, pagada) {
+        var e = ctx.empresa, t = ctx.t, cambio, desde = d.materia !== 'prorroga' ? 'A contar del ' + fechaLarga(d.vigencia) + ', ' : '';
+        switch (d.materia) {
+            case 'sueldo': cambio = '<p class="dc-p">' + esc(desde) + 'el sueldo base mensual del Trabajador será de <strong>' + esc(montoTxt(Number(d.nuevoSueldo))) + '</strong>' + (t.sueldoBase ? ', en reemplazo del sueldo base de ' + esc(pesos(t.sueldoBase)) : '') + '.</p>'; break;
+            case 'jornada': cambio = '<p class="dc-p">' + esc(desde) + 'la jornada ordinaria de trabajo será de ' + esc(jornadaTxt(Number(d.nuevaJornada))) + ', distribuida ' + esc(textoUsuario(d.nuevoHorario).replace(/\.$/, '')) + '.</p>'; break;
+            case 'cargo': cambio = '<p class="dc-p">' + esc(desde) + 'el Trabajador se desempeñará en el cargo de <strong>' + esc(textoUsuario(d.nuevoCargo)) + '</strong>, con las siguientes funciones:</p>' + listaFunciones(d.nuevasFunciones); break;
+            case 'prorroga': cambio = '<p class="dc-p">Las partes acuerdan prorrogar el contrato de trabajo a plazo fijo, cuyo vencimiento era el ' + esc(fechaLarga(t.fechaTerminoPlazo)) + ', hasta el <strong>' + esc(fechaLarga(d.nuevoTermino)) + '</strong>.</p>'; break;
+            case 'indefinido': cambio = '<p class="dc-p">' + esc(desde) + 'el contrato de trabajo pasa a ser de <strong>duración indefinida</strong>, manteniéndose la antigüedad del Trabajador desde su fecha de ingreso.</p>'; break;
+            default: cambio = parrafos(d.textoLibre);
+        }
+        var cuerpo = '<p class="dc-p">En ' + esc(textoUsuario(d.ciudad)) + ', a ' + esc(fechaLarga(d.fecha)) + ', ' + partes(ctx, false) + ', se acuerda el siguiente anexo al contrato de trabajo del Trabajador, que ingresó al servicio el ' + esc(fechaLarga(t.fechaIngreso)) + ' (art. 11 del Código del Trabajo):</p>' +
+            '<p class="dc-p"><strong>PRIMERO:</strong> Las partes acuerdan modificar el contrato de trabajo en lo siguiente:</p>' + cambio +
+            '<p class="dc-p"><strong>SEGUNDO:</strong> En todo lo que no se modifica por este anexo, sigue rigiendo íntegramente el contrato de trabajo y sus anexos anteriores.</p>' +
+            '<p class="dc-p"><strong>TERCERO:</strong> El presente anexo se firma en dos ejemplares del mismo tenor y fecha, quedando uno en poder de cada parte.</p>' +
+            '<div class="dc-firmas">' + firmaEmpleador(e) + firmaTrabajador(t) + '</div>';
+        return envolver(e, 'Anexo de contrato de trabajo', cuerpo, pagada);
+    }
+
+    function generarPactoHE(ctx, d, pagada) {
+        var e = ctx.empresa, t = ctx.t, n = Number(d.maxDiarias);
+        var cuerpo = '<p class="dc-p">En ' + esc(textoUsuario(d.ciudad)) + ', a ' + esc(fechaLarga(d.fecha)) + ', ' + partes(ctx, false) + ', se acuerda el siguiente pacto de horas extraordinarias:</p>' +
+            '<p class="dc-p"><strong>PRIMERO:</strong> Las partes acuerdan que el Trabajador podrá trabajar horas extraordinarias, con un máximo de ' + esc(plural(n, 'hora', 'horas')) + ' por día, para atender la siguiente necesidad o situación temporal de la empresa:</p>' + parrafos(d.motivo) +
+            '<p class="dc-p"><strong>SEGUNDO:</strong> Este pacto rige desde el ' + esc(fechaLarga(d.desde)) + ' hasta el ' + esc(fechaLarga(d.hasta)) + ', plazo que no excede de tres meses, y solo podrá renovarse por acuerdo escrito de las partes (art. 32 del Código del Trabajo).</p>' +
+            '<p class="dc-p"><strong>TERCERO:</strong> Las horas extraordinarias se pagarán con un recargo del cincuenta por ciento sobre el sueldo convenido para la jornada ordinaria, junto con las remuneraciones del mes en que se trabajen, y se registrarán en el sistema de control de asistencia de la empresa (arts. 32 y 33 del Código del Trabajo).</p>' +
+            '<p class="dc-p"><strong>CUARTO:</strong> El presente pacto se firma en dos ejemplares del mismo tenor y fecha, quedando uno en poder de cada parte.</p>' +
+            '<div class="dc-firmas">' + firmaEmpleador(e) + firmaTrabajador(t) + '</div>';
+        return envolver(e, 'Pacto de horas extraordinarias', cuerpo, pagada);
+    }
+
     function generarCertAntiguedad(ctx, d, pagada) {
         var e = ctx.empresa, t = ctx.t, hasta = vacio(d.fechaTermino) ? d.fecha : d.fechaTermino;
         var a = antiguedad(t.fechaIngreso, hasta);
@@ -674,6 +942,7 @@
     }
 
     var GENERADORES = {
+        contrato: generarContrato, anexo_contrato: generarAnexoContrato, pacto_horas_extra: generarPactoHE,
         cert_antiguedad: generarCertAntiguedad, cert_remuneraciones: generarCertRemuneraciones, comprobante_feriado: generarComprobanteFeriado,
         carta_159_4: generarCarta1594, carta_161: generarCarta161, amonestacion: generarAmonestacion, anexo_datos: generarAnexoDatos,
         finiquito: generarFiniquito
@@ -687,10 +956,11 @@
     }
 
     var api = {
-        TIPOS: TIPOS, VERSION_TEXTOS: VERSION_TEXTOS, PIE: PIE, campos: campos, valoresIniciales: valoresIniciales, validar: validar, generar: generar,
+        TIPOS: TIPOS, GRUPOS: GRUPOS, VERSION_TEXTOS: VERSION_TEXTOS, PIE: PIE, campos: campos, campoVisible: campoVisible, valoresIniciales: valoresIniciales, validar: validar, generar: generar,
+        pesosEnLetras: pesosEnLetras, horarioPropuesto: horarioPropuesto,
         periodosPromedio: periodosPromedio, indemnizacion: indemnizacion, antiguedad: antiguedad, antiguedadTxt: antiguedadTxt, plazoComunicacion: plazoComunicacion,
         propuestaFeriado: propuestaFeriado, diasCorridos: diasCorridos, calcularFiniquito: calcularFiniquito,
-        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.1.0'
+        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.3.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeDocs = api;

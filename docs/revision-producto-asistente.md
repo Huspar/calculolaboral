@@ -85,6 +85,30 @@ No migrar producción ni publicar todavía. Construir antes los puntos 1 a 3 de 
 
 Nada de esto ha sido revisado por un abogado; los cálculos nuevos (reforma de pensiones, finiquito) deben verificarse contra las fuentes oficiales al construirlos.
 
+## 7. Tercera revisión (13-oct-2026): todo dentro del asistente y qué más agregar
+
+**Hecho en esta vuelta.** «Contratos y finiquitos» ya no manda a los generadores del sitio. El contrato de trabajo, el anexo de contrato (sueldo, jornada, cargo, prórroga del plazo fijo, paso a indefinido u otro cambio) y el pacto de horas extra se arman dentro del asistente con la ficha, igual que el finiquito. La vista muestra por persona si tiene contrato emitido, sus anexos y las acciones. Al emitir un anexo, el asistente ofrece pasar el cambio a la ficha con un clic. Con el pase, cada documento se descarga también en Word para editarlo. Los generadores sueltos siguen en el sitio para quien compra un documento puntual, pero el Pase ya no los promete.
+
+**Lo que trae Buk Starter (gratis hasta 20 colaboradores) según su página:** registrar colaboradores, asistencia (manual), bonos y descuentos; generar liquidaciones, archivo Previred y nómina de pago; portal de autoconsulta del trabajador, documentos, vacaciones y permisos. **Lo que no trae:** firma digital y registros en la DT, que están en los planes pagados (Basic desde 1,5 UF + IVA al mes). El soporte es de autogestión.
+
+**Qué agregar, en orden de impacto:**
+
+| # | Qué | Por qué | Esfuerzo |
+|---|---|---|---|
+| 1 | **Semana corrida automática** para quien gana comisiones (art. 45) | Hoy el motor no la calcula: es una diferencia que el trabajador puede reclamar. Antes de vender a comercio, debe estar. | Medio |
+| 2 | **Licencias médicas, permisos y ausencias** registrados una vez | Ajustan solos los días trabajados de la liquidación, aparecen en el calendario y avisan qué días paga el empleador. Buk lo tiene como «vacaciones y permisos». | Medio |
+| 3 | **Bonos y asignaciones fijas en la ficha** (como el anticipo fijo) | Hoy un bono permanente se escribe cada mes. Se propone solo en cada liquidación nueva. | Bajo |
+| 4 | **Libro de remuneraciones del mes para el contador** (planilla Excel y PDF) | Es lo primero que pide el contador. Se arma con lo que ya guardamos. | Bajo |
+| 5 | **Avisos por correo** antes de cada vencimiento (plazo fijo, cotizaciones, Mi DT, prórroga) | «Te avisa antes de que te salga caro» deja de depender de entrar al asistente. Buk Starter no acompaña así. Requiere Resend en producción (ya está para el acceso). | Medio |
+| 6 | **Liquidación al trabajador por enlace** con constancia de que la vio | Reemplaza imprimir y es la base de un portal del trabajador como el de Buk. | Medio |
+| 7 | **Nómina de pago al banco** (planilla para transferencias masivas) | Buk Starter la trae. Cada banco usa su formato: empezar con una planilla genérica y los 3 bancos más usados por pymes. | Medio |
+| 8 | **Archivo Previred y LRE** | Cierran la brecha de cálculo con Buk y Nubox (Etapa 2 de la sección 4). Hay que validarlos con archivos reales. | Alto |
+| 9 | **Aceptación del trabajador por enlace** (comprobante de feriado, anexo, pacto de horas extra) | Buk Starter no tiene firma. Requiere revisar qué validez tiene una aceptación electrónica simple para cada documento antes de ofrecerla. | Medio, con revisión legal |
+| 10 | **Revisión de cumplimiento** según el tamaño de la empresa | Protocolo Ley Karin, reglamento interno desde 10, contratos firmados y registrados, LRE desde 5. Cada punto enlaza al kit o documento que lo resuelve. | Bajo |
+| 11 | **Certificado anual de remuneraciones** para la declaración de renta (marzo) | Lo piden los trabajadores todos los años y sale de las liquidaciones guardadas. | Bajo |
+
+**Recomendación:** construir 1 a 4 antes del lanzamiento (la semana corrida es corrección, no extra) y 5 apenas se verifique el correo en producción. Con eso, frente a Buk Starter, el asistente queda con lo básico de remuneraciones más lo que Buk deja en planes pagados: documentos con explicación, registro DT avisado y acompañamiento.
+
 ## Fuentes
 
 - Buk Starter: https://www.buk.cl/starter
@@ -96,3 +120,4 @@ Nada de esto ha sido revisado por un abogado; los cálculos nuevos (reforma de p
 - Cotización del empleador (Superintendencia de Pensiones): https://www.spensiones.cl/portal/institucional/594/w3-propertyvalue-10906.html
 - Registro de contratos, art. 9 bis (Ley 21.327): https://www.carey.cl/download/filebase/newsalert/406_ley-no21.327.pdf
 - Formato de archivo Previred: https://www.previred.com/documents/80476/80730/FormatoLargoVariablePorSeparador.pdf
+- Buk Starter, funciones y comparación con planes pagados: https://www.buk.cl/Starter
