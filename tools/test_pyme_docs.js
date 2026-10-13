@@ -11,6 +11,8 @@ const EMPRESA = { razonSocial: 'Panadería <La Espiga> Ltda.', rut: '76.845.123-
 const TRAB = (extra) => Object.assign({ id: 't1', nombre: 'María Pérez Soto', rut: '12.345.678-5', cargo: 'Vendedora', domicilio: 'Calle 1', comuna: 'Temuco', fechaIngreso: '2020-03-15', contrato: 'indefinido', renovaciones: 0, sueldoBase: 650000, colacion: 40000, movilizacion: 30000, gratificacion: 'legal', distribucion: '5', activo: true }, extra);
 const ctx = (t, extra) => Object.assign({ empresa: EMPRESA, t: t || TRAB(), hoy: '2026-10-12', meses: {}, uf: 41130.94, F }, extra);
 const MES = (liquido) => ({ calculo: { liquido, totalHaberes: liquido + 100000, totalImponible: liquido + 50000, totalDescuentos: 100000, uf: 41000, utm: 72000 } });
+// Mes guardado con el desglose de las bases (pyme_liquidaciones v1.3.0): horas extra 20.000, gratificación 100.000, colación + movilización 70.000
+const MESB = (liquido) => ({ calculo: Object.assign({}, MES(liquido).calculo, { conBases: true, horasExtra: 20000, gratificacion: 100000, colMov: 70000 }) });
 const valido = (tipo, c, extra) => Object.assign(D.valoresIniciales(tipo, c), extra);
 const HECHOS = 'Desde marzo las ventas de la sucursal cayeron un 40% respecto del año anterior y se cerró el turno de tarde, por lo que el cargo de vendedora de ese turno dejó de ser necesario.';
 
@@ -185,9 +187,27 @@ caso('carta del art. 161: informa el tope de 90 UF y la falta de UF', () => {
     const sinUf = ctx(TRAB(), { uf: 0 });
     assert.ok(D.validar('carta_161', sinUf, valido('carta_161', sinUf, { fechaTermino: '2026-10-20', hechos: HECHOS, remuneracion: 800000, sinLicencia: true, sinFuero: true, cotizaciones: true })).avisos.some(a => a.texto.indexOf('UF de hoy') >= 0));
 });
-caso('carta del art. 161: propone la última remuneración desde la liquidación guardada, o el sueldo base', () => {
-    assert.strictEqual(D.valoresIniciales('carta_161', ctx()).remuneracion, 650000);
-    assert.strictEqual(D.valoresIniciales('carta_161', ctx(TRAB(), { meses: { '2026-09': MES(700000) } })).remuneracion, 750000);
+caso('carta del art. 161: propone la base de la indemnización (DT: con colación y movilización, sin horas extra)', () => {
+    // sin liquidación guardada: sueldo base 650.000 + colación 40.000 + movilización 30.000
+    assert.strictEqual(D.valoresIniciales('carta_161', ctx()).remuneracion, 720000);
+    // con liquidación guardada sin desglose (versiones anteriores) vale lo mismo que sin ella
+    assert.strictEqual(D.valoresIniciales('carta_161', ctx(TRAB(), { meses: { '2026-09': MES(700000) } })).remuneracion, 720000);
+    // con desglose: imponible 750.000 - horas extra 20.000 + colación y movilización 70.000
+    assert.strictEqual(D.valoresIniciales('carta_161', ctx(TRAB(), { meses: { '2026-09': MESB(700000) } })).remuneracion, 800000);
+});
+caso('finiquito: el feriado se propone sin gratificación mensual, horas extra, colación ni movilización', () => {
+    const v0 = D.valoresIniciales('finiquito', ctx());
+    assert.strictEqual(v0.remFeriado, 650000);        // sin liquidación: el sueldo base
+    assert.strictEqual(v0.remuneracion, 720000);      // la indemnización sí lleva colación y movilización
+    const v1 = D.valoresIniciales('finiquito', ctx(TRAB(), { meses: { '2026-09': MESB(700000) } }));
+    assert.strictEqual(v1.remFeriado, 630000);        // 750.000 imponible - 20.000 horas extra - 100.000 gratificación
+    assert.strictEqual(v1.remuneracion, 800000);
+});
+caso('textos de ayuda: la base de la indemnización incluye colación y movilización; la del feriado no incluye gratificación', () => {
+    const ayuda = (tipo, k) => D.campos(tipo).find(c => c.k === k).ayuda;
+    assert.ok(/colación y movilización que se pagan mensualmente/.test(ayuda('finiquito', 'remuneracion')) && !/excluye[^.;]*colación/i.test(ayuda('finiquito', 'remuneracion')));
+    assert.ok(/colación y movilización que se pagan mensualmente/.test(ayuda('carta_161', 'remuneracion')) && !/excluye[^.;]*colación/i.test(ayuda('carta_161', 'remuneracion')));
+    assert.ok(/No incluye la gratificación mensual/.test(ayuda('finiquito', 'remFeriado')) && /836\/46/.test(ayuda('finiquito', 'remFeriado')));
 });
 
 caso('amonestación: hechos concretos y mención al reglamento solo si existe', () => {
@@ -249,7 +269,21 @@ caso('finiquito: días hábiles a corridos desde el día siguiente al término (
     const r = D.diasCorridos(ctx(), '2026-10-30', 2.5);
     assert.strictEqual(r.inhabiles, 2);
     assert.strictEqual(r.corridos, 4.5);
-    assert.strictEqual(r.hasta, '2026-11-03');
+    assert.strictEqual(r.hasta, '2026-11-04');       // el 0,5 se toma el día hábil siguiente (miércoles 4)
+});
+caso('finiquito: si los días completos terminan en viernes, el fin de semana antes de la fracción también cuenta', () => {
+    // término sábado 19-sep-2026: 10 hábiles terminan el viernes 2-oct; la fracción de 0,42 cae el lunes 5-oct,
+    // con sábado 3 y domingo 4 en medio. Inhábiles: 20, 26, 27 de septiembre y 3 y 4 de octubre.
+    const r = D.diasCorridos(ctx(), '2026-09-19', 10.42);
+    assert.strictEqual(r.inhabiles, 5);
+    assert.strictEqual(r.corridos, 15.42);
+    assert.strictEqual(r.hasta, '2026-10-05');
+    // sin fracción no hay fin de semana de más
+    assert.strictEqual(D.diasCorridos(ctx(), '2026-09-19', 10).corridos, 13);
+    // la fracción que cae entre semana no suma inhábiles: 9,54 hábiles desde el sábado 19-sep
+    const s = D.diasCorridos(ctx(), '2026-09-19', 9.54);
+    assert.strictEqual(s.inhabiles, 3);
+    assert.strictEqual(s.corridos, 12.54);
 });
 caso('finiquito por art. 161: años de servicio, sustitutiva, feriado y total', () => {
     const c = ctx(ANA(), { vac: VAC_ANA });
@@ -257,8 +291,8 @@ caso('finiquito por art. 161: años de servicio, sustitutiva, feriado y total', 
     const v = D.validar('finiquito', c, d);
     assert.ok(v.puedeEmitir, JSON.stringify(v));
     const r = D.calcularFiniquito(c, d, []);
-    assert.strictEqual(r.ias, 3250000);          // 4 años y 7 meses: 5 años × $650.000
-    assert.strictEqual(r.sustitutiva, 650000);
+    assert.strictEqual(r.ias, 3600000);          // 4 años y 7 meses: 5 años × $720.000 (sueldo, colación y movilización)
+    assert.strictEqual(r.sustitutiva, 720000);
     assert.strictEqual(r.feriado.habiles, 46.42);
     assert.strictEqual(r.feriado.monto, Math.round(r.feriado.corridos * 650000 / 30));
     assert.strictEqual(r.total, r.ias + r.sustitutiva + r.feriado.monto);

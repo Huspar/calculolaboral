@@ -78,6 +78,21 @@ caso('resumen con desglose: lo acepta el servidor y el resumen de Previred agrup
     assert.strictEqual(r.total, r.filas.reduce((s, f) => s + f.monto, 0));
     assert.strictEqual(r.costo, c1.costoEmpleador + c2.costoEmpleador);
 });
+caso('el resumen guarda las bases del finiquito (horas extra, gratificación, colación y movilización) y el servidor las valida', () => {
+    const t = T({ colacion: 40000, movilizacion: 30000 });
+    const mes = L.mesBase(t, '2026-10');
+    mes.horasExtra = 10; mes.gratificacion = 'legal';
+    const v = { uf: 41130.94, utm: 72151, imm: 553553, topeAfpUF: 90, topeAfcUF: 135.2, jornadaMaxima: 42, afp: { Modelo: 0.0058 } };
+    const res = require('../js/liquidacion_engine.js').calcular({ trabajador: Object.assign({ contrato: 'indefinido', jornadaHoras: 42, afp: 'Modelo', salud: 'fonasa', sueldoBase: 900000 }, { colacion: 40000, movilizacion: 30000 }), mes, periodo: '2026-10' }, v);
+    const c = L.resumen(res, v, t);
+    assert.strictEqual(c.conBases, true);
+    assert.ok(c.horasExtra > 0 && c.gratificacion > 0, JSON.stringify(c));
+    assert.strictEqual(c.colMov, 70000);
+    const ok = V.validarMes(Object.assign(L.mesBase(T(), '2026-10'), { calculo: Object.assign({}, c, { uf: 41130.94, utm: 72151 }) }));
+    assert.ok(ok.ok, JSON.stringify(ok.errores));
+    assert.strictEqual(ok.valor.calculo.colMov, 70000);
+    assert.strictEqual(V.validarMes(Object.assign(L.mesBase(T(), '2026-10'), { calculo: Object.assign({}, c, { colMov: -1 }) })).ok, false);
+});
 caso('el servidor rechaza un desglose con montos inválidos y acepta la tasa de la mutual de la empresa', () => {
     const m = Object.assign(L.mesBase(T(), '2026-10'), { calculo: { liquido: 1, totalHaberes: 1, totalImponible: 1, totalDescuentos: 0, uf: 41000, utm: 72000, conDesglose: true, afp: -5 } });
     assert.strictEqual(V.validarMes(m).ok, false);

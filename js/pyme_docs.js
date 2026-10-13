@@ -243,7 +243,7 @@
             { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de la carta', req: true },
             { k: 'hechos', tipo: 'textarea', etiqueta: 'Hechos concretos en que se funda la causal', req: true, max: 2000, ayuda: 'Describe lo que ocurrió en tu empresa (por ejemplo, baja de ventas con cifras y fechas, cierre de una sección). Mínimo ' + MIN_HECHOS_161 + ' caracteres. Un texto genérico puede dejar la causal sin respaldo.' },
             { k: 'aviso', tipo: 'select', etiqueta: 'Aviso previo', req: true, opciones: [['sustitutiva', 'Pago la indemnización sustitutiva del aviso previo'], ['anticipacion', 'Aviso con 30 días de anticipación o más']] },
-            { k: 'remuneracion', tipo: 'pesos', etiqueta: 'Última remuneración mensual (base de la indemnización)', req: true, ayuda: 'Incluye todo lo que percibe por sus servicios al terminar el contrato (sueldo, bonos permanentes, gratificación mensual si se paga cada mes). Excluye asignación familiar, horas extra, colación, movilización y beneficios esporádicos o de una sola vez al año (art. 172). Si es variable, es el promedio de los últimos 3 meses.' },
+            { k: 'remuneracion', tipo: 'pesos', etiqueta: 'Última remuneración mensual (base de la indemnización)', req: true, ayuda: 'Incluye todo lo que percibe por sus servicios al terminar el contrato: sueldo, bonos permanentes, gratificación mensual si se paga cada mes y las asignaciones de colación y movilización que se pagan mensualmente (criterio de la Dirección del Trabajo, Ord. 4466/308 y 2461/40). Excluye asignación familiar, horas extra y beneficios esporádicos o de una sola vez al año (art. 172). Si es variable, es el promedio de los últimos 3 meses.' },
             { k: 'entrega', tipo: 'select', etiqueta: 'Cómo se comunica', req: true, opciones: [['personal', 'Entrega personal al trabajador'], ['certificada', 'Carta certificada al domicilio del contrato']] },
             { k: 'finiquito', tipo: 'select', etiqueta: 'Finiquito', req: true, opciones: [['presencial', 'Se otorgará y pagará de forma presencial'], ['electronico', 'Se otorgará y pagará de forma electrónica']] },
             { k: 'sinLicencia', tipo: 'check', etiqueta: 'Confirmo que el trabajador no está con licencia médica por enfermedad común, accidente del trabajo o enfermedad profesional', req: true },
@@ -269,9 +269,9 @@
         finiquito: [
             { k: 'causal', tipo: 'select', etiqueta: 'Causal de término', req: true, opciones: [['159_4', 'Vencimiento del plazo convenido (art. 159 N°4)'], ['159_2', 'Renuncia del trabajador (art. 159 N°2)'], ['159_1', 'Mutuo acuerdo de las partes (art. 159 N°1)'], ['161', 'Necesidades de la empresa (art. 161)']] },
             { k: 'fechaTermino', tipo: 'fecha', etiqueta: 'Fecha de término del contrato', req: true },
-            { k: 'remFeriado', tipo: 'pesos', etiqueta: 'Remuneración mensual para el feriado', req: true, ayuda: 'Sueldo y lo que se paga en forma fija cada mes (por ejemplo, la gratificación mensual). Si la remuneración es variable, el promedio de los últimos 3 meses (art. 71). El valor del día es este monto dividido por 30.' },
+            { k: 'remFeriado', tipo: 'pesos', etiqueta: 'Remuneración mensual para el feriado', req: true, ayuda: 'Sueldo y los pagos fijos de cada mes. No incluye la gratificación mensual (Ord. 836/46 de la DT) ni la colación y movilización (no son remuneración, art. 41). Si la remuneración es variable, el promedio de los últimos 3 meses (art. 71). El valor del día es este monto dividido por 30.' },
             { k: 'diasFeriado', tipo: 'decimal', etiqueta: 'Días hábiles de feriado por pagar', min: 0, max: 200, ayuda: 'Déjalo vacío para usar el cálculo del asistente: el saldo del registro de vacaciones más el feriado proporcional desde el último aniversario.' },
-            { k: 'remuneracion', tipo: 'pesos', etiqueta: 'Última remuneración mensual (base de la indemnización)', ayuda: 'Solo para la causal del art. 161. Incluye lo que percibe por sus servicios (sueldo, bonos permanentes, gratificación mensual); excluye asignación familiar, horas extra, colación, movilización y beneficios esporádicos (art. 172).' },
+            { k: 'remuneracion', tipo: 'pesos', etiqueta: 'Última remuneración mensual (base de la indemnización)', ayuda: 'Solo para la causal del art. 161. Incluye lo que percibe por sus servicios cada mes (sueldo, bonos permanentes, gratificación mensual) y las asignaciones de colación y movilización que se pagan mensualmente (Ord. 4466/308 y 2461/40 de la DT); excluye asignación familiar, horas extra y beneficios esporádicos (art. 172).' },
             { k: 'aviso', tipo: 'select', etiqueta: 'Aviso previo (solo art. 161)', opciones: [['sustitutiva', 'Pago la indemnización sustitutiva del aviso previo'], ['anticipacion', 'Avisé con 30 días de anticipación o más']] },
             { k: 'remPendiente', tipo: 'pesos', etiqueta: 'Remuneración pendiente del último mes', ayuda: 'Solo si los días trabajados del mes de término no se pagan en su liquidación de sueldo.' },
             { k: 'descuentoAfc', tipo: 'pesos', etiqueta: 'Aporte del empleador al seguro de cesantía que se descuenta', ayuda: 'Solo con el art. 161: el monto del certificado de la AFC (art. 13 de la Ley 19.728). Si no lo tienes, déjalo vacío.' },
@@ -285,9 +285,22 @@
 
     function campos(tipo) { return (CAMPOS[tipo] || []).map(function (c) { return Object.assign({}, c); }); }
 
-    function ultimaRemuneracionPropuesta(ctx) {
-        var t = ctx.t, p = periodosPromedio(ctx.hoy)[0], m = ctx.meses && ctx.meses[p];
-        if (m && m.calculo && m.calculo.totalImponible) return m.calculo.totalImponible;
+    // Última liquidación guardada con el desglose de las bases (pyme_liquidaciones v1.3.0); las anteriores no lo traen
+    function ultimoCalculoConBases(ctx) {
+        var p = periodosPromedio(ctx.hoy)[0], m = ctx.meses && ctx.meses[p];
+        return m && m.calculo && m.calculo.conBases && m.calculo.totalImponible ? m.calculo : null;
+    }
+    // Base de la indemnización (art. 172): lo imponible del mes sin horas extra, más la colación y movilización que se pagan
+    // cada mes (DT Ord. 4466/308 y 2461/40). Sin liquidación guardada, sueldo base más esas asignaciones de la ficha.
+    function baseIndemnizacionPropuesta(ctx) {
+        var t = ctx.t, c = ultimoCalculoConBases(ctx);
+        if (c) return Math.max(0, c.totalImponible - (c.horasExtra || 0)) + (c.colMov || 0);
+        return (Number(t.sueldoBase) || 0) + (Number(t.colacion) || 0) + (Number(t.movilizacion) || 0) || '';
+    }
+    // Base del feriado (arts. 71 y 73): sin gratificación mensual (DT Ord. 836/46), sin horas extra y sin colación ni movilización
+    function baseFeriadoPropuesta(ctx) {
+        var t = ctx.t, c = ultimoCalculoConBases(ctx);
+        if (c) return Math.max(0, c.totalImponible - (c.horasExtra || 0) - (c.gratificacion || 0));
         return t.sueldoBase || '';
     }
 
@@ -309,10 +322,10 @@
             case 'cert_remuneraciones': Object.assign(v, { destinatario: '', incluirPromedio: false }); break;
             case 'comprobante_feriado': Object.assign(v, { fechaInicio: '', diasHabiles: '', saldoAntes: '' }); break;
             case 'carta_159_4': Object.assign(v, { fechaTermino: t.fechaTerminoPlazo || '', entrega: 'personal', finiquito: 'presencial', cotizaciones: false }); break;
-            case 'carta_161': Object.assign(v, { fechaTermino: '', hechos: '', aviso: 'sustitutiva', remuneracion: ultimaRemuneracionPropuesta(ctx), entrega: 'personal', finiquito: 'presencial', sinLicencia: false, sinFuero: false, cotizaciones: false }); break;
+            case 'carta_161': Object.assign(v, { fechaTermino: '', hechos: '', aviso: 'sustitutiva', remuneracion: baseIndemnizacionPropuesta(ctx), entrega: 'personal', finiquito: 'presencial', sinLicencia: false, sinFuero: false, cotizaciones: false }); break;
             case 'amonestacion': Object.assign(v, { fechaHechos: '', obligacion: '', hechos: '', reglamento: 'si' }); break;
             case 'anexo_datos': Object.assign(v, { correoPrivacidad: '', biometria: false, herramientas: false, encargados: false }); break;
-            case 'finiquito': Object.assign(v, { causal: t.contrato === 'plazo_fijo' ? '159_4' : '159_2', fechaTermino: t.contrato === 'plazo_fijo' ? (t.fechaTerminoPlazo || '') : '', remFeriado: ultimaRemuneracionPropuesta(ctx), diasFeriado: '', remuneracion: ultimaRemuneracionPropuesta(ctx), aviso: 'sustitutiva', remPendiente: '', descuentoAfc: '', otrosDescuentos: '', formaPago: 'transferencia', cotizaciones: false }); break;
+            case 'finiquito': Object.assign(v, { causal: t.contrato === 'plazo_fijo' ? '159_4' : '159_2', fechaTermino: t.contrato === 'plazo_fijo' ? (t.fechaTerminoPlazo || '') : '', remFeriado: baseFeriadoPropuesta(ctx), diasFeriado: '', remuneracion: baseIndemnizacionPropuesta(ctx), aviso: 'sustitutiva', remPendiente: '', descuentoAfc: '', otrosDescuentos: '', formaPago: 'transferencia', cotizaciones: false }); break;
         }
         return v;
     }
@@ -582,6 +595,14 @@
         while (contados < enteros && tope-- > 0) {
             d = sumarDiasIso(d, 1);
             if (ctx.F.esDiaHabil(d)) contados++; else inhabiles++;
+        }
+        // La fracción de día se toma en el siguiente día hábil: los sábados, domingos y feriados que queden en medio también cuentan
+        if (fraccion > 0) {
+            while (tope-- > 0) {
+                d = sumarDiasIso(d, 1);
+                if (ctx.F.esDiaHabil(d)) break;
+                inhabiles++;
+            }
         }
         return { corridos: Math.round((enteros + inhabiles + fraccion) * 100) / 100, inhabiles: inhabiles, hasta: d };
     }
@@ -960,7 +981,7 @@
         pesosEnLetras: pesosEnLetras, horarioPropuesto: horarioPropuesto,
         periodosPromedio: periodosPromedio, indemnizacion: indemnizacion, antiguedad: antiguedad, antiguedadTxt: antiguedadTxt, plazoComunicacion: plazoComunicacion,
         propuestaFeriado: propuestaFeriado, diasCorridos: diasCorridos, calcularFiniquito: calcularFiniquito,
-        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.3.0'
+        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.4.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeDocs = api;

@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · valores base de las liquidaciones del Asistente Pyme (v1.2.0). Funciona en el navegador (window.CLPymeLiquidaciones) y en Node.
+ * CalculoLaboral · valores base de las liquidaciones del Asistente Pyme (v1.3.0). Funciona en el navegador (window.CLPymeLiquidaciones) y en Node.
  *
  *   diasBase(trabajador, 'AAAA-MM')  → días a pagar según ingreso y término de plazo fijo (mes comercial de 30 días); 0 si aún no ingresaba o ya terminó
  *   mesBase(trabajador, 'AAAA-MM')   → el mes con los valores por defecto (lo que se guarda al "preparar el mes")
@@ -104,6 +104,18 @@
             uf: mesValores.uf,
             utm: Math.round(mesValores.utm)
         };
+        // Bases para el finiquito (v1.3.0): lo que no entra en la indemnización o en el feriado se ve por separado
+        function suma(lista, prefijos) {
+            return Math.round((lista || []).reduce(function (s, l) {
+                return s + (prefijos.some(function (p) { return String(l.concepto).indexOf(p) === 0; }) ? Number(l.monto) || 0 : 0);
+            }, 0));
+        }
+        if (res.haberesImponibles) {
+            c.conBases = true;
+            c.horasExtra = suma(res.haberesImponibles, ['Horas extra']);
+            c.gratificacion = suma(res.haberesImponibles, ['Gratificación']);
+            c.colMov = suma(res.haberesNoImponibles, ['Colación', 'Movilización']);
+        }
         if (res.montos && res.empleador) {
             var emp = {};
             res.empleador.lineas.forEach(function (l) { emp[l.clave] = l.monto; });
@@ -157,7 +169,7 @@
     var api = {
         diasBase: diasBase, mesBase: mesBase, resumen: resumen, previred: previred, estadoDe: estadoDe,
         cuotasDe: cuotasDe, cuotasDelMes: cuotasDelMes, estadoPrestamo: estadoPrestamo, saldoPrestamos: saldoPrestamos, sumarMes: sumarMes,
-        version: '1.2.0'
+        version: '1.3.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeLiquidaciones = api;
