@@ -10,6 +10,11 @@
  * - http://localhost:3000/__dev/pase?email=ana@ejemplo.cl[&producto=pyme12]  da un pase de 30 dias a esa cuenta (para probar el limite de 5).
  * - La compra del Pase usa un Flow SIMULADO: /__dev/flow?token=...&resultado=ok|rechazado|pendiente confirma o rechaza el pago y vuelve
  *   al panel. La venta esta abierta aqui (en produccion se abre con PYME_PASE_VENTA=1). No se llama a Flow ni a Resend.
+ *
+ * MODO SANDBOX DE FLOW: con FLOW_API_URL=https://sandbox.flow.cl/api, FLOW_API_KEY y FLOW_SECRET_KEY del sandbox, la compra del Pase usa
+ * el Flow de pruebas de verdad y los mismos manejadores de produccion (flow-return y flow-confirm). Flow no puede llamar a localhost,
+ * asi que al volver el comprador (/api/flow-return) este servidor hace antes la llamada de confirmacion que haria Flow. Los correos
+ * (Resend) no se envian: se imprimen en la terminal. La base sigue en memoria.
  */
 'use strict';
 const http = require('http');
@@ -22,6 +27,22 @@ const { crear: crearDatos } = require('../api/_pyme/datos');
 const Cifrado = require('../api/_pyme/cifrado');
 const T = require('../api/_pyme/tokens');
 const { crearAlmacenMemoria } = require('./pyme_almacen_memoria');
+const SANDBOX = /^https:\/\/sandbox\.flow\.cl\//.test(process.env.FLOW_API_URL || '');
+if (SANDBOX) {
+    if (!process.env.FLOW_API_KEY || !process.env.FLOW_SECRET_KEY) { console.error('Modo sandbox: faltan FLOW_API_KEY / FLOW_SECRET_KEY del sandbox.'); process.exit(1); }
+    process.env.SITE_URL = 'http://localhost:' + (Number(process.argv[2]) || 3000);
+    process.env.RESEND_API_KEY = process.env.RESEND_API_KEY || 'dev';
+    // Solo Resend se simula; Flow (sandbox) se llama de verdad
+    const fetchReal = global.fetch;
+    global.fetch = async (url, opts) => {
+        if (String(url).indexOf('api.resend.com') >= 0) {
+            const m = JSON.parse((opts && opts.body) || '{}');
+            console.log('\n[correo simulado] para ' + (m.to || []).join(', ') + ' | ' + m.subject + '\n');
+            return { ok: true, status: 200, json: async () => ({ id: 'simulado' }), text: async () => '' };
+        }
+        return fetchReal(url, opts);
+    };
+}
 process.env.FLOW_API_KEY = process.env.FLOW_API_KEY || 'dev';
 process.env.FLOW_SECRET_KEY = process.env.FLOW_SECRET_KEY || 'dev-secreto';
 const Flow = require('../api/_flow');
@@ -46,13 +67,22 @@ const pagosDev = {};
 let nPago = 0;
 const pase = crearPase({
     almacen, productos: Flow.PRODUCTS,
-    flow: {
+    flow: SANDBOX ? Flow : {
         createPayment: async ({ product, email, optional }) => { const token = 'DEVTOKEN' + (++nPago); pagosDev[token] = { product, email, optional, order: 'DEV-' + nPago }; return { url: SITIO + '/__dev/flow', token }; },
         signUnlock: Flow.signUnlock
     },
     venta: () => true
 });
 const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'development' }, siteUrl: SITIO, pase });
+// Los manejadores de produccion (flow-confirm) piden el servicio del Pase a servicios.js: se les entrega el de memoria
+if (SANDBOX) { const rs = require.resolve('../api/_pyme/servicios'); require.cache[rs] = { id: rs, filename: rs, loaded: true, exports: { pase: () => pase, almacen: () => almacen } }; }
+
+// Adaptador minimo de Vercel (res.status / res.json) para correr los manejadores de api/ tal cual
+function adaptar(res) {
+    res.status = (c) => { res.statusCode = c; return res; };
+    res.json = (o) => { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(o)); return res; };
+    return res;
+}
 
 function leerCuerpo(req) {
     return new Promise((resolver) => {
@@ -97,9 +127,16 @@ http.createServer(async (req, res) => {
         if (url.pathname === '/api/unlock') {
             // La misma funcion de produccion, con el pequeño adaptador de Vercel (res.status / res.json)
             req.body = await leerCuerpo(req);
-            res.status = (c) => { res.statusCode = c; return res; };
-            res.json = (o) => { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(o)); return res; };
-            return require('../api/unlock')(req, res);
+            adaptar(res); return require("../api/unlock")(req, res);
+        }
+        if (SANDBOX && url.pathname === '/api/flow-return') {
+            // Flow vuelve al comprador aqui con el token. Antes se hace la llamada de confirmacion que en produccion hace Flow (servidor a servidor).
+            req.body = await leerCuerpo(req);
+            req.query = Object.fromEntries(url.searchParams);
+            const falso = { statusCode: 200, headers: {}, setHeader() {}, status(c) { this.statusCode = c; return this; }, end() { return this; } };
+            await require('../api/flow-confirm')({ method: 'POST', body: req.body, query: req.query, headers: {} }, falso);
+            console.log('[flow sandbox] flow-confirm respondio ' + falso.statusCode + ' (200 = pase registrado en la cuenta de memoria)');
+            return require('../api/flow-return')(req, adaptar(res));
         }
         if (url.pathname === '/__dev/flow') {
             const p = pagosDev[url.searchParams.get('token')];
