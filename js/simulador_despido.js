@@ -31,7 +31,9 @@
         leyBustosActiva: false,
         mesesJuicioLeyBustos: 5,
         incluirCostas: true,
-        costasEstimadas: 800000
+        costasEstimadas: 800000,
+        tutelaActiva: false, // Art. 489 CT: vulneración de derechos fundamentales con ocasión del despido
+        remuneracionesTutela: 6 // Entre 6 y 11 remuneraciones mensuales
     };
 
     // Helper: Formato Moneda Chilena ($1.500.000)
@@ -53,10 +55,10 @@
         const sueldoTopadoIAS = Math.min(sueldo, getTopeIASPesos());
 
         // Años de servicio para cálculo legal (Art. 163)
-        // Fracción superior a 6 meses suma 1 año completo. Máximo 11 años.
-        let aniosComputables = state.anios;
-        if (state.meses > 6) {
-            aniosComputables += 1;
+        // Exige al menos 1 año de servicio; la fracción superior a 6 meses suma 1 año. Máximo 11 años.
+        let aniosComputables = 0;
+        if (state.anios >= 1) {
+            aniosComputables = state.anios + (state.meses > 6 ? 1 : 0);
         }
         aniosComputables = Math.min(Math.max(aniosComputables, 0), 11);
 
@@ -78,15 +80,30 @@
             avisoPrevioOmisionRiesgo = sueldoTopadoIAS;
         }
 
-        // 3. Finiquito Inicial Pretendido (lo que legalmente correspondía según la causal invocada)
-        let finiquitoInicial = 0;
-        if (state.causal === 'art161') {
-            finiquitoInicial = iasBase + avisoPrevioOriginal;
-        } else {
-            finiquitoInicial = 0; // En Art. 160 no hay indemnizaciones contractuales
+        // 3. Descuento del aporte patronal AFC (Art. 13 Ley 19.728)
+        // Solo procede si la causal invocada fue el art. 161; se imputa a la indemnización por años de servicio.
+        let descuentoAFC = 0;
+        if (state.causal === 'art161' && state.descuentoAfcAplicado) {
+            if (state.montoAfcPersonalizado > 0) {
+                descuentoAFC = state.montoAfcPersonalizado;
+            } else {
+                // Estimación aproximada: 1,6% mensual sobre el sueldo imponible (con tope AFC) por los meses trabajados
+                const mesesTotales = (state.anios * 12) + state.meses;
+                const topeAfcImponible = Math.min(sueldo, Math.round(((typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? CONSTANTS.TOPE_IMPONIBLE_CESANTIA : 135.2) * getUF())); // Tope seguro de cesantía (UF)
+                descuentoAFC = Math.round(topeAfcImponible * 0.016 * mesesTotales);
+            }
+            descuentoAFC = Math.min(descuentoAFC, iasBase); // No puede exceder la indemnización a la que se imputa
         }
 
-        // 4. Recargo Judicial Art. 168
+        // 4. Finiquito Inicial efectivamente pagado según la causal invocada
+        let finiquitoInicial = 0;
+        if (state.causal === 'art161') {
+            finiquitoInicial = iasBase + avisoPrevioOriginal - descuentoAFC;
+        } else {
+            finiquitoInicial = 0; // En Art. 159 y 160 no se pagan indemnizaciones por años de servicio
+        }
+
+        // 5. Recargo Judicial Art. 168
         let porcentajeRecargo = 30;
         let causalNombre = 'Art. 161 (Necesidades de la Empresa)';
 
@@ -106,40 +123,36 @@
 
         const montoRecargoJudicial = Math.round(iasBase * (porcentajeRecargo / 100));
 
-        // 5. Devolución Aporte Patronal AFC (Art. 13 Ley 19.728 - Jurisprudencia Corte Suprema)
-        let montoReintegroAFC = 0;
-        if (state.descuentoAfcAplicado) {
-            if (state.montoAfcPersonalizado > 0) {
-                montoReintegroAFC = state.montoAfcPersonalizado;
-            } else {
-                // Estimación aproximada: 1.6% mensual acumulado sobre el sueldo imponible por los meses trabajados
-                const mesesTotales = (state.anios * 12) + state.meses;
-                const topeAfcImponible = Math.min(sueldo, Math.round(((typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? CONSTANTS.TOPE_IMPONIBLE_CESANTIA : 135.2) * getUF())); // Tope seguro de cesantía (UF)
-                montoReintegroAFC = Math.round(topeAfcImponible * 0.016 * mesesTotales);
-            }
-        }
+        // 6. Devolución del descuento AFC (Jurisprudencia Corte Suprema): si el despido por art. 161
+        // se declara injustificado, se restituye lo descontado. En art. 159/160 no hubo descuento.
+        const montoReintegroAFC = descuentoAFC;
 
-        // 6. Nulidad del Despido / Ley Bustos (Art. 162 inc. 5° y 7°)
+        // 7. Nulidad del Despido / Ley Bustos (Art. 162 inc. 5° y 7°)
         let montoSueldosLeyBustos = 0;
         if (state.leyBustosActiva) {
             // Sueldos íntegros devengados por los meses de juicio hasta convalidación formal
             montoSueldosLeyBustos = sueldo * state.mesesJuicioLeyBustos;
         }
 
-        // 7. Costas Judiciales y Procesales
+        // 8. Costas Judiciales y Procesales
         let montoCostas = 0;
         if (state.incluirCostas) {
             montoCostas = state.costasEstimadas;
         }
 
-        // TOTALES DE CONTINGENCIA
-        // En caso de sentencia judicial condenatoria completa:
-        let totalSentencia = iasBase + montoRecargoJudicial + avisoPrevioOmisionRiesgo + montoReintegroAFC + montoSueldosLeyBustos + montoCostas;
-        
-        // Si fue Art. 161 y ya se contemplaba aviso previo, el monto final incluye el aviso previo ya calculado
-        if (state.causal === 'art161') {
-            totalSentencia += avisoPrevioOriginal;
+        // 9. Tutela por vulneración de derechos fundamentales (Art. 489 CT)
+        // Indemnización adicional fijada por el juez entre 6 y 11 remuneraciones mensuales,
+        // sobre la última remuneración (sin el tope de 90 UF), además de las del art. 168.
+        let montoTutela = 0;
+        if (state.tutelaActiva) {
+            montoTutela = Math.round(sueldo * state.remuneracionesTutela);
         }
+
+        // TOTALES DE CONTINGENCIA
+        // Total que paga el empleador con una sentencia condenatoria completa (incluye lo ya pagado en el finiquito).
+        // La indemnización por años se cuenta una sola vez: lo descontado por AFC vuelve como reintegro.
+        const iasNetaFiniquito = iasBase - descuentoAFC;
+        let totalSentencia = iasNetaFiniquito + montoReintegroAFC + montoRecargoJudicial + avisoPrevioOriginal + avisoPrevioOmisionRiesgo + montoSueldosLeyBustos + montoCostas + montoTutela;
 
         // El sobrecosto directo atribuible exclusivamente al error/juicio:
         const sobrecostoDemanda = totalSentencia - finiquitoInicial;
@@ -173,6 +186,8 @@
             sueldoTopadoIAS,
             aniosComputables,
             iasBase,
+            iasNetaFiniquito,
+            descuentoAFC,
             porcentajeRecargo,
             montoRecargoJudicial,
             causalNombre,
@@ -181,6 +196,7 @@
             montoReintegroAFC,
             montoSueldosLeyBustos,
             montoCostas,
+            montoTutela,
             finiquitoInicial,
             totalSentencia,
             sobrecostoDemanda,
@@ -217,8 +233,11 @@
         const elCostas = document.getElementById('res-costas');
         const elCostasRow = document.getElementById('row-costas');
 
-        if (elIasBase) elIasBase.textContent = formatMoney(res.iasBase);
-        if (elAniosDesc) elAniosDesc.textContent = res.aniosComputables + ' ' + (res.aniosComputables === 1 ? 'año' : 'años');
+        if (elIasBase) elIasBase.textContent = formatMoney(res.iasNetaFiniquito);
+        if (elAniosDesc) {
+            elAniosDesc.textContent = '(' + res.aniosComputables + ' ' + (res.aniosComputables === 1 ? 'año' : 'años') +
+                (res.descuentoAFC > 0 ? ', neta de AFC' : '') + ')';
+        }
         if (elRecargo) elRecargo.textContent = '+' + formatMoney(res.montoRecargoJudicial);
         if (elRecargoPct) elRecargoPct.textContent = '(+' + res.porcentajeRecargo + '%)';
 
@@ -229,6 +248,19 @@
 
         if (elReintegroAfc) {
             elReintegroAfc.textContent = res.montoReintegroAFC > 0 ? '+' + formatMoney(res.montoReintegroAFC) : '$0';
+        }
+        const elReintegroAfcRow = document.getElementById('row-reintegro-afc');
+        if (elReintegroAfcRow) {
+            elReintegroAfcRow.classList.toggle('hidden', state.causal !== 'art161');
+        }
+
+        const elTutelaRow = document.getElementById('row-tutela');
+        const elTutela = document.getElementById('res-tutela');
+        const elTutelaDesc = document.getElementById('res-tutela-desc');
+        if (elTutelaRow) {
+            elTutelaRow.classList.toggle('hidden', !state.tutelaActiva);
+            if (elTutela) elTutela.textContent = '+' + formatMoney(res.montoTutela);
+            if (elTutelaDesc) elTutelaDesc.textContent = '(' + state.remuneracionesTutela + ' rem.)';
         }
 
         if (elLeyBustosRow) {
@@ -421,6 +453,27 @@
             });
         }
 
+        // Tutela de derechos fundamentales (Art. 489 CT)
+        const inTutela = document.getElementById('sim-tutela');
+        const containerTutela = document.getElementById('container-tutela');
+        const inRemTutela = document.getElementById('sim-tutela-remuneraciones');
+        const valRemTutela = document.getElementById('val-tutela-remuneraciones');
+        if (inTutela) {
+            inTutela.addEventListener('change', function (e) {
+                state.tutelaActiva = e.target.checked;
+                if (containerTutela) containerTutela.classList.toggle('hidden', !state.tutelaActiva);
+                calculate();
+            });
+        }
+        if (inRemTutela) {
+            inRemTutela.addEventListener('input', function (e) {
+                const v = parseInt(e.target.value, 10);
+                state.remuneracionesTutela = Math.min(Math.max(isNaN(v) ? 6 : v, 6), 11);
+                if (valRemTutela) valRemTutela.textContent = state.remuneracionesTutela + ' remuneraciones';
+                calculate();
+            });
+        }
+
         // Costas
         const inCostas = document.getElementById('sim-incluir-costas');
         if (inCostas) {
@@ -458,7 +511,7 @@
             return;
         }
 
-        const info = `Causal: ${state.causal} | Sueldo: ${formatMoney(state.sueldoImponible)} | Antigüedad: ${state.anios}a ${state.meses}m | Ley Bustos: ${state.leyBustosActiva ? 'SÍ' : 'NO'} | Ciudad: ${ciudad} | Nota: ${detalle}`;
+        const info = `Causal: ${state.causal} | Sueldo: ${formatMoney(state.sueldoImponible)} | Antigüedad: ${state.anios}a ${state.meses}m | Ley Bustos: ${state.leyBustosActiva ? 'SÍ' : 'NO'} | Tutela: ${state.tutelaActiva ? 'SÍ (' + state.remuneracionesTutela + ' rem.)' : 'NO'} | Ciudad: ${ciudad} | Nota: ${detalle}`;
 
         if (btn) {
             btn.disabled = true;
