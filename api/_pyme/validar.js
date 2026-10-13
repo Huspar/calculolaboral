@@ -163,6 +163,28 @@ function validarPrestamos(v, errores) {
     return salida;
 }
 
+// ---------- bonos y asignaciones fijas de cada mes (van en la ficha) ----------
+// Imponibles con el nombre que ponga el empleador; no imponibles solo las asignaciones del art. 41 inc. 2 que no son
+// remuneración: pérdida de caja y desgaste de herramientas (colación y movilización tienen sus propios campos).
+const MAX_BONOS_FIJOS = 8;
+const BONOS_NO_IMPONIBLES = { perdida_caja: 'Asignación de pérdida de caja', desgaste_herramientas: 'Desgaste de herramientas' };
+function validarBonosFijos(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_BONOS_FIJOS) { errores.bonosFijos = `Puedes registrar hasta ${MAX_BONOS_FIJOS} bonos o asignaciones fijas.`; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const tipo = normalizar('tipo', { t: 'enum', valores: ['imponible'].concat(Object.keys(BONOS_NO_IMPONIBLES)), def: 'imponible' }, it && it.tipo, e);
+        const monto = normalizar('monto', { t: 'entero', min: 1, max: MONTO_MAX, req: true }, it && it.monto, e);
+        let nombre = tipo === 'imponible' ? normalizar('nombre', { t: 'texto', max: 60, req: true }, it && it.nombre, e) : BONOS_NO_IMPONIBLES[tipo];
+        if (e.tipo) { errores.bonosFijos = 'El tipo de un bono no es válido.'; return undefined; }
+        if (e.nombre) { errores.bonosFijos = 'Ponle nombre a cada bono imponible (hasta 60 caracteres).'; return undefined; }
+        if (e.monto) { errores.bonosFijos = 'Indica el monto de cada bono o asignación (hasta $50.000.000).'; return undefined; }
+        salida.push({ tipo, nombre, monto });
+    }
+    return salida;
+}
+
 function validarTrabajador(entrada) {
     const r = validar(CAMPOS_TRABAJADOR, entrada);
     if (!r.ok) return r;
@@ -171,6 +193,11 @@ function validarTrabajador(entrada) {
     if (entrada.prestamos !== undefined) {
         const p = validarPrestamos(entrada.prestamos, errores);
         if (p !== undefined) v.prestamos = p;
+    }
+    // Lo mismo con los bonos fijos
+    if (entrada.bonosFijos !== undefined) {
+        const b = validarBonosFijos(entrada.bonosFijos, errores);
+        if (b !== undefined) v.bonosFijos = b;
     }
     if (v.contrato === 'plazo_fijo') {
         if (!v.fechaTerminoPlazo) errores.fechaTerminoPlazo = 'Indica la fecha en que vence el contrato a plazo fijo.';

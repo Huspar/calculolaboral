@@ -221,6 +221,15 @@ caso('servidor: acepta tratos, semana corrida y licencias o permisos con fechas;
     assert.strictEqual(V.validarMes(Object.assign({}, base, { scModo: 'otro' })).ok, false);
 });
 
+caso('mesBase: los bonos fijos de la ficha se proponen en el mes (imponibles y los no imponibles del art. 41)', () => {
+    const t = T({ bonosFijos: [{ tipo: 'imponible', nombre: 'Bono de responsabilidad', monto: 50000 }, { tipo: 'desgaste_herramientas', nombre: 'Desgaste de herramientas', monto: 12000 }, { tipo: 'imponible', nombre: 'Sin monto', monto: 0 }] });
+    const m = L.mesBase(t, '2026-10');
+    assert.deepStrictEqual(m.bonosImponibles, [{ nombre: 'Bono de responsabilidad', monto: 50000 }]);
+    assert.deepStrictEqual(m.otrosNoImponibles, [{ nombre: 'Desgaste de herramientas', monto: 12000 }]);
+    assert.ok(V.validarMes(m).ok);
+    assert.deepStrictEqual(L.mesBase(T(), '2026-10').bonosImponibles, []);
+});
+
 caso('estadoDe', () => {
     assert.strictEqual(L.estadoDe(null), 'sin_datos');
     assert.strictEqual(L.estadoDe({ emitida: '' }), 'guardada');

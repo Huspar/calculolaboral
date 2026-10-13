@@ -506,6 +506,8 @@
         mensaje($('pm-trab-estado'), '', '');
         var base = { contrato: 'indefinido', jornadaHoras: 42, distribucion: '5', gratificacion: 'legal', afp: 'Modelo', salud: 'fonasa', renovaciones: 0, aniosOtrosEmpleadores: 0, activo: true };
         llenar(f, t || base);
+        bonosFicha = JSON.parse(JSON.stringify((t && t.bonosFijos) || []));
+        pintarBonosFicha();
         $('pm-t-activo-campo').hidden = !t;
         $('carp-borrar').hidden = !t;
         $('pm-trab-cancelar').textContent = t ? 'Descartar cambios' : 'Cancelar';
@@ -513,6 +515,47 @@
         condicionales();
         if (!t) $('pm-t-nombre').focus();
     }
+
+    // --- bonos y asignaciones fijas de la ficha ---
+    var bonosFicha = [];
+    var NOMBRES_NO_IMPONIBLES = { perdida_caja: 'Asignación de pérdida de caja', desgaste_herramientas: 'Desgaste de herramientas' };
+    function pintarBonosFicha() {
+        $('pm-t-bonos').innerHTML = bonosFicha.map(function (b) {
+            var imp = (b.tipo || 'imponible') === 'imponible';
+            return '<div class="lq-row lq-row-bono"><select aria-label="Tipo" data-bono="tipo">' +
+                '<option value="imponible"' + (imp ? ' selected' : '') + '>Bono imponible</option>' +
+                '<option value="perdida_caja"' + (b.tipo === 'perdida_caja' ? ' selected' : '') + '>Pérdida de caja (no imponible)</option>' +
+                '<option value="desgaste_herramientas"' + (b.tipo === 'desgaste_herramientas' ? ' selected' : '') + '>Desgaste de herramientas (no imponible)</option></select>' +
+                '<input type="text" maxlength="60" aria-label="Nombre del bono" data-bono="nombre" placeholder="Bono de responsabilidad" value="' + esc(imp ? (b.nombre || '') : NOMBRES_NO_IMPONIBLES[b.tipo]) + '"' + (imp ? '' : ' disabled') + '>' +
+                '<input type="text" inputmode="numeric" aria-label="Monto mensual" data-bono="monto" placeholder="$0" value="' + (b.monto ? pesos(b.monto) : '') + '">' +
+                '<button type="button" class="lq-x" aria-label="Quitar" data-bono-quitar><span class="material-icons" aria-hidden="true">close</span></button></div>';
+        }).join('');
+        $('pm-t-bonos-agregar').hidden = bonosFicha.length >= 8;
+    }
+    function leerBonosFicha() {
+        bonosFicha = Array.prototype.map.call($('pm-t-bonos').querySelectorAll('.lq-row-bono'), function (f) {
+            var tipo = f.querySelector('[data-bono="tipo"]').value;
+            return { tipo: tipo, nombre: tipo === 'imponible' ? f.querySelector('[data-bono="nombre"]').value : NOMBRES_NO_IMPONIBLES[tipo], monto: Math.min(MONTO_MAX, parseInt(f.querySelector('[data-bono="monto"]').value.replace(/\D/g, ''), 10) || 0) };
+        });
+    }
+    $('pm-t-bonos').addEventListener('change', function (e) {
+        if (e.target.getAttribute('data-bono') === 'tipo') { leerBonosFicha(); pintarBonosFicha(); }
+        if (e.target.getAttribute('data-bono') === 'monto') { var v = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0; e.target.value = v ? pesos(v) : ''; }
+    });
+    $('pm-t-bonos').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-bono-quitar]');
+        if (!b) return;
+        leerBonosFicha();
+        bonosFicha.splice(Array.prototype.indexOf.call($('pm-t-bonos').children, b.closest('.lq-row-bono')), 1);
+        pintarBonosFicha();
+    });
+    $('pm-t-bonos-agregar').addEventListener('click', function () {
+        leerBonosFicha();
+        bonosFicha.push({ tipo: 'imponible', nombre: '', monto: 0 });
+        pintarBonosFicha();
+        var ult = $('pm-t-bonos').querySelector('.lq-row-bono:last-child input[data-bono="nombre"]');
+        if (ult) ult.focus();
+    });
 
     $('pm-trab-cancelar').addEventListener('click', function () {
         if (!editandoId) { navegar('trabajadores'); return; }
@@ -524,6 +567,8 @@
     $('pm-trab-form').addEventListener('submit', function (e) {
         e.preventDefault();
         var f = $('pm-trab-form'), datos = recoger(f), err = $('pm-trab-error'), id = editandoId;
+        leerBonosFicha();
+        datos.bonosFijos = bonosFicha.filter(function (b) { return b.monto > 0 || (b.nombre || '').trim(); });
         limpiarErrores(f);
         err.hidden = true;
         mensaje($('pm-trab-estado'), '', 'Guardando…');

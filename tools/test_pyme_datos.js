@@ -621,4 +621,29 @@ caso('préstamos: se guardan cifrados en la ficha, editar la ficha no los borra 
     assert.deepStrictEqual((await m.datos.guardarPrestamos(cuenta, tid, [])).trabajador.prestamos, []);
 });
 
+caso('bonos fijos: se guardan en la ficha, editarla sin la lista los conserva y solo el art. 41 va como no imponible', async () => {
+    const { m, tid, cuenta } = await conTrabajador();
+    const actual = (await m.datos.estado(cuenta)).trabajadores[0];
+    const { id, prestamos, ...ficha } = actual;
+    const bonos = [{ tipo: 'imponible', nombre: 'Bono de responsabilidad', monto: 50000 }, { tipo: 'perdida_caja', nombre: 'otro nombre', monto: 15000 }];
+    const r = await m.datos.actualizarTrabajador(cuenta, tid, Object.assign({}, ficha, { bonosFijos: bonos }));
+    assert.ok(r.ok, JSON.stringify(r));
+    let t = (await m.datos.estado(cuenta)).trabajadores[0];
+    assert.deepStrictEqual(t.bonosFijos, [{ tipo: 'imponible', nombre: 'Bono de responsabilidad', monto: 50000 }, { tipo: 'perdida_caja', nombre: 'Asignación de pérdida de caja', monto: 15000 }]);
+    // la ficha sin la lista (por ejemplo, al actualizarla desde un anexo) no borra los bonos
+    const { bonosFijos, ...sinBonos } = t;
+    delete sinBonos.id; delete sinBonos.prestamos;
+    assert.ok((await m.datos.actualizarTrabajador(cuenta, tid, Object.assign(sinBonos, { cargo: 'Cajero' }))).ok);
+    t = (await m.datos.estado(cuenta)).trabajadores[0];
+    assert.strictEqual(t.bonosFijos.length, 2);
+    // un bono imponible sin nombre, un tipo inventado o más de 8 se rechazan
+    const malo = (b) => m.datos.actualizarTrabajador(cuenta, tid, Object.assign({}, ficha, { bonosFijos: b }));
+    assert.strictEqual((await malo([{ tipo: 'imponible', nombre: '', monto: 1000 }])).estado, 400);
+    assert.strictEqual((await malo([{ tipo: 'bono_libre_no_imponible', nombre: 'Bono', monto: 1000 }])).estado, 400);
+    assert.strictEqual((await malo(Array.from({ length: 9 }, () => bonos[0]))).estado, 400);
+    // y se vacía con una lista vacía
+    assert.ok((await m.datos.actualizarTrabajador(cuenta, tid, Object.assign({}, ficha, { bonosFijos: [] }))).ok);
+    assert.deepStrictEqual((await m.datos.estado(cuenta)).trabajadores[0].bonosFijos, []);
+});
+
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

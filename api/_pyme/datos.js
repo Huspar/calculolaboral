@@ -93,6 +93,7 @@ function crear({ almacen, cifrado, ahora }) {
         if (!actual) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
         if (existentes.some(t => t.id !== id && t.rut === v.valor.rut)) return fallo(409, 'rut_repetido', 'Ya existe un trabajador con este RUT.', { rut: 'Ya existe un trabajador con este RUT.' });
         if (v.valor.prestamos === undefined && Array.isArray(actual.prestamos)) v.valor.prestamos = actual.prestamos;
+        if (v.valor.bonosFijos === undefined && Array.isArray(actual.bonosFijos)) v.valor.bonosFijos = actual.bonosFijos;
         const lim = await limites(cuenta.cuentaId);
         const { activo, ...datos } = v.valor;
         const c = cifrado.cifrar(datos, ctxTrabajador(cuenta.cuentaId, id));

@@ -2,7 +2,9 @@
  * CalculoLaboral · valores base de las liquidaciones del Asistente Pyme (v1.4.0). Funciona en el navegador (window.CLPymeLiquidaciones) y en Node.
  *
  *   diasBase(trabajador, 'AAAA-MM')  → días a pagar según ingreso y término de plazo fijo (mes comercial de 30 días); 0 si aún no ingresaba o ya terminó
- *   mesBase(trabajador, 'AAAA-MM')   → el mes con los valores por defecto (lo que se guarda al "preparar el mes")
+ *   mesBase(trabajador, 'AAAA-MM')   → el mes con los valores por defecto (lo que se guarda al "preparar el mes"), con los
+ *                                      bonos fijos de la ficha (t.bonosFijos: imponibles a bonosImponibles; pérdida de caja y
+ *                                      desgaste de herramientas a otrosNoImponibles)
  *   resumen(resultado, mesValores, t) → { liquido, totalHaberes, totalImponible, totalDescuentos, uf, utm, y el desglose } para guardar junto al mes
  *   previred(registros)              → lo que se paga en Previred agrupado por institución, con los registros que traen desglose
  *   (desglose: montos retenidos al trabajador, cotizaciones del empleador y costo total; conDesglose: true)
@@ -45,13 +47,19 @@
         var grat = t && t.gratificacion === 'ninguna' ? 'ninguna' : t && t.gratificacion === 'pactada' ? 'manual' : 'legal';
         return {
             diasTrabajados: diasBase(t, periodo), diasLicencia: 0, horasExtra: 0,
-            gratificacion: grat, gratificacionMonto: 0, comisiones: 0, tratos: 0, bonosImponibles: [],
+            gratificacion: grat, gratificacionMonto: 0, comisiones: 0, tratos: 0, bonosImponibles: bonosFijosDe(t, true),
             scModo: 'calcular', ausencias: [], semanaCorrida: 0, semanaCorridaDetalle: '',
-            viaticos: 0, asignacionFamiliar: 0, otrosNoImponibles: [],
+            viaticos: 0, asignacionFamiliar: 0, otrosNoImponibles: bonosFijosDe(t, false),
             apvMonto: 0, apvRegimen: 'B', anticipo: (t && t.anticipoMensual) || 0, creditoCCAF: 0, cuotaSindical: 0, otrosDescuentos: [],
             cuotasPrestamo: cuotasDelMes(t, periodo),
             emitida: '', calculo: null
         };
+    }
+
+    // Bonos fijos de la ficha como conceptos del mes (máximo 8 por lista, como acepta el servidor)
+    function bonosFijosDe(t, imponibles) {
+        return ((t && t.bonosFijos) || []).filter(function (b) { return (b.tipo === 'imponible') === imponibles && b.monto > 0; })
+            .map(function (b) { return { nombre: b.nombre, monto: b.monto }; }).slice(0, 8);
     }
 
     // ---------- préstamos con cuotas ----------
