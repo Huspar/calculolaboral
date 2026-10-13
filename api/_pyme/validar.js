@@ -7,6 +7,8 @@
  */
 const Rut = require('../../js/rut_cl');
 const P = require('../../js/liquidacion_parametros');
+const F = require('../../js/feriados_cl');
+const VAC = require('../../js/pyme_vacaciones');
 
 const AFPS = Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp);
 const MAX_LOGO = 150000; // caracteres del data URL (~110 KB de imagen)
@@ -201,4 +203,34 @@ function validarMes(entrada) {
     return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor };
 }
 
-module.exports = { validarMes, validarPeriodo, validarEmpresa, validarTrabajador, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO };
+// Vacaciones: un período (desde, hasta; los días hábiles los cuenta el servidor) o un ajuste con los días tomados antes de usar el asistente
+function textoNota(v, errores) {
+    if (v === undefined || v === null || v === '') return '';
+    if (typeof v !== 'string') { errores.nota = 'La nota debe ser texto.'; return ''; }
+    const t = v.replace(/\s+/g, ' ').trim();
+    if (t.length > 120) errores.nota = 'La nota puede tener hasta 120 caracteres.';
+    return t.slice(0, 120);
+}
+function validarVacacion(entrada, hoy) {
+    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos no tienen el formato esperado.' } };
+    const errores = {};
+    const nota = textoNota(entrada.nota, errores);
+    if (entrada.tipo === 'ajuste') {
+        const dias = Number(entrada.dias);
+        if (!Number.isInteger(dias) || dias < 1 || dias > 200) errores.dias = 'Indica entre 1 y 200 días hábiles.';
+        return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor: { tipo: 'ajuste', fecha: hoy, dias, nota } };
+    }
+    if (entrada.tipo !== 'periodo') return { ok: false, errores: { tipo: 'Tipo de registro no válido.' } };
+    if (!esFechaIso(entrada.desde)) errores.desde = 'Indica el primer día de vacaciones.';
+    if (!esFechaIso(entrada.hasta)) errores.hasta = 'Indica el último día de vacaciones.';
+    if (Object.keys(errores).length) return { ok: false, errores };
+    let r;
+    try { r = VAC.diasHabiles(entrada.desde, entrada.hasta, F); } catch (e) {
+        const msg = e instanceof F.ErrorFeriados ? 'Por ahora solo podemos contar días hábiles dentro de los años con feriados verificados (' + F.COBERTURA[0] + ' y ' + F.COBERTURA[F.COBERTURA.length - 1] + ').' : e.message;
+        return { ok: false, errores: { hasta: msg } };
+    }
+    if (r.dias < 1) return { ok: false, errores: { hasta: 'En ese período no hay días hábiles de feriado.' } };
+    return { ok: true, valor: { tipo: 'periodo', desde: entrada.desde, hasta: entrada.hasta, dias: r.dias, nota } };
+}
+
+module.exports = { validarMes, validarPeriodo, validarEmpresa, validarTrabajador, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO };

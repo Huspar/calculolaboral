@@ -120,7 +120,7 @@
         comprobante_feriado: [
             { k: 'fechaInicio', tipo: 'fecha', etiqueta: 'Primer día de feriado', req: true },
             { k: 'diasHabiles', tipo: 'numero', etiqueta: 'Días hábiles de feriado', req: true, min: 1, max: 60 },
-            { k: 'saldoAntes', tipo: 'numero', etiqueta: 'Días hábiles disponibles antes de este feriado', req: true, min: 0, max: 200, ayuda: 'Es el saldo que le queda a la persona según tu registro de vacaciones. El sistema no sabe cuántos días ya tomó.' },
+            { k: 'saldoAntes', tipo: 'numero', etiqueta: 'Días hábiles disponibles antes de este feriado', req: true, min: 0, max: 200, ayuda: 'Es el saldo que le queda a la persona antes de este feriado. Si llevas su registro en «Vacaciones», lo proponemos desde ahí: revísalo.' },
             { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
             { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha del comprobante', req: true }
         ],

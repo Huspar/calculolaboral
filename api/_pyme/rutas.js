@@ -165,6 +165,29 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return responder(res, await datos.registrarDocumento(s, id, H.cuerpoDe(req).tipo));
     }
 
+    async function documentos(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        const s = await conSesion(req, res);
+        if (!s) return;
+        return responder(res, await datos.documentos(s));
+    }
+
+    async function vacaciones(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        const s = await conSesion(req, res);
+        if (!s) return;
+        return responder(res, await datos.vacaciones(s));
+    }
+
+    async function vacacion(req, res) {
+        const m = req.method;
+        if (m !== 'POST' && m !== 'DELETE') { res.setHeader('Allow', 'POST, DELETE'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        if (m === 'POST') return responder(res, await datos.guardarVacacion(s, typeof req.query?.trabajador === 'string' ? req.query.trabajador : '', H.cuerpoDe(req).vacacion));
+        return responder(res, await datos.borrarVacacion(s, typeof req.query?.id === 'string' ? req.query.id : ''));
+    }
+
     async function comprar(req, res) {
         if (!metodo(req, res, 'POST')) return;
         const s = await sesionParaEscribir(req, res);
@@ -213,7 +236,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, meses, mes, documento, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, meses, mes, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

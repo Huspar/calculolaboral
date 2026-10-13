@@ -1,12 +1,12 @@
 /*
- * CalculoLaboral · software del Asistente Laboral Pyme en /app (v1.0.0)
+ * CalculoLaboral · software del Asistente Laboral Pyme en /app (v1.1.0)
  * Marco con menú lateral y rutas propias (/app, /app/trabajadores, /app/trabajadores/<id>/<pestaña>, /app/liquidaciones[/<id>],
- * /app/documentos?t=&d=, /app/contratos, /app/empresa, /app/cuenta). Inicio es el cierre del mes: una fila por trabajador con el
+ * /app/documentos?t=&d=, /app/vacaciones?t=, /app/calendario, /app/contratos, /app/empresa, /app/cuenta). Inicio es el cierre del mes: una fila por trabajador con el
  * estado de su liquidación, la franja de cifras, el panel de detalle y los avisos del mes.
  * Hereda del panel anterior (js/pyme_app.js) la entrada por correo, la ficha de empresa y trabajadores, las liquidaciones por mes,
  * los documentos, los generadores con los datos cargados, el Pase Pyme y los datos de la cuenta.
  * Requiere: rut_cl.js, liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js, feriados_cl.js,
- * pyme_pendientes.js, pyme_liquidaciones.js y pyme_docs.js (antes que este archivo). La API es /api/pyme/*.
+ * pyme_pendientes.js, pyme_liquidaciones.js, pyme_docs.js y pyme_vacaciones.js (antes que este archivo). La API es /api/pyme/*.
  * Todo texto de usuario se escapa antes de mostrarse.
  */
 (function () {
@@ -14,7 +14,8 @@
 
     var Rut = window.CLRut, P = window.CLLiquidacionParametros, F = window.CLFeriados, PEND = window.CLPymePendientes;
     var L = window.CLPymeLiquidaciones, E = window.CLLiquidacionEngine, VL = window.CLLiquidacionValores, DOC = window.CLLiquidacionDocumento, PD = window.CLPymeDocs;
-    if (!Rut || !P || !F || !PEND || !L || !E || !VL || !DOC || !PD || !document.getElementById('pm-panel')) return;
+    var VAC = window.CLPymeVacaciones;
+    if (!Rut || !P || !F || !PEND || !L || !E || !VL || !DOC || !PD || !VAC || !document.getElementById('pm-panel')) return;
 
     var KEY_RESPALDO = 'cl_pyme_respaldo';
     var KEY_GENERADOR = 'cl_liq_v1';
@@ -29,6 +30,10 @@
     var logoActual = '';      // data URL del logo en el formulario de la empresa
     var inicioSel = null;     // trabajador elegido en la grilla del cierre
     var genSel = null;        // trabajador elegido en Contratos y finiquitos
+    var vacSel = null;        // trabajador elegido en Vacaciones
+    var vacCache = [];        // registros de vacaciones de la empresa (descifrados por el servidor)
+    var docsCache = [];       // historial de documentos emitidos (tipo y fecha)
+    var docPrefill = null;    // valores que trae la dirección para el comprobante de feriado
 
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -98,8 +103,8 @@
     }
 
     // ---------- rutas ----------
-    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', liquidaciones: 'liquidaciones', documentos: 'documentos', contratos: 'contratos', empresa: 'empresa', cuenta: 'cuenta' };
-    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', liquidaciones: 'Liquidaciones', documentos: 'Documentos', contratos: 'Contratos y finiquitos', empresa: 'Empresa', cuenta: 'Mi cuenta' };
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', contratos: 'contratos', empresa: 'empresa', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', contratos: 'Contratos y finiquitos', empresa: 'Empresa', cuenta: 'Mi cuenta' };
     var vistaActual = null;
 
     function rutaActual() { return window.location.pathname.replace(/^\/app\/?/, '').replace(/\/+$/, ''); }
@@ -140,6 +145,8 @@
         else if (vista === 'trabajador') abrirCarpeta(partes[1], partes[2] || 'ficha');
         else if (vista === 'liquidaciones') rutaLiquidaciones(partes[1]);
         else if (vista === 'documentos') rutaDocumentos();
+        else if (vista === 'vacaciones') rutaVacaciones();
+        else if (vista === 'calendario') dibujarCalendario();
         else if (vista === 'contratos') dibujarContratos();
         else if (vista === 'empresa') dibujarEmpresa();
         else if (vista === 'cuenta') dibujarCuenta();
@@ -240,6 +247,7 @@
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
         estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; genSel = null; vistaActual = null;
+        vacSel = null; vacCache = []; docsCache = []; docPrefill = null;
         docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
         $('print-section').innerHTML = '';
         $('pm-liq-editor').hidden = true;
@@ -256,8 +264,36 @@
             mostrar('panel');
             if (!volvioDePago) { volvioDePago = true; volverDePago(); }
             dibujarRuta();
-            return cargarLiquidaciones();
+            return Promise.all([cargarLiquidaciones(), cargarExtras()]);
         });
+    }
+
+    // Vacaciones e historial de documentos: se cargan aparte y redibujan solo lo que los muestra
+    function cargarExtras() {
+        return Promise.all([api('vacaciones'), api('documentos')]).then(function (rs) {
+            if (rs.some(sinSesion)) return;
+            if (rs[0].ok) vacCache = rs[0].datos.vacaciones || [];
+            if (rs[1].ok) docsCache = rs[1].datos.documentos || [];
+            redibujarExtras();
+        });
+    }
+    function redibujarExtras() {
+        if (!estado) return;
+        if (vistaActual === 'inicio') dibujarInicio();
+        else if (vistaActual === 'vacaciones') dibujarVacaciones();
+        else if (vistaActual === 'calendario') dibujarCalendario();
+        else if (vistaActual === 'documentos') dibujarHistorialDocs();
+        else if (vistaActual === 'trabajador') {
+            var p = rutaActual().split('/');
+            if (p[2] === 'vacaciones' || p[2] === 'documentos') abrirCarpeta(p[1], p[2]);
+        }
+    }
+    function vacDe(id) { return vacCache.filter(function (v) { return v.trabajadorId === id; }); }
+    function resumenVac(t) { return VAC.resumen(t, vacDe(t.id), hoyIso()); }
+    function textoDias(n) { return plural(n, 'día', 'días'); }
+    function rangoCorto(desde, hasta) {
+        if (desde === hasta) return fechaCorta(desde);
+        return desde.slice(0, 7) === hasta.slice(0, 7) ? (+desde.slice(8)) + ' al ' + fechaCorta(hasta) : fechaCorta(desde) + ' al ' + fechaCorta(hasta);
     }
 
     // Lo que se ve en todas las pantallas: empresa en el menú, cuenta y pase en la barra
@@ -371,7 +407,7 @@
         var nuevo = id === 'nuevo', t = nuevo ? null : trabajadorPorId(id);
         if (!nuevo && !t) { navegar('trabajadores', { reemplazar: true }); return; }
         if (nuevo && !estado.empresa) { navegar('empresa', { reemplazar: true }); avisoGlobal('info', 'Primero guarda los datos de la empresa.'); return; }
-        if (['ficha', 'liquidaciones', 'documentos'].indexOf(tab) < 0) tab = 'ficha';
+        if (['ficha', 'liquidaciones', 'vacaciones', 'documentos'].indexOf(tab) < 0) tab = 'ficha';
         if (nuevo) tab = 'ficha';
         $('carp-miga').textContent = nuevo ? 'Nuevo trabajador' : t.nombre;
         document.title = (nuevo ? 'Nuevo trabajador' : t.nombre) + ' · Asistente Laboral Pyme';
@@ -395,9 +431,11 @@
         }
         $('carp-ficha').hidden = tab !== 'ficha';
         $('carp-liq').hidden = tab !== 'liquidaciones';
+        $('carp-vac').hidden = tab !== 'vacaciones';
         $('carp-docs').hidden = tab !== 'documentos';
         if (tab === 'ficha') abrirTrabajador(t);
         else if (tab === 'liquidaciones') dibujarCarpetaLiq(t);
+        else if (tab === 'vacaciones') dibujarCarpetaVac(t);
         else dibujarCarpetaDocs(t);
     }
 
@@ -504,7 +542,21 @@
     $('carp-liq-filas').addEventListener('click', abrirMesDeCarpeta);
     $('carp-liq-filas').addEventListener('keydown', function (e) { if (e.key === 'Enter') abrirMesDeCarpeta(e); });
 
+    function dibujarCarpetaVac(t) {
+        var r = resumenVac(t);
+        $('carp-vac-resumen').innerHTML = resumenVacHtml(t, r);
+        $('carp-vac-registrar').href = '/app/vacaciones?t=' + encodeURIComponent(t.id);
+        $('carp-vac-registrar').setAttribute('data-ruta', 'vacaciones');
+        $('carp-vac-registrar').setAttribute('data-query', 't=' + encodeURIComponent(t.id));
+        var regs = ordenarVac(vacDe(t.id));
+        $('carp-vac-filas').innerHTML = regs.length ? regs.map(function (v) {
+            return '<tr><td>' + esc(v.tipo === 'periodo' ? rangoCorto(v.desde, v.hasta) + ' ' + v.hasta.slice(0, 4) : 'Antes de usar el asistente') + '</td><td class="num">' + v.dias + '</td><td class="ocultar-movil">' + esc(v.nota || '—') + '</td></tr>';
+        }).join('') : '<tr><td colspan="3" class="vacio">Aún no registras vacaciones de esta persona.</td></tr>';
+    }
+
     function dibujarCarpetaDocs(t) {
+        var hist = docsCache.filter(function (d) { return d.trabajadorId === t.id; }).slice().reverse();
+        $('carp-docs-hist').innerHTML = hist.length ? hist.slice(0, 50).map(function (d) { return filaHistorial(d, false); }).join('') : '<tr><td colspan="3" class="vacio">Todavía no emites documentos para esta persona desde el asistente.</td></tr>';
         $('carp-docs-lista').innerHTML = PD.TIPOS.map(function (d) {
             var q = 't=' + encodeURIComponent(t.id) + '&d=' + encodeURIComponent(d.id);
             return '<a class="gen-item" href="/app/documentos?' + q + '" data-ruta="documentos" data-query="' + esc(q) + '"><strong>' + esc(d.titulo) + '<span class="material-icons" aria-hidden="true">chevron_right</span></strong><span>' + esc(d.descripcion) + '</span></a>';
@@ -647,12 +699,23 @@
             return '<tr class="fila" data-id="' + esc(f.t.id) + '" aria-selected="' + sel + '" tabindex="' + (sel ? '0' : '-1') + '">' +
                 '<td class="celda-nombre"><strong>' + esc(f.t.nombre) + '</strong><span>' + esc(f.t.cargo || textoContrato(f.t)) + '</span></td>' +
                 celdaContrato(f.t) +
+                celdaVac(f.t) +
                 '<td>' + selloLiq(reg, f.est, f.corresponde ? 1 : 0) + '</td>' +
                 '<td class="num">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</td>' +
                 '<td class="fecha ocultar-movil">' + (reg && reg.emitida ? esc(fechaCorta(reg.emitida)) : '<span class="vacio">—</span>') + '</td>' +
                 '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
-        }).join('') : '<tr><td colspan="6" class="vacio">No tienes trabajadores activos. Actívalos desde su ficha.</td></tr>';
+        }).join('') : '<tr><td colspan="7" class="vacio">No tienes trabajadores activos. Actívalos desde su ficha.</td></tr>';
         if (inicioSel) dibujarDetalle(inicioSel, false); else $('ini-detalle-cuerpo').innerHTML = '<p class="detalle-vacio">Elige a un trabajador para ver el detalle.</p>';
+    }
+
+    // Vacaciones en la grilla: el período que cae en el mes o, si no hay, el saldo
+    function celdaVac(t) {
+        var ini = periodoSel + '-01', fin = periodoSel + '-31';
+        var p = vacDe(t.id).filter(function (v) { return v.tipo === 'periodo' && v.desde <= fin && v.hasta >= ini; })[0];
+        if (p) return '<td class="celda-contrato ocultar-movil">' + esc(rangoCorto(p.desde, p.hasta)) + '<small>' + textoDias(p.dias) + ' hábiles</small></td>';
+        if (!t.fechaIngreso) return '<td class="ocultar-movil vacio">—</td>';
+        var r = resumenVac(t);
+        return '<td class="celda-contrato ocultar-movil"><span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span><small>de saldo</small></td>';
     }
 
     function elegirFila(id, enfocar) {
@@ -693,7 +756,8 @@
             '<div><dt>Líquido a pagar</dt><dd class="mono">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '—') + '</dd></div>' +
             '<div><dt>Emitida</dt><dd class="mono">' + (reg && reg.emitida ? esc(fechaCortaAnio(reg.emitida)) : '—') + '</dd></div>' +
             '<div><dt>Contrato</dt><dd' + (v && v.clase ? ' class="' + v.clase + '"' : '') + '>' + esc(textoContrato(t)) + (v ? ', ' + esc(v.texto) : '') + '</dd></div>' +
-            '<div><dt>Sueldo base</dt><dd class="mono">' + (t.sueldoBase ? pesos(t.sueldoBase) : '—') + '</dd></div></dl>';
+            '<div><dt>Sueldo base</dt><dd class="mono">' + (t.sueldoBase ? pesos(t.sueldoBase) : '—') + '</dd></div>' +
+            '<div><dt>Vacaciones</dt><dd>' + textoVacDetalle(t) + '</dd></div></dl>';
         var suyos = pendientesActuales.filter(function (p) { return p.accion && p.accion.tipo === 'trabajador' && p.accion.id === id; });
         if (suyos.length) {
             html += '<div class="detalle-avisos">' + suyos.map(function (p) {
@@ -722,6 +786,13 @@
         cuerpo.classList.add('cambiando');
         window.setTimeout(function () { cuerpo.innerHTML = html; cuerpo.classList.remove('cambiando'); }, 90);
     }
+    function textoVacDetalle(t) {
+        if (!t.fechaIngreso) return '—';
+        var r = resumenVac(t);
+        if (r.actual) return 'De vacaciones hasta el ' + esc(fechaCorta(r.actual.hasta));
+        return '<span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span> de saldo' + (r.proximo ? ' · desde el ' + esc(fechaCorta(r.proximo.desde)) : '');
+    }
+
     $('ini-detalle').addEventListener('click', function (e) {
         var b = e.target.closest('[data-det]');
         if (!b) return;
@@ -750,6 +821,10 @@
     // /app/documentos?t=<trabajador>&d=<tipo>: deja elegidos a la persona y el documento
     function rutaDocumentos() {
         var q = new URLSearchParams(window.location.search), t = q.get('t'), d = q.get('d'), forzar = false;
+        if (d === 'comprobante_feriado' && t && q.get('inicio')) {
+            docPrefill = { t: t, tipo: d, valores: { fechaInicio: q.get('inicio'), diasHabiles: String(+q.get('dias') || ''), saldoAntes: String(+q.get('saldo') || 0) } };
+            forzar = true;
+        }
         if (t && trabajadorPorId(t) && t !== docSel.trabajadorId) { docSel.trabajadorId = t; forzar = true; }
         if (d && PD.TIPOS.some(function (x) { return x.id === d; }) && d !== docSel.tipo) { docSel.tipo = d; forzar = true; }
         dibujarDocumentos(forzar);
@@ -774,6 +849,20 @@
             ? 'Con tu pase vigente los documentos salen sin marca de agua. Revisa cada documento antes de entregarlo.'
             : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada documento antes de entregarlo.';
         if (cambio) abrirDoc(); else vistaDoc();
+        dibujarHistorialDocs();
+    }
+
+    var NOMBRES_DOC = { contrato: 'Contrato de trabajo', anexo_42h: 'Anexo de 42 horas', finiquito: 'Finiquito', liquidacion: 'Liquidación de sueldo' };
+    function nombreDoc(tipo) { var x = PD.TIPOS.filter(function (d) { return d.id === tipo; })[0]; return x ? x.titulo : (NOMBRES_DOC[tipo] || tipo); }
+    function filaHistorial(d, conNombre) {
+        var t = trabajadorPorId(d.trabajadorId), puede = t && PD.TIPOS.some(function (x) { return x.id === d.tipo; });
+        var q = 't=' + encodeURIComponent(d.trabajadorId) + '&d=' + encodeURIComponent(d.tipo);
+        return '<tr><td class="fecha">' + esc(fechaCortaAnio(isoChile(d.emitido))) + '</td>' + (conNombre ? '<td>' + esc(t ? t.nombre : 'Trabajador eliminado') + '</td>' : '') + '<td>' + esc(nombreDoc(d.tipo)) + '</td>' +
+            '<td style="text-align:right">' + (puede ? '<a class="btn-texto" href="/app/documentos?' + esc(q) + '" data-ruta="documentos" data-query="' + esc(q) + '">Preparar de nuevo</a>' : '') + '</td></tr>';
+    }
+    function dibujarHistorialDocs() {
+        var lista = docsCache.slice().reverse().slice(0, 60);
+        $('doc-hist-filas').innerHTML = lista.length ? lista.map(function (d) { return filaHistorial(d, true); }).join('') : '<tr><td colspan="4" class="vacio">Todavía no emites documentos desde el asistente.</td></tr>';
     }
 
     // Cambia de persona o de documento: carga lo que haga falta y propone los valores iniciales
@@ -788,6 +877,9 @@
             var c = ctxDoc();
             if (!c) return;
             docSel.datos = PD.valoresIniciales(tipo, c);
+            if (docPrefill && docPrefill.tipo === tipo && docPrefill.t === id) Object.assign(docSel.datos, docPrefill.valores);
+            else if (tipo === 'comprobante_feriado' && c.t.fechaIngreso && !docSel.datos.saldoAntes) docSel.datos.saldoAntes = String(Math.max(0, resumenVac(c.t).saldo));
+            docPrefill = null;
             dibujarFormDoc();
             vistaDoc();
         });
@@ -902,9 +994,212 @@
         imprimirHojas([d.html], d.titulo + ' ' + c.t.nombre);
         api('documento', { metodo: 'POST', query: { trabajador: id }, cuerpo: { tipo: tipo } }).then(function (r) {
             if (sinSesion(r)) return;
+            if (r.ok) { docsCache.push({ trabajadorId: id, tipo: tipo, emitido: new Date().toISOString() }); dibujarHistorialDocs(); }
             mensaje($('pm-doc-estado'), r.ok ? 'ok' : 'error', r.ok ? 'Enviado a imprimir. Anotamos que lo emitiste (solo el tipo de documento y la fecha, nunca su texto).' : 'Se envió a imprimir, pero no pudimos anotar la emisión: ' + (r.datos.error || 'intenta de nuevo.'));
         });
     });
+
+    // ---------- vacaciones ----------
+    function ordenarVac(regs) {
+        return regs.slice().sort(function (a, b) { var x = a.tipo === 'periodo' ? a.desde : a.fecha, y = b.tipo === 'periodo' ? b.desde : b.fecha; return x < y ? 1 : x > y ? -1 : 0; });
+    }
+    function resumenVacHtml(t, r) {
+        var d = r.derecho, html = '<p class="texto-ayuda">Saldo estimado</p><p class="saldo-grande' + (r.saldo < 0 ? ' negativo' : '') + '">' + r.saldo + '<small>días hábiles</small></p>';
+        html += '<dl class="detalle-dl">' +
+            '<div><dt>Corresponden por ' + plural(d.anios, 'año completo', 'años completos') + '</dt><dd class="mono">' + d.total + '</dd></div>' +
+            '<div><dt>Registrados como tomados</dt><dd class="mono">' + r.tomados + '</dd></div>' +
+            (d.proximo ? '<div><dt>El ' + esc(fechaCortaAnio(d.proximo)) + ' suma</dt><dd class="mono">' + d.anual + '</dd></div>' : '') +
+            (r.actual ? '<div><dt>De vacaciones</dt><dd>' + esc(rangoCorto(r.actual.desde, r.actual.hasta)) + '</dd></div>' : r.proximo ? '<div><dt>Próximas</dt><dd>' + esc(rangoCorto(r.proximo.desde, r.proximo.hasta)) + '</dd></div>' : '') +
+            '</dl>';
+        if (r.avisos.length) html += '<div class="detalle-avisos">' + r.avisos.map(function (a) { return '<div class="lq-aviso lq-aviso-' + a.nivel + '"><span class="material-icons" aria-hidden="true">' + (a.nivel === 'aviso' ? 'warning' : 'info') + '</span><p>' + esc(a.texto) + '</p></div>'; }).join('') + '</div>';
+        if (d.porAnio.length) {
+            html += '<details class="det-anios"><summary>Días por año de servicio</summary><table class="tabla"><thead><tr><th scope="col">Año</th><th scope="col">Desde</th><th scope="col" class="num">Días</th></tr></thead><tbody>' +
+                d.porAnio.map(function (x) { return '<tr><td>' + x.anio + '</td><td class="fecha">' + esc(fechaCortaAnio(x.desde)) + '</td><td class="num">' + x.dias + (x.progresivo ? ' <small class="vacio">(' + x.progresivo + ' progresivo)</small>' : '') + '</td></tr>'; }).join('') + '</tbody></table></details>';
+        }
+        return html;
+    }
+
+    function rutaVacaciones() {
+        var t = new URLSearchParams(window.location.search).get('t');
+        if (t && trabajadorPorId(t)) vacSel = t;
+        dibujarVacaciones();
+    }
+    function dibujarVacaciones() {
+        var lista = estado.trabajadores || [];
+        $('vac-vacio').hidden = lista.length > 0;
+        $('vac-contenido').hidden = !lista.length;
+        if (!lista.length) return;
+        if (!trabajadorPorId(vacSel)) vacSel = (lista.filter(function (t) { return t.activo; })[0] || lista[0]).id;
+        $('vac-filas').innerHTML = lista.map(function (t) {
+            var r = resumenVac(t), sel = t.id === vacSel, ahora = r.actual ? 'De vacaciones hasta el ' + fechaCorta(r.actual.hasta) : r.proximo ? rangoCorto(r.proximo.desde, r.proximo.hasta) : '—';
+            return '<tr class="fila" tabindex="0" data-id="' + esc(t.id) + '" aria-selected="' + sel + '">' +
+                '<td class="celda-nombre"><strong>' + esc(t.nombre) + '</strong><span>' + esc(t.fechaIngreso ? 'Ingresó el ' + fechaCortaAnio(t.fechaIngreso) : 'Falta la fecha de ingreso') + (t.activo ? '' : ' · inactivo') + '</span></td>' +
+                '<td class="num ocultar-movil">' + (t.fechaIngreso ? r.derecho.total : '—') + '</td>' +
+                '<td class="num ocultar-movil">' + r.tomados + '</td>' +
+                '<td class="num"><strong' + (r.saldo < 0 ? ' class="vencido"' : '') + '>' + (t.fechaIngreso ? r.saldo : '—') + '</strong></td>' +
+                '<td class="ocultar-movil">' + esc(ahora) + '</td>' +
+                '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
+        }).join('');
+        var sel = $('vac-trab');
+        sel.innerHTML = lista.map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.nombre) + '</option>'; }).join('');
+        sel.value = vacSel;
+        dibujarDetalleVac();
+        calcularVac();
+    }
+    function dibujarDetalleVac() {
+        var t = trabajadorPorId(vacSel);
+        if (!t) { $('vac-detalle').innerHTML = ''; return; }
+        var r = resumenVac(t), regs = ordenarVac(vacDe(t.id));
+        var filas = regs.length ? regs.map(function (v) {
+            var acciones = '';
+            if (v.tipo === 'periodo') {
+                var saldoAntes = Math.max(0, r.saldo + v.dias);
+                var q = 't=' + encodeURIComponent(t.id) + '&d=comprobante_feriado&inicio=' + v.desde + '&dias=' + v.dias + '&saldo=' + saldoAntes;
+                acciones += '<a class="btn-texto" href="/app/documentos?' + esc(q) + '" data-ruta="documentos" data-query="' + esc(q) + '">Comprobante</a> ';
+            }
+            acciones += '<button type="button" class="btn-texto lq-danger" data-vborrar="' + esc(v.id) + '">Eliminar</button>';
+            return '<tr><td>' + esc(v.tipo === 'periodo' ? rangoCorto(v.desde, v.hasta) + ' ' + v.hasta.slice(0, 4) : 'Antes de usar el asistente') + (v.nota ? '<small class="vacio" style="display:block">' + esc(v.nota) + '</small>' : '') + '</td>' +
+                '<td class="num">' + v.dias + '</td><td style="text-align:right;white-space:nowrap">' + acciones + '</td></tr>';
+        }).join('') : '<tr><td colspan="3" class="vacio">Aún no registras vacaciones de esta persona. Si tomó días antes de usar el asistente, regístralos para que el saldo cuadre.</td></tr>';
+        $('vac-detalle').innerHTML = '<div class="panel"><div class="panel-head"><h2>' + esc(t.nombre) + '</h2></div><div class="panel-cuerpo">' + resumenVacHtml(t, r) + '</div>' +
+            '<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Vacaciones registradas</caption><thead><tr><th scope="col">Período</th><th scope="col" class="num">Días hábiles</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + filas + '</tbody></table></div></div>';
+    }
+    function elegirVac(id) {
+        vacSel = id;
+        Array.prototype.forEach.call($('vac-filas').querySelectorAll('tr[data-id]'), function (tr) { tr.setAttribute('aria-selected', tr.getAttribute('data-id') === id ? 'true' : 'false'); });
+        $('vac-trab').value = id;
+        dibujarDetalleVac();
+        calcularVac();
+    }
+    $('vac-filas').addEventListener('click', function (e) { var tr = e.target.closest('tr[data-id]'); if (tr) elegirVac(tr.getAttribute('data-id')); });
+    $('vac-filas').addEventListener('keydown', function (e) { var tr = e.target.closest('tr[data-id]'); if (tr && e.key === 'Enter') elegirVac(tr.getAttribute('data-id')); });
+    $('vac-trab').addEventListener('change', function (e) { elegirVac(e.target.value); });
+
+    function tipoVac() { var r = document.querySelector('input[name="vac-tipo"]:checked'); return r ? r.value : 'periodo'; }
+    function limpiarErroresVac() { Array.prototype.forEach.call($('vac-form').querySelectorAll('[data-verror]'), function (p) { p.hidden = true; p.textContent = ''; }); }
+    // Cuenta los días hábiles del período mientras se escribe (el servidor vuelve a contarlos al guardar)
+    function calcularVac() {
+        var tipo = tipoVac(), caja = $('vac-calculo'), t = trabajadorPorId(vacSel);
+        Array.prototype.forEach.call($('vac-form').querySelectorAll('[data-vac]'), function (el) { el.hidden = el.getAttribute('data-vac') !== tipo; });
+        caja.innerHTML = '';
+        if (!t) return;
+        var saldo = resumenVac(t).saldo, dias = 0, detalle = '';
+        if (tipo === 'periodo') {
+            var desde = $('vac-desde').value, hasta = $('vac-hasta').value;
+            if (!desde || !hasta) return;
+            try {
+                var r = VAC.diasHabiles(desde, hasta, F);
+                dias = r.dias;
+                var fuera = [];
+                if (r.sabados) fuera.push(plural(r.sabados, 'sábado', 'sábados'));
+                if (r.feriados.length) fuera.push('feriado' + (r.feriados.length > 1 ? 's' : '') + ' (' + r.feriados.map(function (f) { return f.nombre; }).join(', ') + ')');
+                detalle = fuera.length ? ' No cuentan: ' + fuera.join(' ni ') + ', además de los domingos.' : '';
+            } catch (err) {
+                caja.innerHTML = '<div class="lq-aviso lq-aviso-error"><span class="material-icons" aria-hidden="true">error</span><p>' + esc(err instanceof F.ErrorFeriados ? 'Por ahora solo podemos contar días hábiles de los años con feriados verificados.' : err.message) + '</p></div>';
+                return;
+            }
+        } else {
+            dias = parseInt($('vac-dias').value, 10) || 0;
+            if (!dias) return;
+        }
+        var queda = saldo - dias;
+        caja.innerHTML = '<div class="lq-aviso lq-aviso-' + (queda < 0 ? 'aviso' : 'info') + '"><span class="material-icons" aria-hidden="true">' + (queda < 0 ? 'warning' : 'info') + '</span><p><strong>' + textoDias(dias) + ' hábiles.</strong>' + esc(detalle) + ' Saldo después de registrarlos: ' + queda + '.' + (queda < 0 ? ' Supera los días que corresponden por años completos.' : '') + '</p></div>';
+    }
+    $('vac-form').addEventListener('input', calcularVac);
+    $('vac-form').addEventListener('change', calcularVac);
+    $('vac-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var tipo = tipoVac(), id = vacSel, est = $('vac-estado');
+        limpiarErroresVac();
+        var cuerpo = tipo === 'periodo' ? { tipo: 'periodo', desde: $('vac-desde').value, hasta: $('vac-hasta').value, nota: $('vac-nota').value } : { tipo: 'ajuste', dias: parseInt($('vac-dias').value, 10) || 0, nota: $('vac-nota').value };
+        mensaje(est, '', 'Guardando…');
+        api('vacacion', { metodo: 'POST', query: { trabajador: id }, cuerpo: { vacacion: cuerpo } }).then(function (r) {
+            if (sinSesion(r)) return;
+            if (!r.ok) {
+                Object.keys(r.datos.errores || {}).forEach(function (k) { var p = $('vac-form').querySelector('[data-verror="' + k + '"]'); if (p) { p.textContent = r.datos.errores[k]; p.hidden = false; } });
+                mensaje(est, 'error', r.datos.error || 'No pudimos guardar.');
+                return;
+            }
+            vacCache.push(r.datos.vacacion);
+            $('vac-desde').value = ''; $('vac-hasta').value = ''; $('vac-dias').value = ''; $('vac-nota').value = '';
+            dibujarVacaciones();
+            mensaje($('vac-estado'), 'ok', 'Guardamos ' + textoDias(r.datos.vacacion.dias) + ' hábiles para ' + trabajadorPorId(id).nombre + '.');
+        });
+    });
+    $('vac-detalle').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-vborrar]');
+        if (!b || !window.confirm('¿Eliminar este registro de vacaciones? El saldo se vuelve a calcular.')) return;
+        var id = b.getAttribute('data-vborrar');
+        api('vacacion', { metodo: 'DELETE', query: { id: id } }).then(function (r) {
+            if (sinSesion(r)) return;
+            if (!r.ok) { mensaje($('vac-estado'), 'error', r.datos.error || 'No pudimos eliminarlo.'); return; }
+            vacCache = vacCache.filter(function (v) { return v.id !== id; });
+            dibujarVacaciones();
+            mensaje($('vac-estado'), 'ok', 'Eliminamos el registro.');
+        });
+    });
+
+    // ---------- calendario ----------
+    function sumarDiasIso(iso, n) { var d = new Date(Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) + n * 86400000); return d.getUTCFullYear() + '-' + dos(d.getUTCMonth() + 1) + '-' + dos(d.getUTCDate()); }
+    // Eventos del mes: { fecha, tipo, texto, ruta?, query? } ordenados por fecha
+    function eventosDelMes(periodo) {
+        var y = +periodo.slice(0, 4), m = +periodo.slice(5, 7), ini = periodo + '-01', ultimo = new Date(Date.UTC(y, m, 0)).getUTCDate(), fin = periodo + '-' + dos(ultimo);
+        var ev = [], sinFeriados = false;
+        try { F.feriadosEntre(ini, fin).forEach(function (f) { ev.push({ fecha: f.fecha, tipo: 'feriado', texto: f.nombre }); }); } catch (e) { sinFeriados = true; }
+        if (activos().length) {
+            var mesAnt = m === 1 ? 12 : m - 1, dia10 = periodo + '-10', plazo = dia10;
+            try { plazo = F.siguienteDiaHabil(dia10); } catch (e) { /* sin feriados verificados */ }
+            ev.push({ fecha: plazo, tipo: 'cotiz', texto: 'Cotizaciones de ' + MESES[mesAnt - 1] });
+            if (periodo + '-13' !== plazo) ev.push({ fecha: periodo + '-13', tipo: 'previred', texto: 'Último día por internet en Previred' });
+        }
+        (estado.trabajadores || []).forEach(function (t) {
+            var nombre = t.nombre.split(' ')[0];
+            if (t.activo && t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo && t.fechaTerminoPlazo >= ini && t.fechaTerminoPlazo <= fin) ev.push({ fecha: t.fechaTerminoPlazo, tipo: 'plazo', texto: 'Vence el plazo fijo de ' + nombre, ruta: 'trabajadores/' + t.id });
+            if (t.activo && t.fechaIngreso && t.fechaIngreso < ini) {
+                var k = y - +t.fechaIngreso.slice(0, 4), aniv = k >= 1 ? VAC.aniversario(t.fechaIngreso, k) : null;
+                if (aniv && aniv >= ini && aniv <= fin) ev.push({ fecha: aniv, tipo: 'aniv', texto: nombre + ' cumple ' + plural(k, 'año', 'años'), ruta: 'vacaciones', query: 't=' + encodeURIComponent(t.id) });
+            }
+            vacDe(t.id).forEach(function (v) {
+                if (v.tipo !== 'periodo' || v.hasta < ini || v.desde > fin) return;
+                for (var d = v.desde < ini ? ini : v.desde; d <= v.hasta && d <= fin; d = sumarDiasIso(d, 1)) ev.push({ fecha: d, tipo: 'vac', texto: nombre + ' de vacaciones', ruta: 'vacaciones', query: 't=' + encodeURIComponent(t.id), vac: v, primero: d === v.desde || d === ini });
+            });
+        });
+        if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= ini && pv <= fin) ev.push({ fecha: pv, tipo: 'pase', texto: 'Vence tu Pase Pyme', ruta: 'cuenta' }); }
+        var orden = { feriado: 0, cotiz: 1, previred: 2, plazo: 3, pase: 4, vac: 5, aniv: 6 };
+        ev.sort(function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : orden[a.tipo] - orden[b.tipo]; });
+        return { eventos: ev, sinFeriados: sinFeriados, ini: ini, fin: fin, ultimo: ultimo };
+    }
+    function chipEvento(e) {
+        var cls = 'cal-ev ev-' + e.tipo, txt = esc(e.texto);
+        if (e.ruta) return '<a class="' + cls + '" href="/app/' + e.ruta + (e.query ? '?' + esc(e.query) : '') + '" data-ruta="' + e.ruta + '"' + (e.query ? ' data-query="' + esc(e.query) + '"' : '') + ' title="' + txt + '">' + txt + '</a>';
+        return '<span class="' + cls + '" title="' + txt + '">' + txt + '</span>';
+    }
+    function dibujarCalendario() {
+        var nombreMes = nombrePeriodo(periodoSel), r = eventosDelMes(periodoSel), hoy = hoyIso();
+        $('cal-titulo').textContent = 'Calendario de ' + nombreMes;
+        var porDia = {};
+        r.eventos.forEach(function (e) { (porDia[e.fecha] = porDia[e.fecha] || []).push(e); });
+        var primero = new Date(Date.UTC(+periodoSel.slice(0, 4), +periodoSel.slice(5, 7) - 1, 1)).getUTCDay(), antes = (primero + 6) % 7, celdas = [];
+        for (var i = antes; i > 0; i--) celdas.push({ iso: sumarDiasIso(r.ini, -i), fuera: true });
+        for (var d = 1; d <= r.ultimo; d++) celdas.push({ iso: periodoSel + '-' + dos(d), fuera: false });
+        while (celdas.length % 7) celdas.push({ iso: sumarDiasIso(celdas[celdas.length - 1].iso, 1), fuera: true });
+        $('cal-grilla').innerHTML = celdas.map(function (c, idx) {
+            var evs = c.fuera ? [] : (porDia[c.iso] || []), dow = idx % 7;
+            var clases = 'cal-dia' + (c.fuera ? ' fuera' : '') + (c.iso === hoy ? ' hoy' : '') + (dow >= 5 ? ' finde' : '') + (evs.some(function (e) { return e.tipo === 'feriado'; }) ? ' feriado' : '') + (evs.length ? ' tiene-ev' : '');
+            var visibles = evs.slice(0, 3), resto = evs.length - visibles.length;
+            return '<div class="' + clases + '" role="gridcell" aria-label="' + esc(fechaLarga(c.iso) + (evs.length ? ': ' + evs.map(function (e) { return e.texto; }).join(', ') : '')) + '">' +
+                '<span class="cal-num">' + (+c.iso.slice(8)) + '</span>' + visibles.map(chipEvento).join('') + (resto > 0 ? '<span class="cal-mas">y ' + resto + ' más</span>' : '') + '</div>';
+        }).join('');
+        // Lista del mes: los días de un mismo período de vacaciones se muestran una sola vez
+        var lista = r.eventos.filter(function (e) { return e.tipo !== 'vac' || e.primero; });
+        $('cal-lista-titulo').textContent = mayuscula(nombreMes);
+        $('cal-lista').innerHTML = lista.length ? lista.map(function (e) {
+            var texto = e.tipo === 'vac' ? e.texto.replace(' de vacaciones', '') + ': vacaciones del ' + rangoCorto(e.vac.desde, e.vac.hasta) : e.texto;
+            var accion = e.ruta ? '<a class="btn-texto" href="/app/' + e.ruta + (e.query ? '?' + esc(e.query) : '') + '" data-ruta="' + e.ruta + '"' + (e.query ? ' data-query="' + esc(e.query) + '"' : '') + '>Ver</a>' : '';
+            return '<li><span class="fecha-ev">' + esc(fechaCorta(e.fecha)) + '</span><div><strong>' + esc(texto) + '</strong></div>' + accion + '</li>';
+        }).join('') : '<li><span></span><div><strong>Nada registrado este mes.</strong></div></li>';
+        $('cal-nota').textContent = r.sinFeriados ? 'Este año aún no tiene los feriados verificados: no aparecen en el calendario.' : 'Los feriados son los nacionales; no incluye feriados regionales ni locales.';
+    }
 
     // ---------- contratos y finiquitos ----------
     var DESBLOQUEOS = { 'pm-gen-contrato': 'contrato', 'pm-gen-finiquito': 'finiquito' };
@@ -1168,7 +1463,7 @@
         mensaje($('ini-estado'), '', '');
         if (vistaActual === 'liquidaciones' && rutaActual() !== 'liquidaciones') navegar('liquidaciones', { reemplazar: true, sinScroll: true });
         if (!sinCargar) cargarLiquidaciones(); else dibujarSelectorMes();
-        if (vistaActual === 'trabajador') dibujarRuta();
+        if (vistaActual === 'trabajador' || vistaActual === 'calendario') dibujarRuta();
     }
     $('app-mes').addEventListener('change', function (e) { cambiarPeriodo(e.target.value); });
     $('app-mes-ant').addEventListener('click', function () { cambiarPeriodo(PERIODOS[PERIODOS.indexOf(periodoSel) + 1]); });

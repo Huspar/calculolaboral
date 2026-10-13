@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.1.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -80,9 +80,11 @@ gtag('js', new Date());
 <a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span>Cierre del mes</a>
 <p class="app-nav-grupo">Personas</p>
 <a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span>Trabajadores</a>
+<a href="/app/vacaciones" data-ruta="vacaciones" data-nav="vacaciones"><span class="material-icons" aria-hidden="true">beach_access</span>Vacaciones</a>
 <p class="app-nav-grupo">Mes</p>
 <a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span>Liquidaciones<span class="app-nav-cuenta" id="nav-liq-n"></span></a>
 <a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos</a>
+<a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span>Calendario</a>
 <p class="app-nav-grupo">Herramientas</p>
 <a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
 <p class="app-nav-grupo">Configuración</p>
@@ -145,7 +147,7 @@ gtag('js', new Date());
 <div class="tabla-wrap">
 <table class="tabla" id="ini-tabla">
 <caption class="sr-only" id="ini-caption">Trabajadores y estado de su liquidación del mes</caption>
-<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="ocultar-movil">Emitida</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
+<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col" class="ocultar-movil">Vacaciones</th><th scope="col">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="ocultar-movil">Emitida</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
 <tbody id="ini-filas"></tbody>
 </table>
 </div>
@@ -199,6 +201,7 @@ gtag('js', new Date());
 <nav class="pestanas" id="carp-tabs" aria-label="Carpeta del trabajador">
 <a href="#" data-tab="ficha">Ficha</a>
 <a href="#" data-tab="liquidaciones">Liquidaciones</a>
+<a href="#" data-tab="vacaciones">Vacaciones</a>
 <a href="#" data-tab="documentos">Documentos</a>
 </nav>
 
@@ -275,7 +278,21 @@ gtag('js', new Date());
 <p class="texto-ayuda" style="margin-top:10px">Se muestran los meses desde su ingreso, hasta 12. Cada liquidación queda guardada y cifrada en tu cuenta.</p>
 </div>
 
+<div id="carp-vac" hidden>
+<div class="dos-col">
+<div class="panel"><div class="panel-cuerpo" id="carp-vac-resumen"></div></div>
+<div class="panel">
+<div class="panel-head"><h2>Registro</h2><a class="btn btn-chico" id="carp-vac-registrar" href="/app/vacaciones"><span class="material-icons" aria-hidden="true">add</span>Registrar</a></div>
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Vacaciones registradas</caption><thead><tr><th scope="col">Período</th><th scope="col" class="num">Días hábiles</th><th scope="col" class="ocultar-movil">Nota</th></tr></thead><tbody id="carp-vac-filas"></tbody></table></div>
+</div>
+</div>
+</div>
+
 <div id="carp-docs" hidden>
+<div class="panel" style="margin-bottom:20px">
+<div class="panel-head"><h2>Emitidos</h2></div>
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Documentos emitidos de esta persona</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Documento</th><th scope="col"><span class="sr-only">Acción</span></th></tr></thead><tbody id="carp-docs-hist"></tbody></table></div>
+</div>
 <p class="texto-ayuda">Elige un documento: se arma con la ficha de esta persona y los datos de tu empresa.</p>
 <div class="gen-lista" id="carp-docs-lista"></div>
 </div>
@@ -398,6 +415,76 @@ gtag('js', new Date());
 <div class="lq-doc-frame" id="pm-doc-marco" hidden><article id="pm-doc-doc" class="lq-doc dc-doc" aria-label="Vista previa del documento"></article></div>
 </div>
 </div>
+<div class="panel" id="doc-historial" style="margin-top:20px">
+<div class="panel-head"><h2>Historial de documentos emitidos</h2></div>
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Documentos emitidos</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Trabajador</th><th scope="col">Documento</th><th scope="col"><span class="sr-only">Acción</span></th></tr></thead><tbody id="doc-hist-filas"></tbody></table></div>
+<p class="texto-ayuda panel-pie">Guardamos solo el tipo de documento y la fecha, nunca su texto. Al prepararlo de nuevo se arma con los datos de hoy, que pueden no coincidir con los del documento que entregaste.</p>
+</div>
+</section>
+
+<!-- Vacaciones -->
+<section class="vista" data-vista="vacaciones" aria-labelledby="vac-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="vac-titulo">Vacaciones</h1>
+<p class="v-sub">Saldo estimado: 15 días hábiles por año completo de servicio (20 en zona extrema) más el feriado progresivo, menos lo que registres (arts. 67 y 68). El sábado no cuenta como día de feriado (art. 69).</p>
+</div>
+</div>
+<div class="panel" id="vac-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">El saldo se calcula con su fecha de ingreso.</p></div></div>
+<div id="vac-contenido">
+<div class="panel">
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Saldo de vacaciones por trabajador</caption>
+<thead><tr><th scope="col">Trabajador</th><th scope="col" class="num ocultar-movil">Corresponden</th><th scope="col" class="num ocultar-movil">Tomados</th><th scope="col" class="num">Saldo</th><th scope="col" class="ocultar-movil">Ahora o próximas</th><th scope="col" class="chev"><span class="sr-only">Elegir</span></th></tr></thead>
+<tbody id="vac-filas"></tbody></table></div>
+</div>
+<div class="editor">
+<div class="editor-izq">
+<div class="panel"><div class="panel-cuerpo">
+<div class="editor-titulo"><h2>Registrar vacaciones</h2></div>
+<form id="vac-form" novalidate autocomplete="off">
+<div class="lq-grid">
+<div class="lq-field lq-span2"><label for="vac-trab">Trabajador</label><select id="vac-trab"></select></div>
+<fieldset class="segmento lq-span2"><legend class="lq-label">Qué registras</legend>
+<label><input type="radio" name="vac-tipo" value="periodo" checked> <span>Vacaciones con fechas</span></label>
+<label><input type="radio" name="vac-tipo" value="ajuste"> <span>Días tomados antes de usar el asistente</span></label>
+</fieldset>
+<div class="lq-field" data-vac="periodo"><label for="vac-desde">Primer día</label><input id="vac-desde" type="date"><p class="pm-error" data-verror="desde" hidden></p></div>
+<div class="lq-field" data-vac="periodo"><label for="vac-hasta">Último día</label><input id="vac-hasta" type="date"><p class="pm-error" data-verror="hasta" hidden></p></div>
+<div class="lq-field" data-vac="ajuste" hidden><label for="vac-dias">Días hábiles tomados</label><input id="vac-dias" type="text" inputmode="numeric" maxlength="3" data-tipo="num" placeholder="0"><p class="pm-error" data-verror="dias" hidden></p></div>
+<div class="lq-field lq-span2"><label for="vac-nota">Nota <span class="lq-opt">(opcional)</span></label><input id="vac-nota" type="text" maxlength="120" placeholder="Por ejemplo: vacaciones de verano"><p class="pm-error" data-verror="nota" hidden></p></div>
+</div>
+<div id="vac-calculo" class="lq-avisos" style="margin-top:14px" role="status"></div>
+<div class="form-acciones">
+<button type="submit" class="btn btn-primario" id="vac-guardar"><span class="material-icons" aria-hidden="true">save</span>Guardar</button>
+<p id="vac-estado" class="lq-estado" role="status"></p>
+</div>
+</form>
+</div></div>
+</div>
+<div class="editor-der" id="vac-detalle"></div>
+</div>
+</div>
+</section>
+
+<!-- Calendario -->
+<section class="vista" data-vista="calendario" aria-labelledby="cal-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="cal-titulo">Calendario</h1>
+<p class="v-sub">Feriados, plazos de cotizaciones, vencimientos de contratos, vacaciones y aniversarios del mes que eliges arriba.</p>
+</div>
+</div>
+<div class="cal-layout">
+<div class="panel cal-panel">
+<div class="cal-semana" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div>
+<div class="cal-grilla" id="cal-grilla" role="grid" aria-label="Días del mes"></div>
+</div>
+<div class="panel">
+<div class="panel-head"><h2 id="cal-lista-titulo">Este mes</h2></div>
+<ul class="avisos-mes cal-lista" id="cal-lista"></ul>
+</div>
+</div>
+<p class="texto-ayuda" id="cal-nota" style="margin-top:10px"></p>
 </section>
 
 <!-- Contratos y finiquitos -->
@@ -529,8 +616,9 @@ gtag('js', new Date());
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
 <script src="/js/pyme_pendientes.js?v=1.1.1"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.0.0"></script>
-<script src="/js/pyme_docs.js?v=1.1.0"></script>
+<script src="/js/pyme_docs.js?v=1.2.0"></script>
+<script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.0.0" defer></script>
+<script src="/js/app_pyme.js?v=1.1.0" defer></script>
 </body>
 </html>

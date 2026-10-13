@@ -222,6 +222,37 @@ function crearAlmacenSql(sql) {
             return r.length === 1;
         },
 
+        // ---------- vacaciones (cifradas, con el mismo candado por trabajador que los meses) ----------
+
+        async listarVacaciones(empresaId) {
+            const r = await filas(
+                'SELECT v.id, v.trabajador_id, v.datos_cifrados, v.version_clave, v.creado FROM vacaciones v JOIN trabajadores t ON t.id = v.trabajador_id ' +
+                'WHERE t.empresa_id = $1::uuid ORDER BY v.creado, v.id',
+                [empresaId]
+            );
+            return r.map(x => ({ id: x.id, trabajadorId: x.trabajador_id, datos: Buffer.from(x.datos_cifrados), version: Number(x.version_clave), creado: new Date(x.creado).toISOString() }));
+        },
+
+        /** Agrega un registro de vacaciones a un trabajador de esa empresa, sin pasar de `maximo` por trabajador. Devuelve true o false. */
+        async crearVacacion({ id, trabajadorId, empresaId, datos, version, ahoraIso, maximo }) {
+            const r = await conCandado('vacaciones:' + trabajadorId,
+                'WITH permitido AS (SELECT t.id AS trabajador_id FROM trabajadores t WHERE t.id = $2::uuid AND t.empresa_id = $3::uuid ' +
+                'AND (SELECT count(*) FROM vacaciones v WHERE v.trabajador_id = t.id) < $7::int) ' +
+                'INSERT INTO vacaciones (id, trabajador_id, datos_cifrados, version_clave, creado) ' +
+                'SELECT $1::uuid, permitido.trabajador_id, $4::bytea, $5::smallint, $6::timestamptz FROM permitido RETURNING id',
+                [id, trabajadorId, empresaId, datos, version, ahoraIso, maximo]
+            );
+            return r.length === 1;
+        },
+
+        async borrarVacacion(id, empresaId) {
+            const r = await filas(
+                'DELETE FROM vacaciones v USING trabajadores t WHERE v.trabajador_id = t.id AND v.id = $1::uuid AND t.empresa_id = $2::uuid RETURNING v.id',
+                [id, empresaId]
+            );
+            return r.length === 1;
+        },
+
         async listarDocumentos(empresaId) {
             const r = await filas(
                 'SELECT d.trabajador_id, d.tipo, d.emitido FROM documentos d JOIN trabajadores t ON t.id = d.trabajador_id WHERE t.empresa_id = $1::uuid ORDER BY d.emitido, d.id',

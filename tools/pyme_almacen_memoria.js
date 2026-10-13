@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -91,6 +91,7 @@ function crearAlmacenMemoria() {
             if (i < 0) return false;
             E.meses = E.meses.filter(m => m.trabajadorId !== id);
             E.documentos = E.documentos.filter(m => m.trabajadorId !== id);
+            E.vacaciones = E.vacaciones.filter(m => m.trabajadorId !== id);
             E.trabajadores.splice(i, 1);
             return true;
         },
@@ -132,6 +133,24 @@ function crearAlmacenMemoria() {
             const ids = E.trabajadores.filter(x => x.empresaId === empresaId).map(x => x.id);
             return E.documentos.filter(d => ids.indexOf(d.trabajadorId) >= 0).map(d => Object.assign({}, d));
         },
+        // ---- vacaciones ----
+        async listarVacaciones(empresaId) {
+            const ids = E.trabajadores.filter(x => x.empresaId === empresaId).map(x => x.id);
+            return E.vacaciones.filter(v => ids.indexOf(v.trabajadorId) >= 0).map(v => ({ id: v.id, trabajadorId: v.trabajadorId, datos: Buffer.from(v.datos), version: v.version, creado: v.creado }));
+        },
+        async crearVacacion({ id, trabajadorId, empresaId, datos, version, ahoraIso, maximo }) {
+            if (!E.trabajadores.some(x => x.id === trabajadorId && x.empresaId === empresaId)) return false;
+            if (E.vacaciones.filter(v => v.trabajadorId === trabajadorId).length >= maximo) return false;
+            E.vacaciones.push({ id, trabajadorId, datos: Buffer.from(datos), version, creado: new Date(ahoraIso).toISOString() });
+            return true;
+        },
+        async borrarVacacion(id, empresaId) {
+            const ids = E.trabajadores.filter(x => x.empresaId === empresaId).map(x => x.id);
+            const i = E.vacaciones.findIndex(v => v.id === id && ids.indexOf(v.trabajadorId) >= 0);
+            if (i < 0) return false;
+            E.vacaciones.splice(i, 1);
+            return true;
+        },
         async paseVigente(cuentaId, ahoraIso) {
             const propios = E.pases.filter(p => p.cuentaId === cuentaId && t(p.vence) > t(ahoraIso));
             if (!propios.some(p => t(p.desde) <= t(ahoraIso))) return null;
@@ -161,6 +180,7 @@ function crearAlmacenMemoria() {
             const tids = E.trabajadores.filter(x => emp.indexOf(x.empresaId) >= 0).map(x => x.id);
             E.meses = E.meses.filter(m => tids.indexOf(m.trabajadorId) < 0);
             E.documentos = E.documentos.filter(m => tids.indexOf(m.trabajadorId) < 0);
+            E.vacaciones = E.vacaciones.filter(m => tids.indexOf(m.trabajadorId) < 0);
             E.trabajadores = E.trabajadores.filter(x => emp.indexOf(x.empresaId) < 0);
             E.empresas = E.empresas.filter(x => x.cuentaId !== cuentaId);
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);

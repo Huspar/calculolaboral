@@ -240,8 +240,8 @@ caso('exportar entrega todo descifrado, con versión y fecha; el archivo no incl
     await m.datos.crearTrabajador(cuenta, TRAB(1));
     const x = (await m.datos.exportar(cuenta)).archivo;
     assert.strictEqual(x.formato, 'calculolaboral-asistente-pyme');
-    assert.strictEqual(x.version, 3);
-    assert.deepStrictEqual([x.meses, x.documentos], [[], []]);
+    assert.strictEqual(x.version, 4);
+    assert.deepStrictEqual([x.meses, x.documentos, x.vacaciones], [[], [], []]);
     assert.strictEqual(x.cuenta.email, 'ana@ejemplo.cl');
     assert.strictEqual(x.empresa.razonSocial, 'Panadería La Espiga Ltda.');
     assert.strictEqual(x.trabajadores[0].nombre, 'Trabajador 1');
@@ -538,6 +538,60 @@ caso('ruta de documentos: registra, valida y exige encabezado y origen', async (
     assert.strictEqual((await escribir(m, { query: q, metodo: 'POST', cookie, body: { tipo: 'otro' } })).statusCode, 400);
     assert.strictEqual((await escribir(m, { query: q, metodo: 'GET', cookie })).statusCode, 405);
     assert.strictEqual(m.almacen._estado.documentos.length, 1);
+});
+
+caso('vacaciones: el servidor cuenta los días hábiles, cifra el registro y lo lista', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    const r = await m.datos.guardarVacacion(cuenta, tid, { tipo: 'periodo', desde: '2026-12-07', hasta: '2026-12-13', dias: 99, nota: '  Fin de año  ' });
+    assert.ok(r.ok, JSON.stringify(r));
+    assert.strictEqual(r.vacacion.dias, 4, 'el servidor ignora los días que manda el cliente: el 8 de diciembre es feriado y el sábado no cuenta');
+    assert.strictEqual(r.vacacion.nota, 'Fin de año');
+    assert.ok(!m.almacen._estado.vacaciones[0].datos.toString('utf8').includes('Fin de año'), 'en la base es ilegible');
+    const a = await m.datos.guardarVacacion(cuenta, tid, { tipo: 'ajuste', dias: 12, fecha: '1999-01-01' });
+    assert.ok(a.ok && a.vacacion.fecha === '2026-10-12', 'la fecha del ajuste la pone el servidor');
+    const lista = (await m.datos.vacaciones(cuenta)).vacaciones;
+    assert.deepStrictEqual(lista.map(v => [v.tipo, v.dias, v.trabajadorId === tid]), [['periodo', 4, true], ['ajuste', 12, true]]);
+    assert.strictEqual((await m.datos.exportar(cuenta)).archivo.vacaciones.length, 2);
+});
+caso('vacaciones: valida fechas, cobertura de feriados, días hábiles y períodos que se cruzan', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    const g = (e) => m.datos.guardarVacacion(cuenta, tid, e);
+    assert.ok((await g({ tipo: 'periodo', desde: '2026-12-10', hasta: '2026-12-07' })).errores.hasta);
+    assert.ok(/feriados verificados/.test((await g({ tipo: 'periodo', desde: '2030-01-07', hasta: '2030-01-11' })).errores.hasta));
+    assert.ok(/no hay días hábiles/.test((await g({ tipo: 'periodo', desde: '2026-12-12', hasta: '2026-12-13' })).errores.hasta));
+    assert.strictEqual((await g({ tipo: 'otro' })).estado, 400);
+    assert.ok((await g({ tipo: 'ajuste', dias: 0 })).errores.dias);
+    assert.ok((await g({ tipo: 'ajuste', dias: 3, nota: 'x'.repeat(130) })).errores.nota);
+    assert.ok((await g({ tipo: 'periodo', desde: '2026-11-02', hasta: '2026-11-06' })).ok);
+    const cruza = await g({ tipo: 'periodo', desde: '2026-11-06', hasta: '2026-11-10' });
+    assert.strictEqual(cruza.codigo, 'se_cruza');
+});
+caso('vacaciones: no se cruzan cuentas; borrar el registro, el trabajador o la cuenta los elimina', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    const r = await m.datos.guardarVacacion(cuenta, tid, { tipo: 'ajuste', dias: 5 });
+    const { cuenta: otra } = await m.entrar('otra@ejemplo.cl');
+    await m.datos.guardarEmpresa(otra, { ...EMPRESA, rut: rutValido(76111222) });
+    assert.strictEqual((await m.datos.guardarVacacion(otra, tid, { tipo: 'ajuste', dias: 5 })).estado, 404);
+    assert.strictEqual((await m.datos.borrarVacacion(otra, r.vacacion.id)).estado, 404);
+    assert.deepStrictEqual((await m.datos.vacaciones(otra)).vacaciones, []);
+    assert.ok((await m.datos.borrarVacacion(cuenta, r.vacacion.id)).ok);
+    await m.datos.guardarVacacion(cuenta, tid, { tipo: 'ajuste', dias: 5 });
+    await m.datos.borrarTrabajador(cuenta, tid);
+    assert.strictEqual(m.almacen._estado.vacaciones.length, 0);
+});
+caso('rutas de vacaciones e historial de documentos', async () => {
+    const { m, cookie, tid } = await conTrabajador();
+    const q = { ruta: 'vacacion', trabajador: tid };
+    assert.strictEqual((await pedir(m.rutas, { query: q, metodo: 'POST', headers: { cookie }, body: { vacacion: { tipo: 'ajuste', dias: 3 } } })).statusCode, 403);
+    const r = await escribir(m, { query: q, metodo: 'POST', cookie, body: { vacacion: { tipo: 'ajuste', dias: 3 } } });
+    assert.strictEqual(r.statusCode, 200);
+    const l = await leer(m, { query: { ruta: 'vacaciones' }, cookie });
+    assert.strictEqual(l.json.vacaciones.length, 1);
+    assert.strictEqual((await escribir(m, { query: { ruta: 'vacacion', id: r.json.vacacion.id }, metodo: 'DELETE', cookie })).statusCode, 200);
+    await escribir(m, { query: { ruta: 'documento', trabajador: tid }, metodo: 'POST', cookie, body: { tipo: 'carta_161' } });
+    const d = await leer(m, { query: { ruta: 'documentos' }, cookie });
+    assert.deepStrictEqual(d.json.documentos.map(x => [x.tipo, x.trabajadorId === tid]), [['carta_161', true]]);
+    assert.strictEqual((await leer(m, { query: { ruta: 'documentos' } })).statusCode, 401);
 });
 
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

@@ -207,6 +207,19 @@ async function main() {
         assert.ok(!JSON.stringify(await sql.query('SELECT * FROM documentos WHERE trabajador_id = $1', [tid])).includes('Panadería'));
         paso('el registro de documentos guarda solo tipo y fecha, respeta el tipo permitido y el máximo, y no cruza cuentas');
 
+        // ---- Vacaciones contra la base real ----
+        const vac = await srv.guardarVacacion(cuentaObj, tid, { tipo: 'periodo', desde: '2026-12-07', hasta: '2026-12-13', nota: 'Fin de año' });
+        assert.ok(vac.ok && vac.vacacion.dias === 4, JSON.stringify(vac));
+        assert.strictEqual((await srv.guardarVacacion(cuentaObj, tid, { tipo: 'periodo', desde: '2026-12-11', hasta: '2026-12-15' })).codigo, 'se_cruza');
+        assert.ok((await srv.guardarVacacion(cuentaObj, tid, { tipo: 'ajuste', dias: 10 })).ok);
+        const crudoVac = await sql.query("SELECT encode(v.datos_cifrados, 'escape') AS t FROM vacaciones v WHERE v.trabajador_id = $1", [tid]);
+        assert.ok(crudoVac.length === 2 && crudoVac.every(f => f.t.indexOf('Fin de año') < 0));
+        assert.deepStrictEqual((await srv.vacaciones(cuentaObj)).vacaciones.map(v => v.tipo), ['periodo', 'ajuste']);
+        assert.strictEqual(await almacen.crearVacacion({ id: crypto.randomUUID(), trabajadorId: tid, empresaId, datos: Buffer.from('x'), version: 1, ahoraIso: new Date().toISOString(), maximo: 2 }), false, 'el máximo lo aplica la sentencia con candado');
+        assert.ok((await srv.borrarVacacion(cuentaObj, vac.vacacion.id)).ok);
+        assert.strictEqual((await srv.documentos(cuentaObj)).documentos.length, 2);
+        paso('vacaciones: días hábiles del servidor, cifradas, sin cruces, con máximo y borrado; historial de documentos');
+
         // ---- Pase: vigencia en la base real ----
         const ahoraPase = new Date().toISOString();
         const vigenteAntes = await almacen.paseVigente(cuentaId, ahoraPase);

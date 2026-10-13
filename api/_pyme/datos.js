@@ -18,7 +18,8 @@ const MAX_TOTAL = 50;
 const MAX_MESES_POR_TRABAJADOR = 120;
 const MAX_DOCUMENTOS_POR_TRABAJADOR = 500;
 const TIPOS_DOCUMENTO = ['cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
-const VERSION_EXPORTACION = 3;
+const MAX_VACACIONES_POR_TRABAJADOR = 200;
+const VERSION_EXPORTACION = 4;
 
 function fallo(estado, codigo, error, errores) {
     const r = { ok: false, estado, codigo, error };
@@ -32,6 +33,7 @@ function crear({ almacen, cifrado, ahora }) {
     const ctxEmpresa = (cuentaId) => `empresas:${cuentaId}`;
     const ctxTrabajador = (cuentaId, id) => `trabajadores:${cuentaId}:${id}`;
     const ctxMes = (cuentaId, id, periodo) => `meses:${cuentaId}:${id}:${periodo}`;
+    const ctxVacacion = (cuentaId, trabajadorId, id) => `vacaciones:${cuentaId}:${trabajadorId}:${id}`;
 
     async function limites(cuentaId) {
         const vence = await almacen.paseVigente(cuentaId, iso());
@@ -170,6 +172,48 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
+    /** Historial de documentos emitidos de la empresa (tipo y fecha). */
+    async function documentos(cuenta) {
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        return { ok: true, documentos: fila ? await almacen.listarDocumentos(fila.id) : [] };
+    }
+
+    // ---------- vacaciones ----------
+    async function leerVacaciones(cuentaId, empresaId) {
+        const filas = await almacen.listarVacaciones(empresaId);
+        return filas.map(f => Object.assign({ id: f.id, trabajadorId: f.trabajadorId, creado: f.creado }, cifrado.descifrar(f.datos, f.version, ctxVacacion(cuentaId, f.trabajadorId, f.id))));
+    }
+
+    async function vacaciones(cuenta) {
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        return { ok: true, vacaciones: fila ? await leerVacaciones(cuenta.cuentaId, fila.id) : [] };
+    }
+
+    /** Registra un período de vacaciones (los días hábiles los cuenta el servidor) o un ajuste de días tomados antes. */
+    async function guardarVacacion(cuenta, trabajadorId, entrada) {
+        if (!esUuid(trabajadorId)) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila || !(await almacen.trabajadorDeEmpresa(trabajadorId, fila.id))) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const v = V.validarVacacion(entrada, iso().slice(0, 10));
+        if (!v.ok) return fallo(400, 'validacion', 'Revisa los datos de las vacaciones.', v.errores);
+        if (v.valor.tipo === 'periodo') {
+            const otro = (await leerVacaciones(cuenta.cuentaId, fila.id)).find(x => x.trabajadorId === trabajadorId && x.tipo === 'periodo' && x.desde <= v.valor.hasta && v.valor.desde <= x.hasta);
+            if (otro) return fallo(409, 'se_cruza', 'Se cruza con otro período registrado (' + otro.desde + ' al ' + otro.hasta + ').', { desde: 'Se cruza con otro período registrado.' });
+        }
+        const id = crypto.randomUUID();
+        const c = cifrado.cifrar(v.valor, ctxVacacion(cuenta.cuentaId, trabajadorId, id));
+        const ok = await almacen.crearVacacion({ id, trabajadorId, empresaId: fila.id, datos: c.datos, version: c.version, ahoraIso: iso(), maximo: MAX_VACACIONES_POR_TRABAJADOR });
+        if (!ok) return fallo(409, 'limite_vacaciones', 'Ya hay demasiados registros de vacaciones para este trabajador.');
+        return { ok: true, vacacion: Object.assign({ id, trabajadorId, creado: iso() }, v.valor) };
+    }
+
+    async function borrarVacacion(cuenta, id) {
+        if (!esUuid(id)) return fallo(404, 'no_existe', 'No encontramos ese registro.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila || !(await almacen.borrarVacacion(id, fila.id))) return fallo(404, 'no_existe', 'No encontramos ese registro.');
+        return { ok: true };
+    }
+
     async function leerDocumentosExport(cuenta) {
         const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
         return fila ? almacen.listarDocumentos(fila.id) : [];
@@ -193,7 +237,8 @@ function crear({ almacen, cifrado, ahora }) {
                 empresa: e.empresa,
                 trabajadores: e.trabajadores,
                 meses: await leerMesesExport(cuenta),
-                documentos: await leerDocumentosExport(cuenta)
+                documentos: await leerDocumentosExport(cuenta),
+                vacaciones: (await vacaciones(cuenta)).vacaciones
             }
         };
     }
@@ -206,7 +251,7 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {
@@ -217,4 +262,4 @@ function limiteTexto(lim) {
 
 function esUuid(s) { return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
 
-module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_DOCUMENTOS_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };
+module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_DOCUMENTOS_POR_TRABAJADOR, MAX_VACACIONES_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };
