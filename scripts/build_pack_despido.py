@@ -162,14 +162,15 @@ class Builder:
         self._para('h', (text, True))
 
     def text(self, t):
-        self._para('body', (t, False))
+        return self._para('body', (t, False))
 
     def lead(self, bold, rest):
         self._para('body', (bold, True), (rest, False))
 
     def close(self, t='Sin otro particular, le saluda atentamente,'):
-        self._para('body', (t, False))
+        p = self._para('body', (t, False))
         self._add(copy.deepcopy(self.part['spacer']))
+        return p
 
     def spacer(self):
         self._add(copy.deepcopy(self.part['spacer']))
@@ -232,9 +233,9 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     b.heading('III. ESTADO DE PAGO DE COTIZACIONES PREVISIONALES:')
     b.text(COTIZ)
     b.heading('IV. FINIQUITO:')
-    b.text(c['finiquito'])
-    b.text(AVISO_FINIQUITO)
-    b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))
+    # Si la carta pasa a otra hoja, el apartado IV, el cierre y la firma viajan juntos
+    for el in (b.text(c['finiquito']), b.text(AVISO_FINIQUITO), b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))):
+        docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.keep_with_next = True
     b.sig()
     return b
 
