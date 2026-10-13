@@ -147,7 +147,7 @@ async function main() {
         await sql.query('DELETE FROM cuentas WHERE id = $1', [otra]);
         paso('una cuenta no puede editar ni borrar trabajadores de otra');
 
-        const crudo = await sql.query('SELECT encode(datos_cifrados, \'escape\') AS t FROM trabajadores t JOIN empresas e ON e.id = t.empresa_id WHERE e.cuenta_id = $1', [cuentaId]);
+        const crudo = await sql.query('SELECT encode(t.datos_cifrados, \'escape\') AS t FROM trabajadores t JOIN empresas e ON e.id = t.empresa_id WHERE e.cuenta_id = $1', [cuentaId]);
         assert.ok(crudo.every(f => f.t.indexOf('Trabajador') < 0 && f.t.indexOf('650000') < 0));
         const exportado = (await srv.exportar(cuentaObj)).archivo;
         assert.ok(exportado.trabajadores.length === 5 && exportado.empresa.razonSocial.indexOf('editada') > 0);

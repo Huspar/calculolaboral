@@ -13,6 +13,19 @@ function crearAlmacenSql(sql) {
         return sql.query(texto, parametros || []);
     }
 
+    /**
+     * Una sentencia que cuenta filas y luego inserta (para respetar un maximo) NO es atomica por si sola: con READ COMMITTED,
+     * dos pedidos simultaneos ven el mismo conteo y ambos insertan. Se corre en una transaccion que primero toma un candado
+     * (por empresa, trabajador o cuenta) y recien despues ejecuta la sentencia, que asi parte con una vista nueva de la base.
+     */
+    async function conCandado(clave, texto, parametros) {
+        const res = await sql.transaction([
+            sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [clave]),
+            sql.query(texto, parametros || [])
+        ]);
+        return res[1];
+    }
+
     return {
         /** Borra lo vencido hace mas de un dia (enlaces, sesiones) o de 2 dias (contadores de intentos). */
         async limpiar(ahoraIso) {
@@ -124,7 +137,7 @@ function crearAlmacenSql(sql) {
 
         /** Inserta solo si no se pasa del maximo de activos (la comprobacion y el INSERT son una sola sentencia). Devuelve true o false. */
         async crearTrabajador({ id, empresaId, activo, datos, version, ahoraIso, maxActivos }) {
-            const r = await filas(
+            const r = await conCandado('trabajadores:' + empresaId,
                 'INSERT INTO trabajadores (id, empresa_id, activo, datos_cifrados, version_clave, creado, actualizado) ' +
                 'SELECT $1::uuid, $2::uuid, $3::boolean, $4::bytea, $5::smallint, $6::timestamptz, $6::timestamptz ' +
                 'WHERE $3::boolean = false OR (SELECT count(*) FROM trabajadores WHERE empresa_id = $2::uuid AND activo) < $7::int RETURNING id',
@@ -135,7 +148,7 @@ function crearAlmacenSql(sql) {
 
         /** Actualiza un trabajador de esa empresa. Reactivar a uno inactivo tambien respeta el maximo. Devuelve true o false. */
         async actualizarTrabajador({ id, empresaId, activo, datos, version, ahoraIso, maxActivos }) {
-            const r = await filas(
+            const r = await conCandado('trabajadores:' + empresaId,
                 'UPDATE trabajadores SET activo = $3::boolean, datos_cifrados = $4::bytea, version_clave = $5::smallint, actualizado = $6::timestamptz ' +
                 'WHERE id = $1::uuid AND empresa_id = $2::uuid AND ($3::boolean = false OR activo OR ' +
                 '(SELECT count(*) FROM trabajadores WHERE empresa_id = $2::uuid AND activo) < $7::int) RETURNING id',
@@ -177,10 +190,12 @@ function crearAlmacenSql(sql) {
 
         /** Crea o reemplaza el mes de un trabajador de esa empresa, sin pasar de `maxMeses` por trabajador. Devuelve true o false. */
         async guardarMes({ trabajadorId, empresaId, periodo, datos, version, ahoraIso, maxMeses }) {
-            const r = await filas(
+            const r = await conCandado('meses:' + trabajadorId,
+                // La CTE solo expone el id del trabajador: leer `trabajadores` directo en el INSERT ... SELECT dejaba "datos_cifrados" ambiguo
+                'WITH permitido AS (SELECT t.id AS trabajador_id FROM trabajadores t WHERE t.id = $1::uuid AND t.empresa_id = $2::uuid ' +
+                'AND ((SELECT count(*) FROM meses m WHERE m.trabajador_id = t.id) < $7::int OR EXISTS (SELECT 1 FROM meses m WHERE m.trabajador_id = t.id AND m.periodo = $3::text))) ' +
                 'INSERT INTO meses (trabajador_id, periodo, datos_cifrados, version_clave, actualizado) ' +
-                'SELECT t.id, $3, $4::bytea, $5::smallint, $6::timestamptz FROM trabajadores t WHERE t.id = $1::uuid AND t.empresa_id = $2::uuid ' +
-                'AND ((SELECT count(*) FROM meses m WHERE m.trabajador_id = t.id) < $7::int OR EXISTS (SELECT 1 FROM meses m WHERE m.trabajador_id = t.id AND m.periodo = $3)) ' +
+                'SELECT permitido.trabajador_id, $3::text, $4::bytea, $5::smallint, $6::timestamptz FROM permitido ' +
                 'ON CONFLICT (trabajador_id, periodo) DO UPDATE SET datos_cifrados = EXCLUDED.datos_cifrados, version_clave = EXCLUDED.version_clave, actualizado = EXCLUDED.actualizado RETURNING id',
                 [trabajadorId, empresaId, periodo, datos, version, ahoraIso, maxMeses]
             );
@@ -199,7 +214,7 @@ function crearAlmacenSql(sql) {
 
         /** Registra un documento emitido para un trabajador de esa empresa, sin pasar de `maximo` registros por trabajador. Devuelve true o false. */
         async registrarDocumento({ trabajadorId, empresaId, tipo, ahoraIso, maximo }) {
-            const r = await filas(
+            const r = await conCandado('documentos:' + trabajadorId,
                 'INSERT INTO documentos (trabajador_id, tipo, emitido) SELECT t.id, $3, $4::timestamptz FROM trabajadores t WHERE t.id = $1::uuid AND t.empresa_id = $2::uuid ' +
                 'AND (SELECT count(*) FROM documentos d WHERE d.trabajador_id = t.id) < $5::int RETURNING id',
                 [trabajadorId, empresaId, tipo, ahoraIso, maximo]
@@ -241,7 +256,7 @@ function crearAlmacenSql(sql) {
          * Empieza cuando termina el ultimo pase de la cuenta, o ahora si no tiene ninguno vigente. Todo en una sentencia.
          */
         async registrarPase({ cuentaId, producto, ordenFlow, dias, ahoraIso }) {
-            const r = await filas(
+            const r = await conCandado('pases:' + cuentaId,
                 'WITH base AS (SELECT greatest($4::timestamptz, coalesce((SELECT max(vence) FROM pases WHERE cuenta_id = $1::uuid), $4::timestamptz)) AS desde) ' +
                 'INSERT INTO pases (cuenta_id, producto, orden_flow, desde, vence) SELECT $1::uuid, $2, $3, base.desde, base.desde + make_interval(days => $5::int) FROM base ' +
                 'ON CONFLICT (orden_flow) DO NOTHING RETURNING desde, vence',
