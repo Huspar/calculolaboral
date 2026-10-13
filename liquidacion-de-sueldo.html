@@ -1276,7 +1276,7 @@ body { overflow-x: hidden; }
 <div class="ls-doc-head">
 <div>
 <p class="ls-doc-title">Liquidación de sueldo</p>
-<p class="ls-doc-period">Período: septiembre 2026</p>
+<p class="ls-doc-period">Período: octubre 2026</p>
 </div>
 <span class="ls-doc-tag">Ejemplo</span>
 </div>
@@ -1372,7 +1372,7 @@ body { overflow-x: hidden; }
 <h2>Formato de liquidación de sueldo gratis (Excel y Word)</h2>
 <p>Si eres empleador de una pyme o de una trabajadora de casa particular, o quieres revisar tu propia liquidación, descarga este modelo. No pide registro ni correo.</p>
 <div class="ls-dl-grid">
-<a class="ls-dl" href="/descargas/formato-liquidacion-de-sueldo.xlsx?v=2" download>
+<a class="ls-dl" href="/descargas/formato-liquidacion-de-sueldo.xlsx?v=3" download>
 <span class="ls-dl-ext ls-dl-xls">XLSX</span>
 <span class="ls-dl-body">
 <strong>Plantilla de liquidación de sueldo en Excel</strong>
@@ -1380,7 +1380,7 @@ body { overflow-x: hidden; }
 <span class="ls-dl-cta">Descargar Excel <span class="material-icons" aria-hidden="true">download</span></span>
 </span>
 </a>
-<a class="ls-dl" href="/descargas/formato-liquidacion-de-sueldo.docx?v=2" download>
+<a class="ls-dl" href="/descargas/formato-liquidacion-de-sueldo.docx?v=3" download>
 <span class="ls-dl-ext ls-dl-doc">DOCX</span>
 <span class="ls-dl-body">
 <strong>Modelo de liquidación de sueldo en Word</strong>
@@ -1687,7 +1687,7 @@ body { overflow-x: hidden; }
 </div>
 </div>
 <!-- Load shared indicators script -->
-<script src="/js/constants.js?v=2.1.2"></script>
+<script src="/js/constants.js?v=2.1.3"></script>
 <script src="/js/indicators.js?v=2.9.2"></script>
 <script src="/js/print_brand.js?v=1.2.0"></script>
 <script src="/js/pdf_generator.js?v=3.2.0"></script>
@@ -1873,30 +1873,6 @@ body { overflow-x: hidden; }
             var texto = 'Hola! Calculé mi sueldo líquido en Cálculo Laboral Chile' + (liquido && liquido !== '$0' && liquido !== '—' ? ' (Líquido: ' + liquido + ')' : '') + '. Revisa tu liquidación con todos los descuentos legales aquí: https://calculolaboral.cl/sueldo_liquido';
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'share', { method: 'WhatsApp', content_type: 'sueldo_liquido' });
-            }
-            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
-        }
-
-        function shareHEWhatsApp() {
-            var totalBrutoEl = document.getElementById('he-total-bruto');
-            var horasEl = document.getElementById('he-total-horas');
-            var totalBruto = totalBrutoEl ? totalBrutoEl.innerText.trim() : '$46.130';
-            var horas = horasEl ? horasEl.innerText.trim() : '10.0 hrs';
-            var texto = 'Hola! Calculé mis horas extras en Cálculo Laboral Chile con la Ley 40 Horas (42h en 2026): ' + horas + ' extras = ' + totalBruto + ' adicionales. Simula las tuyas gratis aquí: https://calculolaboral.cl/calculadora-horas-extras';
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'share', { method: 'WhatsApp', content_type: 'horas_extras' });
-            }
-            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
-        }
-
-        function sharePTWhatsApp() {
-            var liquidoEl = document.getElementById('pt-sueldo-liquido');
-            var jornadaEl = document.getElementById('pt-jornada-badge');
-            var liquido = liquidoEl ? liquidoEl.innerText.trim() : '$323.512';
-            var jornada = jornadaEl ? jornadaEl.innerText.trim() : '30 Horas/Sem';
-            var texto = 'Hola! Calculé mi sueldo part-time (' + jornada + ') en Cálculo Laboral Chile: Sueldo Líquido estimado ' + liquido + '. Revisa el tuyo gratis con protección para estudiantes aquí: https://calculolaboral.cl/calculadora-sueldo-part-time';
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'share', { method: 'WhatsApp', content_type: 'part_time' });
             }
             window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
         }

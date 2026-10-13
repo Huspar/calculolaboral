@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Phase 2 Inputs
         ccaf: getEl('ccaf'),
         apv: getEl('apv'),
+        apvRegime: getEl('apvRegime'),
         prestamos: getEl('prestamos'),
         pension: getEl('pension'),
         sindicato: getEl('sindicato'),
@@ -387,11 +388,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Overtime: 0-100 hours
+        // Overtime: 0-52 hours (límite legal: 2 horas extra diarias, art. 31 CT ≈ 52 al mes)
         if (inputs.overtime && inputs.overtime.value.trim() !== '') {
             const ot = V.safeNumber(inputs.overtime.value);
-            if (ot < 0 || ot > 100) {
-                V.showFieldError(inputs.overtime, 'Máximo 100 horas extra');
+            if (ot < 0 || ot > 52) {
+                V.showFieldError(inputs.overtime, 'Máximo 52 horas extra al mes (límite legal de 2 horas diarias)');
                 valid = false;
             }
         }
@@ -471,11 +472,8 @@ document.addEventListener('DOMContentLoaded', () => {
             sindicato: parseInput(getVal(inputs.sindicato)),
             otrosDescuentos: parseInput(getVal(inputs.otrosDescuentos)),
 
-            // P1: Feature flag – CCAF/APV reduce base de cotizaciones
-            reduceSocialSecurityBaseByCCAFAPV: (() => {
-                const toggle = getEl('toggleReduceSS');
-                return toggle ? toggle.checked : false;
-            })()
+            // Régimen del APV: B rebaja la base del impuesto (tope 50 UF); A no la rebaja
+            apvRegime: inputs.apvRegime ? inputs.apvRegime.value : 'B'
         };
 
         // Final NaN safety net
@@ -633,14 +631,24 @@ document.addEventListener('DOMContentLoaded', () => {
             // CCAF Info
             if (d.ccafAmount > 0) {
                 display.notifications.appendChild(
-                    createAlert('bg-slate-100', 'border border-slate-300', 'text-slate-700', 'info', 'text-slate-900 font-semibold', 'CCAF reduce tu base imponible')
+                    createAlert('bg-slate-100', 'border border-slate-300', 'text-slate-700', 'info', 'text-slate-900 font-semibold', 'La cuota del crédito CCAF se descuenta del líquido: no rebaja tu base imponible ni tu impuesto')
                 );
             }
 
             // APV Tip
             if (d.apvAmount > 0) {
+                const apvMsg = d.apvRegime === 'A'
+                    ? 'APV régimen A: no rebaja tu impuesto mensual; el Estado bonifica el 15% de lo ahorrado (con tope anual)'
+                    : 'APV régimen B: rebaja la base de tu impuesto único (tope 50 UF mensuales)';
                 display.notifications.appendChild(
-                    createAlert('bg-emerald-50', 'border border-emerald-200', 'text-emerald-600', 'lightbulb', 'text-emerald-950 font-semibold', 'APV reduce tu impuesto y te da beneficio tributario')
+                    createAlert('bg-emerald-50', 'border border-emerald-200', 'text-emerald-700', 'lightbulb', 'text-emerald-950 font-semibold', apvMsg)
+                );
+            }
+
+            // Horas extra con sueldo base bajo el mínimo: se calculan sobre el ingreso mínimo
+            if (d.overtimeAmount > 0 && d.overtimeBase > d.baseSalary) {
+                display.notifications.appendChild(
+                    createAlert('bg-amber-50', 'border border-amber-300', 'text-amber-600', 'info', 'text-amber-950 font-semibold', `Horas extra calculadas sobre el ingreso mínimo (${formatCLP(d.overtimeBase)}), porque el sueldo base es menor (dictámenes DT 4725/331 y 4262/210)`)
                 );
             }
 
@@ -672,11 +680,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const endTax = endHealth + pTax;
 
             display.chart.style.background = `conic-gradient(
-                #10b981 0% ${endNet}%, 
-                #3b82f6 ${endNet}% ${endAFP}%, 
-                #ef4444 ${endAFP}% ${endHealth}%, 
-                #a855f7 ${endHealth}% ${endTax}%,
-                #f97316 ${endTax}% 100%
+                #00382E 0% ${endNet}%, 
+                #5E9A88 ${endNet}% ${endAFP}%, 
+                #E11D48 ${endAFP}% ${endHealth}%, 
+                #FFB703 ${endHealth}% ${endTax}%,
+                #94A3B8 ${endTax}% 100%
             )`;
 
             if (display.chartLabel) {

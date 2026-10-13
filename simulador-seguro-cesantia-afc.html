@@ -819,7 +819,7 @@ body { overflow-x: hidden; }
                     Simulador de Seguro de Cesantía AFC Chile 2026
                 </h1>
                 <p class="text-slate-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto leading-relaxed">
-                    Calcula cuánto te corresponde recibir mes a mes con los <strong>giros decrecientes (70% el primer mes, hasta 30% desde el sexto)</strong> en tu Cuenta Individual (CIC), conoce tus derechos al <strong>Fondo Solidario (FCS)</strong> y proyecta el impacto en tu finiquito.
+                    Calcula cuánto te corresponde recibir mes a mes con los <strong>giros decrecientes (70% el primer mes y porcentajes menores en los siguientes)</strong> en tu Cuenta Individual (CIC), conoce tus derechos al <strong>Fondo Solidario (FCS)</strong> y proyecta el impacto en tu finiquito.
                 </p>
             </div>
 
@@ -911,7 +911,7 @@ body { overflow-x: hidden; }
                             <option value="mutuo">Mutuo Acuerdo entre las partes (Art. 159 N° 1)</option>
                             <option value="disciplinario">Despido Disciplinario o Sin Derecho (Art. 160)</option>
                         </select>
-                        <p class="text-xs text-slate-600 mt-1">El despido por Art. 161 permite al empleador descontar el 1,6% patronal en tu finiquito.</p>
+                        <p class="text-xs text-slate-600 mt-1">Renuncia, mutuo acuerdo y Art. 160 solo cobran con tu Cuenta Individual. En contrato indefinido, el despido por Art. 161 permite al empleador descontar el 1,6% patronal en tu finiquito.</p>
                     </div>
 
                     <!-- 5. Saldo Real Opcional en Cartola AFC -->
@@ -942,7 +942,7 @@ body { overflow-x: hidden; }
                                 <span class="material-icons text-sm">savings</span> Total Estimado a Recibir
                             </span>
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200" id="afc-cantidad-giros">
-                                5 Meses
+                                5 giros
                             </span>
                         </div>
 
@@ -978,15 +978,15 @@ body { overflow-x: hidden; }
                             <span class="text-xs text-slate-600 font-medium">Porcentajes Ley 21.628</span>
                         </div>
 
-                        <div class="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-2xs">
+                        <div class="border border-slate-200 rounded-2xl bg-white overflow-x-auto shadow-2xs">
                             <table class="w-full text-left border-collapse text-xs sm:text-sm">
                                 <caption class="sr-only">Calendario de pagos mensuales del Seguro de Cesantía</caption>
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 text-xs">
-                                        <th scope="col" class="py-2.5 px-4 font-semibold">Giro / Mes</th>
+                                        <th scope="col" class="py-2.5 px-4 font-semibold">Giro (mes)</th>
                                         <th scope="col" class="py-2.5 px-4 font-semibold text-center">% Legal</th>
                                         <th scope="col" class="py-2.5 px-4 text-right font-semibold">Monto Estimado</th>
-                                        <th scope="col" class="py-2.5 px-4 text-right font-semibold">Fuente de Pago</th>
+                                        <th scope="col" class="py-2.5 px-4 text-right font-semibold">Fuente</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 font-mono text-xs" id="afc-table-body">
@@ -994,6 +994,8 @@ body { overflow-x: hidden; }
                                 </tbody>
                             </table>
                         </div>
+                        <ul id="afc-notas-giros" class="hidden list-disc pl-5 space-y-1 text-xs text-slate-600 leading-relaxed"></ul>
+                        <p class="text-xs text-slate-500 leading-relaxed">CIC: Cuenta Individual de Cesantía. FCS: Fondo de Cesantía Solidario. Estimación referencial. Los giros con tu Cuenta Individual no tienen tope; los del Fondo Solidario tienen topes y pisos que se reajustan cada año. El monto exacto lo informa la AFC.</p>
                     </div>
 
                     <!-- SMART IMPACT CARD: Descuento AFC en Finiquito (Art. 161) -->
@@ -1436,7 +1438,7 @@ body { overflow-x: hidden; }
     </div>
 
     <!-- Centralized Constants & Live Indicators Scripts -->
-    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
     
     <!-- AFC Calculation Engine -->
@@ -1479,8 +1481,8 @@ body { overflow-x: hidden; }
         }
 
         function calculateSeguroCesantia() {
-            var ufActual = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41049.01;
-            var topeImponibleAFC = (typeof CONSTANTS !== 'undefined' && CONSTANTS.TOPE_IMPONIBLE_CESANTIA) ? (CONSTANTS.TOPE_IMPONIBLE_CESANTIA * ufActual) : (135.2 * ufActual);
+            var ufActual = CONSTANTS.UF;
+            var topeImponibleAFC = CONSTANTS.TOPE_IMPONIBLE_CESANTIA * ufActual;
             var sueldoRaw = parseCleanNumber(document.getElementById('afc-sueldo-base')?.value) || 553553;
             var sueldo = Math.min(sueldoRaw, Math.round(topeImponibleAFC));
             var tipoContratoEl = document.querySelector('input[name="afc-tipo-contrato"]:checked');
@@ -1501,31 +1503,88 @@ body { overflow-x: hidden; }
             var factorAporteCIC = tipo === 'indefinido' ? 0.022 : 0.028;
             var saldoProyectado = saldoManual > 0 ? saldoManual : Math.round(sueldo * factorAporteCIC * meses * 1.035);
 
-            // Porcentajes decrecientes (Ley 21.628; ChileAtiende): 70%, 60%, 45%, 40%, 35% y 30% desde el sexto giro
-            var porcentajes = [0.70, 0.60, 0.45, 0.40, 0.35, 0.30];
-            var giros = [];
-            var totalAcumulado = 0;
+            // Porcentajes decrecientes de los giros (Ley 21.628; ChileAtiende): 70%, 60%, 45%, 40%, 35%.
+            // Los giros pagados con la Cuenta Individual (CIC) NO tienen tope: se pagan mientras alcance el saldo.
+            var porcentajes = [0.70, 0.60, 0.45, 0.40, 0.35];
 
-            for (var i = 0; i < porcentajes.length; i++) {
-                var montoTeorico = Math.round(sueldo * porcentajes[i]);
-                totalAcumulado += montoTeorico;
-                
-                // Determinar fuente (Cuenta Individual vs Fondo Solidario)
-                var fuente = 'Cuenta Individual (CIC)';
-                if (saldoProyectado < totalAcumulado) {
-                    if (causal === '161' || causal === 'plazo') {
-                        fuente = 'Fondo Solidario (FCS)';
+            // Topes y pisos del Fondo de Cesantía Solidario (FCS), contrato indefinido.
+            // Fuente: tabla 2026 publicada por Redimin (fuente secundaria), vigente hasta el 28-feb-2027.
+            // Revisar cada 1 de marzo (los valores se reajustan anualmente). Sin fuente para los pisos
+            // de los giros 3 a 5: no se aplica piso en esos giros (null).
+            var FCS_TABLA = [
+                { pct: 0.70, tope: 1004003, piso: 301201 },
+                { pct: 0.60, tope: 860574,  piso: 258171 },
+                { pct: 0.45, tope: 645429,  piso: null },
+                { pct: 0.40, tope: 573718,  piso: null },
+                { pct: 0.35, tope: 502002,  piso: null }
+            ];
+            // Giros extraordinarios 6 y 7 (30%), solo cuando están activados por alta tasa de desempleo.
+            var FCS_EXTRA = { pct: 0.30, tope: 430288, piso: 129085 };
+
+            // Acceso al FCS: solo causales no imputables al trabajador (art. 161 y art. 159 N° 4, 5 o 6).
+            // Renuncia, mutuo acuerdo y art. 160 cobran solo con la CIC.
+            var accesoFCS = (causal === '161' || causal === 'plazo');
+            // Plazo fijo, obra o faena: el FCS paga hasta 3 giros (Ventanilla Única Social / BNE).
+            // Porcentajes, topes y pisos de plazo fijo sin fuente confirmada: se usan los de los 3 primeros giros (estimación).
+            var nGirosFCS = tipo === 'indefinido' ? 5 : 3;
+
+            function montoFCS(fila) {
+                var m = Math.round(sueldo * fila.pct);
+                if (m > fila.tope) m = fila.tope;
+                if (fila.piso && m < fila.piso) m = fila.piso;
+                return m;
+            }
+
+            var giros = [];
+            var extras = [];
+            var totalAcumulado = 0;
+            var saldoRemanente = 0;
+            var modo = 'cic';
+            var notas = [];
+
+            if (esElegible) {
+                var sumaFCS = 0;
+                for (var f = 0; f < nGirosFCS; f++) sumaFCS += montoFCS(FCS_TABLA[f]);
+                // El FCS complementa solo si el saldo de la CIC no alcanza para financiar los giros
+                if (accesoFCS && saldoProyectado < sumaFCS) modo = 'fcs';
+
+                var saldo = saldoProyectado;
+                if (modo === 'fcs') {
+                    for (var i = 0; i < nGirosFCS; i++) {
+                        var monto = montoFCS(FCS_TABLA[i]);
+                        var fuente;
+                        if (saldo >= monto) { fuente = 'CIC'; saldo -= monto; }
+                        else if (saldo > 0) { fuente = 'CIC + FCS'; saldo = 0; }
+                        else { fuente = 'FCS'; }
+                        giros.push({ numero: i + 1, porcentaje: Math.round(FCS_TABLA[i].pct * 100) + '%', monto: monto, fuente: fuente });
+                        totalAcumulado += monto;
+                    }
+                    if (tipo === 'indefinido') {
+                        var montoExtra = montoFCS(FCS_EXTRA);
+                        extras.push({ numero: 6, porcentaje: '30%', monto: montoExtra, fuente: 'FCS extra*' });
+                        extras.push({ numero: 7, porcentaje: '30%', monto: montoExtra, fuente: 'FCS extra*' });
+                        notas.push('*Los giros 6 y 7 son extraordinarios: solo se pagan si el Gobierno los activa por alta tasa de desempleo. No se suman al total.');
                     } else {
-                        fuente = 'Saldo CIC insuficiente';
+                        notas.push('Plazo fijo, obra o faena: el Fondo Solidario paga hasta 3 giros. Los porcentajes, topes y pisos usados son los de los 3 primeros giros de contrato indefinido (estimación).');
+                    }
+                    notas.push('Montos del Fondo Solidario con topes y pisos 2026 (vigentes hasta el 28-feb-2027). Los giros 3 a 5 también tienen piso legal, no incluido aquí.');
+                } else {
+                    // Solo CIC: giros sin tope, limitados por el saldo disponible
+                    for (var k = 0; k < porcentajes.length && saldo > 0; k++) {
+                        var teorico = Math.round(sueldo * porcentajes[k]);
+                        var pagado = Math.min(teorico, saldo);
+                        saldo -= pagado;
+                        giros.push({ numero: k + 1, porcentaje: Math.round(porcentajes[k] * 100) + '%', monto: pagado, fuente: pagado < teorico ? 'CIC (último saldo)' : 'CIC' });
+                        totalAcumulado += pagado;
+                    }
+                    saldoRemanente = saldo;
+                    if (!accesoFCS) {
+                        notas.push('Con esta causal solo cobras con tu Cuenta Individual (CIC): no hay acceso al Fondo Solidario y el total no puede superar tu saldo.');
+                    }
+                    if (saldoRemanente > 0) {
+                        notas.push('Te quedarían ' + formatCurrency(saldoRemanente) + ' en tu CIC después del 5° giro. Ese saldo sigue siendo tuyo y la CIC puede seguir pagando giros mientras quede saldo; confirma el número y monto en afc.cl.');
                     }
                 }
-
-                giros.push({
-                    numero: i + 1,
-                    porcentaje: Math.round(porcentajes[i] * 100) + '%',
-                    monto: montoTeorico,
-                    fuente: fuente
-                });
             }
 
             // Render Totals
@@ -1533,13 +1592,13 @@ body { overflow-x: hidden; }
             if (totalRecibirEl) totalRecibirEl.innerText = formatCurrency(totalAcumulado);
 
             var cantGirosEl = document.getElementById('afc-cantidad-giros');
-            if (cantGirosEl) cantGirosEl.innerText = giros.length + ' Meses';
+            if (cantGirosEl) cantGirosEl.innerText = giros.length + (giros.length === 1 ? ' giro' : ' giros');
 
             var resPromedioEl = document.getElementById('afc-res-promedio');
             if (resPromedioEl) resPromedioEl.innerText = formatCurrency(sueldo);
 
             var resPrimerGiroEl = document.getElementById('afc-res-primer-giro');
-            if (resPrimerGiroEl) resPrimerGiroEl.innerText = formatCurrency(giros[0].monto);
+            if (resPrimerGiroEl) resPrimerGiroEl.innerText = formatCurrency(giros.length ? giros[0].monto : 0);
 
             var resSaldoCicEl = document.getElementById('afc-res-saldo-cic');
             if (resSaldoCicEl) resSaldoCicEl.innerText = formatCurrency(saldoProyectado);
@@ -1551,8 +1610,8 @@ body { overflow-x: hidden; }
                     badgeEl.className = 'text-xs text-emerald-800 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
                     badgeEl.innerHTML = '<span class="material-icons text-xs text-emerald-600">check_circle</span> Cumples requisitos de cotizaciones (' + meses + ' cotizadas de ' + minCotiz + ' mínimas)';
                 } else {
-                    badgeEl.className = 'text-xs text-amber-800 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
-                    badgeEl.innerHTML = '<span class="material-icons text-xs text-amber-600">warning</span> Faltan ' + (minCotiz - meses) + ' cotizaciones para el mínimo legal (' + minCotiz + ' exigidas)';
+                    badgeEl.className = 'text-xs text-rose-700 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1';
+                    badgeEl.innerHTML = '<span class="material-icons text-xs text-rose-700">error</span> Aún no cumples el requisito: faltan ' + (minCotiz - meses) + ' cotizaciones (' + minCotiz + ' exigidas). Por ahora no podrías cobrar el seguro.';
                 }
             }
 
@@ -1560,26 +1619,44 @@ body { overflow-x: hidden; }
             var tbody = document.getElementById('afc-table-body');
             if (tbody) {
                 tbody.innerHTML = '';
-                for (var j = 0; j < giros.length; j++) {
-                    var g = giros[j];
+                if (!esElegible) {
+                    var trVacio = document.createElement('tr');
+                    trVacio.innerHTML = '<td colspan="4" class="py-4 px-4 text-center font-sans text-slate-600">Sin giros: necesitas al menos ' + minCotiz + ' cotizaciones para cobrar el Seguro de Cesantía.</td>';
+                    tbody.appendChild(trVacio);
+                }
+                var filas = giros.concat(extras);
+                for (var j = 0; j < filas.length; j++) {
+                    var g = filas[j];
                     var tr = document.createElement('tr');
+                    var isExtra = j >= giros.length;
                     var isFCS = g.fuente.indexOf('FCS') !== -1;
-                    tr.className = isFCS ? 'bg-emerald-50/40' : '';
-                    tr.innerHTML = '<td class="py-2.5 px-4 font-bold text-slate-800">' + g.numero + '° Mes (Giro ' + g.numero + ')</td>' +
-                                   '<td class="py-2.5 px-4 text-center font-bold text-[#00382E]">' + g.porcentaje + '</td>' +
-                                   '<td class="py-2.5 px-4 text-right font-extrabold text-slate-900">' + formatCurrency(g.monto) + '</td>' +
-                                   '<td class="py-2.5 px-4 text-right ' + (isFCS ? 'text-emerald-800 font-semibold' : 'text-slate-500') + '">' + g.fuente + '</td>';
+                    tr.className = isExtra ? 'bg-slate-50 text-slate-500' : (isFCS ? 'bg-emerald-50/40' : '');
+                    tr.innerHTML = '<td class="py-2.5 px-4 font-bold ' + (isExtra ? 'text-slate-500' : 'text-slate-800') + '">Giro ' + g.numero + '</td>' +
+                                   '<td class="py-2.5 px-4 text-center font-bold ' + (isExtra ? 'text-slate-500' : 'text-[#00382E]') + '">' + g.porcentaje + '</td>' +
+                                   '<td class="py-2.5 px-4 text-right font-extrabold ' + (isExtra ? 'text-slate-500' : 'text-slate-900') + '">' + formatCurrency(g.monto) + '</td>' +
+                                   '<td class="py-2.5 px-4 text-right ' + (isExtra ? 'text-slate-500 italic' : (isFCS ? 'text-emerald-800 font-semibold' : 'text-slate-500')) + '">' + g.fuente + '</td>';
                     tbody.appendChild(tr);
                 }
+            }
+
+            var notasEl = document.getElementById('afc-notas-giros');
+            if (notasEl) {
+                notasEl.innerHTML = '';
+                notas.forEach(function (n) {
+                    var li = document.createElement('li');
+                    li.textContent = n;
+                    notasEl.appendChild(li);
+                });
+                notasEl.classList.toggle('hidden', notas.length === 0);
             }
 
             // Descuento AFC en Finiquito (Art. 161)
             var bridgeCard = document.getElementById('afc-finiquito-bridge-card');
             var descMontoEl = document.getElementById('afc-monto-descuento-finiquito');
             if (bridgeCard && descMontoEl) {
-                if (causal === '161') {
+                if (causal === '161' && tipo === 'indefinido') {
                     bridgeCard.classList.remove('hidden');
-                    // Empleador aporta 1.6% mensual en indefinido
+                    // Empleador aporta 1.6% mensual a la CIC solo en contrato indefinido (art. 13 Ley 19.728)
                     var montoDescuento = Math.round(sueldo * 0.016 * meses);
                     descMontoEl.innerText = formatCurrency(montoDescuento);
                 } else {

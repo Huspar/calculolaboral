@@ -1,11 +1,14 @@
 /**
  * Vercel Serverless Function: send-finiquito
- * Automatically delivers the Finiquito Notarial Pack (.doc editable)
+ * Automatically delivers the Finiquito Notarial Pack (Word .docx editable)
  * to the buyer via Resend with the document attached.
  * Solo funciona con un desbloqueo firmado tras un pago verificado con Flow
  * (p, o, e, sig; ver api/_flow.js). La venta ya la avisa /api/flow-confirm.
  */
 const { verifyDownload, SITE_URL } = require('./_flow');
+
+// Correos permitidos por orden de pago (el original y hasta dos reenvíos con datos corregidos)
+const MAX_ENVIOS = 3;
 
 const ALLOWED_ORIGINS = new Set([
     'https://calculolaboral.cl',
@@ -104,9 +107,17 @@ module.exports = async (req, res) => {
             trabajadorRut,
             saldoLiquido,
             htmlContent,
+            docxBase64,
+            intento: intentoRaw,
             token,
             unlock
         } = body;
+
+        // Número de envío de esta orden (1 a MAX_ENVIOS); cualquier otro valor se rechaza
+        const intento = intentoRaw === undefined ? 1 : Number(intentoRaw);
+        if (!Number.isInteger(intento) || intento < 1 || intento > MAX_ENVIOS) {
+            return res.status(429).json({ error: `Ya enviaste este finiquito ${MAX_ENVIOS} veces por correo. Descarga el Word desde la página.` });
+        }
 
         // Sin pago verificado no se envia nada (evita usar el dominio para correos arbitrarios)
         const u = unlock && typeof unlock === 'object' ? unlock : {};
@@ -126,7 +137,8 @@ module.exports = async (req, res) => {
         const cleanEmpresaRut = (typeof empresaRut === 'string' ? empresaRut.trim().slice(0, 20) : '—');
         const cleanTrabajador = (typeof trabajadorNombre === 'string' ? trabajadorNombre.trim().slice(0, 80) : 'Trabajador');
         const cleanTrabajadorRut = (typeof trabajadorRut === 'string' ? trabajadorRut.trim().slice(0, 20) : '—');
-        const cleanSaldo = (typeof saldoLiquido === 'string' || typeof saldoLiquido === 'number' ? String(saldoLiquido) : '0');
+        const saldoNum = Math.round(Number(String(saldoLiquido || 0).replace(/[^0-9.-]/g, '')) || 0);
+        const cleanSaldo = saldoNum.toLocaleString('es-CL');
 
         if (!cleanEmail || !isValidEmail(cleanEmail)) {
             return res.status(400).json({ error: 'Correo electrónico no válido.' });
@@ -168,8 +180,17 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const wordBufferBase64 = Buffer.from('\ufeff' + wordHtml, 'utf-8').toString('base64');
-        const filenameSafe = `Finiquito_${cleanTrabajador.replace(/[^a-zA-Z0-9]/g, '_')}_${cleanTrabajadorRut.replace(/[^a-zA-Z0-9]/g, '')}.doc`;
+        // El navegador arma el .docx real (js/finiquito_docx.js); el HTML .doc queda solo de respaldo
+        // para páginas antiguas en caché. Se acepta solo si es un zip de Word de tamaño razonable.
+        let docx = null;
+        if (typeof docxBase64 === 'string' && docxBase64.length > 100 && docxBase64.length < 400000) {
+            const buf = Buffer.from(docxBase64, 'base64');
+            if (buf.slice(0, 4).toString('binary') === 'PK\x03\x04' && buf.includes('word/document.xml')) docx = buf;
+        }
+        const wordBufferBase64 = docx ? docx.toString('base64') : Buffer.from('\ufeff' + wordHtml, 'utf-8').toString('base64');
+        const wordExt = docx ? 'docx' : 'doc';
+        const nombreArchivo = (v) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+        const filenameSafe = `Finiquito_${nombreArchivo(cleanTrabajador)}_${nombreArchivo(cleanTrabajadorRut)}.${wordExt}`;
 
         // 1. Email para el Comprador
         const buyerSubject = `Tu finiquito para notaría: ${cleanTrabajador}`;
@@ -187,7 +208,7 @@ module.exports = async (req, res) => {
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Estimado(a) empleador(a) de ${escapeHtml(cleanEmpresa)},</p>
         
         <p style="font-size: 14px; color: #334155; margin: 0 0 18px;">
-            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría (Word + PDF)</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.doc editable)</strong> listo para imprimir o personalizar.
+            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría</strong>. Adjunto va el finiquito en <strong>Word (.${wordExt}) editable</strong>. El PDF lo guardas desde la página con el botón «Imprimir o guardar PDF».
         </p>
 
         <!-- Tarjeta de Resumen del Documento -->
@@ -223,7 +244,7 @@ module.exports = async (req, res) => {
                 Ver / Re-descargar en la Web (Acceso 48 Horas)
             </a>
             <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
-                Tu sesión web se mantendrá desbloqueada para este trabajador durante 48 horas por si necesitas ajustar algún dato.
+                El acceso dura 48 horas desde el pago y funciona en el mismo navegador donde llenaste los datos; en otro navegador los datos del formulario no aparecen.
             </p>
         </div>
 
@@ -238,7 +259,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.doc editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.${wordExt} editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a editarlo o descargarlo durante 48 horas desde el pago, en el mismo navegador donde llenaste los datos:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {
@@ -258,8 +279,10 @@ module.exports = async (req, res) => {
                     'Authorization': `Bearer ${resendApiKey}`,
                     'Content-Type': 'application/json',
                     'User-Agent': 'calculolaboral-cl/1.0',
-                    // Un solo envío por orden: el desbloqueo no sirve para mandar correos a terceros
-                    'Idempotency-Key': `finiquito-${u.o}`
+                    // Tope de MAX_ENVIOS correos por orden (Resend recuerda la llave 24 horas): el desbloqueo
+                    // no sirve para mandar correos en cantidad. Cada reenvío con datos corregidos usa el
+                    // número siguiente; repetir el mismo número con el mismo contenido no duplica el correo.
+                    'Idempotency-Key': `finiquito-${u.o}-${intento}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -281,8 +304,8 @@ module.exports = async (req, res) => {
         );
 
         if (buyerResp.status === 409) {
-            // Misma orden con otro destinatario o contenido: ya se envió una vez
-            return res.status(409).json({ error: 'Este finiquito ya se envió por correo. Usa el enlace del correo o descárgalo desde la página.' });
+            // Este número de envío ya se usó con otro destinatario o contenido
+            return res.status(409).json({ error: 'Ese envío ya se hizo con otros datos. Pulsa «Reenviar a mi correo» para mandar la versión corregida.' });
         }
         if (!buyerResp.ok) {
             const errText = await buyerResp.text();

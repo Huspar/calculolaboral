@@ -4,8 +4,9 @@ Salida:
     descargas/formato-liquidacion-de-sueldo.xlsx  (con fórmulas, ejemplo con el ingreso mínimo)
     descargas/formato-liquidacion-de-sueldo.docx  (modelo en blanco para llenar a mano)
 
-Valores 2026: ingreso mínimo $553.553, UTM $71.721, tramos del impuesto único en UTM
-(los mismos de js/constants.js) y tasas AFP con comisión.
+Valores de octubre de 2026: ingreso mínimo $553.553, UTM $72.151, UF del 30-sep-2026,
+topes imponibles de 90 UF (AFP y salud) y 135,2 UF (cesantía), tramos del impuesto único
+en UTM (los mismos de js/constants.js) y tasas AFP con comisión.
 
 Uso: python tools/generar_formato_liquidacion.py
 """
@@ -28,11 +29,17 @@ OUT_DOCX = ROOT / "descargas" / "formato-liquidacion-de-sueldo.docx"
 FOREST = "00382E"
 SLATE = "475569"
 
+PERIODO = "Octubre 2026"
 IMM = 553553
-UTM = 71721
-UF = 40975.41
+UTM = 72151  # UTM de octubre de 2026 (SII)
+# UF del último día del mes anterior al período (30-sep-2026): con ella se calculan los topes
+# imponibles. Fuente secundaria: calculadora-uf / calcular.cl (confirmar con la tabla del SII).
+UF = 41057.20
+TOPE_AFP_UF = 90.0     # Res. Ex. SP 237/2026, vigente desde el 1-feb-2026 (igual que js/constants.js)
+TOPE_CES_UF = 135.2    # Res. Ex. SP 236/2026, vigente desde el 1-feb-2026
+# Tasa total = 10% + comisión. AFP Uno: comisión 0,46% desde el 1-oct-2025.
 AFP = [
-    ("Modelo", 0.1058), ("Uno", 0.1069), ("PlanVital", 0.1116), ("Habitat", 0.1127),
+    ("Uno", 0.1046), ("Modelo", 0.1058), ("PlanVital", 0.1116), ("Habitat", 0.1127),
     ("Capital", 0.1144), ("Cuprum", 0.1144), ("Provida", 0.1145),
 ]
 # (desde UTM, factor, rebaja UTM)
@@ -52,15 +59,16 @@ def build_xlsx():
 
     # ---------- Hoja de parámetros ----------
     bold = Font(bold=True)
-    par["A1"] = "Parámetros 2026 (actualízalos cuando cambien)"
+    par["A1"] = f"Parámetros {PERIODO.lower()} (actualízalos cuando cambien)"
     par["A1"].font = Font(bold=True, size=12, color=FOREST)
     par["A3"], par["B3"] = "UTM del mes", UTM
-    par["A4"], par["B4"] = "UF del último día del mes", UF
-    par["A5"], par["B5"] = "Tope imponible AFP y salud (UF)", 89.9
-    par["A6"], par["B6"] = "Tope imponible seguro de cesantía (UF)", 135.1
+    par["A4"], par["B4"] = "UF del último día del mes anterior", UF
+    par["A5"], par["B5"] = "Tope imponible AFP y salud (UF)", TOPE_AFP_UF
+    par["A6"], par["B6"] = "Tope imponible seguro de cesantía (UF)", TOPE_CES_UF
     par["A7"], par["B7"] = "Ingreso mínimo mensual", IMM
-    for r in (3, 4, 7):
+    for r in (3, 7):
         par[f"B{r}"].number_format = MONEY
+    par["B4"].number_format = '"$"#,##0.00'
     par["A9"], par["B9"] = "AFP", "Tasa total (10% + comisión)"
     par["A9"].font = par["B9"].font = bold
     for i, (name, rate) in enumerate(AFP, start=10):
@@ -116,7 +124,7 @@ def build_xlsx():
     put("D1", "LIQUIDACIÓN DE SUELDO", size=15, bold=True, color=FOREST, align=right)
     put("A2", "RUT: ", size=9, color=muted, fill=entry_fill)
     put("D2", "Período", size=9, color=muted, align=right)
-    put("E2", "Septiembre 2026", size=9, fill=entry_fill, align=right)
+    put("E2", PERIODO, size=9, fill=entry_fill, align=right)
     put("A3", "Dirección: ", size=9, color=muted, fill=entry_fill)
     for col in "ABCDE":
         ws[f"{col}4"].border = Border(bottom=Side(style="thick", color=FOREST))
@@ -197,7 +205,10 @@ def build_xlsx():
                    formula=f'=IF({salud}="Isapre",MAX({salud7},{isapre}),{salud7})')
     d_ces = item(r0 + 3, "D", "E", "Seguro de cesantía (0,6%)",
                  formula=f'=IF({contrato}="Indefinido",ROUND(MIN({imponible},{tope_ces})*0.006,0),0)')
-    rli = f"({imponible}-{d_afp}-MIN({d_salud},{salud7})-{d_ces})"
+    # La salud rebaja la base tributable hasta el 7% del tope imponible (90 UF), aunque el plan
+    # Isapre sea mayor que el 7% del propio sueldo (art. 42 N° 1 LIR).
+    salud_tope = f"ROUND(0.07*{tope},0)"
+    rli = f"({imponible}-{d_afp}-MIN({d_salud},{salud_tope})-{d_ces})"
     d_imp = item(r0 + 4, "D", "E", "Impuesto único",
                  formula=(f"=MAX(0,ROUND({rli}*LOOKUP({rli}/{utm},{tramos_a},{tramos_b})"
                           f"-LOOKUP({rli}/{utm},{tramos_a},{tramos_c})*{utm},0))"))

@@ -730,7 +730,7 @@ window.addEventListener('load', function () {
                         <button type="button" onclick="setSalary(900000)" class="sueldo-chip">$900.000</button>
                         <button type="button" onclick="setSalary(1200000)" class="sueldo-chip">$1.200.000</button>
                         <button type="button" onclick="setSalary(1800000)" class="sueldo-chip">$1.800.000</button>
-                        <button type="button" onclick="setSalary(3692938)" class="sueldo-chip">Tope 90 UF</button>
+                        <button type="button" onclick="setSalary(topeIAS90UF())" class="sueldo-chip">Tope 90 UF</button>
                     </div>
                     <p class="text-xs text-slate-600 mt-1.5">Sueldo base + gratificación legal + promedio de comisiones variables (últimos 3 meses).</p>
                 </div>
@@ -843,7 +843,7 @@ window.addEventListener('load', function () {
                                     <span class="text-xs sm:text-sm font-bold text-slate-800">¿El empleador descontó el aporte patronal AFC del finiquito?</span>
                                     <span class="text-xs font-bold px-1.5 py-0.5 bg-red-100 text-red-700 rounded-md">Corte Suprema</span>
                                 </div>
-                                <span class="text-xs text-slate-500 block mt-0.5">La jurisprudencia unificada de la Corte Suprema obliga a devolver íntegramente este descuento si el despido es declarado improcedente.</span>
+                                <span class="text-xs text-slate-500 block mt-0.5">Solo procede si la causal invocada fue el art. 161. La jurisprudencia unificada de la Corte Suprema ordena devolver este descuento si el despido es declarado improcedente.</span>
                             </div>
                         </label>
                         <div id="sim-afc-monto-container" class="mt-2.5 pl-6 flex flex-wrap items-center gap-3">
@@ -881,6 +881,32 @@ window.addEventListener('load', function () {
                                 <span>5-6 meses (promedio real)</span>
                                 <span>12 meses</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Tutela de Derechos Fundamentales (Art. 489 CT) -->
+                    <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 transition-all">
+                        <label for="sim-tutela" class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="sim-tutela" class="mt-0.5 rounded text-[#00382E] focus:ring-[#00382E]">
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-800">Tutela por vulneración de derechos fundamentales</span>
+                                    <span class="text-xs font-bold px-1.5 py-0.5 bg-slate-200/80 text-slate-700 rounded-md">Art. 489 CT</span>
+                                </div>
+                                <span class="text-xs text-slate-500 block mt-0.5">Si el despido vulneró derechos fundamentales (por ejemplo, discriminación o represalia) y el tribunal lo declara, puede fijar una indemnización adicional de entre 6 y 11 remuneraciones mensuales, además de las del art. 168. El número lo decide el juez según el caso.</span>
+                            </div>
+                        </label>
+                        <div id="container-tutela" class="hidden mt-3 pt-3 border-t border-slate-200/80 pl-7 space-y-2">
+                            <div class="flex justify-between items-center gap-2 text-xs font-bold text-slate-800">
+                                <label for="sim-tutela-remuneraciones">Remuneraciones adicionales a estimar:</label>
+                                <span id="val-tutela-remuneraciones" class="font-mono-num text-sm px-2 py-0.5 bg-slate-200/80 text-slate-800 rounded-md whitespace-nowrap">6 remuneraciones</span>
+                            </div>
+                            <input type="range" id="sim-tutela-remuneraciones" min="6" max="11" step="1" value="6" class="w-full accent-[#00382E] cursor-pointer" aria-label="Remuneraciones adicionales por tutela (6 a 11)">
+                            <div class="flex justify-between text-xs text-slate-600 font-mono-num">
+                                <span>6 (mínimo legal)</span>
+                                <span>11 (máximo legal)</span>
+                            </div>
+                            <p class="text-xs text-slate-500">Se calcula sobre la última remuneración mensual, sin el tope de 90 UF.</p>
                         </div>
                     </div>
 
@@ -967,8 +993,8 @@ window.addEventListener('load', function () {
                             <span id="res-aviso-previo" class="font-mono-num font-semibold text-slate-800">$0</span>
                         </div>
 
-                        <div class="flex justify-between items-center py-1.5 text-amber-900 bg-amber-50/60 px-2.5 rounded-xl">
-                            <span class="font-semibold">Reintegro forzoso descuento AFC (Corte Suprema)</span>
+                        <div id="row-reintegro-afc" class="flex justify-between items-center py-1.5 text-amber-900 bg-amber-50/60 px-2.5 rounded-xl">
+                            <span class="font-semibold">Reintegro del descuento AFC (Corte Suprema)</span>
                             <span id="res-reintegro-afc" class="font-mono-num font-bold text-amber-800">+$518.400</span>
                         </div>
 
@@ -981,6 +1007,15 @@ window.addEventListener('load', function () {
                             <span id="res-ley-bustos" class="font-mono-num font-extrabold text-rose-700">+$4.500.000</span>
                         </div>
 
+                        <!-- Fila Tutela Art. 489 (Condicional) -->
+                        <div id="row-tutela" class="hidden flex justify-between items-center gap-2 py-1.5 text-slate-800 bg-slate-100/80 px-2.5 rounded-xl">
+                            <span class="font-semibold flex items-center gap-1">
+                                <span>Indemnización adicional tutela (art. 489)</span>
+                                <span id="res-tutela-desc" class="text-xs font-mono-num text-slate-600">(6 rem.)</span>
+                            </span>
+                            <span id="res-tutela" class="font-mono-num font-bold text-slate-900">+$0</span>
+                        </div>
+
                         <!-- Fila Costas -->
                         <div id="row-costas" class="flex justify-between items-center py-1 text-slate-500">
                             <span>Costas procesales y personales estimadas</span>
@@ -991,7 +1026,7 @@ window.addEventListener('load', function () {
                     <!-- EMBUDO DE MONETIZACIÓN B2B: BLOQUE EMPLEADOR -->
                     <div id="cta-bloque-empleador" class="mt-6 pt-5 border-t border-slate-100 space-y-3">
                         <div class="p-3 bg-amber-50/80 rounded-2xl border border-amber-200 text-amber-900 text-xs leading-relaxed">
-                            🛡️ <strong>¿Cómo evitar este riesgo en tu empresa?</strong> La gran mayoría de las demandas laborales se pierden por cartas de despido genéricas o cláusulas de reserva amplias.
+                            🛡️ <strong>¿Cómo reducir este riesgo en tu empresa?</strong> La carta de despido debe indicar la causal y los hechos concretos (art. 162), y el finiquito debe detallar cada pago y respetar la reserva de derechos del trabajador.
                         </div>
 
                         <!-- CTA 1: Generador Finiquito Notarial ($12.990) -->
@@ -1373,10 +1408,15 @@ window.addEventListener('load', function () {
     </footer>
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
-    <script src="/js/simulador_despido.js?v=2.8.2"></script>
+    <script src="/js/simulador_despido.js?v=2.9.0"></script>
     <script>
+        // Tope de 90 UF para la indemnización por años de servicio (Art. 172), con la UF vigente
+        function topeIAS90UF() {
+            return Math.round(90 * ((typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 0));
+        }
+
         // Helper for quick chip salary selection
         function setSalary(amount) {
             const input = document.getElementById('sim-sueldo');

@@ -717,7 +717,7 @@ function updateCalculations() {
             cause: cause,
             noticeGiven: elements.noticeGiven.checked,
             includeAssignmentsInVacation: elements.includeAssignmentsInVacation ?
-                elements.includeAssignmentsInVacation.checked : true,
+                elements.includeAssignmentsInVacation.checked : false,
             includeAssignmentsInIndemnity: elements.includeAssignmentsInIndemnity ?
                 elements.includeAssignmentsInIndemnity.checked : true,
             enableIAS: readBool(elements.enableIAS, true),

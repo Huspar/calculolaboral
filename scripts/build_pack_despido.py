@@ -20,11 +20,12 @@ import zipfile
 
 import docx
 from docx.oxml.ns import qn
+from docx.shared import Pt
 from docx.table import Table
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import docs_layout as L  # noqa: E402
-from pack_despido_content import CARTAS, DOCS_EXTRA, CHECKLIST_GRATIS, FINIQ_159, FINIQ_160, COTIZ, GUIA, PLAZO_3  # noqa: E402
+from pack_despido_content import CARTAS, DOCS_EXTRA, CHECKLIST_GRATIS, FINIQ_159, FINIQ_160, COTIZ, GUIA, PLAZO_3, AVISO_FINIQUITO, NOTA_AVISO_FINIQUITO  # noqa: E402
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FREE = os.path.join(BASE, 'descargas')
@@ -152,8 +153,8 @@ class Builder:
         self._para('body', ('[CIUDAD], [DÍA] de [MES] de [AÑO].', True))
 
     def addr(self):
-        self._para('body', ('Señor(a):\n[NOMBRE COMPLETO DEL TRABAJADOR]\n', True),
-                   ('R.U.T.: [RUT DEL TRABAJADOR]\nCargo: [CARGO O FUNCIÓN]\nDomicilio: [DIRECCIÓN REGISTRADA EN EL CONTRATO]\nComuna / Ciudad: [COMUNA / CIUDAD]', False))
+        self._para('body', ('Señor(a): [NOMBRE COMPLETO DEL TRABAJADOR]\n', True),
+                   ('R.U.T.: [RUT DEL TRABAJADOR]   ·   Cargo: [CARGO O FUNCIÓN]\nDomicilio: [DIRECCIÓN REGISTRADA EN EL CONTRATO], [COMUNA / CIUDAD]', False))
 
     def salut(self):
         self._para('body', ('De nuestra consideración:', True))
@@ -162,14 +163,15 @@ class Builder:
         self._para('h', (text, True))
 
     def text(self, t):
-        self._para('body', (t, False))
+        return self._para('body', (t, False))
 
     def lead(self, bold, rest):
-        self._para('body', (bold, True), (rest, False))
+        return self._para('body', (bold, True), (rest, False))
 
     def close(self, t='Sin otro particular, le saluda atentamente,'):
-        self._para('body', (t, False))
+        p = self._para('body', (t, False))
         self._add(copy.deepcopy(self.part['spacer']))
+        return p
 
     def spacer(self):
         self._add(copy.deepcopy(self.part['spacer']))
@@ -214,6 +216,7 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     else:
         pasos = list(COMUN)
     pasos += c.get('box', [])
+    pasos.append(NOTA_AVISO_FINIQUITO)
     b.head(c['titulo'], c['subtitulo'], codigo(c['archivo'], prefijo))
     b.box('INSTRUCCIONES PARA EL EMPLEADOR', pasos)
     b.revisa()
@@ -223,16 +226,22 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     b.addr()
     b.salut()
     b.text(c['intro'])
-    b.heading('I. CAUSAL LEGAL INVOCADA:')
-    b.text(c['causal'])
-    b.heading(c.get('h2', 'II. HECHOS EN QUE SE FUNDA:'))
-    for h in c['hechos']:
+    # Títulos dentro del párrafo (sin línea aparte), con 8 pt de aire arriba: la carta cabe en una sola hoja
+    def seccion(titulo, texto):
+        el = b.lead(titulo + '  ', texto)
+        docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.space_before = Pt(8)
+        return el
+
+    seccion('I. CAUSAL LEGAL INVOCADA:', c['causal'])
+    hechos = list(c['hechos'])
+    seccion(c.get('h2', 'II. HECHOS EN QUE SE FUNDA:'), hechos[0])
+    for h in hechos[1:]:
         b.text(h)
-    b.heading('III. ESTADO DE PAGO DE COTIZACIONES PREVISIONALES:')
-    b.text(COTIZ)
-    b.heading('IV. FINIQUITO:')
-    b.text(c['finiquito'])
-    b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))
+    seccion('III. ESTADO DE PAGO DE COTIZACIONES PREVISIONALES:', COTIZ)
+    # Si la carta pasa a otra hoja, el apartado IV, el cierre y la firma viajan juntos
+    for el in (seccion('IV. FINIQUITO:', c['finiquito']), b.text(AVISO_FINIQUITO),
+               b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))):
+        docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.keep_with_next = True
     b.sig()
     return b
 

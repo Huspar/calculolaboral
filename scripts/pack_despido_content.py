@@ -11,6 +11,13 @@ COTIZ = ('En cumplimiento del Artículo 162 del Código del Trabajo, se acompañ
          'cotizaciones previsionales y de salud, con los comprobantes que acreditan que se encuentran pagadas hasta el último día del '
          'mes anterior al del término del contrato (AFP, Fonasa o Isapre, y Seguro de Cesantía).')
 
+AVISO_FINIQUITO = ('Su finiquito se otorgará y pagará en forma [PRESENCIAL ante un ministro de fe / ELECTRÓNICA en el sitio de la Dirección del Trabajo]. '
+                   'Es voluntario para usted aceptar, firmar y recibir el pago por vía electrónica, y siempre podrá optar por la actuación '
+                   'presencial ante un ministro de fe. Al firmar el finiquito podrá formular reserva de derechos si lo estima necesario.')
+
+NOTA_AVISO_FINIQUITO = ('Art. 162 inciso octavo (Ley 21.361): la carta debe informar si el finiquito se otorgará y pagará en forma presencial o '
+                        'electrónica, y que el trabajador puede formular reserva de derechos al firmarlo. Ya viene en el apartado IV: elige una opción.')
+
 FINIQ_160 = ('Por tratarse de una causal imputable al trabajador, no corresponde el pago de indemnización por años de servicio ni de '
              'indemnización sustitutiva del aviso previo, sin perjuicio de lo que se haya pactado en su contrato individual o colectivo. '
              'Su finiquito, con las remuneraciones devengadas pendientes y la compensación del feriado legal y proporcional pendiente '
@@ -27,11 +34,11 @@ INTRO_160 = ('Por medio de la presente, comunicamos formalmente a usted que con 
 
 HECHOS_INTRO = 'Los hechos concretos en que se funda esta decisión son los siguientes: '
 
-PRUEBA = ('Estos hechos constan en [PRUEBAS: registro de asistencia, informe interno de fecha [FECHA], correos, cámaras de seguridad, '
-          'declaraciones de testigos, actas u otros documentos], que quedan a disposición de la autoridad competente.')
+PRUEBA = ('Estos hechos constan en [PRUEBAS: registros de asistencia, informes, correos, cámaras, testigos u otros documentos], '
+          'que quedan a disposición de la autoridad competente.')
 
-DESCARGOS = ('Con fecha [FECHA] se le citó para que entregara sus descargos, y [ENTREGÓ SUS DESCARGOS, QUE NO DESVIRTUARON LOS HECHOS / NO '
-             'COMPARECIÓ NI ENTREGÓ DESCARGOS DENTRO DEL PLAZO OTORGADO]. (Borra este párrafo si no hubo citación.)')
+DESCARGOS = ('Con fecha [FECHA] se le citó a entregar sus descargos y [LOS ENTREGÓ SIN DESVIRTUAR LOS HECHOS / NO COMPARECIÓ NI LOS '
+             'ENTREGÓ EN EL PLAZO OTORGADO]. (Borra este párrafo si no hubo citación.)')
 
 
 def carta(tipo, archivo, titulo, subtitulo, causal, hechos, box=None, finiquito=None, **kw):
@@ -341,7 +348,7 @@ DOCS_EXTRA = [
                ('h', 'PASO 3: PAGAR Y ACREDITAR LAS COTIZACIONES'),
                ('t', '• Las cotizaciones deben estar pagadas hasta el último día del mes anterior al despido. Si no, el despido no produce efecto y debes seguir pagando remuneraciones hasta convalidarlo (Art. 162).\n• Informa el estado de pago por escrito y adjunta los comprobantes (documento 20).'),
                ('h', 'PASO 4: REDACTAR LA CARTA'),
-               ('t', '• Indica la causal legal y los hechos en que se funda, con fechas, horas, lugares y personas.\n• En juicio solo puedes defender los hechos que consten en la carta (Art. 454 N° 1).\n• Usa el modelo que corresponda a tu causal.'),
+               ('t', '• Indica la causal legal y los hechos en que se funda, con fechas, horas, lugares y personas.\n• En juicio solo puedes defender los hechos que consten en la carta (Art. 454 N° 1).\n• Informa en la carta si el finiquito será presencial o electrónico y que el trabajador puede formular reserva de derechos al firmarlo (Art. 162, Ley 21.361).\n• Usa el modelo que corresponda a tu causal.'),
                ('h', 'PASO 5: ENTREGAR LA CARTA EN PLAZO'),
                ('t', '• Entrégala en mano o envíala por carta certificada al domicilio del contrato dentro de 3 días hábiles desde la separación (6 días hábiles si es el Art. 159 N° 6).\n• Art. 161: avisa con 30 días de anticipación, o paga la indemnización sustitutiva equivalente a la última remuneración mensual.\n• Guarda el comprobante de Correos o la firma de recepción del trabajador.'),
                ('h', 'PASO 6: AVISAR A LA INSPECCIÓN DEL TRABAJO'),
@@ -349,7 +356,7 @@ DOCS_EXTRA = [
                ('h', 'PASO 7: FINIQUITO'),
                ('t', '• Prepara el finiquito con remuneraciones pendientes, feriado proporcional y, si corresponde, indemnizaciones, y pónlo a disposición del trabajador dentro de 10 días hábiles.\n• Para que tenga poder liberatorio, debe firmarse ante un ministro de fe (notario, Inspección del Trabajo u otro que indica el Art. 177).'),
                ('h', 'DESPUÉS: SI EL TRABAJADOR RECLAMA'),
-               ('t', '• El trabajador tiene 60 días hábiles para demandar por despido injustificado (Art. 168). Si el juez declara el despido injustificado, indebido o improcedente, las indemnizaciones se pagan con recargo de entre 30% y 80%, según la causal invocada.\n• Conserva toda la documentación de este pack mientras pueda haber un reclamo.')]),
+               ('t', '• El trabajador tiene 60 días hábiles para demandar por despido injustificado (Art. 168). Si el juez declara el despido injustificado, indebido o improcedente, las indemnizaciones se pagan con recargo de 30% a 80%, según la causal invocada (puede llegar a 100% si invocaste ciertas faltas del Art. 160 y el juez declara que no tenían motivo plausible).\n• Conserva toda la documentación de este pack mientras pueda haber un reclamo.')]),
 ]
 
 GUIA = dict(

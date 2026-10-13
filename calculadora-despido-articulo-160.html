@@ -860,7 +860,7 @@ body { overflow-x: hidden; }
                         <div class="relative rounded-2xl shadow-2xs">
                             <input type="text" id="art160-sueldo" value="$ 850.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatArt160Input(this); calculateArt160();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                         </div>
-                        <p class="text-xs text-slate-600 mt-1">Sueldo base + gratificación + comisiones (tope legal 90 UF: ~$3.690.000).</p>
+                        <p class="text-xs text-slate-600 mt-1">Sueldo base + gratificación + comisiones (tope legal 90 UF: ~<span id="art160-tope-90uf" class="font-mono">$ 3.701.785</span>).</p>
                     </div>
 
                     <!-- 4. Días trabajados del mes y Vacaciones Pendientes -->
@@ -1349,7 +1349,7 @@ body { overflow-x: hidden; }
     </div>
 
     <!-- Centralized Constants & Live Indicators Scripts -->
-    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
     
     <!-- Art. 160 Calculation Engine -->
@@ -1407,8 +1407,8 @@ body { overflow-x: hidden; }
 
             var partsS = startStr.split('-').map(Number);
             var partsE = endStr.split('-').map(Number);
-            var startDate = new Date(partsS[0], partsS[1] - 1, partsS[2]);
-            var endDate = new Date(partsE[0], partsE[1] - 1, partsE[2]);
+            var startDate = new Date(Date.UTC(partsS[0], partsS[1] - 1, partsS[2]));
+            var endDate = new Date(Date.UTC(partsE[0], partsE[1] - 1, partsE[2]));
 
             var sueldoMensual = parseArt160Currency(document.getElementById('art160-sueldo').value) || 0;
             var diasMes = parseInt(document.getElementById('art160-dias-mes').value, 10) || 0;
@@ -1423,23 +1423,30 @@ body { overflow-x: hidden; }
             var totalInmediato = subtotalMes + subtotalVac;
 
             // 2. Demanda Judicial (Art. 168 c)
-            // Años de servicio: 1 mes por año y fracción superior a 6 meses, tope 11 años
-            var totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
-            var rawYears = Math.floor(totalDays / 365);
-            var remDays = totalDays % 365;
+            // Años de servicio (art. 163): años y meses calendario reales, con el día de término
+            // contado como trabajado (mismo criterio que js/logic.js). Exige al menos 1 año;
+            // la fracción superior a 6 meses suma un año más. Tope 11 años.
+            var endPlusOne = new Date(endDate.getTime() + 86400000);
+            var years = endPlusOne.getUTCFullYear() - startDate.getUTCFullYear();
+            var months = endPlusOne.getUTCMonth() - startDate.getUTCMonth();
+            var days = endPlusOne.getUTCDate() - startDate.getUTCDate();
+            if (days < 0) { months--; days += 30; }
+            if (months < 0) { years--; months += 12; }
 
-            var computedYears = rawYears;
-            if (remDays > 182) {
-                computedYears += 1;
+            var computedYears = 0;
+            if (years >= 1) {
+                computedYears = years + ((months > 6 || (months === 6 && days > 0)) ? 1 : 0);
             }
             if (computedYears > 11) computedYears = 11;
             if (computedYears < 0) computedYears = 0;
 
-            // Base para IAS tiene tope de 90 UF (aprox $3.694.000)
-            var topeUF90 = 3694000;
+            // Base para IAS con tope de 90 UF (art. 172), según la UF vigente
+            var topeUF90 = Math.round(90 * CONSTANTS.UF);
             var baseIAS = Math.min(sueldoMensual, topeUF90);
+            var elTope90 = document.getElementById('art160-tope-90uf');
+            if (elTope90) elTope90.textContent = formatArt160Currency(topeUF90);
 
-            var subtotalIAS = (computedYears >= 1) ? Math.round(computedYears * baseIAS) : 0;
+            var subtotalIAS = Math.round(computedYears * baseIAS);
             var subtotalAviso = Math.round(baseIAS);
             var subtotalRecargo = Math.round(subtotalIAS * (recargoPct / 100.0));
             var totalDemanda = subtotalIAS + subtotalAviso + subtotalRecargo;
@@ -1596,6 +1603,7 @@ body { overflow-x: hidden; }
         } else {
             initArt160();
         }
+        document.addEventListener('indicatorsUpdated', calculateArt160);
     </script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>

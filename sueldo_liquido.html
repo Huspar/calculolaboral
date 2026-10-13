@@ -791,7 +791,7 @@ window.addEventListener('load', function () {
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label for="overtime" class="block text-xs font-medium text-slate-500 mb-1">Horas Extras al 50%</label>
-                                <input id="overtime" type="number" placeholder="0" min="0" max="100" class="block w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:bg-white transition-all outline-none text-sm text-right font-mono-num" />
+                                <input id="overtime" type="number" placeholder="0" min="0" max="52" class="block w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:bg-white transition-all outline-none text-sm text-right font-mono-num" />
                             </div>
                             <div>
                                 <label for="bonuses" class="block text-xs font-medium text-slate-500 mb-1">Bonos / Comisiones Imponibles</label>
@@ -913,12 +913,20 @@ window.addEventListener('load', function () {
                         <div class="p-4 pt-1 border-t border-slate-100 space-y-3 bg-white">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label for="ccaf" class="block text-xs font-bold text-slate-500 mb-1">CCAF (Crédito Caja Compensación)</label>
+                                    <label for="ccaf" class="block text-xs font-bold text-slate-500 mb-1">Cuota crédito CCAF (Caja de Compensación)</label>
                                     <input id="ccaf" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono-num text-right font-semibold" />
                                 </div>
                                 <div>
-                                    <label for="apv" class="block text-xs font-bold text-slate-500 mb-1">APV (Régimen A o B)</label>
-                                    <input id="apv" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono-num text-right font-semibold" />
+                                    <label for="apv" class="block text-xs font-bold text-slate-500 mb-1">APV (Ahorro Previsional Voluntario)</label>
+                                    <div class="flex gap-2">
+                                        <input id="apv" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full min-w-0 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono-num text-right font-semibold" />
+                                        <label for="apvRegime" class="sr-only">Régimen del APV</label>
+                                        <select id="apvRegime" style="padding-left:0.5rem;padding-right:2rem;min-width:7.5rem" class="shrink-0 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 cursor-pointer">
+                                            <option value="B" selected>Régimen B</option>
+                                            <option value="A">Régimen A</option>
+                                        </select>
+                                    </div>
+                                    <p class="mt-1 text-[11px] text-slate-500 leading-snug">B rebaja la base del impuesto (tope 50 UF al mes). A no la rebaja: recibe una bonificación fiscal del 15%.</p>
                                 </div>
                                 <div>
                                     <label for="prestamos" class="block text-xs font-bold text-slate-500 mb-1">Préstamos Empresa</label>
@@ -937,12 +945,7 @@ window.addEventListener('load', function () {
                                     <input id="otrosDescuentos" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="$ 0" class="block w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono-num text-right font-semibold" />
                                 </div>
                             </div>
-                            <div class="pt-2 border-t border-slate-100 flex items-center">
-                                <label for="toggleReduceSS" class="flex items-center gap-2 cursor-pointer">
-                                    <input id="toggleReduceSS" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-[#00382E] focus:ring-[#00382E] cursor-pointer">
-                                    <span class="text-xs text-slate-600 font-medium">CCAF / APV reduce base de AFP y Salud</span>
-                                </label>
-                            </div>
+                            <p class="pt-2 border-t border-slate-100 text-[11px] text-slate-500 leading-snug">AFP y salud se calculan siempre sobre el total imponible. La cuota del crédito CCAF se descuenta del líquido y no rebaja el impuesto; solo el APV régimen B rebaja la base del impuesto.</p>
                         </div>
                     </details>
 
@@ -976,7 +979,7 @@ window.addEventListener('load', function () {
 
                         <!-- Distribution Conic Chart Segment -->
                         <div class="flex flex-col sm:flex-row gap-5 items-center justify-center border-b border-slate-100 pb-6">
-                            <div id="distribution-chart" class="w-36 h-36 rounded-full border border-slate-100 flex items-center justify-center relative shadow-inner shrink-0" style="background: conic-gradient(#10b981 0% 100%);">
+                            <div id="distribution-chart" class="w-36 h-36 rounded-full border border-slate-100 flex items-center justify-center relative shadow-inner shrink-0" style="background: conic-gradient(#00382E 0% 100%);">
                                 <div class="w-24 h-24 rounded-full bg-white flex flex-col items-center justify-center z-10 shadow-xs">
                                     <span id="chart-liquid-percent" class="text-xl font-black text-slate-900 font-mono-num">0%</span>
                                     <span class="text-xs text-slate-600 font-bold uppercase tracking-wider">Líquido</span>
@@ -986,35 +989,35 @@ window.addEventListener('load', function () {
                             <div class="space-y-2 flex-grow w-full text-xs">
                                 <div class="flex items-center justify-between font-medium">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #00382E;"></span>
                                         <span class="text-slate-600">Sueldo Líquido</span>
                                     </div>
                                     <span id="legend-liquido-percent" class="font-bold text-slate-900 font-mono-num">0%</span>
                                 </div>
                                 <div class="flex items-center justify-between font-medium">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-forest-500 shrink-0"></span>
+                                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #5E9A88;"></span>
                                         <span class="text-slate-600">AFP + AFC</span>
                                     </div>
                                     <span id="legend-afp-percent" class="font-bold text-slate-900 font-mono-num">0%</span>
                                 </div>
                                 <div class="flex items-center justify-between font-medium">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
+                                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #E11D48;"></span>
                                         <span class="text-slate-600">Salud</span>
                                     </div>
                                     <span id="legend-health-percent" class="font-bold text-slate-900 font-mono-num">0%</span>
                                 </div>
                                 <div class="flex items-center justify-between font-medium">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-forest-500 shrink-0"></span>
+                                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #FFB703;"></span>
                                         <span class="text-slate-600">Impuesto SII</span>
                                     </div>
                                     <span id="legend-tax-percent" class="font-bold text-slate-900 font-mono-num">0%</span>
                                 </div>
                                 <div id="legend-otros-container" class="flex items-center justify-between font-medium hidden">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
+                                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: #94A3B8;"></span>
                                         <span class="text-slate-600">Otros Descuentos</span>
                                     </div>
                                     <span id="legend-otros-percent" class="font-bold text-slate-900 font-mono-num">0%</span>
@@ -1830,11 +1833,11 @@ window.addEventListener('load', function () {
     </div>
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.1.2"></script>
+    <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/validation.js?v=2.9.0"></script>
-    <script src="/js/salary_logic.js?v=2.1.2"></script>
-    <script src="/js/salary_ui.js?v=3.1.0"></script>
+    <script src="/js/salary_logic.js?v=2.2.0"></script>
+    <script src="/js/salary_ui.js?v=3.2.1"></script>
     <script src="/js/print_brand.js?v=1.2.0"></script>
     <script src="/js/pdf_generator.js?v=3.2.0"></script>
 
