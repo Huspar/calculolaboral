@@ -680,11 +680,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const endTax = endHealth + pTax;
 
             display.chart.style.background = `conic-gradient(
-                #10b981 0% ${endNet}%, 
-                #3b82f6 ${endNet}% ${endAFP}%, 
-                #ef4444 ${endAFP}% ${endHealth}%, 
-                #a855f7 ${endHealth}% ${endTax}%,
-                #f97316 ${endTax}% 100%
+                #00382E 0% ${endNet}%, 
+                #5E9A88 ${endNet}% ${endAFP}%, 
+                #E11D48 ${endAFP}% ${endHealth}%, 
+                #FFB703 ${endHealth}% ${endTax}%,
+                #94A3B8 ${endTax}% 100%
             )`;
 
             if (display.chartLabel) {
