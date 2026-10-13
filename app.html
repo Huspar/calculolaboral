@@ -269,6 +269,10 @@ gtag('js', new Date());
 <div class="lq-field"><label for="pm-t-colacion">Colación mensual <span class="lq-opt">(opcional)</span></label><input id="pm-t-colacion" data-k="colacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"><p class="pm-error" data-error="colacion" hidden></p></div>
 <div class="lq-field"><label for="pm-t-movil">Movilización mensual <span class="lq-opt">(opcional)</span></label><input id="pm-t-movil" data-k="movilizacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"><p class="pm-error" data-error="movilizacion" hidden></p></div>
 <div class="lq-field"><label for="pm-t-anticipo">Anticipo fijo cada mes <span class="lq-opt">(opcional)</span></label><input id="pm-t-anticipo" data-k="anticipoMensual" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0" aria-describedby="pm-t-anticipo-ayuda"><p class="lq-help" id="pm-t-anticipo-ayuda">Si le pagas una quincena todos los meses, se descuenta sola en cada liquidación nueva.</p><p class="pm-error" data-error="anticipoMensual" hidden></p></div>
+<div class="lq-field"><label for="pm-t-reaj">Reajuste pactado en el contrato <span class="lq-opt">(opcional)</span></label>
+<select id="pm-t-reaj" data-k="reajusteIPC"><option value="no">Sin reajuste pactado</option><option value="semestral">Según IPC, cada 6 meses</option><option value="anual">Según IPC, cada 12 meses</option></select></div>
+<div class="lq-field" data-si-reaj><label for="pm-t-reajmes">Mes del reajuste</label>
+<select id="pm-t-reajmes" data-k="reajusteMes"><option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option><option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option><option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select><p class="lq-help">Te avisamos ese mes (y seis meses después si es semestral).</p></div>
 <div class="lq-field"><label for="pm-t-afp">AFP</label><select id="pm-t-afp" data-k="afp"></select></div>
 <div class="lq-field"><label for="pm-t-salud">Salud</label>
 <select id="pm-t-salud" data-k="salud"><option value="fonasa">Fonasa</option><option value="isapre">Isapre</option></select></div>
@@ -751,7 +755,7 @@ gtag('js', new Date());
 <script src="/js/liquidacion_documento.js?v=1.3.0"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
-<script src="/js/pyme_pendientes.js?v=1.5.0"></script>
+<script src="/js/pyme_pendientes.js?v=1.6.0"></script>
 <script src="/js/semana_corrida.js?v=1.0.0"></script>
 <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
 <script src="/js/pyme_importar.js?v=1.0.0"></script>
@@ -760,6 +764,6 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.12.0" defer></script>
+<script src="/js/app_pyme.js?v=1.13.0" defer></script>
 </body>
 </html>

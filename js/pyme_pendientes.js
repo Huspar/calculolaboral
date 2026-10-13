@@ -1,11 +1,15 @@
 /*
- * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.5.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
+ * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.6.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
  *
  *   pendientes(estado, { hoy: 'AAAA-MM-DD', P: parametros, F: feriados, ultimoRespaldo: 'ISO' | null, liquidaciones: { periodo, registros: [{ trabajadorId, emitida }] } })
  *   periodoLiquidacion(hoy) → { periodo, cuando: 'anterior' | 'actual' } | null   (el mes cuyas liquidaciones se cargan para el aviso)
  *     → [{ id, nivel: 'urgente' | 'aviso' | 'info', titulo, texto, accion? }]   (ordenados: urgente, aviso, info)
  *
  * Solo avisos que se pueden calcular con certeza a partir de la ficha: nada de montos de Previred ni de decisiones legales.
+ * Ingreso mínimo (art. 44): proporcional solo en jornada parcial de hasta 30 horas (art. 40 bis), como el motor de
+ * liquidaciones. Se avisa también cuando el mínimo de uno de los dos meses siguientes ya está cargado y sube.
+ * Reajuste por IPC pactado en el contrato (ficha: reajusteIPC 'semestral' | 'anual' y reajusteMes 1-12): aviso en el mes que
+ * corresponde, sin calcular el IPC (lo publica el INE).
  * Cada aviso dice en qué norma se apoya. Los plazos de cotizaciones se muestran con la advertencia de confirmarlos en Previred
  * (fuentes secundarias; ver docs/asistente-pyme.md, sección 8).
  */
@@ -45,6 +49,22 @@
         return null;
     }
     function nombreMes(p) { var a = p.split('-'); return MESES[+a[1] - 1] + ' ' + a[0]; }
+    var JORNADA_PARCIAL = 30; // art. 40 bis
+    function minimoPara(t, vig) {
+        var j = Number(t.jornadaHoras) || vig.jornadaMaxima;
+        return j <= JORNADA_PARCIAL ? Math.round(vig.imm * j / vig.jornadaMaxima) : vig.imm;
+    }
+    function sumarMes(periodo, n) {
+        var a = periodo.split('-').map(Number), x = a[0] * 12 + (a[1] - 1) + n;
+        return Math.floor(x / 12) + '-' + dos(x % 12 + 1);
+    }
+    // Meses del año en que toca el reajuste pactado: semestral → el mes indicado y seis meses después
+    function tocaReajuste(t, periodo) {
+        var m = Number(t.reajusteMes), mes = +periodo.slice(5, 7);
+        if (!(m >= 1 && m <= 12) || (t.reajusteIPC !== 'semestral' && t.reajusteIPC !== 'anual')) return false;
+        if (t.fechaIngreso && t.fechaIngreso.slice(0, 7) >= periodo) return false; // recién ingresado: aún no hay período que reajustar
+        return mes === m || (t.reajusteIPC === 'semestral' && mes === ((m + 5) % 12) + 1);
+    }
 
     function pendientes(estado, opciones) {
         var hoy = opciones.hoy, P = opciones.P, F = opciones.F;
@@ -72,12 +92,34 @@
             if (!t.sueldoBase) {
                 agregar('sueldo-' + t.id, 'aviso', t.nombre + ': falta el sueldo base', 'Sin el sueldo base no se puede calcular la liquidación.', acc);
             } else if (vig && vig.imm) {
-                var minimo = t.jornadaHoras >= vig.jornadaMaxima ? vig.imm : Math.round(vig.imm * t.jornadaHoras / vig.jornadaMaxima);
+                var minimo = minimoPara(t, vig), anexo = { tipo: 'documento', id: t.id, doc: 'anexo_contrato' };
                 if (t.sueldoBase < minimo) {
                     agregar('minimo-' + t.id, 'aviso', t.nombre + ': sueldo base bajo el ingreso mínimo',
                         'El sueldo base (' + pesos(t.sueldoBase) + ') es menor que el ingreso mínimo de ' + pesos(vig.imm) + ' para jornada completa' +
-                        (minimo !== vig.imm ? ', que para su jornada de ' + t.jornadaHoras + ' horas equivale a ' + pesos(minimo) : '') + '. Revísalo.', acc);
+                        (minimo !== vig.imm ? ', que para su jornada parcial de ' + t.jornadaHoras + ' horas equivale a ' + pesos(minimo) : '') +
+                        ' (art. 44). Sube el sueldo con un anexo de contrato; hay excepciones para menores de 18 y mayores de 65 años.', anexo);
+                } else {
+                    // El mínimo de uno de los dos meses siguientes ya está cargado y sube: aviso anticipado
+                    for (var k = 1; k <= 2; k++) {
+                        var px = sumarMes(periodo, k);
+                        if (px > P.ULTIMO_MES) break;
+                        var vx = P.vigenciaDe(px);
+                        if (vx && vx.imm > vig.imm) {
+                            var minx = minimoPara(t, vx);
+                            if (t.sueldoBase < minx) {
+                                agregar('minimo-prox-' + t.id, 'aviso', t.nombre + ': el ingreso mínimo sube en ' + nombreMes(px),
+                                    'Desde las remuneraciones de ' + nombreMes(px) + ' el ingreso mínimo es ' + pesos(vx.imm) + (minx !== vx.imm ? ' (' + pesos(minx) + ' para su jornada parcial)' : '') +
+                                    ' y su sueldo base es ' + pesos(t.sueldoBase) + '. Prepara el anexo con el nuevo sueldo (art. 44).', anexo);
+                            }
+                            break;
+                        }
+                    }
                 }
+            }
+            if (tocaReajuste(t, periodo)) {
+                agregar('reajuste-' + t.id, 'aviso', t.nombre + ': reajuste por IPC pactado',
+                    'Su contrato tiene un reajuste ' + (t.reajusteIPC === 'semestral' ? 'semestral' : 'anual') + ' según el IPC que corresponde este mes. Revisa la variación del IPC de los últimos ' +
+                    (t.reajusteIPC === 'semestral' ? '6' : '12') + ' meses en el INE (ine.gob.cl), actualiza el sueldo base en la ficha y deja el cambio por escrito si tu contrato lo pide.', acc);
             }
 
             if (t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo) {
@@ -176,7 +218,7 @@
             .map(function (e) { return e.x; });
     }
 
-    var api = { pendientes: pendientes, periodoLiquidacion: periodoLiquidacion, plazoRegistroDT: plazoRegistroDT, anios: anios, dias: dias, version: '1.3.0' };
+    var api = { pendientes: pendientes, periodoLiquidacion: periodoLiquidacion, plazoRegistroDT: plazoRegistroDT, anios: anios, dias: dias, tocaReajuste: tocaReajuste, version: '1.6.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymePendientes = api;
 })(typeof window !== 'undefined' ? window : this);

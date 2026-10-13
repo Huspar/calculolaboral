@@ -66,6 +66,32 @@ caso('sueldo bajo el ingreso mínimo: jornada completa y proporcional', () => {
     const bajo = pend(correr(est([T({ jornadaHoras: 21, sueldoBase: 250000 })]), '2026-10-20'), 'minimo-t1');
     assert.ok(bajo && bajo.texto.indexOf('21 horas') >= 0 && bajo.texto.indexOf('$276.777') >= 0);
 });
+caso('ingreso mínimo: proporcional solo en jornada parcial (hasta 30 horas, art. 40 bis), como el motor; el aviso ofrece el anexo', () => {
+    // 36 horas no es jornada parcial: el mínimo es el completo
+    const p = pend(correr(est([T({ jornadaHoras: 36, sueldoBase: 500000 })]), '2026-10-20'), 'minimo-t1');
+    assert.ok(p && p.texto.indexOf('$553.553') >= 0, JSON.stringify(p));
+    assert.deepStrictEqual(p.accion, { tipo: 'documento', id: 't1', doc: 'anexo_contrato' });
+    // 30 horas sí: 553.553 × 30 / 42 = 395.395
+    assert.ok(!pend(correr(est([T({ jornadaHoras: 30, sueldoBase: 395395 })]), '2026-10-20'), 'minimo-t1'));
+    assert.ok(pend(correr(est([T({ jornadaHoras: 30, sueldoBase: 395394 })]), '2026-10-20'), 'minimo-t1').texto.indexOf('$395.395') >= 0);
+});
+caso('aviso anticipado: si el mínimo de uno de los dos meses siguientes ya está cargado y sube', () => {
+    // En abril de 2026 el mínimo era $539.000 y desde mayo $553.553 (reajuste con efecto en las remuneraciones de mayo)
+    const p = pend(correr(est([T({ jornadaHoras: 44, sueldoBase: 545000 })]), '2026-04-15'), 'minimo-prox-t1');
+    assert.ok(p && /mayo 2026/.test(p.titulo) && p.texto.indexOf('$553.553') >= 0, JSON.stringify(p));
+    assert.ok(!pend(correr(est([T({ sueldoBase: 560000 })]), '2026-04-15'), 'minimo-prox-t1'), 'sobre el nuevo mínimo no avisa');
+    assert.ok(!pend(correr(est([T({ jornadaHoras: 44, sueldoBase: 545000 })]), '2026-02-15'), 'minimo-prox-t1'), 'a tres meses aún no avisa');
+});
+caso('reajuste por IPC pactado: aviso en su mes (y seis meses después si es semestral), sin inventar el IPC', () => {
+    const anual = T({ reajusteIPC: 'anual', reajusteMes: 1 });
+    assert.ok(pend(correr(est([anual]), '2027-01-10'), 'reajuste-t1'));
+    assert.ok(!pend(correr(est([anual]), '2026-07-10'), 'reajuste-t1'));
+    const sem = T({ reajusteIPC: 'semestral', reajusteMes: 1 });
+    assert.ok(pend(correr(est([sem]), '2026-07-10'), 'reajuste-t1').texto.indexOf('6 meses') >= 0);
+    assert.ok(pend(correr(est([T({ reajusteIPC: 'semestral', reajusteMes: 9 })]), '2026-03-02'), 'reajuste-t1'), 'septiembre + 6 = marzo');
+    assert.ok(!pend(correr(est([T({ reajusteIPC: 'no', reajusteMes: 1 })]), '2027-01-10'), 'reajuste-t1'));
+    assert.ok(!pend(correr(est([T({ reajusteIPC: 'anual', reajusteMes: 10, fechaIngreso: '2026-10-01' })]), '2026-10-10'), 'reajuste-t1'), 'recién ingresado no');
+});
 caso('el mínimo usa el valor del mes: en enero de 2026 era $539.000 y la jornada máxima 44 horas', () => {
     assert.ok(!pend(correr(est([T({ jornadaHoras: 44, sueldoBase: 539000 })]), '2026-01-20'), 'minimo-t1'));
     assert.ok(pend(correr(est([T({ jornadaHoras: 44, sueldoBase: 538999 })]), '2026-01-20'), 'minimo-t1'));

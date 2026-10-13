@@ -260,6 +260,8 @@
         var contrato = f.querySelector('[data-k="contrato"]').value, salud = f.querySelector('[data-k="salud"]').value;
         Array.prototype.forEach.call(f.querySelectorAll('[data-si-contrato]'), function (el) { el.hidden = el.getAttribute('data-si-contrato') !== contrato; });
         Array.prototype.forEach.call(f.querySelectorAll('[data-si-salud]'), function (el) { el.hidden = el.getAttribute('data-si-salud') !== salud; });
+        var reaj = f.querySelector('[data-k="reajusteIPC"]').value;
+        Array.prototype.forEach.call(f.querySelectorAll('[data-si-reaj]'), function (el) { el.hidden = reaj === 'no'; });
     }
 
     // ---------- entrar y salir ----------
@@ -640,7 +642,7 @@
         abrirTrabajador(trabajadorPorId(editandoId));
         mensaje($('pm-trab-estado'), '', 'Volvimos a los datos guardados.');
     });
-    $('pm-trab-form').addEventListener('change', function (e) { if (e.target.matches('[data-k="contrato"],[data-k="salud"]')) condicionales(); });
+    $('pm-trab-form').addEventListener('change', function (e) { if (e.target.matches('[data-k="contrato"],[data-k="salud"],[data-k="reajusteIPC"]')) condicionales(); });
 
     $('pm-trab-form').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -864,7 +866,7 @@
         $('pm-pend').innerHTML = lista.length ? lista.map(function (p, i) {
             var accion = '';
             if (p.accion) {
-                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes', documento: 'Emitir contrato' }[p.accion.tipo];
+                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes', documento: p.accion.doc === 'anexo_contrato' ? 'Preparar anexo' : 'Emitir contrato' }[p.accion.tipo];
                 accion = '<button type="button" class="btn-texto" data-pend="' + i + '">' + esc(etiqueta) + '</button>';
             }
             return '<li class="n-' + p.nivel + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><div><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p></div>' + accion + '</li>';

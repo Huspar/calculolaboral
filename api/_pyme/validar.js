@@ -62,6 +62,9 @@ const CAMPOS_TRABAJADOR = {
     aniosOtrosEmpleadores: { t: 'entero', min: 0, max: 10, def: 0 },
     // Anticipo que se paga todos los meses (quincena): se propone en cada liquidación nueva
     anticipoMensual: { t: 'entero', min: 0, max: 50000000, def: 0 },
+    // Reajuste por IPC pactado en el contrato: el asistente avisa en el mes que corresponde
+    reajusteIPC: { t: 'enum', valores: ['no', 'semestral', 'anual'], def: 'no' },
+    reajusteMes: { t: 'entero', min: 1, max: 12, def: 1 },
     activo: { t: 'bool', def: true }
 };
 
