@@ -46,7 +46,12 @@ Se arma un **banco de casos de referencia** (`tools/casos_referencia/*.json` + `
 | 1.8 · Libro del mes para el contador | Hecho (13-oct-2026) | En Liquidaciones: «Libro del mes para el contador (Excel)» (CSV con punto y coma) e «Imprimir libro» (hoja horizontal). 20 columnas por trabajador con totales, recalculadas con el motor; cada fila cuadra (prueba automática). El archivo dice que no reemplaza al LRE de la DT (obligatorio desde 5 trabajadores). |
 | 1.9 · Ley Karin en la ficha | Hecho (13-oct-2026) | Fecha en que se dio a conocer el protocolo (art. 211-A; Circular Suseso 3813: elaborar, poner en conocimiento e implementar) y constancia firmada marcada como recomendada, no obligatoria. Un aviso agrupado con quienes no lo tienen anotado. Enlace al Kit Blindaje para quien no tiene protocolo. No se afirma una obligación de capacitar (no se pudo confirmar). |
 
-**Pendiente al cerrar la Fase 1:** Privacidad debe decir que el asistente guarda nombre y RUT de quienes emiten boletas a la empresa (terceros) y fechas de licencias médicas sin diagnóstico; actualizar la página pública con lo construido.
+**Cierre de la Fase 1 (13-oct-2026):** Privacidad §10 ya dice que se guardan los datos de quienes emiten boletas a la empresa, las fechas de licencias y permisos sin diagnóstico y la entrega del protocolo de la Ley Karin; la página pública describe solo lo construido y aclara lo que no hace (no genera el LRE, no llena el F29, no registra en Mi DT).
+
+**Lo que falta para dar la Fase 1 por cerrada (requiere al dueño):**
+1. Aplicar las migraciones 002 (honorarios) y 003 (tipos de documento) en la rama `pruebas` de Neon y correr `tools/test_pyme_almacen_db.js` contra ella (cadena por portapapeles, como siempre).
+2. Mirar una vez en Mi DT que la hoja guía sigue el orden del formulario.
+3. Decidir si el generador público de liquidaciones ($2.990) también calcula la semana corrida (hoy solo el asistente).
 
 ## 3. Fases y funciones
 
