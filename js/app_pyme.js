@@ -103,6 +103,25 @@
         el.textContent = texto || '';
     }
 
+    // Confirmación propia (en vez de window.confirm): nombra la consecuencia en el botón y devuelve el foco
+    function confirmar(titulo, texto, etiqueta) {
+        var dlg = $('app-confirmar'), previo = document.activeElement;
+        if (!dlg || typeof dlg.showModal !== 'function') return Promise.resolve(window.confirm(titulo + ' ' + texto));
+        $('app-confirmar-titulo').textContent = titulo;
+        $('app-confirmar-texto').textContent = texto;
+        $('app-confirmar-ok').textContent = etiqueta;
+        return new Promise(function (resolver) {
+            dlg.addEventListener('close', function alCerrar() {
+                dlg.removeEventListener('close', alCerrar);
+                if (previo && previo.focus && document.contains(previo)) previo.focus();
+                resolver(dlg.returnValue === 'ok');
+            });
+            dlg.returnValue = '';
+            dlg.showModal();
+            $('app-confirmar-cancelar').focus();
+        });
+    }
+
     // ---------- rutas ----------
     var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', contratos: 'contratos', empresa: 'empresa', cuenta: 'cuenta' };
     var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', contratos: 'Contratos y finiquitos', empresa: 'Empresa', cuenta: 'Mi cuenta' };
@@ -115,9 +134,15 @@
         try {
             if (opciones.reemplazar) window.history.replaceState({}, '', url); else window.history.pushState({}, '', url);
         } catch (e) { window.location.href = url; return; }
-        cerrarMenu();
+        cerrarMenu(true);
         dibujarRuta();
         if (!opciones.sinScroll) window.scrollTo(0, 0);
+        if (!opciones.reemplazar) enfocarTitulo();
+    }
+    // Al cambiar de sección el foco pasa al título: el lector de pantalla anuncia dónde está y el teclado parte de ahí
+    function enfocarTitulo() {
+        var h = document.querySelector('.vista:not([hidden]) .v-titulo');
+        if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
     }
     window.addEventListener('popstate', function () { if (estado) dibujarRuta(); });
 
@@ -161,18 +186,26 @@
     }
 
     // Menú en pantallas chicas
-    function cerrarMenu() { $('pm-panel').classList.remove('menu-abierto'); $('app-menu').setAttribute('aria-expanded', 'false'); $('app-mas').setAttribute('aria-expanded', 'false'); }
-    $('app-menu').addEventListener('click', function () {
-        var abierto = $('pm-panel').classList.toggle('menu-abierto');
-        $('app-menu').setAttribute('aria-expanded', abierto ? 'true' : 'false');
-    });
-    $('app-mas').addEventListener('click', function () {
+    var disparadorMenu = null;
+    function inertar(si) { ['app-principal', 'app-barra'].forEach(function (id) { var el = $(id); if (el) { if (si) el.setAttribute('inert', ''); else el.removeAttribute('inert'); } }); }
+    function cerrarMenu(sinFoco) {
+        var estabaAbierto = $('pm-panel').classList.contains('menu-abierto');
+        $('pm-panel').classList.remove('menu-abierto'); $('app-menu').setAttribute('aria-expanded', 'false'); $('app-mas').setAttribute('aria-expanded', 'false');
+        inertar(false);
+        if (estabaAbierto && sinFoco !== true && disparadorMenu && disparadorMenu.focus) disparadorMenu.focus();
+    }
+    function abrirMenu(disparador) {
+        disparadorMenu = disparador;
         $('pm-panel').classList.add('menu-abierto');
         $('app-mas').setAttribute('aria-expanded', 'true');
-        var primero = $('app-side').querySelector('a'); if (primero) primero.focus();
-    });
-    $('app-velo').addEventListener('click', cerrarMenu);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarMenu(); });
+        inertar(true);
+        var primero = $('app-cerrar'); if (primero) primero.focus();
+    }
+    $('app-menu').addEventListener('click', function () { if ($('pm-panel').classList.contains('menu-abierto')) cerrarMenu(); else abrirMenu($('app-menu')); });
+    $('app-mas').addEventListener('click', function () { abrirMenu($('app-mas')); });
+    $('app-cerrar').addEventListener('click', function () { cerrarMenu(); });
+    $('app-velo').addEventListener('click', function () { cerrarMenu(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('pm-panel').classList.contains('menu-abierto')) cerrarMenu(); });
 
     // ---------- campos de formulario ----------
     function valorDe(el) {
@@ -512,12 +545,15 @@
 
     $('carp-borrar').addEventListener('click', function () {
         var t = trabajadorPorId(editandoId);
-        if (!t || !window.confirm('¿Eliminar a ' + t.nombre + '? Sus datos, liquidaciones y documentos registrados se borran de forma definitiva.')) return;
-        api('trabajador', { metodo: 'DELETE', query: { id: t.id } }).then(function (r) {
-            if (sinSesion(r)) return;
-            if (!r.ok) { avisoGlobal('error', r.datos.error || 'No pudimos eliminar.'); return; }
-            mesesCache = {};
-            cargar().then(function () { navegar('trabajadores', { reemplazar: true }); avisoGlobal('ok', 'Eliminamos a ' + t.nombre + '.'); });
+        if (!t) return;
+        confirmar('¿Eliminar a ' + t.nombre + '?', 'Sus datos, liquidaciones y documentos registrados se borran de forma definitiva. No se puede deshacer.', 'Eliminar trabajador').then(function (si) {
+            if (!si) return;
+            api('trabajador', { metodo: 'DELETE', query: { id: t.id } }).then(function (r) {
+                if (sinSesion(r)) return;
+                if (!r.ok) { avisoGlobal('error', r.datos.error || 'No pudimos eliminar.'); return; }
+                mesesCache = {};
+                cargar().then(function () { navegar('trabajadores', { reemplazar: true }); avisoGlobal('ok', 'Eliminamos a ' + t.nombre + '.'); });
+            });
         });
     });
 
@@ -710,7 +746,7 @@
         }
         $('ini-filas').innerHTML = filas.length ? filas.map(function (f) {
             var sel = f.t.id === inicioSel, reg = f.reg;
-            return '<tr class="fila" data-id="' + esc(f.t.id) + '" aria-selected="' + sel + '" tabindex="' + (sel ? '0' : '-1') + '">' +
+            return '<tr class="fila" data-id="' + esc(f.t.id) + '" aria-current="' + sel + '" tabindex="' + (sel ? '0' : '-1') + '">' +
                 '<td class="celda-nombre"><strong>' + esc(f.t.nombre) + '</strong><span>' + esc(f.t.cargo || textoContrato(f.t)) + '</span></td>' +
                 celdaContrato(f.t) +
                 celdaVac(f.t) +
@@ -735,11 +771,11 @@
         inicioSel = id;
         Array.prototype.forEach.call($('ini-filas').querySelectorAll('tr[data-id]'), function (tr) {
             var sel = tr.getAttribute('data-id') === id;
-            tr.setAttribute('aria-selected', sel ? 'true' : 'false');
+            tr.setAttribute('aria-current', sel ? 'true' : 'false');
             tr.tabIndex = sel ? 0 : -1;
             if (sel && enfocar) tr.focus();
         });
-        dibujarDetalle(id, true);
+        dibujarDetalle(id, !enfocar);
     }
     $('ini-filas').addEventListener('click', function (e) {
         var tr = e.target.closest('tr[data-id]');
@@ -1044,7 +1080,7 @@
         if (!trabajadorPorId(vacSel)) vacSel = (lista.filter(function (t) { return t.activo; })[0] || lista[0]).id;
         $('vac-filas').innerHTML = lista.map(function (t) {
             var r = resumenVac(t), sel = t.id === vacSel, ahora = r.actual ? 'De vacaciones hasta el ' + fechaCorta(r.actual.hasta) : r.proximo ? rangoCorto(r.proximo.desde, r.proximo.hasta) : '—';
-            return '<tr class="fila" tabindex="0" data-id="' + esc(t.id) + '" aria-selected="' + sel + '">' +
+            return '<tr class="fila" tabindex="0" data-id="' + esc(t.id) + '" aria-current="' + sel + '">' +
                 '<td class="celda-nombre"><strong>' + esc(t.nombre) + '</strong><span>' + esc(t.fechaIngreso ? 'Ingresó el ' + fechaCortaAnio(t.fechaIngreso) : 'Falta la fecha de ingreso') + (t.activo ? '' : ' · inactivo') + '</span></td>' +
                 '<td class="num ocultar-movil">' + (t.fechaIngreso ? r.derecho.total : '—') + '</td>' +
                 '<td class="num ocultar-movil">' + r.tomados + '</td>' +
@@ -1078,7 +1114,7 @@
     }
     function elegirVac(id) {
         vacSel = id;
-        Array.prototype.forEach.call($('vac-filas').querySelectorAll('tr[data-id]'), function (tr) { tr.setAttribute('aria-selected', tr.getAttribute('data-id') === id ? 'true' : 'false'); });
+        Array.prototype.forEach.call($('vac-filas').querySelectorAll('tr[data-id]'), function (tr) { tr.setAttribute('aria-current', tr.getAttribute('data-id') === id ? 'true' : 'false'); });
         $('vac-trab').value = id;
         dibujarDetalleVac();
         calcularVac();
@@ -1140,14 +1176,17 @@
     });
     $('vac-detalle').addEventListener('click', function (e) {
         var b = e.target.closest('[data-vborrar]');
-        if (!b || !window.confirm('¿Eliminar este registro de vacaciones? El saldo se vuelve a calcular.')) return;
+        if (!b) return;
         var id = b.getAttribute('data-vborrar');
-        api('vacacion', { metodo: 'DELETE', query: { id: id } }).then(function (r) {
-            if (sinSesion(r)) return;
-            if (!r.ok) { mensaje($('vac-estado'), 'error', r.datos.error || 'No pudimos eliminarlo.'); return; }
-            vacCache = vacCache.filter(function (v) { return v.id !== id; });
-            dibujarVacaciones();
-            mensaje($('vac-estado'), 'ok', 'Eliminamos el registro.');
+        confirmar('¿Eliminar este registro de vacaciones?', 'El saldo del trabajador se vuelve a calcular.', 'Eliminar registro').then(function (si) {
+            if (!si) return;
+            api('vacacion', { metodo: 'DELETE', query: { id: id } }).then(function (r) {
+                if (sinSesion(r)) return;
+                if (!r.ok) { mensaje($('vac-estado'), 'error', r.datos.error || 'No pudimos eliminarlo.'); return; }
+                vacCache = vacCache.filter(function (v) { return v.id !== id; });
+                dibujarVacaciones();
+                mensaje($('vac-estado'), 'ok', 'Eliminamos el registro.');
+            });
         });
     });
 
@@ -1199,7 +1238,7 @@
             var evs = c.fuera ? [] : (porDia[c.iso] || []), dow = idx % 7;
             var clases = 'cal-dia' + (c.fuera ? ' fuera' : '') + (c.iso === hoy ? ' hoy' : '') + (dow >= 5 ? ' finde' : '') + (evs.some(function (e) { return e.tipo === 'feriado'; }) ? ' feriado' : '') + (evs.length ? ' tiene-ev' : '');
             var visibles = evs.slice(0, 3), resto = evs.length - visibles.length;
-            return '<div class="' + clases + '" role="gridcell" aria-label="' + esc(fechaLarga(c.iso) + (evs.length ? ': ' + evs.map(function (e) { return e.texto; }).join(', ') : '')) + '">' +
+            return '<div class="' + clases + '" role="listitem" aria-label="' + esc(fechaLarga(c.iso) + (evs.length ? ': ' + evs.map(function (e) { return e.texto; }).join(', ') : '')) + '">' +
                 '<span class="cal-num">' + (+c.iso.slice(8)) + '</span>' + visibles.map(chipEvento).join('') + (resto > 0 ? '<span class="cal-mas">y ' + resto + ' más</span>' : '') + '</div>';
         }).join('');
         // Lista del mes: los días de un mismo período de vacaciones se muestran una sola vez
@@ -1524,15 +1563,16 @@
                 }
                 acciones = '<button type="button" class="btn btn-chico" data-liq="editar" data-id="' + esc(t.id) + '"><span class="material-icons" aria-hidden="true">' + (reg ? 'edit' : 'playlist_add') + '</span>' + (reg ? 'Abrir' : 'Preparar') + '</button>';
                 if (reg) {
-                    acciones += ' <button type="button" class="lq-link" data-liq="imprimir" data-id="' + esc(t.id) + '">Imprimir</button>' +
-                        ' <button type="button" class="lq-link" data-liq="' + (est === 'emitida' ? 'desmarcar' : 'marcar') + '" data-id="' + esc(t.id) + '">' + (est === 'emitida' ? 'Quitar marca' : 'Marcar emitida') + '</button>';
+                    acciones += '<button type="button" class="btn-texto" data-liq="imprimir" data-id="' + esc(t.id) + '">Imprimir</button>' +
+                        '<button type="button" class="btn-texto" data-liq="' + (est === 'emitida' ? 'desmarcar' : 'marcar') + '" data-id="' + esc(t.id) + '">' + (est === 'emitida' ? 'Quitar marca' : 'Marcar emitida') + '</button>';
                 }
+                acciones = '<div class="acciones-pila acciones-fila">' + acciones + '</div>';
             }
             var abierta = editando && editando.id === t.id;
-            return '<tr' + (abierta ? ' aria-selected="true" class="fila"' : '') + '><td class="celda-nombre"><strong>' + esc(t.nombre) + '</strong><span>' + esc(meta || t.cargo || textoContrato(t)) + '</span></td>' +
+            return '<tr' + (abierta ? ' aria-current="true" class="fila"' : '') + '><td class="celda-nombre"><strong>' + esc(t.nombre) + '</strong><span>' + esc(meta || t.cargo || textoContrato(t)) + '</span></td>' +
                 '<td>' + selloLiq(reg, est, dias) + '</td>' +
                 '<td class="num">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</td>' +
-                '<td style="text-align:right;white-space:nowrap">' + acciones + '</td></tr>';
+                '<td class="celda-acciones">' + acciones + '</td></tr>';
         }).join('');
         $('pm-liq-preparar').hidden = porPreparar === 0;
         $('pm-liq-imprimir-todas').disabled = guardadas === 0;
@@ -1700,16 +1740,19 @@
         });
     });
     $('pm-liq-quitar').addEventListener('click', function () {
-        if (!editando || !window.confirm('¿Quitar la liquidación de ' + nombrePeriodo(periodoSel) + ' de ' + editando.t.nombre + '? Se borran los datos guardados de ese mes.')) return;
-        var id = editando.id;
-        api('mes', { metodo: 'DELETE', query: { trabajador: id, periodo: periodoSel } }).then(function (r) {
-            if (sinSesion(r)) return;
-            if (!r.ok) { mensaje($('pm-liq-editor-estado'), 'error', r.datos.error || 'No pudimos quitarla.'); return; }
-            if (mesesCache[periodoSel]) delete mesesCache[periodoSel][id];
-            cerrarMes();
-            navegar('liquidaciones', { reemplazar: true, sinScroll: true });
-            dibujarPendientes();
-            mensaje($('pm-liq-estado'), 'ok', 'Quitamos esa liquidación.');
+        if (!editando) return;
+        var id = editando.id, periodo = periodoSel;
+        confirmar('¿Quitar la liquidación de ' + nombrePeriodo(periodo) + ' de ' + editando.t.nombre + '?', 'Se borran los datos guardados de ese mes. No se puede deshacer.', 'Quitar liquidación').then(function (si) {
+            if (!si) return;
+            api('mes', { metodo: 'DELETE', query: { trabajador: id, periodo: periodo } }).then(function (r) {
+                if (sinSesion(r)) return;
+                if (!r.ok) { mensaje($('pm-liq-editor-estado'), 'error', r.datos.error || 'No pudimos quitarla.'); return; }
+                if (mesesCache[periodo]) delete mesesCache[periodo][id];
+                cerrarMes();
+                navegar('liquidaciones', { reemplazar: true, sinScroll: true });
+                dibujarPendientes();
+                mensaje($('pm-liq-estado'), 'ok', 'Quitamos esa liquidación.');
+            });
         });
     });
 

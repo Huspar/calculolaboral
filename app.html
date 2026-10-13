@@ -30,10 +30,11 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.3.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
+<a class="app-saltar" href="#app-content">Saltar al contenido</a>
 
 <div id="pm-cargando" class="cargando" role="status"><p>Cargando tu cuenta…</p></div>
 
@@ -76,6 +77,7 @@ gtag('js', new Date());
 <div id="pm-panel" class="app" hidden>
 
 <aside class="app-side" id="app-side" aria-label="Menú del asistente">
+<button type="button" class="app-icono-btn app-cerrar" id="app-cerrar" aria-label="Cerrar el menú"><span class="material-icons" aria-hidden="true">close</span></button>
 <a class="app-logo" href="/app" data-ruta="" aria-label="Cálculo Laboral, ir al inicio del asistente">
 <span class="app-logo-isotipo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 84h40M38 79h24"/><path d="M50 22v57"/><path d="M50 14l-2 4h4l-2-4v8"/><path d="M18 36c10-9 22-12 32-12s22 3 32 12"/><path d="M18 36l-8 18h16Z"/><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M82 36l-8 18h16Z"/><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M41 43.5a10 10 0 1 0 0 20h6"/><path d="M58 43.5v20h10"/></svg></span>
 <span class="app-logo-texto">Cálculo<span>Laboral</span></span>
@@ -106,7 +108,7 @@ gtag('js', new Date());
 </aside>
 <div class="app-velo" id="app-velo"></div>
 
-<div class="app-main">
+<div class="app-main" id="app-principal">
 <header class="app-top">
 <button type="button" class="app-icono-btn app-menu-btn" id="app-menu" aria-label="Abrir el menú" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">menu</span></button>
 <div class="app-mes">
@@ -189,7 +191,7 @@ gtag('js', new Date());
 </table>
 </div>
 </div>
-<div class="panel" id="trab-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Aún no agregas trabajadores</p><p class="texto-ayuda" id="trab-vacio-txt">Con sus datos guardados, cada liquidación y documento se arma solo.</p></div></div>
+<div class="panel" id="trab-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Aún no agregas trabajadores</p><p class="texto-ayuda" id="trab-vacio-txt">Con sus datos guardados, cada liquidación y documento se arma solo.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo"><span class="material-icons" aria-hidden="true">person_add</span>Agregar el primero</a></div></div></div>
 </section>
 
 <!-- Carpeta del trabajador -->
@@ -318,7 +320,7 @@ gtag('js', new Date());
 </div>
 </div>
 <div id="pm-liq-valores" class="lq-avisos" role="status" style="margin-bottom:14px"></div>
-<div class="panel" id="pm-liq-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">No hay trabajadores activos</p><p class="texto-ayuda">Agrega primero a un trabajador activo para preparar su liquidación.</p></div></div>
+<div class="panel" id="pm-liq-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">No hay trabajadores activos</p><p class="texto-ayuda">Agrega primero a un trabajador activo para preparar su liquidación.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
 <div class="panel" id="liq-panel">
 <div class="tabla-wrap">
 <table class="tabla">
@@ -437,7 +439,7 @@ gtag('js', new Date());
 <p class="v-sub">Saldo estimado: 15 días hábiles por año completo de servicio (20 en zona extrema) más el feriado progresivo, menos lo que registres (arts. 67 y 68). El sábado no cuenta como día de feriado (art. 69).</p>
 </div>
 </div>
-<div class="panel" id="vac-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">El saldo se calcula con su fecha de ingreso.</p></div></div>
+<div class="panel" id="vac-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">El saldo se calcula con su fecha de ingreso.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
 <div id="vac-contenido">
 <div class="panel">
 <div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Saldo de vacaciones por trabajador</caption>
@@ -484,7 +486,7 @@ gtag('js', new Date());
 <div class="cal-layout">
 <div class="panel cal-panel">
 <div class="cal-semana" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div>
-<div class="cal-grilla" id="cal-grilla" role="grid" aria-label="Días del mes"></div>
+<div class="cal-grilla" id="cal-grilla" role="list" aria-label="Días del mes"></div>
 </div>
 <div class="panel">
 <div class="panel-head"><h2 id="cal-lista-titulo">Este mes</h2></div>
@@ -502,7 +504,7 @@ gtag('js', new Date());
 <p class="v-sub">Abre un generador con tu empresa y la ficha del trabajador ya escritas. Se abre en otra pestaña y mantiene su forma de uso y de pago.</p>
 </div>
 </div>
-<div class="panel" id="gen-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">Los generadores se llenan con la ficha de la persona y los datos de tu empresa.</p></div></div>
+<div class="panel" id="gen-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">Los generadores se llenan con la ficha de la persona y los datos de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
 <div id="pm-gen">
 <div class="lq-field" style="max-width:22rem"><label for="gen-trab">Trabajador</label><select id="gen-trab"></select></div>
 <p id="pm-gen-nota" class="texto-ayuda" style="margin-top:10px"></p>
@@ -610,7 +612,7 @@ gtag('js', new Date());
 </main>
 </div>
 
-<nav class="app-barra" aria-label="Secciones principales">
+<nav class="app-barra" id="app-barra" aria-label="Secciones principales">
 <a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span><span>Cierre</span></a>
 <a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span><span>Personas</span></a>
 <a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Liquidaciones</span></a>
@@ -618,6 +620,14 @@ gtag('js', new Date());
 <button type="button" id="app-mas" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">more_horiz</span><span>Más</span></button>
 </nav>
 </div>
+
+<dialog class="app-dialogo" id="app-confirmar" aria-labelledby="app-confirmar-titulo" aria-describedby="app-confirmar-texto">
+<form method="dialog">
+<h2 id="app-confirmar-titulo"></h2>
+<p id="app-confirmar-texto"></p>
+<div class="form-acciones"><button type="submit" value="cancelar" class="btn" id="app-confirmar-cancelar">Cancelar</button><button type="submit" value="ok" class="btn-peligro" id="app-confirmar-ok"></button></div>
+</form>
+</dialog>
 
 <div id="print-section" aria-hidden="true"></div>
 
@@ -634,6 +644,6 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.2.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.3.0" defer></script>
+<script src="/js/app_pyme.js?v=1.4.0" defer></script>
 </body>
 </html>
