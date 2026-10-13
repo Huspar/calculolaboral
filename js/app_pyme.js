@@ -1923,6 +1923,7 @@
         $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
         dibujarPrevired();
+        dibujarProyeccion();
         dibujarF29();
         if (vistaActual === 'inicio') dibujarInicio();
     }
@@ -1947,6 +1948,33 @@
         if (faltan.length) pie += '<p>No incluye a ' + esc(faltan.join(', ')) + ': abre su liquidación y guárdala de nuevo para sumarla.</p>';
         pie += '<p>Es una estimación con las tasas de Previred de ' + esc(nombrePeriodo(periodoSel)) + '. El monto exacto lo calcula Previred al declarar. Si tu empresa está afiliada a una caja de compensación, parte del 7% de Fonasa se paga a la caja.</p>';
         $('liq-previred-pie').innerHTML = pie;
+    }
+
+    // ---------- proyección del costo: aumentos del aporte de la Ley 21.735 y jornada de 40 horas ----------
+    var PROY = window.CLPymeProyeccion;
+    function dibujarProyeccion() {
+        var caja = $('liq-proy'), p = periodoSel, guardados = mesesDe(p);
+        var con = activos().map(function (t) { var g = guardados[t.id]; return { t: t, c: g && g.calculo && g.calculo.conDesglose ? g.calculo : null }; });
+        var base = con.filter(function (x) { return x.c; }), hitos = PROY.hitos(p);
+        caja.hidden = !PROY.tasaLey(p) || !base.length || !hitos.length;
+        if (caja.hidden) return;
+        var hoy = base.reduce(function (s, x) { return s + (x.c.costoEmpleador || 0); }, 0);
+        var filas = '<tr><td><strong>' + esc(mayuscula(nombrePeriodo(p))) + '</strong><small class="bloque-chico">Hoy</small></td><td class="num">' + pct(PROY.tasaLey(p)) + '</td><td class="num">' + pesos(hoy) + '</td><td class="num ocultar-movil">—</td></tr>';
+        hitos.forEach(function (h) {
+            var costo = base.reduce(function (s, x) { return s + PROY.proyectar(x.c, p, h).costo; }, 0);
+            filas += '<tr><td>' + esc(mayuscula(nombrePeriodo(h.periodo))) + '</td><td class="num">' + pct(h.tasa) + '</td><td class="num">' + pesos(costo) + '</td><td class="num ocultar-movil">+' + pesos(costo - hoy) + '</td></tr>';
+        });
+        $('liq-proy-filas').innerHTML = filas;
+        var faltan = con.filter(function (x) { return !x.c; }).map(function (x) { return x.t.nombre; });
+        var pie = '<p>Aporte del empleador de la reforma de pensiones (Ley 21.735), con el seguro de invalidez y sobrevivencia incluido, según el calendario oficial. Se calcula con las liquidaciones guardadas de ' + esc(nombrePeriodo(p)) + ' sin cambios de sueldo; el seguro de cesantía y la mutual siguen igual. Desde 2029 el calendario puede extenderse hasta 11 años.</p>';
+        if (faltan.length) pie += '<p>No incluye a ' + esc(faltan.join(', ')) + ': guarda su liquidación de este mes para sumarla.</p>';
+        // Jornada de 40 horas: solo mientras falte para el 26-abr-2028
+        if (p < PROY.JORNADA_40.slice(0, 7)) {
+            var mas40 = activos().filter(function (t) { return (Number(t.jornadaHoras) || 42) > 40 && t.sueldoBase; });
+            if (mas40.length) pie += '<p>Desde el 26 de abril de 2028 la jornada máxima baja a 40 horas, sin rebajar el sueldo (Ley 21.561). Con eso sube el valor de la hora extra: ' +
+                mas40.map(function (t) { return esc(t.nombre.split(' ')[0]) + ' de <span class="mono">' + pesos(PROY.horaExtra(t.sueldoBase, Math.min(42, Number(t.jornadaHoras) || 42))) + '</span> a <span class="mono">' + pesos(PROY.horaExtra(t.sueldoBase, 40)) + '</span>'; }).join(', ') + '.</p>';
+        }
+        $('liq-proy-pie').innerHTML = pie;
     }
 
     // ---------- Formulario 29: impuesto único retenido (código 48) y boletas de honorarios (código 151) ----------

@@ -18,7 +18,14 @@ const MODULOS = {
         const esFeriado = lista ? function (iso) { return lista.indexOf(iso) >= 0; } : F.esFeriado;
         return SC.calcular(Object.assign({}, e, { esFeriado }));
     },
-    honorarios: function (e) { return require('../js/pyme_honorarios.js').boleta(e); }
+    honorarios: function (e) { return require('../js/pyme_honorarios.js').boleta(e); },
+    proyeccion: function (e) {
+        const PR = require('../js/pyme_proyeccion.js');
+        if (e.accion === 'tasas') return { tasas: e.periodos.map(PR.tasaLey) };
+        if (e.accion === 'proyectar') return { proyecciones: e.hitos.map(h => PR.proyectar(e.calculo, e.periodo, { periodo: h, tasa: PR.tasaLey(h) })) };
+        if (e.accion === 'horaExtra') return { valores: e.jornadas.map(j => PR.horaExtra(e.sueldo, j)) };
+        throw new Error('acción desconocida');
+    }
 };
 
 const carpeta = path.join(__dirname, 'casos_referencia');
