@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.10.1">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.11.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -179,7 +179,21 @@ gtag('js', new Date());
 <p class="v-sub" id="pm-trab-limite"></p>
 </div>
 <div class="v-acciones">
+<button type="button" class="btn" id="pm-planilla-abrir"><span class="material-icons" aria-hidden="true">upload_file</span>Importar desde planilla</button>
 <button type="button" class="btn btn-primario" id="pm-trab-nuevo"><span class="material-icons" aria-hidden="true">person_add</span>Agregar trabajador</button>
+</div>
+</div>
+<div class="panel" id="pm-planilla" hidden>
+<div class="panel-head"><h2>Importar trabajadores desde una planilla</h2><button type="button" class="app-icono-btn" id="pm-planilla-cerrar" aria-label="Cerrar la importación"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<div class="panel-cuerpo planilla-cuerpo">
+<ol class="planilla-pasos">
+<li>Descarga la plantilla y ábrela en Excel. Llena una fila por trabajador; solo el nombre y el RUT son obligatorios. <button type="button" class="lq-link" id="pm-planilla-plantilla">Descargar plantilla</button></li>
+<li>Guárdala como «CSV UTF-8 (delimitado por comas)».</li>
+<li>Elígela aquí, revisa lo que leímos y confirma.</li>
+</ol>
+<div class="lq-field"><label for="pm-planilla-archivo">Planilla CSV</label><input type="file" id="pm-planilla-archivo" accept=".csv,text/csv"></div>
+<div id="pm-planilla-revision"></div>
+<div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-planilla-importar" hidden><span class="material-icons" aria-hidden="true">group_add</span>Importar</button><p class="lq-estado" id="pm-planilla-estado" role="status"></p></div>
 </div>
 </div>
 <div class="panel" id="trab-panel">
@@ -732,10 +746,11 @@ gtag('js', new Date());
 <script src="/js/pyme_pendientes.js?v=1.5.0"></script>
 <script src="/js/semana_corrida.js?v=1.0.0"></script>
 <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
+<script src="/js/pyme_importar.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.4.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.10.1" defer></script>
+<script src="/js/app_pyme.js?v=1.11.1" defer></script>
 </body>
 </html>

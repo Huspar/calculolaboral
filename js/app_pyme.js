@@ -440,6 +440,84 @@
         $('pm-trab-nuevo').title = estado.empresa ? '' : 'Primero guarda los datos de la empresa';
     }
     $('pm-trab-nuevo').addEventListener('click', function () { navegar('trabajadores/nuevo'); });
+
+    // --- importar trabajadores desde una planilla CSV ---
+    var IMP = window.CLPymeImportar, planillaFilas = null;
+    function cerrarPlanilla() { $('pm-planilla').hidden = true; $('pm-planilla-archivo').value = ''; $('pm-planilla-revision').innerHTML = ''; $('pm-planilla-importar').hidden = true; planillaFilas = null; mensaje($('pm-planilla-estado'), '', ''); }
+    $('pm-planilla-abrir').addEventListener('click', function () {
+        if (!estado.empresa) { avisoGlobal('error', 'Primero guarda los datos de la empresa.'); return; }
+        $('pm-planilla').hidden = false;
+        $('pm-planilla').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    $('pm-planilla-cerrar').addEventListener('click', cerrarPlanilla);
+    $('pm-planilla-plantilla').addEventListener('click', function () {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['\ufeff', IMP.plantilla()], { type: 'text/csv;charset=utf-8' }));
+        a.download = 'plantilla-trabajadores.csv';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    });
+    $('pm-planilla-archivo').addEventListener('change', function () {
+        var archivo = this.files && this.files[0], est = $('pm-planilla-estado');
+        planillaFilas = null;
+        $('pm-planilla-importar').hidden = true;
+        $('pm-planilla-revision').innerHTML = '';
+        if (!archivo) return;
+        if (archivo.size > 512000) { mensaje(est, 'error', 'La planilla es demasiado grande (máximo 500 KB).'); return; }
+        var lector = new FileReader();
+        lector.onload = function () {
+            var texto = String(lector.result || '');
+            // Excel antiguo guarda en Windows-1252: si hay caracteres inválidos, se vuelve a leer con esa codificación
+            if (texto.indexOf('\uFFFD') >= 0 && !lector.reintento) { lector.reintento = true; lector.readAsText(archivo, 'windows-1252'); return; }
+            var filas = IMP.leerCsv(texto);
+            if (filas.length < 2) { mensaje(est, 'error', 'La planilla no tiene filas con trabajadores debajo de los encabezados.'); return; }
+            planillaFilas = IMP.revisar(filas, { rut: Rut, afps: Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp) });
+            dibujarRevisionPlanilla(filas.length - 1);
+        };
+        lector.onerror = function () { mensaje(est, 'error', 'No pudimos leer el archivo.'); };
+        lector.readAsText(archivo, 'utf-8');
+    });
+    function dibujarRevisionPlanilla(totalFilas) {
+        var buenas = planillaFilas.filter(function (r) { return !r.errores.length; }), est = $('pm-planilla-estado');
+        var existentes = {};
+        (estado.trabajadores || []).forEach(function (t) { existentes[Rut.formatear(t.rut)] = true; });
+        $('pm-planilla-revision').innerHTML = '<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Trabajadores leídos de la planilla</caption>' +
+            '<thead><tr><th scope="col">Fila</th><th scope="col">Nombre</th><th scope="col" class="ocultar-movil">RUT</th><th scope="col" class="num ocultar-movil">Sueldo base</th><th scope="col">Revisión</th></tr></thead><tbody>' +
+            planillaFilas.map(function (r) {
+                var d = r.datos, mal = r.errores.length, repetido = d.rut && existentes[d.rut];
+                return '<tr' + (mal ? ' class="planilla-fila-error"' : '') + '><td class="mono">' + r.fila + '</td><td><strong>' + esc(d.nombre || '—') + '</strong>' +
+                    (mal ? '<span class="planilla-errores">' + esc(mayuscula(r.errores.join('; ')) + '.') + '</span>' : '') + '</td>' +
+                    '<td class="ocultar-movil mono">' + esc(d.rut || '—') + '</td><td class="num ocultar-movil">' + (d.sueldoBase ? pesos(d.sueldoBase) : '—') + '</td>' +
+                    '<td>' + (mal ? 'Corregir' : repetido ? 'Ya está' : 'Lista') + '</td></tr>';
+            }).join('') + '</tbody></table></div>' +
+            (totalFilas > IMP.MAX_FILAS ? '<p class="texto-ayuda">Solo se leen las primeras ' + IMP.MAX_FILAS + ' filas.</p>' : '');
+        var nuevas = buenas.filter(function (r) { return !existentes[r.datos.rut]; });
+        $('pm-planilla-importar').hidden = !nuevas.length;
+        $('pm-planilla-importar').lastChild.textContent = 'Importar ' + plural(nuevas.length, 'trabajador', 'trabajadores');
+        var lim = estado.limites || {}, activos = (estado.trabajadores || []).filter(function (t) { return t.activo; }).length, cupo = Math.max(0, (lim.maxActivos || 1) - activos);
+        var txt = planillaFilas.length - buenas.length ? 'Corrige en la planilla las filas marcadas y vuelve a elegirla, o importa ahora las que están listas. ' : '';
+        if (nuevas.length > cupo) txt += 'Tu cuenta admite ' + plural(cupo, 'trabajador activo más', 'trabajadores activos más') + ': los demás no se importarán.';
+        mensaje(est, '', txt);
+    }
+    $('pm-planilla-importar').addEventListener('click', function () {
+        if (!planillaFilas) return;
+        var boton = this, est = $('pm-planilla-estado');
+        var existentes = {};
+        (estado.trabajadores || []).forEach(function (t) { existentes[Rut.formatear(t.rut)] = true; });
+        var lista = planillaFilas.filter(function (r) { return !r.errores.length && !existentes[r.datos.rut]; }).map(function (r) { return r.datos; });
+        boton.disabled = true;
+        mensaje(est, '', 'Importando…');
+        api('importar', { metodo: 'POST', cuerpo: { trabajadores: lista } }).then(function (r) {
+            boton.disabled = false;
+            if (sinSesion(r)) return;
+            if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos importar la planilla.'); return; }
+            var d = r.datos, omit = d.omitidos || [];
+            var txt = plural(d.importados, 'trabajador importado', 'trabajadores importados') + '.';
+            if (omit.length) txt += ' No se importaron ' + omit.length + ': ' + omit.map(function (o) { return o.nombre + ' (' + { limite: 'supera el límite de tu cuenta', repetido: 'ya estaba', invalido: 'datos inválidos' }[o.motivo] + ')'; }).join('; ') + '.';
+            cerrarPlanilla();
+            cargar().then(function () { avisoGlobal(omit.length ? 'info' : 'ok', txt); });
+        });
+    });
     function abrirFilaTrabajador(e) {
         var fila = e.target.closest('tr[data-id]');
         if (fila) navegar('trabajadores/' + fila.getAttribute('data-id'));
