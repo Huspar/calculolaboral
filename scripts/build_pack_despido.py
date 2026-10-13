@@ -20,7 +20,7 @@ import zipfile
 
 import docx
 from docx.oxml.ns import qn
-from docx.shared import Cm, Pt
+from docx.shared import Pt
 from docx.table import Table
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -222,17 +222,14 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     b.revisa()
     b.nota()
     b.page_break()
-    # La carta ocupa una hoja: márgenes laterales de 1,5 cm (la hoja de instrucciones no cambia)
-    sec = b.doc.sections[-1]
-    sec.left_margin = sec.right_margin = Cm(1.5)
     b.date()
     b.addr()
     b.salut()
     b.text(c['intro'])
-    # Títulos dentro del párrafo (sin línea aparte), con 6 pt de aire arriba: la carta cabe en una sola hoja
+    # Títulos dentro del párrafo (sin línea aparte), con 8 pt de aire arriba: la carta cabe en una sola hoja
     def seccion(titulo, texto):
         el = b.lead(titulo + '  ', texto)
-        docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.space_before = Pt(6)
+        docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.space_before = Pt(8)
         return el
 
     seccion('I. CAUSAL LEGAL INVOCADA:', c['causal'])
