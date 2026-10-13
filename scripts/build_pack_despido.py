@@ -20,6 +20,7 @@ import zipfile
 
 import docx
 from docx.oxml.ns import qn
+from docx.shared import Cm, Pt
 from docx.table import Table
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -78,6 +79,7 @@ class Builder:
             body.remove(k)
         self.doc.sections[0].footer.paragraphs[0].runs[0].text = pie
         self.sect_p = None
+        self.compacto = False  # hoja de la carta: menos espacio entre párrafos para que quepa en una página
 
     # --- piezas -------------------------------------------------------------
     def _add(self, el):
@@ -91,6 +93,8 @@ class Builder:
         proto = runs[0]._r
         for r in runs[1:]:
             r._r.getparent().remove(r._r)
+        if self.compacto and name == 'body':
+            p.paragraph_format.space_after = Pt(3)
         for i, (text, bold) in enumerate(segments):
             if i == 0:
                 r = runs[0]
@@ -152,8 +156,8 @@ class Builder:
         self._para('body', ('[CIUDAD], [DÍA] de [MES] de [AÑO].', True))
 
     def addr(self):
-        self._para('body', ('Señor(a):\n[NOMBRE COMPLETO DEL TRABAJADOR]\n', True),
-                   ('R.U.T.: [RUT DEL TRABAJADOR]\nCargo: [CARGO O FUNCIÓN]\nDomicilio: [DIRECCIÓN REGISTRADA EN EL CONTRATO]\nComuna / Ciudad: [COMUNA / CIUDAD]', False))
+        self._para('body', ('Señor(a): [NOMBRE COMPLETO DEL TRABAJADOR]\n', True),
+                   ('R.U.T.: [RUT DEL TRABAJADOR]   ·   Cargo: [CARGO O FUNCIÓN]\nDomicilio: [DIRECCIÓN REGISTRADA EN EL CONTRATO], [COMUNA / CIUDAD]', False))
 
     def salut(self):
         self._para('body', ('De nuestra consideración:', True))
@@ -165,7 +169,7 @@ class Builder:
         return self._para('body', (t, False))
 
     def lead(self, bold, rest):
-        self._para('body', (bold, True), (rest, False))
+        return self._para('body', (bold, True), (rest, False))
 
     def close(self, t='Sin otro particular, le saluda atentamente,'):
         p = self._para('body', (t, False))
@@ -221,20 +225,24 @@ def build_carta(c, marca=MARCA_PACK, pie=PIE_PACK, prefijo='DESPIDO'):
     b.revisa()
     b.nota()
     b.page_break()
+    # La carta ocupa una hoja: márgenes laterales de 1,5 cm y 3 pt entre párrafos (la hoja de instrucciones no cambia)
+    sec = b.doc.sections[-1]
+    sec.left_margin = sec.right_margin = Cm(1.5)
+    b.compacto = True
     b.date()
     b.addr()
     b.salut()
     b.text(c['intro'])
-    b.heading('I. CAUSAL LEGAL INVOCADA:')
-    b.text(c['causal'])
-    b.heading(c.get('h2', 'II. HECHOS EN QUE SE FUNDA:'))
-    for h in c['hechos']:
+    # Títulos dentro del párrafo (sin línea aparte): la carta cabe en una sola hoja
+    b.lead('I. CAUSAL LEGAL INVOCADA:  ', c['causal'])
+    hechos = list(c['hechos'])
+    b.lead(c.get('h2', 'II. HECHOS EN QUE SE FUNDA:') + '  ', hechos[0])
+    for h in hechos[1:]:
         b.text(h)
-    b.heading('III. ESTADO DE PAGO DE COTIZACIONES PREVISIONALES:')
-    b.text(COTIZ)
-    b.heading('IV. FINIQUITO:')
+    b.lead('III. ESTADO DE PAGO DE COTIZACIONES PREVISIONALES:  ', COTIZ)
     # Si la carta pasa a otra hoja, el apartado IV, el cierre y la firma viajan juntos
-    for el in (b.text(c['finiquito']), b.text(AVISO_FINIQUITO), b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))):
+    for el in (b.lead('IV. FINIQUITO:  ', c['finiquito']), b.text(AVISO_FINIQUITO),
+               b.close(c.get('cierre', 'Sin otro particular, le saluda atentamente,'))):
         docx.text.paragraph.Paragraph(el, b.doc).paragraph_format.keep_with_next = True
     b.sig()
     return b

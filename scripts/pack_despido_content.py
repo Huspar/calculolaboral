@@ -11,10 +11,9 @@ COTIZ = ('En cumplimiento del Artículo 162 del Código del Trabajo, se acompañ
          'cotizaciones previsionales y de salud, con los comprobantes que acreditan que se encuentran pagadas hasta el último día del '
          'mes anterior al del término del contrato (AFP, Fonasa o Isapre, y Seguro de Cesantía).')
 
-AVISO_FINIQUITO = ('Su finiquito se otorgará y pagará en forma [PRESENCIAL ante un ministro de fe / ELECTRÓNICA en el sitio de la Dirección del Trabajo] '
-                   '(borra lo que no aplique). Es voluntario para usted aceptar, firmar y recibir el pago en forma electrónica, y siempre podrá '
-                   'optar por la actuación presencial ante un ministro de fe. Al suscribir el finiquito, si lo estima necesario, podrá formular '
-                   'reserva de derechos.')
+AVISO_FINIQUITO = ('Su finiquito se otorgará y pagará en forma [PRESENCIAL ante un ministro de fe / ELECTRÓNICA en el sitio de la Dirección del Trabajo]. '
+                   'Es voluntario para usted aceptar, firmar y recibir el pago por vía electrónica, y siempre podrá optar por la actuación '
+                   'presencial ante un ministro de fe. Al firmar el finiquito podrá formular reserva de derechos si lo estima necesario.')
 
 NOTA_AVISO_FINIQUITO = ('Art. 162 inciso octavo (Ley 21.361): la carta debe informar si el finiquito se otorgará y pagará en forma presencial o '
                         'electrónica, y que el trabajador puede formular reserva de derechos al firmarlo. Ya viene en el apartado IV: elige una opción.')
@@ -35,11 +34,11 @@ INTRO_160 = ('Por medio de la presente, comunicamos formalmente a usted que con 
 
 HECHOS_INTRO = 'Los hechos concretos en que se funda esta decisión son los siguientes: '
 
-PRUEBA = ('Estos hechos constan en [PRUEBAS: registro de asistencia, informe interno de fecha [FECHA], correos, cámaras de seguridad, '
-          'declaraciones de testigos, actas u otros documentos], que quedan a disposición de la autoridad competente.')
+PRUEBA = ('Estos hechos constan en [PRUEBAS: registros de asistencia, informes, correos, cámaras, testigos u otros documentos], '
+          'que quedan a disposición de la autoridad competente.')
 
-DESCARGOS = ('Con fecha [FECHA] se le citó para que entregara sus descargos, y [ENTREGÓ SUS DESCARGOS, QUE NO DESVIRTUARON LOS HECHOS / NO '
-             'COMPARECIÓ NI ENTREGÓ DESCARGOS DENTRO DEL PLAZO OTORGADO]. (Borra este párrafo si no hubo citación.)')
+DESCARGOS = ('Con fecha [FECHA] se le citó a entregar sus descargos y [LOS ENTREGÓ SIN DESVIRTUAR LOS HECHOS / NO COMPARECIÓ NI LOS '
+             'ENTREGÓ EN EL PLAZO OTORGADO]. (Borra este párrafo si no hubo citación.)')
 
 
 def carta(tipo, archivo, titulo, subtitulo, causal, hechos, box=None, finiquito=None, **kw):
