@@ -35,7 +35,8 @@ function crear({ almacen, cifrado, ahora }) {
 
     async function limites(cuentaId) {
         const vence = await almacen.paseVigente(cuentaId, iso());
-        return { maxActivos: vence ? MAX_CON_PASE : MAX_SIN_PASE, paseVence: vence ? new Date(vence).toISOString() : null };
+        const actual = vence ? await almacen.paseActual(cuentaId, iso()) : null;
+        return { maxActivos: vence ? MAX_CON_PASE : MAX_SIN_PASE, paseVence: vence ? new Date(vence).toISOString() : null, paseProducto: actual ? actual.producto : null };
     }
 
     async function leerTrabajadores(cuentaId, empresaId) {

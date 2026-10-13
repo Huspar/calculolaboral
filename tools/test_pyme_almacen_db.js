@@ -207,6 +207,27 @@ async function main() {
         assert.ok(!JSON.stringify(await sql.query('SELECT * FROM documentos WHERE trabajador_id = $1', [tid])).includes('Panadería'));
         paso('el registro de documentos guarda solo tipo y fecha, respeta el tipo permitido y el máximo, y no cruza cuentas');
 
+        // ---- Pase: vigencia en la base real ----
+        const ahoraPase = new Date().toISOString();
+        const vigenteAntes = await almacen.paseVigente(cuentaId, ahoraPase);
+        assert.ok(vigenteAntes > Date.now(), 'el pase de prueba insertado antes sigue vigente');
+        const nuevoPase = await almacen.registrarPase({ cuentaId, producto: 'pyme3', ordenFlow: 'PRUEBA-A-' + marca, dias: 92, ahoraIso: ahoraPase });
+        assert.strictEqual(nuevoPase.desde, vigenteAntes, 'el pase nuevo empieza cuando termina el que ya tenia');
+        assert.ok(Math.abs(nuevoPase.vence - (vigenteAntes + 92 * 86400000)) < 1000);
+        assert.strictEqual(await almacen.registrarPase({ cuentaId, producto: 'pyme3', ordenFlow: 'PRUEBA-A-' + marca, dias: 92, ahoraIso: ahoraPase }), null, 'la misma orden de Flow no suma dos veces');
+        assert.strictEqual(await almacen.paseVigente(cuentaId, ahoraPase), nuevoPase.vence, 'la vigencia cuenta el pase encolado');
+        assert.strictEqual((await almacen.paseActual(cuentaId, ahoraPase)).producto, 'pyme3');
+        assert.strictEqual((await almacen.paseDeOrden('PRUEBA-A-' + marca)).cuentaId, cuentaId);
+        assert.strictEqual((await almacen.buscarCuentaPorId(cuentaId)).email, correo);
+        assert.strictEqual(await almacen.buscarCuentaPorId(crypto.randomUUID()), null);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM pases WHERE cuenta_id = $1', [cuentaId]))[0].n, 2);
+        const lejano = new Date(Date.now() + 400 * 86400000).toISOString();
+        assert.strictEqual(await almacen.paseVigente(cuentaId, lejano), null, 'vencidos los dos, no hay pase');
+        const paseDoce = await almacen.registrarPase({ cuentaId, producto: 'pyme12', ordenFlow: 'PRUEBA-B-' + marca, dias: 366, ahoraIso: lejano });
+        assert.ok(Math.abs(paseDoce.desde - Date.parse(lejano)) < 1000, 'con todo vencido empieza en la fecha de la compra');
+        await assert.rejects(() => almacen.registrarPase({ cuentaId, producto: 'otro', ordenFlow: 'PRUEBA-C-' + marca, dias: 5, ahoraIso: ahoraPase }), 'la base solo admite pyme3 y pyme12');
+        paso('pase: se suma al que ya tiene, la orden de Flow es unica, la vigencia cuenta lo encolado y la base solo admite los productos del pase');
+
         assert.strictEqual((await srv.borrarCuenta(cuentaObj, 'otro@ejemplo.invalid')).codigo, 'confirmacion');
         assert.ok((await srv.borrarCuenta(cuentaObj, correo)).ok);
         for (const [t, col] of [['sesiones', 'cuenta_id'], ['empresas', 'cuenta_id'], ['pases', 'cuenta_id']]) {

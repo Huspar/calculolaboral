@@ -12,6 +12,8 @@
  *   GET  /api/pyme/meses?periodo=AAAA-MM           liquidaciones guardadas de ese mes (todos los trabajadores)
  *   PUT|DELETE /api/pyme/mes?trabajador=ID&periodo=AAAA-MM  { mes }   guarda o elimina el mes de un trabajador
  *   POST /api/pyme/documento?trabajador=ID  { tipo }   anota que se emitió un documento (solo tipo y fecha)
+ *   POST /api/pyme/comprar     { product }       crea el pago del Pase Pyme en Flow para esta cuenta y devuelve { url } (cerrado por defecto)
+ *   POST /api/pyme/desbloqueo  { producto }      desbloqueo firmado del generador de contrato o finiquito para quien tiene pase
  *   POST /api/pyme/importar           { empresa, trabajadores }  trae datos de otro lugar (el generador de liquidaciones)
  *   GET  /api/pyme/exportar                        descarga todos los datos en un archivo JSON
  *   POST /api/pyme/borrar-cuenta      { confirmar }  elimina la cuenta y todo lo que contiene
@@ -25,7 +27,7 @@ const T = require('./tokens');
 const DESTINO_PANEL = '/asistente-pyme';
 const MENSAJE_ENLACE_INVALIDO = 'El enlace venció o ya se usó. Pide uno nuevo desde el asistente.';
 
-function crearRutas({ auth, datos, env, siteUrl }) {
+function crearRutas({ auth, datos, env, siteUrl, pase }) {
     function metodo(req, res, permitido) {
         if (req.method === permitido) return true;
         res.setHeader('Allow', permitido);
@@ -114,7 +116,9 @@ function crearRutas({ auth, datos, env, siteUrl }) {
         if (!metodo(req, res, 'GET')) return;
         const s = await conSesion(req, res);
         if (!s) return;
-        return responder(res, await datos.estado(s));
+        const r = await datos.estado(s);
+        if (r.ok && pase) r.pase = { venta: pase.ventaActiva(), productos: pase.catalogo(), cobertura: pase.cobertura() };
+        return responder(res, r);
     }
 
     async function empresa(req, res) {
@@ -161,6 +165,25 @@ function crearRutas({ auth, datos, env, siteUrl }) {
         return responder(res, await datos.registrarDocumento(s, id, H.cuerpoDe(req).tipo));
     }
 
+    async function comprar(req, res) {
+        if (!metodo(req, res, 'POST')) return;
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        if (!pase) return H.json(res, 404, { ok: false, error: 'No encontrado.' });
+        const b = H.cuerpoDe(req);
+        const r = await pase.comprar(s, typeof b.product === 'string' ? b.product : b.producto);
+        if (r.ok) await auth.auditar('pase_compra_iniciada', s.cuentaId, H.ipDe(req));
+        return responder(res, r);
+    }
+
+    async function desbloqueo(req, res) {
+        if (!metodo(req, res, 'POST')) return;
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        if (!pase) return H.json(res, 404, { ok: false, error: 'No encontrado.' });
+        return responder(res, await pase.desbloqueo(s, H.cuerpoDe(req).producto));
+    }
+
     async function importar(req, res) {
         if (!metodo(req, res, 'POST')) return;
         const s = await sesionParaEscribir(req, res);
@@ -190,7 +213,7 @@ function crearRutas({ auth, datos, env, siteUrl }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, meses, mes, documento, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, meses, mes, documento, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

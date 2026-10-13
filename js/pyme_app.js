@@ -1,8 +1,9 @@
 /*
- * CalculoLaboral · interfaz del Asistente Laboral Pyme (v1.2.0)
+ * CalculoLaboral · interfaz del Asistente Laboral Pyme (v1.3.0)
  * Entrar con enlace al correo, ficha de empresa y trabajadores (guardada cifrada en el servidor), pendientes del mes,
  * liquidaciones de sueldo guardadas por mes (vista previa, imprimir todas), documentos laborales (certificados, cartas, anexos),
- * enlaces a los generadores con los datos cargados, traer datos del generador, descargar y eliminar los datos.
+ * enlaces a los generadores con los datos cargados, Pase Pyme (compra con Flow, vigencia y desbloqueo de generadores),
+ * traer datos del generador, descargar y eliminar los datos.
  * Requiere: rut_cl.js, liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js, feriados_cl.js,
  * pyme_pendientes.js, pyme_liquidaciones.js y pyme_docs.js (antes que este archivo).
  * La API es /api/pyme/* (api/_pyme/rutas.js). Todo texto de usuario se escapa antes de mostrarse.
@@ -21,6 +22,7 @@
     var AFPS = Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp).sort();
 
     var estado = null;      // lo último que dijo el servidor
+    var volvioDePago = false; // el aviso de ?pase= se atiende una sola vez
     var editandoId = null;  // id del trabajador que se edita (null = nuevo)
     var logoActual = '';    // data URL del logo en el formulario de la empresa
 
@@ -30,6 +32,10 @@
     function dos(n) { return n < 10 ? '0' + n : String(n); }
     function hoyIso() { var d = new Date(); return d.getFullYear() + '-' + dos(d.getMonth() + 1) + '-' + dos(d.getDate()); }
     function fechaLarga(iso) { var a = String(iso).slice(0, 10).split('-'); return +a[2] + ' de ' + MESES[+a[1] - 1] + ' de ' + a[0]; }
+    // Fecha de un instante (vencimiento del pase) en hora de Chile, para que de noche no se corra un día
+    function fechaVence(iso) {
+        try { return fechaLarga(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso))); } catch (e) { return fechaLarga(iso); }
+    }
     function guardado(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
     function guardar(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } }
 
@@ -177,6 +183,7 @@
             dibujar();
             mostrar('panel');
             cargarLiquidaciones();
+            if (!volvioDePago) { volvioDePago = true; volverDePago(); }
         });
     }
 
@@ -187,6 +194,8 @@
         dibujarPendientes();
         dibujarImportar();
         dibujarDocumentos();
+        dibujarPase();
+        dibujarNotaGeneradores();
     }
 
     // ---------- empresa ----------
@@ -253,7 +262,7 @@
                 '<button type="button" class="lq-link pm-danger" data-accion="borrar" data-id="' + esc(t.id) + '">Eliminar</button></div></li>';
         }).join('');
         var txt = 'Trabajadores activos: ' + activos + ' de ' + lim.maxActivos + '. ';
-        txt += lim.paseVence ? 'Tu pase vence el ' + fechaLarga(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; el Pase Pyme, que permitirá hasta 5, aún no está a la venta.';
+        txt += lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme son hasta 5. ' + textoPaseVenta();
         $('pm-trab-limite').textContent = txt;
         $('pm-trab-nuevo').disabled = !estado.empresa;
         $('pm-trab-nuevo').title = estado.empresa ? '' : 'Primero guarda los datos de la empresa';
@@ -377,7 +386,7 @@
         selD.value = docSel.tipo;
         $('pm-doc-nota-marca').textContent = tienePase()
             ? 'Con tu pase vigente los documentos salen sin marca de agua. Revisa cada documento antes de entregarlo.'
-            : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». El Pase Pyme aún no está a la venta. Revisa cada documento antes de entregarlo.';
+            : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada documento antes de entregarlo.';
         enlacesGeneradores();
         if (cambio) abrirDoc(); else vistaDoc();
     }
@@ -515,6 +524,113 @@
         api('documento', { metodo: 'POST', query: { trabajador: id }, cuerpo: { tipo: tipo } }).then(function (r) {
             if (sinSesion(r)) return;
             mensaje($('pm-doc-estado'), r.ok ? 'ok' : 'error', r.ok ? 'Enviado a imprimir. Anotamos que lo emitiste (solo el tipo de documento y la fecha, nunca su texto).' : 'Se envió a imprimir, pero no pudimos anotar la emisión: ' + (r.datos.error || 'intenta de nuevo.'));
+        });
+    });
+
+    // ---------- Pase Pyme ----------
+    var KEY_COMPRA_GA = 'cl_pyme_compra_ga';
+    var NOMBRE_PASE = { pyme3: '3 meses', pyme12: '12 meses' };
+
+    function ventaPase() { return !!(estado && estado.pase && estado.pase.venta); }
+    // Dónde se habla del pase en otros textos: si se vende, se señala la tarjeta; si no, se dice que aún no está a la venta
+    function textoPaseVenta() { return ventaPase() ? 'Puedes comprarlo en la sección «Pase Pyme».' : 'El Pase Pyme aún no está a la venta.'; }
+
+    function dibujarPase() {
+        if (!estado) return;
+        var lim = estado.limites, cat = (estado.pase && estado.pase.productos) || [];
+        var vigente = !!lim.paseVence;
+        $('pm-pase-estado').textContent = vigente
+            ? 'Tu Pase Pyme (' + (NOMBRE_PASE[lim.paseProducto] || '') + ') está vigente hasta el ' + fechaVence(lim.paseVence) + '. Si compras otro, empieza cuando termina este.'
+            : 'Tu cuenta no tiene un pase vigente: puedes tener 1 trabajador activo y los documentos salen con marca de agua.';
+        var caja = $('pm-pase-opciones');
+        if (!ventaPase()) { caja.innerHTML = '<p class="lq-help">El Pase Pyme aún no está a la venta.</p>'; return; }
+        caja.innerHTML = cat.map(function (p) {
+            return '<div class="pm-pase-op"><div><strong>' + esc(NOMBRE_PASE[p.id] || p.titulo) + '</strong>' +
+                '<span class="pm-pase-precio">' + pesos(p.monto) + '</span>' +
+                '<span class="pm-pase-mes">equivale a ' + pesos(p.porMes) + ' al mes</span></div>' +
+                '<button type="button" class="lq-btn-sec" data-comprar="' + esc(p.id) + '"><span class="material-icons" aria-hidden="true">shopping_cart</span>' + (vigente ? 'Agregar ' : 'Comprar ') + esc(NOMBRE_PASE[p.id] || p.titulo) + '</button></div>';
+        }).join('');
+    }
+
+    $('pm-pase-opciones').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-comprar]');
+        if (!b || !window.CLCheckout) return;
+        var producto = b.getAttribute('data-comprar'), est = $('pm-pase-msg');
+        mensaje(est, '', '');
+        window.CLCheckout.buyKit(producto, {}, {
+            endpoint: '/api/pyme/comprar',
+            headers: { 'X-CL-Pyme': '1' },
+            variante: 'servicio',
+            onAccept: function () { b.disabled = true; mensaje(est, '', 'Conectando con Flow…'); },
+            onCancel: function () { mensaje(est, '', ''); },
+            onError: function (msg) { b.disabled = false; mensaje(est, 'error', msg); }
+        });
+    });
+
+    // Al volver de Flow (?pase=ok|pendiente|rechazado): la confirmación del pago llega al servidor aparte, por eso se consulta unos segundos
+    function volverDePago() {
+        var q = new URLSearchParams(window.location.search), res = q.get('pase'), orden = q.get('o') || '';
+        if (!res) return;
+        try { window.history.replaceState({}, document.title, window.location.pathname + window.location.hash); } catch (e) { /* sin historial */ }
+        var est = $('pm-pase-msg');
+        if (res === 'rechazado') { mensaje(est, 'error', 'El pago no se completó y no se hizo ningún cargo.'); return; }
+        if (res === 'pendiente') { mensaje(est, '', 'Tu pago está pendiente en Flow. Cuando se confirme, tu pase aparecerá aquí.'); return; }
+        if (res !== 'ok') return;
+        mensaje(est, '', 'Recibimos tu pago. Estamos activando tu pase…');
+        var intentos = 0;
+        (function consultar() {
+            api('estado').then(function (r) {
+                if (sinSesion(r)) return;
+                var vence = r.ok && r.datos.limites && r.datos.limites.paseVence;
+                var antes = estado && estado.limites && estado.limites.paseVence;
+                if (vence && (!antes || vence !== antes || intentos > 0)) {
+                    estado = r.datos;
+                    dibujar();
+                    mensaje(est, 'ok', 'Tu pase está activo hasta el ' + fechaVence(vence) + '. Te enviamos el comprobante por correo.');
+                    registrarCompraGA(producto3(r.datos), orden);
+                    return;
+                }
+                if (++intentos < 8) { window.setTimeout(consultar, 2500); return; }
+                mensaje(est, '', 'Tu pago está en proceso. Si en unos minutos no ves tu pase, escríbenos a contacto@calculolaboral.cl con el número de orden ' + orden + '.');
+            });
+        })();
+    }
+    function producto3(datos) { return datos.limites && datos.limites.paseProducto; }
+    // La venta se cuenta una vez por orden en GA4
+    function registrarCompraGA(producto, orden) {
+        if (!producto || !orden || !window.CLCheckout) return;
+        try {
+            if (window.localStorage.getItem(KEY_COMPRA_GA + orden) === '1') return;
+            window.localStorage.setItem(KEY_COMPRA_GA + orden, '1');
+        } catch (e) { /* sin almacenamiento */ }
+        window.CLCheckout.track('purchase', producto, { transaction_id: orden });
+    }
+
+    // Generadores incluidos en el pase: se pide un desbloqueo firmado al servidor y se deja guardado antes de abrir el generador
+    var DESBLOQUEOS = { 'pm-gen-contrato': 'contrato', 'pm-gen-finiquito': 'finiquito' };
+    function cubiertoPorPase(producto) {
+        var cob = estado && estado.pase && estado.pase.cobertura, lim = estado && estado.limites;
+        return !!(cob && lim && lim.paseVence && cob[producto] && cob[producto].indexOf(lim.paseProducto) >= 0);
+    }
+    function dibujarNotaGeneradores() {
+        var partes = [];
+        if (cubiertoPorPase('contrato')) partes.push('el contrato se abre desbloqueado con tu pase');
+        if (cubiertoPorPase('finiquito')) partes.push('el finiquito se abre desbloqueado con tu pase');
+        $('pm-gen-nota').textContent = partes.length ? 'Con tu pase vigente: ' + partes.join(' y ') + ' (por 48 horas cada vez que lo abras desde aquí).' : '';
+    }
+    $('pm-gen').addEventListener('click', function (e) {
+        var a = e.target.closest('a[id]');
+        var producto = a && DESBLOQUEOS[a.id];
+        if (!producto || !cubiertoPorPase(producto) || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        var destino = a.href;
+        api('desbloqueo', { metodo: 'POST', cuerpo: { producto: producto } }).then(function (r) {
+            // El desbloqueo firmado viaja en la dirección, como al volver de un pago: el generador lo valida con /api/unlock
+            if (r.ok && r.datos.desbloqueo) {
+                var d = r.datos.desbloqueo;
+                destino += '&' + new URLSearchParams({ p: d.p, o: d.o, e: d.e, sig: d.sig }).toString();
+            }
+            window.location.href = destino;
         });
     });
 
@@ -662,7 +778,7 @@
         $('pm-liq-acciones').hidden = !lista.length;
         $('pm-liq-nota-marca').textContent = tienePase()
             ? 'Con tu pase vigente las liquidaciones salen sin marca de agua. Revisa cada una antes de entregarla.'
-            : 'Sin Pase Pyme las liquidaciones llevan la marca «Vista previa». El Pase Pyme aún no está a la venta. Revisa cada liquidación antes de entregarla.';
+            : 'Sin Pase Pyme las liquidaciones llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada liquidación antes de entregarla.';
 
         var porPreparar = 0, guardadas = 0;
         $('pm-liq-lista').innerHTML = lista.map(function (t) {

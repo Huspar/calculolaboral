@@ -1052,6 +1052,14 @@ body { overflow-x: hidden; }
             #print-section .lqd-total, #print-section .lqd-datos, #print-section .lqd-title h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
+        /* Pase Pyme */
+        .pm-pase-estado { margin: 0 0 .7rem; font-weight: 600; color: #0f172a; }
+        .pm-pase-incluye { margin: 0 0 1rem; font-size: .92rem; color: #334155; }
+        .pm-pase-opciones { display: grid; gap: .7rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+        .pm-pase-op { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem 1rem; padding: .9rem 1rem; border: 1px solid #e2e8f0; border-radius: .8rem; background: #fbfdfc; }
+        .pm-pase-op strong { display: block; color: #0f172a; }
+        .pm-pase-precio { display: block; font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 700; color: #00382E; }
+        .pm-pase-mes { display: block; font-size: .85rem; color: #475569; }
         /* Documentos del Asistente Pyme */
         .pm-doc-form { display: grid; gap: .9rem; margin-top: .6rem; }
         .pm-doc-form[hidden] { display: none !important; }
@@ -1401,6 +1409,19 @@ body { overflow-x: hidden; }
 <ul id="pm-pend" class="pm-pend"></ul>
 </section>
 
+<section class="lq-card" id="pm-sec-pase" aria-labelledby="pm-pase-titulo">
+<h2 id="pm-pase-titulo" class="pm-titulo"><span class="material-icons" aria-hidden="true">workspace_premium</span>Pase Pyme</h2>
+<p id="pm-pase-estado" class="pm-pase-estado"></p>
+<ul class="lq-bullets pm-pase-incluye">
+<li>Hasta 5 trabajadores activos (sin pase, 1).</li>
+<li>Liquidaciones y documentos sin la marca «Vista previa».</li>
+<li>El generador de contrato incluido mientras el pase esté vigente; el de finiquito, con el pase de 12 meses.</li>
+<li>Se paga una vez y no se renueva solo.</li>
+</ul>
+<div id="pm-pase-opciones" class="pm-pase-opciones"></div>
+<p id="pm-pase-msg" class="lq-estado pm-estado" role="status"></p>
+</section>
+
 <section class="lq-card" aria-labelledby="pm-emp-titulo" id="pm-sec-empresa">
 <h2 id="pm-emp-titulo" class="pm-titulo"><span class="lq-step">1</span>Empresa</h2>
 <form id="pm-emp-form" novalidate autocomplete="off">
@@ -1571,6 +1592,7 @@ body { overflow-x: hidden; }
 <div class="lq-sub pm-gen" id="pm-gen">
 <p class="lq-subtitle">Abrir un generador con sus datos ya cargados</p>
 <p class="lq-help">Se abre el generador de la persona elegida arriba, con la empresa y la ficha ya escritas. Cada generador mantiene su forma de uso y de pago actual.</p>
+<p id="pm-gen-nota" class="lq-help"></p>
 <div class="pm-fila">
 <a class="lq-btn-sec" id="pm-gen-contrato" href="generador-contrato-trabajo-chile"><span class="material-icons" aria-hidden="true">description</span>Contrato de trabajo</a>
 <a class="lq-btn-sec" id="pm-gen-anexo42" href="generador-anexo-40-horas"><span class="material-icons" aria-hidden="true">schedule</span>Anexo de 42 horas</a>
@@ -1778,7 +1800,8 @@ body { overflow-x: hidden; }
 <script src="/js/pyme_pendientes.js?v=1.1.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.0.0"></script>
 <script src="/js/pyme_docs.js?v=1.0.0"></script>
-<script src="/js/pyme_app.js?v=1.2.0" defer></script>
+<script src="/js/checkout_consent.js?v=1.5.0" defer></script>
+<script src="/js/pyme_app.js?v=1.3.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

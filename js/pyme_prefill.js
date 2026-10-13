@@ -15,7 +15,24 @@
     var script = document.currentScript;
     var PAGINA = script && script.getAttribute('data-pagina');
     var q = new URLSearchParams(window.location.search);
-    if (!PAGINA || q.get('desde') !== 'pyme' || !q.get('t')) return;
+    var aplica = !!PAGINA && q.get('desde') === 'pyme' && !!q.get('t');
+
+    // Los generadores esperan a que el prellenado termine antes de atender el desbloqueo del pase (el desbloqueo del finiquito
+    // queda atado al RUT del formulario, así que el RUT ya debe estar puesto). Si no se viene del asistente, se ejecuta de inmediato.
+    var terminado = !aplica, esperando = [];
+    function terminar() {
+        terminado = true;
+        var lista = esperando; esperando = [];
+        lista.forEach(function (fn) { try { fn(); } catch (e) { /* un fallo del generador no debe frenar a los demás */ } });
+    }
+    window.CLPymePrefill = {
+        cuando: function (fn) {
+            if (terminado) { fn(); return; }
+            esperando.push(fn);
+            window.setTimeout(terminar, 8000); // si el asistente no responde, el generador sigue como siempre
+        }
+    };
+    if (!aplica) return;
 
     // Borrador que el generador guarda en el navegador y campos que indican que la persona ya escribió algo propio
     // (los generadores guardan su estado inicial desde que se abren, así que solo cuenta si hay empresa o trabajador escritos)
@@ -132,7 +149,7 @@
             avisar('Cargamos los datos de ' + t.nombre + ' y de tu empresa desde el asistente. Revisa todo antes de generar el documento.');
         }).catch(function () {
             avisar('No pudimos cargar los datos desde el asistente. Intenta de nuevo.', 'error');
-        });
+        }).then(terminar);
     }
 
     if (document.readyState === 'complete') aplicar(); else window.addEventListener('load', aplicar);

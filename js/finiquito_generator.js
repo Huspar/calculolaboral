@@ -404,9 +404,11 @@
         // 3. Retorno desde Flow: el servidor firma el desbloqueo solo si el pago está confirmado
         const vieneDeFlow = params.get('p') === 'finiquito' && params.has('sig');
         if (unlockApi()) {
-            unlockApi().unlockFromUrl('finiquito').then((u) => {
+            // Desde el asistente, primero se completa el formulario con los datos del trabajador: el desbloqueo queda atado a su RUT
+            const atenderDesbloqueo = () => unlockApi().unlockFromUrl('finiquito').then((u) => {
                 if (u) applyPaymentSuccess(false, vieneDeFlow);
             });
+            if (window.CLPymePrefill) window.CLPymePrefill.cuando(atenderDesbloqueo); else atenderDesbloqueo();
         }
         if (params.get('pago') === 'rechazado') {
             setTimeout(() => {

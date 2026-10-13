@@ -6,11 +6,12 @@
  *   PYME_SESSION_SECRET   32 bytes aleatorios en base64 (huellas de tokens, correos e IP)
  *   PYME_DATA_KEY         clave de cifrado de los datos de trabajadores (se usa desde la fase 2)
  *   RESEND_API_KEY        envio del correo con el enlace de acceso
+ *   FLOW_API_KEY, FLOW_SECRET_KEY, PYME_PASE_VENTA  cobro del Pase Pyme (la venta se abre con PYME_PASE_VENTA=1)
  */
 const T = require('../_pyme/tokens');
 const H = require('../_pyme/http');
 const C = require('../_pyme/correo');
-const { crearAlmacenSql } = require('../_pyme/almacen');
+const Servicios = require('../_pyme/servicios');
 const { crear, MINUTOS_ENLACE } = require('../_pyme/auth');
 const { crearRutas } = require('../_pyme/rutas');
 const D = require('../_pyme/datos');
@@ -21,10 +22,7 @@ let manejador = null; // se arma una vez por instancia de la funcion
 function armar() {
     const { SITE_URL, sendEmail } = require('../_flow');
     const secreto = T.secretoDesdeEntorno();
-    const url = process.env.DATABASE_URL;
-    if (!url) throw new Error('DATABASE_URL no configurada');
-    const { neon } = require('@neondatabase/serverless');
-    const almacen = crearAlmacenSql(neon(url));
+    const almacen = Servicios.almacen();
 
     async function enviarCorreo({ to, enlace, clave }) {
         const c = C.correoAcceso({ enlace, minutos: MINUTOS_ENLACE });
@@ -40,7 +38,7 @@ function armar() {
             return datosReal[nombre](...args);
         }
     });
-    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL });
+    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase() });
 }
 
 module.exports = async (req, res) => {
@@ -51,6 +49,7 @@ module.exports = async (req, res) => {
         // Sin datos personales ni tokens en el registro: solo el tipo de error
         console.error('pyme:', e && e.name, String((e && e.message) || '').slice(0, 200));
         manejador = null; // por si fue un problema de configuracion que se corrige sin redesplegar
+        Servicios.olvidar();
         if (!res.headersSent) H.json(res, 500, { ok: false, error: 'No pudimos completar la solicitud. Intenta de nuevo en unos minutos.' });
     }
 };

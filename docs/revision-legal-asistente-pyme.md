@@ -62,6 +62,10 @@ El registro de documentos emitidos guarda solo el tipo y la fecha, nunca el text
 
 - **Retracto y reembolso.** Los Términos vigentes excluyen el retracto para bienes digitales descargables. El Pase es un servicio con duración (3 o 12 meses): el abogado debe indicar qué corresponde y cómo informarlo antes de pagar. No quedó escrito en los Términos.
 - Textos de venta del Pase, que siguen las reglas de la sección 2.1 de `AGENTS.md` (sin promesas de validez, sin "oficial", sin precios tachados).
+- **Qué ya está construido y qué no afirma.** El aviso previo al pago del Pase (`js/checkout_consent.js`, variante "servicio") dice solo: acceso por los días del producto desde que se confirma el pago, no se renueva solo, un segundo pase empieza cuando termina el anterior, y los documentos son modelos de referencia. **No dice nada sobre retracto ni reembolso**, y la sección 12 de los Términos (viñeta "Pase Pyme") tampoco; ambos están marcados como borrador. El comprobante por correo tampoco lo menciona. El abogado debe indicar el texto exacto para el aviso, los Términos y el comprobante.
+- **Datos del pago.** El pago de Flow lleva el id de la cuenta (no datos de trabajadores). El comprobante va al correo de la cuenta, no al que se escriba en Flow.
+- **Al vencer el pase.** Hoy la cuenta vuelve a 1 trabajador activo y a los documentos con marca de agua, y conserva sus datos. No hay borrado automático. El plan original proponía solo lectura y exportación por 90 días y luego borrar con aviso: el plazo y la comunicación los define el abogado, y requieren correos automáticos que hoy están fuera de alcance.
+- **Venta cerrada.** El Pase solo se puede comprar si en Vercel está `PYME_PASE_VENTA=1`. No se activa hasta que lo anterior esté resuelto.
 
 ## 5. Datos de hecho para el abogado
 

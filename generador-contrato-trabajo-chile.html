@@ -1779,20 +1779,25 @@ window.addEventListener('load', function () {
 
             // Retorno desde Flow: el servidor firma el desbloqueo solo si el pago está confirmado
             var vieneDeFlow = urlParams.get('p') === 'contrato' && urlParams.has('sig');
-            if (vieneDeFlow) {
-                window.CLCheckout.unlockFromUrl('contrato').then(function (u) {
-                    if (!u) return;
-                    var stored = null;
-                    try {
-                        stored = JSON.parse(localStorage.getItem('contrato_builder_state'));
-                    } catch(e){}
-                    mostrarModalExitoContrato(stored || recolectarDatos());
-                });
-            } else if (urlParams.get('pago') === 'rechazado') {
-                alert('El pago no se completó y no se hizo ningún cargo. Tu borrador quedó guardado para que lo intentes de nuevo.');
+            function atenderRetornoPago() {
+                if (vieneDeFlow) {
+                    window.CLCheckout.unlockFromUrl('contrato').then(function (u) {
+                        if (!u) return;
+                        var stored = null;
+                        try {
+                            stored = JSON.parse(localStorage.getItem('contrato_builder_state'));
+                        } catch(e){}
+                        // Orden "PYME-...": desbloqueo del Pase Pyme, no un pago de este generador
+                        mostrarModalExitoContrato(stored || recolectarDatos(), String(u.o || '').indexOf('PYME-') === 0);
+                    });
+                } else if (urlParams.get('pago') === 'rechazado') {
+                    alert('El pago no se completó y no se hizo ningún cargo. Tu borrador quedó guardado para que lo intentes de nuevo.');
+                }
             }
+            // Desde el asistente, primero se completa el formulario con los datos del trabajador
+            if (window.CLPymePrefill) window.CLPymePrefill.cuando(atenderRetornoPago); else atenderRetornoPago();
 
-            function mostrarModalExitoContrato(datos) {
+            function mostrarModalExitoContrato(datos, porPase) {
                 var modal = document.createElement('div');
                 modal.className = 'fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 backdrop-blur-xs no-print';
                 modal.innerHTML = `
@@ -1801,11 +1806,11 @@ window.addEventListener('load', function () {
                             <span class="material-icons text-3xl text-emerald-700">verified</span>
                         </div>
                         <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-0.5 rounded-full uppercase tracking-wider">
-                            Pago Confirmado ($12.990 CLP)
+                            ${porPase ? 'Incluido en tu Pase Pyme' : 'Pago Confirmado ($12.990 CLP)'}
                         </span>
                         <h2 class="text-lg font-black text-slate-900 mt-2">¡Tu Contrato de Trabajo está listo!</h2>
                         <p class="text-sm text-slate-600 mt-1 leading-relaxed">
-                            Hemos verificado tu pago por Flow.cl. Ya puedes descargar tu documento editable en Word y tu versión PDF limpia.
+                            ${porPase ? 'Tu Pase Pyme está vigente.' : 'Hemos verificado tu pago por Flow.cl.'} Ya puedes descargar tu documento editable en Word y tu versión PDF limpia.
                         </p>
                         <div class="my-4 p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-left space-y-1 font-mono">
                             <div class="flex justify-between text-slate-500">

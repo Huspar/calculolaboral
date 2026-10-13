@@ -279,7 +279,7 @@ caso('las escrituras exigen el encabezado propio y el origen del sitio (antes de
 caso('flujo completo por la API: empresa, trabajador, estado, edición y borrado', async () => {
     const m = montar();
     const { cookie } = await m.entrar('ana@ejemplo.cl');
-    assert.deepStrictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).json, { ok: true, cuenta: { email: 'ana@ejemplo.cl' }, empresa: null, trabajadores: [], limites: { maxActivos: 1, paseVence: null }, maxTotal: 50 });
+    assert.deepStrictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).json, { ok: true, cuenta: { email: 'ana@ejemplo.cl' }, empresa: null, trabajadores: [], limites: { maxActivos: 1, paseVence: null, paseProducto: null }, maxTotal: 50 });
     const e = await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: EMPRESA } });
     assert.strictEqual(e.statusCode, 200);
     const t = await escribir(m, { query: { ruta: 'trabajador' }, metodo: 'POST', cookie, body: { trabajador: TRAB(1) } });

@@ -1,10 +1,10 @@
 /**
  * POST /api/flow-confirm  (llamado por Flow, servidor a servidor, con "token")
- * Verifica el pago con Flow y, si esta pagado, envia el kit (o el desbloqueo del generador).
+ * Verifica el pago con Flow y, si esta pagado, envia el kit (o el desbloqueo del generador) o registra el Pase Pyme en la cuenta.
  * Flow reintenta si no recibe 200; los correos usan una llave de idempotencia
  * por orden, asi un reintento no duplica el envio.
  */
-const { paymentStatus, deliver, notifyOwner, readToken } = require('./_flow');
+const { PRODUCTS, paymentStatus, deliver, deliverPase, notifyOwner, readToken } = require('./_flow');
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -16,7 +16,11 @@ module.exports = async (req, res) => {
 
     try {
         const pay = await paymentStatus(token);
-        if (pay.paid && pay.email) {
+        if (pay.paid && PRODUCTS[pay.product].pase) {
+            // Pase Pyme: se registra en la cuenta (la base solo se necesita para este caso)
+            const { procesarPagoPase } = require('./_pyme/confirmar_pase');
+            await procesarPagoPase(pay, { pase: require('./_pyme/servicios').pase(), deliverPase, notifyOwner });
+        } else if (pay.paid && pay.email) {
             await deliver(pay);
         } else if (pay.paid) {
             // Pagado pero sin correo al que entregar: el dueño lo entrega a mano

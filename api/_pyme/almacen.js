@@ -215,10 +215,50 @@ function crearAlmacenSql(sql) {
             return r.map(x => ({ trabajadorId: x.trabajador_id, tipo: x.tipo, emitido: new Date(x.emitido).toISOString() }));
         },
 
-        /** Fecha en que vence el pase vigente mas largo de la cuenta, en milisegundos, o null si no tiene. */
+        /**
+         * Fecha hasta la que llega el pase de la cuenta, en milisegundos, o null si hoy no tiene uno vigente.
+         * Si compro otro pase mientras tenia uno, el segundo empieza cuando termina el primero: cuenta la vigencia total.
+         */
         async paseVigente(cuentaId, ahoraIso) {
-            const r = await filas('SELECT max(vence) AS vence FROM pases WHERE cuenta_id = $1::uuid AND desde <= $2::timestamptz AND vence > $2::timestamptz', [cuentaId, ahoraIso]);
-            return r[0] && r[0].vence ? new Date(r[0].vence).getTime() : null;
+            const r = await filas(
+                'SELECT max(vence) FILTER (WHERE vence > $2::timestamptz) AS vence, coalesce(bool_or(desde <= $2::timestamptz AND vence > $2::timestamptz), false) AS activo FROM pases WHERE cuenta_id = $1::uuid',
+                [cuentaId, ahoraIso]
+            );
+            return r[0] && r[0].activo && r[0].vence ? new Date(r[0].vence).getTime() : null;
+        },
+
+        /** Producto del pase que esta en curso ahora (el de mayor vigencia entre los activos), o null. */
+        async paseActual(cuentaId, ahoraIso) {
+            const r = await filas(
+                'SELECT producto, vence FROM pases WHERE cuenta_id = $1::uuid AND desde <= $2::timestamptz AND vence > $2::timestamptz ORDER BY vence DESC LIMIT 1',
+                [cuentaId, ahoraIso]
+            );
+            return r[0] ? { producto: r[0].producto, vence: new Date(r[0].vence).getTime() } : null;
+        },
+
+        /**
+         * Registra un pase pagado. La orden de Flow es unica: si Flow avisa dos veces el mismo pago no se duplica (devuelve null).
+         * Empieza cuando termina el ultimo pase de la cuenta, o ahora si no tiene ninguno vigente. Todo en una sentencia.
+         */
+        async registrarPase({ cuentaId, producto, ordenFlow, dias, ahoraIso }) {
+            const r = await filas(
+                'WITH base AS (SELECT greatest($4::timestamptz, coalesce((SELECT max(vence) FROM pases WHERE cuenta_id = $1::uuid), $4::timestamptz)) AS desde) ' +
+                'INSERT INTO pases (cuenta_id, producto, orden_flow, desde, vence) SELECT $1::uuid, $2, $3, base.desde, base.desde + make_interval(days => $5::int) FROM base ' +
+                'ON CONFLICT (orden_flow) DO NOTHING RETURNING desde, vence',
+                [cuentaId, producto, ordenFlow, ahoraIso, dias]
+            );
+            return r[0] ? { desde: new Date(r[0].desde).getTime(), vence: new Date(r[0].vence).getTime() } : null;
+        },
+
+        /** Pase ya registrado para una orden de Flow (para responder igual a un aviso repetido). */
+        async paseDeOrden(ordenFlow) {
+            const r = await filas('SELECT cuenta_id, producto, vence FROM pases WHERE orden_flow = $1', [ordenFlow]);
+            return r[0] ? { cuentaId: r[0].cuenta_id, producto: r[0].producto, vence: new Date(r[0].vence).getTime() } : null;
+        },
+
+        async buscarCuentaPorId(cuentaId) {
+            const r = await filas('SELECT id, email FROM cuentas WHERE id = $1::uuid', [cuentaId]);
+            return r[0] ? { id: r[0].id, email: r[0].email } : null;
         },
 
         /** Borra la cuenta y, en cascada, sesiones, empresa, trabajadores, vacaciones, meses, documentos y pases. */

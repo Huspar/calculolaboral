@@ -53,7 +53,8 @@ module.exports = async (req, res) => {
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const product = clean(body.product, 20);
     const email = clean(body.email, 254).toLowerCase();
-    if (!PRODUCTS[product]) return res.status(400).json({ error: 'Producto no válido.' });
+    // El Pase Pyme se compra desde el asistente (/api/pyme/comprar): necesita la cuenta que lo recibe
+    if (!PRODUCTS[product] || PRODUCTS[product].pase) return res.status(400).json({ error: 'Producto no válido.' });
     if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(email)) {
         return res.status(400).json({ error: 'Correo electrónico no válido.' });
     }

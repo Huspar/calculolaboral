@@ -133,8 +133,28 @@ function crearAlmacenMemoria() {
             return E.documentos.filter(d => ids.indexOf(d.trabajadorId) >= 0).map(d => Object.assign({}, d));
         },
         async paseVigente(cuentaId, ahoraIso) {
-            const v = E.pases.filter(p => p.cuentaId === cuentaId && t(p.desde) <= t(ahoraIso) && t(p.vence) > t(ahoraIso)).map(p => t(p.vence));
-            return v.length ? Math.max.apply(null, v) : null;
+            const propios = E.pases.filter(p => p.cuentaId === cuentaId && t(p.vence) > t(ahoraIso));
+            if (!propios.some(p => t(p.desde) <= t(ahoraIso))) return null;
+            return Math.max.apply(null, propios.map(p => t(p.vence)));
+        },
+        async paseActual(cuentaId, ahoraIso) {
+            const v = E.pases.filter(p => p.cuentaId === cuentaId && t(p.desde) <= t(ahoraIso) && t(p.vence) > t(ahoraIso)).sort((a, b) => t(b.vence) - t(a.vence))[0];
+            return v ? { producto: v.producto, vence: t(v.vence) } : null;
+        },
+        async registrarPase({ cuentaId, producto, ordenFlow, dias, ahoraIso }) {
+            if (E.pases.some(p => p.ordenFlow === ordenFlow)) return null;
+            const ultimo = Math.max.apply(null, [t(ahoraIso)].concat(E.pases.filter(p => p.cuentaId === cuentaId).map(p => t(p.vence))));
+            const vence = ultimo + dias * 86400000;
+            E.pases.push({ cuentaId, producto, ordenFlow, desde: new Date(ultimo).toISOString(), vence: new Date(vence).toISOString() });
+            return { desde: ultimo, vence };
+        },
+        async paseDeOrden(ordenFlow) {
+            const p = E.pases.find(x => x.ordenFlow === ordenFlow);
+            return p ? { cuentaId: p.cuentaId, producto: p.producto, vence: t(p.vence) } : null;
+        },
+        async buscarCuentaPorId(cuentaId) {
+            const c = E.cuentas.find(x => x.id === cuentaId);
+            return c ? { id: c.id, email: c.email } : null;
         },
         async borrarCuenta(cuentaId) {
             const emp = E.empresas.filter(x => x.cuentaId === cuentaId).map(x => x.id);

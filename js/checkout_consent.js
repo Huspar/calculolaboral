@@ -5,6 +5,8 @@
  * Ley 19.496). Cubre los enlaces a flow.cl/btn.php, las redirecciones hechas
  * desde JS con window.CLCheckout.go(url, opciones) y los kits, que crean el
  * pago en el servidor tras window.CLCheckout.confirm(alAceptar, opciones).
+ * El Pase Pyme (servicio con duracion, no descarga) usa opciones.variante = 'servicio':
+ * el aviso no habla de retracto ni de archivos hasta que un abogado defina esos textos.
  */
 (function () {
     'use strict';
@@ -53,7 +55,14 @@
         '.clc-email small{font-size:12px;color:#64748b}' +
         '@media (max-width:420px){.clc-actions .clc-btn{flex:1 1 100%}}';
 
-    var dialog, checkbox, label, confirmBtn, emailWrap, emailInput, pending = null;
+    var dialog, checkbox, label, confirmBtn, emailWrap, emailInput, listEl, leadEl, listaProducto, leadProducto, pending = null;
+
+    // Aviso del Pase Pyme: solo hechos del servicio, sin afirmar nada sobre retracto (pendiente de revision legal)
+    var LISTA_SERVICIO = '' +
+        '<li>El pase da acceso al Asistente Laboral Pyme por la cantidad de días del producto, contados desde que se confirma el pago. No se renueva solo.</li>' +
+        '<li>Si compras otro mientras tienes uno vigente, empieza cuando termina el que ya tienes.</li>' +
+        '<li>Los documentos son modelos de referencia basados en la normativa vigente; no reemplazan la asesoría de un abogado.</li>';
+    var LEAD_SERVICIO = 'Estás comprando un pase de acceso al Asistente Laboral Pyme.';
     var EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 
     function build() {
@@ -70,7 +79,7 @@
                 '<span class="clc-kicker">Paso previo al pago</span>' +
                 '<h2 class="clc-title" id="clc-title">Antes de ir a pagar</h2>' +
                 '<p class="clc-lead" id="clc-lead">Estás comprando un producto digital que recibes de inmediato.</p>' +
-                '<ul class="clc-list">' +
+                '<ul class="clc-list" id="clc-list">' +
                     '<li>Por ser contenido digital de entrega inmediata, no aplica el derecho a retracto (art. 3 bis letra b, Ley 19.496).</li>' +
                     '<li>Si un archivo falla o no te llega, te lo reenviamos en un máximo de 24 horas hábiles.</li>' +
                     '<li>Son modelos de referencia basados en la normativa vigente; no reemplazan la asesoría de un abogado.</li>' +
@@ -93,6 +102,10 @@
         confirmBtn = dialog.querySelector('[data-clc="ok"]');
         emailWrap = dialog.querySelector('.clc-email');
         emailInput = dialog.querySelector('#clc-email');
+        listEl = dialog.querySelector('#clc-list');
+        leadEl = dialog.querySelector('#clc-lead');
+        listaProducto = listEl.innerHTML;
+        leadProducto = leadEl.textContent;
         emailInput.addEventListener('input', function () { emailInput.removeAttribute('aria-invalid'); });
 
         checkbox.addEventListener('change', function () {
@@ -134,7 +147,9 @@
         if (!dialog) build();
         if (typeof dialog.showModal !== 'function') {
             // Navegadores sin <dialog>: confirmacion nativa con el mismo contenido
-            var ok = window.confirm('Producto digital de entrega inmediata: no aplica el derecho a retracto ' +
+            var ok = window.confirm(options.variante === 'servicio'
+                ? 'Estás comprando un pase de acceso al Asistente Laboral Pyme por los días del producto, desde que se confirma el pago. No se renueva solo. ¿Aceptas los Términos y condiciones y continúas al pago?'
+                : 'Producto digital de entrega inmediata: no aplica el derecho a retracto ' +
                 '(art. 3 bis letra b, Ley 19.496). ¿Aceptas los Términos y condiciones y continúas al pago?');
             var mail = options.askEmail ? (window.prompt('Correo para el comprobante:') || '').trim() : '';
             if (ok && (!options.askEmail || EMAIL_RE.test(mail))) onAccept(mail);
@@ -142,6 +157,8 @@
             return;
         }
         pending = { onAccept: onAccept, onCancel: options.onCancel, askEmail: !!options.askEmail };
+        listEl.innerHTML = options.variante === 'servicio' ? LISTA_SERVICIO : listaProducto;
+        leadEl.textContent = options.variante === 'servicio' ? LEAD_SERVICIO : leadProducto;
         emailWrap.hidden = !options.askEmail;
         if (options.defaultEmail && !emailInput.value) emailInput.value = options.defaultEmail;
         emailInput.removeAttribute('aria-invalid');
@@ -181,7 +198,7 @@
     document.addEventListener('auxclick', onLinkClick, true);
 
     /*
-     * Medicion del embudo en GA4 para los siete productos de pago. Una sola tabla, para que
+     * Medicion del embudo en GA4 para los nueve productos de pago. Una sola tabla, para que
      * view_item, begin_checkout y purchase lleguen con el mismo item_id e item_name.
      * Precios y nombres deben coincidir con api/_flow.js.
      */
@@ -192,7 +209,9 @@
         finiquito: { item_id: 'finiquito', item_name: 'Finiquito para Notaría (Word + PDF)', price: 12990 },
         contrato: { item_id: 'contrato', item_name: 'Contrato de Trabajo a la Medida (Word + PDF)', price: 12990 },
         informe: { item_id: 'informe', item_name: 'Informe Ejecutivo de Costo Empresa (PDF)', price: 4990 },
-        liquidacion: { item_id: 'liquidacion', item_name: 'Liquidación de Sueldo en PDF', price: 2990 }
+        liquidacion: { item_id: 'liquidacion', item_name: 'Liquidación de Sueldo en PDF', price: 2990 },
+        pyme3: { item_id: 'pyme3', item_name: 'Pase Pyme 3 meses', price: 19990 },
+        pyme12: { item_id: 'pyme12', item_name: 'Pase Pyme 12 meses', price: 59990 }
     };
 
     function track(eventName, product, extra) {
@@ -231,7 +250,8 @@
     /**
      * Compra (kit o generador): aviso, pago creado en el servidor (/api/checkout) y salida a Flow.
      * buyer: { email, nombre, empresa, telefono, rubro }
-     * opciones: { onAccept, onCancel, onError(mensaje), askEmail (si buyer no trae correo), defaultEmail }
+     * opciones: { onAccept, onCancel, onError(mensaje), askEmail (si buyer no trae correo), defaultEmail,
+     *             endpoint (por defecto /api/checkout; el Pase usa /api/pyme/comprar), headers (extra), variante ('servicio' para el Pase) }
      */
     function buyKit(product, buyer, options) {
         options = options || {};
@@ -246,9 +266,12 @@
             var payload = { product: product };
             for (var k in buyer) if (Object.prototype.hasOwnProperty.call(buyer, k)) payload[k] = buyer[k];
             if (options.askEmail) payload.email = email;
-            fetch('/api/checkout', {
+            var headers = { 'Content-Type': 'application/json' };
+            for (var h in options.headers) if (Object.prototype.hasOwnProperty.call(options.headers, h)) headers[h] = options.headers[h];
+            fetch(options.endpoint || '/api/checkout', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                headers: headers,
                 body: JSON.stringify(payload)
             }).then(function (r) {
                 return r.json().then(function (data) { return { ok: r.ok, data: data }; });
@@ -256,7 +279,7 @@
                 if (res.ok && res.data.url) window.location.href = res.data.url;
                 else fail(res.data && res.data.error);
             }).catch(function () { fail(); });
-        }, { onCancel: options.onCancel, askEmail: options.askEmail, defaultEmail: options.defaultEmail });
+        }, { onCancel: options.onCancel, askEmail: options.askEmail, defaultEmail: options.defaultEmail, variante: options.variante });
     }
 
     /*
@@ -300,7 +323,8 @@
             if (!d || !d.ok) return storedUnlock(product);
             u.expiresAt = d.expiresAt;
             try { localStorage.setItem('cl_unlock_' + product, JSON.stringify(u)); } catch (e) {}
-            trackPurchase(u);
+            // Un desbloqueo que viene del Pase Pyme (orden PYME-...) no es una venta del generador: no se cuenta en GA4
+            if (String(u.o || '').indexOf('PYME-') !== 0) trackPurchase(u);
             return u;
         }).catch(function () { return storedUnlock(product); });
     }
