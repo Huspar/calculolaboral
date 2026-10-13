@@ -814,7 +814,7 @@ window.addEventListener('load', function () {
                         <span class="material-icons text-[#00382E]">tune</span>
                         <span>Datos para el cálculo</span>
                     </h2>
-                    <span class="text-xs font-mono-num text-slate-600 font-semibold" id="iu-utm-badge">UTM $72.151</span>
+                    <span class="text-xs font-mono-num text-slate-600 font-semibold" id="iu-utm-badge" data-utm-x="1">UTM $72.151</span>
                 </div>
 
                 <fieldset>
@@ -960,16 +960,16 @@ window.addEventListener('load', function () {
                 <div class="iu-table-wrap">
                     <table class="iu-table iu-num">
                         <thead><tr><th scope="col">Sueldo bruto</th><th scope="col">Renta tributable</th><th scope="col">Impuesto</th><th scope="col">% del bruto</th><th scope="col">Líquido</th></tr></thead>
-                        <tbody>
+                        <tbody id="iu-sueldos-body">
                             <!-- SUELDOS-IUSC:INICIO -->
                             <tr><td>$1.000.000</td><td>$818.200</td><td><strong>$0</strong></td><td>0%</td><td>$818.200</td></tr>
                             <tr><td>$1.500.000</td><td>$1.227.300</td><td><strong>$10.130</strong></td><td>0,68%</td><td>$1.217.170</td></tr>
                             <tr><td>$2.000.000</td><td>$1.636.400</td><td><strong>$26.494</strong></td><td>1,32%</td><td>$1.609.906</td></tr>
                             <tr><td>$2.500.000</td><td>$2.045.500</td><td><strong>$42.858</strong></td><td>1,71%</td><td>$2.002.642</td></tr>
                             <tr><td>$3.000.000</td><td>$2.454.600</td><td><strong>$70.825</strong></td><td>2,36%</td><td>$2.383.775</td></tr>
-                            <tr><td>$4.000.000</td><td>$3.328.408</td><td><strong>$140.730</strong></td><td>3,52%</td><td>$3.187.678</td></tr>
-                            <tr><td>$5.000.000</td><td>$4.322.408</td><td><strong>$259.567</strong></td><td>5,19%</td><td>$4.062.841</td></tr>
-                            <tr><td>$7.000.000</td><td>$6.319.193</td><td><strong>$649.652</strong></td><td>9,28%</td><td>$5.669.541</td></tr>
+                            <tr><td>$4.000.000</td><td>$3.325.226</td><td><strong>$140.475</strong></td><td>3,51%</td><td>$3.184.751</td></tr>
+                            <tr><td>$5.000.000</td><td>$4.319.226</td><td><strong>$259.138</strong></td><td>5,18%</td><td>$4.060.088</td></tr>
+                            <tr><td>$7.000.000</td><td>$6.315.861</td><td><strong>$648.886</strong></td><td>9,27%</td><td>$5.666.975</td></tr>
                             <!-- SUELDOS-IUSC:FIN -->
                         </tbody>
                     </table>
@@ -1182,6 +1182,44 @@ window.addEventListener('load', function () {
         function tramo(rli, u) { for (var i = 0; i < TRAMOS.length; i++) { if (TRAMOS[i][1] === null || rli <= TRAMOS[i][1] * u) return i; } return TRAMOS.length - 1; }
         function modo() { var r = document.querySelector('input[name="iu-modo"]:checked'); return r ? r.value : 'bruto'; }
 
+        var PUBLICADA = BASE;
+        var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+        // Mes de la UTM en vivo: indicators.js informa la fecha al pintar la barra (updateDOM).
+        // "2026-10-01" se lee tal cual; una fecha con hora se pasa a la hora local de Chile.
+        function mesDeFecha(f) {
+            if (!f) return null;
+            var m = /^(\d{4})-(\d{2})-\d{2}$/.exec(String(f));
+            if (m) return { anio: +m[1], mes: +m[2] - 1 };
+            var d = new Date(f);
+            return isNaN(d) ? null : { anio: d.getFullYear(), mes: d.getMonth() };
+        }
+        function syncMesUTM(fecha) {
+            if (utm() === PUBLICADA) return;
+            var m = mesDeFecha(fecha);
+            if (!m) return;
+            var txt = MESES[m.mes] + ' de ' + m.anio;
+            document.querySelectorAll('[data-utm-mes]').forEach(function (el) { el.textContent = txt; });
+        }
+        if (typeof IndicatorsService !== 'undefined' && typeof IndicatorsService.updateDOM === 'function') {
+            var updateDOMOriginal = IndicatorsService.updateDOM;
+            IndicatorsService.updateDOM = function (data) {
+                var r = updateDOMOriginal.apply(this, arguments);
+                try { syncMesUTM(data && data.utm && data.utm.fecha); } catch (e) { /* sin fecha: se deja el mes publicado */ }
+                return r;
+            };
+        }
+
+        // Fila de la tabla por sueldo (AFP Modelo, Fonasa, indefinido), igual que tools/actualizar_utm.py
+        function filaSueldo(bruto, u) {
+            var base = Math.min(bruto, 90 * uf());
+            var afp = Math.round(base * 0.1058), salud = Math.round(base * 0.07), ces = Math.round(Math.min(bruto, 135.2 * uf()) * 0.006);
+            var rli = bruto - afp - salud - ces;
+            var t = TRAMOS[tramo(rli, u)];
+            var imp = Math.max(0, Math.round(rli * t[2] - t[3] * u));
+            return [money(bruto), money(rli), money(imp), imp ? pct(imp / bruto) : '0%', money(rli - imp)];
+        }
+
         // Si el valor en vivo de la UTM difiere del publicado, actualiza la tabla y los montos de la página.
         function syncUTM() {
             var u = utm();
@@ -1198,7 +1236,19 @@ window.addEventListener('load', function () {
                 if (t[1] !== null) td[1].textContent = d2(t[1] * u);
                 if (t[3] > 0) td[3].textContent = d2(t[3] * u);
             });
-            $('iu-utm-badge').textContent = 'UTM ' + money(u);
+            document.querySelectorAll('#iu-sueldos-body tr').forEach(function (tr) {
+                var td = tr.querySelectorAll('td');
+                var bruto = parseInt(td[0].textContent.replace(/[^0-9]/g, ''), 10);
+                if (!bruto || td.length < 5) return;
+                var f = filaSueldo(bruto, u);
+                td[1].textContent = f[1];
+                var strong = td[2].querySelector('strong');
+                (strong || td[2]).textContent = f[2];
+                td[3].textContent = f[3];
+                td[4].textContent = f[4];
+            });
+            var brutoExento = money(Math.round(13.5 * u / (1 - 0.1058 - 0.07 - 0.006) / 1000) * 1000);
+            document.querySelectorAll('[data-iu-bruto-exento]').forEach(function (el) { el.textContent = brutoExento; });
             BASE = u;
         }
 

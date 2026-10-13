@@ -906,7 +906,7 @@ window.addEventListener('load', function () {
                         <div>
                             <div class="flex justify-between items-center mb-1.5">
                                 <label for="vac-sueldo-base" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                    Sueldo Base Mensual
+                                    Remuneración Mensual Íntegra
                                 </label>
                                 <button type="button" onclick="setVacSueldoMinimo()" class="text-xs font-bold text-[#00382E] hover:text-[#002820] bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-lg transition-colors cursor-pointer active:scale-95">
                                     Usar Mínimo ($553.553)
@@ -915,7 +915,7 @@ window.addEventListener('load', function () {
                             <div class="relative rounded-2xl shadow-2xs">
                                 <input type="text" id="vac-sueldo-base" value="$ 553.553" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatVacInput(this); calculateVacaciones();" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-mono font-bold text-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                             </div>
-                            <p class="text-xs text-slate-600 mt-1">Remuneración íntegra fija (Sueldo / 30 según Art. 71 CT).</p>
+                            <p class="text-xs text-slate-600 mt-1">Remuneración íntegra (art. 71 CT): sueldo fijo más el promedio de las remuneraciones variables de los últimos 3 meses trabajados. No incluye la gratificación mensual (DT Ord. 836/46), la colación ni la movilización. Se paga por día: monto / 30.</p>
                         </div>
 
                         <!-- 3. Días ya Tomados -->
@@ -964,7 +964,7 @@ window.addEventListener('load', function () {
                     <div id="mode-activo-controls" class="space-y-6 hidden">
                         <div class="flex justify-between items-center pb-3 border-b border-slate-100">
                             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                                <span class="material-icons text-[#00382E] text-xl">event_available</span> Días Disponibles Hoy
+                                <span class="material-icons text-[#00382E] text-xl">event_available</span> Días Exigibles Hoy
                             </h2>
                             <span class="text-xs font-mono text-slate-600 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full">Art. 67 CT</span>
                         </div>
@@ -986,6 +986,17 @@ window.addEventListener('load', function () {
                                 <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">días tomados</span>
                             </div>
                             <p class="text-xs text-slate-600 mt-1">Días de vacaciones que ya solicitaste y disfrutaste.</p>
+                        </div>
+
+                        <div>
+                            <label for="act-anios-previos" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                Años Cotizados con Empleadores Anteriores
+                            </label>
+                            <div class="flex items-center gap-3">
+                                <input type="number" id="act-anios-previos" value="0" min="0" max="45" step="1" oninput="calculateVacacionesActivo()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
+                                <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">años previos</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">Para el feriado progresivo (art. 68 CT). Se pueden hacer valer hasta 10 años; déjalo en 0 si no lo sabes.</p>
                         </div>
 
                         <div>
@@ -1013,7 +1024,7 @@ window.addEventListener('load', function () {
                         <div>
                             <div class="flex justify-between items-center mb-1.5">
                                 <label for="act-sueldo" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                    Sueldo Base (Opcional)
+                                    Remuneración Mensual (Opcional)
                                 </label>
                                 <span class="text-xs text-slate-600">Para valorizar tus días</span>
                             </div>
@@ -1038,7 +1049,7 @@ window.addEventListener('load', function () {
                                 <input type="number" id="prog-anios-totales" value="10" min="0" max="45" step="1" oninput="calculateVacacionesProgresivas()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                                 <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">años cotizados</span>
                             </div>
-                            <p class="text-xs text-slate-600 mt-1">Total de años aportados en cualquier empleador (mínimo 10 para activar el beneficio).</p>
+                            <p class="text-xs text-slate-600 mt-1">Total de años trabajados con cotizaciones, <strong>incluidos los del empleador actual</strong> (mínimo 10 para activar el beneficio).</p>
                         </div>
 
                         <div>
@@ -1049,7 +1060,7 @@ window.addEventListener('load', function () {
                                 <input type="number" id="prog-anios-actual" value="3" min="0" max="35" step="1" oninput="calculateVacacionesProgresivas()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E] transition-all">
                                 <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">años continuos</span>
                             </div>
-                            <p class="text-xs text-slate-600 mt-1">Se suma 1 día extra por cada 3 años cumplidos con el empleador vigente.</p>
+                            <p class="text-xs text-slate-600 mt-1">Se suma 1 día extra por cada 3 años nuevos trabajados después de los 10 primeros. De empleadores anteriores solo se pueden hacer valer hasta 10 años (art. 68 CT).</p>
                         </div>
 
                         <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl text-xs text-amber-950 leading-relaxed">
@@ -1277,7 +1288,7 @@ window.addEventListener('load', function () {
                     </p>
                     <ul class="text-sm sm:text-base text-slate-600 space-y-2 list-disc list-inside">
                         <li><strong>Requisito 1:</strong> Acreditar 10 años de trabajo (cotizados) ante cualquier empleador continuo o discontinuo.</li>
-                        <li><strong>Requisito 2:</strong> Por cada 3 nuevos años de antigüedad con el <em>empleador actual</em>, el trabajador gana <strong>1 día hábil adicional</strong> de descanso anual.</li>
+                        <li><strong>Requisito 2:</strong> Por cada 3 nuevos años trabajados <em>después de esos 10</em>, el trabajador gana <strong>1 día hábil adicional</strong> de descanso anual. Con empleadores anteriores solo se pueden hacer valer hasta 10 años, así que los años que suman días extra son los trabajados con el empleador actual.</li>
                         <li><strong>Carácter irrenunciable:</strong> Una vez ganado el feriado progresivo, no se pierde mientras se mantenga el contrato con el mismo empleador.</li>
                     </ul>
                 </div>
@@ -1352,7 +1363,7 @@ window.addEventListener('load', function () {
     <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3.5 z-40 no-print">
         <div class="flex items-center justify-between gap-3">
             <div>
-                <span class="text-xs font-bold text-slate-600 uppercase tracking-widest block">Feriado Proporcional</span>
+                <span id="mobile-total-label" class="text-xs font-bold text-slate-600 uppercase tracking-widest block">Feriado Proporcional</span>
                 <span id="mobile-total-display" style="color: var(--teal-forest);" class="text-xl font-black font-mono">
                     $ 0
                 </span>
@@ -1535,6 +1546,8 @@ window.addEventListener('load', function () {
 
         function switchVacMode(mode) {
             currentVacMode = mode;
+            var mLabel = document.getElementById('mobile-total-label');
+            if (mLabel) mLabel.textContent = mode === 'activo' ? 'Días exigibles' : (mode === 'progresivas' ? 'Feriado anual' : 'Feriado Proporcional');
             const btnProp = document.getElementById('tab-btn-proporcionales');
             const btnAct = document.getElementById('tab-btn-activo');
             const btnProg = document.getElementById('tab-btn-progresivas');
@@ -1606,13 +1619,23 @@ window.addEventListener('load', function () {
             }
         }
 
-        function setVacRangeMonths(months) {
-            var end = new Date();
-            var start = new Date();
-            start.setMonth(start.getMonth() - months);
+        // Fecha local en formato AAAA-MM-DD (toISOString usa UTC y en Chile adelanta el día por la noche)
+        function vacISO(d) {
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
 
-            var endStr = end.toISOString().split('T')[0];
-            var startStr = start.toISOString().split('T')[0];
+        // Inicio para que el período [inicio, fin] (ambos inclusive) dure exactamente N meses
+        function vacInicioParaMeses(fin, months) {
+            return new Date(fin.getFullYear(), fin.getMonth() - months, fin.getDate() + 1);
+        }
+
+        function setVacRangeMonths(months) {
+            var now = new Date();
+            var end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var start = vacInicioParaMeses(end, months);
+
+            var endStr = vacISO(end);
+            var startStr = vacISO(start);
 
             var inStart = document.getElementById('vac-fecha-inicio');
             var inEnd = document.getElementById('vac-fecha-termino');
@@ -1621,6 +1644,38 @@ window.addEventListener('load', function () {
                 inEnd.value = endStr;
                 calculateVacaciones();
             }
+        }
+
+        // Tiempo trabajado en meses calendario (de aniversario a aniversario) y días sueltos,
+        // contando el último día como trabajado. Misma aritmética que js/logic.js:
+        // del 01-03-2023 al 28-02-2026 son 36 meses justos; del 13-10-2025 al 12-10-2026, 12 meses.
+        function vacTiempoServicio(inicio, finInclusive) {
+            var fin = new Date(finInclusive.getFullYear(), finInclusive.getMonth(), finInclusive.getDate() + 1);
+            var meses = (fin.getFullYear() - inicio.getFullYear()) * 12 + (fin.getMonth() - inicio.getMonth());
+            var dias = fin.getDate() - inicio.getDate();
+            if (dias < 0) {
+                meses--;
+                dias += 30; // mes comercial de 30 días, igual que js/logic.js
+            }
+            if (meses < 0) { meses = 0; dias = 0; }
+            return { meses: meses, dias: dias };
+        }
+
+        function vacEsDiaHabil(d) {
+            var dow = d.getDay();
+            var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            // Art. 69 CT: para el feriado, el sábado es siempre inhábil
+            return !(dow === 0 || dow === 6 || CHILE_HOLIDAYS.includes(key));
+        }
+
+        // Feriado progresivo (art. 68 CT): 1 día por cada 3 años nuevos trabajados después de 10;
+        // de empleadores anteriores solo se pueden hacer valer hasta 10 años.
+        function vacDiasProgresivos(aniosPrevios, aniosActual) {
+            aniosPrevios = Math.max(0, aniosPrevios || 0);
+            aniosActual = Math.max(0, aniosActual || 0);
+            if (aniosPrevios + aniosActual < 10) return 0;
+            var previosComputables = Math.min(aniosPrevios, 10);
+            return Math.floor(Math.max(0, previosComputables + aniosActual - 10) / 3);
         }
 
         // --- CÁLCULO MODO 1: PROPORCIONALES (FINIQUITO) ---
@@ -1685,9 +1740,9 @@ window.addEventListener('load', function () {
                 return;
             }
 
-            var diffDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-            var monthsWorked = Math.floor(diffDays / 30);
-            var remDaysWorked = diffDays % 30;
+            var tiempo = vacTiempoServicio(startDate, endDate);
+            var monthsWorked = tiempo.meses;
+            var remDaysWorked = tiempo.dias;
 
             var factorMensual = (regimen === 'extrema') ? (20.0 / 12.0) : 1.25;
             var factorDiario = factorMensual / 30.0;
@@ -1773,80 +1828,127 @@ window.addEventListener('load', function () {
 
             var parts = inIngreso.value.split('-').map(Number);
             var fechaIngreso = new Date(parts[0], parts[1] - 1, parts[2]);
-            var hoy = new Date();
+            var ahora = new Date();
+            var hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
 
-            var diasTomados = parseFloat(document.getElementById('act-dias-tomados').value) || 0;
+            var diasTomados = Math.max(0, parseFloat(document.getElementById('act-dias-tomados').value) || 0);
+            var inPrevios = document.getElementById('act-anios-previos');
+            var aniosPrevios = inPrevios ? Math.max(0, parseInt(inPrevios.value, 10) || 0) : 0;
             var regimen = document.querySelector('input[name="act-regimen"]:checked')?.value || 'general';
-            var sueldoBase = parseVacCurrency(document.getElementById('act-sueldo').value) || 553553;
+            var sueldoBase = parseVacCurrency(document.getElementById('act-sueldo').value) || 0;
 
             var heroCard = document.getElementById('results-hero-card');
             if (heroCard) heroCard.className = 'p-6 bg-slate-50 border border-slate-200/90 rounded-3xl relative overflow-hidden transition-all shadow-2xs';
 
             var bTitle = document.getElementById('results-hero-badge-title');
             if (bTitle) {
-                bTitle.innerHTML = '<span class="material-icons text-sm">beach_access</span> Días Disponibles para Pedir';
+                bTitle.innerHTML = '<span class="material-icons text-sm">beach_access</span> Días Exigibles Hoy';
                 bTitle.className = 'text-xs font-bold text-[#00382E] uppercase tracking-wider flex items-center gap-1.5';
             }
             var bSub = document.getElementById('results-hero-badge-sub');
             if (bSub) {
-                bSub.textContent = 'Derecho al Descanso Legal';
+                bSub.textContent = 'Art. 67 y 68 CT';
                 bSub.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-900 border border-emerald-200';
             }
-            var hDesc = document.getElementById('results-hero-desc');
-            if (hDesc) hDesc.innerHTML = 'Estos son los <strong>días hábiles acumulados a hoy</strong> que puedes solicitar formalmente a tu empleador para disfrutar de tus vacaciones remuneradas.';
 
-            document.getElementById('kpi-1-title').textContent = 'Días Acumulados Totales';
+            document.getElementById('kpi-1-title').textContent = 'Días Exigibles';
             document.getElementById('kpi-1-unit').textContent = 'días hábiles';
-            document.getElementById('kpi-1-desc').textContent = '1,25 días por mes trabajado';
+            document.getElementById('kpi-1-desc').textContent = 'Por cada año completo de servicio';
 
-            document.getElementById('kpi-2-title').textContent = 'Días ya Disfrutados';
-            document.getElementById('kpi-2-unit').textContent = 'días tomados';
-            document.getElementById('kpi-2-desc').textContent = 'Descontados de tu saldo';
+            document.getElementById('kpi-2-title').textContent = 'Devengados Año en Curso';
+            document.getElementById('kpi-2-unit').textContent = 'días hábiles';
+            document.getElementById('kpi-2-desc').textContent = 'Aún no exigibles';
 
-            document.getElementById('kpi-3-title').textContent = 'Descanso Continuo Est.';
+            document.getElementById('kpi-3-title').textContent = 'Descanso en Corrido';
             document.getElementById('kpi-3-unit').textContent = 'días corridos';
-            document.getElementById('kpi-3-desc').textContent = 'Incluyendo fines de semana';
+            document.getElementById('kpi-3-desc').textContent = 'Si inicias el próximo día hábil';
 
             document.getElementById('breakdown-title').textContent = 'Detalle de Antigüedad y Feriado Legal';
 
             if (hoy < fechaIngreso) {
                 document.getElementById('results-hero-main-val').textContent = '0 días hábiles';
+                var mD0 = document.getElementById('mobile-total-display'); if (mD0) mD0.textContent = '0 días';
                 return;
             }
 
-            var diffDays = Math.round((hoy - fechaIngreso) / (1000 * 60 * 60 * 24));
-            var anios = Math.floor(diffDays / 365);
-            var meses = Math.floor((diffDays % 365) / 30);
-            var dias = (diffDays % 365) % 30;
+            var tiempo = vacTiempoServicio(fechaIngreso, hoy);
+            var anios = Math.floor(tiempo.meses / 12);
+            var mesesSueltos = tiempo.meses % 12;
+            var diasSueltos = tiempo.dias;
 
-            var factorMensual = (regimen === 'extrema') ? (20.0 / 12.0) : 1.25;
+            var baseAnual = (regimen === 'extrema') ? 20 : 15;
+            var factorMensual = baseAnual / 12.0;
             var factorDiario = factorMensual / 30.0;
-            var totalMeses = Math.floor(diffDays / 30);
-            var diasSueltos = diffDays % 30;
 
-            var devengados = (totalMeses * factorMensual) + (diasSueltos * factorDiario);
-            var disponibles = Math.max(0, devengados - diasTomados);
+            // Art. 67: el derecho a exigir el feriado nace al cumplir cada año de servicio.
+            // Art. 68: cada año cumplido suma los días progresivos que correspondan a esa antigüedad.
+            var exigiblesBrutos = 0;
+            var progresivosTotal = 0;
+            for (var k = 1; k <= anios; k++) {
+                var prog = vacDiasProgresivos(aniosPrevios, k);
+                exigiblesBrutos += baseAnual + prog;
+                progresivosTotal += prog;
+            }
+            var progresivoActual = vacDiasProgresivos(aniosPrevios, anios);
 
-            var descansoContinuo = Math.round(disponibles * 1.4);
+            // Lo devengado en el año en curso solo se paga como feriado proporcional al terminar
+            // el contrato, o se puede anticipar de común acuerdo.
+            var devengadosAnioEnCurso = (mesesSueltos * factorMensual) + (diasSueltos * factorDiario);
 
-            document.getElementById('results-hero-main-val').textContent = disponibles.toFixed(1) + ' días hábiles';
-            var mDisplay = document.getElementById('mobile-total-display'); if (mDisplay) mDisplay.textContent = disponibles.toFixed(1) + ' días';
-            document.getElementById('kpi-1-val').textContent = devengados.toFixed(1);
-            document.getElementById('kpi-2-val').textContent = '-' + diasTomados.toFixed(1);
-            document.getElementById('kpi-3-val').textContent = '~' + descansoContinuo;
+            var exigibles = Math.max(0, exigiblesBrutos - diasTomados);
+            var anticipados = Math.max(0, diasTomados - exigiblesBrutos);
+            var devengadosNetos = Math.max(0, devengadosAnioEnCurso - anticipados);
+
+            // Proyección real en calendario (feriados y fines de semana), partiendo el próximo día hábil
+            var inicioDescanso = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
+            var guard = 0;
+            while (!vacEsDiaHabil(inicioDescanso) && guard++ < 30) inicioDescanso.setDate(inicioDescanso.getDate() + 1);
+            var corridos = 0;
+            var restantes = exigibles;
+            var cursor = new Date(inicioDescanso);
+            guard = 0;
+            while (restantes > 0 && guard++ < 2000) {
+                corridos++;
+                if (vacEsDiaHabil(cursor)) restantes -= 1;
+                cursor.setDate(cursor.getDate() + 1);
+            }
+            var fechaRetorno = new Date(cursor);
+            guard = 0;
+            while (!vacEsDiaHabil(fechaRetorno) && guard++ < 30) fechaRetorno.setDate(fechaRetorno.getDate() + 1);
+            var fmtFecha = function (d) { return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear(); };
+
+            var fmt1 = function (n) { return n.toFixed(1).replace('.', ','); };
+            var fmt2 = function (n) { return n.toFixed(2).replace('.', ','); };
+
+            var hDesc = document.getElementById('results-hero-desc');
+            if (hDesc) {
+                if (anios < 1) {
+                    hDesc.innerHTML = 'Aún no cumples un año de servicio, así que <strong>todavía no tienes días exigibles</strong> (art. 67 CT). Llevas <strong>' + fmt2(devengadosNetos) + ' días hábiles devengados</strong>: solo se pagan como feriado proporcional si termina el contrato, o los puedes tomar por adelantado si tu empleador está de acuerdo.';
+                } else {
+                    hDesc.innerHTML = 'Días hábiles que ya puedes exigir por tus <strong>' + anios + ' año(s) completos</strong> de servicio' + (progresivosTotal > 0 ? ', incluido el feriado progresivo' : '') + '. Además llevas <strong>' + fmt2(devengadosNetos) + ' días devengados</strong> del año en curso, que serán exigibles al cumplir el próximo año (o se pagan como feriado proporcional si termina el contrato).' + (sueldoBase > 0 && exigibles > 0 ? ' Remuneración del descanso: aprox. <strong>' + formatVacCurrency(sueldoBase / 30 * corridos) + '</strong> (remuneración íntegra / 30 por cada día corrido).' : '') + (exigibles > 2 * (baseAnual + progresivoActual) ? ' <strong>Revisa los días tomados:</strong> el art. 70 CT permite acumular hasta dos períodos, así que un saldo mayor suele indicar vacaciones ya tomadas que no se ingresaron.' : '');
+                }
+            }
+
+            document.getElementById('results-hero-main-val').textContent = fmt1(exigibles) + ' días hábiles';
+            var mDisplay = document.getElementById('mobile-total-display'); if (mDisplay) mDisplay.textContent = fmt1(exigibles) + ' días';
+            document.getElementById('kpi-1-val').textContent = fmt1(exigibles);
+            document.getElementById('kpi-2-val').textContent = fmt2(devengadosNetos);
+            document.getElementById('kpi-3-val').textContent = exigibles > 0 ? String(corridos) : '0';
 
             document.getElementById('row-1-label').textContent = 'Antigüedad en la empresa:';
-            document.getElementById('row-1-val').textContent = anios + ' años, ' + meses + ' meses y ' + dias + ' días';
-            document.getElementById('row-2-label').textContent = 'Feriado anual base:';
-            document.getElementById('row-2-val').textContent = (regimen === 'extrema' ? '20' : '15') + ' días hábiles al año';
-            document.getElementById('row-3-label').textContent = 'Días devengados brutos:';
-            document.getElementById('row-3-val').textContent = devengados.toFixed(2) + ' días hábiles';
-            document.getElementById('row-4-label').textContent = 'Días ya disfrutados:';
-            document.getElementById('row-4-val').textContent = '-' + diasTomados.toFixed(1) + ' días hábiles';
-            document.getElementById('row-5-label').textContent = 'Días corridos estimados de descanso:';
-            document.getElementById('row-5-val').textContent = 'Aprox. ' + descansoContinuo + ' días de corrido';
-            document.getElementById('row-total-label').textContent = 'Saldo actual disponible a solicitar:';
-            document.getElementById('row-total-val').textContent = disponibles.toFixed(1) + ' días hábiles';
+            document.getElementById('row-1-val').textContent = anios + ' años, ' + mesesSueltos + ' meses y ' + diasSueltos + ' días';
+            document.getElementById('row-2-label').textContent = 'Feriado por años completos:';
+            document.getElementById('row-2-val').textContent = anios + ' × ' + baseAnual + ' días' + (progresivosTotal > 0 ? ' + ' + progresivosTotal + ' progresivos' : '') + (progresivoActual > 0 ? ' (hoy ' + (baseAnual + progresivoActual) + '/año)' : '');
+            document.getElementById('row-3-label').textContent = 'Devengados del año en curso (no exigibles):';
+            document.getElementById('row-3-val').textContent = fmt2(devengadosAnioEnCurso) + ' días hábiles';
+            document.getElementById('row-4-label').textContent = 'Días ya tomados:';
+            document.getElementById('row-4-val').textContent = '-' + fmt1(diasTomados) + ' días hábiles' + (anticipados > 0 ? ' (' + fmt1(anticipados) + ' anticipados)' : '');
+            document.getElementById('row-5-label').textContent = 'Proyección en calendario (feriados incluidos):';
+            document.getElementById('row-5-val').textContent = exigibles > 0
+                ? 'Del ' + fmtFecha(inicioDescanso) + ': ' + corridos + ' días corridos, vuelves el ' + fmtFecha(fechaRetorno)
+                : 'Sin días exigibles';
+            document.getElementById('row-total-label').textContent = 'Saldo exigible a solicitar:';
+            document.getElementById('row-total-val').textContent = fmt1(exigibles) + ' días hábiles';
         }
 
         // --- CÁLCULO MODO 3: VACACIONES PROGRESIVAS ---
@@ -1870,7 +1972,7 @@ window.addEventListener('load', function () {
                 bSub.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200';
             }
             var hDesc = document.getElementById('results-hero-desc');
-            if (hDesc) hDesc.innerHTML = 'El feriado progresivo premia tu trayectoria laboral sumando 1 día hábil adicional cada 3 años de antigüedad tras haber cumplido los 10 primeros años cotizados.';
+            if (hDesc) hDesc.innerHTML = 'El feriado progresivo suma 1 día hábil adicional por cada 3 años nuevos trabajados después de los 10 primeros. De empleadores anteriores solo se pueden hacer valer hasta 10 años, así que los días extra se ganan con el empleador actual (art. 68 CT).';
 
             document.getElementById('kpi-1-title').textContent = 'Días Legales Base';
             document.getElementById('kpi-1-unit').textContent = 'días/año';
@@ -1887,12 +1989,12 @@ window.addEventListener('load', function () {
             document.getElementById('breakdown-title').textContent = 'Evaluación Legal de Feriado Progresivo';
 
             var baseDias = 15;
-            var diasExtras = 0;
-            var cumpleRequisito = (aniosTotales >= 10);
-
-            if (cumpleRequisito) {
-                diasExtras = Math.floor(aniosActual / 3);
-            }
+            // Los años totales incluyen los del empleador actual
+            var totalesEfectivos = Math.max(aniosTotales, aniosActual);
+            var aniosPrevios = totalesEfectivos - aniosActual;
+            var previosComputables = Math.min(aniosPrevios, 10);
+            var cumpleRequisito = (totalesEfectivos >= 10);
+            var diasExtras = vacDiasProgresivos(aniosPrevios, aniosActual);
 
             var totalAnual = baseDias + diasExtras;
 
@@ -1902,17 +2004,22 @@ window.addEventListener('load', function () {
             document.getElementById('kpi-2-val').textContent = '+' + diasExtras;
             document.getElementById('kpi-3-val').textContent = totalAnual;
 
-            document.getElementById('row-1-label').textContent = '¿Cumple requisito de 10 años cotizados?';
-            document.getElementById('row-1-val').textContent = cumpleRequisito ? 'Sí, cumple (' + aniosTotales + ' años)' : 'Aún no (faltan ' + (10 - aniosTotales) + ' años)';
-            document.getElementById('row-2-label').textContent = 'Años de servicio con empleador actual:';
-            document.getElementById('row-2-val').textContent = aniosActual + ' años cumplidos';
-            document.getElementById('row-3-label').textContent = 'Feriado legal base obligatorio:';
-            document.getElementById('row-3-val').textContent = '15 días hábiles';
+            document.getElementById('row-1-label').textContent = '¿Cumple requisito de 10 años trabajados?';
+            document.getElementById('row-1-val').textContent = cumpleRequisito
+                ? 'Sí, cumple (' + totalesEfectivos + ' años)' + (aniosTotales < aniosActual ? ' *ajustado a los años con el empleador actual' : '')
+                : 'Aún no (faltan ' + (10 - totalesEfectivos) + ' años)';
+            document.getElementById('row-2-label').textContent = 'Años computables (anteriores + actual):';
+            document.getElementById('row-2-val').textContent = previosComputables + (aniosPrevios > 10 ? ' de ' + aniosPrevios : '') + ' + ' + aniosActual + ' años';
+            document.getElementById('row-3-label').textContent = 'Años nuevos después de los 10:';
+            document.getElementById('row-3-val').textContent = Math.max(0, previosComputables + aniosActual - 10) + ' años';
             document.getElementById('row-4-label').textContent = 'Días adicionales de feriado progresivo:';
             document.getElementById('row-4-val').textContent = '+' + diasExtras + ' días hábiles';
             document.getElementById('row-5-label').textContent = 'Próximo día adicional a ganar:';
-            var faltanParaSiguiente = 3 - (aniosActual % 3);
-            document.getElementById('row-5-val').textContent = cumpleRequisito ? 'En ' + faltanParaSiguiente + ' año(s) más' : 'Al completar los 10 años de cotización';
+            var faltan = 0;
+            for (var n = 1; n <= 60; n++) {
+                if (vacDiasProgresivos(aniosPrevios, aniosActual + n) > diasExtras) { faltan = n; break; }
+            }
+            document.getElementById('row-5-val').textContent = faltan ? 'En ' + faltan + ' año(s) más con el empleador actual' : '—';
             document.getElementById('row-total-label').textContent = 'Total Feriado Anual con Derecho a Descanso:';
             document.getElementById('row-total-val').textContent = totalAnual + ' días hábiles';
         }
@@ -1922,7 +2029,7 @@ window.addEventListener('load', function () {
             var val = document.getElementById('results-hero-main-val').textContent;
             var lines = [
                 "CÁLCULO DE VACACIONES CHILE 2026 (calculolaboral.cl)",
-                "Modo: " + (currentVacMode === 'proporcionales' ? 'Vacaciones Proporcionales Finiquito' : (currentVacMode === 'activo' ? 'Días Disponibles Trabajador Activo' : 'Feriado Progresivo')),
+                "Modo: " + (currentVacMode === 'proporcionales' ? 'Vacaciones Proporcionales Finiquito' : (currentVacMode === 'activo' ? 'Días Exigibles Trabajador Activo' : 'Feriado Progresivo')),
                 "Resultado Principal: " + val,
                 "Calculado gratis según normativa DT en https://calculolaboral.cl/calculadora-vacaciones"
             ];
@@ -1985,19 +2092,19 @@ window.addEventListener('load', function () {
 
         // --- INICIALIZACIÓN ---
         function initVacaciones() {
-            var now = new Date();
-            var past = new Date();
-            past.setFullYear(now.getFullYear() - 1);
+            var nowFull = new Date();
+            var now = new Date(nowFull.getFullYear(), nowFull.getMonth(), nowFull.getDate());
+            var past = vacInicioParaMeses(now, 12);
 
             var inStart = document.getElementById('vac-fecha-inicio');
             var inEnd = document.getElementById('vac-fecha-termino');
             var inIngreso = document.getElementById('act-fecha-ingreso');
             if (inStart && inEnd) {
-                if (!inStart.value) inStart.value = past.toISOString().split('T')[0];
-                if (!inEnd.value) inEnd.value = now.toISOString().split('T')[0];
+                if (!inStart.value) inStart.value = vacISO(past);
+                if (!inEnd.value) inEnd.value = vacISO(now);
             }
             if (inIngreso && !inIngreso.value) {
-                inIngreso.value = past.toISOString().split('T')[0];
+                inIngreso.value = vacISO(past);
             }
             calculateVacaciones();
         }

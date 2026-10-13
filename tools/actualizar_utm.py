@@ -2,6 +2,9 @@
 
 Uso:
     python tools/actualizar_utm.py 72151 octubre 2026
+    python tools/actualizar_utm.py 72151 octubre 2026 --solo impuesto-unico-segunda-categoria.html
+
+Con --solo se actualiza únicamente esa página (no toca js/ ni el resto del sitio).
 
 Qué cambia:
   1. js/constants.js: UTM y la tabla estática del impuesto único (TAX_BRACKETS).
@@ -15,7 +18,11 @@ Qué cambia:
        data-iu-bruto-exento  -> sueldo bruto desde el que se paga impuesto (AFP Modelo, Fonasa)
        data-l2b="N tipo"     -> sueldo base para recibir N líquido (gratificación none o legal_tope; usa node)
   4. impuesto-unico-segunda-categoria.html: las tablas entre los marcadores
-     <!-- TABLA-IUSC:INICIO/FIN --> y <!-- SUELDOS-IUSC:INICIO/FIN -->, y el mes del título.
+     <!-- TABLA-IUSC:INICIO/FIN --> y <!-- SUELDOS-IUSC:INICIO/FIN -->, el mes del título y el
+     texto del JSON-LD "13,5 UTM ($monto en <mes> de <año>)".
+
+La UF y los topes imponibles (TOPE_IMPONIBLE_AFP y TOPE_IMPONIBLE_CESANTIA, en UF) se leen
+de js/constants.js, igual que la calculadora de la página.
 
 Fuente de la UTM: tabla mensual del SII (sii.cl/valores_y_fechas/utm/). El impuesto se
 calcula con los tramos del artículo 43 de la Ley de la Renta, expresados en UTM.
@@ -33,7 +40,6 @@ MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto
 TRAMOS = [(0, 13.5, 0, 0), (13.5, 30, .04, .54), (30, 50, .08, 1.74), (50, 70, .135, 4.49),
           (70, 90, .23, 11.14), (90, 120, .304, 17.8), (120, 310, .35, 23.32), (310, None, .40, 38.82)]
 AFP_MODELO = 0.1058
-TOPE_AFP_UF, TOPE_CES_UF = 89.9, 135.1
 SUELDOS_EJEMPLO = [1_000_000, 1_500_000, 2_000_000, 2_500_000, 3_000_000, 4_000_000, 5_000_000, 7_000_000]
 
 
@@ -77,9 +83,20 @@ def liquido_a_bruto(neto, gratificacion):
     return int(subprocess.run(["node", "-e", js], cwd=ROOT, capture_output=True, text=True, check=True).stdout)
 
 
-def leer_uf():
-    m = re.search(r"UF:\s*([\d.]+)", (ROOT / "js/constants.js").read_text(encoding="utf-8"))
+def leer_constante(nombre):
+    """Valor numérico de CONSTANTS.<nombre> en js/constants.js."""
+    m = re.search(rf"\b{nombre}:\s*([\d.]+)", (ROOT / "js/constants.js").read_text(encoding="utf-8"))
+    assert m, f"{nombre} no encontrado en js/constants.js"
     return float(m.group(1))
+
+
+def leer_uf():
+    return leer_constante("UF")
+
+
+def leer_topes():
+    """Topes imponibles en UF: (AFP y salud, seguro de cesantía)."""
+    return leer_constante("TOPE_IMPONIBLE_AFP"), leer_constante("TOPE_IMPONIBLE_CESANTIA")
 
 
 def tabla_tramos(utm):
@@ -97,11 +114,12 @@ def tabla_tramos(utm):
     return "\n".join(filas)
 
 
-def tabla_sueldos(utm, uf):
+def tabla_sueldos(utm, uf, topes=None):
+    tope_afp_uf, tope_ces_uf = topes or leer_topes()
     filas = []
     for s in SUELDOS_EJEMPLO:
-        base = min(s, TOPE_AFP_UF * uf)
-        afp, salud, ces = rnd(base * AFP_MODELO), rnd(base * 0.07), rnd(min(s, TOPE_CES_UF * uf) * 0.006)
+        base = min(s, tope_afp_uf * uf)
+        afp, salud, ces = rnd(base * AFP_MODELO), rnd(base * 0.07), rnd(min(s, tope_ces_uf * uf) * 0.006)
         rli = s - afp - salud - ces
         imp = rnd(impuesto(rli, utm))
         tasa = imp / s
@@ -120,17 +138,9 @@ def reemplazar_bloque(texto, marca, contenido):
     return nuevo
 
 
-def main():
-    if len(sys.argv) != 4:
-        sys.exit(__doc__)
-    utm, mes, anio = int(sys.argv[1]), sys.argv[2].lower(), int(sys.argv[3])
-    assert 50_000 < utm < 150_000, "UTM fuera de rango"
-    assert mes in MESES, f"mes debe ser uno de {MESES}"
-    uf = leer_uf()
-    mes_txt = f"{mes} de {anio}"
+def actualizar_js(utm, mes, anio):
+    """1. js/constants.js (UTM y TAX_BRACKETS) y los respaldos de UTM en otros JS."""
     Mes = mes.capitalize()
-
-    # 1. constants.js
     p = ROOT / "js/constants.js"
     s = p.read_text(encoding="utf-8")
     s = re.sub(r"UTM: \d+,", f"UTM: {utm},", s, count=1)
@@ -154,47 +164,81 @@ def main():
     s = p.read_text(encoding="utf-8")
     p.write_text(re.sub(r"CONSTANTS\.UTM : \d+;", f"CONSTANTS.UTM : {utm};", s), encoding="utf-8")
 
+
+def actualizar_pagina(t, nombre, utm, mes, anio, uf, topes=None):
+    """Aplica la UTM a un HTML (texto) y devuelve el texto nuevo. No escribe archivos."""
+    mes_txt = f"{mes} de {anio}"
+    Mes = mes.capitalize()
+    t = re.sub(r'(class="utm-value[^"]*">)\$[\d.]+(<)', rf"\g<1>{pesos(utm)}\2", t)
+
+    def by_x(m):
+        factores = iter(float(x) for x in m.group(3).split())
+        inner = re.sub(r"\$[\d.]+", lambda _: pesos(next(factores, 0) * utm), m.group(4))
+        return m.group(1) + inner + m.group(5)
+    t = re.sub(r'(<(\w+)[^>]*\bdata-utm-x="([\d. ]+)"[^>]*>)(.*?)(</\2>)', by_x, t, flags=re.S)
+
+    def by_iusc(m):
+        imp = pesos(impuesto(float(m.group(3)), utm))
+        return m.group(1) + re.sub(r"\$[\d.]+", imp, m.group(4), count=1) + m.group(5)
+    t = re.sub(r'(<(\w+)[^>]*\bdata-iusc="([\d.]+)"[^>]*>)(.*?)(</\2>)', by_iusc, t, flags=re.S)
+
+    def by_neto(m):
+        rli = float(m.group(3))
+        neto = pesos(rli - rnd(impuesto(rli, utm)))
+        return m.group(1) + re.sub(r"\$[\d.]+", neto, m.group(4), count=1) + m.group(5)
+    t = re.sub(r'(<(\w+)[^>]*\bdata-iusc-neto="([\d.]+)"[^>]*>)(.*?)(</\2>)', by_neto, t, flags=re.S)
+    t = re.sub(r'(<(\w+)[^>]*\bdata-utm-mes\b[^>]*>).*?(</\2>)', rf"\g<1>{mes_txt}\3", t, flags=re.S)
+    # sueldo bruto desde el que se paga impuesto (AFP Modelo, Fonasa, indefinido), redondeado a miles
+    bruto_exento = pesos(round(13.5 * utm / (1 - AFP_MODELO - 0.07 - 0.006), -3))
+    t = re.sub(r'(<(\w+)[^>]*\bdata-iu-bruto-exento\b[^>]*>)\$[\d.]+(</\2>)', rf"\g<1>{bruto_exento}\3", t)
+
+    if 'data-l2b="' in t:
+        t = re.sub(r'(<(\w+)[^>]*\bdata-l2b="(\d+) (\w+)"[^>]*>)\$[\d.]+(</\2>)',
+                   lambda m: m.group(1) + pesos(liquido_a_bruto(int(m.group(3)), m.group(4))) + m.group(5), t)
+    if nombre == "impuesto-unico-segunda-categoria.html":
+        t = reemplazar_bloque(t, "TABLA-IUSC", tabla_tramos(utm))
+        t = reemplazar_bloque(t, "SUELDOS-IUSC", tabla_sueldos(utm, uf, topes))
+        t = re.sub(r"Impuesto Único 20\d\d: Tabla (?:" + "|".join(m.capitalize() for m in MESES) + r") y Calculadora",
+                   f"Impuesto Único {anio}: Tabla {Mes} y Calculadora", t)
+        t = re.sub(r'data-utm-base="\d+"', f'data-utm-base="{utm}"', t)
+        t = re.sub(r"13,5 UTM \(\$[\d.]+ en [a-záéíóú]+ de \d{4}\)", f"13,5 UTM ({pesos(13.5 * utm)} en {mes_txt})", t)
+        t = re.sub(r"(eso es un sueldo bruto de unos )\$[\d.]+(\.\")", rf"\g<1>{bruto_exento}\2", t)
+    return t
+
+
+def main():
+    args = sys.argv[1:]
+    solo = None
+    if "--solo" in args:
+        i = args.index("--solo")
+        assert i + 1 < len(args), "--solo requiere el nombre de una página"
+        solo = args[i + 1]
+        del args[i:i + 2]
+    if len(args) != 3:
+        sys.exit(__doc__)
+    utm, mes, anio = int(args[0]), args[1].lower(), int(args[2])
+    assert 50_000 < utm < 150_000, "UTM fuera de rango"
+    assert mes in MESES, f"mes debe ser uno de {MESES}"
+    uf = leer_uf()
+    mes_txt = f"{mes} de {anio}"
+
+    if solo:
+        archivos = [str(ROOT / solo)]
+        assert Path(archivos[0]).is_file(), f"no existe {solo}"
+    else:
+        archivos = sorted(glob.glob(str(ROOT / "*.html")))
+        actualizar_js(utm, mes, anio)
+
     # 2 y 3. páginas
     cambios = 0
-    for f in sorted(glob.glob(str(ROOT / "*.html"))):
+    for f in archivos:
         t = Path(f).read_text(encoding="utf-8")
         o = t
-        t = re.sub(r'(class="utm-value[^"]*">)\$[\d.]+(<)', rf"\g<1>{pesos(utm)}\2", t)
-
-        def by_x(m):
-            factores = iter(float(x) for x in m.group(3).split())
-            inner = re.sub(r"\$[\d.]+", lambda _: pesos(next(factores, 0) * utm), m.group(4))
-            return m.group(1) + inner + m.group(5)
-        t = re.sub(r'(<(\w+)[^>]*\bdata-utm-x="([\d. ]+)"[^>]*>)(.*?)(</\2>)', by_x, t, flags=re.S)
-
-        def by_iusc(m):
-            imp = pesos(impuesto(float(m.group(3)), utm))
-            return m.group(1) + re.sub(r"\$[\d.]+", imp, m.group(4), count=1) + m.group(5)
-        t = re.sub(r'(<(\w+)[^>]*\bdata-iusc="([\d.]+)"[^>]*>)(.*?)(</\2>)', by_iusc, t, flags=re.S)
-
-        def by_neto(m):
-            rli = float(m.group(3))
-            neto = pesos(rli - rnd(impuesto(rli, utm)))
-            return m.group(1) + re.sub(r"\$[\d.]+", neto, m.group(4), count=1) + m.group(5)
-        t = re.sub(r'(<(\w+)[^>]*\bdata-iusc-neto="([\d.]+)"[^>]*>)(.*?)(</\2>)', by_neto, t, flags=re.S)
-        t = re.sub(r'(<(\w+)[^>]*\bdata-utm-mes\b[^>]*>).*?(</\2>)', rf"\g<1>{mes_txt}\3", t, flags=re.S)
-        # sueldo bruto desde el que se paga impuesto (AFP Modelo, Fonasa, indefinido), redondeado a miles
-        bruto_exento = pesos(round(13.5 * utm / (1 - AFP_MODELO - 0.07 - 0.006), -3))
-        t = re.sub(r'(<(\w+)[^>]*\bdata-iu-bruto-exento\b[^>]*>)\$[\d.]+(</\2>)', rf"\g<1>{bruto_exento}\3", t)
-
-        if 'data-l2b="' in t:
-            t = re.sub(r'(<(\w+)[^>]*\bdata-l2b="(\d+) (\w+)"[^>]*>)\$[\d.]+(</\2>)',
-                       lambda m: m.group(1) + pesos(liquido_a_bruto(int(m.group(3)), m.group(4))) + m.group(5), t)
-        if Path(f).name == "impuesto-unico-segunda-categoria.html":
-            t = reemplazar_bloque(t, "TABLA-IUSC", tabla_tramos(utm))
-            t = reemplazar_bloque(t, "SUELDOS-IUSC", tabla_sueldos(utm, uf))
-            t = re.sub(r"Impuesto Único 20\d\d: Tabla (?:" + "|".join(m.capitalize() for m in MESES) + r") y Calculadora",
-                       f"Impuesto Único {anio}: Tabla {Mes} y Calculadora", t)
-            t = re.sub(r'data-utm-base="\d+"', f'data-utm-base="{utm}"', t)
+        t = actualizar_pagina(t, Path(f).name, utm, mes, anio, uf)
         if t != o:
             Path(f).write_text(t, encoding="utf-8")
             cambios += 1
-    print(f"UTM {pesos(utm)} ({mes_txt}) aplicada: constants.js y {cambios} páginas. "
+    print(f"UTM {pesos(utm)} ({mes_txt}) aplicada: {'solo ' + solo if solo else 'constants.js y'} {cambios} página(s). "
           f"Tramo exento hasta {pesos(13.5 * utm, dec=True)}.")
 
 
