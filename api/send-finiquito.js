@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function: send-finiquito
- * Automatically delivers the Finiquito Notarial Pack (.doc editable)
+ * Automatically delivers the Finiquito Notarial Pack (Word .docx editable)
  * to the buyer via Resend with the document attached.
  * Solo funciona con un desbloqueo firmado tras un pago verificado con Flow
  * (p, o, e, sig; ver api/_flow.js). La venta ya la avisa /api/flow-confirm.
@@ -104,6 +104,7 @@ module.exports = async (req, res) => {
             trabajadorRut,
             saldoLiquido,
             htmlContent,
+            docxBase64,
             token,
             unlock
         } = body;
@@ -168,8 +169,17 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const wordBufferBase64 = Buffer.from('\ufeff' + wordHtml, 'utf-8').toString('base64');
-        const filenameSafe = `Finiquito_${cleanTrabajador.replace(/[^a-zA-Z0-9]/g, '_')}_${cleanTrabajadorRut.replace(/[^a-zA-Z0-9]/g, '')}.doc`;
+        // El navegador arma el .docx real (js/finiquito_docx.js); el HTML .doc queda solo de respaldo
+        // para páginas antiguas en caché. Se acepta solo si es un zip de Word de tamaño razonable.
+        let docx = null;
+        if (typeof docxBase64 === 'string' && docxBase64.length > 100 && docxBase64.length < 400000) {
+            const buf = Buffer.from(docxBase64, 'base64');
+            if (buf.slice(0, 4).toString('binary') === 'PK\x03\x04' && buf.includes('word/document.xml')) docx = buf;
+        }
+        const wordBufferBase64 = docx ? docx.toString('base64') : Buffer.from('\ufeff' + wordHtml, 'utf-8').toString('base64');
+        const wordExt = docx ? 'docx' : 'doc';
+        const nombreArchivo = (v) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+        const filenameSafe = `Finiquito_${nombreArchivo(cleanTrabajador)}_${nombreArchivo(cleanTrabajadorRut)}.${wordExt}`;
 
         // 1. Email para el Comprador
         const buyerSubject = `Tu finiquito para notaría: ${cleanTrabajador}`;
@@ -187,7 +197,7 @@ module.exports = async (req, res) => {
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Estimado(a) empleador(a) de ${escapeHtml(cleanEmpresa)},</p>
         
         <p style="font-size: 14px; color: #334155; margin: 0 0 18px;">
-            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría (Word + PDF)</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.doc editable)</strong> listo para imprimir o personalizar.
+            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría (Word + PDF)</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.${wordExt} editable)</strong> listo para imprimir o personalizar.
         </p>
 
         <!-- Tarjeta de Resumen del Documento -->
@@ -238,7 +248,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.doc editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.${wordExt} editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {

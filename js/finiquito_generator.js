@@ -858,7 +858,7 @@
                 </div>
 
                 <!-- Cláusula Quinta: Saldo Líquido -->
-                <div class="p-3 bg-gray-50 border border-gray-300 rounded">
+                <div data-docx="recuadro" class="p-3 bg-gray-50 border border-gray-300 rounded">
                     <p>
                         <strong><u>QUINTO:</u> SALDO LÍQUIDO A PAGAR Y FORMA DE PAGO.</strong> Deducidos los descuentos individualizados, resulta la suma líquida, neta y única a favor del(de la) Trabajador(a) ascendente a <strong>${formatMoney(c.saldoLiquidoFinal)} (${numberToWords(c.saldoLiquidoFinal)})</strong>, monto que la Empleadora paga ${formaPagoTexto}, recibiéndolo el(la) Trabajador(a) a su entera satisfacción, declarando no tener reclamo alguno respecto de su cuantía.
                     </p>
@@ -887,7 +887,7 @@
 
             <!-- Sección de Firmas Notariales -->
             <div class="mt-12 pt-8 border-t border-gray-400 font-serif">
-                <div class="grid grid-cols-2 gap-8 text-center text-xs">
+                <div data-docx="firmas" class="grid grid-cols-2 gap-8 text-center text-xs">
                     <!-- Firma Empleador -->
                     <div class="flex flex-col items-center">
                         <div class="w-48 border-b border-gray-900 mb-2"></div>
@@ -907,7 +907,7 @@
                 </div>
 
                 <!-- Recuadro Reserva de Derechos -->
-                <div class="mt-8 p-3 border border-dashed border-gray-400 text-xs text-gray-700 bg-gray-50/50">
+                <div data-docx="recuadro" class="mt-8 p-3 border border-dashed border-gray-400 text-xs text-gray-700 bg-gray-50/50">
                     <p class="font-bold uppercase text-gray-800 text-xs mb-1">Espacio Exclusivo para Reserva de Derechos del Trabajador(a) (Ley Nº 21.361):</p>
                     <p class="italic text-xs text-gray-500 h-8 flex items-center">
                         [Si no formula reserva, cruzar con una línea. El trabajador conserva el derecho a reservar acciones laborales].
@@ -921,7 +921,7 @@
                         Autorizo las firmas estampadas precedentemente de don(ña) <strong>${escapeHtml(f.empresaRepNombre)}</strong> y de don(ña) <strong>${escapeHtml(f.trabajadorNombre)}</strong>, quienes previa exhibición de sus respectivas cédulas de identidad manifestaron haber leído y aceptado el contenido del presente instrumento.
                     </p>
                     <div class="mt-8 flex justify-center">
-                        <div class="w-64 border-b border-gray-900 pb-1"></div>
+                        <div data-docx="linea" class="w-64 border-b border-gray-900 pb-1"></div>
                     </div>
                     <p class="text-gray-700 font-semibold mt-1">MINISTRO DE FE / NOTARIO PÚBLICO</p>
                 </div>
@@ -1003,7 +1003,7 @@
         }
     }
 
-    // Despacho de finiquito oficial (.doc) al correo electrónico del comprador
+    // Despacho del finiquito (.docx) al correo electrónico del comprador
     let hasSentEmail = false;
 
     async function dispatchFiniquitoEmail(formData, calcData, forceEmail = null) {
@@ -1015,6 +1015,12 @@
 
         const docBody = document.getElementById('notary-document-body');
         const htmlContent = docBody ? docBody.innerHTML : '';
+        let docxBase64 = '';
+        try {
+            if (docBody && window.FiniquitoDocx) docxBase64 = window.FiniquitoDocx.toBase64(docBody, `Finiquito - ${formData.trabajadorNombre}`);
+        } catch (e) {
+            console.warn('No se pudo generar el .docx para el correo:', e);
+        }
 
         try {
             // El servidor solo envía con el desbloqueo firmado tras el pago
@@ -1032,6 +1038,8 @@
                     trabajadorRut: formData.trabajadorRut,
                     saldoLiquido: calcData?.saldoLiquidoFinal || 0,
                     htmlContent,
+                    docxBase64,
+                    filename: wordFilename(formData),
                     token: unlock.o,
                     unlock
                 })
@@ -1269,7 +1277,12 @@
         window.print();
     }
 
-    // Exportador a Word (.doc / .docx compatible)
+    // Exportador a Word: genera un .docx real con js/finiquito_docx.js
+    function wordFilename(f) {
+        const limpio = (v) => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+        return `Finiquito_${limpio(f.trabajadorNombre) || 'Trabajador'}_${limpio(f.trabajadorRut)}.docx`;
+    }
+
     function downloadWord() {
         if (!state.isPaid) {
             const modal = document.getElementById('payment-modal');
@@ -1277,42 +1290,17 @@
             return;
         }
         const docBody = document.getElementById('notary-document-body');
-        if (!docBody) return;
+        if (!docBody || !window.FiniquitoDocx) return;
 
         const f = getFormData();
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head>
-                <meta charset="utf-8">
-                <title>Finiquito - ${escapeHtml(f.trabajadorNombre)}</title>
-                <style>
-                    body { font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.4; color: #000; }
-                    h2 { text-align: center; font-size: 14pt; margin-bottom: 4pt; }
-                    p { text-align: justify; margin-bottom: 8pt; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 6pt; margin-bottom: 8pt; font-family: Arial, sans-serif; font-size: 9.5pt; }
-                    th, td { border: 1px solid #777; padding: 4pt 6pt; }
-                    th { background-color: #f2f2f2; text-align: left; }
-                    .text-right { text-align: right; }
-                </style>
-            </head>
-            <body>
-                ${docBody.innerHTML}
-            </body>
-            </html>
-        `;
-
-        const blob = new Blob(['\ufeff', htmlContent], {
-            type: 'application/msword;charset=utf-8'
-        });
-
-        const filename = `Finiquito_${f.trabajadorNombre.replace(/\s+/g, '_')}_${f.trabajadorRut}.doc`;
+        const blob = window.FiniquitoDocx.toBlob(docBody, `Finiquito - ${f.trabajadorNombre}`);
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = filename;
+        link.download = wordFilename(f);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(link.href), 10000);
     }
 
     function escapeHtml(str) {
