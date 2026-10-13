@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.14.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.15.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -391,6 +391,8 @@ gtag('js', new Date());
 </div>
 <div class="mes-acciones">
 <button type="button" id="pm-liq-marcar" class="btn-texto" hidden>Marcar como emitidas</button>
+<button type="button" id="pm-liq-libro-excel" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">table_view</span>Libro del mes para el contador (Excel)</button>
+<button type="button" id="pm-liq-libro-imprimir" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">print</span>Imprimir libro</button>
 <p id="pm-liq-estado" class="lq-estado" role="status"></p>
 </div>
 <p class="texto-ayuda" id="pm-liq-nota-marca" style="margin-top:6px"></p>
@@ -768,10 +770,11 @@ gtag('js', new Date());
 <script src="/js/pyme_importar.js?v=1.0.0"></script>
 <script src="/js/pyme_proyeccion.js?v=1.0.0"></script>
 <script src="/js/pyme_midt.js?v=1.0.0"></script>
+<script src="/js/pyme_libro.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.4.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.14.0" defer></script>
+<script src="/js/app_pyme.js?v=1.15.0" defer></script>
 </body>
 </html>

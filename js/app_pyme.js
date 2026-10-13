@@ -1963,6 +1963,7 @@
         $('pm-liq-preparar').hidden = porPreparar === 0;
         $('pm-liq-imprimir-todas').disabled = guardadas === 0;
         $('pm-liq-marcar').hidden = !ultimasImpresas.length;
+        $('pm-liq-libro-excel').hidden = $('pm-liq-libro-imprimir').hidden = guardadas === 0;
         $('pm-liq-marcar').textContent = textoMarcar();
         $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
@@ -2545,6 +2546,52 @@
         mensaje(est, omitidas.length ? 'error' : '', omitidas.length ? 'No se imprimieron las de ' + omitidas.join(', ') + ' porque tienen errores: ábrelas y corrígelas.' : '');
         imprimirHojas(hojas, impresas.length === 1 ? 'Liquidacion ' + trabajadorPorId(impresas[0]).nombre + ' ' + periodoSel : 'Liquidaciones ' + periodoSel);
     }
+    // Libro de remuneraciones del mes para el contador: las liquidaciones guardadas, recalculadas con el motor
+    var LIBRO = window.CLPymeLibro;
+    function filasLibro(est) {
+        var val = VAL[periodoSel];
+        if (!val || val.estado !== 'ok') { mensaje(est, 'error', 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return null; }
+        var filas = [], omitidas = [];
+        activos().forEach(function (t) {
+            var reg = mesesDe(periodoSel)[t.id];
+            if (!reg) return;
+            var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
+            if (!r || r.error || !r.res.listo) { omitidas.push(t.nombre); return; }
+            filas.push(LIBRO.fila(t, r.res));
+        });
+        if (!filas.length) { mensaje(est, 'error', 'No hay liquidaciones guardadas sin errores en ' + nombrePeriodo(periodoSel) + '.'); return null; }
+        mensaje(est, omitidas.length ? 'error' : '', omitidas.length ? 'El libro no incluye a ' + omitidas.join(', ') + ': su liquidación tiene errores.' : '');
+        return filas;
+    }
+    $('pm-liq-libro-excel').addEventListener('click', function () {
+        var filas = filasLibro($('pm-liq-estado'));
+        if (!filas) return;
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['\ufeff', LIBRO.csv({ empresa: estado.empresa, periodoNombre: nombrePeriodo(periodoSel) }, filas)], { type: 'text/csv;charset=utf-8' }));
+        a.download = 'libro-remuneraciones-' + periodoSel + '.csv';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    });
+    $('pm-liq-libro-imprimir').addEventListener('click', function () {
+        var filas = filasLibro($('pm-liq-estado'));
+        if (!filas) return;
+        var tot = LIBRO.totales(filas), cols = LIBRO.COLUMNAS;
+        var num = function (v) { return typeof v === 'number' ? Math.round(v).toLocaleString('es-CL') : esc(v); };
+        var html = '<section class="pm-hoja libro-hoja"><div class="libro-doc"><h2>Libro de remuneraciones de ' + esc(nombrePeriodo(periodoSel)) + '</h2>' +
+            '<p>' + esc(estado.empresa.razonSocial) + ' · RUT ' + esc(Rut.formatear(estado.empresa.rut)) + ' · montos en pesos</p><table><thead><tr>' +
+            cols.map(function (c) { return '<th scope="col">' + esc(c.titulo) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+            filas.map(function (f) { return '<tr>' + cols.map(function (c) { return '<td>' + num(f[c.k]) + '</td>'; }).join('') + '</tr>'; }).join('') +
+            '</tbody><tfoot><tr>' + cols.map(function (c) { return '<td>' + num(tot[c.k]) + '</td>'; }).join('') + '</tr></tfoot></table>' +
+            '<p class="libro-nota">Hecho con el Asistente Laboral Pyme a partir de las liquidaciones guardadas. Las cotizaciones del empleador son una estimación: el monto exacto lo calcula Previred. No reemplaza al Libro de Remuneraciones Electrónico de la Dirección del Trabajo, obligatorio para empleadores con 5 o más trabajadores (art. 62 del Código del Trabajo).</p></div></section>';
+        var cont = $('print-section'), anterior = document.title;
+        cont.innerHTML = html;
+        document.title = 'Libro de remuneraciones ' + periodoSel;
+        var restaurar = function () { document.title = anterior; window.removeEventListener('afterprint', restaurar); };
+        window.addEventListener('afterprint', restaurar);
+        window.print();
+        setTimeout(restaurar, 2000);
+    });
+
     $('pm-liq-imprimir-todas').addEventListener('click', function () { imprimirMeses(activos().map(function (t) { return t.id; }), $('pm-liq-estado')); });
     $('pm-liq-imprimir').addEventListener('click', function () {
         if (!editando || $('pm-liq-imprimir').disabled) return;
