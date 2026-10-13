@@ -1,5 +1,5 @@
 /**
- * Generador de Finiquito y Pack de Despido Notarial (Chile 2026)
+ * Generador de Finiquito para Notaría (Chile 2026)
  * Código del Trabajo: Art. 177, Art. 161, Art. 163, Art. 172, Art. 67, 73
  * Leyes Complementarias: Ley 19.631 (Ley Bustos), Ley 19.728 (AFC), Ley 21.389 (Alimentos), Ley 21.361 (Reserva)
  */
@@ -14,8 +14,8 @@
         activeTab: 'datos' // 'datos', 'remuneracion', 'descuentos'
     };
 
-    // Configuración de Pasarela de Pago Oficial ($12.990 CLP)
-    // Botón oficial Flow.cl (Webpay Plus, Servipag, Mach, Tarjetas de Débito y Crédito)
+    // Pago del generador ($12.990 CLP) por la API de Flow
+    // Flow: Webpay Plus, Servipag, Mach y tarjetas
     // El pago se crea en el servidor (/api/checkout, producto 'finiquito') y Flow lo confirma;
     // el desbloqueo llega firmado en la URL de retorno (ver js/checkout_consent.js).
     const unlockApi = () => window.CLCheckout || null;
@@ -440,7 +440,7 @@
         }
     }
 
-    // Comprobar si el finiquito actual está desbloqueado legítimamente (48 horas y mismo RUT)
+    // Comprobar si el finiquito está desbloqueado (firma del servidor vigente, 48 horas)
     function checkUnlockStatus(formData) {
         try {
             // Sin desbloqueo firmado por el servidor (o ya vencido) no hay documento limpio
@@ -448,7 +448,7 @@
             const raw = localStorage.getItem('fini_unlock_payload');
             if (!raw) return false;
             const payload = JSON.parse(raw);
-            if (!payload || !payload.expiresAt || !payload.trabajadorRut) return false;
+            if (!payload || !payload.expiresAt) return false;
 
             // 1. Validar expiración de 48 horas
             const now = Date.now();
@@ -458,14 +458,7 @@
                 return false;
             }
 
-            // 2. Validar que corresponda al mismo trabajador
-            const cleanCurrent = (formData.trabajadorRut || '').replace(/[^0-9kK]/g, '').toUpperCase();
-            const cleanPaid = (payload.trabajadorRut || '').replace(/[^0-9kK]/g, '').toUpperCase();
-
-            if (cleanCurrent.length >= 7 && cleanPaid.length >= 7 && cleanCurrent !== cleanPaid) {
-                return false;
-            }
-
+            // El acceso dura 48 horas en este navegador y permite corregir cualquier dato, RUT incluido
             return true;
         } catch (e) {
             return false;
@@ -492,7 +485,7 @@
                     <div class="watermark-stamp-box">
                         <span class="stamp-badge">Cálculo Laboral Chile</span>
                         <div class="stamp-title">VISTA PREVIA</div>
-                        <div class="stamp-subtitle">BORRADOR NO VÁLIDO PARA FIRMA NOTARIAL</div>
+                        <div class="stamp-subtitle">DESBLOQUEA PARA DESCARGAR</div>
                         <button type="button" id="btn-watermark-unlock" class="stamp-cta">
                             <span class="material-icons text-sm" aria-hidden="true">lock_open</span>
                             Desbloquear Word + PDF ($12.990)
@@ -592,7 +585,7 @@
             descuentoAlimentos: getN('descuento-alimentos'),
 
             formaPago: getV('forma-pago') || 'transferencia',
-            bancoDetalle: getV('banco-detalle') || 'BancoEstado Cuenta RUT'
+            bancoDetalle: getV('banco-detalle')
         };
     }
 
@@ -1064,6 +1057,29 @@
         `;
     }
 
+    // Datos mínimos para emitir el finiquito (se exigen antes de pagar y antes de enviar el correo)
+    function datosFaltantes(raw) {
+        const faltan = [];
+        if (!raw.empresaRazon) faltan.push('razón social del empleador');
+        if (!raw.empresaRut || !validateRut(raw.empresaRut)) faltan.push('RUT válido del empleador');
+        if (!raw.empresaRepNombre) faltan.push('representante legal');
+        if (!raw.trabajadorNombre) faltan.push('nombre del trabajador');
+        if (!raw.trabajadorRut || !validateRut(raw.trabajadorRut)) faltan.push('RUT válido del trabajador');
+        if (!raw.fechaInicio || !raw.fechaTermino || raw.fechaTermino < raw.fechaInicio) faltan.push('fechas de ingreso y término');
+        if (!raw.sueldoBase) faltan.push('sueldo base');
+        if (raw.causal === '160' && !raw.causal160) faltan.push('numeral del art. 160');
+        return faltan;
+    }
+
+    function mostrarAvisoDatos(faltan) {
+        const bar = document.getElementById('unlock-status-bar');
+        if (!bar) return;
+        const aviso = document.createElement('p');
+        aviso.className = 'mt-2 text-xs font-semibold text-rose-700';
+        aviso.textContent = 'Para enviarte el Word por correo, completa: ' + faltan.join(', ') + '. Luego usa «Enviar a mi correo».';
+        bar.appendChild(aviso);
+    }
+
     // Modal de Pago y Descarga
     function setupPaymentModal() {
         const triggerBtns = [
@@ -1104,6 +1120,19 @@
                     alert('Por favor, ingresa un correo electrónico válido para enviarte el respaldo.');
                     return;
                 }
+
+                const faltanEl = document.getElementById('checkout-faltan');
+                const faltan = datosFaltantes(getRawFormData());
+                const okEl = document.getElementById('checkout-datos-ok');
+                if (okEl && !okEl.checked) faltan.push('confirmar que revisaste los datos');
+                if (faltan.length) {
+                    if (faltanEl) {
+                        faltanEl.textContent = 'Antes de pagar, completa: ' + faltan.join(', ') + '.';
+                        faltanEl.classList.remove('hidden');
+                    }
+                    return;
+                }
+                if (faltanEl) faltanEl.classList.add('hidden');
 
                 if (emailInput && emailInput.value) {
                     localStorage.setItem('fini_customer_email', emailInput.value.trim());
@@ -1146,6 +1175,14 @@
         if (!email || !email.includes('@')) return;
 
         if (!forceEmail && hasSentEmail) return;
+
+        // Sin los datos mínimos no se envía un finiquito con textos de ejemplo
+        const faltan = datosFaltantes(getRawFormData());
+        if (faltan.length) {
+            if (forceEmail) alert('Antes de enviarlo, completa: ' + faltan.join(', ') + '.');
+            else mostrarAvisoDatos(faltan);
+            return;
+        }
         if (!forceEmail) hasSentEmail = true;
 
         const docBody = document.getElementById('notary-document-body');
@@ -1181,14 +1218,18 @@
             });
 
             if (resp.ok) {
-                alert(`✅ ¡Copia de respaldo enviada exitosamente a ${email} con el documento Word adjunto!`);
+                alert(`Enviamos el finiquito en Word a ${email}.`);
+            } else {
+                let msg = 'No pudimos enviar el correo. Descarga el Word desde esta página.';
+                try { msg = (await resp.json()).error || msg; } catch (e) {}
+                alert(msg);
             }
         } catch (e) {
             console.warn('Error al despachar finiquito por correo:', e);
         }
     }
 
-    // Aplicar desbloqueo exitoso de finiquito oficial con regla de 48 horas
+    // Aplicar desbloqueo del finiquito pagado (48 horas)
     function applyPaymentSuccess(immediateDownload = true, sendEmail = true) {
         state.isPaid = true;
 
@@ -1246,7 +1287,7 @@
                             </div>
                         </div>
                         <button type="button" id="btn-reset-new-finiquito" class="text-xs text-slate-500 hover:text-slate-800 underline self-start sm:self-auto cursor-pointer">
-                            Crear finiquito para otro trabajador
+                            Limpiar el formulario
                         </button>
                     </div>
 
@@ -1273,9 +1314,7 @@
                 }
             });
             document.getElementById('btn-reset-new-finiquito')?.addEventListener('click', () => {
-                if (confirm('¿Deseas iniciar un nuevo finiquito para otro trabajador? El documento volverá a su estado protegido con marcas de agua.')) {
-                    localStorage.removeItem('fini_unlock_payload');
-                    localStorage.removeItem('fini_paid_token');
+                if (confirm('Se borrarán los datos del formulario. Tu acceso de 48 horas sigue activo en este navegador.')) {
                     localStorage.removeItem('fini_draft_payload');
                     window.location.href = window.location.pathname;
                 }
@@ -1456,8 +1495,8 @@
     }
 
     // Exportar al ámbito global para depuración o pruebas
+    // Sin exponer el estado de pago: el desbloqueo solo lo da la firma del servidor
     window.FiniquitoGenerator = {
-        state,
         updateAll,
         downloadPDF,
         downloadWord,

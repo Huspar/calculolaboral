@@ -5,6 +5,7 @@
  * Solo funciona con un desbloqueo firmado tras un pago verificado con Flow
  * (p, o, e, sig; ver api/_flow.js). La venta ya la avisa /api/flow-confirm.
  */
+const crypto = require('crypto');
 const { verifyDownload, SITE_URL } = require('./_flow');
 
 const ALLOWED_ORIGINS = new Set([
@@ -127,7 +128,8 @@ module.exports = async (req, res) => {
         const cleanEmpresaRut = (typeof empresaRut === 'string' ? empresaRut.trim().slice(0, 20) : '—');
         const cleanTrabajador = (typeof trabajadorNombre === 'string' ? trabajadorNombre.trim().slice(0, 80) : 'Trabajador');
         const cleanTrabajadorRut = (typeof trabajadorRut === 'string' ? trabajadorRut.trim().slice(0, 20) : '—');
-        const cleanSaldo = (typeof saldoLiquido === 'string' || typeof saldoLiquido === 'number' ? String(saldoLiquido) : '0');
+        const saldoNum = Math.round(Number(String(saldoLiquido || 0).replace(/[^0-9.-]/g, '')) || 0);
+        const cleanSaldo = saldoNum.toLocaleString('es-CL');
 
         if (!cleanEmail || !isValidEmail(cleanEmail)) {
             return res.status(400).json({ error: 'Correo electrónico no válido.' });
@@ -197,7 +199,7 @@ module.exports = async (req, res) => {
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Estimado(a) empleador(a) de ${escapeHtml(cleanEmpresa)},</p>
         
         <p style="font-size: 14px; color: #334155; margin: 0 0 18px;">
-            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría (Word + PDF)</strong>. Adjunto a este correo encontrarás el documento completo en formato <strong>Word (.${wordExt} editable)</strong> listo para imprimir o personalizar.
+            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría</strong>. Adjunto va el finiquito en <strong>Word (.${wordExt}) editable</strong>. El PDF lo guardas desde la página con el botón «Imprimir o guardar PDF».
         </p>
 
         <!-- Tarjeta de Resumen del Documento -->
@@ -233,7 +235,7 @@ module.exports = async (req, res) => {
                 Ver / Re-descargar en la Web (Acceso 48 Horas)
             </a>
             <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
-                Tu sesión web se mantendrá desbloqueada para este trabajador durante 48 horas por si necesitas ajustar algún dato.
+                El acceso dura 48 horas desde el pago y funciona en el mismo navegador donde llenaste los datos; en otro navegador los datos del formulario no aparecen.
             </p>
         </div>
 
@@ -248,7 +250,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.${wordExt} editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a ver o descargar tu documento en la web durante 48 horas en:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.${wordExt} editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a editarlo o descargarlo durante 48 horas desde el pago, en el mismo navegador donde llenaste los datos:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {
@@ -269,7 +271,8 @@ module.exports = async (req, res) => {
                     'Content-Type': 'application/json',
                     'User-Agent': 'calculolaboral-cl/1.0',
                     // Un solo envío por orden: el desbloqueo no sirve para mandar correos a terceros
-                    'Idempotency-Key': `finiquito-${u.o}`
+                    // Un envío por orden y contenido: reenviar con datos corregidos genera otra llave
+                    'Idempotency-Key': `finiquito-${u.o}-${crypto.createHash('sha256').update(cleanEmail + '|' + wordBufferBase64).digest('hex').slice(0, 16)}`
                 },
                 body: JSON.stringify(payload)
             });
