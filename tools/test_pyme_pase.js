@@ -312,7 +312,8 @@ caso('api/flow-confirm registra el pase en la cuenta y manda comprobante y aviso
         assert.ok(correosEnviados.some(c => /\[VENTA \$19\.990\]/.test(c.subject)), 'aviso al dueño');
         assert.ok(!correosEnviados.some(c => c.to[0] === 'pagador@otro.cl'));
         const comprobante = correosEnviados.find(c => c.to[0] === 'ana@ejemplo.cl');
-        assert.ok(/no se renueva solo/i.test(comprobante.html) && !/retracto|reembolso|garantiza|100%/i.test(comprobante.html));
+        assert.ok(/no se renueva solo/i.test(comprobante.html) && !/retracto|garantiza|100%/i.test(comprobante.html));
+        assert.ok(/reembolso total dentro de 14 días corridos/.test(comprobante.html), 'el comprobante informa el reembolso');
     } finally { env.restaurar(); }
 });
 caso('api/flow-confirm ignora un pago de pase con monto distinto o sin pagar', async () => {

@@ -120,6 +120,16 @@ caso('carta del art. 159 N°4: solo para contratos a plazo fijo con menos de dos
     assert.ok(!D.validar('carta_159_4', ctx(TRAB()), valido('carta_159_4', ctx(TRAB()), { fechaTermino: '2026-10-31', cotizaciones: true })).puedeEmitir, 'indefinido');
     assert.ok(!D.validar('carta_159_4', ctx(TRAB({ contrato: 'plazo_fijo', renovaciones: 2 })), valido('carta_159_4', c, { fechaTermino: '2026-10-31', cotizaciones: true })).puedeEmitir, 'segunda renovación');
 });
+caso('cartas de término: la advertencia de cotizaciones va primero y como aviso (art. 162)', () => {
+    const c = ctx(TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-01-10', fechaTerminoPlazo: '2026-10-31' }));
+    ['carta_159_4', 'carta_161'].forEach(id => {
+        const a = D.validar(id, c, valido(id, c, { cotizaciones: true })).avisos[0];
+        assert.strictEqual(a.nivel, 'aviso', id);
+        assert.ok(/no produce el efecto de poner término al contrato \(art\. 162\)/.test(a.texto) && /abogado/.test(a.texto), id);
+        const etiqueta = D.campos(id).find(f => f.k === 'cotizaciones').etiqueta;
+        assert.ok(/art\. 162/.test(etiqueta), id + ': la casilla recuerda la consecuencia');
+    });
+});
 caso('carta del art. 159 N°4: exige confirmar las cotizaciones; finiquito electrónico lleva el aviso de voluntariedad', () => {
     const pf = TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-01-10', fechaTerminoPlazo: '2026-10-31' }), c = ctx(pf);
     assert.ok(D.validar('carta_159_4', c, valido('carta_159_4', c)).errores.cotizaciones);

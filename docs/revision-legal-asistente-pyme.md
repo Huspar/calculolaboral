@@ -1,6 +1,6 @@
 # Revisión legal del Asistente Laboral Pyme: qué debe ver un abogado
 
-12-oct-2026. Documento para entregar al abogado junto con los textos. Todo el contenido del Asistente se redactó con apoyo de IA y **ningún texto ha sido revisado por un abogado**. No se publica hasta que se revise.
+12-oct-2026. **Anexo técnico.** El documento para presentar a un abogado laboral es `docs/brief-abogado-laboral.html`; este archivo es el detalle de apoyo. Todo el contenido del Asistente se redactó con apoyo de IA y **ningún texto ha sido revisado por un abogado**. El dueño decidió el 12-oct-2026 lanzar sin esa revisión, con textos conservadores (ver sección 6).
 
 ## 1. Qué es el servicio, en una frase
 
@@ -60,14 +60,14 @@ El registro de documentos emitidos guarda solo el tipo y la fecha, nunca el text
 
 ## 4. Aparte: antes de vender el Pase (no antes de abrir cuentas)
 
-- **Retracto y reembolso.** Los Términos vigentes excluyen el retracto para bienes digitales descargables. El Pase es un servicio con duración (3 o 12 meses): el abogado debe indicar qué corresponde y cómo informarlo antes de pagar. No quedó escrito en los Términos.
+- **Retracto y reembolso (cubierto con un reembolso voluntario de 14 días; ver sección 6).** Los Términos vigentes excluyen el retracto para bienes digitales descargables. El Pase es un servicio con duración (3 o 12 meses): el abogado debe indicar qué corresponde y cómo informarlo antes de pagar. No quedó escrito en los Términos.
 - Textos de venta del Pase, que siguen las reglas de la sección 2.1 de `AGENTS.md` (sin promesas de validez, sin "oficial", sin precios tachados).
-- **Qué ya está construido y qué no afirma.** El aviso previo al pago del Pase (`js/checkout_consent.js`, variante "servicio") dice solo: acceso por los días del producto desde que se confirma el pago, no se renueva solo, un segundo pase empieza cuando termina el anterior, y los documentos son modelos de referencia. **No dice nada sobre retracto ni reembolso**, y la sección 12 de los Términos (viñeta "Pase Pyme") tampoco; ambos están marcados como borrador. El comprobante por correo tampoco lo menciona. El abogado debe indicar el texto exacto para el aviso, los Términos y el comprobante.
+- **Qué ya está construido y qué no afirma.** El aviso previo al pago del Pase (`js/checkout_consent.js`, variante "servicio") dice solo: acceso por los días del producto desde que se confirma el pago, no se renueva solo, un segundo pase empieza cuando termina el anterior, y los documentos son modelos de referencia. Desde el 12-oct-2026 el aviso, la sección 12 de los Términos y el comprobante por correo informan además el reembolso total de 14 días corridos; un abogado puede ajustar la redacción.
 - **Datos del pago.** El pago de Flow lleva el id de la cuenta (no datos de trabajadores). El comprobante va al correo de la cuenta, no al que se escriba en Flow.
 - **Al vencer el pase.** Hoy la cuenta vuelve a 1 trabajador activo y a los documentos con marca de agua, y conserva sus datos. No hay borrado automático. El plan original proponía solo lectura y exportación por 90 días y luego borrar con aviso: el plazo y la comunicación los define el abogado, y requieren correos automáticos que hoy están fuera de alcance.
 - **Página pública** (`asistente-laboral-pyme.html`): también son textos para el abogado (qué hace y qué no hace el asistente, sección de datos, planes y preguntas frecuentes). Dice expresamente que los documentos no fueron revisados por abogados y no promete validez.
 - **Corrección hecha el 12-oct-2026 en Privacidad §10:** el borrador decía que, sin servicio vigente, la cuenta pasaba a modo de lectura por 90 días y luego se borraban los datos con aviso por correo. Eso no está construido; hoy el texto dice que la cuenta sigue disponible con las funciones gratuitas y que los datos se conservan mientras la cuenta esté activa. El abogado debe decir si conviene un plazo máximo para cuentas sin uso (y entonces habría que construir el borrado y el aviso).
-- **Venta cerrada.** El Pase solo se puede comprar si en Vercel está `PYME_PASE_VENTA=1`. No se activa hasta que lo anterior esté resuelto.
+- **Venta cerrada.** El Pase solo se puede comprar si en Vercel está `PYME_PASE_VENTA=1`. Se activa tras las pruebas con la base real y el sandbox de Flow.
 
 ## 5. Datos de hecho para el abogado
 
@@ -81,6 +81,13 @@ El registro de documentos emitidos guarda solo el tipo y la fecha, nunca el text
 | Borrado | Eliminar la cuenta borra en cascada todos los datos de esa cuenta |
 | Quién accede | Solo el dueño del sitio; no hay equipo ni terceros con acceso |
 
-## 6. Mientras esto no esté revisado
+## 6. Operación sin revisión de abogado (decisión del 12-oct-2026)
 
-Se puede seguir construyendo todo el panel y probarlo con datos de ejemplo en la rama de pruebas. No se abren cuentas a clientes reales ni se publican las secciones nuevas de Términos y Privacidad.
+Se lanza sin revisión legal, reduciendo la exposición con estos cambios:
+
+1. **Reembolso total de 14 días corridos del Pase**, informado en el aviso previo al pago, los Términos (§5 y §12), el comprobante, el panel y la página pública. Cubre el retracto legal de 10 días contados como corridos o como hábiles, sea o no aplicable a este servicio. Cómo se atiende: reembolsar en Flow y correr `tools/revocar_pase.js`.
+2. **Sin cláusulas amplias de exclusión de responsabilidad en el Asistente.** La viñeta de disponibilidad pasó de «sin garantía de disponibilidad» a un texto factual (puede haber interrupciones; se puede descargar un respaldo). La sección 10 de los Términos, anterior al Asistente, no se tocó y está en el brief como punto A4.
+3. **Advertencia de cotizaciones en las cartas de los arts. 159 N°4 y 161:** primer aviso en pantalla, en nivel de advertencia, y recordatorio de la consecuencia del art. 162 en la casilla obligatoria.
+4. **Transparencia:** los Términos, el aviso previo y la página pública dicen que los documentos no han sido revisados por un abogado.
+
+Los textos de las secciones 2 a 4 de este anexo siguen siendo los que un abogado debería ver; el orden de prioridad está en el brief.

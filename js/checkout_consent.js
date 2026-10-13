@@ -6,7 +6,7 @@
  * desde JS con window.CLCheckout.go(url, opciones) y los kits, que crean el
  * pago en el servidor tras window.CLCheckout.confirm(alAceptar, opciones).
  * El Pase Pyme (servicio con duracion, no descarga) usa opciones.variante = 'servicio':
- * el aviso no habla de retracto ni de archivos hasta que un abogado defina esos textos.
+ * el aviso describe el servicio y el reembolso voluntario de 14 dias corridos; no usa el texto de retracto de los productos descargables.
  */
 (function () {
     'use strict';
@@ -57,11 +57,12 @@
 
     var dialog, checkbox, label, confirmBtn, emailWrap, emailInput, listEl, leadEl, listaProducto, leadProducto, pending = null;
 
-    // Aviso del Pase Pyme: solo hechos del servicio, sin afirmar nada sobre retracto (pendiente de revision legal)
+    // Aviso del Pase Pyme: hechos del servicio y reembolso voluntario de 14 dias corridos (mas generoso que el retracto legal)
     var LISTA_SERVICIO = '' +
         '<li>El pase da acceso al Asistente Laboral Pyme por la cantidad de días del producto, contados desde que se confirma el pago. No se renueva solo.</li>' +
         '<li>Si compras otro mientras tienes uno vigente, empieza cuando termina el que ya tienes.</li>' +
-        '<li>Los documentos son modelos de referencia basados en la normativa vigente; no reemplazan la asesoría de un abogado.</li>';
+        '<li>Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde la compra, escribiendo a contacto@calculolaboral.cl.</li>' +
+        '<li>Los documentos son modelos de referencia basados en la normativa vigente; no han sido revisados por un abogado y no reemplazan su asesoría.</li>';
     var LEAD_SERVICIO = 'Estás comprando un pase de acceso al Asistente Laboral Pyme.';
     var EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 
@@ -148,7 +149,7 @@
         if (typeof dialog.showModal !== 'function') {
             // Navegadores sin <dialog>: confirmacion nativa con el mismo contenido
             var ok = window.confirm(options.variante === 'servicio'
-                ? 'Estás comprando un pase de acceso al Asistente Laboral Pyme por los días del producto, desde que se confirma el pago. No se renueva solo. ¿Aceptas los Términos y condiciones y continúas al pago?'
+                ? 'Estás comprando un pase de acceso al Asistente Laboral Pyme por los días del producto, desde que se confirma el pago. No se renueva solo. Puedes pedir el reembolso total dentro de 14 días corridos desde la compra. ¿Aceptas los Términos y condiciones y continúas al pago?'
                 : 'Producto digital de entrega inmediata: no aplica el derecho a retracto ' +
                 '(art. 3 bis letra b, Ley 19.496). ¿Aceptas los Términos y condiciones y continúas al pago?');
             var mail = options.askEmail ? (window.prompt('Correo para el comprobante:') || '').trim() : '';
@@ -158,6 +159,7 @@
         }
         pending = { onAccept: onAccept, onCancel: options.onCancel, askEmail: !!options.askEmail };
         listEl.innerHTML = options.variante === 'servicio' ? LISTA_SERVICIO : listaProducto;
+        dialog.querySelector('.clc-check a').setAttribute('href', options.variante === 'servicio' ? '/terminos#asistente-pyme' : TERMS_URL);
         leadEl.textContent = options.variante === 'servicio' ? LEAD_SERVICIO : leadProducto;
         emailWrap.hidden = !options.askEmail;
         if (options.defaultEmail && !emailInput.value) emailInput.value = options.defaultEmail;

@@ -260,6 +260,7 @@ async function deliverPase(pay, vence) {
   <p style="margin:0 0 20px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:#00382E">Laboral</span></p>
   <p style="margin:0 0 16px;font-size:14px;color:#334155">Confirmamos tu pago de <strong>$${p.amount.toLocaleString('es-CL')}</strong> por <strong>${escapeHtml(p.subject)}</strong> (orden Flow ${escapeHtml(pay.order)}).</p>
   <p style="margin:0 0 16px;font-size:14px;color:#334155">Tu pase está vigente hasta el <strong>${escapeHtml(hasta)}</strong>. No se renueva solo: si quieres seguir, puedes comprar otro y se suma a la vigencia que te quede.</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde hoy, respondiendo este correo. No necesitas explicar el motivo.</p>
   <p style="margin:0 0 20px"><a href="${SITE_URL}/asistente-pyme" style="display:inline-block;background:#00382E;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px">Ir al asistente</a></p>
   <p style="margin:0 0 16px;font-size:12px;color:#475569">Los documentos son modelos de referencia basados en la normativa vigente; no constituyen asesoría legal.</p>
   <p style="margin:0;font-size:13px;color:#64748b">¿Dudas? Responde este correo.</p>

@@ -130,7 +130,7 @@
             { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de la carta', req: true },
             { k: 'entrega', tipo: 'select', etiqueta: 'Cómo se comunica', req: true, opciones: [['personal', 'Entrega personal al trabajador'], ['certificada', 'Carta certificada al domicilio del contrato']] },
             { k: 'finiquito', tipo: 'select', etiqueta: 'Finiquito', req: true, opciones: [['presencial', 'Se otorgará y pagará de forma presencial'], ['electronico', 'Se otorgará y pagará de forma electrónica']] },
-            { k: 'cotizaciones', tipo: 'check', etiqueta: 'Confirmo que las cotizaciones previsionales están pagadas íntegramente hasta el último día del mes anterior al término y tengo los comprobantes para adjuntar', req: true }
+            { k: 'cotizaciones', tipo: 'check', etiqueta: 'Confirmo que las cotizaciones previsionales están pagadas íntegramente hasta el último día del mes anterior al término y tengo los comprobantes para adjuntar (si no lo están, el despido no pone término al contrato: art. 162)', req: true }
         ],
         carta_161: [
             { k: 'fechaTermino', tipo: 'fecha', etiqueta: 'Fecha de término del contrato', req: true },
@@ -143,7 +143,7 @@
             { k: 'finiquito', tipo: 'select', etiqueta: 'Finiquito', req: true, opciones: [['presencial', 'Se otorgará y pagará de forma presencial'], ['electronico', 'Se otorgará y pagará de forma electrónica']] },
             { k: 'sinLicencia', tipo: 'check', etiqueta: 'Confirmo que el trabajador no está con licencia médica por enfermedad común, accidente del trabajo o enfermedad profesional', req: true },
             { k: 'sinFuero', tipo: 'check', etiqueta: 'Confirmo que el trabajador no tiene fuero (maternal, sindical u otro)', req: true },
-            { k: 'cotizaciones', tipo: 'check', etiqueta: 'Confirmo que las cotizaciones previsionales están pagadas íntegramente hasta el último día del mes anterior al término y tengo los comprobantes para adjuntar', req: true }
+            { k: 'cotizaciones', tipo: 'check', etiqueta: 'Confirmo que las cotizaciones previsionales están pagadas íntegramente hasta el último día del mes anterior al término y tengo los comprobantes para adjuntar (si no lo están, el despido no pone término al contrato: art. 162)', req: true }
         ],
         amonestacion: [
             { k: 'fechaHechos', tipo: 'fecha', etiqueta: 'Fecha de los hechos', req: true },
@@ -288,6 +288,11 @@
         if (t.fechaIngreso && esFecha(ctx.hoy) && dias(t.fechaIngreso, ctx.hoy) < 365) avisos.push({ nivel: 'aviso', texto: 'La persona lleva menos de un año de servicio: el feriado anual de 15 días hábiles corresponde a quienes tienen más de un año (art. 67). Antes, solo procede el feriado proporcional.' });
     }
 
+    // Advertencia de las cartas de termino: va primero y como aviso (no como dato informativo)
+    function avisoCotizaciones() {
+        return { nivel: 'aviso', texto: 'Antes de entregar la carta, revisa las cotizaciones: si no están pagadas íntegramente (AFP, salud y seguro de cesantía, hasta el último día del mes anterior al término), el despido no produce el efecto de poner término al contrato (art. 162). Si hay cotizaciones atrasadas, consulta con un abogado antes de entregar la carta.' };
+    }
+
     function validar1594(ctx, d, errores, bloqueos, avisos) {
         var t = ctx.t;
         if (t.contrato !== 'plazo_fijo') bloqueos.push('Este trabajador no tiene contrato a plazo fijo en su ficha. Esta carta es solo para el vencimiento del plazo convenido (art. 159 N°4).');
@@ -300,7 +305,7 @@
         }
         if (esFecha(d.fecha) && esFecha(d.fechaTermino)) { var pl = plazoComunicacion(ctx, d.fechaTermino); if (pl) avisos.push({ nivel: 'info', texto: 'Entrega la carta (o envíala certificada) y manda copia a la Inspección del Trabajo a más tardar el ' + fechaLarga(pl) + ': tres días hábiles después de la separación (art. 162). Para este plazo cuenta el sábado como día hábil; los domingos y feriados no.' }); }
         if (d.entrega === 'certificada' && vacio(t.domicilio)) avisos.push({ nivel: 'aviso', texto: 'Falta el domicilio del trabajador en su ficha. La carta certificada debe enviarse al domicilio señalado en el contrato.' });
-        avisos.push({ nivel: 'info', texto: 'Si el empleador no pagó íntegramente las cotizaciones al momento del despido, este no produce el efecto de poner término al contrato (art. 162).' });
+        avisos.unshift(avisoCotizaciones());
     }
 
     function plazoComunicacion(ctx, fechaTermino) {
@@ -313,6 +318,7 @@
 
     function validar161(ctx, d, errores, bloqueos, avisos) {
         var t = ctx.t;
+        avisos.unshift(avisoCotizaciones());
         if (t.fechaIngreso && esFecha(d.fechaTermino) && d.fechaTermino <= t.fechaIngreso) errores.fechaTermino = 'Debe ser posterior a la fecha de ingreso.';
         if (!vacio(d.hechos) && textoUsuario(d.hechos).length < MIN_HECHOS_161) errores.hechos = 'Describe los hechos con más detalle (mínimo ' + MIN_HECHOS_161 + ' caracteres).';
         if (!vacio(d.hechos) && /[\[\]]/.test(d.hechos)) errores.hechos = 'Quita los corchetes: el texto debe quedar completo.';
