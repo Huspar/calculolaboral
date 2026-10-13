@@ -27,17 +27,25 @@ class ForensicSalaryCalculator {
         this.contractType = data.contractType || 'indefinido';
 
         // Additional Discounts (Phase 2)
+        // ccafAmount: cuota de crédito social CCAF. Es un descuento NO imponible: no rebaja
+        // la base de AFP, salud ni impuesto; se resta del líquido después del impuesto.
         this.ccafAmount = parseInt(data.ccafAmount) || 0;
         this.apvAmount = parseInt(data.apvAmount) || 0;
+        // apvRegime (opcional): 'B' (por defecto) rebaja la base del impuesto con tope de 50 UF
+        // mensuales (art. 42 bis LIR); 'A' no rebaja la base (recibe la bonificación fiscal del 15%).
+        this.apvRegime = String(data.apvRegime || 'B').toUpperCase() === 'A' ? 'A' : 'B';
         this.prestamos = parseInt(data.prestamos) || 0;
         this.pension = parseInt(data.pension) || 0;
         this.sindicato = parseInt(data.sindicato) || 0;
         this.otrosDescuentos = parseInt(data.otrosDescuentos) || 0;
 
-        // P1 Feature Flag: Should CCAF/APV reduce the base for AFP/Salud?
-        // Default false = AFP/Salud on totalTaxable (standard, less complaints)
-        // true = AFP/Salud on taxableForTax (reduced by CCAF/APV, strict mode)
-        this.reduceSocialSecurityBase = !!data.reduceSocialSecurityBaseByCCAFAPV;
+        // jornada (opcional): horas ordinarias semanales pactadas, para el valor de la hora extra.
+        // Por defecto 42 h (Ley 21.561, vigente desde el 26-abr-2026).
+        const jornada = parseFloat(data.jornada);
+        this.jornada = (jornada > 0 && jornada <= 45) ? jornada : 42;
+
+        // El antiguo flag reduceSocialSecurityBaseByCCAFAPV se ignora: AFP y salud se calculan
+        // siempre sobre el total imponible (con su tope), sin rebajar CCAF ni APV.
     }
 
     calculate() {
@@ -72,7 +80,12 @@ class ForensicSalaryCalculator {
 
             // PASO 1: Calcular Sueldo Imponible Base
             const baseSalary = this.baseSalary;
-            const overtimeAmount = Math.round(this.baseSalary * C.FACTOR_HORA_EXTRA_42H * this.overtimeHours);
+            // Hora extra: el sueldo base no puede ser inferior al ingreso mínimo proporcional a la
+            // jornada (dictámenes DT Ord. 4725/331 de 1998 y 4262/210 de 2002). Factor DT exacto:
+            // 1,5 × 28 / (30 × 4 × jornada) → 1,5/180 con 42 h (sin truncar a 0,0083333).
+            const overtimeBase = Math.max(baseSalary, Math.round(C.IMM * this.jornada / 42));
+            const overtimeFactor = 1.5 * 28 / (30 * 4 * this.jornada);
+            const overtimeAmount = this.overtimeHours > 0 ? Math.round(overtimeBase * overtimeFactor * this.overtimeHours) : 0;
             const bonusAmount = this.bonusAmount;
 
             // Gratification
@@ -88,19 +101,19 @@ class ForensicSalaryCalculator {
 
             const totalTaxable = baseSalary + gratification + overtimeAmount + bonusAmount;
 
-            // PASO 2: Restar descuentos IMPONIBLES (CCAF, APV)
-            // Reducen la base tributable.
-            const taxableForTax = totalTaxable - this.ccafAmount - this.apvAmount;
+            // PASO 2: Rebaja de la base tributable. Solo el APV régimen B (tope 50 UF mensuales)
+            // rebaja la base del impuesto. La cuota de crédito CCAF NO la rebaja.
+            const apvTaxDeduction = this.apvRegime === 'B'
+                ? Math.min(this.apvAmount, Math.round(50 * C.UF))
+                : 0;
+            const taxableForTax = totalTaxable - apvTaxDeduction;
 
             // Caps Logic (Standard: Caps apply to RAW Taxable, unrelated to CCAF/APV usually, but we follow strict logic)
             const capValueHealthAFP = Math.round(C.TOPE_IMPONIBLE_AFP * C.UF);
             const capValueAFC = Math.round(C.TOPE_IMPONIBLE_CESANTIA * C.UF);
 
-            // CCAF/APV Feature Flag: decide base for social security contributions
-            // Option A (default, flag OFF): AFP/Salud on totalTaxable (topeado) — standard
-            // Option B (flag ON): AFP/Salud on taxableForTax (reduced by CCAF/APV) — strict/alternative
-            const ssBase = this.reduceSocialSecurityBase ? taxableForTax : totalTaxable;
-            const taxableForSocialSecurity = Math.min(ssBase, capValueHealthAFP);
+            // AFP y salud se calculan sobre el total imponible con tope (CCAF y APV no lo rebajan)
+            const taxableForSocialSecurity = Math.min(totalTaxable, capValueHealthAFP);
             const taxableForAFC = Math.min(totalTaxable, capValueAFC); // AFC siempre sobre totalTaxable
 
             // PASO 3: Descuento AFP
@@ -127,9 +140,12 @@ class ForensicSalaryCalculator {
             }
 
             // PASO 5: Impuesto Único
-            // Base = Imponible Ajustado - (AFP + Salud + AFC)
-            // Imponible Ajustado ya tiene descontado CCAF y APV.
-            const taxBase = Math.max(0, taxableForTax - afpAmount - healthAmount - afcAmount);
+            // Base = Imponible (menos APV régimen B) - (AFP + Salud + AFC)
+            // La cotización de salud rebaja la base solo hasta el 7% de 90 UF (tope imponible):
+            // el exceso de un plan Isapre no es deducible (fuente secundaria: Defontana,
+            // "cálculo del impuesto único con Isapre"; art. 42 N°1 LIR).
+            const healthTaxDeduction = Math.min(healthAmount, Math.round(C.SALUD_LEGAL * capValueHealthAFP));
+            const taxBase = Math.max(0, taxableForTax - afpAmount - healthTaxDeduction - afcAmount);
 
             let taxAmount = 0;
             // Configuration-based Tax Calculation
@@ -144,9 +160,8 @@ class ForensicSalaryCalculator {
             taxAmount = Math.max(0, Math.round(taxAmount));
 
             // PASO 6: Sueldo Líquido
-            // Net = Total Taxable - CCAF - APV - AFP - Health - AFC - Tax + NonTaxable - NonTaxableDiscounts
+            // Net = Total Taxable - APV - AFP - Health - AFC - Tax + NonTaxable - NonTaxableDiscounts (incl. CCAF)
             let netSalary = totalTaxable
-                - this.ccafAmount
                 - this.apvAmount
                 - afpAmount
                 - healthAmount
@@ -156,7 +171,8 @@ class ForensicSalaryCalculator {
             const totalNonTaxableIncome = this.colacion + this.movilizacion + this.viaticos;
             netSalary += totalNonTaxableIncome;
 
-            // PASO 7: Restar descuentos NO IMPONIBLES
+            // PASO 7: Restar descuentos NO IMPONIBLES (crédito CCAF, préstamos, pensión, sindicato, otros)
+            netSalary -= this.ccafAmount;
             netSalary -= this.prestamos;
             netSalary -= this.pension;
             netSalary -= this.sindicato;
@@ -173,6 +189,11 @@ class ForensicSalaryCalculator {
 
                     ccafAmount: this.ccafAmount,
                     apvAmount: this.apvAmount,
+                    apvRegime: this.apvRegime,
+                    apvTaxDeduction,
+                    healthTaxDeduction,
+                    overtimeBase,
+                    jornada: this.jornada,
 
                     afpAmount,
                     healthAmount,

@@ -1,7 +1,7 @@
 /**
  * Generador de Anexo Ley 40 Horas (42 Horas 2026)
  * Cálculo Laboral Chile - https://calculolaboral.cl
- * Conforme a Ley Nº 21.561 y Artículos 10, 11 y 38 del Código del Trabajo
+ * Basado en la Ley Nº 21.561 y los artículos 10, 11, 22 y 28 del Código del Trabajo
  */
 
 (function () {
@@ -63,29 +63,33 @@
     }
 
     // Get reduction schedule description
-    function getScheduleData() {
+    function getScheduleData(prevH) {
         const mod = elements.modality ? elements.modality.value : '5x2-viernes';
+        const prev = parseInt(prevH, 10) || 44;
+        const reduccion = Math.max(0, prev - 42);
+        const reduccionTxt = reduccion === 1 ? '1 hora' : `${reduccion} horas`;
         if (mod === '5x2-viernes') {
             return {
                 title: 'Jornada Ordinaria de 42 Horas Semanales (Lunes a Viernes)',
                 text: 'La nueva jornada ordinaria de trabajo será de 42 (cuarenta y dos) horas semanales, distribuidas de lunes a viernes en el siguiente horario:\n\n' +
-                      '• De Lunes a Jueves: de 09:00 horas a 18:00 horas, con 60 minutos destinados a colación (imputables/no imputables según contrato matriz).\n' +
-                      '• Viernes: de 09:00 horas a 16:00 horas, con 60 minutos de colación.\n\n' +
-                      'La reducción horaria se concentra los días viernes (salida anticipada en 2 horas), dando cabal cumplimiento al tope legal de 42 horas semanales fijado para el hito 2026 por la Ley Nº 21.561.'
+                      '• De Lunes a Jueves: de 08:30 horas a 18:30 horas (9 horas de trabajo efectivo diarias).\n' +
+                      '• Viernes: de 08:30 horas a 15:30 horas (6 horas de trabajo efectivo).\n\n' +
+                      'Cada día se otorgan 60 minutos de colación, que no se imputan a la jornada (4 × 9 + 6 = 42 horas semanales).\n\n' +
+                      `La reducción horaria, de ${reduccionTxt} semanales respecto de la jornada anterior de ${prev} horas, se concentra principalmente el día viernes (salida anticipada), dando cumplimiento al tope legal de 42 horas semanales fijado para el hito 2026 por la Ley Nº 21.561.`
             };
         } else if (mod === '5x2-diaria') {
             return {
                 title: 'Jornada Ordinaria de 42 Horas Semanales (Distribución Homogénea)',
                 text: 'La nueva jornada ordinaria de trabajo será de 42 (cuarenta y dos) horas semanales, distribuida de lunes a viernes a razón de 8 horas y 24 minutos diarios, en el siguiente horario:\n\n' +
-                      '• De Lunes a Viernes: de 08:30 horas a 17:54 horas, con una pausa de 60 minutos de colación intermedia.\n\n' +
+                      '• De Lunes a Viernes: de 08:30 horas a 17:54 horas, con una pausa de 60 minutos de colación intermedia que no se imputa a la jornada.\n\n' +
                       'Dicha distribución respeta estrictamente el límite máximo diario y las disposiciones de la Ley Nº 21.561.'
             };
         } else if (mod === '6x1-comercio') {
             return {
                 title: 'Jornada Ordinaria de 42 Horas Semanales (Comercio / Gastronomía - 6x1)',
-                text: 'La nueva jornada ordinaria de trabajo será de 42 (cuarenta y dos) horas semanales, distribuidas en 6 (seis) días a la semana, de conformidad con las excepciones del artículo 38 del Código del Trabajo:\n\n' +
-                      '• De Lunes a Sábado: turnos de 7 (siete) horas diarias efectivas, con un descanso de 30 a 60 minutos para colación según pauta de turnos publicada oportunamente.\n\n' +
-                      'Se deja expresa constancia de que se mantienen plenamente vigentes las normas sobre descanso semanal compensatorio y el otorgamiento obligatorio de al menos dos domingos de descanso al mes conforme al Art. 38 del Código del Trabajo.'
+                text: 'La nueva jornada ordinaria de trabajo será de 42 (cuarenta y dos) horas semanales, distribuidas en 6 (seis) días a la semana, conforme al artículo 28 del Código del Trabajo, que permite distribuir la jornada en no más de seis días:\n\n' +
+                      '• De Lunes a Sábado: turnos de 7 (siete) horas diarias efectivas, con un descanso de 30 a 60 minutos para colación que no se imputa a la jornada, según pauta de turnos publicada oportunamente.\n\n' +
+                      'El domingo es el día de descanso semanal. Si en el futuro la distribución incluyera domingos o festivos, se aplicarán las reglas del artículo 38 del Código del Trabajo (descanso compensatorio y domingos de descanso al mes).'
             };
         } else {
             const custom = elements.customSchedule && elements.customSchedule.value.trim() ? elements.customSchedule.value.trim() : 'Horario a convenir según turnos de 42 horas semanales.';
@@ -120,7 +124,7 @@
         const workPos = elements.workerPosition?.value.trim() || '[CARGO U OFICIO]';
         const origDate = formatDateSpanish(elements.contractDate?.value) || '[FECHA CONTRATO ORIGINAL]';
         const prevH = elements.prevHours?.value || '44';
-        const sched = getScheduleData();
+        const sched = getScheduleData(prevH);
 
         return {
             city, effDate, compName, compRut, compAddr, repName,

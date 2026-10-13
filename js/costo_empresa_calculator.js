@@ -33,8 +33,9 @@
     const TASA_AFC_TRAB_INDEF = 0.006; // 0.6% AFC trabajador en indefinido
 
     // Provisiones Recomendadas para Blindaje Financiero Pyme
-    const TASA_PROV_VACACIONES = 0.0417; // 15 días hábiles / 360 días = 4.167% mensual
+    const TASA_PROV_VACACIONES = 0.0417; // 1,25 días de feriado por mes trabajado ÷ 30 días = 4,17% mensual
     const TASA_PROV_IAS = 0.0833; // 1 mes por año de servicio (Art. 163) = 8.333% mensual
+    const TOPE_IAS_UF = 90; // La remuneración base de la indemnización tiene tope de 90 UF (Art. 172)
 
     // Promedios Trabajador
     const TASA_AFP_PROMEDIO = 0.1144; // 10% obligatorio + 1.44% comisión promedio AFP
@@ -132,7 +133,7 @@
         if (incluirProvisiones) {
             provVacaciones = Math.round(totalImponible * TASA_PROV_VACACIONES);
             if (tipoContrato === 'indefinido') {
-                provIas = Math.round(totalImponible * TASA_PROV_IAS);
+                provIas = Math.round(Math.min(totalImponible, Math.round(TOPE_IAS_UF * currentUF)) * TASA_PROV_IAS);
             }
         }
         var totalProvisiones = provVacaciones + provIas;
@@ -192,12 +193,26 @@
             var optsPuro = Object.assign({}, opciones, { gratificacion: false });
             var basePuro = resolverBaseParaLiquido(sueldoLiquidoDeseado, optsPuro);
             // Luego se le agrega la gratificación legal Art. 50 adicional
-            return calcularDesdeBase(basePuro, Object.assign({}, opciones, { gratificacion: true }));
+            var optsGrat = Object.assign({}, opciones, { gratificacion: true });
+            return aplicarPisoMinimo(calcularDesdeBase(basePuro, optsGrat), optsGrat);
         }
 
         // Caso estándar (Gratificación incluida en la oferta o sin gratificación)
         var sueldoBaseEstimado = resolverBaseParaLiquido(sueldoLiquidoDeseado, opciones);
-        return calcularDesdeBase(sueldoBaseEstimado, opciones);
+        return aplicarPisoMinimo(calcularDesdeBase(sueldoBaseEstimado, opciones), opciones);
+    }
+
+    // El sueldo base de jornada completa no puede ser menor al ingreso mínimo: la gratificación
+    // no se considera para cumplir el mínimo (Ley 20.281). Si el líquido pedido exige un sueldo
+    // base menor, se sube al IMM y se marca el ajuste para avisar al usuario.
+    function aplicarPisoMinimo(res, opciones) {
+        var imm = getIMM();
+        if (res.sueldoBase > 0 && res.sueldoBase < imm) {
+            var ajustado = calcularDesdeBase(imm, opciones);
+            ajustado.ajusteMinimo = { baseCalculada: res.sueldoBase, liquidoCalculado: res.sueldoLiquido };
+            return ajustado;
+        }
+        return res;
     }
 
     // Algoritmo de convergencia exacta al peso para sueldo base inverso
@@ -404,6 +419,21 @@
             setText('det-prov-vacaciones', formatCLP(res.provVacaciones));
             setText('det-prov-ias', formatCLP(res.provIas));
             setText('det-total-prov', formatCLP(res.totalProvisiones));
+
+            // Aviso: sueldo base de jornada completa bajo el ingreso mínimo
+            var elAviso = document.getElementById('aviso-minimo');
+            if (elAviso) {
+                var imm = getIMM();
+                if (res.ajusteMinimo) {
+                    elAviso.innerText = 'Para ' + formatCLP(montoRaw) + ' líquidos bastaría un sueldo base de ' + formatCLP(res.ajusteMinimo.baseCalculada) + ', menor al ingreso mínimo (' + formatCLP(imm) + '). La gratificación no cuenta para el mínimo (Ley 20.281), así que el cálculo usa ' + formatCLP(imm) + ' de sueldo base y el líquido sube a ' + formatCLP(res.sueldoLiquido) + '.';
+                    elAviso.classList.remove('hidden');
+                } else if (modo === 'base' && res.sueldoBase > 0 && res.sueldoBase < imm) {
+                    elAviso.innerText = 'El sueldo base es menor al ingreso mínimo mensual (' + formatCLP(imm) + '). En jornada completa no puede pactarse un sueldo base inferior; la gratificación no cuenta para el mínimo (Ley 20.281).';
+                    elAviso.classList.remove('hidden');
+                } else {
+                    elAviso.classList.add('hidden');
+                }
+            }
 
             // Actualizar Texto Explicativo en Modo Líquido
             var elTextoExplicativo = document.getElementById('texto-explicativo-gratif');

@@ -39,7 +39,7 @@
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "All",
       "url": "https://calculolaboral.cl/calculadora-sueldo-part-time",
-      "description": "Calcula gratis tu sueldo líquido part-time en Chile 2026 (30h, 20h o personalizado). Incluye comisiones, semana corrida, descuentos y protección de Gratuidad para estudiantes (Art. 40 bis).",
+      "description": "Calcula gratis tu sueldo líquido part-time en Chile 2026 (30h, 20h o personalizado). Incluye comisiones, semana corrida estimada, gratificación, AFP, salud, cesantía e impuesto único (Art. 40 bis).",
       "browserRequirements": "Requires JavaScript. Modern browser.",
       "offers": {
         "@type": "Offer",
@@ -825,9 +825,9 @@ window.addEventListener('load', function () {
                 <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
                     Calculadora de Sueldo Part-Time Chile 2026.
                 </h1>
-                <p class="cl-meta">Art. 40 bis • Sueldo Mínimo Proporcional $395.395 (30h) y Protección Estudiante</p>
+                <p class="cl-meta">Art. 40 bis • Sueldo Mínimo Proporcional $395.395 (30h)</p>
                 <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
-                    Simula tu sueldo líquido para jornadas parciales de <strong>30h, 20h o 15h</strong> según el Código del Trabajo. Incluye comisiones variables, semana corrida y verificación de topes para estudiantes (Gratuidad y Carga Familiar).
+                    Simula tu sueldo líquido para jornadas parciales de <strong>30h, 20h o 15h</strong> según el Código del Trabajo. Incluye comisiones variables, semana corrida estimada, gratificación con tope proporcional, impuesto único y topes imponibles.
                 </p>
             </div>
 
@@ -897,7 +897,7 @@ window.addEventListener('load', function () {
                         <!-- Fast Chips Preset -->
                         <div class="flex flex-wrap gap-1.5 mt-2.5">
                             <button type="button" onclick="setPTSalary(395395)" class="sueldo-chip">$395.395 (30h)</button>
-                            <button type="button" onclick="setPTSalary(263596)" class="sueldo-chip">$263.596 (20h)</button>
+                            <button type="button" onclick="setPTSalary(263597)" class="sueldo-chip">$263.597 (20h)</button>
                             <button type="button" onclick="setPTSalary(500000)" class="sueldo-chip">$500.000</button>
                             <button type="button" onclick="setPTSalary(650000)" class="sueldo-chip">$650.000</button>
                         </div>
@@ -920,7 +920,7 @@ window.addEventListener('load', function () {
                         
                         <label class="flex items-center gap-2 cursor-pointer pt-1">
                             <input type="checkbox" id="pt-semana-corrida" checked onchange="calculatePartTime()" class="w-4 h-4 rounded text-[#00382E] focus:ring-[#00382E] border-slate-300">
-                            <span class="text-xs text-slate-600 select-none">Calcular <strong>Semana Corrida</strong> automática (~18% sobre comisiones)</span>
+                            <span class="text-xs text-slate-600 select-none">Sumar <strong>semana corrida</strong> (estimación: 18% de las comisiones)</span>
                         </label>
                     </div>
 
@@ -929,21 +929,44 @@ window.addEventListener('load', function () {
                         <div>
                             <label for="pt-afp" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">AFP</label>
                             <select id="pt-afp" onchange="calculatePartTime()" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E]">
-                                <option value="0.1058">AFP Modelo (10,58%)</option>
-                                <option value="0.1046">AFP Uno (10,46%)</option>
-                                <option value="0.1127">AFP Habitat (11,27%)</option>
-                                <option value="0.1116">AFP Planvital (11,16%)</option>
-                                <option value="0.1144">AFP Capital (11,44%)</option>
-                                <option value="0.1144">AFP Cuprum (11,44%)</option>
-                                <option value="0.1145">AFP Provida (11,45%)</option>
+                                <option value="Modelo">AFP Modelo (10,58%)</option>
+                                <option value="Uno">AFP Uno (10,46%)</option>
+                                <option value="Habitat">AFP Habitat (11,27%)</option>
+                                <option value="Planvital">AFP Planvital (11,16%)</option>
+                                <option value="Capital">AFP Capital (11,44%)</option>
+                                <option value="Cuprum">AFP Cuprum (11,44%)</option>
+                                <option value="Provida">AFP Provida (11,45%)</option>
                             </select>
                         </div>
 
                         <div>
                             <label for="pt-salud" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Salud</label>
                             <select id="pt-salud" onchange="calculatePartTime()" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E]">
-                                <option value="0.07">Fonasa (7%)</option>
-                                <option value="0.07">Isapre (7% Legal)</option>
+                                <option value="fonasa">Fonasa (7%)</option>
+                                <option value="isapre">Isapre (plan en UF)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="pt-isapre-group" class="hidden">
+                        <label for="pt-isapre-uf" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Plan Isapre (UF al mes)</label>
+                        <input type="text" id="pt-isapre-uf" inputmode="decimal" autocomplete="off" placeholder="Ej: 2,5" oninput="calculatePartTime()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E]">
+                        <p class="text-xs text-slate-500 mt-1">Se descuenta el mayor valor entre el 7% y el plan.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="pt-contrato" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Contrato</label>
+                            <select id="pt-contrato" onchange="calculatePartTime()" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E]">
+                                <option value="indefinido">Indefinido (cesantía 0,6%)</option>
+                                <option value="plazo_fijo">Plazo fijo (sin descuento de cesantía)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="pt-gratificacion" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Gratificación mensual</label>
+                            <select id="pt-gratificacion" onchange="calculatePartTime()" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]/20 focus:border-[#00382E]">
+                                <option value="none">No se paga mes a mes</option>
+                                <option value="legal">25% con tope proporcional (art. 40 bis A)</option>
                             </select>
                         </div>
                     </div>
@@ -955,7 +978,7 @@ window.addEventListener('load', function () {
                                 <span class="material-icons text-[#00382E] text-base">school</span> ¿Estudiante entre 18 y 24 años?
                             </span>
                             <p class="text-xs text-emerald-900/80 leading-relaxed">
-                                Protege Gratuidad y Carga Familiar Médica de tus padres si ganas menos de 2 IMM ($1.107.106).
+                                Hay una jornada especial para estudiantes trabajadores (Ley 21.165). Revisa cómo tus ingresos afectan tus beneficios.
                             </p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -996,19 +1019,13 @@ window.addEventListener('load', function () {
                         <span id="pt-compliance-text">Cumple con el mínimo legal proporcional ($395.395).</span>
                     </div>
 
-                    <!-- Student Status Gauge -->
-                    <div id="pt-student-box" class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2">
-                        <div class="flex justify-between text-xs font-semibold">
-                            <span class="text-slate-700 flex items-center gap-1">
-                                <span class="material-icons text-[#00382E] text-sm">school</span> Tope Gratuidad (2 IMM):
-                            </span>
-                            <span class="font-mono font-mono-num text-slate-900 font-bold" id="pt-student-percent">35.7%</span>
+                    <!-- Student info (sin cifras: los requisitos dependen de cada beneficio) -->
+                    <div id="pt-student-box" class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-1">
+                        <div class="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                            <span class="material-icons text-[#00382E] text-sm">school</span> Estudiante trabajador
                         </div>
-                        <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-                            <div id="pt-student-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 35.7%"></div>
-                        </div>
-                        <p class="text-xs text-emerald-800 font-medium" id="pt-student-status">
-                            ✅ Gratuidad y Carga Familiar Médica 100% protegidas (Menor a $1.107.106).
+                        <p class="text-xs text-slate-600" id="pt-student-status">
+                            Antes de aceptar el trabajo, confirma con tu casa de estudios, Fonasa o tu Isapre si estos ingresos afectan tus becas, la gratuidad o tu calidad de carga de salud: cada beneficio tiene sus propios requisitos.
                         </p>
                     </div>
 
@@ -1023,20 +1040,28 @@ window.addEventListener('load', function () {
                                 <span class="font-mono font-mono-num font-semibold text-slate-900" id="pt-desc-base">$395.395</span>
                             </div>
                             <div class="flex justify-between items-center pt-2">
-                                <span class="text-slate-600">Comisiones + Semana Corrida:</span>
+                                <span class="text-slate-600">Comisiones + semana corrida (estimación):</span>
                                 <span class="font-mono font-mono-num font-semibold text-slate-900" id="pt-desc-comisiones">$0</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-slate-600">Gratificación:</span>
+                                <span class="font-mono font-mono-num font-semibold text-slate-900" id="pt-desc-grat">$0</span>
                             </div>
                             <div class="flex justify-between items-center pt-2 text-rose-700">
                                 <span id="pt-afp-label">Descuento AFP Modelo (10,58%):</span>
                                 <span class="font-mono font-mono-num font-semibold" id="pt-desc-afp">-$41.833</span>
                             </div>
                             <div class="flex justify-between items-center pt-2 text-rose-700">
-                                <span>Descuento Salud (7%):</span>
+                                <span id="pt-salud-label">Descuento Salud (7%):</span>
                                 <span class="font-mono font-mono-num font-semibold" id="pt-desc-salud">-$27.678</span>
                             </div>
                             <div class="flex justify-between items-center pt-2 text-rose-700">
                                 <span>Seguro de Cesantía (0,6%):</span>
                                 <span class="font-mono font-mono-num font-semibold" id="pt-desc-afc">-$2.372</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2 text-rose-700">
+                                <span>Impuesto único:</span>
+                                <span class="font-mono font-mono-num font-semibold" id="pt-desc-impuesto">-$0</span>
                             </div>
                             <div class="flex justify-between items-center pt-2 font-bold text-sm">
                                 <span class="text-slate-900">Sueldo Líquido Final a Pago:</span>
@@ -1100,7 +1125,7 @@ window.addEventListener('load', function () {
                         Tabla de Sueldo Mínimo Proporcional Part-Time 2026
                     </h3>
                     <p class="text-xs sm:text-sm text-slate-500 mb-3">
-                        Cálculo con base en el <a href="sueldo-minimo-chile-2026" class="font-semibold text-[#00382E] underline">sueldo mínimo</a> mensual de $553.553 y jornada ordinaria de 42 horas:
+                        Cálculo con base en el <a href="sueldo-minimo-chile-2026" class="font-semibold text-[#00382E] underline">sueldo mínimo</a> mensual de $553.553 y jornada ordinaria de 42 horas (líquido con AFP Modelo, Fonasa, contrato indefinido y sin gratificación mensual):
                     </p>
                     <div class="my-4 border border-slate-200 rounded-2xl bg-white shadow-2xs overflow-hidden">
                         <div class="overflow-x-auto">
@@ -1120,13 +1145,13 @@ window.addEventListener('load', function () {
                                     </tr>
                                     <tr>
                                         <td class="py-3 px-4 font-bold text-slate-800">20 Horas (Media Jornada)</td>
-                                        <td class="py-3 px-4 text-[#00382E] font-bold text-right whitespace-nowrap">$263.596</td>
-                                        <td class="py-3 px-4 text-emerald-700 font-bold text-right whitespace-nowrap">~$215.675</td>
+                                        <td class="py-3 px-4 text-[#00382E] font-bold text-right whitespace-nowrap">$263.597</td>
+                                        <td class="py-3 px-4 text-emerald-700 font-bold text-right whitespace-nowrap">~$215.674</td>
                                     </tr>
                                     <tr>
                                         <td class="py-3 px-4 font-bold text-slate-800">15 Horas (Fin de Semana)</td>
-                                        <td class="py-3 px-4 text-[#00382E] font-bold text-right whitespace-nowrap">$197.697</td>
-                                        <td class="py-3 px-4 text-emerald-700 font-bold text-right whitespace-nowrap">~$161.756</td>
+                                        <td class="py-3 px-4 text-[#00382E] font-bold text-right whitespace-nowrap">$197.698</td>
+                                        <td class="py-3 px-4 text-emerald-700 font-bold text-right whitespace-nowrap">~$161.757</td>
                                     </tr>
                                     <tr>
                                         <td class="py-3 px-4 font-bold text-slate-800">10 Horas (Turno Reducido)</td>
@@ -1142,15 +1167,14 @@ window.addEventListener('load', function () {
                 <!-- Student Worker Law -->
                 <div class="bg-emerald-50/60 border border-emerald-200/90 rounded-2xl p-6">
                     <h3 class="text-lg font-bold text-emerald-950 mb-2 flex items-center gap-2">
-                        <span class="material-icons text-[#00382E]">school</span> Ley del Estudiante Trabajador (Ley 21.155 - Art. 40 bis E)
+                        <span class="material-icons text-[#00382E]">school</span> Estudiantes trabajadores (Ley 21.165)
                     </h3>
                     <p class="text-sm sm:text-sm text-slate-700 leading-relaxed mb-3">
-                        Si eres estudiante de educación superior (Universidad, Instituto Profesional o CFT) entre <strong>18 y 24 años</strong>, la ley te protege especialmente para que puedas trabajar sin perder tus beneficios socioeconómicos:
+                        La Ley 21.165 creó una jornada parcial alternativa para estudiantes de educación superior de entre <strong>18 y 24 años</strong>, que les permite distribuir la jornada según sus horarios de clases.
                     </p>
                     <ul class="text-xs sm:text-sm text-slate-700 space-y-2 list-disc list-inside">
-                        <li><strong>Tope de 2 Ingresos Mínimos ($1.107.106):</strong> Mientras tus ingresos mensuales (sueldo base + comisiones) no superen este monto, <strong>no pierdes la Gratuidad, Beca Bicentenario ni otros beneficios estatales</strong>.</li>
-                        <li><strong>Carga Familiar Médica:</strong> Puedes continuar como beneficiario de salud (carga) en el plan de Fonasa o Isapre de tus padres.</li>
-                        <li><strong>Exención Tributaria:</strong> No se aplica retención de impuesto a la renta.</li>
+                        <li><strong>Beneficios estudiantiles y de salud:</strong> antes de firmar, confirma con tu casa de estudios, Fonasa o tu Isapre si tus ingresos afectan becas, gratuidad o tu calidad de carga; cada beneficio tiene sus propios requisitos.</li>
+                        <li><strong>Impuesto y cotizaciones:</strong> el sueldo de un estudiante cotiza AFP, salud y cesantía como cualquier otro, y paga impuesto único si la renta tributable supera las 13,5 UTM.</li>
                     </ul>
                 </div>
 
@@ -1349,10 +1373,10 @@ window.addEventListener('load', function () {
     <!-- Scripts -->
     <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/salary_logic.js?v=2.2.0"></script>
     <script>
-        var SUELDO_MINIMO_NACIONAL = 553553;
+        var SUELDO_MINIMO_NACIONAL = (window.CONSTANTS && CONSTANTS.IMM) ? CONSTANTS.IMM : 553553;
         var JORNADA_ORDINARIA_LEGAL = 42;
-        var TOPE_ESTUDIANTE_2_IMM = 1107106;
 
         function parseCleanNumber(val) {
             if (!val) return 0;
@@ -1409,7 +1433,7 @@ window.addEventListener('load', function () {
             
             // Auto-update base if it was set to an old minimum
             var currentBase = parseCleanNumber(document.getElementById('pt-sueldo-base').value);
-            if (currentBase === 395395 || currentBase === 263596 || currentBase === 197697 || currentBase === 131798 || currentBase === 0) {
+            if (currentBase === 395395 || currentBase === 263597 || currentBase === 197698 || currentBase === 131798 || currentBase === 263596 || currentBase === 197697 || currentBase === 0) {
                 document.getElementById('pt-sueldo-base').value = '$ ' + minProp.toLocaleString('es-CL');
             }
 
@@ -1439,25 +1463,48 @@ window.addEventListener('load', function () {
             var semCorridaEl = document.getElementById('pt-semana-corrida');
             var hasSemanaCorrida = semCorridaEl ? semCorridaEl.checked : true;
 
-            // Semana Corrida estimation (~18% over commissions based on 4 domingos/month)
-            var semanaCorrida = (hasSemanaCorrida && comisiones > 0) ? (comisiones * 0.18) : 0;
+            // Semana corrida: estimación fija del 18% de las comisiones (≈ domingos y festivos del mes
+            // sobre días trabajados). El monto real depende del calendario del mes (art. 45 CT).
+            var semanaCorrida = (hasSemanaCorrida && comisiones > 0) ? Math.round(comisiones * 0.18) : 0;
             var totalComisiones = comisiones + semanaCorrida;
 
-            var totalImponible = sueldoBase + totalComisiones;
-
-            // Previsional deductions
             var afpSelect = document.getElementById('pt-afp');
-            var afpRate = afpSelect ? parseFloat(afpSelect.value) : 0.1058;
             var saludSelect = document.getElementById('pt-salud');
-            var saludRate = saludSelect ? parseFloat(saludSelect.value) : 0.07;
-            var afcRate = 0.006; // 0.6% standard
+            var healthSystem = saludSelect ? saludSelect.value : 'fonasa';
+            var isapreGroup = document.getElementById('pt-isapre-group');
+            if (isapreGroup) isapreGroup.classList.toggle('hidden', healthSystem !== 'isapre');
+            var isapreUF = parseFloat(((document.getElementById('pt-isapre-uf') || {}).value || '0').replace(',', '.')) || 0;
+            var contratoEl = document.getElementById('pt-contrato');
+            var contractType = contratoEl ? contratoEl.value : 'indefinido';
+            var gratEl = document.getElementById('pt-gratificacion');
+            var gratMode = gratEl ? gratEl.value : 'none';
 
-            var descAFP = totalImponible * afpRate;
-            var descSalud = totalImponible * saludRate;
-            var descAFC = totalImponible * afcRate;
+            // Gratificación: 25% con tope de 4,75 IMM anuales reducido en proporción a la jornada (art. 40 bis A)
+            var gratificacion = 0;
+            if (gratMode === 'legal') {
+                var topeMensual = Math.round(4.75 * SUELDO_MINIMO_NACIONAL / 12 * horas / JORNADA_ORDINARIA_LEGAL);
+                gratificacion = Math.min(Math.round((sueldoBase + totalComisiones) * 0.25), topeMensual);
+            }
 
-            var totalDescuentos = descAFP + descSalud + descAFC;
-            var sueldoLiquido = Math.max(0, totalImponible - totalDescuentos);
+            // Motor común del sitio (js/salary_logic.js): topes imponibles, Isapre, cesantía e impuesto único
+            var d = new ForensicSalaryCalculator({
+                baseSalary: sueldoBase,
+                gratificationType: gratificacion > 0 ? 'manual' : 'none',
+                gratificationManual: gratificacion,
+                bonusAmount: totalComisiones,
+                afpName: afpSelect ? afpSelect.value : 'Modelo',
+                healthSystem: healthSystem,
+                isapreUF: isapreUF,
+                contractType: contractType,
+                jornada: horas
+            }).calculate().details;
+
+            var totalImponible = d.totalTaxable;
+            var descAFP = d.afpAmount;
+            var descSalud = d.healthAmount;
+            var descAFC = d.afcAmount;
+            var descImpuesto = d.taxAmount;
+            var sueldoLiquido = Math.max(0, d.netSalary);
 
             // Minimum wage compliance check
             var compBox = document.getElementById('pt-compliance-box');
@@ -1472,35 +1519,10 @@ window.addEventListener('load', function () {
                 }
             }
 
-            // Student Status calculation
+            // Estudiante: solo información general (sin cifras de tope)
             var studentEl = document.getElementById('pt-is-student');
-            var isStudent = studentEl ? studentEl.checked : false;
             var studentBox = document.getElementById('pt-student-box');
-            if (studentBox) {
-                if (isStudent) {
-                    studentBox.classList.remove('hidden');
-                    var studentPercent = Math.min(100, (totalImponible / TOPE_ESTUDIANTE_2_IMM) * 100);
-                    var pPercent = document.getElementById('pt-student-percent');
-                    if (pPercent) pPercent.innerText = studentPercent.toFixed(1) + '%';
-                    var bar = document.getElementById('pt-student-bar');
-                    if (bar) bar.style.width = studentPercent + '%';
-
-                    var statusText = document.getElementById('pt-student-status');
-                    if (statusText && bar) {
-                        if (totalImponible <= TOPE_ESTUDIANTE_2_IMM) {
-                            bar.className = "bg-emerald-500 h-2.5 rounded-full transition-all duration-300";
-                            statusText.className = "text-xs text-emerald-800 font-medium";
-                            statusText.innerText = "✅ Gratuidad y Carga Familiar Médica 100% protegidas (Menor a " + formatCurrency(TOPE_ESTUDIANTE_2_IMM) + ").";
-                        } else {
-                            bar.className = "bg-rose-500 h-2.5 rounded-full transition-all duration-300";
-                            statusText.className = "text-xs text-rose-800 font-medium";
-                            statusText.innerText = "⚠️ Supera el tope de 2 IMM. Este mes el ingreso tributa y computa normalmente.";
-                        }
-                    }
-                } else {
-                    studentBox.classList.add('hidden');
-                }
-            }
+            if (studentBox) studentBox.classList.toggle('hidden', !(studentEl && studentEl.checked));
 
             // Render Output values
             var outLiq = document.getElementById('pt-sueldo-liquido'); if (outLiq) outLiq.innerText = formatCurrency(sueldoLiquido);
@@ -1513,6 +1535,9 @@ window.addEventListener('load', function () {
             var dAFP = document.getElementById('pt-desc-afp'); if (dAFP) dAFP.innerText = '-' + formatCurrency(descAFP);
             var dSal = document.getElementById('pt-desc-salud'); if (dSal) dSal.innerText = '-' + formatCurrency(descSalud);
             var dAFC = document.getElementById('pt-desc-afc'); if (dAFC) dAFC.innerText = '-' + formatCurrency(descAFC);
+            var dGrat = document.getElementById('pt-desc-grat'); if (dGrat) dGrat.innerText = formatCurrency(gratificacion);
+            var dImp = document.getElementById('pt-desc-impuesto'); if (dImp) dImp.innerText = '-' + formatCurrency(descImpuesto);
+            var sLbl = document.getElementById('pt-salud-label'); if (sLbl) sLbl.innerText = healthSystem === 'isapre' ? 'Descuento Salud (Isapre):' : 'Descuento Salud (7%):';
             var dLiq = document.getElementById('pt-desc-liquido'); if (dLiq) dLiq.innerText = formatCurrency(sueldoLiquido);
 
             if (afpSelect) {
@@ -1558,7 +1583,7 @@ window.addEventListener('load', function () {
             var jornadaEl = document.getElementById('pt-jornada-badge');
             var liquido = liquidoEl ? liquidoEl.innerText.trim() : '$323.512';
             var jornada = jornadaEl ? jornadaEl.innerText.trim() : '30 Horas/Sem';
-            var texto = 'Hola! Calculé mi sueldo part-time (' + jornada + ') en Cálculo Laboral Chile: Sueldo Líquido estimado ' + liquido + '. Revisa el tuyo gratis con protección para estudiantes aquí: https://calculolaboral.cl/calculadora-sueldo-part-time';
+            var texto = 'Hola! Calculé mi sueldo part-time (' + jornada + ') en Cálculo Laboral Chile: Sueldo Líquido estimado ' + liquido + '. Revisa el tuyo gratis aquí: https://calculolaboral.cl/calculadora-sueldo-part-time';
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'share', { method: 'WhatsApp', content_type: 'part_time' });
             }

@@ -719,6 +719,7 @@ window.addEventListener('load', function () {
                         <button type="button" onclick="setHESalary(1500000)" class="sueldo-chip">$1.500.000</button>
                     </div>
                     <p class="text-xs text-slate-600 mt-1.5">Sueldo fijo pactado en tu contrato de trabajo.</p>
+                    <p id="he-imm-note" class="hidden text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mt-2">El sueldo base es menor al ingreso mínimo proporcional a tu jornada (<span id="he-imm-prop" class="font-mono-num font-semibold">$553.553</span>): la hora extra se calcula sobre ese mínimo (dictámenes DT 4725/331 y 4262/210). Para menores de 18 y mayores de 65 años el mínimo es $412.938.</p>
                 </div>
 
                 <!-- 2. Jornada Semanal Pactada -->
@@ -767,7 +768,7 @@ window.addEventListener('load', function () {
                         <span class="block text-xs text-slate-600 mb-2">Días hábiles normales (lunes a sábado)</span>
                         <div class="flex items-center gap-2">
                             <button type="button" aria-label="Disminuir horas extras al 50%" onclick="adjustHE('he-cant-50', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
-                            <input type="number" id="he-cant-50" value="10" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <input type="number" id="he-cant-50" value="10" min="0" max="52" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
                             <button type="button" aria-label="Aumentar horas extras al 50%" onclick="adjustHE('he-cant-50', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
                         </div>
                     </div>
@@ -776,14 +777,14 @@ window.addEventListener('load', function () {
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                         <div class="flex justify-between items-center mb-1">
                             <label for="he-cant-100" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                                Horas Extras al 100%
+                                Horas con recargo pactado del 100%
                             </label>
                             <span class="text-xs font-semibold text-emerald-700 font-mono-num" id="he-live-unit-100">$6.151 c/u</span>
                         </div>
-                        <span class="block text-xs text-slate-600 mb-2">Domingos, festivos o pacto especial</span>
+                        <span class="block text-xs text-slate-600 mb-2">Solo si se pactó un recargo del 100% (el mínimo legal es 50%)</span>
                         <div class="flex items-center gap-2">
                             <button type="button" aria-label="Disminuir horas extras al 100%" onclick="adjustHE('he-cant-100', -1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">-</button>
-                            <input type="number" id="he-cant-100" value="0" min="0" max="100" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <input type="number" id="he-cant-100" value="0" min="0" max="52" step="0.5" oninput="calculateHorasExtras()" class="w-full text-center py-2.5 bg-white border border-slate-200 rounded-xl font-mono-num font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-[#00382E]">
                             <button type="button" aria-label="Aumentar horas extras al 100%" onclick="adjustHE('he-cant-100', 1)" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all text-base cursor-pointer">+</button>
                         </div>
                     </div>
@@ -798,10 +799,10 @@ window.addEventListener('load', function () {
                     <div>
                         <h3 class="text-xs font-bold text-slate-600 uppercase tracking-widest mb-1">Monto Bruto a Pago</h3>
                         <div class="flex items-baseline gap-2 justify-center sm:justify-start">
-                            <span id="he-total-bruto" style="color: var(--teal-forest);" class="text-4xl sm:text-5xl font-black tracking-tight font-mono-num">$46.130</span>
+                            <span id="he-total-bruto" style="color: var(--teal-forest);" class="text-4xl sm:text-5xl font-black tracking-tight font-mono-num">$46.129</span>
                         </div>
                         <p class="text-xs text-emerald-700 font-semibold mt-1 flex items-center justify-center sm:justify-start gap-1">
-                            <span class="material-icons text-xs">payments</span> Líquido adicional aprox: <strong id="he-total-neto" class="font-mono-num text-slate-800 font-bold">$36.904</strong>
+                            <span class="material-icons text-xs">payments</span> Líquido adicional aprox. (81%): <strong id="he-total-neto" class="font-mono-num text-slate-800 font-bold">$37.365</strong>
                         </p>
                     </div>
                     <div class="text-center sm:text-right bg-slate-50 border border-slate-200/80 rounded-2xl px-4 py-3">
@@ -832,7 +833,7 @@ window.addEventListener('load', function () {
                     <div class="space-y-2 text-xs divide-y divide-slate-100">
                         <div class="flex justify-between items-center pt-1">
                             <span class="text-slate-600">Subtotal 50% (<span id="he-desc-cant-50">10</span> hrs):</span>
-                            <span class="font-mono-num font-semibold text-slate-900" id="he-subtotal-50">$46.130</span>
+                            <span class="font-mono-num font-semibold text-slate-900" id="he-subtotal-50">$46.129</span>
                         </div>
                         <div class="flex justify-between items-center pt-2">
                             <span class="text-slate-600">Subtotal 100% (<span id="he-desc-cant-100">0</span> hrs):</span>
@@ -840,7 +841,7 @@ window.addEventListener('load', function () {
                         </div>
                         <div class="flex justify-between items-center pt-2 font-bold text-sm">
                             <span class="text-slate-900">Total Imponible Horas Extras:</span>
-                            <span class="font-mono-num text-emerald-800" id="he-breakdown-total">$46.130</span>
+                            <span class="font-mono-num text-emerald-800" id="he-breakdown-total">$46.129</span>
                         </div>
                     </div>
                 </div>
@@ -924,10 +925,11 @@ window.addEventListener('load', function () {
                         Valor Hora Ordinaria = (Sueldo Base / 30) × (7 / Jornada Semanal) = Sueldo Base / Divisor Mensual
                     </p>
                     <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
-                        <li><strong>Para jornada de 42 horas:</strong> Factor DT = <strong>0,0055555...</strong> (Divisor mensual exacto: <strong>180 horas</strong>).</li>
-                        <li><strong>Para jornada de 40 horas:</strong> Factor DT = <strong>0,0058333...</strong> (Divisor mensual: <strong>171,43 horas</strong>).</li>
-                        <li><strong>Para jornada de 44 horas:</strong> Factor DT = <strong>0,0053030...</strong> (Divisor mensual: <strong>188,57 horas</strong>).</li>
-                        <li><strong>Para jornada de 45 horas (antigua):</strong> Factor DT = <strong>0,0051851...</strong> (Divisor mensual: <strong>192,86 horas</strong>).</li>
+                        <li><strong>Para jornada de 42 horas:</strong> factor hora ordinaria = <strong>0,0055556</strong>; factor hora extra (×1,5) = <strong>0,0083333</strong> (divisor mensual exacto: <strong>180 horas</strong>).</li>
+                        <li><strong>Para jornada de 40 horas:</strong> factor hora ordinaria = <strong>0,0058333</strong>; factor hora extra = <strong>0,00875</strong> (divisor mensual: <strong>171,43 horas</strong>).</li>
+                        <li><strong>Para jornada de 44 horas:</strong> factor hora ordinaria = <strong>0,0053030</strong>; factor hora extra = <strong>0,0079545</strong> (divisor mensual: <strong>188,57 horas</strong>).</li>
+                        <li><strong>Para jornada de 45 horas (antigua):</strong> factor hora ordinaria = <strong>0,0051852</strong>; factor hora extra = <strong>0,0077778</strong> (divisor mensual: <strong>192,86 horas</strong>).</li>
+                        <li><strong>Sueldo base bajo el mínimo:</strong> la hora extra se calcula sobre el ingreso mínimo mensual proporcional a la jornada, no sobre un sueldo base menor (dictámenes DT Ord. 4725/331 de 1998 y 4262/210 de 2002). Para menores de 18 y mayores de 65 años el ingreso mínimo es $412.938.</li>
                     </ul>
                 </div>
             </div>
@@ -943,8 +945,8 @@ window.addEventListener('load', function () {
                                 <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
                                     <th class="py-2.5 px-3 sm:px-3.5">Cantidad de Horas</th>
                                     <th class="py-2.5 px-3 sm:px-3.5 text-amber-700 text-right">Total 50% (Hábiles)</th>
-                                    <th class="py-2.5 px-3 sm:px-3.5 text-emerald-700 text-right">Total 100% (Festivos)</th>
-                                    <th class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right">Líquido Aprox. (~80%)</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-emerald-700 text-right">Total 100% (si se pactó)</th>
+                                    <th class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right">Líquido aprox. (81%)</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 font-mono-num">
@@ -952,37 +954,37 @@ window.addEventListener('load', function () {
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">1 Hora Extra</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$4.613</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$6.151</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$3.690</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$3.736</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">2 Horas Extras</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$9.226</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$12.301</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$7.381</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$7.473</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">5 Horas Extras</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$23.065</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$30.753</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$18.452</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$18.682</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">10 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$46.130</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$46.129</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$61.506</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$36.904</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$37.365</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">15 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$69.195</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$69.194</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$92.259</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$55.356</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$56.047</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800">20 Horas Extras</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$92.260</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$92.259</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$123.012</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$73.808</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-700 text-right whitespace-nowrap">~$74.730</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1012,7 +1014,7 @@ window.addEventListener('load', function () {
                                     <td class="py-2.5 px-3 sm:px-3.5 text-slate-600 text-right whitespace-nowrap">$3.075</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-amber-700 font-bold text-right whitespace-nowrap">$4.613</td>
                                     <td class="py-2.5 px-3 sm:px-3.5 text-emerald-700 font-bold text-right whitespace-nowrap">$6.151</td>
-                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$46.130</td>
+                                    <td class="py-2.5 px-3 sm:px-3.5 text-slate-900 font-bold text-right whitespace-nowrap">$46.129</td>
                                 </tr>
                                 <tr>
                                     <td class="py-2.5 px-3 sm:px-3.5 font-bold text-slate-800 whitespace-nowrap">$700.000</td>
@@ -1094,7 +1096,7 @@ window.addEventListener('load', function () {
                     <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
                         <h4 class="font-bold text-slate-900 text-sm mb-1.5">¿Cuándo corresponde pagar horas extras al 100%?</h4>
                         <p class="text-sm sm:text-sm text-slate-600 leading-relaxed">
-                            El recargo legal mínimo del Código del Trabajo es del 50%. Sin embargo, se paga el 100% (o más) cuando las horas extras se realizan en días domingos o festivos en empresas que no tienen turnos continuos, o cuando se pactó contractualmente un recargo superior mediante convenio individual o colectivo.
+                            El recargo legal mínimo es del 50% sobre el sueldo convenido (art. 32 del Código del Trabajo), también cuando las horas extra se trabajan en domingo o festivo. El 100% (u otro recargo mayor) solo corresponde si se pactó en el contrato, en un convenio individual o en un instrumento colectivo.
                         </p>
                     </div>
                     <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
@@ -1128,7 +1130,7 @@ window.addEventListener('load', function () {
     <div id="mobile-result-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between no-print">
         <div>
             <div class="text-xs font-bold text-slate-600 uppercase tracking-wider">Total Horas Extras</div>
-            <div id="mobile-total-display" style="color: var(--teal-forest);" class="text-lg font-extrabold font-mono-num leading-tight">$46.130</div>
+            <div id="mobile-total-display" style="color: var(--teal-forest);" class="text-lg font-extrabold font-mono-num leading-tight">$46.129</div>
         </div>
         <div class="flex items-center gap-2">
             <button type="button" onclick="var t=document.getElementById('he-total-bruto');if(t)t.scrollIntoView({behavior:'smooth',block:'center'})" class="btn-dark-pill !py-2 !px-3.5 !text-xs !shadow-xs">
@@ -1317,15 +1319,25 @@ window.addEventListener('load', function () {
             var cant50 = parseFloat(document.getElementById('he-cant-50').value) || 0;
             var cant100 = parseFloat(document.getElementById('he-cant-100').value) || 0;
 
-            // Official DT Formula: Valor Hora Ordinaria = (Sueldo / 30) * (7 / Jornada)
-            var valorOrdinaria = (sueldoBase / 30) * (7 / jornada);
+            // Sueldo base bajo el ingreso mínimo: la hora extra se calcula sobre el IMM proporcional a la
+            // jornada (dictámenes DT Ord. 4725/331 de 1998 y 4262/210 de 2002). Menores de 18 y mayores de
+            // 65 años tienen un IMM de $412.938; la calculadora no pide edad, así que usa el IMM general.
+            var imm = (window.CONSTANTS && CONSTANTS.IMM) ? CONSTANTS.IMM : 553553;
+            var immProp = Math.round(imm * jornada / 42);
+            var baseHE = sueldoBase > 0 ? Math.max(sueldoBase, immProp) : 0;
+            var immNote = document.getElementById('he-imm-note');
+            if (immNote) immNote.classList.toggle('hidden', !(sueldoBase > 0 && sueldoBase < immProp));
+            var immPropEl = document.getElementById('he-imm-prop'); if (immPropEl) immPropEl.innerText = formatCurrency(immProp);
+
+            // Fórmula DT: Valor Hora Ordinaria = (Sueldo / 30) * (7 / Jornada), sin redondear la unidad
+            var valorOrdinaria = (baseHE / 30) * (7 / jornada);
             var valor50 = valorOrdinaria * 1.50;
             var valor100 = valorOrdinaria * 2.00;
 
             var subtotal50 = cant50 * valor50;
             var subtotal100 = cant100 * valor100;
             var totalBruto = subtotal50 + subtotal100;
-            var totalNeto = totalBruto * 0.80; // Aprox after AFP & Salud (~20%)
+            var totalNeto = totalBruto * 0.81; // Aprox. tras AFP, salud y cesantía (≈19% con Fonasa e indefinido)
 
             // Divisor descriptor
             var divisor = (30 / 7) * jornada;
@@ -1390,7 +1402,7 @@ window.addEventListener('load', function () {
         function shareHEWhatsApp() {
             var totalBrutoEl = document.getElementById('he-total-bruto');
             var horasEl = document.getElementById('he-total-horas');
-            var totalBruto = totalBrutoEl ? totalBrutoEl.innerText.trim() : '$46.130';
+            var totalBruto = totalBrutoEl ? totalBrutoEl.innerText.trim() : '$46.129';
             var horas = horasEl ? horasEl.innerText.trim() : '10.0 hrs';
             var texto = 'Hola! Calculé mis horas extras en Cálculo Laboral Chile con la Ley 40 Horas (42h en 2026): ' + horas + ' extras = ' + totalBruto + ' adicionales. Simula las tuyas gratis aquí: https://calculolaboral.cl/calculadora-horas-extras';
             if (typeof gtag !== 'undefined') {

@@ -1174,6 +1174,7 @@ body { overflow-x: hidden; }
 <small>Tu valor hora ordinaria (jornada de <span data-vh="jornada">42</span> h)</small>
 <div class="cl-vh__big" data-vh="hora">$3.075</div>
 <p class="cl-vh__nota">Calculado según la fórmula de la Dirección del Trabajo.</p>
+<p class="cl-vh__nota" data-vh="imm-nota" hidden>Tu sueldo es menor al ingreso mínimo proporcional a la jornada (<span data-vh="imm-prop">$553.553</span>): la hora se calcula sobre ese mínimo (dictámenes DT 4725/331 y 4262/210). Menores de 18 y mayores de 65 años: $412.938.</p>
 <dl class="cl-vh__filas">
 <div class="cl-vh__fila"><dt>Hora extra (recargo 50%)</dt><dd data-vh="extra">$4.613</dd></div>
 <div class="cl-vh__fila"><dt>Día de trabajo</dt><dd data-vh="dia">$18.452</dd></div>
@@ -1361,12 +1362,12 @@ body { overflow-x: hidden; }
 <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 shadow-sm my-6 transition-all rounded-xl border-slate-200 my-4 shadow-lg">
 <ul class="!list-none !p-0">
 <li class="flex justify-between border-b border-slate-100 pb-2 mb-2"><span class="text-slate-600">Sueldo mensual:</span> <strong class="text-slate-800">$800.000</strong></li>
-<li class="flex justify-between border-b border-slate-100 pb-2 mb-2"><span class="text-slate-600">Horas mensuales (42 × 4.33):</span> <strong class="text-slate-800">181,86 horas</strong></li>
-<li class="flex justify-between border-b border-slate-100 pb-2 mb-2"><span class="text-slate-600">Valor hora normal:</span> <strong class="text-slate-800">$4.399</strong></li>
-<li class="flex justify-between text-emerald-700 pt-1"><span>Valor hora extra (×1.5):</span> <strong>$6.599</strong></li>
+<li class="flex justify-between border-b border-slate-100 pb-2 mb-2"><span class="text-slate-600">Divisor mensual DT (30 × 42 ÷ 7):</span> <strong class="text-slate-800">180 horas</strong></li>
+<li class="flex justify-between border-b border-slate-100 pb-2 mb-2"><span class="text-slate-600">Valor hora normal ($800.000 ÷ 30 × 28 ÷ 168):</span> <strong class="text-slate-800">$4.444</strong></li>
+<li class="flex justify-between text-emerald-700 pt-1"><span>Valor hora extra (×1,5):</span> <strong>$6.667</strong></li>
 </ul>
 </div>
-<p>Antes, con 45 horas semanales, el divisor era 195 horas mensuales. Ahora es 181,86. Esto significa que cada hora extra vale más. Puedes verificar esto usando nuestra <a href="sueldo_liquido">calculadora de sueldo líquido</a>.</p>
+<p>Antes, con 45 horas semanales, el divisor era 192,86 horas mensuales (con 44 horas, 188,57). Ahora es 180. Esto significa que cada hora extra vale más. Si el sueldo base es menor al ingreso mínimo, la hora extra se calcula sobre el mínimo proporcional a la jornada (dictámenes DT 4725/331 y 4262/210). Puedes verificar esto usando nuestra <a href="sueldo_liquido">calculadora de sueldo líquido</a>.</p>
 <!-- Bloque Publicitario Responsivo Itaú -->
 <div class="my-8 p-4 sm:p-5 bg-gradient-to-br from-amber-50/40 via-white to-slate-50 border border-amber-200/90 rounded-2xl shadow-sm no-print text-center">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
@@ -1415,7 +1416,7 @@ body { overflow-x: hidden; }
 <h2>4. Distribución de la jornada: nuevas opciones de flexibilidad</h2>
 <p>La Ley 21.561 también introdujo nuevas opciones de distribución horaria que benefician a los trabajadores:</p>
 <h3>Jornada 4×3</h3>
-<p>El empleador y el trabajador pueden pactar una distribución de <strong>4 días de trabajo y 3 de descanso</strong>. En este caso, la jornada diaria puede extenderse hasta un máximo de 10,5 horas, sin que las horas adicionales se consideren extraordinarias.</p>
+<p>La Ley 21.561 permite pactar la jornada semanal en <strong>4 días de trabajo y 3 de descanso</strong>, con un máximo de <strong>10 horas ordinarias diarias</strong>. Esta distribución en cuatro días rige recién desde el <strong>26 de abril de 2028</strong>, cuando la jornada llegue a 40 horas; antes de esa fecha solo pueden usarla las empresas que ya tengan una jornada de 40 horas semanales o menos. Las horas que excedan la jornada pactada son horas extraordinarias.</p>
 <div class="callout callout-amber">
 <p class="!mb-0"><strong>Ojo:</strong> La jornada 4×3 es voluntaria y requiere acuerdo entre empleador y trabajador. No puede ser impuesta unilateralmente por la empresa.</p>
 </div>
@@ -1424,7 +1425,7 @@ body { overflow-x: hidden; }
 <div class="flex items-center gap-2.5">
 <span class="material-icons text-amber-600 text-xl shrink-0">edit_calendar</span>
 <p class="text-xs sm:text-sm font-medium m-0 text-slate-800">
-<strong>¿Vas a pactar la jornada 4×3 o el horario de 42 horas?</strong> El acuerdo debe constar en un anexo firmado.
+<strong>¿Vas a pactar el horario de 42 horas (o, desde 2028, la jornada 4×3)?</strong> El acuerdo debe constar en un anexo firmado.
                         </p>
 </div>
 <a class="btn-dark-pill shrink-0 text-xs font-bold text-forest-700 hover:text-forest-800 bg-white border border-slate-200 .5 transition-colors flex items-center gap-1.5" href="generador-anexo-40-horas" data-cta="anexo-40h" data-cta-name="Anexo de jornada 42 horas (gratis)" data-cta-slot="guia-seccion-4">
@@ -1918,7 +1919,7 @@ body { overflow-x: hidden; }
     <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
-    <script src="/js/valor_hora.js?v=1.0.0" defer></script>
+    <script src="/js/valor_hora.js?v=1.1.0" defer></script>
     <script src="/js/puentes.js?v=1.0.0" defer></script>
 </body>
 </html>

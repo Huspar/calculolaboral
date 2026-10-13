@@ -4,6 +4,8 @@
  *   valor hora = (sueldo ÷ 30) × 28 ÷ (jornada semanal × 4)
  *   hora extra = valor hora × 1,5
  *   día        = sueldo ÷ 30
+ * Si el sueldo es menor al ingreso mínimo proporcional a la jornada, la hora se
+ * calcula sobre ese mínimo (dictámenes DT 4725/331 y 4262/210).
  */
 (function () {
     'use strict';
@@ -30,7 +32,19 @@
     function calcular() {
         var sueldo = leerSueldo();
         var extras = Math.max(0, parseFloat((extrasInput.value || '0').replace(',', '.')) || 0);
-        var hora = sueldo / 30 * 28 / (jornada * 4);
+        // Sueldo bajo el ingreso mínimo: la hora se calcula sobre el IMM proporcional a la jornada
+        // (dictámenes DT Ord. 4725/331 de 1998 y 4262/210 de 2002). Menores de 18 y mayores de 65
+        // años tienen un IMM de $412.938; aquí se usa el IMM general.
+        var imm = (window.CONSTANTS && window.CONSTANTS.IMM) ? window.CONSTANTS.IMM : 553553;
+        var immProp = Math.round(imm * jornada / 42);
+        var base = sueldo ? Math.max(sueldo, immProp) : 0;
+        var nota = out('imm-nota');
+        if (nota) {
+            nota.hidden = !(sueldo && sueldo < immProp);
+            var notaMonto = out('imm-prop');
+            if (notaMonto) notaMonto.textContent = clp(immProp);
+        }
+        var hora = base / 30 * 28 / (jornada * 4);
         var extra = hora * 1.5;
         out('hora').textContent = sueldo ? clp(hora) : '—';
         out('extra').textContent = sueldo ? clp(extra) : '—';
