@@ -147,7 +147,7 @@
                             ? 'Si el contrato se firmó el día de ingreso (' + fechaLarga(t.fechaIngreso) + '), el plazo para registrarlo en el portal Mi DT de la Dirección del Trabajo vence el ' + fechaLarga(limite) + (restanReg === 0 ? ' (hoy).' : '.')
                             : 'Si el contrato se firmó el día de ingreso, el plazo para registrarlo en Mi DT venció el ' + fechaLarga(limite) + '.') +
                         ' El contrato se firma dentro de 15 días desde el ingreso y se registra dentro de 15 días desde la firma (arts. 9 y 9 bis).' +
-                        (sinContrato ? ' Puedes emitir el contrato desde el asistente con su ficha.' : ' Si ya lo registraste, no necesitas hacer nada.'), sinContrato ? { tipo: 'documento', id: t.id, doc: 'contrato' } : acc);
+                        (sinContrato ? ' Puedes emitir el contrato desde el asistente con su ficha.' : ' Si ya lo registraste, no necesitas hacer nada.'), sinContrato ? { tipo: 'documento', id: t.id, doc: 'contrato' } : { tipo: 'midt', id: t.id });
                 }
             }
 

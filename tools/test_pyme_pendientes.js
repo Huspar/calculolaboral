@@ -43,8 +43,8 @@ caso('registro en Mi DT: si no se emitió el contrato en el asistente, la acció
     assert.deepStrictEqual(p.accion, { tipo: 'documento', id: 't1', doc: 'contrato' });
     assert.ok(/contrato y registro/.test(p.titulo));
     p = pend(correr(est([nuevo]), '2026-10-08', { documentos: [{ trabajadorId: 't1', tipo: 'contrato', emitido: '2026-10-06T12:00:00Z' }] }), 'registro-t1');
-    assert.strictEqual(p.accion.tipo, 'trabajador');
-    assert.strictEqual(pend(correr(est([nuevo]), '2026-10-08'), 'registro-t1').accion.tipo, 'trabajador', 'sin la lista de documentos no se asume nada');
+    assert.deepStrictEqual(p.accion, { tipo: 'midt', id: 't1' }, 'con el contrato emitido, la acción abre la hoja guía de Mi DT');
+    assert.strictEqual(pend(correr(est([nuevo]), '2026-10-08'), 'registro-t1').accion.tipo, 'midt', 'sin la lista de documentos no se asume que falta el contrato');
 });
 caso('plazo fijo por vencer: recuerda la carta y el registro del término en Mi DT', () => {
     const p = pend(correr(est([T({ contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-31' })]), '2026-10-20'), 'plazo-t1');

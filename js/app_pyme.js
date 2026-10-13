@@ -552,6 +552,7 @@
             $('carp-ir-liq').href = '/app/liquidaciones/' + t.id;
             $('carp-ir-doc').setAttribute('data-ruta', 'documentos');
             $('carp-ir-doc').setAttribute('data-query', 't=' + encodeURIComponent(t.id));
+            $('carp-midt').setAttribute('data-id', t.id);
             $('carp-ir-doc').href = '/app/documentos?t=' + encodeURIComponent(t.id);
         }
         $('carp-ficha').hidden = tab !== 'ficha';
@@ -866,7 +867,7 @@
         $('pm-pend').innerHTML = lista.length ? lista.map(function (p, i) {
             var accion = '';
             if (p.accion) {
-                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes', documento: p.accion.doc === 'anexo_contrato' ? 'Preparar anexo' : 'Emitir contrato' }[p.accion.tipo];
+                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes', documento: p.accion.doc === 'anexo_contrato' ? 'Preparar anexo' : 'Emitir contrato', midt: 'Datos para Mi DT' }[p.accion.tipo];
                 accion = '<button type="button" class="btn-texto" data-pend="' + i + '">' + esc(etiqueta) + '</button>';
             }
             return '<li class="n-' + p.nivel + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><div><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p></div>' + accion + '</li>';
@@ -882,6 +883,7 @@
         else if (a.tipo === 'trabajador-nuevo') navegar('trabajadores/nuevo');
         else if (a.tipo === 'trabajador') navegar('trabajadores/' + a.id);
         else if (a.tipo === 'documento') navegar('documentos', { query: 't=' + encodeURIComponent(a.id) + '&d=' + encodeURIComponent(a.doc) });
+        else if (a.tipo === 'midt') abrirMiDT(a.id);
         else if (a.tipo === 'respaldo') exportar();
         else if (a.tipo === 'liquidaciones') { cambiarPeriodo(a.periodo); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     });
@@ -1403,6 +1405,46 @@
         setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
         anotarEmision(c, 'Descargamos el documento en Word.');
     });
+
+    // ---------- hoja guía para registrar el contrato en Mi DT ----------
+    var MIDT = window.CLPymeMiDT, midtId = null;
+    function hojaMiDT(t) {
+        var h = MIDT.hoja(estado.empresa, t);
+        var lista = function (xs) { return '<ul>' + xs.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; };
+        return '<div class="midt-doc"><h2 class="solo-impresion">Datos para registrar el contrato de ' + esc(t.nombre) + ' en Mi DT</h2>' +
+            '<h3>Plazos</h3>' + lista(h.plazos) + '<h3>Antes de empezar</h3>' + lista(h.antes) +
+            h.etapas.map(function (e) {
+                return '<h3>' + esc(e.titulo) + '</h3><table><tbody>' + e.filas.map(function (f) {
+                    var valor = f.valor === 'Falta en la ficha' ? '<span class="midt-falta">Falta en la ficha</span>' : esc(f.valor);
+                    return '<tr><th scope="row">' + esc(f.campo) + '</th><td>' + valor + (f.nota ? '<small>' + esc(f.nota) + '</small>' : '') + '</td></tr>';
+                }).join('') + '</tbody></table>';
+            }).join('') +
+            '<p class="texto-ayuda">Ordenado como el formulario «Registro de Contrato de Trabajo» de la Dirección del Trabajo (guía rápida de enero de 2024). El registro lo haces tú en mi.dt.gob.cl; si el formulario cambió, sigue lo que pide la DT.</p></div>';
+    }
+    function abrirMiDT(id) {
+        var t = trabajadorPorId(id);
+        if (!t || !estado.empresa) return;
+        midtId = id;
+        $('pm-midt-titulo').textContent = 'Datos para registrar el contrato de ' + t.nombre.split(' ')[0] + ' en Mi DT';
+        $('pm-midt-cuerpo').innerHTML = hojaMiDT(t);
+        $('pm-midt').showModal();
+        $('pm-midt-cuerpo').scrollTop = 0;
+    }
+    $('pm-midt-cerrar').addEventListener('click', function () { $('pm-midt').close(); });
+    $('pm-midt-listo').addEventListener('click', function () { $('pm-midt').close(); });
+    $('pm-midt-imprimir').addEventListener('click', function () {
+        var t = trabajadorPorId(midtId);
+        if (!t) return;
+        $('pm-midt').close();
+        var cont = $('print-section'), anterior = document.title;
+        cont.innerHTML = '<section class="pm-hoja">' + hojaMiDT(t) + '</section>';
+        document.title = 'Datos Mi DT ' + t.nombre;
+        var restaurar = function () { document.title = anterior; window.removeEventListener('afterprint', restaurar); };
+        window.addEventListener('afterprint', restaurar);
+        window.print();
+        setTimeout(restaurar, 2000);
+    });
+    $('carp-midt').addEventListener('click', function () { var id = this.getAttribute('data-id'); if (id) abrirMiDT(id); });
 
     // ---------- vacaciones ----------
     function ordenarVac(regs) {
