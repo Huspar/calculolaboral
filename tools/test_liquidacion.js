@@ -90,6 +90,59 @@ const PREVIRED_TOPES = {
     chequear('Parámetros · topes de enero a septiembre coinciden con Previred; ingreso mínimo y jornada por mes', errores);
 }
 
+// Costo del empleador: tasas de cada mes según los indicadores de Previred (verificados el 13-oct-2026)
+{
+    const errores = [];
+    const tasas = { '2026-01': [0.001, 0.009, 0.0154], '2026-03': [0.001, 0.009, 0.0154], '2026-04': [0.001, 0.009, 0.0162], '2026-06': [0.001, 0.009, 0.0162],
+        '2026-07': [0.001, 0.009, 0.02], '2026-08': [0.001, 0.0162, 0.0178], '2026-10': [0.001, 0.0162, 0.0178] };
+    for (const [p, [afp, ss, sis]] of Object.entries(tasas)) {
+        const e = P.vigenciaDe(p).empleador;
+        if (e.afp !== afp || e.seguroSocial !== ss || e.sis !== sis) errores.push(p + ': ' + JSON.stringify(e));
+    }
+    const ago = P.vigenciaDe('2026-08').empleador;
+    if (Math.round((ago.afp + ago.seguroSocial + ago.sis) * 10000) !== 350) errores.push('agosto no suma 3,5%');
+    if (P.vigenciaDe('2026-10').empleador.porConfirmar) errores.push('octubre no debe estar por confirmar');
+    if (!P.vigenciaDe('2026-11').empleador.porConfirmar) errores.push('noviembre debe estar por confirmar (SIS sin publicar)');
+    chequear('Parámetros · cotizaciones del empleador por mes (0,1% AFP, seguro social y SIS; 3,5% desde agosto)', errores);
+}
+{
+    const mesEmp = p => Object.assign(mesDe(p), { empleador: P.vigenciaDe(p).empleador });
+    const emp = (res, clave) => (res.empleador.lineas.find(l => l.clave === clave) || {}).monto;
+    const errores = [];
+    // Ingreso mínimo de octubre, indefinido, Fonasa: 553.553 × (0,1% + 1,78% + 1,62% + 2,4% + 0,93%)
+    let r = calcular(Object.assign(base({ sueldoBase: 553553, fechaIngreso: '2024-01-10' }), { periodo: '2026-10' }), mesEmp('2026-10'));
+    const esperado = { afp: 554, sis: 9853, seguroSocial: 8968, afc: 13285, mutual: 5148 };
+    for (const [k, v] of Object.entries(esperado)) if (emp(r, k) !== v) errores.push(`${k}: esperado ${v}, obtenido ${emp(r, k)}`);
+    if (r.empleador.total !== 37808 || r.empleador.costoTotal !== 591361) errores.push('total ' + r.empleador.total + ' / costo ' + r.empleador.costoTotal);
+    if (r.liquido !== 452917) errores.push('el costo del empleador no debe cambiar el líquido');
+    if (!r.empleador.avisos.some(a => /0,93%/.test(a.texto))) errores.push('sin tasa de mutual debe avisar que usó 0,93%');
+    // Con la tasa de la mutual de la empresa (1,88%) no hay aviso y se usa esa tasa
+    r = calcular(Object.assign(base({ sueldoBase: 553553 }), { periodo: '2026-10', tasaMutual: 1.88 }), mesEmp('2026-10'));
+    if (emp(r, 'mutual') !== Math.round(553553 * 0.0188)) errores.push('mutual con tasa propia: ' + emp(r, 'mutual'));
+    if (r.empleador.avisos.length) errores.push('con tasa propia no debe avisar');
+    // Plazo fijo: 3% de cesantía del empleador; indefinido con más de 11 años: 0,8%
+    r = calcular(Object.assign(base({ sueldoBase: 1000000, contrato: 'plazo_fijo' }), { periodo: '2026-10', tasaMutual: 0.93 }), mesEmp('2026-10'));
+    if (emp(r, 'afc') !== 30000) errores.push('plazo fijo: ' + emp(r, 'afc'));
+    r = calcular(Object.assign(base({ sueldoBase: 1000000, fechaIngreso: '2010-01-01' }), { periodo: '2026-10', tasaMutual: 0.93 }), mesEmp('2026-10'));
+    if (emp(r, 'afc') !== 8000) errores.push('11 años: ' + emp(r, 'afc'));
+    // Sobre el tope: AFP, SIS, seguro social y mutual con 90 UF; cesantía con 135,2 UF
+    r = calcular(Object.assign(base({ sueldoBase: 6000000 }), { periodo: '2026-10', tasaMutual: 0.93 }), mesEmp('2026-10'));
+    if (emp(r, 'sis') !== Math.round(r.bases.topeAfp * 0.0178) || emp(r, 'afc') !== Math.round(r.bases.topeAfc * 0.024)) errores.push('topes: ' + JSON.stringify(r.empleador.lineas));
+    // Julio: SIS 2,00% y seguro social 0,9% (antes de la Ley 21.735 en régimen)
+    r = calcular(Object.assign(base({ sueldoBase: 1000000 }), { periodo: '2026-07', tasaMutual: 0.93 }), mesEmp('2026-07'));
+    if (emp(r, 'sis') !== 20000 || emp(r, 'seguroSocial') !== 9000) errores.push('julio: ' + JSON.stringify(r.empleador.lineas));
+    // Noviembre: tasa del SIS por confirmar
+    r = calcular(Object.assign(base({ sueldoBase: 1000000 }), { periodo: '2026-11', tasaMutual: 0.93 }), Object.assign(mesDe('2026-10'), { empleador: P.vigenciaDe('2026-11').empleador }));
+    if (!r.empleador.avisos.some(a => /aún no está publicada/.test(a.texto))) errores.push('noviembre sin aviso de tasa por confirmar');
+    // 65 años o más: aviso
+    r = calcular(Object.assign(base({ sueldoBase: 1000000, fechaNacimiento: '1960-05-01' }), { periodo: '2026-10', tasaMutual: 0.93 }), mesEmp('2026-10'));
+    if (!r.empleador.avisos.some(a => /66 años/.test(a.texto))) errores.push('sin aviso de mayor de 65');
+    // Sin cotizaciones del empleador en los valores del mes (generador público antiguo): no se calcula
+    r = calcular(Object.assign(base({ sueldoBase: 553553 }), { periodo: '2026-10' }), mesDe('2026-10'));
+    if (r.empleador !== null) errores.push('sin "empleador" en el mes debe ser null');
+    chequear('Motor · costo del empleador (AFP, SIS, seguro social, cesantía y mutual; topes, plazo fijo, 11 años y avisos)', errores);
+}
+
 // ---------- Parte 2: valores desde la API ----------
 function respuesta(cuerpo, estado = 200) { return { ok: estado === 200, status: estado, json: async () => cuerpo }; }
 function almacenFalso() {

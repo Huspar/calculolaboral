@@ -24,6 +24,23 @@ caso('sin empresa: solo pide completarla', () => {
 caso('empresa sin trabajadores: invita a agregar el primero', () => {
     assert.ok(ids(correr(est([]), '2026-10-20')).indexOf('trabajador-nuevo') >= 0);
 });
+caso('registro del contrato en Mi DT: desde el ingreso hasta 30 días después, con el plazo de 15 días', () => {
+    const nuevo = T({ fechaIngreso: '2026-10-05' });
+    let p = pend(correr(est([nuevo]), '2026-10-08'), 'registro-t1');
+    assert.ok(p && p.nivel === 'info', 'a 12 días del plazo es informativo');
+    assert.ok(p.texto.indexOf('20 de octubre') >= 0 && p.texto.indexOf('9 bis') >= 0, p.texto);
+    assert.strictEqual(pend(correr(est([nuevo]), '2026-10-16'), 'registro-t1').nivel, 'aviso');
+    assert.ok(pend(correr(est([nuevo]), '2026-10-20'), 'registro-t1').texto.indexOf('(hoy)') >= 0);
+    p = pend(correr(est([nuevo]), '2026-10-25'), 'registro-t1');
+    assert.ok(p.nivel === 'aviso' && p.texto.indexOf('venció') >= 0);
+    assert.ok(!pend(correr(est([nuevo]), '2026-11-05'), 'registro-t1'), 'después de 30 días ya no aparece');
+    assert.ok(!pend(correr(est([nuevo]), '2026-09-20'), 'registro-t1'), 'más de una semana antes del ingreso no aparece');
+    assert.strictEqual(M.plazoRegistroDT('2026-12-20'), '2027-01-04');
+});
+caso('plazo fijo por vencer: recuerda la carta y el registro del término en Mi DT', () => {
+    const p = pend(correr(est([T({ contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-31' })]), '2026-10-20'), 'plazo-t1');
+    assert.ok(p.texto.indexOf('3 días hábiles') >= 0 && p.texto.indexOf('Mi DT') >= 0);
+});
 caso('ficha completa y mes tranquilo: no hay avisos', () => {
     assert.deepStrictEqual(correr(est([T()]), '2026-10-20'), []);
 });

@@ -35,7 +35,9 @@ Construido (rama `claude/asistente-pyme-plan`, sin publicar, 13-oct-2026):
 - Cuenta con enlace mágico, sesión de 30 días, casilla de aceptación de Términos y encargo de tratamiento.
 - Empresa y hasta 5 trabajadores activos con Pase (1 sin pase), cifrados (AES-256-GCM).
 - Liquidaciones por mes: preparar el mes con valores base, editar con vista previa, guardar, marcar emitida, imprimir todas. Máximo 120 meses por trabajador.
-- Siete documentos: certificado de antigüedad, certificado de remuneraciones, comprobante de feriado, carta 159 N°4, carta 161, amonestación, anexo de datos. El registro guarda solo tipo y fecha, nunca el texto.
+- Ocho documentos: certificado de antigüedad, certificado de remuneraciones, comprobante de feriado, carta 159 N°4, carta 161, amonestación, anexo de datos y finiquito (feriado desde el registro de vacaciones; sin marca solo con el Pase de 12 meses). El registro guarda solo tipo y fecha, nunca el texto.
+- Costo del empleador por trabajador (aporte de la Ley 21.735, SIS, cesantía y mutual con las tasas de Previred de cada mes) y resumen estimado de lo que se paga en Previred por institución (13-oct-2026).
+- Avisos del registro del contrato en Mi DT (arts. 9 y 9 bis) y del término de plazo fijo.
 - Prellenado de los generadores de contrato, anexo 42 h y finiquito desde la ficha.
 - Pase Pyme: $19.990 (3 meses) y $59.990 (12 meses) por Flow, reembolso total de 14 días corridos; venta cerrada hasta `PYME_PASE_VENTA=1`.
 - Pendientes del mes: plazos fijos por vencer, fecha de cotizaciones, liquidaciones sin emitir, respaldo.

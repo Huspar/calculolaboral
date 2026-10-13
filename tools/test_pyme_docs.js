@@ -14,8 +14,8 @@ const MES = (liquido) => ({ calculo: { liquido, totalHaberes: liquido + 100000, 
 const valido = (tipo, c, extra) => Object.assign(D.valoresIniciales(tipo, c), extra);
 const HECHOS = 'Desde marzo las ventas de la sucursal cayeron un 40% respecto del año anterior y se cerró el turno de tarde, por lo que el cargo de vendedora de ese turno dejó de ser necesario.';
 
-caso('hay siete tipos y todos tienen campos y generador', () => {
-    assert.strictEqual(D.TIPOS.length, 7);
+caso('hay ocho tipos y todos tienen campos y generador', () => {
+    assert.strictEqual(D.TIPOS.length, 8);
     D.TIPOS.forEach(t => assert.ok(D.campos(t.id).length > 0, t.id));
 });
 caso('sin completar los datos obligatorios no se puede emitir ni generar', () => {
@@ -226,6 +226,72 @@ caso('ningún documento deja corchetes de relleno ni la palabra undefined/null/N
         assert.ok(!/undefined|null|NaN|\[\s*\]/.test(h), tipo);
         assert.ok(!/\[[^\]]*\]/.test(h.replace(/<[^>]*>/g, '')), tipo + ' tiene corchetes');
     });
+});
+
+
+// ---------- finiquito ----------
+const ANA = (extra) => TRAB(Object.assign({ nombre: 'Ana Pérez', fechaIngreso: '2022-03-15', sueldoBase: 650000 }, extra));
+const VAC_ANA = [{ tipo: 'ajuste', dias: 18 }, { tipo: 'periodo', desde: '2026-10-19', hasta: '2026-10-23', dias: 5 }];
+const fin = (c, extra) => Object.assign(D.valoresIniciales('finiquito', c), { fechaTermino: '2026-10-30', fecha: '2026-11-03', cotizaciones: true }, extra);
+
+caso('finiquito: feriado pendiente del registro más el proporcional desde el último aniversario', () => {
+    const c = ctx(ANA(), { vac: VAC_ANA });
+    const p = D.propuestaFeriado(c, '2026-10-30');
+    // 4 años completos (60 días) menos 23 tomados = 37; del 15-mar al 30-oct: 7 meses y 16 días × 1,25 = 9,42
+    assert.strictEqual(p.pendientes, 37);
+    assert.strictEqual(p.proporcionales, 9.42);
+    assert.strictEqual(p.total, 46.42);
+    // zona extrema: 20 días al año, 1,67 por mes
+    assert.strictEqual(D.propuestaFeriado(ctx(ANA({ zonaExtrema: true }), { vac: [] }), '2026-10-30').proporcionales, 12.56);
+});
+caso('finiquito: días hábiles a corridos desde el día siguiente al término (sábados, domingos y feriados del período)', () => {
+    // término viernes 30-oct-2026: 2 hábiles son lunes 2 y martes 3 de noviembre (sábado 31-oct y domingo 1-nov son inhábiles)
+    const r = D.diasCorridos(ctx(), '2026-10-30', 2.5);
+    assert.strictEqual(r.inhabiles, 2);
+    assert.strictEqual(r.corridos, 4.5);
+    assert.strictEqual(r.hasta, '2026-11-03');
+});
+caso('finiquito por art. 161: años de servicio, sustitutiva, feriado y total', () => {
+    const c = ctx(ANA(), { vac: VAC_ANA });
+    const d = fin(c, { causal: '161' });
+    const v = D.validar('finiquito', c, d);
+    assert.ok(v.puedeEmitir, JSON.stringify(v));
+    const r = D.calcularFiniquito(c, d, []);
+    assert.strictEqual(r.ias, 3250000);          // 4 años y 7 meses: 5 años × $650.000
+    assert.strictEqual(r.sustitutiva, 650000);
+    assert.strictEqual(r.feriado.habiles, 46.42);
+    assert.strictEqual(r.feriado.monto, Math.round(r.feriado.corridos * 650000 / 30));
+    assert.strictEqual(r.total, r.ias + r.sustitutiva + r.feriado.monto);
+    const html = D.generar('finiquito', c, d, { pagada: true }).html;
+    assert.ok(html.indexOf('artículo 161 inciso primero') >= 0 && html.indexOf('Ministro de fe') >= 0 && html.indexOf('Reserva de derechos') >= 0);
+    assert.ok(html.indexOf('&lt;La Espiga&gt;') >= 0, 'escapa la razón social');
+    assert.ok(html.indexOf('Vista previa') < 0);
+    assert.ok(D.generar('finiquito', c, d, { pagada: false }).html.indexOf('Vista previa') >= 0);
+});
+caso('finiquito por renuncia: sin indemnizaciones; los días escritos a mano reemplazan el cálculo', () => {
+    const c = ctx(ANA(), { vac: VAC_ANA });
+    const d = fin(c, { causal: '159_2', diasFeriado: '10,5' });
+    const r = D.calcularFiniquito(c, d, []);
+    assert.strictEqual(r.ias + r.sustitutiva, 0);
+    assert.strictEqual(r.feriado.habiles, 10.5);
+    assert.strictEqual(r.feriado.usaPropuesta, false);
+    const v = D.validar('finiquito', c, d);
+    assert.ok(v.puedeEmitir);
+    assert.ok(v.avisos.some(a => /renuncia/.test(a.texto) && /177/.test(a.texto)));
+    assert.ok(!v.avisos.some(a => /despido no produce/.test(a.texto)), 'la advertencia del art. 162 es para despidos');
+});
+caso('finiquito: validaciones (fechas, causal, descuentos y plazo fijo)', () => {
+    const c = ctx(ANA(), { vac: VAC_ANA });
+    assert.ok(D.validar('finiquito', c, fin(c, { causal: '161', fecha: '2026-10-20' })).errores.fecha);
+    assert.ok(D.validar('finiquito', c, fin(c, { causal: '161', remuneracion: '' })).errores.remuneracion);
+    assert.ok(D.validar('finiquito', c, fin(c, { causal: '159_2', descuentoAfc: 50000 })).errores.descuentoAfc);
+    assert.ok(D.validar('finiquito', c, fin(c, { causal: '161', descuentoAfc: 9000000 })).errores.descuentoAfc, 'el aporte AFC no puede superar la indemnización');
+    assert.ok(D.validar('finiquito', c, fin(c, { causal: '159_2', otrosDescuentos: 99000000 })).errores.otrosDescuentos);
+    assert.ok(D.validar('finiquito', c, fin(c, { causal: '159_2', diasFeriado: '3,456' })).errores.diasFeriado);
+    assert.ok(D.validar('finiquito', c, fin(c, { causal: '159_4' })).bloqueos.length, 'contrato indefinido no puede terminar por 159 N°4');
+    const pf = ctx(ANA({ contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-30', renovaciones: 2 }), { vac: [] });
+    assert.ok(D.validar('finiquito', pf, fin(pf, { causal: '159_4' })).bloqueos.some(b => /indefinida/.test(b)));
+    assert.ok(!D.validar('finiquito', c, fin(c, { causal: '159_2', cotizaciones: false })).puedeEmitir);
 });
 
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

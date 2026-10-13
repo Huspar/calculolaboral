@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.1.0)
+ * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.2.0)
  *
  * Función pura: calcular(datos, mes) devuelve las líneas de la liquidación, las bases de cálculo y los avisos.
  * "datos": { trabajador, mes, periodo "AAAA-MM" }. "mes" son los valores oficiales del mes (UF, UTM, ingreso
@@ -18,6 +18,13 @@
  * - Base del impuesto único: imponible menos AFP, seguro de cesantía, salud (7% más adicional de Isapre, con tope
  *   conjunto del 7% de 90 UF, según el SII) y APV régimen B. Créditos de caja, anticipos y otros descuentos no la rebajan.
  * - Tramos del impuesto con la UTM del mes.
+ *
+ * Costo del empleador (resultado.empleador, solo si el mes trae "empleador" en sus valores): no cambia el líquido.
+ * - AFP 0,1%, SIS y seguro social (Ley 21.735) sobre lo imponible con el tope de la AFP, con las tasas de cada mes.
+ * - Seguro de cesantía del empleador (art. 5 de la Ley 19.728) con el tope del seguro: 2,4% en contrato indefinido,
+ *   3% a plazo fijo o por obra y 0,8% en indefinido desde el mes siguiente a los 11 años de relación laboral.
+ * - Mutual o ISL (Ley 16.744): 0,90% básica más 0,03% de la Ley 21.010 (SANNA) más la adicional de la empresa. Si no
+ *   se indica la tasa total de la empresa, se usa 0,93% y se avisa.
  */
 (function (root) {
     'use strict';
@@ -29,6 +36,9 @@
     var TASA_AFC_TRABAJADOR = 0.006;
     var TOPE_GRATIFICACION_IMM = 4.75;
     var TOPE_DESCUENTOS_PACTADOS = 0.15; // art. 58
+    var TASA_AFC_EMPLEADOR = { indefinido: 0.024, plazo: 0.03, once: 0.008 }; // art. 5 Ley 19.728
+    var TASA_MUTUAL_BASE = 0.0093;        // 0,90% básica (Ley 16.744) + 0,03% SANNA (Ley 21.010)
+    var TASA_MUTUAL_MAX = 0.08;
 
     // Tramos del impuesto único en UTM: [hasta, factor, rebaja]
     var TRAMOS = [
@@ -228,12 +238,56 @@
                 topeAfp: topeAfp, topeAfc: topeAfc, baseAfp: baseAfp, baseAfc: baseAfc,
                 rebajaSalud: rebajaSalud, baseTributable: baseTributable, tramo: imp.tramo
             },
+            // Montos retenidos al trabajador, para el resumen de lo que se paga en Previred y en el SII
+            montos: { afp: afp, salud: saludTotal, afc: afc, impuesto: imp.monto, apv: apv, creditoCCAF: r(n(m.creditoCCAF)) },
+            empleador: mes.empleador ? aportesEmpleador({ totalHaberes: totalHaberes, bases: { baseAfp: baseAfp, baseAfc: baseAfc } }, datos, mes) : null,
             avisos: avisos,
             listo: !avisos.some(function (a) { return a.nivel === 'error'; })
         };
     }
 
-    var api = { calcular: calcular, impuestoUnico: impuestoUnico, version: '1.1.0' };
+    // Edad cumplida al último día del mes (o null si no hay fecha de nacimiento)
+    function edadAlCierre(fechaNacimiento, periodo) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(fechaNacimiento || '')) || !/^\d{4}-\d{2}$/.test(String(periodo || ''))) return null;
+        var ult = new Date(Date.UTC(+periodo.slice(0, 4), +periodo.slice(5, 7), 0)).getUTCDate();
+        var cierre = periodo + '-' + (ult < 10 ? '0' : '') + ult;
+        var e = +cierre.slice(0, 4) - +fechaNacimiento.slice(0, 4);
+        if (cierre.slice(5) < fechaNacimiento.slice(5)) e--;
+        return e;
+    }
+
+    // Cotizaciones de cargo del empleador. "res" necesita totalHaberes y bases.baseAfp / bases.baseAfc.
+    function aportesEmpleador(res, datos, mes) {
+        var e = mes && mes.empleador;
+        if (!e || !res || !res.bases) return null;
+        var t = datos.trabajador || {}, b = res.bases, avisos = [];
+        var contrato = t.contrato || 'indefinido';
+        var tasaAfc = contrato !== 'indefinido' ? TASA_AFC_EMPLEADOR.plazo
+            : estadoAfc11(t.fechaIngreso, datos.periodo) === 'cumplidos' ? TASA_AFC_EMPLEADOR.once : TASA_AFC_EMPLEADOR.indefinido;
+        var tm = Math.round(n(datos.tasaMutual) * 100) / 10000;
+        var tasaMutual = tm >= TASA_MUTUAL_BASE && tm <= TASA_MUTUAL_MAX ? tm : TASA_MUTUAL_BASE;
+        var lineas = [
+            { clave: 'afp', concepto: 'AFP (cargo del empleador)', detalle: pct(e.afp), monto: r(b.baseAfp * e.afp) },
+            { clave: 'sis', concepto: 'Seguro de invalidez y sobrevivencia (SIS)', detalle: pct(e.sis), monto: r(b.baseAfp * e.sis) },
+            { clave: 'seguroSocial', concepto: 'Seguro social', detalle: pct(e.seguroSocial) + (e.seguroSocialDetalle ? ' (' + e.seguroSocialDetalle + ')' : ''), monto: r(b.baseAfp * e.seguroSocial) },
+            { clave: 'afc', concepto: 'Seguro de cesantía (cargo del empleador)', detalle: pct(tasaAfc), monto: r(b.baseAfc * tasaAfc) },
+            { clave: 'mutual', concepto: 'Mutual o ISL (accidentes del trabajo)', detalle: pct(tasaMutual), monto: r(b.baseAfp * tasaMutual) }
+        ];
+        if (!tm) {
+            avisos.push({ nivel: 'info', texto: 'Para la mutual o el ISL usamos la tasa mínima de 0,93%. Si tu empresa paga una cotización adicional, indica la tasa total en «Empresa».' });
+        }
+        if (e.porConfirmar) {
+            avisos.push({ nivel: 'info', texto: 'La tasa del SIS de este mes aún no está publicada: usamos la vigente (' + pct(e.sis) + '). Confírmala en Previred.' });
+        }
+        var edad = edadAlCierre(t.fechaNacimiento, datos.periodo);
+        if (edad !== null && edad >= 65) {
+            avisos.push({ nivel: 'aviso', texto: 'El trabajador tiene ' + edad + ' años: si está pensionado o es mayor de 65, no corresponden el SIS ni todas las cotizaciones del seguro social. Revisa en Previred cuáles aplican.' });
+        }
+        var total = suma(lineas);
+        return { lineas: lineas, total: total, costoTotal: (res.totalHaberes || 0) + total, tasaMutual: tasaMutual, avisos: avisos };
+    }
+
+    var api = { calcular: calcular, impuestoUnico: impuestoUnico, aportesEmpleador: aportesEmpleador, version: '1.2.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLLiquidacionEngine = api;
 })(typeof window !== 'undefined' ? window : this);

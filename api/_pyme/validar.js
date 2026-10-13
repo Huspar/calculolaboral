@@ -30,6 +30,8 @@ const CAMPOS_EMPRESA = {
     direccion: { t: 'texto', max: 120 },
     comuna: { t: 'texto', max: 60 },
     ciudad: { t: 'texto', max: 60 },
+    // Cotización total de la mutual o el ISL en % (0,90 básica + 0,03 SANNA + adicional de la empresa)
+    tasaMutual: { t: 'decimal', min: 0.93, max: 8, def: 0.93 },
     logo: { t: 'logo' }
 };
 
@@ -157,6 +159,7 @@ const CAMPOS_MES = {
     emitida: { t: 'fecha' }
 };
 const LISTAS_MES = ['bonosImponibles', 'otrosNoImponibles', 'otrosDescuentos'];
+const DESGLOSE_MES = ['afp', 'salud', 'afcTrabajador', 'impuesto', 'apv', 'creditoCCAF', 'empAfp', 'empSis', 'empSeguroSocial', 'empAfc', 'empMutual', 'costoEmpleador'];
 
 function listaMes(nombre, v, errores) {
     if (vacio(v)) return [];
@@ -182,6 +185,14 @@ function calculoMes(v, errores) {
     });
     c.uf = normalizar('uf', { t: 'decimal', min: 30000, max: 70000, req: true }, v.uf, e);
     c.utm = normalizar('utm', { t: 'entero', min: 50000, max: 150000, req: true }, v.utm, e);
+    // Desglose para el resumen de Previred y el costo del empleador (desde la v1.1.0 de pyme_liquidaciones)
+    if (v.conDesglose === true) {
+        c.conDesglose = true;
+        DESGLOSE_MES.forEach(function (k) { c[k] = normalizar(k, { t: 'entero', min: 0, max: 200000000, def: 0 }, v[k], e); });
+        c.afpNombre = normalizar('afpNombre', { t: 'enum', valores: AFPS, def: '' }, v.afpNombre, e);
+        c.saludInst = normalizar('saludInst', { t: 'enum', valores: ['fonasa', 'isapre'], def: 'fonasa' }, v.saludInst, e);
+        c.isapreNombre = normalizar('isapreNombre', { t: 'texto', max: 40 }, v.isapreNombre, e);
+    }
     if (Object.keys(e).length) { errores.calculo = 'El resultado del cálculo no tiene el formato esperado.'; return undefined; }
     return c;
 }

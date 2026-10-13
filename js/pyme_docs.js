@@ -1,8 +1,8 @@
 /*
- * CalculoLaboral · documentos laborales del Asistente Pyme (v1.0.0). Funciona en el navegador (window.CLPymeDocs) y en Node.
+ * CalculoLaboral · documentos laborales del Asistente Pyme (v1.1.0). Funciona en el navegador (window.CLPymeDocs) y en Node.
  *
- * Siete modelos de referencia que se arman con los datos guardados de la empresa y del trabajador:
- *   cert_antiguedad, cert_remuneraciones, comprobante_feriado, carta_159_4, carta_161, amonestacion, anexo_datos
+ * Ocho modelos de referencia que se arman con los datos guardados de la empresa y del trabajador:
+ *   cert_antiguedad, cert_remuneraciones, comprobante_feriado, carta_159_4, carta_161, amonestacion, anexo_datos, finiquito
  *
  *   TIPOS                                  lista { id, titulo, descripcion }
  *   campos(tipo)                           campos que se piden además de la ficha
@@ -11,7 +11,12 @@
  *   generar(tipo, ctx, datos, { pagada })  { titulo, html }  (pagada: false agrega la marca "Vista previa")
  *   periodosPromedio(hoy)                  los 3 meses completos anteriores (para el promedio líquido del certificado)
  *
- * ctx = { empresa, t (trabajador), hoy: 'AAAA-MM-DD', meses: { 'AAAA-MM': mes guardado }, uf, F (feriados) }
+ * ctx = { empresa, t (trabajador), hoy: 'AAAA-MM-DD', meses: { 'AAAA-MM': mes guardado }, uf, F (feriados), vac (registros de vacaciones) }
+ *
+ * Finiquito: feriado pendiente (saldo del registro de vacaciones a la fecha de término) más el proporcional desde el último
+ * aniversario (15 o 20 días hábiles al año, art. 73), convertido a días corridos desde el día siguiente al término
+ * (sábados, domingos y feriados que caen en el período se suman) y pagado con la remuneración mensual / 30. Indemnización por
+ * años de servicio y sustitutiva del aviso solo con el art. 161 (arts. 162, 163 y 172).
  *
  * Reglas
  *  - Un documento solo se emite con todos sus campos obligatorios: no quedan corchetes ni espacios en blanco.
@@ -38,8 +43,18 @@
         { id: 'carta_159_4', titulo: 'Carta de término por vencimiento del plazo fijo (art. 159 N°4)', descripcion: 'Comunica el término de un contrato a plazo fijo e informa el estado de las cotizaciones.' },
         { id: 'carta_161', titulo: 'Carta de término por necesidades de la empresa (art. 161)', descripcion: 'Con los hechos, las indemnizaciones, el estado de las cotizaciones y la copia a la Inspección.' },
         { id: 'amonestacion', titulo: 'Amonestación escrita', descripcion: 'Deja constancia de un incumplimiento y de la obligación que se incumplió.' },
-        { id: 'anexo_datos', titulo: 'Anexo de protección de datos personales', descripcion: 'Anexo al contrato sobre el tratamiento de los datos del trabajador (Ley 21.719, rige desde el 1-dic-2026).' }
+        { id: 'anexo_datos', titulo: 'Anexo de protección de datos personales', descripcion: 'Anexo al contrato sobre el tratamiento de los datos del trabajador (Ley 21.719, rige desde el 1-dic-2026).' },
+        { id: 'finiquito', titulo: 'Finiquito', descripcion: 'Con el feriado pendiente y proporcional calculado desde el registro de vacaciones, las indemnizaciones si corresponden y los descuentos. Se firma ante ministro de fe.' }
     ];
+
+    var CAUSALES_FINIQUITO = {
+        '159_4': 'vencimiento del plazo convenido en el contrato (artículo 159 N°4 del Código del Trabajo)',
+        '159_2': 'renuncia voluntaria del trabajador (artículo 159 N°2 del Código del Trabajo)',
+        '159_1': 'mutuo acuerdo de las partes (artículo 159 N°1 del Código del Trabajo)',
+        '161': 'necesidades de la empresa, establecimiento o servicio (artículo 161 inciso primero del Código del Trabajo)'
+    };
+    var FORMAS_PAGO = { transferencia: 'transferencia electrónica a la cuenta del Trabajador', vale_vista: 'vale vista bancario a nombre del Trabajador', cheque: 'cheque nominativo a nombre del Trabajador', efectivo: 'dinero en efectivo' };
+    function vacMod() { return root.CLPymeVacaciones || (typeof require === 'function' ? require('./pyme_vacaciones') : null); }
 
     // ---------- utilidades ----------
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -53,6 +68,8 @@
     function esFecha(s) { return typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(aMs(s)); }
     function vacio(v) { return v === undefined || v === null || String(v).trim() === ''; }
     function textoUsuario(v) { return String(v == null ? '' : v).replace(/[ \t]+/g, ' ').trim(); }
+    function numDecimal(v) { var s = String(v == null ? '' : v).trim().replace(',', '.'); if (!/^\d+(\.\d{1,2})?$/.test(s)) return null; return Number(s); }
+    function decTxt(n) { return (Math.round(n * 100) / 100).toLocaleString('es-CL', { maximumFractionDigits: 2 }); }
     function sumarDiasIso(iso, n) { var d = new Date(aMs(iso) + n * 86400000); return d.getUTCFullYear() + '-' + dos(d.getUTCMonth() + 1) + '-' + dos(d.getUTCDate()); }
     function mesAnterior(iso) { var a = iso.split('-').map(Number), m = a[1] - 1, y = a[0]; if (m < 1) { m = 12; y--; } return y + '-' + dos(m); }
     function rutFmt(v) { var c = String(v || '').toUpperCase().replace(/[^0-9K]/g, ''); return c.length < 2 ? c : c.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + c.slice(-1); }
@@ -160,6 +177,21 @@
             { k: 'biometria', tipo: 'check', etiqueta: 'La empresa controla la asistencia con huella o reconocimiento facial', ayuda: 'Agrega la cláusula de alternativa no biométrica.' },
             { k: 'herramientas', tipo: 'check', etiqueta: 'La empresa entrega correo, computador o teléfono de trabajo', ayuda: 'Agrega la cláusula de herramientas corporativas.' },
             { k: 'encargados', tipo: 'check', etiqueta: 'La empresa usa proveedores externos con datos de los trabajadores (contador, software de remuneraciones, nube)', ayuda: 'Agrega la cláusula de encargados de tratamiento.' }
+        ],
+        finiquito: [
+            { k: 'causal', tipo: 'select', etiqueta: 'Causal de término', req: true, opciones: [['159_4', 'Vencimiento del plazo convenido (art. 159 N°4)'], ['159_2', 'Renuncia del trabajador (art. 159 N°2)'], ['159_1', 'Mutuo acuerdo de las partes (art. 159 N°1)'], ['161', 'Necesidades de la empresa (art. 161)']] },
+            { k: 'fechaTermino', tipo: 'fecha', etiqueta: 'Fecha de término del contrato', req: true },
+            { k: 'remFeriado', tipo: 'pesos', etiqueta: 'Remuneración mensual para el feriado', req: true, ayuda: 'Sueldo y lo que se paga en forma fija cada mes (por ejemplo, la gratificación mensual). Si la remuneración es variable, el promedio de los últimos 3 meses (art. 71). El valor del día es este monto dividido por 30.' },
+            { k: 'diasFeriado', tipo: 'decimal', etiqueta: 'Días hábiles de feriado por pagar', min: 0, max: 200, ayuda: 'Déjalo vacío para usar el cálculo del asistente: el saldo del registro de vacaciones más el feriado proporcional desde el último aniversario.' },
+            { k: 'remuneracion', tipo: 'pesos', etiqueta: 'Última remuneración mensual (base de la indemnización)', ayuda: 'Solo para la causal del art. 161. Incluye lo que percibe por sus servicios (sueldo, bonos permanentes, gratificación mensual); excluye asignación familiar, horas extra, colación, movilización y beneficios esporádicos (art. 172).' },
+            { k: 'aviso', tipo: 'select', etiqueta: 'Aviso previo (solo art. 161)', opciones: [['sustitutiva', 'Pago la indemnización sustitutiva del aviso previo'], ['anticipacion', 'Avisé con 30 días de anticipación o más']] },
+            { k: 'remPendiente', tipo: 'pesos', etiqueta: 'Remuneración pendiente del último mes', ayuda: 'Solo si los días trabajados del mes de término no se pagan en su liquidación de sueldo.' },
+            { k: 'descuentoAfc', tipo: 'pesos', etiqueta: 'Aporte del empleador al seguro de cesantía que se descuenta', ayuda: 'Solo con el art. 161: el monto del certificado de la AFC (art. 13 de la Ley 19.728). Si no lo tienes, déjalo vacío.' },
+            { k: 'otrosDescuentos', tipo: 'pesos', etiqueta: 'Otros descuentos autorizados por escrito', ayuda: 'Anticipos o préstamos que el trabajador autorizó a descontar del finiquito.' },
+            { k: 'formaPago', tipo: 'select', etiqueta: 'Forma de pago', req: true, opciones: [['transferencia', 'Transferencia electrónica'], ['vale_vista', 'Vale vista'], ['cheque', 'Cheque nominativo'], ['efectivo', 'Efectivo']] },
+            { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
+            { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de firma del finiquito', req: true },
+            { k: 'cotizaciones', tipo: 'check', etiqueta: 'Confirmo que las cotizaciones previsionales están pagadas íntegramente hasta el último día del mes anterior al término y tengo los certificados para acreditarlo ante el ministro de fe', req: true }
         ]
     };
 
@@ -182,6 +214,7 @@
             case 'carta_161': Object.assign(v, { fechaTermino: '', hechos: '', aviso: 'sustitutiva', remuneracion: ultimaRemuneracionPropuesta(ctx), entrega: 'personal', finiquito: 'presencial', sinLicencia: false, sinFuero: false, cotizaciones: false }); break;
             case 'amonestacion': Object.assign(v, { fechaHechos: '', obligacion: '', hechos: '', reglamento: 'si' }); break;
             case 'anexo_datos': Object.assign(v, { correoPrivacidad: '', biometria: false, herramientas: false, encargados: false }); break;
+            case 'finiquito': Object.assign(v, { causal: t.contrato === 'plazo_fijo' ? '159_4' : '159_2', fechaTermino: t.contrato === 'plazo_fijo' ? (t.fechaTerminoPlazo || '') : '', remFeriado: ultimaRemuneracionPropuesta(ctx), diasFeriado: '', remuneracion: ultimaRemuneracionPropuesta(ctx), aviso: 'sustitutiva', remPendiente: '', descuentoAfc: '', otrosDescuentos: '', formaPago: 'transferencia', cotizaciones: false }); break;
         }
         return v;
     }
@@ -205,7 +238,8 @@
         carta_159_4: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }]),
         carta_161: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }]),
         amonestacion: BASE_FICHA,
-        anexo_datos: BASE_FICHA
+        anexo_datos: BASE_FICHA,
+        finiquito: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }])
     };
 
     function validar(tipo, ctx, datos) {
@@ -221,7 +255,8 @@
             if (vacio(v)) { if (c.req) errores[c.k] = 'Este dato es obligatorio.'; return; }
             if (c.tipo === 'fecha' && !esFecha(v)) errores[c.k] = 'La fecha no es válida.';
             if (c.tipo === 'numero') { var n = Number(v); if (!Number.isInteger(n) || n < c.min || n > c.max) errores[c.k] = 'Debe ser un número entero entre ' + c.min + ' y ' + c.max + '.'; }
-            if (c.tipo === 'pesos' && !(Number(v) > 0)) errores[c.k] = 'Indica un monto mayor que cero.';
+            if (c.tipo === 'pesos' && !(Number(v) > 0) && c.req) errores[c.k] = 'Indica un monto mayor que cero.';
+            if (c.tipo === 'decimal') { var x = numDecimal(v); if (x === null || x < c.min || x > c.max) errores[c.k] = 'Debe ser un número entre ' + c.min + ' y ' + c.max + ' (con hasta dos decimales).'; }
             if (c.tipo === 'select' && !c.opciones.some(function (o) { return o[0] === v; })) errores[c.k] = 'Elige una opción.';
             if ((c.tipo === 'texto' || c.tipo === 'textarea') && String(v).length > c.max) errores[c.k] = 'Máximo ' + c.max + ' caracteres.';
         });
@@ -240,6 +275,7 @@
         if (tipo === 'comprobante_feriado') validarFeriado(ctx, d, errores, bloqueos, avisos);
         if (tipo === 'carta_159_4') validar1594(ctx, d, errores, bloqueos, avisos);
         if (tipo === 'carta_161') validar161(ctx, d, errores, bloqueos, avisos);
+        if (tipo === 'finiquito') validarFiniquito(ctx, d, errores, bloqueos, avisos);
         if (tipo === 'amonestacion') {
             if (!vacio(f('hechos')) && textoUsuario(f('hechos')).length < MIN_HECHOS_AMON) errores.hechos = 'Describe los hechos con más detalle (mínimo ' + MIN_HECHOS_AMON + ' caracteres).';
             if (esFecha(f('fechaHechos')) && esFecha(f('fecha')) && f('fecha') < f('fechaHechos')) errores.fecha = 'No puede ser anterior a la fecha de los hechos.';
@@ -335,6 +371,92 @@
         if (esFecha(d.fechaTermino)) avisos.push({ nivel: 'info', texto: 'Entrega la carta al trabajador y envía copia a la Inspección del Trabajo (art. 162). La carta supone una oferta irrevocable de pago de las indemnizaciones que indica (art. 169).' });
         if (d.entrega === 'certificada' && vacio(t.domicilio)) avisos.push({ nivel: 'aviso', texto: 'Falta el domicilio del trabajador en su ficha. La carta certificada debe enviarse al domicilio señalado en el contrato.' });
         avisos.push({ nivel: 'info', texto: 'Las necesidades de la empresa deben ser reales y estar acreditadas: si el trabajador la impugna, el tribunal puede ordenar recargos sobre la indemnización (art. 168).' });
+    }
+
+    // ---------- finiquito ----------
+    // Días hábiles de feriado a pagar: saldo pendiente del registro y proporcional desde el último aniversario (art. 73)
+    function propuestaFeriado(ctx, fechaTermino) {
+        var t = ctx.t, VAC = vacMod();
+        if (!VAC || !esFecha(t.fechaIngreso) || !esFecha(fechaTermino) || fechaTermino <= t.fechaIngreso) return null;
+        var r = VAC.resumen(t, ctx.vac || [], fechaTermino);
+        var k = VAC.aniosCompletos(t.fechaIngreso, fechaTermino);
+        var desde = k > 0 ? VAC.aniversario(t.fechaIngreso, k) : t.fechaIngreso;
+        var a = antiguedad(desde, sumarDiasIso(fechaTermino, 1));   // el día del término se cuenta
+        var base = t.zonaExtrema ? VAC.BASE_EXTREMA : VAC.BASE;
+        var proporcionales = Math.round((a.anios * 12 + a.meses + a.dias / 30) * base / 12 * 100) / 100;
+        var pendientes = Math.max(0, r.saldo);
+        return { pendientes: pendientes, proporcionales: proporcionales, total: Math.round((pendientes + proporcionales) * 100) / 100, desde: desde, base: base, saldoNegativo: r.saldo < 0 };
+    }
+
+    // Convierte días hábiles en días corridos desde el día siguiente al término: se suman los sábados, domingos y feriados del período
+    function diasCorridos(ctx, fechaTermino, habiles) {
+        var enteros = Math.floor(habiles + 1e-9), fraccion = Math.round((habiles - enteros) * 100) / 100;
+        var d = fechaTermino, contados = 0, inhabiles = 0, tope = 400;
+        while (contados < enteros && tope-- > 0) {
+            d = sumarDiasIso(d, 1);
+            if (ctx.F.esDiaHabil(d)) contados++; else inhabiles++;
+        }
+        return { corridos: Math.round((enteros + inhabiles + fraccion) * 100) / 100, inhabiles: inhabiles, hasta: d };
+    }
+
+    function calcularFiniquito(ctx, d, bloqueos) {
+        var t = ctx.t, c = { causal: d.causal };
+        var prop = propuestaFeriado(ctx, d.fechaTermino);
+        var habiles = !vacio(d.diasFeriado) && numDecimal(d.diasFeriado) !== null ? numDecimal(d.diasFeriado) : (prop ? prop.total : 0);
+        var conv = habiles > 0 ? feriadosOk(ctx, bloqueos || [], function () { return diasCorridos(ctx, d.fechaTermino, habiles); }) : { corridos: 0, inhabiles: 0 };
+        var valorDia = Number(d.remFeriado) > 0 ? Number(d.remFeriado) / 30 : 0;
+        c.feriado = { habiles: habiles, propuesta: prop, usaPropuesta: vacio(d.diasFeriado), corridos: conv ? conv.corridos : 0, inhabiles: conv ? conv.inhabiles : 0, valorDia: valorDia, monto: conv ? Math.round(conv.corridos * valorDia) : 0 };
+        c.ias = 0; c.sustitutiva = 0; c.ind = null;
+        if (d.causal === '161' && Number(d.remuneracion) > 0 && esFecha(d.fechaTermino) && esFecha(t.fechaIngreso)) {
+            c.ind = indemnizacion(t.fechaIngreso, d.fechaTermino, Number(d.remuneracion), ctx.uf);
+            c.ias = c.ind.porAnios;
+            c.sustitutiva = d.aviso === 'sustitutiva' ? c.ind.base : 0;
+        }
+        c.remPendiente = Number(d.remPendiente) > 0 ? Math.round(Number(d.remPendiente)) : 0;
+        c.afc = d.causal === '161' && Number(d.descuentoAfc) > 0 ? Math.round(Number(d.descuentoAfc)) : 0;
+        c.otros = Number(d.otrosDescuentos) > 0 ? Math.round(Number(d.otrosDescuentos)) : 0;
+        c.haberes = c.ias + c.sustitutiva + c.feriado.monto + c.remPendiente;
+        c.descuentos = c.afc + c.otros;
+        c.total = c.haberes - c.descuentos;
+        return c;
+    }
+
+    function validarFiniquito(ctx, d, errores, bloqueos, avisos) {
+        var t = ctx.t;
+        if (t.fechaIngreso && esFecha(d.fechaTermino) && d.fechaTermino <= t.fechaIngreso) errores.fechaTermino = 'Debe ser posterior a la fecha de ingreso.';
+        if (esFecha(d.fecha) && esFecha(d.fechaTermino) && d.fecha < d.fechaTermino) errores.fecha = 'El finiquito se firma el día del término o después.';
+        if (d.causal === '161' && !(Number(d.remuneracion) > 0)) errores.remuneracion = 'Con la causal del art. 161 indica la última remuneración mensual.';
+        if (d.causal !== '161' && Number(d.descuentoAfc) > 0) errores.descuentoAfc = 'Este descuento solo procede con la causal del art. 161.';
+        if (d.causal === '159_4') {
+            if (t.contrato !== 'plazo_fijo') bloqueos.push('Este trabajador no tiene contrato a plazo fijo en su ficha. El vencimiento del plazo (art. 159 N°4) solo procede en contratos a plazo fijo.');
+            else if (t.renovaciones >= 2) bloqueos.push('Con dos o más renovaciones, el contrato pasó a ser de duración indefinida (art. 159 N°4, inciso final). No corresponde invocar el vencimiento del plazo.');
+        }
+        if (!esFecha(d.fechaTermino) || errores.fechaTermino) return;
+        var c = calcularFiniquito(ctx, d, bloqueos);
+        if (d.causal === '161' || d.causal === '159_4') avisos.unshift({ nivel: 'aviso', texto: 'Antes de firmar, revisa las cotizaciones: si al término no estaban pagadas íntegramente (AFP, salud y seguro de cesantía, hasta el último día del mes anterior), el despido no produce el efecto de poner término al contrato (art. 162). Si hay cotizaciones atrasadas, consulta con un abogado antes de firmar.' });
+        if (c.feriado.propuesta) {
+            var p = c.feriado.propuesta;
+            var txt = 'Feriado: ' + (c.feriado.usaPropuesta ? 'usamos ' : 'el asistente calcula ') + decTxt(p.total) + ' días hábiles: ' + decTxt(p.pendientes) + ' de saldo pendiente según el registro de vacaciones y ' + decTxt(p.proporcionales) + ' proporcionales desde el ' + fechaLarga(p.desde) + ' (' + decTxt(p.base / 12) + ' por mes, art. 73).';
+            if (c.feriado.habiles > 0) txt += ' Equivalen a ' + decTxt(c.feriado.corridos) + ' días corridos contados desde el día siguiente al término (' + plural(c.feriado.inhabiles, 'día inhábil', 'días inhábiles') + ' incluidos).';
+            avisos.push({ nivel: 'info', texto: txt + ' Revisa que el registro de vacaciones esté completo.' });
+            if (p.saldoNegativo) avisos.push({ nivel: 'aviso', texto: 'El registro de vacaciones tiene más días tomados que los que correspondían: no se descontó del finiquito. Revísalo antes de firmar.' });
+        }
+        if (c.ind) {
+            if (c.ind.antes1981) avisos.push({ nivel: 'aviso', texto: 'El contrato comenzó antes del 14 de agosto de 1981: el tope de 11 años no se aplica. Revisa el cálculo.' });
+            if (c.ind.topada) avisos.push({ nivel: 'info', texto: 'La remuneración supera las 90 UF, el máximo que considera la ley para las indemnizaciones (art. 172). Se calculó con ' + pesos(c.ind.tope) + ', usando la UF de hoy; la ley usa la del último día del mes anterior al pago.' });
+            if (c.ind.antiguedad.anios < 1) avisos.push({ nivel: 'info', texto: 'Con menos de un año de servicio no corresponde la indemnización por años de servicio (art. 163).' });
+            if (!ctx.uf) avisos.push({ nivel: 'aviso', texto: 'No pudimos cargar la UF de hoy: el tope de 90 UF no se aplicó. Revisa que la remuneración no lo supere.' });
+        }
+        if (c.afc > 0) {
+            if (c.afc > c.ias) errores.descuentoAfc = 'No puede superar la indemnización por años de servicio (' + pesos(c.ias) + ').';
+            avisos.push({ nivel: 'aviso', texto: 'El aporte del empleador al seguro de cesantía solo se descuenta de la indemnización por años de servicio del art. 161 (art. 13 de la Ley 19.728). Si el despido se declara injustificado, este descuento puede ser cuestionado: consulta antes de aplicarlo.' });
+        }
+        if (c.otros > 0) avisos.push({ nivel: 'info', texto: 'Descuenta solo anticipos o préstamos que el trabajador autorizó por escrito, y guarda ese documento.' });
+        if (c.total < 0) errores.otrosDescuentos = 'Los descuentos superan lo que se paga.';
+        if (d.causal === '159_2') avisos.push({ nivel: 'info', texto: 'La renuncia debe constar por escrito y estar firmada por el trabajador y ratificada ante un ministro de fe (o hecha en el sitio de la Dirección del Trabajo): si no, no puede invocarse (art. 177). Adjúntala al finiquito.' });
+        if (d.causal === '159_1') avisos.push({ nivel: 'info', texto: 'El mutuo acuerdo debe constar por escrito y ratificarse ante ministro de fe (art. 177). Este finiquito lo deja por escrito al firmarlo ante el ministro de fe.' });
+        avisos.push({ nivel: 'info', texto: 'El finiquito debe otorgarse y su pago ponerse a disposición del trabajador dentro de los 10 días hábiles siguientes a la separación, y se firma ante ministro de fe (inspector del trabajo, notario, oficial del Registro Civil o secretario municipal) o en forma electrónica en el sitio de la Dirección del Trabajo (art. 177). El ministro de fe te pedirá acreditar el pago de las cotizaciones.' });
+        avisos.push({ nivel: 'info', texto: 'Registra el término del contrato en el portal Mi DT dentro del plazo de la causal (art. 9 bis).' });
     }
 
     // ---------- armado de los documentos ----------
@@ -520,9 +642,39 @@
         return envolver(e, 'Anexo de contrato de trabajo · Tratamiento y protección de datos personales', cuerpo, pagada);
     }
 
+    function generarFiniquito(ctx, d, pagada) {
+        var e = ctx.empresa, t = ctx.t, c = calcularFiniquito(ctx, d, []);
+        var filas = [];
+        if (c.ias > 0) filas.push(['Indemnización por años de servicio (art. 163): ' + plural(c.ind.aniosPago, 'año', 'años') + ' × ' + pesos(c.ind.base), c.ias]);
+        if (c.sustitutiva > 0) filas.push(['Indemnización sustitutiva del aviso previo (art. 162)', c.sustitutiva]);
+        if (c.feriado.monto > 0) filas.push(['Feriado pendiente y proporcional: ' + decTxt(c.feriado.habiles) + ' días hábiles, equivalentes a ' + decTxt(c.feriado.corridos) + ' días corridos', c.feriado.monto]);
+        if (c.remPendiente > 0) filas.push(['Remuneración pendiente del último mes', c.remPendiente]);
+        if (c.afc > 0) filas.push(['Menos: aporte del empleador al seguro de cesantía imputado a la indemnización (art. 13 de la Ley 19.728)', -c.afc]);
+        if (c.otros > 0) filas.push(['Menos: descuentos autorizados por escrito por el Trabajador', -c.otros]);
+        var tabla = '<table class="dc-tabla"><tbody>' + filas.map(function (f) { return '<tr><th scope="row">' + esc(f[0]) + '</th><td>' + (f[1] < 0 ? '− ' + pesos(-f[1]) : pesos(f[1])) + '</td></tr>'; }).join('') +
+            (filas.length ? '' : '<tr><th scope="row">Sin montos por pagar</th><td>' + pesos(0) + '</td></tr>') +
+            '</tbody><tfoot><tr><th scope="row">Total a pagar</th><td>' + pesos(c.total) + '</td></tr></tfoot></table>';
+        var rep = e.representante ? ', representada por don/doña ' + esc(e.representante) + (e.rutRepresentante ? ', RUT ' + esc(rutFmt(e.rutRepresentante)) : '') : '';
+        var domE = e.direccion ? ', con domicilio en ' + esc([e.direccion, e.comuna].filter(Boolean).join(', ')) : '';
+        var domT = t.domicilio ? ', con domicilio en ' + esc([t.domicilio, t.comuna].filter(Boolean).join(', ')) : '';
+        var feriadoTxt = c.feriado.monto > 0 ? '<p class="dc-p">El feriado se calcula sobre ' + esc(decTxt(c.feriado.habiles)) + ' días hábiles, que contados desde el día siguiente al término y agregando los sábados, domingos y feriados del período equivalen a ' + esc(decTxt(c.feriado.corridos)) + ' días corridos, con un valor diario de ' + pesos(c.feriado.valorDia) + ' (remuneración mensual de ' + pesos(Number(d.remFeriado)) + ' dividida por 30).</p>' : '';
+        var cuerpo = '<p class="dc-lugar">' + esc(lugar(ctx, d)) + '</p>' +
+            '<p class="dc-p">Entre <strong>' + esc(e.razonSocial) + '</strong>, RUT ' + esc(rutFmt(e.rut)) + rep + domE + ', en adelante el «Empleador», y don/doña <strong>' + esc(t.nombre) + '</strong>, cédula de identidad N° ' + esc(rutFmt(t.rut)) + domT + ', en adelante el «Trabajador», se deja constancia del siguiente finiquito de contrato de trabajo:</p>' +
+            '<p class="dc-p"><strong>PRIMERO:</strong> El Trabajador prestó servicios al Empleador' + (t.cargo ? ' como ' + esc(t.cargo) : '') + ', con contrato ' + contratoTxt(t.contrato) + ', desde el ' + esc(fechaLarga(t.fechaIngreso)) + ' hasta el ' + esc(fechaLarga(d.fechaTermino)) + ', fecha en que terminó la relación laboral por la causal de ' + esc(CAUSALES_FINIQUITO[d.causal]) + '.</p>' +
+            '<p class="dc-p"><strong>SEGUNDO:</strong> En este acto el Empleador paga al Trabajador las siguientes sumas:</p>' + tabla + feriadoTxt +
+            '<p class="dc-p"><strong>TERCERO:</strong> La suma total de ' + pesos(c.total) + ' se paga mediante ' + esc(FORMAS_PAGO[d.formaPago] || FORMAS_PAGO.transferencia) + '.</p>' +
+            '<p class="dc-p"><strong>CUARTO:</strong> El Empleador declara que las cotizaciones previsionales del Trabajador (AFP, salud y seguro de cesantía) se encuentran pagadas íntegramente hasta ' + esc(mesAnio(mesAnterior(d.fechaTermino) + '-01')) + ', lo que acredita con los certificados correspondientes.</p>' +
+            '<p class="dc-p"><strong>QUINTO:</strong> El Trabajador declara recibir las sumas indicadas a su entera satisfacción y que, sin perjuicio de la reserva de derechos que formule al firmar, el Empleador nada le adeuda por remuneraciones, feriado, indemnizaciones ni otro concepto derivado de la relación laboral o de su término, por lo que le otorga el más amplio finiquito.</p>' +
+            '<p class="dc-p"><strong>SEXTO:</strong> Este finiquito se firma ante ministro de fe, como exige el artículo 177 del Código del Trabajo, en tantos ejemplares como partes, quedando uno en poder de cada una.</p>' +
+            '<p class="dc-recibi">Reserva de derechos del Trabajador: ________________________________________________</p>' +
+            '<div class="dc-firmas">' + firmaEmpleador(e) + firmaTrabajador(t) + '<div class="dc-firma"><span></span>Ministro de fe<small>Nombre, firma y timbre</small></div></div>';
+        return envolver(e, 'Finiquito de contrato de trabajo', cuerpo, pagada);
+    }
+
     var GENERADORES = {
         cert_antiguedad: generarCertAntiguedad, cert_remuneraciones: generarCertRemuneraciones, comprobante_feriado: generarComprobanteFeriado,
-        carta_159_4: generarCarta1594, carta_161: generarCarta161, amonestacion: generarAmonestacion, anexo_datos: generarAnexoDatos
+        carta_159_4: generarCarta1594, carta_161: generarCarta161, amonestacion: generarAmonestacion, anexo_datos: generarAnexoDatos,
+        finiquito: generarFiniquito
     };
 
     function generar(tipo, ctx, datos, opciones) {
@@ -535,7 +687,8 @@
     var api = {
         TIPOS: TIPOS, VERSION_TEXTOS: VERSION_TEXTOS, PIE: PIE, campos: campos, valoresIniciales: valoresIniciales, validar: validar, generar: generar,
         periodosPromedio: periodosPromedio, indemnizacion: indemnizacion, antiguedad: antiguedad, antiguedadTxt: antiguedadTxt, plazoComunicacion: plazoComunicacion,
-        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.0.0'
+        propuestaFeriado: propuestaFeriado, diasCorridos: diasCorridos, calcularFiniquito: calcularFiniquito,
+        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.1.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeDocs = api;

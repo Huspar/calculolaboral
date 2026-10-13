@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.2.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
+ * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.3.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
  *
  *   pendientes(estado, { hoy: 'AAAA-MM-DD', P: parametros, F: feriados, ultimoRespaldo: 'ISO' | null, liquidaciones: { periodo, registros: [{ trabajadorId, emitida }] } })
  *   periodoLiquidacion(hoy) → { periodo, cuando: 'anterior' | 'actual' } | null   (el mes cuyas liquidaciones se cargan para el aviso)
@@ -17,6 +17,9 @@
 
     function aMs(iso) { var a = iso.split('-'); return Date.UTC(+a[0], +a[1] - 1, +a[2]); }
     function dias(desde, hasta) { return Math.round((aMs(hasta) - aMs(desde)) / 86400000); }
+    function sumarDias(iso, n) { var d = new Date(aMs(iso) + n * 86400000); return d.getUTCFullYear() + '-' + dos(d.getUTCMonth() + 1) + '-' + dos(d.getUTCDate()); }
+    // Plazo para registrar el contrato en Mi DT si se firmó el día de ingreso (arts. 9 y 9 bis): 15 días desde la firma
+    function plazoRegistroDT(fechaIngreso) { return sumarDias(fechaIngreso, 15); }
     function pesos(n) { return '$' + Math.round(n).toLocaleString('es-CL'); }
     function fechaLarga(iso) { var a = iso.split('-'); return +a[2] + ' de ' + MESES[+a[1] - 1]; }
     function plural(n, uno, varios) { return n + ' ' + (n === 1 ? uno : varios); }
@@ -79,13 +82,27 @@
 
             if (t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo) {
                 var faltan = dias(hoy, t.fechaTerminoPlazo);
-                var apoyo = ' Según el art. 159 N°4 del Código del Trabajo, si el trabajador sigue después de esa fecha o el contrato se renueva por segunda vez, pasa a ser indefinido.';
+                var apoyo = ' Según el art. 159 N°4 del Código del Trabajo, si el trabajador sigue después de esa fecha o el contrato se renueva por segunda vez, pasa a ser indefinido.' +
+                    ' Si termina, la carta de aviso se entrega y el término se registra en Mi DT dentro de los 3 días hábiles siguientes (arts. 162 y 9 bis).';
                 var reno = t.renovaciones >= 1 ? ' Ya tiene ' + plural(t.renovaciones, 'renovación', 'renovaciones') + '.' : '';
                 if (faltan < 0) {
                     agregar('plazo-' + t.id, 'urgente', t.nombre + ': el plazo fijo ya venció', 'Venció el ' + fechaLarga(t.fechaTerminoPlazo) + ' (hace ' + plural(-faltan, 'día', 'días') + ').' + apoyo, acc);
                 } else if (faltan <= 30) {
                     agregar('plazo-' + t.id, faltan <= 7 ? 'urgente' : 'aviso', t.nombre + ': el plazo fijo vence ' + (faltan === 0 ? 'hoy' : 'en ' + plural(faltan, 'día', 'días')),
                         'Vence el ' + fechaLarga(t.fechaTerminoPlazo) + '.' + reno + apoyo, acc);
+                }
+            }
+
+            // Registro del contrato en Mi DT: se firma dentro de 15 días desde el ingreso (art. 9) y se registra dentro de 15 días desde la firma (art. 9 bis)
+            if (t.fechaIngreso) {
+                var desdeIngreso = dias(t.fechaIngreso, hoy);
+                if (desdeIngreso >= -7 && desdeIngreso <= 30) {
+                    var limite = plazoRegistroDT(t.fechaIngreso), restanReg = dias(hoy, limite);
+                    agregar('registro-' + t.id, restanReg <= 5 ? 'aviso' : 'info', t.nombre + ': registra su contrato en Mi DT',
+                        (restanReg >= 0
+                            ? 'Si el contrato se firmó el día de ingreso (' + fechaLarga(t.fechaIngreso) + '), el plazo para registrarlo en el portal Mi DT de la Dirección del Trabajo vence el ' + fechaLarga(limite) + (restanReg === 0 ? ' (hoy).' : '.')
+                            : 'Si el contrato se firmó el día de ingreso, el plazo para registrarlo en Mi DT venció el ' + fechaLarga(limite) + '.') +
+                        ' El contrato se firma dentro de 15 días desde el ingreso y se registra dentro de 15 días desde la firma (arts. 9 y 9 bis). Si ya lo registraste, no necesitas hacer nada.', acc);
                 }
             }
 
@@ -156,7 +173,7 @@
             .map(function (e) { return e.x; });
     }
 
-    var api = { pendientes: pendientes, periodoLiquidacion: periodoLiquidacion, anios: anios, dias: dias, version: '1.2.0' };
+    var api = { pendientes: pendientes, periodoLiquidacion: periodoLiquidacion, plazoRegistroDT: plazoRegistroDT, anios: anios, dias: dias, version: '1.3.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymePendientes = api;
 })(typeof window !== 'undefined' ? window : this);

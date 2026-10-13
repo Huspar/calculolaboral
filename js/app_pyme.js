@@ -731,12 +731,15 @@
         // Franja de cifras
         var conCalculo = cuentan.filter(function (f) { return f.reg && f.reg.calculo; });
         var total = conCalculo.reduce(function (s, f) { return s + (f.reg.calculo.liquido || 0); }, 0);
-        var lim = estado.limites, prox = proximoVencimiento();
+        var conCosto = cuentan.filter(function (f) { return f.reg && f.reg.calculo && f.reg.calculo.conDesglose; });
+        var costo = conCosto.reduce(function (s, f) { return s + (f.reg.calculo.costoEmpleador || 0); }, 0);
+        var prox = proximoVencimiento();
         var proxDias = prox ? PEND.dias(hoyIso(), prox.fecha) : null, proxClase = prox && proxDias <= 3 ? ' vence-pronto' : '';
         var proxFecha = proxDias === 0 ? 'Hoy' : proxDias === 1 ? 'Mañana' : prox ? fechaCorta(prox.fecha) : '';
         $('ini-cifras').innerHTML =
             '<div><dt>Líquido a pagar en ' + esc(MESES[+periodoSel.slice(5) - 1]) + '</dt><dd>' + pesos(total) + '<small>' + esc(conCalculo.length + ' de ' + cuentan.length) + '</small></dd></div>' +
-            '<div><dt>Trabajadores activos</dt><dd>' + activos().length + '<small>de ' + lim.maxActivos + (lim.paseVence ? '' : ', sin Pase') + '</small></dd></div>' +
+            (conCosto.length ? '<div><dt>Costo para la empresa</dt><dd>' + pesos(costo) + '<small>' + esc(conCosto.length + ' de ' + cuentan.length) + '</small></dd></div>'
+                : '<div><dt>Costo para la empresa</dt><dd class="texto">Se calcula al guardar las liquidaciones</dd></div>') +
             '<div><dt>Próximo vencimiento</dt><dd class="texto' + proxClase + '">' + (prox ? '<span' + (proxDias > 1 ? ' class="mono"' : '') + '>' + esc(proxFecha) + '</span> · ' + esc(prox.texto) : 'Nada en los próximos días') + '</dd></div>';
 
         // Grilla
@@ -802,6 +805,7 @@
         html += '<dl class="detalle-dl">' +
             '<div><dt>Liquidación de ' + esc(nombreMes) + '</dt><dd>' + selloLiq(reg, est, corresponde ? 1 : 0) + '</dd></div>' +
             '<div><dt>Líquido a pagar</dt><dd class="mono">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '—') + '</dd></div>' +
+            (reg && reg.calculo && reg.calculo.conDesglose ? '<div><dt>Costo para la empresa</dt><dd class="mono">' + pesos(reg.calculo.costoEmpleador) + '</dd></div>' : '') +
             '<div><dt>Emitida</dt><dd class="mono">' + (reg && reg.emitida ? esc(fechaCortaAnio(reg.emitida)) : '—') + '</dd></div>' +
             '<div><dt>Contrato</dt><dd' + (v && v.clase ? ' class="' + v.clase + '"' : '') + '>' + esc(textoContrato(t)) + (v ? ', ' + esc(v.texto) : '') + '</dd></div>' +
             '<div><dt>Sueldo base</dt><dd class="mono">' + (t.sueldoBase ? pesos(t.sueldoBase) : '—') + '</dd></div>' +
@@ -863,7 +867,7 @@
         if (!t || !estado || !estado.empresa) return null;
         var meses = {};
         PD.periodosPromedio(hoyIso()).forEach(function (p) { var m = mesesCache[p] && mesesCache[p][t.id]; if (m) meses[p] = m; });
-        return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F };
+        return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F, vac: vacDe(t.id) };
     }
 
     // /app/documentos?t=<trabajador>&d=<tipo>: deja elegidos a la persona y el documento
@@ -893,11 +897,19 @@
         if (!docSel.tipo) docSel.tipo = PD.TIPOS[0].id;
         selT.value = docSel.trabajadorId;
         selD.value = docSel.tipo;
-        $('pm-doc-nota-marca').textContent = tienePase()
-            ? 'Con tu pase vigente los documentos salen sin marca de agua. Revisa cada documento antes de entregarlo.'
-            : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada documento antes de entregarlo.';
+        notaMarcaDoc();
         if (cambio) abrirDoc(); else vistaDoc();
         dibujarHistorialDocs();
+    }
+
+    // El finiquito sale sin marca solo con el Pase de 12 meses (igual que el generador de finiquitos); los demás, con cualquier pase
+    function docPagado(tipo) { return tipo === 'finiquito' ? cubiertoPorPase('finiquito') : tienePase(); }
+    function notaMarcaDoc() {
+        var tipo = docSel.tipo, texto;
+        if (docPagado(tipo)) texto = 'Con tu pase vigente ' + (tipo === 'finiquito' ? 'el finiquito sale' : 'los documentos salen') + ' sin marca de agua. Revisa cada documento antes de entregarlo.';
+        else if (tipo === 'finiquito') texto = 'El finiquito lleva la marca «Vista previa» salvo con el Pase Pyme de 12 meses. ' + textoPaseVenta() + ' Revisa el documento antes de firmarlo.';
+        else texto = 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada documento antes de entregarlo.';
+        $('pm-doc-nota-marca').textContent = texto;
     }
 
     var NOMBRES_DOC = { contrato: 'Contrato de trabajo', anexo_42h: 'Anexo de 42 horas', finiquito: 'Finiquito', liquidacion: 'Liquidación de sueldo' };
@@ -919,7 +931,8 @@
         docSel.intento = false;
         var info = PD.TIPOS.filter(function (x) { return x.id === tipo; })[0];
         $('pm-doc-descripcion').textContent = info ? info.descripcion : '';
-        var faltan = (tipo === 'cert_remuneraciones' || tipo === 'carta_161') ? PD.periodosPromedio(hoyIso()).filter(function (p) { return !mesesCache[p]; }) : [];
+        notaMarcaDoc();
+        var faltan = (tipo === 'cert_remuneraciones' || tipo === 'carta_161' || tipo === 'finiquito') ? PD.periodosPromedio(hoyIso()).filter(function (p) { return !mesesCache[p]; }) : [];
         Promise.all(faltan.map(cargarMeses)).then(function () {
             if (!estado || docSel.tipo !== tipo || docSel.trabajadorId !== id) return;
             var c = ctxDoc();
@@ -946,6 +959,7 @@
             else if (c.tipo === 'fecha') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" type="date" value="' + esc(v) + '">';
             else if (c.tipo === 'pesos') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" data-tipo="pesos" type="text" inputmode="numeric" value="' + (v > 0 ? esc(pesos(v)) : '') + '" placeholder="$0">';
             else if (c.tipo === 'numero') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" data-tipo="num" type="text" inputmode="numeric" maxlength="3" value="' + esc(v) + '">';
+            else if (c.tipo === 'decimal') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" type="text" inputmode="decimal" maxlength="6" value="' + esc(v) + '" placeholder="Cálculo del asistente">';
             else ctrl = '<input id="' + id + '" data-dk="' + c.k + '" type="text" maxlength="' + (c.max || 100) + '" value="' + esc(v) + '">';
             var ancho = c.tipo === 'textarea' ? ' lq-span2' : '';
             return '<div class="lq-field' + ancho + '"><label for="' + id + '">' + esc(c.etiqueta) + opc + '</label>' + ctrl + ayuda + err + '</div>';
@@ -1002,7 +1016,7 @@
         var marco = $('pm-doc-marco'), doc = $('pm-doc-doc');
         $('pm-doc-acciones').hidden = false;
         if (v.puedeEmitir) {
-            var pagada = tienePase();
+            var pagada = docPagado(docSel.tipo);
             try {
                 doc.innerHTML = PD.generar(docSel.tipo, c, docSel.datos, { pagada: pagada }).html;
                 doc.classList.toggle('lqd-pagada', pagada);
@@ -1037,7 +1051,7 @@
             return;
         }
         var d;
-        try { d = PD.generar(docSel.tipo, c, docSel.datos, { pagada: tienePase() }); } catch (err) { mensaje($('pm-doc-estado'), 'error', err.message); return; }
+        try { d = PD.generar(docSel.tipo, c, docSel.datos, { pagada: docPagado(docSel.tipo) }); } catch (err) { mensaje($('pm-doc-estado'), 'error', err.message); return; }
         var id = docSel.trabajadorId, tipo = docSel.tipo;
         imprimirHojas([d.html], d.titulo + ' ' + c.t.nombre);
         api('documento', { metodo: 'POST', query: { trabajador: id }, cuerpo: { tipo: tipo } }).then(function (r) {
@@ -1206,6 +1220,7 @@
         (estado.trabajadores || []).forEach(function (t) {
             var nombre = t.nombre.split(' ')[0];
             if (t.activo && t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo && t.fechaTerminoPlazo >= ini && t.fechaTerminoPlazo <= fin) ev.push({ fecha: t.fechaTerminoPlazo, tipo: 'plazo', texto: 'Vence el plazo fijo de ' + nombre, ruta: 'trabajadores/' + t.id });
+            if (t.activo && t.fechaIngreso) { var reg = PEND.plazoRegistroDT(t.fechaIngreso); if (reg >= ini && reg <= fin) ev.push({ fecha: reg, tipo: 'dt', texto: 'Registrar en Mi DT el contrato de ' + nombre, ruta: 'trabajadores/' + t.id }); }
             if (t.activo && t.fechaIngreso && t.fechaIngreso < ini) {
                 var k = y - +t.fechaIngreso.slice(0, 4), aniv = k >= 1 ? VAC.aniversario(t.fechaIngreso, k) : null;
                 if (aniv && aniv >= ini && aniv <= fin) ev.push({ fecha: aniv, tipo: 'aniv', texto: nombre + ' cumple ' + plural(k, 'año', 'años'), ruta: 'vacaciones', query: 't=' + encodeURIComponent(t.id) });
@@ -1216,7 +1231,7 @@
             });
         });
         if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= ini && pv <= fin) ev.push({ fecha: pv, tipo: 'pase', texto: 'Vence tu Pase Pyme', ruta: 'cuenta' }); }
-        var orden = { feriado: 0, cotiz: 1, previred: 2, plazo: 3, pase: 4, vac: 5, aniv: 6 };
+        var orden = { feriado: 0, cotiz: 1, previred: 2, plazo: 3, dt: 3, pase: 4, vac: 5, aniv: 6 };
         ev.sort(function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : orden[a.tipo] - orden[b.tipo]; });
         return { eventos: ev, sinFeriados: sinFeriados, ini: ini, fin: fin, ultimo: ultimo };
     }
@@ -1580,7 +1595,30 @@
         $('pm-liq-marcar').textContent = textoMarcar();
         $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
+        dibujarPrevired();
         if (vistaActual === 'inicio') dibujarInicio();
+    }
+
+    // Lo que se paga en Previred en el mes, agrupado por institución, con las liquidaciones guardadas que traen el desglose
+    function dibujarPrevired() {
+        var guardados = mesesDe(periodoSel), ids = Object.keys(guardados);
+        var regs = ids.map(function (id) { return guardados[id] && guardados[id].calculo; });
+        var r = L.previred(regs), caja = $('liq-previred');
+        caja.hidden = !ids.length;
+        if (!ids.length) return;
+        $('liq-previred-titulo').textContent = 'Para pagar en Previred por ' + nombrePeriodo(periodoSel);
+        $('liq-previred-filas').innerHTML = r.filas.length ? r.filas.map(function (f) {
+            return '<tr><td>' + esc(f.institucion) + '</td><td class="num">' + pesos(f.monto) + '</td></tr>';
+        }).join('') : '<tr><td colspan="2" class="vacio">Guarda las liquidaciones del mes para ver el resumen.</td></tr>';
+        $('liq-previred-total').textContent = pesos(r.total);
+        var faltan = ids.filter(function (id) { var c = guardados[id] && guardados[id].calculo; return !c || !c.conDesglose; })
+            .map(function (id) { var t = trabajadorPorId(id); return t ? t.nombre : null; }).filter(Boolean);
+        var pie = '';
+        if (r.incluidos) pie += '<p>Costo total para la empresa en ' + esc(MESES[+periodoSel.slice(5) - 1]) + ': <strong class="mono">' + pesos(r.costo) + '</strong> (sueldos y cotizaciones del empleador).</p>';
+        if (r.impuesto) pie += '<p>Impuesto único retenido: <strong class="mono">' + pesos(r.impuesto) + '</strong>. No se paga en Previred: se declara y paga en el Formulario 29 del SII.</p>';
+        if (faltan.length) pie += '<p>No incluye a ' + esc(faltan.join(', ')) + ': abre su liquidación y guárdala de nuevo para sumarla.</p>';
+        pie += '<p>Es una estimación con las tasas de Previred de ' + esc(nombrePeriodo(periodoSel)) + '. El monto exacto lo calcula Previred al declarar. Si tu empresa está afiliada a una caja de compensación, parte del 7% de Fonasa se paga a la caja.</p>';
+        $('liq-previred-pie').innerHTML = pie;
     }
 
     // /app/liquidaciones/<id>: abre el editor de esa persona en el mes de la barra
@@ -1651,7 +1689,8 @@
         var val = VAL[periodo];
         if (!val) { cargarValores(periodo); return null; }
         if (val.estado !== 'ok') return null;
-        try { return { res: E.calcular({ trabajador: t, mes: mes, periodo: periodo }, val.mes), val: val }; } catch (err) { return { error: err.message }; }
+        var tasaMutual = estado && estado.empresa ? estado.empresa.tasaMutual : 0;
+        try { return { res: E.calcular({ trabajador: t, mes: mes, periodo: periodo, tasaMutual: tasaMutual }, val.mes), val: val }; } catch (err) { return { error: err.message }; }
     }
 
     function vistaPrevia() {
@@ -1672,11 +1711,25 @@
         if (editando.nota) lista.push({ nivel: 'aviso', texto: editando.nota });
         if (m.gratificacion === 'manual' && !m.gratificacionMonto) lista.push({ nivel: 'aviso', texto: 'La gratificación es de monto fijo pactado: indica el monto, o cambia a «Legal mensual» o «No se paga este mes».' });
         r.res.avisos.forEach(function (a) { lista.push(a); });
+        if (r.res.empleador) r.res.empleador.avisos.forEach(function (a) { lista.push(a); });
+        dibujarCosto(r.res);
         avisos.innerHTML = lista.map(function (a) {
             var icono = a.nivel === 'error' ? 'error' : a.nivel === 'aviso' ? 'warning' : 'info';
             return '<div class="lq-aviso lq-aviso-' + a.nivel + '"><span class="material-icons" aria-hidden="true">' + icono + '</span><p>' + esc(a.texto) + '</p></div>';
         }).join('');
         $('pm-liq-imprimir').disabled = !r.res.listo;
+    }
+
+    // Costo del trabajador para la empresa: lo bruto más las cotizaciones de cargo del empleador
+    function dibujarCosto(res) {
+        var caja = $('pm-liq-costo'), e = res && res.empleador;
+        caja.hidden = !e;
+        if (!e) return;
+        $('pm-liq-costo-cuerpo').innerHTML = '<dl class="detalle-dl costo-dl">' +
+            '<div><dt>Total de haberes<small>Lo que gana el trabajador antes de descuentos</small></dt><dd class="mono">' + pesos(res.totalHaberes) + '</dd></div>' +
+            e.lineas.map(function (l) { return '<div><dt>' + esc(l.concepto) + '<small>' + esc(l.detalle) + '</small></dt><dd class="mono">' + pesos(l.monto) + '</dd></div>'; }).join('') +
+            '<div class="costo-total"><dt>Costo total del mes</dt><dd class="mono">' + pesos(e.costoTotal) + '</dd></div></dl>' +
+            '<p class="texto-ayuda">Las cotizaciones del empleador no se descuentan al trabajador ni aparecen en su liquidación. Es una estimación con las tasas de Previred del mes: el monto exacto lo calcula Previred al declarar.</p>';
     }
 
     $('pm-liq-form').addEventListener('input', function (e) {
@@ -1717,7 +1770,7 @@
     // Guarda un mes (con el resultado calculado si hay valores del mes) y actualiza la memoria local
     function guardarRegistro(id, mes) {
         var t = trabajadorPorId(id), c = t ? calcularMes(t, mes, periodoSel) : null, periodo = periodoSel;
-        var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes) : null) : (mes.calculo || null) });
+        var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes, t) : null) : (mes.calculo || null) });
         return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodo }, cuerpo: { mes: cuerpo } }).then(function (r) {
             if (r.ok) { mesesCache[periodo] = mesesCache[periodo] || {}; mesesCache[periodo][id] = r.datos.mes; }
             return r;

@@ -110,7 +110,7 @@
         }
 
         function armar(periodo, uf, utm, vig) {
-            return { uf: uf, utm: utm, imm: vig.imm, topeAfpUF: vig.topeAfpUF, topeAfcUF: vig.topeAfcUF, jornadaMaxima: vig.jornadaMaxima, afp: vig.afp };
+            return { uf: uf, utm: utm, imm: vig.imm, topeAfpUF: vig.topeAfpUF, topeAfcUF: vig.topeAfcUF, jornadaMaxima: vig.jornadaMaxima, afp: vig.afp, empleador: vig.empleador || null };
         }
         // Notas informativas del mes (cambio de jornada, reajuste retroactivo del ingreso mínimo, etc.)
         function notasDe(periodo, vig) {
