@@ -84,6 +84,7 @@
     // ---------- pantallas generales ----------
     function mostrar(vista, nota) {
         $('pm-cargando').hidden = vista !== 'cargando';
+        $('pm-fallo').hidden = vista !== 'fallo';
         $('pm-entrada').hidden = vista !== 'entrada';
         $('pm-panel').hidden = vista !== 'panel';
         if (vista === 'entrada') {
@@ -139,6 +140,7 @@
         Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
             if (a.getAttribute('data-nav') === base) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
         });
+        if (['', 'trabajadores', 'liquidaciones', 'calendario'].indexOf(base) < 0) $('app-mas').setAttribute('aria-current', 'page'); else $('app-mas').removeAttribute('aria-current');
         document.title = TITULOS[vista] + ' · Asistente Laboral Pyme';
         if (vista === 'inicio') dibujarInicio();
         else if (vista === 'trabajadores') dibujarTrabajadores();
@@ -159,10 +161,15 @@
     }
 
     // Menú en pantallas chicas
-    function cerrarMenu() { $('pm-panel').classList.remove('menu-abierto'); $('app-menu').setAttribute('aria-expanded', 'false'); }
+    function cerrarMenu() { $('pm-panel').classList.remove('menu-abierto'); $('app-menu').setAttribute('aria-expanded', 'false'); $('app-mas').setAttribute('aria-expanded', 'false'); }
     $('app-menu').addEventListener('click', function () {
         var abierto = $('pm-panel').classList.toggle('menu-abierto');
         $('app-menu').setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+    $('app-mas').addEventListener('click', function () {
+        $('pm-panel').classList.add('menu-abierto');
+        $('app-mas').setAttribute('aria-expanded', 'true');
+        var primero = $('app-side').querySelector('a'); if (primero) primero.focus();
     });
     $('app-velo').addEventListener('click', cerrarMenu);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarMenu(); });
@@ -240,6 +247,7 @@
     $('pm-otro-correo').addEventListener('click', function () {
         $('pm-entrar-form').hidden = false; $('pm-entrar-listo').hidden = true; $('pm-email').value = ''; $('pm-email').focus();
     });
+    $('pm-reintentar').addEventListener('click', function () { mostrar('cargando'); arrancar(); });
     $('pm-salir').addEventListener('click', function () {
         api('salir', { metodo: 'POST' }).then(function () { reiniciar(); mostrar('entrada'); });
     });
@@ -257,7 +265,11 @@
     function cargar() {
         return api('estado').then(function (r) {
             if (sinSesion(r)) return;
-            if (!r.ok) { mostrar('entrada', r.datos.error || 'No pudimos cargar tus datos.'); return; }
+            if (!r.ok) {
+                // Sin conexión o falla del servidor: la sesión puede seguir vigente, así que se ofrece reintentar en vez de pedir el correo
+                if (r.estado === 0 || r.estado >= 500) { $('pm-fallo-texto').textContent = r.estado === 0 ? 'Revisa tu conexión a internet e intenta de nuevo. Tus datos siguen guardados.' : 'Tuvimos un problema en nuestro servidor. Intenta de nuevo en unos minutos; tus datos siguen guardados.'; mostrar('fallo'); return; }
+                mostrar('entrada', r.datos.error || 'No pudimos cargar tus datos.'); return;
+            }
             estado = r.datos;
             if (!periodoSel) periodoSel = periodoPorDefecto();
             dibujarMarco();
@@ -366,7 +378,7 @@
     function vencePlazo(t) {
         if (t.contrato !== 'plazo_fijo' || !t.fechaTerminoPlazo) return null;
         var faltan = PEND.dias(hoyIso(), t.fechaTerminoPlazo);
-        return { texto: (faltan < 0 ? 'venció el ' : 'hasta el ') + fechaCorta(t.fechaTerminoPlazo), clase: faltan < 0 ? 'vencido' : faltan <= 30 ? 'vence-pronto' : '' };
+        return { texto: (faltan < 0 ? 'venció el ' : faltan === 0 ? 'vence hoy' : 'vence el ') + (faltan === 0 ? '' : fechaCorta(t.fechaTerminoPlazo)), clase: faltan < 0 ? 'vencido' : faltan <= 30 ? 'vence-pronto' : '' };
     }
     function celdaContrato(t) {
         var v = vencePlazo(t);
@@ -516,9 +528,9 @@
     }
     function dibujarCarpetaLiq(t) {
         var periodos = periodosDe(t), cuerpo = $('carp-liq-filas');
-        if (!periodos.length) { cuerpo.innerHTML = '<tr><td colspan="5" class="vacio">Todavía no hay meses de remuneración desde su ingreso.</td></tr>'; return; }
+        if (!periodos.length) { cuerpo.innerHTML = '<tr><td colspan="4" class="vacio">Todavía no hay meses de remuneración desde su ingreso.</td></tr>'; return; }
         var faltan = periodos.filter(function (p) { return !mesesCache[p]; });
-        if (faltan.length) cuerpo.innerHTML = '<tr><td colspan="5" class="vacio">Cargando sus liquidaciones…</td></tr>';
+        if (faltan.length) cuerpo.innerHTML = '<tr><td colspan="4" class="vacio">Cargando sus liquidaciones…</td></tr>';
         Promise.all(faltan.map(cargarMeses)).then(function () {
             if (vistaActual !== 'trabajador' || $('carp-liq').hidden || rutaActual().split('/')[1] !== t.id) return;
             cuerpo.innerHTML = periodos.map(function (p) {
@@ -527,7 +539,6 @@
                     '<td><strong style="font-weight:600">' + esc(mayuscula(nombrePeriodo(p))) + '</strong></td>' +
                     '<td>' + selloLiq(reg, est, L.diasBase(t, p)) + '</td>' +
                     '<td class="num">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</td>' +
-                    '<td class="fecha ocultar-movil">' + (reg && reg.emitida ? esc(fechaCorta(reg.emitida)) : '<span class="vacio">—</span>') + '</td>' +
                     '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
             }).join('');
             cuerpo.setAttribute('data-trabajador', t.id);
@@ -610,7 +621,7 @@
     }
     function selloLiq(reg, est, dias) {
         if (!reg && dias === 0) return '<span class="sello sello-no">No corresponde</span>';
-        if (est === 'emitida') return '<span class="sello sello-emitida">Emitida</span>';
+        if (est === 'emitida') return '<span class="sello sello-emitida">Emitida' + (reg && reg.emitida ? ' · ' + esc(fechaCorta(reg.emitida)) : '') + '</span>';
         if (est === 'guardada') return '<span class="sello sello-guardada">Preparada</span>';
         return '<span class="sello sello-sin">Sin preparar</span>';
     }
@@ -642,7 +653,9 @@
         var sinEmpresa = !estado.empresa, sinTrabajadores = !(estado.trabajadores || []).length;
         var arranque = sinEmpresa || sinTrabajadores;
         $('ini-primeros').hidden = !arranque;
-        $('ini-cierre').hidden = arranque;
+        $('ini-tabla-panel').hidden = arranque;
+        $('ini-detalle').hidden = arranque;
+        $('ini-cierre').classList.toggle('sin-detalle', arranque);
         $('ini-acciones').hidden = arranque;
         $('ini-avance').hidden = arranque;
         if (arranque) {
@@ -683,11 +696,12 @@
         var conCalculo = cuentan.filter(function (f) { return f.reg && f.reg.calculo; });
         var total = conCalculo.reduce(function (s, f) { return s + (f.reg.calculo.liquido || 0); }, 0);
         var lim = estado.limites, prox = proximoVencimiento();
-        var proxClase = prox && PEND.dias(hoyIso(), prox.fecha) <= 3 ? ' vence-pronto' : '';
+        var proxDias = prox ? PEND.dias(hoyIso(), prox.fecha) : null, proxClase = prox && proxDias <= 3 ? ' vence-pronto' : '';
+        var proxFecha = proxDias === 0 ? 'Hoy' : proxDias === 1 ? 'Mañana' : prox ? fechaCorta(prox.fecha) : '';
         $('ini-cifras').innerHTML =
             '<div><dt>Líquido a pagar en ' + esc(MESES[+periodoSel.slice(5) - 1]) + '</dt><dd>' + pesos(total) + '<small>' + esc(conCalculo.length + ' de ' + cuentan.length) + '</small></dd></div>' +
             '<div><dt>Trabajadores activos</dt><dd>' + activos().length + '<small>de ' + lim.maxActivos + (lim.paseVence ? '' : ', sin Pase') + '</small></dd></div>' +
-            '<div><dt>Próximo vencimiento</dt><dd class="texto' + proxClase + '">' + (prox ? '<span class="mono">' + esc(fechaCorta(prox.fecha)) + '</span> · ' + esc(prox.texto) : 'Nada en los próximos días') + '</dd></div>';
+            '<div><dt>Próximo vencimiento</dt><dd class="texto' + proxClase + '">' + (prox ? '<span' + (proxDias > 1 ? ' class="mono"' : '') + '>' + esc(proxFecha) + '</span> · ' + esc(prox.texto) : 'Nada en los próximos días') + '</dd></div>';
 
         // Grilla
         if (!inicioSel || !filas.some(function (f) { return f.t.id === inicioSel; })) {
@@ -700,11 +714,10 @@
                 '<td class="celda-nombre"><strong>' + esc(f.t.nombre) + '</strong><span>' + esc(f.t.cargo || textoContrato(f.t)) + '</span></td>' +
                 celdaContrato(f.t) +
                 celdaVac(f.t) +
-                '<td>' + selloLiq(reg, f.est, f.corresponde ? 1 : 0) + '</td>' +
-                '<td class="num">' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</td>' +
-                '<td class="fecha ocultar-movil">' + (reg && reg.emitida ? esc(fechaCorta(reg.emitida)) : '<span class="vacio">—</span>') + '</td>' +
+                '<td class="ocultar-movil">' + selloLiq(reg, f.est, f.corresponde ? 1 : 0) + '</td>' +
+                '<td class="num"><span>' + (reg && reg.calculo ? pesos(reg.calculo.liquido) : '<span class="vacio">—</span>') + '</span><span class="solo-movil">' + selloLiq(reg, f.est, f.corresponde ? 1 : 0) + '</span></td>' +
                 '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
-        }).join('') : '<tr><td colspan="7" class="vacio">No tienes trabajadores activos. Actívalos desde su ficha.</td></tr>';
+        }).join('') : '<tr><td colspan="6" class="vacio">No tienes trabajadores activos. Actívalos desde su ficha.</td></tr>';
         if (inicioSel) dibujarDetalle(inicioSel, false); else $('ini-detalle-cuerpo').innerHTML = '<p class="detalle-vacio">Elige a un trabajador para ver el detalle.</p>';
     }
 
@@ -712,10 +725,9 @@
     function celdaVac(t) {
         var ini = periodoSel + '-01', fin = periodoSel + '-31';
         var p = vacDe(t.id).filter(function (v) { return v.tipo === 'periodo' && v.desde <= fin && v.hasta >= ini; })[0];
-        if (p) return '<td class="celda-contrato ocultar-movil">' + esc(rangoCorto(p.desde, p.hasta)) + '<small>' + textoDias(p.dias) + ' hábiles</small></td>';
         if (!t.fechaIngreso) return '<td class="ocultar-movil vacio">—</td>';
         var r = resumenVac(t);
-        return '<td class="celda-contrato ocultar-movil"><span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span><small>de saldo</small></td>';
+        return '<td class="celda-contrato ocultar-movil"><span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span> de saldo<small>' + (p ? esc(rangoCorto(p.desde, p.hasta)) + ', ' + textoDias(p.dias) : 'sin vacaciones este mes') + '</small></td>';
     }
 
     function elegirFila(id, enfocar) {
@@ -1013,7 +1025,7 @@
             '</dl>';
         if (r.avisos.length) html += '<div class="detalle-avisos">' + r.avisos.map(function (a) { return '<div class="lq-aviso lq-aviso-' + a.nivel + '"><span class="material-icons" aria-hidden="true">' + (a.nivel === 'aviso' ? 'warning' : 'info') + '</span><p>' + esc(a.texto) + '</p></div>'; }).join('') + '</div>';
         if (d.porAnio.length) {
-            html += '<details class="det-anios"><summary>Días por año de servicio</summary><table class="tabla"><thead><tr><th scope="col">Año</th><th scope="col">Desde</th><th scope="col" class="num">Días</th></tr></thead><tbody>' +
+            html += '<details class="det-anios"><summary><span class="material-icons" aria-hidden="true">chevron_right</span>Días por año de servicio</summary><table class="tabla"><thead><tr><th scope="col">Año</th><th scope="col">Desde</th><th scope="col" class="num">Días</th></tr></thead><tbody>' +
                 d.porAnio.map(function (x) { return '<tr><td>' + x.anio + '</td><td class="fecha">' + esc(fechaCortaAnio(x.desde)) + '</td><td class="num">' + x.dias + (x.progresivo ? ' <small class="vacio">(' + x.progresivo + ' progresivo)</small>' : '') + '</td></tr>'; }).join('') + '</tbody></table></details>';
         }
         return html;
@@ -1058,11 +1070,11 @@
                 acciones += '<a class="btn-texto" href="/app/documentos?' + esc(q) + '" data-ruta="documentos" data-query="' + esc(q) + '">Comprobante</a> ';
             }
             acciones += '<button type="button" class="btn-texto lq-danger" data-vborrar="' + esc(v.id) + '">Eliminar</button>';
-            return '<tr><td>' + esc(v.tipo === 'periodo' ? rangoCorto(v.desde, v.hasta) + ' ' + v.hasta.slice(0, 4) : 'Antes de usar el asistente') + (v.nota ? '<small class="vacio" style="display:block">' + esc(v.nota) + '</small>' : '') + '</td>' +
-                '<td class="num">' + v.dias + '</td><td style="text-align:right;white-space:nowrap">' + acciones + '</td></tr>';
+            return '<tr><td class="celda-periodo"><span>' + esc(v.tipo === 'periodo' ? rangoCorto(v.desde, v.hasta) + ' ' + v.hasta.slice(0, 4) : 'Antes de usar el asistente') + '</span><small class="solo-movil">' + textoDias(v.dias) + ' hábiles</small>' + (v.nota ? '<small class="vacio">' + esc(v.nota) + '</small>' : '') + '</td>' +
+                '<td class="num ocultar-movil">' + v.dias + '</td><td class="celda-acciones"><div class="acciones-pila">' + acciones + '</div></td></tr>';
         }).join('') : '<tr><td colspan="3" class="vacio">Aún no registras vacaciones de esta persona. Si tomó días antes de usar el asistente, regístralos para que el saldo cuadre.</td></tr>';
         $('vac-detalle').innerHTML = '<div class="panel"><div class="panel-head"><h2>' + esc(t.nombre) + '</h2></div><div class="panel-cuerpo">' + resumenVacHtml(t, r) + '</div>' +
-            '<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Vacaciones registradas</caption><thead><tr><th scope="col">Período</th><th scope="col" class="num">Días hábiles</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + filas + '</tbody></table></div></div>';
+            '<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Vacaciones registradas</caption><thead><tr><th scope="col">Período</th><th scope="col" class="num ocultar-movil">Días hábiles</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + filas + '</tbody></table></div></div>';
     }
     function elegirVac(id) {
         vacSel = id;
@@ -1508,8 +1520,7 @@
                 else {
                     guardadas++;
                     if (est !== 'emitida') porEmitir++;
-                    if (est === 'emitida') meta = 'Emitida el ' + fechaLarga(reg.emitida) + '.';
-                    else if (!reg.calculo) meta = 'Guardada sin cálculo: ábrela para calcularla.';
+                    if (est !== 'emitida' && !reg.calculo) meta = 'Guardada sin cálculo: ábrela para calcularla.';
                 }
                 acciones = '<button type="button" class="btn btn-chico" data-liq="editar" data-id="' + esc(t.id) + '"><span class="material-icons" aria-hidden="true">' + (reg ? 'edit' : 'playlist_add') + '</span>' + (reg ? 'Abrir' : 'Preparar') + '</button>';
                 if (reg) {
@@ -1832,8 +1843,12 @@
     $('pm-t-afp').innerHTML = AFPS.map(function (a) { return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
     aplicarMascaras($('pm-emp-form'));
     aplicarMascaras($('pm-trab-form'));
+    function arrancar() {
+        api('sesion').then(function (r) {
+            if (r.estado === 0 || r.estado >= 500) { mostrar('fallo'); return; }
+            if (r.datos && r.datos.autenticado) cargar(); else mostrar('entrada');
+        });
+    }
     mostrar('cargando');
-    api('sesion').then(function (r) {
-        if (r.datos && r.datos.autenticado) cargar(); else mostrar('entrada');
-    });
+    arrancar();
 })();

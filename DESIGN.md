@@ -27,6 +27,23 @@ colors:
   link: "#0F5E4F"
   on-forest: "#FFFFFF"
   on-amber: "#00382E"
+  # Software /app (Asistente Laboral Pyme): solo en assets/css/app.css
+  app-sidebar: "#00261F"
+  app-side-muted: "#A9C7BD"
+  app-ink-2: "#374151"
+  app-faint: "#6B7280"
+  app-line: "#E3E8E5"
+  app-line-2: "#CFD8D4"
+  app-surface-2: "#F3F6F4"
+  app-hover: "#F6F9F7"
+  app-scrollbar: "#C7D2CD"
+  app-progress-preparada: "#8FB9AB"
+  app-amber-ink: "#7A4F00"
+  app-amber-bg: "#FFF7E0"
+  app-warning-icon: "#B07800"
+  app-risk: "#BE123C"
+  app-risk-ink: "#9F1239"
+  app-ok-ink: "#065F46"
 
 typography:
   sans: "Geist, Inter, system-ui, sans-serif"
@@ -38,11 +55,19 @@ rounded:
   control: 12px
   logo: 12px
   footer-top: 40px
+  app-panel: 12px
+  app-control: 10px
+  app-item: 8px
+  app-sello: 6px
 
 spacing:
   container: 1200px
   gutter: 24px
   header-height: 64px
+  app-sidebar: 248px
+  app-topbar: 56px
+  app-row: 52px
+  app-detail: 340px
 ---
 
 ## Overview
@@ -155,6 +180,114 @@ Toda página enlaza, al final del `<head>`, `/assets/css/polish.css` y, antes de
 - Imágenes para redes (`og:image`): PNG de 1200 × 630 en `assets/og/`, con logo, título corto y la ilustración de la guía. Por defecto: `assets/og/default.png`.
 
 Después de cambiar clases, recompilar con `npm run build:css` y subir el `?v=` de `style.css` en las páginas, porque `/assets/` se sirve con caché inmutable.
+
+## Software /app (Asistente Laboral Pyme)
+
+> Excepción documentada a la regla de encabezado y pie (ver `AGENTS.md`, sección 1). Todo lo de esta sección vale **solo** para `app.html` (servido en `/app` y `/app/*`), `assets/css/app.css` y `js/app_pyme.js`. El resto del sitio sigue las reglas anteriores sin cambios. Fuente de verdad: las variables de `:root` en `assets/css/app.css` (tokens `app-*` del frontmatter). Contrato de diseño: `.impeccable/surfaces/app-html.md`.
+
+### Overview
+
+**Creative North Star: "El libro de remuneraciones en pantalla"**
+
+El mes laboral es la pantalla. Inicio es la planilla de cierre del mes: una fila por trabajador, su estado y lo que falta, con la acción al costado sin cambiar de vista. Es una herramienta de trabajo, densa y tranquila: filetes de 1px en vez de tarjetas, cifras en Geist Mono tabular, estados como sellos de texto. No hay tablero de tarjetas con métricas, ni gráficos decorativos, ni íconos en cuadrados de color.
+
+**Key Characteristics:**
+- Marco propio: menú lateral verde bosque profundo, barra superior blanca, sin el header, la franja de indicadores ni el footer del sitio.
+- Contenido blanco sobre lienzo `canvas`, separado por filetes `app-line`.
+- Cifras, fechas, RUT y montos siempre en Geist Mono tabular.
+- Ámbar solo para lo activo y lo que vence pronto; rose solo para riesgo legal.
+
+### Colors
+
+- **Menú lateral** (`app-sidebar`, igual a `forest-deep`): fondo del menú y `theme-color` de la página. Texto blanco; rótulos de grupo, íconos inactivos y datos secundarios en `app-side-muted`.
+- **Superficies:** contenido en blanco sobre `canvas`; cabeceras de tabla, botones al pasar el cursor y fondos neutros en `app-surface-2`; fila al pasar el cursor en `app-hover`; fila seleccionada en `forest-50`.
+- **Filetes:** `app-line` para toda división (tablas, paneles, franja de cifras, barra superior); `app-line-2` para el borde de botones secundarios, campos y el sello "Preparada".
+- **Texto:** `ink` principal, `app-ink-2` para valores y etiquetas de formulario, `muted` para texto de apoyo, `app-faint` para vacíos, opcionales y marcadores de posición.
+- **Ámbar:** `amber` en el ícono del ítem activo del menú, el punto de "vence pronto", el punto del Pase por vencer y el anillo de foco dentro del menú. Texto de vencimiento en `app-amber-ink`; avisos y eventos de plazo sobre `app-amber-bg` (borde `#F8DE9C`); ícono de aviso en `app-warning-icon`.
+- **Rose (riesgo legal):** `app-risk` en el ícono de aviso urgente, botones de peligro (eliminar cuenta), errores de campo y enlaces destructivos; `app-risk-ink` para texto vencido, saldo negativo y mensajes de error, sobre `risk-bg` con borde `risk-border`. En la app el rose es un tono más oscuro que el del sitio (`#BE123C` en vez de `#E11D48`) para llegar a AA sobre los fondos con tinte.
+- **Éxito:** `app-ok-ink` para el mensaje de guardado correcto.
+- **Línea de avance:** segmentos `app-line` (sin preparar), `app-progress-preparada` (preparada) y `forest-600` (emitida).
+- **Scrollbar:** pulgar `app-scrollbar` de 10px con radio completo y pista transparente.
+
+**La Regla del Ámbar Activo.** El ámbar marca solo dos cosas: dónde estás (ícono del ítem activo) y lo que vence pronto. Nunca rellena botones ni superficies dentro de la app.
+
+**La Regla del Rose Legal.** El rose aparece solo cuando hay riesgo legal o una acción destructiva: plazos vencidos, avisos urgentes, eliminar datos. Nunca como acento ni en una acción de compra.
+
+### Typography
+
+- **Geist** (`--sans`, respaldo Inter y system-ui) para todo el texto de pantalla; cuerpo base de 14px con interlineado 1.5.
+- **Geist Mono** (`--mono`) con `font-variant-numeric: tabular-nums` en columnas numéricas (alineadas a la derecha), fechas, RUT, montos de los campos de pesos, UF y números, cifras de la franja, saldo de vacaciones, números del calendario y contadores del menú. Las cabeceras de columnas numéricas siguen en Geist.
+- **Jerarquía:** título de vista 24px peso 700, tracking -0.015em (21px bajo 900px); título de sección y de panel 15px peso 650; título del panel de detalle y del editor 16px peso 650; cifras de la franja 22px Mono peso 600; saldo grande 28px Mono peso 600; cabeceras de tabla y rótulos de cifras 12.5px peso 600 o 400 en `muted`; texto de ayuda 13px; piso de 11.5px solo para la barra inferior y los eventos del calendario.
+- Sin mayúsculas en la pantalla: rótulos, botones y grupos del menú van en mayúscula inicial.
+
+### Layout
+
+- **Marco:** grilla de dos columnas, menú lateral fijo (sticky) de **248px** y contenido flexible. Barra superior sticky de **56px** con el selector de mes (anterior, mes, siguiente), estado del Pase y cuenta. Contenido con relleno de 28px arriba y 32px a los lados.
+- **Cierre del mes:** encabezado con título, subtítulo y línea de avance segmentada (un segmento por trabajador, 6px de alto, hasta 380px); a la derecha las acciones. Debajo, franja de tres cifras; luego la columna izquierda (grilla del mes y avisos) y el **panel de detalle de 340px** a la derecha, sticky a 76px del borde superior.
+- **Tabla:** cabecera de 40px, filas de **52px**, 16px de relleno horizontal.
+- **Editor de liquidaciones y documentos:** formulario (mín. 360px) y vista previa en proporción 0.8 / 1.2, la vista previa sticky.
+- **Calendario:** grilla de 7 columnas con días de 108px de alto mínimo y una lista lateral de 320px.
+- **Puntos de quiebre** (todos `@media screen`):
+  - **1240px:** el panel de detalle baja a 300px; el editor pasa a una columna y la vista previa deja de ser sticky.
+  - **1080px:** el cierre queda en una columna en el orden grilla, detalle, avisos; el calendario y las vistas de dos columnas también pasan a una.
+  - **900px:** el menú lateral se vuelve un cajón (máx. 280px u 86vw) que entra desde la izquierda en 220ms con velo `rgba(0, 38, 31, 0.45)`; aparece la **barra inferior** fija de cinco botones (Cierre, Personas, Liquidaciones, Calendario y **Más**, que abre el cajón), de 52px de alto mínimo y con margen para el área segura. La franja de cifras se apila con filetes horizontales, se ocultan columnas secundarias de la tabla y sus datos pasan bajo el nombre, el calendario muestra solo un punto bajo los días con eventos.
+
+**La Regla del Mes en Pantalla.** Elegir una fila (clic o flechas arriba y abajo) abre su detalle al costado; nunca se navega a otra pantalla para ver el estado de un trabajador en el cierre.
+
+### Elevation & Depth
+
+Plana. La profundidad se da con filetes y tintes, no con sombras. Las únicas sombras son funcionales: el cajón del menú abierto en móvil (`8px 0 24px rgba(15, 23, 42, 0.18)`) y la hoja de vista previa del documento, que imita un papel (`0 1px 2px rgba(15,23,42,.06), 0 10px 30px -18px rgba(15,23,42,.35)`) sobre un marco `#E9EEEC`.
+
+**La Regla del Libro.** La franja de cifras es una fila de tres valores separados por filetes verticales de 1px, con filetes arriba y abajo, sin cajas ni fondos. Los paneles con borde existen para contener tablas, listas y formularios, nunca para aislar una métrica.
+
+### Shapes
+
+Esquinas suaves y pequeñas: paneles, tablas y opciones de Pase a 12px; botones, campos y avisos a 10px; ítems del menú, botones chicos y botones de ícono a 8px; sellos a 6px; eventos del calendario a 5px; segmentos de avance a 2px. Círculos para el punto de estado, el día de hoy y los pasos numerados.
+
+### Components
+
+**Logo.** En el menú, la versión de pie de página: isotipo de balanza en `forest` sobre contenedor ámbar de 32px (radio 10px), "Cálculo" en blanco y "Laboral" en ámbar, 17px peso 700. En la pantalla de entrada (fondo claro), la versión de header: contenedor `forest`, isotipo ámbar, "Cálculo" en `ink` y "Laboral" en `forest`.
+
+**Menú lateral.** Ítems de 38px con ícono de 19px; al pasar el cursor, blanco al 6%; el activo con fondo blanco al 10%, texto blanco peso 600 e ícono ámbar. Grupos (Personas, Mes, Herramientas, Configuración) en 12px `app-side-muted`. Pie del menú separado por filete blanco al 10%, con enlaces de 34px.
+
+**Botones.** Alto 38px, relleno 0 14px, 14px peso 600. Secundario: blanco con borde `app-line-2`. Primario: `forest` con texto blanco (hover `forest-hover`); uno por vista ("Imprimir todas", "Revisar la liquidación"). Peligro: `app-risk` con texto blanco. Chico: 32px. De texto: `forest-600` subrayado con el subrayado al 35%. Al presionar bajan a `scale: .97`; deshabilitados al 45% de opacidad.
+
+**Sellos de estado.** Texto en una cápsula de 24px, 12.5px peso 600, sin íconos:
+- **Emitida · fecha:** `forest-700` sobre `forest-50`, borde `forest-100`.
+- **Preparada:** `app-ink-2` sobre blanco, borde `app-line-2`.
+- **Sin preparar:** `muted` sobre transparente, borde punteado `#AEBDB7`.
+- **No corresponde:** solo texto `app-faint`. **Inactivo:** `muted` sobre `app-surface-2`.
+
+**Tabla del mes.** Cabecera en `app-surface-2`, filas de 52px con filete inferior, nombre en peso 600 con el cargo debajo en 12.5px; fila seleccionada en `forest-50` con el nombre en `forest`; foco de fila con contorno interior de 2px. "Vence pronto" en `app-amber-ink` peso 600 con un punto ámbar de 7px; "Vencido" en `app-risk-ink`.
+
+**Panel de detalle.** 340px, lista de pares etiqueta/valor separados por filetes, aviso del trabajador y botones a ancho completo. Al cambiar de fila el contenido se desvanece y se desplaza 6px en **180ms** con `cubic-bezier(0.16, 1, 0.3, 1)`.
+
+**Avisos del mes.** Lista con filetes, ícono de 18px, título peso 600 y explicación en 13px; acción como botón de texto a la derecha. Niveles por color del ícono: **urgente** en `app-risk`, **aviso** en `app-warning-icon`, **info** en `forest-600`. Los avisos en caja (`lq-aviso`) usan borde de 1px en su tono: info sobre `forest-50`, aviso sobre `app-amber-bg`, error sobre `risk-bg`.
+
+**Campos.** 40px de alto, borde `app-line-2`, radio 10px, 14.5px; los numéricos, de fecha y de RUT en Geist Mono. Al pasar el cursor el borde pasa a `#AEBDB7`; con foco, contorno `forest` de 2px y borde `forest`; inválidos con borde `app-risk`. Selector de opciones (`segmento`): etiquetas con borde que al marcarse toman borde `forest` sobre `forest-50`.
+
+**Pestañas de la carpeta.** 40px, texto `muted`; la activa en `forest` con subrayado de 2px.
+
+**Foco.** `:focus-visible` con contorno de 2px `forest` y separación de 2px en toda la app; dentro del menú el contorno es ámbar. Nunca se quita el contorno.
+
+**Movimiento.** Estados en 120 a 180ms con `cubic-bezier(0.2, 0, 0, 1)`; entradas (detalle, cajón, flecha del desglose) con `cubic-bezier(0.16, 1, 0.3, 1)`. `prefers-reduced-motion: reduce` desactiva todas las transiciones.
+
+**Impresión.** Solo se imprime `#print-section`; el resto del cuerpo se oculta. Página carta con márgenes de 12mm (`@page { size: letter; margin: 12mm; }`), una hoja por documento con salto de página entre hojas, sin sombra, 11.5px, y el total, los datos y el título conservan su color (`print-color-adjust: exact`). Total, firmas, bases y tablas llevan `break-inside: avoid`. La liquidación impresa lleva filete `forest` de 2px bajo el encabezado y el total en una banda `forest` con cifra Mono; las cartas, título centrado en `forest`, cuerpo justificado y firmas al pie.
+
+### Do's and Don'ts
+
+**Do:**
+- **Do** usar el menú lateral `app-sidebar` de 248px con el logo en su versión de pie de página, y la barra superior blanca de 56px.
+- **Do** separar con filetes `app-line` de 1px y mostrar las cifras clave en una franja sin cajas.
+- **Do** expresar los estados como sellos de texto (Emitida, Preparada, Sin preparar).
+- **Do** poner toda cifra, fecha y RUT en Geist Mono tabular.
+- **Do** verificar en 1440px, 1080px, 800px y 390px, y la impresión en hoja carta.
+
+**Don't:**
+- **Don't** agregar a `/app` el header, la franja de indicadores ni el footer del sitio.
+- **Don't** armar tableros de tarjetas con métricas, gráficos decorativos ni íconos en cuadrados de color.
+- **Don't** usar el ámbar como fondo de botones o superficies dentro de la app, ni el rose fuera del riesgo legal y las acciones destructivas.
+- **Don't** llevar a la pantalla las mayúsculas espaciadas de la liquidación impresa: son convención del documento, no de la interfaz.
 
 ## Do's and Don'ts
 

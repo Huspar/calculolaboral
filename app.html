@@ -30,12 +30,20 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.1.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.3.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
 
 <div id="pm-cargando" class="cargando" role="status"><p>Cargando tu cuenta…</p></div>
+
+<div id="pm-fallo" class="cargando" hidden>
+<div class="entrada-caja" role="alert">
+<h1 class="v-titulo">No pudimos cargar tu cuenta</h1>
+<p class="texto-ayuda" id="pm-fallo-texto">Revisa tu conexión a internet e intenta de nuevo. Tus datos siguen guardados.</p>
+<div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-reintentar"><span class="material-icons" aria-hidden="true">refresh</span>Intentar de nuevo</button><a class="btn-texto" href="/">Ir a calculolaboral.cl</a></div>
+</div>
+</div>
 
 <!-- Entrada -->
 <main id="pm-entrada" class="entrada" hidden>
@@ -142,23 +150,22 @@ gtag('js', new Date());
 </div>
 
 <div class="cierre" id="ini-cierre">
-<div>
-<div class="panel">
+<div class="cierre-izq">
+<div class="panel" id="ini-tabla-panel">
 <div class="tabla-wrap">
 <table class="tabla" id="ini-tabla">
 <caption class="sr-only" id="ini-caption">Trabajadores y estado de su liquidación del mes</caption>
-<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col" class="ocultar-movil">Vacaciones</th><th scope="col">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="ocultar-movil">Emitida</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
+<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col" class="ocultar-movil">Vacaciones</th><th scope="col" class="ocultar-movil">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
 <tbody id="ini-filas"></tbody>
 </table>
 </div>
 </div>
-</div>
-<aside class="detalle panel" id="ini-detalle" aria-label="Detalle del trabajador elegido"><div class="detalle-cuerpo" id="ini-detalle-cuerpo"></div></aside>
-</div>
-
-<div class="panel" id="ini-avisos" style="margin-top: 20px">
+<div class="panel" id="ini-avisos">
 <div class="panel-head"><h2>Avisos del mes</h2></div>
 <ul class="avisos-mes" id="pm-pend"></ul>
+</div>
+</div>
+<aside class="detalle panel" id="ini-detalle" aria-label="Detalle del trabajador elegido"><div class="detalle-cuerpo" id="ini-detalle-cuerpo"></div></aside>
 </div>
 </section>
 
@@ -270,7 +277,7 @@ gtag('js', new Date());
 <div class="tabla-wrap">
 <table class="tabla">
 <caption class="sr-only">Liquidaciones del trabajador por mes</caption>
-<thead><tr><th scope="col">Mes</th><th scope="col">Estado</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="ocultar-movil">Emitida</th><th scope="col" class="chev"><span class="sr-only">Abrir</span></th></tr></thead>
+<thead><tr><th scope="col">Mes</th><th scope="col">Estado</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="chev"><span class="sr-only">Abrir</span></th></tr></thead>
 <tbody id="carp-liq-filas"></tbody>
 </table>
 </div>
@@ -602,6 +609,14 @@ gtag('js', new Date());
 
 </main>
 </div>
+
+<nav class="app-barra" aria-label="Secciones principales">
+<a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span><span>Cierre</span></a>
+<a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span><span>Personas</span></a>
+<a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Liquidaciones</span></a>
+<a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span><span>Calendario</span></a>
+<button type="button" id="app-mas" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">more_horiz</span><span>Más</span></button>
+</nav>
 </div>
 
 <div id="print-section" aria-hidden="true"></div>
@@ -614,11 +629,11 @@ gtag('js', new Date());
 <script src="/js/liquidacion_documento.js?v=1.3.0"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
-<script src="/js/pyme_pendientes.js?v=1.1.1"></script>
+<script src="/js/pyme_pendientes.js?v=1.2.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.0.0"></script>
 <script src="/js/pyme_docs.js?v=1.2.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.1.0" defer></script>
+<script src="/js/app_pyme.js?v=1.3.0" defer></script>
 </body>
 </html>

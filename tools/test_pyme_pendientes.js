@@ -90,6 +90,11 @@ caso('cotizaciones: aviso a 3 días y urgente cuando ya pasó el 10 (y falta has
     assert.strictEqual(pend(correr(est([T()]), '2026-11-07'), 'cotizaciones').nivel, 'aviso');
     assert.strictEqual(pend(correr(est([T()]), '2026-11-11'), 'cotizaciones').nivel, 'urgente');
 });
+caso('cotizaciones: el día del vencimiento es urgente y lo dice en una frase', () => {
+    const c = pend(correr(est([T()]), '2026-10-13'), 'cotizaciones');
+    assert.strictEqual(c.nivel, 'urgente');
+    assert.ok(/^Vencen hoy \(el 10 cae en día inhábil\)\./.test(c.texto) && !/hasta el 13/.test(c.texto), c.texto);
+});
 caso('cotizaciones en enero cuenta diciembre del año anterior; sin trabajadores activos no avisa', () => {
     assert.ok(/Cotizaciones de diciembre 2026/.test(pend(correr(est([T()]), '2027-01-05'), 'cotizaciones').titulo));
     assert.ok(!pend(correr(est([T({ activo: false })]), '2026-11-03'), 'cotizaciones'));
@@ -109,8 +114,8 @@ caso('nota normativa del mes (mayo de 2026: ingreso mínimo retroactivo)', () =>
     const n = pend(correr(est([T()]), '2026-05-20'), 'nota-mes');
     assert.ok(n && /553\.553/.test(n.texto));
 });
-caso('respaldo: sin respaldo o con más de 30 días es un aviso; reciente no', () => {
-    assert.strictEqual(pend(M.pendientes(est([T()]), { hoy: '2026-10-20', P, F, ultimoRespaldo: null }), 'respaldo').nivel, 'aviso');
+caso('respaldo: sin respaldo o con más de 30 días es un recordatorio informativo; reciente no', () => {
+    assert.strictEqual(pend(M.pendientes(est([T()]), { hoy: '2026-10-20', P, F, ultimoRespaldo: null }), 'respaldo').nivel, 'info');
     assert.ok(!pend(M.pendientes(est([T()]), { hoy: '2026-10-20', P, F, ultimoRespaldo: '2026-09-21T00:00:00Z' }), 'respaldo'), '29 días');
     const viejo = pend(M.pendientes(est([T()]), { hoy: '2026-10-20', P, F, ultimoRespaldo: '2026-09-10T00:00:00Z' }), 'respaldo');
     assert.ok(viejo && /Hace 40 días/.test(viejo.titulo) && viejo.accion.tipo === 'respaldo');

@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.1.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
+ * CalculoLaboral · pendientes del mes del Asistente Pyme (v1.2.0). Funciona en el navegador (window.CLPymePendientes) y en Node.
  *
  *   pendientes(estado, { hoy: 'AAAA-MM-DD', P: parametros, F: feriados, ultimoRespaldo: 'ISO' | null, liquidaciones: { periodo, registros: [{ trabajadorId, emitida }] } })
  *   periodoLiquidacion(hoy) → { periodo, cuando: 'anterior' | 'actual' } | null   (el mes cuyas liquidaciones se cargan para el aviso)
@@ -120,9 +120,11 @@
             try { plazo10 = F.siguienteDiaHabil(dia10); } catch (e) { /* año sin feriados verificados: se muestra el día 10 sin corrimiento */ }
             var dia13 = hoy.slice(0, 8) + '13';
             var restan = dias(hoy, plazo10);
-            var nivel = restan < 0 ? 'urgente' : restan <= 3 ? 'aviso' : 'info';
+            var nivel = restan <= 0 ? 'urgente' : restan <= 3 ? 'aviso' : 'info';
+            var corre = plazo10 !== dia10 ? ' (el 10 cae en día inhábil)' : '';
+            var plazoTxt = restan === 0 ? 'Vencen hoy' + corre + '.' : restan < 0 ? 'El plazo general venció el ' + fechaLarga(plazo10) + '.' : 'Declaración y pago hasta el ' + fechaLarga(plazo10) + corre + '.';
             agregar('cotizaciones', nivel, 'Cotizaciones de ' + MESES[mesAnt - 1] + ' ' + anioAnt,
-                'Declaración y pago hasta el ' + fechaLarga(plazo10) + (plazo10 !== dia10 ? ' (el 10 cae en día inhábil)' : '') + '. Si pagas por internet en Previred, hasta el ' + fechaLarga(dia13) + '. Confirma el plazo exacto en Previred.');
+                plazoTxt + (dia13 > plazo10 ? ' Si pagas por internet en Previred, hasta el ' + fechaLarga(dia13) + '.' : '') + ' Confirma el plazo exacto en Previred.');
         }
 
         // Pase por vencer
@@ -140,9 +142,9 @@
         // Respaldo
         var ult = opciones.ultimoRespaldo ? String(opciones.ultimoRespaldo).slice(0, 10) : null;
         if (!ult) {
-            agregar('respaldo', 'aviso', 'Descarga un respaldo de tus datos', 'Un archivo con todo lo que guardaste. Úsalo para tener una copia propia.', { tipo: 'respaldo' });
+            agregar('respaldo', 'info', 'Descarga un respaldo de tus datos', 'Un archivo con todo lo que guardaste. Úsalo para tener una copia propia.', { tipo: 'respaldo' });
         } else if (dias(ult, hoy) > 30) {
-            agregar('respaldo', 'aviso', 'Hace ' + dias(ult, hoy) + ' días que no descargas un respaldo', 'Descarga uno nuevo para tener una copia propia al día.', { tipo: 'respaldo' });
+            agregar('respaldo', 'info', 'Hace ' + dias(ult, hoy) + ' días que no descargas un respaldo', 'Descarga uno nuevo para tener una copia propia al día.', { tipo: 'respaldo' });
         }
 
         return ordenar(lista);
@@ -154,7 +156,7 @@
             .map(function (e) { return e.x; });
     }
 
-    var api = { pendientes: pendientes, periodoLiquidacion: periodoLiquidacion, anios: anios, dias: dias, version: '1.1.0' };
+    var api = { pendientes: pendientes, periodoLiquidacion: periodoLiquidacion, anios: anios, dias: dias, version: '1.2.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymePendientes = api;
 })(typeof window !== 'undefined' ? window : this);
