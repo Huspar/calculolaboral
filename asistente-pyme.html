@@ -1051,6 +1051,41 @@ body { overflow-x: hidden; }
             #print-section .lq-doc { box-shadow: none !important; min-width: 0 !important; padding: 0 !important; font-size: 11.5px !important; overflow: hidden; }
             #print-section .lqd-total, #print-section .lqd-datos, #print-section .lqd-title h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
+
+        /* Documentos del Asistente Pyme */
+        .pm-doc-form { display: grid; gap: .9rem; margin-top: .6rem; }
+        .pm-doc-form[hidden] { display: none !important; }
+        .pm-doc-form .lq-field textarea { width: 100%; min-width: 0; border: 1px solid #cbd5e1; border-radius: .6rem; padding: .6rem .7rem; font-size: 1rem; background: #ffffff; color: #0f172a; font-family: inherit; resize: vertical; }
+        .pm-doc-form .lq-field textarea:focus { outline: 2px solid #00382E; outline-offset: 1px; border-color: #00382E; }
+        .pm-doc-form .lq-field textarea[aria-invalid="true"] { border-color: #be123c; }
+        .pm-doc-form .pm-check label { font-weight: 600; }
+        .pm-doc-nota { margin-top: .4rem !important; }
+        .pm-gen { margin-top: 1.4rem; }
+        .pm-gen a.lq-btn-sec { text-decoration: none; }
+        .pm-wrap a.lq-btn-sec { color: #00382E; }
+        .dc-doc { font-size: 13px; line-height: 1.55; }
+        .dc-head { display: flex; gap: .75rem; align-items: center; padding-bottom: .8rem; margin-bottom: 1rem; border-bottom: 2px solid #00382E; }
+        .dc-head img { max-height: 46px; max-width: 120px; object-fit: contain; }
+        .dc-head div { display: grid; gap: .1rem; min-width: 0; }
+        .dc-head strong { font-size: 14px; overflow-wrap: anywhere; }
+        .dc-head span { color: #475569; font-size: 11.5px; }
+        .dc-titulo { margin: .4rem 0 1rem; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; color: #00382E; text-align: center; }
+        .dc-lugar { margin: 0 0 1rem; text-align: right; color: #334155; }
+        .dc-dest, .dc-ref { margin: 0 0 .8rem; }
+        .dc-p { margin: 0 0 .75rem; text-align: justify; overflow-wrap: anywhere; }
+        .dc-tabla { width: 100%; border-collapse: collapse; margin: 0 0 .9rem; }
+        .dc-tabla th, .dc-tabla td { padding: .3rem 0; border-bottom: 1px solid #eef2f1; text-align: left; font-weight: 400; vertical-align: top; }
+        .dc-tabla td { text-align: right; white-space: nowrap; padding-left: .8rem; font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+        .dc-tabla tfoot th, .dc-tabla tfoot td { font-weight: 800; border-top: 1.5px solid #0f172a; border-bottom: 0; padding-top: .4rem; }
+        .dc-firmas { display: flex; flex-wrap: wrap; gap: 1.2rem 2.5rem; justify-content: space-around; margin-top: 2.8rem; break-inside: avoid; }
+        .dc-firma { flex: 1 1 12rem; text-align: center; font-size: 12px; font-weight: 600; }
+        .dc-firma span { display: block; border-top: 1px solid #0f172a; margin-bottom: .3rem; }
+        .dc-firma small { display: block; color: #475569; font-size: 11px; font-weight: 400; }
+        .dc-recibi, .dc-copia { margin: 1.4rem 0 0; font-size: 11.5px; color: #334155; }
+        .dc-pie { margin: 1.6rem 0 0; padding-top: .5rem; border-top: 1px solid #e2e8f0; font-size: 10.5px; color: #64748b; }
+        @media print {
+            #print-section .dc-firmas, #print-section .dc-tabla { break-inside: avoid; }
+        }
         .pm-wrap [data-si-contrato][hidden], .pm-wrap [data-si-salud][hidden] { display: none !important; }
         @media (prefers-reduced-motion: reduce) { .pm-wrap * { transition: none !important; } }
     </style>
@@ -1515,6 +1550,35 @@ body { overflow-x: hidden; }
 </div>
 </section>
 
+<section class="lq-card" id="pm-sec-documentos" aria-labelledby="pm-doc-titulo">
+<h2 id="pm-doc-titulo" class="pm-titulo"><span class="lq-step">4</span>Documentos</h2>
+<p class="lq-help">Elige a la persona y el documento: se arma con los datos que ya guardaste. Son modelos de referencia basados en la normativa vigente; no constituyen asesoría legal ni reemplazan la revisión de un abogado cuando tu caso lo requiera.</p>
+<p id="pm-doc-vacio" class="lq-help" hidden>Agrega primero a un trabajador para preparar sus documentos.</p>
+<div id="pm-doc-selectores" class="lq-grid">
+<div class="lq-field"><label for="pm-doc-trab">Trabajador</label><select id="pm-doc-trab"></select></div>
+<div class="lq-field"><label for="pm-doc-tipo">Documento</label><select id="pm-doc-tipo"></select></div>
+</div>
+<p id="pm-doc-descripcion" class="lq-help"></p>
+<div id="pm-doc-avisos" class="lq-avisos" role="status"></div>
+<form id="pm-doc-form" class="pm-doc-form" novalidate autocomplete="off"></form>
+<div class="lq-doc-frame" id="pm-doc-marco" hidden><article id="pm-doc-doc" class="lq-doc dc-doc" aria-label="Vista previa del documento"></article></div>
+<div class="pm-fila" id="pm-doc-acciones" hidden>
+<button type="button" id="pm-doc-imprimir" class="lq-btn-sec"><span class="material-icons" aria-hidden="true">print</span>Imprimir o guardar en PDF</button>
+<p id="pm-doc-estado" class="lq-estado pm-estado" role="status"></p>
+</div>
+<p class="lq-help pm-doc-nota" id="pm-doc-nota-marca"></p>
+
+<div class="lq-sub pm-gen" id="pm-gen">
+<p class="lq-subtitle">Abrir un generador con sus datos ya cargados</p>
+<p class="lq-help">Se abre el generador de la persona elegida arriba, con la empresa y la ficha ya escritas. Cada generador mantiene su forma de uso y de pago actual.</p>
+<div class="pm-fila">
+<a class="lq-btn-sec" id="pm-gen-contrato" href="generador-contrato-trabajo-chile"><span class="material-icons" aria-hidden="true">description</span>Contrato de trabajo</a>
+<a class="lq-btn-sec" id="pm-gen-anexo42" href="generador-anexo-40-horas"><span class="material-icons" aria-hidden="true">schedule</span>Anexo de 42 horas</a>
+<a class="lq-btn-sec" id="pm-gen-finiquito" href="generador-finiquito-chile"><span class="material-icons" aria-hidden="true">receipt_long</span>Finiquito</a>
+</div>
+</div>
+</section>
+
 <section class="lq-card" id="pm-sec-importar" aria-labelledby="pm-imp-titulo" hidden>
 <h2 id="pm-imp-titulo" class="pm-titulo"><span class="material-icons" aria-hidden="true">move_down</span>Traer mis datos del generador de liquidaciones</h2>
 <p class="lq-help">Encontramos en este navegador datos que ingresaste en el generador: <strong id="pm-imp-resumen"></strong>. Puedes copiarlos a tu cuenta (se guardan cifrados). Los datos del generador siguen en tu navegador.</p>
@@ -1713,7 +1777,8 @@ body { overflow-x: hidden; }
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
 <script src="/js/pyme_pendientes.js?v=1.1.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.0.0"></script>
-<script src="/js/pyme_app.js?v=1.1.0" defer></script>
+<script src="/js/pyme_docs.js?v=1.0.0"></script>
+<script src="/js/pyme_app.js?v=1.2.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

@@ -195,6 +195,26 @@ function crearAlmacenSql(sql) {
             return r.length === 1;
         },
 
+        // ---------- registro de documentos emitidos (solo el tipo y la fecha, nunca el texto) ----------
+
+        /** Registra un documento emitido para un trabajador de esa empresa, sin pasar de `maximo` registros por trabajador. Devuelve true o false. */
+        async registrarDocumento({ trabajadorId, empresaId, tipo, ahoraIso, maximo }) {
+            const r = await filas(
+                'INSERT INTO documentos (trabajador_id, tipo, emitido) SELECT t.id, $3, $4::timestamptz FROM trabajadores t WHERE t.id = $1::uuid AND t.empresa_id = $2::uuid ' +
+                'AND (SELECT count(*) FROM documentos d WHERE d.trabajador_id = t.id) < $5::int RETURNING id',
+                [trabajadorId, empresaId, tipo, ahoraIso, maximo]
+            );
+            return r.length === 1;
+        },
+
+        async listarDocumentos(empresaId) {
+            const r = await filas(
+                'SELECT d.trabajador_id, d.tipo, d.emitido FROM documentos d JOIN trabajadores t ON t.id = d.trabajador_id WHERE t.empresa_id = $1::uuid ORDER BY d.emitido, d.id',
+                [empresaId]
+            );
+            return r.map(x => ({ trabajadorId: x.trabajador_id, tipo: x.tipo, emitido: new Date(x.emitido).toISOString() }));
+        },
+
         /** Fecha en que vence el pase vigente mas largo de la cuenta, en milisegundos, o null si no tiene. */
         async paseVigente(cuentaId, ahoraIso) {
             const r = await filas('SELECT max(vence) AS vence FROM pases WHERE cuenta_id = $1::uuid AND desde <= $2::timestamptz AND vence > $2::timestamptz', [cuentaId, ahoraIso]);

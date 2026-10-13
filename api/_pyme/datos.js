@@ -16,7 +16,9 @@ const MAX_SIN_PASE = 1;
 const MAX_CON_PASE = 5;
 const MAX_TOTAL = 50;
 const MAX_MESES_POR_TRABAJADOR = 120;
-const VERSION_EXPORTACION = 2;
+const MAX_DOCUMENTOS_POR_TRABAJADOR = 500;
+const TIPOS_DOCUMENTO = ['cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
+const VERSION_EXPORTACION = 3;
 
 function fallo(estado, codigo, error, errores) {
     const r = { ok: false, estado, codigo, error };
@@ -156,6 +158,22 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
+    /** Anota que se emitió un documento (solo el tipo y la fecha: el texto nunca se guarda). */
+    async function registrarDocumento(cuenta, trabajadorId, tipo) {
+        if (!esUuid(trabajadorId)) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        if (TIPOS_DOCUMENTO.indexOf(tipo) < 0) return fallo(400, 'tipo', 'Tipo de documento no válido.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila || !(await almacen.trabajadorDeEmpresa(trabajadorId, fila.id))) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const ok = await almacen.registrarDocumento({ trabajadorId, empresaId: fila.id, tipo, ahoraIso: iso(), maximo: MAX_DOCUMENTOS_POR_TRABAJADOR });
+        if (!ok) return fallo(409, 'limite_documentos', 'Ya hay demasiados documentos registrados para este trabajador.');
+        return { ok: true };
+    }
+
+    async function leerDocumentosExport(cuenta) {
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        return fila ? almacen.listarDocumentos(fila.id) : [];
+    }
+
     async function leerMesesExport(cuenta) {
         const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
         return fila ? leerMeses(cuenta.cuentaId, fila.id, null) : [];
@@ -173,7 +191,8 @@ function crear({ almacen, cifrado, ahora }) {
                 cuenta: { email: cuenta.email },
                 empresa: e.empresa,
                 trabajadores: e.trabajadores,
-                meses: await leerMesesExport(cuenta)
+                meses: await leerMesesExport(cuenta),
+                documentos: await leerDocumentosExport(cuenta)
             }
         };
     }
@@ -186,7 +205,7 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, borrarTrabajador, meses, guardarMes, borrarMes, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {
@@ -197,4 +216,4 @@ function limiteTexto(lim) {
 
 function esUuid(s) { return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
 
-module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, VERSION_EXPORTACION };
+module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_DOCUMENTOS_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };

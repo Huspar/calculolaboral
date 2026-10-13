@@ -191,6 +191,22 @@ async function main() {
         await srv.guardarMes(cuentaObj, tid, '2026-08', mesEj());
         paso('exportar incluye los meses; borrar un mes lo elimina');
 
+        // ---- Documentos emitidos contra la base real ----
+        assert.ok((await srv.registrarDocumento(cuentaObj, tid, 'carta_161')).ok);
+        assert.ok((await srv.registrarDocumento(cuentaObj, tid, 'anexo_datos')).ok);
+        assert.strictEqual((await srv.registrarDocumento(cuentaObj, tid, 'documento_inventado')).codigo, 'tipo');
+        const filasDoc = await sql.query('SELECT tipo FROM documentos WHERE trabajador_id = $1 ORDER BY emitido, id', [tid]);
+        assert.deepStrictEqual(filasDoc.map(f => f.tipo), ['carta_161', 'anexo_datos']);
+        assert.strictEqual(await almacen.registrarDocumento({ trabajadorId: tid, empresaId, tipo: 'carta_161', ahoraIso: new Date().toISOString(), maximo: 2 }), false);
+        const otraD = (await sql.query('INSERT INTO cuentas (email) VALUES ($1) RETURNING id', ['otra3-' + marca + '@ejemplo.invalid']))[0].id;
+        const cuentaOtra3 = { cuentaId: otraD, email: 'otra3-' + marca + '@ejemplo.invalid' };
+        await srv.guardarEmpresa(cuentaOtra3, { razonSocial: 'Otra', rut: rutDe(76111113) });
+        assert.strictEqual((await srv.registrarDocumento(cuentaOtra3, tid, 'carta_161')).codigo, 'no_existe');
+        await sql.query('DELETE FROM cuentas WHERE id = $1', [otraD]);
+        assert.strictEqual((await srv.exportar(cuentaObj)).archivo.documentos.length, 2);
+        assert.ok(!JSON.stringify(await sql.query('SELECT * FROM documentos WHERE trabajador_id = $1', [tid])).includes('Panadería'));
+        paso('el registro de documentos guarda solo tipo y fecha, respeta el tipo permitido y el máximo, y no cruza cuentas');
+
         assert.strictEqual((await srv.borrarCuenta(cuentaObj, 'otro@ejemplo.invalid')).codigo, 'confirmacion');
         assert.ok((await srv.borrarCuenta(cuentaObj, correo)).ok);
         for (const [t, col] of [['sesiones', 'cuenta_id'], ['empresas', 'cuenta_id'], ['pases', 'cuenta_id']]) {
@@ -199,6 +215,7 @@ async function main() {
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM trabajadores WHERE empresa_id NOT IN (SELECT id FROM empresas)'))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id NOT IN (SELECT id FROM trabajadores)'))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id = $1', [tid]))[0].n, 0);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM documentos WHERE trabajador_id = $1', [tid]))[0].n, 0);
         paso('borrar la cuenta borra sesiones, empresa, trabajadores, meses y pases en cascada');
         cuentaId = null;
         console.log('\n' + ok + ' pruebas correctas contra la base real');

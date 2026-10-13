@@ -43,6 +43,21 @@ Se buscó el texto de la ley, pero **no se pudo leer el texto oficial** (BCN / D
 
 Fuentes consultadas (todas secundarias): [Prey Project sobre DPA y Ley 21.719](https://preyproject.com/es/blog/data-processing-agreement-dpa-chile-ley-21719), [Informe de Transferencias Internacionales (Minsegpres)](https://www.minsegpres.gob.cl/wp-content/uploads/2025/09/Informe-2-Transferencias-Internacionales-FINAL.pdf), [Cláusulas contractuales tipo (Guerrero Olivos)](https://guerrero.cl/wp-content/uploads/2026/01/DOC_Aprobacion-Clausulas-Contractuales-Tipo.pdf), [Prey Project sobre notificación de brechas](https://preyproject.com/es/blog/notificacion-de-brechas-de-datos-personales).
 
+## 3 ter. Los siete documentos del panel (fase 4): también son textos legales
+
+Los modelos están en `js/pyme_docs.js` y se arman con los datos de la empresa y del trabajador. Llevan al pie "Modelo de referencia basado en la normativa vigente; no constituye asesoría legal". **No han sido revisados por un abogado**; el sitio no dice lo contrario. Lo que sí se verificó (12-oct-2026) es que las normas que citan existen y dicen lo que se usa, contra el texto del Código del Trabajo en la edición de octubre de 2026 que publica la Dirección del Trabajo (arts. 67 a 70, 154 N°10, 159 N°4, 161, 162, 163, 169 y 172).
+
+| Documento | Qué debe mirar el abogado |
+| :--- | :--- |
+| Carta de término por plazo fijo (art. 159 N°4) | Si el texto cumple el art. 162 (causal, hechos, estado de las cotizaciones con comprobantes, aviso de finiquito presencial o electrónico y reserva de derechos, copia a la Inspección dentro de 3 días hábiles). El sistema cuenta el sábado como día hábil para ese plazo; confirmar el criterio. Bloquea con 2 o más renovaciones |
+| Carta de término por necesidades de la empresa (art. 161) | Texto de la causal y de la oferta irrevocable (art. 169 a); cálculo de la indemnización por años de servicio (30 días por año y fracción superior a 6 meses, tope 11 años, base limitada a 90 UF con la UF de hoy y no con la del último día del mes anterior al pago, que es lo que dice el art. 172); la base de la "última remuneración mensual" la escribe el usuario guiado por el art. 172; casillas de confirmación de licencia médica, fuero y cotizaciones |
+| Amonestación escrita | Que la redacción no dé a entender una sanción donde el reglamento interno no existe (art. 154 N°10 y 11) |
+| Comprobante de feriado | Reintegro cuando el trabajador labora de lunes a sábado (el sábado es inhábil para el feriado, art. 69, pero puede ser día de trabajo); el saldo de días lo escribe el usuario |
+| Certificados de antigüedad y de remuneraciones | Fórmulas de certificación; el promedio del líquido sale de las liquidaciones guardadas por el propio usuario |
+| Anexo de protección de datos | Está basado en el anexo del Kit Ley 21.719 (ya vendido); con cláusulas opcionales de biometría, herramientas corporativas y encargados. La Ley 21.719 rige desde el 1-dic-2026 |
+
+El registro de documentos emitidos guarda solo el tipo y la fecha, nunca el texto.
+
 ## 4. Aparte: antes de vender el Pase (no antes de abrir cuentas)
 
 - **Retracto y reembolso.** Los Términos vigentes excluyen el retracto para bienes digitales descargables. El Pase es un servicio con duración (3 o 12 meses): el abogado debe indicar qué corresponde y cómo informarlo antes de pagar. No quedó escrito en los Términos.

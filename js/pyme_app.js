@@ -1,17 +1,18 @@
 /*
- * CalculoLaboral · interfaz del Asistente Laboral Pyme (v1.1.0)
+ * CalculoLaboral · interfaz del Asistente Laboral Pyme (v1.2.0)
  * Entrar con enlace al correo, ficha de empresa y trabajadores (guardada cifrada en el servidor), pendientes del mes,
- * liquidaciones de sueldo guardadas por mes (vista previa, imprimir todas), traer datos del generador, descargar y eliminar los datos.
+ * liquidaciones de sueldo guardadas por mes (vista previa, imprimir todas), documentos laborales (certificados, cartas, anexos),
+ * enlaces a los generadores con los datos cargados, traer datos del generador, descargar y eliminar los datos.
  * Requiere: rut_cl.js, liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js, feriados_cl.js,
- * pyme_pendientes.js y pyme_liquidaciones.js (antes que este archivo).
+ * pyme_pendientes.js, pyme_liquidaciones.js y pyme_docs.js (antes que este archivo).
  * La API es /api/pyme/* (api/_pyme/rutas.js). Todo texto de usuario se escapa antes de mostrarse.
  */
 (function () {
     'use strict';
 
     var Rut = window.CLRut, P = window.CLLiquidacionParametros, F = window.CLFeriados, PEND = window.CLPymePendientes;
-    var L = window.CLPymeLiquidaciones, E = window.CLLiquidacionEngine, VL = window.CLLiquidacionValores, DOC = window.CLLiquidacionDocumento;
-    if (!Rut || !P || !F || !PEND || !L || !E || !VL || !DOC || !document.getElementById('pm-panel')) return;
+    var L = window.CLPymeLiquidaciones, E = window.CLLiquidacionEngine, VL = window.CLLiquidacionValores, DOC = window.CLLiquidacionDocumento, PD = window.CLPymeDocs;
+    if (!Rut || !P || !F || !PEND || !L || !E || !VL || !DOC || !PD || !document.getElementById('pm-panel')) return;
 
     var KEY_RESPALDO = 'cl_pyme_respaldo';
     var KEY_GENERADOR = 'cl_liq_v1';
@@ -161,6 +162,7 @@
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
         estado = null; mesesCache = {}; editando = null; periodoSel = null; ultimasImpresas = [];
+        docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
         $('print-section').innerHTML = '';
         $('pm-liq-editor').hidden = true;
     }
@@ -184,6 +186,7 @@
         dibujarTrabajadores();
         dibujarPendientes();
         dibujarImportar();
+        dibujarDocumentos();
     }
 
     // ---------- empresa ----------
@@ -341,6 +344,178 @@
             cargarLiquidaciones();
             $('pm-sec-liquidaciones').scrollIntoView({ behavior: 'smooth' });
         }
+    });
+
+    // ---------- documentos ----------
+    var docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
+
+    function ufHoy() { try { return typeof CONSTANTS !== 'undefined' && CONSTANTS.UF > 30000 ? CONSTANTS.UF : 0; } catch (e) { return 0; } }
+
+    function ctxDoc() {
+        var t = trabajadorPorId(docSel.trabajadorId);
+        if (!t || !estado || !estado.empresa) return null;
+        var meses = {};
+        PD.periodosPromedio(hoyIso()).forEach(function (p) { var m = mesesCache[p] && mesesCache[p][t.id]; if (m) meses[p] = m; });
+        return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F };
+    }
+
+    function dibujarDocumentos() {
+        if (!estado) return;
+        var lista = estado.trabajadores || [], hay = lista.length > 0 && !!estado.empresa;
+        $('pm-doc-vacio').hidden = hay;
+        $('pm-doc-vacio').textContent = !estado.empresa ? 'Primero guarda los datos de la empresa y agrega a un trabajador para preparar sus documentos.' : 'Agrega primero a un trabajador para preparar sus documentos.';
+        $('pm-doc-selectores').hidden = !hay;
+        $('pm-gen').hidden = !hay;
+        if (!hay) { $('pm-doc-descripcion').textContent = ''; $('pm-doc-avisos').innerHTML = ''; $('pm-doc-form').hidden = true; $('pm-doc-marco').hidden = true; $('pm-doc-acciones').hidden = true; return; }
+        var selT = $('pm-doc-trab'), selD = $('pm-doc-tipo');
+        selT.innerHTML = lista.map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.nombre) + (t.activo ? '' : ' (inactivo)') + '</option>'; }).join('');
+        if (!selD.options.length) selD.innerHTML = PD.TIPOS.map(function (t) { return '<option value="' + t.id + '">' + esc(t.titulo) + '</option>'; }).join('');
+        var cambio = !trabajadorPorId(docSel.trabajadorId) || !docSel.tipo;
+        if (!trabajadorPorId(docSel.trabajadorId)) docSel.trabajadorId = lista[0].id;
+        if (!docSel.tipo) docSel.tipo = PD.TIPOS[0].id;
+        selT.value = docSel.trabajadorId;
+        selD.value = docSel.tipo;
+        $('pm-doc-nota-marca').textContent = tienePase()
+            ? 'Con tu pase vigente los documentos salen sin marca de agua. Revisa cada documento antes de entregarlo.'
+            : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». El Pase Pyme aún no está a la venta. Revisa cada documento antes de entregarlo.';
+        enlacesGeneradores();
+        if (cambio) abrirDoc(); else vistaDoc();
+    }
+
+    function enlacesGeneradores() {
+        var q = '?desde=pyme&t=' + encodeURIComponent(docSel.trabajadorId || '');
+        $('pm-gen-contrato').href = 'generador-contrato-trabajo-chile' + q;
+        $('pm-gen-anexo42').href = 'generador-anexo-40-horas' + q;
+        $('pm-gen-finiquito').href = 'generador-finiquito-chile' + q;
+    }
+
+    // Cambia de persona o de documento: carga lo que haga falta y propone los valores iniciales
+    function abrirDoc() {
+        var tipo = docSel.tipo, id = docSel.trabajadorId;
+        docSel.intento = false;
+        var info = PD.TIPOS.filter(function (x) { return x.id === tipo; })[0];
+        $('pm-doc-descripcion').textContent = info ? info.descripcion : '';
+        var faltan = (tipo === 'cert_remuneraciones' || tipo === 'carta_161') ? PD.periodosPromedio(hoyIso()).filter(function (p) { return !mesesCache[p]; }) : [];
+        Promise.all(faltan.map(cargarMeses)).then(function () {
+            if (!estado || docSel.tipo !== tipo || docSel.trabajadorId !== id) return;
+            var c = ctxDoc();
+            if (!c) return;
+            docSel.datos = PD.valoresIniciales(tipo, c);
+            dibujarFormDoc();
+            vistaDoc();
+        });
+    }
+
+    function dibujarFormDoc() {
+        var form = $('pm-doc-form'), campos = PD.campos(docSel.tipo);
+        form.hidden = false;
+        form.innerHTML = campos.map(function (c) {
+            var id = 'pm-d-' + c.k, v = docSel.datos[c.k], ayuda = c.ayuda ? '<p class="lq-help">' + esc(c.ayuda) + '</p>' : '', err = '<p class="pm-error" data-derror="' + c.k + '" hidden></p>';
+            var opc = c.req || c.tipo === 'check' ? '' : ' <span class="lq-opt">(opcional)</span>';
+            if (c.tipo === 'check') return '<div class="lq-field pm-check lq-span2"><label><input type="checkbox" id="' + id + '" data-dk="' + c.k + '"' + (v === true ? ' checked' : '') + '> <span>' + esc(c.etiqueta) + '</span></label>' + ayuda + err + '</div>';
+            var ctrl;
+            if (c.tipo === 'select') ctrl = '<select id="' + id + '" data-dk="' + c.k + '">' + c.opciones.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (v === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select>';
+            else if (c.tipo === 'textarea') ctrl = '<textarea id="' + id + '" data-dk="' + c.k + '" rows="5" maxlength="' + c.max + '">' + esc(v) + '</textarea>';
+            else if (c.tipo === 'fecha') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" type="date" value="' + esc(v) + '">';
+            else if (c.tipo === 'pesos') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" data-tipo="pesos" type="text" inputmode="numeric" value="' + (v > 0 ? esc(pesos(v)) : '') + '" placeholder="$0">';
+            else if (c.tipo === 'numero') ctrl = '<input id="' + id + '" data-dk="' + c.k + '" data-tipo="num" type="text" inputmode="numeric" maxlength="3" value="' + esc(v) + '">';
+            else ctrl = '<input id="' + id + '" data-dk="' + c.k + '" type="text" maxlength="' + (c.max || 100) + '" value="' + esc(v) + '">';
+            var ancho = c.tipo === 'textarea' ? ' lq-span2' : '';
+            return '<div class="lq-field' + ancho + '"><label for="' + id + '">' + esc(c.etiqueta) + opc + '</label>' + ctrl + ayuda + err + '</div>';
+        }).join('');
+    }
+
+    function valorCampoDoc(el) {
+        if (el.type === 'checkbox') return el.checked;
+        var tipo = el.getAttribute('data-tipo'), v = el.value;
+        if (tipo === 'pesos') return parseInt(v.replace(/\D/g, ''), 10) || 0;
+        if (tipo === 'num') return v.replace(/\D/g, '');
+        return v;
+    }
+    $('pm-doc-form').addEventListener('input', function (e) {
+        if (!e.target.hasAttribute('data-dk')) return;
+        docSel.datos[e.target.getAttribute('data-dk')] = valorCampoDoc(e.target);
+        vistaDoc();
+    });
+    $('pm-doc-form').addEventListener('change', function (e) {
+        var el = e.target;
+        if (!el.hasAttribute('data-dk')) return;
+        docSel.datos[el.getAttribute('data-dk')] = valorCampoDoc(el);
+        if (el.getAttribute('data-tipo') === 'pesos') el.value = docSel.datos[el.getAttribute('data-dk')] > 0 ? pesos(docSel.datos[el.getAttribute('data-dk')]) : '';
+        vistaDoc();
+    });
+
+    function vistaDoc() {
+        var c = ctxDoc();
+        if (!c || !docSel.tipo) return;
+        var v = PD.validar(docSel.tipo, c, docSel.datos);
+        docSel.listo = v.puedeEmitir;
+        // Los errores de campos vacíos solo se muestran después de intentar imprimir; los demás, apenas hay un valor
+        Array.prototype.forEach.call($('pm-doc-form').querySelectorAll('[data-derror]'), function (p) {
+            var k = p.getAttribute('data-derror'), msg = v.errores[k], valor = docSel.datos[k];
+            var mostrar = !!msg && (docSel.intento || (valor !== '' && valor !== undefined && valor !== false && valor !== 0));
+            p.textContent = mostrar ? msg : '';
+            p.hidden = !mostrar;
+            var campo = $('pm-d-' + k);
+            if (campo) { if (mostrar) campo.setAttribute('aria-invalid', 'true'); else campo.removeAttribute('aria-invalid'); }
+        });
+        var html = '';
+        function aviso(nivel, icono, texto, extra) { html += '<div class="lq-aviso lq-aviso-' + nivel + '"><span class="material-icons" aria-hidden="true">' + icono + '</span><p>' + esc(texto) + (extra || '') + '</p></div>'; }
+        if (v.faltaFicha.length) {
+            var conT = v.faltaFicha.filter(function (x) { return x.de === 't'; }), conE = v.faltaFicha.filter(function (x) { return x.de === 'e'; });
+            var texto = 'Falta en la ficha: ' + v.faltaFicha.map(function (x) { return x.etiqueta; }).join(', ') + '. ';
+            var botones = (conT.length ? ' <button type="button" class="lq-link" data-doc-ficha="t">Editar ficha del trabajador</button>' : '') + (conE.length ? ' <button type="button" class="lq-link" data-doc-ficha="e">Completar empresa</button>' : '');
+            aviso('aviso', 'edit_note', texto, botones);
+        }
+        v.bloqueos.forEach(function (t) { aviso('error', 'error', t); });
+        v.avisos.forEach(function (a) { aviso(a.nivel, a.nivel === 'aviso' ? 'warning' : 'info', a.texto); });
+        $('pm-doc-avisos').innerHTML = html;
+
+        var marco = $('pm-doc-marco'), doc = $('pm-doc-doc');
+        $('pm-doc-acciones').hidden = false;
+        if (v.puedeEmitir) {
+            var pagada = tienePase();
+            try {
+                doc.innerHTML = PD.generar(docSel.tipo, c, docSel.datos, { pagada: pagada }).html;
+                doc.classList.toggle('lqd-pagada', pagada);
+                marco.hidden = false;
+            } catch (err) { marco.hidden = true; mensaje($('pm-doc-estado'), 'error', 'No pudimos armar el documento: ' + err.message); return; }
+            mensaje($('pm-doc-estado'), '', '');
+        } else {
+            marco.hidden = true;
+            doc.innerHTML = '';
+            mensaje($('pm-doc-estado'), '', 'Completa los datos obligatorios para ver el documento.');
+        }
+    }
+
+    $('pm-doc-avisos').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-doc-ficha]');
+        if (!b) return;
+        if (b.getAttribute('data-doc-ficha') === 'e') { $('pm-sec-empresa').scrollIntoView({ behavior: 'smooth' }); $('pm-e-razon').focus(); }
+        else abrirTrabajador(trabajadorPorId(docSel.trabajadorId));
+    });
+    $('pm-doc-trab').addEventListener('change', function (e) { docSel.trabajadorId = e.target.value; enlacesGeneradores(); abrirDoc(); });
+    $('pm-doc-tipo').addEventListener('change', function (e) { docSel.tipo = e.target.value; abrirDoc(); });
+
+    $('pm-doc-imprimir').addEventListener('click', function () {
+        var c = ctxDoc();
+        if (!c) return;
+        if (!docSel.listo) {
+            docSel.intento = true;
+            vistaDoc();
+            var primero = $('pm-doc-form').querySelector('[aria-invalid="true"]');
+            if (primero) primero.focus(); else $('pm-doc-avisos').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            mensaje($('pm-doc-estado'), 'error', 'Faltan datos para emitir el documento.');
+            return;
+        }
+        var d;
+        try { d = PD.generar(docSel.tipo, c, docSel.datos, { pagada: tienePase() }); } catch (err) { mensaje($('pm-doc-estado'), 'error', err.message); return; }
+        var id = docSel.trabajadorId, tipo = docSel.tipo;
+        imprimirHojas([d.html], d.titulo + ' ' + c.t.nombre);
+        api('documento', { metodo: 'POST', query: { trabajador: id }, cuerpo: { tipo: tipo } }).then(function (r) {
+            if (sinSesion(r)) return;
+            mensaje($('pm-doc-estado'), r.ok ? 'ok' : 'error', r.ok ? 'Enviado a imprimir. Anotamos que lo emitiste (solo el tipo de documento y la fecha, nunca su texto).' : 'Se envió a imprimir, pero no pudimos anotar la emisión: ' + (r.datos.error || 'intenta de nuevo.'));
+        });
     });
 
     // ---------- traer datos del generador de liquidaciones ----------

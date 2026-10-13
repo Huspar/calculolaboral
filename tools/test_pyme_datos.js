@@ -240,8 +240,8 @@ caso('exportar entrega todo descifrado, con versión y fecha; el archivo no incl
     await m.datos.crearTrabajador(cuenta, TRAB(1));
     const x = (await m.datos.exportar(cuenta)).archivo;
     assert.strictEqual(x.formato, 'calculolaboral-asistente-pyme');
-    assert.strictEqual(x.version, 2);
-    assert.deepStrictEqual(x.meses, []);
+    assert.strictEqual(x.version, 3);
+    assert.deepStrictEqual([x.meses, x.documentos], [[], []]);
     assert.strictEqual(x.cuenta.email, 'ana@ejemplo.cl');
     assert.strictEqual(x.empresa.razonSocial, 'Panadería La Espiga Ltda.');
     assert.strictEqual(x.trabajadores[0].nombre, 'Trabajador 1');
@@ -262,7 +262,7 @@ caso('borrar la cuenta exige escribir el correo exacto y borra todo', async () =
 console.log('Rutas de datos');
 caso('sin sesión: todas las rutas de datos responden 401', async () => {
     const m = montar();
-    for (const [ruta, metodo] of [['estado', 'GET'], ['exportar', 'GET'], ['empresa', 'PUT'], ['trabajador', 'POST'], ['meses', 'GET'], ['mes', 'PUT'], ['mes', 'DELETE'], ['importar', 'POST'], ['borrar-cuenta', 'POST']]) {
+    for (const [ruta, metodo] of [['estado', 'GET'], ['exportar', 'GET'], ['empresa', 'PUT'], ['trabajador', 'POST'], ['meses', 'GET'], ['mes', 'PUT'], ['mes', 'DELETE'], ['documento', 'POST'], ['importar', 'POST'], ['borrar-cuenta', 'POST']]) {
         const r = await pedir(m.rutas, { query: { ruta }, metodo, headers: metodo === 'GET' ? {} : JSON_OK, body: {} });
         assert.strictEqual(r.statusCode, 401, ruta);
         assert.strictEqual(r.json.codigo, 'sin_sesion');
@@ -492,6 +492,52 @@ caso('rutas de meses: guardar, listar, borrar; escribir exige encabezado y orige
     assert.strictEqual((await escribir(m, { query: q, metodo: 'POST', cookie, body: {} })).statusCode, 405);
     assert.strictEqual((await escribir(m, { query: q, metodo: 'DELETE', cookie })).statusCode, 200);
     assert.strictEqual((await leer(m, { query: { ruta: 'meses', periodo: '2026-09' }, cookie })).json.meses.length, 0);
+});
+
+// ---------- documentos emitidos ----------
+console.log('Registro de documentos');
+caso('registrar un documento guarda solo el tipo y la fecha, y sale en la exportación', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    assert.ok((await m.datos.registrarDocumento(cuenta, tid, 'cert_antiguedad')).ok);
+    assert.ok((await m.datos.registrarDocumento(cuenta, tid, 'carta_161')).ok);
+    const fila = m.almacen._estado.documentos[0];
+    assert.deepStrictEqual(Object.keys(fila).sort(), ['emitido', 'tipo', 'trabajadorId']);
+    const x = (await m.datos.exportar(cuenta)).archivo;
+    assert.deepStrictEqual(x.documentos.map(d => [d.trabajadorId, d.tipo, d.emitido]), [[tid, 'cert_antiguedad', '2026-10-12T15:00:00.000Z'], [tid, 'carta_161', '2026-10-12T15:00:00.000Z']]);
+});
+caso('registrar un documento valida el tipo y el trabajador, y no se puede en trabajadores de otra cuenta', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    assert.strictEqual((await m.datos.registrarDocumento(cuenta, tid, 'documento_inventado')).codigo, 'tipo');
+    assert.strictEqual((await m.datos.registrarDocumento(cuenta, 'no-uuid', 'carta_161')).estado, 404);
+    assert.strictEqual((await m.datos.registrarDocumento(cuenta, crypto.randomUUID(), 'carta_161')).estado, 404);
+    const otra = (await m.entrar('beto@ejemplo.cl')).cuenta;
+    await m.datos.guardarEmpresa(otra, { ...EMPRESA, rut: rutValido(76111222) });
+    assert.strictEqual((await m.datos.registrarDocumento(otra, tid, 'carta_161')).estado, 404);
+    assert.strictEqual(m.almacen._estado.documentos.length, 0);
+});
+caso('hay un máximo de documentos registrados por trabajador', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    for (let i = 0; i < D.MAX_DOCUMENTOS_POR_TRABAJADOR; i++) assert.ok((await m.datos.registrarDocumento(cuenta, tid, 'liquidacion')).ok);
+    assert.strictEqual((await m.datos.registrarDocumento(cuenta, tid, 'liquidacion')).codigo, 'limite_documentos');
+});
+caso('borrar al trabajador o la cuenta borra sus documentos registrados', async () => {
+    const { m, cuenta, tid } = await conTrabajador();
+    await m.datos.registrarDocumento(cuenta, tid, 'carta_161');
+    await m.datos.borrarTrabajador(cuenta, tid);
+    assert.strictEqual(m.almacen._estado.documentos.length, 0);
+    const c2 = await conTrabajador();
+    await c2.m.datos.registrarDocumento(c2.cuenta, c2.tid, 'carta_161');
+    await c2.m.datos.borrarCuenta(c2.cuenta, 'ana@ejemplo.cl');
+    assert.strictEqual(c2.m.almacen._estado.documentos.length, 0);
+});
+caso('ruta de documentos: registra, valida y exige encabezado y origen', async () => {
+    const { m, cookie, tid } = await conTrabajador();
+    const q = { ruta: 'documento', trabajador: tid };
+    assert.strictEqual((await pedir(m.rutas, { query: q, metodo: 'POST', headers: { cookie }, body: { tipo: 'carta_161' } })).statusCode, 403);
+    assert.strictEqual((await escribir(m, { query: q, metodo: 'POST', cookie, body: { tipo: 'carta_161' } })).statusCode, 200);
+    assert.strictEqual((await escribir(m, { query: q, metodo: 'POST', cookie, body: { tipo: 'otro' } })).statusCode, 400);
+    assert.strictEqual((await escribir(m, { query: q, metodo: 'GET', cookie })).statusCode, 405);
+    assert.strictEqual(m.almacen._estado.documentos.length, 1);
 });
 
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

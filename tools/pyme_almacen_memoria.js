@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -90,6 +90,7 @@ function crearAlmacenMemoria() {
             const i = E.trabajadores.findIndex(x => x.id === id && x.empresaId === empresaId);
             if (i < 0) return false;
             E.meses = E.meses.filter(m => m.trabajadorId !== id);
+            E.documentos = E.documentos.filter(m => m.trabajadorId !== id);
             E.trabajadores.splice(i, 1);
             return true;
         },
@@ -120,6 +121,17 @@ function crearAlmacenMemoria() {
             E.meses.splice(i, 1);
             return true;
         },
+        // ---- documentos emitidos ----
+        async registrarDocumento({ trabajadorId, empresaId, tipo, ahoraIso, maximo }) {
+            if (!E.trabajadores.some(x => x.id === trabajadorId && x.empresaId === empresaId)) return false;
+            if (E.documentos.filter(d => d.trabajadorId === trabajadorId).length >= maximo) return false;
+            E.documentos.push({ trabajadorId, tipo, emitido: new Date(ahoraIso).toISOString() });
+            return true;
+        },
+        async listarDocumentos(empresaId) {
+            const ids = E.trabajadores.filter(x => x.empresaId === empresaId).map(x => x.id);
+            return E.documentos.filter(d => ids.indexOf(d.trabajadorId) >= 0).map(d => Object.assign({}, d));
+        },
         async paseVigente(cuentaId, ahoraIso) {
             const v = E.pases.filter(p => p.cuentaId === cuentaId && t(p.desde) <= t(ahoraIso) && t(p.vence) > t(ahoraIso)).map(p => t(p.vence));
             return v.length ? Math.max.apply(null, v) : null;
@@ -128,6 +140,7 @@ function crearAlmacenMemoria() {
             const emp = E.empresas.filter(x => x.cuentaId === cuentaId).map(x => x.id);
             const tids = E.trabajadores.filter(x => emp.indexOf(x.empresaId) >= 0).map(x => x.id);
             E.meses = E.meses.filter(m => tids.indexOf(m.trabajadorId) < 0);
+            E.documentos = E.documentos.filter(m => tids.indexOf(m.trabajadorId) < 0);
             E.trabajadores = E.trabajadores.filter(x => emp.indexOf(x.empresaId) < 0);
             E.empresas = E.empresas.filter(x => x.cuentaId !== cuentaId);
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);

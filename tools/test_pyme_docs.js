@@ -1,0 +1,221 @@
+// Pruebas de los documentos laborales del Asistente Pyme: node tools/test_pyme_docs.js
+'use strict';
+const assert = require('assert');
+const D = require('../js/pyme_docs');
+const F = require('../js/feriados_cl');
+
+let ok = 0;
+function caso(nombre, fn) { try { fn(); ok++; console.log('  ok  ' + nombre); } catch (e) { console.error('  FALLA  ' + nombre + '\n         ' + (e.stack || e.message).split('\n').slice(0, 3).join('\n         ')); process.exitCode = 1; } }
+
+const EMPRESA = { razonSocial: 'Panadería <La Espiga> Ltda.', rut: '76.845.123-0', representante: 'Manuel Lagos', rutRepresentante: '12.345.678-5', direccion: 'Av. Principal 123', comuna: 'Temuco', ciudad: 'Temuco', logo: '' };
+const TRAB = (extra) => Object.assign({ id: 't1', nombre: 'María Pérez Soto', rut: '12.345.678-5', cargo: 'Vendedora', domicilio: 'Calle 1', comuna: 'Temuco', fechaIngreso: '2020-03-15', contrato: 'indefinido', renovaciones: 0, sueldoBase: 650000, colacion: 40000, movilizacion: 30000, gratificacion: 'legal', distribucion: '5', activo: true }, extra);
+const ctx = (t, extra) => Object.assign({ empresa: EMPRESA, t: t || TRAB(), hoy: '2026-10-12', meses: {}, uf: 41130.94, F }, extra);
+const MES = (liquido) => ({ calculo: { liquido, totalHaberes: liquido + 100000, totalImponible: liquido + 50000, totalDescuentos: 100000, uf: 41000, utm: 72000 } });
+const valido = (tipo, c, extra) => Object.assign(D.valoresIniciales(tipo, c), extra);
+const HECHOS = 'Desde marzo las ventas de la sucursal cayeron un 40% respecto del año anterior y se cerró el turno de tarde, por lo que el cargo de vendedora de ese turno dejó de ser necesario.';
+
+caso('hay siete tipos y todos tienen campos y generador', () => {
+    assert.strictEqual(D.TIPOS.length, 7);
+    D.TIPOS.forEach(t => assert.ok(D.campos(t.id).length > 0, t.id));
+});
+caso('sin completar los datos obligatorios no se puede emitir ni generar', () => {
+    const c = ctx();
+    D.TIPOS.forEach(t => {
+        const v = D.validar(t.id, c, { ciudad: '', fecha: c.hoy });
+        assert.ok(!v.puedeEmitir, t.id);
+        assert.throws(() => D.generar(t.id, c, { ciudad: '', fecha: c.hoy }), /pendientes/, t.id);
+    });
+});
+caso('falta de datos en la ficha se informa por separado y bloquea', () => {
+    const c = ctx(TRAB({ fechaIngreso: '', cargo: '' }));
+    const v = D.validar('cert_antiguedad', c, D.valoresIniciales('cert_antiguedad', c));
+    assert.deepStrictEqual(v.faltaFicha.map(x => x.k).sort(), ['cargo', 'fechaIngreso']);
+    assert.ok(!v.puedeEmitir);
+    const sinEmp = ctx(); sinEmp.empresa = Object.assign({}, EMPRESA, { razonSocial: '' });
+    assert.strictEqual(D.validar('amonestacion', sinEmp, {}).faltaFicha[0].k, 'razonSocial');
+});
+
+caso('antigüedad: años, meses y días completos', () => {
+    assert.deepStrictEqual(D.antiguedad('2020-03-15', '2026-10-12'), { anios: 6, meses: 6, dias: 27 });
+    assert.deepStrictEqual(D.antiguedad('2026-01-31', '2026-03-01'), { anios: 0, meses: 1, dias: 1 });
+    assert.strictEqual(D.antiguedadTxt({ anios: 1, meses: 0, dias: 0 }), '1 año');
+    assert.strictEqual(D.antiguedadTxt({ anios: 2, meses: 3, dias: 4 }), '2 años, 3 meses y 4 días');
+});
+caso('certificado de antigüedad: datos de la ficha, escapa el HTML y marca de agua según el pase', () => {
+    const c = ctx(), d = valido('cert_antiguedad', c, { destinatario: 'Caja <b>X</b>' });
+    assert.ok(D.validar('cert_antiguedad', c, d).puedeEmitir);
+    const h = D.generar('cert_antiguedad', c, d, { pagada: true }).html;
+    ['Certificado de antigüedad', '12.345.678-5', 'Vendedora', '15 de marzo de 2020', '6 años, 6 meses y 27 días', '12 de octubre de 2026', 'Temuco, 12 de octubre de 2026', 'no constituye asesoría legal'].forEach(t => assert.ok(h.includes(t), t));
+    assert.ok(h.includes('Panadería &lt;La Espiga&gt; Ltda.') && !h.includes('<La Espiga>'));
+    assert.ok(h.includes('Caja &lt;b&gt;X&lt;/b&gt;') && !h.includes('<b>X</b>'));
+    assert.ok(!h.includes('lqd-marca'));
+    assert.ok(D.generar('cert_antiguedad', c, d, { pagada: false }).html.includes('lqd-marca'));
+    assert.ok(!/\[[A-ZÁÉÍÓÚ ]+\]/.test(h), 'no quedan corchetes');
+});
+caso('certificado de antigüedad: con fecha de término habla en pasado; no admite fechas incoherentes', () => {
+    const c = ctx(), d = valido('cert_antiguedad', c, { fechaTermino: '2026-09-30' });
+    const h = D.generar('cert_antiguedad', c, d, { pagada: true }).html;
+    assert.ok(h.includes('se desempeñó') && h.includes('hasta el 30 de septiembre de 2026') && h.includes('6 años, 6 meses y 15 días'));
+    assert.ok(D.validar('cert_antiguedad', c, valido('cert_antiguedad', c, { fechaTermino: '2019-01-01' })).errores.fechaTermino);
+    assert.ok(D.validar('cert_antiguedad', c, valido('cert_antiguedad', c, { fecha: '2019-01-01' })).errores.fecha);
+});
+
+caso('certificado de remuneraciones: sueldo y asignaciones de la ficha', () => {
+    const c = ctx(), d = valido('cert_remuneraciones', c);
+    const h = D.generar('cert_remuneraciones', c, d, { pagada: true }).html;
+    ['$650.000', '$40.000', '$30.000', 'Gratificación legal', 'Certificado de remuneraciones'].forEach(t => assert.ok(h.includes(t), t));
+    assert.ok(!h.includes('Promedio'));
+});
+caso('certificado de remuneraciones: el promedio exige los 3 meses anteriores con su cálculo', () => {
+    assert.deepStrictEqual(D.periodosPromedio('2026-10-12'), ['2026-09', '2026-08', '2026-07']);
+    assert.deepStrictEqual(D.periodosPromedio('2026-01-05'), ['2025-12', '2025-11', '2025-10']);
+    const sin = ctx(), d = valido('cert_remuneraciones', sin, { incluirPromedio: true });
+    const v = D.validar('cert_remuneraciones', sin, d);
+    assert.ok(!v.puedeEmitir && v.bloqueos[0].includes('septiembre de 2026') && v.bloqueos[0].includes('julio de 2026'));
+    const con = ctx(TRAB(), { meses: { '2026-09': MES(600000), '2026-08': MES(610000), '2026-07': MES(620000) } });
+    const h = D.generar('cert_remuneraciones', con, d, { pagada: true }).html;
+    assert.ok(h.includes('$600.000') && h.includes('$610.000') && h.includes('$620.000') && h.includes('Promedio') && h.includes('$610.000'));
+    const incompleto = ctx(TRAB(), { meses: { '2026-09': MES(600000), '2026-08': { calculo: null }, '2026-07': MES(620000) } });
+    assert.ok(!D.validar('cert_remuneraciones', incompleto, d).puedeEmitir);
+});
+
+caso('comprobante de feriado: días hábiles sin sábados, domingos ni feriados, reintegro y saldo', () => {
+    const c = ctx(), d = valido('comprobante_feriado', c, { fechaInicio: '2026-10-12', diasHabiles: '5', saldoAntes: '15' });
+    const v = D.validar('comprobante_feriado', c, d);
+    assert.ok(v.puedeEmitir, JSON.stringify(v));
+    assert.ok(v.avisos.some(a => a.texto.indexOf('no es día hábil') >= 0), 'el 12-oct-2026 es feriado');
+    const h = D.generar('comprobante_feriado', c, d, { pagada: true }).html;
+    ['13 de octubre de 2026', '19 de octubre de 2026', '20 de octubre de 2026', '<td>10</td>'].forEach(t => assert.ok(h.includes(t), t));
+    assert.ok(h.includes('Reintegro a sus labores'));
+});
+caso('comprobante de feriado: no puede superar el saldo, ni empezar antes del ingreso; año sin calendario bloquea', () => {
+    const c = ctx();
+    assert.ok(D.validar('comprobante_feriado', c, valido('comprobante_feriado', c, { fechaInicio: '2026-11-02', diasHabiles: '16', saldoAntes: '15' })).errores.diasHabiles);
+    assert.ok(D.validar('comprobante_feriado', c, valido('comprobante_feriado', c, { fechaInicio: '2019-11-02', diasHabiles: '5', saldoAntes: '15' })).errores.fechaInicio);
+    const v = D.validar('comprobante_feriado', c, valido('comprobante_feriado', c, { fechaInicio: '2029-01-08', diasHabiles: '5', saldoAntes: '15' }));
+    assert.ok(!v.puedeEmitir && v.bloqueos[0].indexOf('2026 y 2027') >= 0);
+    ['0', '-1', 'x', '1.5', '61'].forEach(n => assert.ok(D.validar('comprobante_feriado', c, valido('comprobante_feriado', c, { fechaInicio: '2026-11-02', diasHabiles: n, saldoAntes: '15' })).errores.diasHabiles, n));
+});
+caso('comprobante de feriado: avisa de la jornada de 6 días y de menos de un año de servicio', () => {
+    const v6 = D.validar('comprobante_feriado', ctx(TRAB({ distribucion: '6' })), valido('comprobante_feriado', ctx(), { fechaInicio: '2026-11-02', diasHabiles: '5', saldoAntes: '15' }));
+    assert.ok(v6.avisos.some(a => a.texto.indexOf('lunes a sábado') >= 0));
+    const nuevo = ctx(TRAB({ fechaIngreso: '2026-03-01' }));
+    assert.ok(D.validar('comprobante_feriado', nuevo, valido('comprobante_feriado', nuevo, { fechaInicio: '2026-11-02', diasHabiles: '5', saldoAntes: '5' })).avisos.some(a => a.texto.indexOf('menos de un año') >= 0));
+});
+
+caso('plazo de comunicación: tres días hábiles contando el sábado, sin domingos ni feriados', () => {
+    assert.strictEqual(D.plazoComunicacion(ctx(), '2026-10-16'), '2026-10-20');
+    assert.strictEqual(D.plazoComunicacion(ctx(), '2026-10-09'), '2026-10-14'); // sáb 10, lun 12 es feriado, mar 13, mié 14
+});
+caso('carta del art. 159 N°4: solo para contratos a plazo fijo con menos de dos renovaciones', () => {
+    const pf = TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-01-10', fechaTerminoPlazo: '2026-10-31', renovaciones: 0 });
+    const c = ctx(pf), d = valido('carta_159_4', c, { cotizaciones: true });
+    assert.strictEqual(d.fechaTermino, '2026-10-31');
+    const v = D.validar('carta_159_4', c, d);
+    assert.ok(v.puedeEmitir, JSON.stringify(v));
+    assert.ok(v.avisos.some(a => a.texto.indexOf('3 de noviembre de 2026') >= 0 || a.texto.indexOf('4 de noviembre de 2026') >= 0), v.avisos.map(a => a.texto).join('|'));
+    const h = D.generar('carta_159_4', c, d, { pagada: true }).html;
+    ['artículo 159 N°4', 'vencimiento del plazo convenido', '31 de octubre de 2026', 'hasta septiembre de 2026', 'artículo 162', 'Inspección del Trabajo', 'reserva de derechos', 'presencial'].forEach(t => assert.ok(h.includes(t), t));
+    assert.ok(h.includes('terminará'));
+    assert.ok(!D.validar('carta_159_4', ctx(TRAB()), valido('carta_159_4', ctx(TRAB()), { fechaTermino: '2026-10-31', cotizaciones: true })).puedeEmitir, 'indefinido');
+    assert.ok(!D.validar('carta_159_4', ctx(TRAB({ contrato: 'plazo_fijo', renovaciones: 2 })), valido('carta_159_4', c, { fechaTermino: '2026-10-31', cotizaciones: true })).puedeEmitir, 'segunda renovación');
+});
+caso('carta del art. 159 N°4: exige confirmar las cotizaciones; finiquito electrónico lleva el aviso de voluntariedad', () => {
+    const pf = TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-01-10', fechaTerminoPlazo: '2026-10-31' }), c = ctx(pf);
+    assert.ok(D.validar('carta_159_4', c, valido('carta_159_4', c)).errores.cotizaciones);
+    const h = D.generar('carta_159_4', c, valido('carta_159_4', c, { cotizaciones: true, finiquito: 'electronico', entrega: 'certificada' }), { pagada: true }).html;
+    assert.ok(h.includes('forma electrónica') && h.includes('voluntario') && h.includes('carta certificada'));
+    const vencida = D.generar('carta_159_4', c, valido('carta_159_4', c, { cotizaciones: true, fechaTermino: '2026-10-05' }), { pagada: true }).html;
+    assert.ok(vencida.includes('terminó'));
+});
+caso('carta del art. 159 N°4: avisa si la duración supera un año y si falta el domicilio para la carta certificada', () => {
+    const pf = TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2025-01-10', fechaTerminoPlazo: '2026-10-31', domicilio: '' }), c = ctx(pf);
+    const v = D.validar('carta_159_4', c, valido('carta_159_4', c, { cotizaciones: true, entrega: 'certificada' }));
+    assert.ok(v.avisos.some(a => a.texto.indexOf('no puede exceder de un año') >= 0));
+    assert.ok(v.avisos.some(a => a.texto.indexOf('domicilio') >= 0));
+});
+
+caso('indemnización: 30 días por año y fracción superior a 6 meses, tope de 11 años y de 90 UF', () => {
+    const i = D.indemnizacion('2020-03-15', '2026-10-20', 800000, null);
+    assert.deepStrictEqual([i.aniosPago, i.porAnios], [7, 5600000]);
+    assert.strictEqual(D.indemnizacion('2020-03-15', '2026-09-15', 800000, null).aniosPago, 6, '6 años y exactamente 6 meses no suma');
+    assert.strictEqual(D.indemnizacion('2020-03-15', '2026-09-16', 800000, null).aniosPago, 7);
+    assert.strictEqual(D.indemnizacion('2005-01-10', '2026-10-20', 800000, null).aniosPago, 11);
+    assert.strictEqual(D.indemnizacion('2026-01-10', '2026-10-20', 800000, null).aniosPago, 0, 'menos de un año');
+    const topada = D.indemnizacion('2020-03-15', '2026-10-20', 5000000, 41130.94);
+    assert.deepStrictEqual([topada.topada, topada.base, topada.porAnios], [true, 3701785, 3701785 * 7]);
+    assert.strictEqual(D.indemnizacion('1975-01-10', '2026-10-20', 800000, null).aniosPago, 52, 'sin tope antes de agosto de 1981');
+});
+caso('carta del art. 161: hechos concretos, confirmaciones y montos de las indemnizaciones', () => {
+    const c = ctx(), base = { fechaTermino: '2026-10-20', hechos: HECHOS, remuneracion: 800000, sinLicencia: true, sinFuero: true, cotizaciones: true };
+    const d = valido('carta_161', c, base);
+    const v = D.validar('carta_161', c, d);
+    assert.ok(v.puedeEmitir, JSON.stringify(v));
+    const h = D.generar('carta_161', c, d, { pagada: true }).html;
+    ['artículo 161 inciso primero', 'necesidades de la empresa', 'ventas de la sucursal', '7 años × $800.000', '$5.600.000', 'sustitutiva del aviso previo', '$6.400.000', 'oferta irrevocable', 'un solo acto', 'reserva de derechos', 'Inspección del Trabajo'].forEach(t => assert.ok(h.includes(t), t));
+    const ant = D.generar('carta_161', c, valido('carta_161', c, Object.assign({}, base, { aviso: 'anticipacion', fecha: '2026-09-01' })), { pagada: true }).html;
+    assert.ok(!ant.includes('Indemnización sustitutiva del aviso previo (art. 162)') && ant.includes('$5.600.000') && ant.includes('treinta días de anticipación'));
+});
+caso('carta del art. 161: rechaza hechos genéricos o con corchetes, falta de confirmaciones y avisos mal fechados', () => {
+    const c = ctx(), base = { fechaTermino: '2026-10-20', hechos: HECHOS, remuneracion: 800000, sinLicencia: true, sinFuero: true, cotizaciones: true };
+    const v = (extra) => D.validar('carta_161', c, valido('carta_161', c, Object.assign({}, base, extra)));
+    assert.ok(v({ hechos: 'Necesidades de la empresa.' }).errores.hechos);
+    assert.ok(v({ hechos: HECHOS + ' [completar]' }).errores.hechos);
+    assert.ok(v({ sinLicencia: false }).errores.sinLicencia);
+    assert.ok(v({ sinFuero: false }).errores.sinFuero);
+    assert.ok(v({ cotizaciones: false }).errores.cotizaciones);
+    assert.ok(v({ remuneracion: 0 }).errores.remuneracion);
+    assert.ok(v({ aviso: 'anticipacion', fecha: '2026-10-10' }).errores.fechaTermino, 'menos de 30 días');
+    assert.ok(!v({ aviso: 'anticipacion', fecha: '2026-09-20' }).errores.fechaTermino);
+    assert.ok(v({ fechaTermino: '2020-03-15' }).errores.fechaTermino);
+});
+caso('carta del art. 161: informa el tope de 90 UF y la falta de UF', () => {
+    const c = ctx(), v = D.validar('carta_161', c, valido('carta_161', c, { fechaTermino: '2026-10-20', hechos: HECHOS, remuneracion: 5000000, sinLicencia: true, sinFuero: true, cotizaciones: true }));
+    assert.ok(v.avisos.some(a => a.texto.indexOf('90 UF') >= 0));
+    const sinUf = ctx(TRAB(), { uf: 0 });
+    assert.ok(D.validar('carta_161', sinUf, valido('carta_161', sinUf, { fechaTermino: '2026-10-20', hechos: HECHOS, remuneracion: 800000, sinLicencia: true, sinFuero: true, cotizaciones: true })).avisos.some(a => a.texto.indexOf('UF de hoy') >= 0));
+});
+caso('carta del art. 161: propone la última remuneración desde la liquidación guardada, o el sueldo base', () => {
+    assert.strictEqual(D.valoresIniciales('carta_161', ctx()).remuneracion, 650000);
+    assert.strictEqual(D.valoresIniciales('carta_161', ctx(TRAB(), { meses: { '2026-09': MES(700000) } })).remuneracion, 750000);
+});
+
+caso('amonestación: hechos concretos y mención al reglamento solo si existe', () => {
+    const c = ctx(), d = valido('amonestacion', c, { fechaHechos: '2026-10-05', obligacion: 'cumplir el horario de ingreso pactado en el contrato', hechos: 'El lunes 5 de octubre ingresó a las 09:40 horas, cuando su horario de ingreso es a las 09:00, sin dar aviso previo.' });
+    assert.ok(D.validar('amonestacion', c, d).puedeEmitir);
+    const h = D.generar('amonestacion', c, d, { pagada: true }).html;
+    assert.ok(h.includes('art. 154 N°10') && h.includes('descargos') && h.includes('toma conocimiento'));
+    const sin = D.generar('amonestacion', c, Object.assign({}, d, { reglamento: 'no' }), { pagada: true }).html;
+    assert.ok(!sin.includes('154') && sin.includes('deja constancia'));
+    assert.ok(D.validar('amonestacion', c, Object.assign({}, d, { hechos: 'Llegó tarde.' })).errores.hechos);
+    assert.ok(D.validar('amonestacion', c, Object.assign({}, d, { fecha: '2026-10-01' })).errores.fecha);
+    assert.ok(D.validar('amonestacion', c, d).avisos.some(a => a.texto.indexOf('acoso') >= 0));
+});
+caso('anexo de datos: cláusulas fijas y opcionales, numeradas en orden', () => {
+    const c = ctx(), base = valido('anexo_datos', c, { correoPrivacidad: 'privacidad@laespiga.cl' });
+    assert.ok(D.validar('anexo_datos', c, base).puedeEmitir);
+    const minimo = D.generar('anexo_datos', c, base, { pagada: true }).html;
+    assert.ok(minimo.includes('CLÁUSULA QUINTA') && !minimo.includes('CLÁUSULA SEXTA') && !minimo.includes('biométric') && !minimo.includes('Herramientas corporativas'));
+    const todo = D.generar('anexo_datos', c, Object.assign({}, base, { biometria: true, herramientas: true, encargados: true }), { pagada: true }).html;
+    ['CLÁUSULA OCTAVA', 'CLÁUSULA SÉPTIMA', 'alternativo', 'Herramientas corporativas', 'Encargados de tratamiento', 'privacidad@laespiga.cl', 'artículo 154 ter', '1 de diciembre de 2026', 'Ley N° 21.719'].forEach(t => assert.ok(todo.includes(t), t));
+    assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: 'no-es-correo' })).errores.correoPrivacidad);
+    assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: '' })).errores.correoPrivacidad);
+});
+caso('ningún documento deja corchetes de relleno ni la palabra undefined/null/NaN', () => {
+    const pf = TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-01-10', fechaTerminoPlazo: '2026-10-31' });
+    const casos = [
+        ['cert_antiguedad', ctx(), {}], ['cert_remuneraciones', ctx(), {}],
+        ['comprobante_feriado', ctx(), { fechaInicio: '2026-11-02', diasHabiles: '5', saldoAntes: '15' }],
+        ['carta_159_4', ctx(pf), { cotizaciones: true }],
+        ['carta_161', ctx(), { fechaTermino: '2026-10-20', hechos: HECHOS, remuneracion: 800000, sinLicencia: true, sinFuero: true, cotizaciones: true }],
+        ['amonestacion', ctx(), { fechaHechos: '2026-10-05', obligacion: 'cumplir el horario', hechos: 'El lunes 5 de octubre ingresó a las 09:40 horas, cuando su horario de ingreso es a las 09:00, sin dar aviso previo.' }],
+        ['anexo_datos', ctx(), { correoPrivacidad: 'a@b.cl' }]
+    ];
+    casos.forEach(([tipo, c, extra]) => {
+        const h = D.generar(tipo, c, valido(tipo, c, extra), { pagada: true }).html;
+        assert.ok(!/undefined|null|NaN|\[\s*\]/.test(h), tipo);
+        assert.ok(!/\[[^\]]*\]/.test(h.replace(/<[^>]*>/g, '')), tipo + ' tiene corchetes');
+    });
+});
+
+console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));
