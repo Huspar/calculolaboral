@@ -8,6 +8,7 @@
  * - /api/pyme/* usa el mismo enrutador de produccion con una base EN MEMORIA (se borra al apagarlo) y claves aleatorias.
  * - No envia correos: el enlace de acceso se imprime en la terminal y queda en http://localhost:3000/__dev/ultimo-enlace
  * - http://localhost:3000/__dev/pase?email=ana@ejemplo.cl[&producto=pyme12]  da un pase de 30 dias a esa cuenta (para probar el limite de 5).
+ * - http://localhost:3000/__dev/avisos  corre la tarea diaria de avisos por correo (los correos se imprimen y quedan en /__dev/ultimos-avisos).
  * - La compra del Pase usa un Flow SIMULADO: /__dev/flow?token=...&resultado=ok|rechazado|pendiente confirma o rechaza el pago y vuelve
  *   al panel. La venta esta abierta aqui (en produccion se abre con PYME_PASE_VENTA=1). No se llama a Flow ni a Resend.
  *
@@ -73,7 +74,12 @@ const pase = crearPase({
     },
     venta: () => true
 });
-const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'development' }, siteUrl: SITIO, pase });
+const avisosEnviados = [];
+const avisos = require('../api/_pyme/avisos').crear({
+    almacen, datos, secreto, siteUrl: SITIO, P: require('../js/liquidacion_parametros.js'), F: require('../js/feriados_cl.js'),
+    enviar: async (m) => { avisosEnviados.push(m); console.log('\n[correo simulado] avisos para ' + m.to + ' | ' + m.asunto + '\n'); }
+});
+const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'development' }, siteUrl: SITIO, pase, avisos });
 // Los manejadores de produccion (flow-confirm) piden el servicio del Pase a servicios.js: se les entrega el de memoria
 if (SANDBOX) { const rs = require.resolve('../api/_pyme/servicios'); require.cache[rs] = { id: rs, filename: rs, loaded: true, exports: { pase: () => pase, almacen: () => almacen } }; }
 
@@ -120,6 +126,8 @@ http.createServer(async (req, res) => {
     try {
         const url = new URL(req.url, SITIO);
         if (url.pathname === '/__dev/ultimo-enlace') { res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify({ enlace: ultimoEnlace })); }
+        if (url.pathname === '/__dev/avisos') { res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify(await avisos.correr())); }
+        if (url.pathname === '/__dev/ultimos-avisos') { res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify(avisosEnviados.slice(-5))); }
         if (url.pathname === '/__dev/pase') {
             const correo = (url.searchParams.get('email') || '').toLowerCase();
             const cuenta = await almacen.buscarCuentaPorEmail(correo);

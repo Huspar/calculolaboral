@@ -30,6 +30,34 @@ function correoAcceso({ enlace, minutos }) {
     return { asunto, texto, html };
 }
 
+/** Correo con los avisos del mes. "avisos": [{ id, nivel, titulo, texto }]; "nuevos": ids que motivan el envío. */
+function correoAvisos({ avisos, nuevos, enlaceApp, enlaceBaja, razonSocial }) {
+    const urgentes = avisos.filter(a => a.nivel === 'urgente').length;
+    const asunto = urgentes ? `Tienes ${urgentes === 1 ? 'un aviso urgente' : urgentes + ' avisos urgentes'} en el Asistente Laboral Pyme` : 'Avisos de este mes en el Asistente Laboral Pyme';
+    const texto = [
+        `Avisos de ${razonSocial || 'tu empresa'} en el Asistente Laboral Pyme:`,
+        '',
+        ...avisos.map(a => `${a.nivel === 'urgente' ? '[Urgente] ' : ''}${a.titulo}. ${a.texto}`),
+        '',
+        `Revísalos en el asistente: ${enlaceApp}`,
+        '',
+        'Estos avisos son una ayuda y no reemplazan revisar los plazos en la fuente (Dirección del Trabajo, Previred, SII).',
+        `Para dejar de recibirlos: ${enlaceBaja}`
+    ].join('\n');
+    const filas = avisos.map(a => `<li style="margin:0 0 12px"><strong style="color:${a.nivel === 'urgente' ? '#BE123C' : '#0f172a'}">${a.nivel === 'urgente' ? 'Urgente · ' : ''}${escapeHtml(a.titulo)}</strong>${nuevos.indexOf(a.id) >= 0 ? '' : ' <span style="color:#64748b;font-size:12px">(ya te lo avisamos)</span>'}<br><span style="font-size:13px;color:#334155">${escapeHtml(a.texto)}</span></li>`).join('');
+    const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
+<div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+  <p style="margin:0 0 16px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:${MARCA}">Laboral</span></p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Avisos de <strong>${escapeHtml(razonSocial || 'tu empresa')}</strong> en el Asistente Laboral Pyme:</p>
+  <ul style="margin:0 0 20px;padding-left:18px">${filas}</ul>
+  <p style="margin:0 0 20px"><a href="${escapeHtml(enlaceApp)}" style="display:inline-block;background:${MARCA};color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px">Abrir el asistente</a></p>
+  <p style="margin:0 0 12px;font-size:12px;color:#475569">Estos avisos son una ayuda y no reemplazan revisar los plazos en la fuente (Dirección del Trabajo, Previred, SII).</p>
+  <p style="margin:0;font-size:12px;color:#64748b">Recibes este correo porque activaste los avisos en tu cuenta. <a href="${escapeHtml(enlaceBaja)}" style="color:${MARCA}">Dejar de recibirlos</a>.</p>
+</div></body></html>`;
+    return { asunto, texto, html };
+}
+
 const ESTILO = `<style>
 body{margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55}
 .t{max-width:480px;margin:40px auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px}
@@ -64,4 +92,14 @@ function paginaMensaje(titulo, texto) {
     return pagina(titulo, `<h1>${escapeHtml(titulo)}</h1><p>${escapeHtml(texto)}</p><p><a href="/app">Volver al asistente</a></p>`);
 }
 
-module.exports = { correoAcceso, paginaConfirmar, paginaMensaje };
+/** Página del enlace de baja: pide confirmar con un botón (un revisor automático de enlaces no la apaga solo). */
+function paginaBajaAvisos({ token }) {
+    return pagina('Dejar de recibir avisos', `<h1>Dejar de recibir los avisos por correo</h1>
+<p>Ya no te enviaremos los avisos del Asistente Laboral Pyme. Tus datos y tu cuenta no cambian, y puedes volver a activarlos en «Mi cuenta».</p>
+<form method="post" action="/api/pyme/avisos-baja">
+<input type="hidden" name="t" value="${escapeHtml(token)}">
+<button type="submit">Dejar de recibirlos</button>
+</form>`);
+}
+
+module.exports = { correoAcceso, correoAvisos, paginaConfirmar, paginaMensaje, paginaBajaAvisos };

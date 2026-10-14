@@ -210,6 +210,35 @@ function crearAlmacenSql(sql) {
             return r.length === 1;
         },
 
+        // ---------- avisos por correo (preferencia y avisos ya enviados; migración 004) ----------
+
+        async obtenerAvisosCorreo(cuentaId) {
+            const r = await filas('SELECT activo, ultimo_envio FROM avisos_correo WHERE cuenta_id = $1::uuid', [cuentaId]);
+            return r[0] ? { activo: r[0].activo === true, ultimoEnvio: r[0].ultimo_envio ? new Date(r[0].ultimo_envio).toISOString() : null } : { activo: false, ultimoEnvio: null };
+        },
+
+        async guardarAvisosCorreo(cuentaId, activo, ahoraIso) {
+            await filas(
+                'INSERT INTO avisos_correo (cuenta_id, activo, actualizado) VALUES ($1::uuid, $2::boolean, $3::timestamptz) ' +
+                'ON CONFLICT (cuenta_id) DO UPDATE SET activo = EXCLUDED.activo, actualizado = EXCLUDED.actualizado',
+                [cuentaId, activo, ahoraIso]
+            );
+        },
+
+        /** Cuentas con los avisos activos, las que llevan más tiempo sin correo primero. */
+        async cuentasConAvisos(limite) {
+            const r = await filas(
+                'SELECT a.cuenta_id, c.email, a.enviados FROM avisos_correo a JOIN cuentas c ON c.id = a.cuenta_id WHERE a.activo ' +
+                'ORDER BY a.ultimo_envio NULLS FIRST LIMIT $1::int',
+                [limite]
+            );
+            return r.map(x => ({ cuentaId: x.cuenta_id, email: x.email, enviados: x.enviados || {} }));
+        },
+
+        async registrarEnvioAvisos(cuentaId, enviados, ahoraIso) {
+            await filas('UPDATE avisos_correo SET enviados = $2::jsonb, ultimo_envio = $3::timestamptz WHERE cuenta_id = $1::uuid', [cuentaId, JSON.stringify(enviados), ahoraIso]);
+        },
+
         // ---------- boletas de honorarios (una fila cifrada por empresa y mes; migración 002) ----------
 
         async listarHonorarios(empresaId, periodo) {

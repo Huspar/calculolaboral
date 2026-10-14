@@ -243,6 +243,19 @@ async function main() {
         await assert.rejects(() => sql.query("INSERT INTO honorarios (empresa_id, periodo, datos_cifrados, version_clave) VALUES ($1, '2026-13', 'x', 1)", [empresaId]), 'la base rechaza un período inválido');
         paso('honorarios: boletas cifradas por mes, se reemplazan, con máximo de meses, se borran con lista vacía y se exportan');
 
+        // ---- Avisos por correo contra la base real (migración 004) ----
+        assert.deepStrictEqual(await almacen.obtenerAvisosCorreo(cuentaId), { activo: false, ultimoEnvio: null });
+        assert.ok((await srv.guardarAvisosCorreo(cuentaObj, true)).ok);
+        assert.strictEqual((await almacen.obtenerAvisosCorreo(cuentaId)).activo, true);
+        assert.ok((await almacen.cuentasConAvisos(1000)).some(c => c.cuentaId === cuentaId && c.email === correo));
+        await almacen.registrarEnvioAvisos(cuentaId, { 'plazo-x': '2026-10-20' }, new Date().toISOString());
+        const filaAv = (await almacen.cuentasConAvisos(1000)).find(c => c.cuentaId === cuentaId);
+        assert.deepStrictEqual(filaAv.enviados, { 'plazo-x': '2026-10-20' });
+        assert.ok((await almacen.obtenerAvisosCorreo(cuentaId)).ultimoEnvio);
+        assert.ok((await srv.guardarAvisosCorreo(cuentaObj, false)).ok);
+        assert.ok(!(await almacen.cuentasConAvisos(1000)).some(c => c.cuentaId === cuentaId));
+        paso('avisos por correo: preferencia, cuentas activas y registro de lo enviado');
+
         // ---- Pase: vigencia en la base real ----
         const ahoraPase = new Date().toISOString();
         const vigenteAntes = await almacen.paseVigente(cuentaId, ahoraPase);
@@ -274,6 +287,7 @@ async function main() {
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id = $1', [tid]))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM documentos WHERE trabajador_id = $1', [tid]))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM honorarios WHERE empresa_id = $1', [empresaId]))[0].n, 0);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM avisos_correo WHERE cuenta_id = $1', [cuentaId]))[0].n, 0);
         paso('borrar la cuenta borra sesiones, empresa, trabajadores, meses, honorarios y pases en cascada');
         cuentaId = null;
         console.log('\n' + ok + ' pruebas correctas contra la base real');

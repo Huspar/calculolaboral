@@ -1774,7 +1774,30 @@
     function ventaPase() { return !!(estado && estado.pase && estado.pase.venta); }
     function textoPaseVenta() { return ventaPase() ? 'Puedes comprarlo en «Mi cuenta».' : 'El Pase Pyme aún no está a la venta.'; }
 
-    function dibujarCuenta() { dibujarPase(); dibujarImportar(); }
+    function dibujarCuenta() { dibujarPase(); dibujarImportar(); dibujarAvisosCorreo(); }
+    // Preferencia de avisos por correo (apagada por defecto)
+    function dibujarAvisosCorreo() {
+        var cb = $('pm-avisos-correo');
+        $('pm-avisos-correo-a').textContent = estado.cuenta.email;
+        cb.disabled = true;
+        api('avisos-correo').then(function (r) {
+            if (sinSesion(r)) return;
+            cb.disabled = !r.ok;
+            if (r.ok) cb.checked = !!r.datos.activo;
+            else mensaje($('pm-avisos-estado'), 'error', r.datos.error || 'No pudimos leer tu preferencia.');
+        });
+    }
+    $('pm-avisos-correo').addEventListener('change', function () {
+        var cb = this, activo = cb.checked, est = $('pm-avisos-estado');
+        cb.disabled = true;
+        mensaje(est, '', 'Guardando…');
+        api('avisos-correo', { metodo: 'PUT', cuerpo: { activo: activo } }).then(function (r) {
+            cb.disabled = false;
+            if (sinSesion(r)) return;
+            if (!r.ok) { cb.checked = !activo; mensaje(est, 'error', r.datos.error || 'No pudimos guardar.'); return; }
+            mensaje(est, 'ok', activo ? 'Listo: te enviaremos los avisos por correo.' : 'Listo: ya no te enviaremos avisos por correo.');
+        });
+    });
     function dibujarPase() {
         if (!estado) return;
         var lim = estado.limites, cat = (estado.pase && estado.pase.productos) || [];

@@ -14,6 +14,9 @@
  *   GET  /api/pyme/meses?periodo=AAAA-MM           liquidaciones guardadas de ese mes (todos los trabajadores)
  *   PUT|DELETE /api/pyme/mes?trabajador=ID&periodo=AAAA-MM  { mes }   guarda o elimina el mes de un trabajador
  *   POST /api/pyme/documento?trabajador=ID  { tipo }   anota que se emitió un documento (solo tipo y fecha)
+ *   GET|PUT /api/pyme/avisos-correo   { activo }   preferencia de avisos por correo de la cuenta
+ *   GET  /api/pyme/avisos-cron                   tarea diaria de Vercel (Authorization: Bearer CRON_SECRET); sin CRON_SECRET, desactivada
+ *   GET|POST /api/pyme/avisos-baja?t=FIRMA        baja de los avisos por correo desde el enlace del correo (pide confirmar)
  *   GET|PUT /api/pyme/honorarios?periodo=AAAA-MM  { boletas }   boletas de honorarios recibidas en el mes (PUT reemplaza la lista)
  *   POST /api/pyme/comprar     { product }       crea el pago del Pase Pyme en Flow para esta cuenta y devuelve { url } (cerrado por defecto)
  *   POST /api/pyme/desbloqueo  { producto }      desbloqueo firmado del generador de contrato o finiquito para quien tiene pase
@@ -30,7 +33,7 @@ const T = require('./tokens');
 const DESTINO_PANEL = '/app';
 const MENSAJE_ENLACE_INVALIDO = 'El enlace venció o ya se usó. Pide uno nuevo desde el asistente.';
 
-function crearRutas({ auth, datos, env, siteUrl, pase }) {
+function crearRutas({ auth, datos, env, siteUrl, pase, avisos }) {
     function metodo(req, res, permitido) {
         if (req.method === permitido) return true;
         res.setHeader('Allow', permitido);
@@ -174,6 +177,42 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return responder(res, await datos.borrarMes(s, id, periodo));
     }
 
+    async function avisosCorreo(req, res) {
+        const m = req.method;
+        if (m !== 'GET' && m !== 'PUT') { res.setHeader('Allow', 'GET, PUT'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = m === 'GET' ? await conSesion(req, res) : await sesionParaEscribir(req, res);
+        if (!s) return;
+        if (m === 'GET') return responder(res, await datos.avisosCorreo(s));
+        return responder(res, await datos.guardarAvisosCorreo(s, H.cuerpoDe(req).activo));
+    }
+
+    // Tarea programada de Vercel: llama con "Authorization: Bearer <CRON_SECRET>". Sin CRON_SECRET no hace nada.
+    async function avisosCron(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        const clave = env && env.CRON_SECRET;
+        if (!clave || !avisos) return H.json(res, 503, { ok: false, error: 'Avisos por correo desactivados.' });
+        const a = Buffer.from(String((req.headers && req.headers.authorization) || '')), b = Buffer.from('Bearer ' + clave);
+        if (a.length !== b.length || !require('crypto').timingSafeEqual(a, b)) return H.json(res, 401, { ok: false, error: 'No autorizado.' });
+        const r = await avisos.correr();
+        console.log('pyme avisos: revisadas ' + r.revisadas + ', enviados ' + r.enviados + ', errores ' + r.errores);
+        return H.json(res, 200, Object.assign({ ok: true }, r));
+    }
+
+    async function avisosBaja(req, res) {
+        const token = String((req.method === 'POST' ? H.cuerpoDe(req).t : req.query?.t) || '');
+        const cuentaId = avisos ? avisos.validarBaja(token) : null;
+        if (!cuentaId) return H.html(res, 400, C.paginaMensaje('Enlace no válido', 'El enlace para dejar de recibir avisos no es válido. Puedes apagarlos en «Mi cuenta» del asistente.'));
+        if (req.method === 'GET') return H.html(res, 200, C.paginaBajaAvisos({ token }));
+        if (req.method === 'POST') {
+            const origen = req.headers && req.headers.origin;
+            if (origen && H.origenesPermitidos(env, siteUrl).indexOf(origen) < 0) return H.json(res, 403, { ok: false, error: 'Solicitud no permitida.' });
+            await datos.guardarAvisosCorreo({ cuentaId }, false);
+            return H.html(res, 200, C.paginaMensaje('Listo', 'Ya no te enviaremos avisos por correo. Puedes volver a activarlos en «Mi cuenta» del asistente.'));
+        }
+        res.setHeader('Allow', 'GET, POST');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
     async function honorarios(req, res) {
         const m = req.method;
         if (m !== 'GET' && m !== 'PUT') { res.setHeader('Allow', 'GET, PUT'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
@@ -263,7 +302,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

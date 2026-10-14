@@ -7,6 +7,7 @@
  *   PYME_DATA_KEY         clave de cifrado de los datos de trabajadores (se usa desde la fase 2)
  *   RESEND_API_KEY        envio del correo con el enlace de acceso
  *   FLOW_API_KEY, FLOW_SECRET_KEY, PYME_PASE_VENTA  cobro del Pase Pyme (la venta se abre con PYME_PASE_VENTA=1)
+ *   CRON_SECRET           activa la tarea diaria de avisos por correo (/api/pyme/avisos-cron); sin ella no se envían
  */
 const T = require('../_pyme/tokens');
 const H = require('../_pyme/http');
@@ -16,6 +17,7 @@ const { crear, MINUTOS_ENLACE } = require('../_pyme/auth');
 const { crearRutas } = require('../_pyme/rutas');
 const D = require('../_pyme/datos');
 const Cifrado = require('../_pyme/cifrado');
+const Avisos = require('../_pyme/avisos');
 
 let manejador = null; // se arma una vez por instancia de la funcion
 
@@ -38,7 +40,12 @@ function armar() {
             return datosReal[nombre](...args);
         }
     });
-    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase() });
+    const avisos = Avisos.crear({
+        almacen, datos, secreto, siteUrl: SITE_URL,
+        P: require('../../js/liquidacion_parametros.js'), F: require('../../js/feriados_cl.js'),
+        enviar: ({ to, asunto, html, texto, clave }) => sendEmail({ to: [to], reply_to: 'contacto@calculolaboral.cl', subject: asunto, html, text: texto }, clave)
+    });
+    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos });
 }
 
 module.exports = async (req, res) => {

@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -122,6 +122,23 @@ function crearAlmacenMemoria() {
             E.meses.splice(i, 1);
             return true;
         },
+        // ---- avisos por correo ----
+        async obtenerAvisosCorreo(cuentaId) {
+            const a = E.avisos.find(x => x.cuentaId === cuentaId);
+            return a ? { activo: a.activo, ultimoEnvio: a.ultimoEnvio || null } : { activo: false, ultimoEnvio: null };
+        },
+        async guardarAvisosCorreo(cuentaId, activo) {
+            const a = E.avisos.find(x => x.cuentaId === cuentaId);
+            if (a) a.activo = activo; else E.avisos.push({ cuentaId, activo, enviados: {}, ultimoEnvio: null });
+        },
+        async cuentasConAvisos(limite) {
+            return E.avisos.filter(a => a.activo).slice(0, limite).map(a => ({ cuentaId: a.cuentaId, email: (E.cuentas.find(c => c.id === a.cuentaId) || {}).email, enviados: JSON.parse(JSON.stringify(a.enviados)) }))
+                .filter(a => a.email);
+        },
+        async registrarEnvioAvisos(cuentaId, enviados, ahoraIso) {
+            const a = E.avisos.find(x => x.cuentaId === cuentaId);
+            if (a) { a.enviados = JSON.parse(JSON.stringify(enviados)); a.ultimoEnvio = ahoraIso; }
+        },
         // ---- boletas de honorarios ----
         async listarHonorarios(empresaId, periodo) {
             return E.honorarios.filter(h => h.empresaId === empresaId && (!periodo || h.periodo === periodo)).sort((a, b) => a.periodo < b.periodo ? -1 : 1)
@@ -205,6 +222,7 @@ function crearAlmacenMemoria() {
             E.empresas = E.empresas.filter(x => x.cuentaId !== cuentaId);
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);
             E.pases = E.pases.filter(x => x.cuentaId !== cuentaId);
+            E.avisos = E.avisos.filter(x => x.cuentaId !== cuentaId);
             E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
         }
     };

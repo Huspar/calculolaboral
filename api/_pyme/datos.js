@@ -294,6 +294,16 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true, periodo, boletas: v.valor };
     }
 
+    // ---------- avisos por correo (preferencia de la cuenta) ----------
+    async function avisosCorreo(cuenta) {
+        return Object.assign({ ok: true }, await almacen.obtenerAvisosCorreo(cuenta.cuentaId));
+    }
+    async function guardarAvisosCorreo(cuenta, activo) {
+        if (typeof activo !== 'boolean') return fallo(400, 'validacion', 'Indica si quieres recibir los avisos por correo.');
+        await almacen.guardarAvisosCorreo(cuenta.cuentaId, activo, iso());
+        return { ok: true, activo };
+    }
+
     async function leerDocumentosExport(cuenta) {
         const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
         return fila ? almacen.listarDocumentos(fila.id) : [];
@@ -337,7 +347,7 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, guardarAusencias, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, guardarAusencias, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, avisosCorreo, guardarAvisosCorreo, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {

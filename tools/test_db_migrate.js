@@ -98,7 +98,7 @@ caso('los tokens se guardan solo como hash', () => {
     assert.ok(!/\btoken\s+text/.test(sqlTodo), 'hay una columna "token" en claro');
 });
 caso('borrar la cuenta borra todo (cascada) y la auditoria no depende de la cuenta', () => {
-    ['sesiones', 'empresas', 'pases'].forEach(n => assert.ok(new RegExp(n + ' \\([\\s\\S]*?REFERENCES cuentas \\(id\\) ON DELETE CASCADE').test(sqlTodo), n));
+    ['sesiones', 'empresas', 'pases', 'avisos_correo'].forEach(n => assert.ok(new RegExp(n + ' \\([\\s\\S]*?REFERENCES cuentas \\(id\\) ON DELETE CASCADE').test(sqlTodo), n));
     ['trabajadores', 'vacaciones', 'meses', 'documentos', 'honorarios'].forEach(n => {
         const t = T.find(x => x.nombre === n);
         assert.ok(/ON DELETE CASCADE/.test(t.cuerpo), n + ' sin cascada');
