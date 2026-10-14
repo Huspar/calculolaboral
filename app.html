@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.15.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.16.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -226,6 +226,7 @@ gtag('js', new Date());
 <a href="#" data-tab="ficha">Ficha</a>
 <a href="#" data-tab="liquidaciones">Liquidaciones</a>
 <a href="#" data-tab="vacaciones">Vacaciones</a>
+<a href="#" data-tab="ausencias">Licencias y permisos</a>
 <a href="#" data-tab="prestamos">Préstamos</a>
 <a href="#" data-tab="documentos">Documentos</a>
 </nav>
@@ -333,6 +334,34 @@ gtag('js', new Date());
 </div>
 </div>
 
+<div id="carp-aus" hidden>
+<div class="prest-pila">
+<div class="panel">
+<div class="panel-head"><h2>Licencias y permisos</h2></div>
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Licencias médicas y permisos del trabajador</caption>
+<thead><tr><th scope="col">Tipo</th><th scope="col">Fechas</th><th scope="col" class="num">Días</th><th scope="col"><span class="sr-only">Acción</span></th></tr></thead>
+<tbody id="carp-aus-filas"></tbody></table></div>
+<div class="panel-pie" id="carp-aus-pie"></div>
+</div>
+<div class="panel"><div class="panel-cuerpo">
+<form id="pm-aus-form" novalidate autocomplete="off">
+<h2 class="h-seccion">Registrar una licencia o un permiso</h2>
+<p class="lq-help">Solo el tipo y las fechas: no anotes diagnósticos ni otros datos de salud. Cada liquidación toma los días de su mes.</p>
+<div class="lq-grid">
+<div class="lq-field lq-span2"><label for="pm-a-tipo">Tipo</label><select id="pm-a-tipo"><option value="licencia">Licencia médica</option><option value="permiso">Permiso con goce de sueldo</option><option value="sin_goce">Permiso sin goce de sueldo</option></select></div>
+<div class="lq-field"><label for="pm-a-desde">Desde</label><input id="pm-a-desde" type="date"></div>
+<div class="lq-field"><label for="pm-a-hasta">Hasta</label><input id="pm-a-hasta" type="date"></div>
+</div>
+<div id="pm-aus-info" class="lq-avisos" role="status" style="margin-top:12px"></div>
+<p id="pm-aus-error" class="pm-error" role="alert" hidden></p>
+<div class="form-acciones">
+<button type="submit" class="btn btn-primario"><span class="material-icons" aria-hidden="true">add</span>Registrar</button>
+<p id="pm-aus-estado" class="lq-estado" role="status"></p>
+</div>
+</form>
+</div></div>
+</div>
+</div>
 <div id="carp-prest" hidden>
 <div class="prest-pila">
 <div class="panel">
@@ -443,6 +472,7 @@ gtag('js', new Date());
 <form id="pm-liq-form" novalidate autocomplete="off">
 <div class="lq-grid">
 <div class="lq-field"><label for="pm-m-dias">Días trabajados (de 30)</label><input id="pm-m-dias" data-k="diasTrabajados" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="30"></div>
+<p class="lq-help lq-span2" id="pm-liq-aus-resumen"></p>
 <div class="lq-field"><label for="pm-m-lic">Días de licencia médica <span class="lq-opt">(informativo)</span></label><input id="pm-m-lic" data-k="diasLicencia" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="0"></div>
 <div class="lq-field"><label for="pm-m-he">Horas extra del mes</label><input id="pm-m-he" data-k="horasExtra" data-tipo="dec" type="text" inputmode="decimal" placeholder="0"></div>
 <div class="lq-field"><label for="pm-m-grat">Gratificación</label>
@@ -459,9 +489,7 @@ gtag('js', new Date());
 <select id="pm-m-scmodo" data-k="scModo"><option value="calcular">Sí, calcularla</option><option value="no">No corresponde (por ejemplo, una comisión mensual repartida entre vendedores)</option></select></div>
 </div>
 <div data-si="sc-calcular" class="lq-sub-interno">
-<p class="lq-help">Licencias médicas y permisos del mes: esos días no cuentan en el promedio. Las vacaciones registradas se descuentan solas. Las faltas sin justificación no se anotan aquí.</p>
-<div class="lq-list" id="pm-liq-aus"></div>
-<button type="button" class="lq-link" id="pm-liq-aus-agregar" style="justify-self:start">+ Agregar licencia o permiso</button>
+<p class="lq-help">Las licencias, los permisos y las vacaciones registradas no cuentan en el promedio. Las faltas sin justificación sí cuentan.</p>
 <div id="pm-liq-sc" class="sc-resumen" aria-live="polite"></div>
 </div>
 </div>
@@ -772,17 +800,18 @@ gtag('js', new Date());
 <script src="/js/liquidacion_documento.js?v=1.3.0"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
-<script src="/js/pyme_pendientes.js?v=1.7.0"></script>
+<script src="/js/pyme_ausencias.js?v=1.0.0"></script>
+<script src="/js/pyme_pendientes.js?v=1.8.0"></script>
 <script src="/js/semana_corrida.js?v=1.0.0"></script>
 <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
 <script src="/js/pyme_importar.js?v=1.0.0"></script>
 <script src="/js/pyme_proyeccion.js?v=1.0.0"></script>
 <script src="/js/pyme_midt.js?v=1.0.0"></script>
 <script src="/js/pyme_libro.js?v=1.0.0"></script>
-<script src="/js/pyme_liquidaciones.js?v=1.4.1"></script>
+<script src="/js/pyme_liquidaciones.js?v=1.5.0"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.15.0" defer></script>
+<script src="/js/app_pyme.js?v=1.16.2" defer></script>
 </body>
 </html>

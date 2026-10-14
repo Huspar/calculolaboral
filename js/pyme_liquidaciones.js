@@ -9,6 +9,8 @@
  *   previred(registros)              → lo que se paga en Previred agrupado por institución, con los registros que traen desglose
  *   (desglose: montos retenidos al trabajador, cotizaciones del empleador y costo total; conDesglose: true)
  *   estadoDe(registro)               → 'sin_datos' | 'guardada' | 'emitida'
+ *   mesBase también toma de la ficha las licencias y permisos del mes (t.ausencias, js/pyme_ausencias.js): mes.ausencias,
+ *   los días trabajados sin la licencia ni el permiso sin goce, y los días de licencia (mes.diasLicencia).
  *   semanaCorridaMes(t, mes, 'AAAA-MM', { esFeriado, vacaciones }) → { aplica, monto, detalle, calculo, error }
  *                                      semana corrida (art. 45) sobre comisiones y tratos del mes, sin contar en el promedio
  *                                      las licencias y permisos del mes (mes.ausencias) ni las vacaciones registradas.
@@ -43,12 +45,20 @@
         return Math.max(0, Math.min(30, hasta - desde + 1));
     }
 
+    function rangoContrato(t) { return { desde: t && t.fechaIngreso, hasta: t && t.contrato === 'plazo_fijo' ? t.fechaTerminoPlazo : '' }; }
+    // Días a pagar del mes con las licencias y permisos sin goce de la ficha
+    function diasPropuestos(t, periodo) {
+        var lista = (t && t.ausencias) || [];
+        return lista.length ? AUS.diasTrabajados(lista, periodo, rangoContrato(t)) : diasBase(t, periodo);
+    }
+
     function mesBase(t, periodo) {
         var grat = t && t.gratificacion === 'ninguna' ? 'ninguna' : t && t.gratificacion === 'pactada' ? 'manual' : 'legal';
+        var aus = (t && t.ausencias) || [];
         return {
-            diasTrabajados: diasBase(t, periodo), diasLicencia: 0, horasExtra: 0,
+            diasTrabajados: diasPropuestos(t, periodo), diasLicencia: AUS.diasLicencia(aus, periodo), horasExtra: 0,
             gratificacion: grat, gratificacionMonto: 0, comisiones: 0, tratos: 0, bonosImponibles: bonosFijosDe(t, true),
-            scModo: 'calcular', ausencias: [], semanaCorrida: 0, semanaCorridaDetalle: '',
+            scModo: 'calcular', ausencias: AUS.delMes(aus, periodo).slice(0, 10), semanaCorrida: 0, semanaCorridaDetalle: '',
             viaticos: 0, asignacionFamiliar: 0, otrosNoImponibles: bonosFijosDe(t, false),
             apvMonto: 0, apvRegimen: 'B', anticipo: (t && t.anticipoMensual) || 0, creditoCCAF: 0, cuotaSindical: 0, otrosDescuentos: [],
             cuotasPrestamo: cuotasDelMes(t, periodo),
@@ -176,6 +186,7 @@
 
     // ---------- semana corrida ----------
     var SC = typeof module !== 'undefined' && module.exports ? require('./semana_corrida.js') : root.CLSemanaCorrida;
+    var AUS = typeof module !== 'undefined' && module.exports ? require('./pyme_ausencias.js') : root.CLPymeAusencias;
 
     function semanaCorridaMes(t, mes, periodo, opc) {
         opc = opc || {};
@@ -202,8 +213,8 @@
     var api = {
         diasBase: diasBase, mesBase: mesBase, resumen: resumen, previred: previred, estadoDe: estadoDe,
         cuotasDe: cuotasDe, cuotasDelMes: cuotasDelMes, estadoPrestamo: estadoPrestamo, saldoPrestamos: saldoPrestamos, sumarMes: sumarMes,
-        semanaCorridaMes: semanaCorridaMes,
-        version: '1.4.0'
+        semanaCorridaMes: semanaCorridaMes, diasPropuestos: diasPropuestos,
+        version: '1.5.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeLiquidaciones = api;

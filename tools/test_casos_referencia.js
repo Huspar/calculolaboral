@@ -25,6 +25,15 @@ const MODULOS = {
         if (e.accion === 'proyectar') return { proyecciones: e.hitos.map(h => PR.proyectar(e.calculo, e.periodo, { periodo: h, tasa: PR.tasaLey(h) })) };
         if (e.accion === 'horaExtra') return { valores: e.jornadas.map(j => PR.horaExtra(e.sueldo, j)) };
         throw new Error('acción desconocida');
+    },
+    ausencias: function (e) {
+        const A = require('../js/pyme_ausencias.js');
+        return {
+            trabajados: A.diasTrabajados(e.ausencias, e.periodo, { desde: e.desde, hasta: e.hasta }),
+            licencia: A.diasLicencia(e.ausencias, e.periodo),
+            carencias: e.ausencias.map(A.carencia),
+            plazos: e.ausencias.map(a => A.plazoTramite(a, F))
+        };
     }
 };
 

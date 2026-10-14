@@ -200,7 +200,11 @@ function validarTrabajador(entrada) {
         const p = validarPrestamos(entrada.prestamos, errores);
         if (p !== undefined) v.prestamos = p;
     }
-    // Lo mismo con los bonos fijos
+    // Lo mismo con los bonos fijos y las licencias y permisos
+    if (entrada.ausencias !== undefined) {
+        const a = validarAusencias(entrada.ausencias, errores);
+        if (a !== undefined) v.ausencias = a;
+    }
     if (entrada.bonosFijos !== undefined) {
         const b = validarBonosFijos(entrada.bonosFijos, errores);
         if (b !== undefined) v.bonosFijos = b;
@@ -283,13 +287,39 @@ function cuotasMes(v, errores) {
 
 // Licencias médicas y permisos del mes (fechas): no cuentan en el promedio de la semana corrida. Sin diagnóstico ni otro dato de salud.
 const MAX_AUSENCIAS_MES = 10;
+const TIPOS_AUSENCIA = ['licencia', 'permiso', 'sin_goce'];
+
+// Licencias y permisos registrados en la ficha (cada mes toma los suyos). Solo tipo y fechas.
+const MAX_AUSENCIAS = 60, MAX_DIAS_AUSENCIA = 366;
+function validarAusencias(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_AUSENCIAS) { errores.ausencias = `Puedes registrar hasta ${MAX_AUSENCIAS} licencias o permisos por trabajador. Elimina los más antiguos.`; return undefined; }
+    const salida = [], usados = {};
+    for (const it of v) {
+        if (!it || typeof it !== 'object' || Array.isArray(it)) { errores.ausencias = 'Las licencias y permisos no tienen el formato esperado.'; return undefined; }
+        const e = {};
+        let id = typeof it.id === 'string' && ID_PRESTAMO.test(it.id) ? it.id : '';
+        while (!id || usados[id]) id = crypto.randomBytes(6).toString('hex');
+        usados[id] = true;
+        const tipo = normalizar('tipo', { t: 'enum', valores: TIPOS_AUSENCIA, def: 'licencia' }, it.tipo, e);
+        const desde = normalizar('desde', { t: 'fecha', req: true }, it.desde, e);
+        const hasta = normalizar('hasta', { t: 'fecha', req: true }, it.hasta, e);
+        if (e.tipo) { errores.ausencias = 'El tipo de ausencia no es válido.'; return undefined; }
+        if (e.desde || e.hasta) { errores.ausencias = 'Indica las fechas de inicio y término.'; return undefined; }
+        if (hasta < desde) { errores.ausencias = 'La fecha de término no puede ser anterior a la de inicio.'; return undefined; }
+        if ((Date.parse(hasta) - Date.parse(desde)) / 86400000 + 1 > MAX_DIAS_AUSENCIA) { errores.ausencias = 'Registra cada licencia o permiso por separado (hasta un año cada uno).'; return undefined; }
+        salida.push({ id, tipo, desde, hasta });
+    }
+    salida.sort((a, b) => a.desde < b.desde ? -1 : a.desde > b.desde ? 1 : 0);
+    return salida;
+}
 function ausenciasMes(v, errores) {
     if (vacio(v)) return [];
     if (!Array.isArray(v) || v.length > MAX_AUSENCIAS_MES) { errores.ausencias = `Máximo ${MAX_AUSENCIAS_MES} licencias o permisos en el mes.`; return undefined; }
     const salida = [];
     for (const it of v) {
         const e = {};
-        const tipo = normalizar('tipo', { t: 'enum', valores: ['licencia', 'permiso'], def: 'licencia' }, it && it.tipo, e);
+        const tipo = normalizar('tipo', { t: 'enum', valores: TIPOS_AUSENCIA, def: 'licencia' }, it && it.tipo, e);
         const desde = normalizar('desde', { t: 'fecha', req: true }, it && it.desde, e);
         const hasta = normalizar('hasta', { t: 'fecha', req: true }, it && it.hasta, e);
         if (Object.keys(e).length || hasta < desde) { errores.ausencias = 'Revisa las fechas de cada licencia o permiso (desde y hasta).'; return undefined; }
@@ -402,4 +432,4 @@ function validarVacacion(entrada, hoy) {
     return { ok: true, valor: { tipo: 'periodo', desde: entrada.desde, hasta: entrada.hasta, dias: r.dias, nota } };
 }
 
-module.exports = { validarMes, validarHonorarios, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };
+module.exports = { validarMes, validarHonorarios, validarAusencias, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };

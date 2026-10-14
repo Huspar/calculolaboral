@@ -1,0 +1,48 @@
+{
+  "modulo": "ausencias",
+  "descripcion": "Licencias médicas y permisos: días a pagar en mes comercial de 30 días, carencia (art. 14 DFL 44) y plazo de tramitación (art. 13 DS 3/1984).",
+  "casos": [
+    {
+      "id": "licencia-todo-febrero",
+      "fuente": "Mes comercial de 30 días (mismo criterio que diasBase del asistente): una licencia que cubre todo febrero deja 0 días a pagar; los días los cubre el subsidio.",
+      "entrada": { "periodo": "2027-02", "ausencias": [{ "tipo": "licencia", "desde": "2027-02-01", "hasta": "2027-02-28" }] },
+      "esperado": { "trabajados": 0, "licencia": 30 }
+    },
+    {
+      "id": "licencia-segunda-quincena-mes-de-31",
+      "fuente": "Licencia del 16 al 31 de octubre: el 31 cuenta como el 30. Se pagan los días 1 a 15.",
+      "entrada": { "periodo": "2026-10", "ausencias": [{ "tipo": "licencia", "desde": "2026-10-16", "hasta": "2026-10-31" }] },
+      "esperado": { "trabajados": 15, "licencia": 15 }
+    },
+    {
+      "id": "licencia-corta-con-carencia",
+      "fuente": "Licencia de 6 días (5 al 10 de octubre): 24 días a pagar. Por durar 10 días o menos, el subsidio corre desde el cuarto día (art. 14 DFL 44, Suseso).",
+      "entrada": { "periodo": "2026-10", "ausencias": [{ "tipo": "licencia", "desde": "2026-10-05", "hasta": "2026-10-10" }] },
+      "esperado": { "trabajados": 24, "licencia": 6, "carencias": [true] }
+    },
+    {
+      "id": "licencia-de-11-dias-sin-carencia",
+      "fuente": "Art. 14 DFL 44: licencia de más de 10 días, subsidio desde el primer día.",
+      "entrada": { "periodo": "2026-10", "ausencias": [{ "tipo": "licencia", "desde": "2026-10-05", "hasta": "2026-10-15" }] },
+      "esperado": { "trabajados": 19, "carencias": [false] }
+    },
+    {
+      "id": "permiso-con-goce-no-descuenta",
+      "fuente": "El permiso con goce de sueldo se paga; el sin goce no. 2 días sin goce + 1 con goce → 28 días a pagar.",
+      "entrada": { "periodo": "2026-10", "ausencias": [{ "tipo": "sin_goce", "desde": "2026-10-20", "hasta": "2026-10-21" }, { "tipo": "permiso", "desde": "2026-10-23", "hasta": "2026-10-23" }] },
+      "esperado": { "trabajados": 28, "licencia": 0 }
+    },
+    {
+      "id": "ingreso-a-mitad-de-mes-y-licencia",
+      "fuente": "Ingreso el 15 de octubre (16 días comerciales, del 15 al 30) y licencia del 20 al 22: 13 días a pagar.",
+      "entrada": { "periodo": "2026-10", "desde": "2026-10-15", "ausencias": [{ "tipo": "licencia", "desde": "2026-10-20", "hasta": "2026-10-22" }] },
+      "esperado": { "trabajados": 13 }
+    },
+    {
+      "id": "plazo-tramite-con-feriado",
+      "fuente": "Art. 13 DS 3/1984: 3 días hábiles desde la recepción. Licencia recibida el jueves 8 de octubre de 2026: viernes 9 y sábado 10 (el sábado se cuenta para ir seguro); domingo 11 y lunes 12 (feriado) no cuentan → martes 13.",
+      "entrada": { "periodo": "2026-10", "ausencias": [{ "tipo": "licencia", "desde": "2026-10-08", "hasta": "2026-10-20" }] },
+      "esperado": { "plazos": ["2026-10-13"] }
+    }
+  ]
+}

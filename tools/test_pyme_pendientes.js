@@ -99,6 +99,15 @@ caso('Ley Karin: un solo aviso con quienes no tienen anotada la entrega del prot
     assert.deepStrictEqual(p.accion, { tipo: 'trabajador', id: 'a' });
     assert.ok(!pend(correr(est([b]), '2026-10-20'), 'karin'));
 });
+caso('licencia médica: aviso del plazo de 3 días hábiles mientras corre', () => {
+    const t = T({ ausencias: [{ id: 'l1', tipo: 'licencia', desde: '2026-10-08', hasta: '2026-10-20' }, { id: 'p1', tipo: 'permiso', desde: '2026-10-08', hasta: '2026-10-08' }] });
+    const p = pend(correr(est([t]), '2026-10-09'), 'licencia-t1-2026-10-08');
+    assert.ok(p && p.nivel === 'aviso' && /13 de octubre/.test(p.texto), JSON.stringify(p));
+    assert.strictEqual(pend(correr(est([t]), '2026-10-13'), 'licencia-t1-2026-10-08').nivel, 'urgente');
+    assert.ok(!pend(correr(est([t]), '2026-10-14'), 'licencia-t1-2026-10-08'), 'vencido el plazo ya no se muestra');
+    assert.ok(!pend(correr(est([t]), '2026-10-05'), 'licencia-t1-2026-10-08'), 'antes de empezar no se muestra');
+    assert.ok(!correr(est([t]), '2026-10-09').some(x => /permiso/.test(x.titulo)), 'los permisos no tienen plazo de tramitación');
+});
 caso('el mínimo usa el valor del mes: en enero de 2026 era $539.000 y la jornada máxima 44 horas', () => {
     assert.ok(!pend(correr(est([T({ jornadaHoras: 44, sueldoBase: 539000 })]), '2026-01-20'), 'minimo-t1'));
     assert.ok(pend(correr(est([T({ jornadaHoras: 44, sueldoBase: 538999 })]), '2026-01-20'), 'minimo-t1'));

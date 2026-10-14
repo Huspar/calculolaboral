@@ -97,6 +97,7 @@ function crear({ almacen, cifrado, ahora }) {
         if (existentes.some(t => t.id !== id && t.rut === v.valor.rut)) return fallo(409, 'rut_repetido', 'Ya existe un trabajador con este RUT.', { rut: 'Ya existe un trabajador con este RUT.' });
         if (v.valor.prestamos === undefined && Array.isArray(actual.prestamos)) v.valor.prestamos = actual.prestamos;
         if (v.valor.bonosFijos === undefined && Array.isArray(actual.bonosFijos)) v.valor.bonosFijos = actual.bonosFijos;
+        if (v.valor.ausencias === undefined && Array.isArray(actual.ausencias)) v.valor.ausencias = actual.ausencias;
         const lim = await limites(cuenta.cuentaId);
         const { activo, ...datos } = v.valor;
         const c = cifrado.cifrar(datos, ctxTrabajador(cuenta.cuentaId, id));
@@ -104,6 +105,28 @@ function crear({ almacen, cifrado, ahora }) {
         if (!ok) return fallo(409, 'limite', limiteTexto(lim));
         return { ok: true, trabajador: Object.assign({ id }, datos, { activo }) };
     }
+
+    /** Reemplaza una lista de la ficha ('prestamos' o 'ausencias') sin tocar el resto. */
+    async function guardarListaFicha(cuenta, id, clave, lista, validador) {
+        if (!esUuid(id)) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        if (!fila) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const t = (await leerTrabajadores(cuenta.cuentaId, fila.id)).find(x => x.id === id);
+        if (!t) return fallo(404, 'no_existe', 'No encontramos al trabajador.');
+        const errores = {};
+        const valor = validador(lista, errores);
+        if (valor === undefined) return fallo(400, 'validacion', errores[clave], errores);
+        const { id: _id, activo, ...datos } = t;
+        datos[clave] = valor;
+        const c = cifrado.cifrar(datos, ctxTrabajador(cuenta.cuentaId, id));
+        const lim = await limites(cuenta.cuentaId);
+        const ok = await almacen.actualizarTrabajador({ id, empresaId: fila.id, activo, datos: c.datos, version: c.version, ahoraIso: iso(), maxActivos: lim.maxActivos });
+        if (!ok) return fallo(409, 'limite', limiteTexto(lim));
+        return { ok: true, trabajador: Object.assign({ id }, datos, { activo }) };
+    }
+
+    /** Reemplaza las licencias y permisos de un trabajador. */
+    async function guardarAusencias(cuenta, id, lista) { return guardarListaFicha(cuenta, id, 'ausencias', lista, V.validarAusencias); }
 
     /** Reemplaza la lista de préstamos de un trabajador (agregar, eliminar o postergar una cuota). */
     async function guardarPrestamos(cuenta, id, lista) {
@@ -314,7 +337,7 @@ function crear({ almacen, cifrado, ahora }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, guardarAusencias, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {

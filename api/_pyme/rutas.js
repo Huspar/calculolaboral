@@ -10,6 +10,7 @@
  *   PUT  /api/pyme/empresa            { empresa }  guarda la empresa (cifrada)
  *   POST|PUT|DELETE /api/pyme/trabajador[?id=]  { trabajador }   crea, actualiza o borra un trabajador
  *   PUT  /api/pyme/prestamos?trabajador=ID  { prestamos }   reemplaza los préstamos con cuotas de un trabajador
+ *   PUT  /api/pyme/ausencias?trabajador=ID  { ausencias }   reemplaza las licencias y permisos de un trabajador (solo tipo y fechas)
  *   GET  /api/pyme/meses?periodo=AAAA-MM           liquidaciones guardadas de ese mes (todos los trabajadores)
  *   PUT|DELETE /api/pyme/mes?trabajador=ID&periodo=AAAA-MM  { mes }   guarda o elimina el mes de un trabajador
  *   POST /api/pyme/documento?trabajador=ID  { tipo }   anota que se emitió un documento (solo tipo y fecha)
@@ -141,6 +142,13 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return responder(res, await datos.borrarTrabajador(s, id));
     }
 
+    async function ausencias(req, res) {
+        if (!metodo(req, res, 'PUT')) return;
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        return responder(res, await datos.guardarAusencias(s, typeof req.query?.trabajador === 'string' ? req.query.trabajador : '', H.cuerpoDe(req).ausencias));
+    }
+
     async function prestamos(req, res) {
         if (!metodo(req, res, 'PUT')) return;
         const s = await sesionParaEscribir(req, res);
@@ -255,7 +263,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, meses, mes, honorarios, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

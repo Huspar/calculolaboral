@@ -230,6 +230,19 @@ caso('mesBase: los bonos fijos de la ficha se proponen en el mes (imponibles y l
     assert.deepStrictEqual(L.mesBase(T(), '2026-10').bonosImponibles, []);
 });
 
+caso('mesBase toma las licencias y permisos de la ficha: días a pagar, días de licencia y la lista del mes', () => {
+    const t = T({ ausencias: [{ id: 'a1', tipo: 'licencia', desde: '2026-09-28', hasta: '2026-10-03' }, { id: 'a2', tipo: 'permiso', desde: '2026-10-15', hasta: '2026-10-15' }, { id: 'a3', tipo: 'sin_goce', desde: '2026-10-20', hasta: '2026-10-21' }] });
+    const m = L.mesBase(t, '2026-10');
+    assert.strictEqual(m.diasLicencia, 3);                 // 1 al 3 de octubre
+    assert.strictEqual(m.diasTrabajados, 25);              // 30 - 3 de licencia - 2 sin goce (el permiso con goce se paga)
+    assert.deepStrictEqual(m.ausencias, [{ tipo: 'licencia', desde: '2026-10-01', hasta: '2026-10-03' }, { tipo: 'permiso', desde: '2026-10-15', hasta: '2026-10-15' }, { tipo: 'sin_goce', desde: '2026-10-20', hasta: '2026-10-21' }]);
+    assert.ok(V.validarMes(m).ok, JSON.stringify(V.validarMes(m).errores));
+    assert.strictEqual(L.mesBase(t, '2026-09').diasLicencia, 3); // 28 al 30 de septiembre
+    // sin ausencias, igual que antes
+    assert.strictEqual(L.mesBase(T(), '2026-10').diasTrabajados, 30);
+    assert.strictEqual(L.diasPropuestos(T({ fechaIngreso: '2026-10-15', ausencias: [{ tipo: 'licencia', desde: '2026-10-20', hasta: '2026-10-22' }] }), '2026-10'), 13);
+});
+
 caso('estadoDe', () => {
     assert.strictEqual(L.estadoDe(null), 'sin_datos');
     assert.strictEqual(L.estadoDe({ emitida: '' }), 'guardada');

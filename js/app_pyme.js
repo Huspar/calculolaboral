@@ -532,7 +532,7 @@
         var nuevo = id === 'nuevo', t = nuevo ? null : trabajadorPorId(id);
         if (!nuevo && !t) { navegar('trabajadores', { reemplazar: true }); return; }
         if (nuevo && !estado.empresa) { navegar('empresa', { reemplazar: true }); avisoGlobal('info', 'Primero guarda los datos de la empresa.'); return; }
-        if (['ficha', 'liquidaciones', 'vacaciones', 'prestamos', 'documentos'].indexOf(tab) < 0) tab = 'ficha';
+        if (['ficha', 'liquidaciones', 'vacaciones', 'ausencias', 'prestamos', 'documentos'].indexOf(tab) < 0) tab = 'ficha';
         if (nuevo) tab = 'ficha';
         $('carp-miga').textContent = nuevo ? 'Nuevo trabajador' : t.nombre;
         document.title = (nuevo ? 'Nuevo trabajador' : t.nombre) + ' · Asistente Laboral Pyme';
@@ -559,11 +559,13 @@
         $('carp-liq').hidden = tab !== 'liquidaciones';
         $('carp-vac').hidden = tab !== 'vacaciones';
         $('carp-prest').hidden = tab !== 'prestamos';
+        $('carp-aus').hidden = tab !== 'ausencias';
         $('carp-docs').hidden = tab !== 'documentos';
         if (tab === 'ficha') abrirTrabajador(t);
         else if (tab === 'liquidaciones') dibujarCarpetaLiq(t);
         else if (tab === 'vacaciones') dibujarCarpetaVac(t);
         else if (tab === 'prestamos') dibujarCarpetaPrest(t);
+        else if (tab === 'ausencias') dibujarCarpetaAus(t);
         else dibujarCarpetaDocs(t);
     }
 
@@ -774,6 +776,76 @@
         $('pm-prest-error').hidden = true;
         $('pm-prest-calc').innerHTML = '';
     }
+    // --- licencias y permisos de la ficha ---
+    var AUS = window.CLPymeAusencias, ausSel = null;
+    function rangoAus(a) { return a.desde === a.hasta ? fechaCortaAnio(a.desde) : fechaCorta(a.desde) + ' al ' + fechaCortaAnio(a.hasta); }
+    function notasLicencia(a) {
+        var n = [];
+        if (a.tipo !== 'licencia') return n;
+        var plazo = AUS.plazoTramite(a, F), hoy = hoyIso();
+        if (plazo && hoy <= plazo) n.push('Tramítala en el portal de licencias médicas a más tardar el ' + fechaLarga(plazo) + ' si la recibiste el ' + fechaLarga(a.desde) + ' (3 días hábiles, art. 13 del DS 3 de 1984). Fuera de plazo, el subsidio lo pagas tú (art. 56).');
+        if (AUS.carencia(a)) n.push('Dura 10 días o menos: el subsidio corre desde el cuarto día (art. 14 del DFL 44). No estás obligado a pagar los tres primeros, salvo que lo hayas pactado. Si continúa otra licencia por la misma causa, se suman.');
+        return n;
+    }
+    function dibujarCarpetaAus(t) {
+        if (ausSel !== t.id) { ausSel = t.id; $('pm-a-desde').value = $('pm-a-hasta').value = ''; $('pm-a-tipo').value = 'licencia'; $('pm-aus-error').hidden = true; $('pm-aus-info').innerHTML = ''; mensaje($('pm-aus-estado'), '', ''); }
+        var lista = (t.ausencias || []).slice().reverse();
+        $('carp-aus-filas').innerHTML = lista.length ? lista.map(function (a) {
+            var notas = notasLicencia(a);
+            return '<tr><td class="celda-nombre"><strong>' + esc(AUS.TIPOS[a.tipo]) + '</strong>' + (notas.length ? '<span class="aus-nota">' + esc(notas.join(' ')) + '</span>' : '') + '</td>' +
+                '<td class="sin-salto">' + esc(rangoAus(a)) + '</td><td class="num">' + AUS.dias(a) + '</td>' +
+                '<td><button type="button" class="btn-texto" data-aus-borrar="' + esc(a.id) + '">Eliminar</button></td></tr>';
+        }).join('') : '<tr><td colspan="4" class="vacio">Sin licencias ni permisos registrados.</td></tr>';
+        $('carp-aus-pie').innerHTML = '<p class="texto-ayuda">La licencia médica y el permiso sin goce de sueldo rebajan los días a pagar de la liquidación de cada mes (mes de 30 días); el permiso con goce no. Los días de licencia los cubre el subsidio de la Compin, la Isapre o la caja de compensación.</p>';
+    }
+    function guardarAusenciasFicha(t, lista, est) {
+        mensaje(est, '', 'Guardando…');
+        return api('ausencias', { metodo: 'PUT', query: { trabajador: t.id }, cuerpo: { ausencias: lista } }).then(function (r) {
+            if (sinSesion(r)) return false;
+            if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos guardar.'); return false; }
+            var tr = r.datos.trabajador;
+            estado.trabajadores = estado.trabajadores.map(function (x) { return x.id === tr.id ? tr : x; });
+            if (editando && editando.id === tr.id) editando.t = tr;
+            dibujarPendientes();
+            mensaje(est, '', '');
+            return true;
+        });
+    }
+    $('pm-aus-form').addEventListener('change', function () {
+        var a = { tipo: $('pm-a-tipo').value, desde: $('pm-a-desde').value, hasta: $('pm-a-hasta').value };
+        if ($('pm-a-desde').value && !$('pm-a-hasta').value) $('pm-a-hasta').min = $('pm-a-desde').value;
+        $('pm-aus-info').innerHTML = a.desde && a.hasta && a.desde <= a.hasta ? notasLicencia(a).map(function (n) { return '<div class="lq-aviso lq-aviso-info"><span class="material-icons" aria-hidden="true">info</span><p>' + esc(n) + '</p></div>'; }).join('') : '';
+    });
+    $('pm-aus-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var t = trabajadorPorId(ausSel), err = $('pm-aus-error');
+        if (!t) return;
+        var a = { tipo: $('pm-a-tipo').value, desde: $('pm-a-desde').value, hasta: $('pm-a-hasta').value };
+        var falta = !a.desde || !a.hasta ? 'Indica las fechas de inicio y término.' : a.hasta < a.desde ? 'La fecha de término no puede ser anterior a la de inicio.' : '';
+        err.hidden = !falta;
+        err.textContent = falta;
+        if (falta) return;
+        guardarAusenciasFicha(t, (t.ausencias || []).concat([a]), $('pm-aus-estado')).then(function (ok) {
+            if (!ok) return;
+            ausSel = null;
+            dibujarCarpetaAus(trabajadorPorId(t.id));
+            mensaje($('pm-aus-estado'), 'ok', 'Registramos ' + (a.tipo === 'licencia' ? 'la licencia' : 'el permiso') + '. Las liquidaciones que aún no emites toman sus días.');
+        });
+    });
+    $('carp-aus-filas').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-aus-borrar]'), t = trabajadorPorId(ausSel);
+        if (!b || !t) return;
+        var id = b.getAttribute('data-aus-borrar');
+        confirmar('¿Eliminar este registro?', 'Las liquidaciones que aún no emites dejan de tomarlo. Las emitidas no cambian.', 'Eliminar').then(function (si) {
+            if (!si) return;
+            guardarAusenciasFicha(t, t.ausencias.filter(function (x) { return x.id !== id; }), $('pm-aus-estado')).then(function (ok) {
+                if (!ok) return;
+                dibujarCarpetaAus(trabajadorPorId(t.id));
+                mensaje($('pm-aus-estado'), 'ok', 'Eliminamos el registro.');
+            });
+        });
+    });
+
     function dibujarCarpetaPrest(t) {
         if (prestSel !== t.id) { prestSel = t.id; limpiarFormPrest(); mensaje($('pm-prest-estado'), '', ''); }
         var ref = periodoSel || periodoPorDefecto(), lista = (t.prestamos || []).slice().sort(function (a, b) { return a.desde < b.desde ? 1 : a.desde > b.desde ? -1 : 0; });
@@ -1614,9 +1686,19 @@
                 if (v.tipo !== 'periodo' || v.hasta < ini || v.desde > fin) return;
                 for (var d = v.desde < ini ? ini : v.desde; d <= v.hasta && d <= fin; d = sumarDiasIso(d, 1)) ev.push({ fecha: d, tipo: 'vac', texto: nombre + ' de vacaciones', ruta: 'vacaciones', query: 't=' + encodeURIComponent(t.id), vac: v, primero: d === v.desde || d === ini });
             });
+            // Licencias y permisos de la ficha; el plazo para tramitar la licencia, el día que vence
+            AUS.delMes(t.ausencias, periodo).forEach(function (a) {
+                var txt = nombre + (a.tipo === 'licencia' ? ' con licencia' : ' con permiso'), ruta = 'trabajadores/' + t.id + '/ausencias';
+                for (var d = a.desde; d <= a.hasta; d = sumarDiasIso(d, 1)) ev.push({ fecha: d, tipo: 'aus', texto: txt, ruta: ruta, aus: a, primero: d === a.desde });
+            });
+            (t.ausencias || []).forEach(function (a) {
+                if (a.tipo !== 'licencia') return;
+                var p = AUS.plazoTramite(a, F);
+                if (p && p >= ini && p <= fin) ev.push({ fecha: p, tipo: 'dt', texto: 'Tramitar la licencia de ' + nombre + ' (si se recibió el ' + fechaCorta(a.desde) + ')', ruta: 'trabajadores/' + t.id + '/ausencias' });
+            });
         });
         if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= ini && pv <= fin) ev.push({ fecha: pv, tipo: 'pase', texto: 'Vence tu Pase Pyme', ruta: 'cuenta' }); }
-        var orden = { feriado: 0, cotiz: 1, previred: 2, plazo: 3, dt: 3, pase: 4, vac: 5, aniv: 6 };
+        var orden = { feriado: 0, cotiz: 1, previred: 2, plazo: 3, dt: 3, pase: 4, vac: 5, aus: 5, aniv: 6 };
         ev.sort(function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : orden[a.tipo] - orden[b.tipo]; });
         return { eventos: ev, sinFeriados: sinFeriados, ini: ini, fin: fin, ultimo: ultimo };
     }
@@ -1642,10 +1724,11 @@
                 '<span class="cal-num">' + (+c.iso.slice(8)) + '</span>' + visibles.map(chipEvento).join('') + (resto > 0 ? '<span class="cal-mas">y ' + resto + ' más</span>' : '') + '</div>';
         }).join('');
         // Lista del mes: los días de un mismo período de vacaciones se muestran una sola vez
-        var lista = r.eventos.filter(function (e) { return e.tipo !== 'vac' || e.primero; });
+        var lista = r.eventos.filter(function (e) { return (e.tipo !== 'vac' && e.tipo !== 'aus') || e.primero; });
         $('cal-lista-titulo').textContent = mayuscula(nombreMes);
         $('cal-lista').innerHTML = lista.length ? lista.map(function (e) {
-            var texto = e.tipo === 'vac' ? e.texto.replace(' de vacaciones', '') + ': vacaciones del ' + rangoCorto(e.vac.desde, e.vac.hasta) : e.texto;
+            var texto = e.tipo === 'vac' ? e.texto.replace(' de vacaciones', '') + ': vacaciones del ' + rangoCorto(e.vac.desde, e.vac.hasta)
+                : e.tipo === 'aus' ? e.texto + ' del ' + rangoCorto(e.aus.desde, e.aus.hasta) : e.texto;
             var accion = e.ruta ? '<a class="btn-texto" href="/app/' + e.ruta + (e.query ? '?' + esc(e.query) : '') + '" data-ruta="' + e.ruta + '"' + (e.query ? ' data-query="' + esc(e.query) + '"' : '') + '>Ver</a>' : '';
             return '<li><span class="fecha-ev">' + esc(fechaCorta(e.fecha)) + '</span><div><strong>' + esc(texto) + '</strong></div>' + accion + '</li>';
         }).join('') : '<li><span></span><div><strong>Nada registrado este mes.</strong></div></li>';
@@ -2177,11 +2260,21 @@
         var reg = mesesDe(periodoSel)[id], nota = '';
         var mes = reg ? JSON.parse(JSON.stringify(reg)) : L.mesBase(t, periodoSel);
         mes.cuotasPrestamo = cuotasVigentes(t, reg, periodoSel);
-        if (!reg && mes.diasTrabajados < 30) nota = 'Pusimos ' + mes.diasTrabajados + ' días trabajados según su fecha de ingreso o de término de contrato (mes de 30 días). Confírmalo.';
+        if (!reg && mes.diasTrabajados < 30) nota = 'Pusimos ' + mes.diasTrabajados + ' días trabajados según su fecha de ingreso o de término de contrato y sus licencias o permisos sin goce (mes de 30 días). Confírmalo.';
+        if (reg && !reg.emitida) {
+            // Las licencias y permisos vienen de la ficha: si cambiaron desde que se guardó el mes, se vuelven a proponer los días
+            var ausFicha = AUS.delMes(t.ausencias, periodoSel).slice(0, 10);
+            if (JSON.stringify(ausFicha) !== JSON.stringify(mes.ausencias || [])) {
+                mes.ausencias = ausFicha;
+                mes.diasTrabajados = L.diasPropuestos(t, periodoSel);
+                mes.diasLicencia = AUS.diasLicencia(t.ausencias, periodoSel);
+                nota = 'Cambiaron las licencias o permisos de la ficha: pusimos ' + mes.diasTrabajados + ' días trabajados y ' + mes.diasLicencia + ' de licencia. Confírmalo y guarda el mes.';
+            }
+        }
         editando = { id: id, t: t, mes: mes, nota: nota, guardado: !!reg };
         llenar($('pm-liq-form'), mes);
         pintarListas();
-        pintarAusencias();
+        dibujarAusenciasMes();
         dibujarCuotasMes();
         visibilidadMes();
         $('pm-liq-editor-titulo').textContent = t.nombre + ' · ' + mayuscula(nombrePeriodo(periodoSel));
@@ -2268,50 +2361,14 @@
         } catch (err) { return { error: err.message }; }
     }
 
-    // --- licencias y permisos del mes (semana corrida) ---
-    function pintarAusencias() {
-        var p = periodoSel, ini = p + '-01', fin = p + '-' + dos(new Date(Date.UTC(+p.slice(0, 4), +p.slice(5, 7), 0)).getUTCDate());
-        $('pm-liq-aus').innerHTML = (editando.mes.ausencias || []).map(function (a) {
-            return '<div class="lq-row lq-row-aus"><select aria-label="Tipo" data-aus="tipo"><option value="licencia"' + (a.tipo === 'permiso' ? '' : ' selected') + '>Licencia médica</option><option value="permiso"' + (a.tipo === 'permiso' ? ' selected' : '') + '>Permiso</option></select>' +
-                '<label class="aus-fecha aus-desde">Desde<input type="date" data-aus="desde" min="' + ini + '" max="' + fin + '" value="' + esc(a.desde || '') + '"></label>' +
-                '<label class="aus-fecha aus-hasta">Hasta<input type="date" data-aus="hasta" min="' + ini + '" max="' + fin + '" value="' + esc(a.hasta || '') + '"></label>' +
-                '<button type="button" class="lq-x" aria-label="Quitar" data-aus-quitar><span class="material-icons" aria-hidden="true">close</span></button></div>';
-        }).join('');
-        $('pm-liq-aus-agregar').hidden = (editando.mes.ausencias || []).length >= 10;
+    // --- licencias y permisos del mes: vienen de la ficha ---
+    function dibujarAusenciasMes() {
+        var lista = editando.mes.ausencias || [], ruta = 'trabajadores/' + editando.t.id + '/ausencias';
+        $('pm-liq-aus-resumen').innerHTML = (lista.length
+            ? 'Licencias y permisos del mes: ' + lista.map(function (a) { return esc(AUS.TIPOS[a.tipo].toLowerCase()) + ' del ' + esc(rangoAus(a)); }).join('; ') + '. '
+            : 'Sin licencias ni permisos registrados este mes. ') +
+            (editando.mes.emitida ? '' : '<a href="/app/' + esc(ruta) + '" data-ruta="' + esc(ruta) + '">' + (lista.length ? 'Ver o cambiar' : 'Registrar una licencia o un permiso') + '</a>');
     }
-    // Solo se guardan las filas con las dos fechas y en orden; las incompletas quedan en pantalla hasta completarlas
-    function leerAusencias() {
-        var filas = $('pm-liq-aus').querySelectorAll('.lq-row-aus');
-        editando.mes.ausencias = Array.prototype.map.call(filas, function (f) {
-            return { tipo: f.querySelector('[data-aus="tipo"]').value, desde: f.querySelector('[data-aus="desde"]').value, hasta: f.querySelector('[data-aus="hasta"]').value };
-        });
-    }
-    // Días corridos de licencia médica dentro del mes (sin repetir días si dos licencias se cruzan)
-    function diasLicenciaEnMes(lista, periodo) {
-        var dias = {};
-        ausenciasValidas(lista).forEach(function (a) {
-            if (a.tipo === 'permiso') return;
-            for (var d = a.desde; d <= a.hasta; d = sumarDiasIso(d, 1)) if (d.slice(0, 7) === periodo) dias[d] = true;
-        });
-        return Math.min(30, Object.keys(dias).length);
-    }
-    function ausenciasValidas(lista) { return (lista || []).filter(function (a) { return a.desde && a.hasta && a.desde <= a.hasta; }); }
-    $('pm-liq-aus').addEventListener('input', function () { if (!editando) return; leerAusencias(); vistaPrevia(); });
-    $('pm-liq-aus').addEventListener('click', function (e) {
-        var b = e.target.closest('[data-aus-quitar]');
-        if (!b || !editando) return;
-        var fila = b.closest('.lq-row-aus');
-        editando.mes.ausencias.splice(Array.prototype.indexOf.call($('pm-liq-aus').children, fila), 1);
-        pintarAusencias();
-        vistaPrevia();
-    });
-    $('pm-liq-aus-agregar').addEventListener('click', function () {
-        if (!editando) return;
-        editando.mes.ausencias = (editando.mes.ausencias || []).concat([{ tipo: 'licencia', desde: '', hasta: '' }]).slice(0, 10);
-        pintarAusencias();
-        var ult = $('pm-liq-aus').querySelector('.lq-row-aus:last-child select');
-        if (ult) ult.focus();
-    });
 
     // Resumen de la semana corrida bajo sus campos: de dónde sale el monto
     function dibujarSemanaCorrida(sc, m) {
@@ -2356,8 +2413,8 @@
         doc.classList.toggle('lqd-pagada', pagada);
         var lista = [];
         if (editando.nota) lista.push({ nivel: 'aviso', texto: editando.nota });
-        var diasLic = diasLicenciaEnMes(m.ausencias, periodoSel), diasBaseMes = L.diasBase(editando.t, periodoSel);
-        if (diasLic && !m.emitida && m.diasTrabajados > Math.max(0, diasBaseMes - diasLic)) lista.push({ nivel: 'aviso', texto: 'Anotaste ' + plural(diasLic, 'día', 'días') + ' de licencia médica: el empleador no paga esos días (los cubre el subsidio de la Compin, la Isapre o la caja). Revisa «Días trabajados» (hoy dice ' + m.diasTrabajados + ').' });
+        var propuestos = L.diasPropuestos(editando.t, periodoSel);
+        if ((m.ausencias || []).length && !m.emitida && m.diasTrabajados !== propuestos) lista.push({ nivel: 'aviso', texto: 'Con las licencias y permisos sin goce registrados, los días a pagar serían ' + propuestos + ' (mes de 30 días) y «Días trabajados» dice ' + m.diasTrabajados + '. Los días de licencia los cubre el subsidio, no el empleador. Revísalo.' });
         if (m.gratificacion === 'manual' && !m.gratificacionMonto) lista.push({ nivel: 'aviso', texto: 'La gratificación es de monto fijo pactado: indica el monto, o cambia a «Legal mensual» o «No se paga este mes».' });
         r.res.avisos.forEach(function (a) { lista.push(a); });
         if (r.res.empleador) r.res.empleador.avisos.forEach(function (a) { lista.push(a); });
@@ -2421,7 +2478,7 @@
         var t = trabajadorPorId(id), periodo = periodoSel, previo = mesesDe(periodo)[id];
         // Las cuotas se toman de la ficha, salvo al editar una liquidación que ya estaba emitida (quedan las emitidas)
         if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { cuotasPrestamo: L.cuotasDelMes(t, periodo) });
-        mes = Object.assign({}, mes, { ausencias: ausenciasValidas(mes.ausencias) });
+        if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { ausencias: AUS.delMes(t.ausencias, periodo).slice(0, 10) });
         if (t) mes = conSemanaCorrida(t, mes, periodo).mes;
         var c = t ? calcularMes(t, mes, periodo) : null;
         var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes, t) : null) : (mes.calculo || null) });

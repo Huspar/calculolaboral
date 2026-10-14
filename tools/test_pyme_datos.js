@@ -678,4 +678,23 @@ caso('boletas de honorarios: se guardan cifradas por mes, se validan, se exporta
     assert.strictEqual(m.almacen._estado.honorarios.length, 0);
 });
 
+caso('licencias y permisos: se guardan en la ficha con su ruta, editar la ficha sin la lista los conserva y no admite otros datos', async () => {
+    const { m, cookie, tid, cuenta } = await conTrabajador();
+    const lic = { tipo: 'licencia', desde: '2026-10-05', hasta: '2026-10-10', diagnostico: 'no debe guardarse' };
+    assert.strictEqual((await pedir(m.rutas, { query: { ruta: 'ausencias', trabajador: tid }, metodo: 'PUT', headers: { cookie }, body: { ausencias: [lic] } })).statusCode, 403);
+    const r = await escribir(m, { query: { ruta: 'ausencias', trabajador: tid }, metodo: 'PUT', cookie, body: { ausencias: [lic, { tipo: 'sin_goce', desde: '2026-09-01', hasta: '2026-09-01' }] } });
+    assert.strictEqual(r.statusCode, 200, JSON.stringify(r.json));
+    assert.deepStrictEqual(r.json.trabajador.ausencias.map(a => [a.tipo, a.desde]), [['sin_goce', '2026-09-01'], ['licencia', '2026-10-05']]);
+    assert.ok(r.json.trabajador.ausencias.every(a => /^[a-z0-9]{6,20}$/.test(a.id) && !('diagnostico' in a)));
+    const actual = (await m.datos.estado(cuenta)).trabajadores[0];
+    const { id, ausencias, ...ficha } = actual;
+    assert.ok((await m.datos.actualizarTrabajador(cuenta, tid, Object.assign(ficha, { cargo: 'Cajero' }))).ok);
+    assert.strictEqual((await m.datos.estado(cuenta)).trabajadores[0].ausencias.length, 2);
+    const malo = async (a) => (await m.datos.guardarAusencias(cuenta, tid, [a])).error;
+    assert.match(await malo({ tipo: 'licencia', desde: '2026-10-10', hasta: '2026-10-01' }), /anterior/);
+    assert.match(await malo({ tipo: 'vacaciones', desde: '2026-10-01', hasta: '2026-10-02' }), /tipo/);
+    assert.match(await malo({ tipo: 'licencia', desde: '2026-01-01', hasta: '2027-06-01' }), /hasta un año/);
+    assert.deepStrictEqual((await m.datos.guardarAusencias(cuenta, tid, [])).trabajador.ausencias, []);
+});
+
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

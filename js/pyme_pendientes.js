@@ -8,6 +8,7 @@
  * Solo avisos que se pueden calcular con certeza a partir de la ficha: nada de montos de Previred ni de decisiones legales.
  * Ingreso mínimo (art. 44): proporcional solo en jornada parcial de hasta 30 horas (art. 40 bis), como el motor de
  * liquidaciones. Se avisa también cuando el mínimo de uno de los dos meses siguientes ya está cargado y sube.
+ * Licencias médicas de la ficha (js/pyme_ausencias.js): plazo de 3 días hábiles para tramitarlas (art. 13 DS 3/1984) mientras corre.
  * Ley Karin (art. 211-A, Ley 21.643): un aviso agrupado con quienes no tienen anotada la entrega del protocolo de prevención.
  * Reajuste por IPC pactado en el contrato (ficha: reajusteIPC 'semestral' | 'anual' y reajusteMes 1-12): aviso en el mes que
  * corresponde, sin calcular el IPC (lo publica el INE).
@@ -19,6 +20,7 @@
 
     var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     var ORDEN = { urgente: 0, aviso: 1, info: 2 };
+    var AUS = typeof module !== 'undefined' && module.exports ? require('./pyme_ausencias.js') : root.CLPymeAusencias;
 
     function aMs(iso) { var a = iso.split('-'); return Date.UTC(+a[0], +a[1] - 1, +a[2]); }
     function dias(desde, hasta) { return Math.round((aMs(hasta) - aMs(desde)) / 86400000); }
@@ -117,6 +119,16 @@
                     }
                 }
             }
+            // Licencia recién registrada: plazo para tramitarla
+            ((t.ausencias) || []).forEach(function (a) {
+                if (a.tipo !== 'licencia' || !AUS || a.desde > hoy) return;
+                var plazo = AUS.plazoTramite(a, F);
+                if (!plazo || hoy > plazo) return;
+                var resta = dias(hoy, plazo);
+                agregar('licencia-' + t.id + '-' + a.desde, resta <= 1 ? 'urgente' : 'aviso', t.nombre + ': tramita su licencia médica',
+                    'Si la recibiste el ' + fechaLarga(a.desde) + ', el plazo para completarla y enviarla en el portal de licencias vence el ' + fechaLarga(plazo) + (resta === 0 ? ' (hoy)' : '') +
+                    ' (3 días hábiles, art. 13 del DS 3 de 1984). Fuera de plazo, el subsidio lo pagas tú (art. 56).', { tipo: 'trabajador', id: t.id });
+            });
             if (tocaReajuste(t, periodo)) {
                 agregar('reajuste-' + t.id, 'aviso', t.nombre + ': reajuste por IPC pactado',
                     'Su contrato tiene un reajuste ' + (t.reajusteIPC === 'semestral' ? 'semestral' : 'anual') + ' según el IPC que corresponde este mes. Revisa la variación del IPC de los últimos ' +
