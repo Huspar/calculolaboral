@@ -1,0 +1,437 @@
+/**
+ * Validacion de lo que el cliente envia al Asistente Pyme (empresa y trabajadores).
+ *
+ * Solo se aceptan los campos de la lista (lo demas se descarta: no se guarda basura ni campos inesperados) y cada uno se
+ * normaliza: textos recortados y con largo maximo, RUT con digito verificador y formato estandar, fechas AAAA-MM-DD reales,
+ * numeros enteros dentro de un rango. Devuelve { ok: true, valor } o { ok: false, errores: { campo: mensaje } }.
+ */
+const crypto = require('crypto');
+const Rut = require('../../js/rut_cl');
+const P = require('../../js/liquidacion_parametros');
+const F = require('../../js/feriados_cl');
+const VAC = require('../../js/pyme_vacaciones');
+
+const AFPS = Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp);
+const MAX_LOGO = 150000; // caracteres del data URL (~110 KB de imagen)
+const LOGO_FORMATO = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/;
+
+function esFechaIso(s) {
+    if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    const d = new Date(s + 'T00:00:00Z');
+    return !isNaN(d) && d.toISOString().slice(0, 10) === s && s >= '1900-01-01' && s <= '2100-12-31';
+}
+
+// Cada campo: tipo y reglas. 'req' obliga a que venga con valor.
+const CAMPOS_EMPRESA = {
+    razonSocial: { t: 'texto', max: 100, req: true },
+    rut: { t: 'rut', req: true },
+    giro: { t: 'texto', max: 100 },
+    representante: { t: 'texto', max: 80 },
+    rutRepresentante: { t: 'rut' },
+    direccion: { t: 'texto', max: 120 },
+    comuna: { t: 'texto', max: 60 },
+    ciudad: { t: 'texto', max: 60 },
+    // Cotización total de la mutual o el ISL en % (0,90 básica + 0,03 SANNA + adicional de la empresa)
+    tasaMutual: { t: 'decimal', min: 0.93, max: 8, def: 0.93 },
+    logo: { t: 'logo' }
+};
+
+const CAMPOS_TRABAJADOR = {
+    nombre: { t: 'texto', max: 80, req: true },
+    rut: { t: 'rut', req: true },
+    nacionalidad: { t: 'texto', max: 40 },
+    fechaNacimiento: { t: 'fecha' },
+    domicilio: { t: 'texto', max: 120 },
+    comuna: { t: 'texto', max: 60 },
+    cargo: { t: 'texto', max: 60 },
+    fechaIngreso: { t: 'fecha' },
+    contrato: { t: 'enum', valores: ['indefinido', 'plazo_fijo', 'obra'], def: 'indefinido' },
+    fechaTerminoPlazo: { t: 'fecha' },
+    renovaciones: { t: 'entero', min: 0, max: 5, def: 0 },
+    jornadaHoras: { t: 'entero', min: 1, max: 45, def: 42 },
+    distribucion: { t: 'enum', valores: ['5', '6'], def: '5' },
+    sueldoBase: { t: 'entero', min: 0, max: 50000000, def: 0 },
+    colacion: { t: 'entero', min: 0, max: 5000000, def: 0 },
+    movilizacion: { t: 'entero', min: 0, max: 5000000, def: 0 },
+    gratificacion: { t: 'enum', valores: ['legal', 'ninguna', 'pactada'], def: 'legal' },
+    afp: { t: 'enum', valores: AFPS, def: 'Modelo' },
+    salud: { t: 'enum', valores: ['fonasa', 'isapre'], def: 'fonasa' },
+    isapreNombre: { t: 'texto', max: 40 },
+    isaprePlanUF: { t: 'decimal', min: 0, max: 99.99, def: 0 },
+    zonaExtrema: { t: 'bool', def: false },
+    aniosOtrosEmpleadores: { t: 'entero', min: 0, max: 10, def: 0 },
+    // Anticipo que se paga todos los meses (quincena): se propone en cada liquidación nueva
+    anticipoMensual: { t: 'entero', min: 0, max: 50000000, def: 0 },
+    // Reajuste por IPC pactado en el contrato: el asistente avisa en el mes que corresponde
+    reajusteIPC: { t: 'enum', valores: ['no', 'semestral', 'anual'], def: 'no' },
+    reajusteMes: { t: 'entero', min: 1, max: 12, def: 1 },
+    // Ley Karin (art. 211-A): fecha en que se dio a conocer el protocolo de prevención y si hay constancia firmada
+    karinEntrega: { t: 'fecha' },
+    karinConstancia: { t: 'bool', def: false },
+    activo: { t: 'bool', def: true }
+};
+
+function vacio(v) { return v === undefined || v === null || (typeof v === 'string' && v.trim() === ''); }
+
+function normalizar(nombre, regla, v, errores) {
+    if (vacio(v)) {
+        if (regla.req) { errores[nombre] = 'Este dato es obligatorio.'; return undefined; }
+        return regla.def !== undefined ? regla.def : (regla.t === 'bool' ? false : '');
+    }
+    switch (regla.t) {
+        case 'texto': {
+            if (typeof v !== 'string') { errores[nombre] = 'Debe ser texto.'; return undefined; }
+            const s = v.replace(/\s+/g, ' ').trim();
+            if (s.length > regla.max) { errores[nombre] = `Máximo ${regla.max} caracteres.`; return undefined; }
+            return s;
+        }
+        case 'rut':
+            if (typeof v !== 'string' || !Rut.valido(v)) { errores[nombre] = 'El RUT no es válido.'; return undefined; }
+            return Rut.formatear(v);
+        case 'fecha':
+            if (!esFechaIso(v)) { errores[nombre] = 'La fecha no es válida.'; return undefined; }
+            return v;
+        case 'enum':
+            if (regla.valores.indexOf(v) < 0) { errores[nombre] = 'Opción no válida.'; return undefined; }
+            return v;
+        case 'entero': {
+            const n = typeof v === 'number' ? v : (/^-?\d+$/.test(String(v).trim()) ? Number(v) : NaN);
+            if (!Number.isInteger(n) || n < regla.min || n > regla.max) { errores[nombre] = `Debe ser un número entero entre ${regla.min} y ${regla.max}.`; return undefined; }
+            return n;
+        }
+        case 'decimal': {
+            const n = typeof v === 'number' ? v : Number(String(v).replace(',', '.'));
+            if (!isFinite(n) || n < regla.min || n > regla.max) { errores[nombre] = `Debe ser un número entre ${regla.min} y ${regla.max}.`; return undefined; }
+            return Math.round(n * 100) / 100;
+        }
+        case 'bool':
+            if (typeof v !== 'boolean') { errores[nombre] = 'Debe ser verdadero o falso.'; return undefined; }
+            return v;
+        case 'logo':
+            if (typeof v !== 'string' || v.length > MAX_LOGO || !LOGO_FORMATO.test(v)) { errores[nombre] = 'El logo debe ser una imagen PNG, JPG o WebP de hasta 100 KB.'; return undefined; }
+            return v;
+        default:
+            errores[nombre] = 'Campo no soportado.';
+            return undefined;
+    }
+}
+
+function validar(campos, entrada) {
+    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos no tienen el formato esperado.' } };
+    const errores = {}, valor = {};
+    Object.keys(campos).forEach(function (k) {
+        const r = normalizar(k, campos[k], entrada[k], errores);
+        if (r !== undefined) valor[k] = r;
+    });
+    return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor };
+}
+
+function validarEmpresa(entrada) { return validar(CAMPOS_EMPRESA, entrada); }
+
+// ---------- préstamos con cuotas (van en la ficha del trabajador) ----------
+const MAX_PRESTAMOS = 12, MAX_CUOTAS = 48, MAX_PAUSAS = 24;
+const ID_PRESTAMO = /^[a-z0-9]{6,20}$/;
+const MENSAJES_PRESTAMO = {
+    concepto: 'El concepto puede tener hasta 60 caracteres.',
+    fecha: 'Indica la fecha en que entregaste el préstamo.',
+    monto: 'El monto debe estar entre $1.000 y $50.000.000.',
+    cuotas: `Las cuotas deben ser entre 1 y ${MAX_CUOTAS}.`,
+    desde: 'Indica el mes de la primera cuota.',
+    pausas: 'Los meses postergados no son válidos.'
+};
+
+// Devuelve la lista normalizada o undefined (con errores.prestamos). Los préstamos nuevos (sin id) reciben uno.
+function validarPrestamos(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_PRESTAMOS) { errores.prestamos = `Puedes registrar hasta ${MAX_PRESTAMOS} préstamos por trabajador. Elimina los que ya terminaron.`; return undefined; }
+    const salida = [], usados = {};
+    for (const it of v) {
+        if (!it || typeof it !== 'object' || Array.isArray(it)) { errores.prestamos = 'Los préstamos no tienen el formato esperado.'; return undefined; }
+        const e = {};
+        let id = typeof it.id === 'string' && ID_PRESTAMO.test(it.id) ? it.id : '';
+        while (!id || usados[id]) id = crypto.randomBytes(6).toString('hex');
+        usados[id] = true;
+        const concepto = normalizar('concepto', { t: 'texto', max: 60, def: 'Préstamo' }, it.concepto, e) || 'Préstamo';
+        const fecha = normalizar('fecha', { t: 'fecha', req: true }, it.fecha, e);
+        const monto = normalizar('monto', { t: 'entero', min: 1000, max: MONTO_MAX, req: true }, it.monto, e);
+        const cuotas = normalizar('cuotas', { t: 'entero', min: 1, max: MAX_CUOTAS, req: true }, it.cuotas, e);
+        const desde = validarPeriodo(it.desde) ? it.desde : (e.desde = true, '');
+        let pausas = [];
+        if (!vacio(it.pausas)) {
+            if (!Array.isArray(it.pausas) || it.pausas.length > MAX_PAUSAS || !it.pausas.every(validarPeriodo)) e.pausas = true;
+            else pausas = Array.from(new Set(it.pausas)).filter(p => !desde || p >= desde).sort();
+        }
+        const primero = Object.keys(MENSAJES_PRESTAMO).find(k => e[k]);
+        if (primero) { errores.prestamos = MENSAJES_PRESTAMO[primero]; return undefined; }
+        if (desde < fecha.slice(0, 7)) { errores.prestamos = 'La primera cuota no puede ser antes del mes en que entregaste el préstamo.'; return undefined; }
+        salida.push({ id, concepto, fecha, monto, cuotas, desde, pausas });
+    }
+    return salida;
+}
+
+// ---------- bonos y asignaciones fijas de cada mes (van en la ficha) ----------
+// Imponibles con el nombre que ponga el empleador; no imponibles solo las asignaciones del art. 41 inc. 2 que no son
+// remuneración: pérdida de caja y desgaste de herramientas (colación y movilización tienen sus propios campos).
+const MAX_BONOS_FIJOS = 8;
+const BONOS_NO_IMPONIBLES = { perdida_caja: 'Asignación de pérdida de caja', desgaste_herramientas: 'Desgaste de herramientas' };
+function validarBonosFijos(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_BONOS_FIJOS) { errores.bonosFijos = `Puedes registrar hasta ${MAX_BONOS_FIJOS} bonos o asignaciones fijas.`; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const tipo = normalizar('tipo', { t: 'enum', valores: ['imponible'].concat(Object.keys(BONOS_NO_IMPONIBLES)), def: 'imponible' }, it && it.tipo, e);
+        const monto = normalizar('monto', { t: 'entero', min: 1, max: MONTO_MAX, req: true }, it && it.monto, e);
+        let nombre = tipo === 'imponible' ? normalizar('nombre', { t: 'texto', max: 60, req: true }, it && it.nombre, e) : BONOS_NO_IMPONIBLES[tipo];
+        if (e.tipo) { errores.bonosFijos = 'El tipo de un bono no es válido.'; return undefined; }
+        if (e.nombre) { errores.bonosFijos = 'Ponle nombre a cada bono imponible (hasta 60 caracteres).'; return undefined; }
+        if (e.monto) { errores.bonosFijos = 'Indica el monto de cada bono o asignación (hasta $50.000.000).'; return undefined; }
+        salida.push({ tipo, nombre, monto });
+    }
+    return salida;
+}
+
+function validarTrabajador(entrada) {
+    const r = validar(CAMPOS_TRABAJADOR, entrada);
+    if (!r.ok) return r;
+    const v = r.valor, errores = {};
+    // Sin "prestamos" en la entrada se conservan los guardados (lo resuelve datos.js); con la lista, se valida y reemplaza
+    if (entrada.prestamos !== undefined) {
+        const p = validarPrestamos(entrada.prestamos, errores);
+        if (p !== undefined) v.prestamos = p;
+    }
+    // Lo mismo con los bonos fijos y las licencias y permisos
+    if (entrada.ausencias !== undefined) {
+        const a = validarAusencias(entrada.ausencias, errores);
+        if (a !== undefined) v.ausencias = a;
+    }
+    if (entrada.bonosFijos !== undefined) {
+        const b = validarBonosFijos(entrada.bonosFijos, errores);
+        if (b !== undefined) v.bonosFijos = b;
+    }
+    if (v.contrato === 'plazo_fijo') {
+        if (!v.fechaTerminoPlazo) errores.fechaTerminoPlazo = 'Indica la fecha en que vence el contrato a plazo fijo.';
+        else if (v.fechaIngreso && v.fechaTerminoPlazo <= v.fechaIngreso) errores.fechaTerminoPlazo = 'Debe ser posterior a la fecha de ingreso.';
+    } else {
+        v.fechaTerminoPlazo = '';
+        v.renovaciones = 0;
+    }
+    if (v.salud === 'fonasa') { v.isapreNombre = ''; v.isaprePlanUF = 0; }
+    if (v.fechaNacimiento && v.fechaIngreso && v.fechaIngreso < v.fechaNacimiento) errores.fechaIngreso = 'No puede ser anterior a la fecha de nacimiento.';
+    return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor: v };
+}
+
+// ---------- meses de liquidacion ----------
+// Lo que cambia de un mes a otro (el "mes" del generador de liquidaciones). El sueldo base y la AFP vienen de la ficha.
+const PERIODO_FORMATO = /^\d{4}-(0[1-9]|1[0-2])$/;
+const PERIODO_MIN = '2020-01', PERIODO_MAX = '2100-12';
+const MAX_LISTA = 8;
+const MONTO_MAX = 50000000;
+
+const CAMPOS_MES = {
+    diasTrabajados: { t: 'entero', min: 0, max: 30, def: 30 },
+    diasLicencia: { t: 'entero', min: 0, max: 30, def: 0 },
+    horasExtra: { t: 'decimal', min: 0, max: 300, def: 0 },
+    gratificacion: { t: 'enum', valores: ['legal', 'manual', 'ninguna'], def: 'legal' },
+    gratificacionMonto: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    comisiones: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    tratos: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    // Semana corrida (art. 45): se calcula en el navegador con js/semana_corrida.js y se guarda el monto usado
+    scModo: { t: 'enum', valores: ['calcular', 'no'], def: 'calcular' },
+    semanaCorrida: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    semanaCorridaDetalle: { t: 'texto', max: 80 },
+    viaticos: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    asignacionFamiliar: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    apvMonto: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    apvRegimen: { t: 'enum', valores: ['A', 'B'], def: 'B' },
+    anticipo: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    creditoCCAF: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    cuotaSindical: { t: 'entero', min: 0, max: MONTO_MAX, def: 0 },
+    emitida: { t: 'fecha' }
+};
+const LISTAS_MES = ['bonosImponibles', 'otrosNoImponibles', 'otrosDescuentos'];
+const MAX_CUOTAS_MES = 12;
+const DESGLOSE_MES = ['afp', 'salud', 'afcTrabajador', 'impuesto', 'apv', 'creditoCCAF', 'empAfp', 'empSis', 'empSeguroSocial', 'empAfc', 'empMutual', 'costoEmpleador'];
+
+function listaMes(nombre, v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_LISTA) { errores[nombre] = `Máximo ${MAX_LISTA} conceptos.`; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const n = normalizar('nombre', { t: 'texto', max: 60 }, it && it.nombre, e);
+        const m = normalizar('monto', { t: 'entero', min: 0, max: MONTO_MAX, def: 0 }, it && it.monto, e);
+        if (e.nombre || e.monto) { errores[nombre] = 'Revisa el nombre (hasta 60 caracteres) y el monto de cada concepto.'; return undefined; }
+        if (n && m > 0) salida.push({ nombre: n, monto: m });
+    }
+    return salida;
+}
+
+// Cuotas de préstamos descontadas en el mes (copia de lo que había en la ficha al guardar: el mes emitido no cambia si después se edita el préstamo)
+function cuotasMes(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_CUOTAS_MES) { errores.cuotasPrestamo = 'Las cuotas de préstamos no tienen el formato esperado.'; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const id = it && typeof it.id === 'string' && ID_PRESTAMO.test(it.id) ? it.id : '';
+        const nombre = normalizar('nombre', { t: 'texto', max: 60, def: 'Préstamo' }, it && it.nombre, e) || 'Préstamo';
+        const monto = normalizar('monto', { t: 'entero', min: 0, max: MONTO_MAX, def: 0 }, it && it.monto, e);
+        const numero = normalizar('numero', { t: 'entero', min: 1, max: MAX_CUOTAS, req: true }, it && it.numero, e);
+        const de = normalizar('de', { t: 'entero', min: 1, max: MAX_CUOTAS, req: true }, it && it.de, e);
+        if (!id || Object.keys(e).length || numero > de) { errores.cuotasPrestamo = 'Las cuotas de préstamos no tienen el formato esperado.'; return undefined; }
+        if (monto > 0) salida.push({ id, nombre, monto, numero, de });
+    }
+    return salida;
+}
+
+// Licencias médicas y permisos del mes (fechas): no cuentan en el promedio de la semana corrida. Sin diagnóstico ni otro dato de salud.
+const MAX_AUSENCIAS_MES = 10;
+const TIPOS_AUSENCIA = ['licencia', 'permiso', 'sin_goce'];
+
+// Licencias y permisos registrados en la ficha (cada mes toma los suyos). Solo tipo y fechas.
+const MAX_AUSENCIAS = 60, MAX_DIAS_AUSENCIA = 366;
+function validarAusencias(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_AUSENCIAS) { errores.ausencias = `Puedes registrar hasta ${MAX_AUSENCIAS} licencias o permisos por trabajador. Elimina los más antiguos.`; return undefined; }
+    const salida = [], usados = {};
+    for (const it of v) {
+        if (!it || typeof it !== 'object' || Array.isArray(it)) { errores.ausencias = 'Las licencias y permisos no tienen el formato esperado.'; return undefined; }
+        const e = {};
+        let id = typeof it.id === 'string' && ID_PRESTAMO.test(it.id) ? it.id : '';
+        while (!id || usados[id]) id = crypto.randomBytes(6).toString('hex');
+        usados[id] = true;
+        const tipo = normalizar('tipo', { t: 'enum', valores: TIPOS_AUSENCIA, def: 'licencia' }, it.tipo, e);
+        const desde = normalizar('desde', { t: 'fecha', req: true }, it.desde, e);
+        const hasta = normalizar('hasta', { t: 'fecha', req: true }, it.hasta, e);
+        if (e.tipo) { errores.ausencias = 'El tipo de ausencia no es válido.'; return undefined; }
+        if (e.desde || e.hasta) { errores.ausencias = 'Indica las fechas de inicio y término.'; return undefined; }
+        if (hasta < desde) { errores.ausencias = 'La fecha de término no puede ser anterior a la de inicio.'; return undefined; }
+        if ((Date.parse(hasta) - Date.parse(desde)) / 86400000 + 1 > MAX_DIAS_AUSENCIA) { errores.ausencias = 'Registra cada licencia o permiso por separado (hasta un año cada uno).'; return undefined; }
+        salida.push({ id, tipo, desde, hasta });
+    }
+    salida.sort((a, b) => a.desde < b.desde ? -1 : a.desde > b.desde ? 1 : 0);
+    return salida;
+}
+function ausenciasMes(v, errores) {
+    if (vacio(v)) return [];
+    if (!Array.isArray(v) || v.length > MAX_AUSENCIAS_MES) { errores.ausencias = `Máximo ${MAX_AUSENCIAS_MES} licencias o permisos en el mes.`; return undefined; }
+    const salida = [];
+    for (const it of v) {
+        const e = {};
+        const tipo = normalizar('tipo', { t: 'enum', valores: TIPOS_AUSENCIA, def: 'licencia' }, it && it.tipo, e);
+        const desde = normalizar('desde', { t: 'fecha', req: true }, it && it.desde, e);
+        const hasta = normalizar('hasta', { t: 'fecha', req: true }, it && it.hasta, e);
+        if (Object.keys(e).length || hasta < desde) { errores.ausencias = 'Revisa las fechas de cada licencia o permiso (desde y hasta).'; return undefined; }
+        salida.push({ tipo, desde, hasta });
+    }
+    return salida;
+}
+
+// Resultado calculado en el navegador al guardar: sirve para el certificado de remuneraciones y para mostrar el mes sin recalcular.
+function calculoMes(v, errores) {
+    if (vacio(v)) return null;
+    if (typeof v !== 'object' || Array.isArray(v)) { errores.calculo = 'El resultado del cálculo no tiene el formato esperado.'; return undefined; }
+    const e = {}, c = {};
+    ['liquido', 'totalHaberes', 'totalImponible', 'totalDescuentos'].forEach(function (k) {
+        c[k] = normalizar(k, { t: 'entero', min: 0, max: 200000000, def: 0 }, v[k], e);
+    });
+    c.uf = normalizar('uf', { t: 'decimal', min: 30000, max: 70000, req: true }, v.uf, e);
+    c.utm = normalizar('utm', { t: 'entero', min: 50000, max: 150000, req: true }, v.utm, e);
+    // Base del impuesto único del mes (resumen anual; desde la v1.5.0 de pyme_liquidaciones)
+    if (v.baseTributable !== undefined && v.baseTributable !== null) c.baseTributable = normalizar('baseTributable', { t: 'entero', min: 0, max: 200000000, def: 0 }, v.baseTributable, e);
+    // Bases para el finiquito: horas extra, gratificación y colación + movilización del mes (desde la v1.3.0 de pyme_liquidaciones)
+    if (v.conBases === true) {
+        c.conBases = true;
+        ['horasExtra', 'gratificacion', 'colMov'].forEach(function (k) { c[k] = normalizar(k, { t: 'entero', min: 0, max: 200000000, def: 0 }, v[k], e); });
+    }
+    // Desglose para el resumen de Previred y el costo del empleador (desde la v1.1.0 de pyme_liquidaciones)
+    if (v.conDesglose === true) {
+        c.conDesglose = true;
+        DESGLOSE_MES.forEach(function (k) { c[k] = normalizar(k, { t: 'entero', min: 0, max: 200000000, def: 0 }, v[k], e); });
+        c.afpNombre = normalizar('afpNombre', { t: 'enum', valores: AFPS, def: '' }, v.afpNombre, e);
+        c.saludInst = normalizar('saludInst', { t: 'enum', valores: ['fonasa', 'isapre'], def: 'fonasa' }, v.saludInst, e);
+        c.isapreNombre = normalizar('isapreNombre', { t: 'texto', max: 40 }, v.isapreNombre, e);
+    }
+    if (Object.keys(e).length) { errores.calculo = 'El resultado del cálculo no tiene el formato esperado.'; return undefined; }
+    return c;
+}
+
+function validarPeriodo(p) { return typeof p === 'string' && PERIODO_FORMATO.test(p) && p >= PERIODO_MIN && p <= PERIODO_MAX; }
+
+function validarMes(entrada) {
+    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos no tienen el formato esperado.' } };
+    const r = validar(CAMPOS_MES, entrada);
+    const errores = r.ok ? {} : Object.assign({}, r.errores);
+    const valor = r.ok ? r.valor : {};
+    LISTAS_MES.forEach(function (k) {
+        const l = listaMes(k, entrada[k], errores);
+        if (l !== undefined) valor[k] = l;
+    });
+    const cuotas = cuotasMes(entrada.cuotasPrestamo, errores);
+    if (cuotas !== undefined) valor.cuotasPrestamo = cuotas;
+    const aus = ausenciasMes(entrada.ausencias, errores);
+    if (aus !== undefined) valor.ausencias = aus;
+    const c = calculoMes(entrada.calculo, errores);
+    if (c !== undefined) valor.calculo = c;
+    if (valor.apvMonto === 0) valor.apvRegimen = 'B';
+    return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor };
+}
+
+// Boletas de honorarios del mes: el nombre y el RUT del prestador van cifrados; la retención se calcula con js/pyme_honorarios.js
+const MAX_BOLETAS_MES = 60;
+function validarHonorarios(entrada, periodo) {
+    if (vacio(entrada)) return { ok: true, valor: [] };
+    if (!Array.isArray(entrada) || entrada.length > MAX_BOLETAS_MES) return { ok: false, errores: { boletas: `Puedes registrar hasta ${MAX_BOLETAS_MES} boletas en un mes.` } };
+    const salida = [];
+    for (let i = 0; i < entrada.length; i++) {
+        const it = entrada[i], e = {}, n = i + 1;
+        if (!it || typeof it !== 'object' || Array.isArray(it)) return { ok: false, errores: { boletas: 'Las boletas no tienen el formato esperado.' } };
+        const fecha = normalizar('fecha', { t: 'fecha', req: true }, it.fecha, e);
+        const nombre = normalizar('nombre', { t: 'texto', max: 80, req: true }, it.nombre, e);
+        const rut = normalizar('rut', { t: 'rut', req: true }, it.rut, e);
+        const numero = normalizar('numero', { t: 'entero', min: 0, max: 9999999999, def: 0 }, it.numero, e);
+        const bruto = normalizar('bruto', { t: 'entero', min: 1, max: MONTO_MAX, req: true }, it.bruto, e);
+        const retiene = normalizar('retiene', { t: 'enum', valores: ['empresa', 'prestador'], def: 'empresa' }, it.retiene, e);
+        if (e.fecha || (fecha && fecha.slice(0, 7) !== periodo)) return { ok: false, errores: { boletas: `Boleta ${n}: la fecha debe ser de este mes.` } };
+        if (e.nombre) return { ok: false, errores: { boletas: `Boleta ${n}: indica el nombre de quien la emitió (hasta 80 caracteres).` } };
+        if (e.rut) return { ok: false, errores: { boletas: `Boleta ${n}: el RUT no es válido.` } };
+        if (e.bruto) return { ok: false, errores: { boletas: `Boleta ${n}: indica el monto bruto (hasta $50.000.000).` } };
+        if (Object.keys(e).length) return { ok: false, errores: { boletas: `Boleta ${n}: revisa los datos.` } };
+        salida.push({ fecha, nombre, rut, numero, bruto, retiene });
+    }
+    salida.sort((a, b) => a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0);
+    return { ok: true, valor: salida };
+}
+
+// Vacaciones: un período (desde, hasta; los días hábiles los cuenta el servidor) o un ajuste con los días tomados antes de usar el asistente
+function textoNota(v, errores) {
+    if (v === undefined || v === null || v === '') return '';
+    if (typeof v !== 'string') { errores.nota = 'La nota debe ser texto.'; return ''; }
+    const t = v.replace(/\s+/g, ' ').trim();
+    if (t.length > 120) errores.nota = 'La nota puede tener hasta 120 caracteres.';
+    return t.slice(0, 120);
+}
+function validarVacacion(entrada, hoy) {
+    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos no tienen el formato esperado.' } };
+    const errores = {};
+    const nota = textoNota(entrada.nota, errores);
+    if (entrada.tipo === 'ajuste') {
+        const dias = Number(entrada.dias);
+        if (!Number.isInteger(dias) || dias < 1 || dias > 200) errores.dias = 'Indica entre 1 y 200 días hábiles.';
+        return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor: { tipo: 'ajuste', fecha: hoy, dias, nota } };
+    }
+    if (entrada.tipo !== 'periodo') return { ok: false, errores: { tipo: 'Tipo de registro no válido.' } };
+    if (!esFechaIso(entrada.desde)) errores.desde = 'Indica el primer día de vacaciones.';
+    if (!esFechaIso(entrada.hasta)) errores.hasta = 'Indica el último día de vacaciones.';
+    if (Object.keys(errores).length) return { ok: false, errores };
+    let r;
+    try { r = VAC.diasHabiles(entrada.desde, entrada.hasta, F); } catch (e) {
+        const msg = e instanceof F.ErrorFeriados ? 'Por ahora solo podemos contar días hábiles dentro de los años con feriados verificados (' + F.COBERTURA[0] + ' y ' + F.COBERTURA[F.COBERTURA.length - 1] + ').' : e.message;
+        return { ok: false, errores: { hasta: msg } };
+    }
+    if (r.dias < 1) return { ok: false, errores: { hasta: 'En ese período no hay días hábiles de feriado.' } };
+    return { ok: true, valor: { tipo: 'periodo', desde: entrada.desde, hasta: entrada.hasta, dias: r.dias, nota } };
+}
+
+module.exports = { validarMes, validarHonorarios, validarAusencias, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };

@@ -99,6 +99,25 @@ const PRODUCTS = {
         unlock: true
     }
 };
+// Pase Pyme: acceso al Asistente Laboral Pyme por `dias` desde la confirmacion del pago. No es descarga ni desbloqueo de generador:
+// el pago se asocia a una cuenta (optional.cuenta, puesto por el servidor) y flow-confirm registra la vigencia en la base.
+// El pase de 12 meses incluye el finiquito; los dos incluyen el contrato (ver api/_pyme/pase.js).
+PRODUCTS.pyme3 = {
+    code: 'P3',
+    amount: 19990,
+    subject: 'Pase Pyme 3 meses',
+    page: '/app',
+    pase: true,
+    dias: 92
+};
+PRODUCTS.pyme12 = {
+    code: 'P12',
+    amount: 59990,
+    subject: 'Pase Pyme 12 meses',
+    page: '/app',
+    pase: true,
+    dias: 366
+};
 const UNLOCK_HOURS = 48;
 
 function productByCode(code) {
@@ -190,6 +209,13 @@ function downloadQuery(product, order) {
     return new URLSearchParams({ p: product, o: order, e: String(exp), sig: downloadSignature(product, order, exp) }).toString();
 }
 
+/** Desbloqueo firmado de un generador para quien tiene pase vigente: { p, o, e, sig, expiresAt }. Lo valida /api/unlock como el de un pago. */
+function signUnlock(product, order) {
+    if (!PRODUCTS[product] || !PRODUCTS[product].unlock) throw new Error('producto sin desbloqueo');
+    const q = new URLSearchParams(downloadQuery(product, order));
+    return { p: product, o: order, e: q.get('e'), sig: q.get('sig'), expiresAt: Number(q.get('e')) * 1000 };
+}
+
 function verifyDownload({ p, o, e, sig }) {
     if (!PRODUCTS[p] || !o || !e || typeof sig !== 'string') return false;
     if (Number(e) < Math.floor(Date.now() / 1000)) return false;
@@ -218,6 +244,28 @@ async function sendEmail(payload, idempotencyKey) {
         body: JSON.stringify({ from: FROM, ...payload })
     });
     if (!resp.ok) throw new Error(`Resend ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+}
+
+/** Pase Pyme: comprobante con la vigencia y el enlace al asistente. */
+async function deliverPase(pay, vence) {
+    const p = PRODUCTS[pay.product];
+    const hasta = new Date(vence).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Santiago' });
+    await sendEmail({
+        to: [pay.email],
+        reply_to: 'contacto@calculolaboral.cl',
+        subject: `Pago confirmado: ${p.subject}`,
+        html: `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
+<div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+  <p style="margin:0 0 20px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:#00382E">Laboral</span></p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Confirmamos tu pago de <strong>$${p.amount.toLocaleString('es-CL')}</strong> por <strong>${escapeHtml(p.subject)}</strong> (orden Flow ${escapeHtml(pay.order)}).</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Tu pase está vigente hasta el <strong>${escapeHtml(hasta)}</strong>. No se renueva solo: si quieres seguir, puedes comprar otro y se suma a la vigencia que te quede.</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde hoy, respondiendo este correo. No necesitas explicar el motivo.</p>
+  <p style="margin:0 0 20px"><a href="${SITE_URL}/app" style="display:inline-block;background:#00382E;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px">Ir al asistente</a></p>
+  <p style="margin:0 0 16px;font-size:12px;color:#475569">Los documentos son modelos de referencia basados en la normativa vigente; no constituyen asesoría legal.</p>
+  <p style="margin:0;font-size:13px;color:#64748b">¿Dudas? Responde este correo.</p>
+</div></body></html>`
+    }, `pase-${pay.order}`);
 }
 
 /** Generadores: comprobante con el enlace para volver a desbloquear el documento. */
@@ -304,6 +352,6 @@ function readToken(req) {
 }
 
 module.exports = {
-    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliver, notifyOwner, sendEmail,
-    downloadQuery, verifyDownload, readToken, escapeHtml
+    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliver, deliverPase, notifyOwner, sendEmail,
+    downloadQuery, signUnlock, verifyDownload, readToken, escapeHtml
 };

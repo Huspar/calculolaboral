@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · valores del mes para el generador de liquidaciones (v1.0.0)
+ * CalculoLaboral · valores del mes para el generador de liquidaciones (v1.3.0)
  *
  * obtener(periodo "YYYY-MM") → Promise<{ ok, mes, fuentes, avisos, mensaje }>
  *   mes: { uf, utm, imm, topeAfpUF, topeAfcUF, afp }  (lo que espera CLLiquidacionEngine.calcular)
@@ -14,6 +14,8 @@
  * - Un mes ya cerrado no cambia: el resultado se guarda en el navegador y se reutiliza, así la misma liquidación
  *   da siempre los mismos montos.
  * - Valores de ingreso mínimo, topes y AFP: vigencias de js/liquidacion_parametros.js.
+ * - Con crear({ extender: true }) (Asistente Pyme) también se calculan los meses posteriores a ULTIMO_MES, con la
+ *   vigencia estimada: el resultado trae estimado: true y un aviso que lo dice.
  */
 (function (root) {
     'use strict';
@@ -42,6 +44,7 @@
         var P = opciones.parametros;
         var pedir = opciones.fetch;
         var almacen = opciones.storage || null;
+        var extender = !!opciones.extender;
         var enCurso = {};
 
         function leerCache(periodo) {
@@ -110,22 +113,29 @@
         }
 
         function armar(periodo, uf, utm, vig) {
-            return { uf: uf, utm: utm, imm: vig.imm, topeAfpUF: vig.topeAfpUF, topeAfcUF: vig.topeAfcUF, jornadaMaxima: vig.jornadaMaxima, afp: vig.afp };
+            return { uf: uf, utm: utm, imm: vig.imm, topeAfpUF: vig.topeAfpUF, topeAfcUF: vig.topeAfcUF, jornadaMaxima: vig.jornadaMaxima, afp: vig.afp, empleador: vig.empleador || null };
         }
         // Notas informativas del mes (cambio de jornada, reajuste retroactivo del ingreso mínimo, etc.)
         function notasDe(periodo, vig) {
             return [vig.nota, (P.NOTAS_MES || {})[periodo]].filter(Boolean);
         }
+        function nombreMes(p) { return MESES_ES[+p.slice(5, 7) - 1] + ' de ' + p.slice(0, 4); }
+        // Aviso de los meses con valores estimados (después del último mes cargado)
+        function avisoEstimado(periodo, vig) {
+            return vig.estimada ? ['Los valores de ' + nombreMes(periodo) + ' aún no están cargados en el asistente: el ingreso mínimo, los topes imponibles, las comisiones de las AFP y las tasas del empleador son los de ' + nombreMes(vig.base) + '. La UF y la UTM sí son las del mes. Compáralos con los indicadores previsionales de Previred antes de pagar.'] : [];
+        }
 
         function calcular(periodo) {
-            var vig = P.vigenciaDe(periodo);
-            if (!vig || periodo < P.PRIMER_MES || periodo > P.ULTIMO_MES) {
+            var vig = periodo >= P.PRIMER_MES && periodo <= P.ULTIMO_MES ? P.vigenciaDe(periodo)
+                : extender && P.vigenciaEstimada ? P.vigenciaEstimada(periodo) : null;
+            if (!vig) {
                 return Promise.resolve({ ok: false, mensaje: 'Ese mes todavía no está disponible en el generador.' });
             }
+            var estimado = !!vig.estimada;
             var cache = almacen ? leerCache(periodo) : null;
             var respaldo = P.RESPALDO[periodo] || null;
             if (cache) {
-                return Promise.resolve({ ok: true, mes: armar(periodo, cache.uf, cache.utm, vig), fuentes: cache.fuentes, avisos: cache.avisos || [], notas: notasDe(periodo, vig), vigencia: vig });
+                return Promise.resolve({ ok: true, mes: armar(periodo, cache.uf, cache.utm, vig), fuentes: cache.fuentes, avisos: avisoEstimado(periodo, vig).concat(cache.avisos || []), notas: notasDe(periodo, vig), vigencia: vig, estimado: estimado });
             }
             return Promise.all([pedirUf(periodo), pedirUtm(periodo)]).then(function (r) {
                 var uf = resolver('UF del ' + fechaLarga(periodo), r[0], respaldo && respaldo.uf, function (a, b) { return Math.abs(a - b) < 0.005; }, function (x) { return '$' + x.toLocaleString('es-CL', { minimumFractionDigits: 2 }); });
@@ -140,7 +150,7 @@
                 var fuentes = { uf: uf.fuente, utm: utm.fuente };
                 // Un mes cerrado no cambia: se guarda para repetir los mismos montos. Con respaldo de emergencia no se guarda.
                 if (almacen && !avisos.length) guardarCache(periodo, { uf: uf.valor, utm: utm.valor, fuentes: fuentes, avisos: [], guardado: new Date().toISOString() });
-                return { ok: true, mes: armar(periodo, uf.valor, utm.valor, vig), fuentes: fuentes, avisos: avisos, notas: notasDe(periodo, vig), vigencia: vig };
+                return { ok: true, mes: armar(periodo, uf.valor, utm.valor, vig), fuentes: fuentes, avisos: avisoEstimado(periodo, vig).concat(avisos), notas: notasDe(periodo, vig), vigencia: vig, estimado: estimado };
             });
         }
 
@@ -155,7 +165,7 @@
         return { obtener: obtener, fechaLarga: fechaLarga };
     }
 
-    var api = { crear: crear, fechaLarga: fechaLarga, version: '1.0.0' };
+    var api = { crear: crear, fechaLarga: fechaLarga, version: '1.3.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLLiquidacionValores = api;
 })(typeof window !== 'undefined' ? window : this);

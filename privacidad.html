@@ -1080,6 +1080,9 @@ body { overflow-x: hidden; }
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
                         Esto significa que cuando ingresas tu sueldo base, bonos, gratificaciones legales, fechas de contrato o causales de despido, la información es procesada <strong>exclusivamente en el motor JavaScript local de tu dispositivo</strong> (computador o smartphone). Dichos montos y parámetros matemáticos <strong>jamás viajan a través de internet a nuestros servidores ni quedan guardados en bases de datos externas</strong>. La generación de reportes en PDF o Word se compila en la memoria temporal de tu propio navegador.
                     </p>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mt-3">
+                        <strong>Única excepción:</strong> el <em>Asistente Laboral Pyme</em>, una herramienta opcional con cuenta, guarda en nuestra base de datos los datos de la empresa y de los trabajadores que tú decidas ingresar. Se describe en la <a href="#asistente-pyme" class="text-forest-600 font-semibold underline">sección 10</a>; nada de eso ocurre si no creas una cuenta.
+                    </p>
                 </section>
 
                 <!-- Section 2 -->
@@ -1160,7 +1163,7 @@ body { overflow-x: hidden; }
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="material-icons text-emerald-600 text-base mt-0.5">check_circle</span>
-                            <span><strong>No requerimos cuentas de usuario:</strong> No tienes que crear usuarios, perfiles ni contraseñas para acceder a ninguna de las calculadoras gratuitas.</span>
+                            <span><strong>No requerimos cuentas de usuario:</strong> No tienes que crear usuarios, perfiles ni contraseñas para acceder a ninguna de las calculadoras gratuitas. Solo el Asistente Laboral Pyme usa una cuenta (sin contraseña), y es opcional (<a href="#asistente-pyme" class="text-forest-600 font-semibold underline">sección 10</a>).</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="material-icons text-emerald-600 text-base mt-0.5">check_circle</span>
@@ -1305,10 +1308,69 @@ body { overflow-x: hidden; }
                     </div>
                 </section>
 
-                <!-- Section 10 -->
+                <!-- Section 10: Asistente Laboral Pyme (12-oct-2026). Texto redactado con apoyo de IA, sin revision de abogado -->
+                <section id="asistente-pyme" class="border-t border-slate-100 pt-6 scroll-mt-24">
+                    <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
+                        <span class="material-icons text-forest-500 text-lg">groups</span> 10. Asistente Laboral Pyme: datos que guardamos y cómo los protegemos
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
+                        Si creas una cuenta en el <strong>Asistente Laboral Pyme</strong>, guardamos en nuestra base de datos la información que ingreses. En ese servicio, <strong>la empresa titular de la cuenta es la responsable</strong> de los datos de sus trabajadores y <strong>Cálculo Laboral actúa como encargado de tratamiento</strong>: los trata solo para prestarle el servicio, según sus instrucciones (ver los <a href="terminos#asistente-pyme" class="text-forest-600 font-semibold underline">Términos, sección 12</a>).
+                    </p>
+                    <div class="overflow-x-auto my-4 border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-xs sm:text-sm text-slate-600">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-900 font-semibold">
+                                <tr>
+                                    <th class="p-3">Datos</th>
+                                    <th class="p-3">Para qué</th>
+                                    <th class="p-3">Cómo se guardan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="p-3 font-medium text-slate-800">Correo de la cuenta y fecha de aceptación de los términos</td>
+                                    <td class="p-3">Identificar la cuenta, enviar el enlace de acceso y los avisos del servicio. Los avisos de plazos del mes se envían solo si los activas en «Mi cuenta», y se apagan desde ahí o con el enlace de cada correo.</td>
+                                    <td class="p-3">En la base de datos, sin cifrado de aplicación (se necesita para enviar los enlaces).</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-medium text-slate-800">Datos de la empresa: razón social, RUT, representante, domicilio, giro y logo</td>
+                                    <td class="p-3">Completar los documentos con el membrete y las partes correctas.</td>
+                                    <td class="p-3">Cifrados por la aplicación antes de guardarlos.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-medium text-slate-800">Datos de trabajadores: nombre, RUT, cargo, fecha de ingreso, contrato, jornada, remuneración, bonos, préstamos, AFP, salud, domicilio, vacaciones, datos de cada liquidación, fechas de licencias médicas y permisos (sin diagnóstico ni otro dato de salud) y fecha de entrega del protocolo de la Ley Karin</td>
+                                    <td class="p-3">Generar liquidaciones y documentos laborales con los datos ya incorporados.</td>
+                                    <td class="p-3">Cifrados por la aplicación antes de guardarlos.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-medium text-slate-800">Boletas de honorarios que recibe la empresa: nombre y RUT de quien la emitió, fecha, número y monto</td>
+                                    <td class="p-3">Calcular la retención y el monto para el Formulario 29.</td>
+                                    <td class="p-3">Cifrados por la aplicación antes de guardarlos.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-medium text-slate-800">Registro técnico de accesos</td>
+                                    <td class="p-3">Seguridad y límite de solicitudes (por ejemplo, evitar el envío masivo de enlaces).</td>
+                                    <td class="p-3">Solo huellas irreversibles de la IP, nunca la dirección ni el correo. Se registran: solicitud de acceso, ingreso, cierre de sesión y exportación o eliminación de datos.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm text-slate-600 mb-3">
+                        <li><strong>Dónde y con quién:</strong> la base de datos está en Neon, en la región de São Paulo (Brasil). Además intervienen Vercel (alojamiento y ejecución del sitio) y Resend (envío del enlace de acceso, de los comprobantes y, si los activas, de los avisos del mes, que mencionan a los trabajadores a los que se refieren); los pagos los procesa Flow, que no recibe los datos de tus trabajadores. Algunos de estos proveedores tratan datos fuera de Chile. No vendemos ni cedemos los datos a terceros distintos de estos proveedores, salvo obligación legal.</li>
+                        <li><strong>Seguridad:</strong> los datos de la empresa y de los trabajadores se cifran en nuestra aplicación antes de llegar a la base, con una clave que no está en la base de datos; las sesiones y los enlaces de acceso se guardan solo como huellas, de modo que quien viera la base no puede usarlos. Ninguna medida elimina por completo el riesgo: si tomamos conocimiento de un incidente de seguridad que afecte a tus datos, te avisamos al correo de la cuenta sin dilaciones indebidas.</li>
+                        <li><strong>Por cuánto tiempo:</strong> mientras tu cuenta esté activa. Puedes descargar todos tus datos y eliminar tu cuenta desde el Asistente en cualquier momento; al eliminarla se borran de nuestra base y las copias de respaldo de nuestro proveedor se eliminan al cumplirse su retención de 7 días. Si tu Pase Pyme vence, tu cuenta sigue disponible con las funciones gratuitas y conservamos tus datos mientras la cuenta esté activa; puedes descargarlos o eliminarlos cuando quieras. <!-- Hoy no hay borrado automatico de cuentas sin uso --></li>
+                        <li><strong>Liquidación por enlace:</strong> si el empleador crea un enlace para que un trabajador vea su liquidación, quien tenga ese enlace puede verla hasta que venza (60 días) o el empleador lo anule. Registramos cuándo se abrió y cuántas veces, sin la dirección IP.</li>
+                        <li><strong>Trabajadores:</strong> si eres trabajador y tu empleador usa el Asistente, puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, portabilidad y bloqueo ante tu empleador, que es el responsable de tus datos. Cálculo Laboral ayuda al empleador a atenderlos. Lo mismo vale para quienes emiten boletas de honorarios a una empresa que usa el Asistente.</li>
+                        <li><strong>Sin decisiones automatizadas:</strong> el Asistente calcula con las reglas que ves en pantalla y no toma decisiones sobre las personas ni elabora perfiles.</li>
+                    </ul>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        Para consultas o para ejercer tus derechos como titular de la cuenta, escribe a <a href="mailto:contacto@calculolaboral.cl" class="text-forest-600 font-semibold underline">contacto@calculolaboral.cl</a> con el asunto "Ejercicio Derechos ARCOP - Ley 21.719", o usa las opciones de exportar y eliminar dentro del Asistente.
+                    </p>
+                </section>
+
+                <!-- Section 11 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-forest-500 text-lg">security</span> 10. Seguridad de la información y medidas técnicas
+                        <span class="material-icons text-forest-500 text-lg">security</span> 11. Seguridad de la información y medidas técnicas
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         En cumplimiento del principio de seguridad consagrado en la Ley N° 21.719, Cálculo Laboral implementa medidas técnicas, operativas y organizativas idóneas para prevenir la pérdida, adulteración, acceso no autorizado o divulgación indebida de datos:
@@ -1321,10 +1383,10 @@ body { overflow-x: hidden; }
                     </ul>
                 </section>
 
-                <!-- Section 11 -->
+                <!-- Section 12 -->
                 <section class="border-t border-slate-100 pt-6">
                     <h2 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-forest-500 text-lg">sync_alt</span> 11. Modificaciones a esta Política y Vigencia
+                        <span class="material-icons text-forest-500 text-lg">sync_alt</span> 12. Modificaciones a esta Política y Vigencia
                     </h2>
                     <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
                         Cálculo Laboral se reserva la facultad de actualizar periódicamente este documento para adaptarlo a nuevas funcionalidades del sitio, modificaciones legislativas o directrices emitidas por la Agencia de Protección de Datos Personales (APDP).

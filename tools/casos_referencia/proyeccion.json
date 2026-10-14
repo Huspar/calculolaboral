@@ -1,0 +1,26 @@
+{
+  "modulo": "proyeccion",
+  "descripcion": "Proyección del costo del empleador (Ley 21.735) y valor de la hora extra con 40 horas (Ley 21.561).",
+  "casos": [
+    {
+      "id": "calendario-oficial",
+      "fuente": "Subsecretaría de Previsión Social, presentación «Ley N°21.735 Reforma previsional: nueva cotización del empleador» (sep-2025), lámina «Calendario»: total empleador + SIS 3,5% ago-2026, 4,25% ago-2027, 5,0% ago-2028, 5,7% ago-2029, 6,4% ago-2030, 7,1% ago-2031, 7,8% ago-2032, 8,5% ago-2033.",
+      "comparado": "Iguales a la tabla oficial y a la de la Superintendencia de Pensiones para 2026 (3,5%).",
+      "entrada": { "accion": "tasas", "periodos": ["2026-07", "2026-08", "2027-07", "2027-08", "2028-08", "2029-08", "2030-08", "2031-08", "2032-08", "2033-08", "2040-01"] },
+      "esperado": { "tasas": [null, 0.035, 0.035, 0.0425, 0.05, 0.057, 0.064, 0.071, 0.078, 0.085, 0.085] }
+    },
+    {
+      "id": "costo-imponible-un-millon",
+      "fuente": "Cálculo con el calendario oficial: imponible $1.000.000 bajo el tope; aporte de la ley 3,5% = $35.000 (AFP 0,1% $1.000 + SIS 1,78% $17.800 + seguro social 1,62% $16.200, tasas de oct-2026 en Previred). Con 4,25% → $42.500; con 5% → $50.000. AFC (2,4% = $24.000) y mutual (0,93% = $9.300) no cambian. Costo hoy $1.000.000 + $35.000 + $24.000 + $9.300 = $1.068.300.",
+      "entrada": { "accion": "proyectar", "periodo": "2026-10", "calculo": { "conDesglose": true, "totalHaberes": 1000000, "empAfp": 1000, "empSis": 17800, "empSeguroSocial": 16200, "empAfc": 24000, "empMutual": 9300, "costoEmpleador": 1068300 }, "hitos": ["2027-08", "2028-08"] },
+      "esperado": { "proyecciones": [{ "costo": 1075800, "ley": 42500, "diferencia": 7500 }, { "costo": 1083300, "ley": 50000, "diferencia": 15000 }] }
+    },
+    {
+      "id": "hora-extra-42-y-40",
+      "fuente": "Factores de la DT para la hora extra con sueldo mensual: 42 horas 0,0083333 y 40 horas 0,00875 (1,5 × 28 / (30 × 4 × jornada)). Sueldo $600.000: $5.000 con 42 horas y $5.250 con 40 horas.",
+      "comparado": "Igual a la calculadora de horas extras del sitio (mismo factor).",
+      "entrada": { "accion": "horaExtra", "sueldo": 600000, "jornadas": [42, 40, 44] },
+      "esperado": { "valores": [5000, 5250, 4773] }
+    }
+  ]
+}

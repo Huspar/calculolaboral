@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asistente Laboral Pyme: textos y documentos para revisión legal</title>
+<style>
+:root { --verde: #00382E; --borde: #cbd5e1; --suave: #f1f5f9; --texto: #0f172a; --gris: #475569; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #fff; color: var(--texto); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 32px 24px 64px; }
+h1 { font-size: 26px; line-height: 1.2; margin: 0 0 6px; color: var(--verde); }
+h2 { font-size: 19px; margin: 36px 0 10px; padding-top: 14px; border-top: 2px solid var(--verde); color: var(--verde); }
+h3 { font-size: 16px; margin: 22px 0 6px; }
+p, li { color: #1e293b; }
+.sub { color: var(--gris); margin: 0 0 18px; }
+.caja { background: var(--suave); border: 1px solid var(--borde); border-radius: 10px; padding: 12px 16px; margin: 14px 0; }
+.caja p { margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 14px; }
+th, td { border: 1px solid var(--borde); padding: 8px 10px; vertical-align: top; text-align: left; }
+th { background: var(--suave); }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 13px; background: var(--suave); padding: 1px 5px; border-radius: 4px; word-break: break-word; }
+.pri { display: inline-block; min-width: 26px; text-align: center; font-weight: 700; color: #fff; background: var(--verde); border-radius: 6px; padding: 1px 6px; }
+.pri.b { background: #334155; }
+.pri.c { background: #64748b; }
+ol.preg li { margin: 6px 0; }
+.nota { font-size: 13px; color: var(--gris); }
+@media print {
+  main { padding: 0; max-width: none; }
+  h2 { break-after: avoid; }
+  table, .caja { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Asistente Laboral Pyme: textos y documentos para revisión legal</h1>
+<p class="sub">Cálculo Laboral Chile (calculolaboral.cl) · Documento preparado el 12 de octubre de 2026, con apoyo de IA, para presentar a un abogado laboral.</p>
+
+<div class="caja">
+<p><strong>Qué se solicita.</strong> Revisar los textos y modelos de documentos que se listan abajo, en el orden de prioridad indicado, y entregar: (1) observaciones o redacción corregida de cada texto, (2) si cada modelo de documento es utilizable tal cual, con cambios o no debe ofrecerse, y (3) respuesta a las preguntas de la sección 4. Se sugiere cotizar por bloques, empezando por la prioridad A.</p>
+<p><strong>Situación actual.</strong> Ningún texto del sitio ni de este producto ha sido revisado por un abogado, y el sitio lo declara así. El dueño decidió operar de esa forma y reducir la exposición con medidas conservadoras (sección 5). Este documento existe para cuando se decida contratar la revisión.</p>
+<p><strong>Alcance profesional.</strong> Las prioridades A2, A3 y A4 son de protección de datos personales (Ley 21.719) y de consumo (Ley 19.496), no de derecho laboral. Si no es su área, se agradece indicar a quién derivarlas.</p>
+</div>
+
+<h2>1. Qué es el producto</h2>
+<p>Un panel con cuenta (acceso por enlace enviado al correo, sin contraseña) donde un empleador guarda los datos de su empresa y de hasta 5 trabajadores, para preparar las liquidaciones de sueldo de cada mes y emitir siete modelos de documentos laborales con esos datos ya cargados. Los datos de la empresa y de los trabajadores se cifran en la aplicación antes de guardarse. Es gratis con 1 trabajador; el «Pase Pyme» (pago único por Flow, sin renovación automática) cuesta $19.990 por 3 meses o $59.990 por 12 meses y permite hasta 5 trabajadores y documentos sin marca de agua.</p>
+<p><strong>No hace:</strong> declarar cotizaciones ni calcular el total de Previred, generar el Libro de Remuneraciones, cartas del art. 160, renuncia del empleador, citación a descargos ni certificados de honorabilidad. Los documentos se presentan como modelos de referencia, no como asesoría legal.</p>
+
+<h2>2. Textos y documentos que necesitan abogado, por prioridad</h2>
+<p class="nota">Prioridad A: debería verse antes de que haya uso real o ante el primer reclamo. B: importante, puede esperar. C: recomendable. Las rutas son archivos del repositorio del sitio, que el dueño puede entregar.</p>
+
+<h3><span class="pri">A1</span> Cartas de término de contrato (laboral)</h3>
+<p>Son los documentos de mayor consecuencia: un error en la carta puede dejar sin efecto el despido o abrir un juicio por despido injustificado.</p>
+<table>
+<tr><th style="width:24%">Documento</th><th>Qué debe mirar el abogado</th></tr>
+<tr><td>Carta de término por vencimiento del plazo fijo (art. 159 N°4)<br><code>js/pyme_docs.js</code></td><td>Si el texto cumple el art. 162: causal y hechos, estado de las cotizaciones con comprobantes, aviso de finiquito presencial o electrónico y reserva de derechos, copia a la Inspección dentro de 3 días hábiles. <strong>Duda abierta:</strong> el sistema cuenta el sábado como día hábil para ese plazo (no domingos ni feriados); confirmar el criterio. El sistema bloquea la emisión con 2 o más renovaciones (contrato indefinido).</td></tr>
+<tr><td>Carta de término por necesidades de la empresa (art. 161)<br><code>js/pyme_docs.js</code></td><td>Texto de la causal y de la oferta irrevocable de pago (art. 169 a). Cálculo de la indemnización por años de servicio (30 días por año y fracción superior a 6 meses, tope de 11 años, base limitada a 90 UF) y de la sustitutiva del aviso previo. <strong>Dudas abiertas:</strong> el tope de 90 UF se aplica con la UF del día y no con la del último día del mes anterior al pago, que es lo que dice el art. 172; y la «última remuneración mensual» la escribe el usuario guiado por una ayuda sobre el art. 172. Los hechos de la causal los escribe el usuario (el sistema exige un mínimo de detalle). La carta confirma por casillas que no hay licencia médica, fuero ni cotizaciones impagas.</td></tr>
+<tr><td>Advertencia sobre cotizaciones (ambas cartas)</td><td>Primer aviso en pantalla: si las cotizaciones no están pagadas íntegramente, el despido no produce el efecto de poner término al contrato (art. 162). Revisar que la advertencia sea correcta y suficiente, y si debe mencionar la convalidación por pago.</td></tr>
+</table>
+
+<h3><span class="pri">A2</span> Encargo de tratamiento de datos (Ley 21.719, vigente desde el 1 de diciembre de 2026)</h3>
+<table>
+<tr><th style="width:24%">Texto</th><th>Qué debe mirar el abogado</th></tr>
+<tr><td>Términos y condiciones, sección 12<br><code>terminos.html#asistente-pyme</code></td><td>La empresa que abre la cuenta figura como <em>responsable</em> de los datos de sus trabajadores y Cálculo Laboral como <em>encargado</em>. ¿Es correcto? ¿Basta una casilla aceptada al crear la cuenta como contrato de encargo? ¿Qué contenido mínimo falta (objeto, duración, naturaleza, instrucciones, subencargados, registro de actividades)?</td></tr>
+<tr><td>Política de Privacidad, sección 10<br><code>privacidad.html#asistente-pyme</code> y dos frases de las secciones 1 y 4</td><td>Datos que se guardan (identificación, RUT, remuneración, AFP, salud previsional, domicilio), finalidades, medidas de seguridad, plazos de conservación, derechos de los trabajadores ante el empleador.</td></tr>
+<tr><td>Casilla de aceptación<br><code>api/_pyme/correo.js</code> (función <code>paginaConfirmar</code>)</td><td>Texto: «Acepto los Términos y la cláusula de encargo de tratamiento de datos, y declaro haber leído la Política de Privacidad». Se marca la primera vez que se entra y se registra la fecha.</td></tr>
+</table>
+
+<h3><span class="pri">A3</span> Transferencia internacional y proveedores</h3>
+<p>La base de datos está en Neon, región São Paulo (Brasil). Vercel (alojamiento; las funciones corren en São Paulo) y Resend (correos) operan en Estados Unidos. Flow procesa los pagos y no recibe datos de trabajadores. ¿Qué exige la ley para esas transferencias (art. 27 y siguientes: cláusulas contractuales tipo aprobadas en diciembre de 2025) y alcanza lo que informa la Política? ¿Se requiere un acuerdo de tratamiento de datos con cada proveedor?</p>
+
+<h3><span class="pri">A4</span> Consumo: retracto, reembolso y cláusulas del sitio</h3>
+<table>
+<tr><th style="width:24%">Texto</th><th>Qué debe mirar el abogado</th></tr>
+<tr><td>Pase Pyme: reembolso de 14 días<br><code>terminos.html</code> §5 y §12, <code>js/checkout_consent.js</code>, comprobante en <code>api/_flow.js</code></td><td>Para no depender de si el retracto del art. 3 bis de la Ley 19.496 aplica a este servicio, se ofrece reembolso total por correo dentro de 14 días corridos desde la compra, aunque se haya usado el servicio. ¿Es correcto ofrecerlo así? ¿Aplica el retracto legal a un servicio con duración y a compradores que son empresas? ¿Está bien informado antes del pago?</td></tr>
+<tr><td>Términos, sección 5 (exclusión de retracto de productos descargables)</td><td>Texto anterior al Asistente, vigente para kits y generadores (finiquito, contrato, informe, liquidación). ¿Es sostenible la exclusión del retracto para esos productos digitales?</td></tr>
+<tr><td>Términos, sección 10 (limitación y exclusión de responsabilidad)</td><td>Texto anterior al Asistente. ¿Hay cláusulas que puedan ser abusivas (art. 16 de la Ley 19.496)?</td></tr>
+</table>
+
+<h3><span class="pri">B</span> Los otros cinco modelos de documentos del panel</h3>
+<table>
+<tr><th style="width:24%">Documento</th><th>Qué debe mirar el abogado</th></tr>
+<tr><td>Amonestación escrita</td><td>Que la redacción no dé a entender una sanción donde el reglamento interno no existe (art. 154 N°10 y 11).</td></tr>
+<tr><td>Comprobante de feriado</td><td>Reintegro cuando el trabajador labora de lunes a sábado (el sábado es inhábil para el feriado, art. 69, pero puede ser día de trabajo). El saldo de días lo escribe el usuario.</td></tr>
+<tr><td>Certificado de antigüedad y certificado de remuneraciones</td><td>Fórmulas de certificación; el promedio del líquido sale de las liquidaciones guardadas por el propio usuario.</td></tr>
+<tr><td>Anexo de protección de datos</td><td>Basado en el anexo del Kit Ley 21.719 ya vendido, con cláusulas opcionales de biometría, herramientas corporativas y encargados.</td></tr>
+<tr><td>Liquidación de sueldo (documento mensual)<br><code>js/liquidacion_documento.js</code></td><td>Contenido mínimo del documento y su leyenda. El motor de cálculo está validado con pruebas automáticas, pero el texto no ha sido visto por un abogado.</td></tr>
+</table>
+
+<h3><span class="pri">B</span> Productos ya vendidos, también sin revisión</h3>
+<p>Antes del Asistente el sitio ya vende documentos y modelos que nunca vio un abogado. Si hay presupuesto para una sola revisión, estos pueden tener más impacto que el Asistente porque ya tienen compradores:</p>
+<table>
+<tr><th style="width:36%">Producto</th><th>Archivo</th></tr>
+<tr><td>Generador de finiquito ($12.990)</td><td><code>generador-finiquito-chile.html</code>, <code>js/finiquito_generator.js</code></td></tr>
+<tr><td>Generador de contrato de trabajo ($12.990)</td><td><code>generador-contrato-trabajo-chile.html</code>, <code>js/contrato_templates_engine.js</code></td></tr>
+<tr><td>Kit Blindaje Laboral ($19.990): 21 documentos Word y manual</td><td><code>kit-cumplimiento-laboral-pymes.html</code> (los archivos viven en <code>api/assets/</code>)</td></tr>
+<tr><td>Kit Ley 21.719 ($29.990): 7 instrumentos y manual</td><td><code>kit-cumplimiento-ley-datos-personales-chile.html</code></td></tr>
+</table>
+
+<h3><span class="pri c">C</span> Otros textos</h3>
+<ul>
+<li><strong>Conservación de datos.</strong> No hay borrado automático: la cuenta conserva sus datos mientras esté activa, y el titular puede descargarlos y eliminarlos cuando quiera. Respaldo del proveedor: 7 días. ¿Corresponde fijar un plazo máximo para cuentas sin uso? (Habría que construirlo y avisar por correo.) ¿Corresponde advertir al cliente de sus propias obligaciones de conservar documentos laborales?</li>
+<li><strong>Página pública</strong> <code>asistente-laboral-pyme.html</code>: qué hace y qué no hace, datos, planes y preguntas frecuentes. Dice expresamente que los documentos no fueron revisados por abogados y no promete validez.</li>
+<li><strong>Derechos de los trabajadores.</strong> Si un trabajador pide sus datos directamente a Cálculo Laboral, hoy el texto lo deriva al empleador, que es el responsable.</li>
+</ul>
+
+<h2>3. Qué se verificó y qué no</h2>
+<ul>
+<li><strong>Verificado (12-oct-2026):</strong> que las normas citadas en los modelos existen y dicen lo que se usa, contra el texto del Código del Trabajo que publica la Dirección del Trabajo (edición de octubre de 2026): arts. 67 a 70, 154 N°10, 159 N°4, 161, 162, 163, 169, 172.</li>
+<li><strong>No verificado:</strong> el texto oficial de la Ley 21.719 (BCN / Diario Oficial). Solo se consultaron fuentes secundarias (blogs y documentos de terceros). Dudas abiertas: si una casilla basta como contrato de encargo, el plazo y la forma de avisar un incidente de seguridad (las fuentes no coinciden), y si se necesita un mecanismo contractual con Neon, Vercel y Resend.</li>
+<li><strong>Cálculos:</strong> el motor de liquidaciones, la indemnización del art. 161 y los plazos tienen pruebas automáticas, pero eso verifica el código, no el criterio jurídico.</li>
+</ul>
+
+<h2>4. Preguntas concretas</h2>
+<ol class="preg">
+<li><strong>Roles.</strong> ¿Es correcto tratar a la empresa cliente como responsable y a Cálculo Laboral como encargado? ¿Qué contenido mínimo exige la ley para el encargo?</li>
+<li><strong>Transferencia internacional.</strong> ¿Qué exige la ley para Brasil (Neon) y Estados Unidos (Vercel, Resend), y qué acuerdos se necesitan con cada proveedor?</li>
+<li><strong>Incidentes de seguridad.</strong> El texto promete avisar al correo de la cuenta «sin dilaciones indebidas». ¿Qué plazo y contenido exige la ley, y qué debe hacer el encargado frente al responsable y a la Agencia?</li>
+<li><strong>Datos de salud.</strong> Se guarda el sistema de salud (Fonasa o Isapre). Si más adelante se guardan licencias médicas, ¿se tratan como datos sensibles con reglas especiales?</li>
+<li><strong>Conservación.</strong> ¿Hace falta un plazo máximo para cuentas sin uso y un aviso previo al borrado?</li>
+<li><strong>Retracto.</strong> ¿Aplica a un servicio de acceso por tiempo y a compradores que son empresas? ¿Basta el reembolso voluntario de 14 días y cómo debe informarse?</li>
+<li><strong>Cláusulas.</strong> ¿Son abusivas la sección 10 de los Términos (exclusión de responsabilidad) o la exclusión de retracto de la sección 5?</li>
+<li><strong>Cartas de término.</strong> ¿Son utilizables tal cual los dos modelos del art. 159 N°4 y 161? ¿Qué falta para el art. 162, y cómo se cuenta el plazo de 3 días hábiles (sábado)?</li>
+<li><strong>Responsabilidad por los modelos.</strong> ¿Es suficiente la leyenda de «modelo de referencia, no revisado por abogado, no constituye asesoría» para el caso en que un cliente use una carta y el despido se declare injustificado o sin efecto?</li>
+<li><strong>Obligaciones formales.</strong> ¿Hay registros, designaciones o evaluaciones que Cálculo Laboral deba tener como encargado?</li>
+</ol>
+
+<h2>5. Medidas conservadoras que ya están aplicadas</h2>
+<ul>
+<li>Reembolso total del Pase por 14 días corridos desde la compra, informado antes del pago, en los Términos, en el comprobante, en el panel y en la página pública.</li>
+<li>Los textos del Asistente no excluyen responsabilidad de forma amplia; solo informan que puede haber interrupciones y ofrecen respaldo descargable.</li>
+<li>Advertencia visible sobre cotizaciones en las cartas de término, y casilla obligatoria que recuerda la consecuencia del art. 162.</li>
+<li>El sitio, el aviso previo al pago y los Términos dicen que los documentos no han sido revisados por un abogado, y nunca prometen validez, cumplimiento total ni ausencia de multas.</li>
+<li>El Pase no se renueva solo, y el comprador puede descargar todos sus datos y eliminar su cuenta en cualquier momento.</li>
+</ul>
+
+<h2>6. Datos de hecho</h2>
+<table>
+<tr><th style="width:24%">Tema</th><th>Dato</th></tr>
+<tr><td>Proveedores</td><td>Neon (base de datos, São Paulo), Vercel (alojamiento; funciones en São Paulo), Resend (correos), Flow (pagos), Cloudflare (CDN).</td></tr>
+<tr><td>Cifrado</td><td>Los datos de la empresa y de los trabajadores se cifran con AES-256-GCM en la aplicación antes de guardarlos; la clave no está en la base de datos.</td></tr>
+<tr><td>Qué no se cifra</td><td>El correo de la cuenta (se necesita para enviar los enlaces) y fechas de control.</td></tr>
+<tr><td>Accesos</td><td>Enlace de un solo uso (15 minutos) y sesión de 30 días; solo se guardan huellas de tokens y de IP.</td></tr>
+<tr><td>Registro de documentos emitidos</td><td>Solo el tipo y la fecha; nunca el texto.</td></tr>
+<tr><td>Borrado</td><td>Eliminar la cuenta borra en cascada todos los datos de esa cuenta; los respaldos del proveedor se eliminan a los 7 días.</td></tr>
+<tr><td>Quién accede</td><td>Solo el dueño del sitio; no hay equipo ni terceros con acceso.</td></tr>
+<tr><td>Pase</td><td>Pago único por Flow, 92 días (3 meses) o 366 días (12 meses) desde la confirmación del pago; sin renovación automática. Un segundo pase empieza cuando termina el anterior. Al vencer, la cuenta vuelve a 1 trabajador activo y a documentos con marca de agua.</td></tr>
+</table>
+
+<p class="nota">Documento de apoyo con más detalle técnico: <code>docs/revision-legal-asistente-pyme.md</code>. Este documento no constituye asesoría legal y fue elaborado con apoyo de IA.</p>
+
+</main>
+</body>
+</html>
