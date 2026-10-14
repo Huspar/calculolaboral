@@ -14,7 +14,7 @@
     border-radius: 1.25rem;
 }
 .cl-asistente p { margin: 0 !important; max-width: 46rem; font-size: 0.95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.86) !important; }
-.cl-asistente .cl-asistente-kicker { margin-bottom: 0.4rem !important; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #FFB703 !important; }
+.cl-asistente .cl-asistente-kicker { margin-bottom: 0.4rem !important; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.01em; color: #FFB703 !important; }
 .cl-asistente .cl-asistente-titulo { margin-bottom: 0.4rem !important; font-size: 1.2rem; font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; color: #ffffff !important; }
 .cl-asistente.cl-asistente-grande { padding: 2rem 2.25rem; }
 .cl-asistente .cl-asistente-titulo { margin-top: 0; }

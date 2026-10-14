@@ -16,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 const RAIZ = path.join(__dirname, '..');
-const CSS = '/assets/css/promo-asistente.css?v=1.0.0';
+const CSS = '/assets/css/promo-asistente.css?v=1.0.1';
 const LINK_CSS = '<link rel="stylesheet" href="' + CSS + '">';
 const INICIO = '<!-- cl-asistente:inicio (lo genera tools/promo_asistente.js: no editar a mano) -->';
 const FIN = '<!-- cl-asistente:fin -->';
