@@ -33,6 +33,8 @@
     var vacCache = [];        // registros de vacaciones de la empresa (descifrados por el servidor)
     var docsCache = [];       // historial de documentos emitidos (tipo y fecha)
     var docPrefill = null;    // valores que trae la dirección para el comprobante de feriado
+    var ejemplo = null;       // modo de ejemplo (js/pyme_demo.js): empresa ficticia en la memoria de la pestaña, sin servidor
+    var KEY_EJEMPLO = 'cl_pyme_ejemplo';
 
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -54,6 +56,7 @@
     // ---------- API ----------
     function api(ruta, o) {
         o = o || {};
+        if (ejemplo) return ejemplo.api(ruta, o);
         var url = '/api/pyme/' + ruta + (o.query ? '?' + new URLSearchParams(o.query).toString() : '');
         var init = { method: o.metodo || 'GET', credentials: 'same-origin', headers: {} };
         if (init.method !== 'GET') {
@@ -283,8 +286,128 @@
     });
     $('pm-reintentar').addEventListener('click', function () { mostrar('cargando'); arrancar(); });
     $('pm-salir').addEventListener('click', function () {
+        if (ejemplo) { salirEjemplo(); return; }
         api('salir', { metodo: 'POST' }).then(function () { reiniciar(); mostrar('entrada'); });
     });
+
+    // ---------- opiniones del piloto ----------
+    var KEY_OPINION = 'cl_pyme_opinion';
+    function estadoOpinion() { try { return JSON.parse(guardado(KEY_OPINION) || '{}') || {}; } catch (e) { return {}; } }
+    function marcarOpinion(clave) { var o = estadoOpinion(); o[clave] = new Date().toISOString(); guardar(KEY_OPINION, JSON.stringify(o)); }
+    // La invitación del cierre del mes aparece durante el piloto, salvo si ya opinó (30 días) o dijo «ahora no» (7 días)
+    function dibujarInvitacionOpinion() {
+        var caja = $('ini-opinion'), o = estadoOpinion(), ahora = Date.now(), dia = 86400000;
+        var oculta = !enPiloto() || (o.enviada && ahora - Date.parse(o.enviada) < 30 * dia) || (o.cerrada && ahora - Date.parse(o.cerrada) < 7 * dia);
+        caja.hidden = !!oculta;
+    }
+    function abrirOpinion(origen) {
+        var dlg = $('pm-opinion');
+        if (!dlg || typeof dlg.showModal !== 'function' || !estado) return;
+        $('pm-opinion-form').hidden = false;
+        $('pm-opinion-gracias').hidden = true;
+        $('pm-opinion-texto').value = '';
+        $('pm-opinion-contacto').checked = false;
+        $('pm-opinion-correo').textContent = estado.cuenta.email;
+        Array.prototype.forEach.call(document.querySelectorAll('input[name="pm-opinion-tipo"]'), function (r) { r.checked = false; });
+        mensaje($('pm-opinion-estado'), '', '');
+        dlg.setAttribute('data-origen', origen || '');
+        dlg.showModal();
+        $('pm-opinion-texto').focus();
+    }
+    document.addEventListener('click', function (e) {
+        var b = e.target.closest && e.target.closest('[data-abrir-opinion], #pm-opinion-abrir');
+        if (b) { e.preventDefault(); abrirOpinion(b.getAttribute('data-abrir-opinion') || 'menu'); }
+    });
+    $('pm-opinion-cerrar').addEventListener('click', function () { $('pm-opinion').close(); });
+    $('pm-opinion-listo').addEventListener('click', function () { $('pm-opinion').close(); });
+    $('pm-opinion-cancelar').addEventListener('click', function () { $('pm-opinion').close(); });
+    $('ini-opinion-ahora-no').addEventListener('click', function () { marcarOpinion('cerrada'); dibujarInvitacionOpinion(); });
+    $('pm-opinion-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var est = $('pm-opinion-estado'), marcada = document.querySelector('input[name="pm-opinion-tipo"]:checked'), texto = $('pm-opinion-texto').value.trim();
+        if (!marcada) { mensaje(est, 'error', 'Elige qué quieres contarnos.'); return; }
+        if (texto.length < 5) { mensaje(est, 'error', 'Cuéntanos un poco más (al menos 5 caracteres).'); $('pm-opinion-texto').focus(); return; }
+        var btn = $('pm-opinion-enviar');
+        btn.disabled = true;
+        mensaje(est, '', 'Enviando…');
+        api('comentario', { metodo: 'POST', cuerpo: { comentario: { tipo: marcada.value, texto: texto, pantalla: vistaActual || '', contacto: $('pm-opinion-contacto').checked } } }).then(function (r) {
+            btn.disabled = false;
+            if (sinSesion(r)) { $('pm-opinion').close(); return; }
+            if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos enviarla. Intenta de nuevo.'); return; }
+            marcarOpinion('enviada');
+            dibujarInvitacionOpinion();
+            $('pm-opinion-form').hidden = true;
+            $('pm-opinion-gracias').hidden = false;
+            $('pm-opinion-listo').focus();
+        });
+    });
+
+    // ---------- modo de ejemplo ----------
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.0', '/js/pyme_demo.js?v=1.0.1'];
+    function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
+    function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
+    function cargarScript(src) {
+        return new Promise(function (resolver, rechazar) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.onload = resolver;
+            s.onerror = function () { rechazar(new Error(src)); };
+            document.head.appendChild(s);
+        });
+    }
+    function mesAnteriorDe(p) { var a = p.split('-').map(Number); return a[1] === 1 ? (a[0] - 1) + '-12' : a[0] + '-' + dos(a[1] - 1); }
+    function entrarEjemplo() {
+        mostrar('cargando');
+        var periodo = periodoPorDefecto();
+        var listos = window.CLPymeDemo && window.CLPymeDemoServidor ? Promise.resolve() : SCRIPTS_EJEMPLO.reduce(function (p, src) { return p.then(function () { return cargarScript(src); }); }, Promise.resolve());
+        return listos.then(function () {
+            return window.CLPymeDemo.crear({ hoy: hoyIso(), periodo: periodo });
+        }).then(function (demo) {
+            reiniciar();
+            ejemplo = demo;
+            recordarEjemplo(true);
+            return sembrarMesesEjemplo(periodo);
+        }).then(function () {
+            if (rutaActual() === 'ejemplo') { try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ } }
+            return cargar();
+        }).catch(function () {
+            ejemplo = null;
+            recordarEjemplo(false);
+            reiniciar();
+            $('pm-fallo-texto').textContent = 'No pudimos abrir el ejemplo. Revisa tu conexión e intenta de nuevo.';
+            mostrar('fallo');
+        });
+    }
+    // Las liquidaciones del ejemplo se guardan con el mismo camino que las del usuario (cuotas, licencias, semana corrida y cálculo)
+    function sembrarMesesEjemplo(P) {
+        var Pa = mesAnteriorDe(P);
+        return api('estado').then(function (r) {
+            if (!r.ok) throw new Error('estado');
+            estado = r.datos;
+            return Promise.all([asegurarValores(Pa), asegurarValores(P)]);
+        }).then(function () {
+            return ejemplo.meses(Pa, P).reduce(function (p, x) {
+                return p.then(function () {
+                    var t = (estado.trabajadores || []).filter(function (w) { return Rut.formatear(w.rut) === Rut.formatear(x.rut); })[0];
+                    if (!t) return;
+                    return guardarRegistro(t.id, Object.assign(L.mesBase(t, x.periodo), x.cambios), x.periodo);
+                });
+            }, Promise.resolve());
+        }).then(function () { estado = null; mesesCache = {}; });
+    }
+    // Al salir del ejemplo se vuelve a la cuenta (si hay sesión) o a la entrada
+    function salirEjemplo() {
+        ejemplo = null;
+        recordarEjemplo(false);
+        reiniciar();
+        $('pm-ejemplo-franja').hidden = true;
+        try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ }
+        mostrar('cargando');
+        arrancar();
+    }
+    $('pm-ejemplo').addEventListener('click', entrarEjemplo);
+    $('pm-ejemplo-salir').addEventListener('click', salirEjemplo);
+    $('pm-ejemplo-entrar').addEventListener('click', salirEjemplo);
 
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
@@ -351,11 +474,16 @@
         $('pm-correo').textContent = estado.cuenta.email;
         $('cuenta-correo').textContent = estado.cuenta.email;
         var lim = estado.limites, caja = $('app-pase'), txt = $('app-pase-texto');
-        caja.classList.remove('vigente', 'porvencer');
-        if (lim.paseVence && Date.parse(lim.paseVence) > Date.now()) {
+        caja.classList.remove('vigente', 'porvencer', 'ejemplo');
+        $('pm-ejemplo-franja').hidden = !estado.ejemplo;
+        $('pm-opinion-abrir').hidden = !!estado.ejemplo;
+        if (estado.ejemplo) {
+            caja.classList.add('ejemplo');
+            txt.textContent = 'Modo de ejemplo';
+        } else if (lim.paseVence && Date.parse(lim.paseVence) > Date.now()) {
             var dias = PEND.dias(hoyIso(), isoChile(lim.paseVence));
             caja.classList.add(dias <= 15 ? 'porvencer' : 'vigente');
-            txt.textContent = 'Pase vigente hasta el ' + fechaCortaAnio(isoChile(lim.paseVence));
+            txt.textContent = (lim.piloto ? 'Piloto gratuito hasta el ' : 'Pase vigente hasta el ') + fechaCortaAnio(isoChile(lim.paseVence));
         } else {
             txt.textContent = 'Sin Pase Pyme';
         }
@@ -436,7 +564,7 @@
                 '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
         }).join('');
         var txt = activosN + ' de ' + lim.maxActivos + ' trabajadores activos. ';
-        txt += lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme, hasta 5.';
+        txt += estado.ejemplo ? 'En el ejemplo puedes agregar hasta 5, como con el Pase Pyme.' : lim.piloto ? 'El piloto gratuito permite hasta 5 y dura hasta el ' + fechaVence(lim.paseVence) + '.' : lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme, hasta 5.';
         $('pm-trab-limite').textContent = txt;
         $('pm-trab-nuevo').disabled = !estado.empresa;
         $('pm-trab-nuevo').title = estado.empresa ? '' : 'Primero guarda los datos de la empresa';
@@ -930,7 +1058,7 @@
             var mapa = mesesCache[toca.periodo];
             liq = { periodo: toca.periodo, registros: Object.keys(mapa).map(function (id) { return { trabajadorId: id, emitida: mapa[id].emitida || '' }; }) };
         }
-        pendientesActuales = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO), liquidaciones: liq, documentos: docsCache });
+        pendientesActuales = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: ejemplo ? new Date().toISOString() : guardado(KEY_RESPALDO), liquidaciones: liq, documentos: docsCache });
         return pendientesActuales;
     }
     function dibujarPendientes() {
@@ -971,7 +1099,7 @@
     function selloLiq(reg, est, dias) {
         if (!reg && dias === 0) return '<span class="sello sello-no">No corresponde</span>';
         if (est === 'emitida') return '<span class="sello sello-emitida">Emitida' + (reg && reg.emitida ? ' · ' + esc(fechaCorta(reg.emitida)) : '') + '</span>';
-        if (est === 'guardada') return '<span class="sello sello-guardada">Preparada</span>';
+        if (est === 'guardada') return '<span class="sello sello-preparada">Preparada</span>';
         return '<span class="sello sello-sin">Sin preparar</span>';
     }
 
@@ -989,13 +1117,14 @@
         activos().forEach(function (t) {
             if (t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo && t.fechaTerminoPlazo >= hoy) lista.push({ fecha: t.fechaTerminoPlazo, texto: 'Plazo fijo de ' + t.nombre.split(' ')[0] });
         });
-        if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= hoy) lista.push({ fecha: pv, texto: 'Vence tu Pase Pyme' }); }
+        if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= hoy) lista.push({ fecha: pv, texto: estado.limites.piloto ? 'Termina el piloto gratuito' : 'Vence tu Pase Pyme' }); }
         lista.sort(function (x, z) { return x.fecha < z.fecha ? -1 : x.fecha > z.fecha ? 1 : 0; });
         return lista[0] || null;
     }
 
     function dibujarInicio() {
         if (!estado) return;
+        dibujarInvitacionOpinion();
         var nombreMes = nombrePeriodo(periodoSel);
         $('ini-titulo').textContent = 'Cierre de ' + nombreMes;
         $('ini-caption').textContent = 'Trabajadores y estado de su liquidación de ' + nombreMes;
@@ -1032,7 +1161,9 @@
         if (cuentan.length && preparadas) sub += ' · ' + plural(preparadas, 'preparada', 'preparadas') + ' sin emitir';
         if (cuentan.length && sin) sub += ' · ' + sin + ' sin preparar';
         $('ini-sub').textContent = sub;
-        $('ini-avance').innerHTML = cuentan.map(function (f) { return '<i class="' + (f.est === 'emitida' ? 'ok' : f.est === 'guardada' ? 'guardada' : '') + '"></i>'; }).join('');
+        // Avance ordenado: emitidas, preparadas y sin preparar
+        var ORDEN_AVANCE = { emitida: 0, guardada: 1 };
+        $('ini-avance').innerHTML = cuentan.map(function (f) { return f.est; }).sort(function (a, b) { return (a in ORDEN_AVANCE ? ORDEN_AVANCE[a] : 2) - (b in ORDEN_AVANCE ? ORDEN_AVANCE[b] : 2); }).map(function (e) { return '<i class="' + (e === 'emitida' ? 'ok' : e === 'guardada' ? 'guardada' : '') + '"></i>'; }).join('');
 
         var paraPreparar = filas.filter(function (f) { return f.corresponde && f.est === 'sin_datos'; }).length;
         $('ini-preparar').hidden = paraPreparar === 0;
@@ -1077,9 +1208,9 @@
     function celdaVac(t) {
         var ini = periodoSel + '-01', fin = periodoSel + '-31';
         var p = vacDe(t.id).filter(function (v) { return v.tipo === 'periodo' && v.desde <= fin && v.hasta >= ini; })[0];
-        if (!t.fechaIngreso) return '<td class="ocultar-movil vacio">—</td>';
+        if (!t.fechaIngreso) return '<td class="ocultar-movil col-vac vacio">—</td>';
         var r = resumenVac(t);
-        return '<td class="celda-contrato ocultar-movil"><span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span> de saldo<small>' + (p ? esc(rangoCorto(p.desde, p.hasta)) + ', ' + textoDias(p.dias) : 'sin vacaciones este mes') + '</small></td>';
+        return '<td class="celda-contrato ocultar-movil col-vac"><span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span> de saldo<small>' + (p ? esc(rangoCorto(p.desde, p.hasta)) + ', ' + textoDias(p.dias) : 'sin vacaciones este mes') + '</small></td>';
     }
 
     function elegirFila(id, enfocar) {
@@ -1225,7 +1356,7 @@
         var tipo = docSel.tipo, texto;
         var w = $('pm-doc-word');
         if (w) { w.disabled = !docPagado(tipo); w.title = docPagado(tipo) ? '' : 'Disponible con el Pase Pyme' + (tipo === 'finiquito' ? ' de 12 meses' : ''); }
-        if (docPagado(tipo)) texto = 'Con tu pase vigente ' + (tipo === 'finiquito' ? 'el finiquito sale' : 'los documentos salen') + ' sin marca de agua y puedes descargarlos en Word para editarlos. Revisa cada documento antes de entregarlo.';
+        if (docPagado(tipo)) texto = (enPiloto() ? 'Con el piloto gratuito ' : 'Con tu pase vigente ') + (tipo === 'finiquito' ? 'el finiquito sale' : 'los documentos salen') + ' sin marca de agua y puedes descargarlos en Word para editarlos. Revisa cada documento antes de entregarlo.';
         else if (tipo === 'finiquito') texto = 'El finiquito lleva la marca «Vista previa» salvo con el Pase Pyme de 12 meses. ' + textoPaseVenta() + ' Revisa el documento antes de firmarlo.';
         else texto = 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada documento antes de entregarlo.';
         $('pm-doc-nota-marca').textContent = texto;
@@ -1697,7 +1828,7 @@
                 if (p && p >= ini && p <= fin) ev.push({ fecha: p, tipo: 'dt', texto: 'Tramitar la licencia de ' + nombre + ' (si se recibió el ' + fechaCorta(a.desde) + ')', ruta: 'trabajadores/' + t.id + '/ausencias' });
             });
         });
-        if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= ini && pv <= fin) ev.push({ fecha: pv, tipo: 'pase', texto: 'Vence tu Pase Pyme', ruta: 'cuenta' }); }
+        if (estado.limites.paseVence) { var pv = isoChile(estado.limites.paseVence); if (pv >= ini && pv <= fin) ev.push({ fecha: pv, tipo: 'pase', texto: estado.limites.piloto ? 'Termina el piloto gratuito' : 'Vence tu Pase Pyme', ruta: 'cuenta' }); }
         var orden = { feriado: 0, cotiz: 1, previred: 2, plazo: 3, dt: 3, pase: 4, vac: 5, aus: 5, aniv: 6 };
         ev.sort(function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : orden[a.tipo] - orden[b.tipo]; });
         return { eventos: ev, sinFeriados: sinFeriados, ini: ini, fin: fin, ultimo: ultimo };
@@ -1762,7 +1893,7 @@
                 enlace('contrato', c ? 'Contrato' : 'Emitir contrato', !c) + enlace('anexo_contrato', 'Anexo') + enlace('pacto_horas_extra', 'Horas extra') + enlace('finiquito', 'Finiquito') +
                 '</div></td></tr>';
         }).join('');
-        var nota = cubiertoPorPase('contrato') ? 'Con tu pase vigente el contrato, los anexos y el pacto de horas extra salen sin marca de agua y en Word.' : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta();
+        var nota = cubiertoPorPase('contrato') ? 'Con ' + tuPase() + ' el contrato, los anexos y el pacto de horas extra salen sin marca de agua y en Word.' : 'Sin Pase Pyme los documentos llevan la marca «Vista previa». ' + textoPaseVenta();
         nota += cubiertoPorPase('finiquito') ? ' El finiquito también está incluido.' : ' El finiquito sin marca viene con el Pase de 12 meses.';
         $('pm-gen-nota').textContent = nota + ' «Sin emitir aquí» solo significa que no se emitió desde el asistente.';
     }
@@ -1772,7 +1903,7 @@
     var NOMBRE_PASE = { pyme3: '3 meses', pyme12: '12 meses' };
 
     function ventaPase() { return !!(estado && estado.pase && estado.pase.venta); }
-    function textoPaseVenta() { return ventaPase() ? 'Puedes comprarlo en «Mi cuenta».' : 'El Pase Pyme aún no está a la venta.'; }
+    function textoPaseVenta() { return estado && estado.ejemplo ? 'El ejemplo no tiene Pase.' : ventaPase() ? 'Puedes comprarlo en «Mi cuenta».' : 'El Pase Pyme aún no está a la venta.'; }
 
     function dibujarCuenta() { dibujarPase(); dibujarImportar(); dibujarAvisosCorreo(); }
     // Preferencia de avisos por correo (apagada por defecto)
@@ -1802,6 +1933,17 @@
         if (!estado) return;
         var lim = estado.limites, cat = (estado.pase && estado.pase.productos) || [];
         var vigente = !!lim.paseVence;
+        if (estado.ejemplo) {
+            $('pm-pase-estado').textContent = 'Estás viendo un ejemplo: no tiene Pase y los documentos salen con la marca «Vista previa». Para usar el asistente con tu empresa, sal del ejemplo y entra con tu correo.';
+            $('pm-pase-opciones').innerHTML = '';
+            return;
+        }
+        $('pm-pase-incluye').hidden = !!lim.piloto;
+        if (lim.piloto) {
+            $('pm-pase-estado').textContent = 'Estás en el piloto gratuito: hasta el ' + fechaVence(lim.paseVence) + ' tienes lo mismo que el Pase de 12 meses, sin pagar.';
+            $('pm-pase-opciones').innerHTML = '<p class="texto-ayuda">Hasta 5 trabajadores activos, liquidaciones y documentos sin marca de agua, y los documentos en Word. Al terminar, la cuenta vuelve a las funciones gratuitas y tus datos se conservan. Nos ayudas mucho si nos cuentas qué funciona, qué no y qué te falta.</p><div style="margin-top:12px"><button type="button" class="btn" data-abrir-opinion="cuenta"><span class="material-icons" aria-hidden="true">chat</span>Contar mi opinión</button></div>';
+            return;
+        }
         $('pm-pase-estado').textContent = vigente
             ? 'Tu Pase Pyme (' + (NOMBRE_PASE[lim.paseProducto] || '') + ') está vigente hasta el ' + fechaVence(lim.paseVence) + '. Si compras otro, empieza cuando termina este.'
             : 'Tu cuenta no tiene un pase vigente: puedes tener 1 trabajador activo y los documentos salen con marca de agua.';
@@ -1890,7 +2032,7 @@
         } catch (e) { return null; }
     }
     function dibujarImportar() {
-        var g = guardado(KEY_IMPORTADO) ? null : leerGenerador();
+        var g = guardado(KEY_IMPORTADO) || (estado && estado.ejemplo) ? null : leerGenerador();
         $('pm-sec-importar').hidden = !g;
         if (!g) return;
         var partes = [];
@@ -1940,6 +2082,9 @@
     function nombrePeriodo(p) { var a = p.split('-'); return MESES[+a[1] - 1] + ' ' + a[0]; }
     function mayuscula(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
     function tienePase() { return !!(estado && estado.limites && estado.limites.paseVence && Date.parse(estado.limites.paseVence) > Date.now()); }
+    // Piloto gratuito (hasta el 31-dic-2026): lo mismo que el Pase de 12 meses, sin pagar
+    function enPiloto() { return !!(estado && estado.limites && estado.limites.piloto); }
+    function tuPase() { return enPiloto() ? 'el piloto gratuito' : 'tu pase vigente'; }
     function activos() { return ((estado && estado.trabajadores) || []).filter(function (t) { return t.activo; }); }
     function trabajadorPorId(id) { return ((estado && estado.trabajadores) || []).filter(function (t) { return t.id === id; })[0]; }
     function mesesDe(periodo) { return mesesCache[periodo] || {}; }
@@ -2038,7 +2183,7 @@
         $('liq-panel').hidden = !lista.length;
         $('pm-liq-acciones').hidden = !lista.length;
         $('pm-liq-nota-marca').textContent = tienePase()
-            ? 'Con tu pase vigente las liquidaciones salen sin marca de agua. Revisa cada una antes de entregarla.'
+            ? 'Con ' + tuPase() + ' las liquidaciones salen sin marca de agua. Revisa cada una antes de entregarla.'
             : 'Sin Pase Pyme las liquidaciones llevan la marca «Vista previa». ' + textoPaseVenta() + ' Revisa cada liquidación antes de entregarla.';
 
         var porPreparar = 0, guardadas = 0, porEmitir = 0;
@@ -2649,8 +2794,8 @@
     $('pm-liq-cerrar').addEventListener('click', function () { cerrarMes(); navegar('liquidaciones', { reemplazar: true, sinScroll: true }); });
 
     // Guarda un mes (con el resultado calculado si hay valores del mes) y actualiza la memoria local
-    function guardarRegistro(id, mes) {
-        var t = trabajadorPorId(id), periodo = periodoSel, previo = mesesDe(periodo)[id];
+    function guardarRegistro(id, mes, periodoForzado) {
+        var t = trabajadorPorId(id), periodo = periodoForzado || periodoSel, previo = mesesDe(periodo)[id];
         // Las cuotas se toman de la ficha, salvo al editar una liquidación que ya estaba emitida (quedan las emitidas)
         if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { cuotasPrestamo: L.cuotasDelMes(t, periodo) });
         if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { ausencias: AUS.delMes(t.ausencias, periodo).slice(0, 10) });
@@ -2837,6 +2982,16 @@
     function exportar() {
         var est = $('pm-exportar-estado');
         mensaje(est, '', 'Preparando…');
+        if (ejemplo) {
+            return ejemplo.exportar().then(function (archivo) {
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob([JSON.stringify(archivo, null, 2)], { type: 'application/json' }));
+                a.download = 'calculolaboral-ejemplo-' + hoyIso() + '.json';
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+                mensaje(est, 'ok', 'Descargamos los datos del ejemplo.');
+            });
+        }
         return fetch('/api/pyme/exportar', { credentials: 'same-origin' }).then(function (r) {
             if (r.status === 401) { mostrar('entrada', 'Tu sesión venció. Entra de nuevo con tu correo.'); return null; }
             if (!r.ok) throw new Error('http');
@@ -2876,6 +3031,7 @@
     aplicarMascaras($('pm-trab-form'));
     aplicarMascaras($('pm-prest-form'));
     function arrancar() {
+        if (rutaActual() === 'ejemplo' || ejemploRecordado()) { entrarEjemplo(); return; }
         api('sesion').then(function (r) {
             if (r.estado === 0 || r.estado >= 500) { mostrar('fallo'); return; }
             if (r.datos && r.datos.autenticado) cargar(); else mostrar('entrada');

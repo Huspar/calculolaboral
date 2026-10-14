@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.19.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.21.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -68,6 +68,10 @@ gtag('js', new Date());
 <span class="material-icons" aria-hidden="true">mark_email_read</span>
 <p><strong>Revisa tu correo.</strong> Si el correo es correcto, te enviamos un enlace para entrar. Revisa también la carpeta de spam. <button type="button" id="pm-otro-correo" class="lq-link">Usar otro correo</button></p>
 </div>
+<div class="entrada-ejemplo">
+<p><strong>¿Quieres verlo antes?</strong> Recorre una panadería ficticia con tres trabajadores, liquidaciones, avisos y documentos. Sin cuenta y sin correo.</p>
+<button type="button" class="btn" id="pm-ejemplo"><span class="material-icons" aria-hidden="true">visibility</span>Ver un ejemplo</button>
+</div>
 <p class="entrada-legal">La primera vez te pediremos aceptar los <a href="/terminos#asistente-pyme">Términos</a> y la cláusula de encargo de tratamiento de datos. Más información en la <a href="/privacidad#asistente-pyme">Política de Privacidad</a>.</p>
 <p class="entrada-volver"><a href="/asistente-laboral-pyme">Qué incluye y cuánto cuesta</a> · <a href="/">Volver a calculolaboral.cl</a></p>
 </div>
@@ -102,6 +106,7 @@ gtag('js', new Date());
 <a href="/app/cuenta" data-ruta="cuenta" data-nav="cuenta"><span class="material-icons" aria-hidden="true">person</span>Mi cuenta</a>
 </nav>
 <div class="app-nav app-side-pie">
+<button type="button" id="pm-opinion-abrir"><span class="material-icons" aria-hidden="true">chat</span>Tu opinión</button>
 <a href="/asistente-laboral-pyme" target="_blank" rel="noopener"><span class="material-icons" aria-hidden="true">help_outline</span>Qué incluye el asistente</a>
 <a href="/"><span class="material-icons" aria-hidden="true">arrow_back</span>Ir a calculolaboral.cl</a>
 </div>
@@ -127,6 +132,11 @@ gtag('js', new Date());
 </header>
 
 <main class="app-content" id="app-content">
+<div id="pm-ejemplo-franja" class="ejemplo-franja" hidden>
+<span class="material-icons" aria-hidden="true">science</span>
+<p><strong>Estás viendo un ejemplo con datos ficticios.</strong> Cambia lo que quieras: nada se guarda y todo se borra al salir. Los documentos salen con la marca «Vista previa».</p>
+<div class="ejemplo-franja-acciones"><button type="button" class="btn btn-chico btn-primario" id="pm-ejemplo-entrar">Usar con mi empresa</button><button type="button" class="btn-texto" id="pm-ejemplo-salir">Salir del ejemplo</button></div>
+</div>
 <div id="pm-aviso-global" class="lq-avisos aviso-global" role="status"></div>
 
 <!-- Cierre del mes -->
@@ -144,6 +154,11 @@ gtag('js', new Date());
 </div>
 <p id="ini-marcar-fila" class="lq-estado" hidden><button type="button" id="ini-marcar" class="btn-texto"></button></p>
 <p id="ini-estado" class="lq-estado" role="status"></p>
+<div class="piloto-invita" id="ini-opinion" hidden>
+<span class="material-icons" aria-hidden="true">forum</span>
+<p><strong>Estás en el piloto gratuito.</strong> Cuéntanos qué funciona, qué no y qué te falta: lo usamos para mejorar el asistente.</p>
+<div class="piloto-invita-acciones"><button type="button" class="btn btn-chico" data-abrir-opinion="cierre">Dar mi opinión</button><button type="button" class="btn-texto" id="ini-opinion-ahora-no">Ahora no</button></div>
+</div>
 <dl class="cifras" id="ini-cifras"></dl>
 
 <div class="panel" id="ini-primeros" hidden>
@@ -157,7 +172,7 @@ gtag('js', new Date());
 <div class="tabla-wrap">
 <table class="tabla" id="ini-tabla">
 <caption class="sr-only" id="ini-caption">Trabajadores y estado de su liquidación del mes</caption>
-<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col" class="ocultar-movil">Vacaciones</th><th scope="col" class="ocultar-movil">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
+<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col" class="ocultar-movil col-vac">Vacaciones</th><th scope="col" class="ocultar-movil">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
 <tbody id="ini-filas"></tbody>
 </table>
 </div>
@@ -735,7 +750,7 @@ gtag('js', new Date());
 <div class="panel-head"><h2>Pase Pyme</h2></div>
 <div class="panel-cuerpo">
 <p id="pm-pase-estado" class="pase-estado"></p>
-<ul class="pase-incluye">
+<ul class="pase-incluye" id="pm-pase-incluye">
 <li>Hasta 5 trabajadores activos (sin pase, 1).</li>
 <li>Liquidaciones y documentos sin la marca «Vista previa».</li>
 <li>Contrato, anexos y pacto de horas extra sin marca de agua y en Word mientras el pase esté vigente; el finiquito, con el pase de 12 meses.</li>
@@ -806,6 +821,33 @@ gtag('js', new Date());
 </form>
 </dialog>
 
+<dialog class="app-dialogo app-dialogo-medio" id="pm-opinion" aria-labelledby="pm-opinion-titulo">
+<div class="midt-cabeza"><h2 id="pm-opinion-titulo">Tu opinión sobre el asistente</h2><button type="button" class="app-icono-btn" id="pm-opinion-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<form id="pm-opinion-form" class="opinion-form" novalidate>
+<p class="texto-ayuda">Es opcional y nos sirve mucho: leemos cada mensaje. Cuéntanos qué funciona, qué no, o qué agregarías para que el asistente te sirva más.</p>
+<fieldset class="opinion-tipos">
+<legend>¿Qué quieres contarnos?</legend>
+<label><input type="radio" name="pm-opinion-tipo" value="funciona"> Lo que funciona</label>
+<label><input type="radio" name="pm-opinion-tipo" value="no_funciona"> Lo que no funciona</label>
+<label><input type="radio" name="pm-opinion-tipo" value="sugerencia"> Qué agregarías</label>
+<label><input type="radio" name="pm-opinion-tipo" value="otro"> Otra cosa</label>
+</fieldset>
+<div class="lq-field">
+<label for="pm-opinion-texto">Tu mensaje</label>
+<textarea id="pm-opinion-texto" rows="5" maxlength="2000" placeholder="Por ejemplo: «Me falta poder subir la nómina al banco» o «No entendí el aviso de la licencia»."></textarea>
+<p class="texto-ayuda">No escribas RUT, nombres ni otros datos de tus trabajadores.</p>
+</div>
+<div class="lq-field pm-check"><label><input type="checkbox" id="pm-opinion-contacto"> Puedes escribirme a <span id="pm-opinion-correo" class="mono"></span> si necesitas entender mejor lo que conté.</label></div>
+<p id="pm-opinion-estado" class="lq-estado" role="status"></p>
+<div class="form-acciones"><button type="button" class="btn-texto" id="pm-opinion-cancelar">Cancelar</button><button type="submit" class="btn btn-primario" id="pm-opinion-enviar">Enviar mi opinión</button></div>
+</form>
+<div id="pm-opinion-gracias" class="opinion-gracias" hidden>
+<span class="material-icons" aria-hidden="true">check_circle</span>
+<p><strong>Gracias.</strong> Recibimos tu opinión. Si necesitas contarnos algo más, el botón «Tu opinión» sigue en el menú.</p>
+<div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-opinion-listo">Listo</button></div>
+</div>
+</dialog>
+
 <dialog class="app-dialogo app-dialogo-ancho" id="pm-midt" aria-labelledby="pm-midt-titulo">
 <div class="midt-cabeza"><h2 id="pm-midt-titulo">Datos para registrar el contrato en Mi DT</h2><button type="button" class="app-icono-btn" id="pm-midt-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
 <div class="midt-cuerpo" id="pm-midt-cuerpo"></div>
@@ -835,6 +877,6 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.19.1" defer></script>
+<script src="/js/app_pyme.js?v=1.21.0" defer></script>
 </body>
 </html>

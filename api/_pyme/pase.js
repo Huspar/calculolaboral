@@ -11,7 +11,7 @@
  *    Terminos esten resueltos con un abogado (ver docs/revision-legal-asistente-pyme.md, seccion 4).
  *  - Desbloqueo de generadores con pase: el contrato con cualquier pase; el finiquito solo con el de 12 meses.
  *
- * crear({ almacen, productos, flow, venta, ahora }) → { catalogo, ventaActiva, cobertura, comprar, confirmar, desbloqueo }
+ * crear({ almacen, productos, flow, venta, ahora, piloto }) → { catalogo, ventaActiva, cobertura, comprar, confirmar, desbloqueo }
  *   productos: PRODUCTS de api/_flow.js; flow: { createPayment({ product, email, optional }), signUnlock(producto, orden) }
  *   venta: () → boolean. ahora: reloj en milisegundos.
  */
@@ -22,7 +22,7 @@ const COBERTURA = { contrato: ['pyme3', 'pyme12'], finiquito: ['pyme12'] };
 
 function fallo(estado, codigo, error) { return { ok: false, estado, codigo, error }; }
 
-function crear({ almacen, productos, flow, venta, ahora }) {
+function crear({ almacen, productos, flow, venta, ahora, piloto }) {
     const reloj = ahora || Date.now;
     const iso = () => new Date(reloj()).toISOString();
     const ids = () => Object.keys(productos).filter(k => productos[k].pase);
@@ -70,7 +70,9 @@ function crear({ almacen, productos, flow, venta, ahora }) {
     /** Desbloqueo firmado de un generador para una cuenta con pase vigente que lo cubra. */
     async function desbloqueo(cuenta, producto) {
         if (!COBERTURA[producto]) return fallo(400, 'producto', 'Ese generador no está incluido en el pase.');
-        const actual = await almacen.paseActual(cuenta.cuentaId, iso());
+        let actual = await almacen.paseActual(cuenta.cuentaId, iso());
+        // Durante el piloto gratuito toda cuenta cuenta como si tuviera el pase de 12 meses (api/_pyme/piloto.js)
+        if (!actual && piloto && piloto.activo()) actual = { producto: piloto.producto, vence: Date.parse(piloto.vence()) };
         if (!actual) return fallo(403, 'sin_pase', 'Necesitas un Pase Pyme vigente.');
         if (COBERTURA[producto].indexOf(actual.producto) < 0) return fallo(403, 'pase_no_incluye', 'Tu pase actual no incluye este generador.');
         const orden = `PYME-${String(cuenta.cuentaId).slice(0, 8)}-${reloj()}`;

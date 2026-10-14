@@ -210,12 +210,14 @@
                 plazoTxt + (dia13 > plazo10 ? ' Si pagas por internet en Previred, hasta el ' + fechaLarga(dia13) + '.' : '') + ' Confirma el plazo exacto en Previred.');
         }
 
-        // Pase por vencer
+        // Pase o piloto gratuito por vencer (el piloto trae su fecha de fin en hora de Chile)
         if (estado.limites && estado.limites.paseVence) {
-            var faltaPase = dias(hoy, estado.limites.paseVence.slice(0, 10));
+            var enPiloto = !!estado.limites.piloto && !!estado.limites.pilotoHasta;
+            var faltaPase = dias(hoy, enPiloto ? estado.limites.pilotoHasta : estado.limites.paseVence.slice(0, 10));
             if (faltaPase >= 0 && faltaPase <= 15) {
-                agregar('pase', faltaPase <= 3 ? 'urgente' : 'aviso', 'Tu pase vence ' + (faltaPase === 0 ? 'hoy' : 'en ' + plural(faltaPase, 'día', 'días')),
-                    'Al vencer, tu cuenta vuelve a las funciones gratuitas (1 trabajador activo y documentos con marca de agua). Tus datos se conservan.');
+                agregar('pase', faltaPase <= 3 ? 'urgente' : 'aviso', (enPiloto ? 'El piloto gratuito termina ' : 'Tu pase vence ') + (faltaPase === 0 ? 'hoy' : 'en ' + plural(faltaPase, 'día', 'días')),
+                    (enPiloto ? 'Al terminar' : 'Al vencer') + ', tu cuenta vuelve a las funciones gratuitas (1 trabajador activo y documentos con marca de agua). Tus datos se conservan.' +
+                    (enPiloto ? ' Respalda lo que necesites desde «Mi cuenta» y cuéntanos qué te pareció con «Tu opinión».' : ''));
             }
         }
 

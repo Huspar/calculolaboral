@@ -25,7 +25,7 @@ Lo que este diseño rechaza: el tablero genérico de tarjetas con números y gr�
 - **Menú lateral fijo a la izquierda** (unos 240 px), con el logo oficial de Cálculo Laboral arriba y, debajo, el nombre de la empresa. Ese bloque queda listo para convertirse en selector de empresas cuando lleguen los contadores.
 - **Barra superior delgada:** el mes que se está mirando (con flechas para ir al anterior o al siguiente), el estado del Pase y la cuenta (correo, salir).
 - **Contenido** a la derecha, ancho completo del espacio que queda, sin el límite de 1200 px del sitio.
-- **Color:** sobrio. Fondo claro, superficies blancas, verde bosque para la marca y lo activo, ámbar solo para marcar el elemento activo del menú y lo que vence pronto, rose solo para riesgo legal. Tema claro: se usa de día, en una oficina, y se imprime.
+- **Color:** sobrio. Fondo claro, superficies blancas, verde bosque para la marca y lo activo, ámbar para lo pendiente (elemento activo del menú, lo que vence pronto, liquidaciones preparadas sin emitir y su tramo en el avance del mes, el modo de ejemplo), rose solo para riesgo legal (los avisos urgentes llevan fondo rose suave). Encabezados de tabla con el tinte verde (`--forest-50`). Tema claro: se usa de día, en una oficina, y se imprime. (Ámbar ampliado por pedido del dueño el 14-oct-2026: el panel se veía solo verde y blanco.)
 - **Tipografía:** Geist para todo; Geist Mono con cifras tabulares para montos, fechas, RUT y días.
 - **Celular:** el menú lateral se convierte en una barra inferior con las cinco secciones principales y un botón «Más». La grilla del mes pasa a una lista por trabajador. Se diseña primero para escritorio (1280 a 1600 px) y se verifica en 390 px.
 
@@ -100,6 +100,7 @@ Cada etapa se prueba en el navegador en 1280 px y 390 px, con las pruebas autom�
 ## 8. Decisiones abiertas
 
 - **Costo empleador:** fuera de esta versión (ver sección 4). Se puede sumar más adelante si se amplía el motor y se valida.
+- **Modo de ejemplo (14-oct-2026):** `/app/ejemplo` o el botón «Ver un ejemplo» de la entrada abren una panadería ficticia con tres trabajadores, en la memoria de la pestaña y sin llamar al servidor (`js/pyme_demo.js` + `js/pyme_demo_servidor.js`, generado con `node tools/build_pyme_demo.js` desde `api/_pyme/datos.js`, `validar.js` y el almacén en memoria; `tools/test_pyme_demo.js` falla si el paquete quedó viejo). Sin Pase: los documentos salen con «Vista previa». No crea enlaces, no envía correos ni compra.
 - **Subdominio `app.calculolaboral.cl`:** más adelante, sin cambiar el diseño.
 - **Varias empresas por cuenta:** preparado en el menú, no construido. Requiere cambios en la base y en el plan de precios.
 - **Revisión legal** del cálculo de vacaciones y de los textos: igual que el resto, sin revisión de abogado.

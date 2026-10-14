@@ -260,6 +260,17 @@ async function main() {
         await almacen.crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId: tid, periodo: '2026-09', tokenHash: 'h4-' + marca, pagada: false, ahoraIso: ahoraEnl, venceIso: venceEnl });
         paso('enlaces de liquidación: reemplazo, aperturas, vencimiento, borrado y solo trabajadores de la empresa');
 
+        // ---- Opiniones del piloto contra la base real (migración 006) ----
+        const ahoraCom = new Date().toISOString();
+        const com = (texto, extra) => almacen.guardarComentario(Object.assign({ cuentaId, tipo: 'sugerencia', pantalla: 'liquidaciones', texto, contacto: false, ahoraIso: ahoraCom, maxPorDia: 5 }, extra || {}));
+        for (let i = 0; i < 5; i++) assert.ok(await com('Opinión de prueba número ' + i), 'las 5 primeras entran');
+        assert.strictEqual(await com('La sexta del día no entra'), null, 'el máximo por día lo aplica la sentencia SQL');
+        assert.ok(await com('Un día después sí entra', { ahoraIso: new Date(Date.now() + 90000000).toISOString() }));
+        await assert.rejects(() => com('x', { ahoraIso: new Date(Date.now() + 400000000).toISOString() }), 'el texto mínimo lo exige la base');
+        await assert.rejects(() => com('Tipo raro', { tipo: 'inventado', ahoraIso: new Date(Date.now() + 200000000).toISOString() }), 'el tipo lo exige la base');
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM comentarios_piloto WHERE cuenta_id = $1', [cuentaId]))[0].n, 6);
+        paso('opiniones del piloto: máximo por día en una sentencia, texto y tipo validados por la base');
+
         // ---- Avisos por correo contra la base real (migración 004) ----
         assert.deepStrictEqual(await almacen.obtenerAvisosCorreo(cuentaId), { activo: false, ultimoEnvio: null });
         assert.ok((await srv.guardarAvisosCorreo(cuentaObj, true)).ok);
@@ -306,6 +317,7 @@ async function main() {
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM honorarios WHERE empresa_id = $1', [empresaId]))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM avisos_correo WHERE cuenta_id = $1', [cuentaId]))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM enlaces_liquidacion WHERE cuenta_id = $1', [cuentaId]))[0].n, 0);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM comentarios_piloto WHERE cuenta_id = $1', [cuentaId]))[0].n, 0);
         paso('borrar la cuenta borra sesiones, empresa, trabajadores, meses, honorarios y pases en cascada');
         cuentaId = null;
         console.log('\n' + ok + ' pruebas correctas contra la base real');

@@ -9,6 +9,9 @@
  * - No envia correos: el enlace de acceso se imprime en la terminal y queda en http://localhost:3000/__dev/ultimo-enlace
  * - http://localhost:3000/__dev/pase?email=ana@ejemplo.cl[&producto=pyme12]  da un pase de 30 dias a esa cuenta (para probar el limite de 5).
  * - http://localhost:3000/__dev/avisos  corre la tarea diaria de avisos por correo (los correos se imprimen y quedan en /__dev/ultimos-avisos).
+ * - El piloto gratuito (hasta el 31-dic-2026) esta activo: toda cuenta tiene el cupo y los beneficios del Pase de 12 meses. Para probar
+ *   el limite de 1 trabajador sin pase: PYME_PILOTO_FIN=1 node tools/dev_pyme.js
+ * - Las opiniones del piloto (boton «Tu opinion») se guardan en memoria; el aviso por correo se imprime y queda en /__dev/ultimas-opiniones.
  * - La compra del Pase usa un Flow SIMULADO: /__dev/flow?token=...&resultado=ok|rechazado|pendiente confirma o rechaza el pago y vuelve
  *   al panel. La venta esta abierta aqui (en produccion se abre con PYME_PASE_VENTA=1). No se llama a Flow ni a Resend.
  *
@@ -25,6 +28,7 @@ const crypto = require('crypto');
 const { crearRutas } = require('../api/_pyme/rutas');
 const { crear: crearAuth } = require('../api/_pyme/auth');
 const { crear: crearDatos } = require('../api/_pyme/datos');
+const Piloto = require('../api/_pyme/piloto');
 const Cifrado = require('../api/_pyme/cifrado');
 const T = require('../api/_pyme/tokens');
 const { crearAlmacenMemoria } = require('./pyme_almacen_memoria');
@@ -62,7 +66,8 @@ const auth = crearAuth({
     almacen, secreto, siteUrl: SITIO,
     enviarCorreo: async ({ to, enlace }) => { ultimoEnlace = enlace; console.log('\n[correo simulado] para ' + to + ':\n  ' + enlace + '\n'); }
 });
-const datos = crearDatos({ almacen, cifrado });
+const piloto = Piloto.crear(process.env);
+const datos = crearDatos({ almacen, cifrado, piloto });
 // Flow simulado: el pago queda pendiente hasta abrir /__dev/flow
 const pagosDev = {};
 let nPago = 0;
@@ -72,7 +77,8 @@ const pase = crearPase({
         createPayment: async ({ product, email, optional }) => { const token = 'DEVTOKEN' + (++nPago); pagosDev[token] = { product, email, optional, order: 'DEV-' + nPago }; return { url: SITIO + '/__dev/flow', token }; },
         signUnlock: Flow.signUnlock
     },
-    venta: () => true
+    venta: () => true,
+    piloto
 });
 const avisosEnviados = [];
 const avisos = require('../api/_pyme/avisos').crear({
@@ -80,7 +86,12 @@ const avisos = require('../api/_pyme/avisos').crear({
     enviar: async (m) => { avisosEnviados.push(m); console.log('\n[correo simulado] avisos para ' + m.to + ' | ' + m.asunto + '\n'); }
 });
 const enlaces = require('../api/_pyme/enlaces').crear({ almacen, datos, secreto, siteUrl: SITIO });
-const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'development' }, siteUrl: SITIO, pase, avisos, enlaces });
+const opiniones = [];
+const comentarios = require('../api/_pyme/comentarios').crear({
+    almacen, destino: ['contacto@calculolaboral.cl'],
+    enviar: async (m) => { opiniones.push(m); console.log('\n[correo simulado] opinion para ' + m.to + ' | ' + m.asunto + (m.reply_to ? ' | responder a ' + m.reply_to : '') + '\n'); }
+});
+const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'development' }, siteUrl: SITIO, pase, avisos, enlaces, comentarios });
 // Los manejadores de produccion (flow-confirm) piden el servicio del Pase a servicios.js: se les entrega el de memoria
 if (SANDBOX) { const rs = require.resolve('../api/_pyme/servicios'); require.cache[rs] = { id: rs, filename: rs, loaded: true, exports: { pase: () => pase, almacen: () => almacen } }; }
 
@@ -128,6 +139,7 @@ http.createServer(async (req, res) => {
         const url = new URL(req.url, SITIO);
         if (url.pathname === '/__dev/ultimo-enlace') { res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify({ enlace: ultimoEnlace })); }
         if (url.pathname === '/__dev/avisos') { res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify(await avisos.correr())); }
+        if (url.pathname === '/__dev/ultimas-opiniones') { res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify({ guardadas: almacen._estado.comentarios, correos: opiniones.slice(-5) })); }
         if (url.pathname === '/__dev/ultimos-avisos') { res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify(avisosEnviados.slice(-5))); }
         if (url.pathname === '/__dev/pase') {
             const correo = (url.searchParams.get('email') || '').toLowerCase();

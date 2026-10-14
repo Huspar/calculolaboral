@@ -8,6 +8,7 @@
  *   RESEND_API_KEY        envio del correo con el enlace de acceso
  *   FLOW_API_KEY, FLOW_SECRET_KEY, PYME_PASE_VENTA  cobro del Pase Pyme (la venta se abre con PYME_PASE_VENTA=1)
  *   CRON_SECRET           activa la tarea diaria de avisos por correo (/api/pyme/avisos-cron); sin ella no se envían
+ *   PYME_PILOTO_FIN       «1» cierra antes de tiempo el piloto gratuito (por defecto dura hasta el 31-dic-2026, ver api/_pyme/piloto.js)
  */
 const T = require('../_pyme/tokens');
 const H = require('../_pyme/http');
@@ -19,6 +20,8 @@ const D = require('../_pyme/datos');
 const Cifrado = require('../_pyme/cifrado');
 const Avisos = require('../_pyme/avisos');
 const Enlaces = require('../_pyme/enlaces');
+const Piloto = require('../_pyme/piloto');
+const Comentarios = require('../_pyme/comentarios');
 
 let manejador = null; // se arma una vez por instancia de la funcion
 
@@ -37,7 +40,7 @@ function armar() {
     let datosReal = null;
     const datos = new Proxy({}, {
         get: (_, nombre) => (...args) => {
-            if (!datosReal) datosReal = D.crear({ almacen, cifrado: Cifrado.crear() });
+            if (!datosReal) datosReal = D.crear({ almacen, cifrado: Cifrado.crear(), piloto: Piloto.crear(process.env) });
             return datosReal[nombre](...args);
         }
     });
@@ -47,7 +50,12 @@ function armar() {
         enviar: ({ to, asunto, html, texto, clave }) => sendEmail({ to: [to], reply_to: 'contacto@calculolaboral.cl', subject: asunto, html, text: texto }, clave)
     });
     const enlaces = Enlaces.crear({ almacen, datos, secreto, siteUrl: SITE_URL });
-    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces });
+    // Opiniones del piloto: se guardan y se avisa a contacto@ (si el correo falla, la opinión queda igual)
+    const comentarios = Comentarios.crear({
+        almacen, destino: ['contacto@calculolaboral.cl'],
+        enviar: ({ to, reply_to, asunto, html, texto, clave }) => sendEmail(Object.assign({ to, subject: asunto, html, text: texto }, reply_to ? { reply_to } : {}), clave)
+    });
+    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces, comentarios });
 }
 
 module.exports = async (req, res) => {
