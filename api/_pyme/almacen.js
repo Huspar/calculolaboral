@@ -210,6 +210,44 @@ function crearAlmacenSql(sql) {
             return r.length === 1;
         },
 
+        // ---------- liquidación compartida por enlace (migración 005) ----------
+
+        /** Crea el enlace del trabajador y mes (reemplaza el anterior) si el trabajador es de la cuenta. Devuelve true o false. */
+        async crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId, periodo, tokenHash, pagada, ahoraIso, venceIso }) {
+            const r = await conCandado('enlaces:' + trabajadorId,
+                'WITH permitido AS (SELECT t.id FROM trabajadores t WHERE t.id = $3::uuid AND t.empresa_id = $2::uuid) ' +
+                'INSERT INTO enlaces_liquidacion (token_hash, cuenta_id, trabajador_id, periodo, pagada, creado, vence) ' +
+                'SELECT $5, $1::uuid, permitido.id, $4::text, $6::boolean, $7::timestamptz, $8::timestamptz FROM permitido ' +
+                'ON CONFLICT (trabajador_id, periodo) DO UPDATE SET token_hash = EXCLUDED.token_hash, pagada = EXCLUDED.pagada, creado = EXCLUDED.creado, vence = EXCLUDED.vence, primera_vista = NULL, ultima_vista = NULL, vistas = 0 RETURNING id',
+                [cuentaId, empresaId, trabajadorId, periodo, tokenHash, pagada, ahoraIso, venceIso]
+            );
+            return r.length === 1;
+        },
+
+        async listarEnlacesLiquidacion(cuentaId, periodo) {
+            const r = await filas(
+                'SELECT trabajador_id, periodo, creado, vence, primera_vista, ultima_vista, vistas FROM enlaces_liquidacion WHERE cuenta_id = $1::uuid AND periodo = $2 ORDER BY creado',
+                [cuentaId, periodo]
+            );
+            const iso = (v) => v ? new Date(v).toISOString() : null;
+            return r.map(x => ({ trabajadorId: x.trabajador_id, periodo: x.periodo, creado: iso(x.creado), vence: iso(x.vence), primeraVista: iso(x.primera_vista), ultimaVista: iso(x.ultima_vista), vistas: Number(x.vistas) }));
+        },
+
+        async borrarEnlaceLiquidacion(cuentaId, trabajadorId, periodo) {
+            const r = await filas('DELETE FROM enlaces_liquidacion WHERE cuenta_id = $1::uuid AND trabajador_id = $2::uuid AND periodo = $3 RETURNING id', [cuentaId, trabajadorId, periodo]);
+            return r.length === 1;
+        },
+
+        /** Abre un enlace vigente: suma la vista en la misma sentencia y devuelve a qué liquidación corresponde. */
+        async abrirEnlaceLiquidacion(tokenHash, ahoraIso) {
+            const r = await filas(
+                'UPDATE enlaces_liquidacion SET vistas = vistas + 1, ultima_vista = $2::timestamptz, primera_vista = COALESCE(primera_vista, $2::timestamptz) ' +
+                'WHERE token_hash = $1 AND vence > $2::timestamptz RETURNING cuenta_id, trabajador_id, periodo, pagada',
+                [tokenHash, ahoraIso]
+            );
+            return r[0] ? { cuentaId: r[0].cuenta_id, trabajadorId: r[0].trabajador_id, periodo: r[0].periodo, pagada: r[0].pagada === true } : null;
+        },
+
         // ---------- avisos por correo (preferencia y avisos ya enviados; migración 004) ----------
 
         async obtenerAvisosCorreo(cuentaId) {

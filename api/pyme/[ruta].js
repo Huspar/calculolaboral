@@ -18,6 +18,7 @@ const { crearRutas } = require('../_pyme/rutas');
 const D = require('../_pyme/datos');
 const Cifrado = require('../_pyme/cifrado');
 const Avisos = require('../_pyme/avisos');
+const Enlaces = require('../_pyme/enlaces');
 
 let manejador = null; // se arma una vez por instancia de la funcion
 
@@ -45,7 +46,8 @@ function armar() {
         P: require('../../js/liquidacion_parametros.js'), F: require('../../js/feriados_cl.js'),
         enviar: ({ to, asunto, html, texto, clave }) => sendEmail({ to: [to], reply_to: 'contacto@calculolaboral.cl', subject: asunto, html, text: texto }, clave)
     });
-    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos });
+    const enlaces = Enlaces.crear({ almacen, datos, secreto, siteUrl: SITE_URL });
+    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces });
 }
 
 module.exports = async (req, res) => {

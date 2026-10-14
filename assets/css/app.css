@@ -339,6 +339,9 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .hon-bloque { display: grid; gap: 10px; border-top: 1px solid var(--line); }
 .planilla-cuerpo { display: grid; gap: 14px; }
 .anual-cuerpo { display: grid; gap: 12px; }
+.enlace-caja { display: grid; gap: 8px; }
+.enlace-fila { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.enlace-fila input { font-family: var(--mono); font-size: 12.5px; }
 .anual-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .anual-acciones select { width: auto; min-width: 7rem; }
 .planilla-pasos { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; color: var(--ink); }

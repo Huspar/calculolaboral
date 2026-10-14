@@ -92,6 +92,20 @@ function paginaMensaje(titulo, texto) {
     return pagina(titulo, `<h1>${escapeHtml(titulo)}</h1><p>${escapeHtml(texto)}</p><p><a href="/app">Volver al asistente</a></p>`);
 }
 
+/** Página pública con la liquidación compartida por enlace. "html" lo arma el servidor con liquidacion_documento.js. */
+function paginaLiquidacion({ html, empresa, periodo, pagada }) {
+    const a = String(periodo).split('-'), meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const titulo = 'Liquidación de ' + meses[+a[1] - 1] + ' ' + a[0];
+    return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>${escapeHtml(titulo)}</title>
+<link rel="stylesheet" href="/assets/css/fonts.css"><link rel="stylesheet" href="/assets/css/app.css">
+<style>body{margin:0;background:#F8FAF9;font-family:Geist,Arial,sans-serif;color:#0f172a}.envoltura{max-width:880px;margin:0 auto;padding:20px 16px 40px}.nota{font-size:13px;color:#475569;margin:0 0 14px;line-height:1.5}.marco{overflow-x:auto}@media print{.nota{display:none}body{background:#fff}.envoltura{padding:0}.lq-doc{box-shadow:none;min-width:0}}</style></head>
+<body><div class="envoltura">
+<p class="nota">Liquidación de sueldo que te comparte <strong>${escapeHtml(empresa || 'tu empleador')}</strong>. Para guardarla o imprimirla, usa la opción Imprimir de tu navegador. Si ves un error, avísale a tu empleador.</p>
+<div class="marco"><article class="lq-doc${pagada ? ' lqd-pagada' : ''}">${html}</article></div>
+</div></body></html>`;
+}
+
 /** Página del enlace de baja: pide confirmar con un botón (un revisor automático de enlaces no la apaga solo). */
 function paginaBajaAvisos({ token }) {
     return pagina('Dejar de recibir avisos', `<h1>Dejar de recibir los avisos por correo</h1>
@@ -102,4 +116,4 @@ function paginaBajaAvisos({ token }) {
 </form>`);
 }
 
-module.exports = { correoAcceso, correoAvisos, paginaConfirmar, paginaMensaje, paginaBajaAvisos };
+module.exports = { correoAcceso, correoAvisos, paginaConfirmar, paginaMensaje, paginaBajaAvisos, paginaLiquidacion };

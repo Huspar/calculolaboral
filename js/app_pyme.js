@@ -288,7 +288,7 @@
 
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
-        estado = null; mesesCache = {}; honCache = {}; honEdit = null; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; vistaActual = null;
+        estado = null; mesesCache = {}; honCache = {}; honEdit = null; enlacesCache = {}; enlaceNuevo = null; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; vistaActual = null;
         vacSel = null; vacCache = []; docsCache = []; docPrefill = null;
         docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
         $('print-section').innerHTML = '';
@@ -2392,6 +2392,7 @@
         pintarListas();
         dibujarAusenciasMes();
         dibujarCuotasMes();
+        dibujarEnlaceMes();
         visibilidadMes();
         $('pm-liq-editor-titulo').textContent = t.nombre + ' · ' + mayuscula(nombrePeriodo(periodoSel));
         $('pm-liq-quitar').hidden = !reg;
@@ -2476,6 +2477,64 @@
             return { res: res, val: val, sc: c.sc };
         } catch (err) { return { error: err.message }; }
     }
+
+    // --- liquidación compartida por enlace ---
+    var enlacesCache = {};   // periodo → { trabajadorId: { creado, vence, primeraVista, ultimaVista, vistas } }
+    var enlaceNuevo = null;  // { id, periodo, enlace } recién creado (el enlace completo solo se conoce al crearlo)
+    function cargarEnlaces(periodo) {
+        return api('enlaces-liquidacion', { query: { periodo: periodo } }).then(function (r) {
+            if (sinSesion(r) || !r.ok) return false;
+            var mapa = {};
+            (r.datos.enlaces || []).forEach(function (e) { mapa[e.trabajadorId] = e; });
+            enlacesCache[periodo] = mapa;
+            return true;
+        });
+    }
+    function dibujarEnlaceMes() {
+        var caja = $('pm-liq-enlace'), cuerpo = $('pm-liq-enlace-cuerpo');
+        if (!editando) return;
+        caja.hidden = false;
+        var id = editando.id, p = periodoSel;
+        if (!editando.guardado) { cuerpo.innerHTML = '<p class="lq-help">Guarda el mes para poder compartir la liquidación con un enlace.</p>'; return; }
+        if (!enlacesCache[p]) { cuerpo.innerHTML = '<p class="lq-help">Revisando…</p>'; cargarEnlaces(p).then(function () { if (editando && editando.id === id && periodoSel === p) dibujarEnlaceMes(); }); return; }
+        var e = enlacesCache[p][id], nuevo = enlaceNuevo && enlaceNuevo.id === id && enlaceNuevo.periodo === p ? enlaceNuevo.enlace : '';
+        var html = '<div class="enlace-caja"><p class="lq-help">Crea un enlace para que ' + esc(editando.t.nombre.split(' ')[0]) + ' vea su liquidación desde el celular y envíaselo tú (WhatsApp, correo). Muestra la liquidación guardada de este mes; si la cambias, el enlace muestra la versión nueva. Vence a los 60 días y puedes anularlo. Si la persona la pide en papel, imprímela.</p>';
+        if (e) {
+            var vence = e.vence.slice(0, 10) < hoyIso() ? 'venció' : 'vence el ' + fechaLarga(e.vence.slice(0, 10));
+            html += (nuevo ? '<div class="enlace-fila"><input type="text" readonly id="pm-enlace-url" value="' + esc(nuevo) + '" aria-label="Enlace para el trabajador"><button type="button" class="btn btn-chico" data-enlace="copiar">Copiar</button></div>' : '') +
+                '<p class="lq-help">Enlace creado el ' + esc(fechaLarga(e.creado.slice(0, 10))) + ', ' + esc(vence) + '. ' +
+                (e.vistas ? 'Abierto por primera vez el ' + esc(fechaLarga(e.primeraVista.slice(0, 10))) + (e.vistas > 1 ? ' (' + plural(e.vistas, 'vez', 'veces') + ', la última el ' + esc(fechaLarga(e.ultimaVista.slice(0, 10))) + ')' : '') + '.' : 'Todavía no se abre.') +
+                ' Un revisor automático de enlaces del correo o de la mensajería también cuenta como apertura: no es firma ni aceptación.</p>' +
+                '<div class="acciones-pila acciones-fila"><button type="button" class="btn-texto" data-enlace="crear">' + (nuevo ? 'Crear otro' : 'Crear un enlace nuevo') + '</button><button type="button" class="btn-texto lq-danger" data-enlace="anular">Anular el enlace</button></div>';
+            if (!nuevo) html += '<p class="lq-help">Por seguridad, el enlace completo solo se muestra al crearlo. Si lo perdiste, crea uno nuevo (el anterior deja de servir).</p>';
+        } else {
+            html += '<div><button type="button" class="btn btn-chico" data-enlace="crear"><span class="material-icons" aria-hidden="true">link</span>Crear enlace</button></div>';
+        }
+        cuerpo.innerHTML = html + '<p class="lq-estado" id="pm-enlace-estado" role="status"></p></div>';
+    }
+    $('pm-liq-enlace-cuerpo').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-enlace]');
+        if (!b || !editando) return;
+        var accion = b.getAttribute('data-enlace'), id = editando.id, p = periodoSel, est = $('pm-enlace-estado');
+        if (accion === 'copiar') {
+            var inp = $('pm-enlace-url');
+            (navigator.clipboard ? navigator.clipboard.writeText(inp.value) : Promise.reject()).then(function () { mensaje(est, 'ok', 'Copiado.'); }, function () { inp.select(); mensaje(est, '', 'Selecciónalo y cópialo.'); });
+            return;
+        }
+        var ir = function () {
+            b.disabled = true;
+            api('enlace-liquidacion', { metodo: accion === 'crear' ? 'POST' : 'DELETE', query: { trabajador: id, periodo: p } }).then(function (r) {
+                b.disabled = false;
+                if (sinSesion(r)) return;
+                if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos hacerlo.'); return; }
+                enlaceNuevo = accion === 'crear' ? { id: id, periodo: p, enlace: r.datos.enlace } : null;
+                cargarEnlaces(p).then(function () { if (editando && editando.id === id) { dibujarEnlaceMes(); mensaje($('pm-enlace-estado'), 'ok', accion === 'crear' ? 'Enlace creado. Cópialo y envíaselo.' : 'Anulamos el enlace: ya no sirve.'); } });
+            });
+        };
+        if (accion === 'anular') confirmar('¿Anular el enlace?', 'Quien lo tenga ya no podrá ver la liquidación.', 'Anular').then(function (si) { if (si) ir(); });
+        else if (accion === 'crear' && enlacesCache[p] && enlacesCache[p][id]) confirmar('¿Crear un enlace nuevo?', 'El anterior deja de servir.', 'Crear').then(function (si) { if (si) ir(); });
+        else ir();
+    });
 
     // --- licencias y permisos del mes: vienen de la ficha ---
     function dibujarAusenciasMes() {
@@ -2614,6 +2673,7 @@
             editando.mes = JSON.parse(JSON.stringify(r.datos.mes));
             editando.guardado = true;
             dibujarCuotasMes();
+            dibujarEnlaceMes();
             $('pm-liq-quitar').hidden = false;
             mensaje(est, 'ok', 'Guardado.');
             dibujarLiquidaciones();

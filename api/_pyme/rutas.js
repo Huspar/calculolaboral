@@ -14,6 +14,9 @@
  *   GET  /api/pyme/meses?periodo=AAAA-MM           liquidaciones guardadas de ese mes (todos los trabajadores)
  *   PUT|DELETE /api/pyme/mes?trabajador=ID&periodo=AAAA-MM  { mes }   guarda o elimina el mes de un trabajador
  *   POST /api/pyme/documento?trabajador=ID  { tipo }   anota que se emitió un documento (solo tipo y fecha)
+ *   POST|DELETE /api/pyme/enlace-liquidacion?trabajador=ID&periodo=AAAA-MM   crea (o anula) el enlace para que el trabajador vea su liquidación
+ *   GET  /api/pyme/enlaces-liquidacion?periodo=AAAA-MM   enlaces del mes con sus aperturas
+ *   GET  /api/pyme/liquidacion?t=TOKEN            página pública con la liquidación (sin scripts, no indexable)
  *   GET|PUT /api/pyme/avisos-correo   { activo }   preferencia de avisos por correo de la cuenta
  *   GET  /api/pyme/avisos-cron                   tarea diaria de Vercel (Authorization: Bearer CRON_SECRET); sin CRON_SECRET, desactivada
  *   GET|POST /api/pyme/avisos-baja?t=FIRMA        baja de los avisos por correo desde el enlace del correo (pide confirmar)
@@ -33,7 +36,7 @@ const T = require('./tokens');
 const DESTINO_PANEL = '/app';
 const MENSAJE_ENLACE_INVALIDO = 'El enlace venció o ya se usó. Pide uno nuevo desde el asistente.';
 
-function crearRutas({ auth, datos, env, siteUrl, pase, avisos }) {
+function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces }) {
     function metodo(req, res, permitido) {
         if (req.method === permitido) return true;
         res.setHeader('Allow', permitido);
@@ -177,6 +180,36 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos }) {
         return responder(res, await datos.borrarMes(s, id, periodo));
     }
 
+    async function enlaceLiquidacion(req, res) {
+        const m = req.method;
+        if (m !== 'POST' && m !== 'DELETE') { res.setHeader('Allow', 'POST, DELETE'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        if (!enlaces) return H.json(res, 503, { ok: false, error: 'No disponible.' });
+        const id = typeof req.query?.trabajador === 'string' ? req.query.trabajador : '';
+        const periodo = typeof req.query?.periodo === 'string' ? req.query.periodo : '';
+        return responder(res, m === 'POST' ? await enlaces.crearEnlace(s, id, periodo) : await enlaces.anular(s, id, periodo));
+    }
+
+    async function enlacesLiquidacion(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        const s = await conSesion(req, res);
+        if (!s) return;
+        if (!enlaces) return H.json(res, 503, { ok: false, error: 'No disponible.' });
+        return responder(res, await enlaces.listar(s, typeof req.query?.periodo === 'string' ? req.query.periodo : ''));
+    }
+
+    // Página pública del enlace: documento armado en el servidor, sin scripts (CSP), no indexable y sin caché
+    async function liquidacionPublica(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        const r = enlaces ? await enlaces.abrir(typeof req.query?.t === 'string' ? req.query.t : '') : { ok: false };
+        res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+        res.setHeader('Referrer-Policy', 'no-referrer');
+        if (!r.ok) return H.html(res, 404, C.paginaMensaje('Enlace no válido', 'Este enlace no existe, venció o el empleador lo anuló. Pídele uno nuevo.'));
+        return H.html(res, 200, C.paginaLiquidacion(r));
+    }
+
     async function avisosCorreo(req, res) {
         const m = req.method;
         if (m !== 'GET' && m !== 'PUT') { res.setHeader('Allow', 'GET, PUT'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
@@ -302,7 +335,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

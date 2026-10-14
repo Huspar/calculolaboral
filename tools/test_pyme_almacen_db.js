@@ -243,6 +243,23 @@ async function main() {
         await assert.rejects(() => sql.query("INSERT INTO honorarios (empresa_id, periodo, datos_cifrados, version_clave) VALUES ($1, '2026-13', 'x', 1)", [empresaId]), 'la base rechaza un período inválido');
         paso('honorarios: boletas cifradas por mes, se reemplazan, con máximo de meses, se borran con lista vacía y se exportan');
 
+        // ---- Liquidación compartida por enlace contra la base real (migración 005) ----
+        const ahoraEnl = new Date().toISOString(), venceEnl = new Date(Date.now() + 60 * 86400000).toISOString();
+        assert.strictEqual(await almacen.crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId: tid, periodo: '2026-09', tokenHash: 'h1-' + marca, pagada: true, ahoraIso: ahoraEnl, venceIso: venceEnl }), true);
+        assert.strictEqual(await almacen.crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId: tid, periodo: '2026-09', tokenHash: 'h2-' + marca, pagada: true, ahoraIso: ahoraEnl, venceIso: venceEnl }), true, 'el segundo reemplaza al primero');
+        assert.strictEqual(await almacen.abrirEnlaceLiquidacion('h1-' + marca, ahoraEnl), null);
+        const abierto = await almacen.abrirEnlaceLiquidacion('h2-' + marca, ahoraEnl);
+        assert.deepStrictEqual([abierto.trabajadorId, abierto.periodo, abierto.pagada], [tid, '2026-09', true]);
+        await almacen.abrirEnlaceLiquidacion('h2-' + marca, ahoraEnl);
+        const listaEnl = await almacen.listarEnlacesLiquidacion(cuentaId, '2026-09');
+        assert.deepStrictEqual([listaEnl.length, listaEnl[0].vistas, !!listaEnl[0].primeraVista], [1, 2, true]);
+        assert.strictEqual(await almacen.abrirEnlaceLiquidacion('h2-' + marca, new Date(Date.now() + 61 * 86400000).toISOString()), null, 'vencido no abre');
+        assert.strictEqual(await almacen.crearEnlaceLiquidacion({ cuentaId, empresaId: crypto.randomUUID(), trabajadorId: tid, periodo: '2026-08', tokenHash: 'h3-' + marca, pagada: false, ahoraIso: ahoraEnl, venceIso: venceEnl }), false, 'solo trabajadores de la empresa');
+        assert.strictEqual(await almacen.borrarEnlaceLiquidacion(cuentaId, tid, '2026-09'), true);
+        assert.deepStrictEqual(await almacen.listarEnlacesLiquidacion(cuentaId, '2026-09'), []);
+        await almacen.crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId: tid, periodo: '2026-09', tokenHash: 'h4-' + marca, pagada: false, ahoraIso: ahoraEnl, venceIso: venceEnl });
+        paso('enlaces de liquidación: reemplazo, aperturas, vencimiento, borrado y solo trabajadores de la empresa');
+
         // ---- Avisos por correo contra la base real (migración 004) ----
         assert.deepStrictEqual(await almacen.obtenerAvisosCorreo(cuentaId), { activo: false, ultimoEnvio: null });
         assert.ok((await srv.guardarAvisosCorreo(cuentaObj, true)).ok);
@@ -288,6 +305,7 @@ async function main() {
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM documentos WHERE trabajador_id = $1', [tid]))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM honorarios WHERE empresa_id = $1', [empresaId]))[0].n, 0);
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM avisos_correo WHERE cuenta_id = $1', [cuentaId]))[0].n, 0);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM enlaces_liquidacion WHERE cuenta_id = $1', [cuentaId]))[0].n, 0);
         paso('borrar la cuenta borra sesiones, empresa, trabajadores, meses, honorarios y pases en cascada');
         cuentaId = null;
         console.log('\n' + ok + ' pruebas correctas contra la base real');

@@ -79,7 +79,8 @@ const avisos = require('../api/_pyme/avisos').crear({
     almacen, datos, secreto, siteUrl: SITIO, P: require('../js/liquidacion_parametros.js'), F: require('../js/feriados_cl.js'),
     enviar: async (m) => { avisosEnviados.push(m); console.log('\n[correo simulado] avisos para ' + m.to + ' | ' + m.asunto + '\n'); }
 });
-const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'development' }, siteUrl: SITIO, pase, avisos });
+const enlaces = require('../api/_pyme/enlaces').crear({ almacen, datos, secreto, siteUrl: SITIO });
+const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'development' }, siteUrl: SITIO, pase, avisos, enlaces });
 // Los manejadores de produccion (flow-confirm) piden el servicio del Pase a servicios.js: se les entrega el de memoria
 if (SANDBOX) { const rs = require.resolve('../api/_pyme/servicios'); require.cache[rs] = { id: rs, filename: rs, loaded: true, exports: { pase: () => pase, almacen: () => almacen } }; }
 

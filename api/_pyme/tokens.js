@@ -34,7 +34,7 @@ function huella(secreto, dominio, valor) {
 
 /** Huella de un token de acceso o de sesion (distintos dominios: uno no sirve como el otro). */
 function huellaToken(secreto, tipo, token) {
-    if (tipo !== 'acceso' && tipo !== 'sesion') throw new Error('Tipo de token desconocido');
+    if (tipo !== 'acceso' && tipo !== 'sesion' && tipo !== 'liquidacion') throw new Error('Tipo de token desconocido');
     return huella(secreto, 'token-' + tipo, token);
 }
 

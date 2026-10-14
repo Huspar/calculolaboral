@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -90,6 +90,7 @@ function crearAlmacenMemoria() {
             const i = E.trabajadores.findIndex(x => x.id === id && x.empresaId === empresaId);
             if (i < 0) return false;
             E.meses = E.meses.filter(m => m.trabajadorId !== id);
+            E.enlaces = E.enlaces.filter(m => m.trabajadorId !== id);
             E.documentos = E.documentos.filter(m => m.trabajadorId !== id);
             E.vacaciones = E.vacaciones.filter(m => m.trabajadorId !== id);
             E.trabajadores.splice(i, 1);
@@ -121,6 +122,27 @@ function crearAlmacenMemoria() {
             if (i < 0) return false;
             E.meses.splice(i, 1);
             return true;
+        },
+        // ---- liquidación compartida por enlace ----
+        async crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId, periodo, tokenHash, pagada, ahoraIso, venceIso }) {
+            if (!E.trabajadores.some(x => x.id === trabajadorId && x.empresaId === empresaId)) return false;
+            E.enlaces = E.enlaces.filter(x => !(x.trabajadorId === trabajadorId && x.periodo === periodo));
+            E.enlaces.push({ tokenHash, cuentaId, trabajadorId, periodo, pagada, creado: ahoraIso, vence: venceIso, primeraVista: null, ultimaVista: null, vistas: 0 });
+            return true;
+        },
+        async listarEnlacesLiquidacion(cuentaId, periodo) {
+            return E.enlaces.filter(x => x.cuentaId === cuentaId && x.periodo === periodo).map(x => ({ trabajadorId: x.trabajadorId, periodo: x.periodo, creado: x.creado, vence: x.vence, primeraVista: x.primeraVista, ultimaVista: x.ultimaVista, vistas: x.vistas }));
+        },
+        async borrarEnlaceLiquidacion(cuentaId, trabajadorId, periodo) {
+            const n = E.enlaces.length;
+            E.enlaces = E.enlaces.filter(x => !(x.cuentaId === cuentaId && x.trabajadorId === trabajadorId && x.periodo === periodo));
+            return E.enlaces.length < n;
+        },
+        async abrirEnlaceLiquidacion(tokenHash, ahoraIso) {
+            const x = E.enlaces.find(e => e.tokenHash === tokenHash && t(e.vence) > t(ahoraIso));
+            if (!x) return null;
+            x.vistas++; x.ultimaVista = ahoraIso; x.primeraVista = x.primeraVista || ahoraIso;
+            return { cuentaId: x.cuentaId, trabajadorId: x.trabajadorId, periodo: x.periodo, pagada: x.pagada };
         },
         // ---- avisos por correo ----
         async obtenerAvisosCorreo(cuentaId) {
@@ -223,6 +245,7 @@ function crearAlmacenMemoria() {
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);
             E.pases = E.pases.filter(x => x.cuentaId !== cuentaId);
             E.avisos = E.avisos.filter(x => x.cuentaId !== cuentaId);
+            E.enlaces = E.enlaces.filter(x => x.cuentaId !== cuentaId);
             E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
         }
     };
