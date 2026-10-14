@@ -137,3 +137,12 @@ Al cerrar cada fase: correr todas las baterías, la prueba contra Neon `pruebas`
 - Suseso, plazo del empleador en licencias: https://www.suseso.gob.cl/612/w3-article-31580.html
 - DT, LRE: https://dt.gob.cl/legislacion/1624/w3-article-81821.html
 - DT, semana corrida: https://dt.gob.cl/legislacion/1624/w3-propertyvalue-170581.html
+
+## Piloto gratuito y promoción en el sitio (14-oct-2026)
+
+Decisiones del dueño: acceso gratis a cambio de opiniones (voluntarias) y promoción del asistente donde corresponda.
+
+- **Piloto:** hasta el 31-dic-2026 a las 23:59 (Chile) toda cuenta tiene lo mismo que el Pase de 12 meses (5 trabajadores, sin marca de agua, Word, generadores de contrato y finiquito). Vive en `api/_pyme/piloto.js` (fecha fija, sin variable de Vercel; se cierra antes con `PYME_PILOTO_FIN=1`). Un Pase pagado que dure más sigue mandando. Al terminar, la cuenta vuelve a 1 trabajador y los datos se conservan. La venta del Pase sigue cerrada.
+- **Opiniones:** botón «Tu opinión» en el menú, invitación en el Cierre del mes (se oculta 7 días con «Ahora no» y 30 al enviar) y sección en Mi cuenta. Formulario con tipo, texto (5 a 2.000), casilla «puedes escribirme». Se guardan en `comentarios_piloto` (migración 006) y avisan por correo a contacto@calculolaboral.cl; el correo de la persona solo viaja si marcó la casilla. Máximo 5 por cuenta por día. Borrar la cuenta las borra. Privacidad (§10) y Términos (§12) actualizados.
+- **Promoción:** `tools/promo_asistente.js` pone un bloque (`.cl-asistente`, estilos en `assets/css/promo-asistente.css`) en 22 páginas para quien emplea o paga remuneraciones, más la banda de la portada y la tarjeta de Para Empleadores. No se tocó ningún encabezado ni pie. Prueba: `tools/test_promo_asistente.js`.
+- **Al terminar el piloto:** cambiar `KICKER` y los textos que mencionan el piloto en `tools/promo_asistente.js`, el bloque manual de `index.html`, la tarjeta de `para-empleadores.html`, `asistente-laboral-pyme.html`, Términos §12 y la invitación del panel; volver a correr `node tools/promo_asistente.js` (o `--quitar`).

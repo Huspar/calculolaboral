@@ -2,7 +2,7 @@
 //
 //   node tools/demo_pyme.js [http://localhost:3000]
 //
-// Crea la cuenta demo@ejemplo.cl con Pase de 12 meses, la empresa ficticia "Panadería Los Aromos", tres trabajadores,
+// Crea la cuenta demo@ejemplo.cl (con el piloto gratuito activo tiene el cupo y los beneficios del Pase de 12 meses), la empresa ficticia "Panadería Los Aromos", tres trabajadores,
 // vacaciones, un préstamo en cuotas, un anticipo fijo y las liquidaciones de septiembre y octubre de 2026 (calculadas con el mismo motor y la UF de respaldo).
 // Al final imprime un enlace de acceso para entrar desde el navegador. Solo para desarrollo: nunca contra la base real.
 'use strict';
@@ -57,7 +57,7 @@ function mesValores(periodo) {
     const t = new URL(enlace).searchParams.get('t');
     const r = await pedir('/api/pyme/verificar?ruta=verificar', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Origin: BASE }, body: 't=' + encodeURIComponent(t) + '&acepto=on' });
     if (!cookie) throw new Error('No se pudo iniciar sesión (' + r.status + ')');
-    await pedir('/__dev/pase?email=' + encodeURIComponent(CORREO) + '&producto=pyme12');
+    // El piloto gratuito ya da el cupo de 5: no hace falta un pase de prueba
 
     await api('empresa', 'PUT', { empresa: EMPRESA });
     const ids = [];

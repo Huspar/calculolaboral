@@ -26,7 +26,8 @@
         comprar: 'En el ejemplo no se compra el Pase. Entra con tu correo para usar el asistente con tu empresa.',
         desbloqueo: 'En el ejemplo no se compra el Pase.',
         'borrar-cuenta': 'El ejemplo no tiene una cuenta que eliminar: usa «Salir del ejemplo».',
-        entrar: 'Sal del ejemplo para entrar con tu correo.'
+        entrar: 'Sal del ejemplo para entrar con tu correo.',
+        comentario: 'En el ejemplo no se guardan opiniones. Entra con tu correo para contarnos qué piensas.'
     };
 
     function dos(n) { return n < 10 ? '0' + n : String(n); }

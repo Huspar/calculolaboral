@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Asistente Laboral Pyme: liquidaciones y documentos laborales</title>
-<meta content="Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Gratis con 1 trabajador." name="description"/>
+<meta content="Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Piloto gratuito hasta el 31 de diciembre de 2026." name="description"/>
 <!-- Favicon -->
 <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
@@ -14,7 +14,7 @@
 <link href="https://calculolaboral.cl/asistente-laboral-pyme" rel="canonical"/>
 <!-- Open Graph Tags -->
 <meta content="Asistente Laboral Pyme: liquidaciones y documentos laborales" property="og:title"/>
-<meta content="Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Gratis con 1 trabajador." property="og:description"/>
+<meta content="Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Piloto gratuito hasta el 31 de diciembre de 2026." property="og:description"/>
 <meta content="website" property="og:type"/>
 <meta content="https://calculolaboral.cl/asistente-laboral-pyme" property="og:url"/>
 <meta content="https://calculolaboral.cl/assets/og/default.png" property="og:image"/>
@@ -22,7 +22,7 @@
 <meta content="Cálculo Laboral" property="og:site_name"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="Asistente Laboral Pyme: liquidaciones y documentos laborales" name="twitter:title"/>
-<meta content="Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Gratis con 1 trabajador." name="twitter:description"/>
+<meta content="Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Piloto gratuito hasta el 31 de diciembre de 2026." name="twitter:description"/>
 <meta content="https://calculolaboral.cl/assets/og/default.png" name="twitter:image"/>
 <!-- Structured Data -->
 <script type="application/ld+json">
@@ -34,27 +34,22 @@
       "@id": "https://calculolaboral.cl/asistente-laboral-pyme#app",
       "name": "Asistente Laboral Pyme",
       "url": "https://calculolaboral.cl/asistente-laboral-pyme",
-      "description": "Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Gratis con 1 trabajador.",
+      "description": "Guarda una vez los datos de tu empresa y de tus trabajadores y emite liquidaciones de sueldo y documentos laborales sin volver a escribirlos. Piloto gratuito hasta el 31 de diciembre de 2026.",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
       "inLanguage": "es-CL",
       "offers": [
         {
           "@type": "Offer",
+          "name": "Piloto gratuito: hasta 5 trabajadores activos",
+          "price": "0",
+          "priceCurrency": "CLP",
+          "priceValidUntil": "2026-12-31"
+        },
+        {
+          "@type": "Offer",
           "name": "Gratis: 1 trabajador activo",
           "price": "0",
-          "priceCurrency": "CLP"
-        },
-        {
-          "@type": "Offer",
-          "name": "Pase Pyme 3 meses: hasta 5 trabajadores activos",
-          "price": "19990",
-          "priceCurrency": "CLP"
-        },
-        {
-          "@type": "Offer",
-          "name": "Pase Pyme 12 meses: hasta 5 trabajadores activos",
-          "price": "59990",
           "priceCurrency": "CLP"
         }
       ],
@@ -101,7 +96,7 @@
           "name": "¿Cuánto cuesta?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Puedes empezar gratis con 1 trabajador activo; los documentos salen con la marca «Vista previa». El Pase Pyme de 3 meses cuesta $19.990 (equivale a $6.663 al mes) y el de 12 meses $59.990 (equivale a $4.999 al mes). Con el pase puedes tener hasta 5 trabajadores activos y los documentos salen sin marca de agua. Se paga una vez con Flow y no se renueva solo. Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde la compra."
+            "text": "Hasta el 31 de diciembre de 2026 es gratis, en un piloto: tienes lo mismo que el Pase de 12 meses (hasta 5 trabajadores activos, documentos sin marca de agua y en Word) sin pagar ni dar datos de pago. Te pedimos tu opinión para mejorar el asistente, pero es voluntaria. Al terminar el piloto la cuenta queda en el plan gratis (1 trabajador activo, documentos con la marca «Vista previa») y tus datos se conservan. El Pase Pyme todavía no está a la venta."
           }
         },
         {
@@ -1000,6 +995,10 @@ body { overflow-x: hidden; }
     </style>
     <style>
         /* Asistente Laboral Pyme (pagina publica): se apoya en los estilos ls- de arriba */
+        .ap-piloto { background: #EEF6F3; border: 1px solid #D6EBE4; border-radius: 1rem; padding: 1.2rem 1.3rem; margin: 1.25rem 0; display: grid; gap: .6rem; }
+        .ap-piloto p { margin: 0 !important; font-size: .95rem; line-height: 1.6; color: #334155; }
+        .ap-piloto .ap-piloto-t { font-size: 1.05rem; font-weight: 800; color: #00382E; }
+        .ap-despues { margin: 1.5rem 0 0 !important; font-size: 1rem !important; color: #0f172a; }
         .ap-planes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.25rem 0; }
         .ap-plan { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
         .ap-plan h3 { margin: 0 !important; font-size: 1rem !important; }
@@ -1276,12 +1275,12 @@ body { overflow-x: hidden; }
 
 <!-- HERO -->
 <header class="ls-hero">
-<p class="ls-kicker">Para pymes con hasta 5 trabajadores</p>
+<p class="ls-kicker">Piloto gratuito hasta el 31 de diciembre de 2026 · Para pymes con hasta 5 trabajadores</p>
 <h1 class="ls-h1">Asistente Laboral Pyme: liquidaciones y documentos de tus trabajadores, sin volver a escribir los datos</h1>
-<p class="ls-lead">Guardas una vez los datos de tu empresa y de cada trabajador. Con eso preparas las liquidaciones de sueldo del mes, emites certificados, cartas y anexos laborales, y ves qué tienes pendiente. Entras con un enlace a tu correo, sin contraseña, y puedes empezar gratis con un trabajador.</p>
+<p class="ls-lead">Guardas una vez los datos de tu empresa y de cada trabajador. Con eso preparas las liquidaciones de sueldo del mes, emites certificados, cartas y anexos laborales, y ves qué tienes pendiente. Entras con un enlace a tu correo, sin contraseña. Durante el piloto es gratis, sin datos de pago: a cambio te pedimos tu opinión.</p>
 <div class="ls-hero-actions">
 <a class="ls-btn ls-btn-primary" href="app" style="color:#ffffff !important;" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="hero">
-<span class="material-icons" aria-hidden="true">login</span><span>Entrar al asistente</span>
+<span class="material-icons" aria-hidden="true">login</span><span>Entrar gratis al piloto</span>
 </a>
 <a class="ls-btn ls-btn-ghost" href="app/ejemplo" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="hero-ejemplo">
 <span class="material-icons" aria-hidden="true">visibility</span><span>Ver un ejemplo sin cuenta</span>
@@ -1381,7 +1380,13 @@ body { overflow-x: hidden; }
 </section>
 
 <section id="planes" class="ls-section">
-<h2>Gratis y Pase Pyme</h2>
+<h2>Piloto gratuito, plan gratis y Pase Pyme</h2>
+<div class="ap-piloto">
+<p class="ap-piloto-t">Piloto gratuito hasta el 31 de diciembre de 2026</p>
+<p>Toda cuenta tiene lo mismo que el Pase de 12 meses, sin pagar: hasta 5 trabajadores activos, liquidaciones y documentos sin marca de agua, y los documentos en Word. No pedimos datos de pago ni se cobra nada al terminar.</p>
+<p><strong>A cambio, te pedimos tu opinión</strong> (voluntaria): qué funciona, qué no y qué te falta. Con eso decidimos qué construir primero. Durante el piloto las funciones pueden cambiar y puede haber errores.</p>
+</div>
+<h3 class="ap-despues">Después del piloto</h3>
 <div class="ap-planes">
 <div class="ap-plan">
 <h3>Gratis</h3>
@@ -1415,11 +1420,11 @@ body { overflow-x: hidden; }
 </ul>
 </div>
 </div>
-<p class="ls-note">Se paga una sola vez con Flow y no se renueva solo. Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde la compra. Si compras otro pase mientras tienes uno vigente, empieza cuando termina el anterior. Al vencer, tu cuenta vuelve a las funciones gratuitas.</p>
+<p class="ls-note"><strong>El Pase Pyme todavía no está a la venta:</strong> durante el piloto no necesitas comprarlo. Los valores son una referencia para cuando termine el piloto. Se paga una sola vez con Flow y no se renueva solo. Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde la compra. Si compras otro pase mientras tienes uno vigente, empieza cuando termina el anterior. Al vencer, tu cuenta vuelve a las funciones gratuitas.</p>
 <div class="ls-cta-inline">
 <div>
-<p class="ls-cta-title">Empieza con un trabajador, sin costo</p>
-<p>Entras con tu correo, cargas la empresa y revisas cómo queda tu primera liquidación.</p>
+<p class="ls-cta-title">Prueba el piloto gratuito</p>
+<p>Entras con tu correo, cargas la empresa y revisas cómo queda tu primera liquidación. Sin datos de pago.</p>
 </div>
 <a class="ls-btn ls-btn-primary" href="app" style="color:#ffffff !important;" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="planes">
 <span>Entrar al asistente</span><span class="material-icons" aria-hidden="true">arrow_forward</span>
@@ -1448,7 +1453,11 @@ body { overflow-x: hidden; }
 </details>
 <details>
 <summary>¿Cuánto cuesta?</summary>
-<p>Puedes empezar gratis con 1 trabajador activo; los documentos salen con la marca «Vista previa». El Pase Pyme de 3 meses cuesta $19.990 (equivale a $6.663 al mes) y el de 12 meses $59.990 (equivale a $4.999 al mes). Con el pase puedes tener hasta 5 trabajadores activos y los documentos salen sin marca de agua. Se paga una vez con Flow y no se renueva solo. Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde la compra.</p>
+<p>Hasta el 31 de diciembre de 2026 es gratis, en un piloto: tienes lo mismo que el Pase de 12 meses (hasta 5 trabajadores activos, documentos sin marca de agua y en Word) sin pagar ni dar datos de pago. Te pedimos tu opinión para mejorar el asistente, pero es voluntaria. Al terminar el piloto la cuenta queda en el plan gratis (1 trabajador activo, documentos con la marca «Vista previa») y tus datos se conservan. El Pase Pyme todavía no está a la venta.</p>
+</details>
+<details>
+<summary>¿Qué es el piloto gratuito y qué me piden a cambio?</summary>
+<p>Es una etapa de prueba abierta a cualquier pyme, hasta el 31 de diciembre de 2026. Usas el asistente completo sin pagar. A cambio te pedimos tu opinión: qué funciona, qué no y qué te falta. Es voluntaria, se envía con el botón «Tu opinión» dentro del asistente y ninguna función depende de ella. Si marcas que podemos escribirte, te respondemos a tu correo. Durante el piloto las funciones pueden cambiar y puede haber errores.</p>
 </details>
 <details>
 <summary>¿Necesito una contraseña?</summary>

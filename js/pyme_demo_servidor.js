@@ -506,7 +506,7 @@ function fallo(estado, codigo, error, errores) {
     return r;
 }
 
-function crear({ almacen, cifrado, ahora }) {
+function crear({ almacen, cifrado, ahora, piloto }) {
     const reloj = ahora || Date.now;
     const iso = () => new Date(reloj()).toISOString();
     const ctxEmpresa = (cuentaId) => `empresas:${cuentaId}`;
@@ -517,6 +517,10 @@ function crear({ almacen, cifrado, ahora }) {
 
     async function limites(cuentaId) {
         const vence = await almacen.paseVigente(cuentaId, iso());
+        // Piloto gratuito (api/_pyme/piloto.js): mientras dure, lo mismo que el Pase de 12 meses, salvo que la cuenta tenga un pase pagado que dure más
+        if (piloto && piloto.activo() && (!vence || vence < Date.parse(piloto.vence()))) {
+            return { maxActivos: MAX_CON_PASE, paseVence: piloto.vence(), paseProducto: piloto.producto, piloto: true, pilotoHasta: piloto.fechaFin() };
+        }
         const actual = vence ? await almacen.paseActual(cuentaId, iso()) : null;
         return { maxActivos: vence ? MAX_CON_PASE : MAX_SIN_PASE, paseVence: vence ? new Date(vence).toISOString() : null, paseProducto: actual ? actual.producto : null };
     }
@@ -845,7 +849,7 @@ module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_T
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -986,6 +990,15 @@ function crearAlmacenMemoria() {
             x.vistas++; x.ultimaVista = ahoraIso; x.primeraVista = x.primeraVista || ahoraIso;
             return { cuentaId: x.cuentaId, trabajadorId: x.trabajadorId, periodo: x.periodo, pagada: x.pagada };
         },
+        // ---- opiniones del piloto ----
+        async guardarComentario({ cuentaId, tipo, pantalla, texto, contacto, ahoraIso, maxPorDia }) {
+            const hoy = E.comentarios.filter(c => c.cuentaId === cuentaId && t(c.creado) > t(ahoraIso) - 86400000).length;
+            if (hoy >= maxPorDia) return null;
+            const id = crypto.randomUUID();
+            E.comentarios.push({ id, cuentaId, tipo, pantalla, texto, contacto, creado: ahoraIso });
+            return id;
+        },
+
         // ---- avisos por correo ----
         async obtenerAvisosCorreo(cuentaId) {
             const a = E.avisos.find(x => x.cuentaId === cuentaId);
@@ -1087,6 +1100,7 @@ function crearAlmacenMemoria() {
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);
             E.pases = E.pases.filter(x => x.cuentaId !== cuentaId);
             E.avisos = E.avisos.filter(x => x.cuentaId !== cuentaId);
+            E.comentarios = E.comentarios.filter(x => x.cuentaId !== cuentaId);
             E.enlaces = E.enlaces.filter(x => x.cuentaId !== cuentaId);
             E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
         }

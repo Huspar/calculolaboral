@@ -30,7 +30,7 @@ function fallo(estado, codigo, error, errores) {
     return r;
 }
 
-function crear({ almacen, cifrado, ahora }) {
+function crear({ almacen, cifrado, ahora, piloto }) {
     const reloj = ahora || Date.now;
     const iso = () => new Date(reloj()).toISOString();
     const ctxEmpresa = (cuentaId) => `empresas:${cuentaId}`;
@@ -41,6 +41,10 @@ function crear({ almacen, cifrado, ahora }) {
 
     async function limites(cuentaId) {
         const vence = await almacen.paseVigente(cuentaId, iso());
+        // Piloto gratuito (api/_pyme/piloto.js): mientras dure, lo mismo que el Pase de 12 meses, salvo que la cuenta tenga un pase pagado que dure más
+        if (piloto && piloto.activo() && (!vence || vence < Date.parse(piloto.vence()))) {
+            return { maxActivos: MAX_CON_PASE, paseVence: piloto.vence(), paseProducto: piloto.producto, piloto: true, pilotoHasta: piloto.fechaFin() };
+        }
         const actual = vence ? await almacen.paseActual(cuentaId, iso()) : null;
         return { maxActivos: vence ? MAX_CON_PASE : MAX_SIN_PASE, paseVence: vence ? new Date(vence).toISOString() : null, paseProducto: actual ? actual.producto : null };
     }

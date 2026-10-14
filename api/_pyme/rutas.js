@@ -17,6 +17,7 @@
  *   POST|DELETE /api/pyme/enlace-liquidacion?trabajador=ID&periodo=AAAA-MM   crea (o anula) el enlace para que el trabajador vea su liquidación
  *   GET  /api/pyme/enlaces-liquidacion?periodo=AAAA-MM   enlaces del mes con sus aperturas
  *   GET  /api/pyme/liquidacion?t=TOKEN            página pública con la liquidación (sin scripts, no indexable)
+ *   POST /api/pyme/comentario                    { comentario: { tipo, texto, pantalla, contacto } } opinión del piloto (máximo 5 por día)
  *   GET|PUT /api/pyme/avisos-correo   { activo }   preferencia de avisos por correo de la cuenta
  *   GET  /api/pyme/avisos-cron                   tarea diaria de Vercel (Authorization: Bearer CRON_SECRET); sin CRON_SECRET, desactivada
  *   GET|POST /api/pyme/avisos-baja?t=FIRMA        baja de los avisos por correo desde el enlace del correo (pide confirmar)
@@ -36,7 +37,7 @@ const T = require('./tokens');
 const DESTINO_PANEL = '/app';
 const MENSAJE_ENLACE_INVALIDO = 'El enlace venció o ya se usó. Pide uno nuevo desde el asistente.';
 
-function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces }) {
+function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios }) {
     function metodo(req, res, permitido) {
         if (req.method === permitido) return true;
         res.setHeader('Allow', permitido);
@@ -210,6 +211,14 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces }) {
         return H.html(res, 200, C.paginaLiquidacion(r));
     }
 
+    async function comentario(req, res) {
+        if (!metodo(req, res, 'POST')) return;
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        if (!comentarios) return H.json(res, 503, { ok: false, error: 'No disponible.' });
+        return responder(res, await comentarios.guardar(s, H.cuerpoDe(req).comentario));
+    }
+
     async function avisosCorreo(req, res) {
         const m = req.method;
         if (m !== 'GET' && m !== 'PUT') { res.setHeader('Allow', 'GET, PUT'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
@@ -335,7 +344,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces }) {
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     return async function manejar(req, res) {
         const ruta = typeof req.query?.ruta === 'string' ? req.query.ruta : '';

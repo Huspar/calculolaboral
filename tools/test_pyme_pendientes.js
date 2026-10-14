@@ -171,6 +171,15 @@ caso('cotizaciones en un año sin feriados verificados: muestra el día 10 sin c
     const c = pend(correr(est([T()]), '2028-02-03'), 'cotizaciones');
     assert.ok(c && /hasta el 10 de febrero/.test(c.texto));
 });
+caso('piloto gratuito por terminar: usa su fecha de Chile (no la del instante UTC) y lo dice con otras palabras', () => {
+    const piloto = { maxActivos: 5, paseVence: '2027-01-01T02:59:59.000Z', paseProducto: 'pyme12', piloto: true, pilotoHasta: '2026-12-31' };
+    assert.ok(!pend(correr(est([T()], { limites: piloto }), '2026-12-10'), 'pase'));
+    const a = pend(correr(est([T()], { limites: piloto }), '2026-12-20'), 'pase');
+    assert.deepStrictEqual([a.nivel, /^El piloto gratuito termina en 11 días$/.test(a.titulo)], ['aviso', true], a.titulo);
+    assert.strictEqual(pend(correr(est([T()], { limites: piloto }), '2026-12-29'), 'pase').nivel, 'urgente');
+    assert.ok(/hoy/.test(pend(correr(est([T()], { limites: piloto }), '2026-12-31'), 'pase').titulo), 'el último día dice hoy aunque el instante UTC ya sea del 1 de enero');
+    assert.ok(!pend(correr(est([T()], { limites: piloto }), '2027-01-01'), 'pase'));
+});
 caso('pase por vencer: aviso desde 15 días, urgente desde 3', () => {
     const con = (venceIso) => est([T()], { limites: { maxActivos: 5, paseVence: venceIso } });
     assert.ok(!pend(correr(con('2026-11-10T00:00:00Z'), '2026-10-20'), 'pase'));

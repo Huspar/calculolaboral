@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -144,6 +144,15 @@ function crearAlmacenMemoria() {
             x.vistas++; x.ultimaVista = ahoraIso; x.primeraVista = x.primeraVista || ahoraIso;
             return { cuentaId: x.cuentaId, trabajadorId: x.trabajadorId, periodo: x.periodo, pagada: x.pagada };
         },
+        // ---- opiniones del piloto ----
+        async guardarComentario({ cuentaId, tipo, pantalla, texto, contacto, ahoraIso, maxPorDia }) {
+            const hoy = E.comentarios.filter(c => c.cuentaId === cuentaId && t(c.creado) > t(ahoraIso) - 86400000).length;
+            if (hoy >= maxPorDia) return null;
+            const id = crypto.randomUUID();
+            E.comentarios.push({ id, cuentaId, tipo, pantalla, texto, contacto, creado: ahoraIso });
+            return id;
+        },
+
         // ---- avisos por correo ----
         async obtenerAvisosCorreo(cuentaId) {
             const a = E.avisos.find(x => x.cuentaId === cuentaId);
@@ -245,6 +254,7 @@ function crearAlmacenMemoria() {
             E.sesiones = E.sesiones.filter(x => x.cuentaId !== cuentaId);
             E.pases = E.pases.filter(x => x.cuentaId !== cuentaId);
             E.avisos = E.avisos.filter(x => x.cuentaId !== cuentaId);
+            E.comentarios = E.comentarios.filter(x => x.cuentaId !== cuentaId);
             E.enlaces = E.enlaces.filter(x => x.cuentaId !== cuentaId);
             E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
         }

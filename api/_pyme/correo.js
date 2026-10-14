@@ -58,6 +58,34 @@ function correoAvisos({ avisos, nuevos, enlaceApp, enlaceBaja, razonSocial }) {
     return { asunto, texto, html };
 }
 
+const TIPOS_COMENTARIO = { funciona: 'Lo que funciona', no_funciona: 'Lo que no funciona', sugerencia: 'Qué agregarían', otro: 'Otra cosa' };
+
+/** Aviso para el equipo cuando alguien deja su opinión en el piloto. Solo muestra el correo de la persona si marcó «puedes escribirme». */
+function correoComentario({ tipo, texto, pantalla, contacto, email, fecha }) {
+    const etiqueta = TIPOS_COMENTARIO[tipo] || 'Opinión';
+    const quien = contacto ? email : 'Prefirió no ser contactada (no se muestra su correo)';
+    const asunto = `[Piloto Asistente] ${etiqueta}${pantalla ? ' · ' + pantalla : ''}`;
+    const textoPlano = [
+        `Nueva opinión del piloto del Asistente Laboral Pyme (${fecha}).`,
+        '',
+        `Tipo: ${etiqueta}`,
+        pantalla ? `Pantalla: ${pantalla}` : null,
+        `Persona: ${quien}`,
+        '',
+        texto
+    ].filter(x => x !== null).join('\n');
+    const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
+<div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+  <p style="margin:0 0 16px;font-size:18px;font-weight:700">Nueva opinión del piloto</p>
+  <p style="margin:0 0 4px;font-size:13px;color:#475569"><strong>Tipo:</strong> ${escapeHtml(etiqueta)}</p>
+  ${pantalla ? `<p style="margin:0 0 4px;font-size:13px;color:#475569"><strong>Pantalla:</strong> ${escapeHtml(pantalla)}</p>` : ''}
+  <p style="margin:0 0 16px;font-size:13px;color:#475569"><strong>Persona:</strong> ${escapeHtml(quien)}</p>
+  <p style="margin:0;font-size:14px;color:#0f172a;white-space:pre-wrap">${escapeHtml(texto)}</p>
+</div></body></html>`;
+    return { asunto, texto: textoPlano, html };
+}
+
 const ESTILO = `<style>
 body{margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55}
 .t{max-width:480px;margin:40px auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px}
@@ -116,4 +144,4 @@ function paginaBajaAvisos({ token }) {
 </form>`);
 }
 
-module.exports = { correoAcceso, correoAvisos, paginaConfirmar, paginaMensaje, paginaBajaAvisos, paginaLiquidacion };
+module.exports = { correoAcceso, correoAvisos, correoComentario, TIPOS_COMENTARIO, paginaConfirmar, paginaMensaje, paginaBajaAvisos, paginaLiquidacion };

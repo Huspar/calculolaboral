@@ -277,6 +277,19 @@ function crearAlmacenSql(sql) {
             await filas('UPDATE avisos_correo SET enviados = $2::jsonb, ultimo_envio = $3::timestamptz WHERE cuenta_id = $1::uuid', [cuentaId, JSON.stringify(enviados), ahoraIso]);
         },
 
+        // ---------- opiniones del piloto (migración 006) ----------
+
+        /** Guarda una opinión sin pasar de `maxPorDia` en las últimas 24 horas por cuenta. Devuelve el id o null si ya llegó al máximo. */
+        async guardarComentario({ cuentaId, tipo, pantalla, texto, contacto, ahoraIso, maxPorDia }) {
+            const r = await conCandado('comentarios:' + cuentaId,
+                'INSERT INTO comentarios_piloto (cuenta_id, tipo, pantalla, texto, contacto, creado) ' +
+                'SELECT $1::uuid, $2, $3, $4, $5::boolean, $6::timestamptz ' +
+                "WHERE (SELECT count(*) FROM comentarios_piloto WHERE cuenta_id = $1::uuid AND creado > $6::timestamptz - interval '24 hours') < $7::int RETURNING id",
+                [cuentaId, tipo, pantalla, texto, contacto, ahoraIso, maxPorDia]
+            );
+            return r[0] ? r[0].id : null;
+        },
+
         // ---------- boletas de honorarios (una fila cifrada por empresa y mes; migración 002) ----------
 
         async listarHonorarios(empresaId, periodo) {

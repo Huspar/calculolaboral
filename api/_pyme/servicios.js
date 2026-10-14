@@ -4,6 +4,7 @@
  */
 const { crearAlmacenSql } = require('./almacen');
 const { crear: crearPase } = require('./pase');
+const Piloto = require('./piloto');
 
 let almacenMemo = null;
 let paseMemo = null;
@@ -24,7 +25,8 @@ function pase() {
         almacen: almacen(),
         productos: flow.PRODUCTS,
         flow: { createPayment: flow.createPayment, signUnlock: flow.signUnlock },
-        venta: () => process.env.PYME_PASE_VENTA === '1'
+        venta: () => process.env.PYME_PASE_VENTA === '1',
+        piloto: Piloto.crear(process.env)
     });
     return paseMemo;
 }
