@@ -2052,6 +2052,7 @@
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
         dibujarPrevired();
         dibujarProyeccion();
+        dibujarAnualPanel();
         dibujarF29();
         if (vistaActual === 'inicio') dibujarInicio();
     }
@@ -2104,6 +2105,98 @@
         }
         $('liq-proy-pie').innerHTML = pie;
     }
+
+    // ---------- resumen anual por trabajador (Certificado N°6 y DDJJ 1887) ----------
+    var ANUAL = window.CLPymeAnual, anualDatos = null;
+    function dibujarAnualPanel() {
+        var caja = $('liq-anual');
+        caja.hidden = !(estado && estado.empresa && (estado.trabajadores || []).length);
+        if (caja.hidden) return;
+        var sel = $('liq-anual-anio'), anios = [];
+        PERIODOS.forEach(function (p) { var a = +p.slice(0, 4); if (anios.indexOf(a) < 0) anios.push(a); });
+        if (sel.options.length !== anios.length) sel.innerHTML = anios.map(function (a) { return '<option value="' + a + '">' + a + '</option>'; }).join('');
+    }
+    // Valores del mes (UF, UTM, topes) como promesa, para recalcular meses guardados antes de que el resumen trajera la base del impuesto
+    function asegurarValores(p) {
+        if (VAL[p] && VAL[p].estado === 'ok') return Promise.resolve(true);
+        return VALORES.obtener(p, false).then(function (r) { VAL[p] = Object.assign({ estado: r.ok ? 'ok' : 'error' }, r); return r.ok; }, function () { return false; });
+    }
+    $('liq-anual-preparar').addEventListener('click', function () {
+        var anio = +$('liq-anual-anio').value, est = $('liq-anual-estado'), boton = this, hoyP = hoyIso().slice(0, 7);
+        var periodos = PERIODOS.filter(function (p) { return +p.slice(0, 4) === anio && p <= hoyP; }).sort();
+        boton.disabled = true;
+        mensaje(est, '', 'Juntando las liquidaciones de ' + anio + '…');
+        Promise.all(periodos.map(function (p) { return mesesCache[p] ? true : cargarMeses(p); })).then(function () {
+            var faltanValores = periodos.filter(function (p) {
+                var g = mesesDe(p);
+                return Object.keys(g).some(function (id) { return !ANUAL.filaDesdeCalculo(p, g[id] && g[id].calculo); });
+            });
+            return Promise.all(faltanValores.map(asegurarValores));
+        }).then(function () {
+            var lista = [], sinCalculo = [];
+            (estado.trabajadores || []).forEach(function (t) {
+                var filas = [];
+                periodos.forEach(function (p) {
+                    var reg = mesesDe(p)[t.id];
+                    if (!reg) return;
+                    var f = ANUAL.filaDesdeCalculo(p, reg.calculo);
+                    if (!f) { var r = calcularMes(t, conCuotas(t, reg, p), p); if (r && r.res && r.res.listo) f = ANUAL.filaDesdeResultado(p, r.res); }
+                    if (f) filas.push(f); else sinCalculo.push(t.nombre.split(' ')[0] + ' (' + nombrePeriodo(p) + ')');
+                });
+                if (filas.length) lista.push({ t: t, resumen: ANUAL.resumen(anio, filas) });
+            });
+            anualDatos = { anio: anio, lista: lista };
+            boton.disabled = false;
+            dibujarAnualTabla(sinCalculo);
+            mensaje(est, sinCalculo.length ? 'error' : '', sinCalculo.length ? 'No se pudieron incluir: ' + sinCalculo.join(', ') + '. Abre esas liquidaciones y guárdalas.' : '');
+        });
+    });
+    function dibujarAnualTabla(sinCalculo) {
+        var d = anualDatos, act = d.lista.some(function (x) { return x.resumen.actualizado; });
+        $('liq-anual-tabla').innerHTML = d.lista.length ? '<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Resumen anual por trabajador</caption>' +
+            '<thead><tr><th scope="col">Trabajador</th><th scope="col" class="num">Renta afecta</th><th scope="col" class="num">Impuesto retenido</th><th scope="col" class="num ocultar-movil">No gravada</th><th scope="col"><span class="sr-only">Acción</span></th></tr></thead><tbody>' +
+            d.lista.map(function (x, i) {
+                var t = x.resumen.totales;
+                return '<tr><td class="celda-nombre"><strong>' + esc(x.t.nombre) + '</strong><span>' + plural(x.resumen.filas.length, 'mes', 'meses') + '</span></td><td class="num">' + pesos(act ? t.afectaAct : t.rentaAfecta) + '</td><td class="num">' + pesos(act ? t.impuestoAct : t.impuesto) + '</td><td class="num ocultar-movil">' + pesos(act ? t.noGravadaAct : t.noGravada) + '</td>' +
+                    '<td><button type="button" class="btn-texto" data-anual="' + i + '">Imprimir</button></td></tr>';
+            }).join('') + '</tbody></table></div><div class="anual-acciones"><button type="button" class="btn-texto" id="liq-anual-excel"><span class="material-icons" aria-hidden="true">table_view</span>Planilla para el contador (Excel)</button></div>'
+            : '<p class="texto-ayuda">No hay liquidaciones guardadas en ' + d.anio + '.</p>';
+        var pie = $('liq-anual-pie');
+        pie.hidden = !d.lista.length;
+        pie.innerHTML = act ? '<p>Montos actualizados con los factores del SII para ' + d.anio + '. Los totales deben coincidir con lo que declares en la DDJJ 1887.</p>'
+            : '<p><strong>Montos sin actualizar.</strong> El SII publica los factores de actualización de ' + d.anio + ' al cerrar el año; con ellos se completa el Certificado N°6 y se declara la DDJJ 1887. Cuando estén cargados en el asistente, este resumen mostrará los montos actualizados. El SII fija cada año el plazo de la DDJJ 1887 (suele vencer en marzo): revísalo en sii.cl.</p>';
+    }
+    $('liq-anual-tabla').addEventListener('click', function (e) {
+        if (e.target.closest('#liq-anual-excel')) {
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob(['\ufeff', ANUAL.csv({ empresa: estado.empresa, anio: anualDatos.anio }, anualDatos.lista)], { type: 'text/csv;charset=utf-8' }));
+            a.download = 'resumen-anual-' + anualDatos.anio + '.csv';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+            return;
+        }
+        var b = e.target.closest('[data-anual]');
+        if (!b) return;
+        var x = anualDatos.lista[+b.getAttribute('data-anual')], r = x.resumen, act = r.actualizado;
+        var cols = [['mes', 'Mes'], ['rentaBruta', 'Renta bruta (2)'], ['cotizaciones', 'Cotizaciones del trabajador (3)'], ['rentaAfecta', 'Renta afecta (4)'], ['impuesto', 'Impuesto único retenido (5)'], ['noGravada', 'Renta no gravada (8)']]
+            .concat(act ? [['factor', 'Factor (10)'], ['afectaAct', 'Renta afecta actualizada (11)'], ['impuestoAct', 'Impuesto actualizado (12)'], ['noGravadaAct', 'No gravada actualizada (15)']] : []);
+        var celda = function (v) { return typeof v === 'number' ? (v % 1 ? v.toLocaleString('es-CL') : Math.round(v).toLocaleString('es-CL')) : esc(v || ''); };
+        var html = '<section class="pm-hoja libro-hoja"><div class="libro-doc"><h2>' + (act ? 'Certificado de sueldos y otras rentas similares (Modelo N°6)' : 'Resumen anual de remuneraciones') + ' · año ' + r.anio + '</h2>' +
+            '<p>' + esc(estado.empresa.razonSocial) + ' · RUT ' + esc(Rut.formatear(estado.empresa.rut)) + ' certifica que pagó a <strong>' + esc(x.t.nombre) + '</strong>, RUT ' + esc(Rut.formatear(x.t.rut)) + ', las siguientes rentas (montos en pesos):</p>' +
+            '<table><thead><tr>' + cols.map(function (c) { return '<th scope="col">' + esc(c[1]) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+            r.filas.map(function (f) { return '<tr>' + cols.map(function (c) { return '<td>' + celda(f[c[0]]) + '</td>'; }).join('') + '</tr>'; }).join('') +
+            '</tbody><tfoot><tr>' + cols.map(function (c, i) { return '<td>' + (i === 0 ? 'Totales' : c[0] === 'factor' ? '' : celda(r.totales[c[0]])) + '</td>'; }).join('') + '</tr></tfoot></table>' +
+            '<p class="libro-nota">' + (act ? 'Montos actualizados con los factores publicados por el SII. Los totales coinciden con lo informado en la DDJJ 1887.' : 'Montos sin actualizar: el SII publica los factores de actualización del año al cerrarlo; con ellos se completa el Certificado N°6 (columnas 10 a 16). Este resumen no reemplaza ese certificado.') +
+            ' Columnas según las instrucciones del SII para el Certificado N°6; las columnas (6) mayor retención, (7) renta exenta y (9) zonas extremas no se usan en el asistente.</p>' +
+            '<div class="dc-firmas" style="margin-top:28px">' + esc(estado.empresa.representante || estado.empresa.razonSocial) + '<br>Firma del empleador</div></div></section>';
+        var cont = $('print-section'), anterior = document.title;
+        cont.innerHTML = html;
+        document.title = 'Resumen anual ' + r.anio + ' ' + x.t.nombre;
+        var restaurar = function () { document.title = anterior; window.removeEventListener('afterprint', restaurar); };
+        window.addEventListener('afterprint', restaurar);
+        window.print();
+        setTimeout(restaurar, 2000);
+    });
 
     // ---------- Formulario 29: impuesto único retenido (código 48) y boletas de honorarios (código 151) ----------
     var HON = window.CLPymeHonorarios;

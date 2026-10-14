@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.16.1">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.17.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -451,6 +451,16 @@ gtag('js', new Date());
 <div class="panel-pie" id="liq-proy-pie"></div>
 </div>
 
+<div class="panel" id="liq-anual" hidden>
+<div class="panel-head"><h2>Resumen anual para el certificado de rentas y la DDJJ 1887</h2></div>
+<div class="panel-cuerpo anual-cuerpo">
+<p class="lq-help">Junta las liquidaciones guardadas del año de cada trabajador con las columnas del Certificado N°6 del SII: renta afecta, impuesto único retenido y renta no gravada, mes a mes. Sirve para entregar el certificado a cada persona y para la DDJJ 1887 (si declaras el Libro de Remuneraciones Electrónico, el SII arma una propuesta con él).</p>
+<div class="anual-acciones"><label for="liq-anual-anio" class="sr-only">Año</label><select id="liq-anual-anio"></select><button type="button" class="btn btn-chico" id="liq-anual-preparar"><span class="material-icons" aria-hidden="true">summarize</span>Preparar resumen</button><p class="lq-estado" id="liq-anual-estado" role="status"></p></div>
+<div id="liq-anual-tabla"></div>
+</div>
+<div class="panel-pie" id="liq-anual-pie" hidden></div>
+</div>
+
 <div class="panel" id="liq-f29" hidden>
 <div class="panel-head"><h2 id="liq-f29-titulo">Para el Formulario 29</h2><span class="sello sello-guardada">Estimación</span></div>
 <div class="tabla-wrap"><table class="tabla tabla-total"><caption class="sr-only">Retenciones del mes para el Formulario 29</caption>
@@ -808,10 +818,11 @@ gtag('js', new Date());
 <script src="/js/pyme_proyeccion.js?v=1.0.0"></script>
 <script src="/js/pyme_midt.js?v=1.0.0"></script>
 <script src="/js/pyme_libro.js?v=1.0.0"></script>
-<script src="/js/pyme_liquidaciones.js?v=1.5.0"></script>
+<script src="/js/pyme_anual.js?v=1.0.0"></script>
+<script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.16.2" defer></script>
+<script src="/js/app_pyme.js?v=1.17.0" defer></script>
 </body>
 </html>

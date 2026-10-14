@@ -338,6 +338,8 @@ function calculoMes(v, errores) {
     });
     c.uf = normalizar('uf', { t: 'decimal', min: 30000, max: 70000, req: true }, v.uf, e);
     c.utm = normalizar('utm', { t: 'entero', min: 50000, max: 150000, req: true }, v.utm, e);
+    // Base del impuesto único del mes (resumen anual; desde la v1.5.0 de pyme_liquidaciones)
+    if (v.baseTributable !== undefined && v.baseTributable !== null) c.baseTributable = normalizar('baseTributable', { t: 'entero', min: 0, max: 200000000, def: 0 }, v.baseTributable, e);
     // Bases para el finiquito: horas extra, gratificación y colación + movilización del mes (desde la v1.3.0 de pyme_liquidaciones)
     if (v.conBases === true) {
         c.conBases = true;

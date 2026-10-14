@@ -139,6 +139,8 @@
             c.gratificacion = suma(res.haberesImponibles, ['Gratificación']);
             c.colMov = suma(res.haberesNoImponibles, ['Colación', 'Movilización']);
         }
+        // Base del impuesto único del mes, para el resumen anual (Certificado N°6 y DDJJ 1887), desde la v1.5.0
+        if (res.bases && typeof res.bases.baseTributable === 'number') c.baseTributable = Math.round(res.bases.baseTributable);
         if (res.montos && res.empleador) {
             var emp = {};
             res.empleador.lineas.forEach(function (l) { emp[l.clave] = l.monto; });
