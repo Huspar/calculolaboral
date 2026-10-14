@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.19.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.20.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -67,6 +67,10 @@ gtag('js', new Date());
 <div id="pm-entrar-listo" class="lq-aviso lq-aviso-info" role="status" hidden>
 <span class="material-icons" aria-hidden="true">mark_email_read</span>
 <p><strong>Revisa tu correo.</strong> Si el correo es correcto, te enviamos un enlace para entrar. Revisa también la carpeta de spam. <button type="button" id="pm-otro-correo" class="lq-link">Usar otro correo</button></p>
+</div>
+<div class="entrada-ejemplo">
+<p><strong>¿Quieres verlo antes?</strong> Recorre una panadería ficticia con tres trabajadores, liquidaciones, avisos y documentos. Sin cuenta y sin correo.</p>
+<button type="button" class="btn" id="pm-ejemplo"><span class="material-icons" aria-hidden="true">visibility</span>Ver un ejemplo</button>
 </div>
 <p class="entrada-legal">La primera vez te pediremos aceptar los <a href="/terminos#asistente-pyme">Términos</a> y la cláusula de encargo de tratamiento de datos. Más información en la <a href="/privacidad#asistente-pyme">Política de Privacidad</a>.</p>
 <p class="entrada-volver"><a href="/asistente-laboral-pyme">Qué incluye y cuánto cuesta</a> · <a href="/">Volver a calculolaboral.cl</a></p>
@@ -127,6 +131,11 @@ gtag('js', new Date());
 </header>
 
 <main class="app-content" id="app-content">
+<div id="pm-ejemplo-franja" class="ejemplo-franja" hidden>
+<span class="material-icons" aria-hidden="true">science</span>
+<p><strong>Estás viendo un ejemplo con datos ficticios.</strong> Cambia lo que quieras: nada se guarda y todo se borra al salir. Los documentos salen con la marca «Vista previa».</p>
+<div class="ejemplo-franja-acciones"><button type="button" class="btn btn-chico btn-primario" id="pm-ejemplo-entrar">Usar con mi empresa</button><button type="button" class="btn-texto" id="pm-ejemplo-salir">Salir del ejemplo</button></div>
+</div>
 <div id="pm-aviso-global" class="lq-avisos aviso-global" role="status"></div>
 
 <!-- Cierre del mes -->
@@ -157,7 +166,7 @@ gtag('js', new Date());
 <div class="tabla-wrap">
 <table class="tabla" id="ini-tabla">
 <caption class="sr-only" id="ini-caption">Trabajadores y estado de su liquidación del mes</caption>
-<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col" class="ocultar-movil">Vacaciones</th><th scope="col" class="ocultar-movil">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
+<thead><tr><th scope="col">Trabajador</th><th scope="col" class="ocultar-movil">Contrato</th><th scope="col" class="ocultar-movil col-vac">Vacaciones</th><th scope="col" class="ocultar-movil">Liquidación</th><th scope="col" class="num">Líquido a pagar</th><th scope="col" class="chev"><span class="sr-only">Detalle</span></th></tr></thead>
 <tbody id="ini-filas"></tbody>
 </table>
 </div>
@@ -835,6 +844,6 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.19.1" defer></script>
+<script src="/js/app_pyme.js?v=1.20.0" defer></script>
 </body>
 </html>

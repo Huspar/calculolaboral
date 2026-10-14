@@ -33,6 +33,8 @@
     var vacCache = [];        // registros de vacaciones de la empresa (descifrados por el servidor)
     var docsCache = [];       // historial de documentos emitidos (tipo y fecha)
     var docPrefill = null;    // valores que trae la dirección para el comprobante de feriado
+    var ejemplo = null;       // modo de ejemplo (js/pyme_demo.js): empresa ficticia en la memoria de la pestaña, sin servidor
+    var KEY_EJEMPLO = 'cl_pyme_ejemplo';
 
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -54,6 +56,7 @@
     // ---------- API ----------
     function api(ruta, o) {
         o = o || {};
+        if (ejemplo) return ejemplo.api(ruta, o);
         var url = '/api/pyme/' + ruta + (o.query ? '?' + new URLSearchParams(o.query).toString() : '');
         var init = { method: o.metodo || 'GET', credentials: 'same-origin', headers: {} };
         if (init.method !== 'GET') {
@@ -283,8 +286,76 @@
     });
     $('pm-reintentar').addEventListener('click', function () { mostrar('cargando'); arrancar(); });
     $('pm-salir').addEventListener('click', function () {
+        if (ejemplo) { salirEjemplo(); return; }
         api('salir', { metodo: 'POST' }).then(function () { reiniciar(); mostrar('entrada'); });
     });
+
+    // ---------- modo de ejemplo ----------
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.0', '/js/pyme_demo.js?v=1.0.0'];
+    function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
+    function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
+    function cargarScript(src) {
+        return new Promise(function (resolver, rechazar) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.onload = resolver;
+            s.onerror = function () { rechazar(new Error(src)); };
+            document.head.appendChild(s);
+        });
+    }
+    function mesAnteriorDe(p) { var a = p.split('-').map(Number); return a[1] === 1 ? (a[0] - 1) + '-12' : a[0] + '-' + dos(a[1] - 1); }
+    function entrarEjemplo() {
+        mostrar('cargando');
+        var periodo = periodoPorDefecto();
+        var listos = window.CLPymeDemo && window.CLPymeDemoServidor ? Promise.resolve() : SCRIPTS_EJEMPLO.reduce(function (p, src) { return p.then(function () { return cargarScript(src); }); }, Promise.resolve());
+        return listos.then(function () {
+            return window.CLPymeDemo.crear({ hoy: hoyIso(), periodo: periodo });
+        }).then(function (demo) {
+            reiniciar();
+            ejemplo = demo;
+            recordarEjemplo(true);
+            return sembrarMesesEjemplo(periodo);
+        }).then(function () {
+            if (rutaActual() === 'ejemplo') { try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ } }
+            return cargar();
+        }).catch(function () {
+            ejemplo = null;
+            recordarEjemplo(false);
+            reiniciar();
+            $('pm-fallo-texto').textContent = 'No pudimos abrir el ejemplo. Revisa tu conexión e intenta de nuevo.';
+            mostrar('fallo');
+        });
+    }
+    // Las liquidaciones del ejemplo se guardan con el mismo camino que las del usuario (cuotas, licencias, semana corrida y cálculo)
+    function sembrarMesesEjemplo(P) {
+        var Pa = mesAnteriorDe(P);
+        return api('estado').then(function (r) {
+            if (!r.ok) throw new Error('estado');
+            estado = r.datos;
+            return Promise.all([asegurarValores(Pa), asegurarValores(P)]);
+        }).then(function () {
+            return ejemplo.meses(Pa, P).reduce(function (p, x) {
+                return p.then(function () {
+                    var t = (estado.trabajadores || []).filter(function (w) { return Rut.formatear(w.rut) === Rut.formatear(x.rut); })[0];
+                    if (!t) return;
+                    return guardarRegistro(t.id, Object.assign(L.mesBase(t, x.periodo), x.cambios), x.periodo);
+                });
+            }, Promise.resolve());
+        }).then(function () { estado = null; mesesCache = {}; });
+    }
+    // Al salir del ejemplo se vuelve a la cuenta (si hay sesión) o a la entrada
+    function salirEjemplo() {
+        ejemplo = null;
+        recordarEjemplo(false);
+        reiniciar();
+        $('pm-ejemplo-franja').hidden = true;
+        try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ }
+        mostrar('cargando');
+        arrancar();
+    }
+    $('pm-ejemplo').addEventListener('click', entrarEjemplo);
+    $('pm-ejemplo-salir').addEventListener('click', salirEjemplo);
+    $('pm-ejemplo-entrar').addEventListener('click', salirEjemplo);
 
     // Olvida todo lo que se cargó de la cuenta (al salir o al eliminarla)
     function reiniciar() {
@@ -351,8 +422,12 @@
         $('pm-correo').textContent = estado.cuenta.email;
         $('cuenta-correo').textContent = estado.cuenta.email;
         var lim = estado.limites, caja = $('app-pase'), txt = $('app-pase-texto');
-        caja.classList.remove('vigente', 'porvencer');
-        if (lim.paseVence && Date.parse(lim.paseVence) > Date.now()) {
+        caja.classList.remove('vigente', 'porvencer', 'ejemplo');
+        $('pm-ejemplo-franja').hidden = !estado.ejemplo;
+        if (estado.ejemplo) {
+            caja.classList.add('ejemplo');
+            txt.textContent = 'Modo de ejemplo';
+        } else if (lim.paseVence && Date.parse(lim.paseVence) > Date.now()) {
             var dias = PEND.dias(hoyIso(), isoChile(lim.paseVence));
             caja.classList.add(dias <= 15 ? 'porvencer' : 'vigente');
             txt.textContent = 'Pase vigente hasta el ' + fechaCortaAnio(isoChile(lim.paseVence));
@@ -436,7 +511,7 @@
                 '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
         }).join('');
         var txt = activosN + ' de ' + lim.maxActivos + ' trabajadores activos. ';
-        txt += lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme, hasta 5.';
+        txt += estado.ejemplo ? 'En el ejemplo puedes agregar hasta 5, como con el Pase Pyme.' : lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme, hasta 5.';
         $('pm-trab-limite').textContent = txt;
         $('pm-trab-nuevo').disabled = !estado.empresa;
         $('pm-trab-nuevo').title = estado.empresa ? '' : 'Primero guarda los datos de la empresa';
@@ -930,7 +1005,7 @@
             var mapa = mesesCache[toca.periodo];
             liq = { periodo: toca.periodo, registros: Object.keys(mapa).map(function (id) { return { trabajadorId: id, emitida: mapa[id].emitida || '' }; }) };
         }
-        pendientesActuales = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: guardado(KEY_RESPALDO), liquidaciones: liq, documentos: docsCache });
+        pendientesActuales = PEND.pendientes(estado, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: ejemplo ? new Date().toISOString() : guardado(KEY_RESPALDO), liquidaciones: liq, documentos: docsCache });
         return pendientesActuales;
     }
     function dibujarPendientes() {
@@ -971,7 +1046,7 @@
     function selloLiq(reg, est, dias) {
         if (!reg && dias === 0) return '<span class="sello sello-no">No corresponde</span>';
         if (est === 'emitida') return '<span class="sello sello-emitida">Emitida' + (reg && reg.emitida ? ' · ' + esc(fechaCorta(reg.emitida)) : '') + '</span>';
-        if (est === 'guardada') return '<span class="sello sello-guardada">Preparada</span>';
+        if (est === 'guardada') return '<span class="sello sello-preparada">Preparada</span>';
         return '<span class="sello sello-sin">Sin preparar</span>';
     }
 
@@ -1032,7 +1107,9 @@
         if (cuentan.length && preparadas) sub += ' · ' + plural(preparadas, 'preparada', 'preparadas') + ' sin emitir';
         if (cuentan.length && sin) sub += ' · ' + sin + ' sin preparar';
         $('ini-sub').textContent = sub;
-        $('ini-avance').innerHTML = cuentan.map(function (f) { return '<i class="' + (f.est === 'emitida' ? 'ok' : f.est === 'guardada' ? 'guardada' : '') + '"></i>'; }).join('');
+        // Avance ordenado: emitidas, preparadas y sin preparar
+        var ORDEN_AVANCE = { emitida: 0, guardada: 1 };
+        $('ini-avance').innerHTML = cuentan.map(function (f) { return f.est; }).sort(function (a, b) { return (a in ORDEN_AVANCE ? ORDEN_AVANCE[a] : 2) - (b in ORDEN_AVANCE ? ORDEN_AVANCE[b] : 2); }).map(function (e) { return '<i class="' + (e === 'emitida' ? 'ok' : e === 'guardada' ? 'guardada' : '') + '"></i>'; }).join('');
 
         var paraPreparar = filas.filter(function (f) { return f.corresponde && f.est === 'sin_datos'; }).length;
         $('ini-preparar').hidden = paraPreparar === 0;
@@ -1077,9 +1154,9 @@
     function celdaVac(t) {
         var ini = periodoSel + '-01', fin = periodoSel + '-31';
         var p = vacDe(t.id).filter(function (v) { return v.tipo === 'periodo' && v.desde <= fin && v.hasta >= ini; })[0];
-        if (!t.fechaIngreso) return '<td class="ocultar-movil vacio">—</td>';
+        if (!t.fechaIngreso) return '<td class="ocultar-movil col-vac vacio">—</td>';
         var r = resumenVac(t);
-        return '<td class="celda-contrato ocultar-movil"><span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span> de saldo<small>' + (p ? esc(rangoCorto(p.desde, p.hasta)) + ', ' + textoDias(p.dias) : 'sin vacaciones este mes') + '</small></td>';
+        return '<td class="celda-contrato ocultar-movil col-vac"><span class="mono' + (r.saldo < 0 ? ' vencido' : '') + '">' + r.saldo + '</span> de saldo<small>' + (p ? esc(rangoCorto(p.desde, p.hasta)) + ', ' + textoDias(p.dias) : 'sin vacaciones este mes') + '</small></td>';
     }
 
     function elegirFila(id, enfocar) {
@@ -1772,7 +1849,7 @@
     var NOMBRE_PASE = { pyme3: '3 meses', pyme12: '12 meses' };
 
     function ventaPase() { return !!(estado && estado.pase && estado.pase.venta); }
-    function textoPaseVenta() { return ventaPase() ? 'Puedes comprarlo en «Mi cuenta».' : 'El Pase Pyme aún no está a la venta.'; }
+    function textoPaseVenta() { return estado && estado.ejemplo ? 'El ejemplo no tiene Pase.' : ventaPase() ? 'Puedes comprarlo en «Mi cuenta».' : 'El Pase Pyme aún no está a la venta.'; }
 
     function dibujarCuenta() { dibujarPase(); dibujarImportar(); dibujarAvisosCorreo(); }
     // Preferencia de avisos por correo (apagada por defecto)
@@ -1802,6 +1879,11 @@
         if (!estado) return;
         var lim = estado.limites, cat = (estado.pase && estado.pase.productos) || [];
         var vigente = !!lim.paseVence;
+        if (estado.ejemplo) {
+            $('pm-pase-estado').textContent = 'Estás viendo un ejemplo: no tiene Pase y los documentos salen con la marca «Vista previa». Para usar el asistente con tu empresa, sal del ejemplo y entra con tu correo.';
+            $('pm-pase-opciones').innerHTML = '';
+            return;
+        }
         $('pm-pase-estado').textContent = vigente
             ? 'Tu Pase Pyme (' + (NOMBRE_PASE[lim.paseProducto] || '') + ') está vigente hasta el ' + fechaVence(lim.paseVence) + '. Si compras otro, empieza cuando termina este.'
             : 'Tu cuenta no tiene un pase vigente: puedes tener 1 trabajador activo y los documentos salen con marca de agua.';
@@ -1890,7 +1972,7 @@
         } catch (e) { return null; }
     }
     function dibujarImportar() {
-        var g = guardado(KEY_IMPORTADO) ? null : leerGenerador();
+        var g = guardado(KEY_IMPORTADO) || (estado && estado.ejemplo) ? null : leerGenerador();
         $('pm-sec-importar').hidden = !g;
         if (!g) return;
         var partes = [];
@@ -2649,8 +2731,8 @@
     $('pm-liq-cerrar').addEventListener('click', function () { cerrarMes(); navegar('liquidaciones', { reemplazar: true, sinScroll: true }); });
 
     // Guarda un mes (con el resultado calculado si hay valores del mes) y actualiza la memoria local
-    function guardarRegistro(id, mes) {
-        var t = trabajadorPorId(id), periodo = periodoSel, previo = mesesDe(periodo)[id];
+    function guardarRegistro(id, mes, periodoForzado) {
+        var t = trabajadorPorId(id), periodo = periodoForzado || periodoSel, previo = mesesDe(periodo)[id];
         // Las cuotas se toman de la ficha, salvo al editar una liquidación que ya estaba emitida (quedan las emitidas)
         if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { cuotasPrestamo: L.cuotasDelMes(t, periodo) });
         if (t && !(previo && previo.emitida && mes.emitida)) mes = Object.assign({}, mes, { ausencias: AUS.delMes(t.ausencias, periodo).slice(0, 10) });
@@ -2837,6 +2919,16 @@
     function exportar() {
         var est = $('pm-exportar-estado');
         mensaje(est, '', 'Preparando…');
+        if (ejemplo) {
+            return ejemplo.exportar().then(function (archivo) {
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob([JSON.stringify(archivo, null, 2)], { type: 'application/json' }));
+                a.download = 'calculolaboral-ejemplo-' + hoyIso() + '.json';
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+                mensaje(est, 'ok', 'Descargamos los datos del ejemplo.');
+            });
+        }
         return fetch('/api/pyme/exportar', { credentials: 'same-origin' }).then(function (r) {
             if (r.status === 401) { mostrar('entrada', 'Tu sesión venció. Entra de nuevo con tu correo.'); return null; }
             if (!r.ok) throw new Error('http');
@@ -2876,6 +2968,7 @@
     aplicarMascaras($('pm-trab-form'));
     aplicarMascaras($('pm-prest-form'));
     function arrancar() {
+        if (rutaActual() === 'ejemplo' || ejemploRecordado()) { entrarEjemplo(); return; }
         api('sesion').then(function (r) {
             if (r.estado === 0 || r.estado >= 500) { mostrar('fallo'); return; }
             if (r.datos && r.datos.autenticado) cargar(); else mostrar('entrada');
