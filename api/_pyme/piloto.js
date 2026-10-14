@@ -1,6 +1,6 @@
 /**
  * Piloto gratuito del Asistente Pyme (decisión del dueño, 14-oct-2026): hasta el 31 de diciembre de 2026 toda cuenta tiene lo mismo
- * que el Pase de 12 meses (hasta 5 trabajadores activos, documentos sin marca de agua, Word y generadores incluidos) sin pagar.
+ * que el Pase de 12 meses (documentos sin marca de agua, Word y generadores incluidos) y hasta 50 trabajadores activos sin pagar.
  * A cambio se pide opinión, pero no es obligatoria.
  *
  *   crear(env, ahora) → { activo(), vence(), producto }

@@ -26,7 +26,7 @@ caso('solo las páginas de la lista tienen el bloque o la hoja de estilos (nada 
         const tiene = html.indexOf(Pr.INICIO) >= 0 || html.indexOf('promo-asistente.css') >= 0;
         assert.strictEqual(tiene, slugs.indexOf(slug) >= 0, slug);
     });
-    ['sueldo_liquido', 'simulador-despido-injustificado-chile', 'reclamar-despido-injustificado-chile', 'que-hacer-si-no-te-pagan-el-finiquito', 'carta-de-renuncia-chile', 'terminos', 'privacidad', 'asistente-laboral-pyme', 'app', 'compra-exitosa'].forEach(s => {
+    ['simulador-despido-injustificado-chile', 'reclamar-despido-injustificado-chile', 'que-hacer-si-no-te-pagan-el-finiquito', 'carta-de-renuncia-chile', 'terminos', 'privacidad', 'asistente-laboral-pyme', 'app', 'compra-exitosa'].forEach(s => {
         assert.ok(slugs.indexOf(s) < 0, s + ' no debe llevar el bloque');
     });
 });

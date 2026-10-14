@@ -480,8 +480,8 @@ module.exports = { validarMes, validarHonorarios, validarAusencias, validarPerio
  * Reglas
  *  - Todo dato personal se cifra aqui (AES-256-GCM) antes de pasar al almacen; la base solo ve bytes.
  *  - Cada dato se cifra atado a su cuenta (y a su id en el caso de los trabajadores): copiarlo a otra fila o cuenta lo inutiliza.
- *  - Limite de trabajadores activos: 1 sin pase y 5 con pase vigente. Lo aplica el servidor en la misma sentencia SQL del INSERT.
- *  - No puede haber dos trabajadores con el mismo RUT en una empresa, y se permiten hasta 50 en total (activos + inactivos).
+ *  - Limite de trabajadores activos: 1 sin pase, 5 con pase vigente y 50 durante el piloto gratuito. Lo aplica el servidor en la misma sentencia SQL del INSERT.
+ *  - No puede haber dos trabajadores con el mismo RUT en una empresa, y se permiten hasta 100 en total (activos + inactivos).
  *  - Los préstamos con cuotas van dentro de la ficha (cifrados con ella). Guardar la ficha sin la lista los conserva.
  *  - Las boletas de honorarios van en una fila cifrada por empresa y mes (tabla honorarios, migración 002).
  *
@@ -492,7 +492,8 @@ const V = require('./validar');
 
 const MAX_SIN_PASE = 1;
 const MAX_CON_PASE = 5;
-const MAX_TOTAL = 50;
+const MAX_PILOTO = 50;
+const MAX_TOTAL = 100;
 const MAX_MESES_POR_TRABAJADOR = 120;
 const MAX_DOCUMENTOS_POR_TRABAJADOR = 500;
 const TIPOS_DOCUMENTO = ['anexo_contrato', 'pacto_horas_extra', 'cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
@@ -519,7 +520,7 @@ function crear({ almacen, cifrado, ahora, piloto }) {
         const vence = await almacen.paseVigente(cuentaId, iso());
         // Piloto gratuito (api/_pyme/piloto.js): mientras dure, lo mismo que el Pase de 12 meses, salvo que la cuenta tenga un pase pagado que dure más
         if (piloto && piloto.activo() && (!vence || vence < Date.parse(piloto.vence()))) {
-            return { maxActivos: MAX_CON_PASE, paseVence: piloto.vence(), paseProducto: piloto.producto, piloto: true, pilotoHasta: piloto.fechaFin() };
+            return { maxActivos: MAX_PILOTO, paseVence: piloto.vence(), paseProducto: piloto.producto, piloto: true, pilotoHasta: piloto.fechaFin() };
         }
         const actual = vence ? await almacen.paseActual(cuentaId, iso()) : null;
         return { maxActivos: vence ? MAX_CON_PASE : MAX_SIN_PASE, paseVence: vence ? new Date(vence).toISOString() : null, paseProducto: actual ? actual.producto : null };
@@ -831,14 +832,16 @@ function crear({ almacen, cifrado, ahora, piloto }) {
 }
 
 function limiteTexto(lim) {
-    return lim.paseVence
+    return lim.piloto
+        ? `El piloto gratuito permite hasta ${MAX_PILOTO} trabajadores activos.`
+        : lim.paseVence
         ? `Tu pase permite hasta ${MAX_CON_PASE} trabajadores activos.`
         : `Sin pase puedes tener ${MAX_SIN_PASE} trabajador activo. Con el Pase Pyme son hasta ${MAX_CON_PASE}.`;
 }
 
 function esUuid(s) { return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
 
-module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_MESES_HONORARIOS, MAX_DOCUMENTOS_POR_TRABAJADOR, MAX_VACACIONES_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };
+module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_PILOTO, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_MESES_HONORARIOS, MAX_DOCUMENTOS_POR_TRABAJADOR, MAX_VACACIONES_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };
 
     });
 
