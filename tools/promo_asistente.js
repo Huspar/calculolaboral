@@ -27,7 +27,7 @@ const PAGINAS = {
     // Con bloque propio escrito a mano en la página (portada y portal de empleadores): aquí solo se asegura la hoja de estilos
     'index': { manual: true },
     'para-empleadores': { manual: true },
-    'liquidacion-de-sueldo': { titulo: '¿Haces las liquidaciones de tu equipo cada mes?', texto: 'Guardas los datos de cada trabajador una sola vez y el asistente prepara las liquidaciones del mes, con gratificación y horas extra, para imprimirlas todas juntas. Hasta 5 trabajadores.' },
+    'liquidacion-de-sueldo': { titulo: '¿Haces las liquidaciones de tu equipo cada mes?', texto: 'Guardas los datos de cada trabajador una sola vez y el asistente prepara las liquidaciones del mes, con gratificación y horas extra, para imprimirlas todas juntas.' },
     'generador-liquidacion-sueldo': { titulo: '¿Tienes más de una persona que liquidar?', texto: 'Este generador cobra por liquidación y deja tus datos solo en tu navegador. En el asistente los guardas cifrados una vez y preparas el mes completo de tus trabajadores, gratis durante el piloto.', antes: '<section class="ls-section" id="preguntas">' },
     'calculadora-horas-extras': { titulo: 'Las horas extra de tu equipo, mes a mes', texto: 'En el asistente agregas las horas extra de cada trabajador y se calculan en su liquidación del mes, junto con el resto de sus haberes y descuentos.' },
     'calculadora-costo-empresa-chile': { titulo: 'Cuánto te cuesta cada trabajador, mes a mes', texto: 'El asistente calcula el costo para la empresa de cada trabajador y proyecta cómo sube con el aporte del empleador de la reforma de pensiones hasta 2033.' },
@@ -48,7 +48,14 @@ const PAGINAS = {
     'finiquito-por-renuncia-voluntaria': { titulo: 'El finiquito con el feriado ya calculado', texto: 'El asistente arma el finiquito con la ficha del trabajador y su registro de vacaciones, para que revises el documento antes de firmarlo.' },
     'como-calcular-finiquito-chile': { titulo: 'Calcula y arma el finiquito de tu trabajador', texto: 'El asistente guarda los datos de cada trabajador y arma el finiquito con el feriado calculado desde su registro de vacaciones.' },
     'como-calcular-sueldo-liquido-paso-a-paso': { titulo: 'Si pagas sueldos, deja que el asistente haga el mes', texto: 'El asistente aplica estas mismas reglas a cada trabajador de tu empresa y prepara las liquidaciones del mes, con la UF y la UTM de cada período.' },
-    'pack-cartas-despido-chile': { titulo: '¿Necesitas también la liquidación y el finiquito?', texto: 'El asistente guarda los datos de tus trabajadores, arma sus liquidaciones del mes y el finiquito con el feriado calculado, sin volver a escribirlos.' }
+    'pack-cartas-despido-chile': { titulo: '¿Necesitas también la liquidación y el finiquito?', texto: 'El asistente guarda los datos de tus trabajadores, arma sus liquidaciones del mes y el finiquito con el feriado calculado, sin volver a escribirlos.' },
+    'sueldo_liquido': { titulo: '¿Eres tú quien paga los sueldos?', texto: 'Si pagas los sueldos de tu equipo, el asistente guarda los datos de cada trabajador una sola vez y prepara las liquidaciones del mes, con gratificación y horas extra, para imprimirlas todas juntas.' },
+    'calculadora-despido-articulo-160': { titulo: 'Con la ficha cargada, el finiquito sale armado', texto: 'El asistente arma el finiquito con el feriado calculado y emite las cartas de término de los artículos 159 N°4 y 161 con los datos de la ficha. Son modelos de referencia: revísalos antes de usarlos.' },
+    'generador-anexo-40-horas': { titulo: 'El anexo de jornada, con los datos de cada trabajador', texto: 'El asistente emite el anexo de contrato por la jornada de 42 horas con los datos ya guardados en la ficha de cada trabajador, sin volver a escribirlos.' },
+    'reconsideracion-multas-dt-art-511': { titulo: 'Los plazos del mes, sin llevarlos de memoria', texto: 'El asistente te avisa los contratos a plazo fijo por vencer, el plazo para registrar contratos en Mi DT y el pago de cotizaciones, para reducir el riesgo de una multa.' },
+    'que-conductas-no-son-ley-karin-dt-chile': { titulo: 'Anota quién ya conoce el protocolo', texto: 'El asistente registra en la ficha de cada trabajador la fecha en que se le dio a conocer el protocolo y te avisa a quién le falta. No es un canal de denuncias.' },
+    'guia-ley-21719-proteccion-datos-personales-chile': { titulo: 'El anexo de datos personales, con la ficha lista', texto: 'El asistente emite el anexo de protección de datos del trabajador con los datos de su ficha, para firmarlo junto con el contrato. Es un modelo de referencia: revísalo antes de usarlo.' },
+    'blog': { antes: '    </main>', titulo: 'Para pymes y emprendedores: el Asistente Laboral Pyme', texto: 'Guardas los datos de tu empresa y de tus trabajadores una sola vez, preparas las liquidaciones del mes y emites contratos, anexos y finiquitos. Es gratis hasta el 31 de diciembre de 2026, a cambio de tu opinión.' },
 };
 
 const ANTES = [
@@ -70,7 +77,7 @@ function bloque(slug, cfg, nl) {
         `<p>${escapar(cfg.texto)}</p>`,
         '</div>',
         '<div class="cl-asistente-acciones">',
-        `<a class="cl-asistente-btn" href="asistente-laboral-pyme" ${cta('bloque')}>Conocer el asistente</a>`,
+        `<a class="cl-asistente-btn" href="asistente-laboral-pyme" ${cta('bloque')}>Conocer el Asistente Laboral Pyme</a>`,
         `<a class="cl-asistente-link" href="app/ejemplo" ${cta('ejemplo')}>Ver un ejemplo, sin cuenta</a>`,
         '</div>',
         '</aside>',

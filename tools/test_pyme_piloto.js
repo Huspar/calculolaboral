@@ -66,15 +66,16 @@ caso('el piloto vence el 31-dic-2026 a las 23:59:59 de Chile y se puede cerrar a
     assert.deepStrictEqual([en('2026-10-14T12:00:00Z'), en('2027-01-01T02:59:58Z'), en('2027-01-01T03:00:00Z'), en('2026-10-14T12:00:00Z', { PYME_PILOTO_FIN: '1' })], [true, true, false, false]);
 });
 
-caso('durante el piloto toda cuenta tiene el cupo de 5 y el estado lo dice (sin pago)', async () => {
+caso('durante el piloto toda cuenta tiene el cupo de 50 y el estado lo dice (sin pago)', async () => {
     const m = montar();
     const s = await conEmpresa(m, 'ana@ejemplo.cl');
-    const lista = await altas(m, s, 5);
+    const lista = await altas(m, s, 50);
     assert.ok(lista.every(r => r.ok), JSON.stringify(lista.find(r => !r.ok)));
-    const sexto = await m.datos.crearTrabajador(s.cuenta, trabajador(6));
-    assert.deepStrictEqual([sexto.ok, sexto.codigo], [false, 'limite']);
+    const extra = await m.datos.crearTrabajador(s.cuenta, trabajador(51));
+    assert.deepStrictEqual([extra.ok, extra.codigo], [false, 'limite']);
+    assert.ok(/hasta 50/.test(extra.error), extra.error);
     const est = await m.datos.estado(s.cuenta);
-    assert.deepStrictEqual(est.limites, { maxActivos: 5, paseVence: Pi.VENCE, paseProducto: 'pyme12', piloto: true, pilotoHasta: '2026-12-31' });
+    assert.deepStrictEqual(est.limites, { maxActivos: 50, paseVence: Pi.VENCE, paseProducto: 'pyme12', piloto: true, pilotoHasta: '2026-12-31' });
 });
 
 caso('al terminar el piloto, o si se cierra antes, la cuenta vuelve a 1 trabajador activo', async () => {

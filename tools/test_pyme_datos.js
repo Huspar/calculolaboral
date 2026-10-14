@@ -214,12 +214,12 @@ caso('editar y borrar: ids que no son UUID o que no existen dan 404', async () =
     assert.ok((await m.datos.borrarTrabajador(cuenta, id)).ok);
     assert.strictEqual((await m.datos.estado(cuenta)).trabajadores.length, 0);
 });
-caso('tope total de 50 trabajadores (activos más inactivos)', async () => {
+caso('tope total de 100 trabajadores (activos más inactivos)', async () => {
     const m = montar();
     const { cuenta } = await m.entrar('ana@ejemplo.cl');
     await m.datos.guardarEmpresa(cuenta, EMPRESA);
-    for (let n = 1; n <= 50; n++) assert.ok((await m.datos.crearTrabajador(cuenta, TRAB(n, { activo: false }))).ok, 'trabajador ' + n);
-    assert.strictEqual((await m.datos.crearTrabajador(cuenta, TRAB(51, { activo: false }))).codigo, 'limite_total');
+    for (let n = 1; n <= 100; n++) assert.ok((await m.datos.crearTrabajador(cuenta, TRAB(n, { activo: false }))).ok, 'trabajador ' + n);
+    assert.strictEqual((await m.datos.crearTrabajador(cuenta, TRAB(101, { activo: false }))).codigo, 'limite_total');
 });
 caso('importar: guarda la empresa, salta repetidos y avisa los que no entran por el límite o por datos inválidos', async () => {
     const m = montar();
@@ -279,7 +279,7 @@ caso('las escrituras exigen el encabezado propio y el origen del sitio (antes de
 caso('flujo completo por la API: empresa, trabajador, estado, edición y borrado', async () => {
     const m = montar();
     const { cookie } = await m.entrar('ana@ejemplo.cl');
-    assert.deepStrictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).json, { ok: true, cuenta: { email: 'ana@ejemplo.cl' }, empresa: null, trabajadores: [], limites: { maxActivos: 1, paseVence: null, paseProducto: null }, maxTotal: 50 });
+    assert.deepStrictEqual((await leer(m, { query: { ruta: 'estado' }, cookie })).json, { ok: true, cuenta: { email: 'ana@ejemplo.cl' }, empresa: null, trabajadores: [], limites: { maxActivos: 1, paseVence: null, paseProducto: null }, maxTotal: 100 });
     const e = await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: EMPRESA } });
     assert.strictEqual(e.statusCode, 200);
     const t = await escribir(m, { query: { ruta: 'trabajador' }, metodo: 'POST', cookie, body: { trabajador: TRAB(1) } });

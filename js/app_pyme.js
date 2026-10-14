@@ -343,7 +343,7 @@
     });
 
     // ---------- modo de ejemplo ----------
-    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.0', '/js/pyme_demo.js?v=1.0.1'];
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.1', '/js/pyme_demo.js?v=1.0.1'];
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
     function cargarScript(src) {
@@ -564,7 +564,7 @@
                 '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
         }).join('');
         var txt = activosN + ' de ' + lim.maxActivos + ' trabajadores activos. ';
-        txt += estado.ejemplo ? 'En el ejemplo puedes agregar hasta 5, como con el Pase Pyme.' : lim.piloto ? 'El piloto gratuito permite hasta 5 y dura hasta el ' + fechaVence(lim.paseVence) + '.' : lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme, hasta 5.';
+        txt += estado.ejemplo ? 'En el ejemplo puedes agregar hasta 5, como con el Pase Pyme.' : lim.piloto ? 'El piloto gratuito permite hasta ' + lim.maxActivos + ' y dura hasta el ' + fechaVence(lim.paseVence) + '.' : lim.paseVence ? 'Tu pase vence el ' + fechaVence(lim.paseVence) + '.' : 'Sin pase puedes tener 1 trabajador activo; con el Pase Pyme, hasta 5.';
         $('pm-trab-limite').textContent = txt;
         $('pm-trab-nuevo').disabled = !estado.empresa;
         $('pm-trab-nuevo').title = estado.empresa ? '' : 'Primero guarda los datos de la empresa';
@@ -1941,7 +1941,7 @@
         $('pm-pase-incluye').hidden = !!lim.piloto;
         if (lim.piloto) {
             $('pm-pase-estado').textContent = 'Estás en el piloto gratuito: hasta el ' + fechaVence(lim.paseVence) + ' tienes lo mismo que el Pase de 12 meses, sin pagar.';
-            $('pm-pase-opciones').innerHTML = '<p class="texto-ayuda">Hasta 5 trabajadores activos, liquidaciones y documentos sin marca de agua, y los documentos en Word. Al terminar, la cuenta vuelve a las funciones gratuitas y tus datos se conservan. Nos ayudas mucho si nos cuentas qué funciona, qué no y qué te falta.</p><div style="margin-top:12px"><button type="button" class="btn" data-abrir-opinion="cuenta"><span class="material-icons" aria-hidden="true">chat</span>Contar mi opinión</button></div>';
+            $('pm-pase-opciones').innerHTML = '<p class="texto-ayuda">Hasta ' + lim.maxActivos + ' trabajadores activos, liquidaciones y documentos sin marca de agua, y los documentos en Word. Al terminar, la cuenta vuelve a las funciones gratuitas y tus datos se conservan. Nos ayudas mucho si nos cuentas qué funciona, qué no y qué te falta.</p><div style="margin-top:12px"><button type="button" class="btn" data-abrir-opinion="cuenta"><span class="material-icons" aria-hidden="true">chat</span>Contar mi opinión</button></div>';
             return;
         }
         $('pm-pase-estado').textContent = vigente
