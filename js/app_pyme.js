@@ -1491,7 +1491,7 @@
                     return '<tr><th scope="row">' + esc(f.campo) + '</th><td>' + valor + (f.nota ? '<small>' + esc(f.nota) + '</small>' : '') + '</td></tr>';
                 }).join('') + '</tbody></table>';
             }).join('') +
-            '<p class="texto-ayuda">Ordenado como el formulario «Registro de Contrato de Trabajo» de la Dirección del Trabajo (guía rápida de enero de 2024). El registro lo haces tú en mi.dt.gob.cl; si el formulario cambió, sigue lo que pide la DT.</p></div>';
+            '<p class="texto-ayuda">Ordenado como el formulario «Registro de Contrato de Trabajo» de la Dirección del Trabajo (guía rápida de enero de 2024). Es una guía armada con la información pública de la DT: no la hemos probado dentro del portal. El registro lo haces tú en mi.dt.gob.cl; si el formulario es distinto, sigue lo que pide la DT.</p></div>';
     }
     function abrirMiDT(id) {
         var t = trabajadorPorId(id);
