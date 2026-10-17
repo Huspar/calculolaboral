@@ -419,7 +419,7 @@ module.exports = async (req, res) => {
                 <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">${siguiente}</ul>
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px; color: #334155;">
                     <span style="font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Publicidad · Banco Itaú</span><br>
-                    ${esSueldo ? '¿Dónde recibirás tu sueldo?' : '¿Dónde recibirás tu pago?'} Abre una Cuenta Corriente Itaú 100% online, con $0 de mantención al transferir tu remuneración mensual. Sujeto a evaluación de antecedentes comerciales.<br>
+                    ${esSueldo ? '¿Dónde recibirás tu sueldo?' : '¿Dónde recibirás tu pago?'} Abre una Cuenta Corriente Itaú 100% online, con mantención mensual $0. Requisitos de Itaú: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000. Sujeto a evaluación de antecedentes comerciales.<br>
                     <a href="https://calculolaboral.cl/itau-correo" style="color: #00382E; font-weight: bold;">Ver la cuenta corriente</a>
                 </div>
                 <p style="margin: 12px 0 0; font-size: 12px; color: #475569;">Recibes este correo porque pediste una copia del cálculo en calculolaboral.cl. No te enviaremos otros mensajes por este motivo.</p>
