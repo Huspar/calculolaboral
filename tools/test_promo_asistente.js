@@ -64,4 +64,34 @@ caso('la hoja de estilos de la promoción no se carga dos veces ni queda en pág
     slugs.forEach(s => assert.strictEqual(leer(s).split('promo-asistente.css').length - 1, 1, s));
 });
 
+caso('todo anuncio del asistente (data-cta="asistente-pyme") se mide: la página carga checkout_consent.js o medir_promo.js, nunca los dos', () => {
+    let paginas = 0;
+    fs.readdirSync(RAIZ).filter(f => /\.html$/.test(f)).forEach(f => {
+        const html = fs.readFileSync(path.join(RAIZ, f), 'utf8');
+        if (html.indexOf('data-cta="asistente-pyme"') < 0) return;
+        paginas++;
+        const consent = /checkout_consent\.js/.test(html), medir = /medir_promo\.js/.test(html);
+        assert.ok(consent || medir, f + ': sus clics no se miden');
+        assert.ok(!(consent && medir), f + ': mediría cada clic dos veces');
+    });
+    assert.ok(paginas >= 32, 'se esperaban al menos 32 páginas con anuncios, hay ' + paginas);
+});
+
+caso('los anuncios del asistente en el cuerpo de las páginas llevan un lugar propio (data-cta-slot) sin repetirse en la página', () => {
+    fs.readdirSync(RAIZ).filter(f => /\.html$/.test(f)).forEach(f => {
+        const html = fs.readFileSync(path.join(RAIZ, f), 'utf8');
+        const slots = (html.match(/data-cta="asistente-pyme"[^>]*data-cta-slot="([^"]+)"/g) || []).map(x => x.replace(/.*data-cta-slot="/, '').replace(/"$/, ''));
+        assert.strictEqual(new Set(slots).size, slots.length, f + ': lugares repetidos ' + slots.join(', '));
+    });
+});
+
+caso('los anuncios del Kit Blindaje que se cambiaron por el asistente ya no apuntan al kit ni llevan su precio', () => {
+    ['sueldo_liquido', 'finiquito_calculator', 'calculadora-horas-extras', 'calculadora-costo-empresa-chile', 'ley-40-horas-chile-2026',
+        'calculadora-sueldo-part-time', 'simulador-despido-injustificado-chile', 'despido-necesidades-empresa-articulo-161'].forEach(s => {
+        const html = leer(s).replace(/<footer[\s\S]*<\/footer>/, '');
+        assert.ok(!/kit-cumplimiento-laboral-pymes/.test(html), s + ' todavía enlaza al kit fuera del pie');
+        assert.ok(/data-cta="asistente-pyme"[^>]*data-cta-slot="[^"]*-anuncio"/.test(html), s + ' no tiene su anuncio del asistente');
+    });
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

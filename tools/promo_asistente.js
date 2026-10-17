@@ -18,6 +18,9 @@ const path = require('path');
 const RAIZ = path.join(__dirname, '..');
 const CSS = '/assets/css/promo-asistente.css?v=1.0.1';
 const LINK_CSS = '<link rel="stylesheet" href="' + CSS + '">';
+// Las páginas que no cargan checkout_consent.js (que ya mide los data-cta) cargan este script para medir los clics (GA4 select_promotion)
+const MEDIR = '/js/medir_promo.js?v=1.0.0';
+const TAG_MEDIR = '<script src="' + MEDIR + '" defer></script>';
 const INICIO = '<!-- cl-asistente:inicio (lo genera tools/promo_asistente.js: no editar a mano) -->';
 const FIN = '<!-- cl-asistente:fin -->';
 const KICKER = 'Asistente Laboral Pyme · Piloto gratuito hasta el 31 de diciembre';
@@ -55,6 +58,7 @@ const PAGINAS = {
     'reconsideracion-multas-dt-art-511': { titulo: 'Los plazos del mes, sin llevarlos de memoria', texto: 'El asistente te avisa los contratos a plazo fijo por vencer, el plazo para registrar contratos en Mi DT y el pago de cotizaciones, para reducir el riesgo de una multa.' },
     'que-conductas-no-son-ley-karin-dt-chile': { titulo: 'Anota quién ya conoce el protocolo', texto: 'El asistente registra en la ficha de cada trabajador la fecha en que se le dio a conocer el protocolo y te avisa a quién le falta. No es un canal de denuncias.' },
     'guia-ley-21719-proteccion-datos-personales-chile': { titulo: 'El anexo de datos personales, con la ficha lista', texto: 'El asistente emite el anexo de protección de datos del trabajador con los datos de su ficha, para firmarlo junto con el contrato. Es un modelo de referencia: revísalo antes de usarlo.' },
+    'aguinaldo-fiestas-patrias-chile-2026': { titulo: 'Aguinaldos y bonos, dentro de la liquidación del mes', texto: 'En el asistente agregas el aguinaldo pactado o cualquier bono a la liquidación de cada trabajador, como haber imponible o no imponible, y se calculan los descuentos y el líquido a pagar.' },
     'blog': { antes: '    </main>', titulo: 'Para pymes y emprendedores: el Asistente Laboral Pyme', texto: 'Guardas los datos de tu empresa y de tus trabajadores una sola vez, preparas las liquidaciones del mes y emites contratos, anexos y finiquitos. Es gratis hasta el 31 de diciembre de 2026, a cambio de tu opinión.' },
 };
 
@@ -96,6 +100,19 @@ function conCss(html, poner) {
     return html.slice(0, i) + LINK_CSS + nl + html.slice(i);
 }
 
+/** Asegura (o quita) el script que mide los clics, solo en las páginas que no cargan checkout_consent.js. */
+function conMedicion(html, poner) {
+    const nl = html.indexOf('\r\n') >= 0 ? '\r\n' : '\n';
+    html = html.replace(/[ \t]*<script src="\/js\/medir_promo\.js[^>]*><\/script>(\r?\n)?/, '');
+    if (!poner || /checkout_consent\.js/.test(html)) return html;
+    const i = html.lastIndexOf('</body>');
+    if (i < 0) throw new Error('Página sin </body>');
+    return html.slice(0, i) + TAG_MEDIR + nl + html.slice(i);
+}
+
+/** Hoja de estilos y medición, juntas. */
+const conExtras = (html, poner) => conMedicion(conCss(html, poner), poner);
+
 function sinBloque(html) {
     const i = html.indexOf(INICIO);
     if (i < 0) return html;
@@ -108,17 +125,17 @@ function sinBloque(html) {
 
 /** html con el bloque de la página (o sin él si cfg es null). */
 function aplicar(html, slug, cfg) {
-    if (cfg && cfg.manual) return conCss(html, true);
+    if (cfg && cfg.manual) return conExtras(html, true);
     const nl = html.indexOf('\r\n') >= 0 ? '\r\n' : '\n';
     html = sinBloque(html);
-    if (!cfg) return conCss(html, false);
+    if (!cfg) return conExtras(html, false);
     let pos = -1;
     if (cfg.antes) pos = html.indexOf(cfg.antes);
     else for (const re of ANTES) { const m = re.exec(html); if (m) { pos = m.index; break; } }
     if (pos < 0) throw new Error('No encontré dónde poner el bloque en ' + slug);
     // Al comienzo de su línea
     const inicioLinea = html.lastIndexOf('\n', pos) + 1;
-    return conCss(html.slice(0, inicioLinea) + bloque(slug, cfg, nl) + html.slice(inicioLinea), true);
+    return conExtras(html.slice(0, inicioLinea) + bloque(slug, cfg, nl) + html.slice(inicioLinea), true);
 }
 
 const archivo = (slug) => path.join(RAIZ, slug + '.html');
@@ -139,4 +156,4 @@ if (require.main === module) {
     for (const slug of Object.keys(PAGINAS)) if (!fs.existsSync(archivo(slug))) { console.error('No existe ' + slug + '.html'); malas++; }
     if (revisar) { if (malas) process.exit(1); console.log('Bloques del asistente al día en ' + Object.keys(PAGINAS).length + ' páginas'); }
 }
-module.exports = { PAGINAS, aplicar, sinBloque, conCss, INICIO, FIN, KICKER, CSS };
+module.exports = { PAGINAS, aplicar, sinBloque, conCss, conMedicion, INICIO, FIN, KICKER, CSS, MEDIR };
