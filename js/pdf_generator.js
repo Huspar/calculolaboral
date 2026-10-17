@@ -456,7 +456,7 @@
                 <div><b>3. Firma el finiquito de la empresa.</b> Este informe es tu respaldo; el documento válido lo extiende el empleador ante ministro de fe.</div>
             </div>
 
-            ${sponsorHTML('¿Dónde recibir el pago de tu finiquito?', 'Cuenta Corriente Itaú con $0 costo de mantención, apertura 100% online.')}
+            ${sponsorHTML('¿Dónde recibir el pago de tu finiquito?', 'Cuenta Corriente Itaú con mantención mensual $0, apertura 100% online. Requisitos: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000.')}
 
             <footer class="clr-foot">Simulación referencial conforme a la normativa de la Dirección del Trabajo. No constituye asesoría legal ni reemplaza el finiquito firmado por las partes. <span class="brand">calculolaboral.cl</span></footer>
         `);
@@ -521,7 +521,7 @@
                 <div class="amt">${netSalary}</div>
             </div>
 
-            ${sponsorHTML('¿Dónde recibir tu sueldo?', 'Cuenta Corriente Itaú con $0 costo de mantención, apertura 100% online.')}
+            ${sponsorHTML('¿Dónde recibir tu sueldo?', 'Cuenta Corriente Itaú con mantención mensual $0, apertura 100% online. Requisitos: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000.')}
 
             <footer class="clr-foot">Simulación referencial según la normativa vigente en Chile. No constituye comprobante de pago ni tiene validez ante la Dirección del Trabajo o el SII. <span class="brand">calculolaboral.cl</span></footer>
         `);
