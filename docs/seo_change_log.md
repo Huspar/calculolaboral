@@ -105,3 +105,14 @@ Comparación a 4 semanas de mezclar: conversión de `blindaje` y `finiquito` con
 
 
 Comparación a 4 semanas de mezclar (cambio del 17-oct-2026): `begin_checkout` de `blindaje` con origen en las ocho páginas cuyo anuncio se cambió contra su línea base, y `select_promotion` de `asistente-pyme` por `creative_slot` (los lugares `-anuncio`, `-anuncio-conocer`, `-bloque` y `-ejemplo`).
+
+## Octubre 2026 - CTR de valor hora y sueldo mínimo frente al resumen de IA de Google
+
+Línea base (Search Console, 27 sep a 24 oct 2026): `/ley-40-horas-chile-2026` 47.357 impresiones, 242 clics, CTR 0,51%, posición 4,98 (el 46% de las impresiones del sitio); `/sueldo-minimo-chile-2026` 2.453 impresiones, 8 clics, CTR 0,33%, posición 7,18. El resumen de IA de Google para «a cuanto esta la hora de trabajo en chile» cita a `/ley-40-horas-chile-2026` como primera fuente y muestra sus cifras ($3.075, $4.613, $18.452), así que la consulta se resuelve sin clic. Para sueldo mínimo el resumen cita a la DT. Se cumple la condición del 8-oct (CTR bajo 1% casi 4 semanas después de la Fase 0) con 47 mil impresiones, suficiente para no esperar al 2-nov.
+
+| Fecha | URL/Recurso | Cambio Específico | Hipótesis / Métrica Esperada a Mover |
+| :--- | :--- | :--- | :--- |
+| 2026-10-24 | `/ley-40-horas-chile-2026` | Title: «Valor Hora de Trabajo Chile 2026: $3.075 · Calcula el Tuyo» (se conserva el prefijo anterior y la cifra; se agrega la invitación a calcular). Meta description (y og/twitter) abre con «Escribe tu sueldo y tu jornada…» y conserva «$3.075 la hora». H1, headline del JSON-LD y Quick Answer Box sin cambios. La calculadora de valor hora sube a justo bajo el H1 (antes estaba tras la caja de respuesta rápida), con una línea para quien gana más que el mínimo; su título pasa de `h3` a `h2`. No se quitó texto. | El resumen de IA da la cifra del mínimo, pero no el valor hora de cada persona. Métrica a 4 semanas (~21 nov): CTR de la página y de las consultas de valor hora (meta: sobre 1%), sin perder posición (4,98) ni la cita en el resumen de IA. |
+| 2026-10-24 | `/sueldo-minimo-chile-2026` | Title: «Sueldo Mínimo Chile 2026: $553.553 Bruto, Líquido y Alza 2027» (se conserva «Bruto», consulta «sueldo mínimo en chile bruto»: 119 imp.). Meta description con líquido por AFP, part-time, dólares y alza de enero. En la cabecera, selector de AFP y contrato que muestra el líquido con Fonasa (mismos montos de la tabla de la página). H1 sin cambios. | Diferenciarse del resumen de IA, que solo da los montos brutos. Métrica a 4 semanas: CTR (meta: sobre 1%) y posición (7,18). |
+| 2026-10-24 | `/sitemap.xml` | `lastmod` de las dos páginas a 2026-10-24. | Recrawl más rápido. |
+
