@@ -116,3 +116,11 @@ Línea base (Search Console, 27 sep a 24 oct 2026): `/ley-40-horas-chile-2026` 4
 | 2026-10-24 | `/sueldo-minimo-chile-2026` | Title: «Sueldo Mínimo Chile 2026: $553.553 Bruto, Líquido y Alza 2027» (se conserva «Bruto», consulta «sueldo mínimo en chile bruto»: 119 imp.). Meta description con líquido por AFP, part-time, dólares y alza de enero. En la cabecera, selector de AFP y contrato que muestra el líquido con Fonasa (mismos montos de la tabla de la página). H1 sin cambios. | Diferenciarse del resumen de IA, que solo da los montos brutos. Métrica a 4 semanas: CTR (meta: sobre 1%) y posición (7,18). |
 | 2026-10-24 | `/sitemap.xml` | `lastmod` de las dos páginas a 2026-10-24. | Recrawl más rápido. |
 
+## Octubre 2026 - Itaú dentro del resultado de las calculadoras
+
+Itaú paga por cuenta abierta, no por clic (confirmado por el dueño el 24-oct). Línea base: la calculadora de valor hora está en `/ley-40-horas-chile-2026`, la página con más impresiones del sitio (47.357 en 28 días) y 325 entradas; hasta hoy no tenía oferta de Itaú conectada al sueldo que escribe la persona. Los clics previos al 17-oct (anuncio visible para todos) no abrieron cuentas.
+
+| Fecha | URL/Recurso | Cambio Específico | Hipótesis / Métrica Esperada a Mover |
+| :--- | :--- | :--- | :--- |
+| 2026-10-24 | `/ley-40-horas-chile-2026`, `js/itau_renta.js` (v1.2.0), `assets/css/valor-hora.css` (v1.1.0) | Aviso de Itaú dentro del resultado de la calculadora de valor hora, solo cuando el sueldo escrito llega a $1.000.000 (con Fonasa y la AFP más cara deja unos $809.000 líquidos, sobre los $800.000 que pide Itaú). Dice el monto escrito, la mantención $0 y los otros requisitos de Itaú. `itau_renta.js` suma la fuente `valorhora`, rellena `data-itau-monto` y envía `ver_anuncio` a GA4 la primera vez que se muestra cada aviso condicionado (también en horas extras, sueldo líquido e impuesto único). | Más cuentas abiertas por clic: el aviso solo lo ve quien cumple la renta, en el momento en que ve su resultado. Métrica a 4 semanas (~21 nov): `ver_anuncio` y `ad_click` con `ad_placement` = `valor_hora_resultado`, y cuentas aprobadas en Soicos contra septiembre y octubre. Sin efecto SEO esperado (aviso oculto al cargar, `rel="sponsored nofollow"`). |
+
