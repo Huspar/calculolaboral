@@ -1008,8 +1008,8 @@ window.addEventListener('load', function () {
             .clf-card, .clf-dots button::before { transition: none; }
         }
 
-        /* En móvil el abanico se limita a la tarjeta activa: sin tarjetas de fondo cortadas */
-        @media (max-width: 639px) {
+        /* Hasta 1023px el abanico se limita a la tarjeta activa: sin tarjetas de fondo cortadas */
+        @media (max-width: 1023px) {
             .clf-fan .clf-card:not(.is-active) { opacity: 0; visibility: hidden; pointer-events: none; }
         }
 
