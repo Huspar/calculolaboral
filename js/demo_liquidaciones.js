@@ -7,6 +7,7 @@
 
     var D = window.DemoCL;
     var state = { records: [], results: [], archivo: '', mes: null, fuente: '', avisos: [] };
+    var sinScroll = false;
 
     var AFP = { cuprum: 'Cuprum', habitat: 'Habitat', modelo: 'Modelo', planvital: 'Planvital', provida: 'Provida', uno: 'Uno' };
 
@@ -239,9 +240,10 @@
         if (!partes.length) partes.push('<b>Sin advertencias.</b> Todas las liquidaciones quedaron listas para emitir.');
         caja.innerHTML = partes.join('<div style="height:10px"></div>');
 
-        if (!document.getElementById('pane-liquidaciones').hasAttribute('hidden')) {
+        if (!sinScroll && !document.getElementById('pane-liquidaciones').hasAttribute('hidden')) {
             document.getElementById('results-liq').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        sinScroll = false;
         construirImpresion();
     }
 
@@ -428,7 +430,7 @@
                 radio.checked = true;
                 radio.dispatchEvent(new Event('change'));
             }
-            cargarPeriodo(true).then(cargarEjemplo);
+            cargarPeriodo(true).then(function () { sinScroll = true; cargarEjemplo(); });
         }
     });
 })();

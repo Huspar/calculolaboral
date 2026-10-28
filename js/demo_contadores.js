@@ -7,6 +7,7 @@
 
     var D = window.DemoCL;
     var state = { records: [], results: [], archivo: '' };
+    var sinScroll = false;
 
     var ALIAS = {
         rut: ['rut', 'rut_trabajador', 'rut_empleado'],
@@ -156,9 +157,10 @@
         document.getElementById('warnings-fin').innerHTML = partes.join('<div style="height:10px"></div>');
 
         var card = document.getElementById('results-fin');
-        if (card.scrollIntoView && !document.getElementById('pane-finiquitos').hasAttribute('hidden')) {
+        if (!sinScroll && card.scrollIntoView && !document.getElementById('pane-finiquitos').hasAttribute('hidden')) {
             card.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        sinScroll = false;
         construirImpresion();
     }
 
@@ -317,6 +319,6 @@
             if (state.results.length) construirImpresion();
         });
 
-        if (/[?&]demo=1/.test(location.search) && !/[?&]tab=liq/.test(location.search)) cargarEjemplo();
+        if (/[?&]demo=1/.test(location.search) && !/[?&]tab=liq/.test(location.search)) { sinScroll = true; cargarEjemplo(); }
     });
 })();
