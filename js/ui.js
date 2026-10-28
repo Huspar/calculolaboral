@@ -796,8 +796,8 @@ function updateCalculations() {
             const fmt = new Intl.NumberFormat('es-CL', { maximumFractionDigits: 2 });
             const vacDays = parseFloat(results.vacationIndemnity.totalCalendarDays);
             const busDays = parseFloat(results.vacationIndemnity.totalBusinessDays);
-            elements.totalVacationDaysOutput.textContent = isNaN(vacDays) ? "— días corridos" :
-                `${fmt.format(busDays)} hábiles = ${fmt.format(vacDays)} días corridos`;
+            elements.totalVacationDaysOutput.textContent = isNaN(vacDays) ? "Del último aniversario" :
+                `Del último aniversario: ${fmt.format(busDays)} hábiles = ${fmt.format(vacDays)} días corridos`;
             elements.totalVacationDaysOutput.title = results.vacationIndemnity.details;
         }
 
