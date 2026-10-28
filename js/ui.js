@@ -492,6 +492,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         updateCalculations();
+
+        // En móvil el total queda muy abajo del formulario: llevar la vista al resultado
+        if (window.matchMedia('(max-width: 1023px)').matches) {
+            const resultPanel = document.getElementById('resultados-finiquito');
+            if (resultPanel) resultPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
     if (elements.btnLoadExample) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es-CL" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -102,7 +102,7 @@
           "name": "¿Cómo se calcula el sueldo líquido en Chile?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "El sueldo líquido se obtiene restando del Sueldo Bruto Imponible los descuentos obligatorios: AFP (10,58% a 11,45%), Salud (7% Fonasa o pactado en Isapre), Seguro de Cesantía (0,6% en contrato indefinido) y el Impuesto Único de Segunda Categoría si la renta imponible supera las 13,5 UTM."
+            "text": "El sueldo líquido se obtiene restando del Sueldo Bruto Imponible los descuentos obligatorios: AFP (10,46% a 11,45%), Salud (7% Fonasa o pactado en Isapre), Seguro de Cesantía (0,6% en contrato indefinido) y el Impuesto Único de Segunda Categoría si la renta imponible supera las 13,5 UTM."
           }
         },
         {
@@ -917,14 +917,12 @@ window.addEventListener('load', function () {
         /* Portada: texto + abanico de calculadoras (js/home_fan.js). Clases propias: el CSS precompilado de Tailwind no trae las nuevas. */
         .clf-hero { padding: 2rem 0 2.5rem; overflow-x: clip; background: radial-gradient(1100px 550px at 50% -30px, rgba(255, 183, 3, 0.08), rgba(0, 56, 46, 0.02) 65%, transparent 100%); }
         .clf-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "fan" "actions"; gap: 1.25rem; }
-        .clf-copy { grid-area: copy; display: grid; gap: 0.875rem; justify-items: start; min-width: 0; }
-        .clf-fanwrap { grid-area: fan; display: grid; gap: 0.625rem; justify-items: center; min-width: 0; }
-        .clf-actions { grid-area: actions; display: grid; gap: 1rem; justify-items: start; min-width: 0; }
+        .clf-left { display: contents; }
+        .clf-copy { grid-area: copy; order: 1; display: grid; gap: 0.875rem; justify-items: start; min-width: 0; }
+        .clf-fanwrap { grid-area: fan; order: 2; display: grid; gap: 0.625rem; justify-items: center; min-width: 0; }
+        .clf-actions { grid-area: actions; order: 3; display: grid; gap: 1rem; justify-items: start; min-width: 0; }
         .clf-h1 { margin: 0; color: var(--teal-forest); font-weight: 800; font-size: 2.25rem; line-height: 1.06; letter-spacing: -0.035em; text-wrap: balance; }
         .clf-lead { margin: 0; font-size: 1.02rem; line-height: 1.55; color: #4B5563; max-width: 36ch; }
-        .clf-nuevo { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.9rem; border-radius: 999px; background-color: #FFFFFF; border: 1px solid #D6EBE4; font-size: 0.875rem; font-weight: 600; line-height: 1.3; color: #00382E; text-decoration: none; }
-        .clf-nuevo b { padding: 0.12rem 0.5rem; border-radius: 999px; background-color: #FFB703; color: #00261F; font-size: 0.75rem; font-weight: 700; }
-        .clf-nuevo:hover { border-color: #00382E; }
         .clf-ctas { display: flex; flex-wrap: wrap; gap: 0.625rem; width: 100%; }
         .clf-ctas .btn-yellow-pill { padding: 0.8rem 1.4rem; font-size: 0.95rem; }
         .clf-cta-t { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -935,10 +933,10 @@ window.addEventListener('load', function () {
         .clf-trust li { display: inline-flex; align-items: center; gap: 0.3rem; }
         .clf-trust .material-icons { font-size: 1rem; color: #059669; }
 
-        .clf-fan { position: relative; width: 100%; height: 352px; touch-action: pan-y; --step: 7deg; --spread: 1; }
+        .clf-fan { position: relative; width: 100%; height: 392px; touch-action: pan-y; --step: 7deg; --spread: 1; }
         .clf-fan.clf-deal { --spread: 0; }
         .clf-card {
-            position: absolute; left: 50%; top: 22px; width: 226px; height: 296px; margin-left: -113px;
+            position: absolute; left: 50%; top: 22px; width: 226px; height: auto; min-height: 296px; margin-left: -113px;
             display: flex; flex-direction: column; gap: 0.6rem; padding: 1rem;
             background: #FFFFFF; color: #111827; text-decoration: none; text-align: left;
             border: 1px solid #E2E8F0; border-radius: 18px;
@@ -983,20 +981,21 @@ window.addEventListener('load', function () {
         .clf-cap-t { min-width: 170px; text-align: center; display: grid; gap: 1px; }
         .clf-cap-t b { font-size: 0.9rem; color: #111827; }
         .clf-cap-t span { font-family: 'Geist Mono', monospace; font-size: 0.75rem; color: #6B7280; }
-        .clf-dots { display: flex; gap: 6px; }
-        .clf-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 9999px; background: #CBD5E1; cursor: pointer; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; }
-        .clf-dots button[aria-current="true"] { width: 22px; background: var(--teal-forest); }
+        .clf-dots { display: flex; gap: 0; }
+        .clf-dots button { position: relative; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+        .clf-dots button::before { content: ""; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 9999px; background: #CBD5E1; transform: translate(-50%, -50%); transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; }
+        .clf-dots button[aria-current="true"]::before { width: 22px; background: var(--teal-forest); }
+        .clf-dots button:focus-visible { outline: 2px solid var(--teal-forest); outline-offset: 2px; border-radius: 9999px; }
         .clf-hint { margin: 0; font-size: 0.75rem; color: #6B7280; text-align: center; }
-        .clf-hint-mouse { display: none; }
-        @media (hover: hover) and (pointer: fine) { .clf-hint-mouse { display: inline; } .clf-hint-touch { display: none; } }
 
         @media (max-width: 1023px) {
             .clf-ctas > a { flex: 1 1 auto; justify-content: center; }
         }
         @media (min-width: 1024px) {
             .clf-hero { padding: 3.5rem 0 4rem; }
-            .clf-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-areas: "copy fan" "actions fan"; column-gap: 1.5rem; row-gap: 1.75rem; align-items: center; }
-            .clf-copy { align-self: end; gap: 1.125rem; }
+            .clf-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-areas: "left fan"; column-gap: 1.5rem; align-items: stretch; }
+            .clf-left { display: flex; flex-direction: column; justify-content: flex-start; gap: 1.5rem; grid-area: left; min-width: 0; }
+            .clf-copy { align-self: auto; gap: 1.125rem; }
             .clf-actions { align-self: start; }
             .clf-h1 { font-size: 3.6rem; }
             .clf-lead { font-size: 1.15rem; }
@@ -1006,33 +1005,43 @@ window.addEventListener('load', function () {
             .clf-r { font-size: 1.6rem; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .clf-card, .clf-dots button { transition: none; }
+            .clf-card, .clf-dots button::before { transition: none; }
         }
 
-        /* Bloque de la calculadora de finiquito */
-        .clf-fini { padding: 0 0 3rem; }
-        .clf-fini-box { display: grid; gap: 1.5rem; padding: 1.5rem; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 1.5rem; }
-        .clf-fini-box h2 { margin: 0 0 0.5rem; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #0F172A; text-wrap: balance; }
-        .clf-fini-box p { margin: 0 0 1.25rem; font-size: 0.95rem; line-height: 1.6; color: #4B5563; max-width: 52ch; }
-        .clf-fini-box .btn-yellow-pill { padding: 0.8rem 1.4rem; }
-        .clf-fini-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; align-content: center; }
-        .clf-fini-list li { display: flex; gap: 0.625rem; font-size: 0.9rem; line-height: 1.45; color: #334155; }
-        .clf-fini-list .material-icons { color: #059669; font-size: 1.15rem; }
-        .clf-fini-list small { display: block; font-size: 0.75rem; color: #6B7280; }
-        .clf-fini-alt { margin: 1rem 0 0; font-size: 0.875rem; color: #4B5563; text-align: center; }
-        .clf-fini-alt a { color: var(--teal-forest); font-weight: 600; text-decoration: underline; }
-        @media (min-width: 1024px) {
-            .clf-fini-box { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; padding: 2.5rem 3rem; }
-            .clf-fini-box h2 { font-size: 2rem; }
+        /* En móvil el abanico se limita a la tarjeta activa: sin tarjetas de fondo cortadas */
+        @media (max-width: 639px) {
+            .clf-fan .clf-card:not(.is-active) { opacity: 0; visibility: hidden; pointer-events: none; }
         }
+
     </style>
     <section class="clf-hero" aria-labelledby="clf-h1">
         <div class="site-container px-4 sm:px-6 clf-grid">
 
+            <div class="clf-left">
             <div class="clf-copy">
                 <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional en Chile.</span></h1>
                 <p class="clf-lead">Calculadoras y herramientas para trabajadores y pymes, al día con la normativa 2026. Elige una y calcula en menos de un minuto.</p>
-                <a class="clf-nuevo" href="asistente-laboral-pyme" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="inicio-hero"><b>Nuevo</b><span>Asistente Laboral Pyme: gratis hasta el 31 de diciembre</span></a>
+            </div>
+
+            <div class="clf-actions">
+                <div class="clf-ctas">
+                    <a id="clf-cta" href="finiquito_calculator" class="btn-yellow-pill" style="color: #111827 !important;">
+                        <span style="color: #111827 !important;">Abrir</span>
+                        <span id="clf-cta-t" class="clf-cta-t" style="color: #111827 !important;">Finiquito</span>
+                        <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">arrow_forward</span>
+                    </a>
+                    <a href="#calculadoras" class="clf-btn-o">
+                        <span class="material-icons" aria-hidden="true" style="color: #047857;">apps</span>
+                        <span>Ver todas</span>
+                        <b>14</b>
+                    </a>
+                </div>
+                <ul class="clf-trust">
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Gratis y referencial</li>
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Sin registro ni datos bancarios</li>
+                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Fórmulas según el Código del Trabajo</li>
+                </ul>
+            </div>
             </div>
 
             <div class="clf-fanwrap">
@@ -1117,52 +1126,9 @@ window.addEventListener('load', function () {
                     <button type="button" id="clf-next" aria-label="Calculadora siguiente"><span class="material-icons" aria-hidden="true">chevron_right</span></button>
                 </div>
                 <div class="clf-dots" id="clf-dots"><button type="button" aria-label="Finiquito" aria-current="true"></button><button type="button" aria-label="Sueldo líquido" aria-current="false"></button><button type="button" aria-label="Sueldo part-time" aria-current="false"></button><button type="button" aria-label="Vacaciones" aria-current="false"></button><button type="button" aria-label="Seguro de cesantía" aria-current="false"></button><button type="button" aria-label="Ver todas" aria-current="false"></button><button type="button" aria-label="Horas extras" aria-current="false"></button><button type="button" aria-label="Despido injustificado" aria-current="false"></button></div>
-                <p class="clf-hint"><span class="clf-hint-mouse">Pasa el mouse para asomar una tarjeta y haz clic para traerla al frente.</span><span class="clf-hint-touch">Desliza o toca una tarjeta para traerla al frente.</span></p>
+                <p class="clf-hint">Pasa el mouse o toca una tarjeta para traerla al frente.</p>
             </div>
 
-            <div class="clf-actions">
-                <div class="clf-ctas">
-                    <a id="clf-cta" href="finiquito_calculator" class="btn-yellow-pill" style="color: #111827 !important;">
-                        <span style="color: #111827 !important;">Abrir</span>
-                        <span id="clf-cta-t" class="clf-cta-t" style="color: #111827 !important;">Finiquito</span>
-                        <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">arrow_forward</span>
-                    </a>
-                    <a href="#calculadoras" class="clf-btn-o">
-                        <span class="material-icons" aria-hidden="true" style="color: #047857;">apps</span>
-                        <span>Ver todas</span>
-                        <b>14</b>
-                    </a>
-                </div>
-                <ul class="clf-trust">
-                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Gratis y referencial</li>
-                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Sin registro ni datos bancarios</li>
-                    <li><span class="material-icons" aria-hidden="true">check_circle</span>Fórmulas según el Código del Trabajo</li>
-                </ul>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- SECTION 2: CALCULADORA DE FINIQUITO (enlace a la página propia; el cálculo vive en /finiquito_calculator) -->
-    <section class="clf-fini" aria-labelledby="clf-fini-t">
-        <div class="site-container px-4 sm:px-6">
-            <div class="clf-fini-box">
-                <div>
-                    <h2 id="clf-fini-t">Tu finiquito, concepto por concepto</h2>
-                    <p>Ingresa tus fechas, tu sueldo y la causal de término, y obtén el desglose de cada concepto con un informe en PDF para revisar antes de firmar.</p>
-                    <a href="finiquito_calculator" class="btn-yellow-pill" style="color: #111827 !important;">
-                        <span style="color: #111827 !important;">Abrir la calculadora de finiquito</span>
-                        <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">arrow_forward</span>
-                    </a>
-                </div>
-                <ul class="clf-fini-list">
-                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Indemnización por años de servicio<small>Con el tope de 90 UF y de 11 años (Art. 163 y 172)</small></span></li>
-                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Indemnización sustitutiva del aviso previo<small>Un mes de remuneración si no hubo aviso con 30 días (Art. 161)</small></span></li>
-                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Vacaciones proporcionales y pendientes<small>1,25 días hábiles por mes trabajado (Art. 67 y 73)</small></span></li>
-                    <li><span class="material-icons" aria-hidden="true">check_circle</span><span>Descuento del aporte del empleador al seguro de cesantía<small>Lo que pueden descontar y cuándo se puede reclamar (Art. 13 Ley 19.728)</small></span></li>
-                </ul>
-            </div>
-            <p class="clf-fini-alt">¿Te despidieron sin causa justificada? <a href="simulador-despido-injustificado-chile">Simula el recargo legal del 30%</a> o <a href="#abogados-laborales">revisa tu caso con un abogado laboral</a>.</p>
         </div>
     </section>
 
@@ -1574,7 +1540,7 @@ window.addEventListener('load', function () {
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-500 font-semibold">calculolaboral.cl/pymes</span>
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">calculolaboral.cl/para-empleadores</span>
                         <a href="para-empleadores" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
                             <span>Ingresar portal</span>
                             <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
@@ -1623,7 +1589,7 @@ window.addEventListener('load', function () {
     </section>
 
     <!-- SECTION 5: PROFILE HUBS (Trabajadores vs Pymes - Authentic Human Design) -->
-    <section id="section-audiences" class="py-12 sm:py-16 bg-gray-50 border-t border-b border-gray-200/90">
+    <section id="section-audiences" class="py-10 sm:py-12 bg-gray-50 border-t border-b border-gray-200/90">
         <div class="site-container px-4 sm:px-6">
 
             <div class="reveal-on-scroll cl-sec-head">
@@ -1645,7 +1611,7 @@ window.addEventListener('load', function () {
                             Audita tus indemnizaciones y cobra lo que realmente te corresponde
                         </h3>
                         <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-                            Frente a una desvinculación, el empleador debe regirse por los topes y fórmulas del Código del Trabajo. Conoce tus montos reales antes de estampar tu firma en notaría o comparecer ante la Dirección del Trabajo.
+                            Conoce tus montos reales antes de firmar en notaría o comparecer ante la Dirección del Trabajo.
                         </p>
                         <ul class="audience-list">
                             <li><a href="finiquito_calculator" class="audience-row"><span><b>Finiquito legal con tope de 90 UF por año</b><small>Años de servicio, mes de aviso sustitutivo y feriado proporcional hábil.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
@@ -1667,7 +1633,7 @@ window.addEventListener('load', function () {
                             Prevención legal y orden ante la Dirección del Trabajo
                         </h3>
                         <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-                            Cartas de despido con causales defectuosas o contratos desactualizados exponen a tu pyme a multas de hasta 60 UTM y demandas con recargo del 30%. Estandariza tus procedimientos con modelos basados en el Código del Trabajo.
+                            Cartas defectuosas o contratos desactualizados exponen a tu pyme a multas de hasta 60 UTM y demandas con recargo del 30%.
                         </p>
                         <ul class="audience-list">
                             <li><a href="generador-finiquito-chile" class="audience-row"><span><b>Generador de finiquito en Word y PDF</b><small>Modelo con cálculo de indemnizaciones, declaración de cotizaciones (Ley Bustos) y ratificación ante ministro de fe.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
@@ -2113,7 +2079,7 @@ window.addEventListener('load', function () {
                         <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0">expand_more</span>
                     </summary>
                     <p class="text-sm sm:text-base text-gray-600 mt-4 pt-4 border-t border-gray-100 leading-relaxed font-sans">
-                        El sueldo líquido se obtiene restando del Sueldo Bruto Imponible los descuentos obligatorios: AFP (10,58% a 11,45%), Salud (7% Fonasa o pactado en Isapre), Seguro de Cesantía (0,6% en contrato indefinido) y el Impuesto Único de Segunda Categoría si la renta imponible supera las 13,5 UTM.
+                        El sueldo líquido se obtiene restando del Sueldo Bruto Imponible los descuentos obligatorios: AFP (10,46% a 11,45%), Salud (7% Fonasa o pactado en Isapre), Seguro de Cesantía (0,6% en contrato indefinido) y el Impuesto Único de Segunda Categoría si la renta imponible supera las 13,5 UTM.
                     </p>
                 </details>
 
