@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<meta name="theme-color" content="#00261F">
+<meta name="theme-color" content="#00382E">
 <title>Finiquitos y liquidaciones en lote · CálculoLaboral</title>
 <meta name="description" content="Demo privada para estudios contables: sube un Excel y obtén finiquitos y liquidaciones calculados, en PDF con el logo de tu estudio.">
 <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
@@ -12,121 +12,239 @@
 <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/app.css?v=1.7.2">
-<link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 <style>
-    /* ---------- Marco de la demo (usa los tokens de app.css) ---------- */
-    .app.demo-main { display: block; max-width: 1140px; margin: 0 auto; padding: 0 24px 64px; }
-    @media (max-width: 640px) { .app.demo-main { padding: 0 16px 48px; } }
-    @media (max-width: 720px) {
-        .demo-top-in { padding: 8px 12px; gap: 8px; }
-        .demo-producto { display: none; }
-        .demo-top .app-logo-texto { font-size: 15px; }
-        .demo-chip { height: 26px; padding: 0 8px; font-size: 11px; }
-    }
+    @font-face { font-family: 'Geist'; src: url('/assets/fonts/geist-latin.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Geist Mono'; src: url('/assets/fonts/geist-mono-latin.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Material Icons'; src: url('/assets/fonts/material-icons.woff2') format('woff2'); font-weight: normal; font-style: normal; font-display: block; }
 
-    .demo-top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
-    .demo-top-in {
-        max-width: 1140px; margin: 0 auto; padding: 10px 24px;
-        display: flex; align-items: center; gap: 14px; min-height: 60px;
+    :root {
+        --forest: #00382E;
+        --forest-2: #0F5E4F;
+        --forest-deep: #00261F;
+        --amber: #F0B429;
+        --amber-soft: #FFF7E0;
+        --ink: #0F1A17;
+        --muted: #5B6B66;
+        --line: #E2E8E6;
+        --line-2: #CFD8D4;
+        --bg: #F6F8F7;
+        --danger: #B42318;
+        --radius: 16px;
+        --radius-sm: 10px;
     }
-    @media (max-width: 640px) { .demo-top-in { padding: 8px 16px; gap: 8px; } }
-    .demo-top .app-logo { padding: 0; }
-    .demo-producto { font-size: 13px; color: var(--muted); border-left: 1px solid var(--line); padding-left: 14px; }
-    .demo-chip {
-        margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
-        height: 28px; padding: 0 10px; border-radius: 999px;
-        background: var(--amber-bg); color: var(--amber-ink); border: 1px solid #F5DFA8;
-        font-size: 12px; font-weight: 600; white-space: nowrap;
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    body {
+        margin: 0; background: var(--bg); color: var(--ink);
+        font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        font-size: 15px; line-height: 1.5; letter-spacing: -0.005em;
+        -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
-    .demo-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber-icon); }
+    h1, h2, h3, p { margin: 0; }
+    .mono, .num { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    .sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+    :focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+    .app-saltar { position: fixed; left: 12px; top: -48px; z-index: 100; height: 38px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 10px; background: var(--forest); color: #fff; font-weight: 600; text-decoration: none; }
+    .app-saltar:focus { top: 10px; }
 
-    .demo-head { padding: 34px 0 20px; max-width: 720px; }
+    /* ---------- barra superior ---------- */
+    .topbar { background: var(--forest); color: #fff; }
+    .topbar-in {
+        max-width: 1120px; margin: 0 auto; padding: 14px 24px;
+        display: flex; align-items: center; gap: 14px; min-height: 62px;
+    }
+    .app-logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    .app-logo-isotipo {
+        width: 34px; height: 34px; border-radius: 10px; background: var(--amber);
+        display: grid; place-items: center; flex: none;
+    }
+    .app-logo-isotipo svg { width: 19px; height: 19px; color: var(--forest); }
+    .app-logo-texto { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #fff; line-height: 1; }
+    .app-logo-texto span { color: var(--amber); }
+    .topbar-sep { width: 1px; height: 18px; background: rgba(255,255,255,.22); }
+    .topbar-sub { font-size: 12.5px; color: rgba(255,255,255,.72); letter-spacing: 0; }
+    .topbar-chip {
+        margin-left: auto; display: inline-flex; align-items: center; gap: 7px;
+        height: 28px; padding: 0 11px; border-radius: 999px;
+        background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+        font-size: 11.5px; font-weight: 600; letter-spacing: .02em; white-space: nowrap;
+    }
+    .topbar-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+
+    /* ---------- estructura ---------- */
+    main { max-width: 1120px; margin: 0 auto; padding: 40px 24px 64px; }
+    .demo-head { max-width: 700px; margin-bottom: 26px; }
     .demo-eyebrow {
-        font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-        color: var(--forest-600); margin-bottom: 8px;
+        font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+        color: var(--forest-2); margin-bottom: 10px;
     }
-    .demo-head .v-titulo { font-size: 30px; }
-    @media (max-width: 640px) { .demo-head .v-titulo { font-size: 24px; } }
-    .demo-head .texto-ayuda { margin-top: 8px; font-size: 14.5px; }
+    h1.v-titulo { font-size: 34px; line-height: 1.12; letter-spacing: -0.03em; font-weight: 700; margin: 0 0 12px; }
+    @media (max-width: 640px) { h1.v-titulo { font-size: 26px; } }
+    .texto-ayuda { font-size: 15px; color: var(--muted); }
+    .demo-head .texto-ayuda { font-size: 15.5px; }
 
-    .demo-tabs { margin-bottom: 18px; }
+    /* ---------- pestañas ---------- */
+    .segmento {
+        display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 20px;
+        background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    }
+    .segmento label { position: relative; cursor: pointer; }
+    .segmento input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .segmento label span {
+        display: inline-flex; align-items: center; height: 38px; padding: 0 16px;
+        border-radius: 9px; font-size: 13.5px; font-weight: 600; color: var(--muted);
+        transition: background-color .15s, color .15s;
+    }
+    .segmento label:hover span { color: var(--forest); }
+    .segmento input:checked + span { background: var(--forest); color: #fff; }
+    .segmento input:focus-visible + span { outline: 2px solid var(--forest); outline-offset: 2px; }
 
-    .demo-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; align-items: start; }
+    /* ---------- rejilla ---------- */
+    .demo-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; align-items: start; }
     @media (max-width: 900px) { .demo-grid { grid-template-columns: minmax(0, 1fr); } }
     .demo-grid > * { min-width: 0; }
     .demo-grid > .full { grid-column: 1 / -1; }
+    .demo-col { display: grid; gap: 20px; min-width: 0; }
 
-    .demo-col { display: grid; gap: 16px; min-width: 0; }
+    /* ---------- tarjetas ---------- */
+    .panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(15,26,23,.04); }
+    .panel-head { display: flex; align-items: center; gap: 10px; padding: 18px 22px; border-bottom: 1px solid #F0F3F2; }
+    .panel-head h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.015em; }
+    .panel-head .texto-ayuda { font-size: 12px; margin-left: auto; }
+    .panel-cuerpo { padding: 22px; }
 
-    .demo-field { display: grid; gap: 5px; margin-bottom: 14px; }
+    /* ---------- formularios ---------- */
+    .demo-field { display: grid; gap: 6px; margin-bottom: 16px; }
     .demo-field:last-child { margin-bottom: 0; }
-    .demo-field > label, .demo-field > .demo-label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
-    .demo-field .texto-ayuda { font-size: 12.5px; }
+    .demo-field > label, .demo-label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+    .demo-field .texto-ayuda { font-size: 12px; line-height: 1.45; }
+    input[type=text], input[type=number], input[type=month] {
+        width: 100%; height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+        font: inherit; font-size: 14px; color: var(--ink); background: #fff;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    input[type=number] { font-family: 'Geist Mono', monospace; font-variant-numeric: tabular-nums; }
+    input:hover { border-color: var(--line-2); }
+    input:focus { outline: none; border-color: var(--forest-2); box-shadow: 0 0 0 3px rgba(15,94,79,.12); }
 
     .demo-logo-row { display: flex; align-items: center; gap: 12px; }
     .demo-logo-prev {
-        width: 72px; height: 46px; border: 1px dashed var(--line-2); border-radius: var(--radius-sm);
-        display: grid; place-items: center; background: var(--surface-2); overflow: hidden; flex: none;
-        font-size: 11px; color: var(--faint); text-align: center;
+        width: 74px; height: 48px; border: 1px dashed var(--line-2); border-radius: var(--radius-sm);
+        display: grid; place-items: center; background: var(--bg); overflow: hidden; flex: none;
+        font-size: 11px; color: #93A19C;
     }
     .demo-logo-prev img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    .demo-drop {
-        border: 1.5px dashed var(--line-2); border-radius: var(--radius); background: var(--surface-2);
-        padding: 26px 20px; text-align: center; cursor: pointer; transition: border-color .15s var(--ease), background-color .15s var(--ease);
+    /* ---------- botones ---------- */
+    .btn {
+        appearance: none; border: 1px solid transparent; border-radius: var(--radius-sm);
+        height: 42px; padding: 0 16px; font: inherit; font-size: 13.5px; font-weight: 650;
+        display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+        cursor: pointer; background: #fff; color: var(--forest); border-color: var(--line);
+        transition: background-color .15s, border-color .15s, transform .1s;
     }
-    .demo-drop:hover, .demo-drop.over { border-color: var(--forest-300); background: var(--forest-50); }
-    .demo-drop strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 3px; }
-    .demo-drop span { font-size: 13px; color: var(--muted); }
-    .demo-drop .material-icons { font-size: 26px; color: var(--forest-600); margin-bottom: 6px; }
+    .btn:hover { background: #F7FAF9; border-color: var(--line-2); }
+    .btn:active { transform: translateY(1px); }
+    .btn-primario { background: var(--forest); border-color: var(--forest); color: #fff; }
+    .btn-primario:hover { background: #002B23; border-color: #002B23; }
+    .btn-chico { height: 36px; padding: 0 13px; font-size: 12.5px; }
+    .btn .material-icons { font-size: 18px; }
+    .material-icons {
+        font-family: 'Material Icons'; font-weight: normal; font-style: normal; line-height: 1;
+        letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap;
+        direction: ltr; -webkit-font-feature-settings: 'liga'; font-feature-settings: 'liga';
+    }
+    .demo-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 
-    .demo-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    /* ---------- zona de carga ---------- */
+    .demo-drop {
+        border: 1.5px dashed var(--line-2); border-radius: 14px; background: #FBFCFC;
+        padding: 28px 20px; text-align: center; cursor: pointer;
+        transition: border-color .15s, background-color .15s;
+    }
+    .demo-drop:hover, .demo-drop.over { border-color: var(--forest-2); background: rgba(15,94,79,.04); }
+    .demo-drop .material-icons { font-size: 26px; color: var(--forest-2); margin-bottom: 6px; }
+    .demo-drop strong { display: block; font-size: 14px; font-weight: 650; margin-bottom: 3px; letter-spacing: -0.01em; }
+    .demo-drop span:last-child { font-size: 12.5px; color: var(--muted); }
 
     .demo-nota {
-        margin-top: 14px; border: 1px solid var(--line); border-left: 3px solid var(--amber);
-        background: var(--amber-bg); border-radius: var(--radius-sm); padding: 12px 14px;
-        font-size: 12.5px; color: var(--amber-ink); line-height: 1.5;
+        margin-top: 16px; border: 1px solid #F3E4BE; border-left: 3px solid var(--amber);
+        background: var(--amber-soft); border-radius: 10px; padding: 13px 15px;
+        font-size: 12.5px; color: #6B4E14; line-height: 1.55;
     }
     .demo-nota b { color: var(--ink); }
 
-    .demo-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    /* ---------- resultados ---------- */
+    .demo-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
     @media (max-width: 760px) { .demo-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    .demo-stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; background: var(--surface-2); min-width: 0; }
-    .demo-stat dt { font-size: 12px; color: var(--muted); font-weight: 500; margin: 0 0 4px; }
-    .demo-stat dd { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+    .demo-stat { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: #FBFCFC; min-width: 0; }
+    .demo-stat dt { font-size: 11.5px; color: var(--muted); font-weight: 600; margin: 0 0 5px; letter-spacing: .01em; }
+    .demo-stat dd { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.025em; overflow-wrap: anywhere; }
     @media (max-width: 760px) { .demo-stat dd { font-size: 17px; } }
-    .demo-stat dd.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-    .demo-stat dd.bad { color: var(--risk); }
+    .demo-stat dd.bad { color: var(--danger); }
 
-    .tabla-wrap { max-width: 100%; }
-    .tabla td { height: 48px; padding: 0 14px; font-size: 13.5px; }
-    .tabla th { padding: 0 14px; height: 40px; }
+    .tabla-wrap { overflow-x: auto; max-width: 100%; border: 1px solid var(--line); border-radius: 12px; }
+    .tabla { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
+    .tabla th {
+        text-align: right; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase;
+        color: var(--muted); font-weight: 700; padding: 11px 14px; background: #FBFCFC;
+        border-bottom: 1px solid var(--line); white-space: nowrap;
+    }
+    .tabla th:first-child, .tabla th:nth-child(2), .tabla th:nth-child(3) { text-align: left; }
+    .tabla td { height: 48px; padding: 0 14px; border-bottom: 1px solid #F2F5F4; text-align: right; white-space: nowrap; }
+    .tabla td:first-child, .tabla td:nth-child(2), .tabla td:nth-child(3) { text-align: left; }
+    .tabla tbody tr:last-child td { border-bottom: 0; }
+    .tabla tbody tr:hover { background: #FAFCFB; }
     .tabla .nom { font-weight: 550; }
+    .tabla .num { text-align: right; }
+
     .demo-badge {
         display: inline-block; margin-left: 6px; padding: 2px 7px; border-radius: 999px;
-        background: var(--amber-bg); color: var(--amber-ink); border: 1px solid #F5DFA8;
+        background: var(--amber-soft); color: #7A5410; border: 1px solid #F0DBA0;
         font-size: 10.5px; font-weight: 700; vertical-align: 1px;
     }
 
-    .demo-plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    @media (max-width: 700px) {
+        .topbar-in { padding: 10px 16px; gap: 10px; }
+        .topbar-sep, .topbar-sub { display: none; }
+        .topbar-chip { font-size: 11px; padding: 0 9px; height: 26px; }
+        .app-logo-texto { font-size: 16px; }
+    }
+    @media (max-width: 420px) {
+        .demo-stat { padding: 12px; }
+        .demo-stat dd { font-size: 15px; }
+    }
+
+    /* ---------- llamada a la acción ---------- */
+    .demo-cta {
+        display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        margin-top: 28px; padding: 22px 24px; border-radius: var(--radius);
+        background: var(--forest); color: #fff;
+    }
+    .demo-cta h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 3px; }
+    .demo-cta p { font-size: 13px; color: rgba(255,255,255,.72); }
+    .demo-cta .btn { margin-left: auto; background: var(--amber); border-color: var(--amber); color: #3A2A00; }
+    .demo-cta .btn:hover { background: #E5A81C; border-color: #E5A81C; }
+    @media (max-width: 640px) { .demo-cta .btn { margin-left: 0; width: 100%; } }
+
+    /* ---------- planes ---------- */
+    .demo-plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
     @media (max-width: 820px) { .demo-plan { grid-template-columns: 1fr; } }
-    .demo-plan > div { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; background: var(--surface); }
-    .demo-plan > div.hl { border-color: var(--forest); box-shadow: 0 0 0 3px var(--forest-50); }
-    .demo-plan h3 { font-size: 13px; font-weight: 600; color: var(--muted); }
-    .demo-plan .p { font-family: var(--mono); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0 2px; }
-    .demo-plan .p small { font-family: var(--sans); font-size: 11.5px; font-weight: 500; color: var(--muted); }
-    .demo-plan ul { margin: 10px 0 0; padding-left: 16px; font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+    .demo-plan > div { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; background: #fff; }
+    .demo-plan > div.hl { border-color: var(--forest); box-shadow: 0 0 0 3px rgba(0,56,46,.07); }
+    .demo-plan h3 { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .demo-plan .p { font-family: 'Geist Mono', monospace; font-size: 24px; font-weight: 700; letter-spacing: -0.03em; margin: 8px 0 2px; }
+    .demo-plan .p small { font-family: 'Geist', sans-serif; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+    .demo-plan ul { margin: 12px 0 0; padding-left: 16px; font-size: 12.5px; color: var(--muted); line-height: 1.7; }
 
-    .demo-pie { max-width: 1140px; margin: 0 auto; padding: 0 24px 40px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .demo-pie { max-width: 1120px; margin: 0 auto; padding: 0 24px 48px; font-size: 12px; color: var(--muted); line-height: 1.6; }
 
-    /* ---------- Impresión ---------- */
+    /* ---------- impresión ---------- */
     #print-area { display: none; }
     @media print {
         body { background: #fff; }
-        .demo-top, .app.demo-main, .demo-pie { display: none !important; }
+        .topbar, main, .demo-pie { display: none !important; }
         #print-area { display: block !important; }
         .print-page { page-break-after: always; padding-bottom: 8mm; }
         .print-page:last-child { page-break-after: auto; }
@@ -142,43 +260,43 @@
         .print-table td { padding: 5px 6px; border-bottom: 1px solid #EEF1F0; }
         .print-table tr.total td { border-top: 1.5px solid #00382E; border-bottom: 0; font-weight: 700; padding-top: 7px; }
         .print-data { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 18px; font-size: 9pt; margin-bottom: 10px; }
-        .print-note { margin-top: 12px; font-size: 7.5pt; color: #4B5563; line-height: 1.5; border-top: 1px solid #E3E8E5; padding-top: 7px; }
+        .print-note { margin-top: 12px; font-size: 7.5pt; color: #4B5563; line-height: 1.5; border-top: 1px solid #E2E8E6; padding-top: 7px; }
         .print-flag { font-size: 8pt; color: #9F1239; margin-top: 6px; }
         .print-h3 { font-size: 9.5pt; font-weight: 700; margin: 10px 0 4px; }
     }
 </style>
 </head>
-<body class="app-body">
+<body>
 
 <a class="app-saltar" href="#contenido">Saltar al contenido</a>
 
-<header class="demo-top">
-    <div class="demo-top-in">
-        <a class="app-logo app-logo-claro" href="/" aria-label="Cálculo Laboral, ir al sitio">
+<header class="topbar">
+    <div class="topbar-in">
+        <a class="app-logo" href="/" aria-label="Cálculo Laboral, ir al sitio">
             <span class="app-logo-isotipo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 84h40M38 79h24"/><path d="M50 22v57"/><path d="M50 14l-2 4h4l-2-4v8"/><path d="M18 36c10-9 22-12 32-12s22 3 32 12"/><path d="M18 36l-8 18h16Z"/><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M82 36l-8 18h16Z"/><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M41 43.5a10 10 0 1 0 0 20h6"/><path d="M58 43.5v20h10"/></svg></span>
             <span class="app-logo-texto">Cálculo<span>Laboral</span></span>
         </a>
-        <span class="demo-producto">Finiquitos y liquidaciones en lote</span>
-        <span class="demo-chip">Demo privada</span>
+        <span class="topbar-sep" aria-hidden="true"></span>
+        <span class="topbar-sub">Estudios contables</span>
+        <span class="topbar-chip">Demo privada</span>
     </div>
 </header>
 
-<main id="contenido" class="app demo-main">
+<main id="contenido">
 
     <div class="demo-head">
-        <p class="demo-eyebrow">Estudios contables</p>
+        <p class="demo-eyebrow">Finiquitos y liquidaciones en lote</p>
         <h1 class="v-titulo" tabindex="-1">Sube tu nómina. Baja los documentos calculados.</h1>
         <p class="texto-ayuda">La calculadora laboral más usada de Chile, procesando tu cartera completa. Finiquitos y liquidaciones con el logo de tu estudio, sin planillas paralelas.</p>
     </div>
 
-    <div class="segmento demo-tabs" role="tablist" aria-label="Tipo de documento">
-        <label><input type="radio" name="modo" value="finiquitos" checked> Finiquitos</label>
-        <label><input type="radio" name="modo" value="liquidaciones"> Liquidaciones de sueldo</label>
+    <div class="segmento" role="tablist" aria-label="Tipo de documento">
+        <label><input type="radio" name="modo" value="finiquitos" checked><span>Finiquitos</span></label>
+        <label><input type="radio" name="modo" value="liquidaciones"><span>Liquidaciones de sueldo</span></label>
     </div>
 
     <div class="demo-grid">
 
-        <!-- PANEL ESTUDIO -->
         <section class="panel">
             <div class="panel-head"><h2>Tu estudio</h2></div>
             <div class="panel-cuerpo">
@@ -195,14 +313,13 @@
                                 <span class="material-icons" aria-hidden="true">image</span>Elegir imagen
                             </button>
                             <input type="file" id="logo-input" accept="image/png,image/jpeg,image/webp" class="sr-only">
-                            <p class="texto-ayuda" style="margin-top:6px;">PNG, JPG o WebP. Sale en el encabezado de cada documento.</p>
+                            <p class="texto-ayuda" style="margin-top:7px;">PNG, JPG o WebP. Sale en el encabezado de cada documento.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- PANEL FINIQUITOS -->
         <div class="demo-col" id="pane-finiquitos">
             <section class="panel">
                 <div class="panel-head">
@@ -212,7 +329,7 @@
                 <div class="panel-cuerpo">
                     <div class="demo-field">
                         <label for="uf-value">Valor UF del período</label>
-                        <input type="number" id="uf-value" step="0.01" min="1" data-tipo="uf">
+                        <input type="number" id="uf-value" step="0.01" min="1">
                         <p class="texto-ayuda">Se usa para el tope de 90 UF de la indemnización y el tope imponible.</p>
                     </div>
 
@@ -235,7 +352,6 @@
             </section>
         </div>
 
-        <!-- PANEL LIQUIDACIONES -->
         <div class="demo-col" id="pane-liquidaciones" hidden>
             <section class="panel">
                 <div class="panel-head">
@@ -243,27 +359,27 @@
                     <span class="texto-ayuda">Excel o CSV</span>
                 </div>
                 <div class="panel-cuerpo">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div class="demo-field">
                             <label for="periodo">Período</label>
                             <input type="month" id="periodo" value="2026-10">
                         </div>
                         <div class="demo-field">
                             <label for="liq-tasa-mutual">Tasa mutual (%)</label>
-                            <input type="number" id="liq-tasa-mutual" step="0.01" min="0.93" value="0.93" data-tipo="dec">
+                            <input type="number" id="liq-tasa-mutual" step="0.01" min="0.93" value="0.93">
                         </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div class="demo-field">
                             <label for="liq-uf">UF del mes</label>
-                            <input type="number" id="liq-uf" step="0.01" min="1" data-tipo="uf">
+                            <input type="number" id="liq-uf" step="0.01" min="1">
                         </div>
                         <div class="demo-field">
                             <label for="liq-utm">UTM del mes</label>
-                            <input type="number" id="liq-utm" step="1" min="1" data-tipo="pesos">
+                            <input type="number" id="liq-utm" step="1" min="1">
                         </div>
                     </div>
-                    <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:14px;">UF y UTM se cargan solas del período; puedes corregirlas.</p>
+                    <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:16px;">UF y UTM se cargan solas del período; puedes corregirlas.</p>
 
                     <div class="demo-drop" id="drop-liq">
                         <span class="material-icons" aria-hidden="true">upload_file</span>
@@ -284,7 +400,6 @@
             </section>
         </div>
 
-        <!-- RESULTADOS FINIQUITOS -->
         <section class="panel full" id="results-fin" hidden>
             <div class="panel-head">
                 <h2>Resultado del lote</h2>
@@ -326,7 +441,6 @@
             </div>
         </section>
 
-        <!-- RESULTADOS LIQUIDACIONES -->
         <section class="panel full" id="results-liq" hidden>
             <div class="panel-head">
                 <h2>Resultado del mes</h2>
@@ -368,6 +482,14 @@
         </section>
     </div>
 
+    <section class="demo-cta">
+        <div>
+            <h2>Llévalo a tu estudio</h2>
+            <p>15 días de prueba con tu logo y hasta 20 documentos. Sin tarjeta, sin instalar nada.</p>
+        </div>
+        <a class="btn" href="mailto:contacto@calculolaboral.cl?subject=Quiero%20probar%20C%C3%A1lculoLaboral%20para%20estudios%20contables&body=Hola%2C%20quiero%20probar%20la%20versi%C3%B3n%20para%20estudios%20contables.%0A%0AMi%20estudio%3A%0ATrabajadores%20que%20liquido%20al%20mes%3A">Pedir mi prueba</a>
+    </section>
+
     <div class="demo-plan">
         <div>
             <h3>Prueba</h3>
@@ -399,8 +521,8 @@
 <script src="/js/liquidacion_engine.js"></script>
 <script src="/js/liquidacion_valores.js"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
-<script src="/js/demo_comun.js?v=1.0.0"></script>
-<script src="/js/demo_contadores.js?v=1.0.0"></script>
-<script src="/js/demo_liquidaciones.js?v=1.0.0"></script>
+<script src="/js/demo_comun.js?v=1.1.0"></script>
+<script src="/js/demo_contadores.js?v=1.1.0"></script>
+<script src="/js/demo_liquidaciones.js?v=1.1.0"></script>
 </body>
 </html>
