@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#00261F">
+<title>Finiquitos y liquidaciones en lote · CálculoLaboral</title>
+<meta name="description" content="Demo privada para estudios contables: sube un Excel y obtén finiquitos y liquidaciones calculados, en PDF con el logo de tu estudio.">
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.7.2">
+<link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
+<style>
+    /* ---------- Marco de la demo (usa los tokens de app.css) ---------- */
+    .app.demo-main { display: block; max-width: 1140px; margin: 0 auto; padding: 0 24px 64px; }
+    @media (max-width: 640px) { .app.demo-main { padding: 0 16px 48px; } }
+    @media (max-width: 720px) {
+        .demo-top-in { padding: 8px 12px; gap: 8px; }
+        .demo-producto { display: none; }
+        .demo-top .app-logo-texto { font-size: 15px; }
+        .demo-chip { height: 26px; padding: 0 8px; font-size: 11px; }
+    }
+
+    .demo-top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+    .demo-top-in {
+        max-width: 1140px; margin: 0 auto; padding: 10px 24px;
+        display: flex; align-items: center; gap: 14px; min-height: 60px;
+    }
+    @media (max-width: 640px) { .demo-top-in { padding: 8px 16px; gap: 8px; } }
+    .demo-top .app-logo { padding: 0; }
+    .demo-producto { font-size: 13px; color: var(--muted); border-left: 1px solid var(--line); padding-left: 14px; }
+    .demo-chip {
+        margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+        height: 28px; padding: 0 10px; border-radius: 999px;
+        background: var(--amber-bg); color: var(--amber-ink); border: 1px solid #F5DFA8;
+        font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .demo-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber-icon); }
+
+    .demo-head { padding: 34px 0 20px; max-width: 720px; }
+    .demo-eyebrow {
+        font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+        color: var(--forest-600); margin-bottom: 8px;
+    }
+    .demo-head .v-titulo { font-size: 30px; }
+    @media (max-width: 640px) { .demo-head .v-titulo { font-size: 24px; } }
+    .demo-head .texto-ayuda { margin-top: 8px; font-size: 14.5px; }
+
+    .demo-tabs { margin-bottom: 18px; }
+
+    .demo-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; align-items: start; }
+    @media (max-width: 900px) { .demo-grid { grid-template-columns: minmax(0, 1fr); } }
+    .demo-grid > * { min-width: 0; }
+    .demo-grid > .full { grid-column: 1 / -1; }
+
+    .demo-col { display: grid; gap: 16px; min-width: 0; }
+
+    .demo-field { display: grid; gap: 5px; margin-bottom: 14px; }
+    .demo-field:last-child { margin-bottom: 0; }
+    .demo-field > label, .demo-field > .demo-label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+    .demo-field .texto-ayuda { font-size: 12.5px; }
+
+    .demo-logo-row { display: flex; align-items: center; gap: 12px; }
+    .demo-logo-prev {
+        width: 72px; height: 46px; border: 1px dashed var(--line-2); border-radius: var(--radius-sm);
+        display: grid; place-items: center; background: var(--surface-2); overflow: hidden; flex: none;
+        font-size: 11px; color: var(--faint); text-align: center;
+    }
+    .demo-logo-prev img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+    .demo-drop {
+        border: 1.5px dashed var(--line-2); border-radius: var(--radius); background: var(--surface-2);
+        padding: 26px 20px; text-align: center; cursor: pointer; transition: border-color .15s var(--ease), background-color .15s var(--ease);
+    }
+    .demo-drop:hover, .demo-drop.over { border-color: var(--forest-300); background: var(--forest-50); }
+    .demo-drop strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .demo-drop span { font-size: 13px; color: var(--muted); }
+    .demo-drop .material-icons { font-size: 26px; color: var(--forest-600); margin-bottom: 6px; }
+
+    .demo-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+    .demo-nota {
+        margin-top: 14px; border: 1px solid var(--line); border-left: 3px solid var(--amber);
+        background: var(--amber-bg); border-radius: var(--radius-sm); padding: 12px 14px;
+        font-size: 12.5px; color: var(--amber-ink); line-height: 1.5;
+    }
+    .demo-nota b { color: var(--ink); }
+
+    .demo-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    @media (max-width: 760px) { .demo-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .demo-stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; background: var(--surface-2); min-width: 0; }
+    .demo-stat dt { font-size: 12px; color: var(--muted); font-weight: 500; margin: 0 0 4px; }
+    .demo-stat dd { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+    @media (max-width: 760px) { .demo-stat dd { font-size: 17px; } }
+    .demo-stat dd.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+    .demo-stat dd.bad { color: var(--risk); }
+
+    .tabla-wrap { max-width: 100%; }
+    .tabla td { height: 48px; padding: 0 14px; font-size: 13.5px; }
+    .tabla th { padding: 0 14px; height: 40px; }
+    .tabla .nom { font-weight: 550; }
+    .demo-badge {
+        display: inline-block; margin-left: 6px; padding: 2px 7px; border-radius: 999px;
+        background: var(--amber-bg); color: var(--amber-ink); border: 1px solid #F5DFA8;
+        font-size: 10.5px; font-weight: 700; vertical-align: 1px;
+    }
+
+    .demo-plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    @media (max-width: 820px) { .demo-plan { grid-template-columns: 1fr; } }
+    .demo-plan > div { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; background: var(--surface); }
+    .demo-plan > div.hl { border-color: var(--forest); box-shadow: 0 0 0 3px var(--forest-50); }
+    .demo-plan h3 { font-size: 13px; font-weight: 600; color: var(--muted); }
+    .demo-plan .p { font-family: var(--mono); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0 2px; }
+    .demo-plan .p small { font-family: var(--sans); font-size: 11.5px; font-weight: 500; color: var(--muted); }
+    .demo-plan ul { margin: 10px 0 0; padding-left: 16px; font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+    .demo-pie { max-width: 1140px; margin: 0 auto; padding: 0 24px 40px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* ---------- Impresión ---------- */
+    #print-area { display: none; }
+    @media print {
+        body { background: #fff; }
+        .demo-top, .app.demo-main, .demo-pie { display: none !important; }
+        #print-area { display: block !important; }
+        .print-page { page-break-after: always; padding-bottom: 8mm; }
+        .print-page:last-child { page-break-after: auto; }
+        .print-head { display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 2px solid #00382E; padding-bottom: 8px; margin-bottom: 14px; }
+        .print-head img { max-height: 42px; max-width: 160px; object-fit: contain; }
+        .print-estudio { font-size: 12pt; font-weight: 700; color: #00382E; }
+        .print-meta { font-size: 8.5pt; color: #4B5563; text-align: right; line-height: 1.45; }
+        .print-title { font-size: 13pt; font-weight: 700; margin: 0 0 2px; letter-spacing: -0.01em; }
+        .print-sub { font-size: 9pt; color: #4B5563; margin: 0 0 12px; }
+        .print-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+        .print-table th { text-align: left; font-size: 8pt; text-transform: uppercase; letter-spacing: .05em; color: #4B5563; border-bottom: 1px solid #CFD8D4; padding: 5px 6px; }
+        .print-table th.r, .print-table td.r { text-align: right; }
+        .print-table td { padding: 5px 6px; border-bottom: 1px solid #EEF1F0; }
+        .print-table tr.total td { border-top: 1.5px solid #00382E; border-bottom: 0; font-weight: 700; padding-top: 7px; }
+        .print-data { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 18px; font-size: 9pt; margin-bottom: 10px; }
+        .print-note { margin-top: 12px; font-size: 7.5pt; color: #4B5563; line-height: 1.5; border-top: 1px solid #E3E8E5; padding-top: 7px; }
+        .print-flag { font-size: 8pt; color: #9F1239; margin-top: 6px; }
+        .print-h3 { font-size: 9.5pt; font-weight: 700; margin: 10px 0 4px; }
+    }
+</style>
+</head>
+<body class="app-body">
+
+<a class="app-saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="demo-top">
+    <div class="demo-top-in">
+        <a class="app-logo app-logo-claro" href="/" aria-label="Cálculo Laboral, ir al sitio">
+            <span class="app-logo-isotipo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 84h40M38 79h24"/><path d="M50 22v57"/><path d="M50 14l-2 4h4l-2-4v8"/><path d="M18 36c10-9 22-12 32-12s22 3 32 12"/><path d="M18 36l-8 18h16Z"/><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M82 36l-8 18h16Z"/><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M41 43.5a10 10 0 1 0 0 20h6"/><path d="M58 43.5v20h10"/></svg></span>
+            <span class="app-logo-texto">Cálculo<span>Laboral</span></span>
+        </a>
+        <span class="demo-producto">Finiquitos y liquidaciones en lote</span>
+        <span class="demo-chip">Demo privada</span>
+    </div>
+</header>
+
+<main id="contenido" class="app demo-main">
+
+    <div class="demo-head">
+        <p class="demo-eyebrow">Estudios contables</p>
+        <h1 class="v-titulo" tabindex="-1">Sube tu nómina. Baja los documentos calculados.</h1>
+        <p class="texto-ayuda">La calculadora laboral más usada de Chile, procesando tu cartera completa. Finiquitos y liquidaciones con el logo de tu estudio, sin planillas paralelas.</p>
+    </div>
+
+    <div class="segmento demo-tabs" role="tablist" aria-label="Tipo de documento">
+        <label><input type="radio" name="modo" value="finiquitos" checked> Finiquitos</label>
+        <label><input type="radio" name="modo" value="liquidaciones"> Liquidaciones de sueldo</label>
+    </div>
+
+    <div class="demo-grid">
+
+        <!-- PANEL ESTUDIO -->
+        <section class="panel">
+            <div class="panel-head"><h2>Tu estudio</h2></div>
+            <div class="panel-cuerpo">
+                <div class="demo-field">
+                    <label for="study-name">Nombre o razón social</label>
+                    <input type="text" id="study-name" placeholder="Asesorías Contables Pérez Ltda." autocomplete="off">
+                </div>
+                <div class="demo-field">
+                    <span class="demo-label">Logo</span>
+                    <div class="demo-logo-row">
+                        <div class="demo-logo-prev" id="logo-preview">Logo</div>
+                        <div>
+                            <button class="btn btn-chico" type="button" id="btn-logo">
+                                <span class="material-icons" aria-hidden="true">image</span>Elegir imagen
+                            </button>
+                            <input type="file" id="logo-input" accept="image/png,image/jpeg,image/webp" class="sr-only">
+                            <p class="texto-ayuda" style="margin-top:6px;">PNG, JPG o WebP. Sale en el encabezado de cada documento.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL FINIQUITOS -->
+        <div class="demo-col" id="pane-finiquitos">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2>Finiquitos</h2>
+                    <span class="texto-ayuda">Excel o CSV</span>
+                </div>
+                <div class="panel-cuerpo">
+                    <div class="demo-field">
+                        <label for="uf-value">Valor UF del período</label>
+                        <input type="number" id="uf-value" step="0.01" min="1" data-tipo="uf">
+                        <p class="texto-ayuda">Se usa para el tope de 90 UF de la indemnización y el tope imponible.</p>
+                    </div>
+
+                    <div class="demo-drop" id="drop-fin">
+                        <span class="material-icons" aria-hidden="true">upload_file</span>
+                        <strong>Arrastra la nómina o haz clic para buscarla</strong>
+                        <span>.xlsx, .xls o .csv · una fila por trabajador</span>
+                        <input type="file" id="file-fin" accept=".xlsx,.xls,.csv" class="sr-only">
+                    </div>
+
+                    <div class="demo-acciones">
+                        <button class="btn btn-chico" type="button" id="btn-sample-fin">Cargar ejemplo (12)</button>
+                        <button class="btn btn-chico" type="button" id="btn-template-fin">Descargar plantilla</button>
+                    </div>
+
+                    <div class="demo-nota">
+                        <b>Columnas:</b> RUT · Nombre · Fecha ingreso · Fecha término · Sueldo base · Gratificación · Colación y movilización · Promedio variables · Días de vacaciones pendientes · Causal.
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- PANEL LIQUIDACIONES -->
+        <div class="demo-col" id="pane-liquidaciones" hidden>
+            <section class="panel">
+                <div class="panel-head">
+                    <h2>Liquidaciones de sueldo</h2>
+                    <span class="texto-ayuda">Excel o CSV</span>
+                </div>
+                <div class="panel-cuerpo">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="demo-field">
+                            <label for="periodo">Período</label>
+                            <input type="month" id="periodo" value="2026-10">
+                        </div>
+                        <div class="demo-field">
+                            <label for="liq-tasa-mutual">Tasa mutual (%)</label>
+                            <input type="number" id="liq-tasa-mutual" step="0.01" min="0.93" value="0.93" data-tipo="dec">
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="demo-field">
+                            <label for="liq-uf">UF del mes</label>
+                            <input type="number" id="liq-uf" step="0.01" min="1" data-tipo="uf">
+                        </div>
+                        <div class="demo-field">
+                            <label for="liq-utm">UTM del mes</label>
+                            <input type="number" id="liq-utm" step="1" min="1" data-tipo="pesos">
+                        </div>
+                    </div>
+                    <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:14px;">UF y UTM se cargan solas del período; puedes corregirlas.</p>
+
+                    <div class="demo-drop" id="drop-liq">
+                        <span class="material-icons" aria-hidden="true">upload_file</span>
+                        <strong>Arrastra la nómina del mes</strong>
+                        <span>.xlsx, .xls o .csv · una fila por trabajador</span>
+                        <input type="file" id="file-liq" accept=".xlsx,.xls,.csv" class="sr-only">
+                    </div>
+
+                    <div class="demo-acciones">
+                        <button class="btn btn-chico" type="button" id="btn-sample-liq">Cargar ejemplo (10)</button>
+                        <button class="btn btn-chico" type="button" id="btn-template-liq">Descargar plantilla</button>
+                    </div>
+
+                    <div class="demo-nota">
+                        <b>Columnas:</b> RUT · Nombre · Sueldo base · Días trabajados · AFP · Salud (fonasa/isapre) · Plan Isapre UF · Contrato · Jornada · Fecha ingreso · Colación · Movilización · Comisiones · Horas extra · Gratificación.
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- RESULTADOS FINIQUITOS -->
+        <section class="panel full" id="results-fin" hidden>
+            <div class="panel-head">
+                <h2>Resultado del lote</h2>
+                <span class="texto-ayuda" id="rows-fin"></span>
+            </div>
+            <div class="panel-cuerpo">
+                <div class="demo-stats">
+                    <dl class="demo-stat"><dt>Trabajadores</dt><dd id="t-workers">0</dd></dl>
+                    <dl class="demo-stat"><dt>Total a pagar</dt><dd class="mono" id="t-total">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Promedio</dt><dd class="mono" id="t-avg">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Filas con problemas</dt><dd id="t-errors">0</dd></dl>
+                </div>
+
+                <div class="tabla-wrap">
+                    <table class="tabla">
+                        <thead>
+                            <tr>
+                                <th>Trabajador</th>
+                                <th>RUT</th>
+                                <th class="num">Años</th>
+                                <th class="num">Indemnización</th>
+                                <th class="num">Aviso previo</th>
+                                <th class="num">Vacaciones</th>
+                                <th class="num">Rem. pendiente</th>
+                                <th class="num">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-fin"></tbody>
+                    </table>
+                </div>
+
+                <div class="demo-acciones">
+                    <button class="btn btn-primario" type="button" id="btn-print-fin">
+                        <span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del lote
+                    </button>
+                    <button class="btn" type="button" id="btn-csv-fin">Exportar a Excel</button>
+                </div>
+                <div class="demo-nota" id="warnings-fin"></div>
+            </div>
+        </section>
+
+        <!-- RESULTADOS LIQUIDACIONES -->
+        <section class="panel full" id="results-liq" hidden>
+            <div class="panel-head">
+                <h2>Resultado del mes</h2>
+                <span class="texto-ayuda" id="rows-liq"></span>
+            </div>
+            <div class="panel-cuerpo">
+                <div class="demo-stats">
+                    <dl class="demo-stat"><dt>Trabajadores</dt><dd id="l-workers">0</dd></dl>
+                    <dl class="demo-stat"><dt>Total líquido</dt><dd class="mono" id="l-liquido">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Total haberes</dt><dd class="mono" id="l-haberes">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Costo empresa</dt><dd class="mono" id="l-costo">$0</dd></dl>
+                </div>
+
+                <div class="tabla-wrap">
+                    <table class="tabla">
+                        <thead>
+                            <tr>
+                                <th>Trabajador</th>
+                                <th>RUT</th>
+                                <th>AFP</th>
+                                <th class="num">Haberes</th>
+                                <th class="num">Descuentos</th>
+                                <th class="num">Líquido</th>
+                                <th class="num">Costo empresa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-liq"></tbody>
+                    </table>
+                </div>
+
+                <div class="demo-acciones">
+                    <button class="btn btn-primario" type="button" id="btn-print-liq">
+                        <span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes
+                    </button>
+                    <button class="btn" type="button" id="btn-csv-liq">Exportar a Excel</button>
+                </div>
+                <div class="demo-nota" id="warnings-liq"></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="demo-plan">
+        <div>
+            <h3>Prueba</h3>
+            <p class="p">$0 <small>/ 15 días</small></p>
+            <ul><li>Hasta 20 documentos</li><li>Con tu logo</li><li>Sin tarjeta</li></ul>
+        </div>
+        <div class="hl">
+            <h3>Estudio</h3>
+            <p class="p">$19.990 <small>/ mes</small></p>
+            <ul><li>Finiquitos y liquidaciones ilimitados</li><li>Historial de documentos emitidos</li><li>PDF con tu marca</li></ul>
+        </div>
+        <div>
+            <h3>Anual</h3>
+            <p class="p">$199.000 <small>/ año</small></p>
+            <ul><li>Todo lo del plan Estudio</li><li>2 meses gratis</li><li>Soporte prioritario</li></ul>
+        </div>
+    </div>
+</main>
+
+<footer class="demo-pie">
+    <p><b>Demostración.</b> Los cálculos se ejecutan en tu navegador: los datos de los trabajadores no se envían a ningún servidor. Los montos son referenciales y requieren la revisión del profesional responsable. CálculoLaboral no presta asesoría legal.</p>
+</footer>
+
+<div id="print-area"></div>
+
+<script src="/js/constants.js"></script>
+<script src="/js/logic.js"></script>
+<script src="/js/liquidacion_parametros.js"></script>
+<script src="/js/liquidacion_engine.js"></script>
+<script src="/js/liquidacion_valores.js"></script>
+<script src="/assets/vendor/xlsx.full.min.js"></script>
+<script src="/js/demo_comun.js?v=1.0.0"></script>
+<script src="/js/demo_contadores.js?v=1.0.0"></script>
+<script src="/js/demo_liquidaciones.js?v=1.0.0"></script>
+</body>
+</html>
