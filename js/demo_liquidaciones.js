@@ -141,6 +141,14 @@
 
     // ------------------------------------------------------------- cálculo
 
+    // Tasa de mutual o ISL que el estudio escribe en el formulario (en %). Si queda vacia,
+    // se usa la minima legal 0,93% que trae el campo por defecto.
+    function tasaMutualElegida() {
+        var el = document.getElementById('liq-tasa-mutual');
+        var v = el ? D.parseNumber(el.value) : 0;
+        return v > 0 ? v : 0.93;
+    }
+
     function calcularTodo() {
         var mes = mesEfectivo();
         var periodo = document.getElementById('periodo').value;
@@ -156,6 +164,7 @@
             try {
                 var res = window.CLLiquidacionEngine.calcular({
                     periodo: periodo,
+                    tasaMutual: tasaMutualElegida(),
                     trabajador: {
                         sueldoBase: r.sueldo,
                         afp: r.afp,
