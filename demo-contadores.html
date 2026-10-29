@@ -292,6 +292,13 @@
         <p class="texto-ayuda">La calculadora laboral más usada de Chile, procesando tu cartera completa. Finiquitos y liquidaciones con el logo de tu estudio, sin planillas paralelas.</p>
     </div>
 
+    <div class="demo-nota" id="cuenta-liq" style="margin:0 0 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <b>Cuenta:</b> <span id="cuenta-estado">sin sesión</span>
+        <button class="btn btn-chico" type="button" id="btn-entrar">Entrar con mi correo</button>
+        <button class="btn btn-chico" type="button" id="btn-subir-nube" hidden>Guardar en la nube</button>
+        <button class="btn btn-chico" type="button" id="btn-bajar-nube" hidden>Traer de la nube</button>
+    </div>
+
     <div class="segmento" role="tablist" aria-label="Tipo de documento">
         <label><input type="radio" name="modo" value="finiquitos" checked><span>Finiquitos</span></label>
         <label><input type="radio" name="modo" value="liquidaciones"><span>Liquidaciones de sueldo</span></label>
@@ -426,12 +433,6 @@
                         <input type="file" id="file-respaldo" accept=".json" class="sr-only">
                     </div>
                     <div id="historial-liq" style="margin-top:10px;"></div>
-                    <div class="demo-nota" id="cuenta-liq" style="margin-top:12px;">
-                        <b>Cuenta:</b> <span id="cuenta-estado">sin sesión</span>
-                        <button class="btn btn-chico" type="button" id="btn-entrar">Entrar con mi correo</button>
-                        <button class="btn btn-chico" type="button" id="btn-subir-nube" hidden>Guardar en la nube</button>
-                        <button class="btn btn-chico" type="button" id="btn-bajar-nube" hidden>Traer de la nube</button>
-                    </div>
                     <div class="demo-nota">Incluye <b>archivo para Previred</b> de 105 campos y el desglose por trabajador.</div>
 
                     <div class="demo-nota">
