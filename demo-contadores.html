@@ -656,6 +656,14 @@
                                 <option value="18 de Septiembre">18 de Septiembre</option>
                             </select>
                         </div>
+                        <div class="demo-field campo-ancho">
+                            <label for="liq-rut-empresa">RUT empresa (LRE)</label>
+                            <input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.123.456-7" autocomplete="off">
+                        </div>
+                        <div class="demo-field campo-ancho">
+                            <label for="liq-comuna">Comuna (LRE)</label>
+                            <input type="text" id="liq-comuna" maxlength="40" placeholder="Temuco" autocomplete="off">
+                        </div>
                     </div>
                     <p class="param-nota" id="liq-fuente">UF y UTM se cargan solas del período; puedes corregirlas.</p>
 
@@ -755,6 +763,11 @@
                 </div>
 
                 <div class="demo-nota" id="warnings-liq"></div>
+                <details class="demo-planes" id="liq-cuentas">
+                    <summary>Códigos de cuenta del asiento</summary>
+                    <p class="param-nota">Escribe el código de tu plan de cuentas para cada línea (opcional). Se recuerdan en este navegador, por cliente.</p>
+                    <div class="param-bar" id="liq-cuentas-campos"></div>
+                </details>
                 <div class="demo-acciones">
                     <button class="btn btn-primario" type="button" id="btn-print-liq">
                         <span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes
@@ -762,6 +775,15 @@
                     <button class="btn" type="button" id="btn-csv-liq">Exportar a Excel</button>
                     <button class="btn" type="button" id="btn-previred-liq">
                         <span class="material-icons" aria-hidden="true">receipt_long</span>Archivo Previred
+                    </button>
+                    <button class="btn" type="button" id="btn-lre-liq">
+                        <span class="material-icons" aria-hidden="true">description</span>Archivo LRE (Mi DT)
+                    </button>
+                    <button class="btn" type="button" id="btn-nomina-liq">
+                        <span class="material-icons" aria-hidden="true">payments</span>Nómina de pagos
+                    </button>
+                    <button class="btn" type="button" id="btn-asiento-liq">
+                        <span class="material-icons" aria-hidden="true">account_balance</span>Asiento contable
                     </button>
                 </div>
             </div>
@@ -823,11 +845,16 @@
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/demo_comun.js?v=1.5.0"></script>
 <script src="/js/demo_contadores.js?v=1.1.1"></script>
-<script src="/js/previred_generador.js?v=1.3.0"></script>
+<script src="/js/previred_generador.js?v=1.4.0"></script>
+<script src="/js/lre_tablas.js?v=1.0.0"></script>
+<script src="/js/lre_generador.js?v=1.0.0"></script>
+<script src="/js/pyme_lre.js?v=1.0.1"></script>
+<script src="/js/pyme_pagos.js?v=1.0.0"></script>
+<script src="/js/demo_archivos.js?v=1.0.0"></script>
 <script src="/js/demo_clientes.js?v=1.0.0"></script>
 <script src="/js/demo_validaciones.js?v=1.0.0"></script>
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.0.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.3.1"></script>
+<script src="/js/demo_liquidaciones.js?v=2.4.0"></script>
 </body>
 </html>

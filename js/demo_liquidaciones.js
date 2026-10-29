@@ -51,7 +51,18 @@
         nacionalidad: ['nacionalidad', 'pais'],
         pensionado: ['pensionado', 'tipo_trabajador', 'condicion'],
         apvMonto: ['apv', 'apv_trabajador', 'ahorro_voluntario'],
-        apvContrato: ['contrato_apv', 'apv_contrato']
+        apvContrato: ['contrato_apv', 'apv_contrato'],
+        banco: ['banco'],
+        tipoCuenta: ['tipo_de_cuenta', 'tipo_cuenta'],
+        numeroCuenta: ['numero_de_cuenta', 'n_de_cuenta', 'numero_cuenta', 'n_cuenta', 'cuenta'],
+        fechaTermino: ['fecha_de_termino', 'fecha_termino', 'termino_de_contrato', 'termino_contrato'],
+        causal: ['causal_de_termino', 'causal_termino', 'causal'],
+        rutSindicato: ['rut_sindicato', 'rut_del_sindicato'],
+        cuotaSindical: ['cuota_sindical'],
+        creditoCCAF: ['credito_ccaf', 'credito_caja', 'credito_personal_ccaf'],
+        indemAnos: ['indemnizacion_anos_de_servicio', 'indemnizacion_anos'],
+        indemAviso: ['indemnizacion_aviso_previo', 'indemnizacion_sustitutiva'],
+        feriadoProp: ['feriado_proporcional', 'indemnizacion_feriado']
     };
 
     // ------------------------------------------------------------ valores
@@ -179,8 +190,27 @@
             apvContrato: String(m.apvContrato || '').trim(),
             nacionalidad: /extran/.test(D.norm(m.nacionalidad)) ? '1' : '0',
             tipoTrabajador: /nocotiza/.test(D.norm(m.pensionado)) ? '2' : (/pensionado|cotiza/.test(D.norm(m.pensionado)) ? '1' : '0'),
-            rima: 0
+            rima: 0,
+            banco: String(m.banco || '').trim(),
+            tipoCuenta: tipoCuentaDe(m.tipoCuenta),
+            numeroCuenta: String(m.numeroCuenta || '').trim(),
+            fechaTermino: D.parseDate(m.fechaTermino),
+            causalTermino: window.CLDemoArchivos ? window.CLDemoArchivos.causalCodigo(m.causal) : '',
+            rutSindicato: String(m.rutSindicato || '').trim(),
+            cuotaSindical: D.parseNumber(m.cuotaSindical),
+            creditoCCAF: D.parseNumber(m.creditoCCAF),
+            indemAnos: D.parseNumber(m.indemAnos),
+            indemAviso: D.parseNumber(m.indemAviso),
+            feriadoProp: D.parseNumber(m.feriadoProp)
         };
+    }
+
+    function tipoCuentaDe(v) {
+        var s = D.norm(v);
+        if (/corriente|cte/.test(s)) return 'corriente';
+        if (/vista|rut|chequera/.test(s)) return 'vista';
+        if (/ahorro/.test(s)) return 'ahorro';
+        return '';
     }
 
     // ------------------------------------------------------------- cálculo
@@ -242,6 +272,10 @@
                 var afcSubsidio = lic > 0 ? Math.round(subsidio * 0.006) : 0;
                 r.rima = (lic > 0 && r.rentaAnterior > 0) ? Math.round(r.rentaAnterior / 30 * lic) : 0;
                 var noImponibles = subsidio > 0 ? [{ nombre: 'Subsidio por licencia médica', monto: subsidio }] : [];
+                // Finiquito dentro del mes: las indemnizaciones se pagan como no imponibles y salen en el LRE con su código
+                if (r.indemAnos > 0) noImponibles.push({ nombre: 'Indemnización años de servicio', monto: Math.round(r.indemAnos) });
+                if (r.indemAviso > 0) noImponibles.push({ nombre: 'Indemnización sustitutiva del aviso previo', monto: Math.round(r.indemAviso) });
+                if (r.feriadoProp > 0) noImponibles.push({ nombre: 'Feriado proporcional', monto: Math.round(r.feriadoProp) });
                 var otrosDesc = [];
                 if (afcSubsidio > 0) otrosDesc.push({ nombre: 'AFC 0,6% sobre subsidio', monto: afcSubsidio });
                 if (r.apvMonto > 0) otrosDesc.push({ nombre: 'APV', monto: Math.round(r.apvMonto) });
@@ -269,7 +303,9 @@
                         gratificacionMonto: r.gratificacionMonto,
                         asignacionFamiliar: montoAsignacionFamiliar(periodo, r.tramoAF || tramoSugerido(r.sueldo, periodo), r.cargas),
                         otrosNoImponibles: noImponibles,
-                        otrosDescuentos: otrosDesc
+                        otrosDescuentos: otrosDesc,
+                        cuotaSindical: r.cuotaSindical,
+                        creditoCCAF: r.creditoCCAF
                     }
                 }, mes);
 
@@ -471,18 +507,18 @@
         ['15.666.555-K', 'Mauricio Contreras Vidal', 1750000, 30, 'Uno', 'Isapre', 3.9, 'indefinido', 42, '2017-05-08', 0, 200000, 90000, 3]
     ];
 
-    // Sexo e Isapre no vienen en la nómina de ejemplo: Previred los exige, así que se agregan por RUT.
+    // Sexo, Isapre y cuenta bancaria no vienen en la nómina de ejemplo: Previred y la nómina de pagos los exigen, así que se agregan por RUT.
     var EXTRA = {
-        '19.876.543-0': ['F', ''],
-        '12.345.678-5': ['F', 'Colmena'],
-        '9.876.543-3': ['M', ''],
-        '16.543.210-K': ['M', 'Consalud'],
-        '20.111.222-2': ['F', ''],
-        '13.222.333-5': ['M', 'Cruz Blanca'],
-        '21.444.555-7': ['F', ''],
-        '10.999.888-5': ['M', 'Colmena'],
-        '22.777.888-1': ['F', ''],
-        '15.666.555-K': ['M', 'Consalud']
+        '19.876.543-0': ['F', '', 'BancoEstado', 'vista', '11111111'],
+        '12.345.678-5': ['F', 'Colmena', 'Banco de Chile', 'corriente', '000222333'],
+        '9.876.543-3': ['M', '', 'Santander', 'corriente', '445566778'],
+        '16.543.210-K': ['M', 'Consalud', 'BCI', 'vista', '99887766'],
+        '20.111.222-2': ['F', '', 'Scotiabank', 'corriente', '12345098'],
+        '13.222.333-5': ['M', 'Cruz Blanca', 'Banco Itaú', 'ahorro', '77665544'],
+        '21.444.555-7': ['F', '', 'BancoEstado', 'vista', '22334455'],
+        '10.999.888-5': ['M', 'Colmena', 'Banco Falabella', 'corriente', '66778899'],
+        '22.777.888-1': ['F', '', 'Banco de Chile', 'vista', '33445566'],
+        '15.666.555-K': ['M', 'Consalud', 'BCI', 'corriente', '55443322']
     };
 
     function cargarEjemplo() {
@@ -496,7 +532,7 @@
         });
         rows.forEach(function (row) {
             var x = EXTRA[row.RUT];
-            if (x) { row['Sexo'] = x[0]; row['Isapre'] = x[1]; }
+            if (x) { row['Sexo'] = x[0]; row['Isapre'] = x[1]; row['Banco'] = x[2]; row['Tipo de cuenta'] = x[3]; row['Número de cuenta'] = x[4]; }
         });
         cargar(rows, 'ejemplo-liquidaciones-' + document.getElementById('periodo').value + '.xlsx');
     }
@@ -569,6 +605,72 @@
             '<br>No se sube solo: cárgalo en tu cuenta de Previred y revísalo antes de pagar.';
     }
 
+    // ------------------------------------------------------------- LRE, nómina de pagos y asiento contable
+    function opcionesArchivos() {
+        var periodo = document.getElementById('periodo').value;
+        var d = new Date(periodo + '-15T12:00:00');
+        var nombre = isNaN(d) ? periodo : d.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+        return {
+            periodo: periodo, periodoNombre: nombre,
+            empresa: {
+                rut: document.getElementById('liq-rut-empresa').value, comuna: document.getElementById('liq-comuna').value,
+                mutual: document.getElementById('liq-mutual').value, ccaf: document.getElementById('liq-ccaf').value
+            },
+            tramoDe: function (rec) { return tramoSugerido(rec.sueldo, periodo); }
+        };
+    }
+    function cuentasAsiento() {
+        var g = {};
+        Array.prototype.forEach.call(document.querySelectorAll('#liq-cuentas-campos [data-cuenta]'), function (el) { if (el.value.trim()) g[el.getAttribute('data-cuenta')] = el.value.trim(); });
+        return g;
+    }
+    function listaAvisos(titulo, items) {
+        return items.length ? '<br><b>' + titulo + '</b><br>' + items.map(function (x) { return '— ' + D.esc(x); }).join('<br>') : '';
+    }
+    function bajar(nombre, partes, tipo) {
+        var blob = new Blob(partes, { type: tipo });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = nombre;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+    function archivoLre() {
+        var caja = document.getElementById('warnings-liq');
+        if (!state.results.some(function (r) { return !r.error; })) { D.avisar('Primero carga y calcula la nómina.'); return; }
+        var s = window.CLDemoArchivos.lre(state.results, opcionesArchivos());
+        if (s.errores.length) { caja.innerHTML = '<b>No se generó el archivo del LRE:</b><br>' + s.errores.map(function (e) { return '— ' + D.esc(e); }).join('<br>'); return; }
+        bajar(s.nombreArchivo.replace(/\.csv$/, '') + (sufijoCliente() ? '-' + sufijoCliente().replace(/-$/, '') : '') + '.csv', [window.CLLre.bytesAnsi(s.texto)], 'text/csv');
+        caja.innerHTML = '<b>Archivo del LRE listo</b> — ' + s.incluidos + ' trabajadores, 147 columnas por línea. Es un archivo para revisar y cargar tú en Mi DT, «Libro de Remuneraciones Electrónico», con la clave del empleador: no se sube solo.' + listaAvisos('Revisa antes de cargarlo', s.avisos);
+    }
+    function archivoNomina() {
+        var caja = document.getElementById('warnings-liq');
+        if (!state.results.some(function (r) { return !r.error; })) { D.avisar('Primero carga y calcula la nómina.'); return; }
+        var s = window.CLDemoArchivos.nomina(state.results, opcionesArchivos());
+        var omit = s.omitidos.map(function (o) { return o.nombre + ': ' + o.motivo; });
+        if (!s.incluidos) { caja.innerHTML = '<b>No se generó la nómina de pagos:</b> ningún trabajador trae banco, tipo y número de cuenta en el Excel (columnas «Banco», «Tipo de cuenta» y «Número de cuenta»).' + listaAvisos('Falta', omit); return; }
+        bajar('nomina-pagos-' + sufijoCliente() + document.getElementById('periodo').value + '.csv', ['\ufeff', s.texto], 'text/csv;charset=utf-8');
+        caja.innerHTML = '<b>Nómina de pagos lista</b> — ' + s.incluidos + ' trabajadores por ' + D.money(s.total) + '. Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada.' + listaAvisos('No están en la nómina', omit);
+    }
+    function archivoAsiento() {
+        var caja = document.getElementById('warnings-liq');
+        if (!state.results.some(function (r) { return !r.error; })) { D.avisar('Primero carga y calcula la nómina.'); return; }
+        var s = window.CLDemoArchivos.asiento(state.results, Object.assign(opcionesArchivos(), { cuentas: cuentasAsiento() }));
+        if (s.errores.length) { caja.innerHTML = '<b>No se generó el asiento:</b><br>' + s.errores.map(function (e) { return '— ' + D.esc(e); }).join('<br>'); return; }
+        if (!s.cuadra) { caja.innerHTML = '<b>No se generó el asiento:</b> el debe (' + D.money(s.debe) + ') no cuadra con el haber (' + D.money(s.haber) + ').'; return; }
+        bajar('asiento-remuneraciones-' + sufijoCliente() + document.getElementById('periodo').value + '.csv', ['\ufeff', s.texto], 'text/csv;charset=utf-8');
+        caja.innerHTML = '<b>Asiento listo</b> — debe y haber por ' + D.money(s.debe) + '. Revísalo antes de contabilizarlo.' + (s.sinCodigos ? '<br>' + s.sinCodigos + ' líneas sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento».' : '');
+    }
+    function pintarCuentasAsiento() {
+        var caja = document.getElementById('liq-cuentas-campos');
+        if (!caja || !window.CLPymePagos) return;
+        var g = {};
+        try { g = JSON.parse(window.localStorage.getItem('cl_demo_cuentas_' + clienteActual()) || '{}') || {}; } catch (e) { g = {}; }
+        caja.innerHTML = window.CLPymePagos.CUENTAS.map(function (c) {
+            return '<div class="demo-field"><label for="cta-' + c.k + '">' + D.esc(c.glosa) + '</label><input type="text" id="cta-' + c.k + '" data-cuenta="' + c.k + '" maxlength="20" value="' + D.esc(g[c.k] || '') + '" autocomplete="off"></div>';
+        }).join('');
+    }
+
     function plantilla() {
         var data = [
             ['RUT', 'Nombre', 'Sueldo base', 'Días trabajados', 'AFP', 'Salud', 'Plan Isapre UF', 'Contrato', 'Jornada', 'Fecha ingreso', 'Colación', 'Movilización', 'Comisiones', 'Horas extra', 'Gratificación'],
@@ -580,6 +682,10 @@
         data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2, 0, '', '', 'Chilena', 'no', '', 0]);
         data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0, 5, 850000, 120000, 'Chilena', 'no', '', 0]);
         data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data[0] = data[0].concat(['Banco', 'Tipo de cuenta', 'Número de cuenta', 'Fecha de término', 'Causal de término', 'RUT sindicato', 'Cuota sindical', 'Crédito CCAF', 'Indemnización años de servicio', 'Indemnización aviso previo', 'Feriado proporcional']);
+        data[1] = data[1].concat(['Banco de Chile', 'vista', '12345678', '', '', '', 0, 0, 0, 0, 0]);
+        data[2] = data[2].concat(['BancoEstado', 'corriente', '000111222', '31-10-2026', 'renuncia', '', 0, 0, 0, 0, 120000]);
+        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '']);
         var ws = XLSX.utils.aoa_to_sheet(data);
         ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }, { wch: 13 }, { wch: 18 }, { wch: 14 }];
         var wb = XLSX.utils.book_new();
@@ -813,6 +919,16 @@
         document.getElementById('btn-template-liq').addEventListener('click', plantilla);
         document.getElementById('btn-csv-liq').addEventListener('click', exportar);
         document.getElementById('btn-previred-liq').addEventListener('click', archivoPrevired);
+        document.getElementById('btn-lre-liq').addEventListener('click', archivoLre);
+        document.getElementById('btn-nomina-liq').addEventListener('click', archivoNomina);
+        document.getElementById('btn-asiento-liq').addEventListener('click', archivoAsiento);
+        var detCuentas = document.getElementById('liq-cuentas');
+        if (detCuentas) {
+            detCuentas.addEventListener('toggle', function () { if (detCuentas.open) pintarCuentasAsiento(); });
+            document.getElementById('liq-cuentas-campos').addEventListener('change', function () {
+                try { window.localStorage.setItem('cl_demo_cuentas_' + clienteActual(), JSON.stringify(cuentasAsiento())); } catch (e) { /* sin almacenamiento */ }
+            });
+        }
 
         // Corregir una fila con error sin volver a subir el Excel.
         document.getElementById('tbody-liq').addEventListener('change', function (ev) {

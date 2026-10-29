@@ -31,6 +31,7 @@
     }
     // Los no imponibles con nombre libre se clasifican solo si el nombre dice claramente qué son (art. 41 del Código del Trabajo)
     var NO_IMPONIBLES_LIBRES = [
+        [/subsidio.*licencia|licencia medica/, '2201'],
         [/perdida de caja|caja/, '2304'], [/desgaste|herramienta/, '2305'], [/gastos? por causa|causa del trabajo/, '2306'],
         [/cambio de residencia|residencia/, '2307'], [/sala cuna/, '2308'], [/teletrabajo|distancia/, '2309'], [/alojamiento/, '2310'],
         [/traslaci/, '2312'], [/viatico/, '2303'], [/colacion/, '2301'], [/movilizacion/, '2302'],

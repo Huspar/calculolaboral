@@ -367,6 +367,7 @@
                 centroCosto: rec.centroCosto,
                 nacionalidad: rec.nacionalidad,
                 tipoTrabajador: rec.tipoTrabajador,
+                creditoCCAF: d.montos ? d.montos.creditoCCAF : 0,
                 apvMonto: rec.apvMonto,
                 apvContrato: rec.apvContrato,
                 tramoAF: rec.tramoAF,
