@@ -661,6 +661,56 @@
         bajar('asiento-remuneraciones-' + sufijoCliente() + document.getElementById('periodo').value + '.csv', ['\ufeff', s.texto], 'text/csv;charset=utf-8');
         caja.innerHTML = '<b>Asiento listo</b> — debe y haber por ' + D.money(s.debe) + '. Revísalo antes de contabilizarlo.' + (s.sinCodigos ? '<br>' + s.sinCodigos + ' líneas sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento».' : '');
     }
+    // Lleva la empresa y las fichas de esta nómina al Asistente Pyme de la cuenta (crea la empresa si no existe y salta a quienes ya están)
+    function llevarAlAsistente() {
+        var caja = document.getElementById('warnings-liq');
+        if (!state.records.length) { D.avisar('Primero carga la nómina.'); return; }
+        var cliente = clienteActual();
+        var opc = opcionesArchivos();
+        var f = window.CLDemoArchivos.fichas(state.records, { cliente: cliente === 'sin-nombre' ? '' : (document.getElementById('liq-cliente').value || '').trim(), empresa: opc.empresa, tasaMutual: tasaMutualElegida() });
+        if (!f.empresa.razonSocial) { caja.innerHTML = '<b>Falta el nombre del cliente:</b> escríbelo en «Nombre del cliente» (a la izquierda) para crear su empresa en el Asistente.'; return; }
+        if (!f.empresa.rut) { caja.innerHTML = '<b>Falta el RUT de la empresa:</b> escríbelo en «RUT empresa» para crearla en el Asistente.'; return; }
+        function api(ruta, o) {
+            o = o || {};
+            var headers = { accept: 'application/json' };
+            if (o.metodo && o.metodo !== 'GET') { headers['content-type'] = 'application/json'; headers['x-cl-pyme'] = '1'; }
+            if (o.empresaId) headers['x-cl-empresa'] = o.empresaId;
+            return fetch('/api/pyme/' + ruta, { method: o.metodo || 'GET', credentials: 'same-origin', headers: headers, body: o.cuerpo ? JSON.stringify(o.cuerpo) : undefined })
+                .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, estado: r.status, j: j }; }); });
+        }
+        function limpio(r) { return String(r || '').replace(/[.\-\s]/g, '').toUpperCase(); }
+        caja.innerHTML = 'Llevando la nómina al Asistente…';
+        api('estado').then(function (e) {
+            if (e.estado === 401) { caja.innerHTML = '<b>Entra con tu correo primero</b> (arriba a la derecha) para llevar esta nómina a tu cuenta del Asistente.'; return null; }
+            if (!e.ok) { caja.innerHTML = '<b>No pudimos consultar tu cuenta:</b> ' + D.esc(e.j.error || 'intenta de nuevo en un momento.'); return null; }
+            var existente = (e.j.empresas || []).filter(function (x) { return limpio(x.rut) === limpio(f.empresa.rut); })[0];
+            if (existente) return { id: existente.id, creada: false };
+            var crear = e.j.empresa ? api('empresas', { metodo: 'POST', cuerpo: { empresa: f.empresa } }) : api('empresa', { metodo: 'PUT', cuerpo: { empresa: f.empresa } });
+            return crear.then(function (r) {
+                if (!r.ok) {
+                    var det = r.j.errores ? Object.keys(r.j.errores).map(function (k) { return k + ': ' + r.j.errores[k]; }).join('; ') : '';
+                    caja.innerHTML = '<b>No se pudo crear la empresa en el Asistente:</b> ' + D.esc((r.j.error || '') + (det ? ' (' + det + ')' : ''));
+                    return null;
+                }
+                return { id: r.j.empresaId, creada: true };
+            });
+        }).then(function (emp) {
+            if (!emp) return;
+            return api('importar', { metodo: 'POST', empresaId: emp.id, cuerpo: { trabajadores: f.trabajadores } }).then(function (r) {
+                if (!r.ok) { caja.innerHTML = '<b>No se pudieron crear las fichas:</b> ' + D.esc(r.j.error || 'intenta de nuevo.'); return; }
+                try { window.localStorage.setItem('cl_pyme_empresa', emp.id); } catch (x) { /* sin almacenamiento */ }
+                var motivos = { repetido: 'ya estaba en el Asistente', limite: 'se llegó al máximo de trabajadores activos', invalido: 'sus datos no pasaron la revisión' };
+                var omit = (r.j.omitidos || []).map(function (o) {
+                    var det = o.detalle ? ' (' + Object.keys(o.detalle).map(function (k) { return k + ': ' + o.detalle[k]; }).join('; ') + ')' : '';
+                    return o.nombre + ': ' + (motivos[o.motivo] || o.motivo) + (o.motivo === 'invalido' ? det : '');
+                });
+                caja.innerHTML = '<b>' + (emp.creada ? 'Empresa creada en el Asistente' : 'Empresa encontrada en el Asistente') + ' — ' + r.j.importados + ' fichas nuevas.</b> ' +
+                    '<a href="/app" target="_blank" rel="noopener">Abrir el Asistente</a> para completar fichas, preparar el mes y guardar las liquidaciones.' +
+                    listaAvisos('No se crearon', omit) + listaAvisos('Revisa', f.avisos);
+            });
+        }).catch(function () { caja.innerHTML = '<b>No pudimos conectar con el Asistente.</b> Revisa tu conexión e intenta de nuevo.'; });
+    }
+
     function pintarCuentasAsiento() {
         var caja = document.getElementById('liq-cuentas-campos');
         if (!caja || !window.CLPymePagos) return;
@@ -922,6 +972,7 @@
         document.getElementById('btn-lre-liq').addEventListener('click', archivoLre);
         document.getElementById('btn-nomina-liq').addEventListener('click', archivoNomina);
         document.getElementById('btn-asiento-liq').addEventListener('click', archivoAsiento);
+        document.getElementById('btn-asistente-liq').addEventListener('click', llevarAlAsistente);
         var detCuentas = document.getElementById('liq-cuentas');
         if (detCuentas) {
             detCuentas.addEventListener('toggle', function () { if (detCuentas.open) pintarCuentasAsiento(); });

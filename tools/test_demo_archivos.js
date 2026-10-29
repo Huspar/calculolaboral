@@ -111,4 +111,28 @@ caso('las filas con error no entran a ningún archivo', () => {
     assert.strictEqual(A.nomina(rs, OPC).incluidos, 1);
 });
 
+caso('las fichas para el Asistente pasan la validación del servidor: empresa y trabajadores', () => {
+    const V = require('../api/_pyme/validar');
+    const recs = [resultado({}).record, resultado({ rut: '19.876.543-0', nombre: 'Bruno Castillo', afp: 'Uno', salud: 'isapre', planUF: 3, isapreNombre: 'Colmena', apPaterno: 'Castillo', apMaterno: 'Rojas', tramoAF: 'B', cargas: 2, apvContrato: 'AB1', rutSindicato: '65.123.456-5', tipoTrabajador: '1', gratificacion: 'no' }).record];
+    const f = A.fichas(recs, { cliente: 'Panadería Los Aromos SpA', empresa: { rut: '76.543.210-3', comuna: 'Temuco', mutual: 'Mutual de Seguridad', ccaf: 'Los Andes' }, tasaMutual: 1.2 });
+    const e = V.validarEmpresa(f.empresa);
+    assert.ok(e.ok, JSON.stringify(e.errores));
+    assert.strictEqual(e.valor.mutual, 'Mutual'); assert.strictEqual(e.valor.ccaf, 'Los Andes'); assert.strictEqual(e.valor.tasaMutual, 1.2);
+    f.trabajadores.forEach(t => { const v = V.validarTrabajador(t); assert.ok(v.ok, t.nombre + ' ' + JSON.stringify(v.errores)); });
+    const b = V.validarTrabajador(f.trabajadores[1]).valor;
+    assert.deepStrictEqual([b.afp, b.salud, b.isapreNombre, b.afTramo, b.afCargas, b.pension, b.gratificacion, b.apellidoPaterno], ['Uno', 'isapre', 'Colmena', 'B', 2, 'vejez_cotiza', 'ninguna', 'Castillo']);
+    const a = V.validarTrabajador(f.trabajadores[0]).valor;
+    assert.deepStrictEqual([a.banco, a.tipoCuenta, a.numeroCuenta, a.fechaIngreso, a.sueldoBase, a.colacion], ['BancoEstado', 'vista', '123456', '2022-03-15', 650000, 40000]);
+});
+
+caso('fichas: un plazo fijo sin fecha de término y un término sin causal quedan avisados en vez de inventados', () => {
+    const V = require('../api/_pyme/validar');
+    const recs = [resultado({ contrato: 'plazo' }).record, resultado({ rut: '19.876.543-0', fechaTermino: '2026-10-20' }).record, resultado({ rut: '9.876.543-3', fechaTermino: '2026-10-20', causalTermino: '4' }).record];
+    const f = A.fichas(recs, { cliente: 'X', empresa: { rut: '76.543.210-3' } });
+    assert.ok(f.avisos.some(x => /plazo fijo/.test(x)) && f.avisos.some(x => /sin causal|no causal|pero no causal/.test(x)));
+    assert.strictEqual(f.trabajadores[0].contrato, 'indefinido');
+    assert.ok(!f.trabajadores[1].fechaTermino && f.trabajadores[2].fechaTermino === '2026-10-20' && f.trabajadores[2].causalTermino === '4');
+    f.trabajadores.forEach(t => assert.ok(V.validarTrabajador(t).ok, JSON.stringify(V.validarTrabajador(t).errores)));
+});
+
 console.log(ok + ' pruebas correctas');

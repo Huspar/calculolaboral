@@ -2960,6 +2960,66 @@
     }
     $('pm-liq-preparar').addEventListener('click', function () { prepararMes($('pm-liq-estado')); });
 
+    // Novedades del mes por planilla CSV: días, horas extra, comisiones, bono, anticipo, etc. de todos a la vez
+    var NOV = window.CLPymeNovedades;
+    function bajarPlantillaNovedades() {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['\ufeff', NOV.plantilla(delMes(periodoSel))], { type: 'text/csv;charset=utf-8' }));
+        a.download = 'novedades-' + periodoSel + '.csv';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    }
+    function listaNov(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
+    $('pm-liq-nov').addEventListener('click', function () {
+        var det = $('pm-liq-nov-detalle');
+        if (!delMes(periodoSel).length) { det.innerHTML = '<p>No hay trabajadores para ' + esc(nombrePeriodo(periodoSel)) + '.</p>'; return; }
+        det.innerHTML = '<p>Sube un CSV con una fila por trabajador (RUT y lo que cambió este mes). <button type="button" class="btn-texto" id="pm-liq-nov-plantilla">Descargar la plantilla con tu equipo</button></p>' +
+            '<p class="lq-help">Lo que dejes vacío queda como está: si el mes ya estaba guardado se conserva, y si no, se parte de los valores base. Las liquidaciones ya emitidas no se tocan.</p>';
+        $('pm-liq-nov-archivo').click();
+    });
+    $('pm-liq-nov-detalle').addEventListener('click', function (e) { if (e.target && e.target.id === 'pm-liq-nov-plantilla') bajarPlantillaNovedades(); });
+    $('pm-liq-nov-archivo').addEventListener('change', function () {
+        var archivo = this.files && this.files[0], det = $('pm-liq-nov-detalle'), input = this;
+        if (!archivo) return;
+        if (archivo.size > 512000) { det.innerHTML = '<p>La planilla es demasiado grande (máximo 500 KB).</p>'; input.value = ''; return; }
+        if (!VAL[periodoSel] || VAL[periodoSel].estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; input.value = ''; return; }
+        var lector = new FileReader();
+        lector.onload = function () {
+            var texto = String(lector.result || '');
+            if (texto.indexOf('\uFFFD') >= 0 && !lector.reintento) { lector.reintento = true; lector.readAsText(archivo, 'windows-1252'); return; }
+            input.value = '';
+            var r = NOV.revisar(IMP.leerCsv(texto), delMes(periodoSel), Rut);
+            if (r.errores.length) {
+                det.innerHTML = '<p><strong>No se aplicó nada.</strong> Corrige estas filas y vuelve a subir la planilla.</p>' + listaNov('Para corregir', r.errores.map(function (x) { return 'Fila ' + x.fila + ': ' + x.motivo; }));
+                return;
+            }
+            var emitidas = [], aplicar = r.cambios.filter(function (c) {
+                var previo = mesesDe(periodoSel)[c.t.id];
+                if (previo && previo.emitida) { emitidas.push(c.t.nombre + ': su liquidación ya está emitida.'); return false; }
+                return true;
+            });
+            if (!aplicar.length) { det.innerHTML = '<p>No hay nada que aplicar.</p>' + listaNov('Sin cambios', emitidas); return; }
+            det.innerHTML = '<p>Aplicando novedades a ' + plural(aplicar.length, 'trabajador', 'trabajadores') + '…</p>';
+            var hechas = 0, fallo = null;
+            aplicar.reduce(function (p, c) {
+                return p.then(function () {
+                    if (fallo) return;
+                    var previo = mesesDe(periodoSel)[c.t.id];
+                    var mes = NOV.aplicar(previo ? Object.assign({}, previo) : L.mesBase(c.t, periodoSel), c.nov);
+                    return guardarRegistro(c.t.id, mes).then(function (res) { if (res.ok) hechas++; else fallo = res; });
+                });
+            }, Promise.resolve()).then(function () {
+                if (fallo && sinSesion(fallo)) return;
+                dibujarLiquidaciones();
+                dibujarPendientes();
+                det.innerHTML = '<p><strong>' + (fallo ? 'Aplicamos ' + hechas + ' y paramos: ' + esc(fallo.datos.error || 'no pudimos guardar.') : 'Listo: ' + plural(hechas, 'liquidación guardada', 'liquidaciones guardadas') + ' con las novedades.') + '</strong> Ábrelas para revisar el cálculo antes de emitirlas.</p>' +
+                    listaNov('Sin fila en la planilla (siguen como estaban)', r.sinFila) + listaNov('No se tocaron', emitidas);
+            });
+        };
+        lector.onerror = function () { det.innerHTML = '<p>No pudimos leer el archivo.</p>'; };
+        lector.readAsText(archivo, 'utf-8');
+    });
+
     function marcarEmitidas(ids, fecha, est) {
         var hechas = 0, fallo = null;
         mensaje(est, '', 'Guardando…');

@@ -464,10 +464,13 @@ gtag('js', new Date());
 </div>
 <div class="v-acciones" id="pm-liq-acciones">
 <button type="button" id="pm-liq-preparar" class="btn"><span class="material-icons" aria-hidden="true">playlist_add</span>Preparar el mes con valores base</button>
+<button type="button" id="pm-liq-nov" class="btn"><span class="material-icons" aria-hidden="true">upload_file</span>Cargar novedades del mes</button>
+<input type="file" id="pm-liq-nov-archivo" accept=".csv,.txt,text/csv" hidden>
 <button type="button" id="pm-liq-imprimir-todas" class="btn btn-primario"><span class="material-icons" aria-hidden="true">print</span>Imprimir todas</button>
 </div>
 </div>
 <div id="pm-liq-valores" class="lq-avisos" role="status" style="margin-bottom:14px"></div>
+<div id="pm-liq-nov-detalle" class="lq-help" role="status" style="margin-bottom:14px"></div>
 <div class="panel" id="pm-liq-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">No hay trabajadores activos</p><p class="texto-ayuda">Agrega primero a un trabajador activo para preparar su liquidación.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
 <div class="panel" id="liq-panel">
 <div class="tabla-wrap">
@@ -931,11 +934,12 @@ gtag('js', new Date());
 <script src="/js/lre_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_lre.js?v=1.0.1"></script>
 <script src="/js/pyme_pagos.js?v=1.0.0"></script>
+<script src="/js/pyme_novedades.js?v=1.0.0"></script>
 <script src="/js/pyme_anual.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.27.0" defer></script>
+<script src="/js/app_pyme.js?v=1.28.0" defer></script>
 </body>
 </html>
