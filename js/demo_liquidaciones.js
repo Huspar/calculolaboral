@@ -652,6 +652,69 @@
             });
         }
 
+        // Cuenta: se usa la sesión del Asistente Pyme (misma cookie de dominio).
+        var estadoCuenta = document.getElementById('cuenta-estado');
+        var btnEntrar = document.getElementById('btn-entrar');
+        var btnSubir = document.getElementById('btn-subir-nube');
+        var btnBajar = document.getElementById('btn-bajar-nube');
+
+        function pintarCuenta(email) {
+            if (!estadoCuenta) return;
+            estadoCuenta.textContent = email || 'sin sesión';
+            if (btnSubir) btnSubir.hidden = !email;
+            if (btnBajar) btnBajar.hidden = !email;
+            if (btnEntrar) btnEntrar.hidden = !!email;
+        }
+
+        function revisarCuenta() {
+            fetch('/api/pyme/sesion', { headers: { accept: 'application/json' } })
+                .then(function (r) { return r.json(); })
+                .then(function (j) { pintarCuenta(j && j.autenticado ? j.email : ''); })
+                .catch(function () { pintarCuenta(''); });
+        }
+
+        if (btnEntrar) {
+            btnEntrar.addEventListener('click', function () { window.open('/app', '_blank'); });
+        }
+
+        if (btnSubir) {
+            btnSubir.addEventListener('click', function () {
+                if (!respaldo) return;
+                var payload;
+                try { payload = JSON.parse(respaldo.exportar()); }
+                catch (e) { D.avisar('No se pudo preparar el respaldo.'); return; }
+                fetch('/api/pyme/estudio', {
+                    method: 'PUT',
+                    headers: { 'content-type': 'application/json', 'x-cl-pyme': '1' },
+                    body: JSON.stringify({ datos: payload })
+                }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                    .then(function (x) {
+                        if (!x.ok || !x.j.ok) { D.avisar(x.j && x.j.error ? x.j.error : 'No se pudo guardar en la nube.'); return; }
+                        D.avisar('Guardado en tu cuenta.');
+                    })
+                    .catch(function () { D.avisar('No se pudo guardar en la nube.'); });
+            });
+        }
+
+        if (btnBajar) {
+            btnBajar.addEventListener('click', function () {
+                if (!respaldo) return;
+                fetch('/api/pyme/estudio', { headers: { accept: 'application/json' } })
+                    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                    .then(function (x) {
+                        if (!x.ok || !x.j.ok) { D.avisar(x.j && x.j.error ? x.j.error : 'No se pudo traer tu estudio.'); return; }
+                        if (!x.j.datos) { D.avisar('Tu cuenta todavía no tiene un estudio guardado.'); return; }
+                        var res = respaldo.importar(JSON.stringify(x.j.datos));
+                        refrescarClientes();
+                        mostrarHistorial();
+                        D.avisar('Traído de tu cuenta: ' + res.clientes + ' clientes y ' + res.meses + ' meses.');
+                    })
+                    .catch(function () { D.avisar('No se pudo traer tu estudio.'); });
+            });
+        }
+
+        revisarCuenta();
+
         function refrescarClientes() {
             if (!tienda || !selClientes) return;
             var lista = tienda.listar();
