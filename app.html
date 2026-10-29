@@ -323,6 +323,15 @@ gtag('js', new Date());
 </div>
 </div>
 <div class="form-bloque">
+<p class="h-seccion">Cuenta para el pago del sueldo <span class="lq-opt">(opcional)</span></p>
+<p class="lq-help">Para la nómina de pagos del mes. Es el único dato bancario que se guarda: no pedimos claves ni nos conectamos a ningún banco.</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-t-banco">Banco</label><input id="pm-t-banco" data-k="banco" type="text" maxlength="40" placeholder="Banco de Chile" autocomplete="off"></div>
+<div class="lq-field"><label for="pm-t-tcuenta">Tipo de cuenta</label><select id="pm-t-tcuenta" data-k="tipoCuenta"><option value="">Sin indicar</option><option value="corriente">Cuenta corriente</option><option value="vista">Cuenta vista o RUT</option><option value="ahorro">Cuenta de ahorro</option></select></div>
+<div class="lq-field"><label for="pm-t-ncuenta">Número de cuenta</label><input id="pm-t-ncuenta" data-k="numeroCuenta" type="text" inputmode="numeric" maxlength="24" placeholder="123456789" autocomplete="off"></div>
+</div>
+</div>
+<div class="form-bloque">
 <p class="h-seccion">Ley Karin</p>
 <p class="lq-help">El protocolo de prevención del acoso sexual, laboral y la violencia en el trabajo debe darse a conocer a cada trabajador (art. 211-A del Código del Trabajo). Anota cuándo se lo entregaste para tener el registro a mano en una fiscalización. Si aún no tienes protocolo, el <a href="/kit-cumplimiento-laboral-pymes" target="_blank" rel="noopener">Kit Blindaje Laboral</a> trae un modelo.</p>
 <div class="lq-grid">
@@ -464,11 +473,19 @@ gtag('js', new Date());
 <button type="button" id="pm-liq-libro-excel" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">table_view</span>Libro del mes para el contador (Excel)</button>
 <button type="button" id="pm-liq-libro-imprimir" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">print</span>Imprimir libro</button>
 <button type="button" id="pm-liq-lre" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">description</span>Archivo para el LRE (Mi DT)</button>
+<button type="button" id="pm-liq-nomina" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">payments</span>Nómina de pagos (Excel)</button>
+<button type="button" id="pm-liq-asiento" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">account_balance</span>Asiento contable (Excel)</button>
 <input type="file" id="pm-liq-lre-plantilla" accept=".csv,.txt" hidden>
 <p id="pm-liq-estado" class="lq-estado" role="status"></p>
 </div>
 <p class="texto-ayuda" id="pm-liq-nota-marca" style="margin-top:6px"></p>
 <div id="pm-liq-lre-detalle" class="lq-help" role="status" style="margin-top:6px"></div>
+<div id="pm-liq-pagos-detalle" class="lq-help" role="status" style="margin-top:6px"></div>
+<details class="lq-cuentas" id="pm-liq-cuentas" style="margin-top:6px">
+<summary>Códigos de cuenta del asiento contable</summary>
+<p class="lq-help">Escribe el código de tu plan de cuentas para cada línea (opcional). Se recuerdan en este navegador, por empresa.</p>
+<div class="lq-grid" id="pm-liq-cuentas-campos"></div>
+</details>
 
 <div class="panel" id="liq-previred" hidden>
 <div class="panel-head"><h2 id="liq-previred-titulo">Para pagar en Previred</h2><span class="sello sello-guardada">Estimación</span></div>
@@ -903,11 +920,12 @@ gtag('js', new Date());
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_lre.js?v=1.0.0"></script>
+<script src="/js/pyme_pagos.js?v=1.0.0"></script>
 <script src="/js/pyme_anual.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.24.0" defer></script>
+<script src="/js/app_pyme.js?v=1.25.0" defer></script>
 </body>
 </html>

@@ -85,6 +85,10 @@ const CAMPOS_TRABAJADOR = {
     afCargas: { t: 'entero', min: 0, max: 20, def: 0 },
     apvContrato: { t: 'texto', max: 20 },
     fun: { t: 'texto', max: 16 },
+    // Para la nómina de pagos (opcionales: la nómina avisa a quién le falta)
+    banco: { t: 'texto', max: 40 },
+    tipoCuenta: { t: 'enum', valores: ['corriente', 'vista', 'ahorro'], def: '' },
+    numeroCuenta: { t: 'texto', max: 24 },
     fechaNacimiento: { t: 'fecha' },
     domicilio: { t: 'texto', max: 120 },
     comuna: { t: 'texto', max: 60 },

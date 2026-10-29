@@ -353,7 +353,7 @@
     });
 
     // ---------- modo de ejemplo ----------
-    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.3', '/js/pyme_demo.js?v=1.0.3'];
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.4', '/js/pyme_demo.js?v=1.0.4'];
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
     function cargarScript(src) {
@@ -2289,7 +2289,7 @@
         $('pm-liq-preparar').hidden = porPreparar === 0;
         $('pm-liq-imprimir-todas').disabled = guardadas === 0;
         $('pm-liq-marcar').hidden = !ultimasImpresas.length;
-        $('pm-liq-libro-excel').hidden = $('pm-liq-libro-imprimir').hidden = $('pm-liq-lre').hidden = guardadas === 0;
+        $('pm-liq-libro-excel').hidden = $('pm-liq-libro-imprimir').hidden = $('pm-liq-lre').hidden = $('pm-liq-nomina').hidden = $('pm-liq-asiento').hidden = guardadas === 0;
         $('pm-liq-marcar').textContent = textoMarcar();
         $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
@@ -2322,6 +2322,7 @@
         $('liq-previred-pie').innerHTML = pie;
         $('liq-previred-detalle').innerHTML = '';
         $('pm-liq-lre-detalle').innerHTML = '';
+        $('pm-liq-pagos-detalle').innerHTML = '';
     }
 
     // ---------- proyección del costo: aumentos del aporte de la Ley 21.735 y jornada de 40 horas ----------
@@ -3053,6 +3054,66 @@
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
         det.innerHTML = '<p><strong>Archivo descargado con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + '.</strong> Es un archivo para revisar y cargar tú en Previred con tu clave: el asistente no se conecta con Previred ni declara por ti. Previred valida el archivo al cargarlo.</p>' +
             lista('Revisa antes de cargarlo', s.avisos.concat(omitidas));
+    });
+    // Nómina de pagos y asiento contable del mes (archivos para Excel; no transfieren ni contabilizan nada)
+    function itemsDelMes(det) {
+        var val = VAL[periodoSel];
+        if (!val || val.estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; return null; }
+        var items = [], omitidas = [];
+        activos().forEach(function (t) {
+            var reg = mesesDe(periodoSel)[t.id];
+            if (!reg) return;
+            var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
+            if (!r || r.error || !r.res.listo) { omitidas.push(t.nombre + ': su liquidación tiene errores.'); return; }
+            items.push({ t: t, res: r.res });
+        });
+        if (!items.length) { det.innerHTML = '<p>No hay liquidaciones guardadas sin errores en ' + esc(nombrePeriodo(periodoSel)) + '.</p>'; return null; }
+        return { items: items, omitidas: omitidas };
+    }
+    function listaHtml(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
+    function bajarCsv(nombre, texto) {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['\ufeff', texto], { type: 'text/csv;charset=utf-8' }));
+        a.download = nombre;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    }
+    $('pm-liq-nomina').addEventListener('click', function () {
+        var det = $('pm-liq-pagos-detalle'), d = itemsDelMes(det);
+        if (!d) return;
+        var s = window.CLPymePagos.nomina({ periodoNombre: nombrePeriodo(periodoSel), items: d.items });
+        var omit = s.omitidos.map(function (o) { return o.nombre + ': ' + o.motivo; }).concat(d.omitidas);
+        if (!s.incluidos) { det.innerHTML = '<p><strong>No se generó la nómina:</strong> ningún trabajador tiene completa su cuenta. Agrégala en su ficha, en «Cuenta para el pago del sueldo».</p>' + listaHtml('Falta corregir', omit); return; }
+        bajarCsv('nomina-pagos-' + periodoSel + '.csv', s.texto);
+        det.innerHTML = '<p><strong>Nómina descargada con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + ' por ' + pesos(s.total) + '.</strong> Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada. Para pagar, cárgala o cópiala tú en el portal de tu banco con tu clave.</p>' +
+            listaHtml('No están en la nómina', omit);
+    });
+    var KEY_CUENTAS = 'cl_pyme_cuentas_';
+    function cuentasGuardadas() {
+        try { return JSON.parse(window.localStorage.getItem(KEY_CUENTAS + (estado && estado.empresaId || 'unica')) || '{}') || {}; } catch (e) { return {}; }
+    }
+    function dibujarCuentasAsiento() {
+        var caja = $('pm-liq-cuentas-campos'), g = cuentasGuardadas();
+        caja.innerHTML = window.CLPymePagos.CUENTAS.map(function (c) {
+            return '<div class="lq-field"><label for="pm-cta-' + c.k + '">' + esc(c.glosa) + '</label><input id="pm-cta-' + c.k + '" data-cuenta="' + c.k + '" type="text" maxlength="20" value="' + esc(g[c.k] || '') + '" autocomplete="off"></div>';
+        }).join('');
+    }
+    $('pm-liq-cuentas').addEventListener('toggle', function () { if (this.open) dibujarCuentasAsiento(); });
+    $('pm-liq-cuentas-campos').addEventListener('change', function () {
+        var g = {};
+        Array.prototype.forEach.call(this.querySelectorAll('[data-cuenta]'), function (el) { if (el.value.trim()) g[el.getAttribute('data-cuenta')] = el.value.trim(); });
+        try { window.localStorage.setItem(KEY_CUENTAS + (estado && estado.empresaId || 'unica'), JSON.stringify(g)); } catch (e) { /* sin almacenamiento */ }
+    });
+    $('pm-liq-asiento').addEventListener('click', function () {
+        var det = $('pm-liq-pagos-detalle'), d = itemsDelMes(det);
+        if (!d) return;
+        var s = window.CLPymePagos.asiento({ periodoNombre: nombrePeriodo(periodoSel), cuentas: cuentasGuardadas(), items: d.items });
+        if (s.errores.length) { det.innerHTML = '<p><strong>No se generó el asiento.</strong></p>' + listaHtml('Falta corregir', s.errores); return; }
+        if (!s.cuadra) { det.innerHTML = '<p><strong>No se generó el asiento:</strong> el debe (' + pesos(s.debe) + ') no cuadra con el haber (' + pesos(s.haber) + '). Avísanos con tu correo y el mes.</p>'; return; }
+        bajarCsv('asiento-remuneraciones-' + periodoSel + '.csv', s.texto);
+        det.innerHTML = '<p><strong>Asiento descargado: debe y haber por ' + pesos(s.debe) + '.</strong> Revísalo antes de contabilizarlo; el asistente no se conecta con tu software contable.</p>' +
+            (s.sinCodigos ? '<p>' + plural(s.sinCodigos, 'línea', 'líneas') + ' sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento contable» y volver a descargar.</p>' : '') +
+            listaHtml('No están en el asiento', d.omitidas);
     });
     var plantillaLre = '';
     // Archivo de carga masiva del Libro de Remuneraciones Electrónico (Mi DT): se descarga para revisarlo y cargarlo con tu clave
