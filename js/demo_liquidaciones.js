@@ -343,6 +343,17 @@
         if (avisos.length) partes.push('<b>Revisar antes de pagar:</b><br>' + avisos.map(function (a) { return '· ' + D.esc(a); }).join('<br>'));
         if (extra.length) partes.push('<b>Del período:</b><br>' + extra.map(function (a) { return '· ' + D.esc(a); }).join('<br>'));
         if (!partes.length) partes.push('<b>Sin advertencias.</b> Todas las liquidaciones quedaron listas para emitir.');
+
+        var revision = (window.CLValidar ? window.CLValidar.lote(state.records, { imm: state.mes ? state.mes.imm : 0 }) : []);
+        if (revision.length) {
+            var errores = revision.filter(function (x) { return x.nivel === 'error'; });
+            var lineas = revision.slice(0, 8).map(function (x) {
+                return '· Fila ' + x.fila + ' — ' + D.esc(x.nombre) + ': ' + D.esc(x.texto);
+            }).join('<br>');
+            partes.unshift('<b>Revisión previa:</b> ' + errores.length + ' errores y ' + (revision.length - errores.length) + ' avisos.<br>' + lineas +
+                (revision.length > 8 ? '<br>… y ' + (revision.length - 8) + ' más.' : ''));
+        }
+
         caja.innerHTML = partes.join('<div style="height:10px"></div>');
 
         if (!sinScroll && !document.getElementById('pane-liquidaciones').hasAttribute('hidden')) {
