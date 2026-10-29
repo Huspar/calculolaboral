@@ -407,6 +407,7 @@
         if (!mapped.length) { D.avisar('No encontramos columnas reconocibles. Revisa la plantilla.'); return; }
 
         state.archivo = archivo || '';
+        state.raw = rows;
         state.records = mapped.map(registro);
 
         cargarPeriodo(true).then(function () { calcularTodo(); });
@@ -524,6 +525,43 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         var periodo = document.getElementById('periodo');
+        var tienda = (window.CLClientes && window.localStorage) ? window.CLClientes.crear(window.localStorage) : null;
+        var selClientes = document.getElementById('liq-clientes-guardados');
+
+        function refrescarClientes() {
+            if (!tienda || !selClientes) return;
+            var lista = tienda.listar();
+            selClientes.innerHTML = '<option value="">Clientes guardados (' + lista.length + ')</option>' +
+                lista.map(function (c) {
+                    return '<option value="' + D.esc(c.nombre) + '">' + D.esc(c.nombre) + ' — ' + c.trabajadores + ' trabajadores</option>';
+                }).join('');
+        }
+
+        var btnGuardar = document.getElementById('btn-guardar-cliente');
+        if (btnGuardar) {
+            btnGuardar.addEventListener('click', function () {
+                if (!tienda) return;
+                try {
+                    tienda.guardar(clienteActual(), state.raw || [], state.archivo);
+                    refrescarClientes();
+                    D.avisar('Cliente guardado en este navegador.');
+                } catch (e) { D.avisar(e.message); }
+            });
+        }
+
+        if (selClientes) {
+            selClientes.addEventListener('change', function () {
+                if (!tienda || !selClientes.value) return;
+                var c = tienda.obtener(selClientes.value);
+                if (!c || !c.filas.length) return;
+                var cli = document.getElementById('liq-cliente');
+                if (cli) cli.value = c.nombre;
+                cargar(c.filas, c.archivo);
+            });
+        }
+
+        refrescarClientes();
+
         var cli = document.getElementById('liq-cliente');
         if (cli) {
             try { cli.value = localStorage.getItem('cl-cliente-liq') || ''; } catch (e) { }
