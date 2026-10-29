@@ -2405,7 +2405,7 @@
         $('pm-liq-preparar').hidden = porPreparar === 0;
         $('pm-liq-imprimir-todas').disabled = guardadas === 0;
         $('pm-liq-marcar').hidden = !ultimasImpresas.length;
-        $('pm-liq-libro-excel').hidden = $('pm-liq-libro-imprimir').hidden = $('pm-liq-lre').hidden = $('pm-liq-nomina').hidden = $('pm-liq-asiento').hidden = guardadas === 0;
+        $('pm-liq-libro-excel').hidden = $('pm-liq-libro-imprimir').hidden = $('pm-liq-lre').hidden = $('pm-liq-nomina').hidden = $('pm-liq-asiento').hidden = $('pm-liq-enlaces').hidden = guardadas === 0;
         $('pm-liq-marcar').textContent = textoMarcar();
         $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
@@ -3264,6 +3264,41 @@
         bajarCsv('nomina-pagos-' + periodoSel + '.csv', s.texto);
         det.innerHTML = '<p><strong>Nómina descargada con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + ' por ' + pesos(s.total) + '.</strong> Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada. Para pagar, cárgala o cópiala tú en el portal de tu banco con tu clave.</p>' +
             listaHtml('No están en la nómina', omit);
+    });
+    // Enlaces de liquidación de todo el equipo: se crean los que faltan y se baja una planilla para enviarlos (el enlace completo solo se ve al crearlo)
+    $('pm-liq-enlaces').addEventListener('click', function () {
+        var det = $('pm-liq-pagos-detalle'), p = periodoSel, guardados = mesesDe(p);
+        var lista = delMes(p).filter(function (t) { return guardados[t.id]; });
+        if (!lista.length) { det.innerHTML = '<p>No hay liquidaciones guardadas en ' + esc(nombrePeriodo(p)) + '.</p>'; return; }
+        det.innerHTML = '<p>Creando enlaces…</p>';
+        cargarEnlaces(p).then(function () {
+            var existentes = enlacesCache[p] || {}, nuevos = [], saltados = [], fallo = null;
+            return lista.reduce(function (pr, t) {
+                return pr.then(function () {
+                    if (fallo) return;
+                    if (existentes[t.id]) { saltados.push(t.nombre + ': ya tiene un enlace (por seguridad no se vuelve a mostrar; créale uno nuevo desde su liquidación si lo perdiste).'); return; }
+                    return api('enlace-liquidacion', { metodo: 'POST', query: { trabajador: t.id, periodo: p } }).then(function (r) {
+                        if (sinSesion(r)) { fallo = r; return; }
+                        if (!r.ok) { saltados.push(t.nombre + ': ' + (r.datos.error || 'no pudimos crear el enlace.')); return; }
+                        nuevos.push({ t: t, enlace: r.datos.enlace });
+                    });
+                });
+            }, Promise.resolve()).then(function () {
+                if (fallo) return;
+                return cargarEnlaces(p).then(function () {
+                    if (!nuevos.length) { det.innerHTML = '<p><strong>No se crearon enlaces nuevos.</strong></p>' + listaHtml('Sin enlace nuevo', saltados); return; }
+                    var filas = [['RUT', 'Nombre', 'Enlace', 'Vence']].concat(nuevos.map(function (n) {
+                        var e = (enlacesCache[p] || {})[n.t.id];
+                        return [n.t.rut, n.t.nombre, n.enlace, e && e.vence ? e.vence.slice(0, 10) : ''];
+                    }));
+                    var csv = filas.map(function (f) {
+                        return f.map(function (v) { v = String(v == null ? '' : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';');
+                    }).join('\r\n') + '\r\n';
+                    bajarCsv('enlaces-liquidacion-' + p + '.csv', csv);
+                    det.innerHTML = '<p><strong>' + plural(nuevos.length, 'enlace creado', 'enlaces creados') + ' y descargados.</strong> Cada enlace muestra solo la liquidación de esa persona, vence a los 60 días y se puede anular desde su liquidación. Envíaselo tú a cada trabajador (WhatsApp o correo): el asistente no guarda ni envía correos de trabajadores. Un revisor automático de enlaces también cuenta como apertura; no es firma ni aceptación.</p>' + listaHtml('Sin enlace nuevo', saltados);
+                });
+            });
+        });
     });
     var KEY_CUENTAS = 'cl_pyme_cuentas_';
     function cuentasGuardadas() {
