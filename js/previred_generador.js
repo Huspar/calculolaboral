@@ -127,9 +127,20 @@
         c[12] = '0';                                          // trabajador activo
         c[13] = entero(t.dias || 30);
         c[14] = '00';                                         // línea principal
-        c[15] = '0';                                          // sin movimiento en el mes
-        c[16] = '';
-        c[17] = '';
+        var mov = t.movimiento || {};
+        var movCodigo = texto(mov.codigo || '0');
+        if (!/^\d{1,2}$/.test(movCodigo)) throw new Error('Código de movimiento inválido: "' + movCodigo + '"');
+        var fechaOk = /^\d{2}-\d{2}-\d{4}$/;
+        if (movCodigo !== '0') {
+            if (movCodigo === '2') {
+                if (!fechaOk.test(texto(mov.hasta))) throw new Error('El retiro necesita fecha de término en formato dd-mm-aaaa.');
+            } else if (!fechaOk.test(texto(mov.desde))) {
+                throw new Error('El movimiento de personal necesita fecha desde en formato dd-mm-aaaa.');
+            }
+        }
+        c[15] = movCodigo;                                    // movimiento de personal
+        c[16] = movCodigo === '0' ? '' : texto(mov.desde);
+        c[17] = movCodigo === '0' ? '' : texto(mov.hasta);
         c[18] = 'D';                                          // sin derecho a asignación familiar
         c[19] = '0';
         c[20] = '0';
@@ -296,6 +307,18 @@
         return 0;
     }
 
+    /* Movimiento de personal (Tabla 7): texto del Excel -> código de Previred. */
+    function codigoMovimiento(valor, contrato) {
+        var v = sinTildes(valor);
+        if (!v || v === '0' || v.indexOf('sin') === 0 || v.indexOf('ningun') === 0) return '0';
+        if (v.indexOf('retiro') === 0 || v.indexOf('baja') === 0 || v.indexOf('finiquito') === 0) return '2';
+        if (v.indexOf('alta') === 0 || v.indexOf('contrat') === 0 || v.indexOf('ingreso') === 0) {
+            return /plazo|fijo|obra|faena/.test(sinTildes(contrato)) ? '7' : '1';
+        }
+        if (/^\d{1,2}$/.test(v)) return v;
+        throw new Error('Movimiento de personal no reconocido: "' + texto(valor) + '"');
+    }
+
     function desdeLiquidaciones(resultados, opciones) {
         var o = opciones || {};
         var trabajadores = (resultados || []).filter(function (r) { return r && r.detalle && !r.error; }).map(function (r) {
@@ -325,10 +348,16 @@
                 cotizacionMutual: buscarClave(emp.lineas, 'mutual'),
                 rentaAfc: d.bases ? d.bases.baseAfc : 0,
                 aporteTrabajadorAfc: buscarMonto(d.descuentosLegales, 'seguro de cesant'),
-                aporteEmpleadorAfc: buscarClave(emp.lineas, 'afc')
+                aporteEmpleadorAfc: buscarClave(emp.lineas, 'afc'),
+                centroCosto: rec.centroCosto,
+                movimiento: {
+                    codigo: codigoMovimiento(rec.movimiento, rec.contrato),
+                    desde: rec.movDesde,
+                    hasta: rec.movHasta
+                }
             };
         });
-        return generar({ periodo: o.periodo, empleador: { mutual: o.mutual }, trabajadores: trabajadores });
+        return generar({ periodo: o.periodo, empleador: { mutual: o.mutual, ccaf: o.ccaf }, trabajadores: trabajadores });
     }
 
     return { generar: generar, desdeLiquidaciones: desdeLiquidaciones, validar: validar, campos: CAMPOS, tablas: { AFP: AFP, SALUD: SALUD, MUTUAL: MUTUAL, CCAF: CCAF }, partirRut: partirRut, dvValido: dvValido };

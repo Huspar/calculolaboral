@@ -31,7 +31,11 @@
         apPaterno: ['apellido_paterno', 'ap_paterno', 'primer_apellido'],
         apMaterno: ['apellido_materno', 'ap_materno', 'segundo_apellido'],
         nombres: ['nombres', 'nombre_propio'],
-        isapreNombre: ['isapre', 'institucion_salud', 'isapre_nombre', 'nombre_isapre']
+        isapreNombre: ['isapre', 'institucion_salud', 'isapre_nombre', 'nombre_isapre'],
+        centroCosto: ['centro_de_costos', 'centro_costo', 'centro_costos', 'centro'],
+        movimiento: ['movimiento', 'movimiento_personal', 'mov'],
+        movDesde: ['fecha_desde_movimiento', 'mov_desde', 'fecha_movimiento'],
+        movHasta: ['fecha_hasta_movimiento', 'mov_hasta']
     };
 
     // ------------------------------------------------------------ valores
@@ -145,7 +149,11 @@
             apPaterno: String(m.apPaterno || '').trim(),
             apMaterno: String(m.apMaterno || '').trim(),
             nombres: String(m.nombres || '').trim(),
-            isapreNombre: String(m.isapreNombre || '').trim()
+            isapreNombre: String(m.isapreNombre || '').trim(),
+            centroCosto: String(m.centroCosto || '').trim(),
+            movimiento: String(m.movimiento || '').trim(),
+            movDesde: String(m.movDesde || '').trim(),
+            movHasta: String(m.movHasta || '').trim()
         };
     }
 
@@ -416,7 +424,8 @@
 
         var periodo = document.getElementById('periodo').value;
         var mutual = document.getElementById('liq-mutual').value;
-        var r = window.CLPrevired.desdeLiquidaciones(ok, { periodo: periodo, mutual: mutual });
+        var ccaf = document.getElementById('liq-ccaf').value;
+        var r = window.CLPrevired.desdeLiquidaciones(ok, { periodo: periodo, mutual: mutual, ccaf: ccaf });
         var problemas = r.errores.length ? r.errores : window.CLPrevired.validar(r.texto);
 
         if (problemas.length) {
@@ -437,12 +446,12 @@
             ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
             ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
-        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre']);
-        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena']);
-        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '']);
-        data[3] = data[3].concat(['', '', '', '', '']);
+        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta']);
+        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '']);
+        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026']);
+        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '']);
         var ws = XLSX.utils.aoa_to_sheet(data);
-        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }];
+        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }];
         var wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
         XLSX.writeFile(wb, 'plantilla-liquidaciones-calculolaboral.xlsx');

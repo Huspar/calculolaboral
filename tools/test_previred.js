@@ -147,4 +147,41 @@ caso('plan de Isapre en UF va al campo 79 con 4 decimales', () => {
     assert.strictEqual(f[78], '00034000');   // campo 79: plan en UF
 });
 
+caso('movimiento de personal, CCAF y centro de costos', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador: { mutual: 'ACHS', ccaf: 'Los Andes' },
+        trabajadores: [Object.assign({}, fonasa, { centroCosto: 'Sucursal 2', movimiento: { codigo: '2', desde: '01-10-2026', hasta: '31-10-2026' } })]
+    });
+    assert.deepStrictEqual(r.errores, []);
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f[14], '2');
+    assert.strictEqual(f[15], '01-10-2026');
+    assert.strictEqual(f[16], '31-10-2026');
+    assert.strictEqual(f[82], '01');            // CCAF Los Andes
+    assert.strictEqual(f[83], '1419115');       // renta imponible CCAF
+    assert.strictEqual(f[104], 'Sucursal 2');
+});
+
+caso('un retiro sin fecha hasta no genera archivo', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [Object.assign({}, fonasa, { movimiento: { codigo: '2', desde: '01-10-2026' } })]
+    });
+    assert.strictEqual(r.texto, '');
+    assert.ok(r.errores.some(e => /fecha/i.test(e)), JSON.stringify(r.errores));
+});
+
+caso('el texto del Excel se traduce a codigo de movimiento', () => {
+    const base = {
+        record: { rut: '12.345.678-5', nombre: 'Camila Rojas Fuentes', sexo: 'F', afp: 'Cuprum', salud: 'fonasa', dias: 30, contrato: 'plazo', movimiento: 'retiro', movHasta: '31-10-2026', centroCosto: 'Obra 1' },
+        detalle: { bases: { baseAfp: 1000000, baseAfc: 1000000 }, descuentosLegales: [{ concepto: 'AFP Cuprum', monto: 114400 }, { concepto: 'Salud Fonasa', monto: 70000 }, { concepto: 'Seguro de cesantía', monto: 6000 }], empleador: { lineas: [{ clave: 'sis', monto: 17800 }, { clave: 'afc', monto: 24000 }, { clave: 'mutual', monto: 9300 }] } }
+    };
+    const r = G.desdeLiquidaciones([base], { periodo: '2026-10', mutual: 'ACHS' });
+    assert.deepStrictEqual(r.errores, []);
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f[14], '2');       // retiro
+    assert.strictEqual(f[16], '31-10-2026');
+    assert.strictEqual(f[104], 'Obra 1');
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');
