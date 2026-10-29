@@ -269,6 +269,11 @@
         radios.forEach(function (r) {
             r.addEventListener('change', function () { if (r.checked) aplicar(r.value); });
         });
+        // El enlace de demostración de finiquitos (?demo=1 sin tab=liq) sigue abriendo Finiquitos;
+        // sin parámetros la página abre en Liquidaciones, que es el uso diario del contador.
+        if (/[?&]demo=1/.test(location.search) && !/[?&]tab=liq/.test(location.search)) {
+            radios.forEach(function (r) { r.checked = r.value === 'finiquitos'; });
+        }
         var activo = radios.filter(function (r) { return r.checked; })[0];
         aplicar(activo ? activo.value : 'finiquitos');
 
