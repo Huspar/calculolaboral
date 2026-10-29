@@ -359,7 +359,7 @@
                     <span class="texto-ayuda">Excel o CSV</span>
                 </div>
                 <div class="panel-cuerpo">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;">
                         <div class="demo-field">
                             <label for="periodo">Período</label>
                             <input type="month" id="periodo" value="2026-10">
@@ -368,8 +368,17 @@
                             <label for="liq-tasa-mutual">Tasa mutual (%)</label>
                             <input type="number" id="liq-tasa-mutual" step="0.01" min="0.93" value="0.93">
                         </div>
+                        <div class="demo-field">
+                            <label for="liq-mutual">Mutualidad</label>
+                            <select id="liq-mutual">
+                                <option value="Mutual de Seguridad">Mutual de Seguridad</option>
+                                <option value="ACHS">ACHS</option>
+                                <option value="IST">IST</option>
+                                <option value="ISL">ISL (sin mutual)</option>
+                            </select>
+                        </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;">
                         <div class="demo-field">
                             <label for="liq-uf">UF del mes</label>
                             <input type="number" id="liq-uf" step="0.01" min="1">
@@ -392,6 +401,7 @@
                         <button class="btn btn-chico" type="button" id="btn-sample-liq">Cargar ejemplo (10)</button>
                         <button class="btn btn-chico" type="button" id="btn-template-liq">Descargar plantilla</button>
                     </div>
+                    <div class="demo-nota">Incluye <b>archivo para Previred</b> de 105 campos y el desglose por trabajador.</div>
 
                     <div class="demo-nota">
                         <b>Columnas:</b> RUT · Nombre · Sueldo base · Días trabajados · AFP · Salud (fonasa/isapre) · Plan Isapre UF · Contrato · Jornada · Fecha ingreso · Colación · Movilización · Comisiones · Horas extra · Gratificación.
@@ -476,6 +486,9 @@
                         <span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes
                     </button>
                     <button class="btn" type="button" id="btn-csv-liq">Exportar a Excel</button>
+                    <button class="btn" type="button" id="btn-previred-liq">
+                        <span class="material-icons" aria-hidden="true">receipt_long</span>Archivo Previred
+                    </button>
                 </div>
                 <div class="demo-nota" id="warnings-liq"></div>
             </div>
@@ -523,6 +536,7 @@
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/demo_comun.js?v=1.1.0"></script>
 <script src="/js/demo_contadores.js?v=1.1.0"></script>
-<script src="/js/demo_liquidaciones.js?v=1.1.0"></script>
+<script src="/js/previred_generador.js?v=1.0.0"></script>
+<script src="/js/demo_liquidaciones.js?v=1.2.0"></script>
 </body>
 </html>

@@ -112,4 +112,39 @@ caso('sin periodo no genera archivo', () => {
     assert.ok(r.errores.some(e => /per/i.test(e)));
 });
 
+caso('un lote real del motor se convierte en 105 campos', () => {
+    const E = require(path.join(__dirname, '..', 'js', 'liquidacion_engine.js'));
+    const P = require(path.join(__dirname, '..', 'js', 'liquidacion_parametros.js'));
+    const valores = Object.assign({}, P.vigenciaDe('2026-10'), P.RESPALDO['2026-10']);
+    const det = E.calcular({
+        trabajador: { sueldoBase: 1200000, afp: 'Cuprum', salud: 'fonasa', contrato: 'indefinido', jornadaHoras: 42, fechaIngreso: '2020-01-01', colacion: 0, movilizacion: 0 },
+        mes: { diasTrabajados: 30, horasExtra: 0, comisiones: 0, gratificacion: 'legal' },
+        periodo: '2026-10', tasaMutual: 0.93
+    }, valores);
+    const r = G.desdeLiquidaciones([{
+        record: { rut: '12.345.678-5', nombre: 'Camila Rojas Fuentes', sexo: 'F', afp: 'Cuprum', salud: 'fonasa', dias: 30 },
+        detalle: det
+    }], { periodo: '2026-10', mutual: 'ACHS' });
+    assert.deepStrictEqual(r.errores, []);
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f.length, 105);
+    assert.strictEqual(f[25], '03');                 // AFP Cuprum
+    assert.strictEqual(f[74], '07');                 // Fonasa
+    assert.strictEqual(f[2] + ' ' + f[3] + ' ' + f[4], 'Rojas Fuentes Camila');
+    assert.strictEqual(f[95], '01');                 // ACHS
+    assert.ok(Number(f[69]) > 0, 'cotizacion de salud');
+    assert.ok(Number(f[101]) > 0, 'aporte empleador AFC');
+});
+
+caso('plan de Isapre en UF va al campo 79 con 4 decimales', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [Object.assign({}, isapre, { isapreMoneda: 'UF', planUF: 3.4 })]
+    });
+    assert.deepStrictEqual(r.errores, []);
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f[77], '2');          // campo 78: moneda UF
+    assert.strictEqual(f[78], '00034000');   // campo 79: plan en UF
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');

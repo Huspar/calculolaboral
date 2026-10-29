@@ -26,7 +26,12 @@
         movilizacion: ['movilizacion', 'asignacion_movilizacion'],
         comisiones: ['comisiones', 'comision', 'bonos_imponibles'],
         horasExtra: ['horas_extra', 'horas_extras', 'hh_extra'],
-        gratificacion: ['gratificacion', 'gratificacion_legal', 'gratificacion_monto']
+        gratificacion: ['gratificacion', 'gratificacion_legal', 'gratificacion_monto'],
+        sexo: ['sexo', 'genero'],
+        apPaterno: ['apellido_paterno', 'ap_paterno', 'primer_apellido'],
+        apMaterno: ['apellido_materno', 'ap_materno', 'segundo_apellido'],
+        nombres: ['nombres', 'nombre_propio'],
+        isapreNombre: ['isapre', 'institucion_salud', 'isapre_nombre', 'nombre_isapre']
     };
 
     // ------------------------------------------------------------ valores
@@ -135,7 +140,12 @@
             comisiones: D.parseNumber(m.comisiones),
             horasExtra: D.parseNumber(m.horasExtra),
             gratificacion: grat === 'no' || grat === 'sin' ? 'no' : (manual > 0 && grat !== 'legal' ? 'manual' : 'legal'),
-            gratificacionMonto: manual
+            gratificacionMonto: manual,
+            sexo: String(m.sexo || '').trim().toUpperCase(),
+            apPaterno: String(m.apPaterno || '').trim(),
+            apMaterno: String(m.apMaterno || '').trim(),
+            nombres: String(m.nombres || '').trim(),
+            isapreNombre: String(m.isapreNombre || '').trim()
         };
     }
 
@@ -332,17 +342,31 @@
     }
 
     var EJEMPLO = [
-        ['19.876.543-2', 'Camila Rojas Fuentes', 1450000, 30, 'Cuprum', 'Fonasa', '', 'indefinido', 42, '2018-04-02', 0, 180000, 0, 0],
-        ['12.345.678-9', 'María González Pérez', 1200000, 30, 'Modelo', 'Isapre', 3.4, 'indefinido', 42, '2019-03-01', 0, 150000, 0, 6],
-        ['9.876.543-2', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0],
+        ['19.876.543-0', 'Camila Rojas Fuentes', 1450000, 30, 'Cuprum', 'Fonasa', '', 'indefinido', 42, '2018-04-02', 0, 180000, 0, 0],
+        ['12.345.678-5', 'María González Pérez', 1200000, 30, 'Modelo', 'Isapre', 3.4, 'indefinido', 42, '2019-03-01', 0, 150000, 0, 6],
+        ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0],
         ['16.543.210-K', 'Andrés Muñoz Tapia', 2350000, 30, 'Habitat', 'Isapre', 4.8, 'indefinido', 42, '2015-01-20', 250000, 0, 0, 4],
-        ['20.111.222-3', 'Valentina Castro León', 780000, 30, 'Planvital', 'Fonasa', '', 'indefinido', 30, '2023-11-06', 0, 80000, 50000, 0],
-        ['13.222.333-4', 'Rodrigo Álvarez Pinto', 3100000, 30, 'Provida', 'Isapre', 5.6, 'indefinido', 42, '2012-06-01', 300000, 0, 0, 0],
-        ['21.444.555-6', 'Francisca Herrera Ríos', 690000, 20, 'Cuprum', 'Fonasa', '', 'plazo', 30, '2026-02-19', 0, 70000, 0, 0],
-        ['10.999.888-7', 'Jorge Vergara Salas', 4200000, 30, 'Habitat', 'Isapre', 6.2, 'indefinido', 42, '2008-09-15', 380000, 0, 120000, 8],
-        ['22.777.888-9', 'Daniela Núñez Bravo', 640000, 30, 'Modelo', 'Fonasa', '', 'indefinido', 42, '2025-01-13', 0, 60000, 0, 0],
-        ['15.666.555-4', 'Mauricio Contreras Vidal', 1750000, 30, 'Uno', 'Isapre', 3.9, 'indefinido', 42, '2017-05-08', 0, 200000, 90000, 3]
+        ['20.111.222-2', 'Valentina Castro León', 780000, 30, 'Planvital', 'Fonasa', '', 'indefinido', 30, '2023-11-06', 0, 80000, 50000, 0],
+        ['13.222.333-5', 'Rodrigo Álvarez Pinto', 3100000, 30, 'Provida', 'Isapre', 5.6, 'indefinido', 42, '2012-06-01', 300000, 0, 0, 0],
+        ['21.444.555-7', 'Francisca Herrera Ríos', 690000, 20, 'Cuprum', 'Fonasa', '', 'plazo', 30, '2026-02-19', 0, 70000, 0, 0],
+        ['10.999.888-5', 'Jorge Vergara Salas', 4200000, 30, 'Habitat', 'Isapre', 6.2, 'indefinido', 42, '2008-09-15', 380000, 0, 120000, 8],
+        ['22.777.888-1', 'Daniela Núñez Bravo', 640000, 30, 'Modelo', 'Fonasa', '', 'indefinido', 42, '2025-01-13', 0, 60000, 0, 0],
+        ['15.666.555-K', 'Mauricio Contreras Vidal', 1750000, 30, 'Uno', 'Isapre', 3.9, 'indefinido', 42, '2017-05-08', 0, 200000, 90000, 3]
     ];
+
+    // Sexo e Isapre no vienen en la nómina de ejemplo: Previred los exige, así que se agregan por RUT.
+    var EXTRA = {
+        '19.876.543-0': ['F', ''],
+        '12.345.678-5': ['F', 'Colmena'],
+        '9.876.543-3': ['M', ''],
+        '16.543.210-K': ['M', 'Consalud'],
+        '20.111.222-2': ['F', ''],
+        '13.222.333-5': ['M', 'Cruz Blanca'],
+        '21.444.555-7': ['F', ''],
+        '10.999.888-5': ['M', 'Colmena'],
+        '22.777.888-1': ['F', ''],
+        '15.666.555-K': ['M', 'Consalud']
+    };
 
     function cargarEjemplo() {
         var rows = EJEMPLO.map(function (r) {
@@ -352,6 +376,10 @@
                 'Fecha ingreso': r[9], 'Colación': r[10], 'Movilización': r[11],
                 'Comisiones': r[12], 'Horas extra': r[13]
             };
+        });
+        rows.forEach(function (row) {
+            var x = EXTRA[row.RUT];
+            if (x) { row['Sexo'] = x[0]; row['Isapre'] = x[1]; }
         });
         cargar(rows, 'ejemplo-liquidaciones-' + document.getElementById('periodo').value + '.xlsx');
     }
@@ -367,15 +395,54 @@
             filas);
     }
 
+    // ------------------------------------------------------------- Previred
+
+    function descargarTexto(nombre, texto) {
+        var blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = nombre;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    function archivoPrevired() {
+        var ok = state.results.filter(function (r) { return !r.error; });
+        var caja = document.getElementById('warnings-liq');
+        if (!ok.length) { D.avisar('Primero carga y calcula la nómina.'); return; }
+
+        var periodo = document.getElementById('periodo').value;
+        var mutual = document.getElementById('liq-mutual').value;
+        var r = window.CLPrevired.desdeLiquidaciones(ok, { periodo: periodo, mutual: mutual });
+        var problemas = r.errores.length ? r.errores : window.CLPrevired.validar(r.texto);
+
+        if (problemas.length) {
+            caja.innerHTML = '<b>No se generó el archivo de Previred:</b><br>' + problemas.map(function (e) { return '— ' + D.esc(e); }).join('<br>');
+            caja.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+        }
+
+        descargarTexto('previred-' + periodo + '.txt', r.texto);
+        caja.innerHTML = '<b>Archivo Previred listo</b> — ' + r.filas.length + ' trabajadores, 105 campos por línea.<br>' +
+            'No se sube solo: cárgalo en tu cuenta de Previred y revísalo antes de pagar.';
+    }
+
     function plantilla() {
         var data = [
             ['RUT', 'Nombre', 'Sueldo base', 'Días trabajados', 'AFP', 'Salud', 'Plan Isapre UF', 'Contrato', 'Jornada', 'Fecha ingreso', 'Colación', 'Movilización', 'Comisiones', 'Horas extra', 'Gratificación'],
-            ['12.345.678-9', 'María González Pérez', 1200000, 30, 'Modelo', 'Isapre', 3.4, 'indefinido', 42, '2019-03-01', 0, 150000, 0, 0, ''],
-            ['9.876.543-2', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
+            ['12.345.678-5', 'María González Pérez', 1200000, 30, 'Modelo', 'Isapre', 3.4, 'indefinido', 42, '2019-03-01', 0, 150000, 0, 0, ''],
+            ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
             ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
+        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre']);
+        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena']);
+        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '']);
+        data[3] = data[3].concat(['', '', '', '', '']);
         var ws = XLSX.utils.aoa_to_sheet(data);
-        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }];
+        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }];
         var wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
         XLSX.writeFile(wb, 'plantilla-liquidaciones-calculolaboral.xlsx');
@@ -424,6 +491,7 @@
         });
         document.getElementById('btn-template-liq').addEventListener('click', plantilla);
         document.getElementById('btn-csv-liq').addEventListener('click', exportar);
+        document.getElementById('btn-previred-liq').addEventListener('click', archivoPrevired);
         document.getElementById('btn-print-liq').addEventListener('click', function () {
             construirImpresion();
             window.print();

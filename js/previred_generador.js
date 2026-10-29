@@ -45,6 +45,13 @@
         var n = Math.round(Number(v) || 0);
         return n > 0 ? String(n) : '0';
     }
+    /* Plan de Isapre en UF: 8 dígitos con 4 decimales implícitos (4,0241 -> 00040241). */
+    function ufPlan(v) {
+        var n = Math.round(Number(v) * 10000);
+        var s = String(n > 0 ? n : 0);
+        while (s.length < 8) s = '0' + s;
+        return s;
+    }
     function sinTildes(s) {
         return texto(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
     }
@@ -95,10 +102,13 @@
         var mutualCodigo = codigoDe(MUTUAL, e.mutual, 'Mutualidad');
         var ccafCodigo = e.ccaf ? codigoDe(CCAF, e.ccaf, 'CCAF') : '00';
         var esFonasa = saludCodigo === '07';
+        var esPlanUF = !esFonasa && texto(t.isapreMoneda).toUpperCase() === 'UF';
 
         if (!esFonasa && !t.rentaIsapre) throw new Error('Isapre sin renta imponible.');
         if (!esFonasa && !t.cotizacionIsapre) throw new Error('Isapre sin cotización obligatoria.');
-        if (!esFonasa && texto(t.isapreMoneda) === 'UF') throw new Error('Isapre en UF: la v1 no informa planes en UF. Se resuelve con el piloto.');
+        if (!esFonasa && texto(t.isapreMoneda).toUpperCase() === 'UF' && !(Number(t.planUF) > 0)) {
+            throw new Error('Isapre en UF sin plan pactado.');
+        }
         if (!t.cotizacionAfp && afpCodigo !== '00') throw new Error('Falta la cotización de AFP.');
         if (!t.cotizacionMutual) throw new Error('Falta la cotización de mutualidad.');
 
@@ -180,8 +190,8 @@
         c[75] = saludCodigo;
         c[76] = esFonasa ? '' : texto(t.fun).slice(0, 16);
         c[77] = esFonasa ? '0' : monto(t.rentaIsapre);
-        c[78] = esFonasa ? '0' : '1';                         // 1 pesos, 2 UF
-        c[79] = esFonasa ? '0' : monto(t.cotizacionPactada || t.cotizacionIsapre);
+        c[78] = esFonasa ? '0' : (esPlanUF ? '2' : '1');
+        c[79] = esFonasa ? '0' : (esPlanUF ? ufPlan(t.planUF) : monto(t.cotizacionPactada || t.cotizacionIsapre));
         c[80] = esFonasa ? '0' : monto(t.cotizacionIsapre);
         c[81] = '0';
         c[82] = '0';
@@ -258,5 +268,68 @@
         return problemas;
     }
 
-    return { generar: generar, validar: validar, campos: CAMPOS, tablas: { AFP: AFP, SALUD: SALUD, MUTUAL: MUTUAL, CCAF: CCAF }, partirRut: partirRut, dvValido: dvValido };
+    /* Arma el archivo a partir del lote de liquidaciones de la demo. */
+    function partesNombre(record) {
+        var ap = ascii(record.apPaterno);
+        var am = ascii(record.apMaterno);
+        var nom = ascii(record.nombres);
+        if (nom) return { apellidoPaterno: ap, apellidoMaterno: am, nombres: nom };
+        var p = ascii(record.nombre).split(/\s+/).filter(Boolean);
+        if (p.length >= 3) {
+            return { apellidoPaterno: p[p.length - 2], apellidoMaterno: p[p.length - 1], nombres: p.slice(0, p.length - 2).join(' ') };
+        }
+        if (p.length === 2) return { apellidoPaterno: p[1], apellidoMaterno: '', nombres: p[0] };
+        return { apellidoPaterno: '', apellidoMaterno: '', nombres: p.join(' ') };
+    }
+
+    function buscarMonto(lista, prefijo) {
+        for (var i = 0; i < (lista || []).length; i++) {
+            if (texto(lista[i].concepto).toLowerCase().indexOf(prefijo) === 0) return lista[i].monto;
+        }
+        return 0;
+    }
+
+    function buscarClave(lista, clave) {
+        for (var i = 0; i < (lista || []).length; i++) {
+            if (lista[i].clave === clave) return lista[i].monto;
+        }
+        return 0;
+    }
+
+    function desdeLiquidaciones(resultados, opciones) {
+        var o = opciones || {};
+        var trabajadores = (resultados || []).filter(function (r) { return r && r.detalle && !r.error; }).map(function (r) {
+            var rec = r.record || {}, d = r.detalle || {}, emp = d.empleador || {};
+            var n = partesNombre(rec);
+            var esFonasa = rec.salud !== 'isapre';
+            return {
+                rut: rec.rut,
+                apellidoPaterno: n.apellidoPaterno,
+                apellidoMaterno: n.apellidoMaterno,
+                nombres: n.nombres,
+                sexo: rec.sexo,
+                nacionalidad: rec.nacionalidad || '0',
+                afp: rec.afp,
+                salud: esFonasa ? 'Fonasa' : (rec.isapreNombre || ''),
+                isapreMoneda: esFonasa ? '' : 'UF',
+                planUF: rec.planUF,
+                fun: rec.fun || '',
+                dias: rec.dias,
+                rentaAfp: d.bases ? d.bases.baseAfp : 0,
+                cotizacionAfp: buscarMonto(d.descuentosLegales, 'afp'),
+                sis: buscarClave(emp.lineas, 'sis'),
+                cotizacionSalud: buscarMonto(d.descuentosLegales, 'salud'),
+                rentaIsapre: esFonasa ? 0 : (d.bases ? d.bases.baseAfp : 0),
+                cotizacionIsapre: esFonasa ? 0 : buscarMonto(d.descuentosLegales, 'salud'),
+                rentaMutual: d.bases ? d.bases.baseAfp : 0,
+                cotizacionMutual: buscarClave(emp.lineas, 'mutual'),
+                rentaAfc: d.bases ? d.bases.baseAfc : 0,
+                aporteTrabajadorAfc: buscarMonto(d.descuentosLegales, 'seguro de cesant'),
+                aporteEmpleadorAfc: buscarClave(emp.lineas, 'afc')
+            };
+        });
+        return generar({ periodo: o.periodo, empleador: { mutual: o.mutual }, trabajadores: trabajadores });
+    }
+
+    return { generar: generar, desdeLiquidaciones: desdeLiquidaciones, validar: validar, campos: CAMPOS, tablas: { AFP: AFP, SALUD: SALUD, MUTUAL: MUTUAL, CCAF: CCAF }, partirRut: partirRut, dvValido: dvValido };
 }));
