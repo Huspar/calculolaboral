@@ -119,18 +119,54 @@ function crearAlmacenSql(sql) {
 
         // ---------- datos de la empresa y de los trabajadores (siempre cifrados: la base solo ve bytes) ----------
 
-        async obtenerEmpresa(cuentaId) {
-            const r = await filas('SELECT id, datos_cifrados, version_clave FROM empresas WHERE cuenta_id = $1::uuid', [cuentaId]);
+        /** La empresa pedida de la cuenta, o la primera si no se indica cual. */
+        async obtenerEmpresa(cuentaId, empresaId) {
+            const r = empresaId
+                ? await filas('SELECT id, datos_cifrados, version_clave FROM empresas WHERE cuenta_id = $1::uuid AND id = $2::uuid', [cuentaId, empresaId])
+                : await filas('SELECT id, datos_cifrados, version_clave FROM empresas WHERE cuenta_id = $1::uuid ORDER BY creada, id LIMIT 1', [cuentaId]);
             return r[0] ? { id: r[0].id, datos: Buffer.from(r[0].datos_cifrados), version: Number(r[0].version_clave) } : null;
         },
 
-        async guardarEmpresa(cuentaId, datos, version, ahoraIso) {
-            const r = await filas(
-                'INSERT INTO empresas (cuenta_id, datos_cifrados, version_clave, actualizada) VALUES ($1::uuid, $2::bytea, $3::smallint, $4::timestamptz) ' +
-                'ON CONFLICT (cuenta_id) DO UPDATE SET datos_cifrados = EXCLUDED.datos_cifrados, version_clave = EXCLUDED.version_clave, actualizada = EXCLUDED.actualizada RETURNING id',
+        /** Todas las empresas de la cuenta, de la mas antigua a la mas nueva. */
+        async listarEmpresas(cuentaId) {
+            const r = await filas('SELECT id, datos_cifrados, version_clave FROM empresas WHERE cuenta_id = $1::uuid ORDER BY creada, id', [cuentaId]);
+            return r.map(f => ({ id: f.id, datos: Buffer.from(f.datos_cifrados), version: Number(f.version_clave) }));
+        },
+
+        /** Guarda una empresa existente (devuelve null si no es de la cuenta). Sin `empresaId`, la primera; si la cuenta no tiene ninguna, la crea. */
+        async guardarEmpresa(cuentaId, datos, version, ahoraIso, empresaId) {
+            if (empresaId) {
+                const r = await filas(
+                    'UPDATE empresas SET datos_cifrados = $3::bytea, version_clave = $4::smallint, actualizada = $5::timestamptz WHERE id = $2::uuid AND cuenta_id = $1::uuid RETURNING id',
+                    [cuentaId, empresaId, datos, version, ahoraIso]
+                );
+                return r[0] ? { id: r[0].id } : null;
+            }
+            const r = await conCandado('empresas:' + cuentaId,
+                'WITH act AS (UPDATE empresas SET datos_cifrados = $2::bytea, version_clave = $3::smallint, actualizada = $4::timestamptz ' +
+                'WHERE id = (SELECT id FROM empresas WHERE cuenta_id = $1::uuid ORDER BY creada, id LIMIT 1) RETURNING id), ' +
+                'ins AS (INSERT INTO empresas (cuenta_id, datos_cifrados, version_clave, creada, actualizada) SELECT $1::uuid, $2::bytea, $3::smallint, $4::timestamptz, $4::timestamptz ' +
+                'WHERE NOT EXISTS (SELECT 1 FROM empresas WHERE cuenta_id = $1::uuid) RETURNING id) ' +
+                'SELECT id FROM act UNION ALL SELECT id FROM ins',
                 [cuentaId, datos, version, ahoraIso]
             );
             return { id: r[0].id };
+        },
+
+        /** Agrega otra empresa a la cuenta, sin pasar de `maxEmpresas`. Devuelve { id } o null si ya esta en el maximo. */
+        async crearEmpresa({ cuentaId, datos, version, ahoraIso, maxEmpresas }) {
+            const r = await conCandado('empresas:' + cuentaId,
+                'INSERT INTO empresas (cuenta_id, datos_cifrados, version_clave, creada, actualizada) SELECT $1::uuid, $2::bytea, $3::smallint, $4::timestamptz, $4::timestamptz ' +
+                'WHERE (SELECT count(*) FROM empresas WHERE cuenta_id = $1::uuid) < $5::int RETURNING id',
+                [cuentaId, datos, version, ahoraIso, maxEmpresas]
+            );
+            return r[0] ? { id: r[0].id } : null;
+        },
+
+        /** Borra la empresa y, en cascada, sus trabajadores, meses, honorarios y enlaces. Devuelve true o false. */
+        async borrarEmpresa(cuentaId, empresaId) {
+            const r = await filas('DELETE FROM empresas WHERE id = $2::uuid AND cuenta_id = $1::uuid RETURNING id', [cuentaId, empresaId]);
+            return r.length > 0;
         },
 
         async listarTrabajadores(empresaId) {

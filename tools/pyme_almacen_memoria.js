@@ -61,15 +61,37 @@ function crearAlmacenMemoria() {
         async registrarAuditoria(a) { E.auditoria.push(a); },
 
         // ---- empresa y trabajadores ----
-        async obtenerEmpresa(cuentaId) {
-            const e = E.empresas.find(x => x.cuentaId === cuentaId);
+        async obtenerEmpresa(cuentaId, empresaId) {
+            const e = empresaId ? E.empresas.find(x => x.cuentaId === cuentaId && x.id === empresaId) : E.empresas.find(x => x.cuentaId === cuentaId);
             return e ? { id: e.id, datos: Buffer.from(e.datos), version: e.version } : null;
         },
-        async guardarEmpresa(cuentaId, datos, version) {
-            let e = E.empresas.find(x => x.cuentaId === cuentaId);
+        async listarEmpresas(cuentaId) {
+            return E.empresas.filter(x => x.cuentaId === cuentaId).map(e => ({ id: e.id, datos: Buffer.from(e.datos), version: e.version }));
+        },
+        async guardarEmpresa(cuentaId, datos, version, ahoraIso, empresaId) {
+            let e = empresaId ? E.empresas.find(x => x.cuentaId === cuentaId && x.id === empresaId) : E.empresas.find(x => x.cuentaId === cuentaId);
+            if (!e && empresaId) return null;
             if (!e) { e = { id: crypto.randomUUID(), cuentaId }; E.empresas.push(e); }
             e.datos = Buffer.from(datos); e.version = version;
             return { id: e.id };
+        },
+        async crearEmpresa({ cuentaId, datos, version, maxEmpresas }) {
+            if (E.empresas.filter(x => x.cuentaId === cuentaId).length >= maxEmpresas) return null;
+            const e = { id: crypto.randomUUID(), cuentaId, datos: Buffer.from(datos), version };
+            E.empresas.push(e);
+            return { id: e.id };
+        },
+        async borrarEmpresa(cuentaId, empresaId) {
+            if (!E.empresas.some(x => x.cuentaId === cuentaId && x.id === empresaId)) return false;
+            const tids = E.trabajadores.filter(x => x.empresaId === empresaId).map(x => x.id);
+            E.meses = E.meses.filter(m => tids.indexOf(m.trabajadorId) < 0);
+            E.documentos = E.documentos.filter(m => tids.indexOf(m.trabajadorId) < 0);
+            E.vacaciones = E.vacaciones.filter(m => tids.indexOf(m.trabajadorId) < 0);
+            E.enlaces = E.enlaces.filter(m => tids.indexOf(m.trabajadorId) < 0);
+            E.trabajadores = E.trabajadores.filter(x => x.empresaId !== empresaId);
+            E.honorarios = E.honorarios.filter(x => x.empresaId !== empresaId);
+            E.empresas = E.empresas.filter(x => x.id !== empresaId);
+            return true;
         },
         async listarTrabajadores(empresaId) {
             return E.trabajadores.filter(x => x.empresaId === empresaId).map(x => ({ id: x.id, activo: x.activo, datos: Buffer.from(x.datos), version: x.version }));

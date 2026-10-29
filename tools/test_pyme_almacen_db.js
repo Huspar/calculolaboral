@@ -243,6 +243,44 @@ async function main() {
         await assert.rejects(() => sql.query("INSERT INTO honorarios (empresa_id, periodo, datos_cifrados, version_clave) VALUES ($1, '2026-13', 'x', 1)", [empresaId]), 'la base rechaza un período inválido');
         paso('honorarios: boletas cifradas por mes, se reemplazan, con máximo de meses, se borran con lista vacía y se exportan');
 
+        // ---- Varias empresas por cuenta contra la base real (migración 008) ----
+        const PilotoMulti = require('../api/_pyme/piloto');
+        const srvP = require('../api/_pyme/datos').crear({ almacen, cifrado: cif, piloto: PilotoMulti.crear({}) });
+        const correoMulti = 'multi-' + marca + '@ejemplo.invalid';
+        const idMulti = (await sql.query('INSERT INTO cuentas (email) VALUES ($1) RETURNING id', [correoMulti]))[0].id;
+        const cuentaMulti = { cuentaId: idMulti, email: correoMulti };
+        const emp = (n) => ({ razonSocial: 'Cliente ' + n + ' SpA', rut: rutDe(76330000 + n) });
+        const empM1 = await srvP.guardarEmpresa(cuentaMulti, emp(1));
+        assert.ok(empM1.ok && empM1.empresaId);
+        assert.strictEqual((await srvP.guardarEmpresa(cuentaMulti, { ...emp(1), giro: 'Editada' })).empresaId, empM1.empresaId, 'sin indicar empresa se edita la empM1');
+        const empM2 = await srvP.crearEmpresa(cuentaMulti, emp(2));
+        assert.ok(empM2.ok && empM2.empresaId !== empM1.empresaId);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM empresas WHERE cuenta_id = $1', [idMulti]))[0].n, 2);
+        assert.deepStrictEqual((await srvP.estado(cuentaMulti)).empresas.map(e => e.razonSocial), ['Cliente 1 SpA', 'Cliente 2 SpA']);
+        assert.strictEqual((await srvP.estado(cuentaMulti)).empresa.giro, 'Editada');
+        assert.strictEqual((await srvP.estado({ ...cuentaMulti, empresaId: empM2.empresaId })).empresa.razonSocial, 'Cliente 2 SpA');
+        assert.strictEqual((await srvP.estado({ ...cuentaMulti, empresaId: crypto.randomUUID() })).codigo, 'no_existe');
+        assert.strictEqual((await srvP.estado({ cuentaId, email: correo, empresaId: empM2.empresaId })).codigo, 'no_existe', 'la empresa de otra cuenta no existe para esta');
+        assert.strictEqual((await srvP.guardarEmpresa({ cuentaId, email: correo, empresaId: empM2.empresaId }, emp(9))).codigo, 'no_existe', 'no se puede editar una empresa ajena');
+        // 30 altas a la vez: el candado deja pasar solo hasta el máximo del piloto (25 en total)
+        const tandas = await Promise.all(Array.from({ length: 30 }, (_, i) => srvP.crearEmpresa(cuentaMulti, emp(100 + i))));
+        assert.strictEqual(tandas.filter(r => r.ok).length, 23);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM empresas WHERE cuenta_id = $1', [idMulti]))[0].n, 25);
+        // borrar una empresa se lleva sus trabajadores y meses, y deja las demás
+        const tM = (await srvP.crearTrabajador({ ...cuentaMulti, empresaId: empM2.empresaId }, trab(51))).trabajador.id;
+        assert.ok((await srvP.crearTrabajador({ ...cuentaMulti, empresaId: empM1.empresaId }, trab(51))).ok, 'el mismo RUT en otra empresa de la cuenta');
+        assert.ok((await srvP.guardarMes({ ...cuentaMulti, empresaId: empM2.empresaId }, tM, '2026-10', { diasTrabajados: 30 })).ok);
+        assert.strictEqual((await srvP.borrarEmpresa(cuentaMulti, empM2.empresaId, false)).codigo, 'confirmacion');
+        assert.ok((await srvP.borrarEmpresa(cuentaMulti, empM2.empresaId, true)).ok);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM trabajadores WHERE id = $1', [tM]))[0].n, 0);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM meses WHERE trabajador_id = $1', [tM]))[0].n, 0);
+        assert.strictEqual((await srvP.estado({ ...cuentaMulti, empresaId: empM1.empresaId })).trabajadores.length, 1);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM empresas WHERE cuenta_id = $1', [idMulti]))[0].n, 24);
+        assert.ok(!(await srvP.borrarEmpresa(cuentaMulti, empM2.empresaId, true)).ok, 'ya no existe');
+        await sql.query('DELETE FROM cuentas WHERE id = $1', [idMulti]);
+        assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM empresas WHERE cuenta_id = $1', [idMulti]))[0].n, 0);
+        paso('varias empresas: alta con candado hasta el máximo, estado por empresa, sin cruzar cuentas, borrado en cascada');
+
         // ---- Liquidación compartida por enlace contra la base real (migración 005) ----
         const ahoraEnl = new Date().toISOString(), venceEnl = new Date(Date.now() + 60 * 86400000).toISOString();
         assert.strictEqual(await almacen.crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId: tid, periodo: '2026-09', tokenHash: 'h1-' + marca, pagada: true, ahoraIso: ahoraEnl, venceIso: venceEnl }), true);

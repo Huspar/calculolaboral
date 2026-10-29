@@ -75,7 +75,7 @@ caso('durante el piloto toda cuenta tiene el cupo de 50 y el estado lo dice (sin
     assert.deepStrictEqual([extra.ok, extra.codigo], [false, 'limite']);
     assert.ok(/hasta 50/.test(extra.error), extra.error);
     const est = await m.datos.estado(s.cuenta);
-    assert.deepStrictEqual(est.limites, { maxActivos: 50, paseVence: Pi.VENCE, paseProducto: 'pyme12', piloto: true, pilotoHasta: '2026-12-31' });
+    assert.deepStrictEqual(est.limites, { maxActivos: 50, maxEmpresas: 25, paseVence: Pi.VENCE, paseProducto: 'pyme12', piloto: true, pilotoHasta: '2026-12-31' });
 });
 
 caso('al terminar el piloto, o si se cierra antes, la cuenta vuelve a 1 trabajador activo', async () => {
@@ -83,7 +83,7 @@ caso('al terminar el piloto, o si se cierra antes, la cuenta vuelve a 1 trabajad
         const s = await conEmpresa(m, 'ana@ejemplo.cl');
         if (avanzar) m.reloj.t = Date.parse('2027-01-02T12:00:00Z');
         const est = await m.datos.estado(s.cuenta);
-        assert.deepStrictEqual(est.limites, { maxActivos: 1, paseVence: null, paseProducto: null }, nombre);
+        assert.deepStrictEqual(est.limites, { maxActivos: 1, maxEmpresas: 1, paseVence: null, paseProducto: null }, nombre);
         assert.ok((await m.datos.crearTrabajador(s.cuenta, trabajador(1))).ok, nombre);
         assert.strictEqual((await m.datos.crearTrabajador(s.cuenta, trabajador(2))).codigo, 'limite', nombre);
     }

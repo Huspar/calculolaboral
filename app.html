@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.21.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.22.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -89,6 +89,11 @@ gtag('js', new Date());
 <div class="app-empresa">
 <strong id="app-empresa-nombre">Tu empresa</strong>
 <span id="app-empresa-rut" class="mono"></span>
+<div id="app-empresas" class="app-empresas" hidden>
+<label class="sr-only" for="app-empresa-sel">Empresa con la que trabajas</label>
+<select id="app-empresa-sel"></select>
+<button type="button" class="btn-texto" id="app-empresa-nueva"><span class="material-icons" aria-hidden="true">add</span>Agregar empresa</button>
+</div>
 </div>
 <nav class="app-nav" aria-label="Secciones">
 <a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span>Cierre del mes</a>
@@ -751,7 +756,8 @@ gtag('js', new Date());
 </div>
 </div>
 <div class="form-acciones">
-<button type="submit" id="pm-emp-guardar" class="btn btn-primario"><span class="material-icons" aria-hidden="true">save</span>Guardar empresa</button>
+<button type="submit" id="pm-emp-guardar" class="btn btn-primario"><span class="material-icons" aria-hidden="true">save</span><span id="pm-emp-guardar-txt">Guardar empresa</span></button>
+<button type="button" id="pm-emp-borrar" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">delete</span>Borrar esta empresa y todo lo suyo</button>
 <p id="pm-emp-estado" class="lq-estado" role="status"></p>
 </div>
 </form>
@@ -902,6 +908,6 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.23.0" defer></script>
+<script src="/js/app_pyme.js?v=1.24.0" defer></script>
 </body>
 </html>

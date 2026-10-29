@@ -7,7 +7,9 @@
  *   GET  /api/pyme/sesion                          { autenticado, email }
  *   POST /api/pyme/salir                           cierra la sesion
  *   GET  /api/pyme/estado                          empresa, trabajadores y limites de la cuenta
- *   PUT  /api/pyme/empresa            { empresa }  guarda la empresa (cifrada)
+ *   PUT  /api/pyme/empresa            { empresa }  guarda la empresa (cifrada); con el encabezado X-CL-Empresa, esa empresa de la cuenta
+ *   POST /api/pyme/empresas           { empresa }  agrega otra empresa a la cuenta (hasta el máximo de la cuenta)
+ *   DELETE /api/pyme/empresas         { id, confirmar: true }  borra la empresa con todo lo suyo
  *   POST|PUT|DELETE /api/pyme/trabajador[?id=]  { trabajador }   crea, actualiza o borra un trabajador
  *   PUT  /api/pyme/prestamos?trabajador=ID  { prestamos }   reemplaza los préstamos con cuotas de un trabajador
  *   PUT  /api/pyme/ausencias?trabajador=ID  { ausencias }   reemplaza las licencias y permisos de un trabajador (solo tipo y fechas)
@@ -105,6 +107,12 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const s = await auth.leerSesion(H.leerCookie(req, H.NOMBRE_COOKIE));
         if (!s.autenticado) { H.json(res, 401, RESPUESTA_SIN_SESION); return null; }
         if (s.renovada) res.setHeader('Set-Cookie', H.cookieSesion(s.renovada.token, s.renovada.vence, Date.now()));
+        // Cuenta con varias empresas (estudios contables): el panel dice con cuál trabaja en el encabezado X-CL-Empresa; sin él, la primera
+        const pedida = req.headers && req.headers['x-cl-empresa'];
+        if (pedida) {
+            if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(pedida))) { H.json(res, 400, { ok: false, codigo: 'empresa_invalida', error: 'La empresa indicada no es válida.' }); return null; }
+            s.empresaId = String(pedida).toLowerCase();
+        }
         return s;
     }
 
@@ -136,6 +144,19 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const s = await sesionParaEscribir(req, res);
         if (!s) return;
         return responder(res, await datos.guardarEmpresa(s, H.cuerpoDe(req).empresa));
+    }
+
+    // Agregar otra empresa a la cuenta (POST) o borrar una con todo lo suyo (DELETE)
+    async function empresas(req, res) {
+        const m = req.method;
+        if (m !== 'POST' && m !== 'DELETE') { res.setHeader('Allow', 'POST, DELETE'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        const b = H.cuerpoDe(req);
+        if (m === 'POST') return responder(res, await datos.crearEmpresa(s, b.empresa));
+        const r = await datos.borrarEmpresa(s, b.id, b.confirmar);
+        if (r.ok) await auth.auditar('empresa_borrada', s.cuentaId, H.ipDe(req));
+        return responder(res, r);
     }
 
     async function trabajador(req, res) {
@@ -344,7 +365,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {

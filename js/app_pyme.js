@@ -53,12 +53,21 @@
     function guardar(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } }
     function plural(n, uno, varios) { return n + ' ' + (n === 1 ? uno : varios); }
 
+    // Empresa con la que se trabaja (cuentas de estudios con varias empresas); se recuerda en este navegador
+    var KEY_EMPRESA = 'cl_pyme_empresa', empresaSel = null, empresaNueva = false;
+    try { empresaSel = window.localStorage.getItem(KEY_EMPRESA) || null; } catch (e) { /* sin almacenamiento */ }
+    function recordarEmpresa(id) {
+        empresaSel = id || null;
+        try { if (id) window.localStorage.setItem(KEY_EMPRESA, id); else window.localStorage.removeItem(KEY_EMPRESA); } catch (e) { /* sin almacenamiento */ }
+    }
+
     // ---------- API ----------
     function api(ruta, o) {
         o = o || {};
         if (ejemplo) return ejemplo.api(ruta, o);
         var url = '/api/pyme/' + ruta + (o.query ? '?' + new URLSearchParams(o.query).toString() : '');
         var init = { method: o.metodo || 'GET', credentials: 'same-origin', headers: {} };
+        if (empresaSel) init.headers['X-CL-Empresa'] = empresaSel;   // cuentas con varias empresas: con cuál se trabaja
         if (init.method !== 'GET') {
             init.headers['Content-Type'] = 'application/json';
             init.headers['X-CL-Pyme'] = '1';
@@ -162,6 +171,7 @@
         if (vista === null) { navegar('', { reemplazar: true }); return; }
         if (base === 'trabajadores' && partes[1]) vista = 'trabajador';
         if (vista !== vistaActual) avisoGlobal('', '');
+        if (vista !== 'empresa') empresaNueva = false;
         vistaActual = vista;
         Array.prototype.forEach.call(document.querySelectorAll('.vista'), function (s) { s.hidden = s.getAttribute('data-vista') !== vista; });
         Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
@@ -343,7 +353,7 @@
     });
 
     // ---------- modo de ejemplo ----------
-    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.2', '/js/pyme_demo.js?v=1.0.2'];
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.3', '/js/pyme_demo.js?v=1.0.3'];
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
     function cargarScript(src) {
@@ -422,12 +432,18 @@
     function cargar() {
         return api('estado').then(function (r) {
             if (sinSesion(r)) return;
+            if (!r.ok && r.estado === 404 && r.datos.codigo === 'no_existe' && empresaSel) {
+                // La empresa recordada ya no existe (o es de otra cuenta): se vuelve a la primera
+                recordarEmpresa(null);
+                return cargar();
+            }
             if (!r.ok) {
                 // Sin conexión o falla del servidor: la sesión puede seguir vigente, así que se ofrece reintentar en vez de pedir el correo
                 if (r.estado === 0 || r.estado >= 500) { $('pm-fallo-texto').textContent = r.estado === 0 ? 'Revisa tu conexión a internet e intenta de nuevo. Tus datos siguen guardados.' : 'Tuvimos un problema en nuestro servidor. Intenta de nuevo en unos minutos; tus datos siguen guardados.'; mostrar('fallo'); return; }
                 mostrar('entrada', r.datos.error || 'No pudimos cargar tus datos.'); return;
             }
             estado = r.datos;
+            if (!ejemplo && estado.empresaId) recordarEmpresa(estado.empresaId);
             if (!periodoSel) periodoSel = periodoPorDefecto();
             dibujarMarco();
             mostrar('panel');
@@ -473,6 +489,7 @@
         $('app-empresa-rut').textContent = e ? 'RUT ' + Rut.formatear(e.rut) : 'Faltan los datos de la empresa';
         $('pm-correo').textContent = estado.cuenta.email;
         $('cuenta-correo').textContent = estado.cuenta.email;
+        dibujarEmpresas();
         var lim = estado.limites, caja = $('app-pase'), txt = $('app-pase-texto');
         caja.classList.remove('vigente', 'porvencer', 'ejemplo');
         $('pm-ejemplo-franja').hidden = !estado.ejemplo;
@@ -491,12 +508,64 @@
         dibujarPase();
     }
 
+    // ---------- varias empresas por cuenta ----------
+    // El selector aparece si la cuenta puede tener más de una empresa (piloto) o ya tiene varias
+    function variasEmpresas() {
+        var lista = (estado && estado.empresas) || [];
+        return !!estado && !estado.ejemplo && lista.length > 0 && (((estado.limites && estado.limites.maxEmpresas) || 1) > 1 || lista.length > 1);
+    }
+    function dibujarEmpresas() {
+        var caja = $('app-empresas'), multi = variasEmpresas();
+        caja.hidden = !multi;
+        if (!multi) return;
+        var lista = estado.empresas;
+        $('app-empresa-sel').innerHTML = lista.map(function (e) {
+            return '<option value="' + esc(e.id) + '"' + (e.id === estado.empresaId ? ' selected' : '') + '>' + esc(e.razonSocial || 'Sin nombre') + (e.rut ? ' · ' + esc(Rut.formatear(e.rut)) : '') + '</option>';
+        }).join('');
+        var tope = (estado.limites && estado.limites.maxEmpresas) || 1;
+        $('app-empresa-nueva').disabled = lista.length >= tope;
+        $('app-empresa-nueva').title = lista.length >= tope ? 'Tu cuenta llegó al máximo de ' + tope + ' empresas.' : '';
+    }
+    function cambiarEmpresa(id) {
+        recordarEmpresa(id);
+        empresaNueva = false;
+        reiniciar();
+        mostrar('cargando');
+        try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ }
+        cerrarMenu(true);
+        return cargar();
+    }
+    $('app-empresa-sel').addEventListener('change', function () { if (this.value && this.value !== (estado && estado.empresaId)) cambiarEmpresa(this.value); });
+    $('app-empresa-nueva').addEventListener('click', function () { empresaNueva = true; navegar('empresa'); });
+    $('pm-emp-borrar').addEventListener('click', function () {
+        if (!estado || !estado.empresaId) return;
+        var nombre = (estado.empresa && estado.empresa.razonSocial) || 'esta empresa', id = estado.empresaId, est = $('pm-emp-estado');
+        confirmar('¿Borrar ' + nombre + '?', 'Se borran sus trabajadores, liquidaciones, documentos, vacaciones, honorarios y enlaces. No se puede deshacer: antes puedes bajar un respaldo desde Mi cuenta.', 'Borrar empresa').then(function (si) {
+            if (!si) return;
+            mensaje(est, '', 'Borrando…');
+            api('empresas', { metodo: 'DELETE', cuerpo: { id: id, confirmar: true } }).then(function (r) {
+                if (sinSesion(r)) return;
+                if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos borrar la empresa.'); return; }
+                recordarEmpresa(null);
+                reiniciar();
+                mostrar('cargando');
+                try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ }
+                cargar().then(function () { avisoGlobal('ok', 'Empresa borrada.'); });
+            });
+        });
+    });
+
     // ---------- empresa ----------
     function dibujarEmpresa() {
         var f = $('pm-emp-form');
         limpiarErrores(f);
-        llenar(f, estado.empresa || {});
-        logoActual = (estado.empresa && estado.empresa.logo) || '';
+        var nueva = empresaNueva && variasEmpresas();
+        if (!nueva) empresaNueva = false;
+        llenar(f, nueva ? {} : (estado.empresa || {}));
+        $('emp-titulo').textContent = nueva ? 'Nueva empresa' : 'Empresa';
+        $('pm-emp-guardar-txt').textContent = nueva ? 'Agregar empresa' : 'Guardar empresa';
+        $('pm-emp-borrar').hidden = nueva || !variasEmpresas();
+        logoActual = nueva ? '' : ((estado.empresa && estado.empresa.logo) || '');
         dibujarLogo();
         mensaje($('pm-emp-estado'), '', '');
     }
@@ -527,8 +596,14 @@
         datos.logo = logoActual;
         limpiarErrores(f);
         mensaje(est, '', 'Guardando…');
-        api('empresa', { metodo: 'PUT', cuerpo: { empresa: datos } }).then(function (r) {
+        var crear = empresaNueva && variasEmpresas();
+        (crear ? api('empresas', { metodo: 'POST', cuerpo: { empresa: datos } }) : api('empresa', { metodo: 'PUT', cuerpo: { empresa: datos } })).then(function (r) {
             if (sinSesion(r)) return;
+            if (r.ok && crear) {
+                // La empresa nueva queda como la que se está viendo
+                cambiarEmpresa(r.datos.empresaId).then(function () { avisoGlobal('ok', 'Empresa agregada. Ahora puedes cargar sus trabajadores.'); });
+                return;
+            }
             if (r.ok) { cargar().then(function () { mensaje($('pm-emp-estado'), 'ok', 'Guardado.'); }); return; }
             mostrarErrores(f, r.datos.errores);
             mensaje(est, 'error', r.datos.error || 'No pudimos guardar.');
