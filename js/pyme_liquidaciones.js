@@ -35,9 +35,12 @@
         return new Date(Date.UTC(a[0], a[1], 0)).getUTCDate();
     }
 
+    // Fin del contrato: la fecha de término anotada (finiquito) o, si no hay, el vencimiento del plazo fijo
+    function terminoDe(t) { return t && (t.fechaTermino || (t.contrato === 'plazo_fijo' ? t.fechaTerminoPlazo : '')) || ''; }
+
     function diasBase(t, periodo) {
         var inicio = periodo + '-01', fin = periodo + '-' + dos(ultimoDia(periodo));
-        var ingreso = t && t.fechaIngreso, termino = t && t.contrato === 'plazo_fijo' ? t.fechaTerminoPlazo : '';
+        var ingreso = t && t.fechaIngreso, termino = terminoDe(t);
         if (ingreso && ingreso > fin) return 0;
         if (termino && termino < inicio) return 0;
         var desde = ingreso && ingreso >= inicio ? Math.min(+ingreso.slice(8, 10), 30) : 1;
@@ -45,7 +48,7 @@
         return Math.max(0, Math.min(30, hasta - desde + 1));
     }
 
-    function rangoContrato(t) { return { desde: t && t.fechaIngreso, hasta: t && t.contrato === 'plazo_fijo' ? t.fechaTerminoPlazo : '' }; }
+    function rangoContrato(t) { return { desde: t && t.fechaIngreso, hasta: terminoDe(t) }; }
     // Días a pagar del mes con las licencias y permisos sin goce de la ficha
     function diasPropuestos(t, periodo) {
         var lista = (t && t.ausencias) || [];
@@ -199,7 +202,7 @@
         try {
             var r = SC.calcular({
                 periodo: periodo, distribucion: (t && t.distribucion) || '5', variable: variable, ausencias: ausencias,
-                desde: t && t.fechaIngreso, hasta: t && t.contrato === 'plazo_fijo' ? t.fechaTerminoPlazo : '', esFeriado: opc.esFeriado
+                desde: t && t.fechaIngreso, hasta: terminoDe(t), esFeriado: opc.esFeriado
             });
             return { aplica: true, monto: r.monto, detalle: r.detalle, calculo: r, error: '' };
         } catch (err) {
@@ -213,7 +216,7 @@
     }
 
     var api = {
-        diasBase: diasBase, mesBase: mesBase, resumen: resumen, previred: previred, estadoDe: estadoDe,
+        terminoDe: terminoDe, diasBase: diasBase, mesBase: mesBase, resumen: resumen, previred: previred, estadoDe: estadoDe,
         cuotasDe: cuotasDe, cuotasDelMes: cuotasDelMes, estadoPrestamo: estadoPrestamo, saldoPrestamos: saldoPrestamos, sumarMes: sumarMes,
         semanaCorridaMes: semanaCorridaMes, diasPropuestos: diasPropuestos,
         version: '1.5.0'

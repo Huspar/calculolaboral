@@ -51,6 +51,9 @@ const CAMPOS_TRABAJADOR = {
     afCargas: { t: 'entero', min: 0, max: 20, def: 0 },
     apvContrato: { t: 'texto', max: 20 },
     fun: { t: 'texto', max: 16 },
+    // Término del contrato (finiquito): el mes del término el trabajador va en Previred y en el LRE como retiro; causal según la tabla 1 del LRE de la DT
+    fechaTermino: { t: 'fecha' },
+    causalTermino: { t: 'enum', valores: ['3', '4', '5', '6', '7', '8', '24', '25', '26', '27', '28', '29', '11', '12', '13', '14', '15', '16', '18', '19', '20'], def: '' },
     // Para la nómina de pagos (opcionales: la nómina avisa a quién le falta)
     banco: { t: 'texto', max: 40 },
     tipoCuenta: { t: 'enum', valores: ['corriente', 'vista', 'ahorro'], def: '' },
@@ -232,6 +235,10 @@ function validarTrabajador(entrada) {
         v.renovaciones = 0;
     }
     if (v.salud === 'fonasa') { v.isapreNombre = ''; v.isaprePlanUF = 0; }
+    if (v.fechaTermino) {
+        if (!v.causalTermino) errores.causalTermino = 'Elige la causal del término del contrato.';
+        if (v.fechaIngreso && v.fechaTermino < v.fechaIngreso) errores.fechaTermino = 'No puede ser anterior a la fecha de ingreso.';
+    } else v.causalTermino = '';
     if (v.fechaNacimiento && v.fechaIngreso && v.fechaIngreso < v.fechaNacimiento) errores.fechaIngreso = 'No puede ser anterior a la fecha de nacimiento.';
     return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor: v };
 }

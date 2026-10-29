@@ -697,4 +697,15 @@ caso('licencias y permisos: se guardan en la ficha con su ruta, editar la ficha 
     assert.deepStrictEqual((await m.datos.guardarAusencias(cuenta, tid, [])).trabajador.ausencias, []);
 });
 
+caso('término del contrato: exige causal, no puede ser anterior al ingreso y sin fecha se borra la causal', () => {
+    const base = { nombre: 'Ana', rut: '12.345.678-5', fechaIngreso: '2026-03-01' };
+    assert.ok(!V.validarTrabajador({ ...base, fechaTermino: '2026-10-15' }).ok);
+    assert.ok(!V.validarTrabajador({ ...base, fechaTermino: '2026-02-15', causalTermino: '4' }).ok);
+    assert.ok(!V.validarTrabajador({ ...base, fechaTermino: '2026-10-15', causalTermino: '99' }).ok);
+    const ok1 = V.validarTrabajador({ ...base, fechaTermino: '2026-10-15', causalTermino: '19' });
+    assert.ok(ok1.ok && ok1.valor.causalTermino === '19');
+    const sin = V.validarTrabajador({ ...base, causalTermino: '4' });
+    assert.ok(sin.ok && sin.valor.causalTermino === '');
+});
+
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

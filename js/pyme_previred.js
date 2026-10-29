@@ -54,6 +54,9 @@
     }
 
     function movimiento(t, periodo) {
+        // Retiro: el mes del término del contrato (movimiento 2, con la fecha de término)
+        var fin = texto(t.fechaTermino);
+        if (fin && fin.slice(0, 7) === periodo) return { codigo: '2', desde: '', hasta: ddmmaaaa(fin) };
         var ing = texto(t.fechaIngreso);
         if (ing && ing.slice(0, 7) === periodo) {
             var plazo = t.contrato === 'plazo_fijo' || t.contrato === 'obra';
@@ -117,6 +120,8 @@
             if (!res.empleador) { errores.push(quien + ': la liquidación no trae las cotizaciones del empleador.'); return; }
             if ((res.montos.apv || 0) > 0 && !texto(t.apvContrato)) { errores.push(quien + ': tiene APV y falta el número de contrato en su ficha.'); return; }
             if (lineaMonto(res.haberesNoImponibles, 'asignaci') > 0 && !t.afTramo) { errores.push(quien + ': recibe asignación familiar y falta el tramo en su ficha.'); return; }
+            if (texto(t.fechaTermino) && texto(t.fechaTermino).slice(0, 7) === periodo && texto(t.fechaIngreso).slice(0, 7) === periodo) avisos.push(quien + ': ingresó y terminó en el mismo mes; Previred admite un solo movimiento por línea y el archivo informa el retiro. Revisa si necesita además el ingreso.');
+            if (texto(t.fechaTermino).slice(0, 7) === periodo && res.bases.dias > Math.min(30, Number(texto(t.fechaTermino).slice(8, 10)))) { errores.push(quien + ': su liquidación guardada paga ' + res.bases.dias + ' días y el contrato terminó el ' + texto(t.fechaTermino).slice(8, 10) + '. Ábrela, vuelve a preparar el mes y guárdala de nuevo.'); return; }
             var x = trabajador(t, res, periodo);
             if (x._derivado) avisos.push(quien + ': los apellidos se separaron del nombre completo; revísalos en el archivo o agrégalos en su ficha.');
             delete x._derivado;
@@ -128,7 +133,8 @@
         });
 
         if (empresa.ccaf) avisos.push('La empresa está afiliada a una caja de compensación: el archivo informa la renta, pero no calcula sus cotizaciones ni créditos; revísalos en Previred.');
-        avisos.push('Si alguien terminó su contrato este mes, su línea de retiro no va en el archivo: agrégala en Previred.');
+        var plazos = items.filter(function (it) { var t = it.t; return !texto(t.fechaTermino) && t.contrato === 'plazo_fijo' && texto(t.fechaTerminoPlazo).slice(0, 7) === periodo; }).map(function (it) { return texto(it.t.nombre) || texto(it.t.rut); });
+        if (plazos.length) avisos.push('Su plazo fijo vence este mes y no tienen anotado el término del contrato: ' + plazos.join(', ') + '. Si no siguen, anota el término en su ficha para que salgan como retiro; si continúan, actualiza su contrato.');
 
         if (errores.length) return { texto: '', filas: [], errores: errores, avisos: avisos, incluidos: 0 };
 

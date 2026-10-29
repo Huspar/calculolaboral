@@ -33,7 +33,8 @@
     var NO_IMPONIBLES_LIBRES = [
         [/perdida de caja|caja/, '2304'], [/desgaste|herramienta/, '2305'], [/gastos? por causa|causa del trabajo/, '2306'],
         [/cambio de residencia|residencia/, '2307'], [/sala cuna/, '2308'], [/teletrabajo|distancia/, '2309'], [/alojamiento/, '2310'],
-        [/traslaci/, '2312'], [/viatico/, '2303'], [/colacion/, '2301'], [/movilizacion/, '2302']
+        [/traslaci/, '2312'], [/viatico/, '2303'], [/colacion/, '2301'], [/movilizacion/, '2302'],
+        [/feriado/, '2313'], [/anos de servicio|años de servicio|ano de servicio/, '2314'], [/sustitutiva|aviso previo/, '2315'], [/fuero/, '2316']
     ];
     function codNoImponible(l) {
         var c = l.concepto;
@@ -74,6 +75,10 @@
 
     function trabajador(t, res, extra, errores) {
         var quien = texto(t.nombre) || texto(t.rut), v = {}, mal = [];
+        if (texto(t.fechaTermino).slice(0, 7) === extra.periodo && res.bases && res.bases.dias > Math.min(30, Number(texto(t.fechaTermino).slice(8, 10)))) {
+            errores.push(quien + ': su liquidación guardada paga ' + res.bases.dias + ' días y el contrato terminó el ' + texto(t.fechaTermino).slice(8, 10) + '. Ábrela, vuelve a preparar el mes y guárdala de nuevo.');
+            return null;
+        }
         function clasificar(lineas, fn, tipo) {
             (lineas || []).forEach(function (l) {
                 if (!(l.monto > 0)) return;
@@ -110,6 +115,9 @@
         v['5302'] = v['5301'] - v['5341'] - v['5361'] - v['5362'];
         v['5410'] = sumar(v, Object.keys(v).filter(function (c) { return c.charAt(0) === '4'; }));
         v['5501'] = v['5201'] - v['5301'];
+        // Indemnizaciones del finiquito (cód. 2313 a 2316): sin impuesto salvo las tributables (2417, 2418)
+        var indem = sumar(v, ['2313', '2314', '2315', '2316', '2331']), indemTrib = sumar(v, ['2417', '2418']);
+        if (indem || indemTrib) { v['5502'] = indem + indemTrib; v['5564'] = indemTrib; v['5565'] = indem; }
         if (v['5201'] !== Math.round(res.totalHaberes) || v['5301'] !== Math.round(res.totalDescuentos) || v['5501'] !== Math.round(res.liquido)) {
             errores.push(quien + ': los conceptos clasificados no cuadran con su liquidación (haberes ' + v['5201'] + ' de ' + Math.round(res.totalHaberes) + ', descuentos ' + v['5301'] + ' de ' + Math.round(res.totalDescuentos) + ').');
             return null;
@@ -122,6 +130,7 @@
         return {
             rut: t.rut, nombre: t.nombre, fechaIngreso: t.fechaIngreso, afp: t.afp,
             salud: t.salud === 'isapre' ? 'isapre' : 'fonasa', isapreNombre: t.isapreNombre,
+            fechaTermino: t.fechaTermino, causalTermino: t.causalTermino,
             jornadaHoras: t.jornadaHoras, dias: res.bases && res.bases.dias,
             diasLicencia: extra.diasLicencia, diasVacaciones: extra.diasVacaciones,
             cargas: cargas, tramo: v['2311'] > 0 ? t.afTramo : '', conApv: (v['3155'] || 0) + (v['3156'] || 0) > 0,
@@ -136,14 +145,15 @@
                 errores.push((texto(it.t.nombre) || texto(it.t.rut)) + ': su liquidación no se pudo calcular.');
                 return;
             }
-            var x = trabajador(it.t, it.res, it, errores);
+            var x = trabajador(it.t, it.res, Object.assign({ periodo: periodo }, it), errores);
             if (x) trabajadores.push(x);
         });
         var hayLey21735 = (datos.items || []).some(function (it) {
             return it.res && it.res.empleador && it.res.empleador.lineas.some(function (l) { return (l.clave === 'seguroSocial' || l.clave === 'afp') && l.monto > 0; });
         });
         if (hayLey21735) avisos.push('Los aportes del empleador de la Ley 21.735 (cuenta individual y seguro social) no tienen un código en el suplemento del LRE vigente: no van en el archivo. Revisa si Mi DT los pide.');
-        avisos.push('El archivo no incluye términos de contrato del mes (fecha y causal de término): si alguien dejó de trabajar este mes, agrégalo en Mi DT.');
+        var plazosL = (datos.items || []).filter(function (it) { var t = it.t; return !texto(t.fechaTermino) && t.contrato === 'plazo_fijo' && texto(t.fechaTerminoPlazo).slice(0, 7) === periodo; }).map(function (it) { return texto(it.t.nombre) || texto(it.t.rut); });
+        if (plazosL.length) avisos.push('Su plazo fijo vence este mes y no tienen anotado el término del contrato: ' + plazosL.join(', ') + '. Si no siguen, anota el término en su ficha para que el libro los informe con su causal.');
         avisos.push('La comuna y la región de prestación de servicios se toman de la comuna de la empresa.');
         if (errores.length) return { texto: '', filas: [], errores: errores, avisos: avisos, incluidos: 0, nombreArchivo: '' };
 

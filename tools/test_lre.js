@@ -162,11 +162,41 @@ caso('sin trabajadores o con período inválido no hay archivo', () => {
     assert.ok(s.errores.some(e => /Período/.test(e)));
 });
 
-caso('el aviso de la Ley 21.735 y el de términos de contrato acompañan al archivo', () => {
+caso('los avisos de la Ley 21.735, de la comuna y del plazo fijo que vence acompañan al archivo', () => {
     const s = armar([{ t: T1, res: calc(T1) }]);
-    assert.ok(s.avisos.some(a => /términos de contrato/.test(a)));
+    const plazo = Object.assign({}, T1, { contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-31' });
+    assert.ok(armar([{ t: plazo, res: calc(plazo) }]).avisos.some(a => /plazo fijo vence este mes/.test(a)));
     assert.ok(s.avisos.some(a => /comuna de la empresa/.test(a)));
     assert.ok(s.avisos.some(a => /Ley 21\.735/.test(a)));
+});
+
+caso('el término del contrato lleva su fecha y su causal (cód 1103 y 1104) y las indemnizaciones salen en su código con sus totales', () => {
+    const t = Object.assign({}, T1, { fechaTermino: '2026-10-20', causalTermino: '19' });
+    const r = calc(t, { diasTrabajados: 20, otrosNoImponibles: [{ nombre: 'Indemnización años de servicio', monto: 650000 }, { nombre: 'Indemnización sustitutiva del aviso previo', monto: 650000 }, { nombre: 'Feriado proporcional', monto: 200000 }] });
+    const s = armar([{ t, res: r }]);
+    assert.deepStrictEqual(s.errores, []);
+    const a = cols(s.filas[0]);
+    const n = (c) => Number(a[col(c)] || 0);
+    assert.strictEqual(a[col('1103')], '20/10/2026'); assert.strictEqual(a[col('1104')], '19');
+    assert.strictEqual(n('2314'), 650000); assert.strictEqual(n('2315'), 650000); assert.strictEqual(n('2313'), 200000);
+    assert.strictEqual(n('5502'), 1500000); assert.strictEqual(n('5565'), 1500000); assert.strictEqual(n('5564'), 0);
+    assert.strictEqual(n('5201'), r.totalHaberes); assert.strictEqual(n('5501'), r.liquido);
+    assert.deepStrictEqual(G.validar(s.texto), []);
+});
+
+caso('un término sin causal, de otro mes o anterior al ingreso se rechaza con el motivo', () => {
+    const casos = [[{ fechaTermino: '2026-10-20' }, /causal/], [{ fechaTermino: '2026-09-20', causalTermino: '4' }, /no cae en el período/], [{ fechaTermino: '2020-10-20', causalTermino: '4', fechaIngreso: '2026-10-25' }, /no cae|posterior/]];
+    casos.forEach(([extra, re]) => {
+        const t = Object.assign({}, T1, extra);
+        const s = armar([{ t, res: calc(t) }]);
+        assert.ok(s.errores.some(e => re.test(e)), JSON.stringify(extra) + ' ' + s.errores.join('|'));
+    });
+});
+
+caso('el LRE tampoco se arma si la liquidación paga más días que los del contrato', () => {
+    const t = Object.assign({}, T1, { fechaTermino: '2026-10-15', causalTermino: '4' });
+    const s = armar([{ t, res: calc(t, { diasTrabajados: 30 }) }]);
+    assert.strictEqual(s.texto, ''); assert.ok(s.errores.some(e => /paga 30 días y el contrato terminó el 15/.test(e)));
 });
 
 console.log(ok + ' pruebas correctas');

@@ -353,7 +353,7 @@
     });
 
     // ---------- modo de ejemplo ----------
-    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.4', '/js/pyme_demo.js?v=1.0.4'];
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.5', '/js/pyme_demo.js?v=1.0.5'];
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
     function cargarScript(src) {
@@ -2160,6 +2160,14 @@
     // Piloto gratuito (hasta el 31-dic-2026): lo mismo que el Pase de 12 meses, sin pagar
     function enPiloto() { return !!(estado && estado.limites && estado.limites.piloto); }
     function tuPase() { return enPiloto() ? 'el piloto gratuito' : 'tu pase vigente'; }
+    // Quienes entran al mes: los activos y quienes terminaron su contrato ese mes (salen en Previred y en el LRE como retiro); después de ese mes ya no
+    function delMes(periodo) {
+        return ((estado && estado.trabajadores) || []).filter(function (t) {
+            var f = t.fechaTermino || '';
+            if (f && f.slice(0, 7) < periodo) return false;
+            return t.activo || !!f;
+        });
+    }
     function activos() { return ((estado && estado.trabajadores) || []).filter(function (t) { return t.activo; }); }
     function trabajadorPorId(id) { return ((estado && estado.trabajadores) || []).filter(function (t) { return t.id === id; })[0]; }
     function mesesDe(periodo) { return mesesCache[periodo] || {}; }
@@ -2253,7 +2261,7 @@
         $('liq-titulo').textContent = 'Liquidaciones de ' + nombrePeriodo(periodoSel);
         valoresAviso();
 
-        var lista = activos(), guardados = mesesDe(periodoSel);
+        var lista = delMes(periodoSel), guardados = mesesDe(periodoSel);
         $('pm-liq-vacio').hidden = lista.length > 0;
         $('liq-panel').hidden = !lista.length;
         $('pm-liq-acciones').hidden = !lista.length;
@@ -2329,7 +2337,7 @@
     var PROY = window.CLPymeProyeccion;
     function dibujarProyeccion() {
         var caja = $('liq-proy'), p = periodoSel, guardados = mesesDe(p);
-        var con = activos().map(function (t) { var g = guardados[t.id]; return { t: t, c: g && g.calculo && g.calculo.conDesglose ? g.calculo : null }; });
+        var con = delMes(periodoSel).map(function (t) { var g = guardados[t.id]; return { t: t, c: g && g.calculo && g.calculo.conDesglose ? g.calculo : null }; });
         var base = con.filter(function (x) { return x.c; }), hitos = PROY.hitos(p);
         caja.hidden = !PROY.tasaLey(p) || !base.length || !hitos.length;
         if (caja.hidden) return;
@@ -2345,7 +2353,7 @@
         if (faltan.length) pie += '<p>No incluye a ' + esc(faltan.join(', ')) + ': guarda su liquidación de este mes para sumarla.</p>';
         // Jornada de 40 horas: solo mientras falte para el 26-abr-2028
         if (p < PROY.JORNADA_40.slice(0, 7)) {
-            var mas40 = activos().filter(function (t) { return (Number(t.jornadaHoras) || 42) > 40 && t.sueldoBase; });
+            var mas40 = delMes(periodoSel).filter(function (t) { return (Number(t.jornadaHoras) || 42) > 40 && t.sueldoBase; });
             if (mas40.length) pie += '<p>Desde el 26 de abril de 2028 la jornada máxima baja a 40 horas, sin rebajar el sueldo (Ley 21.561). Con eso sube el valor de la hora extra: ' +
                 mas40.map(function (t) { return esc(t.nombre.split(' ')[0]) + ' de <span class="mono">' + pesos(PROY.horaExtra(t.sueldoBase, Math.min(42, Number(t.jornadaHoras) || 42))) + '</span> a <span class="mono">' + pesos(PROY.horaExtra(t.sueldoBase, 40)) + '</span>'; }).join(', ') + '.</p>';
         }
@@ -2932,7 +2940,7 @@
     });
 
     function prepararMes(est) {
-        var pendientes = activos().filter(function (t) { return !mesesDe(periodoSel)[t.id] && L.diasBase(t, periodoSel) > 0; });
+        var pendientes = delMes(periodoSel).filter(function (t) { return !mesesDe(periodoSel)[t.id] && L.diasBase(t, periodoSel) > 0; });
         if (!pendientes.length) return;
         if (!VAL[periodoSel] || VAL[periodoSel].estado === 'cargando') { mensaje(est, 'error', 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return; }
         mensaje(est, '', 'Preparando ' + plural(pendientes.length, 'liquidación', 'liquidaciones') + '…');
@@ -2987,7 +2995,7 @@
         var val = VAL[periodoSel];
         if (!val || val.estado !== 'ok') { mensaje(est, 'error', val && val.estado === 'error' ? (val.mensaje || 'No se pudieron obtener los valores del mes.') : 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return; }
         var hojas = [], impresas = [], omitidas = [];
-        activos().forEach(function (t) {
+        delMes(periodoSel).forEach(function (t) {
             var reg = mesesDe(periodoSel)[t.id];
             if (ids.indexOf(t.id) < 0 || !reg) return;
             reg = conCuotas(t, reg, periodoSel);
@@ -3008,7 +3016,7 @@
         var val = VAL[periodoSel];
         if (!val || val.estado !== 'ok') { mensaje(est, 'error', 'Espera a que terminemos de consultar la UF y la UTM del mes.'); return null; }
         var filas = [], omitidas = [];
-        activos().forEach(function (t) {
+        delMes(periodoSel).forEach(function (t) {
             var reg = mesesDe(periodoSel)[t.id];
             if (!reg) return;
             var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
@@ -3034,7 +3042,7 @@
         function lista(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
         if (!val || val.estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; return; }
         var items = [], omitidas = [];
-        activos().forEach(function (t) {
+        delMes(periodoSel).forEach(function (t) {
             var reg = mesesDe(periodoSel)[t.id];
             if (!reg) return;
             var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
@@ -3060,7 +3068,7 @@
         var val = VAL[periodoSel];
         if (!val || val.estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; return null; }
         var items = [], omitidas = [];
-        activos().forEach(function (t) {
+        delMes(periodoSel).forEach(function (t) {
             var reg = mesesDe(periodoSel)[t.id];
             if (!reg) return;
             var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
@@ -3122,7 +3130,7 @@
         function lista(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
         if (!val || val.estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; return; }
         var items = [], omitidas = [];
-        activos().forEach(function (t) {
+        delMes(periodoSel).forEach(function (t) {
             var reg = mesesDe(periodoSel)[t.id];
             if (!reg) return;
             var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
@@ -3182,7 +3190,7 @@
         setTimeout(restaurar, 2000);
     });
 
-    $('pm-liq-imprimir-todas').addEventListener('click', function () { imprimirMeses(activos().map(function (t) { return t.id; }), $('pm-liq-estado')); });
+    $('pm-liq-imprimir-todas').addEventListener('click', function () { imprimirMeses(delMes(periodoSel).map(function (t) { return t.id; }), $('pm-liq-estado')); });
     $('pm-liq-imprimir').addEventListener('click', function () {
         if (!editando || $('pm-liq-imprimir').disabled) return;
         var r = calcularMes(editando.t, editando.mes, periodoSel);

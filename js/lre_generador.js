@@ -129,6 +129,13 @@
         if (texto(t.fechaIngreso).slice(0, 7) > periodo) throw new Error('La fecha de ingreso es posterior al período.');
         v['1101'] = rutLre(t.rut);
         v['1102'] = ddmmaaaa(t.fechaIngreso);
+        if (texto(t.fechaTermino)) {
+            if (texto(t.fechaTermino).slice(0, 7) !== periodo) throw new Error('El término del contrato (' + ddmmaaaa(t.fechaTermino) + ') no cae en el período del archivo.');
+            if (!/^\d{1,2}$/.test(texto(t.causalTermino))) throw new Error('Falta la causal del término del contrato.');
+            if (texto(t.fechaTermino) <= texto(t.fechaIngreso)) throw new Error('La fecha de término debe ser posterior a la de inicio del contrato.');
+            v['1103'] = ddmmaaaa(t.fechaTermino);
+            v['1104'] = texto(t.causalTermino);
+        }
         v['1105'] = String(com.region);
         v['1106'] = String(com.codigo);
         v['1170'] = '1';                                       // impuesto único de segunda categoría

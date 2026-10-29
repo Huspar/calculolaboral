@@ -249,4 +249,14 @@ caso('estadoDe', () => {
     assert.strictEqual(L.estadoDe({ emitida: '2026-10-05' }), 'emitida');
 });
 
+caso('la fecha de término anotada corta los días del mes del término y deja en cero los meses siguientes', () => {
+    const t = T({ fechaTermino: '2026-09-18', causalTermino: '4' });
+    assert.strictEqual(L.diasBase(t, '2026-09'), 18);
+    assert.strictEqual(L.diasBase(t, '2026-10'), 0);
+    assert.strictEqual(L.diasBase(t, '2026-08'), 30);
+    assert.strictEqual(L.terminoDe(t), '2026-09-18');
+    assert.strictEqual(L.terminoDe(T({ contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-12-31' })), '2026-12-31');
+    assert.strictEqual(L.terminoDe(T({ contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-12-31', fechaTermino: '2026-11-10' })), '2026-11-10');
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

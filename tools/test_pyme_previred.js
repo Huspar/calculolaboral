@@ -116,4 +116,28 @@ caso('sin trabajadores no hay archivo', () => {
     assert.strictEqual(s.texto, ''); assert.ok(s.errores.length);
 });
 
+caso('el término del contrato en el mes sale como retiro (movimiento 2) con su fecha, y los días llegan hasta ese día', () => {
+    const t = Object.assign({}, T1, { fechaTermino: '2026-10-15', causalTermino: '4' });
+    const r = calc(t, { diasTrabajados: L.diasBase(t, PER) });
+    const s = armar([{ t, res: r }]);
+    assert.deepStrictEqual(s.errores, []);
+    const f = campos(s.filas[0]);
+    assert.strictEqual(f[14], '2'); assert.strictEqual(f[15], ''); assert.strictEqual(f[16], '15-10-2026');
+    assert.strictEqual(f[12], '15');
+    assert.deepStrictEqual(PV.validar(s.texto), []);
+});
+
+caso('un plazo fijo que vence este mes sin término anotado deja un aviso en vez de adivinar un retiro', () => {
+    const t = Object.assign({}, T1, { contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-31' });
+    const s = armar([{ t, res: calc(t) }]);
+    assert.strictEqual(campos(s.filas[0])[14], '0');
+    assert.ok(s.avisos.some(a => /plazo fijo vence este mes/.test(a)));
+});
+
+caso('si la liquidación guardada paga más días que los del contrato, no se arma el archivo y se dice qué hacer', () => {
+    const t = Object.assign({}, T1, { fechaTermino: '2026-10-15', causalTermino: '4' });
+    const s = armar([{ t, res: calc(t, { diasTrabajados: 30 }) }]);
+    assert.strictEqual(s.texto, ''); assert.ok(s.errores.some(e => /paga 30 días y el contrato terminó el 15/.test(e)));
+});
+
 console.log(ok + ' pruebas correctas');
