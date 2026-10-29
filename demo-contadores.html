@@ -79,8 +79,13 @@
         font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
         color: var(--forest-2); margin-bottom: 10px;
     }
-    h1.v-titulo { font-size: 34px; line-height: 1.12; letter-spacing: -0.03em; font-weight: 700; margin: 0 0 12px; }
-    @media (max-width: 640px) { h1.v-titulo { font-size: 26px; } }
+    h1.v-titulo { font-size: 34px; line-height: 1.12; letter-spacing: -0.03em; font-weight: 700; margin: 0 0 12px; text-wrap: balance; }
+    @media (max-width: 640px) {
+        h1.v-titulo { font-size: 26px; }
+        main { padding-top: 24px; }
+        .demo-head { margin-bottom: 20px; }
+        .demo-head .texto-ayuda { font-size: 14.5px; line-height: 1.45; }
+    }
     .texto-ayuda { font-size: 15px; color: var(--muted); }
     .demo-head .texto-ayuda { font-size: 15.5px; }
 
@@ -297,6 +302,12 @@
 .demo-field select:focus-visible { outline:2px solid var(--forest-2); outline-offset:2px; }
 #warnings-fin:empty, #warnings-liq:empty { display:none; }
 .tabla tbody td[colspan] { white-space:normal; }
+
+/* En 375 la cabecera del resultado se parte en dos lineas por el nombre del archivo */
+@media (max-width: 480px) {
+    #results-fin .panel-head, #results-liq .panel-head { flex-wrap: wrap; row-gap: 2px; }
+    #rows-fin, #rows-liq { width: 100%; margin-left: 0; font-size: 11.5px; text-align: left; overflow-wrap: anywhere; }
+}
 
 /* ---------- tabla en tarjetas (pantallas angostas) ---------- */
 @media (max-width: 700px) {
