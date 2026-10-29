@@ -60,18 +60,21 @@
     .topbar-chip { margin-left: 0; }
     .topbar-cuenta { margin-left: auto; display: flex; align-items: center; gap: 8px; min-width: 0; }
     .topbar-cuenta #cuenta-estado {
-        display: none; align-items: center; gap: 6px; max-width: 280px;
-        padding: 3px 11px; border-radius: 999px; background: #E8F0ED; border: 1px solid #D6E3DE;
+        display: none; max-width: 280px; padding: 3px 11px; border-radius: 999px;
+        background: #E8F0ED; border: 1px solid #D6E3DE; line-height: 1.5;
         color: var(--forest); font-size: 12.5px; font-weight: 600; letter-spacing: -0.01em;
         overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .topbar-cuenta #cuenta-estado.con-sesion { display: inline-flex; }
+    .topbar-cuenta #cuenta-estado.con-sesion { display: inline-block; }
     .topbar-cuenta #cuenta-estado.con-sesion::before {
-        content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex: none;
+        content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+        background: var(--amber); margin-right: 6px; vertical-align: 1px;
     }
     .btn-topbar { background: transparent; border-color: rgba(255,255,255,.28); color: #fff; height: 32px; }
     .topbar .btn-topbar:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.45); }
-    .topbar .btn-topbar { background: transparent; color: #fff; }
+    .topbar .btn-topbar {
+        background: transparent; color: #fff; border-color: rgba(255,255,255,.32); height: 32px;
+    }
     .app-logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
     .app-logo-isotipo {
         width: 34px; height: 34px; border-radius: 10px; background: var(--amber);
@@ -259,7 +262,14 @@
     .demo-drop:hover, .demo-drop.over { border-color: var(--forest-2); background: rgba(15,94,79,.04); }
     .demo-drop .material-icons { font-size: 26px; color: var(--forest-2); margin-bottom: 6px; }
     .demo-drop strong { display: block; font-size: 14px; font-weight: 650; margin-bottom: 3px; letter-spacing: -0.01em; }
-    .demo-drop span:last-child { font-size: 12.5px; color: var(--muted); }
+    .demo-drop span:last-of-type { font-size: 12.5px; color: var(--muted); }
+    /* En escritorio la zona de carga es una franja, no una caja vacía. */
+    @media (min-width: 700px) {
+        .demo-drop { display: flex; align-items: center; gap: 12px; text-align: left; padding: 14px 18px; }
+        .demo-drop .material-icons { margin-bottom: 0; font-size: 22px; }
+        .demo-drop strong { margin-bottom: 0; font-size: 13.5px; }
+        .demo-drop span:last-of-type { margin-left: auto; }
+    }
 
     .demo-nota {
         margin-top: 16px; border: 1px solid #F3E4BE; border-left: 3px solid var(--amber);
@@ -314,7 +324,7 @@
         .topbar-ctx span { font-size: 9px; }
         .topbar-ctx b { font-size: 11.5px; }
         .app-logo-texto { font-size: 16px; }
-        .topbar-cuenta #cuenta-estado { max-width: 150px; }
+        .topbar-cuenta #cuenta-estado { max-width: 170px; }
     }
     @media (max-width: 420px) {
         .topbar-ctx { display: none; }
