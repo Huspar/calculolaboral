@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], actividad: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -59,6 +59,11 @@ function crearAlmacenMemoria() {
             if (s) s.revocada = ahoraIso;
         },
         async registrarAuditoria(a) { E.auditoria.push(a); },
+        async registrarActividad(a) { E.actividad.push(Object.assign({ id: E.actividad.length + 1 }, a)); },
+        async listarActividad(cuentaId, limite) {
+            return E.actividad.filter(x => x.cuentaId === cuentaId).sort((x, y) => y.id - x.id).slice(0, limite)
+                .map(x => ({ id: x.id, empresaId: x.empresaId || null, actorId: x.actorId || null, accion: x.accion, origen: x.origen || 'servidor', cuando: x.cuando }));
+        },
 
         // ---- empresa y trabajadores ----
         async obtenerEmpresa(cuentaId, empresaId) {
@@ -278,6 +283,7 @@ function crearAlmacenMemoria() {
             E.avisos = E.avisos.filter(x => x.cuentaId !== cuentaId);
             E.comentarios = E.comentarios.filter(x => x.cuentaId !== cuentaId);
             E.enlaces = E.enlaces.filter(x => x.cuentaId !== cuentaId);
+            E.actividad = E.actividad.filter(x => x.cuentaId !== cuentaId);
             E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
         }
     };

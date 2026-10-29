@@ -188,7 +188,7 @@
         else if (vista === 'calendario') dibujarCalendario();
         else if (vista === 'contratos') dibujarContratos();
         else if (vista === 'empresa') dibujarEmpresa();
-        else if (vista === 'cuenta') dibujarCuenta();
+        else if (vista === 'cuenta') { dibujarCuenta(); dibujarActividad(); }
         contarVista(vista === 'trabajador' ? 'trabajadores/' + (partes[1] === 'nuevo' ? 'nuevo' : 'carpeta/' + (partes[2] || 'ficha')) : base);
     }
 
@@ -353,7 +353,7 @@
     });
 
     // ---------- modo de ejemplo ----------
-    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.6', '/js/pyme_demo.js?v=1.0.6'];
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.7', '/js/pyme_demo.js?v=1.0.7'];
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
     function cargarScript(src) {
@@ -506,6 +506,37 @@
         }
         dibujarImportar();
         dibujarPase();
+    }
+
+    // ---------- actividad reciente (Mi cuenta) ----------
+    var actividadCache = null;
+    var ETIQUETA_ACTIVIDAD = {
+        empresa_creada: 'Empresa creada', empresa_editada: 'Datos de la empresa editados', empresa_borrada: 'Empresa borrada',
+        ficha_creada: 'Ficha de trabajador creada', ficha_editada: 'Ficha de trabajador editada', ficha_borrada: 'Ficha de trabajador borrada',
+        liquidacion_guardada: 'Liquidación guardada', liquidacion_emitida: 'Liquidación emitida', liquidacion_borrada: 'Liquidación borrada',
+        enlace_creado: 'Enlace de liquidación creado', enlace_anulado: 'Enlace de liquidación anulado', honorarios_guardados: 'Boletas de honorarios guardadas',
+        datos_importados: 'Datos importados', respaldo_descargado: 'Respaldo descargado', descarga_previred: 'Archivo de Previred descargado',
+        descarga_lre: 'Archivo del LRE descargado', descarga_nomina: 'Nómina de pagos descargada', descarga_asiento: 'Asiento contable descargado',
+        descarga_enlaces: 'Enlaces de liquidación descargados', descarga_libro: 'Libro de remuneraciones descargado'
+    };
+    function dibujarActividad() {
+        var caja = $('cuenta-actividad');
+        if (!caja || ejemplo) { if (caja) caja.hidden = true; return; }
+        caja.hidden = false;
+        var pintar = function (lista) {
+            var nombres = {};
+            ((estado && estado.empresas) || []).forEach(function (e) { nombres[e.id] = e.razonSocial; });
+            $('cuenta-actividad-filas').innerHTML = lista.length ? lista.slice(0, 50).map(function (x) {
+                return '<tr><td class="sin-salto">' + esc(new Date(x.cuando).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short' })) + '</td><td>' + esc(ETIQUETA_ACTIVIDAD[x.accion] || x.accion) + '</td><td>' + esc(x.empresaId ? (nombres[x.empresaId] || '') : '') + '</td></tr>';
+            }).join('') : '<tr><td colspan="3" class="vacio">Todavía no hay actividad registrada.</td></tr>';
+        };
+        if (actividadCache) { pintar(actividadCache); return; }
+        api('actividad').then(function (r) {
+            if (sinSesion(r)) return;
+            if (!r.ok) { $('cuenta-actividad-filas').innerHTML = '<tr><td colspan="3" class="vacio">No tienes permiso para ver la actividad.</td></tr>'; return; }
+            actividadCache = r.datos.actividad || [];
+            pintar(actividadCache);
+        });
     }
 
     // ---------- resumen del mes de todas las empresas (Liquidaciones) ----------
@@ -2998,7 +3029,7 @@
         var c = t ? calcularMes(t, mes, periodo) : null;
         var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes, t) : null) : (mes.calculo || null) });
         return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodo }, cuerpo: { mes: cuerpo } }).then(function (r) {
-            if (r.ok) { mesesCache[periodo] = mesesCache[periodo] || {}; mesesCache[periodo][id] = r.datos.mes; estudioCache = {}; resumenEmpresasCache = {}; }
+            if (r.ok) { mesesCache[periodo] = mesesCache[periodo] || {}; mesesCache[periodo][id] = r.datos.mes; estudioCache = {}; resumenEmpresasCache = {}; actividadCache = null; }
             return r;
         });
     }
@@ -3203,6 +3234,7 @@
         a.href = URL.createObjectURL(new Blob(['\ufeff', LIBRO.csv({ empresa: estado.empresa, periodoNombre: nombrePeriodo(periodoSel) }, filas)], { type: 'text/csv;charset=utf-8' }));
         a.download = 'libro-remuneraciones-' + periodoSel + '.csv';
         document.body.appendChild(a); a.click(); a.remove();
+        avisarDescarga('descarga_libro');
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
     });
     // Archivo para Previred (105 campos) con las liquidaciones guardadas del mes: se descarga para revisarlo y cargarlo en Previred
@@ -3228,6 +3260,7 @@
         a.href = URL.createObjectURL(new Blob([s.texto], { type: 'text/plain;charset=us-ascii' }));
         a.download = 'previred-' + periodoSel.replace('-', '') + '.txt';
         document.body.appendChild(a); a.click(); a.remove();
+        avisarDescarga('descarga_previred');
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
         det.innerHTML = '<p><strong>Archivo descargado con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + '.</strong> Es un archivo para revisar y cargar tú en Previred con tu clave: el asistente no se conecta con Previred ni declara por ti. Previred valida el archivo al cargarlo.</p>' +
             lista('Revisa antes de cargarlo', s.avisos.concat(omitidas));
@@ -3248,6 +3281,11 @@
         return { items: items, omitidas: omitidas };
     }
     function listaHtml(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
+    // Avisa al servidor que se bajó un archivo (el archivo se arma en el navegador): queda en el registro de actividad, sin su contenido
+    function avisarDescarga(accion) {
+        if (ejemplo) return;
+        api('actividad', { metodo: 'POST', cuerpo: { accion: accion } }).then(function () { actividadCache = null; }, function () { /* el aviso no impide nada */ });
+    }
     function bajarCsv(nombre, texto) {
         var a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob(['\ufeff', texto], { type: 'text/csv;charset=utf-8' }));
@@ -3262,6 +3300,7 @@
         var omit = s.omitidos.map(function (o) { return o.nombre + ': ' + o.motivo; }).concat(d.omitidas);
         if (!s.incluidos) { det.innerHTML = '<p><strong>No se generó la nómina:</strong> ningún trabajador tiene completa su cuenta. Agrégala en su ficha, en «Cuenta para el pago del sueldo».</p>' + listaHtml('Falta corregir', omit); return; }
         bajarCsv('nomina-pagos-' + periodoSel + '.csv', s.texto);
+        avisarDescarga('descarga_nomina');
         det.innerHTML = '<p><strong>Nómina descargada con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + ' por ' + pesos(s.total) + '.</strong> Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada. Para pagar, cárgala o cópiala tú en el portal de tu banco con tu clave.</p>' +
             listaHtml('No están en la nómina', omit);
     });
@@ -3295,6 +3334,7 @@
                         return f.map(function (v) { v = String(v == null ? '' : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';');
                     }).join('\r\n') + '\r\n';
                     bajarCsv('enlaces-liquidacion-' + p + '.csv', csv);
+                    avisarDescarga('descarga_enlaces');
                     det.innerHTML = '<p><strong>' + plural(nuevos.length, 'enlace creado', 'enlaces creados') + ' y descargados.</strong> Cada enlace muestra solo la liquidación de esa persona, vence a los 60 días y se puede anular desde su liquidación. Envíaselo tú a cada trabajador (WhatsApp o correo): el asistente no guarda ni envía correos de trabajadores. Un revisor automático de enlaces también cuenta como apertura; no es firma ni aceptación.</p>' + listaHtml('Sin enlace nuevo', saltados);
                 });
             });
@@ -3323,6 +3363,7 @@
         if (s.errores.length) { det.innerHTML = '<p><strong>No se generó el asiento.</strong></p>' + listaHtml('Falta corregir', s.errores); return; }
         if (!s.cuadra) { det.innerHTML = '<p><strong>No se generó el asiento:</strong> el debe (' + pesos(s.debe) + ') no cuadra con el haber (' + pesos(s.haber) + '). Avísanos con tu correo y el mes.</p>'; return; }
         bajarCsv('asiento-remuneraciones-' + periodoSel + '.csv', s.texto);
+        avisarDescarga('descarga_asiento');
         det.innerHTML = '<p><strong>Asiento descargado: debe y haber por ' + pesos(s.debe) + '.</strong> Revísalo antes de contabilizarlo; el asistente no se conecta con tu software contable.</p>' +
             (s.sinCodigos ? '<p>' + plural(s.sinCodigos, 'línea', 'líneas') + ' sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento contable» y volver a descargar.</p>' : '') +
             listaHtml('No están en el asiento', d.omitidas);
@@ -3352,6 +3393,7 @@
             a.href = URL.createObjectURL(new Blob([window.CLLre.bytesAnsi(s.texto)], { type: 'text/csv' }));
             a.download = s.nombreArchivo;
             document.body.appendChild(a); a.click(); a.remove();
+            avisarDescarga('descarga_lre');
             setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
             det.innerHTML = '<p><strong>Archivo descargado con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + '</strong> (' + esc(s.nombreArchivo) + ').</p>' +
                 '<p>Es un archivo para revisar y cargar tú en Mi DT, en «Libro de Remuneraciones Electrónico», con tu clave: el asistente no se conecta con la Dirección del Trabajo ni declara por ti. La DT lo valida al recibirlo y avisa por correo. Si ya descargaste el archivo de base de Mi DT, súbelo en «Usar la plantilla de Mi DT» para que los encabezados queden idénticos.</p>' +

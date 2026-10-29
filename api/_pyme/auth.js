@@ -55,6 +55,13 @@ function crear(deps) {
         } catch (e) { /* la auditoria no debe impedir el acceso */ }
     }
 
+    /** Actividad de la cuenta (quién hizo qué): nunca montos ni datos de trabajadores. No impide la acción si falla. */
+    async function registrar(accion, s, empresaId, ip, origen) {
+        try {
+            await almacen.registrarActividad({ cuentaId: s.cuentaId, empresaId: empresaId || s.empresaId || null, actorId: s.personaId || s.cuentaId, accion, origen: origen || 'servidor', ipHash: T.huellaIp(secreto, ip), cuando: new Date(ahora()).toISOString() });
+        } catch (e) { /* el registro no debe impedir el trabajo */ }
+    }
+
     /**
      * Devuelve { ok: true } siempre que el correo sea valido, se haya enviado o no (no revela nada de la cuenta).
      * { ok: false, motivo: 'correo' } si el formato no es de correo, { ok: false, motivo: 'limite' } si esta IP pidio demasiados enlaces.
@@ -159,7 +166,7 @@ function crear(deps) {
         return n <= LIMITE_ESCRITURAS_POR_HORA;
     }
 
-    return { solicitarAcceso, previsualizar, completar, leerSesion, cerrar, auditar, permitirEscritura };
+    return { solicitarAcceso, previsualizar, completar, leerSesion, cerrar, auditar, registrar, listarActividad: (cuentaId, n) => almacen.listarActividad(cuentaId, n), permitirEscritura };
 }
 
 module.exports = {

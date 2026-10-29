@@ -35,6 +35,7 @@ function crearAlmacenSql(sql) {
             await filas("DELETE FROM enlaces_acceso WHERE vence < $1::timestamptz - interval '1 day'", [ahoraIso]);
             await filas("DELETE FROM sesiones WHERE vence < $1::timestamptz - interval '1 day'", [ahoraIso]);
             await filas("DELETE FROM intentos WHERE ventana < $1::timestamptz - interval '2 days'", [ahoraIso]);
+            await filas("DELETE FROM actividad WHERE cuando < $1::timestamptz - interval '24 months'", [ahoraIso]);
         },
 
         /** Suma 1 al contador de la ventana y devuelve el total. */
@@ -111,6 +112,16 @@ function crearAlmacenSql(sql) {
 
         async revocarSesion(tokenHash, ahoraIso) {
             await filas('UPDATE sesiones SET revocada = $2::timestamptz WHERE token_hash = $1 AND revocada IS NULL', [tokenHash, ahoraIso]);
+        },
+
+        /** Registro de actividad del estudio: solo tipo de acción e ids, nunca montos ni datos de trabajadores. */
+        async registrarActividad({ cuentaId, empresaId, actorId, accion, origen, ipHash, cuando }) {
+            await filas('INSERT INTO actividad (cuenta_id, empresa_id, actor_id, accion, origen, ip_hash, cuando) VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6, $7::timestamptz)',
+                [cuentaId, empresaId || null, actorId || null, accion, origen || 'servidor', ipHash || null, cuando]);
+        },
+        async listarActividad(cuentaId, limite) {
+            const r = await filas('SELECT id, empresa_id, actor_id, accion, origen, cuando FROM actividad WHERE cuenta_id = $1::uuid ORDER BY cuando DESC, id DESC LIMIT $2::int', [cuentaId, limite]);
+            return r.map(x => ({ id: Number(x.id), empresaId: x.empresa_id, actorId: x.actor_id, accion: x.accion, origen: x.origen, cuando: new Date(x.cuando).toISOString() }));
         },
 
         async registrarAuditoria({ cuentaId, evento, ipHash, cuando }) {

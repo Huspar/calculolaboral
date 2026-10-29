@@ -281,6 +281,20 @@ async function main() {
         assert.strictEqual((await sql.query('SELECT count(*)::int AS n FROM empresas WHERE cuenta_id = $1', [idMulti]))[0].n, 0);
         paso('varias empresas: alta con candado hasta el máximo, estado por empresa, sin cruzar cuentas, borrado en cascada');
 
+        // ---- Registro de actividad contra la base real (migración 010) ----
+        const ahoraAct = new Date().toISOString();
+        await almacen.registrarActividad({ cuentaId, empresaId, actorId: cuentaId, accion: 'ficha_creada', origen: 'servidor', ipHash: 'h-' + marca, cuando: ahoraAct });
+        await almacen.registrarActividad({ cuentaId, empresaId: null, actorId: cuentaId, accion: 'descarga_lre', origen: 'cliente', ipHash: null, cuando: new Date(Date.now() + 1000).toISOString() });
+        const actLista = await almacen.listarActividad(cuentaId, 10);
+        assert.deepStrictEqual(actLista.map(x => [x.accion, x.origen]), [['descarga_lre', 'cliente'], ['ficha_creada', 'servidor']]);
+        await assert.rejects(() => sql.query("INSERT INTO actividad (cuenta_id, accion, origen) VALUES ($1, 'x', 'otro')", [cuentaId]), 'la base solo admite los dos orígenes');
+        await assert.rejects(() => sql.query("INSERT INTO actividad (cuenta_id, accion) VALUES ($1, '')", [cuentaId]), 'la acción no puede ir vacía');
+        await sql.query("INSERT INTO actividad (cuenta_id, accion, cuando) VALUES ($1, 'vieja', now() - interval '25 months')", [cuentaId]);
+        await almacen.limpiar(new Date().toISOString());
+        assert.strictEqual((await sql.query("SELECT count(*)::int AS n FROM actividad WHERE cuenta_id = $1 AND accion = 'vieja'", [cuentaId]))[0].n, 0, 'a los 24 meses se limpia');
+        assert.strictEqual((await sql.query("SELECT count(*)::int AS n FROM actividad WHERE cuenta_id = $1", [cuentaId]))[0].n, 2);
+        paso('actividad: se registra y se lista por cuenta, la base valida el origen y se limpia a los 24 meses');
+
         // ---- Liquidación compartida por enlace contra la base real (migración 005) ----
         const ahoraEnl = new Date().toISOString(), venceEnl = new Date(Date.now() + 60 * 86400000).toISOString();
         assert.strictEqual(await almacen.crearEnlaceLiquidacion({ cuentaId, empresaId, trabajadorId: tid, periodo: '2026-09', tokenHash: 'h1-' + marca, pagada: true, ahoraIso: ahoraEnl, venceIso: venceEnl }), true);
