@@ -207,11 +207,12 @@
 
     /* ---------- resultados ---------- */
     .demo-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
-    @media (max-width: 760px) { .demo-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    /* Bajo 900 las tarjetas de 4 columnas no alcanzan para los montos completos. */
+    @media (max-width: 900px) { .demo-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     .demo-stat { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: #FBFCFC; min-width: 0; }
     .demo-stat dt { font-size: 11.5px; color: var(--muted); font-weight: 600; margin: 0 0 5px; letter-spacing: .01em; }
     .demo-stat dd { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.025em; overflow-wrap: anywhere; }
-    @media (max-width: 760px) { .demo-stat dd { font-size: 17px; } }
+    @media (max-width: 900px) { .demo-stat dd { font-size: 17px; } }
     .demo-stat dd.bad { color: var(--danger); }
 
     .tabla-wrap { overflow-x: auto; max-width: 100%; border: 1px solid var(--line); border-radius: 12px; }
