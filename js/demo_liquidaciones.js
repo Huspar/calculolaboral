@@ -314,7 +314,7 @@
             if (r.error) {
                 return '<tr><td class="nom">' + D.esc(r.record.nombre) + '</td>' +
                     '<td class="mono">' + D.esc(r.record.rut || '—') + '</td>' +
-                    '<td colspan="5"><span style="color:var(--risk)">' + D.esc(r.error) + '</span>' +
+                    '<td colspan="5"><span style="color:var(--danger)">' + D.esc(r.error) + '</span>' +
                     '<div class="corregir">' +
                     '<select data-fila="' + i + '" data-campo="afp" aria-label="AFP">' + opcionesAFP(r.record.afp) + '</select>' +
                     '<select data-fila="' + i + '" data-campo="salud" aria-label="Salud">' + opcionesSalud(r.record.salud) + '</select>' +

@@ -266,9 +266,12 @@
     }
 .corregir { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 .corregir select, .corregir input { height:34px; padding:0 8px; border:1px solid var(--line-2); border-radius:8px; font:inherit; font-size:13px; background:#fff; color:inherit; }
-.cuenta-strip { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 24px; background:#F7FAF9; border-bottom:1px solid var(--line); font-size:13px; color:var(--ink-2); }
-@media (max-width: 640px) { .cuenta-strip { padding:10px 16px; } }
-</style>
+.cuenta-strip { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:0 -24px 20px; padding:10px 24px; background:#F7FAF9; border-bottom:1px solid var(--line); font-size:13px; color:var(--muted); }
+@media (max-width: 640px) { .cuenta-strip { margin:0 -24px 16px; padding:10px 24px; } }
+.demo-field select { height:42px; padding:0 12px; border:1px solid var(--line-2); border-radius:10px; background:#fff; font:inherit; font-size:14px; color:var(--ink); }
+.demo-field select:focus-visible { outline:2px solid var(--forest-2); outline-offset:2px; }
+#warnings-fin:empty, #warnings-liq:empty { display:none; }
+.tabla tbody td[colspan] { white-space:normal; }</style>
 </head>
 <body>
 
@@ -568,13 +571,13 @@
 <script src="/js/liquidacion_engine.js"></script>
 <script src="/js/liquidacion_valores.js"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
-<script src="/js/demo_comun.js?v=1.1.0"></script>
+<script src="/js/demo_comun.js?v=1.2.0"></script>
 <script src="/js/demo_contadores.js?v=1.1.0"></script>
 <script src="/js/previred_generador.js?v=1.3.0"></script>
 <script src="/js/demo_clientes.js?v=1.0.0"></script>
 <script src="/js/demo_validaciones.js?v=1.0.0"></script>
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.0.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.1.0"></script>
+<script src="/js/demo_liquidaciones.js?v=2.2.0"></script>
 </body>
 </html>

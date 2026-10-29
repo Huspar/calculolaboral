@@ -209,8 +209,16 @@
             Object.keys(panes).forEach(function (k) {
                 panes[k].forEach(function (el) {
                     if (!el) return;
-                    if (k === modo) el.removeAttribute('hidden');
-                    else el.setAttribute('hidden', '');
+                    if (k !== modo) { el.setAttribute('hidden', ''); return; }
+                    // Los resultados solo se muestran cuando hay algo calculado: un panel vacío
+                    // con ceros y botones activos confunde más que ayudar.
+                    if (el.id.indexOf('results-') === 0) {
+                        var tb = el.querySelector('tbody');
+                        if (tb && tb.children.length) el.removeAttribute('hidden');
+                        else el.setAttribute('hidden', '');
+                    } else {
+                        el.removeAttribute('hidden');
+                    }
                 });
             });
             document.dispatchEvent(new CustomEvent('demo:modo', { detail: modo }));
