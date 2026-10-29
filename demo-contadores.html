@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="theme-color" content="#00382E">
-<title>Finiquitos y liquidaciones en lote · CálculoLaboral</title>
-<meta name="description" content="Demo privada para estudios contables: sube un Excel y obtén finiquitos y liquidaciones calculados, en PDF con el logo de tu estudio.">
+<title>Suite para Estudios Contables · Remuneraciones, F29 y Balance · CálculoLaboral</title>
+<meta name="description" content="Suite privada para estudios contables en Chile: finiquitos, liquidaciones Previred y LRE, lector RCV SII para F29, Libro Diario y Mayor, Balance de 8 Columnas, RLI ProPyme y Flujo de Caja.">
 <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
 <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
 <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
@@ -479,6 +479,183 @@
     }
     .demo-acciones .btn { width: 100%; }
 }
+
+/* ---------- suite contable 5 módulos ---------- */
+input[type=date] {
+    width: 100%; height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    font: inherit; font-family: 'Geist Mono', monospace; font-size: 13.5px; color: var(--ink); background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+}
+input[type=date]:hover { border-color: var(--line-2); }
+input[type=date]:focus { outline: none; border-color: var(--forest-2); box-shadow: 0 0 0 3px rgba(15,94,79,.12); }
+input:disabled, select:disabled { opacity: .62; cursor: not-allowed; background: #F3F6F5; }
+
+.ok-txt { color: #067647; font-weight: 700; }
+.cap { text-transform: capitalize; }
+
+.periodo-badge {
+    display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 11px;
+    border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap;
+}
+.periodo-badge .material-icons { font-size: 14px; }
+.periodo-badge.abierto { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.24); color: #fff; }
+.periodo-badge.cerrado { background: var(--amber); border: 1px solid var(--amber); color: #3A2A00; font-weight: 700; }
+@media (max-width: 820px) { .periodo-badge { display: none; } }
+
+.suite-modulos {
+    display: flex; align-items: center; gap: 6px; padding: 5px;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    overflow-x: auto; scrollbar-width: thin; box-shadow: 0 1px 2px rgba(15,26,23,.03);
+}
+.suite-mod-btn {
+    appearance: none; border: 0; background: transparent; color: var(--muted);
+    height: 40px; padding: 0 14px; border-radius: 10px; cursor: pointer;
+    font: inherit; font-size: 13px; font-weight: 650; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 7px; flex: 1 0 auto; justify-content: center;
+    transition: background-color .15s, color .15s;
+}
+.suite-mod-btn .material-icons { font-size: 17px; opacity: .88; }
+.suite-mod-btn:hover { color: var(--forest); background: #F5F8F7; }
+.suite-mod-btn.activo, .suite-mod-btn.activo:hover { background: var(--forest); color: #fff; }
+.suite-mod-btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+@media (max-width: 640px) {
+    .suite-modulos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; overflow: visible; }
+    .suite-mod-btn { min-height: 44px; padding: 0 10px; font-size: 12.5px; justify-content: flex-start; }
+    .suite-mod-btn:last-child { grid-column: 1 / -1; justify-content: center; }
+    .riel .btn-chico { min-height: 44px; }
+}
+
+.suite-pane { display: grid; gap: 14px; min-width: 0; }
+.suite-pane > * { min-width: 0; }
+
+.cierre-banner-bloqueo {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 12px 16px; border-radius: 12px;
+    background: var(--amber-soft); border: 1px solid #F0DBA0; border-left: 4px solid var(--amber);
+    font-size: 12.5px; color: #5C420E; line-height: 1.45;
+}
+.cierre-banner-bloqueo .material-icons { color: #8A6111; font-size: 20px; flex: none; }
+.cierre-banner-bloqueo p { flex: 1 1 260px; margin: 0; }
+
+.grid-dos-paneles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; min-width: 0; }
+.grid-dos-paneles > * { min-width: 0; }
+@media (max-width: 960px) { .grid-dos-paneles { grid-template-columns: minmax(0, 1fr); } }
+
+.rcv-drop-box { display: grid; gap: 6px; min-width: 0; }
+.rcv-drop-estado { font-size: 11.5px; color: var(--muted); font-family: 'Geist Mono', monospace; }
+
+.sub-tabs {
+    display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+}
+.sub-tab-btn {
+    appearance: none; border: 0; background: transparent; color: var(--muted);
+    height: 36px; padding: 0 13px; border-radius: 8px; cursor: pointer;
+    font: inherit; font-size: 12.5px; font-weight: 650; display: inline-flex; align-items: center; gap: 6px;
+}
+.sub-tab-btn:hover { color: var(--forest); }
+.sub-tab-btn.activo { background: var(--forest); color: #fff; }
+@media (max-width: 640px) {
+    .sub-tabs { display: grid; grid-template-columns: 1fr; width: 100%; }
+    .sub-tab-btn { min-height: 44px; justify-content: center; }
+    .trabajo-head .demo-acciones { width: 100%; margin-left: 0 !important; }
+}
+
+.panel, .panel-cuerpo { min-width: 0; max-width: 100%; }
+
+/* Tablas contables formales: mantienen grilla tabular real con scroll horizontal contenido */
+.tabla-contable-wrap {
+    overflow-x: auto; width: 100%; max-width: 100%; border: 1px solid var(--line); border-radius: 12px; background: #fff;
+}
+.tabla-contable {
+    width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 560px;
+}
+.tabla-contable.balance-ocho { min-width: 840px; font-size: 11.5px; }
+.tabla-contable.balance-ocho th, .tabla-contable.balance-ocho td { padding: 7px 6px; }
+.tabla-contable.balance-ocho td:nth-child(2) { max-width: 168px; }
+.tabla-contable.compacta { min-width: 400px; }
+.tabla-contable th {
+    text-align: left; font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--muted); font-weight: 700; padding: 9px 11px; background: #FBFCFC;
+    border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+.tabla-contable th.num, .tabla-contable td.num { text-align: right; }
+.tabla-contable th.grupo-col {
+    text-align: center; border-left: 1px solid var(--line); background: #F4F7F6; color: var(--forest);
+}
+.tabla-contable td {
+    padding: 8px 11px; border-bottom: 1px solid #F2F5F4; vertical-align: middle; line-height: 1.4;
+}
+.tabla-contable td.mono { white-space: nowrap; }
+.tabla-contable tbody tr:last-child td { border-bottom: 0; }
+.tabla-contable tbody tr:hover td { background: #FAFCFB; }
+
+.tabla-contable tr.f29-sec td {
+    background: #F4F7F6; color: var(--forest); font-size: 10.5px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase; padding: 7px 11px; border-top: 1px solid var(--line);
+}
+.tabla-contable tr.f29-subtotal td {
+    background: #FBFCFC; font-weight: 700; border-top: 1px solid var(--line-2); color: var(--ink);
+}
+.tabla-contable tr.f29-remanente td {
+    background: #ECFDF3; color: #065F46; font-weight: 650; border-top: 1px solid #ABEFC6;
+}
+.tabla-contable tr.f29-gran-total td {
+    background: var(--forest); color: #fff; font-weight: 700; font-size: 13px; border-top: 2px solid var(--forest-deep);
+}
+.tabla-contable tr.f29-gran-total:hover td { background: var(--forest); }
+.tabla-contable tr.f29-gran-total .f29-cod { background: var(--amber); color: #3A2A00; border-color: var(--amber); }
+
+.f29-celda-cod { text-align: center; width: 88px; }
+.f29-cod {
+    display: inline-block; min-width: 38px; padding: 2px 7px; border-radius: 6px;
+    background: #EEF3F1; border: 1px solid #D5E0DC; color: var(--forest);
+    font-size: 11px; font-weight: 700; text-align: center;
+}
+.f29-cod-sec { color: var(--muted); font-size: 11px; }
+
+.asiento-lista { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.asiento-lista > *, .asiento-card { min-width: 0; max-width: 100%; overflow: hidden; }
+.asiento-card .asiento-tabla-wrap { border: 0; border-radius: 0 0 var(--radius) var(--radius); }
+.asiento-head { flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.asiento-head h3 { font-size: 13.5px; font-weight: 650; color: var(--ink); margin-top: 2px; }
+.asiento-num { font-size: 11px; color: var(--muted); display: block; }
+.asiento-head-der { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+@media (max-width: 540px) { .asiento-head-der { margin-left: 0; width: 100%; } }
+.asiento-chip {
+    display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px;
+    font-size: 11px; font-weight: 650; white-space: nowrap;
+}
+.asiento-chip .material-icons { font-size: 14px; }
+.chip-automatico { background: #EEF3F1; color: var(--forest); border: 1px solid #D5E0DC; }
+.chip-ajuste { background: var(--amber-soft); color: #7A5410; border: 1px solid #F0DBA0; }
+.chip-auditado { background: #ECFDF3; color: #067647; border: 1px solid #ABEFC6; }
+
+.manual-lineas { display: grid; gap: 8px; margin: 10px 0; }
+.manual-fila {
+    display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 8px; align-items: center;
+}
+@media (max-width: 680px) {
+    .manual-fila { grid-template-columns: 1fr 1fr; padding-bottom: 8px; border-bottom: 1px solid #F0F3F2; }
+    .manual-fila select { grid-column: 1 / -1; }
+    .manual-fila button { grid-column: 1 / -1; min-height: 44px; }
+}
+
+.check-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+@media (max-width: 680px) { .check-grid { grid-template-columns: 1fr; } }
+.check-fila {
+    display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px;
+    border: 1px solid var(--line); border-radius: 10px; background: #FBFCFC; cursor: pointer;
+    font-size: 13px; font-weight: 500;
+}
+.check-fila input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--forest); flex: none; }
+
+@media print {
+    .print-table tr.f29-sec td { background: #F3F5F4; font-weight: 700; font-size: 8pt; text-transform: uppercase; }
+    .print-table tr.f29-subtotal td { border-top: 1px solid #00382E; font-weight: 700; }
+    .print-table tr.f29-gran-total td { border-top: 1.5px solid #00382E; font-weight: 700; font-size: 10pt; }
+}
 </style>
 </head>
 <body>
@@ -497,7 +674,8 @@
             <b id="top-ctx">Finiquitos</b>
         </span>
         <div class="topbar-cuenta">
-            <span class="topbar-chip">Demo privada</span>
+            <span class="periodo-badge abierto" id="suite-estado-badge"><span class="material-icons" aria-hidden="true">lock_open</span>Período abierto</span>
+            <span class="topbar-chip">Suite Contadores</span>
             <span id="cuenta-estado">sin sesión</span>
             <button class="btn btn-chico btn-topbar" type="button" id="btn-entrar">Entrar con mi correo</button>
         </div>
@@ -507,9 +685,9 @@
 <main id="contenido" class="pagina">
 
     <div class="pagina-head">
-        <p class="demo-eyebrow">Finiquitos y liquidaciones en lote</p>
-        <h1 class="v-titulo" tabindex="-1">Sube tu nómina. Baja los documentos calculados.</h1>
-        <p class="texto-ayuda">La calculadora laboral más usada de Chile, procesando tu cartera completa. Finiquitos y liquidaciones con el logo de tu estudio, sin planillas paralelas.</p>
+        <p class="demo-eyebrow">Suite para estudios contables · Nómina, SII y contabilidad</p>
+        <h1 class="v-titulo" tabindex="-1">Remuneraciones, F29, libros contables y balance en un solo flujo.</h1>
+        <p class="texto-ayuda">Procesa finiquitos y liquidaciones en lote, lee el RCV del SII para armar el Formulario 29 y centraliza asientos en Libro Diario, Mayor, Balance de 8 Columnas, RLI ProPyme y Flujo de Caja con el logo de tu estudio.</p>
     </div>
 
     <div class="app">
@@ -517,7 +695,7 @@
         <aside class="riel" aria-label="Estudio, clientes e historial">
             <details class="riel-det" id="riel-det">
                 <summary class="riel-sum">
-                    <span class="material-icons" aria-hidden="true">tune</span>Estudio y clientes
+                    <span class="material-icons" aria-hidden="true">tune</span>Estudio, cliente y régimen
                     <span class="material-icons riel-chev" aria-hidden="true">expand_more</span>
                 </summary>
                 <div class="riel-cuerpo">
@@ -543,25 +721,37 @@
                         <p class="riel-estado">Se guarda en este navegador; con sesión, también en tu cuenta.</p>
                     </section>
 
-                    <section class="riel-bloque" data-modo="liquidaciones">
-                        <h2 class="riel-h">Cliente</h2>
+                    <section class="riel-bloque">
+                        <h2 class="riel-h">Cliente y régimen SII</h2>
                         <select id="liq-clientes-guardados" aria-label="Clientes guardados">
                             <option value="">Clientes guardados (0)</option>
                         </select>
                         <label class="sr-only" for="liq-cliente">Cliente / empresa</label>
                         <input type="text" id="liq-cliente" placeholder="Nombre del cliente" maxlength="60">
+                        <label class="sr-only" for="suite-regimen">Régimen tributario</label>
+                        <select id="suite-regimen" aria-label="Régimen tributario SII">
+                            <option value="14D3">ProPyme General 14 D N°3 (PPM 0,125%)</option>
+                            <option value="14D3_MAYOR">ProPyme General >50k UF (PPM 0,25%)</option>
+                            <option value="14D8">ProPyme Transparente 14 D N°8 (PPM 0,2%)</option>
+                            <option value="14D8_MAYOR">Transparente >50k UF (PPM 0,5%)</option>
+                            <option value="14A">Régimen General Semi-Integrado 14 A</option>
+                        </select>
                         <button class="btn btn-chico" type="button" id="btn-guardar-cliente">Guardar cliente</button>
                     </section>
 
-                    <section class="riel-bloque" data-modo="liquidaciones">
-                        <h2 class="riel-h">Historial</h2>
+                    <section class="riel-bloque">
+                        <h2 class="riel-h">Historial nómina</h2>
                         <div id="historial-liq"></div>
                     </section>
 
-                    <section class="riel-bloque" data-modo="liquidaciones">
-                        <h2 class="riel-h">Archivo</h2>
+                    <section class="riel-bloque">
+                        <h2 class="riel-h">Cierre y respaldo</h2>
+                        <p class="riel-estado mono" id="riel-resumen-f29">F29 cód. 91: $0 · En preparación</p>
                         <div class="riel-acciones">
-                            <button class="btn btn-chico" type="button" id="btn-cerrar-mes">Cerrar el mes</button>
+                            <button class="btn btn-chico" type="button" id="btn-cierre-tributario">
+                                <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
+                            </button>
+                            <button class="btn btn-chico" type="button" id="btn-cerrar-mes">Cerrar el mes (nómina)</button>
                             <button class="btn btn-chico" type="button" id="btn-respaldo">Descargar respaldo</button>
                             <button class="btn btn-chico" type="button" id="btn-restaurar">Restaurar respaldo</button>
                         </div>
@@ -570,10 +760,10 @@
 
                     <section class="riel-bloque">
                         <details class="riel-cols">
-                            <summary>Columnas del archivo</summary>
+                            <summary>Columnas de archivos</summary>
                             <p data-modo="finiquitos"><b>Finiquitos:</b> RUT · Nombre · Fecha ingreso · Fecha término · Sueldo base · Gratificación · Colación y movilización · Promedio variables · Días de vacaciones pendientes · Causal.</p>
                             <p data-modo="liquidaciones"><b>Liquidaciones:</b> RUT · Nombre · Sueldo base · Días trabajados · AFP · Salud (fonasa/isapre) · Plan Isapre UF · Contrato · Jornada · Fecha ingreso · Colación · Movilización · Comisiones · Horas extra · Gratificación.</p>
-                            <p data-modo="liquidaciones">Incluye <b>archivo para Previred</b> de 105 campos y el desglose por trabajador.</p>
+                            <p><b>RCV SII (F29):</b> CSV oficial de Ventas o Compras descargado desde sii.cl (separador punto y coma) o planilla Excel equivalente.</p>
                         </details>
                     </section>
 
@@ -583,6 +773,31 @@
 
         <div class="trabajo">
 
+            <nav class="suite-modulos" id="suite-modulos" aria-label="Módulos de la suite contable">
+                <button type="button" class="suite-mod-btn activo" data-modulo="remuneraciones" aria-current="page">
+                    <span class="material-icons" aria-hidden="true">badge</span>Remuneraciones
+                </button>
+                <button type="button" class="suite-mod-btn" data-modulo="f29" aria-current="false">
+                    <span class="material-icons" aria-hidden="true">request_quote</span>F29 Tributario
+                </button>
+                <button type="button" class="suite-mod-btn" data-modulo="libros" aria-current="false">
+                    <span class="material-icons" aria-hidden="true">menu_book</span>Diario y Mayor
+                </button>
+                <button type="button" class="suite-mod-btn" data-modulo="balance" aria-current="false">
+                    <span class="material-icons" aria-hidden="true">table_chart</span>Balance y RLI
+                </button>
+                <button type="button" class="suite-mod-btn" data-modulo="pnl" aria-current="false">
+                    <span class="material-icons" aria-hidden="true">insights</span>Resultados y Caja
+                </button>
+            </nav>
+
+            <div class="cierre-banner-bloqueo" id="suite-banner-bloqueo" hidden>
+                <span class="material-icons" aria-hidden="true">lock</span>
+                <p id="suite-banner-texto"></p>
+                <button type="button" class="btn btn-chico" id="btn-reabrir-banner">Reabrir para rectificar</button>
+            </div>
+
+            <div class="suite-pane" id="suite-remuneraciones">
             <div class="trabajo-head">
                 <div class="segmento" aria-label="Tipo de documento">
                     <label><input type="radio" name="modo" value="finiquitos"><span>Finiquitos</span></label>
@@ -800,6 +1015,399 @@
                 <li>Descarga el PDF del mes y el archivo para Previred.</li>
             </ol>
         </div>
+            </div><!-- /#suite-remuneraciones -->
+
+            <!-- ==================== MÓDULO 2: F29 TRIBUTARIO ==================== -->
+            <div class="suite-pane" id="suite-f29" hidden>
+                <section class="panel">
+                    <div class="panel-head">
+                        <h2>Lector RCV del SII y parámetros Formulario 29</h2>
+                        <span class="texto-ayuda">Códigos SII verificados 2026</span>
+                    </div>
+                    <div class="panel-cuerpo">
+                        <div class="param-bar">
+                            <div class="demo-field">
+                                <label for="f29-periodo">Período tributario</label>
+                                <input type="month" id="f29-periodo" value="2026-10">
+                            </div>
+                            <div class="demo-field">
+                                <label for="f29-tasa-ppm">Tasa PPM cód. 115 (%)</label>
+                                <input type="number" id="f29-tasa-ppm" step="0.001" min="0" placeholder="0.125">
+                            </div>
+                            <div class="demo-field">
+                                <label for="f29-remanente">Remanente anterior cód. 504 ($)</label>
+                                <input type="number" id="f29-remanente" step="1" min="0" placeholder="0">
+                            </div>
+                            <div class="demo-field">
+                                <label for="f29-hon-bruto">Boletas honorarios brutas ($)</label>
+                                <input type="number" id="f29-hon-bruto" step="1" min="0" placeholder="0">
+                            </div>
+                            <div class="demo-field campo-ancho">
+                                <label for="f29-iusc-manual">Impuesto Único cód. 48 ($)</label>
+                                <input type="number" id="f29-iusc-manual" step="1" min="0" placeholder="0">
+                                <span class="texto-ayuda" id="f29-iusc-ayuda">Se integra automáticamente cuando calculas Liquidaciones del mismo período.</span>
+                            </div>
+                        </div>
+
+                        <div class="grid-dos-paneles" style="margin-top:14px">
+                            <div class="rcv-drop-box">
+                                <div class="demo-drop" id="drop-rcv-ventas" role="button" tabindex="0" aria-label="Subir RCV de Ventas del SII en CSV o Excel">
+                                    <span class="material-icons" aria-hidden="true">north_east</span>
+                                    <strong>RCV Ventas SII (CSV o Excel)</strong>
+                                    <span>DTE 33, 34, 39, 41, 56, 61</span>
+                                    <input type="file" id="file-rcv-ventas" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1">
+                                </div>
+                                <span class="rcv-drop-estado" id="rcv-ventas-estado">Sin archivo cargado (.csv o .xlsx)</span>
+                            </div>
+                            <div class="rcv-drop-box">
+                                <div class="demo-drop" id="drop-rcv-compras" role="button" tabindex="0" aria-label="Subir RCV de Compras del SII en CSV o Excel">
+                                    <span class="material-icons" aria-hidden="true">south_west</span>
+                                    <strong>RCV Compras SII (CSV o Excel)</strong>
+                                    <span>Giro, supermercado, activo fijo y NC</span>
+                                    <input type="file" id="file-rcv-compras" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1">
+                                </div>
+                                <span class="rcv-drop-estado" id="rcv-compras-estado">Sin archivo cargado (.csv o .xlsx)</span>
+                            </div>
+                        </div>
+
+                        <div class="demo-acciones">
+                            <button class="btn btn-chico btn-primario" type="button" id="btn-rcv-ejemplo">
+                                <span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo SII completo
+                            </button>
+                            <button class="btn btn-chico" type="button" id="btn-plantilla-rcv-ventas">Plantilla RCV Ventas</button>
+                            <button class="btn btn-chico" type="button" id="btn-plantilla-rcv-compras">Plantilla RCV Compras</button>
+                            <button class="btn btn-chico" type="button" id="btn-limpiar-f29">Limpiar período</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="demo-vacio" id="f29-vacio">
+                    <p class="demo-vacio-t">Aún no hay movimientos tributarios en este período</p>
+                    <ol>
+                        <li>Sube los archivos CSV del Registro de Compras y Ventas (RCV) descargados desde sii.cl o pulsa <b>Cargar ejemplo SII completo</b>.</li>
+                        <li>Si ya calculaste las liquidaciones del mes en <b>Remuneraciones</b>, el Impuesto Único (cód. 48) pasa solo al borrador.</li>
+                        <li>Revisa cada código oficial y centraliza automáticamente en el <b>Libro Diario</b>.</li>
+                    </ol>
+                </div>
+
+                <section class="panel" id="f29-resultados" hidden>
+                    <div class="panel-head">
+                        <h2>Hoja de Trabajo Formulario 29</h2>
+                        <span class="texto-ayuda">Vencimiento legal: día 20 del mes siguiente</span>
+                    </div>
+                    <div class="panel-cuerpo">
+                        <div class="demo-stats">
+                            <dl class="demo-stat"><dt>Total débito (cód. 538)</dt><dd class="mono" id="f29-k-debito">$0</dd></dl>
+                            <dl class="demo-stat"><dt>Total crédito (cód. 537)</dt><dd class="mono" id="f29-k-credito">$0</dd></dl>
+                            <dl class="demo-stat"><dt id="f29-k-iva-lbl">IVA determinado (cód. 89)</dt><dd class="mono" id="f29-k-iva">$0</dd></dl>
+                            <dl class="demo-stat"><dt>Total a pagar (cód. 91)</dt><dd class="mono" id="f29-k-total">$0</dd></dl>
+                        </div>
+
+                        <div class="tabla-contable-wrap">
+                            <table class="tabla-contable">
+                                <thead>
+                                    <tr>
+                                        <th>Línea / Concepto tributario</th>
+                                        <th class="num">Cant. doctos.</th>
+                                        <th class="f29-celda-cod">Código</th>
+                                        <th class="num">Monto ($)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-f29"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="demo-nota" id="f29-notas"></div>
+
+                        <div class="demo-acciones">
+                            <button class="btn btn-primario" type="button" id="btn-f29-pdf">
+                                <span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir / PDF F29
+                            </button>
+                            <button class="btn" type="button" id="btn-f29-csv">Exportar CSV</button>
+                            <button class="btn" type="button" id="btn-f29-copiar">
+                                <span class="material-icons" aria-hidden="true">content_copy</span>Copiar resumen
+                            </button>
+                            <button class="btn" type="button" id="btn-f29-ir-diario">
+                                <span class="material-icons" aria-hidden="true">menu_book</span>Ver centralización en Diario
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div><!-- /#suite-f29 -->
+
+            <!-- ==================== MÓDULO 3: DIARIO Y MAYOR ==================== -->
+            <div class="suite-pane" id="suite-libros" hidden>
+                <div class="demo-stats" style="margin-bottom:0">
+                    <dl class="demo-stat"><dt>Asientos del mes</dt><dd class="mono" id="lib-k-asientos">0</dd></dl>
+                    <dl class="demo-stat"><dt>Suma Debe</dt><dd class="mono" id="lib-k-debe">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Suma Haber</dt><dd class="mono" id="lib-k-haber">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Partida doble</dt><dd id="lib-k-estado">Cuadrado</dd></dl>
+                </div>
+
+                <div class="trabajo-head">
+                    <div class="sub-tabs" role="tablist" aria-label="Vistas contables de libros">
+                        <button type="button" class="sub-tab-btn activo" role="tab" aria-selected="true" data-sublibro="diario">Libro Diario</button>
+                        <button type="button" class="sub-tab-btn" role="tab" aria-selected="false" data-sublibro="mayor">Libro Mayor</button>
+                        <button type="button" class="sub-tab-btn" role="tab" aria-selected="false" data-sublibro="tesoreria">Tesorería y Pagos</button>
+                    </div>
+                    <div class="demo-acciones" style="margin-top:0; margin-left:auto">
+                        <button class="btn btn-chico btn-primario" type="button" id="btn-libros-pdf">
+                            <span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Libro Diario
+                        </button>
+                        <button class="btn btn-chico" type="button" id="btn-libros-csv">Exportar CSV</button>
+                    </div>
+                </div>
+
+                <div id="sub-diario" class="suite-pane">
+                    <div class="asiento-lista" id="diario-lista"></div>
+
+                    <section class="panel" id="form-nuevo-asiento-wrap">
+                        <div class="panel-head">
+                            <h2>Nuevo asiento manual o reclasificación del contador</h2>
+                            <span class="texto-ayuda">Partida doble obligatoria</span>
+                        </div>
+                        <div class="panel-cuerpo">
+                            <form id="form-nuevo-asiento" novalidate>
+                                <div class="param-bar param-bar-uno">
+                                    <div class="demo-field">
+                                        <label for="manual-fecha">Fecha contable</label>
+                                        <input type="date" id="manual-fecha">
+                                    </div>
+                                    <div class="demo-field">
+                                        <label for="manual-glosa">Glosa del asiento (ej. Apertura de capital, depreciación, reclasificación)</label>
+                                        <input type="text" id="manual-glosa" maxlength="120" placeholder="Asiento de ajuste o reclasificación contable">
+                                    </div>
+                                </div>
+                                <div class="manual-lineas" id="manual-lineas"></div>
+                                <p class="texto-ayuda" id="manual-cuadre">Ingresa montos al Debe y al Haber para cuadrar el asiento.</p>
+                                <div class="demo-acciones">
+                                    <button type="button" class="btn btn-chico" id="btn-manual-agregar-linea">
+                                        <span class="material-icons" aria-hidden="true">add</span>Agregar línea
+                                    </button>
+                                    <button type="submit" class="btn btn-chico btn-primario">
+                                        <span class="material-icons" aria-hidden="true">check</span>Registrar en Libro Diario
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="sub-mayor" class="suite-pane" hidden>
+                    <section class="panel">
+                        <div class="panel-cuerpo" style="padding:14px 18px">
+                            <div class="demo-field" style="margin-bottom:0">
+                                <label for="mayor-cuenta-filtro">Filtrar cuenta del Plan de Cuentas Pyme SII</label>
+                                <select id="mayor-cuenta-filtro">
+                                    <option value="">Todas las cuentas con movimiento</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="asiento-lista" id="mayor-lista"></div>
+                </div>
+
+                <div id="sub-tesoreria" class="suite-pane" hidden>
+                    <section class="panel">
+                        <div class="panel-head">
+                            <h2>Parámetros de cobros, pagos y banco del período</h2>
+                            <span class="texto-ayuda">Impacta Banco (11010), RLI 14 D N°3 y Flujo de Caja</span>
+                        </div>
+                        <div class="panel-cuerpo">
+                            <div class="param-bar">
+                                <div class="demo-field">
+                                    <label for="tes-banco-ini">Saldo inicial Banco ($)</label>
+                                    <input type="number" id="tes-banco-ini" step="1" min="0" value="0">
+                                </div>
+                                <div class="demo-field">
+                                    <label for="tes-pct-cobro">% Ventas del mes cobradas</label>
+                                    <input type="number" id="tes-pct-cobro" step="1" min="0" max="100" value="80">
+                                </div>
+                                <div class="demo-field">
+                                    <label for="tes-pct-pago">% Compras del giro pagadas</label>
+                                    <input type="number" id="tes-pct-pago" step="1" min="0" max="100" value="75">
+                                </div>
+                            </div>
+                            <div class="check-grid">
+                                <label class="check-fila"><input type="checkbox" id="tes-af-pagado" checked><span>Activo fijo del período efectivamente pagado (habilita depreciación instantánea 14 D N°3)</span></label>
+                                <label class="check-fila"><input type="checkbox" id="tes-sueldos-pagados" checked><span>Sueldos líquidos pagados dentro del mes</span></label>
+                                <label class="check-fila"><input type="checkbox" id="tes-hon-pagados" checked><span>Boletas de honorarios líquidas pagadas dentro del mes</span></label>
+                                <label class="check-fila"><input type="checkbox" id="tes-cotiz-pagadas"><span>Cotizaciones Previred pagadas en el mismo mes (si no, quedan provisionadas al día 13)</span></label>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div><!-- /#suite-libros -->
+
+            <!-- ==================== MÓDULO 4: BALANCE 8 COLUMNAS Y RLI ==================== -->
+            <div class="suite-pane" id="suite-balance" hidden>
+                <div class="demo-stats" style="margin-bottom:0">
+                    <dl class="demo-stat"><dt>Total Activo</dt><dd class="mono" id="bal-k-activo">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Pasivo + Patrimonio</dt><dd class="mono" id="bal-k-pasivo">$0</dd></dl>
+                    <dl class="demo-stat"><dt id="bal-k-res-lbl">Resultado contable</dt><dd class="mono" id="bal-k-resultado">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Base RLI ProPyme</dt><dd class="mono" id="bal-k-rli">$0</dd></dl>
+                </div>
+
+                <div class="trabajo-head">
+                    <div class="sub-tabs" role="tablist" aria-label="Balance y Renta Líquida">
+                        <button type="button" class="sub-tab-btn activo" role="tab" aria-selected="true" data-subbal="balance8">Balance de 8 Columnas</button>
+                        <button type="button" class="sub-tab-btn" role="tab" aria-selected="false" data-subbal="rli">Hoja RLI ProPyme 14 D N°3</button>
+                    </div>
+                    <div class="demo-acciones" style="margin-top:0; margin-left:auto">
+                        <button class="btn btn-chico btn-primario" type="button" id="btn-balance-pdf">
+                            <span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Balance + RLI
+                        </button>
+                        <button class="btn btn-chico" type="button" id="btn-balance-csv">CSV Balance 8 Col.</button>
+                        <button class="btn btn-chico" type="button" id="btn-rli-csv">CSV RLI</button>
+                    </div>
+                </div>
+
+                <div id="sub-balance8" class="suite-pane">
+                    <div class="demo-vacio" id="bal-vacio">
+                        <p class="demo-vacio-t">Balance sin movimientos en el período</p>
+                        <ol>
+                            <li>Carga el ejemplo o tus CSV del SII en <b>F29 Tributario</b>, o procesa la nómina en <b>Remuneraciones</b>.</li>
+                            <li>El Balance Tributario de 8 Columnas cuadrará automáticamente Sumas, Saldos, Inventario y Resultados al peso.</li>
+                        </ol>
+                    </div>
+
+                    <section class="panel" id="bal-tabla-panel" hidden>
+                        <div class="panel-head">
+                            <h2>Balance Tributario Clasificado de 8 Columnas</h2>
+                            <span class="texto-ayuda">Cuadratura automática SII</span>
+                        </div>
+                        <div class="panel-cuerpo">
+                            <div class="tabla-contable-wrap">
+                                <table class="tabla-contable balance-ocho">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Código</th>
+                                            <th rowspan="2">Cuenta contable</th>
+                                            <th colspan="2" class="grupo-col">Sumas</th>
+                                            <th colspan="2" class="grupo-col">Saldos</th>
+                                            <th colspan="2" class="grupo-col">Inventario</th>
+                                            <th colspan="2" class="grupo-col">Resultados</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="num">Débito</th>
+                                            <th class="num">Crédito</th>
+                                            <th class="num">Deudor</th>
+                                            <th class="num">Acreedor</th>
+                                            <th class="num">Activo</th>
+                                            <th class="num">Pasivo</th>
+                                            <th class="num">Pérdida</th>
+                                            <th class="num">Ganancia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-balance8"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="sub-rli" class="suite-pane" hidden>
+                    <section class="panel">
+                        <div class="panel-head">
+                            <h2>Hoja de Trabajo Renta Líquida Imponible ProPyme General (Art. 14 D N°3 LIR)</h2>
+                            <span class="texto-ayuda">Base percibida / pagada · Sin corrección monetaria</span>
+                        </div>
+                        <div class="panel-cuerpo">
+                            <div class="param-bar" style="margin-bottom:14px">
+                                <div class="demo-field">
+                                    <label for="rli-cobros-ant">Cobros ventas ejercicios ant. ($)</label>
+                                    <input type="number" id="rli-cobros-ant" step="1" min="0" value="0">
+                                </div>
+                                <div class="demo-field">
+                                    <label for="rli-pagos-ant">Pagos egresos ejercicios ant. ($)</label>
+                                    <input type="number" id="rli-pagos-ant" step="1" min="0" value="0">
+                                </div>
+                                <div class="demo-field">
+                                    <label for="rli-agregados">Otros agregados art. 21/31 ($)</label>
+                                    <input type="number" id="rli-agregados" step="1" min="0" value="0">
+                                </div>
+                                <div class="demo-field">
+                                    <label for="rli-tasa-idpc">Tasa IDPC simulada (%)</label>
+                                    <input type="number" id="rli-tasa-idpc" step="0.1" min="0" max="35" value="12.5">
+                                </div>
+                            </div>
+                            <div class="tabla-contable-wrap">
+                                <table class="tabla-contable">
+                                    <thead>
+                                        <tr>
+                                            <th>Determinación RLI en base a flujos netos sin IVA</th>
+                                            <th class="num">Monto ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-rli"></tbody>
+                                </table>
+                            </div>
+                            <div class="demo-nota">
+                                <b>Criterio normativo ProPyme General (Art. 14 D N°3):</b> ingresos computables por lo efectivamente percibido y egresos por lo efectivamente pagado (excluyendo IVA recuperable), sin corrección monetaria ni ajuste por inventario final de existencias pagadas, y depreciación instantánea del 100% del activo fijo pagado. Confirma tasa IDPC aplicable a tu año tributario en sii.cl.
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div><!-- /#suite-balance -->
+
+            <!-- ==================== MÓDULO 5: ESTADO DE RESULTADOS Y FLUJO DE CAJA ==================== -->
+            <div class="suite-pane" id="suite-pnl" hidden>
+                <div class="demo-stats" style="margin-bottom:0">
+                    <dl class="demo-stat"><dt>Ingresos del giro (neto)</dt><dd class="mono" id="pnl-k-ingresos">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Margen bruto</dt><dd class="mono" id="pnl-k-margen">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Resultado operacional</dt><dd class="mono" id="pnl-k-ebit">$0</dd></dl>
+                    <dl class="demo-stat"><dt>Caja post Previred + F29</dt><dd class="mono" id="pnl-k-caja">$0</dd></dl>
+                </div>
+
+                <div class="grid-dos-paneles">
+                    <section class="panel">
+                        <div class="panel-head">
+                            <h2>Estado de Resultados (Base Devengada)</h2>
+                            <span class="texto-ayuda">Sin IVA</span>
+                        </div>
+                        <div class="panel-cuerpo">
+                            <div class="tabla-contable-wrap">
+                                <table class="tabla-contable compacta">
+                                    <thead>
+                                        <tr>
+                                            <th>Rubro de resultado</th>
+                                            <th class="num">Monto ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-pnl"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-head">
+                            <h2>Flujo de Caja Operativo y Tributario</h2>
+                            <span class="texto-ayuda">Con IVA y vencimientos día 13 / 20</span>
+                        </div>
+                        <div class="panel-cuerpo">
+                            <div class="tabla-contable-wrap">
+                                <table class="tabla-contable compacta">
+                                    <thead>
+                                        <tr>
+                                            <th>Movimiento efectivo y compromisos</th>
+                                            <th class="num">Monto ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-flujo"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="demo-acciones" style="margin-top:0">
+                    <button class="btn btn-primario" type="button" id="btn-pnl-pdf">
+                        <span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir informe ejecutivo (PDF)
+                    </button>
+                    <button class="btn" type="button" id="btn-pnl-csv">Exportar Excel / CSV</button>
+                </div>
+            </div><!-- /#suite-pnl -->
 
         </div>
     </div>
@@ -807,9 +1415,9 @@
     <section class="demo-cta">
         <div>
             <h2>Llévalo a tu estudio</h2>
-            <p>15 días de prueba con tu logo y hasta 20 documentos. Sin tarjeta, sin instalar nada.</p>
+            <p>15 días de prueba con tu logo, cartera multi-RUT, nómina, F29 y libros contables. Sin tarjeta, sin instalar nada.</p>
         </div>
-        <a class="btn" href="mailto:contacto@calculolaboral.cl?subject=Quiero%20probar%20C%C3%A1lculoLaboral%20para%20estudios%20contables&body=Hola%2C%20quiero%20probar%20la%20versi%C3%B3n%20para%20estudios%20contables.%0A%0AMi%20estudio%3A%0ATrabajadores%20que%20liquido%20al%20mes%3A">Pedir mi prueba</a>
+        <a class="btn" href="mailto:contacto@calculolaboral.cl?subject=Quiero%20probar%20C%C3%A1lculoLaboral%20para%20estudios%20contables&body=Hola%2C%20quiero%20probar%20la%20versi%C3%B3n%20para%20estudios%20contables.%0A%0AMi%20estudio%3A%0AClientes%20que%20atiendo%20al%20mes%3A">Pedir mi prueba</a>
     </section>
 
     <details class="demo-planes">
@@ -823,7 +1431,7 @@
         <div class="hl">
             <h3>Estudio</h3>
             <p class="p">$19.990 <small>/ mes</small></p>
-            <ul><li>Finiquitos y liquidaciones ilimitados</li><li>Historial de documentos emitidos</li><li>PDF con tu marca</li></ul>
+            <ul><li>Nómina, F29, Libros y Balance 8 columnas</li><li>Cartera multi-cliente con respaldo en nube</li><li>Informes PDF con la marca de tu estudio</li></ul>
         </div>
         <div>
             <h3>Anual</h3>
@@ -835,7 +1443,7 @@
 </main>
 
 <footer class="demo-pie">
-    <p><b>Demostración.</b> Los cálculos se ejecutan en tu navegador: los datos de los trabajadores no se envían a ningún servidor. Los montos son referenciales y requieren la revisión del profesional responsable. CálculoLaboral no presta asesoría legal.</p>
+    <p><b>Borrador profesional de trabajo.</b> Los cálculos se ejecutan en tu navegador: los archivos RCV y nóminas no se envían a terceros sin tu acción explícita. Los montos laborales, tributarios (F29 / RLI) y contables son referenciales y requieren revisión y confirmación del contador responsable en Previred, Mi DT y sii.cl antes de declarar.</p>
 </footer>
 
 <div id="print-area"></div>
@@ -853,11 +1461,15 @@
 <script src="/js/lre_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_lre.js?v=1.0.1"></script>
 <script src="/js/pyme_pagos.js?v=1.0.0"></script>
+<script src="/js/pyme_honorarios.js?v=1.0.0"></script>
 <script src="/js/demo_archivos.js?v=1.1.0"></script>
 <script src="/js/demo_clientes.js?v=1.0.0"></script>
 <script src="/js/demo_validaciones.js?v=1.0.0"></script>
 <script src="/js/demo_historial.js?v=1.0.0"></script>
-<script src="/js/demo_respaldo.js?v=1.0.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.5.0"></script>
+<script src="/js/demo_respaldo.js?v=1.1.0"></script>
+<script src="/js/demo_liquidaciones.js?v=2.6.0"></script>
+<script src="/js/contadores_f29.js?v=1.0.0"></script>
+<script src="/js/contadores_contabilidad.js?v=1.0.0"></script>
+<script src="/js/demo_suite.js?v=1.0.0"></script>
 </body>
 </html>

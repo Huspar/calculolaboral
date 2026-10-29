@@ -13,6 +13,7 @@
     var VERSION = 1;
     var K_CLIENTES = 'cl-clientes-liq';
     var K_HISTORIAL = 'cl-historial-liq';
+    var K_CONTABLE = 'cl-suite-contable';
 
     function crear(almacen) {
         function leerJson(clave, porDefecto) {
@@ -27,12 +28,14 @@
         function exportar() {
             var clientes = leerJson(K_CLIENTES, []);
             var historial = leerJson(K_HISTORIAL, {});
+            var contable = leerJson(K_CONTABLE, {});
             return JSON.stringify({
                 version: VERSION,
                 aplicacion: 'CalculoLaboral demo contadores',
                 generado: new Date().toISOString(),
                 clientes: Array.isArray(clientes) ? clientes : [],
-                historial: historial
+                historial: historial,
+                contable: (contable && !Array.isArray(contable)) ? contable : {}
             }, null, 1);
         }
 
@@ -64,9 +67,18 @@
                 });
             }
 
+            var cont = leerJson(K_CONTABLE, {});
+            if (!cont || typeof cont !== 'object' || Array.isArray(cont)) cont = {};
+            if (datos.contable && typeof datos.contable === 'object' && !Array.isArray(datos.contable)) {
+                Object.keys(datos.contable).forEach(function (k) {
+                    if (datos.contable[k] && typeof datos.contable[k] === 'object') cont[k] = datos.contable[k];
+                });
+            }
+
             try {
                 almacen.setItem(K_CLIENTES, JSON.stringify(lista));
                 almacen.setItem(K_HISTORIAL, JSON.stringify(hist));
+                almacen.setItem(K_CONTABLE, JSON.stringify(cont));
             } catch (e) {
                 throw new Error('No hay espacio en el navegador para restaurar el respaldo.');
             }

@@ -327,6 +327,7 @@
         });
 
         pintar();
+        document.dispatchEvent(new CustomEvent('demo:liquidaciones', { detail: { results: state.results } }));
     }
 
     function pintar() {
@@ -913,7 +914,9 @@
                 if (!c || !c.filas.length) return;
                 var cli = document.getElementById('liq-cliente');
                 if (cli) cli.value = c.nombre;
+                try { localStorage.setItem('cl-cliente-liq', c.nombre); } catch (e) { }
                 cargar(c.filas, c.archivo);
+                document.dispatchEvent(new CustomEvent('demo:cliente', { detail: { cliente: c.nombre } }));
             });
         }
 
@@ -924,6 +927,7 @@
             try { cli.value = localStorage.getItem('cl-cliente-liq') || ''; } catch (e) { }
             cli.addEventListener('change', function () {
                 try { localStorage.setItem('cl-cliente-liq', cli.value.trim()); } catch (e) { }
+                document.dispatchEvent(new CustomEvent('demo:cliente', { detail: { cliente: cli.value.trim() } }));
             });
             cli.addEventListener('input', function () {
                 if (state.results.length) construirImpresion();
@@ -1013,4 +1017,8 @@
             cargarPeriodo(true).then(function () { sinScroll = true; cargarEjemplo(); });
         }
     });
+
+    window.CLDemoLiquidaciones = {
+        resultados: function () { return state.results ? state.results.slice() : []; }
+    };
 })();
