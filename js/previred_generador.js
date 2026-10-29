@@ -1,4 +1,4 @@
-﻿/*
+/*
  * CálculoLaboral — archivo de nómina para Previred, formato largo variable por ";"
  * (105 campos, versión 58 del documento oficial: tools/previred/especificacion-105.json).
  *
@@ -349,7 +349,7 @@
                 dias: rec.dias,
                 rentaAfp: d.bases ? d.bases.baseAfp : 0,
                 jornadaHoras: rec.jornada,
-                rima: 0,
+                rima: rec.rima,
                 cotizacionAfp: buscarMonto(d.descuentosLegales, 'afp'),
                 sis: buscarClave(emp.lineas, 'sis'),
                 cotizacionSalud: buscarMonto(d.descuentosLegales, 'salud'),

@@ -155,7 +155,11 @@
             movDesde: String(m.movDesde || '').trim(),
             movHasta: String(m.movHasta || '').trim(),
             tramoAF: String(m.tramoAF || '').trim().toUpperCase(),
-            cargas: D.parseNumber(m.cargas)
+            cargas: D.parseNumber(m.cargas),
+            licenciaDias: D.parseNumber(m.licenciaDias),
+            rentaAnterior: D.parseNumber(m.rentaAnterior),
+            subsidioLicencia: D.parseNumber(m.subsidioLicencia),
+            rima: 0
         };
     }
 
@@ -210,6 +214,16 @@
             if (r.dias <= 0) { out.error = 'Días trabajados en cero'; return out; }
 
             try {
+                // Licencia médica: el subsidio lo paga el empleador y lo recupera del organismo;
+                // el estudio lo ingresa desde la licencia autorizada, no se calcula aquí.
+                var lic = Math.max(0, Math.min(30, Math.round(r.licenciaDias || 0)));
+                var dias = lic > 0 ? 30 - lic : r.dias;
+                var subsidio = lic > 0 ? Math.max(0, Math.round(r.subsidioLicencia || 0)) : 0;
+                var afcSubsidio = lic > 0 ? Math.round(subsidio * 0.006) : 0;
+                r.rima = (lic > 0 && r.rentaAnterior > 0) ? Math.round(r.rentaAnterior / 30 * lic) : 0;
+                var noImponibles = subsidio > 0 ? [{ nombre: 'Subsidio por licencia médica', monto: subsidio }] : [];
+                var otrosDesc = afcSubsidio > 0 ? [{ nombre: 'AFC 0,6% sobre subsidio', monto: afcSubsidio }] : [];
+                if (lic > 0 && subsidio === 0) { /* se avisa al final, cuando ya están los avisos del motor */ }
                 var res = window.CLLiquidacionEngine.calcular({
                     periodo: periodo,
                     tasaMutual: tasaMutualElegida(),
@@ -226,12 +240,14 @@
                         movilizacion: r.movilizacion
                     },
                     mes: {
-                        diasTrabajados: r.dias,
+                        diasTrabajados: dias,
                         horasExtra: r.horasExtra,
                         comisiones: r.comisiones,
                         gratificacion: r.gratificacion,
                         gratificacionMonto: r.gratificacionMonto,
-                        asignacionFamiliar: montoAsignacionFamiliar(periodo, r.tramoAF || tramoSugerido(r.sueldo, periodo), r.cargas)
+                        asignacionFamiliar: montoAsignacionFamiliar(periodo, r.tramoAF || tramoSugerido(r.sueldo, periodo), r.cargas),
+                        otrosNoImponibles: noImponibles,
+                        otrosDescuentos: otrosDesc
                     }
                 }, mes);
 
@@ -245,6 +261,9 @@
                 if (!res.listo) out.error = 'Revisa los datos: el documento no está listo para emitir.';
             } catch (err) {
                 out.error = err && err.message ? err.message : 'Error de cálculo';
+            }
+            if (lic > 0 && subsidio === 0 && !out.error) {
+                out.avisos.push('Licencia sin monto de subsidio: el líquido no incluye el pago del organismo.');
             }
             return out;
         });
@@ -477,12 +496,12 @@
             ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
             ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
-        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas']);
-        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2]);
-        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0]);
-        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '']);
+        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas', 'Días de licencia', 'Renta imponible mes anterior', 'Subsidio licencia']);
+        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2, 0, '', '']);
+        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0, 5, 850000, 120000]);
+        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
         var ws = XLSX.utils.aoa_to_sheet(data);
-        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }];
+        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }, { wch: 13 }, { wch: 18 }, { wch: 14 }];
         var wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
         XLSX.writeFile(wb, 'plantilla-liquidaciones-calculolaboral.xlsx');

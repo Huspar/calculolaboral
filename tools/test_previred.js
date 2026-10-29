@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Pruebas del archivo de Previred (105 campos, formato variable por ";").
  *   node tools/test_previred.js
  *
@@ -246,6 +246,37 @@ caso('la RIMA se informa y la 0,90% no se aplica sobre ella', () => {
     assert.strictEqual(f[91], '500000');
     assert.strictEqual(f[93], String(Math.round((1419115 + 500000) * 0.0072)));
     assert.strictEqual(f[94], String(Math.round(1419115 * 0.009)));
+});
+
+caso('licencia: el subsidio entra como no imponible y el AFC se descuenta aparte', () => {
+    const E = require(path.join(__dirname, '..', 'js', 'liquidacion_engine.js'));
+    const P = require(path.join(__dirname, '..', 'js', 'liquidacion_parametros.js'));
+    const valores = Object.assign({}, P.vigenciaDe('2026-10'), P.RESPALDO['2026-10']);
+    const det = E.calcular({
+        trabajador: { sueldoBase: 1200000, afp: 'Cuprum', salud: 'fonasa', contrato: 'indefinido', jornadaHoras: 42, fechaIngreso: '2020-01-01', colacion: 0, movilizacion: 0 },
+        mes: {
+            diasTrabajados: 25, gratificacion: 'legal',
+            otrosNoImponibles: [{ nombre: 'Subsidio por licencia médica', monto: 120000 }],
+            otrosDescuentos: [{ nombre: 'AFC 0,6% sobre subsidio', monto: 720 }]
+        },
+        periodo: '2026-10', tasaMutual: 0.93
+    }, valores);
+    const sub = (det.haberesNoImponibles || []).find(l => /subsidio/i.test(l.concepto));
+    const afc = (det.otrosDescuentos || []).find(l => /AFC/i.test(l.concepto));
+    assert.ok(sub && sub.monto === 120000, JSON.stringify(det.haberesNoImponibles));
+    assert.ok(afc && afc.monto === 720, JSON.stringify(det.otrosDescuentos));
+    assert.ok(det.liquido > 0);
+});
+
+caso('la RIMA sale del registro y llega al campo 92', () => {
+    const r = G.desdeLiquidaciones([{
+        record: { rut: '12.345.678-5', nombre: 'Camila Rojas Fuentes', sexo: 'F', afp: 'Cuprum', salud: 'fonasa', dias: 25, jornada: 42, rima: 141667 },
+        detalle: { bases: { baseAfp: 1000000, baseAfc: 1000000 }, descuentosLegales: [{ concepto: 'AFP Cuprum', monto: 114400 }, { concepto: 'Salud Fonasa', monto: 70000 }, { concepto: 'Seguro de cesantía', monto: 6000 }], empleador: { lineas: [{ clave: 'sis', monto: 17800 }, { clave: 'afc', monto: 24000 }, { clave: 'mutual', monto: 9300 }] } }
+    }], { periodo: '2026-10', mutual: 'ACHS' });
+    assert.deepStrictEqual(r.errores, []);
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f[91], '141667');   // campo 92: RIMA
+    assert.strictEqual(f[92], '1');        // campo 93: jornada completa
 });
 
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');
