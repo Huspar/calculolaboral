@@ -305,6 +305,19 @@ gtag('js', new Date());
 </div>
 </div>
 <div class="form-bloque">
+<p class="h-seccion">Datos para el archivo de Previred <span class="lq-opt">(opcional)</span></p>
+<p class="lq-help">Solo hacen falta si vas a descargar el archivo para Previred: el asistente te dice cuál falta.</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-t-sexo">Sexo</label><select id="pm-t-sexo" data-k="sexo"><option value="">Sin indicar</option><option value="F">Mujer</option><option value="M">Hombre</option></select></div>
+<div class="lq-field"><label for="pm-t-ap1">Apellido paterno</label><input id="pm-t-ap1" data-k="apellidoPaterno" type="text" maxlength="30" placeholder="Pérez"></div>
+<div class="lq-field"><label for="pm-t-ap2">Apellido materno</label><input id="pm-t-ap2" data-k="apellidoMaterno" type="text" maxlength="30" placeholder="Soto"></div>
+<div class="lq-field"><label for="pm-t-aftramo">Tramo de asignación familiar</label><select id="pm-t-aftramo" data-k="afTramo"><option value="">No recibe</option><option value="A">Tramo A</option><option value="B">Tramo B</option><option value="C">Tramo C</option><option value="D">Tramo D</option></select></div>
+<div class="lq-field"><label for="pm-t-afcargas">Cargas familiares</label><input id="pm-t-afcargas" data-k="afCargas" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="0"></div>
+<div class="lq-field"><label for="pm-t-apv">N.º de contrato de APV</label><input id="pm-t-apv" data-k="apvContrato" type="text" maxlength="20" placeholder="Solo si tiene APV"></div>
+<div class="lq-field" data-si-salud="isapre"><label for="pm-t-fun">N.º de FUN de la Isapre</label><input id="pm-t-fun" data-k="fun" type="text" maxlength="16" placeholder="Si lo tienes"></div>
+</div>
+</div>
+<div class="form-bloque">
 <p class="h-seccion">Ley Karin</p>
 <p class="lq-help">El protocolo de prevención del acoso sexual, laboral y la violencia en el trabajo debe darse a conocer a cada trabajador (art. 211-A del Código del Trabajo). Anota cuándo se lo entregaste para tener el registro a mano en una fiscalización. Si aún no tienes protocolo, el <a href="/kit-cumplimiento-laboral-pymes" target="_blank" rel="noopener">Kit Blindaje Laboral</a> trae un modelo.</p>
 <div class="lq-grid">
@@ -456,6 +469,8 @@ gtag('js', new Date());
 <tbody id="liq-previred-filas"></tbody>
 <tfoot><tr><th scope="row">Total en Previred</th><td class="num" id="liq-previred-total"></td></tr></tfoot></table></div>
 <div class="panel-pie" id="liq-previred-pie"></div>
+<div class="acciones-pila acciones-fila" style="padding:0 16px 14px"><button type="button" id="liq-previred-archivo" class="btn btn-chico"><span class="material-icons" aria-hidden="true">download</span>Descargar archivo para Previred</button></div>
+<div id="liq-previred-detalle" class="lq-help" style="padding:0 16px 14px" role="status"></div>
 </div>
 
 <div class="panel" id="liq-proy" hidden>
@@ -719,6 +734,8 @@ gtag('js', new Date());
 <div class="lq-field"><label for="pm-e-comuna">Comuna <span class="lq-opt">(opcional)</span></label><input id="pm-e-comuna" data-k="comuna" type="text" maxlength="60" placeholder="Temuco"></div>
 <div class="lq-field"><label for="pm-e-ciudad">Ciudad <span class="lq-opt">(opcional)</span></label><input id="pm-e-ciudad" data-k="ciudad" type="text" maxlength="60" placeholder="Temuco"></div>
 <div class="lq-field"><label for="pm-e-mutual">Cotización de tu mutual o ISL (%)</label><input id="pm-e-mutual" data-k="tasaMutual" data-tipo="dec" type="text" inputmode="decimal" maxlength="5" placeholder="0,93" aria-describedby="pm-e-mutual-ayuda"><p class="lq-help" id="pm-e-mutual-ayuda">0,90% básica, 0,03% de la Ley SANNA y la adicional de tu rubro: la tasa total está en la resolución de tu mutual o del ISL. Si no la sabes, deja 0,93.</p><p class="pm-error" data-error="tasaMutual" hidden></p></div>
+<div class="lq-field"><label for="pm-e-mutualinst">Mutualidad o ISL <span class="lq-opt">(para Previred)</span></label><select id="pm-e-mutualinst" data-k="mutual"><option value="">Sin indicar</option><option value="ACHS">ACHS</option><option value="Mutual">Mutual de Seguridad</option><option value="IST">IST</option><option value="ISL">ISL</option></select></div>
+<div class="lq-field"><label for="pm-e-ccaf">Caja de compensación <span class="lq-opt">(si estás afiliado)</span></label><select id="pm-e-ccaf" data-k="ccaf"><option value="">Ninguna</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
 <div class="lq-field lq-span2">
 <span class="lq-label" id="pm-logo-label">Logo <span class="lq-opt">(opcional, PNG, JPG o WebP de hasta 100 KB)</span></span>
 <div class="lq-logo-row">
@@ -872,11 +889,13 @@ gtag('js', new Date());
 <script src="/js/pyme_proyeccion.js?v=1.0.0"></script>
 <script src="/js/pyme_midt.js?v=1.0.0"></script>
 <script src="/js/pyme_libro.js?v=1.0.0"></script>
+<script src="/js/previred_generador.js?v=1.0.0"></script>
+<script src="/js/pyme_previred.js?v=1.0.0"></script>
 <script src="/js/pyme_anual.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.21.1" defer></script>
+<script src="/js/app_pyme.js?v=1.22.0" defer></script>
 </body>
 </html>

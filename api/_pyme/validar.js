@@ -33,6 +33,9 @@ const CAMPOS_EMPRESA = {
     ciudad: { t: 'texto', max: 60 },
     // Cotización total de la mutual o el ISL en % (0,90 básica + 0,03 SANNA + adicional de la empresa)
     tasaMutual: { t: 'decimal', min: 0.93, max: 8, def: 0.93 },
+    // Para el archivo de Previred: mutualidad y caja de compensación a las que está afiliada la empresa
+    mutual: { t: 'enum', valores: ['ACHS', 'Mutual', 'IST', 'ISL'], def: '' },
+    ccaf: { t: 'enum', valores: ['Los Andes', 'La Araucana', 'Los Héroes', '18 de Septiembre'], def: '' },
     logo: { t: 'logo' }
 };
 
@@ -40,6 +43,14 @@ const CAMPOS_TRABAJADOR = {
     nombre: { t: 'texto', max: 80, req: true },
     rut: { t: 'rut', req: true },
     nacionalidad: { t: 'texto', max: 40 },
+    // Para el archivo de Previred (opcionales: el archivo avisa cuál falta)
+    sexo: { t: 'enum', valores: ['M', 'F'], def: '' },
+    apellidoPaterno: { t: 'texto', max: 30 },
+    apellidoMaterno: { t: 'texto', max: 30 },
+    afTramo: { t: 'enum', valores: ['A', 'B', 'C', 'D'], def: '' },
+    afCargas: { t: 'entero', min: 0, max: 20, def: 0 },
+    apvContrato: { t: 'texto', max: 20 },
+    fun: { t: 'texto', max: 16 },
     fechaNacimiento: { t: 'fecha' },
     domicilio: { t: 'texto', max: 120 },
     comuna: { t: 'texto', max: 60 },

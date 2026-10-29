@@ -343,7 +343,7 @@
     });
 
     // ---------- modo de ejemplo ----------
-    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.1', '/js/pyme_demo.js?v=1.0.1'];
+    var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.2', '/js/pyme_demo.js?v=1.0.2'];
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
     function cargarScript(src) {
@@ -2245,6 +2245,7 @@
         if (faltan.length) pie += '<p>No incluye a ' + esc(faltan.join(', ')) + ': abre su liquidación y guárdala de nuevo para sumarla.</p>';
         pie += '<p>Es una estimación con las tasas de Previred de ' + esc(nombrePeriodo(periodoSel)) + '. El monto exacto lo calcula Previred al declarar. Si tu empresa está afiliada a una caja de compensación, parte del 7% de Fonasa se paga a la caja.</p>';
         $('liq-previred-pie').innerHTML = pie;
+        $('liq-previred-detalle').innerHTML = '';
     }
 
     // ---------- proyección del costo: aumentos del aporte de la Ley 21.735 y jornada de 40 horas ----------
@@ -2949,6 +2950,33 @@
         a.download = 'libro-remuneraciones-' + periodoSel + '.csv';
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    });
+    // Archivo para Previred (105 campos) con las liquidaciones guardadas del mes: se descarga para revisarlo y cargarlo en Previred
+    $('liq-previred-archivo').addEventListener('click', function () {
+        var det = $('liq-previred-detalle'), val = VAL[periodoSel];
+        function lista(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
+        if (!val || val.estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; return; }
+        var items = [], omitidas = [];
+        activos().forEach(function (t) {
+            var reg = mesesDe(periodoSel)[t.id];
+            if (!reg) return;
+            var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
+            if (!r || r.error || !r.res.listo) { omitidas.push(t.nombre + ': su liquidación tiene errores.'); return; }
+            items.push({ t: t, res: r.res });
+        });
+        if (!items.length) { det.innerHTML = '<p>No hay liquidaciones guardadas sin errores en ' + esc(nombrePeriodo(periodoSel)) + '.</p>' + lista('No se pudo incluir', omitidas); return; }
+        var s = window.CLPymePrevired.armar({ periodo: periodoSel, empresa: estado.empresa, items: items });
+        if (s.errores.length) {
+            det.innerHTML = '<p><strong>No se generó el archivo.</strong> Completa lo que falta y vuelve a intentarlo.</p>' + lista('Falta corregir', s.errores.concat(omitidas));
+            return;
+        }
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([s.texto], { type: 'text/plain;charset=us-ascii' }));
+        a.download = 'previred-' + periodoSel.replace('-', '') + '.txt';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+        det.innerHTML = '<p><strong>Archivo descargado con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + '.</strong> Es un archivo para revisar y cargar tú en Previred con tu clave: el asistente no se conecta con Previred ni declara por ti. Previred valida el archivo al cargarlo.</p>' +
+            lista('Revisa antes de cargarlo', s.avisos.concat(omitidas));
     });
     $('pm-liq-libro-imprimir').addEventListener('click', function () {
         var filas = filasLibro($('pm-liq-estado'));
