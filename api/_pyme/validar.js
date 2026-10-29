@@ -51,6 +51,9 @@ const CAMPOS_TRABAJADOR = {
     afCargas: { t: 'entero', min: 0, max: 20, def: 0 },
     apvContrato: { t: 'texto', max: 20 },
     fun: { t: 'texto', max: 16 },
+    // Pensionado o mayor de 65 (tipo de trabajador de Previred y cód. 1109 del LRE) y sindicato al que paga cuota (cód. 1171)
+    pension: { t: 'enum', valores: ['vejez_cotiza', 'vejez_no_cotiza', 'mayor65'], def: '' },
+    rutSindicato: { t: 'rut' },
     // Término del contrato (finiquito): el mes del término el trabajador va en Previred y en el LRE como retiro; causal según la tabla 1 del LRE de la DT
     fechaTermino: { t: 'fecha' },
     causalTermino: { t: 'enum', valores: ['3', '4', '5', '6', '7', '8', '24', '25', '26', '27', '28', '29', '11', '12', '13', '14', '15', '16', '18', '19', '20'], def: '' },

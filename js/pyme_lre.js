@@ -63,6 +63,7 @@
         var c = l.concepto;
         if (empieza(c, 'Anticipo de sueldo')) return '3188';
         if (empieza(c, 'Crédito caja de compensación')) return '3110';
+        if (empieza(c, 'Cuota sindical')) return '3171';
         if (l.detalle === 'Pactado por escrito') return '3185';
         if (/^Cuota \d+ de \d+$|^Cuota de préstamo$/.test(l.detalle || '')) return '3188';
         return null;
@@ -130,7 +131,7 @@
         return {
             rut: t.rut, nombre: t.nombre, fechaIngreso: t.fechaIngreso, afp: t.afp,
             salud: t.salud === 'isapre' ? 'isapre' : 'fonasa', isapreNombre: t.isapreNombre,
-            fechaTermino: t.fechaTermino, causalTermino: t.causalTermino,
+            fechaTermino: t.fechaTermino, causalTermino: t.causalTermino, pension: t.pension, rutSindicato: t.rutSindicato,
             jornadaHoras: t.jornadaHoras, dias: res.bases && res.bases.dias,
             diasLicencia: extra.diasLicencia, diasVacaciones: extra.diasVacaciones,
             cargas: cargas, tramo: v['2311'] > 0 ? t.afTramo : '', conApv: (v['3155'] || 0) + (v['3156'] || 0) > 0,

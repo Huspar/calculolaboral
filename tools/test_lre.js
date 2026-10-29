@@ -113,7 +113,7 @@ caso('lo que no se puede clasificar detiene el archivo y dice qué línea es', (
     assert.strictEqual(Number(cols(s.filas[0])[col('2304')]), 20000);
     const rs = calc(T1, { cuotaSindical: 8000 });
     s = armar([{ t: T1, res: rs }]);
-    assert.ok(s.errores.some(e => /Cuota sindical/.test(e)));
+    assert.ok(s.errores.some(e => /RUT del sindicato/.test(e)));
 });
 
 caso('asignación familiar sin tramo, comuna desconocida o sin RUT de empresa se rechazan con el dato que falta', () => {
@@ -197,6 +197,19 @@ caso('el LRE tampoco se arma si la liquidación paga más días que los del cont
     const t = Object.assign({}, T1, { fechaTermino: '2026-10-15', causalTermino: '4' });
     const s = armar([{ t, res: calc(t, { diasTrabajados: 30 }) }]);
     assert.strictEqual(s.texto, ''); assert.ok(s.errores.some(e => /paga 30 días y el contrato terminó el 15/.test(e)));
+});
+
+caso('la cuota sindical sale con el RUT del sindicato (1171) y su monto (3171); el pensionado por vejez marca 1109', () => {
+    const t = Object.assign({}, T1, { rutSindicato: '65.123.456-K'.replace('K', '5'), pension: 'vejez_cotiza' });
+    const r = calc(t, { cuotaSindical: 8000 });
+    const s = armar([{ t, res: r }]);
+    assert.deepStrictEqual(s.errores, []);
+    const a = cols(s.filas[0]);
+    assert.strictEqual(a[col('1171')], '65123456-5'); assert.strictEqual(Number(a[col('3171')]), 8000);
+    assert.strictEqual(a[col('1109')], '1');
+    assert.strictEqual(Number(a[col('5302')]), 8000);
+    assert.strictEqual(Number(a[col('5301')]), r.totalDescuentos);
+    assert.strictEqual(cols(armar([{ t: T1, res: calc(T1) }]).filas[0])[col('1109')], '0');
 });
 
 console.log(ok + ' pruebas correctas');

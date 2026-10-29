@@ -140,4 +140,21 @@ caso('si la liquidación guardada paga más días que los del contrato, no se ar
     assert.strictEqual(s.texto, ''); assert.ok(s.errores.some(e => /paga 30 días y el contrato terminó el 15/.test(e)));
 });
 
+caso('pensionado y mayor de 65 cambian el tipo de trabajador y dejan un aviso; el crédito de la caja sale en su campo', () => {
+    const casos = { vejez_cotiza: '1', vejez_no_cotiza: '2', mayor65: '3' };
+    Object.keys(casos).forEach(p => {
+        const t = Object.assign({}, T1, { pension: p });
+        const s = armar([{ t, res: calc(t) }]);
+        assert.deepStrictEqual(s.errores, []);
+        assert.strictEqual(campos(s.filas[0])[11], casos[p]);
+        assert.ok(s.avisos.some(a => /cálculo de su liquidación no cambia/.test(a)));
+    });
+    assert.strictEqual(campos(armar([{ t: T1, res: calc(T1) }]).filas[0])[11], '0');
+    const r = calc(T1, { creditoCCAF: 25000 });
+    const s = armar([{ t: T1, res: r }], { mutual: 'ACHS', ccaf: 'Los Andes' });
+    const f = campos(s.filas[0]);
+    assert.strictEqual(f[82], '01'); assert.strictEqual(f[84], '25000');
+    assert.strictEqual(campos(armar([{ t: T1, res: r }]).filas[0])[84], '0', 'sin caja no se informa');
+});
+
 console.log(ok + ' pruebas correctas');

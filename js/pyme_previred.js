@@ -100,7 +100,8 @@
             tramoAF: t.afTramo || 'D',
             cargas: t.afCargas || 0,
             asignacionFamiliar: lineaMonto(res.haberesNoImponibles, 'asignaci'),
-            tipoTrabajador: '0',
+            tipoTrabajador: { vejez_cotiza: '1', vejez_no_cotiza: '2', mayor65: '3' }[t.pension] || '0',
+            creditoCCAF: m.creditoCCAF || 0,
             movimiento: movimiento(t, periodo),
             _derivado: n.derivado
         };
@@ -125,7 +126,8 @@
             var x = trabajador(t, res, periodo);
             if (x._derivado) avisos.push(quien + ': los apellidos se separaron del nombre completo; revísalos en el archivo o agrégalos en su ficha.');
             delete x._derivado;
-            if (t.fechaNacimiento) {
+            if (t.pension) avisos.push(quien + ': figura como ' + ({ vejez_cotiza: 'pensionado que cotiza', vejez_no_cotiza: 'pensionado que no cotiza', mayor65: 'mayor de 65 años' }[t.pension]) + '. El cálculo de su liquidación no cambia por eso: revisa AFP, seguro de cesantía y SIS antes de cargar.');
+            if (t.fechaNacimiento && !t.pension) {
                 var edad = (Number(periodo.slice(0, 4)) - Number(t.fechaNacimiento.slice(0, 4)));
                 if (edad >= 60) avisos.push(quien + ': tiene ' + edad + ' años; revisa si en Previred corresponde un tipo de trabajador distinto de «activo» (pensionado o mayor de 65).');
             }

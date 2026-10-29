@@ -142,7 +142,7 @@
         v['1146'] = '0';                                       // no es técnico extranjero exento
         v['1107'] = jornada > 0 && jornada <= 30 ? '201' : '101';   // parcial (art. 40 bis) u ordinaria (art. 22)
         v['1108'] = '0';
-        v['1109'] = '0';
+        v['1109'] = /^vejez/.test(texto(t.pension)) ? '1' : '0';
         v['1141'] = String(codigoDe(AFP, t.afp, 'AFP'));
         v['1142'] = '0';
         v['1143'] = String(tieneIsapre ? codigoDe(SALUD, t.isapreNombre, 'Isapre') : SALUD.fonasa);
@@ -155,6 +155,10 @@
         v['1115'] = entero(t.dias);
         if (Number(t.diasLicencia) > 0) v['1116'] = entero(t.diasLicencia);
         if (Number(t.diasVacaciones) > 0) v['1117'] = entero(t.diasVacaciones);
+        if (t.v && Number(t.v['3171']) > 0) {
+            if (!texto(t.rutSindicato)) throw new Error('Paga cuota sindical y falta el RUT del sindicato en su ficha.');
+            v['1171'] = rutLre(t.rutSindicato);
+        }
         v['1118'] = '0';
         v['1155'] = t.conApv ? '1' : '0';
         v['1157'] = '0';

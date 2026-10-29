@@ -215,7 +215,7 @@
         c[82] = '0';
         c[83] = ccafCodigo;
         c[84] = ccafCodigo === '00' ? '0' : monto(t.rentaAfp);
-        c[85] = '0';
+        c[85] = ccafCodigo === '00' ? '0' : monto(t.creditoCCAF);   // créditos personales de la caja, retenidos al trabajador
         c[86] = '0';
         c[87] = '0';
         c[88] = '0';
