@@ -141,9 +141,10 @@
     }
 
     // ---------- rutas ----------
-    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', contratos: 'contratos', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
-    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', contratos: 'Contratos y finiquitos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', 'flujo-caja': 'flujo-caja', cobranzas: 'cobranzas', pagos: 'pagos', conciliacion: 'conciliacion', 'mi-contador': 'mi-contador', contratos: 'contratos', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', 'flujo-caja': 'Flujo de caja', cobranzas: 'Cobranzas', pagos: 'Cuentas por pagar', conciliacion: 'Conciliación bancaria', 'mi-contador': 'Mi Contador y Cierre', contratos: 'Contratos y finiquitos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
     var vistaActual = null;
+    var finanzasUI = null;
 
     function rutaActual() { return window.location.pathname.replace(/^\/app\/?/, '').replace(/\/+$/, ''); }
     function navegar(ruta, opciones) {
@@ -184,8 +185,9 @@
         Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
             if (a.getAttribute('data-nav') === base) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
         });
-        if (['', 'trabajadores', 'liquidaciones', 'calendario'].indexOf(base) < 0) $('app-mas').setAttribute('aria-current', 'page'); else $('app-mas').removeAttribute('aria-current');
+        if (['', 'flujo-caja', 'cobranzas', 'liquidaciones'].indexOf(base) < 0) $('app-mas').setAttribute('aria-current', 'page'); else $('app-mas').removeAttribute('aria-current');
         document.title = TITULOS[vista] + ' · Asistente Laboral Pyme';
+        if (finanzasUI) finanzasUI.actualizarInsigniasYBanner();
         if (vista === 'inicio') dibujarInicio();
         else if (vista === 'trabajadores') dibujarTrabajadores();
         else if (vista === 'trabajador') abrirCarpeta(partes[1], partes[2] || 'ficha');
@@ -193,6 +195,11 @@
         else if (vista === 'documentos') rutaDocumentos();
         else if (vista === 'vacaciones') rutaVacaciones();
         else if (vista === 'calendario') dibujarCalendario();
+        else if (vista === 'flujo-caja' && finanzasUI) finanzasUI.dibujarFlujoCaja();
+        else if (vista === 'cobranzas' && finanzasUI) finanzasUI.dibujarCobranzas();
+        else if (vista === 'pagos' && finanzasUI) finanzasUI.dibujarPagos();
+        else if (vista === 'conciliacion' && finanzasUI) finanzasUI.dibujarConciliacion();
+        else if (vista === 'mi-contador' && finanzasUI) finanzasUI.dibujarMiContador();
         else if (vista === 'contratos') dibujarContratos();
         else if (vista === 'empresa') { dibujarEmpresa(); dibujarPortalEmpresa(); }
         else if (vista === 'equipo') dibujarEquipo();
@@ -433,6 +440,7 @@
         estado = null; mesesCache = {}; honCache = {}; honEdit = null; enlacesCache = {}; enlaceNuevo = null; editando = null; periodoSel = null; ultimasImpresas = []; inicioSel = null; vistaActual = null;
         vacSel = null; vacCache = []; docsCache = []; docPrefill = null;
         docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
+        if (finanzasUI) finanzasUI.limpiarEjemplo();
         $('print-section').innerHTML = '';
         $('pm-liq-editor').hidden = true;
     }
@@ -2900,6 +2908,7 @@ function dibujarEquipo() {
             if (!estado) return;
             dibujarLiquidaciones();
             dibujarPendientes();
+            if (finanzasUI) finanzasUI.redibujarVistaActiva();
         });
     }
 
@@ -2921,7 +2930,7 @@ function dibujarEquipo() {
         mensaje($('ini-estado'), '', '');
         if (vistaActual === 'liquidaciones' && rutaActual() !== 'liquidaciones') navegar('liquidaciones', { reemplazar: true, sinScroll: true });
         if (!sinCargar) cargarLiquidaciones(); else dibujarSelectorMes();
-        if (vistaActual === 'trabajador' || vistaActual === 'calendario') dibujarRuta();
+        if (vistaActual === 'trabajador' || vistaActual === 'calendario' || vistaActual === 'flujo-caja' || vistaActual === 'cobranzas' || vistaActual === 'pagos' || vistaActual === 'conciliacion' || vistaActual === 'mi-contador') dibujarRuta();
     }
     $('app-mes').addEventListener('change', function (e) { cambiarPeriodo(e.target.value); });
     $('app-mes-ant').addEventListener('click', function () { cambiarPeriodo(PERIODOS[PERIODOS.indexOf(periodoSel) + 1]); });
@@ -3585,6 +3594,10 @@ function dibujarEquipo() {
     $('pm-liq-guardar').addEventListener('click', function () {
         if (!editando) return;
         var id = editando.id, est = $('pm-liq-editor-estado');
+        if (finanzasUI && finanzasUI.estaCerrado(periodoSel)) {
+            mensaje(est, 'error', 'Este período está cerrado tributariamente por tu contador. Solicita su reapertura en «Mi Contador» antes de modificar liquidaciones.');
+            return;
+        }
         mensaje(est, '', 'Guardando…');
         guardarRegistro(id, editando.mes).then(function (r) {
             if (sinSesion(r)) return;
@@ -3597,10 +3610,15 @@ function dibujarEquipo() {
             mensaje(est, 'ok', 'Guardado.');
             dibujarLiquidaciones();
             dibujarPendientes();
+            if (finanzasUI) finanzasUI.redibujarVistaActiva();
         });
     });
     $('pm-liq-quitar').addEventListener('click', function () {
         if (!editando) return;
+        if (finanzasUI && finanzasUI.estaCerrado(periodoSel)) {
+            mensaje($('pm-liq-editor-estado'), 'error', 'Este período está cerrado tributariamente por tu contador. No se pueden eliminar liquidaciones cerradas.');
+            return;
+        }
         var id = editando.id, periodo = periodoSel;
         confirmar('¿Quitar la liquidación de ' + nombrePeriodo(periodo) + ' de ' + editando.t.nombre + '?', 'Se borran los datos guardados de ese mes. No se puede deshacer.', 'Quitar liquidación').then(function (si) {
             if (!si) return;
@@ -3611,6 +3629,7 @@ function dibujarEquipo() {
                 cerrarMes();
                 navegar('liquidaciones', { reemplazar: true, sinScroll: true });
                 dibujarPendientes();
+                if (finanzasUI) finanzasUI.redibujarVistaActiva();
                 mensaje($('pm-liq-estado'), 'ok', 'Quitamos esa liquidación.');
             });
         });
@@ -4044,6 +4063,31 @@ function dibujarEquipo() {
     aplicarMascaras($('pm-emp-form'));
     aplicarMascaras($('pm-trab-form'));
     aplicarMascaras($('pm-prest-form'));
+    ['cob-form', 'pag-form', 'pm-saldo-form'].forEach(function (id) { if ($(id)) aplicarMascaras($(id)); });
+    function resumenLaboralMes(p) {
+        p = p || periodoSel || periodoPorDefecto();
+        var guardados = mesesDe(p), ids = Object.keys(guardados);
+        var regs = ids.map(function (id) { return guardados[id] && guardados[id].calculo; });
+        var liquido = regs.reduce(function (s, c) { return s + ((c && c.liquido) || 0); }, 0);
+        var prev = L.previred(regs);
+        var hon = HON ? HON.resumen(honCache[p] || []) : { retenidoEmpresa: 0 };
+        return { liquido: liquido, previred: prev.total || 0, impuesto: prev.impuesto || 0, retencion: hon.retenidoEmpresa || 0 };
+    }
+    if (window.CLPymeFinanzas && window.CLPymeFinanzas.montarUI) {
+        finanzasUI = window.CLPymeFinanzas.montarUI({
+            getEstado: function () { return estado; },
+            getPeriodo: function () { return periodoSel || periodoPorDefecto(); },
+            getVistaActual: function () { return vistaActual; },
+            esEjemplo: function () { return !!ejemplo; },
+            hoyIso: hoyIso,
+            mesAnteriorDe: mesAnteriorDe,
+            nombrePeriodo: nombrePeriodo,
+            cambiarPeriodo: cambiarPeriodo,
+            navegar: navegar,
+            avisoGlobal: avisoGlobal,
+            resumenLaboralMes: resumenLaboralMes
+        });
+    }
     function arrancar() {
         if (rutaActual() === 'ejemplo' || ejemploRecordado()) { entrarEjemplo(); return; }
         api('sesion').then(function (r) {

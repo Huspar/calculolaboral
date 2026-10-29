@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.22.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.23.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -108,6 +108,13 @@ gtag('js', new Date());
 <a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span>Liquidaciones<span class="app-nav-cuenta" id="nav-liq-n"></span></a>
 <a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos</a>
 <a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span>Calendario</a>
+<p class="app-nav-grupo">Finanzas</p>
+<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja"><span class="material-icons" aria-hidden="true">account_balance_wallet</span>Flujo de caja</a>
+<a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas"><span class="material-icons" aria-hidden="true">call_received</span>Cobranzas<span class="app-nav-cuenta" id="nav-cobranzas-pendientes"></span></a>
+<a href="/app/pagos" data-ruta="pagos" data-nav="pagos"><span class="material-icons" aria-hidden="true">call_made</span>Cuentas por pagar<span class="app-nav-cuenta" id="nav-pagos-pendientes"></span></a>
+<a href="/app/conciliacion" data-ruta="conciliacion" data-nav="conciliacion"><span class="material-icons" aria-hidden="true">sync_alt</span>Conciliación bancaria<span class="app-nav-cuenta" id="nav-mov-sin-conciliar"></span></a>
+<p class="app-nav-grupo">Contabilidad y Cierre</p>
+<a href="/app/mi-contador" data-ruta="mi-contador" data-nav="mi-contador"><span class="material-icons" aria-hidden="true">handshake</span>Mi Contador<span class="app-nav-chip" id="nav-chip-cierre"></span></a>
 <p class="app-nav-grupo">Herramientas</p>
 <a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
 <p class="app-nav-grupo">Configuración</p>
@@ -147,6 +154,11 @@ gtag('js', new Date());
 <span class="material-icons" aria-hidden="true">science</span>
 <p><strong>Estás viendo un ejemplo con datos ficticios.</strong> Cambia lo que quieras: nada se guarda y todo se borra al salir. Los documentos salen con la marca «Vista previa».</p>
 <div class="ejemplo-franja-acciones"><button type="button" class="btn btn-chico btn-primario" id="pm-ejemplo-entrar">Usar con mi empresa</button><button type="button" class="btn-texto" id="pm-ejemplo-salir">Salir del ejemplo</button></div>
+</div>
+<div id="pm-cierre-banner" class="cierre-tributario-banner" role="status" hidden>
+<span class="material-icons" aria-hidden="true">lock</span>
+<p id="pm-cierre-banner-txt"></p>
+<div class="cierre-tributario-acciones"><button type="button" class="btn btn-chico" id="pm-cierre-solicitar">Solicitar reapertura</button></div>
 </div>
 <div id="pm-aviso-global" class="lq-avisos aviso-global" role="status"></div>
 
@@ -1043,14 +1055,239 @@ gtag('js', new Date());
 <p class="texto-ayuda" style="margin-top:16px"><a href="/terminos#asistente-pyme">Términos</a> · <a href="/privacidad#asistente-pyme">Privacidad</a> · ¿Dudas? Escribe a <a href="mailto:contacto@calculolaboral.cl">contacto@calculolaboral.cl</a></p>
 </section>
 
+<!-- Flujo de caja operacional -->
+<section class="vista" data-vista="flujo-caja" aria-labelledby="fc-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="fc-titulo">Flujo de caja</h1>
+<p class="v-sub" id="fc-sub"></p>
+</div>
+<div class="v-acciones">
+<button type="button" class="btn" id="fc-btn-saldo"><span class="material-icons" aria-hidden="true">edit</span>Ajustar saldo banco</button>
+<button type="button" class="btn btn-primario" id="fc-btn-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola bancaria</button>
+<input type="file" id="fc-cartola-file" accept=".csv,.xlsx,.xls,text/csv" hidden>
+</div>
+</div>
+
+<div class="fin-kpis fin-kpis-4" id="fc-kpis"></div>
+
+<div class="fin-split">
+<div class="panel">
+<div class="panel-head"><h2>Próximos compromisos del mes</h2><a href="/app/calendario" data-ruta="calendario" class="btn-texto">Ver calendario</a></div>
+<ul class="fin-comp-lista" id="fc-compromisos"></ul>
+</div>
+<div class="panel">
+<div class="panel-head"><h2>Actualizar cartola del banco</h2></div>
+<div class="panel-cuerpo">
+<div class="fin-dropzone" id="fc-dropzone" role="button" tabindex="0" aria-label="Subir cartola bancaria CSV o Excel">
+<span class="material-icons" aria-hidden="true">upload_file</span>
+<strong>Arrastra tu cartola CSV o Excel (.xlsx)</strong>
+<span>Sin claves bancarias: el archivo se lee directo en tu navegador.</span>
+</div>
+<div id="fc-cartola-resumen" style="margin-top:12px"></div>
+<div class="form-acciones" style="margin-top:12px">
+<a href="/app/conciliacion" data-ruta="conciliacion" class="btn btn-chico"><span class="material-icons" aria-hidden="true">sync_alt</span>Ir a conciliar</a>
+<button type="button" class="btn-texto" id="fc-btn-cartola-demo">Probar con cartola de muestra</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Cobranzas (CxC) -->
+<section class="vista" data-vista="cobranzas" aria-labelledby="cob-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="cob-titulo">Cobranzas</h1>
+<p class="v-sub">Facturas emitidas a clientes, estado de vencimiento y recordatorio formal de cobro.</p>
+</div>
+<div class="v-acciones">
+<button type="button" class="btn" id="cob-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Importar RCV Ventas SII (.csv)</button>
+<input type="file" id="cob-rcv-file" accept=".csv,text/csv" hidden>
+<button type="button" class="btn btn-primario" id="cob-btn-nueva"><span class="material-icons" aria-hidden="true">add</span>Nueva cuenta por cobrar</button>
+</div>
+</div>
+
+<div class="panel" id="cob-form-panel" hidden style="margin-bottom:16px">
+<div class="panel-head"><h2>Registrar cuenta por cobrar</h2></div>
+<form id="cob-form" class="panel-cuerpo fin-form-grid" novalidate>
+<div class="lq-field"><label for="cob-f-razon">Cliente / Razón social</label><input id="cob-f-razon" type="text" maxlength="120" required></div>
+<div class="lq-field"><label for="cob-f-rut">RUT cliente</label><input id="cob-f-rut" type="text" data-tipo="rut" maxlength="15" placeholder="76.123.456-7"></div>
+<div class="lq-field"><label for="cob-f-folio">N° Factura / Folio</label><input id="cob-f-folio" type="text" maxlength="20" placeholder="1120"></div>
+<div class="lq-field"><label for="cob-f-monto">Monto total ($)</label><input id="cob-f-monto" type="text" data-tipo="pesos" inputmode="numeric" required placeholder="$595.000"></div>
+<div class="lq-field"><label for="cob-f-fecha">Fecha emisión</label><input id="cob-f-fecha" type="date"></div>
+<div class="lq-field"><label for="cob-f-vence">Fecha vencimiento</label><input id="cob-f-vence" type="date"></div>
+<div class="lq-field"><label for="cob-f-tel">WhatsApp contacto (opcional)</label><input id="cob-f-tel" type="text" maxlength="20" placeholder="+56991234567"></div>
+<p id="cob-form-err" class="pm-error fin-span-all" role="alert" hidden></p>
+<div class="form-acciones fin-span-all"><button type="button" class="btn" id="cob-form-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Guardar factura</button></div>
+</form>
+</div>
+
+<div class="fin-kpis fin-kpis-4" id="cob-kpis"></div>
+
+<div class="fin-filtros" role="toolbar" aria-label="Filtrar cuentas por cobrar">
+<button type="button" class="fin-chip activo" data-cob-filtro="todas" aria-pressed="true">Todas</button>
+<button type="button" class="fin-chip" data-cob-filtro="vencidas" aria-pressed="false">Vencidas</button>
+<button type="button" class="fin-chip" data-cob-filtro="por_vencer" aria-pressed="false">Por vencer (7 días)</button>
+<button type="button" class="fin-chip" data-cob-filtro="al_dia" aria-pressed="false">Al día</button>
+<button type="button" class="fin-chip" data-cob-filtro="pagadas" aria-pressed="false">Cobradas</button>
+</div>
+
+<div class="panel">
+<div class="tabla-wrap">
+<table class="tabla">
+<caption class="sr-only">Facturas por cobrar a clientes</caption>
+<thead><tr><th scope="col">Cliente</th><th scope="col">Documento</th><th scope="col">Vencimiento</th><th scope="col">Estado</th><th scope="col" class="num">Monto</th><th scope="col" class="celda-acciones">Acciones</th></tr></thead>
+<tbody id="cob-filas"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- Cuentas por pagar (CxP) -->
+<section class="vista" data-vista="pagos" aria-labelledby="pag-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="pag-titulo">Cuentas por pagar</h1>
+<p class="v-sub">Facturas de proveedores y planilla para pago masivo en el portal de tu banco.</p>
+</div>
+<div class="v-acciones">
+<button type="button" class="btn" id="pag-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Importar RCV Compras SII (.csv)</button>
+<input type="file" id="pag-rcv-file" accept=".csv,text/csv" hidden>
+<button type="button" class="btn" id="pag-btn-nueva"><span class="material-icons" aria-hidden="true">add</span>Registrar factura</button>
+<button type="button" class="btn btn-primario" id="pag-btn-nomina"><span class="material-icons" aria-hidden="true">download</span><span id="pag-btn-nomina-txt">Descargar nómina bancaria</span></button>
+</div>
+</div>
+
+<div class="panel" id="pag-form-panel" hidden style="margin-bottom:16px">
+<div class="panel-head"><h2>Registrar factura de proveedor</h2></div>
+<form id="pag-form" class="panel-cuerpo fin-form-grid" novalidate>
+<div class="lq-field"><label for="pag-f-razon">Proveedor / Razón social</label><input id="pag-f-razon" type="text" maxlength="120" required></div>
+<div class="lq-field"><label for="pag-f-rut">RUT proveedor</label><input id="pag-f-rut" type="text" data-tipo="rut" maxlength="15" placeholder="96.540.110-K"></div>
+<div class="lq-field"><label for="pag-f-folio">N° Factura / Folio</label><input id="pag-f-folio" type="text" maxlength="20" placeholder="46110"></div>
+<div class="lq-field"><label for="pag-f-monto">Monto total ($)</label><input id="pag-f-monto" type="text" data-tipo="pesos" inputmode="numeric" required placeholder="$464.100"></div>
+<div class="lq-field"><label for="pag-f-fecha">Fecha emisión</label><input id="pag-f-fecha" type="date"></div>
+<div class="lq-field"><label for="pag-f-vence">Fecha vencimiento</label><input id="pag-f-vence" type="date"></div>
+<div class="lq-field"><label for="pag-f-banco">Banco destino</label><select id="pag-f-banco"></select></div>
+<div class="lq-field"><label for="pag-f-tipo">Tipo de cuenta</label><select id="pag-f-tipo"><option value="corriente">Cuenta corriente</option><option value="vista">Cuenta vista / RUT</option><option value="ahorro">Cuenta de ahorro</option></select></div>
+<div class="lq-field"><label for="pag-f-num">Número de cuenta</label><input id="pag-f-num" type="text" maxlength="22" placeholder="0018945002"></div>
+<p id="pag-form-err" class="pm-error fin-span-all" role="alert" hidden></p>
+<div class="form-acciones fin-span-all"><button type="button" class="btn" id="pag-form-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Guardar factura</button></div>
+</form>
+</div>
+
+<div class="fin-kpis fin-kpis-3" id="pag-kpis"></div>
+
+<div id="pag-nomina-detalle" class="panel panel-cuerpo fin-aviso-nomina" hidden style="margin-bottom:16px"></div>
+
+<div class="fin-filtros" role="toolbar" aria-label="Filtrar cuentas por pagar">
+<button type="button" class="fin-chip activo" data-pag-filtro="pendientes" aria-pressed="true">Pendientes</button>
+<button type="button" class="fin-chip" data-pag-filtro="vencidas" aria-pressed="false">Vencidas</button>
+<button type="button" class="fin-chip" data-pag-filtro="pagadas" aria-pressed="false">Pagadas</button>
+<button type="button" class="fin-chip" data-pag-filtro="todas" aria-pressed="false">Todas</button>
+</div>
+
+<div class="panel">
+<div class="tabla-wrap">
+<table class="tabla">
+<caption class="sr-only">Facturas por pagar a proveedores</caption>
+<thead><tr><th scope="col" class="fin-col-check"><input type="checkbox" id="pag-sel-todas" aria-label="Seleccionar todas las pendientes"></th><th scope="col">Proveedor y cuenta</th><th scope="col">Documento</th><th scope="col">Vencimiento</th><th scope="col">Estado</th><th scope="col" class="num">Monto</th><th scope="col" class="celda-acciones">Acciones</th></tr></thead>
+<tbody id="pag-filas"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- Conciliacion bancaria en 1 clic -->
+<section class="vista" data-vista="conciliacion" aria-labelledby="conc-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="conc-titulo">Conciliación bancaria</h1>
+<p class="v-sub">Cruza los abonos y cargos de tu banco con facturas, sueldos, Previred y F29 sin lenguaje contable.</p>
+</div>
+<div class="v-acciones">
+<button type="button" class="btn btn-primario" id="conc-btn-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (.csv / .xlsx)</button>
+</div>
+</div>
+
+<div class="fin-kpis fin-kpis-4" id="conc-kpis"></div>
+
+<div class="fin-filtros" role="toolbar" aria-label="Filtrar movimientos bancarios">
+<button type="button" class="fin-chip activo" data-conc-filtro="pendientes" aria-pressed="true">Sin conciliar</button>
+<button type="button" class="fin-chip" data-conc-filtro="conciliados" aria-pressed="false">Conciliados</button>
+<button type="button" class="fin-chip" data-conc-filtro="todos" aria-pressed="false">Todos</button>
+</div>
+
+<div class="concil-grid">
+<div class="panel">
+<div class="panel-head"><h2>Movimientos del banco</h2></div>
+<div class="conc-lista" id="conc-lista-banco"></div>
+</div>
+<div class="panel">
+<div class="panel-head"><h2>Con qué cruzarlo en tu empresa</h2></div>
+<div id="conc-lista-empresa"></div>
+</div>
+</div>
+</section>
+
+<!-- Mi Contador y Cierre Tributario -->
+<section class="vista" data-vista="mi-contador" aria-labelledby="mc-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="mc-titulo">Mi Contador y Cierre</h1>
+<p class="v-sub">Conexión colaborativa con tu estudio contable, estado del F29 y protección de períodos declarados.</p>
+</div>
+<div class="v-acciones">
+<button type="button" class="btn" id="mc-btn-exportar-contador"><span class="material-icons" aria-hidden="true">download</span>Exportar paquete para mi contador</button>
+</div>
+</div>
+
+<div class="fin-split">
+<div class="panel">
+<div class="panel-head"><h2>Estado tributario del mes</h2></div>
+<div class="panel-cuerpo">
+<div id="mc-cierre-panel"></div>
+<div id="mc-solicitudes-lista" hidden></div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-head"><h2>Estudio contable y cuenta para cobros</h2></div>
+<form id="mc-estudio-form" class="panel-cuerpo fin-form-grid-2" novalidate>
+<div class="lq-field"><label for="mc-est-nombre">Estudio contable</label><input id="mc-est-nombre" type="text" maxlength="100" placeholder="Ej: Soto y Asociados"></div>
+<div class="lq-field"><label for="mc-est-contador">Contador(a) titular</label><input id="mc-est-contador" type="text" maxlength="100" placeholder="Nombre de tu contador"></div>
+<div class="lq-field"><label for="mc-est-correo">Correo del estudio</label><input id="mc-est-correo" type="email" maxlength="120" placeholder="contador@estudio.cl"></div>
+<div class="lq-field"><label for="mc-est-telefono">Teléfono / WhatsApp</label><input id="mc-est-telefono" type="text" maxlength="20" placeholder="+56987654321"></div>
+<div class="lq-field fin-span-all"><label for="mc-regimen">Régimen tributario SII</label><select id="mc-regimen"><option value="14D3">ProPyme General (Art. 14 D N°3)</option><option value="14D8">ProPyme Transparente (Art. 14 D N°8)</option><option value="14A">Régimen General Semi Integrado (Art. 14 A)</option></select></div>
+<div class="lq-field"><label for="mc-cobro-banco">Tu banco para recibir cobros</label><select id="mc-cobro-banco"></select></div>
+<div class="lq-field"><label for="mc-cobro-tipo">Tipo de cuenta empresa</label><select id="mc-cobro-tipo"><option value="corriente">Cuenta corriente</option><option value="vista">Cuenta vista / RUT</option><option value="ahorro">Cuenta de ahorro</option></select></div>
+<div class="lq-field"><label for="mc-cobro-numero">N° cuenta empresa</label><input id="mc-cobro-numero" type="text" maxlength="22" placeholder="6250014892"></div>
+<div class="lq-field"><label for="mc-cobro-correo">Correo notificaciones pago</label><input id="mc-cobro-correo" type="email" maxlength="120" placeholder="pagos@tuempresa.cl"></div>
+<div class="form-acciones fin-span-all"><button type="submit" class="btn btn-primario">Guardar vinculación</button><p class="lq-estado" id="mc-estudio-estado" role="status"></p></div>
+</form>
+</div>
+</div>
+
+<div class="panel" style="margin-top:16px">
+<div class="panel-head"><h2>Historial reciente de cierres y Formulario 29</h2></div>
+<div class="tabla-wrap">
+<table class="tabla">
+<caption class="sr-only">Historial de cierres tributarios mensuales</caption>
+<thead><tr><th scope="col">Período</th><th scope="col">Régimen</th><th scope="col">Estado cierre</th><th scope="col" class="num">Total F29 (cód. 91)</th><th scope="col" class="celda-acciones">Revisar</th></tr></thead>
+<tbody id="mc-historial-filas"></tbody>
+</table>
+</div>
+</div>
+</section>
+
 </main>
 </div>
 
 <nav class="app-barra" id="app-barra" aria-label="Secciones principales">
 <a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span><span>Cierre</span></a>
-<a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span><span>Personas</span></a>
-<a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Liquidaciones</span></a>
-<a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span><span>Calendario</span></a>
+<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja"><span class="material-icons" aria-hidden="true">account_balance_wallet</span><span>Caja</span></a>
+<a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas"><span class="material-icons" aria-hidden="true">call_received</span><span>Cobros</span></a>
+<a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Sueldos</span></a>
 <button type="button" id="app-mas" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">more_horiz</span><span>Más</span></button>
 </nav>
 </div>
@@ -1060,6 +1297,57 @@ gtag('js', new Date());
 <h2 id="app-confirmar-titulo"></h2>
 <p id="app-confirmar-texto"></p>
 <div class="form-acciones"><button type="submit" value="cancelar" class="btn" id="app-confirmar-cancelar">Cancelar</button><button type="submit" value="ok" class="btn-peligro" id="app-confirmar-ok"></button></div>
+</form>
+</dialog>
+
+<dialog class="app-dialogo" id="pm-saldo-dlg" aria-labelledby="pm-saldo-titulo">
+<div class="midt-cabeza"><h2 id="pm-saldo-titulo">Saldo actual en banco</h2><button type="button" class="app-icono-btn" id="pm-saldo-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<form id="pm-saldo-form" class="opinion-form" novalidate>
+<p class="texto-ayuda">Ingresa el saldo disponible hoy en la cuenta bancaria de la empresa para proyectar fin de mes.</p>
+<div class="lq-field"><label for="pm-saldo-input">Saldo disponible ($)</label><input id="pm-saldo-input" type="text" data-tipo="pesos" inputmode="numeric" placeholder="$4.500.000"></div>
+<div class="form-acciones"><button type="submit" class="btn btn-primario">Actualizar saldo</button></div>
+</form>
+</dialog>
+
+<dialog class="app-dialogo app-dialogo-medio" id="pm-cobro-dlg" aria-labelledby="pm-cobro-titulo">
+<div class="midt-cabeza"><h2 id="pm-cobro-titulo">Recordatorio de cobro</h2><button type="button" class="app-icono-btn" id="pm-cobro-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<div class="opinion-form">
+<div class="fin-form-grid-2">
+<div class="lq-field"><label for="pm-cobro-tel">WhatsApp cliente</label><input id="pm-cobro-tel" type="text" maxlength="20" placeholder="+56991234567"></div>
+<div class="lq-field"><label for="pm-cobro-banco">Banco para recibir transferencia</label><select id="pm-cobro-banco"></select></div>
+<div class="lq-field"><label for="pm-cobro-tipo">Tipo de cuenta</label><select id="pm-cobro-tipo"><option value="corriente">Cuenta corriente</option><option value="vista">Cuenta vista / RUT</option><option value="ahorro">Cuenta de ahorro</option></select></div>
+<div class="lq-field"><label for="pm-cobro-num">N° de cuenta</label><input id="pm-cobro-num" type="text" maxlength="22"></div>
+</div>
+<div class="lq-field" style="margin-top:10px">
+<label for="pm-cobro-texto">Mensaje formal listo para enviar</label>
+<textarea id="pm-cobro-texto" rows="6"></textarea>
+</div>
+<p class="lq-estado lq-estado-ok" id="pm-cobro-copiado" role="status"></p>
+<div class="form-acciones">
+<button type="button" class="btn" id="pm-cobro-copiar"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar texto</button>
+<a class="btn btn-primario" id="pm-cobro-wa" href="https://wa.me/" target="_blank" rel="noopener"><span class="material-icons" aria-hidden="true">open_in_new</span>Abrir en WhatsApp</a>
+</div>
+</div>
+</dialog>
+
+<dialog class="app-dialogo app-dialogo-medio" id="pm-prov-banco-dlg" aria-labelledby="pm-prov-titulo">
+<div class="midt-cabeza"><h2 id="pm-prov-titulo">Cuenta bancaria del proveedor</h2><button type="button" class="app-icono-btn" id="pm-prov-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<form id="pm-prov-form" class="opinion-form fin-form-grid-2" novalidate>
+<div class="lq-field"><label for="pm-prov-banco">Banco</label><select id="pm-prov-banco"></select></div>
+<div class="lq-field"><label for="pm-prov-tipo">Tipo de cuenta</label><select id="pm-prov-tipo"><option value="corriente">Cuenta corriente</option><option value="vista">Cuenta vista / RUT</option><option value="ahorro">Cuenta de ahorro</option></select></div>
+<div class="lq-field"><label for="pm-prov-num">Número de cuenta</label><input id="pm-prov-num" type="text" maxlength="22" required></div>
+<div class="lq-field"><label for="pm-prov-correo">Correo de aviso</label><input id="pm-prov-correo" type="email" maxlength="120"></div>
+<div class="form-acciones fin-span-all"><button type="submit" class="btn btn-primario">Guardar cuenta</button></div>
+</form>
+</dialog>
+
+<dialog class="app-dialogo app-dialogo-medio" id="pm-reapertura-dlg" aria-labelledby="pm-reap-titulo">
+<div class="midt-cabeza"><h2 id="pm-reap-titulo">Solicitar reapertura del período</h2><button type="button" class="app-icono-btn" id="pm-reap-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<form id="pm-reap-form" class="opinion-form" novalidate>
+<p class="texto-ayuda">El período ya fue cerrado tributariamente por tu contador para resguardar la cuadratura con el F29. Indica qué documento o liquidación necesitas ajustar para enviarle la solicitud formal.</p>
+<div class="lq-field"><label for="pm-reap-motivo">Motivo del ajuste</label><textarea id="pm-reap-motivo" rows="4" maxlength="500" placeholder="Ej: Llegó una nota de crédito de proveedor o debemos reliquidar un bono pendiente."></textarea></div>
+<p class="pm-error" id="pm-reap-estado" role="alert"></p>
+<div class="form-acciones"><button type="submit" class="btn btn-primario">Registrar y copiar solicitud</button></div>
 </form>
 </dialog>
 
@@ -1126,7 +1414,9 @@ gtag('js', new Date());
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
+<script src="/js/contadores_f29.js?v=1.0.0"></script>
+<script src="/js/pyme_finanzas.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.33.0" defer></script>
+<script src="/js/app_pyme.js?v=1.34.0" defer></script>
 </body>
 </html>
