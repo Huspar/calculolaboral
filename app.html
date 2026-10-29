@@ -458,9 +458,12 @@ gtag('js', new Date());
 <button type="button" id="pm-liq-marcar" class="btn-texto" hidden>Marcar como emitidas</button>
 <button type="button" id="pm-liq-libro-excel" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">table_view</span>Libro del mes para el contador (Excel)</button>
 <button type="button" id="pm-liq-libro-imprimir" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">print</span>Imprimir libro</button>
+<button type="button" id="pm-liq-lre" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">description</span>Archivo para el LRE (Mi DT)</button>
+<input type="file" id="pm-liq-lre-plantilla" accept=".csv,.txt" hidden>
 <p id="pm-liq-estado" class="lq-estado" role="status"></p>
 </div>
 <p class="texto-ayuda" id="pm-liq-nota-marca" style="margin-top:6px"></p>
+<div id="pm-liq-lre-detalle" class="lq-help" role="status" style="margin-top:6px"></div>
 
 <div class="panel" id="liq-previred" hidden>
 <div class="panel-head"><h2 id="liq-previred-titulo">Para pagar en Previred</h2><span class="sello sello-guardada">Estimación</span></div>
@@ -891,11 +894,14 @@ gtag('js', new Date());
 <script src="/js/pyme_libro.js?v=1.0.0"></script>
 <script src="/js/previred_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_previred.js?v=1.0.0"></script>
+<script src="/js/lre_tablas.js?v=1.0.0"></script>
+<script src="/js/lre_generador.js?v=1.0.0"></script>
+<script src="/js/pyme_lre.js?v=1.0.0"></script>
 <script src="/js/pyme_anual.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.22.0" defer></script>
+<script src="/js/app_pyme.js?v=1.23.0" defer></script>
 </body>
 </html>

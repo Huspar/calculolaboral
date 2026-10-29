@@ -2214,7 +2214,7 @@
         $('pm-liq-preparar').hidden = porPreparar === 0;
         $('pm-liq-imprimir-todas').disabled = guardadas === 0;
         $('pm-liq-marcar').hidden = !ultimasImpresas.length;
-        $('pm-liq-libro-excel').hidden = $('pm-liq-libro-imprimir').hidden = guardadas === 0;
+        $('pm-liq-libro-excel').hidden = $('pm-liq-libro-imprimir').hidden = $('pm-liq-lre').hidden = guardadas === 0;
         $('pm-liq-marcar').textContent = textoMarcar();
         $('nav-liq-n').textContent = porEmitir ? String(porEmitir) : '';
         $('nav-liq-n').title = porEmitir ? plural(porEmitir, 'liquidación por emitir', 'liquidaciones por emitir') + ' en ' + nombrePeriodo(periodoSel) : '';
@@ -2246,6 +2246,7 @@
         pie += '<p>Es una estimación con las tasas de Previred de ' + esc(nombrePeriodo(periodoSel)) + '. El monto exacto lo calcula Previred al declarar. Si tu empresa está afiliada a una caja de compensación, parte del 7% de Fonasa se paga a la caja.</p>';
         $('liq-previred-pie').innerHTML = pie;
         $('liq-previred-detalle').innerHTML = '';
+        $('pm-liq-lre-detalle').innerHTML = '';
     }
 
     // ---------- proyección del costo: aumentos del aporte de la Ley 21.735 y jornada de 40 horas ----------
@@ -2977,6 +2978,53 @@
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
         det.innerHTML = '<p><strong>Archivo descargado con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + '.</strong> Es un archivo para revisar y cargar tú en Previred con tu clave: el asistente no se conecta con Previred ni declara por ti. Previred valida el archivo al cargarlo.</p>' +
             lista('Revisa antes de cargarlo', s.avisos.concat(omitidas));
+    });
+    var plantillaLre = '';
+    // Archivo de carga masiva del Libro de Remuneraciones Electrónico (Mi DT): se descarga para revisarlo y cargarlo con tu clave
+    $('pm-liq-lre').addEventListener('click', function () {
+        var det = $('pm-liq-lre-detalle'), val = VAL[periodoSel];
+        function lista(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
+        if (!val || val.estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; return; }
+        var items = [], omitidas = [];
+        activos().forEach(function (t) {
+            var reg = mesesDe(periodoSel)[t.id];
+            if (!reg) return;
+            var r = calcularMes(t, conCuotas(t, reg, periodoSel), periodoSel);
+            if (!r || r.error || !r.res.listo) { omitidas.push(t.nombre + ': su liquidación tiene errores.'); return; }
+            items.push({ t: t, res: r.res, diasLicencia: AUS.diasLicencia(t.ausencias, periodoSel) });
+        });
+        if (!items.length) { det.innerHTML = '<p>No hay liquidaciones guardadas sin errores en ' + esc(nombrePeriodo(periodoSel)) + '.</p>' + lista('No se pudo incluir', omitidas); return; }
+        var armar = function (plantilla) {
+            var s = window.CLPymeLre.armar({ periodo: periodoSel, empresa: estado.empresa, items: items, plantilla: plantilla || '' });
+            if (s.errores.length) {
+                det.innerHTML = '<p><strong>No se generó el archivo.</strong> Completa lo que falta y vuelve a intentarlo.</p>' + lista('Falta corregir', s.errores.concat(omitidas));
+                return;
+            }
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([window.CLLre.bytesAnsi(s.texto)], { type: 'text/csv' }));
+            a.download = s.nombreArchivo;
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+            det.innerHTML = '<p><strong>Archivo descargado con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + '</strong> (' + esc(s.nombreArchivo) + ').</p>' +
+                '<p>Es un archivo para revisar y cargar tú en Mi DT, en «Libro de Remuneraciones Electrónico», con tu clave: el asistente no se conecta con la Dirección del Trabajo ni declara por ti. La DT lo valida al recibirlo y avisa por correo. Si ya descargaste el archivo de base de Mi DT, súbelo en «Usar la plantilla de Mi DT» para que los encabezados queden idénticos.</p>' +
+                '<p><button type="button" class="btn-texto" id="pm-liq-lre-usar">Usar la plantilla de Mi DT…</button></p>' +
+                lista('Revisa antes de cargarlo', s.avisos.concat(omitidas));
+        };
+        armar(plantillaLre || '');
+    });
+    $('pm-liq-lre-detalle').addEventListener('click', function (e) {
+        if (e.target && e.target.id === 'pm-liq-lre-usar') $('pm-liq-lre-plantilla').click();
+    });
+    $('pm-liq-lre-plantilla').addEventListener('change', function () {
+        var f = this.files && this.files[0];
+        if (!f) return;
+        var fr = new FileReader();
+        fr.onload = function () {
+            plantillaLre = String(fr.result || '');
+            $('pm-liq-lre').click();
+        };
+        fr.readAsText(f, 'windows-1252');
+        this.value = '';
     });
     $('pm-liq-libro-imprimir').addEventListener('click', function () {
         var filas = filasLibro($('pm-liq-estado'));
