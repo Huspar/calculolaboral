@@ -311,15 +311,13 @@
 }
 
 /* ---------- tabla en tarjetas (pantallas angostas) ---------- */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
     .tabla-wrap { border: 0; border-radius: 0; overflow: visible; }
     .tabla { display: block; min-width: 0; font-size: 13px; }
     .tabla thead { display: none; }
-    /* Dos tarjetas por fila solo si cada una mide al menos 340px; si no, una. */
-    .tabla tbody {
-        display: grid; gap: 12px; align-items: start;
-        grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
-    }
+    /* Una tarjeta por fila; dos recien cuando cada una llega a 300px de ancho
+       (704px de viewport con el panel actual). */
+    .tabla tbody { display: grid; gap: 12px; align-items: start; grid-template-columns: minmax(0, 1fr); }
     .tabla tbody tr { display: block; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
     .tabla tbody tr:hover { background: #fff; }
     .tabla td {
@@ -347,6 +345,13 @@
     .tabla td[colspan] { display: block; text-align: left; padding-top: 10px; line-height: 1.45; }
     .tabla td[colspan]::before { display: none; }
     .tabla td[colspan]:last-child { margin-top: 0; font-size: 13px; font-weight: 400; }
+}
+@media (min-width: 706px) and (max-width: 1024px) {
+    .tabla tbody { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* La tabla necesita 974px de contenido; con celdas de 10px entra desde 1025. */
+@media (min-width: 1025px) and (max-width: 1100px) {
+    .tabla th, .tabla td { padding-left: 10px; padding-right: 10px; }
 }
 </style>
 </head>
