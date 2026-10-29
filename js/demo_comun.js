@@ -230,6 +230,16 @@
         var activo = radios.filter(function (r) { return r.checked; })[0];
         aplicar(activo ? activo.value : 'finiquitos');
 
+        // La zona de carga es un div con click; con teclado tiene que responder igual.
+        Array.prototype.forEach.call(document.querySelectorAll('.demo-drop'), function (zona) {
+            zona.addEventListener('keydown', function (e) {
+                if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+                e.preventDefault();
+                var input = zona.querySelector('input[type=file]');
+                if (input) input.click();
+            });
+        });
+
         // Logo
         var logoInput = document.getElementById('logo-input');
         var btnLogo = document.getElementById('btn-logo');

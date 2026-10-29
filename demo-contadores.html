@@ -408,11 +408,11 @@
                         <p class="texto-ayuda">Se usa para el tope de 90 UF de la indemnización y el tope imponible.</p>
                     </div>
 
-                    <div class="demo-drop" id="drop-fin">
+                    <div class="demo-drop" id="drop-fin" role="button" tabindex="0" aria-label="Subir nómina de finiquitos: arrastra el archivo o presiona Enter para buscarlo">
                         <span class="material-icons" aria-hidden="true">upload_file</span>
                         <strong>Arrastra la nómina o haz clic para buscarla</strong>
                         <span>.xlsx, .xls o .csv · una fila por trabajador</span>
-                        <input type="file" id="file-fin" accept=".xlsx,.xls,.csv" class="sr-only">
+                        <input type="file" id="file-fin" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1">
                     </div>
 
                     <div class="demo-acciones">
@@ -479,11 +479,11 @@
                     </div>
                     <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:16px;">UF y UTM se cargan solas del período; puedes corregirlas.</p>
 
-                    <div class="demo-drop" id="drop-liq">
+                    <div class="demo-drop" id="drop-liq" role="button" tabindex="0" aria-label="Subir la nómina del mes: arrastra el archivo o presiona Enter para buscarlo">
                         <span class="material-icons" aria-hidden="true">upload_file</span>
                         <strong>Arrastra la nómina del mes</strong>
                         <span>.xlsx, .xls o .csv · una fila por trabajador</span>
-                        <input type="file" id="file-liq" accept=".xlsx,.xls,.csv" class="sr-only">
+                        <input type="file" id="file-liq" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1">
                     </div>
 
                     <div class="demo-acciones">
@@ -639,7 +639,7 @@
 <script src="/js/liquidacion_engine.js"></script>
 <script src="/js/liquidacion_valores.js"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
-<script src="/js/demo_comun.js?v=1.2.0"></script>
+<script src="/js/demo_comun.js?v=1.3.0"></script>
 <script src="/js/demo_contadores.js?v=1.1.1"></script>
 <script src="/js/previred_generador.js?v=1.3.0"></script>
 <script src="/js/demo_clientes.js?v=1.0.0"></script>
