@@ -311,11 +311,15 @@
 }
 
 /* ---------- tabla en tarjetas (pantallas angostas) ---------- */
-@media (max-width: 700px) {
+@media (max-width: 900px) {
     .tabla-wrap { border: 0; border-radius: 0; overflow: visible; }
     .tabla { display: block; min-width: 0; font-size: 13px; }
     .tabla thead { display: none; }
-    .tabla tbody { display: grid; gap: 12px; }
+    /* Dos tarjetas por fila solo si cada una mide al menos 340px; si no, una. */
+    .tabla tbody {
+        display: grid; gap: 12px; align-items: start;
+        grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+    }
     .tabla tbody tr { display: block; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
     .tabla tbody tr:hover { background: #fff; }
     .tabla td {
