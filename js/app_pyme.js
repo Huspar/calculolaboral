@@ -508,6 +508,63 @@
         dibujarPase();
     }
 
+    // ---------- resumen del mes de todas las empresas (Liquidaciones) ----------
+    var estudioCache = {};   // 'periodo|empresaId' → { fila } o { error: true }
+    var estudioCargando = false;
+    function datosEstudio(id, periodo) {
+        return Promise.all([api('estado', { empresaId: id }), api('meses', { query: { periodo: periodo }, empresaId: id }), api('honorarios', { query: { periodo: periodo }, empresaId: id })]).then(function (rs) {
+            if (!rs[0].ok || !rs[1].ok) return { error: true };
+            var meses = {};
+            (rs[1].datos.meses || []).forEach(function (x) { meses[x.trabajadorId] = x.mes; });
+            return { fila: Object.assign({ empresa: (rs[0].datos.empresa && rs[0].datos.empresa.razonSocial) || 'Sin nombre', rut: (rs[0].datos.empresa && rs[0].datos.empresa.rut) ? Rut.formatear(rs[0].datos.empresa.rut) : '' },
+                window.CLPymeEstudio.resumenEmpresa({ trabajadores: rs[0].datos.trabajadores || [], meses: meses, boletas: rs[2].ok ? (rs[2].datos.boletas || []) : [] })) };
+        });
+    }
+    function cargarEstudio(forzar) {
+        if (estudioCargando || !variasEmpresas()) return;
+        var p = periodoSel, cola = estado.empresas.map(function (e) { return e.id; }).filter(function (id) { return forzar || !estudioCache[p + '|' + id]; });
+        if (!cola.length) return;
+        estudioCargando = true;
+        Promise.all([0, 1, 2].map(function () {
+            return (function paso() {
+                var id = cola.shift();
+                if (!id) return Promise.resolve();
+                return datosEstudio(id, p).then(function (r) { estudioCache[p + '|' + id] = r; if (periodoSel === p) dibujarEstudio(true); }, function () { estudioCache[p + '|' + id] = { error: true }; }).then(paso);
+            })();
+        })).then(function () { estudioCargando = false; if (periodoSel === p) dibujarEstudio(true); });
+    }
+    function filasEstudio() {
+        return estado.empresas.map(function (e) { var r = estudioCache[periodoSel + '|' + e.id]; return r && r.fila ? r.fila : null; });
+    }
+    function dibujarEstudio(sinCargar) {
+        var caja = $('liq-estudio'), multi = variasEmpresas();
+        caja.hidden = !multi;
+        if (!multi) return;
+        $('liq-estudio-titulo').textContent = 'Todas tus empresas en ' + nombrePeriodo(periodoSel);
+        var filas = filasEstudio(), listas = filas.filter(Boolean), tot = window.CLPymeEstudio.totales(listas);
+        $('liq-estudio-filas').innerHTML = estado.empresas.map(function (e, i) {
+            var r = estudioCache[periodoSel + '|' + e.id], f = filas[i], nombre = '<strong>' + esc(e.razonSocial || 'Sin nombre') + '</strong>' + (e.rut ? '<span>' + esc(Rut.formatear(e.rut)) + '</span>' : '');
+            if (!r) return '<tr><td class="celda-nombre">' + nombre + '</td><td colspan="5"><span class="vacio">Revisando…</span></td></tr>';
+            if (!f) return '<tr><td class="celda-nombre">' + nombre + '</td><td colspan="5"><span class="vacio">No pudimos revisarla</span></td></tr>';
+            return '<tr' + (e.id === estado.empresaId ? ' aria-current="true"' : '') + '><td class="celda-nombre">' + nombre + (f.sinDesglose ? '<small class="bloque-chico">' + plural(f.sinDesglose, 'liquidación', 'liquidaciones') + ' sin desglose: ábrela y guárdala de nuevo</small>' : '') + '</td>' +
+                '<td class="num">' + f.emitidas + ' / ' + f.guardadas + (f.activos ? ' de ' + f.activos : '') + '</td><td class="num mono">' + pesos(f.previred) + '</td><td class="num mono">' + pesos(f.impuesto) + '</td><td class="num mono">' + pesos(f.retencion) + '</td><td class="num mono">' + pesos(f.costo) + '</td></tr>';
+        }).join('');
+        $('liq-estudio-total').innerHTML = listas.length ? '<th scope="row">Total (' + plural(listas.length, 'empresa', 'empresas') + ')</th><td class="num">' + tot.emitidas + ' / ' + tot.guardadas + '</td><td class="num mono">' + pesos(tot.previred) + '</td><td class="num mono">' + pesos(tot.impuesto) + '</td><td class="num mono">' + pesos(tot.retencion) + '</td><td class="num mono">' + pesos(tot.costo) + '</td>' : '';
+        $('liq-estudio-csv').disabled = !listas.length;
+        if (!sinCargar) cargarEstudio(false);
+    }
+    $('liq-estudio-actualizar').addEventListener('click', function () { estudioCache = {}; dibujarEstudio(); });
+    $('liq-estudio-csv').addEventListener('click', function () {
+        var listas = filasEstudio().filter(Boolean);
+        if (!listas.length) return;
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['\ufeff', window.CLPymeEstudio.csv({ periodoNombre: nombrePeriodo(periodoSel) }, listas)], { type: 'text/csv;charset=utf-8' }));
+        a.download = 'resumen-empresas-' + periodoSel + '.csv';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+        mensaje($('liq-estudio-estado'), 'ok', 'Descargado.');
+    });
+
     // ---------- resumen de todas las empresas (Cierre del mes) ----------
     var resumenEmpresasCache = {};   // empresaId → { trabajadores, urgentes, avisos, titulos } (o { error: true })
     var resumenCargando = false;
@@ -577,7 +634,7 @@
     }
     function cambiarEmpresa(id) {
         recordarEmpresa(id);
-        resumenEmpresasCache = {};
+        resumenEmpresasCache = {}; estudioCache = {};
         empresaNueva = false;
         reiniciar();
         mostrar('cargando');
@@ -2356,6 +2413,7 @@
         dibujarProyeccion();
         dibujarAnualPanel();
         dibujarF29();
+        dibujarEstudio();
         if (vistaActual === 'inicio') dibujarInicio();
     }
 
@@ -2940,7 +2998,7 @@
         var c = t ? calcularMes(t, mes, periodo) : null;
         var cuerpo = Object.assign({}, mes, { calculo: c && c.res ? (c.res.listo ? L.resumen(c.res, c.val.mes, t) : null) : (mes.calculo || null) });
         return api('mes', { metodo: 'PUT', query: { trabajador: id, periodo: periodo }, cuerpo: { mes: cuerpo } }).then(function (r) {
-            if (r.ok) { mesesCache[periodo] = mesesCache[periodo] || {}; mesesCache[periodo][id] = r.datos.mes; }
+            if (r.ok) { mesesCache[periodo] = mesesCache[periodo] || {}; mesesCache[periodo][id] = r.datos.mes; estudioCache = {}; resumenEmpresasCache = {}; }
             return r;
         });
     }

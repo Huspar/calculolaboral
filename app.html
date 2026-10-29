@@ -549,6 +549,19 @@ gtag('js', new Date());
 </div>
 <div class="panel-pie" id="liq-f29-pie"></div>
 </div>
+<div class="panel" id="liq-estudio" hidden>
+<div class="panel-head"><h2 id="liq-estudio-titulo">Todas tus empresas</h2><span class="sello sello-guardada">Estimación</span></div>
+<div class="tabla-wrap"><table class="tabla tabla-total"><caption class="sr-only">Resumen del mes de cada empresa de tu cuenta</caption>
+<thead><tr><th scope="col">Empresa</th><th scope="col" class="num">Liquidaciones</th><th scope="col" class="num">Previred</th><th scope="col" class="num">F29 · cód. 48</th><th scope="col" class="num">F29 · cód. 151</th><th scope="col" class="num">Costo total</th></tr></thead>
+<tbody id="liq-estudio-filas"></tbody>
+<tfoot><tr id="liq-estudio-total"></tr></tfoot></table></div>
+<div class="acciones-pila acciones-fila" style="padding:12px 16px">
+<button type="button" class="btn btn-chico" id="liq-estudio-csv" disabled><span class="material-icons" aria-hidden="true">table_view</span>Descargar resumen (Excel)</button>
+<button type="button" class="btn-texto" id="liq-estudio-actualizar"><span class="material-icons" aria-hidden="true">refresh</span>Actualizar</button>
+<p id="liq-estudio-estado" class="lq-estado" role="status"></p>
+</div>
+<div class="panel-pie"><p>Es lo que ya ves en «Para pagar en Previred» y «Para el Formulario 29» de cada empresa, juntado por mes. Son estimaciones con las liquidaciones y boletas guardadas: confirma los montos en Previred y en sii.cl antes de declarar. Una empresa sin liquidaciones guardadas del mes aparece en cero.</p></div>
+</div>
 
 <div id="pm-liq-editor" class="editor" hidden>
 <div class="editor-izq">
@@ -942,11 +955,12 @@ gtag('js', new Date());
 <script src="/js/pyme_lre.js?v=1.0.1"></script>
 <script src="/js/pyme_pagos.js?v=1.0.0"></script>
 <script src="/js/pyme_novedades.js?v=1.0.0"></script>
+<script src="/js/pyme_estudio.js?v=1.0.1"></script>
 <script src="/js/pyme_anual.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.29.0" defer></script>
+<script src="/js/app_pyme.js?v=1.30.0" defer></script>
 </body>
 </html>
