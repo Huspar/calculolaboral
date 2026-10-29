@@ -5,6 +5,7 @@
  *   node tools/db_migrate.js --entorno=pruebas             aplica las pendientes a la rama "pruebas"
  *   node tools/db_migrate.js --entorno=pruebas --estado    solo muestra aplicadas y pendientes
  *   node tools/db_migrate.js --entorno=pruebas --dry       muestra lo que aplicaria, sin tocar la base
+ *   node tools/db_migrate.js --entorno=produccion --confirmar-produccion --hasta=008   aplica solo las pendientes hasta la 008 (cambios en dos pasos)
  *   node tools/db_migrate.js --entorno=produccion --confirmar-produccion
  *
  * La cadena de conexion se lee de la variable de entorno DATABASE_URL_MIGRACION (nunca por argumento, para que no
@@ -73,12 +74,13 @@ function conSslEstricto(url) {
 }
 
 function leerArgumentos(argv) {
-    const a = { entorno: null, estado: false, dry: false, confirmarProduccion: false };
+    const a = { entorno: null, estado: false, dry: false, confirmarProduccion: false, hasta: null };
     argv.forEach(function (x) {
         if (x.indexOf('--entorno=') === 0) a.entorno = x.slice(10);
         else if (x === '--estado') a.estado = true;
         else if (x === '--dry') a.dry = true;
         else if (x === '--confirmar-produccion') a.confirmarProduccion = true;
+        else if (/^--hasta=\d{3}$/.test(x)) a.hasta = x.slice(8);
         else throw new Error('Argumento desconocido: ' + x);
     });
     if (a.entorno !== 'pruebas' && a.entorno !== 'produccion') throw new Error('Falta --entorno=pruebas o --entorno=produccion');
@@ -122,7 +124,9 @@ async function main() {
             if (args.dry) console.log('(--dry: no se aplico nada)');
             return;
         }
-        for (const m of plan.pendientes) {
+        const aplicar = args.hasta ? plan.pendientes.filter(m => m.nombre.slice(0, 3) <= args.hasta) : plan.pendientes;
+        if (args.hasta) console.log('--hasta=' + args.hasta + ': se aplican ' + aplicar.length + ' de ' + plan.pendientes.length + ' pendientes');
+        for (const m of aplicar) {
             await cliente.query('BEGIN');
             try {
                 await cliente.query(m.sql);
