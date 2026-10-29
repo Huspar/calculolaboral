@@ -27,6 +27,9 @@ function crearAlmacenSql(sql) {
     }
 
     return {
+        /** Consulta cruda para los modulos que traen su propio SQL (por ejemplo el estudio del contador). */
+        consulta: (texto, parametros) => filas(texto, parametros),
+
         /** Borra lo vencido hace mas de un dia (enlaces, sesiones) o de 2 dias (contadores de intentos). */
         async limpiar(ahoraIso) {
             await filas("DELETE FROM enlaces_acceso WHERE vence < $1::timestamptz - interval '1 day'", [ahoraIso]);

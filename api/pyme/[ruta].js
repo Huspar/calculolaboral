@@ -50,12 +50,21 @@ function armar() {
         enviar: ({ to, asunto, html, texto, clave }) => sendEmail({ to: [to], reply_to: 'contacto@calculolaboral.cl', subject: asunto, html, text: texto }, clave)
     });
     const enlaces = Enlaces.crear({ almacen, datos, secreto, siteUrl: SITE_URL });
+    // Estudio del contador: se arma al primer uso para no exigir la clave de cifrado al entrar
+    const Est = require('../_estudio/datos');
+    let estudioReal = null;
+    const estudio = new Proxy({}, {
+        get: (_, nombre) => (...args) => {
+            if (!estudioReal) estudioReal = Est.crear({ consulta: almacen.consulta, cifrado: Cifrado.crear() });
+            return estudioReal[nombre](...args);
+        }
+    });
     // Opiniones del piloto: se guardan y se avisa a contacto@ (si el correo falla, la opinión queda igual)
     const comentarios = Comentarios.crear({
         almacen, destino: ['contacto@calculolaboral.cl'],
         enviar: ({ to, reply_to, asunto, html, texto, clave }) => sendEmail(Object.assign({ to, subject: asunto, html, text: texto }, reply_to ? { reply_to } : {}), clave)
     });
-    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces, comentarios });
+    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces, comentarios, estudio });
 }
 
 module.exports = async (req, res) => {
