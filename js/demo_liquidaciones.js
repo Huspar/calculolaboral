@@ -671,6 +671,7 @@
             if (!estadoCuenta) return;
             cuentaActiva = email || '';
             estadoCuenta.textContent = email || 'sin sesión';
+            estadoCuenta.classList.toggle('con-sesion', !!email);
             if (btnSubir) btnSubir.hidden = !email;
             if (btnBajar) btnBajar.hidden = !email;
             if (btnEntrar) btnEntrar.hidden = !!email;
