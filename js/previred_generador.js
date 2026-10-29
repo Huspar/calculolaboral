@@ -168,10 +168,12 @@
         c[37] = '';
         c[38] = '0';                                          // por confirmar en la especificación
         c[39] = '0';
-        c[40] = '0';
-        c[41] = '';
-        c[42] = '0';
-        c[43] = '0';
+        // 40 a 43: APV del trabajador en su propia AFP (tabla 12: forma de pago 1 = directa).
+        var apv = Math.max(0, Math.round(Number(t.apvMonto) || 0));
+        c[40] = apv > 0 ? afpCodigo : '0';
+        c[41] = apv > 0 ? texto(t.apvContrato).slice(0, 20) : '';
+        c[42] = apv > 0 ? '1' : '0';
+        c[43] = monto(apv);
         c[44] = '0';
         c[45] = '0';
         c[46] = '';
@@ -365,6 +367,8 @@
                 centroCosto: rec.centroCosto,
                 nacionalidad: rec.nacionalidad,
                 tipoTrabajador: rec.tipoTrabajador,
+                apvMonto: rec.apvMonto,
+                apvContrato: rec.apvContrato,
                 tramoAF: rec.tramoAF,
                 cargas: rec.cargas,
                 asignacionFamiliar: buscarMonto(d.haberesNoImponibles, 'asignaci'),

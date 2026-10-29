@@ -314,4 +314,24 @@ caso('totales del archivo suman las cotizaciones de las dos lineas', () => {
     assert.strictEqual(t.total, esperado);
 });
 
+caso('APV del trabajador en su AFP: campos 40 a 43', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [Object.assign({}, fonasa, { apvMonto: 50000, apvContrato: 'C-123' })]
+    });
+    assert.deepStrictEqual(r.errores, []);
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f[39], '03');       // campo 40: institución = AFP Cuprum
+    assert.strictEqual(f[40], 'C-123');    // campo 41: contrato
+    assert.strictEqual(f[41], '1');        // campo 42: forma de pago directa
+    assert.strictEqual(f[42], '50000');    // campo 43: monto APV
+});
+
+caso('sin APV los campos 40 a 43 quedan en cero', () => {
+    const f = salida.filas[0].split(';');
+    assert.strictEqual(f[39], '0');
+    assert.strictEqual(f[41], '0');
+    assert.strictEqual(f[42], '0');
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');

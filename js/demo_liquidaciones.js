@@ -37,7 +37,9 @@
         movDesde: ['fecha_desde_movimiento', 'mov_desde', 'fecha_movimiento'],
         movHasta: ['fecha_hasta_movimiento', 'mov_hasta'],
         nacionalidad: ['nacionalidad', 'pais'],
-        pensionado: ['pensionado', 'tipo_trabajador', 'condicion']
+        pensionado: ['pensionado', 'tipo_trabajador', 'condicion'],
+        apvMonto: ['apv', 'apv_trabajador', 'ahorro_voluntario'],
+        apvContrato: ['contrato_apv', 'apv_contrato']
     };
 
     // ------------------------------------------------------------ valores
@@ -161,6 +163,8 @@
             licenciaDias: D.parseNumber(m.licenciaDias),
             rentaAnterior: D.parseNumber(m.rentaAnterior),
             subsidioLicencia: D.parseNumber(m.subsidioLicencia),
+            apvMonto: D.parseNumber(m.apvMonto),
+            apvContrato: String(m.apvContrato || '').trim(),
             nacionalidad: /extran/.test(D.norm(m.nacionalidad)) ? '1' : '0',
             tipoTrabajador: /nocotiza/.test(D.norm(m.pensionado)) ? '2' : (/pensionado|cotiza/.test(D.norm(m.pensionado)) ? '1' : '0'),
             rima: 0
@@ -226,7 +230,9 @@
                 var afcSubsidio = lic > 0 ? Math.round(subsidio * 0.006) : 0;
                 r.rima = (lic > 0 && r.rentaAnterior > 0) ? Math.round(r.rentaAnterior / 30 * lic) : 0;
                 var noImponibles = subsidio > 0 ? [{ nombre: 'Subsidio por licencia médica', monto: subsidio }] : [];
-                var otrosDesc = afcSubsidio > 0 ? [{ nombre: 'AFC 0,6% sobre subsidio', monto: afcSubsidio }] : [];
+                var otrosDesc = [];
+                if (afcSubsidio > 0) otrosDesc.push({ nombre: 'AFC 0,6% sobre subsidio', monto: afcSubsidio });
+                if (r.apvMonto > 0) otrosDesc.push({ nombre: 'APV', monto: Math.round(r.apvMonto) });
                 if (lic > 0 && subsidio === 0) { /* se avisa al final, cuando ya están los avisos del motor */ }
                 var res = window.CLLiquidacionEngine.calcular({
                     periodo: periodo,
@@ -535,10 +541,10 @@
             ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
             ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
-        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas', 'Días de licencia', 'Renta imponible mes anterior', 'Subsidio licencia', 'Nacionalidad', 'Pensionado']);
-        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2, 0, '', '', 'Chilena', 'no']);
-        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0, 5, 850000, 120000, 'Chilena', 'no']);
-        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas', 'Días de licencia', 'Renta imponible mes anterior', 'Subsidio licencia', 'Nacionalidad', 'Pensionado', 'Contrato APV', 'APV trabajador']);
+        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2, 0, '', '', 'Chilena', 'no', '', 0]);
+        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0, 5, 850000, 120000, 'Chilena', 'no', '', 0]);
+        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
         var ws = XLSX.utils.aoa_to_sheet(data);
         ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }, { wch: 13 }, { wch: 18 }, { wch: 14 }];
         var wb = XLSX.utils.book_new();
