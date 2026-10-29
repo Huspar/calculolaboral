@@ -224,6 +224,48 @@
             document.dispatchEvent(new CustomEvent('demo:modo', { detail: modo }));
         }
 
+        // Shell: bloques del riel por modo, riel abierto en escritorio y contexto del topbar.
+        var bloquesModo = document.querySelectorAll('[data-modo]');
+        var rielDet = document.getElementById('riel-det');
+        var topCtx = document.getElementById('top-ctx');
+        var topCtxL = document.getElementById('top-ctx-l');
+        var periodoInput = document.getElementById('periodo');
+        var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+        function pintarContexto(modo) {
+            if (!topCtx) return;
+            if (modo === 'liquidaciones' && periodoInput) {
+                var p = (periodoInput.value || '').split('-');
+                var mes = p.length === 2 ? MESES[parseInt(p[1], 10) - 1] : '';
+                topCtx.textContent = mes ? mes + ' ' + p[0] : 'Período';
+                if (topCtxL) topCtxL.textContent = 'Período';
+            } else {
+                topCtx.textContent = 'Finiquitos';
+                if (topCtxL) topCtxL.textContent = 'Modo';
+            }
+        }
+
+        document.addEventListener('demo:modo', function (e) {
+            var modo = e.detail;
+            Array.prototype.forEach.call(bloquesModo, function (el) {
+                if (el.getAttribute('data-modo') === modo) el.removeAttribute('hidden');
+                else el.setAttribute('hidden', '');
+            });
+            pintarContexto(modo);
+        });
+
+        if (periodoInput) {
+            periodoInput.addEventListener('change', function () { pintarContexto('liquidaciones'); });
+        }
+        if (rielDet) {
+            var mqRiel = window.matchMedia('(min-width: 1024px)');
+            if (mqRiel.matches) rielDet.open = true;
+            if (mqRiel.addEventListener) {
+                mqRiel.addEventListener('change', function (ev) { if (ev.matches) rielDet.open = true; });
+            }
+        }
+
         radios.forEach(function (r) {
             r.addEventListener('change', function () { if (r.checked) aplicar(r.value); });
         });
