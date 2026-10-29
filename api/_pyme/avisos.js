@@ -46,14 +46,25 @@ function crear({ almacen, datos, enviar, secreto, siteUrl, ahora, P, F }) {
                 const cuenta = { cuentaId: c.cuentaId, email: c.email };
                 const est = await datos.estado(cuenta);
                 if (!est.ok || !est.empresa) continue;
-                const docs = (await datos.documentos(cuenta)).documentos || [];
-                // El respaldo y los demás avisos informativos no van por correo
-                const lista = PEND.pendientes(est, { hoy, P, F, ultimoRespaldo: hoy, documentos: docs })
-                    .filter(a => a.nivel === 'urgente' || a.nivel === 'aviso');
+                // Estudios con varias empresas: se revisan todas y van en un solo correo, cada aviso con el nombre de su empresa.
+                // La primera empresa conserva los ids de siempre, así que quien tiene una sola no recibe nada repetido.
+                const empresas = est.empresas && est.empresas.length ? est.empresas : [{ id: est.empresaId, razonSocial: est.empresa.razonSocial }];
+                let lista = [];
+                for (let i = 0; i < empresas.length; i++) {
+                    const emp = empresas[i];
+                    const cuentaEmp = { cuentaId: c.cuentaId, email: c.email, empresaId: emp.id };
+                    const e = i === 0 ? est : await datos.estado(cuentaEmp);
+                    if (!e.ok || !e.empresa) continue;
+                    const docs = (await datos.documentos(cuentaEmp)).documentos || [];
+                    // El respaldo y los demás avisos informativos no van por correo
+                    let l = PEND.pendientes(e, { hoy, P, F, ultimoRespaldo: hoy, documentos: docs }).filter(a => a.nivel === 'urgente' || a.nivel === 'aviso');
+                    if (empresas.length > 1) l = l.map(a => Object.assign({}, a, { id: (i === 0 ? '' : emp.id + ':') + a.id, titulo: '[' + (emp.razonSocial || 'Empresa') + '] ' + a.titulo }));
+                    lista = lista.concat(l);
+                }
                 const previos = c.enviados || {};
                 const nuevos = lista.filter(a => !previos[a.id] || diasEntre(previos[a.id], hoy) >= DIAS_REPETIR);
                 if (!nuevos.length) continue;
-                const correo = C.correoAvisos({ avisos: lista, nuevos: nuevos.map(a => a.id), enlaceApp: siteUrl + '/app', enlaceBaja: siteUrl + '/api/pyme/avisos-baja?t=' + firmaBaja(c.cuentaId), razonSocial: est.empresa.razonSocial });
+                const correo = C.correoAvisos({ avisos: lista, nuevos: nuevos.map(a => a.id), enlaceApp: siteUrl + '/app', enlaceBaja: siteUrl + '/api/pyme/avisos-baja?t=' + firmaBaja(c.cuentaId), razonSocial: empresas.length > 1 ? 'tus ' + empresas.length + ' empresas' : est.empresa.razonSocial });
                 await enviar({ to: c.email, asunto: correo.asunto, html: correo.html, texto: correo.texto, clave: 'pyme-avisos-' + c.cuentaId + '-' + hoy });
                 const enviados = {};
                 Object.keys(previos).forEach(k => { if (diasEntre(previos[k], hoy) < DIAS_GUARDAR) enviados[k] = previos[k]; });

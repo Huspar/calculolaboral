@@ -67,7 +67,7 @@
         if (ejemplo) return ejemplo.api(ruta, o);
         var url = '/api/pyme/' + ruta + (o.query ? '?' + new URLSearchParams(o.query).toString() : '');
         var init = { method: o.metodo || 'GET', credentials: 'same-origin', headers: {} };
-        if (empresaSel) init.headers['X-CL-Empresa'] = empresaSel;   // cuentas con varias empresas: con cuál se trabaja
+        if (o.empresaId || empresaSel) init.headers['X-CL-Empresa'] = o.empresaId || empresaSel;   // cuentas con varias empresas: con cuál se trabaja
         if (init.method !== 'GET') {
             init.headers['Content-Type'] = 'application/json';
             init.headers['X-CL-Pyme'] = '1';
@@ -508,6 +508,55 @@
         dibujarPase();
     }
 
+    // ---------- resumen de todas las empresas (Cierre del mes) ----------
+    var resumenEmpresasCache = {};   // empresaId → { trabajadores, urgentes, avisos, titulos } (o { error: true })
+    var resumenCargando = false;
+    function resumenDeEmpresa(id) {
+        var toca = PEND.periodoLiquidacion(hoyIso());
+        return Promise.all([api('estado', { empresaId: id }), api('documentos', { empresaId: id }), toca ? api('meses', { query: { periodo: toca.periodo }, empresaId: id }) : Promise.resolve(null)]).then(function (rs) {
+            if (!rs[0].ok) return { error: true };
+            var est = rs[0].datos, liq = null;
+            if (toca && rs[2] && rs[2].ok) liq = { periodo: toca.periodo, registros: (rs[2].datos.meses || []).map(function (x) { return { trabajadorId: x.trabajadorId, emitida: (x.mes && x.mes.emitida) || '' }; }) };
+            var lista = PEND.pendientes(est, { hoy: hoyIso(), P: P, F: F, ultimoRespaldo: new Date().toISOString(), liquidaciones: liq, documentos: rs[1].ok ? (rs[1].datos.documentos || []) : [] })
+                .filter(function (a) { return a.nivel === 'urgente' || a.nivel === 'aviso'; });
+            return { trabajadores: (est.trabajadores || []).filter(function (t) { return t.activo; }).length, urgentes: lista.filter(function (a) { return a.nivel === 'urgente'; }).length, avisos: lista.length, titulos: lista.slice(0, 3).map(function (a) { return a.titulo; }) };
+        });
+    }
+    function cargarResumenEmpresas(forzar) {
+        if (resumenCargando || !variasEmpresas()) return;
+        var ids = estado.empresas.map(function (e) { return e.id; }).filter(function (id) { return forzar || !resumenEmpresasCache[id]; });
+        if (!ids.length) return;
+        resumenCargando = true;
+        var cola = ids.slice(), trabajadores = [0, 1, 2].map(function () {
+            return (function paso() {
+                var id = cola.shift();
+                if (!id) return Promise.resolve();
+                return resumenDeEmpresa(id).then(function (r) { resumenEmpresasCache[id] = r; dibujarResumenEmpresas(); }, function () { resumenEmpresasCache[id] = { error: true }; }).then(paso);
+            })();
+        });
+        Promise.all(trabajadores).then(function () { resumenCargando = false; dibujarResumenEmpresas(); });
+    }
+    function dibujarResumenEmpresas() {
+        var caja = $('ini-empresas'), multi = variasEmpresas();
+        caja.hidden = !multi;
+        if (!multi) return;
+        $('ini-empresas-filas').innerHTML = estado.empresas.map(function (e) {
+            var r = resumenEmpresasCache[e.id], actual = e.id === estado.empresaId, nombre = '<strong>' + esc(e.razonSocial || 'Sin nombre') + '</strong>' + (e.rut ? '<span>' + esc(Rut.formatear(e.rut)) + '</span>' : '');
+            var detalle = !r ? '<span class="vacio">Revisando…</span>' : r.error ? '<span class="vacio">No pudimos revisarla</span>'
+                : !r.avisos ? '<span class="sello sello-emitida">Al día</span>'
+                : '<strong class="' + (r.urgentes ? 'vencido' : '') + '">' + plural(r.avisos, 'aviso', 'avisos') + (r.urgentes ? ' · ' + plural(r.urgentes, 'urgente', 'urgentes') : '') + '</strong><small>' + esc(r.titulos.join(' · ')) + '</small>';
+            return '<tr' + (actual ? ' aria-current="true"' : '') + '><td class="celda-nombre">' + nombre + '</td>' +
+                '<td class="num">' + (r && !r.error ? r.trabajadores : '—') + '</td><td class="celda-contrato">' + detalle + '</td>' +
+                '<td class="celda-acciones">' + (actual ? '<span class="vacio">Viendo esta</span>' : '<button type="button" class="btn btn-chico" data-abrir-empresa="' + esc(e.id) + '">Abrir</button>') + '</td></tr>';
+        }).join('');
+        cargarResumenEmpresas(false);
+    }
+    $('ini-empresas-filas').addEventListener('click', function (ev) {
+        var b = ev.target.closest('[data-abrir-empresa]');
+        if (b) cambiarEmpresa(b.getAttribute('data-abrir-empresa'));
+    });
+    $('ini-empresas-actualizar').addEventListener('click', function () { resumenEmpresasCache = {}; dibujarResumenEmpresas(); });
+
     // ---------- varias empresas por cuenta ----------
     // El selector aparece si la cuenta puede tener más de una empresa (piloto) o ya tiene varias
     function variasEmpresas() {
@@ -528,6 +577,7 @@
     }
     function cambiarEmpresa(id) {
         recordarEmpresa(id);
+        resumenEmpresasCache = {};
         empresaNueva = false;
         reiniciar();
         mostrar('cargando');
@@ -1199,6 +1249,7 @@
 
     function dibujarInicio() {
         if (!estado) return;
+        dibujarResumenEmpresas();
         dibujarInvitacionOpinion();
         var nombreMes = nombrePeriodo(periodoSel);
         $('ini-titulo').textContent = 'Cierre de ' + nombreMes;

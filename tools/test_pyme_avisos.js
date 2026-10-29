@@ -23,14 +23,14 @@ const SITIO = 'https://calculolaboral.cl', DIA = 86400000;
 const rutValido = (c) => { let s = 0, m = 2; for (let i = String(c).length - 1; i >= 0; i--) { s += +String(c)[i] * m; m = m === 7 ? 2 : m + 1; } const r = 11 - (s % 11); return Rut.formatear(c + (r === 11 ? '0' : r === 10 ? 'K' : String(r))); };
 const EMPRESA = { razonSocial: 'Panadería La Espiga Ltda.', rut: rutValido(76845123), representante: 'Manuel Lagos' };
 
-function montar(env) {
+function montar(env, conPiloto) {
     const reloj = { t: Date.parse('2026-10-20T15:00:00Z') };
     const almacen = crearAlmacenMemoria();
     const secreto = T.secretoDesdeEntorno({ PYME_SESSION_SECRET: crypto.randomBytes(32).toString('base64') });
     const cifrado = Cif.crear(Cif.clavesDesdeEntorno({ PYME_DATA_KEY: crypto.randomBytes(32).toString('base64') }));
     const accesos = [], correos = [];
     const auth = A.crear({ almacen, secreto, siteUrl: SITIO, ahora: () => reloj.t, enviarCorreo: async m => { accesos.push(m); } });
-    const datos = D.crear({ almacen, cifrado, ahora: () => reloj.t });
+    const datos = D.crear({ almacen, cifrado, ahora: () => reloj.t, piloto: conPiloto ? require('../api/_pyme/piloto').crear({}, () => reloj.t) : undefined });
     const avisos = Av.crear({ almacen, datos, secreto, siteUrl: SITIO, ahora: () => reloj.t, P, F, enviar: async m => { correos.push(m); } });
     const rutas = crearRutas({ auth, datos, env: Object.assign({ VERCEL_ENV: 'production' }, env), siteUrl: SITIO, avisos });
     let ip = 0;
@@ -131,6 +131,33 @@ caso('a los 7 días el aviso que sigue pendiente se vuelve a mandar; borrar la c
     assert.strictEqual((await m.avisos.correr()).enviados, 1);
     assert.ok((await m.datos.borrarCuenta(s.cuenta, 'ana@ejemplo.cl')).ok);
     assert.strictEqual(m.almacen._estado.avisos.length, 0);
+});
+
+caso('con varias empresas va un solo correo con los avisos de todas, cada uno con su empresa, y no se repite', async () => {
+    const m = montar(undefined, true);
+    const s = await conAviso(m, 'estudio@ejemplo.cl', true);
+    const otra = await m.datos.crearEmpresa(s.cuenta, { razonSocial: 'Ferretería El Clavo SpA', rut: rutValido(76111222) });
+    assert.ok(otra.ok);
+    await m.datos.crearTrabajador(Object.assign({}, s.cuenta, { empresaId: otra.empresaId }), { nombre: 'Luis Soto', rut: rutValido(12345678), fechaIngreso: '2026-04-01', contrato: 'plazo_fijo', fechaTerminoPlazo: '2026-10-26', sueldoBase: 650000, afp: 'Habitat' });
+    const r = await m.avisos.correr();
+    assert.strictEqual(r.enviados, 1);
+    assert.strictEqual(m.correos.length, 1);
+    const c = m.correos[0];
+    assert.match(c.texto, /\[Panadería La Espiga Ltda\.\] .*Ana Pérez/s);
+    assert.match(c.texto, /\[Ferretería El Clavo SpA\] .*Luis Soto/s);
+    assert.match(c.texto, /Avisos de tus 2 empresas/);
+    assert.strictEqual((await m.avisos.correr()).enviados, 0, 'el mismo día no se repite');
+    m.reloj.t += 7 * DIA;
+    assert.strictEqual((await m.avisos.correr()).enviados, 1, 'a los 7 días vuelve');
+});
+
+caso('una sola empresa: los ids y el texto no cambian (no se reenvía nada tras la actualización)', async () => {
+    const m = montar();
+    await conAviso(m, 'uno@ejemplo.cl', true);
+    await m.avisos.correr();
+    const ids = Object.keys(m.almacen._estado.avisos[0].enviados);
+    assert.ok(ids.length && ids.every(id => !/^[0-9a-f-]{36}:/.test(id)));
+    assert.doesNotMatch(m.correos[0].texto, /\[Panadería/);
 });
 
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

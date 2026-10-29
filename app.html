@@ -159,6 +159,13 @@ gtag('js', new Date());
 </div>
 <p id="ini-marcar-fila" class="lq-estado" hidden><button type="button" id="ini-marcar" class="btn-texto"></button></p>
 <p id="ini-estado" class="lq-estado" role="status"></p>
+<div class="panel" id="ini-empresas" hidden>
+<div class="panel-head"><h2>Tus empresas</h2><button type="button" class="btn-texto" id="ini-empresas-actualizar"><span class="material-icons" aria-hidden="true">refresh</span>Actualizar</button></div>
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Avisos pendientes de cada empresa de tu cuenta</caption>
+<thead><tr><th scope="col">Empresa</th><th scope="col" class="num">Trabajadores</th><th scope="col">Avisos pendientes</th><th scope="col"><span class="sr-only">Abrir</span></th></tr></thead>
+<tbody id="ini-empresas-filas"></tbody></table></div>
+<div class="panel-pie"><p class="texto-ayuda">Son los mismos avisos del cierre del mes de cada empresa (plazos fijos, liquidaciones sin emitir, cotizaciones, Mi DT). Con los avisos por correo activados te llegan todos juntos.</p></div>
+</div>
 <div class="piloto-invita" id="ini-opinion" hidden>
 <span class="material-icons" aria-hidden="true">forum</span>
 <p><strong>Estás en el piloto gratuito.</strong> Cuéntanos qué funciona, qué no y qué te falta: lo usamos para mejorar el asistente.</p>
@@ -940,6 +947,6 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.28.0" defer></script>
+<script src="/js/app_pyme.js?v=1.29.0" defer></script>
 </body>
 </html>
