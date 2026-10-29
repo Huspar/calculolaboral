@@ -587,6 +587,7 @@
         var periodo = document.getElementById('periodo');
         var tienda = (window.CLClientes && window.localStorage) ? window.CLClientes.crear(window.localStorage) : null;
         var historial = (window.CLHistorial && window.localStorage) ? window.CLHistorial.crear(window.localStorage) : null;
+        var respaldo = (window.CLRespaldo && window.localStorage) ? window.CLRespaldo.crear(window.localStorage) : null;
         var selClientes = document.getElementById('liq-clientes-guardados');
 
         function mostrarHistorial() {
@@ -622,6 +623,34 @@
             });
         }
         mostrarHistorial();
+
+        var btnRespaldo = document.getElementById('btn-respaldo');
+        var btnRestaurar = document.getElementById('btn-restaurar');
+        var fileRespaldo = document.getElementById('file-respaldo');
+        if (btnRespaldo) {
+            btnRespaldo.addEventListener('click', function () {
+                if (!respaldo) return;
+                descargarTexto('respaldo-estudio-' + new Date().toISOString().slice(0, 10) + '.json', respaldo.exportar());
+            });
+        }
+        if (btnRestaurar && fileRespaldo) {
+            btnRestaurar.addEventListener('click', function () { fileRespaldo.click(); });
+            fileRespaldo.addEventListener('change', function () {
+                var f = fileRespaldo.files[0];
+                if (!f || !respaldo) return;
+                var lector = new FileReader();
+                lector.onload = function () {
+                    try {
+                        var r = respaldo.importar(String(lector.result));
+                        refrescarClientes();
+                        mostrarHistorial();
+                        D.avisar('Respaldo restaurado: ' + r.clientes + ' clientes y ' + r.meses + ' meses.');
+                    } catch (e) { D.avisar(e.message); }
+                };
+                lector.readAsText(f);
+                fileRespaldo.value = '';
+            });
+        }
 
         function refrescarClientes() {
             if (!tienda || !selClientes) return;
