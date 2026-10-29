@@ -625,6 +625,7 @@
                     });
                     mostrarHistorial();
                     D.avisar('Mes cerrado y guardado en este navegador.');
+                    if (cuentaActiva) subirNube(true);
                 } catch (e) { D.avisar(e.message); }
             });
         }
@@ -664,8 +665,11 @@
         var btnSubir = document.getElementById('btn-subir-nube');
         var btnBajar = document.getElementById('btn-bajar-nube');
 
+        var cuentaActiva = '';
+
         function pintarCuenta(email) {
             if (!estadoCuenta) return;
+            cuentaActiva = email || '';
             estadoCuenta.textContent = email || 'sin sesión';
             if (btnSubir) btnSubir.hidden = !email;
             if (btnBajar) btnBajar.hidden = !email;
@@ -683,23 +687,25 @@
             btnEntrar.addEventListener('click', function () { window.open('/app', '_blank'); });
         }
 
+        function subirNube(silencioso) {
+            if (!respaldo) return;
+            var payload;
+            try { payload = JSON.parse(respaldo.exportar()); }
+            catch (e) { if (!silencioso) D.avisar('No se pudo preparar el respaldo.'); return; }
+            fetch('/api/pyme/estudio', {
+                method: 'PUT',
+                headers: { 'content-type': 'application/json', 'x-cl-pyme': '1' },
+                body: JSON.stringify({ datos: payload })
+            }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                .then(function (x) {
+                    if (!x.ok || !x.j.ok) { if (!silencioso) D.avisar(x.j && x.j.error ? x.j.error : 'No se pudo guardar en la nube.'); return; }
+                    if (!silencioso) D.avisar('Guardado en tu cuenta.');
+                })
+                .catch(function () { if (!silencioso) D.avisar('No se pudo guardar en la nube.'); });
+        }
+
         if (btnSubir) {
-            btnSubir.addEventListener('click', function () {
-                if (!respaldo) return;
-                var payload;
-                try { payload = JSON.parse(respaldo.exportar()); }
-                catch (e) { D.avisar('No se pudo preparar el respaldo.'); return; }
-                fetch('/api/pyme/estudio', {
-                    method: 'PUT',
-                    headers: { 'content-type': 'application/json', 'x-cl-pyme': '1' },
-                    body: JSON.stringify({ datos: payload })
-                }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-                    .then(function (x) {
-                        if (!x.ok || !x.j.ok) { D.avisar(x.j && x.j.error ? x.j.error : 'No se pudo guardar en la nube.'); return; }
-                        D.avisar('Guardado en tu cuenta.');
-                    })
-                    .catch(function () { D.avisar('No se pudo guardar en la nube.'); });
-            });
+            btnSubir.addEventListener('click', function () { subirNube(false); });
         }
 
         if (btnBajar) {
@@ -738,6 +744,7 @@
                     tienda.guardar(clienteActual(), state.raw || [], state.archivo);
                     refrescarClientes();
                     D.avisar('Cliente guardado en este navegador.');
+                    if (cuentaActiva) subirNube(true);
                 } catch (e) { D.avisar(e.message); }
             });
         }
