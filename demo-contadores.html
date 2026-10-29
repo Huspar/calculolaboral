@@ -102,7 +102,14 @@
 
     /* ---------- rejilla ---------- */
     .demo-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; align-items: start; }
-    @media (max-width: 900px) { .demo-grid { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 900px) {
+        .demo-grid { grid-template-columns: minmax(0, 1fr); }
+        /* En pantallas angostas primero se sube la nómina: "Tu estudio" es opcional
+           y empujaba el botón de carga fuera de la primera pantalla. */
+        .demo-grid > .demo-col { order: 1; }
+        .demo-grid > .panel:not(.full) { order: 2; }
+        .demo-grid > .full { order: 3; }
+    }
     .demo-grid > * { min-width: 0; }
     .demo-grid > .full { grid-column: 1 / -1; }
     .demo-col { display: grid; gap: 20px; min-width: 0; }
