@@ -19,6 +19,7 @@ const { crearRutas } = require('../_pyme/rutas');
 const D = require('../_pyme/datos');
 const Cifrado = require('../_pyme/cifrado');
 const Avisos = require('../_pyme/avisos');
+const Equipo = require('../_pyme/equipo');
 const Enlaces = require('../_pyme/enlaces');
 const Piloto = require('../_pyme/piloto');
 const Comentarios = require('../_pyme/comentarios');
@@ -50,6 +51,7 @@ function armar() {
         enviar: ({ to, asunto, html, texto, clave }) => sendEmail({ to: [to], reply_to: 'contacto@calculolaboral.cl', subject: asunto, html, text: texto }, clave)
     });
     const enlaces = Enlaces.crear({ almacen, datos, secreto, siteUrl: SITE_URL });
+    const equipo = Equipo.crear({ almacen, datos });
     // Estudio del contador: se arma al primer uso para no exigir la clave de cifrado al entrar
     const Est = require('../_estudio/datos');
     let estudioReal = null;
@@ -64,7 +66,7 @@ function armar() {
         almacen, destino: ['contacto@calculolaboral.cl'],
         enviar: ({ to, reply_to, asunto, html, texto, clave }) => sendEmail(Object.assign({ to, subject: asunto, html, text: texto }, reply_to ? { reply_to } : {}), clave)
     });
-    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces, comentarios, estudio });
+    return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces, comentarios, estudio, equipo });
 }
 
 module.exports = async (req, res) => {

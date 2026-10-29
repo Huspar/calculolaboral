@@ -55,6 +55,12 @@
 
     // Empresa con la que se trabaja (cuentas de estudios con varias empresas); se recuerda en este navegador
     var KEY_EMPRESA = 'cl_pyme_empresa', empresaSel = null, empresaNueva = false;
+    var KEY_ESTUDIO = 'cl_pyme_estudio', estudioSel = null, listaEstudios = [];
+    try { estudioSel = window.localStorage.getItem(KEY_ESTUDIO) || null; } catch (e) { /* sin almacenamiento */ }
+    function recordarEstudio(id) {
+        estudioSel = id || null;
+        try { if (id) window.localStorage.setItem(KEY_ESTUDIO, id); else window.localStorage.removeItem(KEY_ESTUDIO); } catch (e) {}
+    }
     try { empresaSel = window.localStorage.getItem(KEY_EMPRESA) || null; } catch (e) { /* sin almacenamiento */ }
     function recordarEmpresa(id) {
         empresaSel = id || null;
@@ -68,6 +74,7 @@
         var url = '/api/pyme/' + ruta + (o.query ? '?' + new URLSearchParams(o.query).toString() : '');
         var init = { method: o.metodo || 'GET', credentials: 'same-origin', headers: {} };
         if (o.empresaId || empresaSel) init.headers['X-CL-Empresa'] = o.empresaId || empresaSel;   // cuentas con varias empresas: con cuál se trabaja
+        if (o.estudioId || estudioSel) init.headers['X-CL-Estudio'] = o.estudioId || estudioSel; // miembro de un estudio
         if (init.method !== 'GET') {
             init.headers['Content-Type'] = 'application/json';
             init.headers['X-CL-Pyme'] = '1';
@@ -134,8 +141,8 @@
     }
 
     // ---------- rutas ----------
-    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', contratos: 'contratos', empresa: 'empresa', cuenta: 'cuenta' };
-    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', contratos: 'Contratos y finiquitos', empresa: 'Empresa', cuenta: 'Mi cuenta' };
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', contratos: 'contratos', empresa: 'empresa', equipo: 'equipo', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', contratos: 'Contratos y finiquitos', empresa: 'Empresa', equipo: 'Equipo', cuenta: 'Mi cuenta' };
     var vistaActual = null;
 
     function rutaActual() { return window.location.pathname.replace(/^\/app\/?/, '').replace(/\/+$/, ''); }
@@ -188,6 +195,7 @@
         else if (vista === 'calendario') dibujarCalendario();
         else if (vista === 'contratos') dibujarContratos();
         else if (vista === 'empresa') dibujarEmpresa();
+        else if (vista === 'equipo') dibujarEquipo();
         else if (vista === 'cuenta') { dibujarCuenta(); dibujarActividad(); }
         contarVista(vista === 'trabajador' ? 'trabajadores/' + (partes[1] === 'nuevo' ? 'nuevo' : 'carpeta/' + (partes[2] || 'ficha')) : base);
     }
@@ -490,6 +498,30 @@
         $('pm-correo').textContent = estado.cuenta.email;
         $('cuenta-correo').textContent = estado.cuenta.email;
         dibujarEmpresas();
+        // Selector de estudio cuando la persona pertenece a más de uno
+        var wrapEst = $('app-estudio-wrap'), selEst = $('app-estudio-sel');
+        if (wrapEst && selEst) {
+            if (listaEstudios.length > 1) {
+                wrapEst.hidden = false;
+                selEst.innerHTML = listaEstudios.map(function (s) {
+                    var texto = s.propio ? 'Mi estudio (titular)' : (s.titular + ' (' + (s.rol === 'admin' ? 'administrador' : s.rol) + ')');
+                    var val = s.propio ? '' : s.estudioId;
+                    return '<option value="' + esc(val) + '"' + (val === (estudioSel || '') ? ' selected' : '') + '>' + esc(texto) + '</option>';
+                }).join('');
+                if (!selEst._bound) {
+                    selEst._bound = true;
+                    selEst.addEventListener('change', function () {
+                        recordarEstudio(this.value);
+                        recordarEmpresa(null);
+                        window.location.href = '/app';
+                    });
+                }
+            } else {
+                wrapEst.hidden = true;
+            }
+        }
+        var navEq = $('app-nav-equipo');
+        if (navEq) navEq.hidden = !!ejemplo;
         var lim = estado.limites, caja = $('app-pase'), txt = $('app-pase-texto');
         caja.classList.remove('vigente', 'porvencer', 'ejemplo');
         $('pm-ejemplo-franja').hidden = !estado.ejemplo;
@@ -506,6 +538,188 @@
         }
         dibujarImportar();
         dibujarPase();
+    }
+
+    // ---------- equipo del estudio ----------
+    var ETIQUETAS_ROL = {
+        admin: 'Administrador',
+        contador: 'Contador',
+        asistente: 'Asistente',
+        lectura: 'Solo lectura'
+    };
+    var DESCRIP_ROL = {
+        admin: 'Administrador (acceso a todas las empresas y gestión del equipo)',
+        contador: 'Contador (liquidar, Previred, LRE, nómina y asiento de sus empresas)',
+        asistente: 'Asistente (ver y editar fichas y novedades; no emite liquidaciones ni baja pagos)',
+        lectura: 'Solo lectura (ver resúmenes y liquidaciones sin datos bancarios)'
+    };
+
+    function dibujarEquipo() {
+        var cajaCupo = $('eq-cupo'), tablaFilas = $('eq-filas'), agregarWrap = $('eq-agregar-wrap');
+        if (!tablaFilas) return;
+        if (ejemplo) {
+            if (cajaCupo) cajaCupo.textContent = '1 de 5 personas';
+            tablaFilas.innerHTML = '<tr><td class="sin-salto font-semibold">ejemplo@estudio.cl</td><td><span class="lq-tag">Titular</span></td><td>Todas las empresas</td><td class="sin-salto">—</td><td>—</td></tr>';
+            if (agregarWrap) agregarWrap.hidden = true;
+            return;
+        }
+        api('equipo').then(function (r) {
+            if (sinSesion(r)) return;
+            if (!r.ok) {
+                tablaFilas.innerHTML = '<tr><td colspan="5" class="vacio">' + esc(r.datos.error || 'Tu rol no permite gestionar el equipo del estudio.') + '</td></tr>';
+                if (agregarWrap) agregarWrap.hidden = true;
+                return;
+            }
+            var miembros = r.datos.miembros || [], maximo = r.datos.maximo || 5, roles = r.datos.rolesQueSePuedenDar || [];
+            if (cajaCupo) cajaCupo.textContent = (miembros.length + 1) + ' de ' + maximo + ' personas (contándote a ti)';
+
+            var mapaEmpresas = {};
+            ((estado && estado.empresas) || []).forEach(function (e) { mapaEmpresas[e.id] = e.razonSocial || 'Sin nombre'; });
+
+            // Fila titular
+            var html = '<tr><td class="sin-salto font-semibold">' + esc(estado.cuenta.email) + '</td><td><span class="lq-tag">Titular</span></td><td>Todas las empresas</td><td class="sin-salto">—</td><td>—</td></tr>';
+
+            // Filas colaboradores
+            miembros.forEach(function (m) {
+                var nomEmpresas = m.rol === 'admin' ? 'Todas las empresas' : (m.empresas.map(function (id) { return mapaEmpresas[id] || id; }).join(', ') || 'Ninguna');
+                var uAcceso = m.ultimoAcceso ? esc(new Date(m.ultimoAcceso).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short' })) : '<span class="texto-ayuda">Aún no entra</span>';
+                var puedeEditar = roles.indexOf(m.rol) >= 0 || (m.rol !== 'admin' && roles.length > 0);
+                var acciones = puedeEditar ? ('<button type="button" class="btn btn-chico eq-btn-edit" data-id="' + esc(m.id) + '">Editar</button> <button type="button" class="btn-texto eq-btn-del" data-id="' + esc(m.id) + '" data-email="' + esc(m.email) + '" style="color:var(--rojo,#b91c1c)">Quitar</button>') : '—';
+                html += '<tr><td class="sin-salto">' + esc(m.email) + '</td><td><span class="lq-tag">' + esc(ETIQUETAS_ROL[m.rol] || m.rol) + '</span></td><td>' + esc(nomEmpresas) + '</td><td class="sin-salto">' + uAcceso + '</td><td>' + acciones + '</td></tr>';
+            });
+            tablaFilas.innerHTML = html;
+
+            // Delegación de eventos en tabla
+            tablaFilas.onclick = function (e) {
+                var btnEdit = e.target.closest('.eq-btn-edit');
+                if (btnEdit) {
+                    var idEdit = btnEdit.getAttribute('data-id');
+                    var target = miembros.find(function (x) { return x.id === idEdit; });
+                    if (target) abrirEditarMiembro(target, roles, mapaEmpresas);
+                    return;
+                }
+                var btnDel = e.target.closest('.eq-btn-del');
+                if (btnDel) {
+                    var idDel = btnDel.getAttribute('data-id'), emailDel = btnDel.getAttribute('data-email');
+                    confirmar('¿Quitar a ' + emailDel + ' del equipo?', 'Perderá el acceso de inmediato a las empresas del estudio.', 'Quitar del equipo').then(function (si) {
+                        if (!si) return;
+                        api('equipo', { metodo: 'DELETE', query: { id: idDel } }).then(function (res) {
+                            if (res.ok) { avisoGlobal('ok', 'Se quitó a ' + emailDel + ' del equipo.'); dibujarEquipo(); }
+                            else { avisoGlobal('error', res.datos.error || 'No pudimos quitar a esa persona.'); }
+                        });
+                    });
+                }
+            };
+
+            // Formulario para sumar persona
+            if (agregarWrap) {
+                if (miembros.length + 1 >= maximo) {
+                    agregarWrap.hidden = true;
+                } else {
+                    agregarWrap.hidden = false;
+                    var selRol = $('eq-rol'), checkWrap = $('eq-empresas-checks'), fEmp = $('eq-empresas-field');
+                    if (selRol) {
+                        selRol.innerHTML = roles.map(function (r) {
+                            return '<option value="' + esc(r) + '">' + esc(DESCRIP_ROL[r] || r) + '</option>';
+                        }).join('');
+                        var toggleEmp = function () {
+                            if (fEmp) fEmp.hidden = selRol.value === 'admin';
+                        };
+                        selRol.onchange = toggleEmp;
+                        toggleEmp();
+                    }
+                    if (checkWrap) {
+                        checkWrap.innerHTML = ((estado && estado.empresas) || []).map(function (e) {
+                            return '<label class="lq-field pm-check" style="margin:0"><input type="checkbox" name="eq-add-emp" value="' + esc(e.id) + '"> ' + esc(e.razonSocial || 'Sin nombre') + '</label>';
+                        }).join('');
+                    }
+                }
+            }
+        });
+    }
+
+    // Submit del formulario para sumar al equipo
+    var formAddEq = $('eq-form');
+    if (formAddEq) {
+        formAddEq.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var email = ($('eq-email').value || '').trim().toLowerCase();
+            var rol = $('eq-rol').value;
+            var checks = document.querySelectorAll('input[name="eq-add-emp"]:checked');
+            var empresas = Array.prototype.map.call(checks, function (c) { return c.value; });
+            var estadoMsg = $('eq-estado'), btn = $('eq-btn-sumar');
+
+            if (!email) { estadoMsg.textContent = 'Escribe el correo de la persona.'; return; }
+            if (rol !== 'admin' && !empresas.length) { estadoMsg.textContent = 'Elige al menos una empresa para esa persona.'; return; }
+
+            estadoMsg.textContent = 'Sumando al equipo...';
+            btn.disabled = true;
+            api('equipo', { metodo: 'POST', cuerpo: { email: email, rol: rol, empresas: empresas } }).then(function (r) {
+                btn.disabled = false;
+                if (!r.ok) {
+                    estadoMsg.textContent = r.datos.error || 'No pudimos sumar a esa persona.';
+                    return;
+                }
+                estadoMsg.textContent = '';
+                $('eq-email').value = '';
+                avisoGlobal('ok', 'Se sumó a ' + email + ' al equipo.');
+                dibujarEquipo();
+            }, function () {
+                btn.disabled = false;
+                estadoMsg.textContent = 'Error de conexión. Intenta de nuevo.';
+            });
+        });
+    }
+
+    // Diálogo editar miembro
+    function abrirEditarMiembro(m, roles, mapaEmpresas) {
+        var dlg = $('eq-editar-dlg');
+        if (!dlg || typeof dlg.showModal !== 'function') return;
+        $('eq-editar-id').value = m.id;
+        $('eq-editar-sub').textContent = 'Permisos de ' + m.email;
+        $('eq-editar-estado').textContent = '';
+        var selRol = $('eq-editar-rol'), checkWrap = $('eq-editar-checks'), fEmp = $('eq-editar-empresas-field');
+        if (selRol) {
+            selRol.innerHTML = roles.map(function (r) {
+                return '<option value="' + esc(r) + '"' + (r === m.rol ? ' selected' : '') + '>' + esc(DESCRIP_ROL[r] || r) + '</option>';
+            }).join('');
+            var toggleEmp = function () { if (fEmp) fEmp.hidden = selRol.value === 'admin'; };
+            selRol.onchange = toggleEmp;
+            toggleEmp();
+        }
+        if (checkWrap) {
+            checkWrap.innerHTML = ((estado && estado.empresas) || []).map(function (e) {
+                var checked = m.empresas && m.empresas.indexOf(e.id) >= 0 ? ' checked' : '';
+                return '<label class="lq-field pm-check" style="margin:0"><input type="checkbox" name="eq-edit-emp" value="' + esc(e.id) + '"' + checked + '> ' + esc(e.razonSocial || 'Sin nombre') + '</label>';
+            }).join('');
+        }
+        dlg.showModal();
+    }
+    var dlgEditEq = $('eq-editar-dlg');
+    if (dlgEditEq) {
+        $('eq-editar-cerrar').onclick = function () { dlgEditEq.close(); };
+        $('eq-editar-cancelar').onclick = function () { dlgEditEq.close(); };
+        $('eq-editar-form').onsubmit = function (e) {
+            e.preventDefault();
+            var id = $('eq-editar-id').value;
+            var rol = $('eq-editar-rol').value;
+            var checks = document.querySelectorAll('input[name="eq-edit-emp"]:checked');
+            var empresas = Array.prototype.map.call(checks, function (c) { return c.value; });
+            var msg = $('eq-editar-estado'), btn = $('eq-editar-guardar');
+            if (rol !== 'admin' && !empresas.length) { msg.textContent = 'Elige al menos una empresa.'; return; }
+            msg.textContent = 'Guardando cambios...';
+            btn.disabled = true;
+            api('equipo', { metodo: 'PUT', query: { id: id }, cuerpo: { rol: rol, empresas: empresas } }).then(function (r) {
+                btn.disabled = false;
+                if (!r.ok) { msg.textContent = r.datos.error || 'No pudimos guardar los cambios.'; return; }
+                dlgEditEq.close();
+                avisoGlobal('ok', 'Permisos actualizados.');
+                dibujarEquipo();
+            }, function () {
+                btn.disabled = false;
+                msg.textContent = 'Error de conexión. Intenta de nuevo.';
+            });
+        };
     }
 
     // ---------- actividad reciente (Mi cuenta) ----------
@@ -3500,7 +3714,10 @@
         if (rutaActual() === 'ejemplo' || ejemploRecordado()) { entrarEjemplo(); return; }
         api('sesion').then(function (r) {
             if (r.estado === 0 || r.estado >= 500) { mostrar('fallo'); return; }
-            if (r.datos && r.datos.autenticado) cargar(); else mostrar('entrada');
+            if (r.datos && r.datos.autenticado) {
+                listaEstudios = r.datos.estudios || [];
+                cargar();
+            } else mostrar('entrada');
         });
     }
     mostrar('cargando');

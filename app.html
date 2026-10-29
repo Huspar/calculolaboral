@@ -89,6 +89,10 @@ gtag('js', new Date());
 <div class="app-empresa">
 <strong id="app-empresa-nombre">Tu empresa</strong>
 <span id="app-empresa-rut" class="mono"></span>
+<div id="app-estudio-wrap" class="app-empresas" hidden style="margin-bottom:8px">
+<label class="sr-only" for="app-estudio-sel">Estudio con el que trabajas</label>
+<select id="app-estudio-sel"></select>
+</div>
 <div id="app-empresas" class="app-empresas" hidden>
 <label class="sr-only" for="app-empresa-sel">Empresa con la que trabajas</label>
 <select id="app-empresa-sel"></select>
@@ -108,6 +112,7 @@ gtag('js', new Date());
 <a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
 <p class="app-nav-grupo">Configuración</p>
 <a href="/app/empresa" data-ruta="empresa" data-nav="empresa"><span class="material-icons" aria-hidden="true">apartment</span>Empresa</a>
+<a href="/app/equipo" data-ruta="equipo" data-nav="equipo" id="app-nav-equipo"><span class="material-icons" aria-hidden="true">badge</span>Equipo</a>
 <a href="/app/cuenta" data-ruta="cuenta" data-nav="cuenta"><span class="material-icons" aria-hidden="true">person</span>Mi cuenta</a>
 </nav>
 <div class="app-nav app-side-pie">
@@ -815,6 +820,66 @@ gtag('js', new Date());
 </div></div>
 </section>
 
+<!-- Equipo del estudio -->
+<section class="vista" data-vista="equipo" aria-labelledby="eq-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="eq-titulo">Equipo del estudio</h1>
+<p class="v-sub">Personas que pueden entrar a trabajar en tus empresas</p>
+</div>
+</div>
+<div class="panel" id="eq-panel">
+<div class="panel-head"><h2>Personas del equipo</h2><span id="eq-cupo" class="pill"></span></div>
+<div class="panel-cuerpo">
+<p class="texto-ayuda">Invita a colaboradores con su rol y las empresas que atienden. Cada persona entra con su propio correo usando el enlace habitual de acceso, sin contraseñas ni invitaciones aparte. El estudio permite hasta 5 personas (contándote a ti).</p>
+
+<div class="tabla-wrap" style="margin-top:16px"><table class="tabla"><caption class="sr-only">Miembros del equipo y sus accesos</caption>
+<thead><tr><th scope="col">Correo</th><th scope="col">Rol</th><th scope="col">Empresas asignadas</th><th scope="col">Último acceso</th><th scope="col">Acciones</th></tr></thead>
+<tbody id="eq-filas"></tbody></table></div>
+
+<div id="eq-agregar-wrap" style="margin-top:24px;border-top:1px solid var(--borde, #e5e7eb);padding-top:20px" hidden>
+<h3 style="font-size:1.1rem;font-weight:600;margin-bottom:12px">Sumar a una persona</h3>
+<form id="eq-form" novalidate autocomplete="off">
+<div class="lq-grid">
+<div class="lq-field"><label for="eq-email">Correo de la persona</label><input id="eq-email" type="email" maxlength="120" placeholder="colaborador@estudio.cl" required><p class="pm-error" id="eq-err-email" hidden></p></div>
+<div class="lq-field"><label for="eq-rol">Rol en el estudio</label><select id="eq-rol"></select><p class="pm-error" id="eq-err-rol" hidden></p></div>
+<div class="lq-field lq-span2" id="eq-empresas-field">
+<label>Empresas asignadas</label>
+<p class="texto-ayuda" id="eq-empresas-ayuda" style="margin-bottom:8px">Elige las empresas que podrá ver y gestionar. Quien no tiene empresas asignadas no puede trabajar.</p>
+<div id="eq-empresas-checks" style="display:flex;flex-wrap:wrap;gap:12px"></div>
+<p class="pm-error" id="eq-err-empresas" hidden></p>
+</div>
+</div>
+<div class="form-acciones" style="margin-top:16px">
+<button type="submit" id="eq-btn-sumar" class="btn btn-primario"><span class="material-icons" aria-hidden="true">person_add</span>Sumar al equipo</button>
+<p id="eq-estado" class="lq-estado" role="status"></p>
+</div>
+</form>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- Diálogo para editar rol y empresas de un miembro -->
+<dialog class="app-dialogo app-dialogo-medio" id="eq-editar-dlg" aria-labelledby="eq-editar-titulo">
+<div class="midt-cabeza"><h2 id="eq-editar-titulo">Editar permisos</h2><button type="button" class="app-icono-btn" id="eq-editar-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<form id="eq-editar-form" novalidate autocomplete="off" style="padding:16px 20px">
+<p id="eq-editar-sub" class="texto-ayuda" style="margin-bottom:16px"></p>
+<input type="hidden" id="eq-editar-id">
+<div class="lq-field" style="margin-bottom:16px"><label for="eq-editar-rol">Rol en el estudio</label><select id="eq-editar-rol"></select></div>
+<div class="lq-field" id="eq-editar-empresas-field">
+<label>Empresas asignadas</label>
+<div id="eq-editar-checks" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px"></div>
+</div>
+<div class="form-acciones" style="margin-top:20px">
+<button type="button" class="btn" id="eq-editar-cancelar">Cancelar</button>
+<button type="submit" class="btn btn-primario" id="eq-editar-guardar">Guardar cambios</button>
+</div>
+<p id="eq-editar-estado" class="lq-estado" role="status" style="margin-top:12px"></p>
+</form>
+</dialog>
+
 <!-- Mi cuenta -->
 <section class="vista" data-vista="cuenta" aria-labelledby="cta-titulo" hidden>
 <div class="v-head">
@@ -970,6 +1035,6 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.32.0" defer></script>
+<script src="/js/app_pyme.js?v=1.33.0" defer></script>
 </body>
 </html>

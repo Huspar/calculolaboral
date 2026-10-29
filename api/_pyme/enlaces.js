@@ -43,7 +43,7 @@ function crear({ almacen, datos, secreto, siteUrl, ahora }) {
         const t = est.ok && (est.trabajadores || []).find(x => x.id === trabajadorId);
         const mes = t ? await mesGuardado(cuenta, trabajadorId, periodo) : null;
         if (!mes || !mes.calculo) return fallo(409, 'sin_mes', 'Primero guarda la liquidación de ese mes.');
-        const fila = await almacen.obtenerEmpresa(cuenta.cuentaId);
+        const fila = { id: est.empresaId };   // la empresa de este trabajador (no la primera de la cuenta)
         const token = T.nuevoToken();
         const vence = new Date(reloj() + DIAS_VIGENCIA * 86400000).toISOString();
         const ok = await almacen.crearEnlaceLiquidacion({ cuentaId: cuenta.cuentaId, empresaId: fila.id, trabajadorId, periodo, tokenHash: T.huellaToken(secreto, 'liquidacion', token), pagada: !!(est.limites && est.limites.paseVence), ahoraIso: iso(), venceIso: vence });

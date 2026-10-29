@@ -19,7 +19,8 @@ const MATRIZ = {
     respaldo: ['titular', 'admin'],                        // exportar todo
     equipo_gestionar: ['titular', 'admin'],
     actividad_ver: ['titular', 'admin'],
-    cuenta_borrar: ['titular']
+    cuenta_borrar: ['titular'],
+    facturacion: ['titular']                               // comprar o desbloquear un pase
 };
 
 // Ruta y método → acción. Lo que no está aquí lo puede usar cualquier persona con sesión (su propia cuenta, avisos, opiniones).
@@ -29,7 +30,8 @@ const RUTAS = {
     trabajador: { POST: 'ficha_editar', PUT: 'ficha_editar', DELETE: 'ficha_editar' }, prestamos: { PUT: 'ficha_editar' }, ausencias: { PUT: 'ficha_editar' },
     documento: { POST: 'ficha_editar' }, vacacion: { POST: 'ficha_editar', DELETE: 'ficha_editar' }, importar: { POST: 'ficha_editar' },
     mes: { PUT: 'liquidar', DELETE: 'liquidar' }, 'enlace-liquidacion': { POST: 'liquidar', DELETE: 'liquidar' },
-    exportar: { GET: 'respaldo' }, actividad: { GET: 'actividad_ver', POST: 'ver' }, 'borrar-cuenta': { POST: 'cuenta_borrar' }
+    exportar: { GET: 'respaldo' }, equipo: { GET: 'equipo_gestionar', POST: 'equipo_gestionar', PUT: 'equipo_gestionar', DELETE: 'equipo_gestionar' },
+    'avisos-correo': { GET: 'equipo_gestionar', PUT: 'equipo_gestionar', POST: 'equipo_gestionar' }, comprar: { POST: 'facturacion', GET: 'facturacion' }, desbloqueo: { POST: 'facturacion', GET: 'facturacion' }, actividad: { GET: 'actividad_ver', POST: 'ver' }, 'borrar-cuenta': { POST: 'cuenta_borrar' }
 };
 
 function permitir(rol, accion) {

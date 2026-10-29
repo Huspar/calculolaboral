@@ -46,10 +46,11 @@ const ACTIVIDAD_RUTA = {
     'trabajador:POST': 'ficha_creada', 'trabajador:PUT': 'ficha_editada', 'trabajador:DELETE': 'ficha_borrada',
     'mes:PUT': (req) => (req.body && req.body.mes && req.body.mes.emitida ? 'liquidacion_emitida' : 'liquidacion_guardada'), 'mes:DELETE': 'liquidacion_borrada',
     'enlace-liquidacion:POST': 'enlace_creado', 'enlace-liquidacion:DELETE': 'enlace_anulado',
+    'equipo:POST': 'equipo_invitado', 'equipo:PUT': 'equipo_cambiado', 'equipo:DELETE': 'equipo_quitado',
     'honorarios:PUT': 'honorarios_guardados', 'importar:POST': 'datos_importados', 'exportar:GET': 'respaldo_descargado'
 };
 
-function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio }) {
+function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo }) {
     function metodo(req, res, permitido) {
         if (req.method === permitido) return true;
         res.setHeader('Allow', permitido);
@@ -100,7 +101,8 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const s = await auth.leerSesion(H.leerCookie(req, H.NOMBRE_COOKIE));
         if (!s.autenticado) return H.json(res, 200, { autenticado: false });
         const extras = s.renovada ? { cookie: H.cookieSesion(s.renovada.token, s.renovada.vence, Date.now()) } : undefined;
-        return H.json(res, 200, { autenticado: true, email: s.email }, extras);
+        const estudios = equipo ? await equipo.estudiosDe(s).catch(() => []) : [];
+        return H.json(res, 200, { autenticado: true, email: s.email, estudios: estudios.length > 1 ? estudios : undefined }, extras);
     }
 
     async function salir(req, res) {
@@ -117,7 +119,17 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const s = await auth.leerSesion(H.leerCookie(req, H.NOMBRE_COOKIE));
         if (!s.autenticado) { H.json(res, 401, RESPUESTA_SIN_SESION); return null; }
         if (s.renovada) res.setHeader('Set-Cookie', H.cookieSesion(s.renovada.token, s.renovada.vence, Date.now()));
-        s.rol = s.rol || 'titular';
+        // Equipo: con el encabezado X-CL-Estudio se trabaja como miembro de ese estudio (los datos son los de su titular); sin él, o con el propio, como titular
+        const pedido = req.headers && req.headers['x-cl-estudio'];
+        if (pedido && equipo) {
+            const id = String(pedido).toLowerCase();
+            const como = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id) ? await equipo.resolver(s, id) : null;
+            if (!como) { H.json(res, 403, { ok: false, codigo: 'sin_acceso', error: 'No tienes acceso a ese estudio.' }); return null; }
+            Object.assign(s, como);
+        } else {
+            s.rol = s.rol || 'titular';
+            s.personaId = s.personaId || s.cuentaId;
+        }
         // Permiso por ruta y método, centralizado en permisos.js: una ruta nueva sin permiso declarado no se puede olvidar sin que lo vea la prueba
         const accion = PERM.accionDe(req.query && req.query.ruta, req.method);
         if (accion && !PERM.permitir(s.rol, accion)) { H.json(res, 403, { ok: false, codigo: 'sin_permiso', error: 'Tu rol no permite esta acción.' }); return null; }
@@ -136,7 +148,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         if (!H.escrituraPermitida(req, env, siteUrl)) { H.json(res, 403, { ok: false, error: 'Solicitud no permitida.' }); return null; }
         const s = await conSesion(req, res);
         if (!s) return null;
-        if (!(await auth.permitirEscritura(s.cuentaId))) { H.json(res, 429, { ok: false, codigo: 'limite_escrituras', error: 'Hiciste demasiados cambios seguidos. Espera un momento e intenta de nuevo.' }); return null; }
+        if (!(await auth.permitirEscritura(s.personaId || s.cuentaId))) { H.json(res, 429, { ok: false, codigo: 'limite_escrituras', error: 'Hiciste demasiados cambios seguidos. Espera un momento e intenta de nuevo.' }); return null; }
         return s;
     }
 
@@ -159,6 +171,20 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const s = await sesionParaEscribir(req, res);
         if (!s) return;
         return responder(res, await datos.guardarEmpresa(s, H.cuerpoDe(req).empresa));
+    }
+
+    // Equipo del estudio: GET lista; POST suma a una persona; PUT cambia su rol o sus empresas; DELETE la quita
+    async function equipoRuta(req, res) {
+        const m = req.method;
+        if (!equipo) return H.json(res, 503, { ok: false, error: 'No disponible.' });
+        if (['GET', 'POST', 'PUT', 'DELETE'].indexOf(m) < 0) { res.setHeader('Allow', 'GET, POST, PUT, DELETE'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = m === 'GET' ? await conSesion(req, res) : await sesionParaEscribir(req, res);
+        if (!s) return;
+        const b = H.cuerpoDe(req), id = typeof req.query?.id === 'string' ? req.query.id : '';
+        if (m === 'GET') return responder(res, await equipo.listar(s));
+        if (m === 'POST') return responder(res, await equipo.invitar(s, b));
+        if (m === 'PUT') return responder(res, await equipo.cambiar(s, id, b));
+        return responder(res, await equipo.quitar(s, id));
     }
 
     // Registro de actividad: GET lista lo último (titular y administradores); POST lo avisa el navegador tras bajar un archivo
@@ -398,7 +424,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, actividad, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, actividad, equipo: equipoRuta, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {

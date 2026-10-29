@@ -114,6 +114,37 @@ function crearAlmacenSql(sql) {
             await filas('UPDATE sesiones SET revocada = $2::timestamptz WHERE token_hash = $1 AND revocada IS NULL', [tokenHash, ahoraIso]);
         },
 
+        // ---------- equipo del estudio (migración 011) ----------
+        async listarMiembros(estudioId) {
+            const r = await filas('SELECT id, email, rol, empresas, creado, ultimo_acceso FROM miembros WHERE estudio_id = $1::uuid ORDER BY creado, id', [estudioId]);
+            return r.map(x => ({ id: x.id, email: x.email, rol: x.rol, empresas: Array.isArray(x.empresas) ? x.empresas : [], ultimoAcceso: x.ultimo_acceso ? new Date(x.ultimo_acceso).toISOString() : null }));
+        },
+        /** Agrega a una persona sin pasar de `maxMiembros` (con candado, para que dos altas a la vez no se salten el máximo). Devuelve { id } o null. */
+        async crearMiembro({ estudioId, email, rol, empresas, invitadoPor, ahoraIso, maxMiembros }) {
+            const r = await conCandado('miembros:' + estudioId,
+                'INSERT INTO miembros (estudio_id, email, rol, empresas, invitado_por, creado) SELECT $1::uuid, $2, $3, $4::jsonb, $5::uuid, $6::timestamptz ' +
+                'WHERE (SELECT count(*) FROM miembros WHERE estudio_id = $1::uuid) < $7::int RETURNING id',
+                [estudioId, email, rol, JSON.stringify(empresas || []), invitadoPor || null, ahoraIso, maxMiembros]
+            );
+            return r[0] ? { id: r[0].id } : null;
+        },
+        async actualizarMiembro(estudioId, id, { rol, empresas }) {
+            await filas('UPDATE miembros SET rol = $3, empresas = $4::jsonb WHERE id = $2::uuid AND estudio_id = $1::uuid', [estudioId, id, rol, JSON.stringify(empresas || [])]);
+        },
+        async borrarMiembro(estudioId, id) {
+            const r = await filas('DELETE FROM miembros WHERE id = $2::uuid AND estudio_id = $1::uuid RETURNING id', [estudioId, id]);
+            return r.length === 1;
+        },
+        async buscarMiembro(estudioId, email) {
+            const r = await filas('SELECT id, rol, empresas FROM miembros WHERE estudio_id = $1::uuid AND email = $2', [estudioId, email]);
+            return r[0] ? { id: r[0].id, rol: r[0].rol, empresas: Array.isArray(r[0].empresas) ? r[0].empresas : [] } : null;
+        },
+        async tocarMiembro(id, ahoraIso) { await filas('UPDATE miembros SET ultimo_acceso = $2::timestamptz WHERE id = $1::uuid', [id, ahoraIso]); },
+        async estudiosDeMiembro(email) {
+            const r = await filas('SELECT m.estudio_id, m.rol, c.email AS titular FROM miembros m JOIN cuentas c ON c.id = m.estudio_id WHERE m.email = $1 ORDER BY m.creado', [email]);
+            return r.map(x => ({ estudioId: x.estudio_id, rol: x.rol, titular: x.titular }));
+        },
+
         /** Registro de actividad del estudio: solo tipo de acción e ids, nunca montos ni datos de trabajadores. */
         async registrarActividad({ cuentaId, empresaId, actorId, accion, origen, ipHash, cuando }) {
             await filas('INSERT INTO actividad (cuenta_id, empresa_id, actor_id, accion, origen, ip_hash, cuando) VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6, $7::timestamptz)',

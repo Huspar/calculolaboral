@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], actividad: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], actividad: [], miembros: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -59,6 +59,19 @@ function crearAlmacenMemoria() {
             if (s) s.revocada = ahoraIso;
         },
         async registrarAuditoria(a) { E.auditoria.push(a); },
+        async listarMiembros(estudioId) { return E.miembros.filter(m => m.estudioId === estudioId).map(m => ({ id: m.id, email: m.email, rol: m.rol, empresas: m.empresas.slice(), ultimoAcceso: m.ultimoAcceso || null })); },
+        async crearMiembro({ estudioId, email, rol, empresas, invitadoPor, maxMiembros }) {
+            if (E.miembros.filter(m => m.estudioId === estudioId).length >= maxMiembros) return null;
+            if (E.miembros.some(m => m.estudioId === estudioId && m.email === email)) throw new Error('miembro repetido');
+            const m = { id: crypto.randomUUID(), estudioId, email, rol, empresas: (empresas || []).slice(), invitadoPor };
+            E.miembros.push(m);
+            return { id: m.id };
+        },
+        async actualizarMiembro(estudioId, id, { rol, empresas }) { const m = E.miembros.find(x => x.id === id && x.estudioId === estudioId); if (m) { m.rol = rol; m.empresas = (empresas || []).slice(); } },
+        async borrarMiembro(estudioId, id) { const n = E.miembros.length; E.miembros = E.miembros.filter(x => !(x.id === id && x.estudioId === estudioId)); return E.miembros.length < n; },
+        async buscarMiembro(estudioId, email) { const m = E.miembros.find(x => x.estudioId === estudioId && x.email === email); return m ? { id: m.id, rol: m.rol, empresas: m.empresas.slice() } : null; },
+        async tocarMiembro(id, ahoraIso) { const m = E.miembros.find(x => x.id === id); if (m) m.ultimoAcceso = ahoraIso; },
+        async estudiosDeMiembro(email) { return E.miembros.filter(m => m.email === email).map(m => ({ estudioId: m.estudioId, rol: m.rol, titular: (E.cuentas.find(c => c.id === m.estudioId) || {}).email })); },
         async registrarActividad(a) { E.actividad.push(Object.assign({ id: E.actividad.length + 1 }, a)); },
         async listarActividad(cuentaId, limite) {
             return E.actividad.filter(x => x.cuentaId === cuentaId).sort((x, y) => y.id - x.id).slice(0, limite)
@@ -284,6 +297,7 @@ function crearAlmacenMemoria() {
             E.comentarios = E.comentarios.filter(x => x.cuentaId !== cuentaId);
             E.enlaces = E.enlaces.filter(x => x.cuentaId !== cuentaId);
             E.actividad = E.actividad.filter(x => x.cuentaId !== cuentaId);
+            E.miembros = E.miembros.filter(x => x.estudioId !== cuentaId);
             E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
         }
     };
