@@ -35,7 +35,9 @@
         centroCosto: ['centro_de_costos', 'centro_costo', 'centro_costos', 'centro'],
         movimiento: ['movimiento', 'movimiento_personal', 'mov'],
         movDesde: ['fecha_desde_movimiento', 'mov_desde', 'fecha_movimiento'],
-        movHasta: ['fecha_hasta_movimiento', 'mov_hasta']
+        movHasta: ['fecha_hasta_movimiento', 'mov_hasta'],
+        nacionalidad: ['nacionalidad', 'pais'],
+        pensionado: ['pensionado', 'tipo_trabajador', 'condicion']
     };
 
     // ------------------------------------------------------------ valores
@@ -159,6 +161,8 @@
             licenciaDias: D.parseNumber(m.licenciaDias),
             rentaAnterior: D.parseNumber(m.rentaAnterior),
             subsidioLicencia: D.parseNumber(m.subsidioLicencia),
+            nacionalidad: /extran/.test(D.norm(m.nacionalidad)) ? '1' : '0',
+            tipoTrabajador: /nocotiza/.test(D.norm(m.pensionado)) ? '2' : (/pensionado|cotiza/.test(D.norm(m.pensionado)) ? '1' : '0'),
             rima: 0
         };
     }
@@ -499,8 +503,29 @@
         }
 
         descargarTexto('previred-' + sufijoCliente() + periodo + '.txt', r.texto);
-        caja.innerHTML = '<b>Archivo Previred listo</b> — ' + r.filas.length + ' trabajadores, 105 campos por línea.<br>' +
-            'No se sube solo: cárgalo en tu cuenta de Previred y revísalo antes de pagar.';
+
+        var esperado = 0;
+        ok.forEach(function (x) {
+            var d = x.detalle || {};
+            (d.descuentosLegales || []).forEach(function (l) {
+                if (/^(afp|salud|seguro de cesant)/i.test(l.concepto)) esperado += l.monto;
+            });
+            ((d.empleador || {}).lineas || []).forEach(function (l) {
+                if (l.clave === 'sis' || l.clave === 'mutual' || l.clave === 'afc') esperado += l.monto;
+            });
+        });
+        var tot = window.CLPrevired.totales(r.filas);
+        var cuadre = '';
+        if (tot.lineas !== ok.length) {
+            cuadre = '<br><b>Ojo:</b> el archivo tiene ' + tot.lineas + ' líneas y el lote ' + ok.length + ' trabajadores.';
+        } else if (Math.abs(tot.total - esperado) > ok.length) {
+            cuadre = '<br><b>Ojo:</b> las cotizaciones del archivo difieren en ' + D.money(Math.abs(tot.total - esperado)) + ' del cálculo.';
+        } else {
+            cuadre = '<br>Cuadre de cotizaciones: OK (' + D.money(tot.total) + ').';
+        }
+
+        caja.innerHTML = '<b>Archivo Previred listo</b> — ' + r.filas.length + ' trabajadores, 105 campos por línea.' + cuadre +
+            '<br>No se sube solo: cárgalo en tu cuenta de Previred y revísalo antes de pagar.';
     }
 
     function plantilla() {
@@ -510,10 +535,10 @@
             ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
             ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
-        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas', 'Días de licencia', 'Renta imponible mes anterior', 'Subsidio licencia']);
-        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2, 0, '', '']);
-        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0, 5, 850000, 120000]);
-        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas', 'Días de licencia', 'Renta imponible mes anterior', 'Subsidio licencia', 'Nacionalidad', 'Pensionado']);
+        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2, 0, '', '', 'Chilena', 'no']);
+        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0, 5, 850000, 120000, 'Chilena', 'no']);
+        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
         var ws = XLSX.utils.aoa_to_sheet(data);
         ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }, { wch: 13 }, { wch: 18 }, { wch: 14 }];
         var wb = XLSX.utils.book_new();

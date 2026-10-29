@@ -279,4 +279,39 @@ caso('la RIMA sale del registro y llega al campo 92', () => {
     assert.strictEqual(f[92], '1');        // campo 93: jornada completa
 });
 
+caso('tipo de trabajador y nacionalidad', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [
+            Object.assign({}, fonasa, { tipoTrabajador: '1', nacionalidad: '1' }),
+            Object.assign({}, fonasa, { rut: '9.876.543-3', tipoTrabajador: '2' })
+        ]
+    });
+    assert.deepStrictEqual(r.errores, []);
+    const a = r.filas[0].split(';');
+    const b = r.filas[1].split(';');
+    assert.strictEqual(a[11], '1');   // campo 12: pensionado que cotiza
+    assert.strictEqual(a[6], '1');    // campo 7: extranjero
+    assert.strictEqual(b[11], '2');   // pensionado que no cotiza
+    assert.strictEqual(b[6], '0');
+});
+
+caso('un tipo de trabajador invalido no genera archivo', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [Object.assign({}, fonasa, { tipoTrabajador: '9' })]
+    });
+    assert.strictEqual(r.texto, '');
+    assert.ok(r.errores.some(e => /trabajador/i.test(e)));
+});
+
+caso('totales del archivo suman las cotizaciones de las dos lineas', () => {
+    const t = G.totales(salida.filas);
+    const a = salida.filas[0].split(';');
+    const b = salida.filas[1].split(';');
+    const esperado = ['27', '28', '69', '79', '97', '100', '101'].reduce((s, i) => s + Number(a[i]) + Number(b[i]), 0);
+    assert.strictEqual(t.lineas, 2);
+    assert.strictEqual(t.total, esperado);
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');

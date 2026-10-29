@@ -124,7 +124,9 @@
         c[9] = per;                                           // período desde mmaaaa
         c[10] = '';                                           // período hasta
         c[11] = 'AFP';
-        c[12] = '0';                                          // trabajador activo
+        var tipoTrab = texto(t.tipoTrabajador) || '0';
+        if (!/^[0-3]$/.test(tipoTrab)) throw new Error('Tipo de trabajador inválido: "' + tipoTrab + '"');
+        c[12] = tipoTrab;                                     // 0 activo, 1/2 pensionado, 3 mayor de 65
         c[13] = entero(t.dias || 30);
         c[14] = '00';                                         // línea principal
         var mov = t.movimiento || {};
@@ -361,6 +363,8 @@
                 aporteTrabajadorAfc: buscarMonto(d.descuentosLegales, 'seguro de cesant'),
                 aporteEmpleadorAfc: buscarClave(emp.lineas, 'afc'),
                 centroCosto: rec.centroCosto,
+                nacionalidad: rec.nacionalidad,
+                tipoTrabajador: rec.tipoTrabajador,
                 tramoAF: rec.tramoAF,
                 cargas: rec.cargas,
                 asignacionFamiliar: buscarMonto(d.haberesNoImponibles, 'asignaci'),
@@ -374,5 +378,23 @@
         return generar({ periodo: o.periodo, empleador: { mutual: o.mutual, ccaf: o.ccaf }, trabajadores: trabajadores });
     }
 
-    return { generar: generar, desdeLiquidaciones: desdeLiquidaciones, validar: validar, campos: CAMPOS, tablas: { AFP: AFP, SALUD: SALUD, MUTUAL: MUTUAL, CCAF: CCAF }, partirRut: partirRut, dvValido: dvValido };
+    /* Suma de cotizaciones del archivo, para cuadrar contra las liquidaciones. */
+    function totales(filas) {
+        var t = { afp: 0, sis: 0, salud: 0, mutual: 0, afcTrabajador: 0, afcEmpleador: 0, lineas: 0, total: 0 };
+        (filas || []).forEach(function (l) {
+            var f = l.split(SEP);
+            if (f.length !== CAMPOS) return;
+            t.lineas++;
+            t.afp += Number(f[27]) || 0;
+            t.sis += Number(f[28]) || 0;
+            t.salud += (Number(f[69]) || 0) + (Number(f[79]) || 0);
+            t.mutual += Number(f[97]) || 0;
+            t.afcTrabajador += Number(f[100]) || 0;
+            t.afcEmpleador += Number(f[101]) || 0;
+        });
+        t.total = t.afp + t.sis + t.salud + t.mutual + t.afcTrabajador + t.afcEmpleador;
+        return t;
+    }
+
+    return { generar: generar, desdeLiquidaciones: desdeLiquidaciones, validar: validar, totales: totales, campos: CAMPOS, tablas: { AFP: AFP, SALUD: SALUD, MUTUAL: MUTUAL, CCAF: CCAF }, partirRut: partirRut, dvValido: dvValido };
 }));
