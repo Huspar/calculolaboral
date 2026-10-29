@@ -11,6 +11,18 @@
 
     var AFP = { cuprum: 'Cuprum', habitat: 'Habitat', modelo: 'Modelo', planvital: 'Planvital', provida: 'Provida', uno: 'Uno' };
 
+    function opcionesAFP(sel) {
+        return Object.keys(AFP).map(function (k) {
+            return '<option value="' + k + '"' + (k === sel ? ' selected' : '') + '>' + AFP[k] + '</option>';
+        }).join('');
+    }
+
+    function opcionesSalud(sel) {
+        return ['fonasa', 'isapre'].map(function (k) {
+            return '<option value="' + k + '"' + (k === sel ? ' selected' : '') + '>' + (k === 'isapre' ? 'Isapre' : 'Fonasa') + '</option>';
+        }).join('');
+    }
+
     var ALIAS = {
         rut: ['rut', 'rut_trabajador', 'rut_empleado'],
         nombre: ['nombre', 'nombre_trabajador', 'trabajador', 'empleado', 'nombre_completo', 'apellidos_nombres'],
@@ -298,11 +310,17 @@
         document.getElementById('l-haberes').textContent = D.money(totalHab);
         document.getElementById('l-costo').textContent = D.money(totalCosto);
 
-        document.getElementById('tbody-liq').innerHTML = results.map(function (r) {
+        document.getElementById('tbody-liq').innerHTML = results.map(function (r, i) {
             if (r.error) {
                 return '<tr><td class="nom">' + D.esc(r.record.nombre) + '</td>' +
                     '<td class="mono">' + D.esc(r.record.rut || '—') + '</td>' +
-                    '<td colspan="5" style="color:var(--risk)">' + D.esc(r.error) + '</td></tr>';
+                    '<td colspan="5"><span style="color:var(--risk)">' + D.esc(r.error) + '</span>' +
+                    '<div class="corregir">' +
+                    '<select data-fila="' + i + '" data-campo="afp" aria-label="AFP">' + opcionesAFP(r.record.afp) + '</select>' +
+                    '<select data-fila="' + i + '" data-campo="salud" aria-label="Salud">' + opcionesSalud(r.record.salud) + '</select>' +
+                    '<input type="number" data-fila="' + i + '" data-campo="plan" value="' + (r.record.planUF || '') + '" placeholder="Plan UF" min="0" step="0.01">' +
+                    '<input type="number" data-fila="' + i + '" data-campo="sueldo" value="' + (r.record.sueldo || '') + '" placeholder="Sueldo" min="0" step="1000">' +
+                    '</div></td></tr>';
             }
             return '<tr>' +
                 '<td class="nom">' + D.esc(r.record.nombre) + '</td>' +
@@ -643,6 +661,21 @@
         document.getElementById('btn-template-liq').addEventListener('click', plantilla);
         document.getElementById('btn-csv-liq').addEventListener('click', exportar);
         document.getElementById('btn-previred-liq').addEventListener('click', archivoPrevired);
+
+        // Corregir una fila con error sin volver a subir el Excel.
+        document.getElementById('tbody-liq').addEventListener('change', function (ev) {
+            var el = ev.target;
+            var idx = el.getAttribute('data-fila');
+            if (idx === null) return;
+            var r = state.records[Number(idx)];
+            if (!r) return;
+            var campo = el.getAttribute('data-campo');
+            if (campo === 'afp') r.afp = el.value;
+            if (campo === 'salud') r.salud = el.value;
+            if (campo === 'plan') r.planUF = D.parseNumber(el.value);
+            if (campo === 'sueldo') r.sueldo = D.parseNumber(el.value);
+            calcularTodo();
+        });
         document.getElementById('btn-print-liq').addEventListener('click', function () {
             construirImpresion();
             window.print();
