@@ -129,24 +129,31 @@
         errEl.textContent = errores;
         errEl.className = errores ? 'bad' : '';
 
+        // Etiquetas para la vista de tarjetas (<=700px): salen del propio thead
+        // para que no se despeguen de la tabla si cambia una columna.
+        var cols = Array.prototype.map.call(document.querySelectorAll('#results-fin thead th'), function (th) {
+            return th.textContent.trim();
+        });
+        function et(i) { return ' data-l="' + D.esc(cols[i] || '') + '"'; }
+
         document.getElementById('tbody-fin').innerHTML = results.map(function (r) {
             if (r.error) {
                 return '<tr>' +
-                    '<td class="nom">' + D.esc(r.record.nombre) + '</td>' +
-                    '<td class="mono">' + D.esc(r.record.rut || '—') + '</td>' +
-                    '<td colspan="6" style="color:var(--risk)">' + D.esc(r.error) + '</td>' +
+                    '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) + '</td>' +
+                    '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '—') + '</td>' +
+                    '<td colspan="6" style="color:var(--danger)">' + D.esc(r.error) + '</td>' +
                     '</tr>';
             }
             return '<tr>' +
-                '<td class="nom">' + D.esc(r.record.nombre) +
+                '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) +
                 (r.warnings.length ? '<span class="demo-badge" title="' + D.esc(r.warnings.join(' ')) + '">Tope 90 UF</span>' : '') + '</td>' +
-                '<td class="mono">' + D.esc(r.record.rut || '—') + '</td>' +
-                '<td class="num">' + D.num(r.serviceTime.indemnityYears) + '</td>' +
-                '<td class="num">' + D.money(r.ias) + '</td>' +
-                '<td class="num">' + D.money(r.notice) + '</td>' +
-                '<td class="num">' + D.money(r.vacation) + '</td>' +
-                '<td class="num">' + D.money(r.pending) + '</td>' +
-                '<td class="num"><b>' + D.money(r.total) + '</b></td>' +
+                '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '—') + '</td>' +
+                '<td class="num"' + et(2) + '>' + D.num(r.serviceTime.indemnityYears) + '</td>' +
+                '<td class="num"' + et(3) + '>' + D.money(r.ias) + '</td>' +
+                '<td class="num"' + et(4) + '>' + D.money(r.notice) + '</td>' +
+                '<td class="num"' + et(5) + '>' + D.money(r.vacation) + '</td>' +
+                '<td class="num"' + et(6) + '>' + D.money(r.pending) + '</td>' +
+                '<td class="num"' + et(7) + '><b>' + D.money(r.total) + '</b></td>' +
                 '</tr>';
         }).join('');
 

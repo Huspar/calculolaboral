@@ -310,6 +310,12 @@
         document.getElementById('l-haberes').textContent = D.money(totalHab);
         document.getElementById('l-costo').textContent = D.money(totalCosto);
 
+        // Etiquetas para la vista de tarjetas (<=700px): salen del propio thead.
+        var cols = Array.prototype.map.call(document.querySelectorAll('#results-liq thead th'), function (th) {
+            return th.textContent.trim();
+        });
+        function et(i) { return ' data-l="' + D.esc(cols[i] || '') + '"'; }
+
         document.getElementById('tbody-liq').innerHTML = results.map(function (r, i) {
             if (r.error) {
                 return '<tr><td class="nom">' + D.esc(r.record.nombre) + '</td>' +
@@ -323,13 +329,13 @@
                     '</div></td></tr>';
             }
             return '<tr>' +
-                '<td class="nom">' + D.esc(r.record.nombre) + '</td>' +
-                '<td class="mono">' + D.esc(r.record.rut || '—') + '</td>' +
-                '<td>' + D.esc(r.record.afp) + '</td>' +
-                '<td class="num">' + D.money(r.haberes) + '</td>' +
-                '<td class="num">' + D.money(r.descuentos) + '</td>' +
-                '<td class="num"><b>' + D.money(r.liquido) + '</b></td>' +
-                '<td class="num">' + D.money(r.costo) + '</td>' +
+                '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) + '</td>' +
+                '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '—') + '</td>' +
+                '<td' + et(2) + '>' + D.esc(r.record.afp) + '</td>' +
+                '<td class="num"' + et(3) + '>' + D.money(r.haberes) + '</td>' +
+                '<td class="num"' + et(4) + '>' + D.money(r.descuentos) + '</td>' +
+                '<td class="num"' + et(5) + '><b>' + D.money(r.liquido) + '</b></td>' +
+                '<td class="num"' + et(6) + '>' + D.money(r.costo) + '</td>' +
                 '</tr>';
         }).join('');
 
