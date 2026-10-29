@@ -141,11 +141,14 @@
         c[15] = movCodigo;                                    // movimiento de personal
         c[16] = movCodigo === '0' ? '' : texto(mov.desde);
         c[17] = movCodigo === '0' ? '' : texto(mov.hasta);
-        c[18] = 'D';                                          // sin derecho a asignación familiar
-        c[19] = '0';
+        var tramo = String(texto(t.tramoAF) || 'D').toUpperCase();
+        if (!/^[ABCD]$/.test(tramo)) throw new Error('Tramo de asignación familiar inválido: "' + texto(t.tramoAF) + '"');
+        var cargas = Math.max(0, Math.round(Number(t.cargas) || 0));
+        c[18] = tramo;
+        c[19] = String(cargas);
         c[20] = '0';
         c[21] = '0';
-        c[22] = '0';
+        c[22] = monto(t.asignacionFamiliar);
         c[23] = '0';
         c[24] = '0';
         c[25] = 'N';
@@ -350,6 +353,9 @@
                 aporteTrabajadorAfc: buscarMonto(d.descuentosLegales, 'seguro de cesant'),
                 aporteEmpleadorAfc: buscarClave(emp.lineas, 'afc'),
                 centroCosto: rec.centroCosto,
+                tramoAF: rec.tramoAF,
+                cargas: rec.cargas,
+                asignacionFamiliar: buscarMonto(d.haberesNoImponibles, 'asignaci'),
                 movimiento: {
                     codigo: codigoMovimiento(rec.movimiento, rec.contrato),
                     desde: rec.movDesde,

@@ -184,4 +184,38 @@ caso('el texto del Excel se traduce a codigo de movimiento', () => {
     assert.strictEqual(f[104], 'Obra 1');
 });
 
+caso('asignacion familiar: tramo, cargas y monto en sus campos', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [Object.assign({}, fonasa, { tramoAF: 'B', cargas: 2, asignacionFamiliar: 27740 })]
+    });
+    assert.deepStrictEqual(r.errores, []);
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f[17], 'B');       // campo 18
+    assert.strictEqual(f[18], '2');       // campo 19
+    assert.strictEqual(f[21], '27740');   // campo 22
+});
+
+caso('un tramo de asignacion familiar invalido no genera archivo', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [Object.assign({}, fonasa, { tramoAF: 'Z', cargas: 1 })]
+    });
+    assert.strictEqual(r.texto, '');
+    assert.ok(r.errores.some(e => /tramo/i.test(e)), JSON.stringify(r.errores));
+});
+
+caso('el motor suma la asignacion familiar como haber no imponible', () => {
+    const E = require(path.join(__dirname, '..', 'js', 'liquidacion_engine.js'));
+    const P = require(path.join(__dirname, '..', 'js', 'liquidacion_parametros.js'));
+    const valores = Object.assign({}, P.vigenciaDe('2026-10'), P.RESPALDO['2026-10']);
+    const det = E.calcular({
+        trabajador: { sueldoBase: 1200000, afp: 'Cuprum', salud: 'fonasa', contrato: 'indefinido', jornadaHoras: 42, fechaIngreso: '2020-01-01', colacion: 0, movilizacion: 0 },
+        mes: { diasTrabajados: 30, gratificacion: 'legal', asignacionFamiliar: 27740 },
+        periodo: '2026-10', tasaMutual: 0.93
+    }, valores);
+    const linea = (det.haberesNoImponibles || []).find(l => /asignaci/i.test(l.concepto));
+    assert.ok(linea && linea.monto === 27740, JSON.stringify(det.haberesNoImponibles));
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');

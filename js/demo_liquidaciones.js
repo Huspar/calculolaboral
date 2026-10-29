@@ -153,7 +153,9 @@
             centroCosto: String(m.centroCosto || '').trim(),
             movimiento: String(m.movimiento || '').trim(),
             movDesde: String(m.movDesde || '').trim(),
-            movHasta: String(m.movHasta || '').trim()
+            movHasta: String(m.movHasta || '').trim(),
+            tramoAF: String(m.tramoAF || '').trim().toUpperCase(),
+            cargas: D.parseNumber(m.cargas)
         };
     }
 
@@ -165,6 +167,34 @@
         var el = document.getElementById('liq-tasa-mutual');
         var v = el ? D.parseNumber(el.value) : 0;
         return v > 0 ? v : 0.93;
+    }
+
+    // Asignación familiar: montos por tramo (SUSESO, 2026). El tramo legal se define por
+    // el promedio semestral de remuneraciones, no por el sueldo del mes; si el estudio no
+    // escribe el tramo, se sugiere uno con la renta del mes y se avisa en pantalla.
+    var AF = {
+        'ene-abr': { A: 22007, B: 13505, C: 4267, D: 0, topeA: 631976, topeB: 923067, topeC: 1439668 },
+        'may-dic': { A: 22601, B: 13870, C: 4382, D: 0, topeA: 649039, topeB: 947990, topeC: 1478539 }
+    };
+
+    function valoresAF(periodo) {
+        return textoPeriodo(periodo) <= '2026-04' ? AF['ene-abr'] : AF['may-dic'];
+    }
+    function textoPeriodo(p) { return String(p || '').slice(0, 7); }
+
+    function tramoSugerido(renta, periodo) {
+        var v = valoresAF(periodo);
+        if (renta <= v.topeA) return 'A';
+        if (renta <= v.topeB) return 'B';
+        if (renta <= v.topeC) return 'C';
+        return 'D';
+    }
+
+    function montoAsignacionFamiliar(periodo, tramo, cargas) {
+        var v = valoresAF(periodo);
+        var t = String(tramo || '').toUpperCase();
+        if (!/^[ABCD]$/.test(t)) return 0;
+        return (v[t] || 0) * (Number(cargas) || 0);
     }
 
     function calcularTodo() {
@@ -200,7 +230,8 @@
                         horasExtra: r.horasExtra,
                         comisiones: r.comisiones,
                         gratificacion: r.gratificacion,
-                        gratificacionMonto: r.gratificacionMonto
+                        gratificacionMonto: r.gratificacionMonto,
+                        asignacionFamiliar: montoAsignacionFamiliar(periodo, r.tramoAF || tramoSugerido(r.sueldo, periodo), r.cargas)
                     }
                 }, mes);
 
@@ -446,12 +477,12 @@
             ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
             ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
         ];
-        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta']);
-        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '']);
-        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026']);
-        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '']);
+        data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas']);
+        data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2]);
+        data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0]);
+        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '']);
         var ws = XLSX.utils.aoa_to_sheet(data);
-        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }];
+        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }];
         var wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
         XLSX.writeFile(wb, 'plantilla-liquidaciones-calculolaboral.xlsx');
