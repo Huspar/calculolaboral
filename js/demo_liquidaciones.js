@@ -333,6 +333,18 @@
         }).join('');
     }
 
+    function clienteActual() {
+        var el = document.getElementById('liq-cliente');
+        return el ? el.value.trim() : '';
+    }
+
+    function sufijoCliente() {
+        var c = clienteActual();
+        if (!c) return '';
+        var s = c.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+        return s ? s + '-' : '';
+    }
+
     function construirImpresion() {
         var ok = state.results.filter(function (r) { return !r.error; });
         if (!ok.length) { document.getElementById('print-area').innerHTML = ''; return; }
@@ -344,7 +356,7 @@
 
         paginas.push('<div class="print-page">' +
             D.encabezado('Resumen de liquidaciones · ' + periodo, ok.length + ' trabajadores · líquido ' + D.money(totalLiq) + ' · costo empresa ' + D.money(totalCosto)) +
-            '<table class="print-table"><thead><tr><th>Trabajador</th><th>RUT</th><th>AFP</th>' +
+            (clienteActual() ? '<div style="font-weight:600;margin:0 0 10px">Cliente: ' + D.esc(clienteActual()) + '</div>' : '') + '<table class="print-table"><thead><tr><th>Trabajador</th><th>RUT</th><th>AFP</th>' +
             '<th class="r">Haberes</th><th class="r">Descuentos</th><th class="r">Líquido</th><th class="r">Costo empresa</th></tr></thead><tbody>' +
             ok.map(function (r) {
                 return '<tr><td>' + D.esc(r.record.nombre) + '</td><td>' + D.esc(r.record.rut || '—') + '</td><td>' + D.esc(r.record.afp) + '</td>' +
@@ -368,6 +380,7 @@
                 '<div><b>Contrato:</b> ' + (r.record.contrato === 'indefinido' ? 'Indefinido' : 'Plazo fijo') + '</div>' +
                 '<div><b>Fecha de ingreso:</b> ' + D.fechaCorta(r.record.ingreso) + '</div>' +
                 '</div>' +
+                (clienteActual() ? '<div><b>Cliente:</b> ' + D.esc(clienteActual()) + '</div>' : '') +
                 '<div class="print-h3">Haberes</div>' +
                 '<table class="print-table"><tbody>' + filas(d.haberesImponibles.concat(d.haberesNoImponibles)) +
                 '<tr class="total"><td>Total haberes</td><td class="r">' + D.money(d.totalHaberes) + '</td></tr></tbody></table>' +
@@ -448,7 +461,7 @@
                 r.record.contrato, r.record.dias, Math.round(r.haberes), Math.round(r.descuentos),
                 Math.round(r.liquido), Math.round(r.costo), r.error];
         });
-        D.descargarCsv('liquidaciones-' + document.getElementById('periodo').value + '.csv',
+        D.descargarCsv('liquidaciones-' + sufijoCliente() + document.getElementById('periodo').value + '.csv',
             ['RUT', 'Trabajador', 'AFP', 'Salud', 'Contrato', 'Días', 'Haberes', 'Descuentos', 'Líquido', 'Costo empresa', 'Observación'],
             filas);
     }
@@ -484,7 +497,7 @@
             return;
         }
 
-        descargarTexto('previred-' + periodo + '.txt', r.texto);
+        descargarTexto('previred-' + sufijoCliente() + periodo + '.txt', r.texto);
         caja.innerHTML = '<b>Archivo Previred listo</b> — ' + r.filas.length + ' trabajadores, 105 campos por línea.<br>' +
             'No se sube solo: cárgalo en tu cuenta de Previred y revísalo antes de pagar.';
     }
@@ -511,6 +524,16 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         var periodo = document.getElementById('periodo');
+        var cli = document.getElementById('liq-cliente');
+        if (cli) {
+            try { cli.value = localStorage.getItem('cl-cliente-liq') || ''; } catch (e) { }
+            cli.addEventListener('change', function () {
+                try { localStorage.setItem('cl-cliente-liq', cli.value.trim()); } catch (e) { }
+            });
+            cli.addEventListener('input', function () {
+                if (state.results.length) construirImpresion();
+            });
+        }
         var mes = periodoActual();
         if (+mes.slice(0, 4) === 2026 || +mes.slice(0, 4) > 2026) periodo.value = mes;
 
