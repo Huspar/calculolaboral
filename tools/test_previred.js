@@ -218,4 +218,34 @@ caso('el motor suma la asignacion familiar como haber no imponible', () => {
     assert.ok(linea && linea.monto === 27740, JSON.stringify(det.haberesNoImponibles));
 });
 
+caso('jornada parcial y cotizaciones 94 y 95 del 1,62%', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [
+            Object.assign({}, fonasa, { jornadaHoras: 42 }),
+            Object.assign({}, fonasa, { jornadaHoras: 30, rut: '9.876.543-3' })
+        ]
+    });
+    assert.deepStrictEqual(r.errores, []);
+    const a = r.filas[0].split(';');
+    const b = r.filas[1].split(';');
+    assert.strictEqual(a[92], '1');                                  // jornada completa
+    assert.strictEqual(b[92], '2');                                  // 30 horas: parcial
+    assert.strictEqual(a[93], String(Math.round(1419115 * 0.0072)));  // expectativa de vida
+    assert.strictEqual(a[94], String(Math.round(1419115 * 0.009)));   // rentabilidad protegida
+    assert.ok(Math.abs(Number(a[93]) + Number(a[94]) - 22990) <= 1, 'el 1,62% debe cuadrar con el costo empresa');
+    assert.strictEqual(a[91], '0');                                  // sin licencia, RIMA en cero
+});
+
+caso('la RIMA se informa y la 0,90% no se aplica sobre ella', () => {
+    const r = G.generar({
+        periodo: '2026-10', empleador,
+        trabajadores: [Object.assign({}, fonasa, { rima: 500000 })]
+    });
+    const f = r.filas[0].split(';');
+    assert.strictEqual(f[91], '500000');
+    assert.strictEqual(f[93], String(Math.round((1419115 + 500000) * 0.0072)));
+    assert.strictEqual(f[94], String(Math.round(1419115 * 0.009)));
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');

@@ -218,10 +218,16 @@
         c[89] = '0';
         c[90] = '0';
         c[91] = '0';
-        c[92] = '0';
-        c[93] = '0';
-        c[94] = '0';
-        c[95] = '';
+        // 92 a 95: desde la versión 100 del formulario son licencia, jornada y las dos
+        // cotizaciones del 1,62% del empleador (0,72% expectativa de vida y 0,90% rentabilidad
+        // protegida). La 0,90% no se aplica a la RIMA; la 0,72% sí.
+        var rima = Math.max(0, Math.round(Number(t.rima) || 0));
+        var baseSeguro = Math.max(0, Math.round(Number(t.rentaAfp) || 0));
+        var jornadaHoras = Number(t.jornadaHoras) || 0;
+        c[92] = monto(rima);
+        c[93] = jornadaHoras > 0 && jornadaHoras <= 30 ? '2' : '1';
+        c[94] = monto(Math.round((baseSeguro + rima) * 0.0072));
+        c[95] = monto(Math.round(baseSeguro * 0.0090));
         c[96] = mutualCodigo;
         c[97] = monto(t.rentaMutual || t.rentaAfp);
         c[98] = monto(t.cotizacionMutual);
@@ -342,6 +348,8 @@
                 fun: rec.fun || '',
                 dias: rec.dias,
                 rentaAfp: d.bases ? d.bases.baseAfp : 0,
+                jornadaHoras: rec.jornada,
+                rima: 0,
                 cotizacionAfp: buscarMonto(d.descuentosLegales, 'afp'),
                 sis: buscarClave(emp.lineas, 'sis'),
                 cotizacionSalud: buscarMonto(d.descuentosLegales, 'salud'),

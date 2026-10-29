@@ -1,431 +1,534 @@
 {
- "fuente": "https://www.previred.com/documents/80476/80730/FormatoLargoVariablePorSeparador.pdf",
+ "fuente": "https://www.previred.com/documents/FormatosArchivos/FormatoLargoVariablePorSeparador.pdf",
  "documento": "Formato de Envio Estandar de Largo Variable, por separador",
- "version_documento": "58 (abril 2022)",
+ "version_documento": "100 (septiembre 2026)",
  "consultado": "2026-10-28",
  "campos_totales": 105,
  "campos": {
   "1": {
    "nombre": "RUT Trabajador",
-   "tipo": "9(11)"
+   "tipo": "9",
+   "largo": 11
   },
   "2": {
    "nombre": "DV Trabajador",
-   "tipo": "X(1)"
+   "tipo": "X",
+   "largo": 1
   },
   "3": {
    "nombre": "Apellido Paterno",
-   "tipo": "X(30)"
+   "tipo": "X",
+   "largo": 30
   },
   "4": {
    "nombre": "Apellido Materno",
-   "tipo": "X(30)"
+   "tipo": "X",
+   "largo": 30
   },
   "5": {
    "nombre": "Nombres",
-   "tipo": "X(30)"
+   "tipo": "X",
+   "largo": 30
   },
   "6": {
    "nombre": "Sexo",
-   "tipo": "X(1)"
+   "tipo": "X",
+   "largo": 1
   },
   "7": {
    "nombre": "Nacionalidad",
-   "tipo": "9(1)"
+   "tipo": "9",
+   "largo": 1
   },
   "8": {
    "nombre": "Tipo Pago",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "9": {
    "nombre": "Período (Desde)",
-   "tipo": "9(6)"
+   "tipo": "9",
+   "largo": 6
   },
   "10": {
    "nombre": "Período (Hasta)",
-   "tipo": "9(6)"
+   "tipo": "9",
+   "largo": 6
   },
   "11": {
    "nombre": "Régimen Previsional",
-   "tipo": "X(3)"
+   "tipo": "X",
+   "largo": 3
   },
   "12": {
    "nombre": "Tipo Trabajador",
-   "tipo": "9(1)"
+   "tipo": "9",
+   "largo": 1
   },
   "13": {
    "nombre": "Días Trabajados",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "14": {
    "nombre": "Tipo de Línea",
-   "tipo": "X(2)"
+   "tipo": "X",
+   "largo": 2
   },
   "15": {
    "nombre": "Código Movimiento de Personal",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "16": {
    "nombre": "Fecha Desde",
-   "tipo": "X(10)"
+   "tipo": "X",
+   "largo": 10
   },
   "17": {
    "nombre": "Fecha Hasta",
-   "tipo": "X(10)"
+   "tipo": "X",
+   "largo": 10
   },
   "18": {
    "nombre": "Tramo Asignación Familiar",
-   "tipo": "X(1)"
+   "tipo": "X",
+   "largo": 1
   },
   "19": {
    "nombre": "N°Cargas Simples",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "20": {
    "nombre": "N° Cargas Maternales",
-   "tipo": "9(1)"
+   "tipo": "9",
+   "largo": 1
   },
   "21": {
    "nombre": "N°Cargas Inválidas",
-   "tipo": "9(1)"
+   "tipo": "9",
+   "largo": 1
   },
   "22": {
    "nombre": "Asignación Familiar",
-   "tipo": "9(6)"
+   "tipo": "9",
+   "largo": 6
   },
   "23": {
    "nombre": "Asignación Familiar Retroactiva",
-   "tipo": "9(6)"
+   "tipo": "9",
+   "largo": 6
   },
   "24": {
    "nombre": "Reintegro Cargas Familiares",
-   "tipo": "9(6)"
+   "tipo": "9",
+   "largo": 6
   },
   "25": {
    "nombre": "Solicitud Trabajador Joven",
-   "tipo": "X(1)"
+   "tipo": "X",
+   "largo": 1
   },
   "26": {
    "nombre": "Código de la AFP",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "27": {
-   "nombre": "Renta Imponible AFP",
-   "tipo": "9(8)"
+   "nombre": "Renta Imponible AFP / SEGURO",
+   "tipo": "9",
+   "largo": 8
   },
   "28": {
    "nombre": "Cotización Obligatoria AFP",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "29": {
    "nombre": "Cotización Seguro de Invalidez y",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "30": {
    "nombre": "Cuenta de Ahorro Voluntario AFP",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "31": {
-   "nombre": "Renta Imp. Sust.AFP",
-   "tipo": "9(8)"
+   "nombre": "Renta Imp. Sustitutiva AFP",
+   "tipo": "9",
+   "largo": 8
   },
   "32": {
-   "nombre": "POR CONFIRMAR (entre Renta Imp. Sust. y Aporte Indemn.)",
-   "tipo": "?",
-   "revisar": true
+   "nombre": "Tasa Pactada (Sustitutiva)",
+   "tipo": "X",
+   "largo": 5
   },
   "33": {
-   "nombre": "Aporte Indemn. (Sustit.)",
-   "tipo": "9(9)"
+   "nombre": "Aporte Indemnización (Sustitutiva)",
+   "tipo": "9",
+   "largo": 9
   },
   "34": {
-   "nombre": "N° Períodos (Sustit.)",
-   "tipo": "9(2)"
+   "nombre": "N° Períodos (Sustitutiva)",
+   "tipo": "9",
+   "largo": 2
   },
   "35": {
-   "nombre": "Período desde (Sustit.)",
-   "tipo": "X(10)"
+   "nombre": "Período desde (Sustitutiva)",
+   "tipo": "X",
+   "largo": 10
   },
   "36": {
-   "nombre": "Período Hasta (Sustit.)",
-   "tipo": "X(10)"
+   "nombre": "Período Hasta (Sustitutiva)",
+   "tipo": "X",
+   "largo": 10
   },
   "37": {
    "nombre": "Puesto de Trabajo Pesado",
-   "tipo": "X(40)"
+   "tipo": "X",
+   "largo": 40
   },
   "38": {
-   "nombre": "POR CONFIRMAR (tasa trabajo pesado)",
-   "tipo": "?",
-   "revisar": true
+   "nombre": "% Cotizacion Trabajo Pesado",
+   "tipo": "X",
+   "largo": 5
   },
   "39": {
    "nombre": "Cotización Trabajo Pesado",
-   "tipo": "9(6)"
+   "tipo": "9",
+   "largo": 6
   },
   "40": {
    "nombre": "Código de la Institución APVI",
-   "tipo": "9(3)"
+   "tipo": "9",
+   "largo": 3
   },
   "41": {
    "nombre": "Número de Contrato APVI",
-   "tipo": "X(20)"
+   "tipo": "X",
+   "largo": 20
   },
   "42": {
    "nombre": "Forma de Pago APVI",
-   "tipo": "9(1)"
+   "tipo": "9",
+   "largo": 1
   },
   "43": {
    "nombre": "Cotización APVI",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "44": {
    "nombre": "Cotización Depósitos Convenidos",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "45": {
    "nombre": "Código Institución Autorizada APVC",
-   "tipo": "9(3)"
+   "tipo": "9",
+   "largo": 3
   },
   "46": {
    "nombre": "Número de Contrato APVC",
-   "tipo": "X(20)"
+   "tipo": "X",
+   "largo": 20
   },
   "47": {
    "nombre": "Forma de Pago APVC",
-   "tipo": "9(1)"
+   "tipo": "9",
+   "largo": 1
   },
   "48": {
    "nombre": "Cotización Trabajador APVC",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "49": {
    "nombre": "Cotización Empleador APVC",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "50": {
    "nombre": "RUT Afiliado Voluntario",
-   "tipo": "9(11)"
+   "tipo": "9",
+   "largo": 11
   },
   "51": {
    "nombre": "DV Afiliado Voluntario",
-   "tipo": "X(1)"
+   "tipo": "X",
+   "largo": 1
   },
   "52": {
    "nombre": "Apellido Paterno",
-   "tipo": "X(30)"
+   "tipo": "X",
+   "largo": 30
   },
   "53": {
    "nombre": "Nombres (afiliado voluntario)",
-   "tipo": "X(30)"
+   "tipo": "X",
+   "largo": 30
   },
   "54": {
    "nombre": "Apellido Materno",
-   "tipo": "X(30)"
+   "tipo": "X",
+   "largo": 30
   },
   "55": {
    "nombre": "Código Movimiento de Personal",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "56": {
    "nombre": "Fecha desde",
-   "tipo": "X(10)"
+   "tipo": "X",
+   "largo": 10
   },
   "57": {
    "nombre": "Fecha hasta",
-   "tipo": "X(10)"
+   "tipo": "X",
+   "largo": 10
   },
   "58": {
    "nombre": "Código de la AFP",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "59": {
    "nombre": "Monto Capitalización Voluntaria",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "60": {
    "nombre": "Monto Ahorro Voluntario",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "61": {
    "nombre": "Número de periodos de cotización",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "62": {
    "nombre": "Código EX-Caja Régimen",
-   "tipo": "9(4)"
+   "tipo": "9",
+   "largo": 4
   },
   "63": {
    "nombre": "Tasa Cotizacion Ex-Caja Prevision",
-   "tipo": "99,99(5)"
+   "tipo": "X",
+   "largo": 5
   },
   "64": {
-   "nombre": "Renta Imponible IPS",
-   "tipo": "9(8)"
+   "nombre": "Renta Imponible IPS / ISL / Fonasa",
+   "tipo": "9",
+   "largo": 8
   },
   "65": {
    "nombre": "Cotización Obligatoria IPS",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "66": {
    "nombre": "Renta Imponible Desahucio",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "67": {
    "nombre": "Código Ex-Caja Régimen Desahucio",
-   "tipo": "9(4)"
+   "tipo": "9",
+   "largo": 4
   },
   "68": {
    "nombre": "Tasa Cotizacion Desahucio Ex-Cajas de Prevision",
-   "tipo": "99,99(5)"
+   "tipo": "X",
+   "largo": 5
   },
   "69": {
    "nombre": "Cotización Desahucio",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "70": {
    "nombre": "Cotización Fonasa",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "71": {
    "nombre": "Cotización Acc. Trabajo (ISL)",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "72": {
    "nombre": "Bonificación Ley 15.386",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "73": {
    "nombre": "Descuento por cargas familiares de IPS",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "74": {
    "nombre": "Bonos Gobierno",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "75": {
    "nombre": "Código Institución de Salud",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "76": {
    "nombre": "Número del FUN",
-   "tipo": "X(16)"
+   "tipo": "X",
+   "largo": 16
   },
   "77": {
    "nombre": "Renta Imponible Isapre",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "78": {
    "nombre": "Moneda del plan pactado Isapre",
-   "tipo": "9(1)"
+   "tipo": "9",
+   "largo": 1
   },
   "79": {
    "nombre": "Cotización Pactada",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "80": {
    "nombre": "Cotización Obligatoria Isapre",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "81": {
-   "nombre": "Cotización Adicional Voluntaria",
-   "tipo": "9(8)"
+   "nombre": "Cotización Adicional Isapre",
+   "tipo": "9",
+   "largo": 8
   },
   "82": {
    "nombre": "Monto Garantía Explícita de Salud",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "83": {
    "nombre": "Código CCAF",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "84": {
    "nombre": "Renta Imponible CCAF",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "85": {
    "nombre": "Créditos Personales CCAF",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "86": {
    "nombre": "Descuento Dental CCAF",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "87": {
    "nombre": "Descuentos por Leasing",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "88": {
    "nombre": "Descuentos por seguro",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "89": {
    "nombre": "Otros descuentos CCAF",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "90": {
    "nombre": "Cotización a CCAF de",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "91": {
    "nombre": "Descuento Cargas Familiares CCAF",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "92": {
-   "nombre": "Otros descuentos CCAF 1 (Uso Futuro)",
-   "tipo": "9(8)"
+   "nombre": "Renta Imponible Mes Anterior a la",
+   "tipo": "9",
+   "largo": 8
   },
   "93": {
-   "nombre": "Otros descuentos CCAF 2 (Uso Futuro)",
-   "tipo": "9(8)"
+   "nombre": "Tipo de Jornada",
+   "tipo": "9",
+   "largo": 8
   },
   "94": {
-   "nombre": "Bonos Gobierno (Uso Futuro)",
-   "tipo": "9(8)"
+   "nombre": "Cotización Expectativa de Vida",
+   "tipo": "9",
+   "largo": 8
   },
   "95": {
-   "nombre": "Código de Sucursal (Uso Futuro)",
-   "tipo": "X(20)"
+   "nombre": "Cotización Rentabilidad Protegida",
+   "tipo": "9",
+   "largo": 20
   },
   "96": {
    "nombre": "Código Mutualidad",
-   "tipo": "9(2)"
+   "tipo": "9",
+   "largo": 2
   },
   "97": {
    "nombre": "Renta Imponible Mutual",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "98": {
    "nombre": "Cotización Accidente del Trabajo",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "99": {
    "nombre": "Sucursal para pago Mutual",
-   "tipo": "9(3)"
+   "tipo": "9",
+   "largo": 3
   },
   "100": {
    "nombre": "Renta Imponible Seguro Cesantía",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "101": {
    "nombre": "Aporte Trabajador Seguro Cesantía",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "102": {
    "nombre": "Aporte Empleador Seguro Cesantía",
-   "tipo": "9(8)"
+   "tipo": "9",
+   "largo": 8
   },
   "103": {
    "nombre": "Rut Pagadora Subsidio",
-   "tipo": "9(11)"
+   "tipo": "9",
+   "largo": 11
   },
   "104": {
    "nombre": "DV Pagadora Subsidio",
-   "tipo": "X(1)"
+   "tipo": "X",
+   "largo": 1
   },
   "105": {
    "nombre": "Centro de Costos, Sucursal, Agencia,",
-   "tipo": "X(20)"
+   "tipo": "X",
+   "largo": 20
   }
  },
  "faltan": []
