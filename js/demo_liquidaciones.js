@@ -586,7 +586,42 @@
     document.addEventListener('DOMContentLoaded', function () {
         var periodo = document.getElementById('periodo');
         var tienda = (window.CLClientes && window.localStorage) ? window.CLClientes.crear(window.localStorage) : null;
+        var historial = (window.CLHistorial && window.localStorage) ? window.CLHistorial.crear(window.localStorage) : null;
         var selClientes = document.getElementById('liq-clientes-guardados');
+
+        function mostrarHistorial() {
+            var caja = document.getElementById('historial-liq');
+            if (!caja || !historial) return;
+            var lista = historial.listar(clienteActual());
+            if (!lista.length) {
+                caja.innerHTML = '<span class="texto-ayuda">Sin meses cerrados para este cliente.</span>';
+                return;
+            }
+            caja.innerHTML = '<table class="tabla"><thead><tr><th>Período</th><th class="num">Trabajadores</th><th class="num">Líquido</th><th class="num">Costo empresa</th></tr></thead><tbody>' +
+                lista.map(function (m) {
+                    return '<tr><td>' + D.esc(m.periodo) + '</td><td class="num">' + m.trabajadores + '</td>' +
+                        '<td class="num">' + D.money(m.liquido) + '</td><td class="num">' + D.money(m.costo) + '</td></tr>';
+                }).join('') + '</tbody></table>';
+        }
+
+        var btnCerrarMes = document.getElementById('btn-cerrar-mes');
+        if (btnCerrarMes) {
+            btnCerrarMes.addEventListener('click', function () {
+                if (!historial) return;
+                var ok = state.results.filter(function (r) { return !r.error; });
+                if (!ok.length) { D.avisar('No hay liquidaciones para cerrar.'); return; }
+                try {
+                    historial.cerrar(clienteActual(), document.getElementById('periodo').value, {
+                        trabajadores: ok.length,
+                        liquido: ok.reduce(function (s, r) { return s + r.liquido; }, 0),
+                        costo: ok.reduce(function (s, r) { return s + r.costo; }, 0)
+                    });
+                    mostrarHistorial();
+                    D.avisar('Mes cerrado y guardado en este navegador.');
+                } catch (e) { D.avisar(e.message); }
+            });
+        }
+        mostrarHistorial();
 
         function refrescarClientes() {
             if (!tienda || !selClientes) return;
