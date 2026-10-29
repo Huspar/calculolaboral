@@ -266,6 +266,8 @@
     }
 .corregir { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 .corregir select, .corregir input { height:34px; padding:0 8px; border:1px solid var(--line-2); border-radius:8px; font:inherit; font-size:13px; background:#fff; color:inherit; }
+.cuenta-strip { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 24px; background:#F7FAF9; border-bottom:1px solid var(--line); font-size:13px; color:var(--ink-2); }
+@media (max-width: 640px) { .cuenta-strip { padding:10px 16px; } }
 </style>
 </head>
 <body>
@@ -286,17 +288,17 @@
 
 <main id="contenido">
 
-    <div class="demo-head">
-        <p class="demo-eyebrow">Finiquitos y liquidaciones en lote</p>
-        <h1 class="v-titulo" tabindex="-1">Sube tu nómina. Baja los documentos calculados.</h1>
-        <p class="texto-ayuda">La calculadora laboral más usada de Chile, procesando tu cartera completa. Finiquitos y liquidaciones con el logo de tu estudio, sin planillas paralelas.</p>
-    </div>
-
-    <div class="demo-nota" id="cuenta-liq" style="margin:0 0 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <div class="cuenta-strip" id="cuenta-liq">
         <b>Cuenta:</b> <span id="cuenta-estado">sin sesión</span>
         <button class="btn btn-chico" type="button" id="btn-entrar">Entrar con mi correo</button>
         <button class="btn btn-chico" type="button" id="btn-subir-nube" hidden>Guardar en la nube</button>
         <button class="btn btn-chico" type="button" id="btn-bajar-nube" hidden>Traer de la nube</button>
+    </div>
+
+    <div class="demo-head">
+        <p class="demo-eyebrow">Finiquitos y liquidaciones en lote</p>
+        <h1 class="v-titulo" tabindex="-1">Sube tu nómina. Baja los documentos calculados.</h1>
+        <p class="texto-ayuda">La calculadora laboral más usada de Chile, procesando tu cartera completa. Finiquitos y liquidaciones con el logo de tu estudio, sin planillas paralelas.</p>
     </div>
 
     <div class="segmento" role="tablist" aria-label="Tipo de documento">
