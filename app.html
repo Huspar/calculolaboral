@@ -113,6 +113,7 @@ gtag('js', new Date());
 <p class="app-nav-grupo">Configuración</p>
 <a href="/app/empresa" data-ruta="empresa" data-nav="empresa"><span class="material-icons" aria-hidden="true">apartment</span>Empresa</a>
 <a href="/app/equipo" data-ruta="equipo" data-nav="equipo" id="app-nav-equipo"><span class="material-icons" aria-hidden="true">badge</span>Equipo</a>
+<a href="/app/portal" data-ruta="portal" data-nav="portal" id="app-nav-portal" hidden><span class="material-icons" aria-hidden="true">storefront</span>Portal cliente</a>
 <a href="/app/cuenta" data-ruta="cuenta" data-nav="cuenta"><span class="material-icons" aria-hidden="true">person</span>Mi cuenta</a>
 </nav>
 <div class="app-nav app-side-pie">
@@ -818,6 +819,40 @@ gtag('js', new Date());
 </div>
 </form>
 </div></div>
+
+<div class="panel" id="pm-portal-panel" style="margin-top:20px">
+<div class="panel-head"><h2>Portal del cliente</h2><span id="pm-portal-estado-pill" class="pill"></span></div>
+<div class="panel-cuerpo">
+<p class="texto-ayuda">Permite que el dueño o administrador de esta empresa ingrese a ver el resumen mensual, avisos y descargar liquidaciones emitidas en modo solo lectura. Jamás se muestran datos bancarios de los trabajadores ni información interna del estudio.</p>
+
+<div id="pm-portal-cliente-info" hidden>
+<div class="tabla-wrap" style="margin-top:16px"><table class="tabla"><caption class="sr-only">Acceso del cliente al portal</caption>
+<thead><tr><th scope="col">Correo del cliente</th><th scope="col">Secciones activas</th><th scope="col">Último acceso</th><th scope="col">Acciones</th></tr></thead>
+<tbody id="pm-portal-cliente-fila"></tbody></table></div>
+</div>
+
+<div id="pm-portal-invitar" style="margin-top:16px" hidden>
+<h3 style="font-size:1.05rem;font-weight:600;margin-bottom:8px">Dar acceso al portal</h3>
+<form id="pm-portal-inv-form" novalidate autocomplete="off">
+<div class="lq-grid">
+<div class="lq-field lq-span2"><label for="pm-portal-email">Correo del cliente</label><input id="pm-portal-email" type="email" placeholder="gerente@cliente.cl" maxlength="254"><p class="pm-error" id="pm-portal-email-err" hidden></p></div>
+<div class="lq-field lq-span2">
+<span class="lq-label">Secciones visibles para el cliente</span>
+<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:6px">
+<label class="pm-check" style="margin:0"><input type="checkbox" checked disabled> Resumen del mes y avisos <span class="lq-opt">(siempre activo)</span></label>
+<label class="pm-check" style="margin:0"><input type="checkbox" id="pm-portal-sec-liq" checked> Liquidaciones emitidas</label>
+<label class="pm-check" style="margin:0"><input type="checkbox" id="pm-portal-sec-doc"> Documentos</label>
+</div>
+</div>
+</div>
+<div class="form-acciones" style="margin-top:16px">
+<button type="submit" id="pm-portal-inv-btn" class="btn btn-primario"><span class="material-icons" aria-hidden="true">person_add</span>Dar acceso al portal</button>
+<p id="pm-portal-inv-msg" class="lq-estado" role="status"></p>
+</div>
+</form>
+</div>
+</div>
+</div>
 </section>
 
 <!-- Equipo del estudio -->
@@ -858,6 +893,63 @@ gtag('js', new Date());
 </div>
 
 </div>
+</div>
+</section>
+
+<!-- Portal del cliente (solo lectura para dueños/gerentes) -->
+<section class="vista" data-vista="portal" aria-labelledby="portal-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="portal-titulo">Portal de la empresa</h1>
+<p class="v-sub" id="portal-sub">Resumen del mes, avisos y liquidaciones emitidas para la administración.</p>
+</div>
+<div class="v-head-acciones">
+<div id="portal-empresa-selector-wrap" hidden style="display:inline-flex;align-items:center;gap:8px">
+<label for="portal-empresa-sel" class="sr-only">Empresa</label>
+<select id="portal-empresa-sel" class="lq-select"></select>
+</div>
+<div style="display:inline-flex;align-items:center;gap:8px">
+<label for="portal-periodo" class="sr-only">Periodo</label>
+<select id="portal-periodo" class="lq-select"></select>
+</div>
+</div>
+</div>
+
+<div id="portal-cargando" class="panel"><div class="panel-cuerpo"><p class="texto-ayuda">Cargando datos del portal...</p></div></div>
+<div id="portal-error" class="panel" hidden><div class="panel-cuerpo"><p class="pm-error" id="portal-error-txt"></p></div></div>
+
+<div id="portal-contenido" hidden>
+<dl class="cifras" id="portal-cifras"></dl>
+
+<!-- Avisos de la empresa -->
+<div class="panel" id="portal-panel-avisos" style="margin-top:20px" hidden>
+<div class="panel-head"><h2>Avisos de la empresa</h2></div>
+<div class="panel-cuerpo">
+<div id="portal-avisos-lista"></div>
+</div>
+</div>
+
+<!-- Liquidaciones emitidas -->
+<div class="panel" id="portal-panel-liquidaciones" style="margin-top:20px" hidden>
+<div class="panel-head"><h2>Liquidaciones emitidas</h2></div>
+<div class="panel-cuerpo">
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Liquidaciones emitidas del periodo</caption>
+<thead><tr><th scope="col">Trabajador</th><th scope="col">RUT</th><th scope="col">Cargo</th><th scope="col" style="text-align:right">Líquido a pagar</th><th scope="col">Emisión</th><th scope="col">Liquidación</th></tr></thead>
+<tbody id="portal-liq-filas"></tbody></table></div>
+<p class="texto-ayuda" style="margin-top:12px"><span class="material-icons" style="font-size:16px;vertical-align:-3px" aria-hidden="true">lock</span> Por seguridad y privacidad laboral, este portal no expone cuentas corrientes ni datos bancarios de los trabajadores.</p>
+</div>
+</div>
+
+<!-- Documentos -->
+<div class="panel" id="portal-panel-documentos" style="margin-top:20px" hidden>
+<div class="panel-head"><h2>Documentos</h2></div>
+<div class="panel-cuerpo">
+<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Documentos de la empresa</caption>
+<thead><tr><th scope="col">Nombre del documento</th><th scope="col">Tipo</th><th scope="col">Fecha</th></tr></thead>
+<tbody id="portal-doc-filas"></tbody></table></div>
+</div>
+</div>
+
 </div>
 </section>
 

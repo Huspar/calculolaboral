@@ -47,10 +47,11 @@ const ACTIVIDAD_RUTA = {
     'mes:PUT': (req) => (req.body && req.body.mes && req.body.mes.emitida ? 'liquidacion_emitida' : 'liquidacion_guardada'), 'mes:DELETE': 'liquidacion_borrada',
     'enlace-liquidacion:POST': 'enlace_creado', 'enlace-liquidacion:DELETE': 'enlace_anulado',
     'equipo:POST': 'equipo_invitado', 'equipo:PUT': 'equipo_cambiado', 'equipo:DELETE': 'equipo_quitado',
+    'portal-gestion:POST': 'portal_invitado', 'portal-gestion:PUT': 'portal_cambiado', 'portal-gestion:DELETE': 'portal_quitado',
     'honorarios:PUT': 'honorarios_guardados', 'importar:POST': 'datos_importados', 'exportar:GET': 'respaldo_descargado'
 };
 
-function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo }) {
+function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo, portal }) {
     function metodo(req, res, permitido) {
         if (req.method === permitido) return true;
         res.setHeader('Allow', permitido);
@@ -102,7 +103,12 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         if (!s.autenticado) return H.json(res, 200, { autenticado: false });
         const extras = s.renovada ? { cookie: H.cookieSesion(s.renovada.token, s.renovada.vence, Date.now()) } : undefined;
         const estudios = equipo ? await equipo.estudiosDe(s).catch(() => []) : [];
-        return H.json(res, 200, { autenticado: true, email: s.email, estudios: estudios.length > 1 ? estudios : undefined }, extras);
+        const portales = portal ? await portal.portalesDe(s).catch(() => []) : [];
+        return H.json(res, 200, {
+            autenticado: true, email: s.email,
+            estudios: estudios.length > 1 ? estudios : undefined,
+            portales: portales.length ? portales : undefined
+        }, extras);
     }
 
     async function salir(req, res) {
@@ -185,6 +191,42 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         if (m === 'POST') return responder(res, await equipo.invitar(s, b));
         if (m === 'PUT') return responder(res, await equipo.cambiar(s, id, b));
         return responder(res, await equipo.quitar(s, id));
+    }
+
+    // Portal del cliente: gestión por parte del estudio (GET lista; POST invita; PUT actualiza secciones; DELETE quita)
+    async function portalGestion(req, res) {
+        const m = req.method;
+        if (!portal) return H.json(res, 503, { ok: false, error: 'No disponible.' });
+        if (['GET', 'POST', 'PUT', 'DELETE'].indexOf(m) < 0) { res.setHeader('Allow', 'GET, POST, PUT, DELETE'); return H.json(res, 405, { ok: false, error: 'Método no permitido.' }); }
+        const s = m === 'GET' ? await conSesion(req, res) : await sesionParaEscribir(req, res);
+        if (!s) return;
+        const b = H.cuerpoDe(req), id = typeof req.query?.id === 'string' ? req.query.id : '';
+        const empId = typeof req.query?.empresaId === 'string' ? req.query.empresaId : (b.empresaId || s.empresaId || '');
+        if (m === 'GET') return responder(res, await portal.listar(s, empId));
+        if (m === 'POST') return responder(res, await portal.invitar(s, b));
+        if (m === 'PUT') return responder(res, await portal.cambiar(s, id, b));
+        return responder(res, await portal.quitar(s, id));
+    }
+
+    // Portal del cliente: consulta de datos por parte del cliente (solo lectura)
+    async function portalDatos(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        if (!portal) return H.json(res, 503, { ok: false, error: 'No disponible.' });
+        const s = await conSesion(req, res);
+        if (!s) return;
+        const empId = typeof req.query?.empresaId === 'string' ? req.query.empresaId : '';
+        const per = typeof req.query?.periodo === 'string' ? req.query.periodo : '';
+        const trabId = typeof req.query?.trabajadorId === 'string' ? req.query.trabajadorId : '';
+
+        if (trabId) {
+            return responder(res, await portal.obtenerLiquidacion(s, { empresaId: empId, trabajadorId: trabId, periodo: per }));
+        }
+        const resp = await portal.obtenerDatos(s, { empresaId: empId, periodo: per });
+        if (resp.ok) {
+            const actor = { cuentaId: resp.estudioId, personaId: s.personaId || s.cuentaId, empresaId: empId };
+            await auth.registrar('portal_visto', actor, empId, H.ipDe(req), 'cliente');
+        }
+        return responder(res, resp);
     }
 
     // Registro de actividad: GET lista lo último (titular y administradores); POST lo avisa el navegador tras bajar un archivo
@@ -424,7 +466,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, actividad, equipo: equipoRuta, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {

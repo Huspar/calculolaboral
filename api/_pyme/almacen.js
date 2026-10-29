@@ -114,6 +114,38 @@ function crearAlmacenSql(sql) {
             await filas('UPDATE sesiones SET revocada = $2::timestamptz WHERE token_hash = $1 AND revocada IS NULL', [tokenHash, ahoraIso]);
         },
 
+        // ---------- portal del cliente (migración 012) ----------
+        async listarPortalClientes(estudioId, empresaId) {
+            const params = [estudioId];
+            let sql = 'SELECT id, empresa_id, email, secciones, creado, ultimo_acceso FROM portal_clientes WHERE estudio_id = $1::uuid';
+            if (empresaId) { params.push(empresaId); sql += ' AND empresa_id = $2::uuid'; }
+            sql += ' ORDER BY creado, id';
+            const r = await filas(sql, params);
+            return r.map(x => ({ id: x.id, empresaId: x.empresa_id, email: x.email, secciones: typeof x.secciones === 'object' && x.secciones !== null ? x.secciones : {}, creado: new Date(x.creado).toISOString(), ultimoAcceso: x.ultimo_acceso ? new Date(x.ultimo_acceso).toISOString() : null }));
+        },
+        async crearPortalCliente({ estudioId, empresaId, email, secciones, invitadoPor, ahoraIso, maxPorEmpresa }) {
+            const r = await conCandado('portal:' + empresaId,
+                'INSERT INTO portal_clientes (estudio_id, empresa_id, email, secciones, invitado_por, creado) SELECT $1::uuid, $2::uuid, $3, $4::jsonb, $5::uuid, $6::timestamptz ' +
+                'WHERE (SELECT count(*) FROM portal_clientes WHERE empresa_id = $2::uuid) < $7::int RETURNING id',
+                [estudioId, empresaId, email, JSON.stringify(secciones || {}), invitadoPor || null, ahoraIso, maxPorEmpresa || 1]
+            );
+            return r[0] ? { id: r[0].id } : null;
+        },
+        async actualizarPortalCliente(estudioId, id, { secciones }) {
+            await filas('UPDATE portal_clientes SET secciones = $3::jsonb WHERE id = $2::uuid AND estudio_id = $1::uuid', [estudioId, id, JSON.stringify(secciones || {})]);
+        },
+        async borrarPortalCliente(estudioId, id) {
+            const r = await filas('DELETE FROM portal_clientes WHERE id = $2::uuid AND estudio_id = $1::uuid RETURNING id', [estudioId, id]);
+            return r.length === 1;
+        },
+        async buscarPortalPorEmail(email) {
+            const r = await filas('SELECT p.id, p.estudio_id, p.empresa_id, p.secciones, c.email AS titular FROM portal_clientes p JOIN cuentas c ON c.id = p.estudio_id WHERE p.email = $1 ORDER BY p.creado', [email]);
+            return r.map(x => ({ id: x.id, estudioId: x.estudio_id, empresaId: x.empresa_id, secciones: x.secciones || {}, titular: x.titular }));
+        },
+        async tocarPortalCliente(id, ahoraIso) {
+            await filas('UPDATE portal_clientes SET ultimo_acceso = $2::timestamptz WHERE id = $1::uuid', [id, ahoraIso]);
+        },
+
         // ---------- equipo del estudio (migración 011) ----------
         async listarMiembros(estudioId) {
             const r = await filas('SELECT id, email, rol, empresas, creado, ultimo_acceso FROM miembros WHERE estudio_id = $1::uuid ORDER BY creado, id', [estudioId]);

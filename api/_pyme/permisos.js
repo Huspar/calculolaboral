@@ -19,6 +19,7 @@ const MATRIZ = {
     respaldo: ['titular', 'admin'],                        // exportar todo
     equipo_gestionar: ['titular', 'admin'],
     actividad_ver: ['titular', 'admin'],
+    portal_gestionar: ['titular', 'admin'],
     cuenta_borrar: ['titular'],
     facturacion: ['titular']                               // comprar o desbloquear un pase
 };
@@ -30,7 +31,8 @@ const RUTAS = {
     trabajador: { POST: 'ficha_editar', PUT: 'ficha_editar', DELETE: 'ficha_editar' }, prestamos: { PUT: 'ficha_editar' }, ausencias: { PUT: 'ficha_editar' },
     documento: { POST: 'ficha_editar' }, vacacion: { POST: 'ficha_editar', DELETE: 'ficha_editar' }, importar: { POST: 'ficha_editar' },
     mes: { PUT: 'liquidar', DELETE: 'liquidar' }, 'enlace-liquidacion': { POST: 'liquidar', DELETE: 'liquidar' },
-    exportar: { GET: 'respaldo' }, equipo: { GET: 'equipo_gestionar', POST: 'equipo_gestionar', PUT: 'equipo_gestionar', DELETE: 'equipo_gestionar' },
+    exportar: { GET: 'respaldo' },
+    'portal-gestion': { GET: 'portal_gestionar', POST: 'portal_gestionar', PUT: 'portal_gestionar', DELETE: 'portal_gestionar' }, equipo: { GET: 'equipo_gestionar', POST: 'equipo_gestionar', PUT: 'equipo_gestionar', DELETE: 'equipo_gestionar' },
     'avisos-correo': { GET: 'equipo_gestionar', PUT: 'equipo_gestionar', POST: 'equipo_gestionar' }, comprar: { POST: 'facturacion', GET: 'facturacion' }, desbloqueo: { POST: 'facturacion', GET: 'facturacion' }, actividad: { GET: 'actividad_ver', POST: 'ver' }, 'borrar-cuenta': { POST: 'cuenta_borrar' }
 };
 

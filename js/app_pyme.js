@@ -55,7 +55,7 @@
 
     // Empresa con la que se trabaja (cuentas de estudios con varias empresas); se recuerda en este navegador
     var KEY_EMPRESA = 'cl_pyme_empresa', empresaSel = null, empresaNueva = false;
-    var KEY_ESTUDIO = 'cl_pyme_estudio', estudioSel = null, listaEstudios = [];
+    var KEY_ESTUDIO = 'cl_pyme_estudio', estudioSel = null, listaEstudios = [], listaPortales = [], portalEmpresaSel = null, portalPeriodoSel = null;
     try { estudioSel = window.localStorage.getItem(KEY_ESTUDIO) || null; } catch (e) { /* sin almacenamiento */ }
     function recordarEstudio(id) {
         estudioSel = id || null;
@@ -141,8 +141,8 @@
     }
 
     // ---------- rutas ----------
-    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', contratos: 'contratos', empresa: 'empresa', equipo: 'equipo', cuenta: 'cuenta' };
-    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', contratos: 'Contratos y finiquitos', empresa: 'Empresa', equipo: 'Equipo', cuenta: 'Mi cuenta' };
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', contratos: 'contratos', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', contratos: 'Contratos y finiquitos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
     var vistaActual = null;
 
     function rutaActual() { return window.location.pathname.replace(/^\/app\/?/, '').replace(/\/+$/, ''); }
@@ -194,8 +194,9 @@
         else if (vista === 'vacaciones') rutaVacaciones();
         else if (vista === 'calendario') dibujarCalendario();
         else if (vista === 'contratos') dibujarContratos();
-        else if (vista === 'empresa') dibujarEmpresa();
+        else if (vista === 'empresa') { dibujarEmpresa(); dibujarPortalEmpresa(); }
         else if (vista === 'equipo') dibujarEquipo();
+        else if (vista === 'portal') dibujarPortal();
         else if (vista === 'cuenta') { dibujarCuenta(); dibujarActividad(); }
         contarVista(vista === 'trabajador' ? 'trabajadores/' + (partes[1] === 'nuevo' ? 'nuevo' : 'carpeta/' + (partes[2] || 'ficha')) : base);
     }
@@ -522,6 +523,8 @@
         }
         var navEq = $('app-nav-equipo');
         if (navEq) navEq.hidden = !!ejemplo;
+        var navPortal = $('app-nav-portal');
+        if (navPortal) navPortal.hidden = !listaPortales || listaPortales.length === 0;
         var lim = estado.limites, caja = $('app-pase'), txt = $('app-pase-texto');
         caja.classList.remove('vigente', 'porvencer', 'ejemplo');
         $('pm-ejemplo-franja').hidden = !estado.ejemplo;
@@ -554,7 +557,338 @@
         lectura: 'Solo lectura (ver resúmenes y liquidaciones sin datos bancarios)'
     };
 
-    function dibujarEquipo() {
+    
+    // ---------- Portal del cliente (fase 3) ----------
+    function dibujarPortalEmpresa() {
+        var panel = $('pm-portal-panel');
+        if (!panel) return;
+        var puedeGestionar = !estado.cuenta || !estado.cuenta.rol || ['titular', 'admin'].indexOf(estado.cuenta.rol) >= 0;
+        if (!puedeGestionar) {
+            panel.hidden = true;
+            return;
+        }
+        panel.hidden = false;
+        var pill = $('pm-portal-estado-pill'), info = $('pm-portal-cliente-info'), inv = $('pm-portal-invitar');
+        var tbody = $('pm-portal-cliente-fila'), msg = $('pm-portal-inv-msg');
+        if (msg) mensaje(msg, '', '');
+
+        if (ejemplo) {
+            if (pill) { pill.textContent = 'Sin acceso activo'; pill.className = 'pill'; }
+            if (info) info.hidden = true;
+            if (inv) inv.hidden = false;
+            return;
+        }
+
+        api('portal-gestion', { query: { empresaId: estado.empresaId } }).then(function (r) {
+            if (!r.ok) {
+                if (pill) { pill.textContent = 'Error'; pill.className = 'pill'; }
+                if (inv) inv.hidden = true;
+                if (info) {
+                    info.hidden = false;
+                    tbody.innerHTML = '<tr><td colspan="4" class="vacio">' + esc(r.datos.error || 'No se pudo cargar el portal del cliente.') + '</td></tr>';
+                }
+                return;
+            }
+            var clientes = r.datos.clientes || [];
+            if (clientes.length > 0) {
+                var c = clientes[0];
+                if (pill) { pill.textContent = '1 cliente activo'; pill.className = 'pill pill-ok'; }
+                if (inv) inv.hidden = true;
+                if (info) info.hidden = false;
+
+                var secLiqChecked = (c.secciones && c.secciones.liquidaciones) ? ' checked' : '';
+                var secDocChecked = (c.secciones && c.secciones.documentos) ? ' checked' : '';
+                var ultimoAcc = c.ultimoAcceso ? esc(new Date(c.ultimoAcceso).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short' })) : '<span class="texto-ayuda">Nunca ha ingresado</span>';
+
+                tbody.innerHTML = '<tr>' +
+                    '<td class="sin-salto font-semibold">' + esc(c.email) + '</td>' +
+                    '<td>' +
+                        '<div style="display:flex;flex-direction:column;gap:4px">' +
+                        '<label class="pm-check" style="margin:0"><input type="checkbox" checked disabled> Resumen y avisos</label>' +
+                        '<label class="pm-check" style="margin:0"><input type="checkbox" id="pm-portal-row-liq"' + secLiqChecked + '> Liquidaciones emitidas</label>' +
+                        '<label class="pm-check" style="margin:0"><input type="checkbox" id="pm-portal-row-doc"' + secDocChecked + '> Documentos</label>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td class="sin-salto">' + ultimoAcc + '</td>' +
+                    '<td class="sin-salto">' +
+                        '<button type="button" class="btn btn-chico" id="pm-portal-guardar-btn"><span class="material-icons" aria-hidden="true">save</span>Guardar</button> ' +
+                        '<button type="button" class="btn-texto btn-peligro" id="pm-portal-quitar-btn"><span class="material-icons" aria-hidden="true">delete</span>Quitar acceso</button>' +
+                    '</td>' +
+                '</tr>';
+
+                var btnGuardar = $('pm-portal-guardar-btn');
+                if (btnGuardar) {
+                    btnGuardar.addEventListener('click', function () {
+                        var liq = $('pm-portal-row-liq').checked;
+                        var doc = $('pm-portal-row-doc').checked;
+                        btnGuardar.disabled = true;
+                        api('portal-gestion', {
+                            metodo: 'PUT',
+                            query: { id: c.id, empresaId: estado.empresaId },
+                            body: { secciones: { resumen: true, liquidaciones: liq, documentos: doc } }
+                        }).then(function (res) {
+                            btnGuardar.disabled = false;
+                            if (!res.ok) {
+                                alert(res.datos.error || 'No se pudieron guardar los cambios.');
+                                return;
+                            }
+                            dibujarPortalEmpresa();
+                        });
+                    });
+                }
+
+                var btnQuitar = $('pm-portal-quitar-btn');
+                if (btnQuitar) {
+                    btnQuitar.addEventListener('click', function () {
+                        confirmarModal('¿Quitar acceso al portal?', 'El cliente (' + c.email + ') ya no podrá ver el resumen ni las liquidaciones de esta empresa.', 'Quitar acceso').then(function (conf) {
+                            if (!conf) return;
+                            api('portal-gestion', {
+                                metodo: 'DELETE',
+                                query: { id: c.id, empresaId: estado.empresaId }
+                            }).then(function (res) {
+                                if (!res.ok) {
+                                    alert(res.datos.error || 'No se pudo quitar el acceso.');
+                                    return;
+                                }
+                                dibujarPortalEmpresa();
+                            });
+                        });
+                    });
+                }
+            } else {
+                if (pill) { pill.textContent = 'Sin acceso activo'; pill.className = 'pill'; }
+                if (info) info.hidden = true;
+                if (inv) inv.hidden = false;
+            }
+        });
+    }
+
+    var fInvPortal = $('pm-portal-inv-form');
+    if (fInvPortal) {
+        fInvPortal.addEventListener('submit', function (ev) {
+            ev.preventDefault();
+            var correoInput = $('pm-portal-email'), correoErr = $('pm-portal-email-err'), msg = $('pm-portal-inv-msg');
+            var btn = $('pm-portal-inv-btn');
+            if (correoErr) correoErr.hidden = true;
+            mensaje(msg, '', '');
+            var correo = (correoInput.value || '').trim();
+            if (!correo || correo.indexOf('@') < 0) {
+                if (correoErr) { correoErr.textContent = 'Ingresa un correo electrónico válido.'; correoErr.hidden = false; }
+                correoInput.focus();
+                return;
+            }
+            btn.disabled = true;
+            mensaje(msg, 'cargando', 'Dando acceso al cliente...');
+            var liq = $('pm-portal-sec-liq').checked;
+            var doc = $('pm-portal-sec-doc').checked;
+            api('portal-gestion', {
+                metodo: 'POST',
+                query: { empresaId: estado.empresaId },
+                body: { empresaId: estado.empresaId, email: correo, secciones: { resumen: true, liquidaciones: liq, documentos: doc } }
+            }).then(function (res) {
+                btn.disabled = false;
+                if (!res.ok) {
+                    mensaje(msg, 'error', res.datos.error || 'No pudimos dar acceso al portal.');
+                    return;
+                }
+                correoInput.value = '';
+                mensaje(msg, 'ok', 'Acceso otorgado al cliente.');
+                setTimeout(function () { dibujarPortalEmpresa(); }, 600);
+            });
+        });
+    }
+
+    function dibujarPortal() {
+        var boxCargando = $('portal-cargando'), boxError = $('portal-error'), boxContenido = $('portal-contenido');
+        var errTxt = $('portal-error-txt');
+
+        if (!listaPortales || listaPortales.length === 0) {
+            if (ejemplo) {
+                if (boxCargando) boxCargando.hidden = true;
+                if (boxError) boxError.hidden = true;
+                if (boxContenido) boxContenido.hidden = false;
+                $('portal-titulo').textContent = 'Portal de Comercial Ejemplo SpA';
+                $('portal-sub').textContent = 'Estudio Contable Silva & Asociados · RUT 76.543.210-K';
+                $('portal-cifras').innerHTML =
+                    '<div><dt>Trabajadores activos</dt><dd>3</dd></div>' +
+                    '<div><dt>Liquidaciones emitidas</dt><dd>3</dd></div>' +
+                    '<div><dt>Líquido a pagar</dt><dd>$1.850.000</dd></div>' +
+                    '<div><dt>Costo total empresa</dt><dd>$2.410.000</dd></div>' +
+                    '<div><dt>Previred</dt><dd>Estimadas</dd></div>';
+                return;
+            }
+            if (boxCargando) boxCargando.hidden = true;
+            if (boxContenido) boxContenido.hidden = true;
+            if (boxError) {
+                boxError.hidden = false;
+                errTxt.textContent = 'No tienes acceso al portal de ninguna empresa con esta cuenta.';
+            }
+            return;
+        }
+
+        if (!portalEmpresaSel || !listaPortales.some(function (p) { return p.empresaId === portalEmpresaSel; })) {
+            portalEmpresaSel = listaPortales[0].empresaId;
+        }
+        if (!portalPeriodoSel) {
+            portalPeriodoSel = periodoSel || periodoPorDefecto();
+        }
+
+        var wrapEmp = $('portal-empresa-selector-wrap'), selEmp = $('portal-empresa-sel');
+        if (wrapEmp && selEmp) {
+            if (listaPortales.length > 1) {
+                wrapEmp.hidden = false;
+                selEmp.innerHTML = listaPortales.map(function (p) {
+                    return '<option value="' + esc(p.empresaId) + '"' + (p.empresaId === portalEmpresaSel ? ' selected' : '') + '>' + esc(p.razonSocial) + '</option>';
+                }).join('');
+                if (!selEmp._bound) {
+                    selEmp._bound = true;
+                    selEmp.addEventListener('change', function () {
+                        portalEmpresaSel = this.value;
+                        dibujarPortal();
+                    });
+                }
+            } else {
+                wrapEmp.hidden = true;
+            }
+        }
+
+        var selPer = $('portal-periodo');
+        if (selPer) {
+            var mesesOpc = [];
+            var hoy = new Date();
+            for (var i = 0; i < 12; i++) {
+                var d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
+                var pIso = d.getFullYear() + '-' + dos(d.getMonth() + 1);
+                var pNom = MESES[d.getMonth()] + ' ' + d.getFullYear();
+                mesesOpc.push('<option value="' + pIso + '"' + (pIso === portalPeriodoSel ? ' selected' : '') + '>' + esc(pNom) + '</option>');
+            }
+            selPer.innerHTML = mesesOpc.join('');
+            selPer.value = portalPeriodoSel;
+            if (!selPer._bound) {
+                selPer._bound = true;
+                selPer.addEventListener('change', function () {
+                    portalPeriodoSel = this.value;
+                    dibujarPortal();
+                });
+            }
+        }
+
+        if (boxCargando) boxCargando.hidden = false;
+        if (boxError) boxError.hidden = true;
+        if (boxContenido) boxContenido.hidden = true;
+
+        api('portal-datos', { query: { empresaId: portalEmpresaSel, periodo: portalPeriodoSel } }).then(function (r) {
+            if (boxCargando) boxCargando.hidden = true;
+            if (!r.ok) {
+                if (boxError) {
+                    boxError.hidden = false;
+                    errTxt.textContent = r.datos.error || 'No pudimos cargar los datos del portal.';
+                }
+                return;
+            }
+            if (boxContenido) boxContenido.hidden = false;
+            var d = r.datos;
+            $('portal-titulo').textContent = d.empresa.razonSocial ? 'Portal de ' + d.empresa.razonSocial : 'Portal de la empresa';
+            $('portal-sub').textContent = 'Estudio: ' + (d.estudio.titular || 'Estudio contable') + ' · RUT ' + Rut.formatear(d.empresa.rut);
+
+            var res = d.resumen || {};
+            var prevText = res.cotizacionesPrevired === 'estimadas' ? 'Estimadas' : 'Pendientes';
+            $('portal-cifras').innerHTML =
+                '<div><dt>Trabajadores activos</dt><dd>' + (res.trabajadoresActivos || 0) + '</dd></div>' +
+                '<div><dt>Liquidaciones emitidas</dt><dd>' + (res.liquidacionesEmitidas || 0) + '</dd></div>' +
+                '<div><dt>Líquido a pagar</dt><dd>' + pesos(res.liquidoTotal) + '</dd></div>' +
+                '<div><dt>Costo total empresa</dt><dd>' + pesos(res.costoTotal) + '</dd></div>' +
+                '<div><dt>Previred</dt><dd>' + esc(prevText) + '</dd></div>';
+
+            var panelAvisos = $('portal-panel-avisos'), listaAvisos = $('portal-avisos-lista');
+            if (panelAvisos && listaAvisos) {
+                if (d.avisos && d.avisos.length > 0) {
+                    panelAvisos.hidden = false;
+                    listaAvisos.innerHTML = d.avisos.map(function (av) {
+                        return '<div class="pm-aviso' + (av.tipo === 'urgente' ? ' pm-aviso-urgente' : '') + '">' +
+                            '<strong>' + esc(av.titulo) + '</strong>: ' + esc(av.texto) +
+                        '</div>';
+                    }).join('');
+                } else {
+                    panelAvisos.hidden = true;
+                }
+            }
+
+            var panelLiq = $('portal-panel-liquidaciones'), tbodyLiq = $('portal-liq-filas');
+            if (panelLiq && tbodyLiq) {
+                if (d.secciones && d.secciones.liquidaciones) {
+                    panelLiq.hidden = false;
+                    var liqs = d.liquidaciones || [];
+                    if (liqs.length > 0) {
+                        tbodyLiq.innerHTML = liqs.map(function (lq) {
+                            var fechaEm = lq.fechaEmision ? fechaCorta(lq.fechaEmision) : 'Emitida';
+                            return '<tr>' +
+                                '<td class="sin-salto font-semibold">' + esc(lq.nombre + ' ' + lq.apellido) + '</td>' +
+                                '<td class="sin-salto mono">' + esc(Rut.formatear(lq.rut)) + '</td>' +
+                                '<td>' + esc(lq.cargo || '—') + '</td>' +
+                                '<td class="sin-salto num font-semibold">' + pesos(lq.liquido) + '</td>' +
+                                '<td class="sin-salto">' + esc(fechaEm) + '</td>' +
+                                '<td class="sin-salto">' +
+                                    '<button type="button" class="btn btn-chico" data-portal-descargar="' + esc(lq.trabajadorId) + '">' +
+                                        '<span class="material-icons" aria-hidden="true">visibility</span>Ver' +
+                                    '</button>' +
+                                '</td>' +
+                            '</tr>';
+                        }).join('');
+
+                        tbodyLiq.querySelectorAll('[data-portal-descargar]').forEach(function (btn) {
+                            btn.addEventListener('click', function () {
+                                var trabId = this.getAttribute('data-portal-descargar');
+                                btn.disabled = true;
+                                api('portal-datos', { query: { empresaId: portalEmpresaSel, trabajadorId: trabId, periodo: portalPeriodoSel } }).then(function (lqResp) {
+                                    btn.disabled = false;
+                                    if (!lqResp.ok) {
+                                        alert(lqResp.datos.error || 'No se pudo descargar la liquidación.');
+                                        return;
+                                    }
+                                    var data = lqResp.datos;
+                                    var valMes = { uf: (data.mes.calculo && data.mes.calculo.uf) || 39000, utm: (data.mes.calculo && data.mes.calculo.utm) || 69000 };
+                                    var resCalc = E.calcular({ trabajador: data.trabajador, mes: data.mes, periodo: portalPeriodoSel, tasaMutual: data.empresa.tasaMutual || 0 }, valMes);
+                                    var docHtml = DOC.documento(data.empresa, data.trabajador, data.mes, resCalc, { periodo: portalPeriodoSel, pagada: true });
+                                    imprimirHojas([docHtml], 'Liquidacion-' + (data.trabajador.rut || 'empleado') + '-' + portalPeriodoSel);
+                                }).catch(function () {
+                                    btn.disabled = false;
+                                    alert('Error al obtener la liquidación.');
+                                });
+                            });
+                        });
+                    } else {
+                        tbodyLiq.innerHTML = '<tr><td colspan="6" class="vacio">No hay liquidaciones emitidas para este periodo.</td></tr>';
+                    }
+                } else {
+                    panelLiq.hidden = true;
+                }
+            }
+
+            var panelDoc = $('portal-panel-documentos'), tbodyDoc = $('portal-doc-filas');
+            if (panelDoc && tbodyDoc) {
+                if (d.secciones && d.secciones.documentos) {
+                    panelDoc.hidden = false;
+                    var docs = d.documentos || [];
+                    if (docs.length > 0) {
+                        tbodyDoc.innerHTML = docs.map(function (dc) {
+                            return '<tr>' +
+                                '<td class="sin-salto font-semibold">' + esc(dc.nombre || dc.tipo || 'Documento') + '</td>' +
+                                '<td>' + esc(dc.tipo || 'General') + '</td>' +
+                                '<td class="sin-salto">' + (dc.emitido ? fechaCorta(dc.emitido) : '—') + '</td>' +
+                            '</tr>';
+                        }).join('');
+                    } else {
+                        tbodyDoc.innerHTML = '<tr><td colspan="3" class="vacio">No hay documentos registrados para esta empresa.</td></tr>';
+                    }
+                } else {
+                    panelDoc.hidden = true;
+                }
+            }
+        });
+    }
+
+function dibujarEquipo() {
         var cajaCupo = $('eq-cupo'), tablaFilas = $('eq-filas'), agregarWrap = $('eq-agregar-wrap');
         if (!tablaFilas) return;
         if (ejemplo) {
@@ -3716,6 +4050,8 @@
             if (r.estado === 0 || r.estado >= 500) { mostrar('fallo'); return; }
             if (r.datos && r.datos.autenticado) {
                 listaEstudios = r.datos.estudios || [];
+                listaPortales = r.datos.portales || [];
+                if (listaPortales.length > 0 && rutaActual() === '' && (!listaEstudios.some(function (s) { return s.propio; }))) { rutaActual = function () { return 'portal'; }; }
                 cargar();
             } else mostrar('entrada');
         });

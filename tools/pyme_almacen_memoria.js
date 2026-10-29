@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 
 function crearAlmacenMemoria() {
-    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], actividad: [], miembros: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
+    const E = { enlaces: [], cuentas: [], sesiones: [], intentos: {}, auditoria: [], actividad: [], miembros: [], portalClientes: [], empresas: [], trabajadores: [], pases: [], meses: [], documentos: [], vacaciones: [], honorarios: [], avisos: [], enlaces: [], comentarios: [] };
     const t = iso => Date.parse(iso);
 
     return {
@@ -59,6 +59,37 @@ function crearAlmacenMemoria() {
             if (s) s.revocada = ahoraIso;
         },
         async registrarAuditoria(a) { E.auditoria.push(a); },
+        async listarPortalClientes(estudioId, empresaId) {
+            return E.portalClientes.filter(p => p.estudioId === estudioId && (!empresaId || p.empresaId === empresaId))
+                .map(p => ({ id: p.id, empresaId: p.empresaId, email: p.email, secciones: Object.assign({}, p.secciones), creado: p.creado, ultimoAcceso: p.ultimoAcceso || null }));
+        },
+        async crearPortalCliente({ estudioId, empresaId, email, secciones, invitadoPor, maxPorEmpresa, ahoraIso }) {
+            const actuales = E.portalClientes.filter(p => p.empresaId === empresaId);
+            if (actuales.length >= (maxPorEmpresa || 1)) return null;
+            if (actuales.some(p => p.email === email)) throw new Error('cliente repetido');
+            const id = crypto.randomUUID();
+            E.portalClientes.push({ id, estudioId, empresaId, email, secciones: Object.assign({}, secciones), invitadoPor, creado: ahoraIso || new Date().toISOString() });
+            return { id };
+        },
+        async actualizarPortalCliente(estudioId, id, { secciones }) {
+            const p = E.portalClientes.find(x => x.id === id && x.estudioId === estudioId);
+            if (p) p.secciones = Object.assign({}, secciones);
+        },
+        async borrarPortalCliente(estudioId, id) {
+            const n = E.portalClientes.length;
+            E.portalClientes = E.portalClientes.filter(x => !(x.id === id && x.estudioId === estudioId));
+            return E.portalClientes.length < n;
+        },
+        async buscarPortalPorEmail(email) {
+            return E.portalClientes.filter(p => p.email === email).map(p => ({
+                id: p.id, estudioId: p.estudioId, empresaId: p.empresaId, secciones: Object.assign({}, p.secciones),
+                titular: (E.cuentas.find(c => c.id === p.estudioId) || {}).email
+            }));
+        },
+        async tocarPortalCliente(id, ahoraIso) {
+            const p = E.portalClientes.find(x => x.id === id);
+            if (p) p.ultimoAcceso = ahoraIso;
+        },
         async listarMiembros(estudioId) { return E.miembros.filter(m => m.estudioId === estudioId).map(m => ({ id: m.id, email: m.email, rol: m.rol, empresas: m.empresas.slice(), ultimoAcceso: m.ultimoAcceso || null })); },
         async crearMiembro({ estudioId, email, rol, empresas, invitadoPor, maxMiembros }) {
             if (E.miembros.filter(m => m.estudioId === estudioId).length >= maxMiembros) return null;
@@ -298,6 +329,7 @@ function crearAlmacenMemoria() {
             E.enlaces = E.enlaces.filter(x => x.cuentaId !== cuentaId);
             E.actividad = E.actividad.filter(x => x.cuentaId !== cuentaId);
             E.miembros = E.miembros.filter(x => x.estudioId !== cuentaId);
+            E.portalClientes = E.portalClientes.filter(x => x.estudioId !== cuentaId);
             E.cuentas = E.cuentas.filter(x => x.id !== cuentaId);
         }
     };

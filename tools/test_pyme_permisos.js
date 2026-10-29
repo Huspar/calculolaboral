@@ -51,8 +51,8 @@ const FICHA = () => ({ trabajador: { nombre: 'Ana', rut: rutValido(15234567), su
 
 caso('la matriz: cada rol tiene exactamente lo que dice la propuesta', () => {
     const esperado = {
-        titular: ['ver', 'ficha_editar', 'liquidar', 'descargar', 'empresa_gestionar', 'respaldo', 'equipo_gestionar', 'actividad_ver', 'cuenta_borrar', 'facturacion'],
-        admin: ['ver', 'ficha_editar', 'liquidar', 'descargar', 'empresa_gestionar', 'respaldo', 'equipo_gestionar', 'actividad_ver'],
+        titular: ['ver', 'ficha_editar', 'liquidar', 'descargar', 'empresa_gestionar', 'respaldo', 'equipo_gestionar', 'actividad_ver', 'portal_gestionar', 'cuenta_borrar', 'facturacion'],
+        admin: ['ver', 'ficha_editar', 'liquidar', 'descargar', 'empresa_gestionar', 'respaldo', 'equipo_gestionar', 'actividad_ver', 'portal_gestionar'],
         contador: ['ver', 'ficha_editar', 'liquidar', 'descargar'],
         asistente: ['ver', 'ficha_editar'],
         lectura: ['ver']
