@@ -1,0 +1,115 @@
+﻿/*
+ * Pruebas del archivo de Previred (105 campos, formato variable por ";").
+ *   node tools/test_previred.js
+ *
+ * No prueba contra Previred: verifica estructura, posiciones, digito verificador,
+ * cuadre de montos y que los casos no soportados fallen con un error claro.
+ */
+'use strict';
+const assert = require('assert');
+const path = require('path');
+const G = require(path.join(__dirname, '..', 'js', 'previred_generador.js'));
+
+let ok = 0;
+function caso(nombre, fn) {
+    try { fn(); ok++; console.log('  ok  ' + nombre); }
+    catch (e) { console.error('  FALLA  ' + nombre + '\n         ' + (e.message || e).split('\n').slice(0, 6).join('\n         ')); process.exitCode = 1; }
+}
+
+const empleador = { mutual: 'Mutual de Seguridad' };
+
+const fonasa = {
+    rut: '12.345.678-5', apellidoPaterno: 'Rojas', apellidoMaterno: 'Pérez', nombres: 'Camila',
+    sexo: 'F', nacionalidad: '0', afp: 'Cuprum', salud: 'Fonasa', dias: 30,
+    rentaAfp: 1419115, cotizacionAfp: 162347, sis: 25260, cotizacionSalud: 99338,
+    rentaMutual: 1419115, cotizacionMutual: 13198,
+    rentaAfc: 1419115, aporteTrabajadorAfc: 8515, aporteEmpleadorAfc: 34059
+};
+
+const isapre = {
+    rut: '9.876.543-3', apellidoPaterno: 'Álvarez', apellidoMaterno: 'Soto', nombres: 'Rodrigo',
+    sexo: 'M', nacionalidad: '0', afp: 'Habitat', salud: 'Colmena', dias: 30,
+    rentaAfp: 2100000, cotizacionAfp: 243600, sis: 37380, rentaIsapre: 2100000,
+    cotizacionIsapre: 147000, cotizacionPactada: 147000, isapreMoneda: 'PESOS', fun: 'FUN123',
+    rentaMutual: 2100000, cotizacionMutual: 52500,
+    rentaAfc: 2100000, aporteTrabajadorAfc: 12600, aporteEmpleadorAfc: 50400
+};
+
+const salida = G.generar({ periodo: '2026-10', empleador, trabajadores: [fonasa, isapre] });
+
+caso('genera una linea por trabajador', () => {
+    assert.strictEqual(salida.filas.length, 2);
+    assert.ok(salida.texto.length > 0, JSON.stringify(salida.errores));
+});
+
+caso('cada linea tiene 105 campos', () => {
+    salida.filas.forEach(f => assert.strictEqual(f.split(';').length, 105));
+});
+
+caso('el validador no encuentra problemas', () => {
+    assert.deepStrictEqual(G.validar(salida.texto), []);
+});
+
+caso('Fonasa: salud 07 y cotizacion en el campo 70', () => {
+    const f = salida.filas[0].split(';');
+    assert.strictEqual(f[74], '07');
+    assert.strictEqual(f[69], '99338');
+    assert.strictEqual(f[77], '0');
+});
+
+caso('AFP Cuprum es 03 y Habitat 05', () => {
+    const a = salida.filas[0].split(';');
+    const b = salida.filas[1].split(';');
+    assert.strictEqual(a[25], '03');
+    assert.strictEqual(b[25], '05');
+});
+
+caso('Isapre: codigo, renta y cotizacion en 75, 77 y 80', () => {
+    const f = salida.filas[1].split(';');
+    assert.strictEqual(f[74], '04');
+    assert.strictEqual(f[76], '2100000');
+    assert.strictEqual(f[79], '147000');
+    assert.strictEqual(f[77], '1'); // campo 78: moneda en pesos
+});
+
+caso('mutualidad y seguro de cesantia en sus campos', () => {
+    const f = salida.filas[0].split(';');
+    assert.strictEqual(f[95], '02');
+    assert.strictEqual(f[99], '1419115');
+    assert.strictEqual(f[101], '34059');
+});
+
+caso('periodo en formato mmaaaa', () => {
+    assert.strictEqual(salida.filas[0].split(';')[8], '102026');
+});
+
+caso('un RUT con digito verificador malo no genera archivo', () => {
+    const r = G.generar({ periodo: '2026-10', empleador, trabajadores: [Object.assign({}, fonasa, { rut: '12.345.678-9' })] });
+    assert.strictEqual(r.texto, '');
+    assert.ok(r.errores.length > 0, JSON.stringify(r.errores));
+});
+
+caso('un plan de Isapre en UF se rechaza en vez de adivinar', () => {
+    const r = G.generar({ periodo: '2026-10', empleador, trabajadores: [Object.assign({}, isapre, { isapreMoneda: 'UF' })] });
+    assert.strictEqual(r.texto, '');
+    assert.ok(r.errores.some(e => /UF/.test(e)), JSON.stringify(r.errores));
+});
+
+caso('sin mutualidad del empleador no genera archivo', () => {
+    const r = G.generar({ periodo: '2026-10', empleador: {}, trabajadores: [fonasa] });
+    assert.strictEqual(r.texto, '');
+    assert.ok(r.errores.some(e => /mutualidad/i.test(e)));
+});
+
+caso('el validador detecta una linea incompleta', () => {
+    const roto = salida.filas[0].split(';').slice(0, 100).join(';');
+    assert.ok(G.validar(roto).some(p => /105/.test(p)));
+});
+
+caso('sin periodo no genera archivo', () => {
+    const r = G.generar({ empleador, trabajadores: [fonasa] });
+    assert.strictEqual(r.texto, '');
+    assert.ok(r.errores.some(e => /per/i.test(e)));
+});
+
+console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');
