@@ -27,7 +27,7 @@
        1. SIDEBAR LATERAL PROFUNDA (#app-side)
        ======================================================== -->
   <aside class="app-side" id="app-side" aria-label="Menú de la Suite Contable">
-    <button type="button" class="app-icono-btn app-cerrar" id="app-cerrar" aria-label="Cerrar el menú">
+    <button type="button" class="app-cerrar" id="app-cerrar" aria-label="Cerrar el menú">
       <span class="material-icons" aria-hidden="true">close</span>
     </button>
 
@@ -53,8 +53,8 @@
         <select id="liq-clientes-guardados" class="lq-select" style="background:#0F5E4F;color:#FFFFFF;border:0;border-radius:6px;height:28px;font-size:11.5px;padding:0 6px;width:100%">
           <option value="">Clientes guardados (0)</option>
         </select>
-        <button type="button" class="btn-texto" id="btn-guardar-cliente" style="color:var(--side-muted);font-size:12px;padding:2px 0;text-align:left">
-          <span class="material-icons" style="font-size:15px;vertical-align:-3px" aria-hidden="true">save</span> Guardar cliente actual
+        <button type="button" class="btn-texto" id="btn-guardar-cliente" style="color:var(--side-muted);font-size:12px;padding:2px 0;text-align:left;display:inline-flex;align-items:center;gap:4px;white-space:nowrap">
+          <span class="material-icons" style="font-size:15px" aria-hidden="true">save</span> Guardar cliente actual
         </button>
       </div>
     </div>
@@ -100,10 +100,10 @@
     </nav>
 
     <!-- Pie del Sidebar con Régimen, Cierre y Enlace al Asistente Pyme -->
-    <div class="app-nav app-side-pie" style="padding:14px;border-top:1px solid rgba(255,255,255,0.12);display:grid;gap:8px">
-      <div style="display:flex;align-items:center;justify-content:space-between;color:var(--side-muted);font-size:12px">
-        <span>Régimen SII:</span>
-        <select id="suite-regimen" style="background:#0F5E4F;color:#FFFFFF;border:0;border-radius:6px;height:26px;font-size:11.5px;padding:0 6px">
+    <div class="app-side-pie" id="suite-side-pie">
+      <div style="display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;color:var(--side-muted);font-size:12px">
+        <span style="white-space:nowrap">Régimen SII:</span>
+        <select id="suite-regimen" style="background:#0F5E4F;color:#FFFFFF;border:0;border-radius:6px;height:26px;font-size:11.5px;padding:0 6px;width:100%;min-width:0">
           <option value="14D3">ProPyme (14 D3)</option>
           <option value="14D3_MAYOR">ProPyme &gt;50k UF</option>
           <option value="14D8">Transparente (14 D8)</option>
@@ -111,12 +111,12 @@
           <option value="14A">Semi Integrado (14 A)</option>
         </select>
       </div>
-      <button type="button" class="btn btn-chico" id="btn-cierre-tributario" style="width:100%;font-size:12px;background:var(--amber);color:var(--forest-deep);border:0">
+      <button type="button" class="btn btn-chico" id="btn-cierre-tributario">
         <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
       </button>
       <div style="display:flex;gap:6px;margin-top:2px">
-        <button type="button" class="btn btn-chico" id="btn-respaldo" style="flex:1;font-size:11px;padding:0 6px">Respaldo</button>
-        <button type="button" class="btn btn-chico" id="btn-restaurar" style="flex:1;font-size:11px;padding:0 6px">Restaurar</button>
+        <button type="button" class="btn btn-chico" id="btn-respaldo" style="flex:1">Respaldo</button>
+        <button type="button" class="btn btn-chico" id="btn-restaurar" style="flex:1">Restaurar</button>
         <input type="file" id="file-respaldo" accept=".json" class="sr-only">
       </div>
       <a href="/app" style="color:var(--side-muted);font-size:12px;text-decoration:none;display:flex;align-items:center;gap:6px;margin-top:6px">

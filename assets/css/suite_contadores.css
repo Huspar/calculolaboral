@@ -301,3 +301,138 @@
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+/* ========================================================
+   Área de Impresión: Oculta 100% en Pantalla
+   ======================================================== */
+#print-area {
+    display: none !important;
+}
+
+@media print {
+    body {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    #pm-panel,
+    .app,
+    .app-top,
+    .app-barra,
+    .app-side,
+    .app-velo {
+        display: none !important;
+    }
+    #print-area {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .print-page {
+        page-break-after: always;
+        padding-bottom: 8mm;
+    }
+    .print-page:last-child {
+        page-break-after: auto;
+    }
+    .print-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        border-bottom: 2px solid #00382E;
+        padding-bottom: 8px;
+        margin-bottom: 14px;
+    }
+    .print-head img {
+        max-height: 42px;
+        max-width: 160px;
+        object-fit: contain;
+    }
+    .print-estudio {
+        font-size: 12pt;
+        font-weight: 700;
+        color: #00382E;
+    }
+    .print-title {
+        font-size: 14pt;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 4px;
+    }
+    .print-sub {
+        font-size: 10pt;
+        color: #444;
+        margin-bottom: 12px;
+    }
+    .print-note {
+        font-size: 8pt;
+        color: #666;
+        margin-top: 14px;
+        border-top: 1px solid #ccc;
+        padding-top: 6px;
+    }
+}
+
+/* ========================================================
+   Alineación y Centrado de Botones en Pie de Sidebar
+   ======================================================== */
+.app-side-pie {
+    display: grid !important;
+    gap: 8px !important;
+    padding: 14px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+#btn-cierre-tributario {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    height: 36px !important;
+    padding: 0 12px !important;
+    border-radius: var(--radius-sm) !important;
+    background: var(--amber) !important;
+    color: var(--forest-deep) !important;
+    border: 0 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    gap: 7px !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+}
+
+#btn-cierre-tributario .material-icons {
+    color: var(--forest-deep) !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+}
+
+#btn-respaldo,
+#btn-restaurar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    height: 30px !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 6px !important;
+}
+
+#btn-respaldo:hover,
+#btn-restaurar:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+
+/* En escritorio ocultar botón de cerrar el menú */
+@media screen and (min-width: 901px) {
+    #app-cerrar {
+        display: none !important;
+    }
+}
