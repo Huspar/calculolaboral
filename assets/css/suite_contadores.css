@@ -1,0 +1,303 @@
+/* 
+ * CálculoLaboral · Estilos complementarios para Suite Contadores (/demo-contadores)
+ * Basado 100% en el sistema de diseño del Asistente Pyme (app.css)
+ */
+
+/* Banner de Cierre Tributario en la Suite */
+.cierre-banner-bloqueo {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    color: var(--amber-ink);
+}
+.cierre-banner-bloqueo .material-icons {
+    color: var(--amber-icon, var(--amber));
+    font-size: 20px;
+}
+.cierre-banner-bloqueo p {
+    font-size: 13.5px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Tablas Contables Formales */
+.tabla-contable-wrap {
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+}
+.tabla-contable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 540px;
+}
+.tabla-contable.balance-ocho {
+    min-width: 860px;
+    font-size: 12px;
+}
+.tabla-contable.compacta {
+    min-width: 380px;
+}
+.tabla-contable th {
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    padding: 10px 12px;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+.tabla-contable th.num, .tabla-contable td.num {
+    text-align: right;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+}
+.tabla-contable th.grupo-col {
+    text-align: center;
+    border-left: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--forest-700);
+}
+.tabla-contable td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+    line-height: 1.45;
+}
+.tabla-contable tbody tr:last-child td {
+    border-bottom: 0;
+}
+.tabla-contable tbody tr:hover td {
+    background: var(--hover);
+}
+
+/* Filas especiales Formulario 29 */
+.tabla-contable tr.f29-sec td {
+    background: var(--forest-50);
+    color: var(--forest-700);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-top: 1px solid var(--line);
+}
+.tabla-contable tr.f29-subtotal td {
+    background: var(--canvas);
+    font-weight: 700;
+    border-top: 1px solid var(--line-2);
+    color: var(--ink);
+}
+.tabla-contable tr.f29-remanente td {
+    background: var(--forest-50);
+    color: var(--forest-700);
+    font-weight: 650;
+    border-top: 1px solid var(--forest-100);
+}
+.tabla-contable tr.f29-gran-total td {
+    background: var(--forest);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 13.5px;
+    border-top: 2px solid var(--forest-deep);
+}
+.tabla-contable tr.f29-gran-total:hover td {
+    background: var(--forest);
+}
+.tabla-contable tr.f29-gran-total .f29-cod {
+    background: var(--amber);
+    color: var(--forest-deep);
+    border-color: var(--amber);
+}
+
+.f29-celda-cod {
+    text-align: center;
+    width: 88px;
+}
+.f29-cod {
+    display: inline-block;
+    min-width: 38px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    color: var(--forest-700);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    font-family: var(--mono);
+}
+.f29-cod-sec {
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+}
+
+/* Asientos Contables */
+.asiento-lista {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    min-width: 0;
+}
+.asiento-card {
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+}
+.asiento-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--line);
+}
+.asiento-head h3 {
+    font-size: 13.5px;
+    font-weight: 650;
+    color: var(--ink);
+    margin: 0;
+}
+.asiento-num {
+    font-size: 11px;
+    color: var(--muted);
+    display: block;
+}
+.asiento-head-der {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+.asiento-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+.asiento-chip .material-icons {
+    font-size: 14px;
+}
+.chip-automatico {
+    background: var(--forest-50);
+    color: var(--forest-700);
+    border: 1px solid var(--forest-100);
+}
+.chip-ajuste {
+    background: var(--amber-bg);
+    color: var(--amber-ink);
+    border: 1px solid var(--amber-line);
+}
+.chip-auditado {
+    background: #ECFDF3;
+    color: #067647;
+    border: 1px solid #ABEFC6;
+}
+
+/* Formulario Asiento Manual */
+.manual-lineas {
+    display: grid;
+    gap: 8px;
+    margin: 10px 0;
+    min-width: 0;
+    max-width: 100%;
+}
+.manual-fila {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+}
+.manual-fila > * {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* RCV Drop Box en Suite */
+.rcv-drop-box {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+.rcv-drop-estado {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+}
+
+/* Parámetros de nómina / sueldos */
+.param-bar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px 14px;
+    margin-bottom: 14px;
+}
+
+@media screen and (max-width: 900px) {
+    .cierre-banner-bloqueo {
+        grid-template-columns: 20px minmax(0, 1fr);
+    }
+    .cierre-banner-bloqueo button {
+        grid-column: 1 / -1;
+    }
+    .param-bar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .manual-fila {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+    }
+    .manual-fila select {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: 0;
+    }
+    .manual-fila input {
+        width: 100%;
+        min-width: 0;
+    }
+    .manual-fila button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #suite-estado-badge {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .param-bar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

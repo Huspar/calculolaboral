@@ -649,9 +649,14 @@
         var cerrado = m.estado.cerradoTributario;
         var badgeTop = $('suite-estado-badge');
         if (badgeTop) {
-            badgeTop.className = 'periodo-badge ' + (cerrado ? 'cerrado' : 'abierto');
+            badgeTop.className = 'sello ' + (cerrado ? 'sello-preparada' : 'sello-emitida');
             badgeTop.innerHTML = '<span class="material-icons" aria-hidden="true">' + (cerrado ? 'lock' : 'lock_open') + '</span>' +
                 (cerrado ? 'Cerrado tributario' : 'Período abierto');
+        }
+        var chipSuite = $('suite-estado-chip');
+        if (chipSuite) {
+            chipSuite.className = 'app-nav-chip ' + (cerrado ? 'cerrado' : 'abierto');
+            chipSuite.textContent = cerrado ? 'Cerrado' : 'Abierto';
         }
         var banner = $('suite-banner-bloqueo');
         if (banner) {

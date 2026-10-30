@@ -967,16 +967,20 @@
                 .catch(function (e) { D.avisar('No pudimos leer el archivo: ' + e.message); });
         }
 
-        document.getElementById('btn-sample-liq').addEventListener('click', function () {
+        var bindClick = function (id, fn) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('click', fn);
+        };
+        bindClick('btn-sample-liq', function () {
             cargarPeriodo(true).then(cargarEjemplo);
         });
-        document.getElementById('btn-template-liq').addEventListener('click', plantilla);
-        document.getElementById('btn-csv-liq').addEventListener('click', exportar);
-        document.getElementById('btn-previred-liq').addEventListener('click', archivoPrevired);
-        document.getElementById('btn-lre-liq').addEventListener('click', archivoLre);
-        document.getElementById('btn-nomina-liq').addEventListener('click', archivoNomina);
-        document.getElementById('btn-asiento-liq').addEventListener('click', archivoAsiento);
-        document.getElementById('btn-asistente-liq').addEventListener('click', llevarAlAsistente);
+        bindClick('btn-template-liq', plantilla);
+        bindClick('btn-csv-liq', exportar);
+        bindClick('btn-previred-liq', archivoPrevired);
+        bindClick('btn-lre-liq', archivoLre);
+        bindClick('btn-nomina-liq', archivoNomina);
+        bindClick('btn-asiento-liq', archivoAsiento);
+        bindClick('btn-asistente-liq', llevarAlAsistente);
         var detCuentas = document.getElementById('liq-cuentas');
         if (detCuentas) {
             detCuentas.addEventListener('toggle', function () { if (detCuentas.open) pintarCuentasAsiento(); });
