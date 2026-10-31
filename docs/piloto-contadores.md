@@ -8,11 +8,13 @@ Una herramienta web donde el estudio sube la nómina del mes en Excel y obtiene:
 
 - **Liquidaciones de sueldo** de todo el lote, con PDF por trabajador y resumen del mes.
 - **Finiquitos** por término de contrato, con el desglose legal.
-- **Archivo para Previred** de 105 campos, listo para cargar en la cuenta del estudio.
+- **Archivo para Previred** de 105 campos (formulario v100), armado para cargarlo en la cuenta del estudio. Todavía no lo probamos con Previred: por eso le pedimos que lo pruebe.
 - **Costo empresa** por trabajador, con AFP, SIS, mutual, AFC y caja de compensación.
 - Exportación a Excel y respaldo del trabajo en un archivo.
 
-Todo se calcula en el navegador: los datos de los trabajadores no se envían a ningún servidor.
+Todo se calcula en el navegador. **Sin cuenta**, los datos de los trabajadores no salen de él: se guardan en el navegador y se respaldan en un archivo.
+
+**Con tu cuenta** (botón «Mi Estudio», el mismo correo y enlace del Asistente), al guardar un cliente o cerrar un mes el estudio completo se guarda en nuestro servidor: clientes, nóminas e historial, con los RUT y sueldos de los trabajadores. Se guarda cifrado y atado a tu cuenta. Si prefieres que no salga de tu equipo, trabaja sin cuenta y usa el respaldo en archivo.
 
 ## Qué incluye hoy
 
@@ -30,7 +32,7 @@ Todo se calcula en el navegador: los datos de los trabajadores no se envían a n
 
 ## Qué no incluye todavía
 
-- **Cuentas**: no hay login. El trabajo vive en el navegador y se respalda en un archivo.
+- **Varias personas en un mismo estudio**: el estudio guardado es de una sola cuenta, sin permisos por persona. Sin cuenta, el trabajo vive en el navegador y se respalda en un archivo.
 - **APV en otra institución** que no sea la AFP del trabajador.
 - **Régimen IPS** (ex cajas) y segundo contrato.
 - **Firma del finiquito** y ratificación: hoy genera el PDF, el trámite se cierra aparte.
@@ -50,6 +52,7 @@ Acceso gratis mientras dure el piloto, sin tarjeta y sin compromiso. Si el archi
 
 ## Qué NO prometemos
 
+- Que Previred acepte el archivo sin cambios: aún no lo probamos con Previred.
 - Que reemplace su sistema de remuneraciones.
 - Que calcule casos que no están en la lista de arriba.
 - Asesoría legal: los cálculos son referencia y el estudio responde por lo que firma.
