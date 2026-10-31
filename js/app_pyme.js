@@ -187,6 +187,8 @@
         });
         if (['', 'flujo-caja', 'cobranzas', 'liquidaciones'].indexOf(base) < 0) $('app-mas').setAttribute('aria-current', 'page'); else $('app-mas').removeAttribute('aria-current');
         document.title = TITULOS[vista] + ' · Asistente Laboral Pyme';
+        // Sin empresa o sin trabajadores el menú se queda con lo del primer cierre; lo demás aparece al tener datos
+        $('pm-panel').classList.toggle('app-arranque', !estado.empresa || !(estado.trabajadores || []).length);
         if (finanzasUI) finanzasUI.actualizarInsigniasYBanner();
         if (vista === 'inicio') dibujarInicio();
         else if (vista === 'trabajadores') dibujarTrabajadores();
@@ -323,7 +325,9 @@
     // La invitación del cierre del mes aparece durante el piloto, salvo si ya opinó (30 días) o dijo «ahora no» (7 días)
     function dibujarInvitacionOpinion() {
         var caja = $('ini-opinion'), o = estadoOpinion(), ahora = Date.now(), dia = 86400000;
-        var oculta = !enPiloto() || (o.enviada && ahora - Date.parse(o.enviada) < 30 * dia) || (o.cerrada && ahora - Date.parse(o.cerrada) < 7 * dia);
+        // Solo se pide la opinión a quien ya preparó una liquidación: antes no hay nada que opinar
+        var sinUso = !estado || !estado.empresa || !(estado.trabajadores || []).length || !filasDelMes().some(function (f) { return f.est === 'guardada' || f.est === 'emitida'; });
+        var oculta = sinUso || !enPiloto() || (o.enviada && ahora - Date.parse(o.enviada) < 30 * dia) || (o.cerrada && ahora - Date.parse(o.cerrada) < 7 * dia);
         caja.hidden = !!oculta;
     }
     function abrirOpinion(origen) {
@@ -1298,7 +1302,13 @@ function dibujarEquipo() {
                 cambiarEmpresa(r.datos.empresaId).then(function () { avisoGlobal('ok', 'Empresa agregada. Ahora puedes cargar sus trabajadores.'); });
                 return;
             }
-            if (r.ok) { cargar().then(function () { mensaje($('pm-emp-estado'), 'ok', 'Guardado.'); }); return; }
+            if (r.ok) {
+                cargar().then(function () {
+                    if (!(estado.trabajadores || []).length) { navegar('trabajadores/nuevo'); avisoGlobal('ok', 'Guardamos la empresa. Ahora agrega a tu primer trabajador.'); return; }
+                    mensaje($('pm-emp-estado'), 'ok', 'Guardado.');
+                });
+                return;
+            }
             mostrarErrores(f, r.datos.errores);
             mensaje(est, 'error', r.datos.error || 'No pudimos guardar.');
         });
@@ -1436,7 +1446,7 @@ function dibujarEquipo() {
         $('carp-nombre').textContent = nuevo ? 'Nuevo trabajador' : t.nombre;
         $('carp-tabs').hidden = nuevo;
         $('carp-acciones').hidden = nuevo;
-        $('carp-resumen').innerHTML = nuevo ? '<span>Completa la ficha: sus datos llegan solos a cada liquidación y documento.</span>' : resumenCarpeta(t);
+        $('carp-resumen').innerHTML = nuevo ? '<span>Con estos datos ya puedes ver su primera liquidación. El resto lo completas cuando quieras.</span>' : resumenCarpeta(t);
         if (!nuevo) {
             Array.prototype.forEach.call($('carp-tabs').querySelectorAll('a'), function (a) {
                 var k = a.getAttribute('data-tab');
@@ -1493,8 +1503,28 @@ function dibujarEquipo() {
         $('pm-trab-cancelar').textContent = t ? 'Descartar cambios' : 'Cancelar';
         $('pm-trab-guardar').lastChild.textContent = t ? 'Guardar cambios' : 'Guardar trabajador';
         condicionales();
+        // Al agregar a alguien solo se piden los datos de su primera liquidación; el resto queda tras «Agregar más datos»
+        marcarAvanzados();
+        f.classList.toggle('ficha-rapida', !t);
+        $('pm-trab-mas').hidden = !!t;
         if (!t) $('pm-t-nombre').focus();
     }
+
+    // --- ficha rápida: solo lo necesario para la primera liquidación ---
+    var FICHA_RAPIDA = ['pm-t-nombre', 'pm-t-rut', 'pm-t-ingreso', 'pm-t-contrato', 'pm-t-termino', 'pm-t-reno', 'pm-t-sueldo', 'pm-t-grat', 'pm-t-afp', 'pm-t-salud', 'pm-t-isapre', 'pm-t-plan'];
+    function marcarAvanzados() {
+        var f = $('pm-trab-form');
+        Array.prototype.forEach.call(f.querySelectorAll('.lq-field'), function (c) {
+            var campo = c.querySelector('input,select,textarea');
+            if (campo && FICHA_RAPIDA.indexOf(campo.id) < 0) c.setAttribute('data-avanzado', '');
+        });
+        Array.prototype.forEach.call(f.querySelectorAll('.lq-sub, .form-bloque'), function (b) {
+            if (b.id === 'pm-t-activo-campo') return;
+            if (!FICHA_RAPIDA.some(function (id) { return b.querySelector('#' + id); })) b.setAttribute('data-avanzado', '');
+        });
+    }
+    function mostrarTodosLosDatos() { $('pm-trab-form').classList.remove('ficha-rapida'); $('pm-trab-mas').hidden = true; }
+    $('pm-trab-mas-btn').addEventListener('click', function () { mostrarTodosLosDatos(); $('pm-t-cargo').focus(); });
 
     // --- bonos y asignaciones fijas de la ficha ---
     var bonosFicha = [];
@@ -1547,10 +1577,18 @@ function dibujarEquipo() {
     $('pm-trab-form').addEventListener('submit', function (e) {
         e.preventDefault();
         var f = $('pm-trab-form'), datos = recoger(f), err = $('pm-trab-error'), id = editandoId;
+        var primero = !id && !(estado.trabajadores || []).length; // su primera liquidación es lo que viene a ver
         leerBonosFicha();
         datos.bonosFijos = bonosFicha.filter(function (b) { return b.monto > 0 || (b.nombre || '').trim(); });
         limpiarErrores(f);
         err.hidden = true;
+        if (!id && !(datos.sueldoBase > 0)) {
+            mensaje($('pm-trab-estado'), '', '');
+            mostrarErrores(f, { sueldoBase: 'Escribe el sueldo base mensual: con él se calcula la liquidación.' });
+            err.textContent = 'Falta el sueldo base.';
+            err.hidden = false;
+            return;
+        }
         mensaje($('pm-trab-estado'), '', 'Guardando…');
         var llamada = id ? api('trabajador', { metodo: 'PUT', query: { id: id }, cuerpo: { trabajador: datos } }) : api('trabajador', { metodo: 'POST', cuerpo: { trabajador: datos } });
         llamada.then(function (r) {
@@ -1558,12 +1596,14 @@ function dibujarEquipo() {
             if (r.ok) {
                 var tr = r.datos.trabajador || {};
                 cargar().then(function () {
-                    if (!id && tr.id) navegar('trabajadores/' + tr.id, { reemplazar: true });
-                    avisoGlobal('ok', (id ? 'Guardamos los cambios de ' : 'Agregamos a ') + (tr.nombre || 'la persona') + '.');
+                    if (!id && tr.id) navegar((primero ? 'liquidaciones/' : 'trabajadores/') + tr.id, { reemplazar: true });
+                    avisoGlobal('ok', (id ? 'Guardamos los cambios de ' : 'Agregamos a ') + (tr.nombre || 'la persona') + '.' + (primero ? ' Esta es su liquidación del mes: revísala y guárdala.' : ''));
                 });
                 return;
             }
             mensaje($('pm-trab-estado'), '', '');
+            // Si el error está en un dato que la ficha rápida oculta, se muestran todos para que se vea
+            if (f.classList.contains('ficha-rapida') && Object.keys(r.datos.errores || {}).some(function (k) { var c = f.querySelector('[data-k="' + k + '"]'); return c && c.closest('[data-avanzado]'); })) mostrarTodosLosDatos();
             mostrarErrores(f, r.datos.errores);
             err.textContent = r.datos.error || 'No pudimos guardar.';
             err.hidden = false;
@@ -1901,6 +1941,7 @@ function dibujarEquipo() {
         var sinEmpresa = !estado.empresa, sinTrabajadores = !(estado.trabajadores || []).length;
         var arranque = sinEmpresa || sinTrabajadores;
         $('ini-primeros').hidden = !arranque;
+        $('ini-avisos').hidden = arranque; // en el primer uso los pasos de arriba ya dicen qué falta
         $('ini-tabla-panel').hidden = arranque;
         $('ini-detalle').hidden = arranque;
         $('ini-cierre').classList.toggle('sin-detalle', arranque);

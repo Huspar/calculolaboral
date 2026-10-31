@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.23.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.24.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -108,18 +108,18 @@ gtag('js', new Date());
 <a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span>Liquidaciones<span class="app-nav-cuenta" id="nav-liq-n"></span></a>
 <a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos</a>
 <a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span>Calendario</a>
-<p class="app-nav-grupo">Finanzas</p>
-<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja"><span class="material-icons" aria-hidden="true">account_balance_wallet</span>Flujo de caja</a>
-<a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas"><span class="material-icons" aria-hidden="true">call_received</span>Cobranzas<span class="app-nav-cuenta" id="nav-cobranzas-pendientes"></span></a>
-<a href="/app/pagos" data-ruta="pagos" data-nav="pagos"><span class="material-icons" aria-hidden="true">call_made</span>Cuentas por pagar<span class="app-nav-cuenta" id="nav-pagos-pendientes"></span></a>
-<a href="/app/conciliacion" data-ruta="conciliacion" data-nav="conciliacion"><span class="material-icons" aria-hidden="true">sync_alt</span>Conciliación bancaria<span class="app-nav-cuenta" id="nav-mov-sin-conciliar"></span></a>
-<p class="app-nav-grupo">Contabilidad y Cierre</p>
-<a href="/app/mi-contador" data-ruta="mi-contador" data-nav="mi-contador"><span class="material-icons" aria-hidden="true">handshake</span>Mi Contador<span class="app-nav-chip" id="nav-chip-cierre"></span></a>
-<p class="app-nav-grupo">Herramientas</p>
-<a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
+<p class="app-nav-grupo" data-mas>Finanzas</p>
+<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja" data-mas><span class="material-icons" aria-hidden="true">account_balance_wallet</span>Flujo de caja</a>
+<a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas" data-mas><span class="material-icons" aria-hidden="true">call_received</span>Cobranzas<span class="app-nav-cuenta" id="nav-cobranzas-pendientes"></span></a>
+<a href="/app/pagos" data-ruta="pagos" data-nav="pagos" data-mas><span class="material-icons" aria-hidden="true">call_made</span>Cuentas por pagar<span class="app-nav-cuenta" id="nav-pagos-pendientes"></span></a>
+<a href="/app/conciliacion" data-ruta="conciliacion" data-nav="conciliacion" data-mas><span class="material-icons" aria-hidden="true">sync_alt</span>Conciliación bancaria<span class="app-nav-cuenta" id="nav-mov-sin-conciliar"></span></a>
+<p class="app-nav-grupo" data-mas>Contabilidad y Cierre</p>
+<a href="/app/mi-contador" data-ruta="mi-contador" data-nav="mi-contador" data-mas><span class="material-icons" aria-hidden="true">handshake</span>Mi Contador<span class="app-nav-chip" id="nav-chip-cierre"></span></a>
+<p class="app-nav-grupo" data-mas>Herramientas</p>
+<a href="/app/contratos" data-ruta="contratos" data-nav="contratos" data-mas><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
 <p class="app-nav-grupo">Configuración</p>
 <a href="/app/empresa" data-ruta="empresa" data-nav="empresa"><span class="material-icons" aria-hidden="true">apartment</span>Empresa</a>
-<a href="/app/equipo" data-ruta="equipo" data-nav="equipo" id="app-nav-equipo"><span class="material-icons" aria-hidden="true">badge</span>Equipo</a>
+<a href="/app/equipo" data-ruta="equipo" data-nav="equipo" id="app-nav-equipo" data-mas><span class="material-icons" aria-hidden="true">badge</span>Equipo</a>
 <a href="/app/portal" data-ruta="portal" data-nav="portal" id="app-nav-portal" hidden><span class="material-icons" aria-hidden="true">storefront</span>Portal cliente</a>
 <a href="/app/cuenta" data-ruta="cuenta" data-nav="cuenta"><span class="material-icons" aria-hidden="true">person</span>Mi cuenta</a>
 </nav>
@@ -377,6 +377,7 @@ gtag('js', new Date());
 <div class="form-bloque" id="pm-t-activo-campo" hidden>
 <div class="lq-field pm-check"><label><input id="pm-t-activo" data-k="activo" type="checkbox" checked> Trabajador activo <span class="lq-opt">(cuenta para el límite de trabajadores de tu plan)</span></label></div>
 </div>
+<p class="fr-mas" id="pm-trab-mas" hidden><button type="button" class="lq-link" id="pm-trab-mas-btn">Agregar más datos: cargo, colación, bonos, datos para Previred y otros</button></p>
 <p id="pm-trab-error" class="pm-error" role="alert" hidden></p>
 <div class="form-acciones">
 <button type="submit" id="pm-trab-guardar" class="btn btn-primario"><span class="material-icons" aria-hidden="true">save</span>Guardar</button>
@@ -1285,8 +1286,9 @@ gtag('js', new Date());
 
 <nav class="app-barra" id="app-barra" aria-label="Secciones principales">
 <a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span><span>Cierre</span></a>
-<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja"><span class="material-icons" aria-hidden="true">account_balance_wallet</span><span>Caja</span></a>
-<a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas"><span class="material-icons" aria-hidden="true">call_received</span><span>Cobros</span></a>
+<a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores" class="solo-arranque"><span class="material-icons" aria-hidden="true">group</span><span>Trabajadores</span></a>
+<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja" data-mas><span class="material-icons" aria-hidden="true">account_balance_wallet</span><span>Caja</span></a>
+<a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas" data-mas><span class="material-icons" aria-hidden="true">call_received</span><span>Cobros</span></a>
 <a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Sueldos</span></a>
 <button type="button" id="app-mas" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">more_horiz</span><span>Más</span></button>
 </nav>
@@ -1417,6 +1419,6 @@ gtag('js', new Date());
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
 <script src="/js/pyme_finanzas.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.34.0" defer></script>
+<script src="/js/app_pyme.js?v=1.35.0" defer></script>
 </body>
 </html>

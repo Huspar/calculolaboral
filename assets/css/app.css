@@ -958,3 +958,15 @@ a.cal-ev:hover { filter: brightness(0.97); }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Primer uso: sin empresa o sin trabajadores el menú muestra solo lo necesario para el primer cierre */
+.app-arranque [data-mas] { display: none !important; }
+.app-barra .solo-arranque { display: none; }
+@media screen and (max-width: 900px) {
+    .app-arranque .app-barra { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .app-arranque .app-barra .solo-arranque { display: flex; }
+}
+
+/* Ficha rápida del trabajador nuevo: solo lo necesario para su primera liquidación */
+#pm-trab-form.ficha-rapida [data-avanzado] { display: none !important; }
+.fr-mas { margin: 12px 0 0; }
