@@ -31,11 +31,12 @@ const PRODUCTS = {
         // require con ruta fija: Vercel solo empaqueta lo que puede rastrear
         zip: () => require('./assets/kit-base64.js'),
         page: '/kit-cumplimiento-laboral-pymes',
-        intro: '21 documentos en Word (.docx editable) y el manual de uso en PDF.',
+        personalizer: '/personalizar-kit-blindaje',
+        intro: '21 documentos en Word (.docx editable), Excel Matriz DT y Ley Karin (5 hojas) y el manual de uso en PDF.',
         steps: [
-            'Descomprime el archivo.',
-            'Abre primero <strong>00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf</strong>.',
-            'En la página 2 del manual verás qué documentos aplican a tu rubro.'
+            'Descomprime el archivo o usa el personalizador web con tus datos antes de descargar.',
+            'Abre primero <strong>00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf</strong> y el Excel <strong>20_Matriz_Control_Cumplimiento_DT_y_Ley_Karin_2026.xlsx</strong>.',
+            'En la página 2 del manual verás qué anexos aplican a tu rubro.'
         ]
     },
     datos: {
@@ -45,6 +46,7 @@ const PRODUCTS = {
         filename: 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip',
         zip: () => require('./assets/kit-datos-base64.js'),
         page: '/kit-cumplimiento-ley-datos-personales-chile',
+        personalizer: '/personalizar-kit-datos',
         intro: '7 instrumentos en Word y Excel editables y el manual de uso (PDF y Word).',
         steps: [
             'Descomprime el archivo.',
@@ -319,7 +321,9 @@ function deliver(pay) {
 async function deliverKit(pay) {
     const p = PRODUCTS[pay.product];
     const nombre = (pay.optional && pay.optional.nombre) || '';
-    const link = `${SITE_URL}/api/download?${downloadQuery(pay.product, pay.order)}`;
+    const dq = downloadQuery(pay.product, pay.order);
+    const link = `${SITE_URL}/api/download?${dq}`;
+    const customLink = p.personalizer ? `${SITE_URL}${p.personalizer}?${dq}` : '';
     const zip = p.zip();
 
     const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
@@ -328,7 +332,8 @@ async function deliverKit(pay) {
   <p style="margin:0 0 20px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:#00382E">Laboral</span></p>
   <p style="margin:0 0 12px;font-size:15px">Hola${nombre ? ' ' + escapeHtml(nombre) : ''},</p>
   <p style="margin:0 0 16px;font-size:14px;color:#334155">Confirmamos tu pago de <strong>$${p.amount.toLocaleString('es-CL')}</strong> (orden Flow ${escapeHtml(pay.order)}). Adjuntamos <strong>${p.filename}</strong>: ${p.intro}</p>
-  <p style="margin:0 0 20px"><a href="${link}" style="display:inline-block;background:#00382E;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px">Descargar el kit</a></p>
+  <p style="margin:0 0 12px"><a href="${link}" style="display:inline-block;background:#00382E;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px">Descargar el kit</a></p>
+  ${customLink ? `<p style="margin:0 0 16px"><a href="${customLink}" style="display:inline-block;background:#FFB703;color:#111827;text-decoration:none;font-weight:700;font-size:13px;padding:10px 18px;border-radius:12px">Personalizar documentos con tus datos</a></p>` : ''}
   <p style="margin:0 0 8px;font-size:12px;color:#64748b">El enlace funciona por ${DOWNLOAD_DAYS} días, por si el adjunto no te llega.</p>
   <div style="background:#EEF6F3;border:1px solid #D6EBE4;border-radius:12px;padding:16px;margin:16px 0;font-size:13px">
     <p style="margin:0 0 8px;font-weight:700">Para empezar</p>

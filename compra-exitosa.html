@@ -709,9 +709,9 @@ body { overflow-x: hidden; }
                     </button>
                     <a id="btn-personalizar-kit" href="#" class="hidden w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#00382E] bg-white hover:bg-[#EEF6F3] text-[#00382E] font-bold text-xs inline-flex items-center justify-center gap-2 mx-auto transition-all">
                         <span class="material-icons text-sm" aria-hidden="true">edit_document</span>
-                        <span>Personalizar tus 6 Word con tus datos (sin [COMPLETAR])</span>
+                        <span id="lbl-personalizar-kit">Personalizar tus documentos con tus datos</span>
                     </a>
-                    <p id="download-meta" class="text-xs text-emerald-700 font-mono">21 documentos Word editables · Manual de uso en PDF</p>
+                    <p id="download-meta" class="text-xs text-emerald-700 font-mono">21 documentos Word editables · Excel Matriz DT y Ley Karin (5 hojas) · Manual PDF</p>
                 </div>
 
                 <!-- Practical Steps -->
@@ -893,9 +893,9 @@ body { overflow-x: hidden; }
             var PRODUCTOS = {
                 blindaje: {
                     monto: 19990, nombre: 'Kit Blindaje Laboral Pyme 2026', asunto: '"Tu Kit Blindaje Laboral Pyme 2026"',
-                    archivo: 'Kit_Blindaje_Laboral_Pyme_2026.zip', meta: '21 documentos Word editables · Manual de uso en PDF',
+                    archivo: 'Kit_Blindaje_Laboral_Pyme_2026.zip', meta: '21 documentos Word editables · Excel Matriz DT y Ley Karin (5 hojas) · Manual PDF',
                     inicio: '00_MANUAL_DE_USO_E_INSTRUCCIONES_BLINDAJE_PYME.pdf',
-                    detalle: 'Te enviamos a tu correo los <strong>21 documentos Word editables y el manual de uso en PDF</strong>. También puedes descargarlos ahora.'
+                    detalle: 'Te enviamos a tu correo los <strong>21 documentos Word editables, el libro Excel de control DT/Ley Karin y el manual de uso en PDF</strong>. También puedes descargarlos o personalizarlos ahora.'
                 },
                 despido: {
                     monto: 9990, nombre: 'Pack Cartas de Despido por Causal 2026', asunto: '"Tu Pack Cartas de Despido por Causal 2026"',
@@ -952,6 +952,11 @@ body { overflow-x: hidden; }
             $('btn-download-zip').addEventListener('click', function () { window.location.href = descarga; });
             if (q.get('p') === 'datos' && $('btn-personalizar-kit')) {
                 $('btn-personalizar-kit').href = '/personalizar-kit-datos?' + qs;
+                $('lbl-personalizar-kit').textContent = 'Personalizar tus 6 Word con tus datos (sin [COMPLETAR])';
+                $('btn-personalizar-kit').classList.remove('hidden');
+            } else if (q.get('p') === 'blindaje' && $('btn-personalizar-kit')) {
+                $('btn-personalizar-kit').href = '/personalizar-kit-blindaje?' + qs;
+                $('lbl-personalizar-kit').textContent = 'Personalizar los 21 Word + Excel con tus datos ahora';
                 $('btn-personalizar-kit').classList.remove('hidden');
             }
 
