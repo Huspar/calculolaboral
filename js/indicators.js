@@ -15,11 +15,42 @@ const IndicatorsService = {
     HISTORY_STORAGE_KEY: 'econIndicatorsHistory.v1',
     TIMEOUT_MS: 3500,
 
-    // Dataset base offline de contingencia (UF 30 días, UTM 12 meses)
+    // Dataset base offline de contingencia (UF 30 días + cierres de mes, UTM 12 meses)
     BASELINE_DATA: {
         uf: [
-            {"fecha": "2026-10-09", "valor": 41130.94},
-{"fecha": "2026-09-20", "valor": 40975.41},
+            {"fecha": "2026-11-13", "valor": 41322.93},
+            {"fecha": "2026-11-12", "valor": 41316.06},
+            {"fecha": "2026-11-11", "valor": 41309.19},
+            {"fecha": "2026-11-10", "valor": 41302.33},
+            {"fecha": "2026-11-09", "valor": 41295.46},
+            {"fecha": "2026-11-08", "valor": 41290.15},
+            {"fecha": "2026-11-07", "valor": 41284.83},
+            {"fecha": "2026-11-06", "valor": 41279.51},
+            {"fecha": "2026-11-05", "valor": 41274.2},
+            {"fecha": "2026-11-04", "valor": 41268.88},
+            {"fecha": "2026-11-03", "valor": 41263.57},
+            {"fecha": "2026-11-02", "valor": 41258.26},
+            {"fecha": "2026-11-01", "valor": 41252.94},
+            {"fecha": "2026-10-31", "valor": 41247.63},
+            {"fecha": "2026-10-30", "valor": 41242.32},
+            {"fecha": "2026-10-29", "valor": 41237.01},
+            {"fecha": "2026-10-28", "valor": 41231.7},
+            {"fecha": "2026-10-27", "valor": 41226.39},
+            {"fecha": "2026-10-26", "valor": 41221.08},
+            {"fecha": "2026-10-25", "valor": 41215.77},
+            {"fecha": "2026-10-24", "valor": 41210.47},
+            {"fecha": "2026-10-23", "valor": 41205.16},
+            {"fecha": "2026-10-22", "valor": 41199.85},
+            {"fecha": "2026-10-21", "valor": 41194.55},
+            {"fecha": "2026-10-20", "valor": 41189.24},
+            {"fecha": "2026-10-19", "valor": 41183.94},
+            {"fecha": "2026-10-18", "valor": 41178.64},
+            {"fecha": "2026-10-17", "valor": 41173.33},
+            {"fecha": "2026-10-16", "valor": 41168.03},
+            {"fecha": "2026-10-15", "valor": 41162.73},
+            {"fecha": "2026-10-14", "valor": 41157.43},
+            {"fecha": "2026-09-30", "valor": 41057.20},
+            {"fecha": "2026-09-20", "valor": 40975.41},
             {"fecha": "2026-09-19", "valor": 40967.24},
             {"fecha": "2026-09-18", "valor": 40959.08},
             {"fecha": "2026-09-17", "valor": 40950.91},
@@ -51,6 +82,7 @@ const IndicatorsService = {
             {"fecha": "2026-08-22", "valor": 40861.91}
         ],
         utm: [
+            {"fecha": "2026-11-01", "valor": 72440.0},
             {"fecha": "2026-10-01", "valor": 72151.0},
             {"fecha": "2026-09-01", "valor": 71721.0},
             {"fecha": "2026-08-01", "valor": 71649.0},
@@ -409,6 +441,95 @@ const IndicatorsService = {
             const formattedDate = today.toLocaleDateString('es-CL', options);
             dateEl.textContent = `Valores actualizados al ${formattedDate}`;
         }
+    },
+
+    _capUfCache: {},
+    _capUfInflight: {},
+
+    /**
+     * Calcula la fecha de cierre del mes anterior al pago (Art. 172 inc. final Código del Trabajo).
+     * Retorna { iso: 'YYYY-MM-DD', ym: 'YYYY-MM', ddmmyyyy: 'DD-MM-YYYY' }.
+     */
+    getCapDateInfo(paymentDateStr) {
+        let baseDate;
+        if (typeof paymentDateStr === 'string' && /^\d{4}-\d{2}-\d{2}/.test(paymentDateStr)) {
+            const p = paymentDateStr.slice(0, 10).split('-').map(Number);
+            baseDate = new Date(p[0], p[1] - 1, p[2]);
+        } else if (paymentDateStr instanceof Date && !isNaN(paymentDateStr.getTime())) {
+            baseDate = paymentDateStr;
+        } else {
+            baseDate = new Date();
+        }
+        const cap = new Date(baseDate.getFullYear(), baseDate.getMonth(), 0);
+        const y = cap.getFullYear();
+        const m = String(cap.getMonth() + 1).padStart(2, '0');
+        const d = String(cap.getDate()).padStart(2, '0');
+        return {
+            iso: `${y}-${m}-${d}`,
+            ym: `${y}-${m}`,
+            ddmmyyyy: `${d}-${m}-${y}`
+        };
+    },
+
+    /**
+     * Resuelve la UF del último día del mes anterior al pago (Art. 172 inc. final CT) para el tope de 90 UF.
+     * Retorna el mejor valor síncrono disponible (caché, respaldo mensual, BASELINE_DATA o CONSTANTS.UF)
+     * y consulta mindicador.cl en segundo plano si la fecha exacta no estaba en caché ni en BASELINE_DATA.
+     */
+    getCapUFForDate(paymentDateStr, onResolved) {
+        const info = this.getCapDateInfo(paymentDateStr);
+        const fallbackUF = (typeof CONSTANTS !== 'undefined' && this._isValid(CONSTANTS.UF))
+            ? CONSTANTS.UF
+            : this.BASELINE_DATA.uf[0].valor;
+
+        if (this._isValid(this._capUfCache[info.iso])) {
+            return { uf: this._capUfCache[info.iso], capDate: info.iso, exact: true };
+        }
+
+        const paramRespaldo = (typeof window !== 'undefined' && window.CLLiquidacionParametros && window.CLLiquidacionParametros.RESPALDO)
+            ? window.CLLiquidacionParametros.RESPALDO[info.ym]
+            : null;
+        if (paramRespaldo && this._isValid(paramRespaldo.uf)) {
+            this._capUfCache[info.iso] = paramRespaldo.uf;
+            return { uf: paramRespaldo.uf, capDate: info.iso, exact: true };
+        }
+
+        const baseMatch = (this.BASELINE_DATA && Array.isArray(this.BASELINE_DATA.uf))
+            ? this.BASELINE_DATA.uf.find(item => item && item.fecha === info.iso && this._isValid(item.valor))
+            : null;
+        if (baseMatch) {
+            this._capUfCache[info.iso] = baseMatch.valor;
+            return { uf: baseMatch.valor, capDate: info.iso, exact: true };
+        }
+
+        try {
+            const stored = Number(localStorage.getItem('cl_uf_tope_' + info.iso));
+            if (this._isValid(stored)) {
+                this._capUfCache[info.iso] = stored;
+                return { uf: stored, capDate: info.iso, exact: true };
+            }
+        } catch (e) { /* sin localStorage */ }
+
+        const today = new Date();
+        const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        if (info.iso <= todayIso && typeof fetch === 'function' && !this._capUfInflight[info.iso]) {
+            this._capUfInflight[info.iso] = fetch(`https://mindicador.cl/api/uf/${info.ddmmyyyy}`)
+                .then(r => (r.ok ? r.json() : null))
+                .then(d => {
+                    const val = d && d.serie && d.serie[0] && Number(d.serie[0].valor);
+                    if (this._isValid(val)) {
+                        this._capUfCache[info.iso] = val;
+                        try { localStorage.setItem('cl_uf_tope_' + info.iso, String(val)); } catch (e) { /* noop */ }
+                        if (typeof onResolved === 'function' && val !== fallbackUF) {
+                            onResolved(val, info.iso);
+                        }
+                    }
+                })
+                .catch(() => { /* usa respaldo sin bloquear cálculo */ })
+                .finally(() => { delete this._capUfInflight[info.iso]; });
+        }
+
+        return { uf: fallbackUF, capDate: info.iso, exact: false };
     },
 
     init() {

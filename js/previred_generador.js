@@ -1,6 +1,6 @@
 /*
  * CálculoLaboral — archivo de nómina para Previred, formato largo variable por ";"
- * (105 campos, versión 58 del documento oficial: tools/previred/especificacion-105.json).
+ * (105 campos, versión 100 del documento oficial: tools/previred/especificacion-105.json).
  *
  * Uso:
  *   var salida = CLPrevired.generar({ periodo: '2026-10', empleador: {...}, trabajadores: [...] });

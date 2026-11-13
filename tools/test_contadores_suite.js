@@ -199,4 +199,35 @@ caso('Balance de 8 Columnas tambien cuadra cuando el ejercicio arroja perdida', 
     assert.strictEqual(bal.sumasIguales.perdida, bal.sumasIguales.ganancia);
 });
 
+caso('F29 conserva signos en cod. 538 y cod. 537 cuando notas de credito superan ventas/compras y el balance sigue cuadrando', () => {
+    const vNeg = { netoGiro: 100000, ivaGiro: 19000, cantFacturasGiro: 1, netoNotasCredito: 300000, ivaNotasCredito: 57000, cantNotasCredito: 1 };
+    const cNeg = { netoGiro: 200000, ivaGiro: 38000, cantFacturasGiro: 1, netoNotasCredito: 500000, ivaNotasCredito: 95000, cantNotasCredito: 1 };
+    const fNeg = F29.calcularF29({
+        periodo: '2026-11',
+        regimen: '14D3',
+        ventas: vNeg,
+        compras: cNeg,
+        remanenteAnterior: 0
+    });
+    // Debitos = 19.000 - 57.000 = -38.000; Creditos = 38.000 - 95.000 = -57.000 -> difIva = +19.000 -> cod. 89 = 19.000
+    assert.strictEqual(fNeg.codigos[538], -38000);
+    assert.strictEqual(fNeg.codigos[537], -57000);
+    assert.strictEqual(fNeg.codigos[89], 19000);
+    assert.strictEqual(fNeg.codigos[77], 0);
+    assert.ok(fNeg.avisos.length >= 2);
+
+    const gen = C.generarAsientos({
+        periodo: '2026-11',
+        ventas: vNeg,
+        compras: cNeg,
+        f29: fNeg,
+        tesoreria: { saldoInicialBanco: 1000000 }
+    });
+    assert.ok(gen.asientos.every(a => a.cuadra), 'Asientos con NC netas negativas deben cuadrar');
+    const bal = C.calcularBalance8Columnas(C.calcularMayor(gen.asientos));
+    assert.strictEqual(bal.cuadra, true, 'Balance con cod. 538/537 negativos debe cuadrar');
+    const cta21070 = bal.filas.find(x => x.codigo === '21070');
+    assert.strictEqual(cta21070.pasivo, fNeg.codigos[91]);
+});
+
 console.log(ok + ' pruebas correctas en Suite Contadores');

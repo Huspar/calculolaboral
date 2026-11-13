@@ -14,7 +14,7 @@
 <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/app.css?v=1.23.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.24.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.0.0">
 </head>
@@ -119,6 +119,11 @@
         <button type="button" class="btn btn-chico" id="btn-restaurar" style="flex:1">Restaurar</button>
         <input type="file" id="file-respaldo" accept=".json" class="sr-only">
       </div>
+      <button type="button" class="btn btn-chico" id="btn-importar-pyme" title="Importar paquete-contador-YYYY-MM.json exportado desde /app">
+        <span class="material-icons" aria-hidden="true">drive_folder_upload</span>Importar paquete Pyme
+      </button>
+      <input type="file" id="file-paquete-pyme" accept=".json,application/json" class="sr-only">
+      <p id="puente-pyme-estado" hidden style="margin:2px 0 0;font-size:11px;line-height:1.35;color:var(--side-muted)"></p>
       <a href="/app" style="color:var(--side-muted);font-size:12px;text-decoration:none;display:flex;align-items:center;gap:6px;margin-top:6px">
         <span class="material-icons" style="font-size:16px" aria-hidden="true">arrow_back</span>Ir al Asistente Pyme
       </a>
@@ -144,15 +149,15 @@
         <label class="sr-only" for="periodo">Mes de trabajo</label>
         <select id="periodo">
           <option value="2026-12">Diciembre 2026</option>
-          <option value="2026-11">Noviembre 2026</option>
-          <option value="2026-10" selected>Octubre 2026</option>
+          <option value="2026-11" selected>Noviembre 2026</option>
+          <option value="2026-10">Octubre 2026</option>
           <option value="2026-09">Septiembre 2026</option>
           <option value="2026-08">Agosto 2026</option>
           <option value="2026-07">Julio 2026</option>
           <option value="2026-06">Junio 2026</option>
           <option value="2026-05">Mayo 2026</option>
         </select>
-        <input type="hidden" id="f29-periodo" value="2026-10">
+        <input type="hidden" id="f29-periodo" value="2026-11">
         <button type="button" class="app-icono-btn" id="btn-mes-sig" aria-label="Mes siguiente">
           <span class="material-icons" aria-hidden="true">chevron_right</span>
         </button>
@@ -204,7 +209,7 @@
               <div class="param-bar">
                 <div class="lq-field">
                   <label for="uf-value">Valor UF del período</label>
-                  <input type="number" id="uf-value" step="0.01" min="1" placeholder="41.130,94">
+                  <input type="number" id="uf-value" step="0.01" min="1" placeholder="41.322,93">
                 </div>
               </div>
               <div class="fin-dropzone" id="drop-fin" role="button" tabindex="0" aria-label="Subir nómina de finiquitos">
@@ -671,8 +676,8 @@
 <script src="/js/liquidacion_valores.js"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/demo_comun.js?v=1.5.0"></script>
-<script src="/js/demo_contadores.js?v=1.1.1"></script>
-<script src="/js/previred_generador.js?v=1.4.0"></script>
+<script src="/js/demo_contadores.js?v=1.1.2"></script>
+<script src="/js/previred_generador.js?v=1.4.1"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_lre.js?v=1.0.1"></script>
@@ -683,10 +688,10 @@
 <script src="/js/demo_validaciones.js?v=1.0.0"></script>
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.1.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.6.0"></script>
-<script src="/js/contadores_f29.js?v=1.0.0"></script>
-<script src="/js/contadores_contabilidad.js?v=1.0.0"></script>
-<script src="/js/demo_suite.js?v=1.0.1"></script>
+<script src="/js/demo_liquidaciones.js?v=2.6.1"></script>
+<script src="/js/contadores_f29.js?v=1.1.0"></script>
+<script src="/js/contadores_contabilidad.js?v=1.1.0"></script>
+<script src="/js/demo_suite.js?v=1.1.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes para coincidir 100% con /app
 (function () {

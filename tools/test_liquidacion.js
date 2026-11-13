@@ -167,7 +167,7 @@ function fetchFalso({ mindicador, findic, registro, retrasoMindicador }) {
         return respuesta({ serie: Object.entries(prov.utm || {}).map(([mes, valor]) => ({ fecha: fecha(mes + '-01'), valor })) });
     };
 }
-const SERIE_OK = { uf: { '2026-09-30': 41057.2, '2026-10-31': 41247.63, '2026-11-30': 41400.5 }, utm: { '2026-09': 71721, '2026-10': 72151, '2026-11': 72440 } };
+const SERIE_OK = { uf: { '2026-09-30': 41057.2, '2026-10-31': 41247.63, '2026-11-30': 41439.89, '2026-12-31': 41580.5 }, utm: { '2026-09': 71721, '2026-10': 72151, '2026-11': 72440, '2026-12': 72802 } };
 function crear(config, almacen = almacenFalso()) {
     const registro = [];
     const v = V.crear({ parametros: P, fetch: fetchFalso(Object.assign({ registro }, config)), storage: almacen });
@@ -203,8 +203,8 @@ function crear(config, almacen = almacenFalso()) {
     ].filter(Boolean));
 
     t = crear({ mindicador: 'caido', findic: 'caido' });
-    r = await t.v.obtener('2026-11');
-    chequear('Valores · ambas APIs caen y no hay respaldo (noviembre): no se emite', [!r.ok && /UF del 30 de noviembre/.test(r.mensaje) ? '' : 'debía bloquear'].filter(Boolean));
+    r = await t.v.obtener('2026-12');
+    chequear('Valores · ambas APIs caen y no hay respaldo (diciembre): no se emite', [!r.ok && /UF del 31 de diciembre/.test(r.mensaje) ? '' : 'debía bloquear'].filter(Boolean));
 
     t = crear({ mindicador: { uf: { '2026-10-31': 41999.99 }, utm: { '2026-10': 72151 } }, findic: 'caido' });
     r = await t.v.obtener('2026-10');
@@ -213,33 +213,33 @@ function crear(config, almacen = almacenFalso()) {
     ].filter(Boolean));
 
     t = crear({ mindicador: SERIE_OK, findic: SERIE_OK });
-    r = await t.v.obtener('2026-11');
-    chequear('Valores · noviembre sin respaldo, con API', [r.ok && r.mes.uf === 41400.5 && r.mes.utm === 72440 && r.mes.afp.Uno === 0.1046 ? '' : 'datos'].filter(Boolean));
+    r = await t.v.obtener('2026-12');
+    chequear('Valores · diciembre sin respaldo, con API', [r.ok && r.mes.uf === 41580.5 && r.mes.utm === 72802 && r.mes.afp.Uno === 0.1046 ? '' : 'datos'].filter(Boolean));
 
     t = crear({ mindicador: { uf: {}, utm: SERIE_OK.utm }, findic: { uf: {}, utm: SERIE_OK.utm } });
     r = await t.v.obtener('2026-12');
     chequear('Valores · la UF de fin de mes aún no está publicada', [!r.ok && /todavía no está publicada/.test(r.mensaje) ? '' : 'debía avisar'].filter(Boolean));
 
-    t = crear({ mindicador: { uf: { '2026-11-30': 100 }, utm: SERIE_OK.utm }, findic: 'caido' });
-    r = await t.v.obtener('2026-11');
+    t = crear({ mindicador: { uf: { '2026-12-31': 100 }, utm: SERIE_OK.utm }, findic: 'caido' });
+    r = await t.v.obtener('2026-12');
     chequear('Valores · UF fuera de rango se rechaza', [!r.ok ? '' : 'aceptó una UF de 100'].filter(Boolean));
 
     t = crear({ mindicador: SERIE_OK, findic: SERIE_OK });
-    await t.v.obtener('2026-11');
+    await t.v.obtener('2026-12');
     const antes = t.registro.length;
-    r = await t.v.obtener('2026-11');
-    chequear('Valores · el mes cerrado se guarda y no se vuelve a consultar', [t.registro.length === antes && r.ok && r.mes.uf === 41400.5 ? '' : 'volvió a consultar'].filter(Boolean));
+    r = await t.v.obtener('2026-12');
+    chequear('Valores · el mes cerrado se guarda y no se vuelve a consultar', [t.registro.length === antes && r.ok && r.mes.uf === 41580.5 ? '' : 'volvió a consultar'].filter(Boolean));
 
     // La UF aún no está publicada; después se publica y se reintenta con "forzar": no debe quedar pegada la respuesta vacía
-    const aun = { uf: {}, utm: SERIE_OK.utm }, yaPublicada = { uf: { '2026-11-30': 41400.5 }, utm: SERIE_OK.utm };
+    const aun = { uf: {}, utm: SERIE_OK.utm }, yaPublicada = { uf: { '2026-12-31': 41580.5 }, utm: SERIE_OK.utm };
     const cfg = { mindicador: aun, findic: aun };
     const registro2 = [];
     const v2 = V.crear({ parametros: P, fetch: (u, o) => fetchFalso(Object.assign({ registro: registro2 }, cfg))(u, o), storage: almacenFalso() });
-    r = await v2.obtener('2026-11');
+    r = await v2.obtener('2026-12');
     const antesDeForzar = r.ok;
     cfg.mindicador = yaPublicada; cfg.findic = yaPublicada;
-    r = await v2.obtener('2026-11', true);
-    chequear('Valores · al reintentar con "forzar" se vuelve a consultar una UF que ya se publicó', [!antesDeForzar && r.ok && r.mes.uf === 41400.5 ? '' : 'seguía sin disponible'].filter(Boolean));
+    r = await v2.obtener('2026-12', true);
+    chequear('Valores · al reintentar con "forzar" se vuelve a consultar una UF que ya se publicó', [!antesDeForzar && r.ok && r.mes.uf === 41580.5 ? '' : 'seguía sin disponible'].filter(Boolean));
 
     t = crear({ mindicador: SERIE_OK, findic: SERIE_OK });
     const [a, b] = await Promise.all([t.v.obtener('2026-09'), t.v.obtener('2026-09')]);

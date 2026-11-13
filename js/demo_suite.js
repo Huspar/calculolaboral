@@ -39,7 +39,7 @@
 
     function periodoActual() {
         var el = $('periodo');
-        return (el && el.value) ? el.value : '2026-10';
+        return (el && el.value) ? el.value : '2026-11';
     }
 
     function leerTodoAlmacen() {
@@ -261,8 +261,8 @@
         vacio.hidden = true;
         resPanel.hidden = false;
 
-        $('f29-k-debito').textContent = D.money(c[538]);
-        $('f29-k-credito').textContent = D.money(c[537]);
+        $('f29-k-debito').textContent = moneySigno(c[538]);
+        $('f29-k-credito').textContent = moneySigno(c[537]);
         $('f29-k-iva-lbl').textContent = c[89] > 0 ? 'IVA determinado (cód. 89)' : 'Remanente mes sig. (cód. 77)';
         $('f29-k-iva').textContent = c[89] > 0 ? D.money(c[89]) : D.money(c[77]);
         $('f29-k-total').textContent = D.money(c[91]);
@@ -300,7 +300,7 @@
         ];
 
         $('tbody-f29').innerHTML = filas.filter(function (r) {
-            return !r.ocultarCero || r.monto > 0 || r.cant > 0;
+            return !r.ocultarCero || r.monto !== 0 || r.cant > 0;
         }).map(function (r) {
             if (r.sec) {
                 return '<tr class="f29-sec"><td colspan="4">' + D.esc(r.sec) + '</td></tr>';
@@ -312,7 +312,7 @@
                 '<td>' + D.esc(r.glosa) + '</td>' +
                 '<td class="mono num">' + cantTxt + '</td>' +
                 '<td class="mono f29-celda-cod"><span class="f29-cod">' + D.esc(r.cod) + '</span></td>' +
-                '<td class="mono num">' + signo + D.money(r.monto) + '</td>' +
+                '<td class="mono num">' + signo + (r.resta ? D.money(r.monto) : moneySigno(r.monto)) + '</td>' +
                 '</tr>';
         }).join('');
 
@@ -676,8 +676,18 @@
         }
     }
 
-    function cambiarModulo(mod) {
-        ui.modulo = mod;
+    var MODULOS_VALIDOS = /^(remuneraciones|f29|libros|balance|pnl)$/;
+
+    function moduloDesdeUbicacion() {
+        var hash = String(location.hash || '').replace(/^#/, '');
+        if (MODULOS_VALIDOS.test(hash)) return hash;
+        var modUrl = (/[?&]mod=(remuneraciones|f29|libros|balance|pnl)/.exec(location.search) || [])[1];
+        return modUrl || 'remuneraciones';
+    }
+
+    function cambiarModulo(mod, opts) {
+        var modNorm = MODULOS_VALIDOS.test(mod) ? mod : 'remuneraciones';
+        ui.modulo = modNorm;
         var mapPanes = {
             remuneraciones: $('suite-remuneraciones'),
             f29: $('suite-f29'),
@@ -686,17 +696,131 @@
             pnl: $('suite-pnl')
         };
         Object.keys(mapPanes).forEach(function (k) {
-            if (mapPanes[k]) mapPanes[k].hidden = (k !== mod);
+            if (mapPanes[k]) mapPanes[k].hidden = (k !== modNorm);
         });
         Array.prototype.forEach.call(document.querySelectorAll('.suite-mod-btn'), function (b) {
-            var act = b.getAttribute('data-modulo') === mod;
+            var act = b.getAttribute('data-modulo') === modNorm;
             b.classList.toggle('activo', act);
             b.setAttribute('aria-current', act ? 'page' : 'false');
         });
+        if (!opts || !opts.sinHash) {
+            var targetHash = '#' + modNorm;
+            if (location.hash !== targetHash) {
+                try { history.replaceState(null, '', targetHash); } catch (e) { location.hash = targetHash; }
+            }
+        }
         refrescarTodo();
     }
 
+    function pintarEstadoPuentePyme(est) {
+        var el = $('puente-pyme-estado');
+        if (!el) return;
+        var meta = est && est.paquetePymeMeta;
+        if (!meta) {
+            el.hidden = true;
+            el.textContent = '';
+            return;
+        }
+        el.hidden = false;
+        el.textContent = 'Paquete Pyme (' + (meta.periodo || periodoActual()) + ') · ' +
+            (meta.cobranzasCount || 0) + ' cobros · ' + (meta.pagosCount || 0) + ' pagos';
+    }
+
+    function importarPaquetePyme(textoJson) {
+        var paquete;
+        try {
+            paquete = JSON.parse(textoJson);
+        } catch (e) {
+            D.avisar('El archivo seleccionado no es un JSON válido.');
+            return;
+        }
+        if (!paquete || paquete.tipo !== 'paquete-colaborativo-pyme-contador') {
+            D.avisar('Formato no reconocido. Sube el archivo paquete-contador-YYYY-MM.json exportado desde /app.');
+            return;
+        }
+
+        if (paquete.empresa && paquete.empresa.razonSocial) {
+            var cli = $('liq-cliente');
+            if (cli) {
+                cli.value = paquete.empresa.razonSocial;
+                try { localStorage.setItem('cl-cliente-liq', cli.value); } catch (e) { }
+                cli.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+        if (paquete.empresa && paquete.empresa.rut && $('liq-rut-empresa')) {
+            $('liq-rut-empresa').value = paquete.empresa.rut;
+        }
+
+        var selPeriodo = $('periodo');
+        if (selPeriodo && paquete.periodo) {
+            var tieneOpc = Array.prototype.some.call(selPeriodo.options, function (o) { return o.value === paquete.periodo; });
+            if (tieneOpc && selPeriodo.value !== paquete.periodo) {
+                selPeriodo.value = paquete.periodo;
+                if ($('f29-periodo')) $('f29-periodo').value = paquete.periodo;
+            }
+        }
+
+        if (leerEstadoActual().cerradoTributario) {
+            D.avisar('El período ' + periodoActual() + ' está cerrado. Reábrelo para importar los datos de /app.');
+            return;
+        }
+
+        var lab = paquete.resumenLaboral || {};
+        var cobros = Array.isArray(paquete.cobranzas) ? paquete.cobranzas : [];
+        var pagos = Array.isArray(paquete.pagos) ? paquete.pagos : [];
+        var movs = Array.isArray(paquete.movimientosBancarios) ? paquete.movimientosBancarios : [];
+
+        var totalCob = cobros.reduce(function (s, x) { return s + (Number(x && x.monto) || 0); }, 0);
+        var pagadoCob = cobros.reduce(function (s, x) { return s + (x && x.pagada ? (Number(x.monto) || 0) : 0); }, 0);
+        var pctCob = totalCob > 0 ? Math.round((pagadoCob / totalCob) * 100) : null;
+
+        var totalPag = pagos.reduce(function (s, x) { return s + (Number(x && x.monto) || 0); }, 0);
+        var pagadoPag = pagos.reduce(function (s, x) { return s + (x && x.pagada ? (Number(x.monto) || 0) : 0); }, 0);
+        var pctPag = totalPag > 0 ? Math.round((pagadoPag / totalPag) * 100) : null;
+
+        var saldoIni = null;
+        if (movs.length) {
+            var prim = movs[0];
+            if (prim && typeof prim.saldo === 'number') {
+                var mAmt = Number(prim.monto) || 0;
+                saldoIni = Math.max(0, Math.round(prim.saldo + (prim.tipo === 'cargo' ? mAmt : -mAmt)));
+            }
+        }
+
+        var anio = Number(String(paquete.periodo || periodoActual()).slice(0, 4)) || 2026;
+        var tasaHon = (window.CLHonorarios && typeof window.CLHonorarios.tasa === 'function')
+            ? window.CLHonorarios.tasa(anio)
+            : 0.1525;
+
+        guardarEstadoActual(function (est) {
+            if (paquete.regimen && /^(14D3|14D3_MAYOR|14D8|14D8_MAYOR|14A)$/.test(paquete.regimen)) {
+                est.regimen = paquete.regimen;
+            }
+            if (Number(lab.impuesto) > 0 && !resultadosNominaActiva().length) {
+                est.iuscManual = String(Math.round(Number(lab.impuesto)));
+            }
+            if (Number(lab.retencion) > 0) {
+                est.honorariosBruto = Math.round(Number(lab.retencion) / (tasaHon || 0.1525));
+            }
+            if (pctCob !== null) est.tesoreria.pctVentasCobradas = pctCob;
+            if (pctPag !== null) est.tesoreria.pctComprasPagadas = pctPag;
+            if (saldoIni !== null) est.tesoreria.saldoInicialBanco = saldoIni;
+            est.paquetePymeMeta = {
+                periodo: paquete.periodo || periodoActual(),
+                generadoEn: paquete.generadoEn || '',
+                cobranzasCount: cobros.length,
+                pagosCount: pagos.length,
+                movimientosCount: movs.length
+            };
+        });
+
+        refrescarTodo();
+        D.avisar('Paquete Pyme importado: ' + (paquete.empresa && paquete.empresa.razonSocial ? paquete.empresa.razonSocial : 'Empresa') + ' (' + (paquete.periodo || periodoActual()) + ').');
+    }
+
     function refrescarTodo() {
+        var est = leerEstadoActual();
+        pintarEstadoPuentePyme(est);
         var m = calcularModelo();
         pintarEstadoCierre(m);
         pintarF29(m);
@@ -1196,11 +1320,31 @@
             });
         }
 
+        // Puente colaborativo Pyme (/app -> paquete-contador-YYYY-MM.json)
+        if ($('btn-importar-pyme') && $('file-paquete-pyme')) {
+            $('btn-importar-pyme').addEventListener('click', function () {
+                $('file-paquete-pyme').value = '';
+                $('file-paquete-pyme').click();
+            });
+            $('file-paquete-pyme').addEventListener('change', function () {
+                var f = $('file-paquete-pyme').files && $('file-paquete-pyme').files[0];
+                if (!f) return;
+                f.text().then(importarPaquetePyme).catch(function (err) {
+                    D.avisar('No se pudo leer el paquete Pyme: ' + (err && err.message ? err.message : 'error'));
+                });
+            });
+        }
+
         // Eventos cruzados desde Liquidaciones / Cliente
         document.addEventListener('demo:liquidaciones', refrescarTodo);
         document.addEventListener('demo:cliente', refrescarTodo);
+        window.addEventListener('hashchange', function () {
+            var mHash = String(location.hash || '').replace(/^#/, '');
+            if (MODULOS_VALIDOS.test(mHash) && mHash !== ui.modulo) {
+                cambiarModulo(mHash, { sinHash: true });
+            }
+        });
 
-        var modUrl = (/[?&]mod=(remuneraciones|f29|libros|balance|pnl)/.exec(location.search) || [])[1];
-        cambiarModulo(modUrl || 'remuneraciones');
+        cambiarModulo(moduloDesdeUbicacion());
     });
 })();

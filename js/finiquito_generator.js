@@ -624,34 +624,11 @@
     }
 
     // UF del último día del mes anterior al pago, para el tope de 90 UF (art. 172 inc. final).
-    // Se busca en el historial de indicators.js; si no está, se pide a mindicador.cl y se recalcula.
-    const ufCache = {};
     function ufParaTope(fechaPago) {
-        const fecha = (typeof FiniquitoCalculator !== 'undefined' && FiniquitoCalculator.ufCapDate)
-            ? FiniquitoCalculator.ufCapDate(fechaPago) : null;
-        const actual = (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) || 0;
-        if (!fecha) return actual;
-        if (ufCache[fecha]) return ufCache[fecha];
-        const series = [];
-        try {
-            if (typeof IndicatorsService !== 'undefined' && IndicatorsService.BASELINE_DATA) series.push(...IndicatorsService.BASELINE_DATA.uf);
-            const hist = JSON.parse(localStorage.getItem('econIndicatorsHistory.v1') || 'null');
-            if (hist && Array.isArray(hist.uf)) series.push(...hist.uf);
-        } catch (e) {}
-        const hit = series.find(x => x && String(x.fecha).slice(0, 10) === fecha);
-        if (hit) return (ufCache[fecha] = Number(hit.valor));
-        if (ufCache[fecha] === undefined && fecha <= new Date().toISOString().slice(0, 10)) {
-            ufCache[fecha] = 0;
-            const [y, m, d] = fecha.split('-');
-            fetch(`https://mindicador.cl/api/uf/${d}-${m}-${y}`)
-                .then(r => r.json())
-                .then(j => {
-                    const v = j && j.serie && j.serie[0] && Number(j.serie[0].valor);
-                    if (v) { ufCache[fecha] = v; updateAll(); }
-                })
-                .catch(() => {});
+        if (typeof IndicatorsService !== 'undefined' && typeof IndicatorsService.getCapUFForDate === 'function') {
+            return IndicatorsService.getCapUFForDate(fechaPago, () => updateAll()).uf;
         }
-        return actual;
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) || 0;
     }
 
     // Cotizaciones e impuesto del sueldo de los días trabajados (paga el trabajador; los retiene el empleador)

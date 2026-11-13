@@ -942,9 +942,14 @@ button[aria-label="Abrir menú"] {
     }
 }
 
-/* Barra de resultado fija en movil: deja espacio al final para que no tape el pie */
+/* Barra de resultado fija en movil: deja espacio al final y se oculta al escribir para no tapar el teclado */
 @media (max-width: 1023px) {
     body:has(#mobile-result-bar) .teal-footer-curve {
         padding-bottom: 5.5rem;
+    }
+
+    body:has(input:focus, select:focus, textarea:focus) #mobile-result-bar {
+        transform: translateY(100%) !important;
+        pointer-events: none;
     }
 }

@@ -144,7 +144,8 @@
     }
     var ULTIMO_MES_EXTENDIDO = sumarMeses(ULTIMO_MES, MESES_EXTENSION);
 
-    // Respaldo (UF del último día del mes y UTM del mes), confirmado con Previred y con la API el 12-oct-2026.
+    // Respaldo (UF del último día del mes y UTM del mes), confirmado con Previred y con la API el 13-nov-2026.
+    // Noviembre 2026: UF al 30-nov-2026 proyectada oficial SII (IPC oct +0,5%) y UTM de noviembre 2026.
     var RESPALDO = {
         '2026-01': { uf: 39706.07, utm: 69751 },
         '2026-02': { uf: 39790.63, utm: 69611 },
@@ -155,7 +156,8 @@
         '2026-07': { uf: 40844.79, utm: 71649 },
         '2026-08': { uf: 40873.77, utm: 71649 },
         '2026-09': { uf: 41057.20, utm: 71721 },
-        '2026-10': { uf: 41247.63, utm: 72151 }
+        '2026-10': { uf: 41247.63, utm: 72151 },
+        '2026-11': { uf: 41439.89, utm: 72440 }
     };
 
     var FUENTES = [

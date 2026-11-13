@@ -9,6 +9,23 @@
 
 const elements = {};
 let _previousVacProp = null; // Track previous vacation proportional value for explanation message
+let _trackCalcTimer = null;
+
+function resolveFiniquitoCapUF(paymentDateStr) {
+    const targetDate = paymentDateStr || (elements.endDate && elements.endDate.value) || new Date().toISOString().slice(0, 10);
+    if (typeof IndicatorsService !== 'undefined' && typeof IndicatorsService.getCapUFForDate === 'function') {
+        return IndicatorsService.getCapUFForDate(targetDate, () => updateCalculations()).uf;
+    }
+    return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 0;
+}
+
+function updateUfCapDisplay(ufVal) {
+    const capEl = elements.ufCapValue || document.getElementById('ufCapValue');
+    if (!capEl) return;
+    const topeUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_INDEMNIZACION : 90;
+    const valorUF = ufVal || resolveFiniquitoCapUF();
+    capEl.textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valorUF * topeUF);
+}
 
 function isFiniquitoActive() {
     const finiquitoContainer = document.getElementById('finiquito-calc-container');
@@ -61,12 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.lastUpdateDate = document.getElementById('lastUpdateDate');
 
     // Initialize UF Display and Dynamic Date
-    if (elements.ufCapValue) {
-        // UF Cap = TOPE_INDEMNIZACION * UF
-        const topeUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.TOPE_INDEMNIZACION : 90;
-        const valorUF = typeof CONSTANTS !== 'undefined' ? CONSTANTS.UF : 0;
-        elements.ufCapValue.textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valorUF * topeUF);
-    }
+    updateUfCapDisplay();
+    document.addEventListener('indicatorsUpdated', () => {
+        updateUfCapDisplay();
+        if (elements.baseSalary && elements.baseSalary.value) updateCalculations();
+    });
     if (elements.lastUpdateDate) {
         const now = new Date();
         const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -712,6 +728,9 @@ function updateCalculations() {
         const rawCause = elements.cause?.value ?? '161';
         const cause = rawCause.replace(/\D/g, '') || '161';
 
+        const capUF = resolveFiniquitoCapUF(elements.endDate.value);
+        updateUfCapDisplay(capUF);
+
         const calculator = new FiniquitoCalculator({
             startDate: elements.startDate.value, // YYYY-MM-DD
             endDate: elements.endDate.value,     // YYYY-MM-DD
@@ -730,6 +749,7 @@ function updateCalculations() {
             enableNotice: readBool(elements.enableNotice, true),
             enablePending: readBool(elements.enablePending, true),
             simulateAFC: readBool(elements.simulateAFC, true),
+            ufValue: capUF,
             holidays: window.HOLIDAYS_LIST
         });
 
@@ -1001,30 +1021,32 @@ function updateCalculations() {
 // ============================================
 
 function trackCalculation(results) {
-    // Google Analytics
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'calculate_finiquito', {
-            'event_category': 'Calculator',
-            'event_label': results.economics.isCapped ? 'capped_salary' : 'normal_salary',
-            'value': Math.round(results.total)
-        });
-    }
+    if (_trackCalcTimer) clearTimeout(_trackCalcTimer);
+    _trackCalcTimer = setTimeout(() => {
+        // Google Analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'calculate_finiquito', {
+                'event_category': 'Calculator',
+                'event_label': results.economics.isCapped ? 'capped_salary' : 'normal_salary',
+                'value': Math.round(results.total)
+            });
+        }
 
-    // Facebook Pixel
-    if (typeof fbq !== 'undefined') {
-        fbq('track', 'Calculate', {
-            content_name: 'Finiquito',
-            value: results.total,
-            currency: 'CLP'
-        });
-    }
+        // Facebook Pixel
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'Calculate', {
+                content_name: 'Finiquito',
+                value: results.total,
+                currency: 'CLP'
+            });
+        }
 
-    // Log to console for debugging (remove in production)
-    console.log('Cálculo completado:', {
-        total: results.total,
-        antiguedad: `${results.serviceTime.years} años, ${results.serviceTime.months} meses`,
-        salaryCapped: results.economics.isCapped
-    });
+        console.log('Cálculo completado:', {
+            total: results.total,
+            antiguedad: `${results.serviceTime.years} años, ${results.serviceTime.months} meses`,
+            salaryCapped: results.economics.isCapped
+        });
+    }, 1500);
 }
 
 // ============================================

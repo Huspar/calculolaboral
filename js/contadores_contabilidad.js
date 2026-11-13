@@ -43,14 +43,23 @@
     PLAN_CUENTAS.forEach(function (c) { MAPA_CUENTAS[c.codigo] = c; });
 
     function entero(v) { return Math.max(0, Math.round(Number(v) || 0)); }
+    function enteroConSigno(v) { return Math.round(Number(v) || 0); }
+
+    function lineaConSigno(cuenta, valorSigned, ladoNormal) {
+        var v = enteroConSigno(valorSigned);
+        if (ladoNormal === 'debe') {
+            return v >= 0 ? { cuenta: cuenta, debe: v, haber: 0 } : { cuenta: cuenta, debe: 0, haber: Math.abs(v) };
+        }
+        return v >= 0 ? { cuenta: cuenta, debe: 0, haber: v } : { cuenta: cuenta, debe: Math.abs(v), haber: 0 };
+    }
 
     function cuentaInfo(codigo) {
         return MAPA_CUENTAS[String(codigo)] || { codigo: String(codigo || '99999'), nombre: 'Cuenta ' + (codigo || 's/c'), tipo: 'activo', grupo: 'otro' };
     }
 
     function ultimoDiaMes(periodo) {
-        var m = /^(\d{4})-(\d{2})$/.exec(String(periodo || '2026-10'));
-        if (!m) return '2026-10-31';
+        var m = /^(\d{4})-(\d{2})$/.exec(String(periodo || '2026-11'));
+        if (!m) return '2026-11-30';
         var d = new Date(Date.UTC(Number(m[1]), Number(m[2]), 0));
         var dd = d.getUTCDate();
         return m[1] + '-' + m[2] + '-' + (dd < 10 ? '0' + dd : String(dd));
@@ -91,7 +100,7 @@
      */
     function generarAsientos(entrada) {
         var e = entrada || {};
-        var periodo = e.periodo || '2026-10';
+        var periodo = e.periodo || '2026-11';
         var iniFecha = periodo + '-01';
         var finFecha = ultimoDiaMes(periodo);
         var f29 = e.f29 || null;
@@ -130,18 +139,18 @@
         var netoVentasExentas = 0;
         var netoVentasFueraGiro = 0;
         if (ventas && f29) {
-            netoVentasAfectas = Math.max(0, entero(ventas.netoGiro) + entero(ventas.netoBoletas39) + entero(ventas.netoNotasDebito) - entero(ventas.netoNotasCredito));
+            netoVentasAfectas = entero(ventas.netoGiro) + entero(ventas.netoBoletas39) + entero(ventas.netoNotasDebito) - entero(ventas.netoNotasCredito);
             netoVentasExentas = Math.max(0, entero(ventas.exentoGiro) + entero(ventas.exentoBoletas41));
             netoVentasFueraGiro = entero(ventas.netoFueraGiro);
-            var ivaDeb = entero(f29.codigos[538]);
+            var ivaDeb = enteroConSigno(f29.codigos[538]);
             totalBrutoVentas = netoVentasAfectas + netoVentasExentas + netoVentasFueraGiro + ivaDeb;
-            if (totalBrutoVentas > 0) {
+            if (totalBrutoVentas !== 0 || netoVentasAfectas !== 0 || ivaDeb !== 0) {
                 var aVen = crearAsiento(sigId('VEN'), finFecha, 'Centralizacion libro de ventas RCV ' + periodo, 'automatico', [
-                    { cuenta: '11050', debe: totalBrutoVentas, haber: 0 },
-                    { cuenta: '51010', debe: 0, haber: netoVentasAfectas },
+                    lineaConSigno('11050', totalBrutoVentas, 'debe'),
+                    lineaConSigno('51010', netoVentasAfectas, 'haber'),
                     { cuenta: '51020', debe: 0, haber: netoVentasExentas },
                     { cuenta: '52010', debe: 0, haber: netoVentasFueraGiro },
-                    { cuenta: '21050', debe: 0, haber: ivaDeb }
+                    lineaConSigno('21050', ivaDeb, 'haber')
                 ]);
                 if (aVen) asientos.push(aVen);
             }
@@ -155,20 +164,20 @@
         var ivaNoRec = 0;
         var ivaCredMes = 0;
         if (compras && f29) {
-            costoGiroNeto = Math.max(0, entero(compras.netoGiro) + entero(compras.exentoGiro) + entero(compras.netoNotasDebito) - entero(compras.netoNotasCredito));
+            costoGiroNeto = entero(compras.netoGiro) + entero(compras.exentoGiro) + entero(compras.netoNotasDebito) - entero(compras.netoNotasCredito);
             gastoSuperNeto = entero(compras.netoSupermercado);
             activoFijoNeto = entero(compras.netoActivoFijo);
             ivaNoRec = entero(compras.ivaNoRecuperable);
-            ivaCredMes = Math.max(0, entero(f29.codigos[537]) - entero(f29.codigos[504]));
+            ivaCredMes = enteroConSigno(f29.codigos[537]) - entero(f29.codigos[504]);
             totalBrutoCompras = costoGiroNeto + gastoSuperNeto + activoFijoNeto + ivaNoRec + ivaCredMes;
-            if (totalBrutoCompras > 0) {
+            if (totalBrutoCompras !== 0 || costoGiroNeto !== 0 || ivaCredMes !== 0) {
                 var aCom = crearAsiento(sigId('COM'), finFecha, 'Centralizacion libro de compras RCV ' + periodo, 'automatico', [
-                    { cuenta: '41010', debe: costoGiroNeto, haber: 0 },
+                    lineaConSigno('41010', costoGiroNeto, 'debe'),
                     { cuenta: '42040', debe: gastoSuperNeto, haber: 0 },
                     { cuenta: '12010', debe: activoFijoNeto, haber: 0 },
                     { cuenta: '42090', debe: ivaNoRec, haber: 0 },
-                    { cuenta: '11080', debe: ivaCredMes, haber: 0 },
-                    { cuenta: '21010', debe: 0, haber: totalBrutoCompras }
+                    lineaConSigno('11080', ivaCredMes, 'debe'),
+                    lineaConSigno('21010', totalBrutoCompras, 'haber')
                 ]);
                 if (aCom) asientos.push(aCom);
             }
@@ -248,21 +257,21 @@
 
         // 7. Centralizacion Devengo F29 (compensa IVA Debito vs Credito, registra PPM y consolida pasivo F29 cod. 91)
         if (f29) {
-            var cod538 = entero(f29.codigos[538]);
+            var cod538 = enteroConSigno(f29.codigos[538]);
             var cod504 = entero(f29.codigos[504]);
             var cod89 = entero(f29.codigos[89]);
             var cod77 = entero(f29.codigos[77]);
             var cod62 = entero(f29.codigos[62]);
             var imp48EnLibro = remImp48;
             var totalPasivoF29 = cod89 + cod62 + imp48EnLibro + honRet151;
-            if (cod538 > 0 || ivaCredMes > 0 || cod504 > 0 || totalPasivoF29 > 0 || cod77 > 0) {
+            if (cod538 !== 0 || ivaCredMes !== 0 || cod504 > 0 || totalPasivoF29 > 0 || cod77 > 0) {
                 var aF29 = crearAsiento(sigId('F29'), finFecha, 'Centralizacion y determinacion F29 ' + periodo, 'automatico', [
-                    { cuenta: '21050', debe: cod538, haber: 0 },
+                    lineaConSigno('21050', cod538, 'debe'),
                     { cuenta: '11085', debe: cod77, haber: 0 },
                     { cuenta: '21040', debe: imp48EnLibro, haber: 0 },
                     { cuenta: '21060', debe: honRet151, haber: 0 },
                     { cuenta: '11090', debe: cod62, haber: 0 },
-                    { cuenta: '11080', debe: 0, haber: ivaCredMes },
+                    lineaConSigno('11080', ivaCredMes, 'haber'),
                     { cuenta: '11085', debe: 0, haber: cod504 },
                     { cuenta: '21070', debe: 0, haber: totalPasivoF29 }
                 ]);

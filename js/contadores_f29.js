@@ -287,7 +287,7 @@
         var v = e.ventas || parsearRcv([], 'ventas');
         var c = e.compras || parsearRcv([], 'compras');
         var reg = REGIMENES[e.regimen] || REGIMENES['14D3'];
-        var anio = Number(String(e.periodo || '2026-10').slice(0, 4)) || 2026;
+        var anio = Number(String(e.periodo || '2026-11').slice(0, 4)) || 2026;
 
         // Debitos F29
         var cod503 = entero(v.cantFacturasGiro);
@@ -306,7 +306,7 @@
         var cod510 = entero(v.ivaNotasCredito);
 
         var sumaDebitos = cod502 + cod717 + cod111 + cod759 + ivaBoletasElectronicas + cod513 - cod510;
-        var cod538 = Math.max(0, sumaDebitos);
+        var cod538 = sumaDebitos;
 
         // Creditos F29
         var cod519 = entero(c.cantFacturasGiro);
@@ -322,7 +322,7 @@
         var cod504 = entero(e.remanenteAnterior);
 
         var sumaCreditos = cod520 + cod762 + cod525 + cod532 - cod528 + cod504;
-        var cod537 = Math.max(0, sumaCreditos);
+        var cod537 = sumaCreditos;
 
         // Determinacion IVA: 538 - 537
         var difIva = cod538 - cod537;
@@ -338,7 +338,7 @@
 
         if (Array.isArray(e.boletasHonorarios) && e.boletasHonorarios.length && HON) {
             var rHon = HON.resumen(e.boletasHonorarios.map(function (b) {
-                return Object.assign({ fecha: String(e.periodo || '2026-10') + '-15', retiene: 'empresa' }, b);
+                return Object.assign({ fecha: String(e.periodo || '2026-11') + '-15', retiene: 'empresa' }, b);
             }));
             cod151 = rHon.retenidoEmpresa;
             honorariosBruto = rHon.bruto;
@@ -382,11 +382,14 @@
             avisos.push('Régimen 14 A seleccionado con tasa PPM en 0%: ingresa la tasa variable anual determinada para el cliente en el código 115.');
         }
         if (sumaDebitos < 0) {
-            avisos.push('Las notas de crédito emitidas superan los débitos del mes: revisa en el SII el tratamiento del exceso.');
+            avisos.push('Las notas de crédito emitidas superan los débitos del mes (cód. 538 negativo): revisa en el SII el tratamiento del exceso.');
+        }
+        if (sumaCreditos < 0) {
+            avisos.push('Las notas de crédito recibidas superan los créditos y remanente del mes (cód. 537 negativo): aumenta el IVA determinado del período.');
         }
 
         return {
-            periodo: e.periodo || '2026-10',
+            periodo: e.periodo || '2026-11',
             regimen: reg.codigo,
             regimenNombre: reg.nombre,
             codigos: {

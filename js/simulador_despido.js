@@ -10,11 +10,17 @@
 
     // Constantes Oficiales 2026
     function getUF() {
-        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41130.94;
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41322.93;
     }
-    const TOPE_IAS_UF = 90; // Art. 172 Código del Trabajo
+    function getCapUF() {
+        if (typeof IndicatorsService !== 'undefined' && typeof IndicatorsService.getCapUFForDate === 'function') {
+            return IndicatorsService.getCapUFForDate(new Date(), () => calculate()).uf;
+        }
+        return 41247.63;
+    }
+    const TOPE_IAS_UF = 90; // Art. 172 inc. final Código del Trabajo (UF último día del mes anterior)
     function getTopeIASPesos() {
-        return Math.round(TOPE_IAS_UF * getUF());
+        return Math.round(TOPE_IAS_UF * getCapUF());
     }
     const SUELDO_MINIMO_2026 = 553553;
 

@@ -9,10 +9,10 @@
 
     // Constantes e Indicadores Oficiales 2026 (SUSESO, Previred, SII, DT)
     function getUF() {
-        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41130.94;
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UF) ? CONSTANTS.UF : 41322.93;
     }
     function getUTM() {
-        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UTM) ? CONSTANTS.UTM : 72151;
+        return (typeof CONSTANTS !== 'undefined' && CONSTANTS.UTM) ? CONSTANTS.UTM : 72440;
     }
     function getIMM() {
         return (typeof CONSTANTS !== 'undefined' && CONSTANTS.IMM) ? CONSTANTS.IMM : 553553;

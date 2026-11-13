@@ -10,9 +10,9 @@
  */
 
 const CONSTANTS = {
-    // Economic Indicators (respaldo sin conexión: UF del 9-oct-2026 según el SII; la UF del día se carga en vivo)
-    UF: 41130.94,
-    UTM: 72151,
+    // Economic Indicators (respaldo sin conexión: UF del 13-nov-2026 según el SII; la UF del día se carga en vivo)
+    UF: 41322.93,
+    UTM: 72440,
     IMM: 553553,
 
     // Legal Caps (Topes Imponibles)
@@ -61,16 +61,16 @@ const CONSTANTS = {
     AFC_PLAZO_FIJO_EMPLOYER: 0.03,      // 3.0% (2.8% CIC + 0.2% FCS)
     FACTOR_HORA_EXTRA_42H: 0.0083333, // Factor DT 42h: 1,5 × 28 / (30 × 168) = 1,5 / 180
 
-    // Income Tax Brackets (Impuesto Segunda Categoría) - Octubre 2026 (Base UTM $72.151)
+    // Income Tax Brackets (Impuesto Segunda Categoría) - Noviembre 2026 (Base UTM $72.440)
     TAX_BRACKETS: [
-        { limit: 974038.50, factor: 0, rebate: 0.00 },
-        { limit: 2164530.00, factor: 0.04, rebate: 38961.54 },
-        { limit: 3607550.00, factor: 0.08, rebate: 125542.74 },
-        { limit: 5050570.00, factor: 0.135, rebate: 323957.99 },
-        { limit: 6493590.00, factor: 0.23, rebate: 803762.14 },
-        { limit: 8658120.00, factor: 0.304, rebate: 1284287.80 },
-        { limit: 22366810.00, factor: 0.35, rebate: 1682561.32 },
-        { limit: Infinity, factor: 0.4, rebate: 2800901.82 }
+        { limit: 977940.00, factor: 0, rebate: 0.00 },
+        { limit: 2173200.00, factor: 0.04, rebate: 39117.60 },
+        { limit: 3622000.00, factor: 0.08, rebate: 126045.60 },
+        { limit: 5070800.00, factor: 0.135, rebate: 325255.60 },
+        { limit: 6519600.00, factor: 0.23, rebate: 806981.60 },
+        { limit: 8692800.00, factor: 0.304, rebate: 1289432.00 },
+        { limit: 22456400.00, factor: 0.35, rebate: 1689300.80 },
+        { limit: Infinity, factor: 0.4, rebate: 2812120.80 }
     ],
 
     // Función para recalcular tramos tributarios dinámicamente si cambia la UTM

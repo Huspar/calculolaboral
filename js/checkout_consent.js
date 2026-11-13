@@ -257,6 +257,7 @@
      */
     function buyKit(product, buyer, options) {
         options = options || {};
+        track('add_to_cart', product);
         function fail(message) {
             message = message || 'No pudimos conectar con Flow. Intenta de nuevo en unos minutos.';
             if (typeof options.onError === 'function') options.onError(message);

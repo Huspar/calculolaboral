@@ -270,8 +270,8 @@
     function plantilla() {
         var data = [
             ['RUT', 'Nombre', 'Fecha ingreso', 'Fecha término', 'Sueldo base', 'Gratificación', 'Colación y movilización', 'Promedio variables', 'Días vacaciones pendientes', 'Causal'],
-            ['12.345.678-9', 'María González Pérez', '2019-03-01', '2026-10-31', 1200000, 0, 150000, 0, 7.5, '161'],
-            ['9.876.543-2', 'Pedro Soto Ramírez', '2022-07-15', '2026-10-31', 850000, 0, 100000, 60000, 0, '159'],
+            ['12.345.678-9', 'María González Pérez', '2019-03-01', '2026-11-30', 1200000, 0, 150000, 0, 7.5, '161'],
+            ['9.876.543-2', 'Pedro Soto Ramírez', '2022-07-15', '2026-11-30', 850000, 0, 100000, 60000, 0, '159'],
             ['', '', '', '', '', '', '', '', '', '']
         ];
         var ws = XLSX.utils.aoa_to_sheet(data);
@@ -285,7 +285,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         var uf = document.getElementById('uf-value');
-        var ufDef = (typeof CONSTANTS !== 'undefined' ? CONSTANTS.UF : 41130.94);
+        var ufDef = (typeof CONSTANTS !== 'undefined' ? CONSTANTS.UF : 41322.93);
         // Si el motor de liquidaciones tiene la UF del mes en curso, úsala para que ambos módulos coincidan.
         if (window.CLLiquidacionParametros && window.CLLiquidacionParametros.RESPALDO) {
             var d = new Date();

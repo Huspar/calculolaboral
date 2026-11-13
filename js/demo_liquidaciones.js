@@ -85,7 +85,7 @@
     function respaldo(periodo) {
         var P = window.CLLiquidacionParametros;
         var vig = P.vigenciaDe(periodo) || P.vigenciaEstimada(periodo);
-        var base = P.RESPALDO[periodo] || P.RESPALDO['2026-10'] || { uf: 41247.63, utm: 72151 };
+        var base = P.RESPALDO[periodo] || P.RESPALDO['2026-11'] || { uf: 41439.89, utm: 72440 };
         if (!vig) return null;
         return {
             uf: base.uf, utm: base.utm, imm: vig.imm,
