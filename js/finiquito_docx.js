@@ -115,9 +115,13 @@
             let cells = '';
             Array.from(tr.children).forEach((cell, i) => {
                 const right = hasClass(cell, 'text-right');
-                const fmt = { font: FONT_TABLE, size: 18, bold: header || total, italic: hasClass(cell, 'italic') };
-                const shade = header ? 'E7E6E6' : (total ? 'F2F2F2' : '');
-                cells += `<w:tc><w:tcPr><w:tcW w:w="${widths[i] || amountW}" w:type="dxa"/>${CELL_BORDERS}` +
+                const span = Math.max(1, parseInt(cell.getAttribute('colspan') || '1', 10) || 1);
+                const cellW = span > 1 ? (widths.slice(i, i + span).reduce((a, b) => a + b, 0) || CONTENT_W) : (widths[i] || amountW);
+                const fmt = { font: FONT_TABLE, size: 18, bold: header || total || cell.tagName.toLowerCase() === 'th', italic: hasClass(cell, 'italic') };
+                const shade = (header || cell.tagName.toLowerCase() === 'th') ? 'E7E6E6' : (total ? 'F2F2F2' : '');
+                cells += `<w:tc><w:tcPr><w:tcW w:w="${cellW}" w:type="dxa"/>` +
+                    (span > 1 ? `<w:gridSpan w:val="${span}"/>` : '') +
+                    `${CELL_BORDERS}` +
                     (shade ? `<w:shd w:val="clear" w:color="auto" w:fill="${shade}"/>` : '') +
                     '<w:vAlign w:val="center"/></w:tcPr>' +
                     paraXml(runsXml(inlineRuns(cell, fmt, [])), { align: right ? 'right' : 'left', after: 0, before: 0, line: 240 }) +
@@ -203,8 +207,15 @@
         return out;
     }
 
+    function resolveBodyEl(bodyOrHtml) {
+        if (typeof bodyOrHtml !== 'string') return bodyOrHtml;
+        const container = document.createElement('div');
+        container.innerHTML = bodyOrHtml;
+        return container;
+    }
+
     function documentXml(bodyEl) {
-        const body = blocks(bodyEl, {}, []).join('');
+        const body = blocks(resolveBodyEl(bodyEl), {}, []).join('');
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
             '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
             `<w:body>${body}<w:sectPr><w:pgSz w:w="${PAGE.w}" w:h="${PAGE.h}"/>` +
@@ -251,68 +262,20 @@
             `<dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`;
     }
 
-    // ---------- zip (método store) ----------
+    // ---------- zip (delega en CLKitZipEngine) ----------
 
-    const CRC_TABLE = (() => {
-        const t = new Uint32Array(256);
-        for (let n = 0; n < 256; n++) {
-            let c = n;
-            for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
-            t[n] = c >>> 0;
-        }
-        return t;
-    })();
-
-    function crc32(bytes) {
-        let c = 0xFFFFFFFF;
-        for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
-        return (c ^ 0xFFFFFFFF) >>> 0;
+    function getZipEngine() {
+        if (root.CLKitZipEngine) return root.CLKitZipEngine;
+        if (typeof require === 'function') return require('./kit_zip_engine.js');
+        throw new Error('Falta CLKitZipEngine (js/kit_zip_engine.js).');
     }
 
     function zip(files) {
         const enc = new TextEncoder();
-        const chunks = [];
-        const central = [];
-        let offset = 0;
-        files.forEach(([name, text]) => {
-            const nameB = enc.encode(name);
-            const data = enc.encode(text);
-            const crc = crc32(data);
-            const local = new DataView(new ArrayBuffer(30));
-            local.setUint32(0, 0x04034b50, true);
-            local.setUint16(4, 20, true);
-            local.setUint16(6, 0x0800, true); // nombres en UTF-8
-            local.setUint32(14, crc, true);
-            local.setUint32(18, data.length, true);
-            local.setUint32(22, data.length, true);
-            local.setUint16(26, nameB.length, true);
-            chunks.push(new Uint8Array(local.buffer), nameB, data);
-
-            const cen = new DataView(new ArrayBuffer(46));
-            cen.setUint32(0, 0x02014b50, true);
-            cen.setUint16(4, 20, true);
-            cen.setUint16(6, 20, true);
-            cen.setUint16(8, 0x0800, true);
-            cen.setUint32(16, crc, true);
-            cen.setUint32(20, data.length, true);
-            cen.setUint32(24, data.length, true);
-            cen.setUint16(28, nameB.length, true);
-            cen.setUint32(42, offset, true);
-            central.push(new Uint8Array(cen.buffer), nameB);
-            offset += 30 + nameB.length + data.length;
-        });
-        const cenSize = central.reduce((s, c) => s + c.length, 0);
-        const end = new DataView(new ArrayBuffer(22));
-        end.setUint32(0, 0x06054b50, true);
-        end.setUint16(8, files.length, true);
-        end.setUint16(10, files.length, true);
-        end.setUint32(12, cenSize, true);
-        end.setUint32(16, offset, true);
-        const all = chunks.concat(central, [new Uint8Array(end.buffer)]);
-        const out = new Uint8Array(all.reduce((s, c) => s + c.length, 0));
-        let p = 0;
-        all.forEach(c => { out.set(c, p); p += c.length; });
-        return out;
+        return getZipEngine().buildZipBytes(files.map(([name, text]) => ({
+            name: name,
+            data: enc.encode(text)
+        })));
     }
 
     function build(bodyEl, title) {
@@ -338,4 +301,4 @@
         toBlob: (bodyEl, title) => new Blob([build(bodyEl, title)], { type: root.FiniquitoDocx.MIME }),
         toBase64: (bodyEl, title) => toBase64(build(bodyEl, title))
     };
-})(window);
+})(typeof window !== 'undefined' ? window : globalThis);

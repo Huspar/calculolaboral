@@ -2,90 +2,20 @@
 (function (root) {
     'use strict';
 
-    var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-
-    function esc(s) {
-        return String(s == null ? '' : s)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
+    function getZipEngine() {
+        var eng = root.CLKitZipEngine || (typeof require === 'function' ? require('./kit_zip_engine.js') : null);
+        if (!eng) throw new Error('Falta CLKitZipEngine (js/kit_zip_engine.js).');
+        return eng;
     }
 
-    function fechaHoyLarga() {
-        var d = new Date();
-        return d.getDate() + ' de ' + MESES[d.getMonth()] + ' de ' + d.getFullYear();
-    }
-
-    function or(val, fallback) {
-        var s = String(val == null ? '' : val).trim();
-        return s || fallback;
-    }
-
-    function slugRut(rut) {
-        return String(rut || 'empresa').replace(/[^0-9kK]/g, '').toUpperCase() || 'empresa';
-    }
-
-    // Mini empaquetador ZIP (Store sin compresión) para juntar los 6 .docx personalizados en un solo .zip
-    var CRC_TAB = (function () {
-        var t = new Uint32Array(256);
-        for (var i = 0; i < 256; i++) {
-            var c = i;
-            for (var k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
-            t[i] = c >>> 0;
-        }
-        return t;
-    })();
-
-    function crc32(u8) {
-        var c = 0xffffffff;
-        for (var i = 0; i < u8.length; i++) c = CRC_TAB[(c ^ u8[i]) & 0xff] ^ (c >>> 8);
-        return (c ^ 0xffffffff) >>> 0;
-    }
+    var Zip = getZipEngine();
+    var esc = Zip.escXml;
+    var fechaHoyLarga = Zip.fechaHoyLarga;
+    var or = Zip.or;
+    var slugRut = Zip.slugRut;
 
     function buildZip(entries) {
-        var enc = new TextEncoder();
-        var locals = [], centrals = [], offset = 0;
-        for (var i = 0; i < entries.length; i++) {
-            var nameBytes = enc.encode(entries[i].name);
-            var data = entries[i].data;
-            var crc = crc32(data);
-            var lfh = new Uint8Array(30 + nameBytes.length);
-            var lv = new DataView(lfh.buffer);
-            lv.setUint32(0, 0x04034b50, true);
-            lv.setUint16(4, 20, true);
-            lv.setUint16(6, 0x0800, true);
-            lv.setUint32(14, crc, true);
-            lv.setUint32(18, data.length, true);
-            lv.setUint32(22, data.length, true);
-            lv.setUint16(26, nameBytes.length, true);
-            lfh.set(nameBytes, 30);
-            locals.push(lfh, data);
-
-            var cdh = new Uint8Array(46 + nameBytes.length);
-            var cv = new DataView(cdh.buffer);
-            cv.setUint32(0, 0x02014b50, true);
-            cv.setUint16(4, 20, true);
-            cv.setUint16(6, 20, true);
-            cv.setUint16(8, 0x0800, true);
-            cv.setUint32(16, crc, true);
-            cv.setUint32(20, data.length, true);
-            cv.setUint32(24, data.length, true);
-            cv.setUint16(28, nameBytes.length, true);
-            cv.setUint32(42, offset, true);
-            cdh.set(nameBytes, 46);
-            centrals.push(cdh);
-            offset += lfh.length + data.length;
-        }
-        var cSize = centrals.reduce(function (a, b) { return a + b.length; }, 0);
-        var eocd = new Uint8Array(22);
-        var ev = new DataView(eocd.buffer);
-        ev.setUint32(0, 0x06054b50, true);
-        ev.setUint16(8, entries.length, true);
-        ev.setUint16(10, entries.length, true);
-        ev.setUint32(12, cSize, true);
-        ev.setUint32(16, offset, true);
-        return new Blob(locals.concat(centrals, [eocd]), { type: 'application/zip' });
+        return new Blob([Zip.buildZipBytes(entries)], { type: 'application/zip' });
     }
 
     function headerDoc(titulo, subtitulo) {
@@ -311,4 +241,4 @@
         exportarTodosZip: exportarTodosZip,
         buildZip: buildZip
     };
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : globalThis);
