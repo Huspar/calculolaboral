@@ -1056,6 +1056,38 @@ window.addEventListener('load', function () {
                             <span class="block mt-1.5">¿Régimen de casa particular? <a href="finiquito-trabajadora-casa-particular-chile" class="text-[#00382E] font-bold underline hover:text-emerald-700">Calcula aquí la indemnización AFP a todo evento</a>.</span>
                         </div>
 
+                        <!-- Itaú Cuenta Corriente (cuando total finiquito >= $800.000) -->
+                        <div class="mt-4 p-4 bg-amber-50/50 border border-amber-200/70 rounded-2xl space-y-2 no-print" data-itau-renta="finiquito" data-placement="finiquito_sidebar">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-amber-900 uppercase tracking-wider">Publicidad · Banco Itaú</span>
+                                <span class="text-xs font-semibold text-amber-800">$0 Mantención</span>
+                            </div>
+                            <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="finiquito_sidebar_img" class="block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-amber-200/70 bg-white hover:shadow-md transition-shadow">
+                                <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú: ábrela en minutos, $0 mantención" width="300" height="250" class="mx-auto block w-full h-auto" loading="lazy" decoding="async">
+                            </a>
+                            <p class="text-xs font-bold text-slate-900">¿Dónde recibirás el pago de tu finiquito?</p>
+                            <p class="text-sm text-slate-600 leading-snug">Abre tu Cuenta Corriente Itaú 100% online, con mantención mensual $0. Requisitos de Itaú: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000.</p>
+                            <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="finiquito_sidebar_btn" class="btn-yellow-pill w-full !py-2 !px-3 !text-xs text-center justify-center">
+                                <span>Ver requisitos y abrir cuenta</span>
+                            </a>
+                        </div>
+
+                        <!-- Abakos Emergencias Fallback (cuando total finiquito < $800.000) -->
+                        <div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 no-print" data-abakos-fallback="finiquito" data-partner="abakos_emergencias" data-placement="finiquito_sidebar_fallback" style="display: none;">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-[#00382E] uppercase tracking-wider">Publicidad</span>
+                                <span class="text-xs font-semibold text-slate-600">Abakos Chile</span>
+                            </div>
+                            <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="finiquito_sidebar_fallback_img" class="block max-w-[270px] mx-auto overflow-hidden rounded-xl border border-slate-200 bg-white hover:shadow-md transition-shadow">
+                                <img src="/assets/abakos-emergencias-app.jpg" alt="Abakos Chile: préstamos online para contingencias" width="270" height="270" class="mx-auto block w-full h-auto" loading="lazy" decoding="async">
+                            </a>
+                            <p class="text-xs font-bold text-slate-900">¿Esperando el pago de tu finiquito?</p>
+                            <p class="text-sm text-slate-600 leading-snug">Tu empleador dispone de hasta 10 días hábiles para pagarlo. Si necesitas liquidez antes, simula un préstamo 100% online sin cobros previos.</p>
+                            <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="finiquito_sidebar_fallback_btn" class="btn-dark-pill w-full !py-2 !px-3 !text-xs text-center justify-center" style="background-color: #00382E !important; color: #ffffff !important;">
+                                <span style="color: #ffffff !important;">Simular préstamo online</span>
+                            </a>
+                        </div>
+
                     </div>
 
                 </div>
@@ -1540,7 +1572,7 @@ window.addEventListener('load', function () {
     <script src="/js/constants.js?v=2.2.0"></script>
     <script src="/js/indicators.js?v=2.10.0"></script>
     <script src="/js/print_brand.js?v=1.2.0"></script>
-    <script src="/js/pdf_generator.js?v=3.2.4"></script>
+    <script src="/js/pdf_generator.js?v=3.3.0"></script>
     <script src="/js/validation.js?v=2.9.0"></script>
     <script src="/js/logic.js?v=2.1.0"></script>
     <script src="/js/ui.js?v=3.1.0"></script>
@@ -1681,5 +1713,7 @@ window.addEventListener('load', function () {
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
     <script src="/js/lead_abogado.js?v=1.0.2" defer></script>
+    <script src="/js/itau_renta.js?v=1.3.0" defer></script>
+    <script src="/js/ad_tracker.js?v=1.1.0" defer></script>
 </body>
 </html>

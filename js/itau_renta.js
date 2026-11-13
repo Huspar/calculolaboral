@@ -21,7 +21,8 @@
         liquido: { id: 'headerNetSalary', minimo: 800000, ocultarEnCero: false },
         base: { id: 'he-sueldo-base', minimo: 1000000, ocultarEnCero: true },
         impuesto: { id: 'iu-total', minimo: 1, ocultarEnCero: true },
-        valorhora: { id: 'vh-sueldo', minimo: 1000000, ocultarEnCero: true }
+        valorhora: { id: 'vh-sueldo', minimo: 1000000, ocultarEnCero: true },
+        finiquito: { id: 'totalAmount', minimo: 800000, ocultarEnCero: false }
     };
 
     function valor(el) {
@@ -29,23 +30,43 @@
         return parseInt(String(t).replace(/[^\d]/g, ''), 10) || 0;
     }
 
+    function buscarFallback(bloque) {
+        var sel = bloque.getAttribute('data-itau-fallback');
+        if (sel) return document.querySelector(sel);
+        var sib = bloque.nextElementSibling;
+        return (sib && sib.hasAttribute('data-abakos-fallback')) ? sib : null;
+    }
+
     function enlazar(bloque) {
-        var f = FUENTES[bloque.getAttribute('data-itau-renta') || 'liquido'];
+        var fuenteKey = bloque.getAttribute('data-itau-renta') || 'liquido';
+        var f = FUENTES[fuenteKey];
         var origen = f && document.getElementById(f.id);
         if (!origen) return;
         var monto = bloque.querySelector('[data-itau-monto]');
+        var fallback = buscarFallback(bloque);
+        var placement = bloque.getAttribute('data-placement') || fuenteKey;
         var visto = false;
+        var vistoFallback = false;
         function actualizar() {
             var v = valor(origen);
             var ocultar = (v > 0 || f.ocultarEnCero) && v < f.minimo;
             bloque.style.display = ocultar ? 'none' : '';
+            if (fallback) fallback.style.display = ocultar ? '' : 'none';
             if (monto && v) monto.textContent = '$' + v.toLocaleString('es-CL');
-            if (!ocultar && !visto && typeof window.gtag === 'function') {
-                visto = true;
-                window.gtag('event', 'ver_anuncio', {
-                    ad_name: 'itau_cuenta_corriente',
-                    ad_placement: bloque.getAttribute('data-placement') || bloque.getAttribute('data-itau-renta') || 'liquido'
-                });
+            if (typeof window.gtag === 'function') {
+                if (!ocultar && !visto) {
+                    visto = true;
+                    window.gtag('event', 'ver_anuncio', {
+                        ad_name: 'itau_cuenta_corriente',
+                        ad_placement: placement
+                    });
+                } else if (ocultar && fallback && !vistoFallback) {
+                    vistoFallback = true;
+                    window.gtag('event', 'ver_anuncio', {
+                        ad_name: fallback.getAttribute('data-partner') || 'abakos_prestamos',
+                        ad_placement: fallback.getAttribute('data-placement') || (placement + '_fallback')
+                    });
+                }
             }
         }
         if (origen.tagName === 'INPUT') {

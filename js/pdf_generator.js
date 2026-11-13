@@ -61,13 +61,68 @@
             '.cl-pdfmail__skip{display:block;width:100%;margin-top:8px;border:0;background:none;padding:8px;font-size:13px;color:#475569;text-decoration:underline;cursor:pointer}' +
             '.cl-pdfmail__err{color:#be123c;font-size:12px;margin:0 0 10px}' +
             '.cl-pdfmail__err[hidden]{display:none}' +
-            '.cl-pdfmail__hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}';
+            '.cl-pdfmail__hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}' +
+            '.cl-pdfnext{position:fixed;right:16px;bottom:16px;z-index:90;max-width:370px;width:calc(100% - 32px);background:#fff;border:1px solid #cbd5e1;border-top:3px solid #00382E;border-radius:14px;padding:16px 18px;box-shadow:0 12px 32px rgba(15,23,42,.16);color:#0f172a;font-family:inherit}' +
+            '.cl-pdfnext__x{position:absolute;top:8px;right:10px;border:0;background:none;font-size:22px;line-height:1;color:#64748b;cursor:pointer;padding:2px 6px}' +
+            '.cl-pdfnext__k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#0F5E4F;margin:0 0 4px}' +
+            '.cl-pdfnext h3{font-size:16px;font-weight:800;color:#00382E;margin:0 22px 6px 0;line-height:1.25}' +
+            '.cl-pdfnext p{font-size:13px;line-height:1.45;color:#475569;margin:0 0 12px}' +
+            '.cl-pdfnext__cta{display:block;text-align:center;text-decoration:none;border-radius:999px;padding:10px 14px;font-size:13px;font-weight:700;background:#00382E;color:#fff!important}' +
+            '.cl-pdfnext__cta:hover{background:#0F5E4F}' +
+            '.cl-pdfnext__sec{display:block;margin-top:8px;font-size:12.5px;font-weight:600;color:#00382E;text-decoration:underline;text-align:center}' +
+            '.cl-pdfnext__ad{margin-top:12px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:12px;line-height:1.4;color:#475569}' +
+            '.cl-pdfnext__ad a{color:#00382E;font-weight:700;text-decoration:underline}';
         document.head.appendChild(st);
+    }
+
+    function showPostDownloadCard(calculatorType) {
+        injectModalStyles();
+        var prev = document.getElementById('cl-pdfnext');
+        if (prev) prev.remove();
+        var esSueldo = calculatorType === 'sueldo_liquido';
+        var montoNum = parseCleanNumber(montoActual(calculatorType));
+        var usarAbakos = montoNum > 0 && montoNum < 800000;
+
+        var adLink = usarAbakos
+            ? {
+                href: esSueldo ? '/abakos' : '/abakos-emergencias',
+                partner: esSueldo ? 'abakos_prestamos' : 'abakos_emergencias',
+                label: 'Publicidad · Abakos Chile: ',
+                cta: esSueldo ? 'Simula un préstamo online sin cobros previos' : 'Simula liquidez online mientras esperas el pago'
+            }
+            : {
+                href: '/itau-informe',
+                partner: 'itau_cuenta_corriente',
+                label: 'Publicidad · Banco Itaú: ',
+                cta: esSueldo ? 'Cuenta corriente $0 mantención para recibir tu sueldo' : 'Recibe tu finiquito en cuenta corriente $0 mantención'
+            };
+
+        var card = document.createElement('aside');
+        card.id = 'cl-pdfnext';
+        card.className = 'cl-pdfnext no-print';
+        card.setAttribute('aria-label', 'Siguiente paso');
+        card.innerHTML =
+            '<button type="button" class="cl-pdfnext__x" aria-label="Cerrar">&times;</button>' +
+            '<p class="cl-pdfnext__k">Siguiente paso</p>' +
+            '<h3>' + (esSueldo ? '¿Necesitas la liquidación formal?' : '¿Preparas el finiquito para firma?') + '</h3>' +
+            '<p>' + (esSueldo
+                ? 'Emite el comprobante de sueldo completo en PDF con haberes, AFP, salud e impuesto listo para firma o respaldo.'
+                : 'Genera el borrador completo de finiquito para revisar y llevar a firma ante notario o ministro de fe.') + '</p>' +
+            '<a class="cl-pdfnext__cta" href="' + (esSueldo ? '/generador-liquidacion-sueldo' : '/generador-finiquito-chile') + '" style="color:#ffffff !important;">' +
+                (esSueldo ? 'Crear liquidación de sueldo ($2.990)' : 'Generar finiquito para notaría ($12.990)') +
+            '</a>' +
+            (esSueldo ? '' : '<a class="cl-pdfnext__sec" href="/pack-cartas-despido-chile">¿También necesitas la carta de despido? Pack ($9.990)</a>') +
+            '<div class="cl-pdfnext__ad">' + adLink.label +
+                '<a href="' + adLink.href + '" target="_blank" rel="sponsored nofollow noopener" data-partner="' + adLink.partner + '" data-placement="pdf_post_download">' + adLink.cta + '</a>.' +
+            '</div>';
+        document.body.appendChild(card);
+        card.querySelector('.cl-pdfnext__x').addEventListener('click', function () { card.remove(); });
+        medir('ver_siguiente_paso_pdf', { calculadora: calculatorType });
     }
 
     function askEmailThenPrint(calculatorType) {
         if (lsGet('cl_pdf_correo') === '1' || ssGet('cl_pdf_sin_correo') === '1') {
-            generatePDFReport();
+            generatePDFReport(calculatorType);
             return;
         }
         injectModalStyles();
@@ -111,7 +166,7 @@
         function onKey(e) { if (e.key === 'Escape') cerrar(); }
         function imprimir() {
             cerrar();
-            generatePDFReport();
+            generatePDFReport(calculatorType);
         }
         function mostrarError(msg) { err.textContent = msg; err.hidden = false; }
 
@@ -190,7 +245,8 @@
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'click_download_pdf_report', {
                     'event_category': 'PDF_Report',
-                    'event_label': calculatorType + '_report'
+                    'event_label': calculatorType + '_report',
+                    'calculator': calculatorType
                 });
             }
 
@@ -251,7 +307,7 @@
     // 6. HELPER: SAVE EMAIL LEAD TO LOCAL STORAGE DATABASE (REMOVED)
 
     // 7. MAIN FUNCTION: GENERATE PRINT REPORT AND TRIGGER WINDOW.PRINT
-    function generatePDFReport() {
+    function generatePDFReport(calculatorType) {
         const isSueldoActive = document.getElementById('sueldo-calc-container') && !document.getElementById('sueldo-calc-container').classList.contains('hidden');
         
         // Remove existing print section
@@ -296,12 +352,23 @@
                 if (!img.complete || !img.naturalWidth) img.parentNode.innerHTML = sponsorFallbackHTML();
             });
         }))).then(() => setTimeout(() => {
-            window.print();
-            // Clean up print section after dialog close
-            setTimeout(() => {
+            const calcType = calculatorType || (isSueldoActive ? 'sueldo_liquido' : 'finiquito');
+            let postShown = false;
+            let fallbackTimer = null;
+            function finishPrint() {
+                window.removeEventListener('afterprint', finishPrint);
+                if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
                 const sec = document.getElementById('print-section');
                 if (sec) sec.remove();
-            }, 1000);
+                if (!postShown) {
+                    postShown = true;
+                    showPostDownloadCard(calcType);
+                }
+            }
+            window.addEventListener('afterprint', finishPrint, { once: true });
+            window.print();
+            // Fallback por si el navegador móvil no dispara afterprint tras cerrar el diálogo
+            fallbackTimer = setTimeout(finishPrint, 2000);
         }, 100));
     }
 

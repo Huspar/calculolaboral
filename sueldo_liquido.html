@@ -1158,6 +1158,26 @@ window.addEventListener('load', function () {
                             </a>
                         </div>
 
+                        <!-- Abakos Fallback (cuando sueldo líquido < $800.000) -->
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2" data-abakos-fallback="liquido" data-partner="abakos_prestamos" data-placement="sueldo_liquido_sidebar_fallback" style="display: none;">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-[#00382E] uppercase tracking-wider">Publicidad</span>
+                                <span class="text-xs font-semibold text-slate-600">Abakos Chile</span>
+                            </div>
+                            <a href="/abakos" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_prestamos" data-placement="sueldo_liquido_sidebar_fallback_img" class="block max-w-[300px] mx-auto overflow-hidden rounded-xl border border-slate-200 bg-white hover:shadow-md transition-shadow">
+                                <img src="/assets/abakos-prestamos-rapidos.jpg" alt="Abakos: préstamos online sin pagos adelantados en Chile" width="300" height="250" class="mx-auto block w-full h-auto" loading="lazy" decoding="async">
+                            </a>
+                            <p class="text-xs font-bold text-slate-900">
+                                ¿Necesitas liquidez para cubrir un gasto este mes?
+                            </p>
+                            <p class="text-sm text-slate-600 leading-snug">
+                                Simula un préstamo 100% online con Abakos Chile, sin cobros previos ni pagos adelantados y con depósito directo en tu cuenta.
+                            </p>
+                            <a href="/abakos" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_prestamos" data-placement="sueldo_liquido_sidebar_fallback_btn" class="btn-dark-pill w-full !py-2 !px-3 !text-xs text-center justify-center" style="background-color: #00382E !important; color: #ffffff !important;">
+                                <span style="color: #ffffff !important;">Simular préstamo online</span>
+                            </a>
+                        </div>
+
                     </div>
 
                 </div>
@@ -1871,7 +1891,7 @@ window.addEventListener('load', function () {
     <script src="/js/salary_logic.js?v=2.2.0"></script>
     <script src="/js/salary_ui.js?v=3.2.2"></script>
     <script src="/js/print_brand.js?v=1.2.0"></script>
-    <script src="/js/pdf_generator.js?v=3.2.4"></script>
+    <script src="/js/pdf_generator.js?v=3.3.0"></script>
 
     <script>
         function shareSueldoWhatsApp() {
@@ -1950,6 +1970,7 @@ window.addEventListener('load', function () {
     <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
-<script src="/js/itau_renta.js?v=1.2.0" defer></script>
+<script src="/js/itau_renta.js?v=1.3.0" defer></script>
+<script src="/js/ad_tracker.js?v=1.1.0" defer></script>
 </body>
 </html>

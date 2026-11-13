@@ -401,27 +401,38 @@ module.exports = async (req, res) => {
             const esSueldo = body.producto === 'sueldo_liquido';
             const saludo = cleanName && cleanName !== 'Lector' ? `Hola ${safeName},` : 'Hola,';
             const montoTxt = cleanMonto && cleanMonto !== '0' ? '$' + cleanMonto : '';
+            const montoNum = parseInt(String(cleanMonto || '').replace(/[^\d]/g, ''), 10) || 0;
+            const mostrarSoloAbakos = montoNum > 0 && montoNum < 800000;
             userSubject = esSueldo ? 'Tu cálculo de sueldo líquido - Cálculo Laboral' : 'Tu cálculo de finiquito - Cálculo Laboral';
             const userIntro = `${saludo} aquí tienes una copia del resultado que calculaste en calculolaboral.cl. El informe en PDF lo descargaste desde la página.`;
             const resultado = montoTxt
                 ? `<p style="margin: 0 0 12px;"><strong>${esSueldo ? 'Sueldo líquido estimado' : 'Total estimado del finiquito'}:</strong> <span style="font-size: 18px; font-weight: bold; color: #00382E;">${montoTxt} CLP</span></p>`
                 : '';
             const siguiente = esSueldo
-                ? `<li><a href="https://calculolaboral.cl/liquidacion-de-sueldo" style="color: #00382E; font-weight: 600;">Tu liquidación de sueldo, rubro por rubro</a>, para comparar cada descuento con tu liquidación real.</li>
+                ? `<li><a href="https://calculolaboral.cl/generador-liquidacion-sueldo" style="color: #00382E; font-weight: 600;">Generador de Liquidación de Sueldo ($2.990)</a>: arma el documento listo para imprimir con todos tus haberes y descuentos.</li>
+                   <li><a href="https://calculolaboral.cl/liquidacion-de-sueldo" style="color: #00382E; font-weight: 600;">Tu liquidación de sueldo, rubro por rubro</a>, para comparar cada descuento con tu liquidación real.</li>
                    <li><a href="https://calculolaboral.cl/calculadora-horas-extras" style="color: #00382E; font-weight: 600;">Calculadora de horas extras</a>, si trabajas más de tu jornada.</li>`
-                : `<li><a href="https://calculolaboral.cl/finiquito-por-renuncia-voluntaria" style="color: #00382E; font-weight: 600;">Finiquito por renuncia voluntaria</a>: qué te corresponde y qué no.</li>
-                   <li><a href="https://calculolaboral.cl/que-hacer-si-no-te-pagan-el-finiquito" style="color: #00382E; font-weight: 600;">Qué hacer si no te pagan el finiquito</a>.</li>`;
+                : `<li><a href="https://calculolaboral.cl/generador-finiquito-chile" style="color: #00382E; font-weight: 600;">Generador de Finiquito para Notaría ($12.990)</a>: borrador completo para revisar o llevar a firma ante ministro de fe.</li>
+                   <li><a href="https://calculolaboral.cl/pack-cartas-despido-chile" style="color: #00382E; font-weight: 600;">Pack de Cartas de Despido ($9.990)</a>, si necesitas redactar el aviso de término de contrato.</li>
+                   <li><a href="https://calculolaboral.cl/finiquito-por-renuncia-voluntaria" style="color: #00382E; font-weight: 600;">Finiquito por renuncia voluntaria</a> y <a href="https://calculolaboral.cl/que-hacer-si-no-te-pagan-el-finiquito" style="color: #00382E; font-weight: 600;">qué hacer si no te pagan el finiquito</a>.</li>`;
+            const anuncioHtml = mostrarSoloAbakos
+                ? `<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px; color: #334155;">
+                    <span style="font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Publicidad · Abakos Chile</span><br>
+                    ${esSueldo ? '¿Necesitas liquidez para cubrir un gasto imprevisto este mes?' : 'Tu empleador tiene hasta 10 días hábiles para pagar tu finiquito.'} Simula un préstamo 100% online, sin cobros previos ni pagos adelantados, con depósito directo en tu cuenta.<br>
+                    <a href="https://calculolaboral.cl/${esSueldo ? 'abakos' : 'abakos-emergencias'}" style="color: #00382E; font-weight: bold;">Simular préstamo online en Abakos</a>
+                </div>`
+                : `<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px; color: #334155;">
+                    <span style="font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Publicidad · Banco Itaú</span><br>
+                    ${esSueldo ? '¿Dónde recibirás tu sueldo?' : '¿Dónde recibirás tu pago?'} Abre una Cuenta Corriente Itaú 100% online, con mantención mensual $0. Requisitos de Itaú: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000. Sujeto a evaluación de antecedentes comerciales.<br>
+                    <a href="https://calculolaboral.cl/itau-correo" style="color: #00382E; font-weight: bold;">Ver la cuenta corriente</a>${esSueldo ? '' : ' · ¿Necesitas liquidez mientras esperas el pago? <a href="https://calculolaboral.cl/abakos-emergencias" style="color: #00382E; font-weight: 600;">Simula con Abakos</a>'}
+                </div>`;
             const userBody = `
                 ${resultado}
                 <p style="margin: 0 0 12px; font-size: 13px; color: #475569;">Es una estimación referencial. El valor definitivo depende de tus antecedentes, de tu contrato y de lo que acuerdes con tu empleador.</p>
                 ${esSueldo ? '' : '<p style="margin: 0 0 12px; font-size: 13px; color: #475569;">Recuerda que, para tener poder liberatorio, el finiquito debe firmarse ante un ministro de fe (notario, Inspección del Trabajo u otro que indica el Art. 177 del Código del Trabajo).</p>'}
-                <p style="margin: 14px 0 6px;"><strong>Para seguir:</strong></p>
+                <p style="margin: 14px 0 6px;"><strong>Siguientes pasos útiles:</strong></p>
                 <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">${siguiente}</ul>
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 14px 0; font-size: 12.5px; color: #334155;">
-                    <span style="font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Publicidad · Banco Itaú</span><br>
-                    ${esSueldo ? '¿Dónde recibirás tu sueldo?' : '¿Dónde recibirás tu pago?'} Abre una Cuenta Corriente Itaú 100% online, con mantención mensual $0. Requisitos de Itaú: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000. Sujeto a evaluación de antecedentes comerciales.<br>
-                    <a href="https://calculolaboral.cl/itau-correo" style="color: #00382E; font-weight: bold;">Ver la cuenta corriente</a>
-                </div>
+                ${anuncioHtml}
                 <p style="margin: 12px 0 0; font-size: 12px; color: #475569;">Recibes este correo porque pediste una copia del cálculo en calculolaboral.cl. No te enviaremos otros mensajes por este motivo.</p>
             `;
             userHtml = buildEmailHtml({ title: esSueldo ? 'Tu cálculo de sueldo líquido' : 'Tu cálculo de finiquito', intro: userIntro, body: userBody });

@@ -14,6 +14,8 @@
     { "source": "/como-leer-liquidacion-de-sueldo", "destination": "/liquidacion-de-sueldo", "permanent": true },
     { "source": "/ley-40-horas-chile-2026-tabla-horarios-42h-y-sueldo", "destination": "/ley-40-horas-chile-2026", "permanent": true },
     { "source": "/asistente-pyme", "destination": "/app", "permanent": true },
+    { "source": "/costo_empleador.html", "destination": "/calculadora-costo-empresa-chile", "permanent": true },
+    { "source": "/costo_empleador", "destination": "/calculadora-costo-empresa-chile", "permanent": true },
     { "source": "/:page.html", "destination": "/:page", "permanent": true }
   ],
   "rewrites": [
