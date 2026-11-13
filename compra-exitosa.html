@@ -899,9 +899,9 @@ body { overflow-x: hidden; }
                 },
                 despido: {
                     monto: 9990, nombre: 'Pack Cartas de Despido por Causal 2026', asunto: '"Tu Pack Cartas de Despido por Causal 2026"',
-                    archivo: 'Pack_Cartas_Despido_por_Causal_Chile_2026.zip', meta: '22 documentos Word editables',
+                    archivo: 'Pack_Cartas_Despido_por_Causal_Chile_2026.zip', meta: '22 Word + Excel Art. 162',
                     inicio: '00_LEEME_Guia_de_Uso_y_Plazos.docx',
-                    detalle: 'Te enviamos a tu correo los <strong>22 documentos Word editables</strong>. También puedes descargarlos ahora.'
+                    detalle: 'Te enviamos a tu correo los <strong>22 Word editables y el Excel de Control Art. 162</strong>. También puedes personalizarlos con tus datos o descargarlos ahora.'
                 },
                 datos: {
                     monto: 29990, nombre: 'Kit Ley 21.719 Protección de Datos 2026', asunto: '"Tu Kit Ley 21.719 Protección de Datos 2026"',
@@ -957,6 +957,10 @@ body { overflow-x: hidden; }
             } else if (q.get('p') === 'blindaje' && $('btn-personalizar-kit')) {
                 $('btn-personalizar-kit').href = '/personalizar-kit-blindaje?' + qs;
                 $('lbl-personalizar-kit').textContent = 'Personalizar los 21 Word + Excel con tus datos ahora';
+                $('btn-personalizar-kit').classList.remove('hidden');
+            } else if (q.get('p') === 'despido' && $('btn-personalizar-kit')) {
+                $('btn-personalizar-kit').href = '/personalizar-kit-despido?' + qs;
+                $('lbl-personalizar-kit').textContent = 'Personalizar las 22 cartas Word + Excel con tus datos';
                 $('btn-personalizar-kit').classList.remove('hidden');
             }
 

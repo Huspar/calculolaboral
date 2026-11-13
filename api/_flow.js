@@ -62,11 +62,12 @@ const PRODUCTS = {
         filename: 'Pack_Cartas_Despido_por_Causal_Chile_2026.zip',
         zip: () => require('./assets/pack-despido-base64.js'),
         page: '/pack-cartas-despido-chile',
-        intro: '22 documentos en Word (.docx editable): cartas de término por causal y documentos de apoyo.',
+        personalizer: '/personalizar-kit-despido',
+        intro: '22 documentos en Word (.docx editable) más Excel de Control de Plazos Art. 162 y Ley Bustos (4 hojas).',
         steps: [
-            'Descomprime el archivo.',
-            'Abre primero <strong>00_LEEME_Guia_de_Uso_y_Plazos.docx</strong>: te indica qué carta usar según la causal.',
-            'Completa los campos entre corchetes y recuerda el plazo de 3 días hábiles para enviar la carta.'
+            'Descomprime el archivo o usa el personalizador web con los datos de tu empresa antes de descargar.',
+            'Abre primero <strong>00_LEEME_Guia_de_Uso_y_Plazos.docx</strong> y el Excel <strong>22_Control_Despidos_Plazos_Art162_y_Cotizaciones_2026.xlsx</strong>.',
+            'Completa los hechos concretos y recuerda el plazo de 3 días hábiles para enviar la carta (6 en caso fortuito).'
         ]
     },
     // Generadores: el documento se arma en el navegador con los datos del cliente;
