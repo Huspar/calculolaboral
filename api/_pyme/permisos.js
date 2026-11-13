@@ -27,7 +27,7 @@ const MATRIZ = {
 // Ruta y método → acción. Lo que no está aquí lo puede usar cualquier persona con sesión (su propia cuenta, avisos, opiniones).
 const RUTAS = {
     estado: { GET: 'ver' }, meses: { GET: 'ver' }, honorarios: { GET: 'ver', PUT: 'liquidar' }, documentos: { GET: 'ver' }, vacaciones: { GET: 'ver' }, 'enlaces-liquidacion': { GET: 'ver' },
-    empresa: { PUT: 'empresa_gestionar' }, empresas: { POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
+    empresa: { PUT: 'empresa_gestionar' }, empresas: { POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' }, 'datos-personales': { PUT: 'ficha_editar' },
     trabajador: { POST: 'ficha_editar', PUT: 'ficha_editar', DELETE: 'ficha_editar' }, prestamos: { PUT: 'ficha_editar' }, ausencias: { PUT: 'ficha_editar' },
     documento: { POST: 'ficha_editar' }, vacacion: { POST: 'ficha_editar', DELETE: 'ficha_editar' }, importar: { POST: 'ficha_editar' },
     mes: { PUT: 'liquidar', DELETE: 'liquidar' }, 'enlace-liquidacion': { POST: 'liquidar', DELETE: 'liquidar' },

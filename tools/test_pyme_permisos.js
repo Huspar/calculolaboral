@@ -65,7 +65,7 @@ caso('toda ruta que cambia datos declara su permiso y todo permiso declarado exi
     Object.keys(PERM.RUTAS).forEach(r => Object.keys(PERM.RUTAS[r]).forEach(m => assert.ok(PERM.MATRIZ[PERM.RUTAS[r][m]], r + ':' + m)));
     const fuente = require('fs').readFileSync(require('path').join(__dirname, '..', 'api', '_pyme', 'rutas.js'), 'utf8');
     const tabla = /const tabla = \{([^}]*)\}/.exec(fuente)[1];
-    const escritura = ['empresa', 'empresas', 'trabajador', 'prestamos', 'ausencias', 'documento', 'vacacion', 'importar', 'mes', 'honorarios', 'enlace-liquidacion', 'exportar', 'borrar-cuenta'];
+    const escritura = ['empresa', 'empresas', 'datos-personales', 'trabajador', 'prestamos', 'ausencias', 'documento', 'vacacion', 'importar', 'mes', 'honorarios', 'enlace-liquidacion', 'exportar', 'borrar-cuenta'];
     escritura.forEach(r => { assert.ok(PERM.RUTAS[r], 'falta el permiso de ' + r); assert.ok(tabla.indexOf(r) >= 0, r + ' no está en la tabla de rutas'); });
     assert.strictEqual(PERM.accionDe('mes', 'PUT'), 'liquidar');
     assert.strictEqual(PERM.accionDe('mes', 'TRACE'), null);

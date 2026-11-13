@@ -141,10 +141,11 @@
     }
 
     // ---------- rutas ----------
-    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', 'flujo-caja': 'flujo-caja', cobranzas: 'cobranzas', pagos: 'pagos', conciliacion: 'conciliacion', 'mi-contador': 'mi-contador', contratos: 'contratos', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
-    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', 'flujo-caja': 'Flujo de caja', cobranzas: 'Cobranzas', pagos: 'Cuentas por pagar', conciliacion: 'Conciliación bancaria', 'mi-contador': 'Mi Contador y Cierre', contratos: 'Contratos y finiquitos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', 'flujo-caja': 'flujo-caja', cobranzas: 'cobranzas', pagos: 'pagos', conciliacion: 'conciliacion', 'mi-contador': 'mi-contador', contratos: 'contratos', 'datos-personales': 'datos-personales', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', 'flujo-caja': 'Flujo de caja', cobranzas: 'Cobranzas', pagos: 'Cuentas por pagar', conciliacion: 'Conciliación bancaria', 'mi-contador': 'Mi Contador y Cierre', contratos: 'Contratos y finiquitos', 'datos-personales': 'Protección de Datos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
     var vistaActual = null;
     var finanzasUI = null;
+    var datosLeyUI = null;
 
     function rutaActual() { return window.location.pathname.replace(/^\/app\/?/, '').replace(/\/+$/, ''); }
     function navegar(ruta, opciones) {
@@ -190,6 +191,7 @@
         // Sin empresa o sin trabajadores el menú se queda con lo del primer cierre; lo demás aparece al tener datos
         $('pm-panel').classList.toggle('app-arranque', !estado.empresa || !(estado.trabajadores || []).length);
         if (finanzasUI) finanzasUI.actualizarInsigniasYBanner();
+        if (datosLeyUI) datosLeyUI.actualizarInsignia();
         if (vista === 'inicio') dibujarInicio();
         else if (vista === 'trabajadores') dibujarTrabajadores();
         else if (vista === 'trabajador') abrirCarpeta(partes[1], partes[2] || 'ficha');
@@ -203,6 +205,10 @@
         else if (vista === 'conciliacion' && finanzasUI) finanzasUI.dibujarConciliacion();
         else if (vista === 'mi-contador' && finanzasUI) finanzasUI.dibujarMiContador();
         else if (vista === 'contratos') dibujarContratos();
+        else if (vista === 'datos-personales' && datosLeyUI) {
+            var dpTab = new URLSearchParams(window.location.search).get('tab');
+            datosLeyUI.dibujar(dpTab || undefined);
+        }
         else if (vista === 'empresa') { dibujarEmpresa(); dibujarPortalEmpresa(); }
         else if (vista === 'equipo') dibujarEquipo();
         else if (vista === 'portal') dibujarPortal();
@@ -1072,6 +1078,7 @@ function dibujarEquipo() {
     var actividadCache = null;
     var ETIQUETA_ACTIVIDAD = {
         empresa_creada: 'Empresa creada', empresa_editada: 'Datos de la empresa editados', empresa_borrada: 'Empresa borrada',
+        datos_ley_actualizados: 'Controles Ley 21.719 actualizados',
         ficha_creada: 'Ficha de trabajador creada', ficha_editada: 'Ficha de trabajador editada', ficha_borrada: 'Ficha de trabajador borrada',
         liquidacion_guardada: 'Liquidación guardada', liquidacion_emitida: 'Liquidación emitida', liquidacion_borrada: 'Liquidación borrada',
         enlace_creado: 'Enlace de liquidación creado', enlace_anulado: 'Enlace de liquidación anulado', honorarios_guardados: 'Boletas de honorarios guardadas',
@@ -1883,7 +1890,7 @@ function dibujarEquipo() {
         $('pm-pend').innerHTML = lista.length ? lista.map(function (p, i) {
             var accion = '';
             if (p.accion) {
-                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes', documento: p.accion.doc === 'anexo_contrato' ? 'Preparar anexo' : 'Emitir contrato', midt: 'Datos para Mi DT' }[p.accion.tipo];
+                var etiqueta = { empresa: 'Completar empresa', 'trabajador-nuevo': 'Agregar trabajador', trabajador: 'Ver ficha', respaldo: 'Descargar respaldo', liquidaciones: 'Ver el mes', documento: p.accion.doc === 'anexo_contrato' ? 'Preparar anexo' : 'Emitir contrato', midt: 'Datos para Mi DT', 'datos-personales': 'Ver en Datos Personales' }[p.accion.tipo];
                 accion = '<button type="button" class="btn-texto" data-pend="' + i + '">' + esc(etiqueta) + '</button>';
             }
             return '<li class="n-' + p.nivel + '"><span class="material-icons" aria-hidden="true">' + ICONO[p.nivel] + '</span><div><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p></div>' + accion + '</li>';
@@ -1902,6 +1909,7 @@ function dibujarEquipo() {
         else if (a.tipo === 'midt') abrirMiDT(a.id);
         else if (a.tipo === 'respaldo') exportar();
         else if (a.tipo === 'liquidaciones') { cambiarPeriodo(a.periodo); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        else if (a.tipo === 'datos-personales') navegar('datos-personales', { query: a.tab ? 'tab=' + encodeURIComponent(a.tab) : '' });
     });
 
     // ---------- Inicio: cierre del mes ----------
@@ -4134,6 +4142,24 @@ function dibujarEquipo() {
             navegar: navegar,
             avisoGlobal: avisoGlobal,
             resumenLaboralMes: resumenLaboralMes
+        });
+    }
+    if (window.CLPymeDatosLey && window.CLPymeDatosLey.montarUI) {
+        datosLeyUI = window.CLPymeDatosLey.montarUI({
+            api: api,
+            getEstado: function () { return estado; },
+            setDatosLey: function (d) { if (estado) estado.datosLey21719 = d; },
+            actualizarTrabajadorLocal: function (t) {
+                if (!estado || !estado.trabajadores) return;
+                estado.trabajadores = estado.trabajadores.map(function (x) { return x.id === t.id ? t : x; });
+            },
+            hoyIso: hoyIso,
+            navegar: navegar,
+            avisoGlobal: avisoGlobal,
+            confirmar: confirmar,
+            esc: esc,
+            fechaCortaAnio: fechaCortaAnio,
+            alCambiar: function () { dibujarPendientes(); }
         });
     }
     function arrancar() {

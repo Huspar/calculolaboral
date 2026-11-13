@@ -785,8 +785,8 @@ body { overflow-x: hidden; }
                 </div>
 
                 <div class="flex flex-wrap items-center gap-6 pt-3 text-xs text-slate-500">
-                    <span class="flex items-center gap-1.5"><span class="material-icons text-sm text-emerald-500">check_circle</span> Manual Paso a Paso (PDF y Word)</span>
-                    <span class="flex items-center gap-1.5"><span class="material-icons text-sm text-emerald-500">check_circle</span> Formato Word y Excel (.docx / .xlsx)</span>
+                    <span class="flex items-center gap-1.5"><span class="material-icons text-sm text-emerald-500">check_circle</span> Excel 6 hojas (RAT, ARCOP 30d, DPA, Brechas)</span>
+                    <span class="flex items-center gap-1.5"><span class="material-icons text-sm text-emerald-500">check_circle</span> Personalizador web sin [COMPLETAR]</span>
                     <span class="flex items-center gap-1.5"><span class="material-icons text-sm text-emerald-500">check_circle</span> Anexo Trabajadores DT Res. 38</span>
                     <span class="flex items-center gap-1.5"><span class="material-icons text-sm text-emerald-500">check_circle</span> Descarga inmediata en 1 clic</span>
                 </div>
@@ -958,9 +958,9 @@ body { overflow-x: hidden; }
                                 <span class="material-icons text-xs">table_chart</span> Excel
                             </span>
                         </div>
-                        <h3 class="font-extrabold text-slate-900 text-sm leading-snug">Registro de Actividades de Tratamiento (RAT)</h3>
+                        <h3 class="font-extrabold text-slate-900 text-sm leading-snug">Registro RAT + Control ARCOP 30d, DPA y Brechas</h3>
                         <p class="text-sm text-slate-600 leading-relaxed">
-                            Libro en Microsoft Excel (.xlsx) para inventariar los tratamientos de tu empresa: categorías de datos (personal, salud, clientes), bases de licitud, plazos de conservación, destinatarios y controles de seguridad. Sirve para documentar qué datos trata tu empresa y por qué.
+                            Libro en Excel (.xlsx) de 6 pestañas con fórmulas automáticas: inventario RAT, seguimiento de solicitudes ARCOP (vencimiento automático a 30 días), control de contratos DPA con proveedores y bitácora de incidentes de 72 horas.
                         </p>
                     </div>
                     <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
@@ -1066,14 +1066,20 @@ body { overflow-x: hidden; }
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-forest-700">Vista previa del contenido real</span>
                     <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">Revisa cómo vienen armados los archivos</h2>
-                    <p class="text-sm text-slate-600 mt-1">Extracto real de la planilla Excel y los modelos en Word incluidos en la descarga (.zip).</p>
+                    <p class="text-sm text-slate-600 mt-1">Extracto real de la planilla Excel (6 hojas) y los modelos Word, más acceso al personalizador en navegador.</p>
                 </div>
-                <a href="#seccion-comprar" class="btn-outline-pill !py-2 !px-4 !text-xs shrink-0 self-start sm:self-auto">Ir al pago ($29.990)</a>
+                <div class="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
+                    <a href="/personalizar-kit-datos" class="btn-outline-pill !py-2 !px-4 !text-xs">Probar personalizador web →</a>
+                    <a href="#seccion-comprar" class="btn-outline-pill !py-2 !px-4 !text-xs !border-[#00382E] !text-[#00382E]">Ir al pago ($29.990)</a>
+                </div>
             </div>
 
             <div class="flex flex-wrap gap-2" role="tablist" aria-label="Muestras del Kit Ley 21.719">
                 <button type="button" role="tab" aria-selected="true" data-kit-sample="rat" class="kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-[#00382E] text-white cursor-pointer border border-[#00382E] transition-colors">
                     Registro RAT (Excel .xlsx)
+                </button>
+                <button type="button" role="tab" aria-selected="false" data-kit-sample="arcop" class="kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 cursor-pointer border border-slate-300 transition-colors">
+                    Control ARCOP 30d &amp; DPA (Excel)
                 </button>
                 <button type="button" role="tab" aria-selected="false" data-kit-sample="anexo" class="kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 cursor-pointer border border-slate-300 transition-colors">
                     Anexo Laboral (Word)
@@ -1087,7 +1093,7 @@ body { overflow-x: hidden; }
             <div data-kit-panel="rat" class="space-y-3 min-w-0">
                 <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 min-w-0">
                     <span class="font-semibold text-slate-900 break-words min-w-0 max-w-full">Archivo: <code class="font-mono text-forest-700 break-all">4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx</code></span>
-                    <span>3 pestañas: Guía Rápida · Registro RAT · Fila nueva (6 filas de ejemplo)</span>
+                    <span>6 pestañas: Guía Rápida · Registro RAT · Fila nueva · Control ARCOP 30d · Proveedores DPA · Brechas 72h</span>
                 </div>
                 <div class="overflow-x-auto max-w-full border border-slate-200 rounded-xl">
                     <table class="w-full text-left text-xs border-collapse min-w-[640px]">
@@ -1133,6 +1139,50 @@ body { overflow-x: hidden; }
                                 <td class="p-2.5">Ejecución contractual de compraventa</td>
                                 <td class="p-2.5 font-semibold text-slate-700">NO</td>
                                 <td class="p-2.5">6 años (prescripción SII)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Panel 2: Excel Control ARCOP 30d & DPA -->
+            <div data-kit-panel="arcop" class="hidden space-y-3 min-w-0">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 min-w-0">
+                    <span class="font-semibold text-slate-900">Hojas nuevas incluidas: <code class="font-mono text-forest-700">⏳ Control ARCOP 30d</code> · <code class="font-mono text-forest-700">🤝 Proveedores y DPA</code> · <code class="font-mono text-forest-700">🚨 Bitácora Brechas 72h</code></span>
+                    <span>Fórmulas automáticas de vencimiento y semáforo</span>
+                </div>
+                <div class="overflow-x-auto max-w-full border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs border-collapse min-w-[600px]">
+                        <thead class="bg-[#EEF6F3] text-[#00382E] font-bold">
+                            <tr>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">ID</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Titular / Proveedor</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Derecho / Servicio</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Vencimiento (+30d)</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Semáforo fórmula</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700 bg-white">
+                            <tr>
+                                <td class="p-2.5 font-mono font-bold text-slate-900">ARC-01</td>
+                                <td class="p-2.5">Ex-trabajador (ej.)</td>
+                                <td class="p-2.5">Acceso a liquidaciones</td>
+                                <td class="p-2.5 font-mono">+30 días corridos</td>
+                                <td class="p-2.5 font-bold text-amber-700">Urgente (&lt;=5 días)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-mono font-bold text-slate-900">DPA-01</td>
+                                <td class="p-2.5">Estudio Contable</td>
+                                <td class="p-2.5">Contabilidad y RR.HH.</td>
+                                <td class="p-2.5 font-mono">Cláusula Art. 15 bis</td>
+                                <td class="p-2.5 font-bold text-rose-700">Pendiente DPA</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-mono font-bold text-slate-900">DPA-02</td>
+                                <td class="p-2.5">Software Remuneraciones</td>
+                                <td class="p-2.5">Liquidaciones y LRE</td>
+                                <td class="p-2.5 font-mono">Firmada</td>
+                                <td class="p-2.5 font-bold text-emerald-700">Al día</td>
                             </tr>
                         </tbody>
                     </table>

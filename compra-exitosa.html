@@ -707,6 +707,10 @@ body { overflow-x: hidden; }
                         <span class="material-icons text-base">download</span>
                         <span id="download-label">Descargar el kit (.zip)</span>
                     </button>
+                    <a id="btn-personalizar-kit" href="#" class="hidden w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#00382E] bg-white hover:bg-[#EEF6F3] text-[#00382E] font-bold text-xs inline-flex items-center justify-center gap-2 mx-auto transition-all">
+                        <span class="material-icons text-sm" aria-hidden="true">edit_document</span>
+                        <span>Personalizar tus 6 Word con tus datos (sin [COMPLETAR])</span>
+                    </a>
                     <p id="download-meta" class="text-xs text-emerald-700 font-mono">21 documentos Word editables · Manual de uso en PDF</p>
                 </div>
 
@@ -901,9 +905,9 @@ body { overflow-x: hidden; }
                 },
                 datos: {
                     monto: 29990, nombre: 'Kit Ley 21.719 Protección de Datos 2026', asunto: '"Tu Kit Ley 21.719 Protección de Datos 2026"',
-                    archivo: 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip', meta: '7 instrumentos Word y Excel · Manual de uso en PDF y Word',
+                    archivo: 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip', meta: '7 instrumentos Word y Excel de 6 hojas (RAT, ARCOP 30d, DPA, Brechas) · Manual PDF y Word',
                     inicio: '0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf',
-                    detalle: 'Te enviamos a tu correo los <strong>7 instrumentos en Word y Excel y el manual de uso</strong>. También puedes descargarlos ahora.'
+                    detalle: 'Te enviamos a tu correo los <strong>7 instrumentos en Word y Excel (6 hojas de control) y el manual de uso</strong>. También puedes descargarlos o personalizarlos ahora.'
                 }
             };
             var $ = function (id) { return document.getElementById(id); };
@@ -942,9 +946,14 @@ body { overflow-x: hidden; }
             $('start-file').textContent = p.inicio;
             $('download-label').textContent = 'Descargar ' + p.archivo;
             $('download-meta').textContent = p.meta;
-            var descarga = '/api/download?' + new URLSearchParams({ p: q.get('p'), o: q.get('o'), e: q.get('e'), sig: q.get('sig') }).toString();
+            var qs = new URLSearchParams({ p: q.get('p'), o: q.get('o'), e: q.get('e'), sig: q.get('sig') }).toString();
+            var descarga = '/api/download?' + qs;
             $('direct-download-box').classList.remove('hidden');
             $('btn-download-zip').addEventListener('click', function () { window.location.href = descarga; });
+            if (q.get('p') === 'datos' && $('btn-personalizar-kit')) {
+                $('btn-personalizar-kit').href = '/personalizar-kit-datos?' + qs;
+                $('btn-personalizar-kit').classList.remove('hidden');
+            }
 
             // Una sola venta por orden en Analytics, aunque recargue la página
             var yaContada = false;

@@ -234,4 +234,24 @@ caso('liquidaciones: a fin de mes es solo información; sin los datos cargados, 
     assert.ok(!pend(correr(est([T({ activo: false })]), '2026-10-06', { liquidaciones: { periodo: '2026-09', registros: [] } }), 'liquidaciones'));
 });
 
+caso('Ley 21.719: alerta ARCOP <= 7 días, brecha abierta (72h) y trabajadores sin anexo desde nov-2026', () => {
+    const dp = {
+        solicitudesArcop: [
+            { id: 's1', nombre: 'Camila', derecho: 'acceso', fechaRecepcion: '2026-10-20', prorroga: false, estado: 'pendiente' },
+            { id: 's2', nombre: 'Pedro', derecho: 'supresion', fechaRecepcion: '2026-11-10', prorroga: true, estado: 'pendiente' },
+            { id: 's3', nombre: 'Luis', derecho: 'acceso', fechaRecepcion: '2026-09-01', prorroga: false, estado: 'respondida' }
+        ],
+        brechas: [{ id: 'b1', estado: 'abierta' }, { id: 'b2', estado: 'notificada' }]
+    };
+    const l = correr(est([T({ anexoDatosEntrega: '' })], { datosLey21719: dp }), '2026-11-15');
+    assert.strictEqual(pend(l, 'arcop-s1').nivel, 'urgente', 's1 vence 19-nov -> 4 días restantes');
+    assert.strictEqual(pend(l, 'arcop-s1').accion.tab, 'arcop');
+    assert.ok(!pend(l, 'arcop-s2'), 'con prórroga 60d vence en enero');
+    assert.ok(!pend(l, 'arcop-s3'), 'respondida no alerta');
+    assert.strictEqual(pend(l, 'brecha-b1').nivel, 'urgente');
+    assert.ok(!pend(l, 'brecha-b2'));
+    assert.strictEqual(pend(l, 'anexo-datos').nivel, 'aviso');
+    assert.ok(!pend(correr(est([T({ anexoDatosEntrega: '2026-11-10' })]), '2026-11-15'), 'anexo-datos'));
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

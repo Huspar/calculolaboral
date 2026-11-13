@@ -43,6 +43,7 @@ const MENSAJE_ENLACE_INVALIDO = 'El enlace venció o ya se usó. Pide uno nuevo 
 // Ruta:método → nombre de la actividad que se registra (nunca con montos ni datos de trabajadores)
 const ACTIVIDAD_RUTA = {
     'empresa:PUT': 'empresa_editada', 'empresas:POST': 'empresa_creada', 'empresas:DELETE': 'empresa_borrada',
+    'datos-personales:PUT': 'datos_ley_actualizados',
     'trabajador:POST': 'ficha_creada', 'trabajador:PUT': 'ficha_editada', 'trabajador:DELETE': 'ficha_borrada',
     'mes:PUT': (req) => (req.body && req.body.mes && req.body.mes.emitida ? 'liquidacion_emitida' : 'liquidacion_guardada'), 'mes:DELETE': 'liquidacion_borrada',
     'enlace-liquidacion:POST': 'enlace_creado', 'enlace-liquidacion:DELETE': 'enlace_anulado',
@@ -177,6 +178,13 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const s = await sesionParaEscribir(req, res);
         if (!s) return;
         return responder(res, await datos.guardarEmpresa(s, H.cuerpoDe(req).empresa));
+    }
+
+    async function datosPersonales(req, res) {
+        if (!metodo(req, res, 'PUT')) return;
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        return responder(res, await datos.guardarDatosLey21719(s, H.cuerpoDe(req).datosLey21719));
     }
 
     // Equipo del estudio: GET lista; POST suma a una persona; PUT cambia su rol o sus empresas; DELETE la quita
@@ -466,7 +474,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {

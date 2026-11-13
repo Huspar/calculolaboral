@@ -117,6 +117,7 @@ gtag('js', new Date());
 <a href="/app/mi-contador" data-ruta="mi-contador" data-nav="mi-contador" data-mas><span class="material-icons" aria-hidden="true">handshake</span>Mi Contador<span class="app-nav-chip" id="nav-chip-cierre"></span></a>
 <p class="app-nav-grupo" data-mas>Herramientas</p>
 <a href="/app/contratos" data-ruta="contratos" data-nav="contratos" data-mas><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
+<a href="/app/datos-personales" data-ruta="datos-personales" data-nav="datos-personales" data-mas><span class="material-icons" aria-hidden="true">shield</span>Datos personales<span class="app-nav-chip" id="nav-chip-datos-personales" hidden></span></a>
 <p class="app-nav-grupo">Configuración</p>
 <a href="/app/empresa" data-ruta="empresa" data-nav="empresa"><span class="material-icons" aria-hidden="true">apartment</span>Empresa</a>
 <a href="/app/equipo" data-ruta="equipo" data-nav="equipo" id="app-nav-equipo" data-mas><span class="material-icons" aria-hidden="true">badge</span>Equipo</a>
@@ -338,6 +339,14 @@ gtag('js', new Date());
 <div class="lq-grid">
 <div class="lq-field"><label for="pm-t-karin">Protocolo entregado el <span class="lq-opt">(opcional)</span></label><input id="pm-t-karin" data-k="karinEntrega" type="date"><p class="pm-error" data-error="karinEntrega" hidden></p></div>
 <div class="lq-field pm-check"><label><input id="pm-t-karin-firma" data-k="karinConstancia" type="checkbox"> Firmó una constancia de recepción <span class="lq-opt">(recomendado, no obligatorio)</span></label></div>
+</div>
+</div>
+<div class="form-bloque">
+<p class="h-seccion">Ley 21.719 · Protección de datos personales</p>
+<p class="lq-help">Registra cuándo entregaste o formalizaste el anexo de tratamiento de datos laborales. Puedes generarlo prellenado desde «Documentos» o en «Datos personales».</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-t-anexodatos">Anexo datos entregado el <span class="lq-opt">(opcional)</span></label><input id="pm-t-anexodatos" data-k="anexoDatosEntrega" type="date"><p class="pm-error" data-error="anexoDatosEntrega" hidden></p></div>
+<div class="lq-field pm-check"><label><input id="pm-t-anexodatos-firma" data-k="anexoDatosConstancia" type="checkbox"> Anexo firmado por el trabajador <span class="lq-opt">(recomendado)</span></label></div>
 </div>
 </div>
 </div>
@@ -821,6 +830,38 @@ gtag('js', new Date());
 <div><p class="h-seccion">Si algo cambia</p><p class="texto-ayuda">Un anexo firmado por ambos para el nuevo sueldo, la jornada, el cargo, la prórroga del plazo fijo o el paso a indefinido. Después actualizas la ficha con un clic.</p></div>
 <div><p class="h-seccion">Al terminar</p><p class="texto-ayuda">La carta de término cuando corresponde y el finiquito, con el feriado calculado desde el registro de vacaciones y el saldo de préstamos a la vista.</p></div>
 </div>
+</div>
+</section>
+
+<!-- Protección de datos personales (Ley 21.719) -->
+<section class="vista" data-vista="datos-personales" aria-labelledby="dp-titulo" hidden>
+<div class="v-head">
+<div>
+<h1 class="v-titulo" id="dp-titulo">Protección de Datos Personales</h1>
+<p class="v-sub">Cumplimiento operacional Ley 21.719: anexos laborales, encargados DPA, solicitudes ARCOP (30 días) y bitácora de incidentes (72h).</p>
+</div>
+<div class="v-acciones">
+<button type="button" class="btn btn-primario" id="dp-btn-nueva-solicitud"><span class="material-icons" aria-hidden="true">add</span>Nueva solicitud ARCOP</button>
+<button type="button" class="btn" id="dp-btn-registrar-brecha"><span class="material-icons" aria-hidden="true">warning_amber</span>Registrar incidente (72h)</button>
+</div>
+</div>
+<div class="panel" id="dp-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero guarda los datos de tu empresa</p><p class="texto-ayuda">Los anexos, contratos DPA y respuestas ARCOP usan la razón social y el RUT de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/empresa" data-ruta="empresa">Ir a Empresa</a></div></div></div>
+<div id="dp-contenido">
+<dl class="cifras cifras-4" id="dp-cifras">
+<div><dt>Anexos laborales Ley 21.719</dt><dd class="mono" id="dp-kpi-anexos">0 / 0</dd><span class="texto-ayuda" id="dp-kpi-anexos-sub">Cruce con trabajadores activos</span></div>
+<div><dt>Encargados con DPA (Art. 15 bis)</dt><dd class="mono" id="dp-kpi-dpa">0 / 0</dd><span class="texto-ayuda">Contador, software y nube</span></div>
+<div><dt>Bandeja ARCOP (plazo 30 días)</dt><dd class="mono" id="dp-kpi-arcop">0</dd><span class="texto-ayuda" id="dp-kpi-arcop-sub">Sin solicitudes pendientes</span></div>
+<div><dt>Incidentes de seguridad (72h)</dt><dd class="mono" id="dp-kpi-brechas">0</dd><span class="texto-ayuda">Art. 14 sexies Ley 21.719</span></div>
+</dl>
+<div class="fin-filtros" role="tablist" aria-label="Secciones de protección de datos">
+<button type="button" class="fin-chip activo" data-dp-tab="resumen" role="tab" aria-selected="true">Resumen y checklist</button>
+<button type="button" class="fin-chip" data-dp-tab="trabajadores" role="tab" aria-selected="false">Anexos trabajadores</button>
+<button type="button" class="fin-chip" data-dp-tab="encargados" role="tab" aria-selected="false">Proveedores y DPA</button>
+<button type="button" class="fin-chip" data-dp-tab="arcop" role="tab" aria-selected="false">Bandeja ARCOP (30 días)</button>
+<button type="button" class="fin-chip" data-dp-tab="brechas" role="tab" aria-selected="false">Bitácora y RAT</button>
+</div>
+<p id="dp-estado-msg" class="lq-estado" role="status"></p>
+<div id="dp-panel-activo"></div>
 </div>
 </section>
 
@@ -1452,6 +1493,7 @@ gtag('js', new Date());
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
 <script src="/js/pyme_finanzas.js?v=1.1.0"></script>
+<script src="/js/pyme_datos_ley.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
 <script src="/js/app_pyme.js?v=1.36.0" defer></script>
 </body>

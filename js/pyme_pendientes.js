@@ -182,6 +182,37 @@
                 ' (art. 211-A del Código del Trabajo). Se anota en la ficha de cada persona.', { tipo: 'trabajador', id: sinKarin[0].id });
         }
 
+        // Ley 21.719: solicitudes ARCOP próximas a vencer o vencidas, brechas abiertas y anexos de trabajadores
+        var dp = estado.datosLey21719 || {};
+        (dp.solicitudesArcop || []).forEach(function (s) {
+            if (s.estado !== 'pendiente' || !s.fechaRecepcion) return;
+            var vence = sumarDias(s.fechaRecepcion, s.prorroga ? 60 : 30);
+            var restan = dias(hoy, vence);
+            if (restan > 7) return;
+            var titulo = restan < 0
+                ? 'Solicitud ARCOP vencida (hace ' + plural(-restan, 'día', 'días') + ')'
+                : restan === 0
+                    ? 'Solicitud ARCOP vence hoy'
+                    : 'Solicitud ARCOP por vencer (' + plural(restan, 'día restante', 'días restantes') + ')';
+            agregar('arcop-' + s.id, 'urgente', titulo,
+                s.nombre + ' ejerció su derecho de ' + s.derecho + '. La Ley 21.719 establece 30 días corridos para responder (art. 11).',
+                { tipo: 'datos-personales', tab: 'arcop' });
+        });
+        (dp.brechas || []).forEach(function (b) {
+            if (b.estado !== 'abierta') return;
+            agregar('brecha-' + b.id, 'urgente', 'Incidente de datos abierto (ventana 72h)',
+                'Revisa las medidas adoptadas y evalúa si corresponde notificar a la Agencia de Protección de Datos (art. 14 sexies, Ley 21.719).',
+                { tipo: 'datos-personales', tab: 'brechas' });
+        });
+        if (hoy >= '2026-11-01' && activos.length) {
+            var sinAnexoDatos = activos.filter(function (t) { return !t.anexoDatosEntrega; });
+            if (sinAnexoDatos.length) {
+                agregar('anexo-datos', 'aviso', plural(sinAnexoDatos.length, 'trabajador', 'trabajadores') + ' sin anexo Ley 21.719',
+                    'Formaliza el deber de información y tratamiento de datos laborales con ' + sinAnexoDatos.map(function (t) { return t.nombre; }).join(', ') + ' (vigencia 1 de diciembre de 2026).',
+                    { tipo: 'datos-personales', tab: 'trabajadores' });
+            }
+        }
+
         // Liquidaciones del mes sin emitir (solo si el panel cargó los meses de ese periodo)
         var liq = opciones.liquidaciones, toca = periodoLiquidacion(hoy);
         if (liq && toca && liq.periodo === toca.periodo && P && toca.periodo >= P.PRIMER_MES && toca.periodo <= (P.ULTIMO_MES_EXTENDIDO || P.ULTIMO_MES)) {

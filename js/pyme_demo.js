@@ -49,11 +49,30 @@
         return {
             empresa: { razonSocial: 'Panadería Los Aromos SpA', mutual: 'ACHS', rut: '76.543.210-3', giro: 'Panadería y pastelería', representante: 'Manuel Lagos Rojas', rutRepresentante: '12.345.678-5', direccion: 'Av. Alemania 0450', comuna: 'Temuco', ciudad: 'Temuco', tasaMutual: '0,93' },
             trabajadores: [
-                { nombre: 'Ana Pérez González', rut: '15.234.567-4', cargo: 'Panadera', sexo: 'F', banco: 'BancoEstado', tipoCuenta: 'vista', numeroCuenta: '12345678', fechaNacimiento: '1988-06-12', nacionalidad: 'Chilena', domicilio: 'Los Aromos 123', comuna: 'Temuco', fechaIngreso: '2022-03-15', contrato: 'indefinido', jornadaHoras: 42, distribucion: '6', sueldoBase: 650000, gratificacion: 'legal', colacion: 40000, movilizacion: 30000, afp: 'Modelo', salud: 'fonasa', karinEntrega: '2024-08-01' },
-                // Plazo fijo que vence en 12 días, con comisiones (semana corrida), una licencia médica en curso y sin el protocolo de la Ley Karin anotado
+                { nombre: 'Ana Pérez González', rut: '15.234.567-4', cargo: 'Panadera', sexo: 'F', banco: 'BancoEstado', tipoCuenta: 'vista', numeroCuenta: '12345678', fechaNacimiento: '1988-06-12', nacionalidad: 'Chilena', domicilio: 'Los Aromos 123', comuna: 'Temuco', fechaIngreso: '2022-03-15', contrato: 'indefinido', jornadaHoras: 42, distribucion: '6', sueldoBase: 650000, gratificacion: 'legal', colacion: 40000, movilizacion: 30000, afp: 'Modelo', salud: 'fonasa', karinEntrega: '2024-08-01', anexoDatosEntrega: '2026-10-15', anexoDatosConstancia: true },
+                // Plazo fijo que vence en 12 días, con comisiones (semana corrida), una licencia médica en curso y sin el protocolo de la Ley Karin ni anexo 21.719 anotado
                 { nombre: 'Bruno Castillo Muñoz', rut: '19.876.543-0', cargo: 'Vendedor', sexo: 'M', banco: 'Banco de Chile', tipoCuenta: 'corriente', numeroCuenta: '000123456789', fechaNacimiento: '1999-11-03', nacionalidad: 'Chilena', domicilio: 'Pasaje Ñielol 45', comuna: 'Temuco', fechaIngreso: sumarMeses(P, -4) + '-01', contrato: 'plazo_fijo', fechaTerminoPlazo: sumarDias(hoy, 12), renovaciones: 1, jornadaHoras: 42, distribucion: '6', sueldoBase: 560000, gratificacion: 'legal', afp: 'Uno', salud: 'fonasa', ausencias: [{ tipo: 'licencia', desde: sumarDias(hoy, -1), hasta: sumarDias(hoy, 3) }] },
-                { nombre: 'Carla Rojas Vidal', rut: '13.456.789-9', cargo: 'Encargada de local', sexo: 'F', fechaNacimiento: '1979-02-21', nacionalidad: 'Chilena', domicilio: 'Caupolicán 980', comuna: 'Temuco', fechaIngreso: '2014-08-01', contrato: 'indefinido', jornadaHoras: 42, distribucion: '5', sueldoBase: 900000, gratificacion: 'legal', colacion: 50000, movilizacion: 40000, afp: 'Habitat', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: 3.2, aniosOtrosEmpleadores: 6, anticipoMensual: 150000, karinEntrega: '2024-08-01' }
-            ]
+                { nombre: 'Carla Rojas Vidal', rut: '13.456.789-9', cargo: 'Encargada de local', sexo: 'F', fechaNacimiento: '1979-02-21', nacionalidad: 'Chilena', domicilio: 'Caupolicán 980', comuna: 'Temuco', fechaIngreso: '2014-08-01', contrato: 'indefinido', jornadaHoras: 42, distribucion: '5', sueldoBase: 900000, gratificacion: 'legal', colacion: 50000, movilizacion: 40000, afp: 'Habitat', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: 3.2, aniosOtrosEmpleadores: 6, anticipoMensual: 150000, karinEntrega: '2024-08-01', anexoDatosEntrega: '2026-10-15', anexoDatosConstancia: true }
+            ],
+            datosLey21719: {
+                correoPrivacidad: 'privacidad@losaromos.cl',
+                responsableDatos: 'Manuel Lagos Rojas',
+                checklist: { protocoloBrechas: true, ratRevisado: false },
+                encargados: [
+                    { nombre: 'Contadora Paula Soto', servicio: 'Estudio contable / remuneraciones', datosTratados: 'Liquidaciones, RUT, licencias y Previred', dpaFirmado: true, fechaFirma: '2026-10-10', notas: 'Anexo DPA incorporado al contrato de honorarios.' },
+                    { nombre: 'Cálculo Laboral', servicio: 'Software de remuneraciones', datosTratados: 'Cálculo de sueldos, cotizaciones y documentos', dpaFirmado: true, fechaFirma: '2026-10-15', notas: 'Cifrado AES-256-GCM en servidor.' },
+                    { nombre: 'Google Workspace', servicio: 'Correo y respaldo en la nube', datosTratados: 'Facturas, respaldos y solicitudes de clientes', dpaFirmado: false, fechaFirma: '', notas: 'Pendiente aprobar anexo de procesamiento de datos.' }
+                ],
+                solicitudesArcop: [
+                    { nombre: 'Camila Navarro Torres', rut: '17.654.321-3', correo: 'camila.navarro@ejemplo.cl', calidad: 'ex_trabajador', derecho: 'acceso', fechaRecepcion: sumarDias(hoy, -25), prorroga: false, estado: 'pendiente', fechaRespuesta: '', notas: 'Solicita copia de su historial de liquidaciones y datos personales.' }
+                ],
+                brechas: [],
+                rat: [
+                    { actividad: 'Gestión de personal y remuneraciones', baseLegal: 'Ejecución de contrato / Código del Trabajo', datosTratados: 'RUT, sueldo, banco, AFP, salud y licencias', plazoConservacion: '5 años tras término de la relación laboral' },
+                    { actividad: 'Facturación y cobranza a clientes', baseLegal: 'Obligación legal (SII) y relación contractual', datosTratados: 'Razón social, RUT, dirección y correo de contacto', plazoConservacion: '6 años tributarios (Código Tributario)' },
+                    { actividad: 'Cámaras de seguridad en local', baseLegal: 'Interés legítimo de seguridad y resguardo', datosTratados: 'Registros audiovisuales de acceso al local', plazoConservacion: '30 días corridos en ciclo de sobrescritura' }
+                ]
+            }
         };
     }
 
@@ -86,6 +105,8 @@
             return almacen.registrarPase({ cuentaId: s.cuentaId, producto: 'pyme12', ordenFlow: 'EJEMPLO', dias: 365, ahoraIso: iso() });
         }).then(function () {
             return datos.guardarEmpresa(s, sem.empresa).then(function (r) { exigir(r, 'la empresa'); });
+        }).then(function () {
+            return datos.guardarDatosLey21719(s, sem.datosLey21719).then(function (r) { exigir(r, 'ley 21.719'); });
         }).then(function () {
             return sem.trabajadores.reduce(function (p, t) {
                 return p.then(function (ids) { return datos.crearTrabajador(s, t).then(function (r) { exigir(r, t.nombre); ids.push(r.trabajador.id); return ids; }); });
@@ -130,6 +151,7 @@
                 return responder(r);
             });
             if (ruta === 'empresa') return hecho(datos.guardarEmpresa(s, b.empresa));
+            if (ruta === 'datos-personales' && m === 'PUT') return hecho(datos.guardarDatosLey21719(s, b.datosLey21719));
             if (ruta === 'trabajador') return hecho(m === 'POST' ? datos.crearTrabajador(s, b.trabajador) : m === 'PUT' ? datos.actualizarTrabajador(s, q.id, b.trabajador) : datos.borrarTrabajador(s, q.id));
             if (ruta === 'ausencias') return hecho(datos.guardarAusencias(s, q.trabajador, b.ausencias));
             if (ruta === 'prestamos') return hecho(datos.guardarPrestamos(s, q.trabajador, b.prestamos));

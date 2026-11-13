@@ -13,6 +13,13 @@ module.exports = (req, res) => {
     } catch (err) {
         console.error('download:', err.message);
     }
+    if (q.verify === '1') {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'private, no-store');
+        if (!ok) return res.status(403).json({ ok: false, error: 'Enlace de descarga no válido o vencido.' });
+        const p = PRODUCTS[q.p];
+        return res.status(200).json({ ok: true, product: q.p, filename: p ? p.filename : null });
+    }
     if (!ok) {
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         return res.status(403).send('Enlace de descarga no válido o vencido. Escríbenos a contacto@calculolaboral.cl con tu número de orden.');

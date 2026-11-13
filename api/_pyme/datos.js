@@ -80,6 +80,10 @@ function crear({ almacen, cifrado, ahora, piloto }) {
         });
     }
 
+    function datosLeyDefecto() {
+        return { correoPrivacidad: '', responsableDatos: '', checklist: { protocoloBrechas: false, ratRevisado: false }, encargados: [], solicitudesArcop: [], brechas: [], rat: [] };
+    }
+
     /** Todo lo que el panel necesita para dibujarse. Con `cuenta.empresaId` es esa empresa; sin él, la primera. */
     async function estado(cuenta) {
         const lim = await limites(cuenta.cuentaId);
@@ -87,18 +91,35 @@ function crear({ almacen, cifrado, ahora, piloto }) {
         const empresas = await resumenEmpresas(cuenta.cuentaId, cuenta.empresasPermitidas);
         if (!fila && cuenta.empresaId) return fallo(404, 'no_existe', 'No encontramos esa empresa en tu cuenta.');
         if (!fila) return { ok: true, cuenta: { email: cuenta.email }, empresa: null, empresaId: null, empresas, trabajadores: [], limites: lim, maxTotal: MAX_TOTAL };
-        const empresa = cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId));
+        const desc = cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId));
+        const { datosLey21719, ...empresa } = desc;
         const trabajadores = await leerTrabajadores(cuenta.cuentaId, fila.id);
-        return { ok: true, cuenta: { email: cuenta.email }, empresa, empresaId: fila.id, empresas, trabajadores, limites: lim, maxTotal: MAX_TOTAL };
+        return { ok: true, cuenta: { email: cuenta.email }, empresa, empresaId: fila.id, empresas, trabajadores, datosLey21719: datosLey21719 || datosLeyDefecto(), limites: lim, maxTotal: MAX_TOTAL };
     }
 
     async function guardarEmpresa(cuenta, entrada) {
         const v = V.validarEmpresa(entrada);
         if (!v.ok) return fallo(400, 'validacion', 'Revisa los datos de la empresa.', v.errores);
-        const c = cifrado.cifrar(v.valor, ctxEmpresa(cuenta.cuentaId));
+        const fila = await empresaDe(cuenta);
+        const previo = fila ? cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId)) : null;
+        const payload = previo && previo.datosLey21719 ? Object.assign({}, v.valor, { datosLey21719: previo.datosLey21719 }) : v.valor;
+        const c = cifrado.cifrar(payload, ctxEmpresa(cuenta.cuentaId));
         const r = await almacen.guardarEmpresa(cuenta.cuentaId, c.datos, c.version, iso(), cuenta.empresaId);
         if (!r) return fallo(404, 'no_existe', 'No encontramos esa empresa en tu cuenta.');
         return { ok: true, empresa: v.valor, empresaId: r.id };
+    }
+
+    /** Guarda la configuración y registros operacionales de Ley 21.719 cifrados junto a la empresa. */
+    async function guardarDatosLey21719(cuenta, entrada) {
+        const fila = await empresaDe(cuenta);
+        if (!fila) return fallo(409, 'sin_empresa', 'Primero guarda los datos de la empresa.');
+        const v = V.validarDatosLey21719(entrada);
+        if (!v.ok) return fallo(400, 'validacion', 'Revisa los datos de protección de datos.', v.errores);
+        const actual = cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId));
+        const c = cifrado.cifrar(Object.assign({}, actual, { datosLey21719: v.valor }), ctxEmpresa(cuenta.cuentaId));
+        const r = await almacen.guardarEmpresa(cuenta.cuentaId, c.datos, c.version, iso(), fila.id);
+        if (!r) return fallo(404, 'no_existe', 'No encontramos esa empresa en tu cuenta.');
+        return { ok: true, datosLey21719: v.valor };
     }
 
     /** Agrega otra empresa a la cuenta (un cliente más del estudio), dentro del máximo de la cuenta. */
@@ -383,6 +404,7 @@ function crear({ almacen, cifrado, ahora, piloto }) {
                 exportado: iso(),
                 cuenta: { email: cuenta.email },
                 empresa: e.empresa,
+                datosLey21719: e.datosLey21719,
                 trabajadores: e.trabajadores,
                 meses: await leerMesesExport(cuenta),
                 documentos: await leerDocumentosExport(cuenta),
@@ -400,7 +422,7 @@ function crear({ almacen, cifrado, ahora, piloto }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearEmpresa, borrarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, guardarAusencias, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, avisosCorreo, guardarAvisosCorreo, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearEmpresa, borrarEmpresa, guardarDatosLey21719, crearTrabajador, actualizarTrabajador, guardarPrestamos, guardarAusencias, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, avisosCorreo, guardarAvisosCorreo, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {

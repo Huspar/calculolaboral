@@ -123,6 +123,9 @@ const CAMPOS_TRABAJADOR = {
     // Ley Karin (art. 211-A): fecha en que se dio a conocer el protocolo de prevención y si hay constancia firmada
     karinEntrega: { t: 'fecha' },
     karinConstancia: { t: 'bool', def: false },
+    // Ley 21.719: anexo o deber de información sobre tratamiento de datos personales laborales
+    anexoDatosEntrega: { t: 'fecha' },
+    anexoDatosConstancia: { t: 'bool', def: false },
     activo: { t: 'bool', def: true }
 };
 
@@ -493,7 +496,97 @@ function validarVacacion(entrada, hoy) {
     return { ok: true, valor: { tipo: 'periodo', desde: entrada.desde, hasta: entrada.hasta, dias: r.dias, nota } };
 }
 
-module.exports = { validarMes, validarHonorarios, validarAusencias, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };
+function esCorreoSimple(v) { return typeof v === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
+
+function validarListaObjetos(lista, max, claveErr, msgFormato, validarItem, errores) {
+    if (vacio(lista)) return [];
+    if (!Array.isArray(lista) || lista.length > max) {
+        errores[claveErr] = `Puedes registrar hasta ${max} elementos aquí.`;
+        return undefined;
+    }
+    const salida = [], usados = {};
+    for (let i = 0; i < lista.length; i++) {
+        const it = lista[i];
+        if (!it || typeof it !== 'object' || Array.isArray(it)) { errores[claveErr] = msgFormato; return undefined; }
+        let id = typeof it.id === 'string' && ID_PRESTAMO.test(it.id) ? it.id : '';
+        while (!id || usados[id]) id = crypto.randomBytes(6).toString('hex');
+        usados[id] = true;
+        const limpio = validarItem(it, id, i + 1);
+        if (!limpio.ok) { errores[claveErr] = limpio.error; return undefined; }
+        salida.push(limpio.valor);
+    }
+    return salida;
+}
+
+/** Valida el estado de cumplimiento Ley 21.719 (encargados DPA, ARCOP, brechas 72h, RAT y canal). */
+function validarDatosLey21719(entrada) {
+    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos de protección de datos no tienen el formato esperado.' } };
+    const errores = {};
+    const correoPrivacidad = normalizar('correoPrivacidad', { t: 'texto', max: 120 }, entrada.correoPrivacidad, errores);
+    if (correoPrivacidad && !esCorreoSimple(correoPrivacidad)) errores.correoPrivacidad = 'El correo de privacidad no parece válido.';
+    const responsableDatos = normalizar('responsableDatos', { t: 'texto', max: 80 }, entrada.responsableDatos, errores);
+    const ck = entrada.checklist && typeof entrada.checklist === 'object' && !Array.isArray(entrada.checklist) ? entrada.checklist : {};
+    const checklist = {
+        protocoloBrechas: normalizar('protocoloBrechas', { t: 'bool', def: false }, ck.protocoloBrechas, errores),
+        ratRevisado: normalizar('ratRevisado', { t: 'bool', def: false }, ck.ratRevisado, errores)
+    };
+
+    const encargados = validarListaObjetos(entrada.encargados, 30, 'encargados', 'Los proveedores encargados no tienen el formato esperado.', (it, id, n) => {
+        const e = {};
+        const nombre = normalizar('nombre', { t: 'texto', max: 80, req: true }, it.nombre, e);
+        const servicio = normalizar('servicio', { t: 'texto', max: 80 }, it.servicio, e);
+        const datosTratados = normalizar('datosTratados', { t: 'texto', max: 120 }, it.datosTratados, e);
+        const dpaFirmado = normalizar('dpaFirmado', { t: 'bool', def: false }, it.dpaFirmado, e);
+        const fechaFirma = normalizar('fechaFirma', { t: 'fecha' }, it.fechaFirma, e);
+        const notas = normalizar('notas', { t: 'texto', max: 160 }, it.notas, e);
+        if (Object.keys(e).length) return { ok: false, error: `Proveedor ${n}: revisa el nombre o la fecha de firma DPA.` };
+        return { ok: true, valor: { id, nombre, servicio, datosTratados, dpaFirmado, fechaFirma, notas } };
+    }, errores);
+
+    const solicitudesArcop = validarListaObjetos(entrada.solicitudesArcop, 100, 'solicitudesArcop', 'Las solicitudes ARCOP no tienen el formato esperado.', (it, id, n) => {
+        const e = {};
+        const nombre = normalizar('nombre', { t: 'texto', max: 80, req: true }, it.nombre, e);
+        const rut = normalizar('rut', { t: 'rut' }, it.rut, e);
+        const correo = normalizar('correo', { t: 'texto', max: 120 }, it.correo, e);
+        if (correo && !esCorreoSimple(correo)) e.correo = true;
+        const calidad = normalizar('calidad', { t: 'enum', valores: ['trabajador', 'ex_trabajador', 'cliente', 'contacto'], def: 'trabajador' }, it.calidad, e);
+        const derecho = normalizar('derecho', { t: 'enum', valores: ['acceso', 'rectificacion', 'cancelacion', 'oposicion', 'portabilidad'], def: 'acceso' }, it.derecho, e);
+        const fechaRecepcion = normalizar('fechaRecepcion', { t: 'fecha', req: true }, it.fechaRecepcion, e);
+        const prorroga = normalizar('prorroga', { t: 'bool', def: false }, it.prorroga, e);
+        const estado = normalizar('estado', { t: 'enum', valores: ['pendiente', 'respondida', 'denegada'], def: 'pendiente' }, it.estado, e);
+        const fechaRespuesta = normalizar('fechaRespuesta', { t: 'fecha' }, it.fechaRespuesta, e);
+        const notas = normalizar('notas', { t: 'texto', max: 200 }, it.notas, e);
+        if (Object.keys(e).length) return { ok: false, error: `Solicitud ARCOP ${n}: revisa titular, RUT, correo o fecha de recepción.` };
+        return { ok: true, valor: { id, nombre, rut, correo, calidad, derecho, fechaRecepcion, prorroga, estado, fechaRespuesta, notas } };
+    }, errores);
+
+    const brechas = validarListaObjetos(entrada.brechas, 50, 'brechas', 'La bitácora de incidentes no tiene el formato esperado.', (it, id, n) => {
+        const e = {};
+        const fechaHora = normalizar('fechaHora', { t: 'texto', max: 20, req: true }, it.fechaHora, e);
+        const origen = normalizar('origen', { t: 'enum', valores: ['equipo', 'malware', 'correo', 'acceso', 'otro'], def: 'otro' }, it.origen, e);
+        const datosComprometidos = normalizar('datosComprometidos', { t: 'texto', max: 160 }, it.datosComprometidos, e);
+        const medidas = normalizar('medidas', { t: 'texto', max: 200 }, it.medidas, e);
+        const estado = normalizar('estado', { t: 'enum', valores: ['abierta', 'notificada', 'cerrada_sin_riesgo'], def: 'abierta' }, it.estado, e);
+        const fechaNotificacion = normalizar('fechaNotificacion', { t: 'fecha' }, it.fechaNotificacion, e);
+        if (Object.keys(e).length) return { ok: false, error: `Incidente ${n}: revisa la fecha, tipo u observaciones.` };
+        return { ok: true, valor: { id, fechaHora, origen, datosComprometidos, medidas, estado, fechaNotificacion } };
+    }, errores);
+
+    const rat = validarListaObjetos(entrada.rat, 25, 'rat', 'El registro RAT no tiene el formato esperado.', (it, id, n) => {
+        const e = {};
+        const actividad = normalizar('actividad', { t: 'texto', max: 80, req: true }, it.actividad, e);
+        const baseLegal = normalizar('baseLegal', { t: 'texto', max: 80 }, it.baseLegal, e);
+        const datosTratados = normalizar('datosTratados', { t: 'texto', max: 140 }, it.datosTratados, e);
+        const plazoConservacion = normalizar('plazoConservacion', { t: 'texto', max: 80 }, it.plazoConservacion, e);
+        if (Object.keys(e).length) return { ok: false, error: `Actividad RAT ${n}: revisa el nombre o los campos.` };
+        return { ok: true, valor: { id, actividad, baseLegal, datosTratados, plazoConservacion } };
+    }, errores);
+
+    if (Object.keys(errores).length) return { ok: false, errores };
+    return { ok: true, valor: { correoPrivacidad, responsableDatos, checklist, encargados, solicitudesArcop, brechas, rat } };
+}
+
+module.exports = { validarMes, validarHonorarios, validarAusencias, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, validarDatosLey21719, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };
 
     });
 
@@ -581,6 +674,10 @@ function crear({ almacen, cifrado, ahora, piloto }) {
         });
     }
 
+    function datosLeyDefecto() {
+        return { correoPrivacidad: '', responsableDatos: '', checklist: { protocoloBrechas: false, ratRevisado: false }, encargados: [], solicitudesArcop: [], brechas: [], rat: [] };
+    }
+
     /** Todo lo que el panel necesita para dibujarse. Con `cuenta.empresaId` es esa empresa; sin él, la primera. */
     async function estado(cuenta) {
         const lim = await limites(cuenta.cuentaId);
@@ -588,18 +685,35 @@ function crear({ almacen, cifrado, ahora, piloto }) {
         const empresas = await resumenEmpresas(cuenta.cuentaId, cuenta.empresasPermitidas);
         if (!fila && cuenta.empresaId) return fallo(404, 'no_existe', 'No encontramos esa empresa en tu cuenta.');
         if (!fila) return { ok: true, cuenta: { email: cuenta.email }, empresa: null, empresaId: null, empresas, trabajadores: [], limites: lim, maxTotal: MAX_TOTAL };
-        const empresa = cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId));
+        const desc = cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId));
+        const { datosLey21719, ...empresa } = desc;
         const trabajadores = await leerTrabajadores(cuenta.cuentaId, fila.id);
-        return { ok: true, cuenta: { email: cuenta.email }, empresa, empresaId: fila.id, empresas, trabajadores, limites: lim, maxTotal: MAX_TOTAL };
+        return { ok: true, cuenta: { email: cuenta.email }, empresa, empresaId: fila.id, empresas, trabajadores, datosLey21719: datosLey21719 || datosLeyDefecto(), limites: lim, maxTotal: MAX_TOTAL };
     }
 
     async function guardarEmpresa(cuenta, entrada) {
         const v = V.validarEmpresa(entrada);
         if (!v.ok) return fallo(400, 'validacion', 'Revisa los datos de la empresa.', v.errores);
-        const c = cifrado.cifrar(v.valor, ctxEmpresa(cuenta.cuentaId));
+        const fila = await empresaDe(cuenta);
+        const previo = fila ? cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId)) : null;
+        const payload = previo && previo.datosLey21719 ? Object.assign({}, v.valor, { datosLey21719: previo.datosLey21719 }) : v.valor;
+        const c = cifrado.cifrar(payload, ctxEmpresa(cuenta.cuentaId));
         const r = await almacen.guardarEmpresa(cuenta.cuentaId, c.datos, c.version, iso(), cuenta.empresaId);
         if (!r) return fallo(404, 'no_existe', 'No encontramos esa empresa en tu cuenta.');
         return { ok: true, empresa: v.valor, empresaId: r.id };
+    }
+
+    /** Guarda la configuración y registros operacionales de Ley 21.719 cifrados junto a la empresa. */
+    async function guardarDatosLey21719(cuenta, entrada) {
+        const fila = await empresaDe(cuenta);
+        if (!fila) return fallo(409, 'sin_empresa', 'Primero guarda los datos de la empresa.');
+        const v = V.validarDatosLey21719(entrada);
+        if (!v.ok) return fallo(400, 'validacion', 'Revisa los datos de protección de datos.', v.errores);
+        const actual = cifrado.descifrar(fila.datos, fila.version, ctxEmpresa(cuenta.cuentaId));
+        const c = cifrado.cifrar(Object.assign({}, actual, { datosLey21719: v.valor }), ctxEmpresa(cuenta.cuentaId));
+        const r = await almacen.guardarEmpresa(cuenta.cuentaId, c.datos, c.version, iso(), fila.id);
+        if (!r) return fallo(404, 'no_existe', 'No encontramos esa empresa en tu cuenta.');
+        return { ok: true, datosLey21719: v.valor };
     }
 
     /** Agrega otra empresa a la cuenta (un cliente más del estudio), dentro del máximo de la cuenta. */
@@ -884,6 +998,7 @@ function crear({ almacen, cifrado, ahora, piloto }) {
                 exportado: iso(),
                 cuenta: { email: cuenta.email },
                 empresa: e.empresa,
+                datosLey21719: e.datosLey21719,
                 trabajadores: e.trabajadores,
                 meses: await leerMesesExport(cuenta),
                 documentos: await leerDocumentosExport(cuenta),
@@ -901,7 +1016,7 @@ function crear({ almacen, cifrado, ahora, piloto }) {
         return { ok: true };
     }
 
-    return { estado, guardarEmpresa, crearEmpresa, borrarEmpresa, crearTrabajador, actualizarTrabajador, guardarPrestamos, guardarAusencias, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, avisosCorreo, guardarAvisosCorreo, importar, exportar, borrarCuenta };
+    return { estado, guardarEmpresa, crearEmpresa, borrarEmpresa, guardarDatosLey21719, crearTrabajador, actualizarTrabajador, guardarPrestamos, guardarAusencias, borrarTrabajador, meses, guardarMes, borrarMes, registrarDocumento, documentos, vacaciones, guardarVacacion, borrarVacacion, honorarios, guardarHonorarios, avisosCorreo, guardarAvisosCorreo, importar, exportar, borrarCuenta };
 }
 
 function limiteTexto(lim) {
