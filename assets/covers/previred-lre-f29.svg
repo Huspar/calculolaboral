@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Flujo mensual Previred 105 campos, LRE Mi DT y Formulario 29</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+<rect x="160" y="130" width="150" height="190" rx="16" fill="#FFFFFF"/>
+<rect x="160" y="130" width="150" height="48" rx="16" fill="#00382E"/>
+<line x1="186" y1="205" x2="284" y2="205"/>
+<line x1="186" y1="235" x2="262" y2="235"/>
+<line x1="186" y1="265" x2="284" y2="265"/>
+<line x1="186" y1="295" x2="245" y2="295"/>
+<path d="M326 225 H362 M350 213 L364 225 L350 237" stroke="#FFB703" stroke-width="7"/>
+<rect x="376" y="110" width="160" height="210" rx="16" fill="#FFFFFF"/>
+<rect x="376" y="110" width="160" height="50" rx="16" fill="#FFB703"/>
+<rect x="402" y="185" width="44" height="32" rx="6" fill="#EEF6F3"/>
+<rect x="462" y="185" width="48" height="32" rx="6" fill="#EEF6F3"/>
+<rect x="402" y="230" width="44" height="32" rx="6" fill="#EEF6F3"/>
+<rect x="462" y="230" width="48" height="32" rx="6" fill="#EEF6F3"/>
+<line x1="402" y1="286" x2="510" y2="286"/>
+<path d="M550 225 H586 M574 213 L588 225 L574 237" stroke="#FFB703" stroke-width="7"/>
+<rect x="600" y="145" width="130" height="175" rx="16" fill="#FFFFFF"/>
+<rect x="600" y="145" width="130" height="44" rx="16" fill="#00382E"/>
+<circle cx="665" cy="245" r="28" fill="#FFB703"/>
+<path d="M654 245 L662 254 L678 236" stroke="#00382E" stroke-width="6"/>
+</g>
+</svg>

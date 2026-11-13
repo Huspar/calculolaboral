@@ -436,3 +436,344 @@
         display: none !important;
     }
 }
+
+/* ---------- Componentes limpios del Sidebar de Suite Contadores ---------- */
+.suite-cliente-caja {
+    margin-top: 10px;
+    display: grid;
+    gap: 6px;
+}
+.suite-cliente-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+}
+.suite-cliente-input:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+}
+.suite-clientes-select {
+    width: 100%;
+    height: 28px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--forest-600);
+    color: #FFFFFF;
+    font: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+}
+.suite-clientes-select:focus-visible {
+    outline: 2px solid var(--amber);
+}
+.suite-btn-guardar {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 0;
+    font-size: 12px;
+    color: var(--side-muted);
+    text-align: left;
+    white-space: nowrap;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+.suite-btn-guardar .material-icons {
+    font-size: 15px;
+}
+.suite-btn-guardar:hover {
+    color: #FFFFFF;
+}
+
+/* Pie del sidebar y Régimen */
+.suite-regimen-fila {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    color: var(--side-muted);
+    font-size: 12px;
+}
+.suite-regimen-label {
+    white-space: nowrap;
+}
+.suite-regimen-select {
+    width: 100%;
+    min-width: 0;
+    height: 26px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--forest-600);
+    color: #FFFFFF;
+    font: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+}
+.suite-regimen-select:focus-visible {
+    outline: 2px solid var(--amber);
+}
+.suite-respaldo-fila {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+}
+.suite-respaldo-fila .btn {
+    flex: 1;
+}
+.suite-btn-importar {
+    margin-top: 6px;
+    width: 100%;
+    justify-content: center;
+}
+.suite-puente-texto {
+    margin: 2px 0 0;
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--side-muted);
+}
+.suite-link-pyme {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--side-muted);
+    text-decoration: none;
+}
+.suite-link-pyme:hover {
+    color: #FFFFFF;
+}
+.suite-link-pyme .material-icons {
+    font-size: 16px;
+}
+
+/* ---------- Tarjeta de resumen ejecutivo móvil (Balance y F29) ---------- */
+.tabla-resumen-movil {
+    display: none;
+    margin-bottom: 14px;
+}
+@media (max-width: 768px) {
+    .tabla-resumen-movil {
+        display: block;
+    }
+    .resumen-movil-card {
+        background: #FFFFFF;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .resumen-movil-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+    }
+    .resumen-movil-tag {
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--forest);
+    }
+    .resumen-movil-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .resumen-movil-kpi {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 6px;
+        padding: 8px 10px;
+    }
+    .resumen-movil-kpi.destacado {
+        background: var(--forest-50);
+        border-color: var(--forest-100);
+    }
+    .resumen-kpi-lbl {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 2px;
+    }
+    .resumen-kpi-val {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--forest);
+    }
+    .resumen-kpi-val.ok {
+        color: var(--ok-ink);
+    }
+    .resumen-movil-pie {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px dashed var(--line);
+        font-size: 11.5px;
+    }
+}
+
+/* ---------- Guía RCV en 2 pasos ---------- */
+.rcv-guia-card {
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+}
+.rcv-guia-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--forest);
+    font-size: 13.5px;
+    margin-bottom: 10px;
+}
+.rcv-guia-head .material-icons {
+    font-size: 18px;
+}
+.rcv-guia-pasos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+.rcv-paso {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #FFFFFF;
+    border: 1px solid rgba(6, 74, 62, 0.12);
+    border-radius: 6px;
+    padding: 10px;
+}
+.rcv-paso-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.rcv-paso-info strong {
+    display: block;
+    font-size: 12.5px;
+    color: var(--forest-deep);
+    margin-bottom: 2px;
+}
+.rcv-paso-info p {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.35;
+}
+@media (max-width: 768px) {
+    .rcv-guia-pasos {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Estado de homologación y códigos ERP ---------- */
+.suite-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    color: #166534;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+.suite-status-pill .material-icons {
+    font-size: 17px;
+    color: #16A34A;
+}
+.input-codigo-mapeo {
+    height: 30px;
+    font-size: 12px;
+    padding: 0 8px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    width: 140px;
+    background: #FFFFFF;
+    color: var(--ink);
+}
+.input-codigo-mapeo:focus-visible {
+    outline: 2px solid var(--amber);
+}
+
+/* Compactación de sidebar de Suite Contadores en laptops (1366x768) */
+@media screen and (min-width: 901px) and (max-height: 800px) {
+    .app-side {
+        gap: 2px;
+        padding: 6px 8px;
+    }
+    .app-marca {
+        padding: 2px 4px;
+        font-size: 13.5px;
+    }
+    .app-empresa {
+        padding: 2px 6px;
+    }
+    .suite-cliente-caja {
+        margin-top: 3px;
+        gap: 2px;
+    }
+    .suite-cliente-input {
+        height: 27px;
+        font-size: 12px;
+    }
+    .suite-clientes-select,
+    .suite-regimen-select {
+        height: 23px;
+    }
+    #suite-modulos {
+        gap: 0;
+    }
+    #suite-modulos .app-nav-grupo {
+        margin: 4px 8px 1px;
+    }
+    #suite-modulos .suite-mod-btn {
+        height: 27px;
+        font-size: 12px;
+    }
+    #suite-side-pie.app-side-pie {
+        gap: 3px !important;
+        padding: 5px 8px !important;
+    }
+    #suite-side-pie #btn-cierre-tributario {
+        height: 27px !important;
+        font-size: 11.5px !important;
+    }
+    #suite-side-pie #btn-respaldo,
+    #suite-side-pie #btn-restaurar {
+        height: 24px !important;
+    }
+    #suite-side-pie .suite-btn-importar {
+        margin-top: 1px;
+        height: 25px;
+    }
+    #suite-side-pie .suite-link-pyme {
+        margin-top: 1px;
+        height: 20px;
+    }
+}

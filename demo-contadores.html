@@ -14,9 +14,9 @@
 <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/app.css?v=1.24.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.25.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.1.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -46,15 +46,15 @@
       <strong id="study-name-display">Asesorías Pérez Ltda.</strong>
       <span class="mono" style="font-size:11.5px;color:var(--side-muted)">Suite Estudios Contables</span>
 
-      <div style="margin-top:10px;display:grid;gap:6px">
+      <div class="suite-cliente-caja">
         <label class="sr-only" for="liq-cliente">Cliente o empresa en trabajo</label>
-        <input type="text" id="liq-cliente" class="lq-select" style="background:#FFFFFF;color:var(--ink);height:36px;font-size:13px;border-radius:8px;padding:0 10px;width:100%" value="Panadería San Isidro SpA" placeholder="Nombre del cliente">
+        <input type="text" id="liq-cliente" class="suite-cliente-input" value="Panadería San Isidro SpA" placeholder="Nombre del cliente">
         <label class="sr-only" for="liq-clientes-guardados">Clientes guardados</label>
-        <select id="liq-clientes-guardados" class="lq-select" style="background:#0F5E4F;color:#FFFFFF;border:0;border-radius:6px;height:28px;font-size:11.5px;padding:0 6px;width:100%">
+        <select id="liq-clientes-guardados" class="suite-clientes-select">
           <option value="">Clientes guardados (0)</option>
         </select>
-        <button type="button" class="btn-texto" id="btn-guardar-cliente" style="color:var(--side-muted);font-size:12px;padding:2px 0;text-align:left;display:inline-flex;align-items:center;gap:4px;white-space:nowrap">
-          <span class="material-icons" style="font-size:15px" aria-hidden="true">save</span> Guardar cliente actual
+        <button type="button" class="btn-texto suite-btn-guardar" id="btn-guardar-cliente">
+          <span class="material-icons" aria-hidden="true">save</span> Guardar cliente actual
         </button>
       </div>
     </div>
@@ -101,9 +101,9 @@
 
     <!-- Pie del Sidebar con Régimen, Cierre y Enlace al Asistente Pyme -->
     <div class="app-side-pie" id="suite-side-pie">
-      <div style="display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;color:var(--side-muted);font-size:12px">
-        <span style="white-space:nowrap">Régimen SII:</span>
-        <select id="suite-regimen" style="background:#0F5E4F;color:#FFFFFF;border:0;border-radius:6px;height:26px;font-size:11.5px;padding:0 6px;width:100%;min-width:0">
+      <div class="suite-regimen-fila">
+        <label for="suite-regimen" class="suite-regimen-label">Régimen SII:</label>
+        <select id="suite-regimen" class="suite-regimen-select">
           <option value="14D3">ProPyme (14 D3)</option>
           <option value="14D3_MAYOR">ProPyme &gt;50k UF</option>
           <option value="14D8">Transparente (14 D8)</option>
@@ -114,18 +114,18 @@
       <button type="button" class="btn btn-chico" id="btn-cierre-tributario">
         <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
       </button>
-      <div style="display:flex;gap:6px;margin-top:2px">
-        <button type="button" class="btn btn-chico" id="btn-respaldo" style="flex:1">Respaldo</button>
-        <button type="button" class="btn btn-chico" id="btn-restaurar" style="flex:1">Restaurar</button>
-        <input type="file" id="file-respaldo" accept=".json" class="sr-only">
+      <div class="suite-respaldo-fila">
+        <button type="button" class="btn btn-chico" id="btn-respaldo">Respaldo</button>
+        <button type="button" class="btn btn-chico" id="btn-restaurar">Restaurar</button>
+        <input type="file" id="file-respaldo" accept=".json" class="sr-only" aria-label="Restaurar archivo de respaldo JSON">
       </div>
-      <button type="button" class="btn btn-chico" id="btn-importar-pyme" title="Importar paquete-contador-YYYY-MM.json exportado desde /app">
+      <button type="button" class="btn btn-chico suite-btn-importar" id="btn-importar-pyme" title="Importar paquete-contador-YYYY-MM.json exportado desde /app">
         <span class="material-icons" aria-hidden="true">drive_folder_upload</span>Importar paquete Pyme
       </button>
-      <input type="file" id="file-paquete-pyme" accept=".json,application/json" class="sr-only">
-      <p id="puente-pyme-estado" hidden style="margin:2px 0 0;font-size:11px;line-height:1.35;color:var(--side-muted)"></p>
-      <a href="/app" style="color:var(--side-muted);font-size:12px;text-decoration:none;display:flex;align-items:center;gap:6px;margin-top:6px">
-        <span class="material-icons" style="font-size:16px" aria-hidden="true">arrow_back</span>Ir al Asistente Pyme
+      <input type="file" id="file-paquete-pyme" accept=".json,application/json" class="sr-only" aria-label="Importar archivo paquete Pyme JSON">
+      <p id="puente-pyme-estado" hidden class="suite-puente-texto"></p>
+      <a href="/app" class="suite-link-pyme">
+        <span class="material-icons" aria-hidden="true">arrow_back</span>Ir al Asistente Pyme
       </a>
     </div>
   </aside>
@@ -216,7 +216,7 @@
                 <span class="material-icons" aria-hidden="true">upload_file</span>
                 <strong>Arrastra la nómina de finiquitos o haz clic para buscarla</strong>
                 <span>.xlsx, .xls o .csv con una fila por trabajador</span>
-                <input type="file" id="file-fin" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1">
+                <input type="file" id="file-fin" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1" aria-label="Archivo de nómina de finiquitos">
               </div>
               <div class="form-acciones" style="margin-top:12px">
                 <button class="btn btn-chico" type="button" id="btn-sample-fin">Cargar ejemplo (12)</button>
@@ -283,7 +283,7 @@
                 <span class="material-icons" aria-hidden="true">upload_file</span>
                 <strong>Arrastra la nómina mensual o haz clic para buscarla</strong>
                 <span>.xlsx, .xls o .csv con una fila por trabajador</span>
-                <input type="file" id="file-liq" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1">
+                <input type="file" id="file-liq" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1" aria-label="Archivo de nómina mensual de liquidaciones">
               </div>
               <div class="form-acciones" style="margin-top:12px">
                 <button class="btn btn-chico btn-primario" type="button" id="btn-sample-liq"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo (10 trabajadores)</button>
@@ -360,13 +360,35 @@
               <div class="lq-field"><label for="f29-hon-bruto">Boletas honorarios brutas ($)</label><input type="number" id="f29-hon-bruto" step="1" min="0" placeholder="0"></div>
               <div class="lq-field fin-span-all"><label for="f29-iusc-manual">Impuesto Único trabajadores cód. 48 ($)</label><input type="number" id="f29-iusc-manual" step="1" min="0" placeholder="0"><span class="texto-ayuda" id="f29-iusc-ayuda">Se integra automáticamente cuando calculas Liquidaciones.</span></div>
             </div>
+            <div class="rcv-guia-card">
+              <div class="rcv-guia-head">
+                <span class="material-icons" aria-hidden="true">help_outline</span>
+                <strong>¿Cómo descargar los archivos RCV desde el SII en 2 clics?</strong>
+              </div>
+              <div class="rcv-guia-pasos">
+                <div class="rcv-paso">
+                  <span class="rcv-paso-num">1</span>
+                  <div class="rcv-paso-info">
+                    <strong>Ingresa a sii.cl &gt; Servicios Online</strong>
+                    <p>Ve a <em>Impuestos Mensuales &gt; Registro de Compras y Ventas (RCV) &gt; Ingresar al RCV</em>. Elige el mes tributario.</p>
+                  </div>
+                </div>
+                <div class="rcv-paso">
+                  <span class="rcv-paso-num">2</span>
+                  <div class="rcv-paso-info">
+                    <strong>Haz clic en «Descargar Detalles» (CSV o Excel)</strong>
+                    <p>Baja el archivo de <em>Ventas</em> y luego el de <em>Compras</em>. Arrástralos a las cajas de abajo; no necesitas abrirlos ni editarlos.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="fin-split">
               <div class="rcv-drop-box">
                 <div class="fin-dropzone" id="drop-rcv-ventas" role="button" tabindex="0" aria-label="Subir RCV Ventas SII">
                   <span class="material-icons" aria-hidden="true">north_east</span>
                   <strong>RCV Ventas SII (CSV o Excel)</strong>
                   <span>Facturas afectas, exentas, boletas y notas de crédito</span>
-                  <input type="file" id="file-rcv-ventas" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1">
+                  <input type="file" id="file-rcv-ventas" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1" aria-label="Archivo RCV Ventas SII">
                 </div>
                 <span class="rcv-drop-estado" id="rcv-ventas-estado">Sin archivo cargado</span>
               </div>
@@ -375,7 +397,7 @@
                   <span class="material-icons" aria-hidden="true">south_west</span>
                   <strong>RCV Compras SII (CSV o Excel)</strong>
                   <span>Giro, supermercado, activo fijo y notas de crédito</span>
-                  <input type="file" id="file-rcv-compras" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1">
+                  <input type="file" id="file-rcv-compras" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1" aria-label="Archivo RCV Compras SII">
                 </div>
                 <span class="rcv-drop-estado" id="rcv-compras-estado">Sin archivo cargado</span>
               </div>
@@ -395,6 +417,35 @@
         <div class="panel" id="f29-resultados" hidden style="margin-bottom:16px">
           <div class="panel-head"><h2>Hoja de trabajo del Formulario 29</h2><span class="texto-ayuda">Vencimiento legal: día 20 del mes siguiente</span></div>
           <div class="panel-cuerpo">
+            <div class="tabla-resumen-movil" id="f29-resumen-movil">
+              <div class="resumen-movil-card">
+                <div class="resumen-movil-head">
+                  <span class="mono resumen-movil-tag">Resumen Declaración F29</span>
+                  <span class="sello sello-activo" id="f29-m-estado">Con pago en plazo</span>
+                </div>
+                <div class="resumen-movil-grid">
+                  <div class="resumen-movil-kpi">
+                    <span class="resumen-kpi-lbl">Débito Fiscal (cód. 538)</span>
+                    <span class="resumen-kpi-val mono" id="f29-m-deb">$0</span>
+                  </div>
+                  <div class="resumen-movil-kpi">
+                    <span class="resumen-kpi-lbl">Crédito Fiscal (cód. 537)</span>
+                    <span class="resumen-kpi-val mono" id="f29-m-cred">$0</span>
+                  </div>
+                  <div class="resumen-movil-kpi">
+                    <span class="resumen-kpi-lbl" id="f29-m-iva-lbl">IVA determinado (cód. 89)</span>
+                    <span class="resumen-kpi-val mono" id="f29-m-iva">$0</span>
+                  </div>
+                  <div class="resumen-movil-kpi destacado">
+                    <span class="resumen-kpi-lbl">Total F29 a pagar (cód. 91)</span>
+                    <span class="resumen-kpi-val mono ok" id="f29-m-total">$0</span>
+                  </div>
+                </div>
+                <div class="resumen-movil-pie">
+                  <span class="texto-ayuda" id="f29-m-pie">Incluye retenciones y PPM mensual.</span>
+                </div>
+              </div>
+            </div>
             <div class="fin-kpis fin-kpis-4">
               <div class="fin-kpi"><span class="fin-kpi-label">Total débito fiscal (cód. 538)</span><span class="fin-kpi-val mono" id="f29-k-debito">$0</span></div>
               <div class="fin-kpi"><span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span><span class="fin-kpi-val mono" id="f29-k-credito">$0</span></div>
@@ -501,6 +552,82 @@
             </div>
           </div>
         </div>
+
+        <div class="panel" id="panel-mapeo-cuentas" style="margin-bottom:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Plan de cuentas y equivalencia de software contable</h2>
+              <p class="texto-ayuda">Homologa códigos de tu software de escritorio para centralización y Balance de 8 Columnas.</p>
+            </div>
+            <div class="v-acciones">
+              <button type="button" class="btn btn-chico" id="btn-importar-plan-csv">
+                <span class="material-icons" aria-hidden="true">upload_file</span>Importar plan CSV personalizado
+              </button>
+              <input type="file" id="file-plan-csv" accept=".csv" class="sr-only" aria-label="Importar archivo CSV de plan de cuentas">
+            </div>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="fin-form-grid">
+              <div class="lq-field">
+                <label for="suite-erp-origen">Estructura o ERP contable de origen</label>
+                <select id="suite-erp-origen">
+                  <option value="sii_estandar" selected>Estándar Pyme SII (1-Activo, 2-Pasivo, 3-Patrimonio, 4-Resultados)</option>
+                  <option value="softland">Softland Contabilidad (Formato 8 dígitos X-XX-XXXX)</option>
+                  <option value="transtecnia">Transtecnia ERP (Codificación alfanumérica)</option>
+                  <option value="laudus">Laudus Software Contable (Árbol multinivel)</option>
+                  <option value="personalizado">Mapeo personalizado mediante archivo CSV</option>
+                </select>
+              </div>
+              <div class="lq-field">
+                <span class="lq-label">Estado de homologación</span>
+                <div id="suite-plan-estado" class="suite-status-pill ok">
+                  <span class="material-icons" aria-hidden="true">check_circle</span>
+                  <span id="suite-plan-estado-txt">42 cuentas base homologadas (SII Estándar)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tabla-wrap" style="margin-top:10px">
+              <table class="tabla tabla-compacta">
+                <caption class="sr-only">Cuentas rectoras del Balance y homologación</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Concepto contable</th>
+                    <th scope="col">Cuenta sugerida (Cálculo Laboral)</th>
+                    <th scope="col">Código en tu software</th>
+                    <th scope="col">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>IVA Débito Fiscal</strong></td>
+                    <td><code>2105-01</code> IVA Débito Fiscal</td>
+                    <td><input type="text" class="input-codigo-mapeo mono" value="2-1-03-01" aria-label="Código IVA Débito"></td>
+                    <td><span class="sello sello-activo">Vinculada</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>IVA Crédito Fiscal</strong></td>
+                    <td><code>1107-01</code> IVA Crédito Fiscal</td>
+                    <td><input type="text" class="input-codigo-mapeo mono" value="1-1-05-01" aria-label="Código IVA Crédito"></td>
+                    <td><span class="sello sello-activo">Vinculada</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Leyes Sociales por Pagar</strong></td>
+                    <td><code>2104-01</code> Previred / Imposiciones por Pagar</td>
+                    <td><input type="text" class="input-codigo-mapeo mono" value="2-1-02-04" aria-label="Código Previred"></td>
+                    <td><span class="sello sello-activo">Vinculada</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Sueldos por Pagar</strong></td>
+                    <td><code>2103-01</code> Remuneraciones por Pagar Líquidas</td>
+                    <td><input type="text" class="input-codigo-mapeo mono" value="2-1-02-01" aria-label="Código Sueldos"></td>
+                    <td><span class="sello sello-activo">Vinculada</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ==================== VISTA 4: BALANCE Y RLI ==================== -->
@@ -514,6 +641,36 @@
             <button class="btn btn-primario" type="button" id="btn-balance-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Balance + RLI</button>
             <button class="btn" type="button" id="btn-balance-csv">CSV Balance</button>
             <button class="btn" type="button" id="btn-rli-csv">CSV RLI</button>
+          </div>
+        </div>
+
+        <div class="tabla-resumen-movil" id="bal-resumen-movil" hidden>
+          <div class="resumen-movil-card">
+            <div class="resumen-movil-head">
+              <span class="mono resumen-movil-tag">Balance 8 Columnas</span>
+              <span class="sello sello-activo" id="bal-m-cuadratura">Cuadrado al peso</span>
+            </div>
+            <div class="resumen-movil-grid">
+              <div class="resumen-movil-kpi">
+                <span class="resumen-kpi-lbl">Total Activo</span>
+                <span class="resumen-kpi-val mono" id="bal-m-activo">$0</span>
+              </div>
+              <div class="resumen-movil-kpi">
+                <span class="resumen-kpi-lbl">Pasivo + Patrimonio</span>
+                <span class="resumen-kpi-val mono" id="bal-m-pasivo">$0</span>
+              </div>
+              <div class="resumen-movil-kpi">
+                <span class="resumen-kpi-lbl" id="bal-m-res-lbl">Resultado ejercicio</span>
+                <span class="resumen-kpi-val mono ok" id="bal-m-resultado">$0</span>
+              </div>
+              <div class="resumen-movil-kpi destacado">
+                <span class="resumen-kpi-lbl">Base RLI ProPyme (F22)</span>
+                <span class="resumen-kpi-val mono ok" id="bal-m-rli">$0</span>
+              </div>
+            </div>
+            <div class="resumen-movil-pie">
+              <p class="texto-ayuda">Diferencia cuadratura: <strong class="mono" id="bal-m-dif">$0</strong> (Débitos = Créditos)</p>
+            </div>
           </div>
         </div>
 
@@ -691,7 +848,7 @@
 <script src="/js/demo_liquidaciones.js?v=2.6.1"></script>
 <script src="/js/contadores_f29.js?v=1.1.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.1.0"></script>
-<script src="/js/demo_suite.js?v=1.1.0"></script>
+<script src="/js/demo_suite.js?v=1.2.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes para coincidir 100% con /app
 (function () {

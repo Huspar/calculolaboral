@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.24.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.25.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -281,25 +281,42 @@ gtag('js', new Date());
 <form id="pm-trab-form" novalidate autocomplete="off">
 <h2 id="pm-trab-form-titulo" class="sr-only">Datos del trabajador</h2>
 <div class="form-bloque">
-<p class="h-seccion">Identificación</p>
+<p class="h-seccion">Datos esenciales para la primera liquidación</p>
 <div class="lq-grid">
 <div class="lq-field lq-span2"><label for="pm-t-nombre">Nombre completo</label><input id="pm-t-nombre" data-k="nombre" type="text" maxlength="80" placeholder="María Pérez Soto"><p class="pm-error" data-error="nombre" hidden></p></div>
 <div class="lq-field"><label for="pm-t-rut">RUT</label><input id="pm-t-rut" data-k="rut" data-tipo="rut" type="text" maxlength="12" placeholder="12.345.678-5"><p class="pm-error" data-error="rut" hidden></p></div>
-<div class="lq-field"><label for="pm-t-cargo">Cargo <span class="lq-opt">(opcional)</span></label><input id="pm-t-cargo" data-k="cargo" type="text" maxlength="60" placeholder="Vendedora"></div>
-<div class="lq-field"><label for="pm-t-nac">Fecha de nacimiento <span class="lq-opt">(opcional)</span></label><input id="pm-t-nac" data-k="fechaNacimiento" type="date"><p class="pm-error" data-error="fechaNacimiento" hidden></p></div>
-<div class="lq-field"><label for="pm-t-nacion">Nacionalidad <span class="lq-opt">(opcional)</span></label><input id="pm-t-nacion" data-k="nacionalidad" type="text" maxlength="40" placeholder="Chilena"></div>
-<div class="lq-field lq-span2"><label for="pm-t-dom">Domicilio <span class="lq-opt">(opcional)</span></label><input id="pm-t-dom" data-k="domicilio" type="text" maxlength="120" placeholder="Calle 123, Temuco"></div>
-<div class="lq-field"><label for="pm-t-comuna">Comuna <span class="lq-opt">(opcional)</span></label><input id="pm-t-comuna" data-k="comuna" type="text" maxlength="60" placeholder="Temuco"></div>
-</div>
-</div>
-<div class="form-bloque">
-<p class="h-seccion">Contrato y jornada</p>
-<div class="lq-grid">
 <div class="lq-field"><label for="pm-t-ingreso">Fecha de ingreso</label><input id="pm-t-ingreso" data-k="fechaIngreso" type="date"><p class="pm-error" data-error="fechaIngreso" hidden></p></div>
 <div class="lq-field"><label for="pm-t-contrato">Contrato</label>
 <select id="pm-t-contrato" data-k="contrato"><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="obra">Por obra o faena</option></select></div>
 <div class="lq-field" data-si-contrato="plazo_fijo"><label for="pm-t-termino">Vence el contrato a plazo fijo</label><input id="pm-t-termino" data-k="fechaTerminoPlazo" type="date"><p class="pm-error" data-error="fechaTerminoPlazo" hidden></p></div>
 <div class="lq-field" data-si-contrato="plazo_fijo"><label for="pm-t-reno">Renovaciones que lleva</label><input id="pm-t-reno" data-k="renovaciones" data-tipo="num" type="text" inputmode="numeric" maxlength="1" placeholder="0"><p class="pm-error" data-error="renovaciones" hidden></p></div>
+<div class="lq-field"><label for="pm-t-sueldo">Sueldo base mensual</label><input id="pm-t-sueldo" data-k="sueldoBase" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$650.000"><p class="pm-error" data-error="sueldoBase" hidden></p></div>
+<div class="lq-field"><label for="pm-t-grat">Gratificación</label>
+<select id="pm-t-grat" data-k="gratificacion"><option value="legal">Legal (art. 50)</option><option value="ninguna">Ninguna</option><option value="pactada">Pactada</option></select></div>
+<div class="lq-field"><label for="pm-t-afp">AFP</label><select id="pm-t-afp" data-k="afp"></select></div>
+<div class="lq-field"><label for="pm-t-salud">Salud</label>
+<select id="pm-t-salud" data-k="salud"><option value="fonasa">Fonasa</option><option value="isapre">Isapre</option></select></div>
+<div class="lq-field" data-si-salud="isapre"><label for="pm-t-isapre">Isapre</label><input id="pm-t-isapre" data-k="isapreNombre" type="text" maxlength="40" placeholder="Colmena"></div>
+<div class="lq-field" data-si-salud="isapre"><label for="pm-t-plan">Plan pactado (UF)</label><input id="pm-t-plan" data-k="isaprePlanUF" data-tipo="uf" type="text" inputmode="decimal" placeholder="4,2"><p class="pm-error" data-error="isaprePlanUF" hidden></p></div>
+</div>
+</div>
+
+<div class="fr-acordeones" id="pm-trab-acordeones" data-avanzado>
+<details class="fr-acordeon" id="pm-bloque-contrato" data-avanzado>
+<summary class="fr-acordeon-head">
+<span class="fr-acordeon-titulo"><span class="material-icons" aria-hidden="true">badge</span><strong>Contrato, jornada, domicilio y término</strong></span>
+<span class="fr-acordeon-desc">Cargo, 42h, vacaciones progresivas, Ley Karin</span>
+<span class="material-icons fr-acordeon-flecha" aria-hidden="true">expand_more</span>
+</summary>
+<div class="fr-acordeon-cuerpo">
+<div class="form-bloque">
+<p class="h-seccion">Identificación y jornada</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-t-cargo">Cargo <span class="lq-opt">(opcional)</span></label><input id="pm-t-cargo" data-k="cargo" type="text" maxlength="60" placeholder="Vendedora"></div>
+<div class="lq-field"><label for="pm-t-nac">Fecha de nacimiento <span class="lq-opt">(opcional)</span></label><input id="pm-t-nac" data-k="fechaNacimiento" type="date"><p class="pm-error" data-error="fechaNacimiento" hidden></p></div>
+<div class="lq-field"><label for="pm-t-nacion">Nacionalidad <span class="lq-opt">(opcional)</span></label><input id="pm-t-nacion" data-k="nacionalidad" type="text" maxlength="40" placeholder="Chilena"></div>
+<div class="lq-field lq-span2"><label for="pm-t-dom">Domicilio <span class="lq-opt">(opcional)</span></label><input id="pm-t-dom" data-k="domicilio" type="text" maxlength="120" placeholder="Calle 123, Temuco"></div>
+<div class="lq-field"><label for="pm-t-comuna">Comuna <span class="lq-opt">(opcional)</span></label><input id="pm-t-comuna" data-k="comuna" type="text" maxlength="60" placeholder="Temuco"></div>
 <div class="lq-field"><label for="pm-t-jornada">Jornada semanal (horas)</label><input id="pm-t-jornada" data-k="jornadaHoras" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="42"><p class="pm-error" data-error="jornadaHoras" hidden></p></div>
 <div class="lq-field"><label for="pm-t-dist">Días de trabajo a la semana</label>
 <select id="pm-t-dist" data-k="distribucion"><option value="5">5 días (lunes a viernes)</option><option value="6">6 días (lunes a sábado)</option></select></div>
@@ -308,11 +325,34 @@ gtag('js', new Date());
 </div>
 </div>
 <div class="form-bloque">
-<p class="h-seccion">Remuneración y previsión</p>
+<p class="h-seccion">Término del contrato <span class="lq-opt">(opcional)</span></p>
+<p class="lq-help">Anótalo cuando el contrato termine. Ese mes la persona sale como retiro en Previred y en el libro de remuneraciones, y después deja de aparecer en las liquidaciones. Las indemnizaciones del finiquito van en su última liquidación, en «otros no imponibles» (por ejemplo «Indemnización años de servicio»).</p>
 <div class="lq-grid">
-<div class="lq-field"><label for="pm-t-sueldo">Sueldo base mensual</label><input id="pm-t-sueldo" data-k="sueldoBase" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$650.000"><p class="pm-error" data-error="sueldoBase" hidden></p></div>
-<div class="lq-field"><label for="pm-t-grat">Gratificación</label>
-<select id="pm-t-grat" data-k="gratificacion"><option value="legal">Legal (art. 50)</option><option value="ninguna">Ninguna</option><option value="pactada">Pactada</option></select></div>
+<div class="lq-field"><label for="pm-t-ftermino">Fecha de término</label><input id="pm-t-ftermino" data-k="fechaTermino" type="date"><p class="pm-error" data-error="fechaTermino" hidden></p></div>
+<div class="lq-field lq-span2"><label for="pm-t-causal">Causal</label><select id="pm-t-causal" data-k="causalTermino"><option value="">Sin indicar</option><option value="3">Art. 159 N°1: mutuo acuerdo de las partes</option><option value="4">Art. 159 N°2: renuncia del trabajador</option><option value="5">Art. 159 N°3: muerte del trabajador</option><option value="6">Art. 159 N°4: vencimiento del plazo convenido</option><option value="7">Art. 159 N°5: conclusión del trabajo o servicio</option><option value="8">Art. 159 N°6: caso fortuito o fuerza mayor</option><option value="24">Art. 160 N°1 a): falta de probidad</option><option value="25">Art. 160 N°1 b): conductas de acoso sexual</option><option value="26">Art. 160 N°1 c): vías de hecho</option><option value="27">Art. 160 N°1 d): injurias</option><option value="28">Art. 160 N°1 e): conducta inmoral</option><option value="29">Art. 160 N°1 f): conductas de acoso laboral</option><option value="11">Art. 160 N°2: negociaciones prohibidas por escrito</option><option value="12">Art. 160 N°3: no concurrencia a las labores</option><option value="13">Art. 160 N°4: abandono del trabajo</option><option value="14">Art. 160 N°5: actos, omisiones o imprudencias temerarias</option><option value="15">Art. 160 N°6: perjuicio material causado intencionalmente</option><option value="16">Art. 160 N°7: incumplimiento grave de las obligaciones</option><option value="18">Art. 161 inciso 1°: necesidades de la empresa</option><option value="19">Art. 161 inciso 2°: desahucio escrito del empleador</option><option value="20">Art. 163 bis: procedimiento concursal de liquidación</option></select><p class="pm-error" data-error="causalTermino" hidden></p></div>
+</div>
+</div>
+<div class="form-bloque">
+<p class="h-seccion">Ley Karin</p>
+<p class="lq-help">El protocolo de prevención del acoso sexual, laboral y la violencia en el trabajo debe darse a conocer a cada trabajador (art. 211-A del Código del Trabajo). Anota cuándo se lo entregaste para tener el registro a mano en una fiscalización. Si aún no tienes protocolo, el <a href="/kit-cumplimiento-laboral-pymes" target="_blank" rel="noopener">Kit Blindaje Laboral</a> trae un modelo.</p>
+<div class="lq-grid">
+<div class="lq-field"><label for="pm-t-karin">Protocolo entregado el <span class="lq-opt">(opcional)</span></label><input id="pm-t-karin" data-k="karinEntrega" type="date"><p class="pm-error" data-error="karinEntrega" hidden></p></div>
+<div class="lq-field pm-check"><label><input id="pm-t-karin-firma" data-k="karinConstancia" type="checkbox"> Firmó una constancia de recepción <span class="lq-opt">(recomendado, no obligatorio)</span></label></div>
+</div>
+</div>
+</div>
+</details>
+
+<details class="fr-acordeon" id="pm-bloque-haberes" data-avanzado>
+<summary class="fr-acordeon-head">
+<span class="fr-acordeon-titulo"><span class="material-icons" aria-hidden="true">payments</span><strong>Haberes no imponibles, bonos y reajustes</strong></span>
+<span class="fr-acordeon-desc">Colación, movilización, anticipos y bonos fijos</span>
+<span class="material-icons fr-acordeon-flecha" aria-hidden="true">expand_more</span>
+</summary>
+<div class="fr-acordeon-cuerpo">
+<div class="form-bloque">
+<p class="h-seccion">Asignaciones y reajustes</p>
+<div class="lq-grid">
 <div class="lq-field"><label for="pm-t-colacion">Colación mensual <span class="lq-opt">(opcional)</span></label><input id="pm-t-colacion" data-k="colacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"><p class="pm-error" data-error="colacion" hidden></p></div>
 <div class="lq-field"><label for="pm-t-movil">Movilización mensual <span class="lq-opt">(opcional)</span></label><input id="pm-t-movil" data-k="movilizacion" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0"><p class="pm-error" data-error="movilizacion" hidden></p></div>
 <div class="lq-field"><label for="pm-t-anticipo">Anticipo fijo cada mes <span class="lq-opt">(opcional)</span></label><input id="pm-t-anticipo" data-k="anticipoMensual" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$0" aria-describedby="pm-t-anticipo-ayuda"><p class="lq-help" id="pm-t-anticipo-ayuda">Si le pagas una quincena todos los meses, se descuenta sola en cada liquidación nueva.</p><p class="pm-error" data-error="anticipoMensual" hidden></p></div>
@@ -320,11 +360,6 @@ gtag('js', new Date());
 <select id="pm-t-reaj" data-k="reajusteIPC"><option value="no">Sin reajuste pactado</option><option value="semestral">Según IPC, cada 6 meses</option><option value="anual">Según IPC, cada 12 meses</option></select></div>
 <div class="lq-field" data-si-reaj><label for="pm-t-reajmes">Mes del reajuste</label>
 <select id="pm-t-reajmes" data-k="reajusteMes"><option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option><option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option><option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select><p class="lq-help">Te avisamos ese mes (y seis meses después si es semestral).</p></div>
-<div class="lq-field"><label for="pm-t-afp">AFP</label><select id="pm-t-afp" data-k="afp"></select></div>
-<div class="lq-field"><label for="pm-t-salud">Salud</label>
-<select id="pm-t-salud" data-k="salud"><option value="fonasa">Fonasa</option><option value="isapre">Isapre</option></select></div>
-<div class="lq-field" data-si-salud="isapre"><label for="pm-t-isapre">Isapre</label><input id="pm-t-isapre" data-k="isapreNombre" type="text" maxlength="40" placeholder="Colmena"></div>
-<div class="lq-field" data-si-salud="isapre"><label for="pm-t-plan">Plan pactado (UF)</label><input id="pm-t-plan" data-k="isaprePlanUF" data-tipo="uf" type="text" inputmode="decimal" placeholder="4,2"><p class="pm-error" data-error="isaprePlanUF" hidden></p></div>
 </div>
 <div class="lq-sub">
 <p class="lq-subtitle">Bonos y asignaciones fijas de cada mes <span class="lq-opt">(opcional)</span></p>
@@ -334,6 +369,16 @@ gtag('js', new Date());
 <p class="pm-error" data-error="bonosFijos" hidden></p>
 </div>
 </div>
+</div>
+</details>
+
+<details class="fr-acordeon" id="pm-bloque-prevision" data-avanzado>
+<summary class="fr-acordeon-head">
+<span class="fr-acordeon-titulo"><span class="material-icons" aria-hidden="true">account_balance</span><strong>Previred, cargas y cuenta de sueldo</strong></span>
+<span class="fr-acordeon-desc">APV, cargas familiares, FUN Isapre y banco</span>
+<span class="material-icons fr-acordeon-flecha" aria-hidden="true">expand_more</span>
+</summary>
+<div class="fr-acordeon-cuerpo">
 <div class="form-bloque">
 <p class="h-seccion">Datos para el archivo de Previred <span class="lq-opt">(opcional)</span></p>
 <p class="lq-help">Solo hacen falta si vas a descargar el archivo para Previred: el asistente te dice cuál falta.</p>
@@ -358,21 +403,8 @@ gtag('js', new Date());
 <div class="lq-field"><label for="pm-t-ncuenta">Número de cuenta</label><input id="pm-t-ncuenta" data-k="numeroCuenta" type="text" inputmode="numeric" maxlength="24" placeholder="123456789" autocomplete="off"></div>
 </div>
 </div>
-<div class="form-bloque">
-<p class="h-seccion">Término del contrato <span class="lq-opt">(opcional)</span></p>
-<p class="lq-help">Anótalo cuando el contrato termine. Ese mes la persona sale como retiro en Previred y en el libro de remuneraciones, y después deja de aparecer en las liquidaciones. Las indemnizaciones del finiquito van en su última liquidación, en «otros no imponibles» (por ejemplo «Indemnización años de servicio»).</p>
-<div class="lq-grid">
-<div class="lq-field"><label for="pm-t-ftermino">Fecha de término</label><input id="pm-t-ftermino" data-k="fechaTermino" type="date"><p class="pm-error" data-error="fechaTermino" hidden></p></div>
-<div class="lq-field lq-span2"><label for="pm-t-causal">Causal</label><select id="pm-t-causal" data-k="causalTermino"><option value="">Sin indicar</option><option value="3">Art. 159 N°1: mutuo acuerdo de las partes</option><option value="4">Art. 159 N°2: renuncia del trabajador</option><option value="5">Art. 159 N°3: muerte del trabajador</option><option value="6">Art. 159 N°4: vencimiento del plazo convenido</option><option value="7">Art. 159 N°5: conclusión del trabajo o servicio</option><option value="8">Art. 159 N°6: caso fortuito o fuerza mayor</option><option value="24">Art. 160 N°1 a): falta de probidad</option><option value="25">Art. 160 N°1 b): conductas de acoso sexual</option><option value="26">Art. 160 N°1 c): vías de hecho</option><option value="27">Art. 160 N°1 d): injurias</option><option value="28">Art. 160 N°1 e): conducta inmoral</option><option value="29">Art. 160 N°1 f): conductas de acoso laboral</option><option value="11">Art. 160 N°2: negociaciones prohibidas por escrito</option><option value="12">Art. 160 N°3: no concurrencia a las labores</option><option value="13">Art. 160 N°4: abandono del trabajo</option><option value="14">Art. 160 N°5: actos, omisiones o imprudencias temerarias</option><option value="15">Art. 160 N°6: perjuicio material causado intencionalmente</option><option value="16">Art. 160 N°7: incumplimiento grave de las obligaciones</option><option value="18">Art. 161 inciso 1°: necesidades de la empresa</option><option value="19">Art. 161 inciso 2°: desahucio escrito del empleador</option><option value="20">Art. 163 bis: procedimiento concursal de liquidación</option></select><p class="pm-error" data-error="causalTermino" hidden></p></div>
 </div>
-</div>
-<div class="form-bloque">
-<p class="h-seccion">Ley Karin</p>
-<p class="lq-help">El protocolo de prevención del acoso sexual, laboral y la violencia en el trabajo debe darse a conocer a cada trabajador (art. 211-A del Código del Trabajo). Anota cuándo se lo entregaste para tener el registro a mano en una fiscalización. Si aún no tienes protocolo, el <a href="/kit-cumplimiento-laboral-pymes" target="_blank" rel="noopener">Kit Blindaje Laboral</a> trae un modelo.</p>
-<div class="lq-grid">
-<div class="lq-field"><label for="pm-t-karin">Protocolo entregado el <span class="lq-opt">(opcional)</span></label><input id="pm-t-karin" data-k="karinEntrega" type="date"><p class="pm-error" data-error="karinEntrega" hidden></p></div>
-<div class="lq-field pm-check"><label><input id="pm-t-karin-firma" data-k="karinConstancia" type="checkbox"> Firmó una constancia de recepción <span class="lq-opt">(recomendado, no obligatorio)</span></label></div>
-</div>
+</details>
 </div>
 <div class="form-bloque" id="pm-t-activo-campo" hidden>
 <div class="lq-field pm-check"><label><input id="pm-t-activo" data-k="activo" type="checkbox" checked> Trabajador activo <span class="lq-opt">(cuenta para el límite de trabajadores de tu plan)</span></label></div>
@@ -491,7 +523,7 @@ gtag('js', new Date());
 <div class="v-acciones" id="pm-liq-acciones">
 <button type="button" id="pm-liq-preparar" class="btn"><span class="material-icons" aria-hidden="true">playlist_add</span>Preparar el mes con valores base</button>
 <button type="button" id="pm-liq-nov" class="btn"><span class="material-icons" aria-hidden="true">upload_file</span>Cargar novedades del mes</button>
-<input type="file" id="pm-liq-nov-archivo" accept=".csv,.txt,text/csv" hidden>
+<input type="file" id="pm-liq-nov-archivo" accept=".csv,.txt,text/csv" hidden aria-label="Archivo CSV de novedades del mes">
 <button type="button" id="pm-liq-imprimir-todas" class="btn btn-primario"><span class="material-icons" aria-hidden="true">print</span>Imprimir todas</button>
 </div>
 </div>
@@ -515,7 +547,7 @@ gtag('js', new Date());
 <button type="button" id="pm-liq-nomina" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">payments</span>Nómina de pagos (Excel)</button>
 <button type="button" id="pm-liq-asiento" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">account_balance</span>Asiento contable (Excel)</button>
 <button type="button" id="pm-liq-enlaces" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">link</span>Enlaces de liquidación para todos (Excel)</button>
-<input type="file" id="pm-liq-lre-plantilla" accept=".csv,.txt" hidden>
+<input type="file" id="pm-liq-lre-plantilla" accept=".csv,.txt" hidden aria-label="Plantilla CSV del Libro de Remuneraciones Electrónico">
 <p id="pm-liq-estado" class="lq-estado" role="status"></p>
 </div>
 <p class="texto-ayuda" id="pm-liq-nota-marca" style="margin-top:6px"></p>
@@ -1066,7 +1098,7 @@ gtag('js', new Date());
 <div class="v-acciones">
 <button type="button" class="btn" id="fc-btn-saldo"><span class="material-icons" aria-hidden="true">edit</span>Ajustar saldo banco</button>
 <button type="button" class="btn btn-primario" id="fc-btn-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola bancaria</button>
-<input type="file" id="fc-cartola-file" accept=".csv,.xlsx,.xls,text/csv" hidden>
+<input type="file" id="fc-cartola-file" accept=".csv,.xlsx,.xls,text/csv" hidden aria-label="Cartola bancaria en CSV o Excel">
 </div>
 </div>
 
@@ -1104,7 +1136,7 @@ gtag('js', new Date());
 </div>
 <div class="v-acciones">
 <button type="button" class="btn" id="cob-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Importar RCV Ventas SII (.csv)</button>
-<input type="file" id="cob-rcv-file" accept=".csv,text/csv" hidden>
+<input type="file" id="cob-rcv-file" accept=".csv,text/csv" hidden aria-label="Archivo RCV de Ventas del SII en CSV">
 <button type="button" class="btn btn-primario" id="cob-btn-nueva"><span class="material-icons" aria-hidden="true">add</span>Nueva cuenta por cobrar</button>
 </div>
 </div>
@@ -1134,7 +1166,7 @@ gtag('js', new Date());
 <button type="button" class="fin-chip" data-cob-filtro="pagadas" aria-pressed="false">Cobradas</button>
 </div>
 
-<div class="panel">
+<div class="panel tabla-financiera-escritorio">
 <div class="tabla-wrap">
 <table class="tabla">
 <caption class="sr-only">Facturas por cobrar a clientes</caption>
@@ -1143,6 +1175,7 @@ gtag('js', new Date());
 </table>
 </div>
 </div>
+<div class="fin-cards-lista" id="cob-cards"></div>
 </section>
 
 <!-- Cuentas por pagar (CxP) -->
@@ -1154,7 +1187,7 @@ gtag('js', new Date());
 </div>
 <div class="v-acciones">
 <button type="button" class="btn" id="pag-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Importar RCV Compras SII (.csv)</button>
-<input type="file" id="pag-rcv-file" accept=".csv,text/csv" hidden>
+<input type="file" id="pag-rcv-file" accept=".csv,text/csv" hidden aria-label="Archivo RCV de Compras del SII en CSV">
 <button type="button" class="btn" id="pag-btn-nueva"><span class="material-icons" aria-hidden="true">add</span>Registrar factura</button>
 <button type="button" class="btn btn-primario" id="pag-btn-nomina"><span class="material-icons" aria-hidden="true">download</span><span id="pag-btn-nomina-txt">Descargar nómina bancaria</span></button>
 </div>
@@ -1188,7 +1221,7 @@ gtag('js', new Date());
 <button type="button" class="fin-chip" data-pag-filtro="todas" aria-pressed="false">Todas</button>
 </div>
 
-<div class="panel">
+<div class="panel tabla-financiera-escritorio">
 <div class="tabla-wrap">
 <table class="tabla">
 <caption class="sr-only">Facturas por pagar a proveedores</caption>
@@ -1197,6 +1230,7 @@ gtag('js', new Date());
 </table>
 </div>
 </div>
+<div class="fin-cards-lista" id="pag-cards"></div>
 </section>
 
 <!-- Conciliacion bancaria en 1 clic -->
@@ -1417,8 +1451,8 @@ gtag('js', new Date());
 <script src="/js/pyme_docs.js?v=1.6.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
-<script src="/js/pyme_finanzas.js?v=1.0.0"></script>
+<script src="/js/pyme_finanzas.js?v=1.1.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.35.0" defer></script>
+<script src="/js/app_pyme.js?v=1.36.0" defer></script>
 </body>
 </html>

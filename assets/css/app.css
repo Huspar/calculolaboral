@@ -970,3 +970,100 @@ a.cal-ev:hover { filter: brightness(0.97); }
 /* Ficha rápida del trabajador nuevo: solo lo necesario para su primera liquidación */
 #pm-trab-form.ficha-rapida [data-avanzado] { display: none !important; }
 .fr-mas { margin: 12px 0 0; }
+
+/* ---------- Acordeones del formulario del trabajador ---------- */
+.fr-acordeones { display: grid; gap: 10px; margin: 14px 0 16px; }
+.fr-acordeon {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
+}
+.fr-acordeon[open] {
+    border-color: var(--forest);
+    box-shadow: 0 4px 12px rgba(0, 56, 46, 0.06);
+}
+.fr-acordeon-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; cursor: pointer; user-select: none; list-style: none;
+    font-size: 13.5px; color: var(--ink);
+    border-radius: var(--radius);
+}
+.fr-acordeon-head::-webkit-details-marker { display: none; }
+.fr-acordeon-head:hover { background: var(--forest-50); }
+.fr-acordeon-head:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+.fr-acordeon-titulo { display: flex; align-items: center; gap: 8px; }
+.fr-acordeon-titulo .material-icons { font-size: 18px; color: var(--forest); }
+.fr-acordeon-desc { font-size: 12px; color: var(--muted); margin-left: auto; margin-right: 12px; display: inline-block; }
+.fr-acordeon-flecha { font-size: 20px; color: var(--muted); transition: transform .2s var(--ease); }
+.fr-acordeon[open] .fr-acordeon-flecha { transform: rotate(180deg); color: var(--forest); }
+.fr-acordeon-cuerpo {
+    padding: 10px 14px 14px;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+}
+.fr-acordeon-cuerpo .form-bloque:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+@media (max-width: 768px) {
+    .fr-acordeon-desc { display: none; }
+    .fr-acordeon-head { padding: 10px 12px; }
+    .fr-acordeon-cuerpo { padding: 8px 10px 12px; }
+}
+
+/* ---------- Tarjetas responsivas móvil (<=768px) para Cobranzas y Pagos ---------- */
+.fin-cards-lista { display: none; }
+@media (max-width: 768px) {
+    .tabla-financiera-escritorio { display: none !important; }
+    .fin-cards-lista { display: grid; gap: 12px; }
+    .fin-card-item {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        display: flex; flex-direction: column; gap: 8px;
+        border-left: 4px solid var(--faint);
+    }
+    .fin-card-item.fin-card-con-check { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; }
+    .fin-card-check { padding-top: 2px; }
+    .fin-card-check input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    .fin-card-contenido { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .fin-card-item.estado-vencida { border-left-color: var(--risk); background: #FFFDFD; }
+    .fin-card-item.estado-aviso { border-left-color: var(--amber); }
+    .fin-card-item.estado-activo { border-left-color: var(--ok-ink); }
+    .fin-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .fin-card-id { display: flex; flex-direction: column; gap: 2px; }
+    .fin-folio { font-size: 13px; font-weight: 700; color: var(--forest); }
+    .fin-fecha { font-size: 11.5px; color: var(--muted); }
+    .fin-card-empresa { font-size: 14px; font-weight: 600; color: var(--ink); margin: 0; line-height: 1.25; overflow-wrap: anywhere; }
+    .fin-card-rut { font-size: 11.5px; color: var(--muted); margin: 0; }
+    .fin-card-banco { font-size: 12px; color: var(--forest-700); background: var(--forest-50); padding: 4px 8px; border-radius: 6px; overflow-wrap: anywhere; }
+    .fin-card-monto-wrap {
+        display: flex; align-items: baseline; justify-content: space-between;
+        margin-top: 4px; padding-top: 6px; border-top: 1px dashed var(--line);
+    }
+    .fin-card-lbl { font-size: 12px; color: var(--muted); }
+    .fin-card-val { font-size: 16px; font-weight: 700; color: var(--forest); }
+    .fin-card-pie { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .fin-card-pie .btn { flex: 1 1 auto; justify-content: center; min-height: 40px; font-size: 12.5px; }
+    .btn-whatsapp { background: #128C7E; color: #FFFFFF; border-color: #128C7E; }
+    .btn-whatsapp:hover { background: #075E54; }
+}
+
+/* ---------- Compactación de Sidebar en laptops (1366x768) ---------- */
+@media screen and (min-width: 901px) and (max-height: 800px) {
+    .app-side { gap: 6px; padding: 10px 8px 8px; }
+    .app-empresa { padding: 4px 6px 6px; }
+    .app-empresa strong { font-size: 12.5px; }
+    .app-empresa span { font-size: 11px; }
+    .app-empresas { margin-top: 4px; gap: 4px; }
+    .app-empresas select { min-height: 32px; height: 32px; font-size: 12px; padding: 0 24px 0 8px; }
+    .app-nav { gap: 1px; }
+    .app-nav-grupo { margin: 6px 8px 2px; font-size: 10.5px; }
+    .app-nav a, .app-nav button { height: 31px; padding: 0 8px; gap: 8px; font-size: 12.5px; }
+    .app-nav a .material-icons, .app-nav button .material-icons { font-size: 17px; }
+    .app-nav-cuenta { font-size: 11px; }
+    .app-side-pie { padding-top: 6px; gap: 1px; }
+    .app-side-pie a, .app-side-pie button { height: 28px; font-size: 12px; gap: 6px; }
+    .app-side-pie .material-icons { font-size: 16px; }
+}

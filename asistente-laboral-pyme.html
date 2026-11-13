@@ -234,7 +234,7 @@ window.addEventListener('load', function () {
         gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
     </script>
 <!-- Precompiled Tailwind CSS -->
-<link href="/assets/css/style.css?v=3.3.0" rel="stylesheet"/>
+<link href="/assets/css/style.css?v=3.4.0" rel="stylesheet"/>
 <style>
         @media (min-width: 1024px) {
             [class*="lg:w-[480px]"], .lg-w-480 {
@@ -1507,6 +1507,18 @@ Tu navegador no puede reproducir el video. <a href="assets/video/asistente-labor
 <span>Entrar al asistente</span><span class="material-icons" aria-hidden="true">arrow_forward</span>
 </a>
 </div>
+<div class="ap-waitlist" style="margin-top:1.15rem;padding:1.25rem 1.4rem;border:1px solid #cbd5e1;border-radius:1rem;background:#ffffff;">
+<p style="margin:0 0 .35rem;font-weight:750;color:#0f172a;font-size:1rem;">Lista de espera del Pase Pyme</p>
+<p style="margin:0 0 .85rem;font-size:.9rem;color:#475569;">Si quieres que te avisemos cuando se habilite el pago único del Pase Pyme (3 o 12 meses), deja tu correo aquí.</p>
+<form id="pase-waitlist-form" style="display:flex;flex-wrap:wrap;gap:.65rem;align-items:flex-end;">
+<div style="flex:1 1 240px;">
+<label for="pase-waitlist-email" style="display:block;font-size:.78rem;font-weight:700;color:#334155;margin-bottom:.25rem;">Correo electrónico</label>
+<input id="pase-waitlist-email" type="email" required placeholder="tu@empresa.cl" style="width:100%;padding:.65rem .85rem;border:1px solid #cbd5e1;border-radius:.75rem;font-size:.92rem;color:#0f172a;background:#f8fafc;">
+</div>
+<button id="pase-waitlist-btn" type="submit" class="ls-btn ls-btn-primary" style="color:#ffffff !important;cursor:pointer;border:0;">Avisarme al activar el Pase</button>
+</form>
+<p id="pase-waitlist-msg" aria-live="polite" style="display:none;margin:.7rem 0 0;font-size:.88rem;font-weight:600;"></p>
+</div>
 </section>
 
 <section id="solo-un-documento" class="ls-section">
@@ -1771,5 +1783,62 @@ Tu navegador no puede reproducir el video. <a href="assets/video/asistente-labor
 <script src="/js/checkout_consent.js?v=1.5.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('pase-waitlist-form');
+    var input = document.getElementById('pase-waitlist-email');
+    var btn = document.getElementById('pase-waitlist-btn');
+    var msg = document.getElementById('pase-waitlist-msg');
+    if (!form || !input || !btn || !msg) return;
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var correo = (input.value || '').trim();
+        if (!correo || correo.indexOf('@') === -1) {
+            msg.style.display = 'block';
+            msg.style.color = '#b91c1c';
+            msg.textContent = 'Ingresa un correo electrónico válido.';
+            return;
+        }
+        btn.disabled = true;
+        var origText = btn.textContent;
+        btn.textContent = 'Enviando...';
+        msg.style.display = 'none';
+        try {
+            var res = await fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: 'Lista espera Pase Pyme',
+                    correo: correo,
+                    telefono: '',
+                    tipo: 'Pyme',
+                    fuente: 'Lista Espera Pase Pyme',
+                    detalle: 'Solicitud de aviso cuando se habilite el Pase Pyme (3 o 12 meses).',
+                    monto_calculado: '0'
+                })
+            });
+            var data = await res.json().catch(function () { return {}; });
+            if (res.ok && data && data.ok) {
+                msg.style.display = 'block';
+                msg.style.color = '#047857';
+                msg.textContent = 'Listo: anotamos ' + correo + ' en la lista de espera del Pase Pyme.';
+                form.reset();
+                if (typeof window.gtag === 'function') {
+                    window.gtag('event', 'waitlist_pase_pyme', { event_category: 'asistente_pyme' });
+                }
+            } else {
+                throw new Error(data.error || 'No se pudo registrar el correo.');
+            }
+        } catch (err) {
+            msg.style.display = 'block';
+            msg.style.color = '#b91c1c';
+            msg.textContent = 'No pudimos registrar tu correo en este momento. Intenta de nuevo en unos minutos.';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = origText;
+        }
+    });
+});
+</script>
 </body>
 </html>

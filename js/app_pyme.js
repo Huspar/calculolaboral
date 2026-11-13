@@ -1524,7 +1524,11 @@ function dibujarEquipo() {
         });
     }
     function mostrarTodosLosDatos() { $('pm-trab-form').classList.remove('ficha-rapida'); $('pm-trab-mas').hidden = true; }
-    $('pm-trab-mas-btn').addEventListener('click', function () { mostrarTodosLosDatos(); $('pm-t-cargo').focus(); });
+    $('pm-trab-mas-btn').addEventListener('click', function () {
+        mostrarTodosLosDatos();
+        if ($('pm-bloque-contrato')) $('pm-bloque-contrato').open = true;
+        $('pm-t-cargo').focus();
+    });
 
     // --- bonos y asignaciones fijas de la ficha ---
     var bonosFicha = [];
@@ -1605,6 +1609,9 @@ function dibujarEquipo() {
             // Si el error está en un dato que la ficha rápida oculta, se muestran todos para que se vea
             if (f.classList.contains('ficha-rapida') && Object.keys(r.datos.errores || {}).some(function (k) { var c = f.querySelector('[data-k="' + k + '"]'); return c && c.closest('[data-avanzado]'); })) mostrarTodosLosDatos();
             mostrarErrores(f, r.datos.errores);
+            Array.prototype.forEach.call(f.querySelectorAll('details.fr-acordeon'), function (det) {
+                if (det.querySelector('.pm-error:not([hidden])')) det.open = true;
+            });
             err.textContent = r.datos.error || 'No pudimos guardar.';
             err.hidden = false;
         });

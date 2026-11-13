@@ -1053,8 +1053,10 @@
             });
 
             var tbody = $('cob-filas');
+            var cards = $('cob-cards');
             if (!filtradas.length) {
                 tbody.innerHTML = '<tr><td colspan="6" class="vacio">No hay facturas en esta vista. Importa el archivo RCV de Ventas del SII o agrega una cuenta por cobrar.</td></tr>';
+                if (cards) cards.innerHTML = '<div class="fin-card-item"><p class="texto-ayuda" style="margin:0">No hay facturas en esta vista. Importa el RCV de Ventas del SII o agrega una cuenta por cobrar.</p></div>';
                 return;
             }
 
@@ -1076,6 +1078,23 @@
                     '<td class="celda-acciones">' + acciones + '</td>' +
                     '</tr>';
             }).join('');
+
+            if (cards) {
+                cards.innerHTML = filtradas.map(function (c) {
+                    var st = estadoVencimiento(c, hoy);
+                    var cls = st.codigo === 'pagada' ? 'sello-emitida' : st.codigo === 'vencida' ? 'sello-riesgo' : st.codigo === 'por_vencer' ? 'sello-preparada' : 'sello-guardada';
+                    var estCls = st.codigo === 'pagada' ? 'estado-activo' : st.codigo === 'vencida' ? 'estado-vencida' : st.codigo === 'por_vencer' ? 'estado-aviso' : '';
+                    var pie = c.pagada
+                        ? (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn btn-chico" data-cob-accion="desmarcar" data-id="' + esc(c.id) + '">Reabrir</button>')
+                        : '<button type="button" class="btn btn-chico btn-whatsapp" data-cob-accion="cobrar" data-id="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">send</span>Cobrar por WhatsApp</button>' +
+                          (cerrado ? '' : '<button type="button" class="btn btn-chico" data-cob-accion="pagada" data-id="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">check</span>Cobrada</button>');
+                    return '<div class="fin-card-item ' + estCls + '">' +
+                        '<div class="fin-card-head"><div class="fin-card-id"><span class="mono fin-folio">Factura ' + esc(c.folio) + '</span><span class="fin-fecha">Vence: ' + esc(c.vencimiento) + '</span></div><span class="sello ' + cls + '">' + esc(st.etiqueta) + '</span></div>' +
+                        '<div class="fin-card-cuerpo"><p class="fin-card-empresa">' + esc(c.razonSocial) + '</p><p class="fin-card-rut mono">' + esc(c.rut || 'Sin RUT') + '</p>' +
+                        '<div class="fin-card-monto-wrap"><span class="fin-card-lbl">Monto</span><span class="fin-card-val mono">' + pesos(c.monto) + '</span></div></div>' +
+                        '<div class="fin-card-pie">' + pie + '</div></div>';
+                }).join('');
+            }
         }
 
         // ---------------- 3. CUENTAS POR PAGAR ----------------
@@ -1128,8 +1147,10 @@
             });
 
             var tbody = $('pag-filas');
+            var cards = $('pag-cards');
             if (!filtradas.length) {
                 tbody.innerHTML = '<tr><td colspan="7" class="vacio">No hay facturas de proveedores en esta vista. Importa el RCV de Compras del SII o registra una factura.</td></tr>';
+                if (cards) cards.innerHTML = '<div class="fin-card-item"><p class="texto-ayuda" style="margin:0">No hay facturas de proveedores en esta vista. Importa el RCV de Compras del SII o registra una factura.</p></div>';
                 return;
             }
 
@@ -1159,6 +1180,34 @@
                     '<td class="celda-acciones">' + acc + '</td>' +
                     '</tr>';
             }).join('');
+
+            if (cards) {
+                cards.innerHTML = filtradas.map(function (x) {
+                    var st = estadoVencimiento(x, hoy);
+                    var cls = st.codigo === 'pagada' ? 'sello-emitida' : st.codigo === 'vencida' ? 'sello-riesgo' : st.codigo === 'por_vencer' ? 'sello-preparada' : 'sello-guardada';
+                    var estCls = st.codigo === 'pagada' ? 'estado-activo' : st.codigo === 'vencida' ? 'estado-vencida' : st.codigo === 'por_vencer' ? 'estado-aviso' : '';
+                    var tieneBanco = x.banco && x.tipoCuenta && x.numeroCuenta;
+                    var infoBanco = tieneBanco
+                        ? '<div class="fin-card-banco mono">' + esc(x.banco) + ' · ' + esc(x.numeroCuenta) + '</div>'
+                        : '';
+                    var checkHtml = x.pagada
+                        ? ''
+                        : '<div class="fin-card-check"><input type="checkbox" class="pag-check" data-id="' + esc(x.id) + '" aria-label="Seleccionar factura ' + esc(x.folio) + '"' + (ui.seleccionPagos[x.id] ? ' checked' : '') + '></div>';
+                    var pie = x.pagada
+                        ? (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn btn-chico" data-pag-accion="desmarcar" data-id="' + esc(x.id) + '">Reabrir</button>')
+                        : '<button type="button" class="btn btn-chico" data-pag-accion="banco" data-id="' + esc(x.id) + '">' + (tieneBanco ? 'Editar cuenta' : 'Completar cuenta') + '</button>' +
+                          (cerrado ? '' : '<button type="button" class="btn btn-chico btn-primario" data-pag-accion="pagada" data-id="' + esc(x.id) + '">Marcar pagada</button>');
+                    return '<div class="fin-card-item ' + estCls + (x.pagada ? '' : ' fin-card-con-check') + '">' +
+                        checkHtml +
+                        '<div class="fin-card-contenido">' +
+                        '<div class="fin-card-head"><div class="fin-card-id"><span class="mono fin-folio">Factura ' + esc(x.folio) + '</span><span class="fin-fecha">Vence: ' + esc(x.vencimiento) + '</span></div><span class="sello ' + cls + '">' + esc(st.etiqueta) + '</span></div>' +
+                        '<p class="fin-card-empresa">' + esc(x.razonSocial) + '</p>' +
+                        '<p class="fin-card-rut mono">' + esc(x.rut || 'Sin RUT') + '</p>' +
+                        infoBanco +
+                        '<div class="fin-card-monto-wrap"><span class="fin-card-lbl">Total factura</span><span class="fin-card-val mono">' + pesos(x.monto) + '</span></div>' +
+                        '<div class="fin-card-pie">' + pie + '</div></div></div>';
+                }).join('');
+            }
         }
 
         // ---------------- 4. CONCILIACION BANCARIA ----------------
@@ -1786,6 +1835,16 @@
                     dibujarPagos();
                 }
             });
+            if ($('pag-cards')) {
+                $('pag-cards').addEventListener('change', function (e) {
+                    if (e.target && e.target.classList.contains('pag-check')) {
+                        var id = e.target.getAttribute('data-id');
+                        if (e.target.checked) ui.seleccionPagos[id] = true;
+                        else delete ui.seleccionPagos[id];
+                        dibujarPagos();
+                    }
+                });
+            }
             $('pag-btn-nomina').addEventListener('click', function () {
                 var ctx = datosPeriodoActual();
                 var pendientes = (ctx.per.pagos || []).filter(function (x) { return !x.pagada; });

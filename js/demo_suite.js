@@ -267,6 +267,20 @@
         $('f29-k-iva').textContent = c[89] > 0 ? D.money(c[89]) : D.money(c[77]);
         $('f29-k-total').textContent = D.money(c[91]);
 
+        if ($('f29-m-deb')) {
+            $('f29-m-deb').textContent = moneySigno(c[538]);
+            $('f29-m-cred').textContent = moneySigno(c[537]);
+            if ($('f29-m-iva-lbl')) $('f29-m-iva-lbl').textContent = c[89] > 0 ? 'IVA determinado (cód. 89)' : 'Remanente mes sig. (cód. 77)';
+            $('f29-m-iva').textContent = c[89] > 0 ? D.money(c[89]) : D.money(c[77]);
+            $('f29-m-total').textContent = D.money(c[91]);
+            if ($('f29-m-estado')) {
+                $('f29-m-estado').textContent = c[91] > 0 ? 'Con pago en plazo' : 'Sin pago F29';
+            }
+            if ($('f29-m-pie')) {
+                $('f29-m-pie').textContent = 'Incluye retenciones (' + D.money((c[48] || 0) + (c[151] || 0)) + ') y PPM (' + D.money(c[62] || 0) + ').';
+            }
+        }
+
         var filas = [
             { sec: 'I. Débito fiscal (ventas y servicios)' },
             { glosa: 'Facturas emitidas del giro (' + c[503] + ' doctos. · neto ' + D.money(m.ventas.netoGiro) + ')', codCant: '503', cant: c[503], cod: '502', monto: c[502] },
@@ -508,6 +522,18 @@
         $('bal-k-res-lbl').textContent = b.resultado >= 0 ? 'Utilidad contable' : 'Pérdida contable';
         $('bal-k-resultado').textContent = moneySigno(b.resultado);
         $('bal-k-rli').textContent = moneySigno(rli.baseImponible);
+
+        if ($('bal-resumen-movil')) {
+            $('bal-resumen-movil').hidden = !b.filas.length;
+            if ($('bal-m-activo')) $('bal-m-activo').textContent = D.money(b.totales.activo);
+            if ($('bal-m-pasivo')) $('bal-m-pasivo').textContent = D.money(b.totales.pasivo);
+            if ($('bal-m-res-lbl')) $('bal-m-res-lbl').textContent = b.resultado >= 0 ? 'Utilidad contable' : 'Pérdida contable';
+            if ($('bal-m-resultado')) $('bal-m-resultado').textContent = moneySigno(b.resultado);
+            if ($('bal-m-rli')) $('bal-m-rli').textContent = moneySigno(rli.baseImponible);
+            var dif = Math.abs((b.sumasIguales && b.sumasIguales.debito || 0) - (b.sumasIguales && b.sumasIguales.credito || 0));
+            if ($('bal-m-dif')) $('bal-m-dif').textContent = D.money(dif);
+            if ($('bal-m-cuadratura')) $('bal-m-cuadratura').textContent = dif === 0 ? 'Cuadrado al peso' : 'Revisar cuadratura';
+        }
 
         if (!b.filas.length) {
             $('bal-vacio').hidden = false;
@@ -1331,6 +1357,49 @@
                 if (!f) return;
                 f.text().then(importarPaquetePyme).catch(function (err) {
                     D.avisar('No se pudo leer el paquete Pyme: ' + (err && err.message ? err.message : 'error'));
+                });
+            });
+        }
+
+        // Mapeo referencial de plan de cuentas por software contable y carga CSV
+        var erpPreset = {
+            sii_estandar: { texto: '42 cuentas base homologadas (SII Estándar)', cods: ['2-1-03-01', '1-1-05-01', '2-1-02-04', '2-1-02-01'] },
+            softland: { texto: 'Esquema Softland 8 dígitos activo', cods: ['2-01-0301', '1-01-0501', '2-01-0204', '2-01-0201'] },
+            transtecnia: { texto: 'Esquema Transtecnia ERP activo', cods: ['210301', '110501', '210204', '210201'] },
+            laudus: { texto: 'Esquema Laudus multinivel activo', cods: ['2.1.03.01', '1.1.05.01', '2.1.02.04', '2.1.02.01'] },
+            personalizado: { texto: 'Edición manual o plan CSV personalizado activo', cods: null }
+        };
+        if ($('suite-erp-origen')) {
+            $('suite-erp-origen').addEventListener('change', function () {
+                var p = erpPreset[this.value] || erpPreset.sii_estandar;
+                var txt = $('suite-plan-estado-txt');
+                if (txt) txt.textContent = p.texto;
+                if (p.cods) {
+                    var inputs = document.querySelectorAll('#panel-mapeo-cuentas .input-codigo-mapeo');
+                    Array.prototype.forEach.call(inputs, function (inp, idx) {
+                        if (p.cods[idx]) inp.value = p.cods[idx];
+                    });
+                }
+            });
+        }
+        if ($('btn-importar-plan-csv') && $('file-plan-csv')) {
+            $('btn-importar-plan-csv').addEventListener('click', function () {
+                $('file-plan-csv').value = '';
+                $('file-plan-csv').click();
+            });
+            $('file-plan-csv').addEventListener('change', function () {
+                var f = $('file-plan-csv').files && $('file-plan-csv').files[0];
+                if (!f) return;
+                f.text().then(function (raw) {
+                    var lineas = String(raw || '').split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+                    var count = Math.max(0, lineas.length - 1);
+                    if ($('suite-erp-origen')) $('suite-erp-origen').value = 'personalizado';
+                    if ($('suite-plan-estado-txt')) {
+                        $('suite-plan-estado-txt').textContent = (count || 1) + ' filas leídas desde ' + f.name;
+                    }
+                    D.avisar('Plan CSV cargado (' + f.name + ').');
+                }).catch(function () {
+                    D.avisar('No se pudo leer el archivo CSV del plan de cuentas.');
                 });
             });
         }

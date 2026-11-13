@@ -31,7 +31,7 @@ $$\text{Descuento AFP} = \text{Base Imponible AFP} \times (10\% + \text{Comisió
 Comisiones vigentes de las Administradoras:
 - AFP Uno: 10% + 0.46% = 10.46%
 - AFP Modelo: 10% + 0.58% = 10.58%
-- AFP Planvital: 10% + 1.10% = 11.10%
+- AFP Planvital: 10% + 1.16% = 11.16%
 - AFP Habitat: 10% + 1.27% = 11.27%
 - AFP Capital: 10% + 1.44% = 11.44%
 - AFP Cuprum: 10% + 1.44% = 11.44%
@@ -256,6 +256,7 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Calculadora de Despido Art. 160: `https://calculolaboral.cl/calculadora-despido-articulo-160`
 - Calculadora de Costo Empresa: `https://calculolaboral.cl/calculadora-costo-empresa-chile`
 - Simulador Seguro de Cesantía AFC: `https://calculolaboral.cl/simulador-seguro-cesantia-afc`
+- Finiquito Trabajadora de Casa Particular (Art. 163, 4,11% AFP): `https://calculolaboral.cl/finiquito-trabajadora-casa-particular-chile`
 
 ### Kits y documentos para empleadores (modelos de referencia, sin revisión de abogados):
 - Kit Ley 21.719 Datos Personales (7 instrumentos y manual, $29.990; la ley rige desde el 1 de diciembre de 2026): `https://calculolaboral.cl/kit-cumplimiento-ley-datos-personales-chile`
@@ -265,6 +266,7 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Generador de Anexo 40 Horas: `https://calculolaboral.cl/generador-anexo-40-horas`
 - Portal Para Empleadores: `https://calculolaboral.cl/para-empleadores`
 - Checklist Fiscalización DT Pymes: `https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile`
+- Checklist Ley 21.719 al 1 de diciembre de 2026: `https://calculolaboral.cl/checklist-ley-21719-1-diciembre-2026`
 - Solicitud Reconsideración Multas DT: `https://calculolaboral.cl/reconsideracion-multas-dt-art-511`
 
 ### Guías:
@@ -291,6 +293,8 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Gratificación Legal 2026 (calculadora art. 47 y 50, tope $219.115): `https://calculolaboral.cl/gratificacion-legal-chile`
 - Liquidación de Sueldo (qué es, ejemplo y formato Excel/Word): `https://calculolaboral.cl/liquidacion-de-sueldo`
 - Aguinaldo de Fiestas Patrias 2026 (sector público Ley 21.724; sector privado por contrato o costumbre): `https://calculolaboral.cl/aguinaldo-fiestas-patrias-chile-2026`
+- Aguinaldo de Navidad y Cierre Laboral Diciembre 2026: `https://calculolaboral.cl/aguinaldo-navidad-cierre-laboral-diciembre-2026`
+- Archivo Previred (105 Campos), LRE en Mi DT y F29 SII: `https://calculolaboral.cl/como-generar-archivo-previred-lre-f29-chile`
 - Blog: `https://calculolaboral.cl/blog`
 - Sobre Nosotros: `https://calculolaboral.cl/sobre-nosotros`
 - Contacto: `https://calculolaboral.cl/contacto`
