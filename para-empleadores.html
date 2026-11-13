@@ -85,7 +85,7 @@ window.addEventListener('load', function () {
     </script>
     
     <!-- Precompiled Tailwind CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=3.2.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.3.0">
     <style>
         :root {
             --teal-forest: #00382E;
@@ -784,7 +784,7 @@ body { overflow-x: hidden; }
                         <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight m-0">
                             Kit de Cumplimiento Ley 21.719: <span class="text-emerald-800">prepárate</span> antes de que rija la ley
                         </h2>
-                        <p class="cl-meta">Rige desde el 1 de diciembre de 2026 · Ley 21.719</p>
+                        <p class="cl-meta">Rige desde el 1 de diciembre de 2026 · Ley 21.719 · <a href="checklist-ley-21719-1-diciembre-2026" class="underline font-semibold text-emerald-800 hover:text-emerald-900">Ver checklist práctico para el 1 de diciembre</a></p>
 
                         <p class="text-sm sm:text-[15px] text-slate-600 leading-relaxed m-0">
                             Obtén <strong>7 instrumentos editables</strong> para prepararte ante la nueva Agencia de Protección de Datos Personales (APDP) y la Dirección del Trabajo (DT), listos para completar:
@@ -1454,6 +1454,45 @@ body { overflow-x: hidden; }
             </div>
         </section>
 
+        <!-- Estudios Contables Suite Bridge -->
+        <section id="estudios-contables" class="mb-16 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 md:p-12 shadow-sm">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="lg:col-span-2 space-y-4">
+                    <span class="cl-tag">Estudios Contables · Demo en vivo</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight m-0">
+                        Suite para Estudios Contables y Asesores de Pymes
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed m-0">
+                        Calcula remuneraciones y finiquitos en lote, exporta Previred (105 campos) y Libro de Remuneraciones Electrónico (147 columnas), prepara el Formulario 29 desde el RCV del SII y genera Libro Diario, Balance de 8 columnas y RLI ProPyme 14 D N°3 en un solo flujo.
+                    </p>
+                    <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li class="flex items-center gap-2">
+                            <span class="material-icons text-emerald-700 text-base" aria-hidden="true">lock</span>
+                            <span><strong>Arquitectura Zero-Knowledge:</strong> opera en tu navegador sin pedir claves del SII, Previred ni del banco.</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="material-icons text-emerald-700 text-base" aria-hidden="true">domain</span>
+                            <span><strong>Acceso multiempresa:</strong> diseñada para estudios contables con múltiples RUT y cierres mensuales.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                    <div class="text-xs font-bold text-[#00382E] uppercase tracking-wider">Acceso anticipado</div>
+                    <p class="text-xs text-slate-600 leading-relaxed m-0">
+                        Prueba los cálculos con empresas de ejemplo o postula tu estudio al programa piloto sin costo inicial.
+                    </p>
+                    <a href="demo-contadores" style="background-color: var(--teal-forest);" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-white font-bold text-sm shadow-sm hover:opacity-95 transition-all">
+                        <span style="color: #ffffff !important;">Probar demo interactiva</span>
+                        <span class="material-icons text-sm" style="color: #ffffff !important;" aria-hidden="true">arrow_forward</span>
+                    </a>
+                    <a href="#form-lead-pyme" id="btn-piloto-contadores" class="btn-outline-pill w-full !py-2.5 !text-xs">
+                        <span>Solicitar piloto para estudio</span>
+                        <span class="material-icons text-sm" aria-hidden="true">mail</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- Industry Specialization Section -->
         <section class="mb-16 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xs">
             <div class="max-w-3xl mb-8">
@@ -1562,6 +1601,7 @@ body { overflow-x: hidden; }
                         <select id="pyme-necesidad" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#00382E] focus:ring-2 focus:ring-[#00382E]/20 outline-none bg-white">
                             <option value="Kit Ley 21.719 Datos Personales" selected>Kit Ley 21.719 Protección de Datos ($29.990)</option>
                             <option value="Kit Laboral Completo">Kit Blindaje Laboral Completo ($19.990)</option>
+                            <option value="Piloto Suite Contadores">Piloto Suite Contadores (Multiempresa)</option>
                             <option value="Anexos 40 Horas">Implementar Anexos 40 Horas (42h)</option>
                             <option value="Protocolo Ley Karin">Protocolo e Investigación Ley Karin</option>
                             <option value="Multa DT Art 511">Rebajar Multa Notificada por la DT</option>
@@ -1705,6 +1745,7 @@ body { overflow-x: hidden; }
                         <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="demo-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
                             <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos</a></li>
                             <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Blindaje Laboral</a></li>
                             <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Finiquito</a></li>
@@ -1744,6 +1785,22 @@ body { overflow-x: hidden; }
             var form = document.getElementById('form-lead-pyme');
             var successBox = document.getElementById('pyme-lead-success');
             var btn = document.getElementById('pyme-submit-btn');
+            var btnPilotoContadores = document.getElementById('btn-piloto-contadores');
+            if (btnPilotoContadores) {
+                btnPilotoContadores.addEventListener('click', function() {
+                    var sel = document.getElementById('pyme-necesidad');
+                    if (sel) sel.value = 'Piloto Suite Contadores';
+                    var dot = document.getElementById('pyme-dotacion');
+                    if (dot) {
+                        for (var i = 0; i < dot.options.length; i++) {
+                            if (dot.options[i].value.toLowerCase().indexOf('contador') !== -1) {
+                                dot.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
 
             if (!form) return;
 

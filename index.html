@@ -146,7 +146,7 @@ window.addEventListener('load', function () {
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=3.2.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.3.0">
     
     <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
@@ -1151,16 +1151,13 @@ window.addEventListener('load', function () {
                 <!-- Interactive Filter Controls -->
                 <div class="mt-6 flex flex-wrap items-center justify-start gap-2">
                     <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter">
-                        Todas las herramientas (14)
+                        Todas las herramientas (15)
                     </button>
                     <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn">
-                        Trabajadores (9)
+                        Trabajadores (10)
                     </button>
                     <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn">
                         Pymes y empleadores (5)
-                    </button>
-                    <button type="button" onclick="filterCatalog('afp', this)" class="catalog-filter-btn">
-                        Previsión y AFP (próximamente)
                     </button>
                 </div>
             </div>
@@ -1551,30 +1548,30 @@ window.addEventListener('load', function () {
                     </div>
                 </div>
 
-                <!-- CARD 15: Módulo Previsional AFP -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border-2 border-dashed border-amber-300 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-all group" data-category="afp">
+                <!-- CARD 15: Finiquito Trabajadora de Casa Particular -->
+                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
-                                <span class="material-icons text-lg">savings</span>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                <span class="material-icons text-lg" aria-hidden="true">home</span>
                             </div>
-                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-100 text-amber-900">
-                                Próximamente
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-900">
+                                Nuevo 2026
                             </span>
                         </div>
-                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-amber-900 transition-colors leading-snug">
-                            Módulo previsional y AFP
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-950 transition-colors leading-snug">
+                            Finiquito Casa Particular
                         </h3>
                         <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
-                            Simulador en preparación para proyectar rentabilidad histórica Fondos A al E y pensión esperada.
+                            Cálculo especial Arts. 146–150 y 163 inc. 5° CT: fondo a todo evento 4,11% AFP, desahucio y vacaciones.
                         </p>
                     </div>
                     <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs font-mono-num text-gray-500 font-semibold">SPensiones</span>
-                        <span class="inline-flex items-center gap-1 text-xs font-bold text-amber-700">
-                            <span>En desarrollo</span>
-                            <span class="material-icons text-xs">schedule</span>
-                        </span>
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Arts. 146-163 CT</span>
+                        <a href="finiquito-trabajadora-casa-particular-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Abrir calculadora</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
                     </div>
                 </div>
 
@@ -1583,7 +1580,7 @@ window.addEventListener('load', function () {
             <!-- Expandable Catalog Toggle Button (Option 1) -->
             <div class="mt-8 text-center" id="catalog-toggle-wrapper">
                 <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer">
-                    <span id="toggle-catalog-text">Mostrar las 14 herramientas y kits (8 más)</span>
+                    <span id="toggle-catalog-text">Mostrar las 15 herramientas y kits (9 más)</span>
                     <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon">keyboard_arrow_down</span>
                 </button>
             </div>
@@ -1643,6 +1640,7 @@ window.addEventListener('load', function () {
                             <li><a href="generador-anexo-40-horas" class="audience-row"><span><b>Anexo de contrato Ley 40 horas (42 h en 2026)</b><small>Modelo en Word para formalizar por escrito la jornada reducida sin contingencias.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                             <li><a href="kit-cumplimiento-laboral-pymes" class="audience-row"><span><b>Kit Blindaje Laboral</b><small>Protocolo Ley Karin, anexos de jornada y checklist de fiscalización DT.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                             <li><a href="asistente-laboral-pyme" class="audience-row" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="inicio-tarjeta"><span><b>Asistente Laboral Pyme · piloto gratuito</b><small>Liquidaciones, documentos y plazos de tus trabajadores en un solo lugar.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="demo-contadores" class="audience-row"><span><b>Suite para Estudios Contables · Demo en vivo</b><small>Remuneraciones en lote, Previred 105 campos, LRE, Formulario 29 con RCV SII y Balance 8 columnas.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                         </ul>
                     </div>
                     <a href="para-empleadores" class="audience-btn">
@@ -2241,7 +2239,7 @@ window.addEventListener('load', function () {
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_up';
             } else {
                 if (extraContainer) extraContainer.classList.add('hidden');
-                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 14 herramientas y kits (8 más)';
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 15 herramientas y kits (9 más)';
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_down';
                 
                 const catSection = document.getElementById('calculadoras');
