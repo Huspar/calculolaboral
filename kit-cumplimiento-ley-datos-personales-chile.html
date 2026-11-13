@@ -1050,12 +1050,120 @@ body { overflow-x: hidden; }
                 </div>
 
                 <!-- Opción 3: Kit Cálculo Laboral -->
-                <div class="p-5 rounded-2xl border-2 border-2 border-[#00382E] bg-white space-y-2 relative shadow-md">
+                <div class="p-5 rounded-2xl border-2 border-[#00382E] bg-white space-y-2 relative shadow-md">
                     <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#00382E] text-[#FFB703] font-extrabold text-xs uppercase tracking-wider">Punto de partida</span>
                     <span class="text-xs font-bold uppercase tracking-wider text-forest-700">Modelos de referencia</span>
                     <h3 class="font-bold text-slate-900 text-base">Kit Ley 21.719</h3>
                     <p class="text-sm text-slate-600 leading-relaxed">Los 7 modelos, basados en la Ley 21.719 y la normativa chilena. Descarga inmediata, personalizables en minutos y sin costos recurrentes. No reemplazan la asesoría de un abogado.</p>
                     <div class="text-forest-600 font-mono font-black text-lg pt-2">$29.990 CLP</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MUESTRA REAL POR DENTRO (transparencia antes de pagar) -->
+        <section id="muestra-kit-datos" class="bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xs space-y-5 min-w-0 overflow-hidden">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-forest-700">Vista previa del contenido real</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">Revisa cómo vienen armados los archivos</h2>
+                    <p class="text-sm text-slate-600 mt-1">Extracto real de la planilla Excel y los modelos en Word incluidos en la descarga (.zip).</p>
+                </div>
+                <a href="#seccion-comprar" class="btn-outline-pill !py-2 !px-4 !text-xs shrink-0 self-start sm:self-auto">Ir al pago ($29.990)</a>
+            </div>
+
+            <div class="flex flex-wrap gap-2" role="tablist" aria-label="Muestras del Kit Ley 21.719">
+                <button type="button" role="tab" aria-selected="true" data-kit-sample="rat" class="kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-[#00382E] text-white cursor-pointer border border-[#00382E] transition-colors">
+                    Registro RAT (Excel .xlsx)
+                </button>
+                <button type="button" role="tab" aria-selected="false" data-kit-sample="anexo" class="kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 cursor-pointer border border-slate-300 transition-colors">
+                    Anexo Laboral (Word)
+                </button>
+                <button type="button" role="tab" aria-selected="false" data-kit-sample="brechas" class="kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 cursor-pointer border border-slate-300 transition-colors">
+                    Protocolo Brechas 72h (Word)
+                </button>
+            </div>
+
+            <!-- Panel 1: Excel RAT real -->
+            <div data-kit-panel="rat" class="space-y-3 min-w-0">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 min-w-0">
+                    <span class="font-semibold text-slate-900 break-words min-w-0 max-w-full">Archivo: <code class="font-mono text-forest-700 break-all">4_Registro_Actividades_Tratamiento_RAT_Ley_21719.xlsx</code></span>
+                    <span>3 pestañas: Guía Rápida · Registro RAT · Fila nueva (6 filas de ejemplo)</span>
+                </div>
+                <div class="overflow-x-auto max-w-full border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs border-collapse min-w-[640px]">
+                        <thead class="bg-[#EEF6F3] text-[#00382E] font-bold">
+                            <tr>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Código</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Área / Proceso</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Categoría de Datos</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Base Legal de Licitud</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">¿Sensibles?</th>
+                                <th scope="col" class="p-2.5 border-b border-slate-200">Plazo</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700 bg-white">
+                            <tr>
+                                <td class="p-2.5 font-mono font-bold text-slate-900">RAT-01</td>
+                                <td class="p-2.5">Recursos Humanos</td>
+                                <td class="p-2.5">Nombre, RUT, sueldos, cuentas bancarias</td>
+                                <td class="p-2.5">Cumplimiento contractual y mandato</td>
+                                <td class="p-2.5 font-semibold text-slate-700">NO</td>
+                                <td class="p-2.5">Hasta 5 años tras término</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-mono font-bold text-slate-900">RAT-02</td>
+                                <td class="p-2.5">Recursos Humanos</td>
+                                <td class="p-2.5">Licencias médicas y diagnósticos</td>
+                                <td class="p-2.5">Obligación legal previsional y de salud</td>
+                                <td class="p-2.5 font-bold text-rose-700">SÍ (Salud)</td>
+                                <td class="p-2.5">5 años desde tramitación</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-mono font-bold text-slate-900">RAT-03</td>
+                                <td class="p-2.5">Operaciones &amp; RRHH</td>
+                                <td class="p-2.5">Patrones biométricos (asistencia)</td>
+                                <td class="p-2.5">Cumplimiento Art. 33 Código del Trabajo</td>
+                                <td class="p-2.5 font-bold text-rose-700">SÍ (Biométrico)</td>
+                                <td class="p-2.5">Vigencia del contrato</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-mono font-bold text-slate-900">RAT-04</td>
+                                <td class="p-2.5">Ventas &amp; Facturación</td>
+                                <td class="p-2.5">Nombre, RUT y dirección de clientes</td>
+                                <td class="p-2.5">Ejecución contractual de compraventa</td>
+                                <td class="p-2.5 font-semibold text-slate-700">NO</td>
+                                <td class="p-2.5">6 años (prescripción SII)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Panel 2: Anexo Laboral Word real -->
+            <div data-kit-panel="anexo" class="hidden space-y-3 min-w-0">
+                <div class="text-xs text-slate-600 break-words">
+                    <span class="font-semibold text-slate-900">Archivo: <code class="font-mono text-forest-700 break-all">1_Anexo_Laboral_Datos_Personales_Ley_21719.docx</code></span>
+                </div>
+                <div class="bg-[#F8FAF9] border border-slate-200 rounded-xl p-4 sm:p-5 text-xs sm:text-sm text-slate-700 space-y-2.5 leading-relaxed font-serif">
+                    <p class="font-bold text-slate-900 text-center">ANEXO DE CONTRATO INDIVIDUAL DE TRABAJO: AUTORIZACIÓN, TRATAMIENTO Y PROTECCIÓN DE DATOS PERSONALES</p>
+                    <p class="text-xs text-slate-600 text-center">(Ley N° 19.628 modificada por la Ley N° 21.719, Art. 154 ter del Código del Trabajo y Res. Exenta N° 38/2024 de la Dirección del Trabajo)</p>
+                    <p><strong>CLÁUSULA PRIMERA: ANTECEDENTES Y MARCO NORMATIVO.</strong> Las partes declaran que con fecha 13 de diciembre de 2024 se publicó la Ley N° 21.719 que regula la protección y el tratamiento de los datos personales...</p>
+                    <p><strong>CLÁUSULA SEGUNDA: CATEGORÍAS DE DATOS Y FINALIDAD DEL TRATAMIENTO.</strong> El Trabajador toma conocimiento de que el Empleador tratará exclusivamente los datos estrictamente necesarios para la gestión laboral (liquidaciones, transferencias) y reportes legales ante SII, Mi DT y AFP...</p>
+                </div>
+            </div>
+
+            <!-- Panel 3: Protocolo Brechas Word real -->
+            <div data-kit-panel="brechas" class="hidden space-y-3 min-w-0">
+                <div class="text-xs text-slate-600 break-words">
+                    <span class="font-semibold text-slate-900">Archivo: <code class="font-mono text-forest-700 break-all">5_Protocolo_Brechas_Seguridad_72h_Ley_21719.docx</code></span>
+                </div>
+                <div class="bg-[#F8FAF9] border border-slate-200 rounded-xl p-4 sm:p-5 text-xs sm:text-sm text-slate-700 space-y-2 leading-relaxed">
+                    <p class="font-bold text-slate-900">PROTOCOLO OPERATIVO DE GESTIÓN Y NOTIFICACIÓN DE BRECHAS (ART. 14 SEXIES)</p>
+                    <ul class="space-y-1.5 list-disc pl-5">
+                        <li><strong>Fase 1 · Detección y contención (0 a 12 h):</strong> aislar equipos comprometidos y rotar accesos.</li>
+                        <li><strong>Fase 2 · Evaluación del impacto (12 a 36 h):</strong> identificar si hubo exposición de datos comunes o sensibles.</li>
+                        <li><strong>Fase 3 · Notificación a la Agencia (36 a 72 h):</strong> remitir el reporte si la brecha afecta derechos de titulares.</li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -1099,8 +1207,8 @@ body { overflow-x: hidden; }
                                 <input type="email" id="buyer-email" required placeholder="contacto@empresa.cl" class="w-full bg-white text-slate-900 text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#00382E]">
                             </div>
                             <div>
-                                <label for="buyer-telefono" class="block text-xs font-bold text-slate-700 mb-1">Teléfono Móvil (WhatsApp) *</label>
-                                <input type="tel" id="buyer-telefono" required placeholder="+56 9 1234 5678" class="w-full bg-white text-slate-900 text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                                <label for="buyer-telefono" class="block text-xs font-bold text-slate-700 mb-1">Teléfono Móvil (opcional)</label>
+                                <input type="tel" id="buyer-telefono" placeholder="+56 9 1234 5678" class="w-full bg-white text-slate-900 text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#00382E]">
                             </div>
                         </div>
 
@@ -1418,6 +1526,25 @@ body { overflow-x: hidden; }
                 });
             }
 
+            // Pestañas de muestra real por dentro
+            var sampleTabs = document.querySelectorAll('.kit-sample-tab');
+            var samplePanels = document.querySelectorAll('[data-kit-panel]');
+            sampleTabs.forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    var target = tab.getAttribute('data-kit-sample');
+                    sampleTabs.forEach(function (t) {
+                        var active = t === tab;
+                        t.setAttribute('aria-selected', active ? 'true' : 'false');
+                        t.className = active
+                            ? 'kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-[#00382E] text-white cursor-pointer border border-[#00382E] transition-colors'
+                            : 'kit-sample-tab px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 cursor-pointer border border-slate-300 transition-colors';
+                    });
+                    samplePanels.forEach(function (p) {
+                        p.classList.toggle('hidden', p.getAttribute('data-kit-panel') !== target);
+                    });
+                });
+            });
+
             // Vuelta desde Flow sin pago completado
             if (new URLSearchParams(window.location.search).get('pago') === 'rechazado' && errorBox) {
                 errorBox.textContent = 'El pago no se completó y no se hizo ningún cargo. Puedes intentarlo de nuevo.';
@@ -1427,6 +1554,7 @@ body { overflow-x: hidden; }
         });
     </script>
     <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
+    <script>window.addEventListener("load", function () { if (window.CLCheckout) window.CLCheckout.track("view_item", "datos"); });</script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

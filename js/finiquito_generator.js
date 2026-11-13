@@ -477,7 +477,7 @@
         if (printArea) printArea.classList.add('protected-preview', 'select-none');
         if (docBody) docBody.classList.add('protected-preview', 'select-none');
 
-        // Restaurar overlay de marca de agua si no existe
+        // Restaurar barra superior de marca de agua si no existe (sin tapar la lectura del documento)
         if (!document.getElementById('doc-watermark-overlay') && printArea) {
             const wmOverlay = document.createElement('div');
             wmOverlay.className = 'watermark-overlay';
@@ -485,19 +485,20 @@
             wmOverlay.innerHTML = `
                 <div class="watermark-stamp-container">
                     <div class="watermark-stamp-box">
-                        <span class="stamp-badge">Cálculo Laboral Chile</span>
-                        <div class="stamp-title">VISTA PREVIA</div>
-                        <div class="stamp-subtitle">DESBLOQUEA PARA DESCARGAR</div>
+                        <div class="text-left">
+                            <span class="stamp-badge">Borrador no válido para firmar</span>
+                            <div class="stamp-subtitle">Vista previa completa. Tras el pago se desbloquea en Word (.docx) y PDF sin marca de agua durante 48 horas.</div>
+                        </div>
                         <button type="button" id="btn-watermark-unlock" class="stamp-cta">
                             <span class="material-icons text-sm" aria-hidden="true">lock_open</span>
-                            Desbloquear Word + PDF ($12.990)
+                            <span>Desbloquear Word + PDF ($12.990)</span>
                         </button>
                     </div>
                 </div>
             `;
             printArea.prepend(wmOverlay);
             document.getElementById('btn-watermark-unlock')?.addEventListener('click', () => {
-                document.getElementById('payment-modal')?.classList.remove('hidden');
+                openPaymentModal();
             });
         }
 
@@ -1059,6 +1060,29 @@
         bar.appendChild(aviso);
     }
 
+    function openPaymentModal() {
+        const modal = document.getElementById('payment-modal');
+        if (!modal) return;
+        const emailInput = document.getElementById('checkout-email');
+        if (emailInput && !emailInput.value.trim()) {
+            const savedEmail = localStorage.getItem('fini_customer_email');
+            if (savedEmail) emailInput.value = savedEmail;
+        }
+        const faltanEl = document.getElementById('checkout-faltan');
+        const faltan = datosFaltantes(getRawFormData());
+        if (faltanEl) {
+            if (faltan.length) {
+                faltanEl.textContent = 'Nota: aún faltan ' + faltan.join(', ') + '. Puedes pagar ahora y completarlos dentro de tus 48 horas de edición antes de descargar o enviar el Word final.';
+                faltanEl.className = 'text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-2.5';
+            } else {
+                faltanEl.textContent = '';
+                faltanEl.className = 'hidden text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-2.5';
+            }
+        }
+        modal.classList.remove('hidden');
+        if (emailInput && !emailInput.value.trim()) emailInput.focus();
+    }
+
     // Modal de Pago y Descarga
     function setupPaymentModal() {
         const triggerBtns = [
@@ -1081,7 +1105,7 @@
                     else downloadPDF();
                     return;
                 }
-                if (modal) modal.classList.remove('hidden');
+                openPaymentModal();
             });
         });
 
@@ -1091,31 +1115,18 @@
             });
         }
 
-        // Simulación / Conexión de Pago
+        // Conexión de Pago Flow (no bloquea por datos incompletos: el comprador tiene 48 h para completar o corregir)
         if (confirmPayBtn) {
             confirmPayBtn.addEventListener('click', () => {
                 const emailInput = document.getElementById('checkout-email');
-                if (emailInput && !emailInput.value.includes('@')) {
+                const emailVal = emailInput ? emailInput.value.trim() : '';
+                if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
                     alert('Por favor, ingresa un correo electrónico válido para enviarte el respaldo.');
+                    if (emailInput) emailInput.focus();
                     return;
                 }
 
-                const faltanEl = document.getElementById('checkout-faltan');
-                const faltan = datosFaltantes(getRawFormData());
-                const okEl = document.getElementById('checkout-datos-ok');
-                if (okEl && !okEl.checked) faltan.push('confirmar que revisaste los datos');
-                if (faltan.length) {
-                    if (faltanEl) {
-                        faltanEl.textContent = 'Antes de pagar, completa: ' + faltan.join(', ') + '.';
-                        faltanEl.classList.remove('hidden');
-                    }
-                    return;
-                }
-                if (faltanEl) faltanEl.classList.add('hidden');
-
-                if (emailInput && emailInput.value) {
-                    localStorage.setItem('fini_customer_email', emailInput.value.trim());
-                }
+                localStorage.setItem('fini_customer_email', emailVal);
 
                 // Guardar borrador completo en el navegador antes de salir a pagar
                 saveDraftToStorage();
@@ -1128,13 +1139,17 @@
                 const datos = getRawFormData();
                 // Aviso de retracto, pago creado en el servidor y salida a Flow
                 unlockApi().buyKit('finiquito', {
-                    email: emailInput ? emailInput.value.trim() : '',
+                    email: emailVal,
                     nombre: datos.empresaRazon || '',
                     empresa: datos.empresaRazon || ''
                 }, {
                     onAccept: () => {
                         confirmPayBtn.disabled = true;
                         confirmPayBtn.textContent = 'Conectando con Flow...';
+                    },
+                    onCancel: () => {
+                        confirmPayBtn.disabled = false;
+                        confirmPayBtn.innerHTML = original;
                     },
                     onError: (mensaje) => {
                         confirmPayBtn.disabled = false;

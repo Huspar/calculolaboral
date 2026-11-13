@@ -97,6 +97,13 @@ const PRODUCTS = {
         subject: 'Liquidación de Sueldo en PDF',
         page: '/generador-liquidacion-sueldo',
         unlock: true
+    },
+    anexo: {
+        code: 'GA',
+        amount: 7990,
+        subject: 'Anexo de Contrato de Trabajo (Word + PDF)',
+        page: '/generador-anexo-contrato-chile',
+        unlock: true
     }
 };
 // Pase Pyme: acceso al Asistente Laboral Pyme por `dias` desde la confirmacion del pago. No es descarga ni desbloqueo de generador:

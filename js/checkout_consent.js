@@ -212,6 +212,7 @@
         contrato: { item_id: 'contrato', item_name: 'Contrato de Trabajo a la Medida (Word + PDF)', price: 12990 },
         informe: { item_id: 'informe', item_name: 'Informe Ejecutivo de Costo Empresa (PDF)', price: 4990 },
         liquidacion: { item_id: 'liquidacion', item_name: 'Liquidación de Sueldo en PDF', price: 2990 },
+        anexo: { item_id: 'anexo', item_name: 'Anexo de Contrato de Trabajo (Word + PDF)', price: 7990 },
         pyme3: { item_id: 'pyme3', item_name: 'Pase Pyme 3 meses', price: 19990 },
         pyme12: { item_id: 'pyme12', item_name: 'Pase Pyme 12 meses', price: 59990 }
     };

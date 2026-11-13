@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Genera tu anexo de contrato de trabajo en Chile (2026) en Word (.docx) y PDF: cambio de sueldo, cargo, jornada 42h, prórroga plazo fijo o teletrabajo Ley 21.220.">
+    <title>Generador de Anexo de Contrato de Trabajo Chile 2026 | Word y PDF</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://calculolaboral.cl/generador-anexo-contrato-chile">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Generador de Anexo de Contrato de Trabajo Chile 2026 | Word y PDF">
+    <meta property="og:description" content="Genera tu anexo de contrato de trabajo en Chile (2026) en Word (.docx) y PDF: cambio de sueldo, cargo, jornada 42h, prórroga plazo fijo o teletrabajo Ley 21.220.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/generador-anexo-contrato-chile">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Generador de Anexo de Contrato de Trabajo Chile 2026 | Word y PDF">
+    <meta name="twitter:description" content="Genera tu anexo de contrato de trabajo en Chile (2026) en Word (.docx) y PDF: cambio de sueldo, cargo, jornada 42h, prórroga plazo fijo o teletrabajo Ley 21.220.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
+
+    <!-- Fonts & Icons -->
+    <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+
+    <!-- Google Tag Manager / Analytics -->
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        try {
+            if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+            if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+            if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+        } catch (e) {}
+        gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+    </script>
+
+    <!-- Precompiled Tailwind CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.4.0">
+    <style>
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAF9;
+            color: #1E293B;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-mono-num {
+            font-family: 'Geist Mono', monospace;
+            font-feature-settings: 'tnum' on, 'zero' on;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.3);
+        }
+        .btn-yellow-pill:hover {
+            background-color: var(--teal-yellow-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 183, 3, 0.38);
+        }
+
+        .btn-dark-pill {
+            background-color: var(--teal-forest);
+            color: #FFFFFF !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.22);
+        }
+        .btn-dark-pill:hover {
+            background-color: var(--teal-forest-hover);
+            transform: translateY(-1px);
+            color: #FFFFFF !important;
+        }
+
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #374151 !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 10px 20px;
+            font-size: 13.5px;
+            min-height: 44px;
+            border: 1.5px solid #D1D5DB;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover {
+            border-color: var(--teal-forest);
+            color: var(--teal-forest) !important;
+            background-color: #F8FAF9;
+        }
+
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+
+        .notary-sheet {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            font-family: Georgia, "Times New Roman", serif;
+            color: #0f172a;
+            line-height: 1.65;
+            user-select: text;
+        }
+        .notary-sheet.protected-preview {
+            user-select: none;
+            -webkit-user-select: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='150' viewBox='0 0 260 150'><text x='15' y='85' transform='rotate(-22 130 75)' font-family='sans-serif' font-weight='800' font-size='15' letter-spacing='3' fill='rgba(0,56,46,0.055)'>VISTA PREVIA · BORRADOR</text></svg>");
+            background-repeat: repeat;
+        }
+        .notary-sheet.protected-preview #notary-document-body {
+            padding-top: 4.5rem;
+        }
+        .watermark-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .watermark-overlay.hidden {
+            display: none !important;
+        }
+        .watermark-stamp-box {
+            border: 1.5px solid rgba(0, 56, 46, 0.35);
+            padding: 7px 14px;
+            border-radius: 10px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(2px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .watermark-stamp-box .stamp-title {
+            font-family: 'Geist', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: #00382E;
+            text-transform: uppercase;
+        }
+        .watermark-stamp-box .stamp-subtitle {
+            font-family: 'Geist', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-chevron {
+            transform: rotate(180deg);
+        }
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+    </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "Generador de Anexo de Contrato de Trabajo Chile 2026",
+          "url": "https://calculolaboral.cl/generador-anexo-contrato-chile",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "es-CL",
+          "offers": {
+            "@type": "Offer",
+            "price": "7990",
+            "priceCurrency": "CLP"
+          },
+          "description": "Generador interactivo de anexos de contrato individual de trabajo en Chile conforme al artículo 11 del Código del Trabajo. Permite modificar sueldo, cargo, jornada de 42 horas, prórroga de plazo fijo o paso a indefinido y teletrabajo Ley 21.220."
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+            { "@type": "ListItem", "position": 2, "name": "Para Empleadores", "item": "https://calculolaboral.cl/para-empleadores" },
+            { "@type": "ListItem", "position": 3, "name": "Generador de Anexo de Contrato", "item": "https://calculolaboral.cl/generador-anexo-contrato-chile" }
+          ]
+        }
+      ]
+    }
+    </script>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
+<link rel="stylesheet" href="/assets/css/promo-asistente.css?v=1.0.1">
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- 1. TOP TICKER -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Código del Trabajo Art. 11 · Ley 40 Horas (42h en 2026) y Ley 21.220</span>
+            </div>
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
+                <span class="text-white/50">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$72.440</strong></span>
+                <span class="text-white/50">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN HEADER -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm shrink-0" style="background-color: #00382E;">
+                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">Simulador Finiquito</a>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">calculate</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div><div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div></div>
+                                </a>
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">payments</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Sueldo Líquido</div><div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div></div>
+                                </a>
+                                <a href="generador-contrato-trabajo-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0"><span class="material-icons text-lg">description</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Generador de Contrato</div><div class="text-xs text-slate-500 mt-0.5">Contrato de trabajo en Word y PDF.</div></div>
+                                </a>
+                                <a href="generador-liquidacion-sueldo" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">receipt_long</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Liquidación de Sueldo</div><div class="text-xs text-slate-500 mt-0.5">Documento mensual en PDF ($2.990).</div></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="sueldo_liquido" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">Sueldo Líquido</a>
+                    <a href="blog" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">Blog</a>
+                </nav>
+
+                <div class="flex items-center gap-2.5">
+                    <a href="para-empleadores" class="hidden md:inline-flex btn-yellow-pill !py-2.5 !px-5 !text-xs !shadow-xs">Portal Empleadores</a>
+                    <a href="contacto" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">Contacto</a>
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-3">
+            <a href="finiquito_calculator" class="block text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="sueldo_liquido" class="block text-sm font-semibold text-slate-700">Sueldo Líquido</a>
+            <a href="generador-contrato-trabajo-chile" class="block text-sm font-semibold text-slate-700">Generador de Contrato</a>
+            <a href="generador-liquidacion-sueldo" class="block text-sm font-semibold text-slate-700">Liquidación de Sueldo</a>
+            <a href="blog" class="block text-sm font-semibold text-slate-700">Blog de Guías Laborales</a>
+            <div class="pt-2">
+                <a href="para-empleadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+        <div class="w-full">
+            <nav class="flex items-center gap-2 text-xs text-slate-600 mb-4 no-print" aria-label="Breadcrumb">
+                <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
+                <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+                <a href="para-empleadores" class="hover:text-[#00382E] transition-colors font-medium">Para Empleadores</a>
+                <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+                <span class="text-slate-800 font-semibold">Generador de Anexo de Contrato</span>
+            </nav>
+
+            <!-- Hero -->
+            <div class="text-center mt-2 mb-8 max-w-3xl mx-auto no-print">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 text-slate-700 shadow-2xs mb-4">
+                    <span class="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-900 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span class="material-icons text-xs" aria-hidden="true">edit_document</span> Art. 11 Código del Trabajo
+                    </span>
+                    <span class="text-xs font-semibold text-slate-800">Word editable (.docx) + PDF · Modelo de referencia</span>
+                </div>
+                <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                    Generador de Anexo de Contrato de Trabajo 2026
+                </h1>
+                <p class="text-slate-600 text-sm sm:text-base mt-3 max-w-2xl mx-auto leading-relaxed">
+                    Arma en minutos el anexo de modificación de sueldo, cambio de cargo, adecuación de jornada a 42 horas, prórroga de plazo fijo o pacto de teletrabajo (Ley 21.220). Revisa el borrador completo en pantalla y descarga en <strong>Word (.docx)</strong> y <strong>PDF</strong> por <strong>$7.990 CLP</strong>.
+                </p>
+            </div>
+
+            <!-- Workspace 12 cols -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
+                <!-- Left Form (7 cols) -->
+                <form id="anexo-form" class="lg:col-span-7 space-y-6 no-print" onsubmit="return false;">
+                    <!-- Card 1: Datos Generales y Partes -->
+                    <section class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-full bg-[#00382E] text-white text-xs font-bold flex items-center justify-center">1</span>
+                                Identificación de las Partes y Contrato Base
+                            </h2>
+                            <span class="text-xs font-semibold text-slate-500">Art. 11 C. del T.</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                            <div>
+                                <label for="anexo-ciudad" class="block text-xs font-bold text-slate-700 mb-1">Ciudad de firma</label>
+                                <input id="anexo-ciudad" type="text" value="Santiago" placeholder="Santiago" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="anexo-fecha" class="block text-xs font-bold text-slate-700 mb-1">Fecha de firma del anexo</label>
+                                <input id="anexo-fecha" type="date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="anexo-vigencia" class="block text-xs font-bold text-slate-700 mb-1">Fecha de vigencia</label>
+                                <input id="anexo-vigencia" type="date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                            <div>
+                                <label for="empresa-razon" class="block text-xs font-bold text-slate-700 mb-1">Razón social empleador</label>
+                                <input id="empresa-razon" type="text" placeholder="Ej: Comercial Andina SpA" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="empresa-rut" class="block text-xs font-bold text-slate-700 mb-1">RUT empleador</label>
+                                <input id="empresa-rut" type="text" placeholder="76.123.456-7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="empresa-domicilio" class="block text-xs font-bold text-slate-700 mb-1">Domicilio empresa</label>
+                                <input id="empresa-domicilio" type="text" placeholder="Av. Providencia 1234, Of. 402, Providencia" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="empresa-rep" class="block text-xs font-bold text-slate-700 mb-1">Representante legal</label>
+                                <input id="empresa-rep" type="text" placeholder="Nombre completo" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="empresa-rep-rut" class="block text-xs font-bold text-slate-700 mb-1">RUT representante</label>
+                                <input id="empresa-rep-rut" type="text" placeholder="12.345.678-9" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label for="trab-nombre" class="block text-xs font-bold text-slate-700 mb-1">Nombre completo trabajador(a)</label>
+                                <input id="trab-nombre" type="text" placeholder="Nombre y dos apellidos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="trab-rut" class="block text-xs font-bold text-slate-700 mb-1">RUT trabajador(a)</label>
+                                <input id="trab-rut" type="text" placeholder="18.234.567-K" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="trab-cargo-actual" class="block text-xs font-bold text-slate-700 mb-1">Cargo actual en contrato base</label>
+                                <input id="trab-cargo-actual" type="text" placeholder="Ej: Asistente Administrativo" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div>
+                                <label for="contrato-fecha-base" class="block text-xs font-bold text-slate-700 mb-1">Fecha contrato original</label>
+                                <input id="contrato-fecha-base" type="date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="trab-domicilio" class="block text-xs font-bold text-slate-700 mb-1">Domicilio trabajador(a)</label>
+                                <input id="trab-domicilio" type="text" placeholder="Calle, número, comuna" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="empresa-email" class="block text-xs font-bold text-slate-700 mb-1">Correo para comprobante de respaldo <span class="font-normal text-slate-500">(opcional)</span></label>
+                                <input id="empresa-email" type="email" placeholder="rrhh@tuempresa.cl" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Card 2: Modulos de Modificacion -->
+                    <section class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+                        <div class="border-b border-slate-100 pb-3">
+                            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-full bg-[#00382E] text-white text-xs font-bold flex items-center justify-center">2</span>
+                                Selecciona qué estás modificando en el contrato
+                            </h2>
+                            <p class="text-xs text-slate-600 mt-1">Puedes activar uno o varios bloques en el mismo anexo sin recargo.</p>
+                        </div>
+
+                        <!-- Toggle 1: Sueldo -->
+                        <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input id="chk-mod-sueldo" type="checkbox" checked class="mt-0.5 w-5 h-5 rounded accent-[#00382E]">
+                                <span>
+                                    <strong class="block text-sm font-bold text-slate-900">1. Modificación de sueldo base, IPC o asignaciones</strong>
+                                    <span class="block text-xs text-slate-600">Actualiza remuneración bruta (mínimo 2026: $553.553), gratificación y colación/movilización.</span>
+                                </span>
+                            </label>
+                            <div id="panel-mod-sueldo" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200/80">
+                                <div>
+                                    <label for="sueldo-nuevo" class="block text-xs font-bold text-slate-700 mb-1">Nuevo sueldo base bruto (CLP)</label>
+                                    <input id="sueldo-nuevo" type="text" inputmode="numeric" value="750000" placeholder="750000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-mono-num focus:ring-2 focus:ring-[#00382E] outline-none">
+                                </div>
+                                <div>
+                                    <label for="gratificacion-modo" class="block text-xs font-bold text-slate-700 mb-1">Gratificación legal</label>
+                                    <select id="gratificacion-modo" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                        <option value="mantener">Mantener estipulación vigente</option>
+                                        <option value="tope-475">Art. 50: 25% mensual con tope 4,75 IMM</option>
+                                        <option value="art-47">Art. 47: Según utilidades líquidas</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="asignacion-colacion" class="block text-xs font-bold text-slate-700 mb-1">Colación mensual (CLP, 0 si no aplica)</label>
+                                    <input id="asignacion-colacion" type="text" inputmode="numeric" value="0" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-mono-num focus:ring-2 focus:ring-[#00382E] outline-none">
+                                </div>
+                                <div>
+                                    <label for="asignacion-movilizacion" class="block text-xs font-bold text-slate-700 mb-1">Movilización mensual (CLP, 0 si no aplica)</label>
+                                    <input id="asignacion-movilizacion" type="text" inputmode="numeric" value="0" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-mono-num focus:ring-2 focus:ring-[#00382E] outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggle 2: Cargo -->
+                        <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input id="chk-mod-cargo" type="checkbox" class="mt-0.5 w-5 h-5 rounded accent-[#00382E]">
+                                <span>
+                                    <strong class="block text-sm font-bold text-slate-900">2. Cambio de cargo, funciones o lugar de trabajo</strong>
+                                    <span class="block text-xs text-slate-600">Formaliza ascenso, ajuste de responsabilidades o traslado de sucursal sin ius variandi abusivo.</span>
+                                </span>
+                            </label>
+                            <div id="panel-mod-cargo" class="hidden space-y-3 pt-2 border-t border-slate-200/80">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="cargo-nuevo" class="block text-xs font-bold text-slate-700 mb-1">Nuevo cargo</label>
+                                        <input id="cargo-nuevo" type="text" placeholder="Ej: Jefe de Operaciones" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="lugar-nuevo" class="block text-xs font-bold text-slate-700 mb-1">Nuevo lugar/sucursal <span class="font-normal text-slate-500">(opcional)</span></label>
+                                        <input id="lugar-nuevo" type="text" placeholder="Ej: Casa Matriz Las Condes" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="funciones-nuevas" class="block text-xs font-bold text-slate-700 mb-1">Detalle de funciones principales (exigido por DT)</label>
+                                    <textarea id="funciones-nuevas" rows="2" placeholder="Supervisar turnos de bodega, coordinar despachos diarios y controlar inventario..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggle 3: Jornada -->
+                        <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input id="chk-mod-jornada" type="checkbox" class="mt-0.5 w-5 h-5 rounded accent-[#00382E]">
+                                <span>
+                                    <strong class="block text-sm font-bold text-slate-900">3. Cambio de horario o adecuación de jornada (42h Ley 21.561)</strong>
+                                    <span class="block text-xs text-slate-600">Actualiza horas semanales, distribución diaria y minutos de colación.</span>
+                                </span>
+                            </label>
+                            <div id="panel-mod-jornada" class="hidden space-y-3 pt-2 border-t border-slate-200/80">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="jornada-horas" class="block text-xs font-bold text-slate-700 mb-1">Horas semanales pactadas</label>
+                                        <input id="jornada-horas" type="text" inputmode="numeric" value="42" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-mono-num focus:ring-2 focus:ring-[#00382E] outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="jornada-colacion" class="block text-xs font-bold text-slate-700 mb-1">Colación diaria (minutos)</label>
+                                        <input id="jornada-colacion" type="text" inputmode="numeric" value="60" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-mono-num focus:ring-2 focus:ring-[#00382E] outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="jornada-detalle" class="block text-xs font-bold text-slate-700 mb-1">Distribución semanal y horario</label>
+                                    <textarea id="jornada-detalle" rows="2" placeholder="Lunes a jueves de 09:00 a 18:30 horas y viernes de 09:00 a 17:00 horas." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggle 4: Plazo -->
+                        <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input id="chk-mod-plazo" type="checkbox" class="mt-0.5 w-5 h-5 rounded accent-[#00382E]">
+                                <span>
+                                    <strong class="block text-sm font-bold text-slate-900">4. Prórroga de plazo fijo o transformación a indefinido</strong>
+                                    <span class="block text-xs text-slate-600">Art. 159 N° 4: segunda prórroga o continuación tras vencimiento transforma en indefinido.</span>
+                                </span>
+                            </label>
+                            <div id="panel-mod-plazo" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200/80">
+                                <div>
+                                    <label for="plazo-tipo" class="block text-xs font-bold text-slate-700 mb-1">Acuerdo sobre duración</label>
+                                    <select id="plazo-tipo" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                        <option value="indefinido">Transformar a Contrato Indefinido</option>
+                                        <option value="prorroga">Prórroga de Plazo Fijo (1ª renovación)</option>
+                                    </select>
+                                </div>
+                                <div id="group-plazo-fecha" class="hidden">
+                                    <label for="plazo-nueva-fecha" class="block text-xs font-bold text-slate-700 mb-1">Nueva fecha de término</label>
+                                    <input id="plazo-nueva-fecha" type="date" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggle 5: Teletrabajo -->
+                        <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input id="chk-mod-teletrabajo" type="checkbox" class="mt-0.5 w-5 h-5 rounded accent-[#00382E]">
+                                <span>
+                                    <strong class="block text-sm font-bold text-slate-900">5. Pacto de teletrabajo o modalidad híbrida (Ley 21.220)</strong>
+                                    <span class="block text-xs text-slate-600">Incluye desconexión digital mínima de 12 horas y asignación de conectividad opcional.</span>
+                                </span>
+                            </label>
+                            <div id="panel-mod-teletrabajo" class="hidden space-y-3 pt-2 border-t border-slate-200/80">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="tele-modalidad" class="block text-xs font-bold text-slate-700 mb-1">Modalidad</label>
+                                        <select id="tele-modalidad" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                            <option value="hibrida">Híbrida (combinación presencial/remota)</option>
+                                            <option value="total">100% Teletrabajo / Distancia</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="tele-asignacion" class="block text-xs font-bold text-slate-700 mb-1">Asignación conectividad/luz (CLP/mes)</label>
+                                        <input id="tele-asignacion" type="text" inputmode="numeric" value="25000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-mono-num focus:ring-2 focus:ring-[#00382E] outline-none">
+                                    </div>
+                                </div>
+                                <div id="group-tele-dias">
+                                    <label for="tele-dias-remoto" class="block text-xs font-bold text-slate-700 mb-1">Días remotos / alternancia</label>
+                                    <input id="tele-dias-remoto" type="text" placeholder="Ej: martes y jueves remoto; lunes, miércoles y viernes presencial" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                </div>
+                                <div>
+                                    <label for="tele-desconexion" class="block text-xs font-bold text-slate-700 mb-1">Desconexión digital diaria (mín. 12h art. 152 quáter J)</label>
+                                    <input id="tele-desconexion" type="text" value="12 horas continuas entre jornadas" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggle 6: Clausula Libre -->
+                        <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input id="chk-mod-libre" type="checkbox" class="mt-0.5 w-5 h-5 rounded accent-[#00382E]">
+                                <span>
+                                    <strong class="block text-sm font-bold text-slate-900">6. Acuerdo complementario personalizado</strong>
+                                    <span class="block text-xs text-slate-600">Bono puntual, cambio de turno especial, vehículo a cargo, etc.</span>
+                                </span>
+                            </label>
+                            <div id="panel-mod-libre" class="hidden space-y-3 pt-2 border-t border-slate-200/80">
+                                <div>
+                                    <label for="libre-titulo" class="block text-xs font-bold text-slate-700 mb-1">Título de la cláusula</label>
+                                    <input id="libre-titulo" type="text" value="Acuerdo Complementario" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none">
+                                </div>
+                                <div>
+                                    <label for="libre-texto" class="block text-xs font-bold text-slate-700 mb-1">Redacción del acuerdo</label>
+                                    <textarea id="libre-texto" rows="3" placeholder="Redacta aquí la estipulación adicional acordada entre ambas partes..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:ring-2 focus:ring-[#00382E] outline-none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </form>
+
+                <!-- Right Sticky Preview + Flow Checkout (5 cols) -->
+                <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
+                    <!-- Payment / Action Card -->
+                    <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-md space-y-4 no-print">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#0F5E4F]">Documento Listo para Firmar</span>
+                                <h2 class="text-lg font-extrabold text-slate-900">Anexo en Word (.docx) + PDF</h2>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="block text-2xl font-black font-mono-num text-[#00382E]">$7.990</span>
+                                <span class="text-xs text-slate-500">Pago único CLP</span>
+                            </div>
+                        </div>
+
+                        <div class="text-xs bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-slate-700">
+                            <span class="font-bold text-slate-900">Cláusulas activas:</span>
+                            <span id="anexo-resumen-modulos">Sueldo / Haberes</span>
+                        </div>
+
+                        <button type="button" id="btn-anexo-comprar" class="w-full btn-yellow-pill !py-3.5 !text-sm shadow-md">
+                            <span class="material-icons text-base" aria-hidden="true">lock_open</span>
+                            <span>Descargar Word y PDF ($7.990)</span>
+                        </button>
+
+                        <div id="box-anexo-desbloqueado" class="hidden space-y-2.5 pt-1">
+                            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-semibold text-emerald-900 flex items-center gap-2">
+                                <span class="material-icons text-sm text-emerald-700" aria-hidden="true">check_circle</span>
+                                <span>Documento desbloqueado para descarga ilimitada (48 h)</span>
+                            </div>
+                            <button type="button" id="btn-anexo-docx" class="w-full btn-yellow-pill !py-3 !text-xs">
+                                <span class="material-icons text-sm" aria-hidden="true">description</span>
+                                <span>Descargar Word (.docx editable)</span>
+                            </button>
+                            <button type="button" id="btn-anexo-pdf" class="w-full btn-dark-pill !py-3 !text-xs">
+                                <span class="material-icons text-sm" aria-hidden="true">picture_as_pdf</span>
+                                <span>Imprimir / Guardar PDF limpio</span>
+                            </button>
+                        </div>
+
+                        <ul class="text-xs text-slate-600 space-y-1.5 pt-1">
+                            <li class="flex items-center gap-2"><span class="material-icons text-emerald-700 text-sm" aria-hidden="true">check</span> Microsoft Word (.docx) 100% editable sin candados</li>
+                            <li class="flex items-center gap-2"><span class="material-icons text-emerald-700 text-sm" aria-hidden="true">check</span> PDF limpio formateado para imprimir o firma electrónica</li>
+                            <li class="flex items-center gap-2"><span class="material-icons text-emerald-700 text-sm" aria-hidden="true">check</span> Tu borrador queda guardado automáticamente en el navegador</li>
+                        </ul>
+                        <p class="text-[11px] text-slate-500 border-t border-slate-100 pt-2.5 leading-snug">
+                            Modelo de referencia basado en el Código del Trabajo vigente en Chile; no reemplaza la asesoría de un abogado.
+                        </p>
+                    </div>
+
+                    <!-- Document Sheet Preview -->
+                    <div class="bg-white rounded-3xl border border-slate-200/90 p-3 sm:p-4 shadow-xs">
+                        <div class="flex items-center justify-between px-2 pb-2.5 border-b border-slate-100 mb-3 no-print">
+                            <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                Vista previa completa del documento
+                            </span>
+                            <span class="text-[11px] font-medium text-slate-500">En vivo</span>
+                        </div>
+                        <div class="max-h-[560px] overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-2 sm:p-3">
+                            <div id="notary-sheet" class="notary-sheet protected-preview rounded-xl p-5 sm:p-6">
+                                <div id="watermark-overlay" class="watermark-overlay">
+                                    <div class="watermark-stamp-box">
+                                        <div class="stamp-title">Vista Previa · Borrador Legible</div>
+                                        <div class="stamp-subtitle">Revisa todas las cláusulas. Al pagar se descarga en Word (.docx) y PDF sin sello.</div>
+                                    </div>
+                                </div>
+                                <div id="notary-document-body"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Content / SEO -->
+            <section class="mt-12 pt-10 border-t border-slate-200/90 max-w-4xl mx-auto space-y-8 no-print">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-3">Cuándo es obligatorio firmar un Anexo de Contrato en Chile (Art. 11)</h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        El artículo 11 del Código del Trabajo exige consignar por escrito toda modificación a las estipulaciones del contrato individual de trabajo, firmada por ambas partes al dorso o en un documento anexo. En 2026 es especialmente frecuente emitir anexos por actualización de sueldo mínimo ($553.553), reducción gradual de jornada a 42 horas semanales (Ley 21.561), cambio de funciones, paso de plazo fijo a indefinido o regulación del trabajo híbrido (Ley 21.220).
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200/90">
+                        <h3 class="text-sm font-bold text-slate-900 mb-1">Registro en Mi DT</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Toda modificación contractual debe registrarse electrónicamente en el portal Mi DT de la Dirección del Trabajo dentro de los 15 días corridos siguientes.</p>
+                    </div>
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200/90">
+                        <h3 class="text-sm font-bold text-slate-900 mb-1">Mutuo Acuerdo</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Ninguna modificación permanente de remuneración, jornada o cargo se puede imponer unilateralmente fuera de los casos taxativos del art. 12.</p>
+                    </div>
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200/90">
+                        <h3 class="text-sm font-bold text-slate-900 mb-1">Dos Ejemplares</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Se firma en duplicado con idéntico tenor: un ejemplar para la carpeta del empleador y otro entregado al trabajador.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+<!-- cl-asistente:inicio (lo genera tools/promo_asistente.js: no editar a mano) -->
+<aside class="cl-asistente no-print" aria-labelledby="cl-asistente-t">
+<div class="cl-asistente-cuerpo">
+<p class="cl-asistente-kicker">Asistente Laboral Pyme · Piloto gratuito hasta el 31 de diciembre</p>
+<p class="cl-asistente-titulo" id="cl-asistente-t">Emite anexos de todo tu equipo sin reescribir fichas</p>
+<p>En el asistente guardas los datos de tus trabajadores una sola vez y generas contratos, anexos y liquidaciones mensuales desde la misma ficha.</p>
+</div>
+<div class="cl-asistente-acciones">
+<a class="cl-asistente-btn" href="asistente-laboral-pyme" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="generador-anexo-contrato-chile-bloque">Conocer el Asistente Laboral Pyme</a>
+<a class="cl-asistente-link" href="app/ejemplo" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="generador-anexo-contrato-chile-ejemplo">Ver un ejemplo, sin cuenta</a>
+</div>
+</aside>
+<!-- cl-asistente:fin -->
+        <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="fuentes-titulo">
+            <h2 id="fuentes-titulo" class="text-lg font-bold text-slate-900 mb-3">Fuentes</h2>
+            <p class="text-sm text-slate-600 mb-2">Modelo referencial elaborado a partir de estas fuentes públicas vigentes. No fue revisado por abogados.</p>
+            <ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+                <li><a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Código del Trabajo — Art. 11 y Art. 152 quáter (BCN)</a></li>
+                <li><a href="https://www.dt.gob.cl/" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Dirección del Trabajo — Registro Mi DT</a></li>
+            </ul>
+        </section>
+        <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
+            <h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
+            <ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+                <li><a href="/generador-contrato-trabajo-chile" class="font-semibold text-[#00382E] underline">Generador de contrato de trabajo completo ($12.990)</a></li>
+                <li><a href="/generador-liquidacion-sueldo" class="font-semibold text-[#00382E] underline">Generador de liquidación de sueldo en PDF ($2.990)</a></li>
+                <li><a href="/ley-40-horas-chile-2026" class="font-semibold text-[#00382E] underline">Guía Ley 40 horas y jornada 42h en 2026</a></li>
+                <li><a href="/sueldo-minimo-chile-2026" class="font-semibold text-[#00382E] underline">Sueldo mínimo Chile 2026 ($553.553)</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+                                <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                                </svg>
+                            </div>
+                            <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+                        </a>
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores y pymes en Chile (2026).</p>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Calculadoras</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-horas-extras" class="text-white/80 hover:text-[#FFB703] transition-colors">Horas Extras 42h</a></li>
+                            <li><a href="liquidacion-de-sueldo" class="text-white/80 hover:text-[#FFB703] transition-colors">Liquidación de Sueldo</a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Guías Legales</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas</a></li>
+                            <li><a href="sueldo-minimo-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Mínimo 2026</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="generador-contrato-trabajo-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Contrato</a></li>
+                            <li><a href="generador-finiquito-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Generador Finiquito</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50">
+                    <div>&copy; 2026 Cálculo Laboral Chile. Fórmulas basadas en el Código del Trabajo y los dictámenes de la Dirección del Trabajo.</div>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a href="terminos" class="hover:text-white transition-colors">Términos</a><span>·</span>
+                        <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a><span>·</span>
+                        <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/constants.js?v=2.1.3"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/finiquito_docx.js?v=1.0.0"></script>
+    <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
+    <script src="/js/anexo_contrato_generator.js?v=1.0.0" defer></script>
+    <script>window.addEventListener("load", function () { if (window.CLCheckout) window.CLCheckout.track("view_item", "anexo"); });</script>
+    <script src="/js/origen.js?v=1.0.0" defer></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
+</body>
+</html>

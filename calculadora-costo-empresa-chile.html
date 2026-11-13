@@ -1210,6 +1210,9 @@ window.addEventListener('load', function () {
                                 <span>Crear a la Medida ($12.990)</span>
                             </a>
                         </div>
+                        <p class="text-xs text-slate-600 pt-2 border-t border-slate-100">
+                            ¿Ya contrataste? <a href="generador-liquidacion-sueldo" data-cta="liquidacion" data-cta-slot="costo-empresa-puente" class="font-bold text-[#00382E] underline">Emite la liquidación mensual en PDF ($2.990)</a>.
+                        </p>
                     </div>
 
                     <!-- BANNER: ASISTENTE LABORAL PYME, PILOTO GRATUITO (CARD B) -->
@@ -1588,6 +1591,7 @@ window.addEventListener('load', function () {
     <script src="/js/print_brand.js?v=1.2.0"></script>
     <script src="/js/costo_empresa_pdf_generator.js?v=3.2.4"></script>
     <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
+    <script>window.addEventListener("load", function () { if (window.CLCheckout) window.CLCheckout.track("view_item", "informe"); });</script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>
