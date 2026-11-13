@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('scroll', () => {
             if (!display.mobileResultBar || !isSueldoActive()) return;
             const net = parseInput(display.netSalary ? display.netSalary.textContent : '0');
-            if (window.scrollY > 200 && net > 0) {
+            if (window.scrollY > 120 && net > 0) {
                 display.mobileResultBar.classList.remove('translate-y-full');
             } else {
                 display.mobileResultBar.classList.add('translate-y-full');
@@ -536,6 +536,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setText(display.percentage, `${perc.toFixed(1)}%`);
 
         // Update Mobile Bar (only if Sueldo is active)
+        var mobileInlineVal = document.getElementById('mobile-inline-value');
+        if (mobileInlineVal) mobileInlineVal.textContent = formatCLP(d.netSalary);
+        var mobileInlineLabel = document.getElementById('mobile-inline-label');
+        if (mobileInlineLabel) mobileInlineLabel.textContent = getCalcMode() === 'liquido' ? 'Líquido objetivo' : 'Líquido estimado';
         if (display.mobileResultBar && isSueldoActive()) {
             setText(display.mobileResultValue, formatCLP(d.netSalary));
             setText(display.mobileResultPercentage, `${perc.toFixed(1)}%`);
@@ -543,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
             var mobileLabel = document.getElementById('mobile-result-label');
             if (mobileLabel) mobileLabel.textContent = 'Líquido a pago';
 
-            if (d.netSalary > 0 && window.scrollY > 200) {
+            if (d.netSalary > 0 && window.scrollY > 120) {
                 display.mobileResultBar.classList.remove('translate-y-full');
             } else if (d.netSalary <= 0) {
                 display.mobileResultBar.classList.add('translate-y-full');

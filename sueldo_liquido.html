@@ -426,6 +426,10 @@ window.addEventListener('load', function () {
         .sl-inverse-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #00382E; }
         .sl-inverse-value { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 1.6rem; font-weight: 800; color: #00382E; line-height: 1.2; }
         .sl-inverse p { font-size: .75rem; color: #475569; margin: .2rem 0 0; }
+        @media (max-width: 639px) {
+            .sl-mode { padding: .45rem .4rem; font-size: .78rem; }
+            .sl-mode span { display: none; }
+        }
         @media (prefers-reduced-motion: reduce) { .sl-mode { transition: none; } }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
@@ -452,7 +456,7 @@ window.addEventListener('load', function () {
     <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
     <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-14 sm:h-20">
                 
                 <!-- Brand Logo: Official CálculoLaboral Brand Logo -->
                 <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
@@ -707,11 +711,11 @@ window.addEventListener('load', function () {
 
 
     <!-- 3. MAIN WRAPPER -->
-    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
+    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-10 w-full">
         
         <!-- Breadcrumb & Hero Header (TealHQ Editorial Style) -->
-        <div class="mb-8">
-            <nav class="text-xs text-slate-500 font-medium mb-3 flex items-center gap-1.5" aria-label="Breadcrumb">
+        <div class="mb-4 sm:mb-8">
+            <nav class="text-xs text-slate-500 font-medium mb-2 sm:mb-3 flex items-center gap-1.5" aria-label="Breadcrumb">
                 <a href="./" class="hover:text-[#00382E] transition-colors">Inicio</a>
                 <span class="text-slate-500">/</span>
                 <span class="text-slate-500">Herramientas</span>
@@ -719,14 +723,17 @@ window.addEventListener('load', function () {
                 <span class="text-slate-900 font-semibold">Calculadora de Sueldo Líquido</span>
             </nav>
 
-            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#111827] tracking-tight leading-tight">
+            <h1 class="text-2xl sm:text-5xl lg:text-6xl font-extrabold text-[#111827] tracking-tight leading-tight">
                 Calculadora de sueldo líquido: de bruto a líquido gratis (2026)
             </h1>
-            <p class="text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed mt-3">
+            <p class="sm:hidden text-xs text-slate-600 leading-relaxed mt-1.5">
+                Simulador bruto a líquido y líquido a bruto con AFP, salud, AFC e Impuesto Único 2026 (IMM <strong>$553.553</strong>).
+            </p>
+            <p class="hidden sm:block text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed mt-3">
                 Simulador online y gratis: ingresa tu sueldo bruto y obtén tu sueldo líquido, el detalle de tu liquidación de sueldo y tu liquidación en PDF. Conoce tus descuentos al día de AFP, Fonasa o Isapre, Seguro de Cesantía (AFC) e Impuesto Único de Segunda Categoría (SII), actualizado con el <a href="sueldo-minimo-chile-2026" class="font-semibold text-[#00382E] underline">sueldo mínimo</a> de <strong>$553.553</strong> y topes previsionales de 2026.
             </p>
 
-            <nav class="cl-calcnav no-print" aria-label="Calculadoras">
+            <nav class="cl-calcnav !my-3 sm:!my-7 no-print" aria-label="Calculadoras">
                 <div class="cl-calcnav-track"><a href="finiquito_calculator">Finiquito</a><a href="simulador-despido-injustificado-chile">Despido injustificado</a><a href="sueldo_liquido" aria-current="page">Sueldo líquido</a><a href="gratificacion-legal-chile">Gratificación</a><a href="impuesto-unico-segunda-categoria">Impuesto único</a><a href="calculadora-horas-extras">Horas extras</a><a href="calculadora-sueldo-part-time">Part-time</a><a href="calculadora-vacaciones">Vacaciones</a><a href="calculadora-despido-articulo-160">Despido Art. 160</a><a href="simulador-seguro-cesantia-afc">Seguro de cesantía</a><a href="calculadora-costo-empresa-chile">Costo empresa</a></div>
             </nav>
         </div>
@@ -737,13 +744,13 @@ window.addEventListener('load', function () {
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
                 <!-- LEFT COLUMN: Input Form Card (7 Cols) -->
-                <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6 no-print">
+                <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-4 sm:p-8 shadow-xs space-y-4 sm:space-y-6 no-print">
                     
                     <!-- Card Top Header -->
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-100">
+                    <div class="flex justify-between items-center pb-3 sm:pb-4 border-b border-slate-100">
                         <div>
-                            <h2 class="text-lg font-bold text-slate-900">Parámetros de Remuneración</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Ingresa tus haberes para simular tu liquidación mensual en tiempo real.</p>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-900">Parámetros de Remuneración</h2>
+                            <p class="hidden sm:block text-xs text-slate-500 mt-0.5">Ingresa tus haberes para simular tu liquidación mensual en tiempo real.</p>
                         </div>
                         <span class="px-2.5 py-1 text-xs font-bold text-[#00382E] bg-slate-100 rounded-full font-mono-num">
                             2026
@@ -761,7 +768,7 @@ window.addEventListener('load', function () {
 
                     <!-- STEP 1: Sueldo Base -->
                     <div class="space-y-2">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between gap-2">
                             <label class="text-xs font-bold text-slate-800 uppercase tracking-wider" for="salary" id="salary-label">
                                 1. Sueldo Base Mensual
                             </label>
@@ -770,9 +777,24 @@ window.addEventListener('load', function () {
                             </button>
                         </div>
                         <div class="relative">
-                            <input id="salary" name="salary" value="$ 553.553" placeholder="$ 553.553" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:bg-white transition-all outline-none text-right font-mono-num text-lg" />
+                            <input id="salary" name="salary" value="$ 553.553" placeholder="$ 553.553" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="block w-full px-4 py-3 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:bg-white transition-all outline-none text-right font-mono-num text-lg" />
                         </div>
-                        <p class="text-xs text-slate-600" id="salary-help">Remuneración fija mensual acordada en el contrato de trabajo.</p>
+                        <div class="flex flex-wrap items-center gap-1.5 pt-0.5" aria-label="Montos rápidos de sueldo">
+                            <button type="button" onclick="var s=document.getElementById('salary');if(s){s.value='$ 553.553';s.dispatchEvent(new Event('input',{bubbles:true}));}" class="px-2.5 py-1.5 text-xs font-semibold rounded-full bg-slate-100 hover:bg-slate-200 text-[#00382E] transition-colors cursor-pointer font-mono-num">$553.553</button>
+                            <button type="button" onclick="var s=document.getElementById('salary');if(s){s.value='$ 800.000';s.dispatchEvent(new Event('input',{bubbles:true}));}" class="px-2.5 py-1.5 text-xs font-semibold rounded-full bg-slate-100 hover:bg-slate-200 text-[#00382E] transition-colors cursor-pointer font-mono-num">$800 mil</button>
+                            <button type="button" onclick="var s=document.getElementById('salary');if(s){s.value='$ 1.200.000';s.dispatchEvent(new Event('input',{bubbles:true}));}" class="px-2.5 py-1.5 text-xs font-semibold rounded-full bg-slate-100 hover:bg-slate-200 text-[#00382E] transition-colors cursor-pointer font-mono-num">$1,2 M</button>
+                            <button type="button" onclick="var s=document.getElementById('salary');if(s){s.value='$ 2.000.000';s.dispatchEvent(new Event('input',{bubbles:true}));}" class="px-2.5 py-1.5 text-xs font-semibold rounded-full bg-slate-100 hover:bg-slate-200 text-[#00382E] transition-colors cursor-pointer font-mono-num">$2 M</button>
+                        </div>
+                        <div id="mobile-inline-preview" class="lg:hidden flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <div>
+                                <span id="mobile-inline-label" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600">Líquido estimado</span>
+                                <span id="mobile-inline-value" style="color: var(--teal-forest);" class="text-lg font-black font-mono-num">$0</span>
+                            </div>
+                            <button type="button" onclick="var target=document.getElementById('resultados-sueldo');if(target)target.scrollIntoView({behavior:'smooth',block:'start'})" class="btn-dark-pill !py-1.5 !px-3 !text-xs shrink-0">
+                                Ver desglose
+                            </button>
+                        </div>
+                        <p class="hidden sm:block text-xs text-slate-600" id="salary-help">Remuneración fija mensual acordada en el contrato de trabajo.</p>
                         <div id="inverse-result" class="sl-inverse hidden" aria-live="polite">
                             <div class="sl-inverse-label">Sueldo base bruto a pactar</div>
                             <div class="sl-inverse-value" id="inverse-base">$0</div>
@@ -1843,11 +1865,11 @@ window.addEventListener('load', function () {
     </div>
 
     <!-- Scripts -->
-    <script src="/js/constants.js?v=2.1.3"></script>
-    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/constants.js?v=2.2.0"></script>
+    <script src="/js/indicators.js?v=2.10.0"></script>
     <script src="/js/validation.js?v=2.9.0"></script>
     <script src="/js/salary_logic.js?v=2.2.0"></script>
-    <script src="/js/salary_ui.js?v=3.2.1"></script>
+    <script src="/js/salary_ui.js?v=3.2.2"></script>
     <script src="/js/print_brand.js?v=1.2.0"></script>
     <script src="/js/pdf_generator.js?v=3.2.4"></script>
 
