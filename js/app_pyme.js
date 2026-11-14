@@ -2403,7 +2403,7 @@ function dibujarEquipo() {
         });
     }
 
-    // Word: el mismo documento como archivo .doc para editarlo (solo sin marca de agua, es decir, con el pase que lo cubre)
+    // Word: el mismo documento en formato .docx editable (solo sin marca de agua, es decir, con el pase que lo cubre)
     var ESTILO_WORD = 'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.4;color:#111}' +
         '.dc-head{border-bottom:2px solid #00382E;padding-bottom:6pt;margin-bottom:12pt}.dc-head strong{font-size:12pt}.dc-head span{color:#475569;font-size:9pt}' +
         '.dc-titulo{text-align:center;font-size:13pt;text-transform:uppercase;color:#00382E;margin:6pt 0 12pt}.dc-lugar{text-align:right;margin:0 0 10pt}' +
@@ -2424,15 +2424,23 @@ function dibujarEquipo() {
         if (!docSel.listo) { docSel.intento = true; vistaDoc(); mensaje($('pm-doc-estado'), 'error', 'Faltan datos para emitir el documento.'); return; }
         var d;
         try { d = PD.generar(docSel.tipo, c, docSel.datos, { pagada: true }); } catch (err) { mensaje($('pm-doc-estado'), 'error', err.message); return; }
-        var archivo = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' + esc(d.titulo) + '</title><style>' + ESTILO_WORD + '</style></head><body>' + htmlParaWord(d.html) + '</body></html>';
-        var blob = new Blob(['\ufeff', archivo], { type: 'application/msword' });
+        var nombreBase = (d.titulo + ' ' + c.t.nombre).replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ').trim();
+        var blob, ext;
+        if (window.FiniquitoDocx && typeof window.FiniquitoDocx.toBlob === 'function') {
+            blob = window.FiniquitoDocx.toBlob(d.html, d.titulo);
+            ext = '.docx';
+        } else {
+            var archivo = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' + esc(d.titulo) + '</title><style>' + ESTILO_WORD + '</style></head><body>' + htmlParaWord(d.html) + '</body></html>';
+            blob = new Blob(['\ufeff', archivo], { type: 'application/msword' });
+            ext = '.doc';
+        }
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = (d.titulo + ' ' + c.t.nombre).replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ').trim() + '.doc';
+        a.download = nombreBase + ext;
         document.body.appendChild(a);
         a.click();
         setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
-        anotarEmision(c, 'Descargamos el documento en Word.');
+        anotarEmision(c, 'Descargamos el documento en Word (' + ext + ').');
     });
 
     // ---------- hoja guía para registrar el contrato en Mi DT ----------

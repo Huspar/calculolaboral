@@ -4,7 +4,7 @@ Salida:
     descargas/formato-liquidacion-de-sueldo.xlsx  (con fórmulas, ejemplo con el ingreso mínimo)
     descargas/formato-liquidacion-de-sueldo.docx  (modelo en blanco para llenar a mano)
 
-Valores de octubre de 2026: ingreso mínimo $553.553, UTM $72.151, UF del 30-sep-2026,
+Valores de noviembre de 2026: ingreso mínimo $553.553, UTM $72.440, UF del 31-oct-2026,
 topes imponibles de 90 UF (AFP y salud) y 135,2 UF (cesantía), tramos del impuesto único
 en UTM (los mismos de js/constants.js) y tasas AFP con comisión.
 
@@ -29,12 +29,12 @@ OUT_DOCX = ROOT / "descargas" / "formato-liquidacion-de-sueldo.docx"
 FOREST = "00382E"
 SLATE = "475569"
 
-PERIODO = "Octubre 2026"
+PERIODO = "Noviembre 2026"
 IMM = 553553
-UTM = 72151  # UTM de octubre de 2026 (SII)
-# UF del último día del mes anterior al período (30-sep-2026): con ella se calculan los topes
-# imponibles. Fuente secundaria: calculadora-uf / calcular.cl (confirmar con la tabla del SII).
-UF = 41057.20
+UTM = 72440  # UTM de noviembre de 2026 (SII)
+# UF del último día del mes anterior al período (31-oct-2026): con ella se calculan los topes
+# imponibles, coincidente con RESPALDO['2026-10'].uf en js/liquidacion_parametros.js.
+UF = 41247.63
 TOPE_AFP_UF = 90.0     # Res. Ex. SP 237/2026, vigente desde el 1-feb-2026 (igual que js/constants.js)
 TOPE_CES_UF = 135.2    # Res. Ex. SP 236/2026, vigente desde el 1-feb-2026
 # Tasa total = 10% + comisión. AFP Uno: comisión 0,46% desde el 1-oct-2025.

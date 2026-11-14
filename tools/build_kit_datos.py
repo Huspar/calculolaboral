@@ -426,9 +426,11 @@ def rebuild_zip_and_js():
             if not p.exists():
                 raise FileNotFoundError(f'Falta archivo del kit: {p}')
             zf.write(p, arcname=name)
-    b64 = base64.b64encode(buf.getvalue()).decode('ascii')
+    zip_data = buf.getvalue()
+    (ROOT / 'api' / 'assets' / 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip').write_bytes(zip_data)
+    b64 = base64.b64encode(zip_data).decode('ascii')
     B64_JS_PATH.write_text(f'module.exports = "{b64}";\n', encoding='utf-8')
-    return len(buf.getvalue()), len(b64)
+    return len(zip_data), len(b64)
 
 
 def main():

@@ -1116,19 +1116,28 @@ El Trabajador desempeñará sus funciones desde su domicilio particular individu
         </html>
         `;
 
-        var blob = new Blob(['\ufeff', htmlDocumento], {
-            type: 'application/msword;charset=utf-8'
-        });
-
         var nombreLimpio = (datos.trabajadorNombre || 'Trabajador').replace(/\s+/g, '_');
-        var filename = `Contrato_Trabajo_${nombreLimpio}_${res.folio}.doc`;
+        var tituloDoc = 'Contrato de Trabajo ' + (datos.trabajadorNombre || 'Trabajador');
+        var blob;
+        var filename;
+        if (window.FiniquitoDocx && typeof window.FiniquitoDocx.toBlob === 'function') {
+            blob = window.FiniquitoDocx.toBlob(wordBodyHtml, tituloDoc);
+            filename = `Contrato_Trabajo_${nombreLimpio}_${res.folio}.docx`;
+        } else {
+            blob = new Blob(['\ufeff', htmlDocumento], {
+                type: 'application/msword;charset=utf-8'
+            });
+            filename = `Contrato_Trabajo_${nombreLimpio}_${res.folio}.doc`;
+        }
 
+        var url = URL.createObjectURL(blob);
         var link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
+        link.href = url;
         link.download = filename;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
     }
 
     // IMPRESIÓN / GUARDADO DIRECTO EN PDF (CON MARCA DE AGUA NOTORIA EN PREVIEW)

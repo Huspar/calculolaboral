@@ -25,7 +25,35 @@
     }
 
     function hasClass(el, name) {
-        return el.classList && el.classList.contains(name);
+        return !!(el && el.classList && el.classList.contains(name));
+    }
+
+    function attr(el, name) {
+        return (el && el.getAttribute && el.getAttribute(name)) || '';
+    }
+
+    function styleHas(el, re) {
+        return re.test(attr(el, 'style'));
+    }
+
+    function alignOf(el, fallback) {
+        const st = attr(el, 'style');
+        const m = /text-align\s*:\s*(left|right|center|justify)/i.exec(st);
+        if (m) return m[1].toLowerCase() === 'justify' ? 'both' : m[1].toLowerCase();
+        if (hasClass(el, 'text-center') || hasClass(el, 'dc-titulo')) return 'center';
+        if (hasClass(el, 'text-right') || hasClass(el, 'dc-lugar')) return 'right';
+        if (hasClass(el, 'text-left') || hasClass(el, 'dc-pie') || hasClass(el, 'dc-recibi') || hasClass(el, 'dc-copia')) return 'left';
+        return fallback;
+    }
+
+    const BLOCK_TAGS = { p: 1, div: 1, table: 1, ul: 1, ol: 1, li: 1, h1: 1, h2: 1, h3: 1, h4: 1, header: 1, footer: 1, section: 1, article: 1 };
+
+    function hasBlockChild(el) {
+        return Array.from(el.childNodes).some(c => {
+            if (c.nodeType !== 1) return false;
+            const t = c.tagName.toLowerCase();
+            return !!BLOCK_TAGS[t] || (t === 'br' && styleHas(c, /page-break-before\s*:\s*always/i));
+        });
     }
 
     // ---------- runs ----------
@@ -52,11 +80,13 @@
                 if (t) out.push({ text: t, fmt });
             } else if (ch.nodeType === 1) {
                 const tag = ch.tagName.toLowerCase();
+                if (tag === 'img' || tag === 'script' || tag === 'style' || hasClass(ch, 'lqd-marca')) return;
                 const f = Object.assign({}, fmt);
-                if (tag === 'strong' || tag === 'b' || hasClass(ch, 'font-bold') || hasClass(ch, 'font-semibold')) f.bold = true;
-                if (tag === 'em' || tag === 'i' || hasClass(ch, 'italic')) f.italic = true;
-                if (tag === 'u') f.underline = true;
-                if (hasClass(ch, 'uppercase')) f.caps = true;
+                if (tag === 'strong' || tag === 'b' || hasClass(ch, 'font-bold') || hasClass(ch, 'font-semibold') || styleHas(ch, /font-weight\s*:\s*(bold|[6-9]00)/i)) f.bold = true;
+                if (tag === 'em' || tag === 'i' || hasClass(ch, 'italic') || styleHas(ch, /font-style\s*:\s*italic/i)) f.italic = true;
+                if (tag === 'u' || styleHas(ch, /text-decoration\s*:\s*underline/i)) f.underline = true;
+                if (hasClass(ch, 'uppercase') || styleHas(ch, /text-transform\s*:\s*uppercase/i)) f.caps = true;
+                if (tag === 'small') f.size = Math.min(f.size || 22, 17);
                 if (tag === 'br') { out.push({ br: true }); return; }
                 inlineRuns(ch, f, out);
             }
@@ -95,45 +125,147 @@
         return {
             font,
             size,
-            bold: hasClass(el, 'font-bold') || hasClass(el, 'font-semibold'),
-            italic: hasClass(el, 'italic'),
-            caps: hasClass(el, 'uppercase')
+            bold: hasClass(el, 'font-bold') || hasClass(el, 'font-semibold') || styleHas(el, /font-weight\s*:\s*(bold|[6-9]00)/i),
+            italic: hasClass(el, 'italic') || styleHas(el, /font-style\s*:\s*italic/i),
+            caps: hasClass(el, 'uppercase') || styleHas(el, /text-transform\s*:\s*uppercase/i)
         };
     }
 
     // ---------- tablas ----------
 
     const CELL_BORDERS = '<w:tcBorders>' + ['top', 'left', 'bottom', 'right'].map(s => `<w:${s} w:val="single" w:sz="4" w:space="0" w:color="808080"/>`).join('') + '</w:tcBorders>';
+    const CELL_BORDERS_NONE = '<w:tcBorders>' + ['top', 'left', 'bottom', 'right'].map(s => `<w:${s} w:val="nil"/>`).join('') + '</w:tcBorders>';
+
+    function tableWidths(table, trs) {
+        let maxCols = 0;
+        trs.forEach(tr => {
+            let cols = 0;
+            Array.from(tr.children).forEach(cell => {
+                cols += Math.max(1, parseInt(attr(cell, 'colspan') || '1', 10) || 1);
+            });
+            if (cols > maxCols) maxCols = cols;
+        });
+        maxCols = maxCols || 2;
+        if (maxCols === 2 && !styleHas(table, /border\s*:\s*(none|0)/i)) {
+            const amountW = 2300;
+            return [CONTENT_W - amountW, amountW];
+        }
+        const firstRow = trs[0] ? Array.from(trs[0].children) : [];
+        if (firstRow.length === maxCols) {
+            const pcts = firstRow.map(c => {
+                const m = /width\s*:\s*(\d+(?:\.\d+)?)%/i.exec(attr(c, 'style'));
+                return m ? parseFloat(m[1]) : 0;
+            });
+            const sum = pcts.reduce((a, b) => a + b, 0);
+            if (sum >= 90 && pcts.every(p => p > 0)) {
+                const widths = pcts.map(p => Math.round((p / sum) * CONTENT_W));
+                const diff = CONTENT_W - widths.reduce((a, b) => a + b, 0);
+                widths[0] += diff;
+                return widths;
+            }
+        }
+        const colW = Math.floor(CONTENT_W / maxCols);
+        const widths = Array.from({ length: maxCols }, () => colW);
+        widths[0] += CONTENT_W - colW * maxCols;
+        return widths;
+    }
+
+    function cellBodyXml(cell, fmt, align, topLineFirst) {
+        const subBlocks = Array.from(cell.children).filter(c => BLOCK_TAGS[c.tagName.toLowerCase()]);
+        if (subBlocks.length) {
+            return subBlocks.map((b, idx) => {
+                const bFmt = Object.assign({}, fmt, baseFmt(b, fmt.font, fmt.size));
+                const hasTop = (idx === 0 && topLineFirst) || styleHas(b, /border-top\s*:/i);
+                const bAlign = alignOf(b, align);
+                // Recursivamente extraer sublíneas si hay hijos div dentro (ej: contrato firma box)
+                const innerBlocks = Array.from(b.children).filter(c => BLOCK_TAGS[c.tagName.toLowerCase()]);
+                if (innerBlocks.length) {
+                    return innerBlocks.map((ib, j) => paraXml(
+                        runsXml(inlineRuns(ib, Object.assign({}, bFmt, baseFmt(ib, fmt.font, fmt.size)), [])),
+                        { align: alignOf(ib, bAlign), after: 20, before: 0, line: 240, topLine: j === 0 && hasTop }
+                    )).join('');
+                }
+                return paraXml(runsXml(inlineRuns(b, bFmt, [])), { align: bAlign, after: 20, before: 0, line: 240, topLine: hasTop });
+            }).join('');
+        }
+        return paraXml(runsXml(inlineRuns(cell, fmt, [])), { align, after: 0, before: 0, line: 240, topLine: topLineFirst });
+    }
 
     function tableXml(table) {
-        const amountW = 2300;
-        const widths = [CONTENT_W - amountW, amountW];
+        const trs = Array.from(table.querySelectorAll('tr'));
+        const widths = tableWidths(table, trs);
+        const borderless = styleHas(table, /border\s*:\s*(none|0)/i);
+        const isDcTabla = hasClass(table, 'dc-tabla');
         let rows = '';
-        table.querySelectorAll('tr').forEach(tr => {
-            const header = !!tr.closest('thead');
-            const total = hasClass(tr, 'font-semibold') || hasClass(tr, 'font-bold');
+        trs.forEach(tr => {
+            const parentTag = tr.parentNode && tr.parentNode.tagName ? tr.parentNode.tagName.toLowerCase() : '';
+            const header = parentTag === 'thead' || !!(tr.closest && tr.closest('thead'));
+            const footer = parentTag === 'tfoot' || !!(tr.closest && tr.closest('tfoot'));
+            const total = footer || hasClass(tr, 'font-semibold') || hasClass(tr, 'font-bold');
             let cells = '';
-            Array.from(tr.children).forEach((cell, i) => {
-                const right = hasClass(cell, 'text-right');
-                const span = Math.max(1, parseInt(cell.getAttribute('colspan') || '1', 10) || 1);
-                const cellW = span > 1 ? (widths.slice(i, i + span).reduce((a, b) => a + b, 0) || CONTENT_W) : (widths[i] || amountW);
-                const fmt = { font: FONT_TABLE, size: 18, bold: header || total || cell.tagName.toLowerCase() === 'th', italic: hasClass(cell, 'italic') };
-                const shade = (header || cell.tagName.toLowerCase() === 'th') ? 'E7E6E6' : (total ? 'F2F2F2' : '');
+            let colIdx = 0;
+            Array.from(tr.children).forEach(cell => {
+                const cAlign = alignOf(cell, (hasClass(cell, 'text-right') || (isDcTabla && colIdx > 0)) ? 'right' : (borderless ? 'center' : 'left'));
+                const span = Math.max(1, parseInt(attr(cell, 'colspan') || '1', 10) || 1);
+                const cellW = span > 1 ? (widths.slice(colIdx, colIdx + span).reduce((a, b) => a + b, 0) || CONTENT_W) : (widths[colIdx] || widths[widths.length - 1]);
+                colIdx += span;
+                const isTh = cell.tagName.toLowerCase() === 'th';
+                const fmt = {
+                    font: borderless ? FONT_BODY : FONT_TABLE,
+                    size: borderless ? 19 : 18,
+                    bold: !borderless && (header || total || isTh) || styleHas(cell, /font-weight\s*:\s*bold/i),
+                    italic: hasClass(cell, 'italic')
+                };
+                const noCellBorder = borderless || styleHas(cell, /border\s*:\s*(none|0)/i);
+                const shade = noCellBorder ? '' : ((header || isTh) ? 'E7E6E6' : (total ? 'F2F2F2' : ''));
                 cells += `<w:tc><w:tcPr><w:tcW w:w="${cellW}" w:type="dxa"/>` +
                     (span > 1 ? `<w:gridSpan w:val="${span}"/>` : '') +
-                    `${CELL_BORDERS}` +
+                    (noCellBorder ? CELL_BORDERS_NONE : CELL_BORDERS) +
                     (shade ? `<w:shd w:val="clear" w:color="auto" w:fill="${shade}"/>` : '') +
-                    '<w:vAlign w:val="center"/></w:tcPr>' +
-                    paraXml(runsXml(inlineRuns(cell, fmt, [])), { align: right ? 'right' : 'left', after: 0, before: 0, line: 240 }) +
+                    `<w:vAlign w:val="${borderless ? 'top' : 'center'}"/></w:tcPr>` +
+                    cellBodyXml(cell, fmt, cAlign, false) +
                     '</w:tc>';
             });
             rows += `<w:tr><w:trPr><w:cantSplit/>${header ? '<w:tblHeader/>' : ''}</w:trPr>${cells}</w:tr>`;
         });
-        return '<w:tbl><w:tblPr><w:tblW w:w="' + CONTENT_W + '" w:type="dxa"/>' +
-            '<w:tblLayout w:type="fixed"/><w:tblCellMar><w:top w:w="50" w:type="dxa"/><w:left w:w="100" w:type="dxa"/>' +
+        const tblBorders = borderless
+            ? '<w:tblBorders>' + ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(s => `<w:${s} w:val="nil"/>`).join('') + '</w:tblBorders>'
+            : '';
+        return (borderless ? paraXml('', { after: 180 }) : '') +
+            '<w:tbl><w:tblPr><w:tblW w:w="' + CONTENT_W + '" w:type="dxa"/>' +
+            '<w:tblLayout w:type="fixed"/>' + tblBorders +
+            '<w:tblCellMar><w:top w:w="50" w:type="dxa"/><w:left w:w="100" w:type="dxa"/>' +
             '<w:bottom w:w="50" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr>' +
-            `<w:tblGrid><w:gridCol w:w="${widths[0]}"/><w:gridCol w:w="${widths[1]}"/></w:tblGrid>${rows}</w:tbl>` +
+            `<w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rows}</w:tbl>` +
             paraXml('', { after: 60 });
+    }
+
+    // Bloque .dc-firmas (Asistente Pyme): columnas sin bordes con línea sobre el nombre y <small> abajo
+    function dcFirmasXml(grid) {
+        const cols = Array.from(grid.children);
+        if (!cols.length) return '';
+        const w = Math.floor(CONTENT_W / cols.length);
+        let cells = '';
+        cols.forEach(col => {
+            let inner = paraXml('', { after: 0, line: 240 }) + paraXml('', { after: 0, line: 240 }) + paraXml('', { after: 0, line: 240 });
+            const smalls = [];
+            const nameParts = [];
+            Array.from(col.childNodes).forEach(ch => {
+                if (ch.nodeType === 3 && ch.textContent.trim()) nameParts.push({ text: ch.textContent.trim(), fmt: { font: FONT_BODY, size: 19, bold: true } });
+                else if (ch.nodeType === 1 && ch.tagName.toLowerCase() === 'small') smalls.push(ch);
+            });
+            inner += paraXml(runsXml(nameParts.length ? nameParts : [{ text: '', fmt: { font: FONT_BODY, size: 19 } }]), { align: 'center', after: 0, line: 240, topLine: true, indent: 300 });
+            smalls.forEach(sm => {
+                inner += paraXml(runsXml(inlineRuns(sm, { font: FONT_BODY, size: 17 }, [])), { align: 'center', after: 0, line: 240, indent: 300 });
+            });
+            cells += `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/></w:tcPr>${inner}</w:tc>`;
+        });
+        const none = '<w:tblBorders>' + ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(s => `<w:${s} w:val="nil"/>`).join('') + '</w:tblBorders>';
+        return paraXml('', { after: 200 }) +
+            `<w:tbl><w:tblPr><w:tblW w:w="${CONTENT_W}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${none}</w:tblPr>` +
+            `<w:tblGrid>${cols.map(() => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>` +
+            `<w:tr><w:trPr><w:cantSplit/></w:trPr>${cells}</w:tr></w:tbl>` +
+            paraXml('', { after: 120 });
     }
 
     // Bloque de firmas: dos columnas sin bordes; cada una con espacio para firmar, línea y datos
@@ -161,28 +293,96 @@
 
     // ---------- recorrido de bloques ----------
 
+    function headingXml(el, size, align, caps, before, after) {
+        const fmt = Object.assign({ font: FONT_BODY, size, bold: true, caps: !!caps }, baseFmt(el, FONT_BODY, size));
+        return paraXml(runsXml(inlineRuns(el, fmt, [])), {
+            align: alignOf(el, align),
+            before: before || 0,
+            after: after === undefined ? 80 : after,
+            keepNext: true
+        });
+    }
+
+    function listXml(el, ordered, ctx) {
+        const out = [];
+        let idx = 1;
+        Array.from(el.childNodes).forEach(li => {
+            if (li.nodeType !== 1 || li.tagName.toLowerCase() !== 'li') return;
+            const prefix = ordered ? (idx++) + '. ' : '• ';
+            const fmt = baseFmt(li, FONT_BODY, ctx.small ? 19 : 21);
+            const parts = [{ text: prefix, fmt: Object.assign({}, fmt, { bold: ordered }) }];
+            inlineRuns(li, fmt, parts);
+            out.push(paraXml(runsXml(parts), { align: 'both', indent: 360, after: 60 }));
+        });
+        return out.join('');
+    }
+
+    function headXml(el) {
+        const parts = [];
+        const div = el.querySelector && el.querySelector('div');
+        const src = div || el;
+        Array.from(src.childNodes).forEach(ch => {
+            if (ch.nodeType !== 1 && ch.nodeType !== 3) return;
+            if (ch.nodeType === 1 && ch.tagName.toLowerCase() === 'img') return;
+            const txt = (ch.textContent || '').trim();
+            if (!txt) return;
+            if (parts.length) parts.push({ text: '  ·  ', fmt: { font: FONT_BODY, size: 18 } });
+            const isStrong = ch.nodeType === 1 && ch.tagName.toLowerCase() === 'strong';
+            parts.push({ text: txt, fmt: { font: FONT_BODY, size: isStrong ? 21 : 18, bold: isStrong } });
+        });
+        if (!parts.length) return '';
+        return paraXml(runsXml(parts), { align: 'left', bottomLine: true, after: 180 });
+    }
+
     function blocks(node, ctx, out) {
-        node.childNodes.forEach(ch => {
+        Array.from(node.childNodes).forEach(ch => {
             if (ch.nodeType !== 1) return;
             const tag = ch.tagName.toLowerCase();
-            const mark = ch.getAttribute('data-docx');
-            const center = ctx.center || hasClass(ch, 'text-center');
+            if (tag === 'script' || tag === 'style' || tag === 'img' || hasClass(ch, 'lqd-marca')) return;
 
+            const mark = attr(ch, 'data-docx');
+            const center = ctx.center || hasClass(ch, 'text-center') || styleHas(ch, /text-align\s*:\s*center/i);
+            const hasPageBreak = hasClass(ch, 'page-break-before') || styleHas(ch, /page-break-before\s*:\s*always/i);
+
+            if (hasPageBreak && out.length) {
+                out.push('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+            }
+            if (tag === 'br' || tag === 'hr') {
+                if (tag === 'hr') out.push(paraXml('', { bottomLine: true, after: 120, line: 120 }));
+                return;
+            }
             if (mark === 'firmas') { out.push(firmasXml(ch)); return; }
+            if (hasClass(ch, 'dc-firmas')) { out.push(dcFirmasXml(ch)); return; }
+            if (hasClass(ch, 'dc-head') || tag === 'header') {
+                const h = headXml(ch);
+                if (h) out.push(h);
+                return;
+            }
             if (mark === 'linea') {
                 out.push(paraXml('', { after: 0, line: 240 }) + paraXml('', { after: 0, line: 240 }) +
                     paraXml('', { bottomLine: true, align: 'center', after: 0, line: 240, indent: 2600 }));
                 return;
             }
             if (tag === 'table') { out.push(tableXml(ch)); return; }
+            if (tag === 'ul' || tag === 'ol') { out.push(listXml(ch, tag === 'ol', ctx)); return; }
+            if (tag === 'h1') { out.push(headingXml(ch, 28, 'center', true, 60, 100)); return; }
             if (tag === 'h2') {
-                out.push(paraXml(runsXml(inlineRuns(ch, { font: FONT_BODY, size: 28, bold: true, caps: true }, [])), { align: 'center', after: 60 }));
+                const a = alignOf(ch, 'center');
+                out.push(headingXml(ch, a === 'left' ? 24 : 28, a, a === 'center', a === 'left' ? 140 : 0, 80));
                 return;
             }
+            if (tag === 'h3') { out.push(headingXml(ch, 22, 'left', false, 120, 60)); return; }
+            if (tag === 'h4') { out.push(headingXml(ch, 20, 'left', false, 80, 40)); return; }
             if (tag === 'p') {
-                const fmt = baseFmt(ch, FONT_BODY, ctx.small || hasClass(ch, 'text-xs') ? 19 : 22);
+                const fmt = baseFmt(ch, FONT_BODY, ctx.small || hasClass(ch, 'text-xs') || hasClass(ch, 'dc-pie') ? 18 : 22);
+                const indentMatch = /margin-left\s*:\s*(\d+)/i.exec(attr(ch, 'style'));
+                const indent = indentMatch ? Math.min(1440, parseInt(indentMatch[1], 10) * 18) : 0;
+                const align = alignOf(ch, center ? 'center' : 'both');
+                const topBorder = styleHas(ch, /border-top\s*:/i) || hasClass(ch, 'dc-pie');
                 out.push(paraXml(runsXml(inlineRuns(ch, fmt, [])), {
-                    align: center ? 'center' : 'both',
+                    align,
+                    indent,
+                    topLine: topBorder && hasClass(ch, 'dc-pie'),
                     border: ctx.box,
                     shade: ctx.box ? 'F2F2F2' : '',
                     keepNext: ctx.keepNext,
@@ -190,10 +390,25 @@
                 }));
                 return;
             }
-            // contenedores: el encabezado lleva una línea bajo el título
+            // Contenedor: si no tiene hijos de bloque (e.g. div con solo texto/<strong>/<br>), trátalo como párrafo para no perder texto
+            if (!hasBlockChild(ch)) {
+                const fmt = baseFmt(ch, FONT_BODY, ctx.small || hasClass(ch, 'text-xs') ? 18 : 21);
+                const parts = inlineRuns(ch, fmt, []);
+                if (parts.length) {
+                    out.push(paraXml(runsXml(parts), {
+                        align: alignOf(ch, center ? 'center' : 'left'),
+                        topLine: styleHas(ch, /border-top\s*:/i),
+                        border: ctx.box || styleHas(ch, /border\s*:\s*1px/i),
+                        shade: ctx.box ? 'F2F2F2' : '',
+                        after: 80
+                    }));
+                }
+                return;
+            }
+            // Contenedores con bloques hijos
             const sub = Object.assign({}, ctx, {
                 center,
-                box: ctx.box || mark === 'recuadro',
+                box: ctx.box || mark === 'recuadro' || styleHas(ch, /border\s*:\s*1px/i),
                 small: ctx.small || hasClass(ch, 'text-xs')
             });
             const start = out.length;

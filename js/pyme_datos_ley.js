@@ -317,13 +317,22 @@
         function descargarWord(titulo, cuerpoHtml, nombreArchivo) {
             var est = ctx.getEstado(), emp = (est && est.empresa) || {};
             var d = dActual();
-            var estilo = 'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#111827;line-height:1.45;margin:28px;}h1{font-size:14pt;color:#00382E;margin:0 0 6px;}h2{font-size:11.5pt;color:#00382E;margin:14px 0 4px;}p,li{margin:4px 0 8px;}table{width:100%;border-collapse:collapse;margin:10px 0;}th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:left;font-size:10pt;}th{background:#f3f6f4;} .meta{color:#4b5563;font-size:9.5pt;margin-bottom:14px;}';
             var encabezado = '<h1>' + esc(titulo) + '</h1><p class="meta"><strong>' + esc(emp.razonSocial || 'Mi Empresa') + '</strong> · RUT ' + esc(emp.rut || '-') + (d.correoPrivacidad ? ' · Canal privacidad: ' + esc(d.correoPrivacidad) : '') + ' · Fecha: ' + esc(ctx.hoyIso()) + '</p>';
-            var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' + esc(titulo) + '</title><style>' + estilo + '</style></head><body>' + encabezado + cuerpoHtml + '<p class="meta" style="margin-top:18px">Documento de referencia operacional Ley N° 21.719 generado desde el Asistente Laboral Pyme. No reemplaza la revisión legal individual.</p></body></html>';
-            var blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+            var pieDoc = '<p class="meta" style="margin-top:18px">Documento de referencia operacional Ley N° 21.719 generado desde el Asistente Laboral Pyme. No reemplaza la revisión legal individual.</p>';
+            var baseNombre = nombreArchivo.replace(/[^a-zA-Z0-9._-]+/g, '-');
+            var blob, ext;
+            if (window.FiniquitoDocx && typeof window.FiniquitoDocx.toBlob === 'function') {
+                blob = window.FiniquitoDocx.toBlob(encabezado + cuerpoHtml + pieDoc, titulo);
+                ext = '.docx';
+            } else {
+                var estilo = 'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#111827;line-height:1.45;margin:28px;}h1{font-size:14pt;color:#00382E;margin:0 0 6px;}h2{font-size:11.5pt;color:#00382E;margin:14px 0 4px;}p,li{margin:4px 0 8px;}table{width:100%;border-collapse:collapse;margin:10px 0;}th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:left;font-size:10pt;}th{background:#f3f6f4;} .meta{color:#4b5563;font-size:9.5pt;margin-bottom:14px;}';
+                var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' + esc(titulo) + '</title><style>' + estilo + '</style></head><body>' + encabezado + cuerpoHtml + pieDoc + '</body></html>';
+                blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+                ext = '.doc';
+            }
             var a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = nombreArchivo.replace(/[^a-zA-Z0-9._-]+/g, '-') + '.doc';
+            a.download = baseNombre + ext;
             document.body.appendChild(a);
             a.click();
             setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
@@ -399,6 +408,21 @@
                 '<table><thead><tr><th>Operación evaluada</th><th>Riesgo identificado</th><th>Medidas concretas de mitigación</th></tr></thead><tbody>' + filas + '</tbody></table>' +
                 '<p style="margin-top:24px">Aprobado por: ______________________________ (' + esc(emp.razonSocial || 'Responsable') + ' · ' + esc(ctx.hoyIso()) + ')</p>';
             descargarWord('Evaluacion de Impacto EIPD Art 15 ter', cuerpo, 'Evaluacion-Impacto-EIPD');
+        }
+
+        function modeloRatWord(rat) {
+            var est = ctx.getEstado(), emp = (est && est.empresa) || {}, d = dActual();
+            var lista = Array.isArray(rat) ? rat : [];
+            var filas = lista.length
+                ? lista.map(function (r) {
+                    return '<tr><td><strong>' + esc(r.actividad || '-') + '</strong></td><td>' + esc(r.datosTratados || '-') + '</td><td>' + esc(r.baseLegal || '-') + '</td><td>' + esc(r.plazoConservacion || '-') + '</td></tr>';
+                }).join('')
+                : '<tr><td colspan="4">Aún no registras actividades de tratamiento en tu inventario.</td></tr>';
+            var cuerpo = '<p><strong>INVENTARIO DE ACTIVIDADES DE TRATAMIENTO DE DATOS PERSONALES (RAT · LEY N° 21.719)</strong></p>' +
+                '<p>Registro interno mantenido por <strong>' + esc(emp.razonSocial || 'la Empresa') + '</strong> para acreditar licitud, minimización de datos y plazos de conservación ante la Agencia de Protección de Datos Personales y la Dirección del Trabajo.</p>' +
+                '<table><tr><th>Responsable interno (Art. 50)</th><td>' + esc(d.responsableDatos || 'Dueño / Administración') + ' (' + esc(d.correoPrivacidad || 'Sin correo configurado') + ')</td></tr></table>' +
+                '<table><thead><tr><th>Actividad o proceso</th><th>Datos que se guardan</th><th>Motivo legal</th><th>Tiempo que se conservan</th></tr></thead><tbody>' + filas + '</tbody></table>';
+            descargarWord('Registro Actividades Tratamiento RAT', cuerpo, 'Registro-Actividades-RAT');
         }
 
         function construirPoliticaWeb() {
@@ -562,7 +586,7 @@
                 '<span class="material-icons" aria-hidden="true">fingerprint</span>' +
                 '<div><strong>¿Usas reloj biométrico (huella o rostro)?</strong>' +
                 '<p>La Ley 21.719 (Art. 16 ter) y la Resolución Exenta N° 38/2024 de la Dirección del Trabajo exigen consentimiento expreso separado y ofrecer siempre una alternativa no biométrica (clave, PIN o tarjeta).</p></div>' +
-                '<button type="button" class="btn btn-chico" id="dp-btn-consentimiento-bio"><span class="material-icons" aria-hidden="true">download</span>Consentimiento biométrico (.doc)</button>' +
+                '<button type="button" class="btn btn-chico" id="dp-btn-consentimiento-bio"><span class="material-icons" aria-hidden="true">download</span>Consentimiento biométrico (.docx)</button>' +
                 '</div>';
 
             if (!activos.length) {
@@ -606,7 +630,7 @@
                 var esIntl = p.transferenciaInternacional || (p.pais && !/^chile$/i.test(String(p.pais).trim()));
                 var sello = (p.dpaFirmado ? '<span class="sello sello-emitida">Acuerdo firmado</span>' : '<span class="sello sello-preparada">Pendiente firma</span>') +
                     (esIntl ? ' <span class="sello sello-guardada">Transf. ' + esc(p.pais || 'extranjero') + '</span>' : '');
-                var acc = '<button type="button" class="btn btn-chico" data-dp-dpa-word="' + esc(p.id) + '">Descargar acuerdo (.doc)</button>' +
+                var acc = '<button type="button" class="btn btn-chico" data-dp-dpa-word="' + esc(p.id) + '">Descargar acuerdo (.docx)</button>' +
                     (!p.dpaFirmado ? ' <button type="button" class="btn-texto" data-dp-dpa-ok="' + esc(p.id) + '">Marcar firmado</button>' : '') +
                     ' <button type="button" class="btn-texto lq-danger" data-dp-dpa-del="' + esc(p.id) + '">Quitar</button>';
                 var sub = [p.servicio, p.duracion].filter(Boolean).join(' · ');
@@ -670,7 +694,7 @@
                 '<div class="form-acciones" style="margin-top:6px"><button type="submit" class="btn btn-primario" id="dp-btn-guardar-preguntas">Guardar y actualizar lista de datos</button></div>' +
                 '</form></div></div>' +
                 '<div class="panel">' +
-                '<div class="panel-head"><div><h2>Lista de actividades y plazos generada</h2><p class="texto-ayuda">Puedes descargar este inventario listo para fiscalización o agregar otro proceso específico de tu negocio.</p></div><div class="v-acciones"><button type="button" class="btn btn-chico" id="dp-btn-rat-word"><span class="material-icons" aria-hidden="true">download</span>Descargar inventario (.doc)</button><button type="button" class="btn btn-chico" id="dp-btn-abrir-rat">Agregar otra actividad</button></div></div>' +
+                '<div class="panel-head"><div><h2>Lista de actividades y plazos generada</h2><p class="texto-ayuda">Puedes descargar este inventario listo para fiscalización o agregar otro proceso específico de tu negocio.</p></div><div class="v-acciones"><button type="button" class="btn btn-chico" id="dp-btn-rat-word"><span class="material-icons" aria-hidden="true">download</span>Descargar inventario (.docx)</button><button type="button" class="btn btn-chico" id="dp-btn-abrir-rat">Agregar otra actividad</button></div></div>' +
                 '<form class="panel-cuerpo" id="dp-form-rat" hidden style="border-bottom:1px solid var(--line);background:var(--surface-2)">' +
                 '<div class="lq-grid">' +
                 '<div class="lq-field"><label for="dp-rat-act">Actividad o proceso del negocio</label><input id="dp-rat-act" type="text" maxlength="80" required placeholder="Ej. Despacho a domicilio"></div>' +
@@ -696,7 +720,7 @@
                     return '<label class="dp-eipd-card"><input type="checkbox" id="' + esc(c.id) + '" name="dp-eipd" value="' + esc(k) + '"><div><strong>' + esc(c.titulo) + '</strong><p>' + esc(c.resumen) + '</p></div></label>';
                 }).join('') +
                 '</div>' +
-                '<div class="form-acciones" style="margin-top:12px"><button type="button" class="btn btn-primario" id="dp-btn-descargar-eipd"><span class="material-icons" aria-hidden="true">download</span>Descargar Evaluación de Impacto (.doc)</button></div>' +
+                '<div class="form-acciones" style="margin-top:12px"><button type="button" class="btn btn-primario" id="dp-btn-descargar-eipd"><span class="material-icons" aria-hidden="true">download</span>Descargar Evaluación de Impacto (.docx)</button></div>' +
                 '</div></div>';
         }
 
@@ -723,7 +747,7 @@
                     estadoSello = '<span class="sello sello-emitida">' + plural(restan, 'día restante', 'días restantes') + '</span>';
                 }
                 var der = ETIQUETAS_DERECHO[s.derecho] || s.derecho;
-                var acc = '<button type="button" class="btn btn-chico" data-dp-arcop-word="' + esc(s.id) + '">Descargar respuesta (.doc)</button>' +
+                var acc = '<button type="button" class="btn btn-chico" data-dp-arcop-word="' + esc(s.id) + '">Descargar respuesta (.docx)</button>' +
                     (s.estado === 'pendiente' && !s.prorroga ? ' <button type="button" class="btn-texto" data-dp-arcop-prorroga="' + esc(s.id) + '">Prórroga +30d</button>' : '') +
                     (s.estado === 'pendiente' ? ' <button type="button" class="btn-texto" data-dp-arcop-ok="' + esc(s.id) + '">Marcar respondida</button>' : '') +
                     ' <button type="button" class="btn-texto lq-danger" data-dp-arcop-del="' + esc(s.id) + '">Eliminar</button>';

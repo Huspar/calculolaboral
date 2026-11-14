@@ -33,6 +33,7 @@
         
         // Buttons
         copyBtn: document.getElementById('btn-copy-letter'),
+        docxBtn: document.getElementById('btn-docx-letter'),
         printBtn: document.getElementById('btn-print-letter'),
         resetBtn: document.getElementById('btn-reset-letter'),
         
@@ -389,6 +390,33 @@
         `;
     }
 
+    function handleDocx() {
+        if (!window.FiniquitoDocx || typeof window.FiniquitoDocx.toBlob !== 'function') {
+            handlePrint();
+            return;
+        }
+        const workerRaw = (elements.workerName?.value.trim() || 'Trabajador');
+        const slug = workerRaw.replace(/[^a-zA-Z0-9_-]+/g, '_').replace(/^_+|_+$/g, '') || 'Trabajador';
+        // Convertir bloque de constancias grid en tabla de 2 columnas para Word (.docx)
+        const rawHtml = getPrintLetterHTML().replace(
+            /<!-- Casilleros de Formalidades Legales[\s\S]*?(?=<!-- Footer Legal -->)/,
+            '<table><thead><tr><th>Constancia de Recepción Empleador</th><th>Ratificación Ministro de Fe (Art. 177)</th></tr></thead>' +
+            '<tbody><tr>' +
+            '<td>Fecha de Recepción: _____ / _____ / 202___<br>Nombre Receptor: _______________________<br>Firma y Timbre: ________________________<br><small>(Copia para el trabajador acreditando entrega de aviso previo)</small></td>' +
+            '<td>Ratificada ante mí por el trabajador individualizado, previa comprobación de identidad con su cédula de identidad.<br><br>____________________________________<br>Firma y Timbre Notario Público / Inspector DT</td>' +
+            '</tr></tbody></table>'
+        );
+        const blob = window.FiniquitoDocx.toBlob(rawHtml, 'Carta de Renuncia Voluntaria - ' + workerRaw);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Carta_Renuncia_' + slug + '.docx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+
     // Print / PDF Handler
     function handlePrint() {
         const printContainer = document.getElementById('print-letter-content');
@@ -554,8 +582,9 @@
             });
         });
 
-        // Copy and print buttons
+        // Copy, Word and print buttons
         if (elements.copyBtn) elements.copyBtn.addEventListener('click', handleCopy);
+        if (elements.docxBtn) elements.docxBtn.addEventListener('click', handleDocx);
         if (elements.printBtn) elements.printBtn.addEventListener('click', handlePrint);
 
         // Reset button

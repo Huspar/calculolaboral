@@ -28,6 +28,7 @@
             city: document.getElementById('city'),
             previewContainer: document.getElementById('annex-preview-text'),
             copyBtn: document.getElementById('copy-annex-btn'),
+            docxBtn: document.getElementById('docx-annex-btn'),
             printBtn: document.getElementById('print-annex-btn'),
             printContainer: document.getElementById('print-annex-content'),
             leadForm: document.getElementById('form-lead-checklist'),
@@ -321,6 +322,37 @@
         }
     }
 
+    function handleDocx() {
+        if (!window.FiniquitoDocx || typeof window.FiniquitoDocx.toBlob !== 'function') {
+            handlePrint();
+            return;
+        }
+        const d = getAnnexValues();
+        const html = buildPrintHTML().replace(
+            /<div style="margin-top: 36px; display: grid;[\s\S]*?<\/div>\s*<\/div>\s*<\/div>\s*(?=<div style="margin-top: 16px)/,
+            '<div data-docx="firmas">' +
+                '<div><p><strong>' + escapeHTML(d.compName) + '</strong><br>p.p. ' + escapeHTML(d.repName) + '<br>RUT: ' + escapeHTML(d.compRut) + '<br>Empleador / Representante Legal</p></div>' +
+                '<div><p><strong>' + escapeHTML(d.workName) + '</strong><br>CNI: ' + escapeHTML(d.workRut) + '<br>Trabajador</p></div>' +
+            '</div>'
+        );
+        const slug = (d.workName || 'Trabajador').replace(/[^a-zA-Z0-9_-]+/g, '_').replace(/^_+|_+$/g, '') || 'Trabajador';
+        const blob = window.FiniquitoDocx.toBlob(html, 'Anexo Jornada 42 Horas - ' + d.workName);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Anexo_Jornada_42_Horas_' + slug + '.docx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        if (typeof gtag === 'function') {
+            gtag('event', 'docx_anexo_40h', {
+                event_category: 'tool',
+                event_label: elements.modality?.value || 'standard'
+            });
+        }
+    }
+
     // Print / PDF Handler
     function handlePrint() {
         if (!elements.printContainer) {
@@ -446,6 +478,7 @@
 
         // Action buttons
         if (elements.copyBtn) elements.copyBtn.addEventListener('click', handleCopy);
+        if (elements.docxBtn) elements.docxBtn.addEventListener('click', handleDocx);
         if (elements.printBtn) elements.printBtn.addEventListener('click', handlePrint);
 
         // Lead form
