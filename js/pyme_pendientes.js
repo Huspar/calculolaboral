@@ -200,7 +200,7 @@
         });
         (dp.brechas || []).forEach(function (b) {
             if (b.estado !== 'abierta') return;
-            agregar('brecha-' + b.id, 'urgente', 'Incidente de datos abierto (ventana 72h)',
+            agregar('brecha-' + b.id, 'urgente', 'Incidente de datos abierto (reportar sin dilaciones indebidas)',
                 'Revisa las medidas adoptadas y evalúa si corresponde notificar a la Agencia de Protección de Datos (art. 14 sexies, Ley 21.719).',
                 { tipo: 'datos-personales', tab: 'brechas' });
         });

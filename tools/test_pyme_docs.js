@@ -226,8 +226,8 @@ caso('anexo de datos: cláusulas fijas y opcionales, numeradas en orden', () => 
     assert.ok(D.validar('anexo_datos', c, base).puedeEmitir);
     const minimo = D.generar('anexo_datos', c, base, { pagada: true }).html;
     assert.ok(minimo.includes('CLÁUSULA QUINTA') && !minimo.includes('CLÁUSULA SEXTA') && !minimo.includes('biométric') && !minimo.includes('Herramientas corporativas'));
-    const todo = D.generar('anexo_datos', c, Object.assign({}, base, { biometria: true, herramientas: true, encargados: true }), { pagada: true }).html;
-    ['CLÁUSULA OCTAVA', 'CLÁUSULA SÉPTIMA', 'alternativo', 'Herramientas corporativas', 'Encargados de tratamiento', 'privacidad@laespiga.cl', 'artículo 154 ter', '1 de diciembre de 2026', 'Ley N° 21.719'].forEach(t => assert.ok(todo.includes(t), t));
+    const todo = D.generar('anexo_datos', c, Object.assign({}, base, { biometria: true, geolocalizacion: true, herramientas: true, encargados: true }), { pagada: true }).html;
+    ['CLÁUSULA NOVENA', 'CLÁUSULA SÉPTIMA', 'alternativo', 'artículo 16 ter', 'artículo 16 sexies', '30 días hábiles', 'Herramientas corporativas', 'Encargados de tratamiento', 'privacidad@laespiga.cl', 'artículo 154 ter', '1 de diciembre de 2026', 'Ley N° 21.719'].forEach(t => assert.ok(todo.includes(t), t));
     assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: 'no-es-correo' })).errores.correoPrivacidad);
     assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: '' })).errores.correoPrivacidad);
     assert.strictEqual(D.valoresIniciales('anexo_datos', ctx(TRAB(), { correoPrivacidad: 'datos@laespiga.cl' })).correoPrivacidad, 'datos@laespiga.cl');

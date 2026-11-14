@@ -484,7 +484,7 @@ function validarListaObjetos(lista, max, claveErr, msgFormato, validarItem, erro
     return salida;
 }
 
-/** Valida el estado de cumplimiento Ley 21.719 (encargados DPA, ARCOP, brechas 72h, RAT y canal). */
+/** Valida el estado de cumplimiento Ley 21.719 (encargados DPA, ARCOPS+bloqueo, brechas art. 14 sexies, inventario y canal). */
 function validarDatosLey21719(entrada) {
     if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos de protección de datos no tienen el formato esperado.' } };
     const errores = {};
@@ -502,11 +502,14 @@ function validarDatosLey21719(entrada) {
         const nombre = normalizar('nombre', { t: 'texto', max: 80, req: true }, it.nombre, e);
         const servicio = normalizar('servicio', { t: 'texto', max: 80 }, it.servicio, e);
         const datosTratados = normalizar('datosTratados', { t: 'texto', max: 120 }, it.datosTratados, e);
+        const pais = normalizar('pais', { t: 'texto', max: 60 }, it.pais, e);
+        const duracion = normalizar('duracion', { t: 'texto', max: 80 }, it.duracion, e);
+        const transferenciaInternacional = normalizar('transferenciaInternacional', { t: 'bool', def: false }, it.transferenciaInternacional, e);
         const dpaFirmado = normalizar('dpaFirmado', { t: 'bool', def: false }, it.dpaFirmado, e);
         const fechaFirma = normalizar('fechaFirma', { t: 'fecha' }, it.fechaFirma, e);
         const notas = normalizar('notas', { t: 'texto', max: 160 }, it.notas, e);
         if (Object.keys(e).length) return { ok: false, error: `Proveedor ${n}: revisa el nombre o la fecha de firma DPA.` };
-        return { ok: true, valor: { id, nombre, servicio, datosTratados, dpaFirmado, fechaFirma, notas } };
+        return { ok: true, valor: { id, nombre, servicio, datosTratados, pais, duracion, transferenciaInternacional, dpaFirmado, fechaFirma, notas } };
     }, errores);
 
     const solicitudesArcop = validarListaObjetos(entrada.solicitudesArcop, 100, 'solicitudesArcop', 'Las solicitudes ARCOP no tienen el formato esperado.', (it, id, n) => {
@@ -516,7 +519,7 @@ function validarDatosLey21719(entrada) {
         const correo = normalizar('correo', { t: 'texto', max: 120 }, it.correo, e);
         if (correo && !esCorreoSimple(correo)) e.correo = true;
         const calidad = normalizar('calidad', { t: 'enum', valores: ['trabajador', 'ex_trabajador', 'cliente', 'contacto'], def: 'trabajador' }, it.calidad, e);
-        const derecho = normalizar('derecho', { t: 'enum', valores: ['acceso', 'rectificacion', 'cancelacion', 'oposicion', 'portabilidad'], def: 'acceso' }, it.derecho, e);
+        const derecho = normalizar('derecho', { t: 'enum', valores: ['acceso', 'rectificacion', 'supresion', 'cancelacion', 'oposicion', 'portabilidad', 'bloqueo'], def: 'acceso' }, it.derecho, e);
         const fechaRecepcion = normalizar('fechaRecepcion', { t: 'fecha', req: true }, it.fechaRecepcion, e);
         const prorroga = normalizar('prorroga', { t: 'bool', def: false }, it.prorroga, e);
         const estado = normalizar('estado', { t: 'enum', valores: ['pendiente', 'respondida', 'denegada'], def: 'pendiente' }, it.estado, e);
@@ -531,11 +534,15 @@ function validarDatosLey21719(entrada) {
         const fechaHora = normalizar('fechaHora', { t: 'texto', max: 20, req: true }, it.fechaHora, e);
         const origen = normalizar('origen', { t: 'enum', valores: ['equipo', 'malware', 'correo', 'acceso', 'otro'], def: 'otro' }, it.origen, e);
         const datosComprometidos = normalizar('datosComprometidos', { t: 'texto', max: 160 }, it.datosComprometidos, e);
+        const naturaleza = normalizar('naturaleza', { t: 'texto', max: 120 }, it.naturaleza, e);
+        const efectos = normalizar('efectos', { t: 'texto', max: 160 }, it.efectos, e);
+        const afectados = normalizar('afectados', { t: 'texto', max: 40 }, typeof it.afectados === 'number' ? String(it.afectados) : it.afectados, e);
+        const notificarTitulares = normalizar('notificarTitulares', { t: 'bool', def: false }, it.notificarTitulares, e);
         const medidas = normalizar('medidas', { t: 'texto', max: 200 }, it.medidas, e);
         const estado = normalizar('estado', { t: 'enum', valores: ['abierta', 'notificada', 'cerrada_sin_riesgo'], def: 'abierta' }, it.estado, e);
         const fechaNotificacion = normalizar('fechaNotificacion', { t: 'fecha' }, it.fechaNotificacion, e);
         if (Object.keys(e).length) return { ok: false, error: `Incidente ${n}: revisa la fecha, tipo u observaciones.` };
-        return { ok: true, valor: { id, fechaHora, origen, datosComprometidos, medidas, estado, fechaNotificacion } };
+        return { ok: true, valor: { id, fechaHora, origen, datosComprometidos, naturaleza, efectos, afectados, notificarTitulares, medidas, estado, fechaNotificacion } };
     }, errores);
 
     const rat = validarListaObjetos(entrada.rat, 25, 'rat', 'El registro RAT no tiene el formato esperado.', (it, id, n) => {

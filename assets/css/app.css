@@ -1129,6 +1129,26 @@ a.cal-ev:hover { filter: brightness(0.97); }
 .dp-pregunta-cuerpo p { margin: 3px 0 4px; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
 .dp-pregunta-meta { display: block; font-size: 12px; color: var(--forest-700); font-weight: 500; }
 .dp-codigo-box { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; background: var(--surface-2); }
+/* Radar Nube Internacional (Arts. 27 y 28) */
+.dp-radar-box { padding: 12px 16px; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.dp-radar-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); margin-bottom: 8px; flex-wrap: wrap; }
+.dp-radar-head .material-icons { font-size: 17px; color: var(--forest); }
+.dp-radar-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dp-radar-chip { height: 32px; font-size: 12px; padding: 0 11px; background: var(--surface); border-color: var(--line-2); }
+.dp-radar-chip:hover { border-color: var(--forest); color: var(--forest); }
+.dp-radar-chip.activo, .dp-radar-chip[disabled] { background: var(--forest-50); border-color: var(--forest-100); color: var(--forest-700); opacity: 1; cursor: default; }
+.dp-radar-chip:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+/* EIPD Express (Art. 15 ter) */
+.dp-panel-eipd { border-top: 2px solid var(--forest-100); background: #FAFDFB; }
+.dp-eipd-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.dp-eipd-card { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); cursor: pointer; transition: border-color .15s var(--ease), background-color .15s var(--ease); }
+.dp-eipd-card:hover { background: var(--surface-2); }
+.dp-eipd-card:has(input:checked) { border-color: var(--forest); background: var(--forest-50); }
+.dp-eipd-card:has(input:focus-visible) { outline: 2px solid var(--forest); outline-offset: 2px; }
+.dp-eipd-card input[type="checkbox"] { margin-top: 2px; width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--forest); }
+.dp-eipd-card strong { display: block; font-size: 13px; color: var(--ink); line-height: 1.25; }
+.dp-eipd-card p { margin: 4px 0 0; font-size: 12px; color: var(--muted); line-height: 1.38; }
+.dp-aviso-bio { align-items: center; }
 .arcop-dias-badge {
     font-family: var(--mono); font-size: 12px; font-weight: 700;
     display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px;
@@ -1148,10 +1168,17 @@ a.cal-ev:hover { filter: brightness(0.97); }
     [data-vista="datos-personales"] .btn,
     [data-vista="datos-personales"] .btn-texto,
     [data-vista="datos-personales"] .fin-filtros button,
+    [data-vista="datos-personales"] .dp-radar-chip,
     #dp-dialogo-politica .btn,
     #dp-dialogo-politica .btn-texto,
     #dp-dialogo-canal .btn,
-    #dp-dialogo-canal .btn-texto { min-height: 44px; display: inline-flex; align-items: center; }
+    #dp-dialogo-canal .btn-texto { min-height: 44px; height: auto; display: inline-flex; align-items: center; }
+    .dp-radar-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .dp-radar-chips::-webkit-scrollbar { display: none; }
+    .dp-radar-chip { flex-shrink: 0; }
+    .dp-eipd-grid { grid-template-columns: minmax(0, 1fr); }
+    .dp-aviso-bio { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .dp-aviso-bio .btn { width: 100%; justify-content: center; }
     .dp-paso-item { flex-direction: column; align-items: flex-start; gap: 8px; }
     .dp-paso-accion, .dp-paso-accion .btn { width: 100%; justify-content: center; }
     .dp-tools-grid { grid-template-columns: minmax(0, 1fr); }

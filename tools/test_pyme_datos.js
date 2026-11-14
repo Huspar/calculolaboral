@@ -716,15 +716,24 @@ caso('Ley 21.719: se guarda cifrada junto a la empresa, editar la empresa la con
         correoPrivacidad: 'privacidad@espiga.cl',
         responsableDatos: 'Ana Lagos',
         checklist: { protocoloBrechas: true, ratRevisado: true },
-        encargados: [{ nombre: 'Contadora Soto', servicio: 'Contabilidad', datosTratados: 'Liquidaciones', dpaFirmado: true, fechaFirma: '2026-10-10' }],
-        solicitudesArcop: [{ nombre: 'Camila Navarro', rut: rutValido(17654321), correo: 'c@ejemplo.cl', calidad: 'ex_trabajador', derecho: 'acceso', fechaRecepcion: '2026-10-01', estado: 'pendiente' }],
-        brechas: [{ fechaHora: '2026-10-15 10:00', origen: 'correo', datosComprometidos: 'Colilla', medidas: 'Aviso inmediato', estado: 'cerrada_sin_riesgo' }],
+        encargados: [{ nombre: 'Contadora Soto', servicio: 'Contabilidad', datosTratados: 'Liquidaciones', pais: 'EE. UU.', duracion: 'Vigencia del contrato', transferenciaInternacional: true, dpaFirmado: true, fechaFirma: '2026-10-10' }],
+        solicitudesArcop: [
+            { nombre: 'Camila Navarro', rut: rutValido(17654321), correo: 'c@ejemplo.cl', calidad: 'ex_trabajador', derecho: 'supresion', fechaRecepcion: '2026-10-01', estado: 'pendiente' },
+            { nombre: 'Luis Pérez', rut: rutValido(15432198), correo: 'l@ejemplo.cl', calidad: 'cliente', derecho: 'bloqueo', fechaRecepcion: '2026-10-02', estado: 'pendiente' }
+        ],
+        brechas: [{ fechaHora: '2026-10-15 10:00', origen: 'correo', naturaleza: 'Envío erróneo de archivo o correo a tercero', efectos: 'Exposición de datos laborales', datosComprometidos: 'Colilla', afectados: 3, notificarTitulares: true, medidas: 'Aviso inmediato', estado: 'cerrada_sin_riesgo' }],
         rat: [{ actividad: 'Nómina', baseLegal: 'Contrato', datosTratados: 'RUT y sueldo', plazoConservacion: '5 años' }]
     };
     const r = await escribir(m, { query: { ruta: 'datos-personales' }, metodo: 'PUT', cookie, body: { datosLey21719: carga } });
     assert.strictEqual(r.statusCode, 200, JSON.stringify(r.json));
     assert.strictEqual(r.json.datosLey21719.correoPrivacidad, 'privacidad@espiga.cl');
     assert.ok(/^[a-z0-9]{6,20}$/.test(r.json.datosLey21719.solicitudesArcop[0].id));
+    assert.strictEqual(r.json.datosLey21719.solicitudesArcop[0].derecho, 'supresion');
+    assert.strictEqual(r.json.datosLey21719.solicitudesArcop[1].derecho, 'bloqueo');
+    assert.strictEqual(r.json.datosLey21719.encargados[0].pais, 'EE. UU.');
+    assert.strictEqual(r.json.datosLey21719.encargados[0].transferenciaInternacional, true);
+    assert.strictEqual(r.json.datosLey21719.brechas[0].afectados, '3');
+    assert.strictEqual(r.json.datosLey21719.brechas[0].notificarTitulares, true);
     // Texto no queda legible en base cifrada
     const crudo = JSON.stringify(m.almacen._estado.empresas) + Buffer.from(m.almacen._estado.empresas[0].datos).toString('latin1');
     assert.ok(crudo.indexOf('privacidad@espiga.cl') < 0 && crudo.indexOf('Camila Navarro') < 0);
@@ -732,7 +741,7 @@ caso('Ley 21.719: se guarda cifrada junto a la empresa, editar la empresa la con
     await escribir(m, { query: { ruta: 'empresa' }, metodo: 'PUT', cookie, body: { empresa: Object.assign({}, EMPRESA, { giro: 'Panadería Artesanal' }) } });
     const est = (await leer(m, { query: { ruta: 'estado' }, cookie })).json;
     assert.strictEqual(est.empresa.giro, 'Panadería Artesanal');
-    assert.strictEqual(est.datosLey21719.solicitudesArcop.length, 1);
+    assert.strictEqual(est.datosLey21719.solicitudesArcop.length, 2);
     assert.strictEqual(est.datosLey21719.encargados[0].dpaFirmado, true);
     // Validación rechaza correo o fecha mala
     const malo = await escribir(m, { query: { ruta: 'datos-personales' }, metodo: 'PUT', cookie, body: { datosLey21719: { correoPrivacidad: 'no-es-correo', solicitudesArcop: [{ nombre: 'X', fechaRecepcion: 'mala' }] } } });

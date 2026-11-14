@@ -1,7 +1,7 @@
 /*
  * CalculoLaboral · Modulo operacional Ley 21.719 (Proteccion de Datos Personales) en /app/datos-personales.
- * Recorrido guiado en 4 pasos (contacto, trabajadores, proveedores, inventario de datos),
- * generador de politica web, canal de atencion y bandeja de solicitudes (30 dias) e incidentes (72h).
+ * Recorrido guiado en 4 pasos (contacto, trabajadores, proveedores y radar nube/IA, inventario y EIPD),
+ * generador de politica web (Art. 14 ter), canal de atencion y bandeja de solicitudes ARCOPS+Bloqueo e incidentes (Art. 14 sexies).
  */
 (function () {
     'use strict';
@@ -26,10 +26,12 @@
     var DERECHOS = {
         acceso: 'Ver sus datos (Acceso)',
         rectificacion: 'Corregir un dato (Rectificación)',
-        cancelacion: 'Borrar sus datos (Cancelación)',
+        supresion: 'Borrar sus datos (Supresión)',
         oposicion: 'Dejar de recibir avisos (Oposición)',
-        portabilidad: 'Llevarse sus datos (Portabilidad)'
+        portabilidad: 'Llevarse copia digital (Portabilidad, art. 9)',
+        bloqueo: 'Suspender uso temporalmente (Bloqueo, art. 8 ter)'
     };
+    var ETIQUETAS_DERECHO = Object.assign({ cancelacion: 'Borrar sus datos (Supresión)' }, DERECHOS);
     var CALIDADES = { trabajador: 'Trabajador activo', ex_trabajador: 'Ex-trabajador', cliente: 'Cliente', contacto: 'Contacto comercial' };
     var ORIGENES = {
         equipo: 'Robo o pérdida de computador o celular',
@@ -38,67 +40,111 @@
         acceso: 'Ingreso indebido con claves o cuentas',
         otro: 'Otro incidente'
     };
-    var EST_BRECHA = { abierta: 'Abierta (en ventana 72h)', notificada: 'Notificada a la Agencia', cerrada_sin_riesgo: 'Cerrada sin riesgo relevante' };
+    var NATURALEZAS_BRECHA = [
+        'Acceso no autorizado a cuenta o sistema',
+        'Pérdida o robo de equipo con datos',
+        'Envío erróneo de archivo o correo a tercero',
+        'Alteración o destrucción accidental de registros'
+    ];
+    var EFECTOS_BRECHA = [
+        'Exposición de datos laborales, de sueldo o salud',
+        'Riesgo de suplantación de identidad o fraude',
+        'Afectación acotada de contacto sin perjuicio patrimonial'
+    ];
+    var EST_BRECHA = { abierta: 'Sin dilaciones indebidas (meta 72h)', notificada: 'Notificada a la Agencia', cerrada_sin_riesgo: 'Cerrada sin riesgo relevante' };
 
-    // Cinco preguntas cotidianas que generan filas RAT sin pedir conocimientos legales
+    var RADAR_NUBE = [
+        { key: 'google', chip: '+ Google Workspace / Gmail (EE. UU.)', nombre: 'Google Workspace / Gmail', servicio: 'Correo corporativo y documentos en la nube', datosTratados: 'Correos, archivos de clientes y trabajadores', pais: 'EE. UU.', notas: 'Cláusulas estándar de tratamiento (DPA) aceptadas en contrato Google; transferencia internacional Arts. 27-28.' },
+        { key: 'ms365', chip: '+ Microsoft 365 / Outlook (EE. UU.)', nombre: 'Microsoft 365 / Outlook', servicio: 'Correo y ofimática en la nube', datosTratados: 'Correos, planillas y documentos laborales', pais: 'EE. UU.', notas: 'Cláusulas estándar (DPA Microsoft) aceptadas en contrato; transferencia internacional Arts. 27-28.' },
+        { key: 'meta', chip: '+ WhatsApp Business / Meta (EE. UU.)', nombre: 'WhatsApp Business / Meta', servicio: 'Mensajería comercial y atención a clientes', datosTratados: 'Nombres, teléfonos y consultas comerciales', pais: 'EE. UU.', notas: 'Términos comerciales Meta; evitar circular licencias médicas o datos sensibles (Art. 16 bis).' },
+        { key: 'mailchimp', chip: '+ Mailchimp / Email Mkt (EE. UU.)', nombre: 'Mailchimp / Email Marketing', servicio: 'Envío de campañas y avisos comerciales', datosTratados: 'Nombres y correos de clientes o suscriptores', pais: 'EE. UU.', notas: 'Cláusulas estándar de transferencia internacional (Arts. 27-28); respetar derecho de oposición (Art. 8).' },
+        { key: 'hosting', chip: '+ Hosting internacional (AWS / Vercel)', nombre: 'Hosting internacional (AWS / Vercel)', servicio: 'Alojamiento de sitio web y formularios', datosTratados: 'Formularios de contacto y registros de acceso web', pais: 'EE. UU.', notas: 'DPA estándar de infraestructura en la nube; transferencia internacional Arts. 27-28.' },
+        { key: 'ia', chip: '+ Herramientas de IA (ChatGPT / Claude)', nombre: 'Herramientas de IA (ChatGPT / Claude)', servicio: 'Asistencia de redacción o análisis con IA', datosTratados: 'Textos operativos (sin cargar RUT ni salud de personas)', pais: 'EE. UU.', notas: 'Activar privacidad sin entrenamiento con datos y no subir datos sensibles ni nóminas identificables (Arts. 16 bis y 27).' }
+    ];
+
+    var CASOS_EIPD = {
+        cctv: {
+            id: 'dp-eipd-cctv',
+            titulo: 'Cámaras hacia la vía pública o acceso común',
+            resumen: 'Riesgo: Captación de terceros ajenos. Mitigación: Ángulo ajustado a perímetro propio y letrero visible.',
+            riesgo: 'Vigilancia sistemática de zona de acceso público y captación incidental de transeúntes o áreas íntimas.',
+            mitigacion: 'Enfocar solo accesos o cajas, prohibir cámaras en baños o descanso (Art. 154 ter CT), ciclo acotado de sobrescritura y letrero visible con correo de contacto.'
+        },
+        bio: {
+            id: 'dp-eipd-bio',
+            titulo: 'Reloj biométrico (huella o reconocimiento facial)',
+            resumen: 'Riesgo: Dato sensible irreparable. Mitigación: Plantilla hash cifrada y alternativa no biométrica (Res. 38 DT).',
+            riesgo: 'Tratamiento de datos biométricos sensibles irreparables ante eventual filtración o falta de voluntariedad laboral.',
+            mitigacion: 'Consentimiento expreso separado (Art. 16 ter), almacenamiento como algoritmo cifrado no reconstruible y entrega permanente de alternativa no biométrica (Res. Ex. 38/2024 DT).'
+        },
+        gps: {
+            id: 'dp-eipd-gps',
+            titulo: 'GPS en vehículos o geolocalización de personal',
+            resumen: 'Riesgo: Invasión de vida privada. Mitigación: Registro activo solo en jornada laboral con aviso previo.',
+            riesgo: 'Seguimiento continuo fuera de horario laboral o inferencia de vida privada de conductores y personal en terreno.',
+            mitigacion: 'Informar tipo de dato, finalidad y duración (Art. 16 sexies), activar solo en jornada pactada y restringir historial a coordinación operativa.'
+        }
+    };
+
+    // Cinco preguntas cotidianas que generan inventario sin confundir el RAT con obligación del Art. 14 ter
     var PREGUNTAS_RAT = [
         {
             key: 'trabajadores',
             pregunta: '1. ¿Tienes trabajadores contratados?',
             ayuda: 'Guardas RUT, domicilio, sueldo, salud, AFP y licencias médicas para contratos, liquidaciones y Previred.',
-            meta: 'Motivo legal: Código del Trabajo · Plazo: 5 años tras el finiquito',
+            meta: 'Motivo legal: Obligación laboral (Art. 16 letra e) · Plazo: 2 años (Art. 510 CT) / 6 años tributario',
             patron: /personal|remuneracion|trabajador/i,
             rat: {
                 actividad: 'Gestión de personal y remuneraciones',
-                baseLegal: 'Ejecución de contrato y Código del Trabajo',
-                datosTratados: 'RUT, domicilio, sueldo, AFP, salud y licencias médicas',
-                plazoConservacion: '5 años tras el término de la relación laboral'
+                baseLegal: 'Obligación laboral y seguridad social (Art. 16 letra e)',
+                datosTratados: 'RUT, domicilio, sueldo, AFP, salud y licencias médicas (Art. 16 bis)',
+                plazoConservacion: '2 años prescripción laboral (Art. 510 CT) y hasta 6 años tributario'
             }
         },
         {
             key: 'facturas',
             pregunta: '2. ¿Emites facturas o boletas a tus clientes?',
             ayuda: 'Guardas razón social, RUT, dirección y correos de contacto para emitir documentos tributarios y cobrar.',
-            meta: 'Motivo legal: Obligación tributaria ante el SII · Plazo: 6 años',
+            meta: 'Motivo legal: Obligación tributaria ante el SII · Plazo: Hasta 6 años (Arts. 17 y 200 Cód. Tributario)',
             patron: /facturac|boleta|sii|cobranz/i,
             rat: {
                 actividad: 'Facturación y cobranza a clientes',
                 baseLegal: 'Obligación tributaria ante el SII y contrato comercial',
                 datosTratados: 'Nombre o razón social, RUT, dirección y correo de contacto',
-                plazoConservacion: '6 años tributarios (Código Tributario)'
+                plazoConservacion: 'Hasta 6 años tributarios (Arts. 17 y 200 Código Tributario)'
             }
         },
         {
             key: 'cctv',
             pregunta: '3. ¿Tienes cámaras de seguridad o control de acceso en tu local u oficina?',
             ayuda: 'Registras imágenes de video o ingresos de personas por motivos de seguridad.',
-            meta: 'Motivo legal: Seguridad de personas y bienes · Plazo: 30 días de ciclo de grabación',
+            meta: 'Motivo legal: Seguridad proporcional de personas y bienes · Plazo: Mínimo operativo (ej. 30 días de sobrescritura)',
             patron: /c[aá]mara|videovigilancia|acceso/i,
             rat: {
                 actividad: 'Cámaras de seguridad y control de acceso',
-                baseLegal: 'Interés legítimo de seguridad de personas y bienes',
+                baseLegal: 'Interés legítimo proporcional de seguridad de personas y bienes',
                 datosTratados: 'Imágenes de video y registro de ingreso al recinto',
-                plazoConservacion: '30 días corridos en ciclo de sobrescritura'
+                plazoConservacion: 'Mínimo operativo de seguridad (práctica de 30 días por ciclo)'
             }
         },
         {
             key: 'comercial',
             pregunta: '4. ¿Envías presupuestos, cotizaciones o promociones por WhatsApp o correo?',
             ayuda: 'Guardas nombres, teléfonos o correos de clientes y prospectos para cotizar y contactarlos.',
-            meta: 'Motivo legal: Relación comercial y consentimiento · Plazo: Hasta que pidan no recibir más',
+            meta: 'Motivo legal: Relación comercial y consentimiento · Plazo: 2 años desde último contacto o retiro del permiso',
             patron: /cotizacion|promocion|comercial|prospecto/i,
             rat: {
                 actividad: 'Cotizaciones y contacto comercial',
-                baseLegal: 'Relación comercial y consentimiento del titular',
+                baseLegal: 'Relación comercial y consentimiento revocable del titular',
                 datosTratados: 'Nombre, teléfono, correo electrónico e historial de cotizaciones',
-                plazoConservacion: 'Hasta que la persona solicite dejar de recibir mensajes'
+                plazoConservacion: '2 años desde la última interacción o hasta oposición (Art. 8)'
             }
         },
         {
             key: 'web',
             pregunta: '5. ¿Pides datos en un formulario de contacto en tu sitio web?',
             ayuda: 'Recibes consultas web con nombre, teléfono o correo de quienes te escriben.',
-            meta: 'Motivo legal: Responder la consulta solicitada · Plazo: 1 año',
+            meta: 'Motivo legal: Responder la consulta solicitada · Plazo: 1 año tras cierre de consulta',
             patron: /formulario web|consultas web|sitio web/i,
             rat: {
                 actividad: 'Consultas desde formulario del sitio web',
@@ -285,40 +331,74 @@
 
         function modeloDpaWord(prov) {
             var est = ctx.getEstado(), emp = (est && est.empresa) || {};
-            var cuerpo = '<p><strong>ACUERDO DE ENCARGO DE TRATAMIENTO DE DATOS PERSONALES (ART. 15 BIS LEY N° 21.719)</strong></p>' +
-                '<p>Entre <strong>' + esc(emp.razonSocial || 'Responsable') + '</strong> (RUT ' + esc(emp.rut || '-') + '), en adelante el <strong>Responsable</strong>, y <strong>' + esc(prov.nombre) + '</strong> (' + esc(prov.servicio || 'Proveedor de servicios') + '), en adelante el <strong>Proveedor o Encargado</strong>, se dejan por escrito las obligaciones aplicables a los datos personales tratados por cuenta de la empresa:</p>' +
+            var hayIntl = !!(prov.transferenciaInternacional || (prov.pais && !/^chile$/i.test(String(prov.pais).trim())));
+            var clIntl = hayIntl
+                ? '<li><strong>Transferencia internacional de datos (Arts. 27 y 28):</strong> Debido a que el servicio opera o almacena datos fuera de Chile (' + esc(prov.pais || 'extranjero') + '), el Proveedor acredita garantías equivalentes mediante cláusulas contractuales tipo, normas corporativas vinculantes o país adecuado conforme a las instrucciones de la Agencia.</li>'
+                : '';
+            var cuerpo = '<p><strong>ACUERDO DE ENCARGO DE TRATAMIENTO DE DATOS PERSONALES (ART. 15 BIS LEY N° 19.628 / LEY N° 21.719)</strong></p>' +
+                '<p>Entre <strong>' + esc(emp.razonSocial || 'Responsable') + '</strong> (RUT ' + esc(emp.rut || '-') + '), en adelante el <strong>Responsable</strong>, y <strong>' + esc(prov.nombre) + '</strong> (' + esc(prov.servicio || 'Proveedor de servicios') + '), en adelante el <strong>Proveedor o Encargado</strong>, se dejan por escrito las obligaciones exigidas por el artículo 15 bis:</p>' +
+                '<table><tr><th>Objeto y finalidad</th><td>' + esc(prov.servicio || 'Prestación de servicios contratados') + '</td></tr>' +
+                '<tr><th>Duración</th><td>' + esc(prov.duracion || 'Durante la vigencia del contrato principal de servicios') + '</td></tr>' +
+                '<tr><th>Tipos de datos y titulares</th><td>' + esc(prov.datosTratados || 'Datos identificatorios, laborales, previsionales o de contacto de trabajadores, clientes y proveedores') + '</td></tr>' +
+                (prov.pais ? '<tr><th>País de alojamiento</th><td>' + esc(prov.pais) + '</td></tr>' : '') + '</table>' +
                 '<ol>' +
-                '<li><strong>Uso exclusivo según contrato:</strong> El Proveedor tratará los datos («' + esc(prov.datosTratados || 'datos laborales, previsionales o de clientes') + '») solo para prestar el servicio contratado y según instrucciones del Responsable, sin comercializarlos ni usarlos para fines propios.</li>' +
-                '<li><strong>Reserva y confidencialidad:</strong> Su personal autorizado mantendrá reserva estricta sobre la información personal a la que acceda.</li>' +
-                '<li><strong>Resguardo y seguridad:</strong> Aplicará medidas técnicas y de control proporcionales para proteger los datos contra extravío, alteración o acceso no autorizado.</li>' +
-                '<li><strong>Subcontratación:</strong> No podrá delegar el tratamiento en otro tercero sin autorización escrita del Responsable.</li>' +
-                '<li><strong>Colaboración ante solicitudes e incidentes:</strong> Avisará de inmediato al Responsable si detecta un incidente de seguridad y apoyará la respuesta de solicitudes de personas dentro del plazo legal de 30 días corridos.</li>' +
-                '<li><strong>Devolución o eliminación:</strong> Terminado el servicio, devolverá o borrará de forma segura los datos, salvo deber legal de conservación.</li>' +
+                '<li><strong>Uso exclusivo y derechos/obligaciones:</strong> El Proveedor tratará los datos únicamente para prestar el servicio contratado según instrucciones documentadas del Responsable, sin comercializarlos ni utilizarlos para fines propios.</li>' +
+                '<li><strong>Reserva y confidencialidad:</strong> Su personal autorizado mantendrá reserva estricta y vinculante sobre la información personal a la que acceda.</li>' +
+                '<li><strong>Resguardo y seguridad (Art. 14 quinquies):</strong> Aplicará medidas técnicas y organizativas proporcionales al riesgo contra extravío, alteración o acceso no autorizado.</li>' +
+                '<li><strong>Subdelegación prohibida sin autorización:</strong> No podrá delegar el tratamiento en subencargados sin autorización previa y por escrito del Responsable.</li>' +
+                clIntl +
+                '<li><strong>Colaboración ante solicitudes e incidentes (Art. 14 sexies):</strong> Avisará sin dilaciones indebidas (y operativamente en un máximo de 24 horas) al Responsable ante cualquier vulneración de seguridad, y apoyará la respuesta de derechos ARCOPS y bloqueo dentro de los 30 días corridos legales.</li>' +
+                '<li><strong>Devolución o supresión al término:</strong> Terminado el servicio, devolverá o suprimirá de forma segura e irrecuperable los datos y copias, salvo obligación legal de conservación.</li>' +
                 '</ol>' +
                 '<p style="margin-top:28px">______________________________ &nbsp;&nbsp;&nbsp;&nbsp; ______________________________<br>' + esc(emp.razonSocial || 'Responsable') + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + esc(prov.nombre) + '</p>';
             descargarWord('Acuerdo proveedor ' + prov.nombre, cuerpo, 'Acuerdo-proveedor-' + prov.nombre);
         }
 
         function modeloRespuestaArcopWord(sol) {
-            var der = DERECHOS[sol.derecho] || sol.derecho;
+            var der = ETIQUETAS_DERECHO[sol.derecho] || sol.derecho;
             var vence = sumarDiasIso(sol.fechaRecepcion, sol.prorroga ? 60 : 30);
-            var cuerpo = '<p><strong>COMPROBANTE DE RESPUESTA A SOLICITUD DE DATOS PERSONALES (LEY N° 21.719)</strong></p>' +
+            var cuerpo = '<p><strong>COMPROBANTE DE RESPUESTA A SOLICITUD DE DATOS PERSONALES (ARTS. 4 A 11 LEY N° 19.628)</strong></p>' +
                 '<table><tr><th>Titular solicitante</th><td>' + esc(sol.nombre) + ' (' + esc(sol.rut || 'RUT sin indicar') + ')</td></tr>' +
                 '<tr><th>Relación con la empresa</th><td>' + esc(CALIDADES[sol.calidad] || sol.calidad) + '</td></tr>' +
-                '<tr><th>Qué solicita</th><td>' + esc(der) + '</td></tr>' +
+                '<tr><th>Derecho ejercido</th><td>' + esc(der) + '</td></tr>' +
                 '<tr><th>Fecha de recepción</th><td>' + esc(sol.fechaRecepcion) + '</td></tr>' +
-                '<tr><th>Plazo legal máximo</th><td>' + esc(vence) + (sol.prorroga ? ' (incluye prórroga legal única de 30 días)' : ' (30 días corridos)') + '</td></tr></table>' +
-                '<h2>Detalle de la respuesta entregada</h2>' +
-                '<p>' + (sol.notas ? esc(sol.notas) : '[Indica aquí el resultado concreto de la solicitud: información entregada, dato actualizado, baja aplicada o motivo legal de conservación].') + '</p>' +
-                '<p>Si consideras que esta respuesta no satisface tu solicitud, puedes acudir ante la Agencia de Protección de Datos Personales conforme a la Ley N° 21.719.</p>';
+                '<tr><th>Plazo legal máximo</th><td>' + esc(vence) + (sol.prorroga ? ' (incluye prórroga legal única de 30 días corridos)' : ' (30 días corridos)') + '</td></tr></table>' +
+                '<h2>Detalle de la respuesta fundada entregada</h2>' +
+                '<p>' + (sol.notas ? esc(sol.notas) : '[Indica aquí el resultado concreto: copia entregada, rectificación, supresión, bloqueo temporal aplicado, oposición o motivo legal fundado de conservación/denegación].') + '</p>' +
+                '<p>Este trámite es gratuito (salvo acceso o portabilidad reiterados más de una vez por trimestre, art. 10). Si consideras que la solicitud fue denegada injustificadamente o no respondida en plazo, puedes reclamar ante la <strong>Agencia de Protección de Datos Personales dentro de 30 días hábiles</strong> conforme al artículo 11 de la Ley N° 19.628 (modificada por Ley N° 21.719).</p>';
             descargarWord('Respuesta solicitud datos ' + sol.nombre, cuerpo, 'Respuesta-solicitud-' + sol.nombre);
         }
 
-        function modeloRatWord(rat) {
-            var filas = rat.length ? rat.map(function (r) {
-                return '<tr><td>' + esc(r.actividad) + '</td><td>' + esc(r.datosTratados || '-') + '</td><td>' + esc(r.baseLegal || '-') + '</td><td>' + esc(r.plazoConservacion || '-') + '</td></tr>';
-            }).join('') : '<tr><td colspan="4">Sin actividades registradas aún.</td></tr>';
-            descargarWord('Inventario de datos personales (RAT)', '<table><thead><tr><th>Actividad o proceso</th><th>Qué datos se guardan</th><th>Motivo legal</th><th>Tiempo que se conservan</th></tr></thead><tbody>' + filas + '</tbody></table>', 'Inventario-datos-RAT');
+        function modeloConsentimientoBioWord() {
+            var est = ctx.getEstado(), emp = (est && est.empresa) || {}, d = dActual();
+            var cuerpo = '<p><strong>CONSENTIMIENTO EXPRESO DE CONTROL BIOMÉTRICO Y OPCIÓN NO BIOMÉTRICA (ART. 16 TER LEY 19.628 Y RES. EX. N° 38/2024 DT)</strong></p>' +
+                '<p>En __________, a ' + esc(ctx.hoyIso()) + ', entre <strong>' + esc(emp.razonSocial || 'Empleador') + '</strong> (RUT ' + esc(emp.rut || '-') + ') y el/la trabajador(a) ______________________________, RUT _______________:</p>' +
+                '<ol>' +
+                '<li><strong>Sistema utilizado y almacenamiento (Art. 16 ter):</strong> El sistema de control de asistencia captura patrones biométricos (huella dactilar o rostro) convertidos en algoritmos matemáticos cifrados, sin almacenar imágenes reconstruibles.</li>' +
+                '<li><strong>Finalidad y período de uso:</strong> Los datos se usarán exclusivamente para registrar la jornada laboral y calcular remuneraciones mientras dure la relación de trabajo, suprimiéndose al término de esta salvo deber legal de respaldo de asistencia.</li>' +
+                '<li><strong>Alternativa obligatoria no biométrica (Res. Ex. 38/2024 DT):</strong> La empresa garantiza siempre un método no biométrico (clave/PIN, tarjeta o aplicación web) sin represalias ni perjuicios si el trabajador prefiere no usar biometría.</li>' +
+                '<li><strong>Derechos y retiro del consentimiento:</strong> Puedes retirar este consentimiento en cualquier momento y ejercer acceso, rectificación, supresión, oposición y bloqueo escribiendo a <strong>' + esc(d.correoPrivacidad || '[correo de privacidad]') + '</strong>.</li>' +
+                '</ol>' +
+                '<p><strong>Elección del trabajador (marca una opción):</strong><br>' +
+                '[ ] AUTORIZO expresamente el registro biométrico de mi asistencia.<br>' +
+                '[ ] PREFIERO utilizar el método alternativo no biométrico (PIN, tarjeta o clave).</p>' +
+                '<p style="margin-top:26px">______________________________ &nbsp;&nbsp;&nbsp;&nbsp; ______________________________<br>' + esc(emp.razonSocial || 'Empleador') + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Firma del Trabajador</p>';
+            descargarWord('Consentimiento biometrico y alternativa Res 38 DT', cuerpo, 'Consentimiento-biometrico-Res38');
+        }
+
+        function modeloEipdWord(claves) {
+            var est = ctx.getEstado(), emp = (est && est.empresa) || {}, d = dActual();
+            var filas = claves.map(function (k) {
+                var c = CASOS_EIPD[k];
+                return '<tr><td><strong>' + esc(c.titulo) + '</strong></td><td>' + esc(c.riesgo) + '</td><td>' + esc(c.mitigacion) + '</td></tr>';
+            }).join('');
+            var cuerpo = '<p><strong>EVALUACIÓN DE IMPACTO EN PROTECCIÓN DE DATOS PERSONALES (EIPD, ART. 15 TER LEY 19.628 / LEY 21.719)</strong></p>' +
+                '<p>Conforme al artículo 15 ter de la Ley N° 19.628, el responsable evalúa previamente los riesgos y medidas de mitigación para operaciones de mayor sensibilidad (art. 34 quáter letra k sanciona omitirla cuando corresponde):</p>' +
+                '<table><tr><th>Responsable interno (Art. 50)</th><td>' + esc(d.responsableDatos || 'Dueño / Administración') + ' (' + esc(d.correoPrivacidad || 'Sin correo configurado') + ')</td></tr>' +
+                '<tr><th>Necesidad y proporcionalidad</th><td>Los tratamientos evaluados responden a control de jornada, seguridad patrimonial u operación logística, limitando acceso, duración y alcance al mínimo indispensable (privacidad desde el diseño, art. 14 quáter).</td></tr></table>' +
+                '<table><thead><tr><th>Operación evaluada</th><th>Riesgo identificado</th><th>Medidas concretas de mitigación</th></tr></thead><tbody>' + filas + '</tbody></table>' +
+                '<p style="margin-top:24px">Aprobado por: ______________________________ (' + esc(emp.razonSocial || 'Responsable') + ' · ' + esc(ctx.hoyIso()) + ')</p>';
+            descargarWord('Evaluacion de Impacto EIPD Art 15 ter', cuerpo, 'Evaluacion-Impacto-EIPD');
         }
 
         function construirPoliticaWeb() {
@@ -326,39 +406,46 @@
             var nombre = emp.razonSocial || 'Nuestra empresa';
             var rut = emp.rut ? ' (RUT ' + emp.rut + ')' : '';
             var correo = d.correoPrivacidad || '[configura tu correo de privacidad en el Paso 1]';
-            var resp = d.responsableDatos ? ' Responsable interno: ' + d.responsableDatos + '.' : '';
+            var resp = d.responsableDatos ? ' Encargado interno (Art. 50): ' + d.responsableDatos + '.' : '';
             var act = d.rat.length ? d.rat : [
-                { actividad: 'Atención de consultas y clientes', baseLegal: 'Relación comercial y consentimiento', datosTratados: 'Nombre, correo y teléfono de contacto', plazoConservacion: 'Tiempo necesario para atender la relación' }
+                { actividad: 'Atención de consultas y clientes', baseLegal: 'Relación comercial y consentimiento revocable', datosTratados: 'Nombre, correo y teléfono de contacto', plazoConservacion: '2 años desde el último contacto o retiro del permiso' }
             ];
+            var encIntl = d.encargados.filter(function (p) { return p.transferenciaInternacional || (p.pais && !/^chile$/i.test(String(p.pais).trim())); });
+            var txtIntl = encIntl.length
+                ? 'Se realizan transferencias internacionales hacia: ' + encIntl.map(function (p) { return p.nombre + ' (' + (p.pais || 'extranjero') + ')'; }).join(', ') + ', respaldadas por país adecuado o cláusulas contractuales conforme a los arts. 27 y 28.'
+                : 'Si contratamos servicios en la nube fuera de Chile, la transferencia internacional cumple país adecuado o cláusulas contractuales con garantías equivalentes (Arts. 27 y 28).';
 
             var textoLista = act.map(function (r, idx) {
-                return (idx + 1) + '. ' + r.actividad + ': ' + (r.datosTratados || 'datos de identificación y contacto') + '. Motivo: ' + (r.baseLegal || 'cumplimiento legal o contractual') + '. Conservación: ' + (r.plazoConservacion || 'según ley vigente') + '.';
+                return (idx + 1) + '. ' + r.actividad + ': ' + (r.datosTratados || 'datos de identificación y contacto') + '. Base de licitud: ' + (r.baseLegal || 'cumplimiento legal o contractual') + '. Conservación: ' + (r.plazoConservacion || '2 años laboral art. 510 CT / hasta 6 años tributario') + '.';
             }).join('\n');
 
-            var texto = 'POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS PERSONALES\n' +
+            var texto = 'POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS PERSONALES (ART. 14 TER LEY N° 19.628 / LEY N° 21.719)\n' +
                 nombre + rut + '\n' +
                 'Actualizada el ' + ctx.hoyIso() + '\n\n' +
-                '1. Quién es responsable de tus datos\n' +
-                nombre + rut + ' resguarda los datos personales que nos entregas conforme a la Ley N° 21.719.' + resp + '\n\n' +
-                '2. Para qué usamos los datos y cuánto tiempo los guardamos\n' +
+                '1. Responsable y contacto\n' +
+                nombre + rut + ' resguarda los datos personales entregados directamente por clientes, trabajadores y proveedores conforme a la Ley N° 21.719.' + resp + ' Contacto: ' + correo + '.\n\n' +
+                '2. Datos, titulares, bases de licitud y conservación\n' +
                 textoLista + '\n\n' +
-                '3. Proveedores de apoyo\n' +
-                'Solo compartimos datos con proveedores necesarios para operar (contabilidad, software de gestión o correo) bajo acuerdo de confidencialidad y nunca vendemos tu información.\n\n' +
-                '4. Tus derechos sobre tus datos\n' +
-                'Puedes pedir acceso para ver tus datos, corregir errores, solicitar que se eliminen cuando no exista obligación legal de conservarlos u oponerte a mensajes comerciales.\n' +
-                'Escríbenos a: ' + correo + '. Responderemos en un plazo máximo de 30 días corridos.';
+                '3. Destinatarios, encargados y transferencias internacionales (Arts. 15 bis, 27 y 28)\n' +
+                'No vendemos datos personales. Solo comunicamos antecedentes por obligación legal (SII, DT, previsional) o a proveedores encargados bajo contrato escrito. ' + txtIntl + '\n\n' +
+                '4. Seguridad, retiro del consentimiento y decisiones automatizadas\n' +
+                'Aplicamos control de accesos, resguardo cifrado y medidas proporcionales al riesgo (Art. 14 quinquies). Puedes retirar tu consentimiento cuando esta sea la base de licitud. No aplicamos decisiones exclusivamente automatizadas con efectos jurídicos significativos sin opción de revisión humana (Art. 8 bis).\n\n' +
+                '5. Derechos ARCOPS, bloqueo y reclamo ante la Agencia (Arts. 4 a 11)\n' +
+                'Puedes solicitar acceso, rectificación, supresión, oposición, portabilidad (en tratamientos automatizados basados en consentimiento, Art. 9) y bloqueo temporal (Art. 8 ter) escribiendo gratis a ' + correo + '. Responderemos en máximo 30 días corridos (prorrogables una vez por otros 30). Si denegamos o no respondemos a tiempo, puedes reclamar ante la Agencia de Protección de Datos Personales dentro de 30 días hábiles.';
 
             var htmlLista = act.map(function (r) {
-                return '    <li><strong>' + esc(r.actividad) + ':</strong> ' + esc(r.datosTratados || 'datos de contacto') + '. Motivo: ' + esc(r.baseLegal || 'ley o contrato') + '. Conservación: ' + esc(r.plazoConservacion || 'plazo legal') + '.</li>';
+                return '    <li><strong>' + esc(r.actividad) + ':</strong> ' + esc(r.datosTratados || 'datos de contacto') + '. Base de licitud: ' + esc(r.baseLegal || 'ley o contrato') + '. Conservación: ' + esc(r.plazoConservacion || 'plazo legal aplicable') + '.</li>';
             }).join('\n');
 
             var html = '<article class="politica-privacidad">\n' +
-                '  <h2>Política de privacidad</h2>\n' +
-                '  <p><strong>' + esc(nombre) + '</strong>' + esc(rut) + ' resguarda los datos personales conforme a la Ley N° 21.719.' + (d.responsableDatos ? ' Encargado de atención: ' + esc(d.responsableDatos) + '.' : '') + '</p>\n' +
-                '  <h3>Qué datos guardamos y para qué</h3>\n' +
+                '  <h2>Política de privacidad (Art. 14 ter Ley 19.628)</h2>\n' +
+                '  <p><strong>' + esc(nombre) + '</strong>' + esc(rut) + ' resguarda los datos personales entregados directamente por clientes, trabajadores y proveedores conforme a la Ley N° 21.719.' + (d.responsableDatos ? ' Encargado interno (Art. 50): ' + esc(d.responsableDatos) + '.' : '') + '</p>\n' +
+                '  <h3>Datos tratados, bases de licitud y conservación</h3>\n' +
                 '  <ul>\n' + htmlLista + '\n  </ul>\n' +
-                '  <h3>Cómo ejercer tus derechos</h3>\n' +
-                '  <p>Para ver, corregir o pedir la eliminación de tus datos, escribe a <a href="mailto:' + esc(correo) + '">' + esc(correo) + '</a>. Responderemos dentro de 30 días corridos.</p>\n' +
+                '  <h3>Destinatarios, seguridad y transferencias internacionales</h3>\n' +
+                '  <p>Aplicamos medidas de seguridad proporcionales al riesgo (Art. 14 quinquies). Solo compartimos datos por deber legal o con encargados bajo contrato escrito (Art. 15 bis). ' + esc(txtIntl) + ' No aplicamos decisiones automatizadas sin revisión humana (Art. 8 bis).</p>\n' +
+                '  <h3>Derechos ARCOPS, bloqueo y reclamo ante la Agencia</h3>\n' +
+                '  <p>Para ejercer acceso, rectificación, supresión, oposición, portabilidad (Art. 9), bloqueo (Art. 8 ter) o retirar tu consentimiento, escribe a <a href="mailto:' + esc(correo) + '">' + esc(correo) + '</a>. Responderemos dentro de 30 días corridos (prorrogables una vez por 30); ante negativa o falta de respuesta puedes reclamar ante la Agencia dentro de 30 días hábiles.</p>\n' +
                 '</article>';
 
             return { texto: texto, html: html };
@@ -471,8 +558,15 @@
                 ? '<div class="lq-aviso lq-aviso-aviso" style="margin:12px 16px 0"><span class="material-icons" aria-hidden="true">info</span><div><strong>Te conviene configurar tu correo en el Paso 1 primero</strong><p>Así el anexo laboral se prellenará solo con el correo de contacto de tu empresa.</p></div><button type="button" class="btn btn-chico" id="dp-trab-ir-paso1">Ir al Paso 1</button></div>'
                 : '';
 
+            var avisoBio = '<div class="lq-aviso dp-aviso-bio" style="margin-top:16px">' +
+                '<span class="material-icons" aria-hidden="true">fingerprint</span>' +
+                '<div><strong>¿Usas reloj biométrico (huella o rostro)?</strong>' +
+                '<p>La Ley 21.719 (Art. 16 ter) y la Resolución Exenta N° 38/2024 de la Dirección del Trabajo exigen consentimiento expreso separado y ofrecer siempre una alternativa no biométrica (clave, PIN o tarjeta).</p></div>' +
+                '<button type="button" class="btn btn-chico" id="dp-btn-consentimiento-bio"><span class="material-icons" aria-hidden="true">download</span>Consentimiento biométrico (.doc)</button>' +
+                '</div>';
+
             if (!activos.length) {
-                return '<div class="panel"><div class="panel-head"><h2>Anexo laboral de protección de datos</h2></div><div class="panel-cuerpo"><p class="vacio">No hay trabajadores activos registrados en esta empresa. Agrega trabajadores en la sección Personas para generar sus anexos con un clic.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores" data-ruta="trabajadores">Ir a Personas</a></div></div></div>';
+                return '<div class="panel"><div class="panel-head"><h2>Anexo laboral de protección de datos</h2></div><div class="panel-cuerpo"><p class="vacio">No hay trabajadores activos registrados en esta empresa. Agrega trabajadores en la sección Personas para generar sus anexos con un clic.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores" data-ruta="trabajadores">Ir a Personas</a></div></div></div>' + avisoBio;
             }
 
             var filas = activos.map(function (t) {
@@ -496,39 +590,54 @@
             return '<div class="panel"><div class="panel-head"><div><h2>Anexo laboral de protección de datos</h2><p class="texto-ayuda">Genera el documento con los datos que ya guardaste en la ficha del trabajador. Una vez firmado, anota la fecha aquí para mantener tu registro al día.</p></div></div>' +
                 avisoCorreo +
                 '<div class="tabla-wrap tabla-financiera-escritorio"><table class="tabla"><caption class="sr-only">Anexo de protección de datos por trabajador</caption><thead><tr><th scope="col">Trabajador y RUT</th><th scope="col" class="ocultar-movil">Cargo</th><th scope="col">Estado</th><th scope="col">Fecha de firma</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + filas.map(function (f) { return f.html; }).join('') + '</tbody></table></div>' +
-                '<div class="panel-cuerpo fin-cards-lista">' + filas.map(function (f) { return f.card; }).join('') + '</div></div>';
+                '<div class="panel-cuerpo fin-cards-lista">' + filas.map(function (f) { return f.card; }).join('') + '</div></div>' +
+                avisoBio;
         }
 
         function pintarProveedores(d) {
+            var existentes = d.encargados.map(function (p) { return String(p.nombre || '').toLowerCase(); });
+            var radarChips = RADAR_NUBE.map(function (r) {
+                var ya = existentes.indexOf(r.nombre.toLowerCase()) >= 0;
+                return '<button type="button" class="btn dp-radar-chip' + (ya ? ' activo' : '') + '" data-radar="' + esc(r.key) + '"' + (ya ? ' disabled' : '') + '>' +
+                    esc(ya ? r.chip.replace(/^\+\s*/, '✓ ') : r.chip) + '</button>';
+            }).join('');
+
             var rows = d.encargados.map(function (p) {
-                var sello = p.dpaFirmado ? '<span class="sello sello-emitida">Acuerdo firmado</span>' : '<span class="sello sello-preparada">Pendiente firma</span>';
+                var esIntl = p.transferenciaInternacional || (p.pais && !/^chile$/i.test(String(p.pais).trim()));
+                var sello = (p.dpaFirmado ? '<span class="sello sello-emitida">Acuerdo firmado</span>' : '<span class="sello sello-preparada">Pendiente firma</span>') +
+                    (esIntl ? ' <span class="sello sello-guardada">Transf. ' + esc(p.pais || 'extranjero') + '</span>' : '');
                 var acc = '<button type="button" class="btn btn-chico" data-dp-dpa-word="' + esc(p.id) + '">Descargar acuerdo (.doc)</button>' +
                     (!p.dpaFirmado ? ' <button type="button" class="btn-texto" data-dp-dpa-ok="' + esc(p.id) + '">Marcar firmado</button>' : '') +
                     ' <button type="button" class="btn-texto lq-danger" data-dp-dpa-del="' + esc(p.id) + '">Quitar</button>';
+                var sub = [p.servicio, p.duracion].filter(Boolean).join(' · ');
                 return {
-                    html: '<tr><td><strong>' + esc(p.nombre) + '</strong><br><span style="font-size:12px;color:var(--muted)">' + esc(p.servicio || '') + '</span></td>' +
+                    html: '<tr><td><strong>' + esc(p.nombre) + '</strong><br><span style="font-size:12px;color:var(--muted)">' + esc(sub) + '</span></td>' +
                         '<td class="ocultar-movil">' + esc(p.datosTratados || '-') + '</td>' +
                         '<td>' + sello + '</td>' +
                         '<td class="mono">' + fecha(p.fechaFirma) + '</td>' +
                         '<td class="celda-acciones"><div class="acciones-pila">' + acc + '</div></td></tr>',
-                    card: '<div class="fin-card-item"><div class="fin-card-top"><strong>' + esc(p.nombre) + '</strong>' + sello + '</div>' +
-                        '<p class="texto-ayuda" style="margin:4px 0">' + esc(p.servicio || '') + (p.datosTratados ? ' · ' + esc(p.datosTratados) : '') + '</p>' +
+                    card: '<div class="fin-card-item"><div class="fin-card-top"><strong>' + esc(p.nombre) + '</strong><div>' + sello + '</div></div>' +
+                        '<p class="texto-ayuda" style="margin:4px 0">' + esc(sub) + (p.datosTratados ? ' · ' + esc(p.datosTratados) : '') + '</p>' +
                         '<div class="acciones-pila" style="margin-top:8px">' + acc + '</div></div>'
                 };
             });
 
-            return '<div class="panel"><div class="panel-head"><div><h2>Proveedores externos con acceso a datos</h2><p class="texto-ayuda">Todo externo que procese datos por cuenta de tu empresa (estudio contable, software de nómina, correo o nube) requiere un acuerdo formal de confidencialidad y resguardo (DPA, Art. 15 bis).</p></div><div class="v-acciones"><button type="button" class="btn btn-chico" id="dp-btn-sugerir-dpa">Sugerir habituales</button><button type="button" class="btn btn-chico btn-primario" id="dp-btn-abrir-dpa">Agregar proveedor</button></div></div>' +
+            return '<div class="panel"><div class="panel-head"><div><h2>Proveedores externos y transferencias nube / IA</h2><p class="texto-ayuda">Todo externo que procese datos por cuenta de tu empresa requiere un acuerdo formal (DPA, Art. 15 bis). Si el servicio aloja datos fuera de Chile, decláralo para respaldar la transferencia internacional (Arts. 27 y 28).</p></div><div class="v-acciones"><button type="button" class="btn btn-chico" id="dp-btn-sugerir-dpa">Sugerir habituales</button><button type="button" class="btn btn-chico btn-primario" id="dp-btn-abrir-dpa">Agregar proveedor</button></div></div>' +
+                '<div class="dp-radar-box"><div class="dp-radar-head"><span class="material-icons" aria-hidden="true">public</span><strong>Radar Nube e IA (1 clic)</strong><span class="texto-ayuda">Agrega herramientas extranjeras que ya usas y actualiza tu política web automáticamente</span></div><div class="dp-radar-chips">' + radarChips + '</div></div>' +
                 '<form class="panel-cuerpo" id="dp-form-dpa" hidden style="border-bottom:1px solid var(--line);background:var(--surface-2)">' +
                 '<div class="lq-grid">' +
                 '<div class="lq-field"><label for="dp-dpa-nom">Nombre o razón social</label><input id="dp-dpa-nom" type="text" maxlength="80" required placeholder="Ej. Estudio Contable o Software"></div>' +
                 '<div class="lq-field"><label for="dp-dpa-serv">Servicio prestado</label><input id="dp-dpa-serv" type="text" maxlength="80" placeholder="Contabilidad, remuneraciones, correo"></div>' +
                 '<div class="lq-field lq-span2"><label for="dp-dpa-datos">Qué datos ve este proveedor</label><input id="dp-dpa-datos" type="text" maxlength="120" placeholder="Liquidaciones, RUT, licencias médicas, clientes"></div>' +
+                '<div class="lq-field"><label for="dp-dpa-pais">País donde procesa o aloja datos</label><input id="dp-dpa-pais" type="text" maxlength="50" value="Chile" placeholder="Ej. Chile o EE. UU."></div>' +
+                '<div class="lq-field"><label for="dp-dpa-dur">Duración del encargo <span class="lq-opt">(opcional)</span></label><input id="dp-dpa-dur" type="text" maxlength="80" placeholder="Ej. Vigencia del contrato de servicio"></div>' +
                 '<div class="lq-field"><label for="dp-dpa-fecha">Fecha firma del acuerdo <span class="lq-opt">(opcional)</span></label><input id="dp-dpa-fecha" type="date"></div>' +
+                '<div class="lq-field pm-check"><label><input id="dp-dpa-intl" type="checkbox"> Implica transferencia internacional (fuera de Chile)</label></div>' +
                 '<div class="lq-field pm-check"><label><input id="dp-dpa-firmado" type="checkbox"> Acuerdo de confidencialidad firmado</label></div>' +
                 '</div><div class="form-acciones"><button type="button" class="btn-texto" id="dp-dpa-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Guardar proveedor</button></div></form>' +
                 (rows.length
                     ? '<div class="tabla-wrap tabla-financiera-escritorio"><table class="tabla"><caption class="sr-only">Proveedores externos con acceso a datos</caption><thead><tr><th scope="col">Proveedor y servicio</th><th scope="col" class="ocultar-movil">Qué datos ve</th><th scope="col">Estado</th><th scope="col">Firma</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + rows.map(function (r) { return r.html; }).join('') + '</tbody></table></div><div class="panel-cuerpo fin-cards-lista">' + rows.map(function (r) { return r.card; }).join('') + '</div>'
-                    : '<div class="panel-cuerpo"><p class="vacio">Aún no agregas proveedores externos. Presiona «Sugerir habituales» para vincular a tu contador y al software de sueldos de inmediato.</p></div>') +
+                    : '<div class="panel-cuerpo"><p class="vacio">Aún no agregas proveedores externos. Presiona «Sugerir habituales» o usa el Radar Nube arriba para vincular tus herramientas de inmediato.</p></div>') +
                 '</div>';
         }
 
@@ -554,7 +663,7 @@
             });
 
             return '<div class="panel" style="margin-bottom:16px">' +
-                '<div class="panel-head"><div><h2>Qué datos guardas en tu empresa</h2><p class="texto-ayuda">La ley (RAT, Art. 14 ter) pide tener claridad de qué datos almacenas, para qué los usas y cuándo debes eliminarlos. Marca las preguntas que correspondan a tu negocio para armar tu lista automáticamente.</p></div></div>' +
+                '<div class="panel-head"><div><h2>Qué datos guardas en tu empresa</h2><p class="texto-ayuda">Ten claridad de qué datos almacenas, por qué motivo legal los usas y cuándo debes eliminarlos. Este inventario alimenta tu política pública (Art. 14 ter). Marca las preguntas que correspondan a tu negocio para armar tu lista automáticamente.</p></div></div>' +
                 '<div class="panel-cuerpo">' +
                 '<form id="dp-form-cuestionario-datos" class="dp-preguntas-lista">' +
                 preguntasHtml +
@@ -577,7 +686,18 @@
                 (rows.length
                     ? '<div class="tabla-wrap tabla-financiera-escritorio"><table class="tabla"><caption class="sr-only">Lista de actividades con datos personales</caption><thead><tr><th scope="col">Actividad o proceso</th><th scope="col" class="ocultar-movil">Qué datos se guardan</th><th scope="col">Motivo legal</th><th scope="col">Tiempo que se conservan</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + rows.map(function (r) { return r.html; }).join('') + '</tbody></table></div><div class="panel-cuerpo fin-cards-lista">' + rows.map(function (r) { return r.card; }).join('') + '</div>'
                     : '<div class="panel-cuerpo"><p class="vacio">Aún no respondes las preguntas de tu negocio. Marca las casillas arriba para generar tu lista de datos en segundos.</p></div>') +
-                '</div>';
+                '</div>' +
+                '<div class="panel dp-panel-eipd" style="margin-top:16px">' +
+                '<div class="panel-head"><div><h2>Evaluación de Impacto Express (EIPD, Art. 15 ter)</h2><p class="texto-ayuda">Si utilizas vigilancia hacia la vía pública, biometría o rastreo GPS, la Ley 21.719 exige evaluar riesgos previamente. Marca los casos que apliquen para descargar tu informe de respaldo.</p></div></div>' +
+                '<div class="panel-cuerpo">' +
+                '<div class="dp-eipd-grid">' +
+                ['cctv', 'bio', 'gps'].map(function (k) {
+                    var c = CASOS_EIPD[k];
+                    return '<label class="dp-eipd-card"><input type="checkbox" id="' + esc(c.id) + '" name="dp-eipd" value="' + esc(k) + '"><div><strong>' + esc(c.titulo) + '</strong><p>' + esc(c.resumen) + '</p></div></label>';
+                }).join('') +
+                '</div>' +
+                '<div class="form-acciones" style="margin-top:12px"><button type="button" class="btn btn-primario" id="dp-btn-descargar-eipd"><span class="material-icons" aria-hidden="true">download</span>Descargar Evaluación de Impacto (.doc)</button></div>' +
+                '</div></div>';
         }
 
         function pintarSolicitudesYBrechas(d, hoy) {
@@ -602,7 +722,7 @@
                 } else {
                     estadoSello = '<span class="sello sello-emitida">' + plural(restan, 'día restante', 'días restantes') + '</span>';
                 }
-                var der = DERECHOS[s.derecho] || s.derecho;
+                var der = ETIQUETAS_DERECHO[s.derecho] || s.derecho;
                 var acc = '<button type="button" class="btn btn-chico" data-dp-arcop-word="' + esc(s.id) + '">Descargar respuesta (.doc)</button>' +
                     (s.estado === 'pendiente' && !s.prorroga ? ' <button type="button" class="btn-texto" data-dp-arcop-prorroga="' + esc(s.id) + '">Prórroga +30d</button>' : '') +
                     (s.estado === 'pendiente' ? ' <button type="button" class="btn-texto" data-dp-arcop-ok="' + esc(s.id) + '">Marcar respondida</button>' : '') +
@@ -625,14 +745,15 @@
                 var acc = (b.estado === 'abierta'
                     ? '<button type="button" class="btn btn-chico" data-dp-br-notif="' + esc(b.id) + '">Notificada a la Agencia</button> <button type="button" class="btn-texto" data-dp-br-cerrar="' + esc(b.id) + '">Cerrar sin riesgo</button> '
                     : '') + '<button type="button" class="btn-texto lq-danger" data-dp-br-del="' + esc(b.id) + '">Quitar</button>';
+                var detalleBrecha = [b.datosComprometidos, b.naturaleza, b.afectados ? (b.afectados + ' personas') : ''].filter(Boolean).join(' · ');
                 return {
-                    html: '<tr><td class="mono">' + esc(b.fechaHora) + '</td><td><strong>' + esc(ORIGENES[b.origen] || b.origen) + '</strong><br><span style="font-size:12px;color:var(--muted)">' + esc(b.datosComprometidos || '') + '</span></td><td>' + sello + '</td><td class="celda-acciones"><div class="acciones-pila">' + acc + '</div></td></tr>',
-                    card: '<div class="fin-card-item"><div class="fin-card-top"><strong>' + esc(ORIGENES[b.origen] || b.origen) + '</strong>' + sello + '</div><p class="texto-ayuda" style="margin:4px 0"><span class="mono">' + esc(b.fechaHora) + '</span> · ' + esc(b.datosComprometidos || '') + '</p><div class="acciones-pila" style="margin-top:8px">' + acc + '</div></div>'
+                    html: '<tr><td class="mono">' + esc(b.fechaHora) + '</td><td><strong>' + esc(ORIGENES[b.origen] || b.origen) + '</strong><br><span style="font-size:12px;color:var(--muted)">' + esc(detalleBrecha) + '</span></td><td>' + sello + '</td><td class="celda-acciones"><div class="acciones-pila">' + acc + '</div></td></tr>',
+                    card: '<div class="fin-card-item"><div class="fin-card-top"><strong>' + esc(ORIGENES[b.origen] || b.origen) + '</strong>' + sello + '</div><p class="texto-ayuda" style="margin:4px 0"><span class="mono">' + esc(b.fechaHora) + '</span>' + (detalleBrecha ? ' · ' + esc(detalleBrecha) : '') + '</p><div class="acciones-pila" style="margin-top:8px">' + acc + '</div></div>'
                 };
             });
 
             return '<div class="panel" id="dp-bloque-arcop" style="margin-bottom:16px">' +
-                '<div class="panel-head"><div><h2>Solicitudes de personas (Derechos ARCOP)</h2><p class="texto-ayuda">Cualquier cliente o trabajador puede pedir ver qué datos tienes suyos, corregir un error o pedir que los borres si ya no hay motivo legal para conservarlos. La Ley 21.719 da un plazo de 30 días corridos para responder.</p></div><button type="button" class="btn btn-chico btn-primario" id="dp-btn-abrir-arcop"><span class="material-icons" aria-hidden="true">add</span>Registrar solicitud recibida</button></div>' +
+                '<div class="panel-head"><div><h2>Solicitudes de personas (Derechos ARCOPS + Bloqueo)</h2><p class="texto-ayuda">Cualquier cliente o trabajador puede pedir ver, corregir, suprimir, oponerse, portar o bloquear temporalmente sus datos (arts. 5 al 9). La Ley 21.719 da 30 días corridos para responder (prorrogables 30 días más) y 30 días hábiles para reclamar ante la Agencia.</p></div><button type="button" class="btn btn-chico btn-primario" id="dp-btn-abrir-arcop"><span class="material-icons" aria-hidden="true">add</span>Registrar solicitud recibida</button></div>' +
                 '<form class="panel-cuerpo" id="dp-form-arcop" hidden style="border-bottom:1px solid var(--line);background:var(--surface-2)">' +
                 '<div class="lq-grid">' +
                 '<div class="lq-field"><label for="dp-arc-nom">Nombre completo de quien solicita</label><input id="dp-arc-nom" type="text" maxlength="80" required></div>' +
@@ -649,12 +770,16 @@
                 '</div>' +
 
                 '<div class="panel" id="dp-bloque-brechas">' +
-                '<div class="panel-head"><div><h2>Registro de incidentes y filtraciones (Bitácora 72h)</h2><p class="texto-ayuda">Si ocurre un incidente de seguridad (robo de un computador con datos, hackeo o envío por error de una planilla de sueldos), regístralo aquí. Si pone en riesgo a las personas, la ley exige avisar a la Agencia dentro de 72 horas.</p></div><button type="button" class="btn btn-chico" id="dp-btn-abrir-brecha"><span class="material-icons" aria-hidden="true">warning_amber</span>Registrar incidente</button></div>' +
+                '<div class="panel-head"><div><h2>Registro de incidentes y filtraciones (Art. 14 sexies)</h2><p class="texto-ayuda">Si ocurre un incidente de seguridad (robo de equipo, hackeo o envío por error de liquidaciones), regístralo aquí con los detalles del art. 14 sexies. La ley exige avisar a la Agencia sin dilaciones indebidas cuando haya riesgo razonable (usa 72 horas como meta operativa interna).</p></div><button type="button" class="btn btn-chico" id="dp-btn-abrir-brecha"><span class="material-icons" aria-hidden="true">warning_amber</span>Registrar incidente</button></div>' +
                 '<form class="panel-cuerpo" id="dp-form-brecha" hidden style="border-bottom:1px solid var(--line);background:var(--surface-2)">' +
                 '<div class="lq-grid">' +
                 '<div class="lq-field"><label for="dp-br-fecha">Fecha y hora del hallazgo</label><input id="dp-br-fecha" type="text" maxlength="25" value="' + esc(hoy + ' 10:00') + '" required></div>' +
                 '<div class="lq-field"><label for="dp-br-orig">Qué ocurrió</label><select id="dp-br-orig">' + Object.keys(ORIGENES).map(function (k) { return '<option value="' + k + '">' + esc(ORIGENES[k]) + '</option>'; }).join('') + '</select></div>' +
+                '<div class="lq-field"><label for="dp-br-nat">Naturaleza del incidente (Art. 14 sexies)</label><select id="dp-br-nat">' + NATURALEZAS_BRECHA.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('') + '</select></div>' +
+                '<div class="lq-field"><label for="dp-br-efectos">Posibles efectos para las personas</label><select id="dp-br-efectos">' + EFECTOS_BRECHA.map(function (ef) { return '<option value="' + esc(ef) + '">' + esc(ef) + '</option>'; }).join('') + '</select></div>' +
                 '<div class="lq-field lq-span2"><label for="dp-br-datos">Qué datos se vieron comprometidos</label><input id="dp-br-datos" type="text" maxlength="160" placeholder="Ej. Nombres y liquidaciones de 2 personas" required></div>' +
+                '<div class="lq-field"><label for="dp-br-num">N° aproximado de afectados <span class="lq-opt">(opcional)</span></label><input id="dp-br-num" type="number" min="0" max="999999" placeholder="Ej. 5"></div>' +
+                '<div class="lq-field pm-check"><label><input id="dp-br-notif-titular" type="checkbox"> Corresponde notificar también a las personas afectadas</label></div>' +
                 '<div class="lq-field lq-span2"><label for="dp-br-med">Medidas inmediatas adoptadas</label><input id="dp-br-med" type="text" maxlength="300" placeholder="Ej. Cambio de contraseñas, bloqueo de equipo y aviso a afectados"></div>' +
                 '</div><div class="form-acciones"><button type="button" class="btn-texto" id="dp-br-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Registrar en bitácora</button></div></form>' +
                 (filasBrechas.length
@@ -692,7 +817,7 @@
 
             $('dp-kpi-arcop').textContent = String(res.arcopAbiertas);
             $('dp-kpi-arcop-sub').textContent = res.brechasAbiertas
-                ? plural(res.brechasAbiertas, 'incidente abierto (72h)', 'incidentes abiertos (72h)')
+                ? plural(res.brechasAbiertas, 'incidente abierto (sin dilaciones)', 'incidentes abiertos (sin dilaciones)')
                 : (res.arcopUrgentes ? plural(res.arcopUrgentes, 'vence pronto (≤7 días)', 'vencen pronto (≤7 días)') : (res.arcopAbiertas ? 'En plazo legal de 30 días' : 'Plazo legal de 30 días'));
             $('dp-kpi-arcop').parentElement.classList.toggle('vence-pronto', res.arcopUrgentes > 0 && !res.brechasAbiertas);
             $('dp-kpi-arcop').parentElement.classList.toggle('dp-riesgo', res.brechasAbiertas > 0);
@@ -788,6 +913,43 @@
                     return;
                 }
 
+                var btnRadar = t.closest('[data-radar]');
+                if (btnRadar) {
+                    var rk = btnRadar.getAttribute('data-radar');
+                    var rd = RADAR_NUBE.find(function (x) { return x.key === rk; });
+                    if (rd) {
+                        var drd = dActual();
+                        var yaR = drd.encargados.some(function (p) { return (p.nombre || '').toLowerCase() === rd.nombre.toLowerCase(); });
+                        if (yaR) {
+                            if ($('dp-estado-msg')) { $('dp-estado-msg').className = 'lq-estado'; $('dp-estado-msg').textContent = rd.nombre + ' ya está registrado.'; }
+                            return;
+                        }
+                        drd.encargados.push({
+                            nombre: rd.nombre,
+                            servicio: rd.servicio,
+                            datosTratados: rd.datosTratados,
+                            pais: rd.pais,
+                            duracion: 'Vigencia del servicio en la nube',
+                            transferenciaInternacional: true,
+                            dpaFirmado: true,
+                            fechaFirma: ctx.hoyIso(),
+                            notas: rd.notas
+                        });
+                        guardarDatos(drd, rd.nombre + ' agregado al mapa internacional y reflejado en tu política.');
+                    }
+                    return;
+                }
+
+                if (t.closest('#dp-btn-consentimiento-bio')) { modeloConsentimientoBioWord(); return; }
+                if (t.closest('#dp-btn-descargar-eipd')) {
+                    var clavesEipd = Array.prototype.map.call(vista.querySelectorAll('input[name="dp-eipd"]:checked'), function (inp) { return inp.value; });
+                    if (!clavesEipd.length) {
+                        if ($('dp-estado-msg')) { $('dp-estado-msg').className = 'lq-estado error'; $('dp-estado-msg').textContent = 'Marca al menos un caso de riesgo (cámaras, reloj biométrico o GPS) para generar la EIPD.'; }
+                        return;
+                    }
+                    modeloEipdWord(clavesEipd);
+                    return;
+                }
                 if (t.closest('#dp-btn-rat-word')) { modeloRatWord(dActual().rat); return; }
 
                 var bAnexo = t.closest('[data-dp-anexo]');
@@ -895,10 +1057,14 @@
                 } else if (f.id === 'dp-form-dpa') {
                     var dd = dActual();
                     var fechaF = $('dp-dpa-fecha').value;
+                    var paisDpa = ($('dp-dpa-pais').value || 'Chile').trim();
                     dd.encargados.push({
                         nombre: $('dp-dpa-nom').value.trim(),
                         servicio: $('dp-dpa-serv').value.trim(),
                         datosTratados: $('dp-dpa-datos').value.trim(),
+                        pais: paisDpa,
+                        duracion: $('dp-dpa-dur').value.trim(),
+                        transferenciaInternacional: $('dp-dpa-intl').checked || !/^chile$/i.test(paisDpa),
                         dpaFirmado: $('dp-dpa-firmado').checked || !!fechaF,
                         fechaFirma: fechaF,
                         notas: ''
@@ -940,12 +1106,16 @@
                     db.brechas.push({
                         fechaHora: $('dp-br-fecha').value.trim(),
                         origen: $('dp-br-orig').value,
+                        naturaleza: $('dp-br-nat').value,
+                        efectos: $('dp-br-efectos').value,
                         datosComprometidos: $('dp-br-datos').value.trim(),
+                        afectados: ($('dp-br-num').value || '').trim(),
+                        notificarTitulares: $('dp-br-notif-titular').checked,
                         medidas: $('dp-br-med').value.trim(),
                         estado: 'abierta',
                         fechaNotificacion: ''
                     });
-                    guardarDatos(db, 'Incidente registrado en bitácora (ventana 72h).');
+                    guardarDatos(db, 'Incidente registrado (reportar sin dilaciones indebidas, Art. 14 sexies).');
                 } else if (f.id === 'dp-form-rat') {
                     var dr = dActual();
                     dr.checklist.ratRevisado = true;
