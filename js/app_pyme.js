@@ -2137,7 +2137,7 @@ function dibujarEquipo() {
         if (!t || !estado || !estado.empresa) return null;
         var meses = {};
         PD.periodosPromedio(hoyIso()).forEach(function (p) { var m = mesesCache[p] && mesesCache[p][t.id]; if (m) meses[p] = m; });
-        return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F, vac: vacDe(t.id), saldoPrestamos: function (p) { return L.saldoPrestamos(t, p); } };
+        return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F, vac: vacDe(t.id), correoPrivacidad: (estado.datosLey21719 && estado.datosLey21719.correoPrivacidad) || '', saldoPrestamos: function (p) { return L.saldoPrestamos(t, p); } };
     }
 
     // /app/documentos?t=<trabajador>&d=<tipo>: deja elegidos a la persona y el documento

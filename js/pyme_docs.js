@@ -324,7 +324,7 @@
             case 'carta_159_4': Object.assign(v, { fechaTermino: t.fechaTerminoPlazo || '', entrega: 'personal', finiquito: 'presencial', cotizaciones: false }); break;
             case 'carta_161': Object.assign(v, { fechaTermino: '', hechos: '', aviso: 'sustitutiva', remuneracion: baseIndemnizacionPropuesta(ctx), entrega: 'personal', finiquito: 'presencial', sinLicencia: false, sinFuero: false, cotizaciones: false }); break;
             case 'amonestacion': Object.assign(v, { fechaHechos: '', obligacion: '', hechos: '', reglamento: 'si' }); break;
-            case 'anexo_datos': Object.assign(v, { correoPrivacidad: '', biometria: false, herramientas: false, encargados: false }); break;
+            case 'anexo_datos': Object.assign(v, { correoPrivacidad: ctx.correoPrivacidad || (ctx.datosLey21719 && ctx.datosLey21719.correoPrivacidad) || '', biometria: false, herramientas: false, encargados: false }); break;
             case 'finiquito': Object.assign(v, { causal: t.contrato === 'plazo_fijo' ? '159_4' : '159_2', fechaTermino: t.contrato === 'plazo_fijo' ? (t.fechaTerminoPlazo || '') : '', remFeriado: baseFeriadoPropuesta(ctx), diasFeriado: '', remuneracion: baseIndemnizacionPropuesta(ctx), aviso: 'sustitutiva', remPendiente: '', descuentoAfc: '', otrosDescuentos: '', formaPago: 'transferencia', cotizaciones: false }); break;
         }
         return v;

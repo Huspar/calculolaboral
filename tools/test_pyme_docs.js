@@ -230,6 +230,7 @@ caso('anexo de datos: cláusulas fijas y opcionales, numeradas en orden', () => 
     ['CLÁUSULA OCTAVA', 'CLÁUSULA SÉPTIMA', 'alternativo', 'Herramientas corporativas', 'Encargados de tratamiento', 'privacidad@laespiga.cl', 'artículo 154 ter', '1 de diciembre de 2026', 'Ley N° 21.719'].forEach(t => assert.ok(todo.includes(t), t));
     assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: 'no-es-correo' })).errores.correoPrivacidad);
     assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: '' })).errores.correoPrivacidad);
+    assert.strictEqual(D.valoresIniciales('anexo_datos', ctx(TRAB(), { correoPrivacidad: 'datos@laespiga.cl' })).correoPrivacidad, 'datos@laespiga.cl');
 });
 caso('ningún documento deja corchetes de relleno ni la palabra undefined/null/NaN', () => {
     const pf = TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-01-10', fechaTerminoPlazo: '2026-10-31' });

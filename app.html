@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.25.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.26.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -837,33 +837,83 @@ gtag('js', new Date());
 <section class="vista" data-vista="datos-personales" aria-labelledby="dp-titulo" hidden>
 <div class="v-head">
 <div>
-<h1 class="v-titulo" id="dp-titulo">Protección de Datos Personales</h1>
-<p class="v-sub">Cumplimiento operacional Ley 21.719: anexos laborales, encargados DPA, solicitudes ARCOP (30 días) y bitácora de incidentes (72h).</p>
+<h1 class="v-titulo" id="dp-titulo">Protección de datos (Ley 21.719)</h1>
+<p class="v-sub">Paso a paso para poner tu empresa al día: trabajadores, proveedores externos, qué datos guardas y canal de atención para personas.</p>
 </div>
 <div class="v-acciones">
-<button type="button" class="btn btn-primario" id="dp-btn-nueva-solicitud"><span class="material-icons" aria-hidden="true">add</span>Nueva solicitud ARCOP</button>
-<button type="button" class="btn" id="dp-btn-registrar-brecha"><span class="material-icons" aria-hidden="true">warning_amber</span>Registrar incidente (72h)</button>
+<button type="button" class="btn btn-chico" id="dp-btn-politica-modal"><span class="material-icons" aria-hidden="true">description</span>Política web</button>
+<button type="button" class="btn btn-chico" id="dp-btn-canal-modal"><span class="material-icons" aria-hidden="true">link</span>Canal de solicitudes</button>
 </div>
 </div>
-<div class="panel" id="dp-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero guarda los datos de tu empresa</p><p class="texto-ayuda">Los anexos, contratos DPA y respuestas ARCOP usan la razón social y el RUT de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/empresa" data-ruta="empresa">Ir a Empresa</a></div></div></div>
+<div class="panel" id="dp-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero guarda los datos de tu empresa</p><p class="texto-ayuda">Los anexos laborales, acuerdos con proveedores y políticas usan la razón social y el RUT de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/empresa" data-ruta="empresa">Ir a Empresa</a></div></div></div>
 <div id="dp-contenido">
 <dl class="cifras cifras-4" id="dp-cifras">
-<div><dt>Anexos laborales Ley 21.719</dt><dd class="mono" id="dp-kpi-anexos">0 / 0</dd><span class="texto-ayuda" id="dp-kpi-anexos-sub">Cruce con trabajadores activos</span></div>
-<div><dt>Encargados con DPA (Art. 15 bis)</dt><dd class="mono" id="dp-kpi-dpa">0 / 0</dd><span class="texto-ayuda">Contador, software y nube</span></div>
-<div><dt>Bandeja ARCOP (plazo 30 días)</dt><dd class="mono" id="dp-kpi-arcop">0</dd><span class="texto-ayuda" id="dp-kpi-arcop-sub">Sin solicitudes pendientes</span></div>
-<div><dt>Incidentes de seguridad (72h)</dt><dd class="mono" id="dp-kpi-brechas">0</dd><span class="texto-ayuda">Art. 14 sexies Ley 21.719</span></div>
+<div><dt>Paso a paso</dt><dd class="mono" id="dp-kpi-avance">0 / 4</dd><span class="texto-ayuda" id="dp-kpi-avance-sub">Por iniciar</span></div>
+<div><dt>Trabajadores con anexo</dt><dd class="mono" id="dp-kpi-anexos">0 / 0</dd><span class="texto-ayuda" id="dp-kpi-anexos-sub">Cruce con personal activo</span></div>
+<div><dt>Proveedores con acuerdo</dt><dd class="mono" id="dp-kpi-dpa">0 / 0</dd><span class="texto-ayuda" id="dp-kpi-dpa-sub">Contador, software y nube</span></div>
+<div><dt>Solicitudes pendientes</dt><dd class="mono" id="dp-kpi-arcop">0</dd><span class="texto-ayuda" id="dp-kpi-arcop-sub">Plazo legal de 30 días</span></div>
 </dl>
-<div class="fin-filtros" role="tablist" aria-label="Secciones de protección de datos">
-<button type="button" class="fin-chip activo" data-dp-tab="resumen" role="tab" aria-selected="true">Resumen y checklist</button>
-<button type="button" class="fin-chip" data-dp-tab="trabajadores" role="tab" aria-selected="false">Anexos trabajadores</button>
-<button type="button" class="fin-chip" data-dp-tab="encargados" role="tab" aria-selected="false">Proveedores y DPA</button>
-<button type="button" class="fin-chip" data-dp-tab="arcop" role="tab" aria-selected="false">Bandeja ARCOP (30 días)</button>
-<button type="button" class="fin-chip" data-dp-tab="brechas" role="tab" aria-selected="false">Bitácora y RAT</button>
+<div class="fin-filtros" role="tablist" aria-label="Secciones de datos personales">
+<button type="button" class="fin-chip activo" data-dp-tab="inicio" role="tab" aria-selected="true">Inicio y checklist</button>
+<button type="button" class="fin-chip" data-dp-tab="trabajadores" role="tab" aria-selected="false">Trabajadores</button>
+<button type="button" class="fin-chip" data-dp-tab="proveedores" role="tab" aria-selected="false">Proveedores</button>
+<button type="button" class="fin-chip" data-dp-tab="inventario" role="tab" aria-selected="false">Qué datos guardas</button>
+<button type="button" class="fin-chip" data-dp-tab="solicitudes" role="tab" aria-selected="false">Solicitudes y brechas</button>
 </div>
 <p id="dp-estado-msg" class="lq-estado" role="status"></p>
 <div id="dp-panel-activo"></div>
 </div>
 </section>
+
+<dialog class="app-dialogo app-dialogo-ancho" id="dp-dialogo-politica" aria-labelledby="dp-pol-titulo">
+<div class="midt-cabeza"><h2 id="dp-pol-titulo">Política de privacidad para tu sitio web</h2><button type="button" class="app-icono-btn" id="dp-pol-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<div class="midt-cuerpo">
+<p class="texto-ayuda" style="margin-bottom:12px">Generada con los datos de tu empresa, el correo del Paso 1 y las respuestas de «Qué datos guardas». Revísala antes de publicarla en tu sitio web.</p>
+<div id="dp-pol-aviso" class="lq-aviso lq-aviso-aviso" hidden style="margin-bottom:12px"><span class="material-icons" aria-hidden="true">warning</span><div><strong>Falta tu correo de privacidad</strong><p>Configúralo en el Paso 1 para que tus clientes tengan un canal real donde escribirte.</p></div><button type="button" class="btn btn-chico" id="dp-pol-ir-paso1">Ir al Paso 1</button></div>
+<div class="fin-filtros" role="tablist" aria-label="Formato de política web">
+<button type="button" class="fin-chip activo" data-dp-pol-fmt="texto" role="tab" aria-selected="true">Texto plano</button>
+<button type="button" class="fin-chip" data-dp-pol-fmt="html" role="tab" aria-selected="false">Código HTML</button>
+</div>
+<div class="lq-field">
+<label for="dp-pol-preview">Contenido listo para copiar</label>
+<textarea id="dp-pol-preview" class="dp-codigo-box" rows="12" readonly></textarea>
+</div>
+<p id="dp-pol-estado" class="lq-estado" role="status"></p>
+</div>
+<div class="form-acciones">
+<button type="button" class="btn" id="dp-pol-cerrar-btn">Cerrar</button>
+<button type="button" class="btn" id="dp-btn-copiar-politica-html"><span class="material-icons" aria-hidden="true">code</span>Copiar HTML</button>
+<button type="button" class="btn btn-primario" id="dp-btn-copiar-politica-txt"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar texto</button>
+</div>
+</dialog>
+
+<dialog class="app-dialogo app-dialogo-ancho" id="dp-dialogo-canal" aria-labelledby="dp-can-titulo">
+<div class="midt-cabeza"><h2 id="dp-can-titulo">Canal de atención para solicitudes de personas</h2><button type="button" class="app-icono-btn" id="dp-can-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<div class="midt-cuerpo">
+<p class="texto-ayuda" style="margin-bottom:12px">Comparte este acceso en el pie de página de tu web, en cotizaciones o por WhatsApp para que tus clientes y trabajadores envíen solicitudes de acceso, corrección o eliminación de forma ordenada. Cuando llegue un correo, anótalo en «Solicitudes y brechas» para activar el plazo legal de 30 días.</p>
+<div id="dp-can-aviso" class="lq-aviso lq-aviso-aviso" hidden style="margin-bottom:12px"><span class="material-icons" aria-hidden="true">warning</span><div><strong>Primero define tu correo de privacidad</strong><p>Necesitamos un correo de contacto en el Paso 1 para armar el enlace directo de atención.</p></div><button type="button" class="btn btn-chico" id="dp-can-ir-paso1">Configurar correo</button></div>
+<div id="dp-can-cuerpo">
+<div class="lq-field" style="margin-bottom:12px">
+<label for="dp-can-mailto">Enlace directo de correo prellenado (para web o firma de correo)</label>
+<input id="dp-can-mailto" type="text" class="mono" readonly>
+</div>
+<div class="lq-field" style="margin-bottom:12px">
+<label for="dp-can-html">Botón en HTML listo para pegar en tu web</label>
+<textarea id="dp-can-html" class="dp-codigo-box" rows="3" readonly></textarea>
+</div>
+<div class="lq-field">
+<label for="dp-can-wa">Texto rápido para responder por WhatsApp o correo</label>
+<textarea id="dp-can-wa" rows="4" readonly></textarea>
+</div>
+</div>
+<p id="dp-can-estado" class="lq-estado" role="status"></p>
+</div>
+<div class="form-acciones">
+<button type="button" class="btn" id="dp-can-registrar"><span class="material-icons" aria-hidden="true">add</span>Registrar solicitud recibida</button>
+<button type="button" class="btn" id="dp-btn-copiar-canal-wa"><span class="material-icons" aria-hidden="true">chat</span>Copiar texto WhatsApp</button>
+<button type="button" class="btn btn-primario" id="dp-btn-copiar-enlace-canal"><span class="material-icons" aria-hidden="true">link</span>Copiar enlace de atención</button>
+</div>
+</dialog>
 
 <!-- Empresa -->
 <section class="vista" data-vista="empresa" aria-labelledby="emp-titulo" hidden>
@@ -1489,12 +1539,12 @@ gtag('js', new Date());
 <script src="/js/pyme_estudio.js?v=1.0.1"></script>
 <script src="/js/pyme_anual.js?v=1.0.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
-<script src="/js/pyme_docs.js?v=1.6.0"></script>
+<script src="/js/pyme_docs.js?v=1.7.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
 <script src="/js/pyme_finanzas.js?v=1.1.0"></script>
-<script src="/js/pyme_datos_ley.js?v=1.0.0"></script>
+<script src="/js/pyme_datos_ley.js?v=1.1.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.36.0" defer></script>
+<script src="/js/app_pyme.js?v=1.37.0" defer></script>
 </body>
 </html>

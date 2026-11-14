@@ -1076,25 +1076,59 @@ a.cal-ev:hover { filter: brightness(0.97); }
 .dp-amber-texto { color: var(--amber-ink); font-weight: 500; }
 .dp-progreso-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-size: 13px; color: var(--ink-2); }
 .dp-progreso-head strong { font-size: 14px; color: var(--forest); }
-.dp-progreso { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-bottom: 16px; }
+.dp-progreso { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 16px; }
 .dp-seg { height: 6px; border-radius: 99px; background: var(--line); }
 .dp-seg.hecho { background: var(--forest-600); }
-.dp-checklist { display: grid; gap: 10px; }
-.dp-check-item {
+.dp-pasos-guia { display: grid; gap: 10px; margin-top: 10px; }
+.dp-paso-item {
     display: flex; align-items: center; gap: 14px;
     padding: 12px 14px; border: 1px solid var(--line);
     border-radius: var(--radius-sm); background: var(--surface);
     transition: background-color .15s var(--ease);
 }
-.dp-check-item:hover { background: var(--surface-2); }
-.dp-check-icon { font-size: 20px; flex-shrink: 0; }
-.dp-check-icon.ok { color: var(--forest-700); }
-.dp-check-icon.aviso { color: var(--amber-icon); }
-.dp-check-icon.neutro { color: var(--muted); }
-.dp-check-info { flex: 1; min-width: 0; }
-.dp-check-info strong { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
-.dp-check-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); line-height: 1.35; }
-.dp-check-accion { flex-shrink: 0; }
+.dp-paso-item:hover { background: var(--surface-2); }
+.dp-paso-num {
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface-2); color: var(--forest-700);
+    font-family: var(--mono); font-size: 13px; font-weight: 700; flex-shrink: 0;
+    border: 1px solid var(--line-2);
+}
+.dp-paso-item.completado .dp-paso-num {
+    background: var(--forest-50); color: var(--forest-700);
+    border-color: var(--forest-100);
+}
+.dp-paso-info { flex: 1; min-width: 0; }
+.dp-paso-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.dp-paso-info strong { font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.dp-paso-info p { margin: 3px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.dp-paso-accion { flex-shrink: 0; }
+.dp-tools-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.dp-tool-card {
+    display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+    padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface);
+}
+.dp-tool-card strong { font-size: 14px; font-weight: 600; color: var(--ink); }
+.dp-tool-card p { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.dp-preguntas-lista { display: grid; gap: 10px; margin-bottom: 16px; }
+.dp-pregunta-card {
+    display: flex; align-items: flex-start; gap: 12px; min-height: 44px;
+    padding: 12px 14px; border: 1px solid var(--line);
+    border-radius: var(--radius-sm); background: var(--surface);
+    cursor: pointer; transition: border-color .15s var(--ease), background-color .15s var(--ease);
+}
+.dp-pregunta-card:hover { background: var(--surface-2); }
+.dp-pregunta-card:has(input:checked) { border-color: var(--forest-600); background: #FAFDFB; }
+.dp-pregunta-card:has(input:focus-visible) { outline: 2px solid var(--forest); outline-offset: 2px; }
+.dp-pregunta-card input[type="checkbox"] {
+    margin-top: 2px; width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--forest);
+}
+.dp-pregunta-cuerpo { flex: 1; min-width: 0; }
+.dp-pregunta-cuerpo strong { display: block; font-size: 13.5px; color: var(--ink); line-height: 1.3; }
+.dp-pregunta-cuerpo p { margin: 3px 0 4px; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.dp-pregunta-meta { display: block; font-size: 12px; color: var(--forest-700); font-weight: 500; }
+.dp-codigo-box { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; background: var(--surface-2); }
 .arcop-dias-badge {
     font-family: var(--mono); font-size: 12px; font-weight: 700;
     display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px;
@@ -1108,11 +1142,24 @@ a.cal-ev:hover { filter: brightness(0.97); }
     .cifras-4 > div:nth-child(n+3) { border-top: 1px solid var(--line); }
 }
 @media (max-width: 768px) {
-    .dp-check-item { flex-direction: column; align-items: flex-start; gap: 8px; }
-    .dp-check-accion { width: 100%; }
-    .dp-check-accion .btn { width: 100%; justify-content: center; }
+    [data-vista="datos-personales"] .v-acciones,
+    [data-vista="datos-personales"] .panel-head .v-acciones,
+    [data-vista="datos-personales"] .acciones-pila { flex-wrap: wrap; gap: 8px; }
+    [data-vista="datos-personales"] .btn,
+    [data-vista="datos-personales"] .btn-texto,
+    [data-vista="datos-personales"] .fin-filtros button,
+    #dp-dialogo-politica .btn,
+    #dp-dialogo-politica .btn-texto,
+    #dp-dialogo-canal .btn,
+    #dp-dialogo-canal .btn-texto { min-height: 44px; display: inline-flex; align-items: center; }
+    .dp-paso-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .dp-paso-accion, .dp-paso-accion .btn { width: 100%; justify-content: center; }
+    .dp-tools-grid { grid-template-columns: minmax(0, 1fr); }
+    .dp-tool-card .btn { width: 100%; justify-content: center; }
     .fin-filtros { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
     .fin-filtros::-webkit-scrollbar { display: none; }
+    .app-dialogo-ancho .form-acciones { flex-wrap: wrap; }
+    .app-dialogo-ancho .form-acciones .btn { flex: 1 1 auto; justify-content: center; }
 }
 @media (max-width: 560px) {
     .cifras-4 { grid-template-columns: minmax(0, 1fr); }
