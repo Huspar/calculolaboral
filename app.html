@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.28.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.29.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -106,26 +106,24 @@ gtag('js', new Date());
 </div>
 <nav class="app-nav" aria-label="Secciones">
 <a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span>Cierre del mes</a>
-<p class="app-nav-grupo">Personas</p>
+<p class="app-nav-grupo">Operar el mes</p>
+<a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span>Liquidaciones<span class="app-nav-cuenta" id="nav-liq-n"></span></a>
+<a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span>Calendario y plazos</a>
+<p class="app-nav-grupo">Equipo y documentos</p>
 <a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span>Trabajadores</a>
 <a href="/app/vacaciones" data-ruta="vacaciones" data-nav="vacaciones"><span class="material-icons" aria-hidden="true">beach_access</span>Vacaciones</a>
-<p class="app-nav-grupo">Mes</p>
-<a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span>Liquidaciones<span class="app-nav-cuenta" id="nav-liq-n"></span></a>
-<a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos</a>
-<a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span>Calendario</a>
-<p class="app-nav-grupo" data-mas>Finanzas</p>
+<a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
+<a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos laborales</a>
+<a href="/app/datos-personales" data-ruta="datos-personales" data-nav="datos-personales"><span class="material-icons" aria-hidden="true">shield</span>Datos personales (Ley 21.719)<span class="app-nav-chip" id="nav-chip-datos-personales" hidden></span></a>
+<p class="app-nav-grupo" data-mas>Negocio y contador</p>
 <a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja" data-mas><span class="material-icons" aria-hidden="true">account_balance_wallet</span>Flujo de caja</a>
 <a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas" data-mas><span class="material-icons" aria-hidden="true">call_received</span>Cobranzas<span class="app-nav-cuenta" id="nav-cobranzas-pendientes"></span></a>
 <a href="/app/pagos" data-ruta="pagos" data-nav="pagos" data-mas><span class="material-icons" aria-hidden="true">call_made</span>Cuentas por pagar<span class="app-nav-cuenta" id="nav-pagos-pendientes"></span></a>
 <a href="/app/conciliacion" data-ruta="conciliacion" data-nav="conciliacion" data-mas><span class="material-icons" aria-hidden="true">sync_alt</span>Conciliación bancaria<span class="app-nav-cuenta" id="nav-mov-sin-conciliar"></span></a>
-<p class="app-nav-grupo" data-mas>Contabilidad y Cierre</p>
 <a href="/app/mi-contador" data-ruta="mi-contador" data-nav="mi-contador" data-mas><span class="material-icons" aria-hidden="true">handshake</span>Mi Contador<span class="app-nav-chip" id="nav-chip-cierre"></span></a>
-<p class="app-nav-grupo" data-mas>Herramientas</p>
-<a href="/app/contratos" data-ruta="contratos" data-nav="contratos" data-mas><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
-<a href="/app/datos-personales" data-ruta="datos-personales" data-nav="datos-personales" data-mas><span class="material-icons" aria-hidden="true">shield</span>Datos personales<span class="app-nav-chip" id="nav-chip-datos-personales" hidden></span></a>
 <p class="app-nav-grupo">Configuración</p>
 <a href="/app/empresa" data-ruta="empresa" data-nav="empresa"><span class="material-icons" aria-hidden="true">apartment</span>Empresa</a>
-<a href="/app/equipo" data-ruta="equipo" data-nav="equipo" id="app-nav-equipo" data-mas><span class="material-icons" aria-hidden="true">badge</span>Equipo</a>
+<a href="/app/equipo" data-ruta="equipo" data-nav="equipo" id="app-nav-equipo" data-mas><span class="material-icons" aria-hidden="true">badge</span>Equipo del estudio</a>
 <a href="/app/portal" data-ruta="portal" data-nav="portal" id="app-nav-portal" hidden><span class="material-icons" aria-hidden="true">storefront</span>Portal cliente</a>
 <a href="/app/cuenta" data-ruta="cuenta" data-nav="cuenta"><span class="material-icons" aria-hidden="true">person</span>Mi cuenta</a>
 </nav>
@@ -204,7 +202,12 @@ gtag('js', new Date());
 
 <div class="cierre" id="ini-cierre">
 <div class="cierre-izq">
-<div class="panel" id="ini-tabla-panel">
+<div class="panel ini-panel-avisos" id="ini-avisos">
+<div class="panel-head"><h2>Tareas y avisos del mes</h2><span class="texto-ayuda" id="ini-avisos-contador"></span></div>
+<ul class="avisos-mes" id="pm-pend"></ul>
+</div>
+<div class="panel ini-panel-tabla" id="ini-tabla-panel">
+<div class="panel-head"><h2>Liquidaciones del personal</h2></div>
 <div class="tabla-wrap">
 <table class="tabla" id="ini-tabla">
 <caption class="sr-only" id="ini-caption">Trabajadores y estado de su liquidación del mes</caption>
@@ -212,10 +215,6 @@ gtag('js', new Date());
 <tbody id="ini-filas"></tbody>
 </table>
 </div>
-</div>
-<div class="panel" id="ini-avisos">
-<div class="panel-head"><h2>Avisos del mes</h2></div>
-<ul class="avisos-mes" id="pm-pend"></ul>
 </div>
 </div>
 <aside class="detalle panel" id="ini-detalle" aria-label="Detalle del trabajador elegido"><div class="detalle-cuerpo" id="ini-detalle-cuerpo"></div></aside>
@@ -1570,6 +1569,6 @@ gtag('js', new Date());
 <script src="/js/pyme_finanzas.js?v=1.2.0"></script>
 <script src="/js/pyme_datos_ley.js?v=1.3.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.39.0" defer></script>
+<script src="/js/app_pyme.js?v=1.40.0" defer></script>
 </body>
 </html>

@@ -217,6 +217,8 @@ h1, h2, h3, p { margin: 0; }
 .panel + .panel { margin-top: 16px; }
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
 .panel-head h2 { font-size: 15px; font-weight: 650; }
+.panel-head .texto-ayuda { margin: 0; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.ini-panel-avisos .panel-head h2 { color: var(--forest); }
 
 /* ---------- Tabla del libro ---------- */
 .tabla-wrap { overflow-x: auto; }
@@ -281,7 +283,7 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .cierre { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
 .cierre.sin-detalle { grid-template-columns: minmax(0, 1fr); }
 .cierre-izq { min-width: 0; }
-.cierre-izq > .panel + .panel { margin-top: 16px; }
+.cierre-izq > .panel + .panel { margin-top: 20px; }
 .cal-layout > .panel + .panel, .dos-col > .panel + .panel { margin-top: 0; }
 .detalle { position: sticky; top: 76px; }
 .detalle-cuerpo { padding: 18px 20px; transition: opacity .18s var(--ease-out), translate .18s var(--ease-out); }
@@ -306,9 +308,10 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .avisos-mes strong { display: block; font-weight: 600; font-size: 14px; }
 .avisos-mes p { margin-top: 2px; font-size: 13px; color: var(--muted); }
 .avisos-mes .n-urgente .material-icons { color: var(--risk); }
-.avisos-mes li.n-urgente { background: var(--risk-bg); }
+.avisos-mes li.n-urgente { background: var(--risk-bg); border-left: 3px solid var(--risk); }
 .avisos-mes li.n-urgente strong { color: var(--risk-ink); }
 .avisos-mes .n-aviso .material-icons { color: var(--amber-icon); }
+.avisos-mes li.n-aviso { background: rgba(255, 183, 3, 0.04); border-left: 3px solid var(--amber); }
 .avisos-mes .n-info .material-icons { color: var(--forest-600); }
 .avisos-mes .btn-texto { white-space: nowrap; }
 
@@ -717,9 +720,9 @@ a.cal-ev:hover { filter: brightness(0.97); }
 @media screen and (max-width: 1080px) {
     .cierre { grid-template-columns: minmax(0, 1fr); }
     .cierre-izq { display: contents; }
-    #ini-tabla-panel { order: 1; }
-    .cierre .detalle { order: 2; }
-    #ini-avisos { order: 3; }
+    #ini-avisos { order: 1; }
+    #ini-tabla-panel { order: 2; }
+    .cierre .detalle { order: 3; }
     .cal-layout { grid-template-columns: minmax(0, 1fr); }
     .detalle { position: static; }
     .dos-col, .gen-guia { grid-template-columns: minmax(0, 1fr); }

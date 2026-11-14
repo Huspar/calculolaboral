@@ -1888,6 +1888,13 @@ function dibujarEquipo() {
     function dibujarPendientes() {
         if (!estado) return;
         var lista = calcularPendientes();
+        var contAv = $('ini-avisos-contador');
+        if (contAv) {
+            var urg = lista.filter(function (x) { return x.nivel === 'urgente'; }).length;
+            contAv.textContent = lista.length
+                ? (urg ? urg + (urg === 1 ? ' urgente · ' : ' urgentes · ') : '') + lista.length + (lista.length === 1 ? ' pendiente' : ' pendientes')
+                : 'Todo al día';
+        }
         $('pm-pend').innerHTML = lista.length ? lista.map(function (p, i) {
             var accion = '';
             if (p.accion) {
