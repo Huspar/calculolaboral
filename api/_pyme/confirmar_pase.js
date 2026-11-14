@@ -18,4 +18,30 @@ async function procesarPagoPase(pay, { pase, deliverPase, notifyOwner }) {
     return { estado: 'ignorado', motivo: r.motivo };
 }
 
-module.exports = { procesarPagoPase };
+/**
+ * Que hace flow-confirm cuando Flow avisa la compra del Kit Ley 21.719 (producto: 'datos').
+ * Asigna 60 dias de pase pyme12 (anclado al fin del piloto si sigue activo) antes de enviar el kit
+ * para incluir la vigencia y el enlace de acceso en el mismo correo de entrega.
+ * Si falla el registro en BD, avisa al dueno pero no bloquea el envio del kit pagado.
+ */
+async function procesarKitConPase(pay, { pase, notifyOwner }) {
+    try {
+        const svc = typeof pase === 'function' ? pase() : pase;
+        if (!svc || typeof svc.otorgarPorKit !== 'function') return null;
+        const r = await svc.otorgarPorKit(pay);
+        if (r && r.ok) {
+            return { paseVence: r.vence, paseEmail: r.email, paseRepetido: r.repetido };
+        }
+        if (notifyOwner) {
+            await notifyOwner(pay, 'Venta Kit Ley 21.719 sin pase automático (' + ((r && r.motivo) || 'sin detalle') + ').');
+        }
+    } catch (err) {
+        console.error('flow-confirm: error otorgando pase por kit', pay && pay.commerceOrder, err);
+        if (notifyOwner) {
+            try { await notifyOwner(pay, 'Venta Kit Ley 21.719 confirmada, pero falló asignar pase automático: ' + err.message); } catch (_) {}
+        }
+    }
+    return null;
+}
+
+module.exports = { procesarPagoPase, procesarKitConPase };

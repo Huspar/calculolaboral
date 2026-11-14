@@ -504,14 +504,17 @@ function crearAlmacenSql(sql) {
 
         /**
          * Registra un pase pagado. La orden de Flow es unica: si Flow avisa dos veces el mismo pago no se duplica (devuelve null).
-         * Empieza cuando termina el ultimo pase de la cuenta, o ahora si no tiene ninguno vigente. Todo en una sentencia.
+         * Empieza cuando termina el ultimo pase de la cuenta, o ahora si no tiene ninguno vigente.
+         * Si se indica venceDesdeIso (p. ej. fin del piloto), la vigencia de los dias corre desde greatest(desde, venceDesdeIso),
+         * manteniendo activo el pase desde base.desde hasta el termino calculado. Todo en una sentencia.
          */
-        async registrarPase({ cuentaId, producto, ordenFlow, dias, ahoraIso }) {
+        async registrarPase({ cuentaId, producto, ordenFlow, dias, ahoraIso, venceDesdeIso = null }) {
             const r = await conCandado('pases:' + cuentaId,
                 'WITH base AS (SELECT greatest($4::timestamptz, coalesce((SELECT max(vence) FROM pases WHERE cuenta_id = $1::uuid), $4::timestamptz)) AS desde) ' +
-                'INSERT INTO pases (cuenta_id, producto, orden_flow, desde, vence) SELECT $1::uuid, $2, $3, base.desde, base.desde + make_interval(days => $5::int) FROM base ' +
+                'INSERT INTO pases (cuenta_id, producto, orden_flow, desde, vence) ' +
+                'SELECT $1::uuid, $2, $3, base.desde, greatest(base.desde, coalesce($6::timestamptz, base.desde)) + make_interval(days => $5::int) FROM base ' +
                 'ON CONFLICT (orden_flow) DO NOTHING RETURNING desde, vence',
-                [cuentaId, producto, ordenFlow, ahoraIso, dias]
+                [cuentaId, producto, ordenFlow, ahoraIso, dias, venceDesdeIso]
             );
             return r[0] ? { desde: new Date(r[0].desde).getTime(), vence: new Date(r[0].vence).getTime() } : null;
         },

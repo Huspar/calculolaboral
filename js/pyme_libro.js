@@ -68,7 +68,30 @@
         return lineas.join('\r\n') + '\r\n';
     }
 
-    var api = { COLUMNAS: COLUMNAS, fila: fila, totales: totales, csv: csv, version: '1.0.0' };
-    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    var esNode = typeof module !== 'undefined' && module.exports;
+    function EX() { return esNode ? require('./pyme_excel.js') : root.CLPymeExcel; }
+
+    function hojaFilas(meta, filas) {
+        var datos = [
+            ['Libro de remuneraciones de ' + meta.periodoNombre],
+            [meta.empresa.razonSocial || '', 'RUT ' + (meta.empresa.rut || '')],
+            [],
+            COLUMNAS.map(function (c) { return c.titulo; })
+        ];
+        filas.concat([totales(filas)]).forEach(function (f) {
+            datos.push(COLUMNAS.map(function (c) { return f[c.k]; }));
+        });
+        datos.push([]);
+        datos.push(['Montos en pesos, calculados con el Asistente Laboral Pyme de calculolaboral.cl a partir de las liquidaciones guardadas. Las cotizaciones del empleador son una estimación: el monto exacto lo calcula Previred.']);
+        datos.push(['No reemplaza al Libro de Remuneraciones Electrónico de la Dirección del Trabajo, obligatorio para empleadores con 5 o más trabajadores (art. 62 del Código del Trabajo).']);
+        return datos;
+    }
+
+    function xlsx(meta, filas, xlsxMod) {
+        return EX().construirLibro([{ nombre: 'Libro remuneraciones', filas: hojaFilas(meta, filas), textos: { 0: true } }], xlsxMod);
+    }
+
+    var api = { COLUMNAS: COLUMNAS, fila: fila, totales: totales, csv: csv, xlsx: xlsx, _hojaFilas: hojaFilas, version: '1.1.0' };
+    if (esNode) module.exports = api;
     else root.CLPymeLibro = api;
 })(typeof window !== 'undefined' ? window : this);

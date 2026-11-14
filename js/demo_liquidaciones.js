@@ -544,9 +544,10 @@
                 r.record.contrato, r.record.dias, Math.round(r.haberes), Math.round(r.descuentos),
                 Math.round(r.liquido), Math.round(r.costo), r.error];
         });
-        D.descargarCsv('liquidaciones-' + sufijoCliente() + document.getElementById('periodo').value + '.csv',
+        D.descargarXlsx('liquidaciones-' + sufijoCliente() + document.getElementById('periodo').value + '.xlsx',
             ['RUT', 'Trabajador', 'AFP', 'Salud', 'Contrato', 'Días', 'Haberes', 'Descuentos', 'Líquido', 'Costo empresa', 'Observación'],
-            filas);
+            filas,
+            { nombreHoja: 'Liquidaciones', textos: { 0: true } });
     }
 
     // ------------------------------------------------------------- Previred
@@ -608,14 +609,15 @@
 
     // ------------------------------------------------------------- LRE, nómina de pagos y asiento contable
     function opcionesArchivos() {
-        var periodo = document.getElementById('periodo').value;
+        var val = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
+        var periodo = val('periodo');
         var d = new Date(periodo + '-15T12:00:00');
         var nombre = isNaN(d) ? periodo : d.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
         return {
             periodo: periodo, periodoNombre: nombre,
             empresa: {
-                rut: document.getElementById('liq-rut-empresa').value, comuna: document.getElementById('liq-comuna').value,
-                mutual: document.getElementById('liq-mutual').value, ccaf: document.getElementById('liq-ccaf').value
+                rut: val('liq-rut-empresa'), comuna: val('liq-comuna'),
+                mutual: val('liq-mutual'), ccaf: val('liq-ccaf')
             },
             tramoDe: function (rec) { return tramoSugerido(rec.sueldo, periodo); }
         };
@@ -647,20 +649,26 @@
     function archivoNomina() {
         var caja = document.getElementById('warnings-liq');
         if (!state.results.some(function (r) { return !r.error; })) { D.avisar('Primero carga y calcula la nómina.'); return; }
-        var s = window.CLDemoArchivos.nomina(state.results, opcionesArchivos());
-        var omit = s.omitidos.map(function (o) { return o.nombre + ': ' + o.motivo; });
-        if (!s.incluidos) { caja.innerHTML = '<b>No se generó la nómina de pagos:</b> ningún trabajador trae banco, tipo y número de cuenta en el Excel (columnas «Banco», «Tipo de cuenta» y «Número de cuenta»).' + listaAvisos('Falta', omit); return; }
-        bajar('nomina-pagos-' + sufijoCliente() + document.getElementById('periodo').value + '.csv', ['\ufeff', s.texto], 'text/csv;charset=utf-8');
-        caja.innerHTML = '<b>Nómina de pagos lista</b> — ' + s.incluidos + ' trabajadores por ' + D.money(s.total) + '. Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada.' + listaAvisos('No están en la nómina', omit);
+        window.CLPymeExcel.asegurarXlsx().then(function (XLSX) {
+            var r = window.CLDemoArchivos.nominaXlsx(state.results, opcionesArchivos(), XLSX);
+            var s = r.res;
+            var omit = s.omitidos.map(function (o) { return o.nombre + ': ' + o.motivo; });
+            if (!s.incluidos) { caja.innerHTML = '<b>No se generó la nómina de pagos:</b> ningún trabajador trae banco, tipo y número de cuenta en el Excel (columnas «Banco», «Tipo de cuenta» y «Número de cuenta»).' + listaAvisos('Falta', omit); return; }
+            window.CLPymeExcel.descargarBytes('nomina-pagos-' + sufijoCliente() + document.getElementById('periodo').value + '.xlsx', r.bytes);
+            caja.innerHTML = '<b>Nómina de pagos lista (.xlsx)</b> — ' + s.incluidos + ' trabajadores por ' + D.money(s.total) + '. Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada.' + listaAvisos('No están en la nómina', omit);
+        }).catch(function (err) { D.avisar(err && err.message || 'No pudimos generar el archivo Excel.'); });
     }
     function archivoAsiento() {
         var caja = document.getElementById('warnings-liq');
         if (!state.results.some(function (r) { return !r.error; })) { D.avisar('Primero carga y calcula la nómina.'); return; }
-        var s = window.CLDemoArchivos.asiento(state.results, Object.assign(opcionesArchivos(), { cuentas: cuentasAsiento() }));
-        if (s.errores.length) { caja.innerHTML = '<b>No se generó el asiento:</b><br>' + s.errores.map(function (e) { return '— ' + D.esc(e); }).join('<br>'); return; }
-        if (!s.cuadra) { caja.innerHTML = '<b>No se generó el asiento:</b> el debe (' + D.money(s.debe) + ') no cuadra con el haber (' + D.money(s.haber) + ').'; return; }
-        bajar('asiento-remuneraciones-' + sufijoCliente() + document.getElementById('periodo').value + '.csv', ['\ufeff', s.texto], 'text/csv;charset=utf-8');
-        caja.innerHTML = '<b>Asiento listo</b> — debe y haber por ' + D.money(s.debe) + '. Revísalo antes de contabilizarlo.' + (s.sinCodigos ? '<br>' + s.sinCodigos + ' líneas sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento».' : '');
+        window.CLPymeExcel.asegurarXlsx().then(function (XLSX) {
+            var r = window.CLDemoArchivos.asientoXlsx(state.results, Object.assign(opcionesArchivos(), { cuentas: cuentasAsiento() }), XLSX);
+            var s = r.res;
+            if (s.errores.length) { caja.innerHTML = '<b>No se generó el asiento:</b><br>' + s.errores.map(function (e) { return '— ' + D.esc(e); }).join('<br>'); return; }
+            if (!s.cuadra) { caja.innerHTML = '<b>No se generó el asiento:</b> el debe (' + D.money(s.debe) + ') no cuadra con el haber (' + D.money(s.haber) + ').'; return; }
+            window.CLPymeExcel.descargarBytes('asiento-remuneraciones-' + sufijoCliente() + document.getElementById('periodo').value + '.xlsx', r.bytes);
+            caja.innerHTML = '<b>Asiento listo (.xlsx)</b> — debe y haber por ' + D.money(s.debe) + '. Revísalo antes de contabilizarlo.' + (s.sinCodigos ? '<br>' + s.sinCodigos + ' líneas sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento».' : '');
+        }).catch(function (err) { D.avisar(err && err.message || 'No pudimos generar el archivo Excel.'); });
     }
     // Lleva la empresa y las fichas de esta nómina al Asistente Pyme de la cuenta (crea la empresa si no existe y salta a quienes ya están)
     function llevarAlAsistente() {

@@ -69,7 +69,35 @@
         return lineas.join('\r\n') + '\r\n';
     }
 
-    var api = { FACTORES: FACTORES, MESES: MESES, filaDesdeCalculo: filaDesdeCalculo, filaDesdeResultado: filaDesdeResultado, resumen: resumen, csv: csv, version: '1.0.0' };
-    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    var esNode = typeof module !== 'undefined' && module.exports;
+    function EX() { return esNode ? require('./pyme_excel.js') : root.CLPymeExcel; }
+
+    function hojaFilas(meta, lista) {
+        var act = lista.some(function (x) { return x.resumen.actualizado; });
+        var enc = ['RUT', 'Nombre', 'Meses con remuneración', 'Renta bruta', 'Cotizaciones del trabajador', 'Renta afecta al impuesto único', 'Impuesto único retenido', 'Renta no gravada']
+            .concat(act ? ['Renta afecta actualizada', 'Impuesto retenido actualizado', 'Renta no gravada actualizada'] : []);
+        var filas = [
+            ['Resumen anual de remuneraciones ' + meta.anio + (act ? '' : ' (montos sin actualizar)')],
+            [meta.empresa.razonSocial || '', 'RUT ' + (meta.empresa.rut || '')],
+            [],
+            enc
+        ];
+        lista.forEach(function (x) {
+            var r = x.resumen, t = r.totales;
+            filas.push([x.t.rut, x.t.nombre, r.filas.map(function (f) { return +f.periodo.slice(5, 7); }).join(' '), t.rentaBruta, t.cotizaciones, t.rentaAfecta, t.impuesto, t.noGravada]
+                .concat(act ? [t.afectaAct, t.impuestoAct, t.noGravadaAct] : []));
+        });
+        filas.push([]);
+        filas.push([act ? 'Montos actualizados con los factores publicados por el SII para ' + meta.anio + '.' : 'Montos sin actualizar: el SII publica los factores de actualización de ' + meta.anio + ' al cerrar el año. Con ellos se emite el Certificado N°6 y se declara la DDJJ 1887.']);
+        filas.push(['Hecho con el Asistente Laboral Pyme a partir de las liquidaciones guardadas. Revísalo con tu contador antes de declarar; el asistente no genera el archivo de la DDJJ 1887.']);
+        return filas;
+    }
+
+    function xlsx(meta, lista, xlsxMod) {
+        return EX().construirLibro([{ nombre: 'Resumen anual ' + meta.anio, filas: hojaFilas(meta, lista), textos: { 0: true, 2: true } }], xlsxMod);
+    }
+
+    var api = { FACTORES: FACTORES, MESES: MESES, filaDesdeCalculo: filaDesdeCalculo, filaDesdeResultado: filaDesdeResultado, resumen: resumen, csv: csv, xlsx: xlsx, version: '1.1.0' };
+    if (esNode) module.exports = api;
     else root.CLPymeAnual = api;
 })(typeof window !== 'undefined' ? window : this);

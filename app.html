@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.30.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.31.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -237,11 +237,11 @@ gtag('js', new Date());
 <div class="panel-head"><h2>Importar trabajadores desde una planilla</h2><button type="button" class="app-icono-btn" id="pm-planilla-cerrar" aria-label="Cerrar la importación"><span class="material-icons" aria-hidden="true">close</span></button></div>
 <div class="panel-cuerpo planilla-cuerpo">
 <ol class="planilla-pasos">
-<li>Descarga la plantilla y ábrela en Excel. Llena una fila por trabajador; solo el nombre y el RUT son obligatorios. <button type="button" class="lq-link" id="pm-planilla-plantilla">Descargar plantilla</button></li>
-<li>Guárdala como «CSV UTF-8 (delimitado por comas)».</li>
-<li>Elígela aquí, revisa lo que leímos y confirma.</li>
+<li>Descarga la plantilla y ábrela en Excel. Llena una fila por trabajador; solo el nombre y el RUT son obligatorios. <button type="button" class="lq-link" id="pm-planilla-plantilla">Descargar plantilla Excel</button></li>
+<li>Guárdala en Excel (.xlsx) o como CSV y súbela aquí.</li>
+<li>Revisa lo que leímos y confirma.</li>
 </ol>
-<div class="lq-field"><label for="pm-planilla-archivo">Planilla CSV</label><input type="file" id="pm-planilla-archivo" accept=".csv,text/csv"></div>
+<div class="lq-field"><label for="pm-planilla-archivo">Planilla Excel o CSV</label><input type="file" id="pm-planilla-archivo" accept=".xlsx,.xls,.csv,text/csv"></div>
 <div id="pm-planilla-revision"></div>
 <div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-planilla-importar" hidden><span class="material-icons" aria-hidden="true">group_add</span>Importar</button><p class="lq-estado" id="pm-planilla-estado" role="status"></p></div>
 </div>
@@ -536,7 +536,7 @@ gtag('js', new Date());
 <div class="v-acciones" id="pm-liq-acciones">
 <button type="button" id="pm-liq-preparar" class="btn"><span class="material-icons" aria-hidden="true">playlist_add</span>Preparar el mes con valores base</button>
 <button type="button" id="pm-liq-nov" class="btn"><span class="material-icons" aria-hidden="true">upload_file</span>Cargar horas extras, bonos o ausencias</button>
-<input type="file" id="pm-liq-nov-archivo" accept=".csv,.txt,text/csv" hidden aria-label="Archivo CSV de horas extras, bonos o ausencias">
+<input type="file" id="pm-liq-nov-archivo" accept=".xlsx,.xls,.csv,.txt,text/csv" hidden aria-label="Archivo Excel o CSV de horas extras, bonos o ausencias">
 <button type="button" id="pm-liq-imprimir-todas" class="btn btn-primario"><span class="material-icons" aria-hidden="true">print</span>Imprimir todas</button>
 </div>
 </div>
@@ -1548,28 +1548,29 @@ gtag('js', new Date());
 <script src="/js/pyme_pendientes.js?v=1.10.0"></script>
 <script src="/js/semana_corrida.js?v=1.0.0"></script>
 <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
-<script src="/js/pyme_importar.js?v=1.0.0"></script>
+<script src="/js/pyme_excel.js?v=1.0.0"></script>
+<script src="/js/pyme_importar.js?v=1.1.0"></script>
 <script src="/js/pyme_proyeccion.js?v=1.0.0"></script>
 <script src="/js/pyme_midt.js?v=1.0.0"></script>
-<script src="/js/pyme_libro.js?v=1.0.0"></script>
+<script src="/js/pyme_libro.js?v=1.1.0"></script>
 <script src="/js/previred_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_previred.js?v=1.0.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_lre.js?v=1.0.1"></script>
-<script src="/js/pyme_pagos.js?v=1.0.0"></script>
-<script src="/js/pyme_novedades.js?v=1.0.0"></script>
-<script src="/js/pyme_estudio.js?v=1.0.1"></script>
-<script src="/js/pyme_anual.js?v=1.0.0"></script>
+<script src="/js/pyme_pagos.js?v=1.1.0"></script>
+<script src="/js/pyme_novedades.js?v=1.1.0"></script>
+<script src="/js/pyme_estudio.js?v=1.1.0"></script>
+<script src="/js/pyme_anual.js?v=1.1.0"></script>
 <script src="/js/pyme_liquidaciones.js?v=1.5.1"></script>
 <script src="/js/pyme_docs.js?v=1.8.0"></script>
 <script src="/js/pyme_vacaciones.js?v=1.0.0"></script>
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
 <script src="/js/kit_zip_engine.js?v=1.0.0"></script>
 <script src="/js/finiquito_docx.js?v=1.2.0"></script>
-<script src="/js/pyme_finanzas.js?v=1.2.0"></script>
+<script src="/js/pyme_finanzas.js?v=1.3.0"></script>
 <script src="/js/pyme_datos_ley.js?v=1.3.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.41.0" defer></script>
+<script src="/js/app_pyme.js?v=1.42.0" defer></script>
 </body>
 </html>

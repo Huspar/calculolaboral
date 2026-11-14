@@ -79,7 +79,42 @@ function crear({ almacen, productos, flow, venta, ahora, piloto }) {
         return { ok: true, desbloqueo: flow.signUnlock(producto, orden) };
     }
 
-    return { catalogo, ventaActiva, cobertura: () => JSON.parse(JSON.stringify(COBERTURA)), comprar, confirmar, desbloqueo };
+    const CORREO_OK = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
+    const KIT_GRATIS_DIAS = 60;
+    const KIT_PRODUCTO_PASE = 'pyme12';
+
+    /** Registra 60 dias de pase pyme12 por compra del Kit Ley 21.719 (anclado al fin del piloto si sigue activo). */
+    async function otorgarPorKit(pay) {
+        if (!pay || !pay.paid || pay.product !== 'datos') return { ok: false, motivo: 'no_aplica' };
+        const correo = typeof pay.email === 'string' ? pay.email.trim().toLowerCase() : '';
+        if (!CORREO_OK.test(correo)) return { ok: false, motivo: 'correo_invalido' };
+        const ts = iso();
+        const cuenta = await almacen.upsertCuenta(correo, null, ts);
+        const ordenFlow = 'KIT-' + String(pay.order);
+        const venceDesdeIso = piloto && piloto.activo() ? piloto.vence() : null;
+        const nuevo = await almacen.registrarPase({
+            cuentaId: cuenta.id,
+            producto: KIT_PRODUCTO_PASE,
+            ordenFlow,
+            dias: KIT_GRATIS_DIAS,
+            ahoraIso: ts,
+            venceDesdeIso,
+        });
+        if (nuevo) {
+            return { ok: true, cuentaId: cuenta.id, email: correo, producto: KIT_PRODUCTO_PASE, vence: nuevo.vence, repetido: false };
+        }
+        const previo = await almacen.paseDeOrden(ordenFlow);
+        return {
+            ok: true,
+            cuentaId: cuenta.id,
+            email: correo,
+            producto: previo ? previo.producto : KIT_PRODUCTO_PASE,
+            vence: previo ? previo.vence : null,
+            repetido: true,
+        };
+    }
+
+    return { catalogo, ventaActiva, cobertura: () => JSON.parse(JSON.stringify(COBERTURA)), comprar, confirmar, desbloqueo, otorgarPorKit };
 }
 
 module.exports = { crear, COBERTURA };

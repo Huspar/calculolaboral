@@ -64,4 +64,26 @@ caso('los totales suman cada columna y el CSV se lee con el mismo lector de plan
     assert.ok(filas[1][0].includes('estimación') || filas[1][0].includes('Previred'));
 });
 
+caso('xlsx del estudio genera .xlsx real con RUT texto y columnas numéricas', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const mes = (tr) => ({ calculo: E.calcular({ trabajador: tr, mes: L.mesBase(tr, PER), periodo: PER, tasaMutual: 0.93 }, v) });
+    const f1 = Object.assign({ empresa: 'Panadería "Los Aromos"; SpA', rut: '76.543.210-3' }, S.resumenEmpresa({ trabajadores: [TA], meses: { a: mes(TA) }, boletas: BOL }));
+    const f2 = Object.assign({ empresa: 'Ferretería El Clavo', rut: '76.111.222-3' }, S.resumenEmpresa({ trabajadores: [TB], meses: { b: mes(TB) }, boletas: [] }));
+    const t = S.totales([f1, f2]);
+    const bytes = S.xlsx({ periodoNombre: 'octubre 2026' }, [f1, f2], XLSX);
+    const wb = XLSX.read(bytes, { type: 'array', cellStyles: true });
+    assert.deepStrictEqual(wb.SheetNames, ['Resumen empresas']);
+    const ws = wb.Sheets['Resumen empresas'];
+    assert.ok(Array.isArray(ws['!cols']) && ws['!cols'].length === S.COLUMNAS.length);
+    const mat = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+    const f1Row = mat.findIndex(r => r[0] === 'Panadería "Los Aromos"; SpA');
+    assert.ok(f1Row >= 0);
+    assert.strictEqual(ws[XLSX.utils.encode_cell({ r: f1Row, c: 1 })].t, 's');
+    assert.strictEqual(ws[XLSX.utils.encode_cell({ r: f1Row, c: 1 })].v, '76.543.210-3');
+    const totRow = mat.findIndex(r => r[0] === 'Totales');
+    const prevCell = ws[XLSX.utils.encode_cell({ r: totRow, c: 6 })];
+    assert.strictEqual(prevCell.t, 'n');
+    assert.strictEqual(prevCell.v, t.previred);
+});
+
 console.log(ok + ' pruebas correctas');

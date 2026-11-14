@@ -85,6 +85,8 @@
 
     function nomina(results, o) { return PAG.nomina({ periodoNombre: o.periodoNombre, items: items(results, o) }); }
     function asiento(results, o) { return PAG.asiento({ periodoNombre: o.periodoNombre, cuentas: o.cuentas || {}, items: items(results, o) }); }
+    function nominaXlsx(results, o, xlsxMod) { return PAG.nominaXlsx({ periodoNombre: o.periodoNombre, items: items(results, o) }, xlsxMod); }
+    function asientoXlsx(results, o, xlsxMod) { return PAG.asientoXlsx({ periodoNombre: o.periodoNombre, cuentas: o.cuentas || {}, items: items(results, o) }, xlsxMod); }
 
     // Fichas del Asistente Pyme a partir de las filas de la nómina de la demo (lo que el Excel no trae queda vacío y se completa allá)
     var MUTUAL_ASISTENTE = { achs: 'ACHS', mutualdeseguridad: 'Mutual', mutual: 'Mutual', ist: 'IST', isl: 'ISL' };
@@ -123,7 +125,7 @@
         return { empresa: empresa, trabajadores: trabajadores, avisos: avisos };
     }
 
-    var api = { fichas: fichas, lre: lre, nomina: nomina, asiento: asiento, causalCodigo: causalCodigo, items: items, version: '1.0.0' };
+    var api = { fichas: fichas, lre: lre, nomina: nomina, asiento: asiento, nominaXlsx: nominaXlsx, asientoXlsx: asientoXlsx, causalCodigo: causalCodigo, items: items, version: '1.1.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLDemoArchivos = api;
 })(typeof window !== 'undefined' ? window : this);

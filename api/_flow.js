@@ -314,18 +314,28 @@ async function notifyOwner(pay, lead) {
 }
 
 /** Entrega segun el producto: kit por correo o desbloqueo del generador. */
-function deliver(pay) {
-    return PRODUCTS[pay.product].unlock ? deliverUnlock(pay) : deliverKit(pay);
+function deliver(pay, extra) {
+    return PRODUCTS[pay.product].unlock ? deliverUnlock(pay) : deliverKit(pay, extra);
 }
 
 /** Envia el kit al comprador (adjunto + enlace) y avisa la venta al dueño. */
-async function deliverKit(pay) {
+async function deliverKit(pay, extra) {
     const p = PRODUCTS[pay.product];
     const nombre = (pay.optional && pay.optional.nombre) || '';
     const dq = downloadQuery(pay.product, pay.order);
     const link = `${SITE_URL}/api/download?${dq}`;
     const customLink = p.personalizer ? `${SITE_URL}${p.personalizer}?${dq}` : '';
     const zip = p.zip();
+    const hasta = extra && extra.paseVence
+        ? new Date(extra.paseVence).toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Santiago' })
+        : '';
+    const accesoCorreo = escapeHtml((extra && extra.paseEmail) || pay.email || '');
+    const paseBlock = hasta ? `
+  <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:16px;margin:16px 0;font-size:13px;color:#0f172a">
+    <p style="margin:0 0 6px;font-weight:700;color:#00382E">Incluye 2 meses gratis del Asistente Pyme (Pase 12 meses)</p>
+    <p style="margin:0 0 10px;color:#334155">Ya activamos tu pase de cortesía (60 días equivalentes al Pase 12 meses, vigente hasta el <strong>${escapeHtml(hasta)}</strong>, sin cobros ni renovación automática). Entra en <a href="${SITE_URL}/app" style="color:#00382E;font-weight:700">${SITE_URL}/app</a> con tu correo <strong>${accesoCorreo}</strong> usando el enlace de acceso de un solo uso (sin clave).</p>
+    <p style="margin:0"><a href="${SITE_URL}/app" style="display:inline-block;background:#00382E;color:#ffffff;text-decoration:none;font-weight:700;font-size:13px;padding:10px 16px;border-radius:10px">Entrar al asistente</a></p>
+  </div>` : '';
 
     const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
@@ -336,6 +346,7 @@ async function deliverKit(pay) {
   <p style="margin:0 0 12px"><a href="${link}" style="display:inline-block;background:#00382E;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px">Descargar el kit</a></p>
   ${customLink ? `<p style="margin:0 0 16px"><a href="${customLink}" style="display:inline-block;background:#FFB703;color:#111827;text-decoration:none;font-weight:700;font-size:13px;padding:10px 18px;border-radius:12px">Personalizar documentos con tus datos</a></p>` : ''}
   <p style="margin:0 0 8px;font-size:12px;color:#64748b">El enlace funciona por ${DOWNLOAD_DAYS} días, por si el adjunto no te llega.</p>
+  ${paseBlock}
   <div style="background:#EEF6F3;border:1px solid #D6EBE4;border-radius:12px;padding:16px;margin:16px 0;font-size:13px">
     <p style="margin:0 0 8px;font-weight:700">Para empezar</p>
     <ol style="margin:0;padding-left:18px">${p.steps.map(s => `<li style="margin-bottom:4px">${s}</li>`).join('')}</ol>
@@ -353,7 +364,7 @@ async function deliverKit(pay) {
         attachments: [{ filename: p.filename, content: zip }]
     }, `kit-${pay.order}`);
 
-    await notifyOwner(pay, 'Venta confirmada por Flow y kit enviado.');
+    await notifyOwner(pay, hasta ? 'Venta confirmada por Flow, kit enviado y pase Pyme (60 días) activado.' : 'Venta confirmada por Flow y kit enviado.');
 }
 
 /** Lee el token que Flow envia por POST (form-urlencoded) o por query. */

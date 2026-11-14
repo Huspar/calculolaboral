@@ -21,7 +21,15 @@ module.exports = async (req, res) => {
             const { procesarPagoPase } = require('./_pyme/confirmar_pase');
             await procesarPagoPase(pay, { pase: require('./_pyme/servicios').pase(), deliverPase, notifyOwner });
         } else if (pay.paid && pay.email) {
-            await deliver(pay);
+            let extra;
+            if (pay.product === 'datos') {
+                const { procesarKitConPase } = require('./_pyme/confirmar_pase');
+                extra = await procesarKitConPase(pay, {
+                    pase: () => require('./_pyme/servicios').pase(),
+                    notifyOwner,
+                });
+            }
+            await deliver(pay, extra);
         } else if (pay.paid) {
             // Pagado pero sin correo al que entregar: el dueño lo entrega a mano
             console.error('flow-confirm: pago confirmado sin correo', pay.commerceOrder);

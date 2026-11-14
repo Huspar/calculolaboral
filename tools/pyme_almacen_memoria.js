@@ -298,12 +298,13 @@ function crearAlmacenMemoria() {
             const v = E.pases.filter(p => p.cuentaId === cuentaId && t(p.desde) <= t(ahoraIso) && t(p.vence) > t(ahoraIso)).sort((a, b) => t(b.vence) - t(a.vence))[0];
             return v ? { producto: v.producto, vence: t(v.vence) } : null;
         },
-        async registrarPase({ cuentaId, producto, ordenFlow, dias, ahoraIso }) {
+        async registrarPase({ cuentaId, producto, ordenFlow, dias, ahoraIso, venceDesdeIso = null }) {
             if (E.pases.some(p => p.ordenFlow === ordenFlow)) return null;
-            const ultimo = Math.max.apply(null, [t(ahoraIso)].concat(E.pases.filter(p => p.cuentaId === cuentaId).map(p => t(p.vence))));
-            const vence = ultimo + dias * 86400000;
-            E.pases.push({ cuentaId, producto, ordenFlow, desde: new Date(ultimo).toISOString(), vence: new Date(vence).toISOString() });
-            return { desde: ultimo, vence };
+            const desde = Math.max.apply(null, [t(ahoraIso)].concat(E.pases.filter(p => p.cuentaId === cuentaId).map(p => t(p.vence))));
+            const baseVence = venceDesdeIso ? Math.max(desde, t(venceDesdeIso)) : desde;
+            const vence = baseVence + dias * 86400000;
+            E.pases.push({ cuentaId, producto, ordenFlow, desde: new Date(desde).toISOString(), vence: new Date(vence).toISOString() });
+            return { desde, vence };
         },
         async paseDeOrden(ordenFlow) {
             const p = E.pases.find(x => x.ordenFlow === ordenFlow);

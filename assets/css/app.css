@@ -555,7 +555,7 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .libro-doc tfoot td { font-weight: 700; }
 .libro-doc .libro-nota { margin-top: 8px; color: #4B5563; }
 @page libro { size: letter landscape; margin: 10mm; }
-#print-section .libro-hoja { page: libro; }
+#print-section.es-libro { page: libro; }
 #print-section .midt-doc h2 { font-size: 15px; margin-bottom: 4px; }
 
 /* ---------- Entrada y carga ---------- */

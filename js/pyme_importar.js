@@ -70,9 +70,14 @@
         return filas.filter(function (f) { return f.some(function (x) { return String(x).trim() !== ''; }); });
     }
 
-    // "15-03-2022", "15/03/2022", "15.03.2022" o "2022-03-15" → "2022-03-15"; '' si viene vacía; null si no se entiende
+    // "15-03-2022", "15/03/2022", "15.03.2022", "2022-03-15" o Date de Excel → "2022-03-15"; '' si viene vacía; null si no se entiende
     function fecha(v) {
-        v = String(v || '').trim();
+        if (v instanceof Date && !isNaN(v.getTime())) {
+            var dUtc = new Date(v.getTime() + 43200000);
+            var ay = dUtc.getUTCFullYear(), am = dUtc.getUTCMonth() + 1, ad = dUtc.getUTCDate();
+            return ay + '-' + (am < 10 ? '0' : '') + am + '-' + (ad < 10 ? '0' : '') + ad;
+        }
+        v = String(v == null ? '' : v).trim();
         if (!v) return '';
         var m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(v) || null, a, me, d;
         if (m) { a = +m[1]; me = +m[2]; d = +m[3]; }
@@ -82,15 +87,23 @@
         if (f.getUTCFullYear() !== a || f.getUTCMonth() !== me - 1 || f.getUTCDate() !== d) return null;
         return a + '-' + (me < 10 ? '0' : '') + me + '-' + (d < 10 ? '0' : '') + d;
     }
-    // "$650.000", "650000" o "650.000" → 650000; '' vacío; null si no es un monto en pesos
+    // "$650.000", "650000", "650.000" o número 650000 → 650000; '' vacío; null si no es un monto en pesos
     function monto(v) {
-        v = String(v || '').replace(/\s|\$/g, '');
+        if (typeof v === 'number') {
+            if (!isFinite(v) || v < 0 || Math.abs(v - Math.round(v)) > 1e-6) return null;
+            return Math.round(v);
+        }
+        v = String(v == null ? '' : v).replace(/\s|\$/g, '');
         if (!v) return '';
         if (!/^\d{1,3}(\.\d{3})*$|^\d+$/.test(v)) return null;
         return parseInt(v.replace(/\./g, ''), 10);
     }
     function decimal(v) {
-        v = String(v || '').trim().replace(',', '.');
+        if (typeof v === 'number') {
+            if (!isFinite(v) || v < 0) return null;
+            return Math.round(v * 100) / 100;
+        }
+        v = String(v == null ? '' : v).trim().replace(',', '.');
         if (!v) return '';
         return /^\d+(\.\d+)?$/.test(v) ? Math.round(parseFloat(v) * 100) / 100 : null;
     }
@@ -109,7 +122,8 @@
         (opc.afps || []).forEach(function (a) { afps[sinTildes(a)] = a; });
         return filas.slice(1, MAX_FILAS + 1).map(function (f, n) {
             var errores = [], d = {};
-            function val(k) { return indice[k] === undefined ? '' : String(f[indice[k]] || '').trim(); }
+            function valCrudo(k) { return indice[k] === undefined ? '' : f[indice[k]]; }
+            function val(k) { var x = valCrudo(k); return x == null ? '' : String(x).trim(); }
             d.nombre = val('nombre').replace(/\s+/g, ' ');
             if (!d.nombre) errores.push('falta el nombre');
             else if (d.nombre.length > 80) errores.push('el nombre tiene más de 80 caracteres');
@@ -119,12 +133,13 @@
             else d.rut = opc.rut ? opc.rut.formatear(rut) : rut;
             ['cargo', 'nacionalidad', 'domicilio', 'comuna', 'isapreNombre'].forEach(function (k) { var x = val(k); if (x) d[k] = x; });
             [['fechaIngreso', 'la fecha de ingreso'], ['fechaTerminoPlazo', 'el término del plazo fijo'], ['fechaNacimiento', 'la fecha de nacimiento']].forEach(function (p) {
-                var x = fecha(val(p[0]));
+                var x = fecha(valCrudo(p[0]));
                 if (x === null) errores.push(p[1] + ' no es una fecha (usa dd-mm-aaaa)');
                 else if (x) d[p[0]] = x;
             });
             ['sueldoBase', 'colacion', 'movilizacion'].forEach(function (k) {
-                var x = monto(val(k));
+                var c = valCrudo(k);
+                var x = monto(c);
                 if (x === null) errores.push('«' + val(k) + '» no es un monto en pesos');
                 else if (x !== '') d[k] = x;
             });
@@ -141,14 +156,27 @@
             if (a) { var an = afps[sinTildes(a.replace(/^afp\s+/i, ''))]; if (an) d.afp = an; else errores.push('AFP «' + a + '» desconocida'); }
             var s = opcion(val('salud'), { 'fonasa': 'fonasa', 'isapre': 'isapre' });
             if (s === null) errores.push('la salud debe ser Fonasa o Isapre'); else if (s) d.salud = s;
-            var plan = decimal(val('isaprePlanUF'));
+            var plan = decimal(valCrudo('isaprePlanUF'));
             if (plan === null) errores.push('el plan de Isapre debe ser un número en UF (por ejemplo 4,2)'); else if (plan !== '') d.isaprePlanUF = plan;
             if (d.salud === 'isapre' && !d.isapreNombre) errores.push('falta el nombre de la Isapre');
             return { fila: n + 2, datos: d, errores: errores };
         });
     }
 
-    var api = { COLUMNAS: COLUMNAS, MAX_FILAS: MAX_FILAS, plantilla: plantilla, leerCsv: leerCsv, revisar: revisar, _fecha: fecha, _monto: monto, version: '1.0.0' };
-    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    var esNode = typeof module !== 'undefined' && module.exports;
+    function EX() { return esNode ? require('./pyme_excel.js') : root.CLPymeExcel; }
+
+    function plantillaXlsx(xlsxMod) {
+        var enc = COLUMNAS.map(function (c) { return c.titulo; });
+        var anchos = COLUMNAS.map(function (c) { return Math.min(Math.max(c.titulo.length + 3, 14), 38); });
+        return EX().construirLibro([{ nombre: 'Trabajadores', filas: [enc], anchos: anchos, textos: { 1: true, 3: true, 5: true, 16: true } }], xlsxMod);
+    }
+
+    function leerXlsx(buffer, xlsxMod) {
+        return EX().filasDesdeBuffer(buffer, xlsxMod);
+    }
+
+    var api = { COLUMNAS: COLUMNAS, MAX_FILAS: MAX_FILAS, plantilla: plantilla, plantillaXlsx: plantillaXlsx, leerCsv: leerCsv, leerXlsx: leerXlsx, revisar: revisar, _fecha: fecha, _monto: monto, version: '1.1.0' };
+    if (esNode) module.exports = api;
     else root.CLPymeImportar = api;
 })(typeof window !== 'undefined' ? window : this);

@@ -37,21 +37,35 @@
     }
 
     function monto(v) {
-        v = String(v || '').replace(/\s|\$/g, '');
+        if (typeof v === 'number') {
+            if (!isFinite(v) || v < 0 || Math.abs(v - Math.round(v)) > 1e-6) return null;
+            var ent = Math.round(v);
+            return ent <= MAX_MONTO ? ent : null;
+        }
+        v = String(v == null ? '' : v).replace(/\s|\$/g, '');
         if (!v) return '';
         if (!/^\d{1,3}(\.\d{3})*$|^\d+$/.test(v)) return null;
         var n = parseInt(v.replace(/\./g, ''), 10);
         return n <= MAX_MONTO ? n : null;
     }
     function decimal(v) {
-        v = String(v || '').trim().replace(',', '.');
+        if (typeof v === 'number') {
+            if (!isFinite(v) || v < 0) return null;
+            return v <= 300 ? Math.round(v * 100) / 100 : null;
+        }
+        v = String(v == null ? '' : v).trim().replace(',', '.');
         if (!v) return '';
         if (!/^\d+(\.\d+)?$/.test(v)) return null;
         var n = parseFloat(v);
         return n <= 300 ? Math.round(n * 100) / 100 : null;
     }
     function dias(v) {
-        v = String(v || '').trim().replace(',', '.');
+        if (typeof v === 'number') {
+            if (!isFinite(v) || v < 0 || Math.abs(v - Math.round(v)) > 1e-6) return null;
+            var d = Math.round(v);
+            return d <= 30 ? d : null;
+        }
+        v = String(v == null ? '' : v).trim().replace(',', '.');
         if (!v) return '';
         if (!/^\d+(\.\d+)?$/.test(v)) return null;
         var n = parseFloat(v);
@@ -81,10 +95,11 @@
             var nov = {}, malos = [];
             COLUMNAS.forEach(function (c) {
                 if (!c.tipo || pos[c.k] === undefined) return;
-                var crudo = String(f[pos[c.k]] == null ? '' : f[pos[c.k]]).trim();
-                if (!crudo) return;
-                var v = LECTOR[c.tipo](crudo);
-                if (v === null) malos.push('«' + c.titulo + '» no es un valor válido (' + crudo + ')');
+                var crudoVal = f[pos[c.k]];
+                var crudoTxt = crudoVal == null ? '' : String(crudoVal).trim();
+                if (!crudoTxt) return;
+                var v = LECTOR[c.tipo](typeof crudoVal === 'number' ? crudoVal : crudoTxt);
+                if (v === null) malos.push('«' + c.titulo + '» no es un valor válido (' + crudoTxt + ')');
                 else if (v !== '') nov[c.k] = v;
             });
             if (malos.length) { salida.errores.push({ fila: n, motivo: t.nombre + ': ' + malos.join('; ') + '.' }); return; }
@@ -111,7 +126,21 @@
         return m;
     }
 
-    var api = { COLUMNAS: COLUMNAS, plantilla: plantilla, revisar: revisar, aplicar: aplicar, version: '1.0.0' };
-    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    var esNode = typeof module !== 'undefined' && module.exports;
+    function EX() { return esNode ? require('./pyme_excel.js') : root.CLPymeExcel; }
+
+    function plantillaXlsx(trabajadores, xlsxMod) {
+        var filas = [COLUMNAS.map(function (c) { return c.titulo; })];
+        (trabajadores || []).forEach(function (t) {
+            var fila = [t.rut, t.nombre];
+            for (var i = 2; i < COLUMNAS.length; i++) fila.push('');
+            filas.push(fila);
+        });
+        var anchos = COLUMNAS.map(function (c) { return Math.min(Math.max(c.titulo.length + 3, 14), 34); });
+        return EX().construirLibro([{ nombre: 'Novedades', filas: filas, anchos: anchos, textos: { 0: true } }], xlsxMod);
+    }
+
+    var api = { COLUMNAS: COLUMNAS, plantilla: plantilla, plantillaXlsx: plantillaXlsx, revisar: revisar, aplicar: aplicar, version: '1.1.0' };
+    if (esNode) module.exports = api;
     else root.CLPymeNovedades = api;
 })(typeof window !== 'undefined' ? window : this);

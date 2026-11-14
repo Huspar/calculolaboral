@@ -101,4 +101,37 @@ caso('una liquidación sin las cotizaciones del empleador no se puede asentar y 
     assert.ok(a.errores.length === 1 && /cotizaciones del empleador/.test(a.errores[0]));
 });
 
+caso('nominaXlsx y asientoXlsx generan .xlsx reales preservando ceros a la izquierda y montos numéricos', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const nom = G.nominaXlsx({ periodoNombre: 'octubre 2026', items: items([T1, T2]) }, XLSX);
+    assert.strictEqual(nom.res.incluidos, 2);
+    const wbNom = XLSX.read(nom.bytes, { type: 'array', cellStyles: true });
+    assert.deepStrictEqual(wbNom.SheetNames, ['Nomina de pagos']);
+    const wsNom = wbNom.Sheets['Nomina de pagos'];
+    assert.ok(Array.isArray(wsNom['!cols']) && wsNom['!cols'].length >= 6);
+    const matNom = XLSX.utils.sheet_to_json(wsNom, { header: 1, raw: true, defval: '' });
+    const t2Row = matNom.findIndex(r => r[0] === T2.rut);
+    assert.ok(t2Row >= 0);
+    const ctaCell = wsNom[XLSX.utils.encode_cell({ r: t2Row, c: 4 })];
+    assert.strictEqual(ctaCell.t, 's');
+    assert.strictEqual(ctaCell.v, '000123456789');
+    const montoCell = wsNom[XLSX.utils.encode_cell({ r: t2Row, c: 5 })];
+    assert.strictEqual(montoCell.t, 'n');
+    assert.ok(montoCell.v > 0);
+
+    const asi = G.asientoXlsx({ periodoNombre: 'octubre 2026', cuentas: { sueldos: '006101', liquido: '002105' }, items: items([T1]) }, XLSX);
+    assert.ok(asi.res.cuadra);
+    const wbAsi = XLSX.read(asi.bytes, { type: 'array' });
+    assert.deepStrictEqual(wbAsi.SheetNames, ['Asiento remuneraciones']);
+    const wsAsi = wbAsi.Sheets['Asiento remuneraciones'];
+    const matAsi = XLSX.utils.sheet_to_json(wsAsi, { header: 1, raw: true, defval: '' });
+    const cabAsi = matAsi.findIndex(r => r[0] === 'Cuenta');
+    const ctaSueldo = wsAsi[XLSX.utils.encode_cell({ r: cabAsi + 1, c: 0 })];
+    assert.strictEqual(ctaSueldo.t, 's');
+    assert.strictEqual(ctaSueldo.v, '006101');
+    const totAsi = matAsi.findIndex(r => r[1] === 'Totales');
+    assert.strictEqual(wsAsi[XLSX.utils.encode_cell({ r: totAsi, c: 2 })].t, 'n');
+    assert.strictEqual(wsAsi[XLSX.utils.encode_cell({ r: totAsi, c: 2 })].v, wsAsi[XLSX.utils.encode_cell({ r: totAsi, c: 3 })].v);
+});
+
 console.log(ok + ' pruebas correctas');

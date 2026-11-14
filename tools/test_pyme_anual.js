@@ -57,4 +57,23 @@ caso('planilla para el contador: una fila por trabajador con los meses y el avis
     assert.ok(/no genera el archivo de la DDJJ 1887/.test(texto));
 });
 
+caso('xlsx genera resumen anual .xlsx con RUT/meses como texto y totales numéricos', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const r = A.resumen(2026, ['2026-09', '2026-10'].map(p => A.filaDesdeResultado(p, calc(p))));
+    const bytes = A.xlsx({ empresa: { razonSocial: 'Panadería', rut: '76.543.210-3' }, anio: 2026 }, [{ t: T, resumen: r }], XLSX);
+    const wb = XLSX.read(bytes, { type: 'array', cellStyles: true });
+    assert.deepStrictEqual(wb.SheetNames, ['Resumen anual 2026']);
+    const ws = wb.Sheets['Resumen anual 2026'];
+    assert.ok(Array.isArray(ws['!cols']) && ws['!cols'].length >= 7);
+    const mat = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+    const rowIdx = mat.findIndex(row => row[0] === '13.456.789-9');
+    assert.ok(rowIdx >= 0);
+    assert.strictEqual(ws[XLSX.utils.encode_cell({ r: rowIdx, c: 0 })].t, 's');
+    assert.strictEqual(ws[XLSX.utils.encode_cell({ r: rowIdx, c: 2 })].t, 's');
+    assert.strictEqual(ws[XLSX.utils.encode_cell({ r: rowIdx, c: 2 })].v, '9 10');
+    const impCell = ws[XLSX.utils.encode_cell({ r: rowIdx, c: 6 })];
+    assert.strictEqual(impCell.t, 'n');
+    assert.strictEqual(impCell.v, r.totales.impuesto);
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

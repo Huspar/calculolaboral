@@ -160,4 +160,29 @@ caso('resolverPuenteContable sincroniza estado CERRADO_TRIBUTARIO y F29 desde Su
     assert.ok(puente.f29Resumen.totalPagar91 > 140000);
 });
 
+caso('generarNominaProveedoresXlsx exporta .xlsx real con cuentas como texto (ceros iniciales) y montos numéricos', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const res = FIN.generarNominaProveedoresXlsx([
+        { rut: '96.540.110-K', razonSocial: 'Molinos Cunco S.A.', folio: '46088', monto: 844900, banco: 'Banco de Chile', tipoCuenta: 'corriente', numeroCuenta: '0018945002', pagada: false },
+        { rut: '88.272.600-2', razonSocial: 'Envases BioBío SpA', folio: '1820', monto: 297500, banco: '', tipoCuenta: '', numeroCuenta: '', pagada: false }
+    ], { periodoNombre: 'octubre 2026' }, XLSX);
+
+    assert.strictEqual(res.nom.incluidos, 1);
+    assert.strictEqual(res.nom.total, 844900);
+    const wb = XLSX.read(res.bytes, { type: 'array', cellStyles: true });
+    assert.deepStrictEqual(wb.SheetNames, ['Nomina proveedores']);
+    const ws = wb.Sheets['Nomina proveedores'];
+    assert.ok(Array.isArray(ws['!cols']) && ws['!cols'].length >= 6);
+    const mat = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+    const rowIdx = mat.findIndex(r => r[0] === '96.540.110-K');
+    assert.ok(rowIdx >= 0);
+    assert.strictEqual(ws[XLSX.utils.encode_cell({ r: rowIdx, c: 0 })].t, 's');
+    const ctaCell = ws[XLSX.utils.encode_cell({ r: rowIdx, c: 4 })];
+    assert.strictEqual(ctaCell.t, 's');
+    assert.strictEqual(ctaCell.v, '0018945002');
+    const montoCell = ws[XLSX.utils.encode_cell({ r: rowIdx, c: 5 })];
+    assert.strictEqual(montoCell.t, 'n');
+    assert.strictEqual(montoCell.v, 844900);
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

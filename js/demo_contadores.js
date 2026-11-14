@@ -262,9 +262,10 @@
                 r.serviceTime.indemnityYears || 0, Math.round(r.ias), Math.round(r.notice),
                 Math.round(r.vacation), Math.round(r.pending), Math.round(r.afc), Math.round(r.total)];
         });
-        D.descargarCsv('finiquitos-lote.csv',
+        D.descargarXlsx('finiquitos-lote.xlsx',
             ['RUT', 'Trabajador', 'Fecha ingreso', 'Fecha término', 'Causal', 'Años', 'Indemnización', 'Aviso previo', 'Vacaciones', 'Rem. pendiente', 'AFC', 'Total'],
-            filas);
+            filas,
+            { nombreHoja: 'Finiquitos', textos: { 0: true, 2: true, 3: true } });
     }
 
     function plantilla() {

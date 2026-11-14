@@ -46,4 +46,26 @@ caso('los totales suman las filas y el archivo se lee con el mismo lector de pla
     assert.ok(/No reemplaza al Libro de Remuneraciones Electrónico/.test(texto));
 });
 
+caso('xlsx genera un libro .xlsx real con tipos numéricos, RUT como texto y anchos de columna', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const filas = [B.fila(T1, calc(T1)), B.fila(T2, calc(T2, { diasTrabajados: 20 }))];
+    const tot = B.totales(filas);
+    const bytes = B.xlsx({ empresa: { razonSocial: 'Panadería', rut: '76.543.210-3' }, periodoNombre: 'octubre 2026' }, filas, XLSX);
+    const wb = XLSX.read(bytes, { type: 'array', cellStyles: true });
+    assert.deepStrictEqual(wb.SheetNames, ['Libro remuneraciones']);
+    const ws = wb.Sheets['Libro remuneraciones'];
+    assert.ok(Array.isArray(ws['!cols']) && ws['!cols'].length === B.COLUMNAS.length);
+    const mat = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+    const cabIdx = mat.findIndex(r => r[0] === 'RUT');
+    assert.ok(cabIdx >= 0);
+    const rutCell = ws[XLSX.utils.encode_cell({ r: cabIdx + 1, c: 0 })];
+    assert.strictEqual(rutCell.t, 's');
+    assert.strictEqual(rutCell.v, '15.234.567-4');
+    const totIdx = mat.findIndex(r => r[1] === 'Totales');
+    const liqCol = mat[cabIdx].indexOf('Líquido a pagar');
+    const totCell = ws[XLSX.utils.encode_cell({ r: totIdx, c: liqCol })];
+    assert.strictEqual(totCell.t, 'n');
+    assert.strictEqual(totCell.v, tot.liquido);
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

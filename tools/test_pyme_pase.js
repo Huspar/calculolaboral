@@ -15,9 +15,11 @@ const T = require('../api/_pyme/tokens');
 const Cif = require('../api/_pyme/cifrado');
 const D = require('../api/_pyme/datos');
 const Pase = require('../api/_pyme/pase');
-const { procesarPagoPase } = require('../api/_pyme/confirmar_pase');
+const Pi = require('../api/_pyme/piloto');
+const { procesarPagoPase, procesarKitConPase } = require('../api/_pyme/confirmar_pase');
 const { crearRutas } = require('../api/_pyme/rutas');
 const { crearAlmacenMemoria } = require('./pyme_almacen_memoria');
+const OtorgarKit = require('./otorgar_pase_kit');
 
 let ok = 0, pendientes = Promise.resolve();
 function caso(nombre, fn) {
@@ -31,20 +33,21 @@ const DIA = 86400000;
 const JSON_OK = { 'content-type': 'application/json', 'x-cl-pyme': '1', origin: SITIO };
 
 // ---------- montaje ----------
-function montar({ venta = true } = {}) {
-    const reloj = { t: Date.parse('2026-10-12T15:00:00Z') };
+function montar({ venta = true, conPiloto = false, fecha = '2026-10-12T15:00:00Z' } = {}) {
+    const reloj = { t: Date.parse(fecha) };
     const almacen = crearAlmacenMemoria();
     const creados = [];
     const flow = {
         createPayment: async (x) => { creados.push(x); return { url: 'https://flow.invalid/pagar', token: 'TOKEN' + creados.length }; },
         signUnlock: Flow.signUnlock
     };
-    const pase = Pase.crear({ almacen, productos: Flow.PRODUCTS, flow, venta: () => venta, ahora: () => reloj.t });
+    const piloto = conPiloto ? Pi.crear({}, () => reloj.t) : undefined;
+    const pase = Pase.crear({ almacen, productos: Flow.PRODUCTS, flow, venta: () => venta, ahora: () => reloj.t, piloto });
     const secreto = T.secretoDesdeEntorno({ PYME_SESSION_SECRET: crypto.randomBytes(32).toString('base64') });
     const cifrado = Cif.crear(Cif.clavesDesdeEntorno({ PYME_DATA_KEY: crypto.randomBytes(32).toString('base64') }));
     const enviados = [];
     const auth = A.crear({ almacen, secreto, siteUrl: SITIO, ahora: () => reloj.t, enviarCorreo: async m => { enviados.push(m); } });
-    const datos = D.crear({ almacen, cifrado, ahora: () => reloj.t });
+    const datos = D.crear({ almacen, cifrado, ahora: () => reloj.t, piloto });
     const rutas = crearRutas({ auth, datos, env: { VERCEL_ENV: 'production' }, siteUrl: SITIO, pase });
     let ipN = 0;
     async function entrar(correo) {
@@ -54,7 +57,7 @@ function montar({ venta = true } = {}) {
         const s = await auth.leerSesion(r.sesion.token);
         return { cookie: 'cl_pyme=' + r.sesion.token, cuenta: { cuentaId: s.cuentaId, email: s.email } };
     }
-    return { reloj, almacen, pase, rutas, entrar, creados };
+    return { reloj, almacen, pase, auth, datos, rutas, entrar, creados, enviados };
 }
 function pedir(rutas, o) {
     const req = { method: o.metodo || 'GET', query: o.query || {}, headers: o.headers || {}, body: o.body };
@@ -338,6 +341,105 @@ caso('api/checkout no vende el pase: exige comprar desde la cuenta', async () =>
     const res = respuesta();
     await checkout({ method: 'POST', headers: { origin: 'https://calculolaboral.cl' }, body: { product: 'pyme3', email: 'a@b.cl' } }, res);
     assert.strictEqual(res.statusCode, 400);
+});
+
+// ---------- pase de cortesía por compra del Kit Ley 21.719 (60 días pyme12) ----------
+console.log('Pase por compra del Kit Ley 21.719');
+caso('otorgarPorKit durante el piloto ancla 60 días al fin del piloto y exige aceptar términos al primer ingreso', async () => {
+    const m = montar({ conPiloto: true, fecha: '2026-11-14T15:00:00Z' });
+    const res = await m.pase.otorgarPorKit({ paid: true, product: 'datos', order: 9001, email: '  Kit@Pyme.cl ' });
+    assert.strictEqual(res.ok, true);
+    assert.strictEqual(res.repetido, false);
+    assert.strictEqual(res.email, 'kit@pyme.cl');
+    assert.strictEqual(res.producto, 'pyme12');
+    assert.strictEqual(res.vence, Date.parse(Pi.VENCE) + 60 * DIA);
+    assert.strictEqual(m.almacen._estado.pases[0].ordenFlow, 'KIT-9001');
+
+    // Primer acceso mágico sigue pidiendo aceptar términos (acepto_encargo estaba NULL) y luego desbloquea todo pyme12
+    await m.auth.solicitarAcceso({ email: 'kit@pyme.cl', ip: '10.0.2.1' });
+    const token = new URL(m.enviados[0].enlace).searchParams.get('t');
+    const prev = await m.auth.previsualizar(token);
+    assert.strictEqual(prev.requiereAceptar, true, 'cuenta creada por compra de kit debe aceptar términos en primer ingreso');
+    await m.auth.completar({ token, acepto: true, ip: '10.0.2.1' });
+
+    const est = await m.datos.estado({ cuentaId: res.cuentaId, email: res.email });
+    assert.strictEqual(est.limites.paseProducto, 'pyme12');
+    assert.strictEqual(est.limites.paseVence, new Date(Date.parse(Pi.VENCE) + 60 * DIA).toISOString());
+    assert.strictEqual(est.limites.piloto, undefined);
+    assert.strictEqual(est.limites.maxActivos, 5);
+    assert.strictEqual((await m.pase.desbloqueo(res.cuentaId, 'finiquito')).ok, true);
+    assert.strictEqual((await m.pase.desbloqueo(res.cuentaId, 'contrato')).ok, true);
+});
+caso('otorgarPorKit después del piloto otorga 60 días desde la fecha de compra', async () => {
+    const m = montar({ conPiloto: true, fecha: '2027-01-15T15:00:00Z' });
+    const res = await m.pase.otorgarPorKit({ paid: true, product: 'datos', order: 9002, email: 'post@pyme.cl' });
+    assert.strictEqual(res.vence, Date.parse('2027-01-15T15:00:00Z') + 60 * DIA);
+});
+caso('otorgarPorKit se apila sobre un pase previo que termina después del piloto', async () => {
+    const m = montar({ conPiloto: true, fecha: '2026-11-14T15:00:00Z' });
+    const { cuenta } = await m.entrar('conpase@pyme.cl');
+    const p1 = await m.pase.confirmar(pago('pyme12', cuenta.cuentaId));
+    const res = await m.pase.otorgarPorKit({ paid: true, product: 'datos', order: 9003, email: 'conpase@pyme.cl' });
+    assert.strictEqual(res.vence, p1.vence + 60 * DIA);
+});
+caso('api/flow-confirm con compra de Kit Ley 21.719 otorga el pase, informa los 2 meses en el correo y es idempotente', async () => {
+    const m = montar({ conPiloto: true, fecha: '2026-11-14T15:00:00Z' });
+    const ruta = require.resolve('../api/_pyme/servicios');
+    require.cache[ruta] = { id: ruta, filename: ruta, loaded: true, exports: { pase: () => m.pase, almacen: () => m.almacen } };
+    delete require.cache[require.resolve('../api/flow-confirm')];
+    const confirmar = require('../api/flow-confirm');
+    const flowPayload = { status: 2, commerceOrder: 'KD-1700000000000-kit01', amount: 29990, flowOrder: 9101, payer: 'Compradora@Pyme.cl', optional: JSON.stringify({ nombre: 'Camila' }) };
+    const env = entorno(flowPayload);
+    try {
+        const res = respuesta();
+        await confirmar({ method: 'POST', body: 'token=TOKENDEFLOW1234', query: {}, headers: {} }, res);
+        assert.strictEqual(res.statusCode, 200);
+        assert.strictEqual(m.almacen._estado.pases.length, 1);
+        assert.deepStrictEqual([m.almacen._estado.pases[0].producto, m.almacen._estado.pases[0].ordenFlow], ['pyme12', 'KIT-9101']);
+        const correosEnviados = env.llamadas.filter(l => l[1].indexOf('resend') >= 0).map(l => JSON.parse(l[2]));
+        const correoCliente = correosEnviados.find(c => c.to[0] === 'compradora@pyme.cl');
+        assert.ok(correoCliente && /2 meses gratis del Asistente Pyme/.test(correoCliente.html), 'el correo del kit informa los 2 meses del asistente');
+        assert.ok(/https:\/\/calculolaboral\.cl\/app/.test(correoCliente.html) && /compradora@pyme\.cl/.test(correoCliente.html), 'indica enlace /app y correo normalizado');
+        assert.ok(correosEnviados.some(c => /pase Pyme \(60 días\) activado/.test(c.html)), 'aviso al dueño refleja activación');
+
+        // Reintento de Flow sobre la misma orden: no duplica pase
+        const res2 = respuesta();
+        await confirmar({ method: 'POST', body: 'token=TOKENDEFLOW1234', query: {}, headers: {} }, res2);
+        assert.strictEqual(res2.statusCode, 200);
+        assert.strictEqual(m.almacen._estado.pases.length, 1);
+    } finally { env.restaurar(); }
+});
+caso('procesarKitConPase no bloquea el envío del kit si falla el registro del pase', async () => {
+    const avisos = [];
+    const r = await procesarKitConPase({ paid: true, product: 'datos', order: 99, email: 'a@b.cl' }, {
+        pase: { async otorgarPorKit() { throw new Error('bd caída'); } },
+        notifyOwner: async (pay, texto) => { avisos.push(texto); }
+    });
+    assert.strictEqual(r, null);
+    assert.ok(avisos[0] && avisos[0].indexOf('bd caída') > 0);
+});
+caso('script retroactivo otorgar_pase_kit: parseo CSV, idempotencia y vista previa sin escrituras', async () => {
+    const lista = OtorgarKit.parsearListaCorreos('email,orden\n# comentario\nAna@Pyme.cl\nANA@pyme.cl\nbeto@pyme.cl, 4455\n', 'KIT-RETRO');
+    assert.strictEqual(lista.length, 2);
+    assert.strictEqual(lista[0].email, 'ana@pyme.cl');
+    assert.ok(lista[0].ordenFlow.startsWith('KIT-RETRO-'));
+    assert.deepStrictEqual([lista[1].email, lista[1].ordenFlow], ['beto@pyme.cl', 'KIT-4455']);
+
+    const prev = OtorgarKit.calcularFechaVencimiento({ ahoraIso: '2026-11-14T15:00:00.000Z', ultimoVenceIso: null, venceDesdeIso: Pi.VENCE, dias: 60 });
+    assert.strictEqual(prev.venceIso, new Date(Date.parse(Pi.VENCE) + 60 * DIA).toISOString());
+
+    const sqls = [];
+    const fakeClienteDry = {
+        async query(sql, params) {
+            sqls.push(sql);
+            if (sql.indexOf('FROM pases WHERE orden_flow') >= 0) return { rows: params[0] === 'KIT-4455' ? [{ id: 'p1' }] : [] };
+            if (sql.indexOf('FROM cuentas WHERE email') >= 0) return { rows: [] };
+            throw new Error('en modo dry no debe escribir: ' + sql);
+        }
+    };
+    const rDry = await OtorgarKit.ejecutarAsignacion(fakeClienteDry, lista, { dias: 60, ahoraIso: '2026-11-14T15:00:00.000Z', venceDesdeIso: Pi.VENCE, dry: true });
+    assert.deepStrictEqual(rDry.map(x => x.estado), ['pendiente', 'ya_existia']);
+    assert.ok(sqls.every(s => s.indexOf('INSERT') === -1));
 });
 
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

@@ -60,4 +60,29 @@ caso('columnas en otro orden o con otro texto entre paréntesis se reconocen; ha
     assert.strictEqual(I.revisar(I.leerCsv(muchas), OPC).length, 50);
 });
 
+caso('plantillaXlsx y leerXlsx preservan fechas Excel, números y ceros a la izquierda', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const tplBytes = I.plantillaXlsx(XLSX);
+    const tplWb = XLSX.read(tplBytes, { type: 'array' });
+    assert.deepStrictEqual(tplWb.SheetNames, ['Trabajadores']);
+    const tplRows = I.leerXlsx(tplBytes, XLSX);
+    assert.deepStrictEqual(tplRows[0], I.COLUMNAS.map(c => c.titulo));
+
+    const ws = XLSX.utils.aoa_to_sheet([
+        ['Nombre completo', 'RUT', 'Fecha de ingreso', 'Sueldo base', 'Colación mensual', 'Domicilio'],
+        ['Ana Pérez', '08111222-3', new Date(Date.UTC(2022, 2, 15)), 650000, 40000, 'Pasaje 00123']
+    ]);
+    ws['B2'].t = 's';
+    ws['B2'].z = '@';
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Trabajadores');
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    const [r] = I.revisar(I.leerXlsx(buf, XLSX), OPC);
+    assert.deepStrictEqual(r.errores, []);
+    assert.strictEqual(r.datos.rut, '08.111.222-3');
+    assert.strictEqual(r.datos.fechaIngreso, '2022-03-15');
+    assert.strictEqual(r.datos.sueldoBase, 650000);
+    assert.strictEqual(r.datos.colacion, 40000);
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

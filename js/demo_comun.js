@@ -155,6 +155,18 @@
         descargar(new Blob(['\uFEFF' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' }), nombre);
     }
 
+    function descargarXlsx(nombre, encabezados, filas, opts) {
+        opts = opts || {};
+        var ex = window.CLPymeExcel;
+        var hojas = [{
+            nombre: opts.nombreHoja || 'Datos',
+            filas: [encabezados].concat(filas || []),
+            textos: opts.textos || { 0: true }
+        }];
+        var bytes = ex.construirLibro(hojas, window.XLSX);
+        descargar(new Blob([bytes], { type: ex.MIME_XLSX }), nombre);
+    }
+
     // ------------------------------------------------------------- estudio
 
     function estudio() {
@@ -317,7 +329,7 @@
         parseNumber: parseNumber, parseDate: parseDate,
         fechaCorta: fechaCorta, hoy: hoy,
         leerArchivo: leerArchivo, mapaColumnas: mapaColumnas,
-        descargar: descargar, descargarCsv: descargarCsv,
+        descargar: descargar, descargarCsv: descargarCsv, descargarXlsx: descargarXlsx,
         estudio: estudio, encabezado: encabezado, NOTA: NOTA,
         imprimir: imprimir, avisar: avisar
     };

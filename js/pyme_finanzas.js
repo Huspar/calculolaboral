@@ -320,7 +320,7 @@
 
     function generarNominaProveedores(items, meta) {
         meta = meta || {};
-        var lineas = [], incluidos = 0, omitidos = [], total = 0;
+        var lineas = [], filasDatos = [], incluidos = 0, omitidos = [], total = 0;
         var periodoNombre = meta.periodoNombre || meta.periodo || '';
         lineas.push(['Nómina de pago a proveedores · ' + periodoNombre, '', '', '', '', '', '', ''].map(celdaCsv).join(';'));
         lineas.push(['Planilla para revisión y carga en portal bancario empresa. No ejecuta transferencias automáticas.', '', '', '', '', '', '', ''].map(celdaCsv).join(';'));
@@ -342,7 +342,7 @@
                 omitidos.push({ nombre: quien + ' (Factura ' + (it.folio || 'S/N') + ')', motivo: 'falta ' + faltan.join(', ') + '.' });
                 return;
             }
-            lineas.push([
+            var fila = [
                 it.rut,
                 quien,
                 it.banco,
@@ -351,14 +351,36 @@
                 monto,
                 'Pago Factura ' + (it.folio || 'S/N'),
                 it.correo || ''
-            ].map(celdaCsv).join(';'));
+            ];
+            filasDatos.push(fila);
+            lineas.push(fila.map(celdaCsv).join(';'));
             incluidos++;
             total += monto;
         });
 
         lineas.push('');
         lineas.push(['', 'Total seleccionado', '', '', '', total, '', ''].map(celdaCsv).join(';'));
-        return { texto: lineas.join('\r\n') + '\r\n', incluidos: incluidos, omitidos: omitidos, total: total };
+        return { texto: lineas.join('\r\n') + '\r\n', filasDatos: filasDatos, incluidos: incluidos, omitidos: omitidos, total: total };
+    }
+
+    function generarNominaProveedoresXlsx(items, meta, xlsxMod) {
+        meta = meta || {};
+        var nom = generarNominaProveedores(items, meta);
+        var periodoNombre = meta.periodoNombre || meta.periodo || '';
+        var filas = [
+            ['Nómina de pago a proveedores · ' + periodoNombre],
+            ['Planilla para revisión y carga en portal bancario empresa. No ejecuta transferencias automáticas.'],
+            [],
+            ['RUT Proveedor', 'Razón Social', 'Banco', 'Tipo de cuenta', 'Número de cuenta', 'Monto a pagar', 'Glosa', 'Correo aviso']
+        ].concat(nom.filasDatos).concat([
+            [],
+            ['', 'Total seleccionado', '', '', '', nom.total, '', '']
+        ]);
+        var ex = typeof module !== 'undefined' && module.exports ? require('./pyme_excel.js') : root.CLPymeExcel;
+        return {
+            nom: nom,
+            bytes: ex.construirLibro([{ nombre: 'Nomina proveedores', filas: filas, textos: { 0: true, 4: true } }], xlsxMod)
+        };
     }
 
     function sugerirConciliacion(movimientos, contexto) {
@@ -1873,9 +1895,16 @@
                     caja.innerHTML = '<p><strong>No pudimos armar la nómina:</strong> completa los datos bancarios de los proveedores seleccionados.</p>' + listaOmit;
                     return;
                 }
-                bajarTexto('nomina-proveedores-' + app.getPeriodo() + '.csv', nom.texto, 'text/csv;charset=utf-8');
-                caja.hidden = false;
-                caja.innerHTML = '<p><strong>Nómina descargada con ' + nom.incluidos + (nom.incluidos === 1 ? ' factura' : ' facturas') + ' por ' + pesos(nom.total) + '.</strong> Revísala antes de cargarla en el portal empresa de tu banco.</p>' + listaOmit;
+                var period = app.getPeriodo();
+                var ex = root.CLPymeExcel;
+                ex.asegurarXlsx().then(function (XLSX) {
+                    var res = generarNominaProveedoresXlsx(elegidos, { periodoNombre: app.nombrePeriodo(period) }, XLSX);
+                    ex.descargarBytes('nomina-proveedores-' + period + '.xlsx', res.bytes);
+                    caja.hidden = false;
+                    caja.innerHTML = '<p><strong>Nómina descargada en Excel (.xlsx) con ' + nom.incluidos + (nom.incluidos === 1 ? ' factura' : ' facturas') + ' por ' + pesos(nom.total) + '.</strong> Revísala antes de cargarla en el portal empresa de tu banco.</p>' + listaOmit;
+                }).catch(function () {
+                    app.avisoGlobal('error', 'No pudimos generar la nómina en Excel (.xlsx).');
+                });
             });
             document.addEventListener('click', function (e) {
                 var pf = e.target.closest('[data-pag-filtro]');
@@ -2085,6 +2114,7 @@
         importarRcvAPagos: importarRcvAPagos,
         mensajeCobranza: mensajeCobranza,
         generarNominaProveedores: generarNominaProveedores,
+        generarNominaProveedoresXlsx: generarNominaProveedoresXlsx,
         sugerirConciliacion: sugerirConciliacion,
         calcularFlujoCaja: calcularFlujoCaja,
         resolverPuenteContable: resolverPuenteContable,

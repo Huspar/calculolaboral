@@ -25,7 +25,7 @@
     var TIPOS_CUENTA = { corriente: 'Cuenta corriente', vista: 'Cuenta vista o RUT', ahorro: 'Cuenta de ahorro' };
 
     function nomina(datos) {
-        var lineas = [], incluidos = 0, omitidos = [], total = 0;
+        var lineas = [], filasDatos = [], incluidos = 0, omitidos = [], total = 0;
         lineas.push(fila(['Nómina de pagos de ' + datos.periodoNombre, '', '', '', '', '', '']));
         lineas.push(fila(['Planilla genérica para revisar: no es el formato de ningún banco y no transfiere nada.', '', '', '', '', '', '']));
         lineas.push('');
@@ -38,12 +38,14 @@
             if (!TIPOS_CUENTA[t.tipoCuenta]) faltan.push('tipo de cuenta');
             if (!/^\d{4,20}$/.test(texto(t.numeroCuenta).replace(/[\s.-]/g, ''))) faltan.push('número de cuenta');
             if (faltan.length) { omitidos.push({ nombre: quien, motivo: 'falta ' + faltan.join(', ') + ' en su ficha.' }); return; }
-            lineas.push(fila([texto(t.rut), quien, texto(t.banco), TIPOS_CUENTA[t.tipoCuenta], texto(t.numeroCuenta).replace(/[\s.-]/g, ''), monto, 'Remuneración ' + datos.periodoNombre]));
+            var registro = [texto(t.rut), quien, texto(t.banco), TIPOS_CUENTA[t.tipoCuenta], texto(t.numeroCuenta).replace(/[\s.-]/g, ''), monto, 'Remuneración ' + datos.periodoNombre];
+            filasDatos.push(registro);
+            lineas.push(fila(registro));
             incluidos++; total += monto;
         });
         lineas.push('');
         lineas.push(fila(['', 'Total', '', '', '', total, '']));
-        return { texto: lineas.join('\r\n') + '\r\n', incluidos: incluidos, omitidos: omitidos, total: total };
+        return { texto: lineas.join('\r\n') + '\r\n', filasDatos: filasDatos, incluidos: incluidos, omitidos: omitidos, total: total };
     }
 
     // Cuentas del asiento: el contador pone el código de cada una (el de su plan de cuentas); si no pone ninguno sale solo la glosa
@@ -106,7 +108,52 @@
         return { texto: lineas.join('\r\n') + '\r\n', filas: filas, debe: debe, haber: haber, cuadra: debe === haber, errores: errores, sinCodigos: filas.filter(function (f) { return !f.cuenta; }).length };
     }
 
-    var api = { nomina: nomina, asiento: asiento, CUENTAS: CUENTAS, TIPOS_CUENTA: TIPOS_CUENTA, version: '1.0.0' };
-    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    var esNode = typeof module !== 'undefined' && module.exports;
+    function EX() { return esNode ? require('./pyme_excel.js') : root.CLPymeExcel; }
+
+    function nominaFilas(datos, r) {
+        var out = [
+            ['Nómina de pagos de ' + datos.periodoNombre],
+            ['Planilla genérica para revisar: no es el formato de ningún banco y no transfiere nada.'],
+            [],
+            ['RUT', 'Nombre', 'Banco', 'Tipo de cuenta', 'Número de cuenta', 'Monto a pagar', 'Glosa']
+        ];
+        r.filasDatos.forEach(function (f) { out.push(f); });
+        out.push([]);
+        out.push(['', 'Total', '', '', '', r.total, '']);
+        return out;
+    }
+
+    function nominaXlsx(datos, xlsxMod) {
+        var r = nomina(datos);
+        return {
+            res: r,
+            bytes: EX().construirLibro([{ nombre: 'Nomina de pagos', filas: nominaFilas(datos, r), textos: { 0: true, 4: true } }], xlsxMod)
+        };
+    }
+
+    function asientoFilas(datos, s) {
+        var out = [
+            ['Asiento de remuneraciones de ' + datos.periodoNombre],
+            ['Hecho con el Asistente Laboral Pyme a partir de las liquidaciones guardadas. Revísalo antes de contabilizarlo.'],
+            [],
+            ['Cuenta', 'Glosa', 'Debe', 'Haber']
+        ];
+        s.filas.forEach(function (f) { out.push([f.cuenta, f.glosa, f.debe || '', f.haber || '']); });
+        out.push([]);
+        out.push(['', 'Totales', s.debe, s.haber]);
+        return out;
+    }
+
+    function asientoXlsx(datos, xlsxMod) {
+        var s = asiento(datos);
+        return {
+            res: s,
+            bytes: EX().construirLibro([{ nombre: 'Asiento remuneraciones', filas: asientoFilas(datos, s), textos: { 0: true } }], xlsxMod)
+        };
+    }
+
+    var api = { nomina: nomina, asiento: asiento, nominaXlsx: nominaXlsx, asientoXlsx: asientoXlsx, CUENTAS: CUENTAS, TIPOS_CUENTA: TIPOS_CUENTA, version: '1.1.0' };
+    if (esNode) module.exports = api;
     else root.CLPymePagos = api;
 })(typeof window !== 'undefined' ? window : this);

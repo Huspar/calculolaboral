@@ -1155,12 +1155,11 @@ function dibujarEquipo() {
     $('liq-estudio-csv').addEventListener('click', function () {
         var listas = filasEstudio().filter(Boolean);
         if (!listas.length) return;
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob(['\ufeff', window.CLPymeEstudio.csv({ periodoNombre: nombrePeriodo(periodoSel) }, listas)], { type: 'text/csv;charset=utf-8' }));
-        a.download = 'resumen-empresas-' + periodoSel + '.csv';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
-        mensaje($('liq-estudio-estado'), 'ok', 'Descargado.');
+        bajarArchivoExcel('resumen-empresas-' + periodoSel + '.xlsx', function (XLSX) {
+            return window.CLPymeEstudio.xlsx({ periodoNombre: nombrePeriodo(periodoSel) }, listas, XLSX);
+        }).then(function () {
+            mensaje($('liq-estudio-estado'), 'ok', 'Descargado en Excel (.xlsx).');
+        });
     });
 
     // ---------- resumen de todas las empresas (Cierre del mes) ----------
@@ -1358,8 +1357,44 @@ function dibujarEquipo() {
     }
     $('pm-trab-nuevo').addEventListener('click', function () { navegar('trabajadores/nuevo'); });
 
-    // --- importar trabajadores desde una planilla CSV ---
-    var IMP = window.CLPymeImportar, planillaFilas = null;
+    // --- importar trabajadores desde una planilla Excel o CSV ---
+    var IMP = window.CLPymeImportar, EX = window.CLPymeExcel, planillaFilas = null;
+    function bajarArchivoExcel(nombreArchivo, generarBytes) {
+        return EX.asegurarXlsx().then(function (XLSX) {
+            var bytes = generarBytes(XLSX);
+            EX.descargarBytes(nombreArchivo, bytes);
+            return bytes;
+        }).catch(function () {
+            avisoGlobal('error', 'No pudimos generar el archivo Excel (.xlsx).');
+            throw new Error('xlsx');
+        });
+    }
+    function leerArchivoPlanilla(archivo, alTerminar, alError) {
+        if (/\.xlsx?$/i.test(archivo.name || '')) {
+            EX.asegurarXlsx().then(function (XLSX) {
+                var fr = new FileReader();
+                fr.onload = function () {
+                    try {
+                        alTerminar(EX.filasDesdeBuffer(fr.result, XLSX));
+                    } catch (e) {
+                        alError('No pudimos leer el archivo Excel (.xlsx).');
+                    }
+                };
+                fr.onerror = function () { alError('No pudimos leer el archivo.'); };
+                fr.readAsArrayBuffer(archivo);
+            }).catch(function () { alError('No pudimos cargar el lector de Excel (.xlsx).'); });
+            return;
+        }
+        var lector = new FileReader();
+        lector.onload = function () {
+            var texto = String(lector.result || '');
+            // Excel antiguo guarda en Windows-1252: si hay caracteres inválidos, se vuelve a leer con esa codificación
+            if (texto.indexOf('\uFFFD') >= 0 && !lector.reintento) { lector.reintento = true; lector.readAsText(archivo, 'windows-1252'); return; }
+            alTerminar(IMP.leerCsv(texto));
+        };
+        lector.onerror = function () { alError('No pudimos leer el archivo.'); };
+        lector.readAsText(archivo, 'utf-8');
+    }
     function cerrarPlanilla() { $('pm-planilla').hidden = true; $('pm-planilla-archivo').value = ''; $('pm-planilla-revision').innerHTML = ''; $('pm-planilla-importar').hidden = true; planillaFilas = null; mensaje($('pm-planilla-estado'), '', ''); }
     $('pm-planilla-abrir').addEventListener('click', function () {
         if (!estado.empresa) { avisoGlobal('error', 'Primero guarda los datos de la empresa.'); return; }
@@ -1368,11 +1403,9 @@ function dibujarEquipo() {
     });
     $('pm-planilla-cerrar').addEventListener('click', cerrarPlanilla);
     $('pm-planilla-plantilla').addEventListener('click', function () {
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob(['\ufeff', IMP.plantilla()], { type: 'text/csv;charset=utf-8' }));
-        a.download = 'plantilla-trabajadores.csv';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+        bajarArchivoExcel('plantilla-trabajadores.xlsx', function (XLSX) {
+            return IMP.plantillaXlsx(XLSX);
+        });
     });
     $('pm-planilla-archivo').addEventListener('change', function () {
         var archivo = this.files && this.files[0], est = $('pm-planilla-estado');
@@ -1380,19 +1413,12 @@ function dibujarEquipo() {
         $('pm-planilla-importar').hidden = true;
         $('pm-planilla-revision').innerHTML = '';
         if (!archivo) return;
-        if (archivo.size > 512000) { mensaje(est, 'error', 'La planilla es demasiado grande (máximo 500 KB).'); return; }
-        var lector = new FileReader();
-        lector.onload = function () {
-            var texto = String(lector.result || '');
-            // Excel antiguo guarda en Windows-1252: si hay caracteres inválidos, se vuelve a leer con esa codificación
-            if (texto.indexOf('\uFFFD') >= 0 && !lector.reintento) { lector.reintento = true; lector.readAsText(archivo, 'windows-1252'); return; }
-            var filas = IMP.leerCsv(texto);
+        if (archivo.size > 2097152) { mensaje(est, 'error', 'La planilla es demasiado grande (máximo 2 MB).'); return; }
+        leerArchivoPlanilla(archivo, function (filas) {
             if (filas.length < 2) { mensaje(est, 'error', 'La planilla no tiene filas con trabajadores debajo de los encabezados.'); return; }
             planillaFilas = IMP.revisar(filas, { rut: Rut, afps: Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp) });
             dibujarRevisionPlanilla(filas.length - 1);
-        };
-        lector.onerror = function () { mensaje(est, 'error', 'No pudimos leer el archivo.'); };
-        lector.readAsText(archivo, 'utf-8');
+        }, function (err) { mensaje(est, 'error', err); });
     });
     function dibujarRevisionPlanilla(totalFilas) {
         var buenas = planillaFilas.filter(function (r) { return !r.errores.length; }), est = $('pm-planilla-estado');
@@ -2559,6 +2585,7 @@ function dibujarEquipo() {
         if (!t) return;
         $('pm-midt').close();
         var cont = $('print-section'), anterior = document.title;
+        cont.classList.remove('es-libro');
         cont.innerHTML = '<section class="pm-hoja">' + hojaMiDT(t) + '</section>';
         document.title = 'Datos Mi DT ' + t.nombre;
         var restaurar = function () { document.title = anterior; window.removeEventListener('afterprint', restaurar); };
@@ -3268,11 +3295,9 @@ function dibujarEquipo() {
     }
     $('liq-anual-tabla').addEventListener('click', function (e) {
         if (e.target.closest('#liq-anual-excel')) {
-            var a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob(['\ufeff', ANUAL.csv({ empresa: estado.empresa, anio: anualDatos.anio }, anualDatos.lista)], { type: 'text/csv;charset=utf-8' }));
-            a.download = 'resumen-anual-' + anualDatos.anio + '.csv';
-            document.body.appendChild(a); a.click(); a.remove();
-            setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+            bajarArchivoExcel('resumen-anual-' + anualDatos.anio + '.xlsx', function (XLSX) {
+                return ANUAL.xlsx({ empresa: estado.empresa, anio: anualDatos.anio }, anualDatos.lista, XLSX);
+            });
             return;
         }
         var b = e.target.closest('[data-anual]');
@@ -3290,9 +3315,10 @@ function dibujarEquipo() {
             ' Columnas según las instrucciones del SII para el Certificado N°6; las columnas (6) mayor retención, (7) renta exenta y (9) zonas extremas no se usan en el asistente.</p>' +
             '<div class="dc-firmas" style="margin-top:28px">' + esc(estado.empresa.representante || estado.empresa.razonSocial) + '<br>Firma del empleador</div></div></section>';
         var cont = $('print-section'), anterior = document.title;
+        cont.classList.add('es-libro');
         cont.innerHTML = html;
         document.title = 'Resumen anual ' + r.anio + ' ' + x.t.nombre;
-        var restaurar = function () { document.title = anterior; window.removeEventListener('afterprint', restaurar); };
+        var restaurar = function () { cont.classList.remove('es-libro'); document.title = anterior; window.removeEventListener('afterprint', restaurar); };
         window.addEventListener('afterprint', restaurar);
         window.print();
         setTimeout(restaurar, 2000);
@@ -3819,17 +3845,15 @@ function dibujarEquipo() {
     // Novedades del mes por planilla CSV: días, horas extra, comisiones, bono, anticipo, etc. de todos a la vez
     var NOV = window.CLPymeNovedades;
     function bajarPlantillaNovedades() {
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob(['\ufeff', NOV.plantilla(delMes(periodoSel))], { type: 'text/csv;charset=utf-8' }));
-        a.download = 'novedades-' + periodoSel + '.csv';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+        bajarArchivoExcel('novedades-' + periodoSel + '.xlsx', function (XLSX) {
+            return NOV.plantillaXlsx(delMes(periodoSel), XLSX);
+        });
     }
     function listaNov(titulo, items) { return items.length ? '<p><strong>' + titulo + '</strong></p><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
     $('pm-liq-nov').addEventListener('click', function () {
         var det = $('pm-liq-nov-detalle');
         if (!delMes(periodoSel).length) { det.innerHTML = '<p>No hay trabajadores para ' + esc(nombrePeriodo(periodoSel)) + '.</p>'; return; }
-        det.innerHTML = '<p>Sube un CSV con una fila por trabajador (RUT y lo que cambió este mes). <button type="button" class="btn-texto" id="pm-liq-nov-plantilla">Descargar la plantilla con tu equipo</button></p>' +
+        det.innerHTML = '<p>Sube un archivo Excel (.xlsx) o CSV con una fila por trabajador (RUT y lo que cambió este mes). <button type="button" class="btn-texto" id="pm-liq-nov-plantilla">Descargar plantilla Excel con tu equipo</button></p>' +
             '<p class="lq-help">Lo que dejes vacío queda como está: si el mes ya estaba guardado se conserva, y si no, se parte de los valores base. Las liquidaciones ya emitidas no se tocan.</p>';
         $('pm-liq-nov-archivo').click();
     });
@@ -3837,14 +3861,11 @@ function dibujarEquipo() {
     $('pm-liq-nov-archivo').addEventListener('change', function () {
         var archivo = this.files && this.files[0], det = $('pm-liq-nov-detalle'), input = this;
         if (!archivo) return;
-        if (archivo.size > 512000) { det.innerHTML = '<p>La planilla es demasiado grande (máximo 500 KB).</p>'; input.value = ''; return; }
+        if (archivo.size > 2097152) { det.innerHTML = '<p>La planilla es demasiado grande (máximo 2 MB).</p>'; input.value = ''; return; }
         if (!VAL[periodoSel] || VAL[periodoSel].estado !== 'ok') { det.innerHTML = '<p>Espera a que terminemos de consultar la UF y la UTM del mes.</p>'; input.value = ''; return; }
-        var lector = new FileReader();
-        lector.onload = function () {
-            var texto = String(lector.result || '');
-            if (texto.indexOf('\uFFFD') >= 0 && !lector.reintento) { lector.reintento = true; lector.readAsText(archivo, 'windows-1252'); return; }
+        leerArchivoPlanilla(archivo, function (filas) {
             input.value = '';
-            var r = NOV.revisar(IMP.leerCsv(texto), delMes(periodoSel), Rut);
+            var r = NOV.revisar(filas, delMes(periodoSel), Rut);
             if (r.errores.length) {
                 det.innerHTML = '<p><strong>No se aplicó nada.</strong> Corrige estas filas y vuelve a subir la planilla.</p>' + listaNov('Para corregir', r.errores.map(function (x) { return 'Fila ' + x.fila + ': ' + x.motivo; }));
                 return;
@@ -3871,9 +3892,7 @@ function dibujarEquipo() {
                 det.innerHTML = '<p><strong>' + (fallo ? 'Aplicamos ' + hechas + ' y paramos: ' + esc(fallo.datos.error || 'no pudimos guardar.') : 'Listo: ' + plural(hechas, 'liquidación guardada', 'liquidaciones guardadas') + ' con las novedades.') + '</strong> Ábrelas para revisar el cálculo antes de emitirlas.</p>' +
                     listaNov('Sin fila en la planilla (siguen como estaban)', r.sinFila) + listaNov('No se tocaron', emitidas);
             });
-        };
-        lector.onerror = function () { det.innerHTML = '<p>No pudimos leer el archivo.</p>'; };
-        lector.readAsText(archivo, 'utf-8');
+        }, function (err) { input.value = ''; det.innerHTML = '<p>' + esc(err) + '</p>'; });
     });
 
     function marcarEmitidas(ids, fecha, est) {
@@ -3898,6 +3917,7 @@ function dibujarEquipo() {
     // --- impresión ---
     function imprimirHojas(htmls, titulo) {
         var cont = $('print-section'), pagada = tienePase();
+        cont.classList.remove('es-libro');
         cont.innerHTML = htmls.map(function (h) { return '<section class="pm-hoja"><article class="lq-doc' + (pagada ? ' lqd-pagada' : '') + '">' + h + '</article></section>'; }).join('');
         var anterior = document.title;
         document.title = titulo;
@@ -3946,12 +3966,11 @@ function dibujarEquipo() {
     $('pm-liq-libro-excel').addEventListener('click', function () {
         var filas = filasLibro($('pm-liq-estado'));
         if (!filas) return;
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob(['\ufeff', LIBRO.csv({ empresa: estado.empresa, periodoNombre: nombrePeriodo(periodoSel) }, filas)], { type: 'text/csv;charset=utf-8' }));
-        a.download = 'libro-remuneraciones-' + periodoSel + '.csv';
-        document.body.appendChild(a); a.click(); a.remove();
-        avisarDescarga('descarga_libro');
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+        bajarArchivoExcel('libro-remuneraciones-' + periodoSel + '.xlsx', function (XLSX) {
+            return LIBRO.xlsx({ empresa: estado.empresa, periodoNombre: nombrePeriodo(periodoSel) }, filas, XLSX);
+        }).then(function () {
+            avisarDescarga('descarga_libro');
+        });
     });
     // Archivo para Previred (105 campos) con las liquidaciones guardadas del mes: se descarga para revisarlo y cargarlo en Previred
     $('liq-previred-archivo').addEventListener('click', function () {
@@ -4002,23 +4021,19 @@ function dibujarEquipo() {
         if (ejemplo) return;
         api('actividad', { metodo: 'POST', cuerpo: { accion: accion } }).then(function () { actividadCache = null; }, function () { /* el aviso no impide nada */ });
     }
-    function bajarCsv(nombre, texto) {
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob(['\ufeff', texto], { type: 'text/csv;charset=utf-8' }));
-        a.download = nombre;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
-    }
     $('pm-liq-nomina').addEventListener('click', function () {
         var det = $('pm-liq-pagos-detalle'), d = itemsDelMes(det);
         if (!d) return;
         var s = window.CLPymePagos.nomina({ periodoNombre: nombrePeriodo(periodoSel), items: d.items });
         var omit = s.omitidos.map(function (o) { return o.nombre + ': ' + o.motivo; }).concat(d.omitidas);
         if (!s.incluidos) { det.innerHTML = '<p><strong>No se generó la nómina:</strong> ningún trabajador tiene completa su cuenta. Agrégala en su ficha, en «Cuenta para el pago del sueldo».</p>' + listaHtml('Falta corregir', omit); return; }
-        bajarCsv('nomina-pagos-' + periodoSel + '.csv', s.texto);
-        avisarDescarga('descarga_nomina');
-        det.innerHTML = '<p><strong>Nómina descargada con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + ' por ' + pesos(s.total) + '.</strong> Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada. Para pagar, cárgala o cópiala tú en el portal de tu banco con tu clave.</p>' +
-            listaHtml('No están en la nómina', omit);
+        bajarArchivoExcel('nomina-pagos-' + periodoSel + '.xlsx', function (XLSX) {
+            return window.CLPymePagos.nominaXlsx({ periodoNombre: nombrePeriodo(periodoSel), items: d.items }, XLSX).bytes;
+        }).then(function () {
+            avisarDescarga('descarga_nomina');
+            det.innerHTML = '<p><strong>Nómina descargada en Excel (.xlsx) con ' + plural(s.incluidos, 'trabajador', 'trabajadores') + ' por ' + pesos(s.total) + '.</strong> Es una planilla genérica para revisar: no es el formato de ningún banco ni transfiere nada. Para pagar, cárgala o cópiala tú en el portal de tu banco con tu clave.</p>' +
+                listaHtml('No están en la nómina', omit);
+        });
     });
     // Enlaces de liquidación de todo el equipo: se crean los que faltan y se baja una planilla para enviarlos (el enlace completo solo se ve al crearlo)
     $('pm-liq-enlaces').addEventListener('click', function () {
@@ -4046,12 +4061,12 @@ function dibujarEquipo() {
                         var e = (enlacesCache[p] || {})[n.t.id];
                         return [n.t.rut, n.t.nombre, n.enlace, e && e.vence ? e.vence.slice(0, 10) : ''];
                     }));
-                    var csv = filas.map(function (f) {
-                        return f.map(function (v) { v = String(v == null ? '' : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';');
-                    }).join('\r\n') + '\r\n';
-                    bajarCsv('enlaces-liquidacion-' + p + '.csv', csv);
-                    avisarDescarga('descarga_enlaces');
-                    det.innerHTML = '<p><strong>' + plural(nuevos.length, 'enlace creado', 'enlaces creados') + ' y descargados.</strong> Cada enlace muestra solo la liquidación de esa persona, vence a los 60 días y se puede anular desde su liquidación. Envíaselo tú a cada trabajador (WhatsApp o correo): el asistente no guarda ni envía correos de trabajadores. Un revisor automático de enlaces también cuenta como apertura; no es firma ni aceptación.</p>' + listaHtml('Sin enlace nuevo', saltados);
+                    return bajarArchivoExcel('enlaces-liquidacion-' + p + '.xlsx', function (XLSX) {
+                        return EX.construirLibro([{ nombre: 'Enlaces', filas: filas, textos: { 0: true, 3: true } }], XLSX);
+                    }).then(function () {
+                        avisarDescarga('descarga_enlaces');
+                        det.innerHTML = '<p><strong>' + plural(nuevos.length, 'enlace creado', 'enlaces creados') + ' y descargados en Excel (.xlsx).</strong> Cada enlace muestra solo la liquidación de esa persona, vence a los 60 días y se puede anular desde su liquidación. Envíaselo tú a cada trabajador (WhatsApp o correo): el asistente no guarda ni envía correos de trabajadores. Un revisor automático de enlaces también cuenta como apertura; no es firma ni aceptación.</p>' + listaHtml('Sin enlace nuevo', saltados);
+                    });
                 });
             });
         });
@@ -4078,11 +4093,14 @@ function dibujarEquipo() {
         var s = window.CLPymePagos.asiento({ periodoNombre: nombrePeriodo(periodoSel), cuentas: cuentasGuardadas(), items: d.items });
         if (s.errores.length) { det.innerHTML = '<p><strong>No se generó el asiento.</strong></p>' + listaHtml('Falta corregir', s.errores); return; }
         if (!s.cuadra) { det.innerHTML = '<p><strong>No se generó el asiento:</strong> el debe (' + pesos(s.debe) + ') no cuadra con el haber (' + pesos(s.haber) + '). Avísanos con tu correo y el mes.</p>'; return; }
-        bajarCsv('asiento-remuneraciones-' + periodoSel + '.csv', s.texto);
-        avisarDescarga('descarga_asiento');
-        det.innerHTML = '<p><strong>Asiento descargado: debe y haber por ' + pesos(s.debe) + '.</strong> Revísalo antes de contabilizarlo; el asistente no se conecta con tu software contable.</p>' +
-            (s.sinCodigos ? '<p>' + plural(s.sinCodigos, 'línea', 'líneas') + ' sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento contable» y volver a descargar.</p>' : '') +
-            listaHtml('No están en el asiento', d.omitidas);
+        bajarArchivoExcel('asiento-remuneraciones-' + periodoSel + '.xlsx', function (XLSX) {
+            return window.CLPymePagos.asientoXlsx({ periodoNombre: nombrePeriodo(periodoSel), cuentas: cuentasGuardadas(), items: d.items }, XLSX).bytes;
+        }).then(function () {
+            avisarDescarga('descarga_asiento');
+            det.innerHTML = '<p><strong>Asiento descargado en Excel (.xlsx): debe y haber por ' + pesos(s.debe) + '.</strong> Revísalo antes de contabilizarlo; el asistente no se conecta con tu software contable.</p>' +
+                (s.sinCodigos ? '<p>' + plural(s.sinCodigos, 'línea', 'líneas') + ' sin código de cuenta: puedes ponerlos en «Códigos de cuenta del asiento contable» y volver a descargar.</p>' : '') +
+                listaHtml('No están en el asiento', d.omitidas);
+        });
     });
     var plantillaLre = '';
     // Archivo de carga masiva del Libro de Remuneraciones Electrónico (Mi DT): se descarga para revisarlo y cargarlo con tu clave
@@ -4144,9 +4162,10 @@ function dibujarEquipo() {
             '</tbody><tfoot><tr>' + cols.map(function (c) { return '<td>' + num(tot[c.k]) + '</td>'; }).join('') + '</tr></tfoot></table>' +
             '<p class="libro-nota">Hecho con el Asistente Laboral Pyme a partir de las liquidaciones guardadas. Las cotizaciones del empleador son una estimación: el monto exacto lo calcula Previred. No reemplaza al Libro de Remuneraciones Electrónico de la Dirección del Trabajo, obligatorio para empleadores con 5 o más trabajadores (art. 62 del Código del Trabajo).</p></div></section>';
         var cont = $('print-section'), anterior = document.title;
+        cont.classList.add('es-libro');
         cont.innerHTML = html;
         document.title = 'Libro de remuneraciones ' + periodoSel;
-        var restaurar = function () { document.title = anterior; window.removeEventListener('afterprint', restaurar); };
+        var restaurar = function () { cont.classList.remove('es-libro'); document.title = anterior; window.removeEventListener('afterprint', restaurar); };
         window.addEventListener('afterprint', restaurar);
         window.print();
         setTimeout(restaurar, 2000);

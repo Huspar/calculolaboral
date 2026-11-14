@@ -135,4 +135,23 @@ caso('fichas: un plazo fijo sin fecha de término y un término sin causal queda
     f.trabajadores.forEach(t => assert.ok(V.validarTrabajador(t).ok, JSON.stringify(V.validarTrabajador(t).errores)));
 });
 
+caso('nominaXlsx y asientoXlsx en demo_archivos generan .xlsx válidos desde resultados de la demo', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const rs = [resultado({ numeroCuenta: '000987654' })];
+    const nom = A.nominaXlsx(rs, OPC, XLSX);
+    const wbNom = XLSX.read(nom.bytes, { type: 'array' });
+    assert.deepStrictEqual(wbNom.SheetNames, ['Nomina de pagos']);
+    const wsNom = wbNom.Sheets['Nomina de pagos'];
+    const matNom = XLSX.utils.sheet_to_json(wsNom, { header: 1, raw: true, defval: '' });
+    const rowIdx = matNom.findIndex(r => r[4] === '000987654');
+    assert.ok(rowIdx >= 0);
+    assert.strictEqual(wsNom[XLSX.utils.encode_cell({ r: rowIdx, c: 4 })].t, 's');
+    assert.strictEqual(wsNom[XLSX.utils.encode_cell({ r: rowIdx, c: 5 })].t, 'n');
+
+    const asi = A.asientoXlsx(rs, OPC, XLSX);
+    assert.ok(asi.res.cuadra);
+    const wbAsi = XLSX.read(asi.bytes, { type: 'array' });
+    assert.deepStrictEqual(wbAsi.SheetNames, ['Asiento remuneraciones']);
+});
+
 console.log(ok + ' pruebas correctas');

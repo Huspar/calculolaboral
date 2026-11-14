@@ -75,4 +75,26 @@ caso('los encabezados se reconocen sin tildes, en mayúsculas y con el texto ent
     assert.deepStrictEqual(r.cambios[0].nov, { dias: 20, horasExtra: 2, creditoCCAF: 9000 });
 });
 
+caso('plantillaXlsx prellena RUT y nombres y leerXlsx importa novedades con números reales', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const tplBytes = N.plantillaXlsx(TS, XLSX);
+    const wb = XLSX.read(tplBytes, { type: 'array' });
+    const hoja = wb.SheetNames[0];
+    assert.strictEqual(hoja, 'Novedades');
+    const mat = I.leerXlsx(tplBytes, XLSX);
+    assert.strictEqual(mat[1][0], T1.rut);
+    assert.strictEqual(mat[1][1], T1.nombre);
+
+    const ws = XLSX.utils.aoa_to_sheet([
+        N.COLUMNAS.map(c => c.titulo),
+        [T1.rut, T1.nombre, 20, 2, '', '', 35000, '', '', '', 9000]
+    ]);
+    const wb2 = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb2, ws, 'Novedades');
+    const buf = XLSX.write(wb2, { type: 'buffer', bookType: 'xlsx' });
+    const res = N.revisar(I.leerXlsx(buf, XLSX), TS, Rut);
+    assert.deepStrictEqual(res.errores, []);
+    assert.deepStrictEqual(res.cambios[0].nov, { dias: 20, horasExtra: 2, bono: 35000, creditoCCAF: 9000 });
+});
+
 console.log(ok + ' pruebas correctas');

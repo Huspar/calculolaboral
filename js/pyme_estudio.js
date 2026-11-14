@@ -71,7 +71,26 @@
         return lineas.join('\r\n') + '\r\n';
     }
 
-    var api = { resumenEmpresa: resumenEmpresa, totales: totales, csv: csv, COLUMNAS: COLUMNAS, version: '1.0.0' };
-    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    function EX() { return esNode ? require('./pyme_excel.js') : root.CLPymeExcel; }
+
+    function hojaFilas(meta, filas) {
+        var out = [
+            ['Resumen de ' + meta.periodoNombre + ' de todas las empresas'],
+            ['Montos en pesos calculados con el Asistente Laboral Pyme a partir de las liquidaciones y boletas guardadas. Previred y el F29 son una estimación: confirma los montos en Previred y en sii.cl antes de declarar.'],
+            [],
+            COLUMNAS.map(function (c) { return c.titulo; })
+        ];
+        (filas || []).concat([totales(filas)]).forEach(function (f) {
+            out.push(COLUMNAS.map(function (c) { return f[c.k]; }));
+        });
+        return out;
+    }
+
+    function xlsx(meta, filas, xlsxMod) {
+        return EX().construirLibro([{ nombre: 'Resumen empresas', filas: hojaFilas(meta, filas), textos: { 1: true } }], xlsxMod);
+    }
+
+    var api = { resumenEmpresa: resumenEmpresa, totales: totales, csv: csv, xlsx: xlsx, COLUMNAS: COLUMNAS, version: '1.1.0' };
+    if (esNode) module.exports = api;
     else root.CLPymeEstudio = api;
 })(typeof window !== 'undefined' ? window : this);
