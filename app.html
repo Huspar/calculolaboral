@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.27.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.28.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -55,6 +55,11 @@ gtag('js', new Date());
 </a>
 <h1 id="pm-entrada-titulo">Entra al Asistente Laboral Pyme</h1>
 <p class="texto-ayuda">Te enviamos un enlace de un solo uso, válido por 15 minutos. No necesitas contraseña.</p>
+<ul class="entrada-puntos">
+<li><span class="material-icons" aria-hidden="true">check_circle</span><span>Calcula sueldos, Previred y el archivo para Mi DT en pocos pasos.</span></li>
+<li><span class="material-icons" aria-hidden="true">check_circle</span><span>Recibe alertas claras de contratos, licencias y plazos antes de que venzan.</span></li>
+<li><span class="material-icons" aria-hidden="true">check_circle</span><span>Ordena cobros, pagos a proveedores y la caja real del mes.</span></li>
+</ul>
 <div id="pm-entrada-nota" class="lq-aviso lq-aviso-info" role="status" hidden><span class="material-icons" aria-hidden="true">info</span><p></p></div>
 <form id="pm-entrar-form" novalidate>
 <div class="lq-field">
@@ -153,7 +158,7 @@ gtag('js', new Date());
 <main class="app-content" id="app-content">
 <div id="pm-ejemplo-franja" class="ejemplo-franja" hidden>
 <span class="material-icons" aria-hidden="true">science</span>
-<p><strong>Estás viendo un ejemplo con datos ficticios.</strong> Cambia lo que quieras: nada se guarda y todo se borra al salir. Los documentos salen con la marca «Vista previa».</p>
+<p><strong>Estás viendo un mes simulado con datos ficticios.</strong> Prueba liquidaciones, cobros y avisos: nada se guarda y todo se borra al salir. Los documentos salen con la marca «Vista previa».</p>
 <div class="ejemplo-franja-acciones"><button type="button" class="btn btn-chico btn-primario" id="pm-ejemplo-entrar">Usar con mi empresa</button><button type="button" class="btn-texto" id="pm-ejemplo-salir">Salir del ejemplo</button></div>
 </div>
 <div id="pm-cierre-banner" class="cierre-tributario-banner" role="status" hidden>
@@ -293,7 +298,7 @@ gtag('js', new Date());
 <div class="lq-field" data-si-contrato="plazo_fijo"><label for="pm-t-reno">Renovaciones que lleva</label><input id="pm-t-reno" data-k="renovaciones" data-tipo="num" type="text" inputmode="numeric" maxlength="1" placeholder="0"><p class="pm-error" data-error="renovaciones" hidden></p></div>
 <div class="lq-field"><label for="pm-t-sueldo">Sueldo base mensual</label><input id="pm-t-sueldo" data-k="sueldoBase" data-tipo="pesos" type="text" inputmode="numeric" placeholder="$650.000"><p class="pm-error" data-error="sueldoBase" hidden></p></div>
 <div class="lq-field"><label for="pm-t-grat">Gratificación</label>
-<select id="pm-t-grat" data-k="gratificacion"><option value="legal">Legal (art. 50)</option><option value="ninguna">Ninguna</option><option value="pactada">Pactada</option></select></div>
+<select id="pm-t-grat" data-k="gratificacion"><option value="legal">Legal mensual (25% con tope, lo más común)</option><option value="ninguna">Sin gratificación</option><option value="pactada">Pactada en contrato</option></select></div>
 <div class="lq-field"><label for="pm-t-afp">AFP</label><select id="pm-t-afp" data-k="afp"></select></div>
 <div class="lq-field"><label for="pm-t-salud">Salud</label>
 <select id="pm-t-salud" data-k="salud"><option value="fonasa">Fonasa</option><option value="isapre">Isapre</option></select></div>
@@ -531,8 +536,8 @@ gtag('js', new Date());
 </div>
 <div class="v-acciones" id="pm-liq-acciones">
 <button type="button" id="pm-liq-preparar" class="btn"><span class="material-icons" aria-hidden="true">playlist_add</span>Preparar el mes con valores base</button>
-<button type="button" id="pm-liq-nov" class="btn"><span class="material-icons" aria-hidden="true">upload_file</span>Cargar novedades del mes</button>
-<input type="file" id="pm-liq-nov-archivo" accept=".csv,.txt,text/csv" hidden aria-label="Archivo CSV de novedades del mes">
+<button type="button" id="pm-liq-nov" class="btn"><span class="material-icons" aria-hidden="true">upload_file</span>Cargar horas extras, bonos o ausencias</button>
+<input type="file" id="pm-liq-nov-archivo" accept=".csv,.txt,text/csv" hidden aria-label="Archivo CSV de horas extras, bonos o ausencias">
 <button type="button" id="pm-liq-imprimir-todas" class="btn btn-primario"><span class="material-icons" aria-hidden="true">print</span>Imprimir todas</button>
 </div>
 </div>
@@ -552,7 +557,7 @@ gtag('js', new Date());
 <button type="button" id="pm-liq-marcar" class="btn-texto" hidden>Marcar como emitidas</button>
 <button type="button" id="pm-liq-libro-excel" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">table_view</span>Libro del mes para el contador (Excel)</button>
 <button type="button" id="pm-liq-libro-imprimir" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">print</span>Imprimir libro</button>
-<button type="button" id="pm-liq-lre" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">description</span>Archivo para el LRE (Mi DT)</button>
+<button type="button" id="pm-liq-lre" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">description</span>Archivo de sueldos para Mi DT (LRE)</button>
 <button type="button" id="pm-liq-nomina" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">payments</span>Nómina de pagos (Excel)</button>
 <button type="button" id="pm-liq-asiento" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">account_balance</span>Asiento contable (Excel)</button>
 <button type="button" id="pm-liq-enlaces" class="btn-texto" hidden><span class="material-icons" aria-hidden="true">link</span>Enlaces de liquidación para todos (Excel)</button>
@@ -563,7 +568,7 @@ gtag('js', new Date());
 <div id="pm-liq-lre-detalle" class="lq-help" role="status" style="margin-top:6px"></div>
 <div id="pm-liq-pagos-detalle" class="lq-help" role="status" style="margin-top:6px"></div>
 <details class="lq-cuentas" id="pm-liq-cuentas" style="margin-top:6px">
-<summary>Códigos de cuenta del asiento contable</summary>
+<summary>Para tu contador: códigos de cuenta del asiento contable (opcional)</summary>
 <p class="lq-help">Escribe el código de tu plan de cuentas para cada línea (opcional). Se recuerdan en este navegador, por empresa.</p>
 <div class="lq-grid" id="pm-liq-cuentas-campos"></div>
 </details>
@@ -613,7 +618,7 @@ gtag('js', new Date());
 <div class="panel" id="liq-estudio" hidden>
 <div class="panel-head"><h2 id="liq-estudio-titulo">Todas tus empresas</h2><span class="sello sello-guardada">Estimación</span></div>
 <div class="tabla-wrap"><table class="tabla tabla-total"><caption class="sr-only">Resumen del mes de cada empresa de tu cuenta</caption>
-<thead><tr><th scope="col">Empresa</th><th scope="col" class="num">Liquidaciones</th><th scope="col" class="num">Previred</th><th scope="col" class="num">F29 · cód. 48</th><th scope="col" class="num">F29 · cód. 151</th><th scope="col" class="num">Costo total</th></tr></thead>
+<thead><tr><th scope="col">Empresa</th><th scope="col" class="num">Liquidaciones</th><th scope="col" class="num">Previred</th><th scope="col" class="num">Impuesto sueldos (F29 cód. 48)</th><th scope="col" class="num">Retención honorarios (F29 cód. 151)</th><th scope="col" class="num">Costo total</th></tr></thead>
 <tbody id="liq-estudio-filas"></tbody>
 <tfoot><tr id="liq-estudio-total"></tr></tfoot></table></div>
 <div class="acciones-pila acciones-fila" style="padding:12px 16px">
@@ -934,7 +939,7 @@ gtag('js', new Date());
 <div class="lq-field lq-span2"><label for="pm-e-dir">Dirección <span class="lq-opt">(opcional)</span></label><input id="pm-e-dir" data-k="direccion" type="text" maxlength="120" placeholder="Av. Principal 123"></div>
 <div class="lq-field"><label for="pm-e-comuna">Comuna <span class="lq-opt">(opcional)</span></label><input id="pm-e-comuna" data-k="comuna" type="text" maxlength="60" placeholder="Temuco"></div>
 <div class="lq-field"><label for="pm-e-ciudad">Ciudad <span class="lq-opt">(opcional)</span></label><input id="pm-e-ciudad" data-k="ciudad" type="text" maxlength="60" placeholder="Temuco"></div>
-<div class="lq-field"><label for="pm-e-mutual">Cotización de tu mutual o ISL (%)</label><input id="pm-e-mutual" data-k="tasaMutual" data-tipo="dec" type="text" inputmode="decimal" maxlength="5" placeholder="0,93" aria-describedby="pm-e-mutual-ayuda"><p class="lq-help" id="pm-e-mutual-ayuda">0,90% básica, 0,03% de la Ley SANNA y la adicional de tu rubro: la tasa total está en la resolución de tu mutual o del ISL. Si no la sabes, deja 0,93.</p><p class="pm-error" data-error="tasaMutual" hidden></p></div>
+<div class="lq-field"><label for="pm-e-mutual">Cotización de tu mutual o ISL (%)</label><input id="pm-e-mutual" data-k="tasaMutual" data-tipo="dec" type="text" inputmode="decimal" maxlength="5" placeholder="0,93" aria-describedby="pm-e-mutual-ayuda"><p class="lq-help" id="pm-e-mutual-ayuda">Tasa estándar para pymes: 0,93% (0,90% básica + 0,03% Ley SANNA). Si la resolución de tu mutual o ISL fija otra tasa, cámbiala aquí.</p><p class="pm-error" data-error="tasaMutual" hidden></p></div>
 <div class="lq-field"><label for="pm-e-mutualinst">Mutualidad o ISL <span class="lq-opt">(para Previred)</span></label><select id="pm-e-mutualinst" data-k="mutual"><option value="">Sin indicar</option><option value="ACHS">ACHS</option><option value="Mutual">Mutual de Seguridad</option><option value="IST">IST</option><option value="ISL">ISL</option></select></div>
 <div class="lq-field"><label for="pm-e-ccaf">Caja de compensación <span class="lq-opt">(si estás afiliado)</span></label><select id="pm-e-ccaf" data-k="ccaf"><option value="">Ninguna</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
 <div class="lq-field lq-span2">
@@ -1226,7 +1231,8 @@ gtag('js', new Date());
 <p class="v-sub">Facturas emitidas a clientes, estado de vencimiento y recordatorio formal de cobro.</p>
 </div>
 <div class="v-acciones">
-<button type="button" class="btn" id="cob-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Importar RCV Ventas SII (.csv)</button>
+<button type="button" class="btn" id="cob-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Cargar facturas de clientes (.csv del SII)</button>
+<button type="button" class="btn-texto" id="cob-btn-rcv-ayuda">¿Dónde obtengo este archivo?</button>
 <input type="file" id="cob-rcv-file" accept=".csv,text/csv" hidden aria-label="Archivo RCV de Ventas del SII en CSV">
 <button type="button" class="btn btn-primario" id="cob-btn-nueva"><span class="material-icons" aria-hidden="true">add</span>Nueva cuenta por cobrar</button>
 </div>
@@ -1277,7 +1283,8 @@ gtag('js', new Date());
 <p class="v-sub">Facturas de proveedores y planilla para pago masivo en el portal de tu banco.</p>
 </div>
 <div class="v-acciones">
-<button type="button" class="btn" id="pag-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Importar RCV Compras SII (.csv)</button>
+<button type="button" class="btn" id="pag-btn-rcv"><span class="material-icons" aria-hidden="true">upload_file</span>Cargar facturas de proveedores (.csv del SII)</button>
+<button type="button" class="btn-texto" id="pag-btn-rcv-ayuda">¿Dónde obtengo este archivo?</button>
 <input type="file" id="pag-rcv-file" accept=".csv,text/csv" hidden aria-label="Archivo RCV de Compras del SII en CSV">
 <button type="button" class="btn" id="pag-btn-nueva"><span class="material-icons" aria-hidden="true">add</span>Registrar factura</button>
 <button type="button" class="btn btn-primario" id="pag-btn-nomina"><span class="material-icons" aria-hidden="true">download</span><span id="pag-btn-nomina-txt">Descargar nómina bancaria</span></button>
@@ -1329,7 +1336,7 @@ gtag('js', new Date());
 <div class="v-head">
 <div>
 <h1 class="v-titulo" id="conc-titulo">Conciliación bancaria</h1>
-<p class="v-sub">Cruza los abonos y cargos de tu banco con facturas, sueldos, Previred y F29 sin lenguaje contable.</p>
+<p class="v-sub">Compara los movimientos de tu banco con tus facturas, sueldos, Previred y F29 en pocos clics.</p>
 </div>
 <div class="v-acciones">
 <button type="button" class="btn btn-primario" id="conc-btn-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (.csv / .xlsx)</button>
@@ -1411,10 +1418,9 @@ gtag('js', new Date());
 
 <nav class="app-barra" id="app-barra" aria-label="Secciones principales">
 <a href="/app" data-ruta="" data-nav=""><span class="material-icons" aria-hidden="true">fact_check</span><span>Cierre</span></a>
-<a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores" class="solo-arranque"><span class="material-icons" aria-hidden="true">group</span><span>Trabajadores</span></a>
-<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja" data-mas><span class="material-icons" aria-hidden="true">account_balance_wallet</span><span>Caja</span></a>
-<a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas" data-mas><span class="material-icons" aria-hidden="true">call_received</span><span>Cobros</span></a>
+<a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span><span>Equipo</span></a>
 <a href="/app/liquidaciones" data-ruta="liquidaciones" data-nav="liquidaciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Sueldos</span></a>
+<a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja" data-mas><span class="material-icons" aria-hidden="true">account_balance_wallet</span><span>Caja</span></a>
 <button type="button" id="app-mas" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">more_horiz</span><span>Más</span></button>
 </nav>
 </div>
@@ -1511,6 +1517,23 @@ gtag('js', new Date());
 <div class="form-acciones"><button type="button" class="btn" id="pm-midt-imprimir"><span class="material-icons" aria-hidden="true">print</span>Imprimir</button><button type="button" class="btn btn-primario" id="pm-midt-listo">Listo</button></div>
 </dialog>
 
+<dialog class="app-dialogo app-dialogo-medio" id="pm-rcv-ayuda-dlg" aria-labelledby="pm-rcv-ayuda-titulo">
+<div class="midt-cabeza"><h2 id="pm-rcv-ayuda-titulo">Cómo bajar tus facturas desde el SII</h2><button type="button" class="app-icono-btn" id="pm-rcv-ayuda-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<div class="rcv-ayuda-cuerpo">
+<p>Solo necesitas el archivo CSV del Registro de Compras y Ventas (RCV). Toma menos de un minuto:</p>
+<ol class="rcv-ayuda-lista">
+<li>Entra a <strong>sii.cl</strong> con el RUT y clave de tu empresa, y abre <strong>Servicios online &gt; Impuestos mensuales &gt; Registro de Compras y Ventas</strong>.</li>
+<li>Elige el mes que estás revisando y selecciona la pestaña <strong>Ventas</strong> (para cobros a clientes) o <strong>Compras</strong> (para facturas de proveedores).</li>
+<li>Presiona <strong>Descargar detalles</strong> para bajar el archivo CSV y cárgalo aquí con el botón principal.</li>
+</ol>
+<div class="rcv-ayuda-seguro">
+<span class="material-icons" aria-hidden="true">lock</span>
+<p><strong>Tus claves son solo tuyas.</strong> El asistente nunca te pide la clave del SII ni acceso a tu banco; procesamos solo el archivo que decides cargar.</p>
+</div>
+<div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-rcv-ayuda-listo">Entendido</button></div>
+</div>
+</dialog>
+
 <div id="print-section" aria-hidden="true"></div>
 
 <script src="/js/constants.js?v=2.1.2"></script>
@@ -1522,7 +1545,7 @@ gtag('js', new Date());
 <script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
 <script src="/js/pyme_ausencias.js?v=1.0.0"></script>
-<script src="/js/pyme_pendientes.js?v=1.9.0"></script>
+<script src="/js/pyme_pendientes.js?v=1.10.0"></script>
 <script src="/js/semana_corrida.js?v=1.0.0"></script>
 <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
 <script src="/js/pyme_importar.js?v=1.0.0"></script>
@@ -1544,9 +1567,9 @@ gtag('js', new Date());
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
 <script src="/js/kit_zip_engine.js?v=1.0.0"></script>
 <script src="/js/finiquito_docx.js?v=1.2.0"></script>
-<script src="/js/pyme_finanzas.js?v=1.1.0"></script>
+<script src="/js/pyme_finanzas.js?v=1.2.0"></script>
 <script src="/js/pyme_datos_ley.js?v=1.3.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.38.0" defer></script>
+<script src="/js/app_pyme.js?v=1.39.0" defer></script>
 </body>
 </html>

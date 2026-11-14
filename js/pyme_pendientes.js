@@ -97,10 +97,10 @@
             } else if (vig && vig.imm) {
                 var minimo = minimoPara(t, vig), anexo = { tipo: 'documento', id: t.id, doc: 'anexo_contrato' };
                 if (t.sueldoBase < minimo) {
-                    agregar('minimo-' + t.id, 'aviso', t.nombre + ': sueldo base bajo el ingreso mínimo',
-                        'El sueldo base (' + pesos(t.sueldoBase) + ') es menor que el ingreso mínimo de ' + pesos(vig.imm) + ' para jornada completa' +
-                        (minimo !== vig.imm ? ', que para su jornada parcial de ' + t.jornadaHoras + ' horas equivale a ' + pesos(minimo) : '') +
-                        ' (art. 44). Sube el sueldo con un anexo de contrato; hay excepciones para menores de 18 y mayores de 65 años.', anexo);
+                    agregar('minimo-' + t.id, 'aviso', t.nombre + ': sube su sueldo al ingreso mínimo',
+                        'Sube su sueldo a ' + pesos(minimo) + ' con un anexo de contrato: el sueldo base actual (' + pesos(t.sueldoBase) + ') es menor que el ingreso mínimo de ' + pesos(vig.imm) + ' para jornada completa' +
+                        (minimo !== vig.imm ? ' (' + pesos(minimo) + ' proporcional a sus ' + t.jornadaHoras + ' horas)' : '') +
+                        ' (art. 44). Pagar bajo el mínimo expone a multa de la Dirección del Trabajo (1 a 10 UTM en micro y pequeña empresa, art. 506); hay excepciones para menores de 18 y mayores de 65 años.', anexo);
                 } else {
                     // El mínimo de uno de los dos meses siguientes ya está cargado y sube: aviso anticipado
                     for (var k = 1; k <= 2; k++) {
@@ -126,8 +126,8 @@
                 if (!plazo || hoy > plazo) return;
                 var resta = dias(hoy, plazo);
                 agregar('licencia-' + t.id + '-' + a.desde, resta <= 1 ? 'urgente' : 'aviso', t.nombre + ': tramita su licencia médica',
-                    'Si la recibiste el ' + fechaLarga(a.desde) + ', el plazo para completarla y enviarla en el portal de licencias vence el ' + fechaLarga(plazo) + (resta === 0 ? ' (hoy)' : '') +
-                    ' (3 días hábiles, art. 13 del DS 3 de 1984). Fuera de plazo, el subsidio lo pagas tú (art. 56).', { tipo: 'trabajador', id: t.id });
+                    'Completa y envía la licencia en el portal de licencias antes del ' + fechaLarga(plazo) + (resta === 0 ? ' (vence hoy)' : '') +
+                    ' si la recibiste el ' + fechaLarga(a.desde) + ' (plazo: 3 días hábiles, art. 13 del DS 3 de 1984). Si la envías fuera de plazo, el subsidio lo paga la empresa y no la ISAPRE ni FONASA (art. 56).', { tipo: 'trabajador', id: t.id });
             });
             if (tocaReajuste(t, periodo)) {
                 agregar('reajuste-' + t.id, 'aviso', t.nombre + ': reajuste por IPC pactado',
@@ -137,8 +137,8 @@
 
             if (t.contrato === 'plazo_fijo' && t.fechaTerminoPlazo) {
                 var faltan = dias(hoy, t.fechaTerminoPlazo);
-                var apoyo = ' Según el art. 159 N°4 del Código del Trabajo, si el trabajador sigue después de esa fecha o el contrato se renueva por segunda vez, pasa a ser indefinido.' +
-                    ' Si termina, la carta de aviso se entrega y el término se registra en Mi DT dentro de los 3 días hábiles siguientes (arts. 162 y 9 bis).';
+                var apoyo = ' Si sigue trabajando después de esa fecha o se renueva por segunda vez, pasa a contrato indefinido (art. 159 N°4 del Código del Trabajo).' +
+                    ' Si termina, entrega la carta de aviso y registra el término en Mi DT dentro de los 3 días hábiles siguientes (arts. 162 y 9 bis).';
                 var reno = t.renovaciones >= 1 ? ' Ya tiene ' + plural(t.renovaciones, 'renovación', 'renovaciones') + '.' : '';
                 if (faltan < 0) {
                     agregar('plazo-' + t.id, 'urgente', t.nombre + ': el plazo fijo ya venció', 'Venció el ' + fechaLarga(t.fechaTerminoPlazo) + ' (hace ' + plural(-faltan, 'día', 'días') + ').' + apoyo, acc);
@@ -156,10 +156,11 @@
                     // Si el panel pasó los documentos emitidos y aún no hay contrato, la acción lleva a emitirlo
                     var docs = opciones.documentos, sinContrato = Array.isArray(docs) && !docs.some(function (d) { return d.trabajadorId === t.id && d.tipo === 'contrato'; });
                     agregar('registro-' + t.id, restanReg <= 5 ? 'aviso' : 'info', t.nombre + ': ' + (sinContrato ? 'contrato y registro en Mi DT' : 'registra su contrato en Mi DT'),
+                        'Registra el contrato firmado en Mi DT: ' +
                         (restanReg >= 0
-                            ? 'Si el contrato se firmó el día de ingreso (' + fechaLarga(t.fechaIngreso) + '), el plazo para registrarlo en el portal Mi DT de la Dirección del Trabajo vence el ' + fechaLarga(limite) + (restanReg === 0 ? ' (hoy).' : '.')
-                            : 'Si el contrato se firmó el día de ingreso, el plazo para registrarlo en Mi DT venció el ' + fechaLarga(limite) + '.') +
-                        ' El contrato se firma dentro de 15 días desde el ingreso y se registra dentro de 15 días desde la firma (arts. 9 y 9 bis).' +
+                            ? 'si se firmó al ingresar (' + fechaLarga(t.fechaIngreso) + '), el plazo vence el ' + fechaLarga(limite) + (restanReg === 0 ? ' (hoy).' : '.')
+                            : 'si se firmó al ingresar, el plazo venció el ' + fechaLarga(limite) + '.') +
+                        ' La ley da 15 días desde el ingreso para firmarlo y 15 días desde la firma para subirlo (arts. 9 y 9 bis), o hay riesgo de multa en la DT (1 a 10 UTM en micro y pequeña empresa, art. 506).' +
                         (sinContrato ? ' Puedes emitir el contrato desde el asistente con su ficha.' : ' Si ya lo registraste, no necesitas hacer nada.'), sinContrato ? { tipo: 'documento', id: t.id, doc: 'contrato' } : { tipo: 'midt', id: t.id });
                 }
             }
@@ -168,8 +169,8 @@
                 var total = (t.fechaIngreso ? anios(t.fechaIngreso, hoy) : 0) + (t.aniosOtrosEmpleadores || 0);
                 var extra = total >= 10 ? Math.floor((total - 10) / 3) : 0;
                 if (extra > 0) {
-                    agregar('progresivo-' + t.id, 'info', t.nombre + ': feriado progresivo',
-                        'Con ' + total + ' años de trabajo (contando los de otros empleadores, hasta 10) le corresponde ' + plural(extra, 'día hábil adicional', 'días hábiles adicionales') + ' de feriado (art. 68).', acc);
+                    agregar('progresivo-' + t.id, 'info', t.nombre + ': tiene ' + plural(extra, 'día adicional', 'días adicionales') + ' de vacaciones',
+                        'Con ' + total + ' años de trabajo (incluyendo años en otros empleadores, hasta 10) suma ' + plural(extra, 'día hábil adicional', 'días hábiles adicionales') + ' de vacaciones al año por feriado progresivo (art. 68).', acc);
                 }
             }
         });
@@ -177,9 +178,9 @@
         // Ley Karin: protocolo de prevención dado a conocer a cada trabajador (art. 211-A)
         var sinKarin = activos.filter(function (t) { return !t.karinEntrega; });
         if (sinKarin.length) {
-            agregar('karin', 'info', 'Ley Karin: anota la entrega del protocolo',
-                'Falta registrar cuándo diste a conocer el protocolo de prevención del acoso y la violencia en el trabajo a ' + sinKarin.map(function (t) { return t.nombre; }).join(', ') +
-                ' (art. 211-A del Código del Trabajo). Se anota en la ficha de cada persona.', { tipo: 'trabajador', id: sinKarin[0].id });
+            agregar('karin', 'info', 'Ley Karin: registra la entrega del protocolo',
+                'Anota en la ficha de ' + sinKarin.map(function (t) { return t.nombre; }).join(', ') +
+                ' cuándo entregaste el protocolo contra el acoso y la violencia en el trabajo (art. 211-A del Código del Trabajo). No acreditar su entrega expone a multa de la Dirección del Trabajo (1 a 10 UTM en micro y pequeña empresa, art. 506).', { tipo: 'trabajador', id: sinKarin[0].id });
         }
 
         // Ley 21.719: solicitudes ARCOP próximas a vencer o vencidas, brechas abiertas y anexos de trabajadores
@@ -195,7 +196,7 @@
                     ? 'Solicitud ARCOP vence hoy'
                     : 'Solicitud ARCOP por vencer (' + plural(restan, 'día restante', 'días restantes') + ')';
             agregar('arcop-' + s.id, 'urgente', titulo,
-                s.nombre + ' ejerció su derecho de ' + s.derecho + '. La Ley 21.719 establece 30 días corridos para responder (art. 11).',
+                s.nombre + ' pidió ' + s.derecho + ' sobre sus datos personales. Responde dentro de 30 días corridos (art. 11 de la Ley 21.719) para evitar reclamos o sanciones.',
                 { tipo: 'datos-personales', tab: 'arcop' });
         });
         (dp.brechas || []).forEach(function (b) {
@@ -207,8 +208,8 @@
         if (hoy >= '2026-11-01' && activos.length) {
             var sinAnexoDatos = activos.filter(function (t) { return !t.anexoDatosEntrega; });
             if (sinAnexoDatos.length) {
-                agregar('anexo-datos', 'aviso', plural(sinAnexoDatos.length, 'trabajador', 'trabajadores') + ' sin anexo Ley 21.719',
-                    'Formaliza el deber de información y tratamiento de datos laborales con ' + sinAnexoDatos.map(function (t) { return t.nombre; }).join(', ') + ' (vigencia 1 de diciembre de 2026).',
+                agregar('anexo-datos', 'aviso', plural(sinAnexoDatos.length, 'trabajador', 'trabajadores') + ' sin anexo de datos personales (Ley 21.719)',
+                    'Emite y firma el anexo de uso de datos laborales con ' + sinAnexoDatos.map(function (t) { return t.nombre; }).join(', ') + ' antes de la vigencia de la Ley 21.719 (1 de diciembre de 2026).',
                     { tipo: 'datos-personales', tab: 'trabajadores' });
             }
         }

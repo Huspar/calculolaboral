@@ -254,4 +254,16 @@ caso('Ley 21.719: alerta ARCOP <= 7 días, brecha abierta (72h) y trabajadores s
     assert.ok(!pend(correr(est([T({ anexoDatosEntrega: '2026-11-10' })]), '2026-11-15'), 'anexo-datos'));
 });
 
+caso('alertas fiscalizables por la DT indican el riesgo de multa verificado (1 a 10 UTM, art. 506)', () => {
+    const l = correr(est([
+        T({ id: 't1', sueldoBase: 400000, fechaIngreso: '2026-10-05', karinEntrega: '' })
+    ]), '2026-10-20');
+    ['minimo-t1', 'registro-t1', 'karin'].forEach(id => {
+        const a = pend(l, id);
+        assert.ok(a, id + ' debe existir');
+        assert.match(a.texto, /1 a 10 UTM/, id + ' incluye tramo micro/pequeña empresa');
+        assert.match(a.texto, /art\. 506/, id + ' cita art. 506');
+    });
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

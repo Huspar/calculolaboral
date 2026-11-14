@@ -1353,8 +1353,8 @@
                 '<dl class="detalle-dl">' +
                     '<div><dt>IVA Débito Fiscal del mes</dt><dd class="mono">' + pesos(f.ivaDebito) + '</dd></div>' +
                     '<div><dt>IVA Crédito Fiscal recuperable</dt><dd class="mono">' + pesos(f.ivaCredito) + '</dd></div>' +
-                    '<div><dt>Impuesto único trabajadores (cód. 48)</dt><dd class="mono">' + pesos(f.iusc48) + '</dd></div>' +
-                    '<div><dt>Retención boletas honorarios (cód. 151)</dt><dd class="mono">' + pesos(f.retencion151) + '</dd></div>' +
+                    '<div><dt>Impuesto retenido a los sueldos (F29 cód. 48)</dt><dd class="mono">' + pesos(f.iusc48) + '</dd></div>' +
+                    '<div><dt>Retención boletas de honorarios (F29 cód. 151)</dt><dd class="mono">' + pesos(f.retencion151) + '</dd></div>' +
                     '<div><dt>PPM mensual estimado (cód. 62)</dt><dd class="mono">' + pesos(f.ppm) + '</dd></div>' +
                     '<div class="mc-total-f29"><dt>Total F29 del período (cód. 91)</dt><dd class="mono">' + pesos(f.totalPagar91) + '</dd></div>' +
                 '</dl>' +
@@ -1741,6 +1741,19 @@
                 $('pm-cobro-copiado').textContent = 'Mensaje copiado al portapapeles.';
             });
             $('pm-cobro-cerrar').addEventListener('click', function () { $('pm-cobro-dlg').close(); });
+
+            // Guía RCV SII sin compartir claves
+            var dlgRcvAyuda = $('pm-rcv-ayuda-dlg');
+            if (dlgRcvAyuda) {
+                ['cob-btn-rcv-ayuda', 'pag-btn-rcv-ayuda'].forEach(function (id) {
+                    var btn = $(id);
+                    if (btn) btn.addEventListener('click', function () { dlgRcvAyuda.showModal(); });
+                });
+                ['pm-rcv-ayuda-cerrar', 'pm-rcv-ayuda-listo'].forEach(function (id) {
+                    var btn = $(id);
+                    if (btn) btn.addEventListener('click', function () { dlgRcvAyuda.close(); });
+                });
+            }
 
             // Cuentas por pagar
             $('pag-btn-nueva').addEventListener('click', function () {

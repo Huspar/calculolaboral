@@ -186,7 +186,7 @@
         Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
             if (a.getAttribute('data-nav') === base) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
         });
-        if (['', 'flujo-caja', 'cobranzas', 'liquidaciones'].indexOf(base) < 0) $('app-mas').setAttribute('aria-current', 'page'); else $('app-mas').removeAttribute('aria-current');
+        if (['', 'trabajadores', 'flujo-caja', 'liquidaciones'].indexOf(base) < 0) $('app-mas').setAttribute('aria-current', 'page'); else $('app-mas').removeAttribute('aria-current');
         document.title = TITULOS[vista] + ' · Asistente Laboral Pyme';
         // Sin empresa o sin trabajadores el menú se queda con lo del primer cierre; lo demás aparece al tener datos
         $('pm-panel').classList.toggle('app-arranque', !estado.empresa || !(estado.trabajadores || []).length);
@@ -1267,6 +1267,7 @@ function dibujarEquipo() {
         var nueva = empresaNueva && variasEmpresas();
         if (!nueva) empresaNueva = false;
         llenar(f, nueva ? {} : (estado.empresa || {}));
+        if (!$('pm-e-mutual').value) $('pm-e-mutual').value = '0,93';
         $('emp-titulo').textContent = nueva ? 'Nueva empresa' : 'Empresa';
         $('pm-emp-guardar-txt').textContent = nueva ? 'Agregar empresa' : 'Guardar empresa';
         $('pm-emp-borrar').hidden = nueva || !variasEmpresas();
@@ -2007,8 +2008,8 @@ function dibujarEquipo() {
         var proxDias = prox ? PEND.dias(hoyIso(), prox.fecha) : null, proxClase = prox && proxDias <= 3 ? ' vence-pronto' : '';
         var proxFecha = proxDias === 0 ? 'Hoy' : proxDias === 1 ? 'Mañana' : prox ? fechaCorta(prox.fecha) : '';
         $('ini-cifras').innerHTML =
-            '<div><dt>Líquido a pagar en ' + esc(MESES[+periodoSel.slice(5) - 1]) + '</dt><dd>' + pesos(total) + '<small>' + esc(conCalculo.length + ' de ' + cuentan.length) + '</small></dd></div>' +
-            (conCosto.length ? '<div><dt>Costo para la empresa</dt><dd>' + pesos(costo) + '<small>' + esc(conCosto.length + ' de ' + cuentan.length) + '</small></dd></div>'
+            '<div><dt>Líquido a pagar en ' + esc(MESES[+periodoSel.slice(5) - 1]) + '</dt><dd>' + pesos(total) + '<small>' + esc(conCalculo.length + ' de ' + cuentan.length + ' liquidaciones listas') + '</small></dd></div>' +
+            (conCosto.length ? '<div><dt>Costo para la empresa</dt><dd>' + pesos(costo) + '<small>' + esc(conCosto.length + ' de ' + cuentan.length + ' liquidaciones listas') + '</small></dd></div>'
                 : '<div><dt>Costo para la empresa</dt><dd class="texto">Se calcula al guardar las liquidaciones</dd></div>') +
             '<div><dt>Próximo vencimiento</dt><dd class="texto' + proxClase + '">' + (prox ? '<span' + (proxDias > 1 ? ' class="mono"' : '') + '>' + esc(proxFecha) + '</span> · ' + esc(prox.texto) : 'Nada en los próximos días') + '</dd></div>';
 
