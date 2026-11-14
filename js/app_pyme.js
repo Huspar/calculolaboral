@@ -2209,6 +2209,48 @@ function dibujarEquipo() {
         $('doc-hist-filas').innerHTML = lista.length ? lista.map(function (d) { return filaHistorial(d, true); }).join('') : '<tr><td colspan="4" class="vacio">Todavía no emites documentos desde el asistente.</td></tr>';
     }
 
+    function datosEjemploDoc(tipo, c, d) {
+        if (!c || !c.t) return;
+        var t = c.t, hoy = hoyIso();
+        if (tipo === 'contrato' && !d.funciones) {
+            var porCargo = {
+                'Panadera': 'Elaborar pan, masas y productos de pastelería según las recetas y estándares de la empresa.\nControlar tiempos de horneado, temperaturas y merma diaria de insumos.\nMantener la limpieza e higiene de mesones, hornos y área de producción.',
+                'Vendedor': 'Atender al público en mesón y orientar sobre productos y precios.\nOperar caja, emitir boletas y mantener la reposición ordenada de vitrinas.\nApoyar en el inventario diario y orden del local.',
+                'Encargada de local': 'Coordinar los turnos de apertura y cierre del local y supervisar la atención a clientes.\nRealizar el arqueo diario de caja, control de stock y pedidos a proveedores.\nVelar por el cumplimiento de normas sanitarias y de seguridad en tienda.'
+            };
+            d.funciones = porCargo[t.cargo] || ('Cumplir las labores propias del cargo de ' + (t.cargo || 'trabajador') + '.\nResguardar las herramientas y materiales asignados por la empresa.');
+        } else if (tipo === 'anexo_contrato') {
+            if (d.materia === 'sueldo' && !d.nuevoSueldo && t.sueldoBase > 0) d.nuevoSueldo = Math.round(t.sueldoBase * 1.1 / 1000) * 1000;
+            else if (d.materia === 'prorroga' && !d.nuevoTermino) d.nuevoTermino = sumarDiasIso(t.fechaTerminoPlazo || hoy, 90);
+        } else if (tipo === 'pacto_horas_extra' && !d.motivo) {
+            d.motivo = 'Aumento temporal de pedidos y producción por temporada alta en la panadería.';
+        } else if (tipo === 'comprobante_feriado' && !d.fechaInicio) {
+            var inicioF = sumarDiasIso(hoy, 7);
+            try { if (F && F.siguienteDiaHabil) inicioF = F.siguienteDiaHabil(inicioF); } catch (e) {}
+            var saldoNum = Math.floor(Number(d.saldoAntes || 0));
+            if (saldoNum >= 1) {
+                d.fechaInicio = inicioF;
+                d.diasHabiles = String(Math.min(5, saldoNum));
+            }
+        } else if (tipo === 'amonestacion' && !d.hechos) {
+            d.fechaHechos = sumarDiasIso(hoy, -2);
+            d.obligacion = 'cumplir el horario de ingreso pactado en el contrato';
+            d.hechos = 'El trabajador ingresó con 45 minutos de atraso respecto del inicio de su turno sin dar aviso previo a su jefatura.';
+        } else if (tipo === 'carta_159_4' && t.contrato === 'plazo_fijo') {
+            d.cotizaciones = true;
+        } else if (tipo === 'carta_161' && !d.fechaTermino) {
+            d.fechaTermino = hoy;
+            d.hechos = 'Reestructuración operativa del local de Temuco ante una baja sostenida de las ventas de mostrador en los últimos tres meses.';
+            d.sinFuero = true;
+            d.cotizaciones = true;
+            var enLic = (t.ausencias || []).some(function (a) { return a.tipo === 'licencia' && a.desde <= hoy && a.hasta >= hoy; });
+            d.sinLicencia = !enLic;
+        } else if (tipo === 'finiquito' && !d.fechaTermino) {
+            d.fechaTermino = t.fechaTerminoPlazo || hoy;
+            d.cotizaciones = true;
+        }
+    }
+
     // Cambia de persona o de documento: carga lo que haga falta y propone los valores iniciales
     function abrirDoc() {
         var tipo = docSel.tipo, id = docSel.trabajadorId;
@@ -2226,6 +2268,7 @@ function dibujarEquipo() {
             docSel.datos = PD.valoresIniciales(tipo, c);
             if (docPrefill && docPrefill.tipo === tipo && docPrefill.t === id) Object.assign(docSel.datos, docPrefill.valores);
             else if (tipo === 'comprobante_feriado' && c.t.fechaIngreso && !docSel.datos.saldoAntes) docSel.datos.saldoAntes = String(Math.max(0, resumenVac(c.t).saldo));
+            if (ejemplo && (!docPrefill || docPrefill.t !== id)) datosEjemploDoc(tipo, c, docSel.datos);
             docPrefill = null;
             dibujarFormDoc();
             vistaDoc();
@@ -2325,9 +2368,10 @@ function dibujarEquipo() {
         v.avisos.forEach(function (a) { aviso(a.nivel, a.nivel === 'aviso' ? 'warning' : 'info', a.texto); });
         $('pm-doc-avisos').innerHTML = html;
 
-        var marco = $('pm-doc-marco'), doc = $('pm-doc-doc');
+        var marco = $('pm-doc-marco'), doc = $('pm-doc-doc'), pend = $('pm-doc-pendiente'), pendCuerpo = $('pm-doc-pendiente-cuerpo');
         $('pm-doc-acciones').hidden = false;
         if (v.puedeEmitir) {
+            if (pend) pend.hidden = true;
             var pagada = docPagado(docSel.tipo);
             try {
                 doc.innerHTML = PD.generar(docSel.tipo, c, docSel.datos, { pagada: pagada }).html;
@@ -2338,8 +2382,41 @@ function dibujarEquipo() {
         } else {
             marco.hidden = true;
             doc.innerHTML = '';
-            mensaje($('pm-doc-estado'), '', 'Completa los datos obligatorios para ver el documento.');
+            if (pend && pendCuerpo) {
+                var items = [];
+                v.faltaFicha.forEach(function (x) {
+                    var ruta = x.de === 'e' ? 'empresa' : 'trabajadores/' + docSel.trabajadorId;
+                    items.push('<li>Falta en ' + (x.de === 'e' ? 'la empresa' : 'la ficha') + ': <strong>' + esc(x.etiqueta) + '</strong> <button type="button" class="lq-link" data-doc-ir="' + esc(ruta) + '">Completar</button></li>');
+                });
+                v.bloqueos.forEach(function (t) { items.push('<li>' + esc(t) + '</li>'); });
+                Object.keys(v.errores).forEach(function (k) {
+                    var elCampo = $('pm-d-' + k);
+                    var lbl = elCampo && $('pm-doc-form').querySelector('label[for="pm-d-' + k + '"]');
+                    var nombreCampo = lbl ? lbl.textContent.replace(/\s*\(opcional\)\s*/g, '').trim() : k;
+                    if (!lbl && elCampo) {
+                        var spanTxt = elCampo.closest('.lq-field') && elCampo.closest('.lq-field').querySelector('span');
+                        if (spanTxt) nombreCampo = spanTxt.textContent.trim();
+                    }
+                    items.push('<li><strong>' + esc(nombreCampo) + ':</strong> ' + esc(v.errores[k]) + (elCampo ? ' <button type="button" class="lq-link" data-doc-foco="pm-d-' + esc(k) + '">Ir al campo</button>' : '') + '</li>');
+                });
+                pendCuerpo.innerHTML = '<h2>Vista previa en espera de datos</h2><p class="doc-pendiente-sub">Completa estos puntos para ver y emitir el documento:</p><ul class="doc-pendiente-lista">' + items.join('') + '</ul>';
+                pend.hidden = false;
+            }
+            mensaje($('pm-doc-estado'), '', 'Completa los datos pendientes para ver el documento.');
         }
+    }
+
+    if ($('pm-doc-pendiente')) {
+        $('pm-doc-pendiente').addEventListener('click', function (e) {
+            var foco = e.target.closest('[data-doc-foco]');
+            if (foco) {
+                var inp = $(foco.getAttribute('data-doc-foco'));
+                if (inp) { inp.scrollIntoView({ behavior: 'smooth', block: 'center' }); inp.focus(); }
+                return;
+            }
+            var ir = e.target.closest('[data-doc-ir]');
+            if (ir) navegar(ir.getAttribute('data-doc-ir'));
+        });
     }
 
     $('pm-doc-avisos').addEventListener('click', function (e) {

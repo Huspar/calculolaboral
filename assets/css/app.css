@@ -460,6 +460,9 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .editor-titulo { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .editor-titulo h2 { font-size: 16px; font-weight: 650; }
 .lq-doc-frame { background: #E9EEEC; border-radius: var(--radius); padding: 16px; overflow-x: auto; max-height: calc(100vh - 220px); overflow-y: auto; }
+.doc-pendiente h2 { font-size: 15px; font-weight: 650; color: var(--forest); }
+.doc-pendiente-sub { margin-top: 6px; font-size: 13.5px; color: var(--muted); }
+.doc-pendiente-lista { margin: 12px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 13.5px; color: var(--ink-2); }
 
 /* Lista del mes en Liquidaciones */
 .mes-acciones { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
