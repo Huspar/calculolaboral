@@ -167,6 +167,7 @@
         .min-h-\[44px\] { min-height: 44px; }
         .min-w-\[44px\] { min-width: 44px; }
         #cp-stat-ok { color: #FFB703; }
+        @media print { .no-print, header, footer, .cl-promo, .cl-breadcrumbs { display: none !important; } }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 <link rel="stylesheet" href="/assets/css/promo-asistente.css?v=1.0.1">
@@ -312,10 +313,11 @@
                             <p class="text-xs sm:text-sm text-slate-600 mt-1 mb-0">Marca el estado real de los 12 documentos, imprime el índice de la carpeta o descárgalo en CSV para Excel.</p>
                         </div>
                         <div class="flex flex-wrap gap-2 no-print">
-                            <button type="button" id="btn-cp-csv" class="btn-yellow-pill !py-2 !px-4 !text-xs">
+                            <button type="button" id="btn-cp-xlsx" class="btn-yellow-pill !py-2 !px-4 !text-xs">
                                 <span class="material-icons text-sm" aria-hidden="true">download</span>
-                                <span>Descargar CSV</span>
+                                <span>Descargar Excel (.xlsx)</span>
                             </button>
+                            <button type="button" id="btn-cp-csv" class="btn-outline-pill !py-2 !px-4 !text-xs">CSV</button>
                             <button type="button" onclick="window.print()" class="btn-outline-pill !py-2 !px-4 !text-xs">
                                 <span class="material-icons text-sm" aria-hidden="true">print</span>
                                 <span>Imprimir índice</span>
@@ -507,6 +509,7 @@
 
     <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/pyme_excel.js?v=2.0.0"></script>
     <script>
     (function () {
         'use strict';
@@ -516,7 +519,7 @@
             { id: 'anexo42', cat: 'condicional', titulo: 'Anexos vigentes y ajuste a 42 horas (2026)', norma: 'Art. 11 CT y Ley 21.561 (40 Horas)', enlace: 'generador-anexo-40-horas', enlaceTxt: 'Crear anexo 42h' },
             { id: 'identidad', cat: 'siempre', titulo: 'Cédula de identidad y permiso laboral si corresponde', norma: 'Identificación y respaldo de contratación válida', enlace: null, enlaceTxt: null },
             { id: 'prevision', cat: 'siempre', titulo: 'Certificados de afiliación AFP, Fonasa/Isapre y AFC', norma: 'Respaldo de tasas al liquidar cotizaciones', enlace: null, enlaceTxt: null },
-            { id: 'riohs', cat: 'condicional', titulo: 'Comprobante entrega Reglamento Interno (incl. Ley Karin)', norma: 'Art. 153 CT (obligatorio desde 10 trabajadores)', enlace: null, enlaceTxt: null },
+            { id: 'riohs', cat: 'condicional', titulo: 'Comprobante entrega Reglamento Interno / Protocolo Ley Karin', norma: 'Art. 153 CT (RIOHS desde 10 trab.) y Ley 21.643 (Protocolo obligatorio en toda empresa)', enlace: null, enlaceTxt: null },
             { id: 'odi', cat: 'siempre', titulo: 'Obligación de Informar riesgos laborales (ODI / IRL)', norma: 'Decreto Supremo N° 44 (previo al inicio de funciones)', enlace: null, enlaceTxt: null },
             { id: 'epp', cat: 'condicional', titulo: 'Registro de entrega de Elementos de Protección Personal', norma: 'Art. 184 CT y DS 594 según faena o cargo', enlace: null, enlaceTxt: null },
             { id: 'asistencia', cat: 'siempre', titulo: 'Registro de asistencia diario firmado o electrónico DT', norma: 'Art. 33 CT (permite calcular jornada y horas extra)', enlace: 'calculadora-horas-extras', enlaceTxt: 'Calcular horas extra' },
@@ -624,23 +627,80 @@
             render();
         });
 
-        $('btn-cp-csv').addEventListener('click', function () {
-            var emp = ($('cp-empresa').value || 'Mi Empresa').replace(/;/g, ',');
-            var trab = ($('cp-trabajador').value || 'Trabajador').replace(/;/g, ',');
-            var labels = { ok: 'Al dia', pendiente: 'Pendiente', na: 'No aplica' };
-            var rows = [['Empresa', 'Trabajador', 'N', 'Documento', 'Exigibilidad', 'Respaldo_normativo', 'Estado']];
-            DOCS.forEach(function (d, idx) {
-                rows.push([
-                    emp,
-                    trab,
-                    idx + 1,
-                    d.titulo.replace(/;/g, ','),
-                    d.cat === 'siempre' ? 'Siempre' : 'Si aplica',
-                    d.norma.replace(/;/g, ','),
-                    labels[getEstado(d.id)]
-                ]);
+        function csvCell(v) {
+            if (typeof v === 'number' && isFinite(v)) return String(v);
+            var s = String(v == null ? '' : v);
+            if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+
+        function buildExportData() {
+            var emp = ($('cp-empresa').value || '').trim() || 'Mi Empresa';
+            var trab = ($('cp-trabajador').value || '').trim() || 'Trabajador';
+            var hoy = new Date().toISOString().slice(0, 10);
+            var labels = { ok: 'Al día', pendiente: 'Pendiente', na: 'No aplica' };
+            var ok = 0, pend = 0, na = 0;
+            var items = DOCS.map(function (d, idx) {
+                var st = getEstado(d.id);
+                if (st === 'ok') ok++;
+                else if (st === 'na') na++;
+                else pend++;
+                return {
+                    nro: idx + 1,
+                    titulo: d.titulo,
+                    exig: d.cat === 'siempre' ? 'Siempre' : 'Si aplica',
+                    norma: d.norma,
+                    estado: labels[st]
+                };
             });
-            var csv = '\uFEFF' + rows.map(function (r) { return r.join(';'); }).join('\r\n');
+            var relevantes = Math.max(1, DOCS.length - na);
+            var pct = Math.round((ok / relevantes) * 100);
+            return { emp: emp, trab: trab, hoy: hoy, ok: ok, pend: pend, na: na, pct: pct, items: items };
+        }
+
+        $('btn-cp-xlsx').addEventListener('click', function () {
+            if (!window.CLPymeExcel) return;
+            var d = buildExportData();
+            var filas = [
+                ['Checklist Carpeta Laboral por Trabajador · Chile 2026'],
+                ['Empresa: ' + d.emp + '   ·   Trabajador: ' + d.trab + '   ·   Fecha: ' + d.hoy + '   ·   Avance: ' + d.pct + '% (' + d.ok + ' al día, ' + d.pend + ' pendientes, ' + d.na + ' no aplica)'],
+                [],
+                ['N°', 'Documento exigible', 'Exigibilidad', 'Respaldo normativo', 'Estado actual']
+            ];
+            d.items.forEach(function (it) {
+                filas.push([it.nro, it.titulo, it.exig, it.norma, it.estado]);
+            });
+            var idxTotal = filas.length;
+            filas.push(['', 'Resumen de cumplimiento (' + d.pct + '%)', d.items.length + ' ítems', 'Al día: ' + d.ok + ' · Pendientes: ' + d.pend + ' · N/A: ' + d.na, d.pct + '%']);
+            filas.push([]);
+            filas.push(['Índice referencial generado en calculolaboral.cl/carpeta-laboral-empresa-chile. Verifica exigibilidad según dotación y rubro.']);
+
+            window.CLPymeExcel.descargarXlsx('checklist-carpeta-laboral-2026.xlsx', [{
+                nombre: 'Carpeta Laboral',
+                filas: filas,
+                alinear: { 0: 'center', 1: 'left', 2: 'center', 3: 'left', 4: 'center' },
+                anchos: { 0: 6, 1: 42, 2: 14, 3: 46, 4: 14 },
+                estilo: {
+                    tituloFilas: [0],
+                    metaFilas: [1],
+                    encabezadoFila: 3,
+                    totalesFilas: [idxTotal],
+                    notasFilas: [filas.length - 1],
+                    congelarFila: 4,
+                    orientacion: 'landscape',
+                    zebra: true
+                }
+            }]);
+        });
+
+        $('btn-cp-csv').addEventListener('click', function () {
+            var d = buildExportData();
+            var rows = [['Empresa', 'Trabajador', 'Fecha', 'N', 'Documento', 'Exigibilidad', 'Respaldo_normativo', 'Estado']];
+            d.items.forEach(function (it) {
+                rows.push([d.emp, d.trab, d.hoy, it.nro, it.titulo, it.exig, it.norma, it.estado]);
+            });
+            rows.push([d.emp, d.trab, d.hoy, '', 'Resumen de cumplimiento', 'Total: ' + d.items.length, 'Al día: ' + d.ok + ' / Pendientes: ' + d.pend + ' / N/A: ' + d.na, d.pct + '%']);
+            var csv = '\uFEFF' + rows.map(function (r) { return r.map(csvCell).join(';'); }).join('\r\n');
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var a = document.createElement('a');
             a.href = URL.createObjectURL(blob);

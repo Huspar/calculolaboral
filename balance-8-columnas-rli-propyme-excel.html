@@ -332,9 +332,10 @@
                 <div class="flex flex-wrap gap-2 no-print">
                     <button type="button" id="btn-b8-ejemplo" class="btn-outline-pill !py-2 !px-4 !text-xs">Cargar ejemplo pyme</button>
                     <button type="button" id="btn-b8-cero" class="btn-outline-pill !py-2 !px-4 !text-xs">Limpiar a $0</button>
-                    <button type="button" id="btn-b8-csv" class="btn-yellow-pill !py-2 !px-4 !text-xs">
+                    <button type="button" id="btn-b8-csv" class="btn-outline-pill !py-2 !px-4 !text-xs">CSV</button>
+                    <button type="button" id="btn-b8-xlsx" class="btn-yellow-pill !py-2 !px-4 !text-xs">
                         <span class="material-icons text-sm" aria-hidden="true">download</span>
-                        <span>Descargar Excel (CSV)</span>
+                        <span>Descargar Excel (.xlsx)</span>
                     </button>
                 </div>
             </div>
@@ -549,6 +550,7 @@
     <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/contadores_contabilidad.js?v=1.0.0"></script>
+    <script src="/js/pyme_excel.js?v=2.0.0"></script>
     <script>
     (function () {
         'use strict';
@@ -771,30 +773,149 @@
             $(id).addEventListener('change', recalcular);
         });
 
-        $('btn-b8-csv').addEventListener('click', function () {
-            if (!ultimoBalance) return;
-            var rows = [
-                ['Codigo', 'Cuenta', 'Tipo', 'Debito', 'Credito', 'Deudor', 'Acreedor', 'Activo', 'Pasivo', 'Perdida', 'Ganancia']
+        function csvCell(v) {
+            if (typeof v === 'number' && isFinite(v)) return String(v);
+            var s = String(v == null ? '' : v);
+            if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+
+        function buildBalanceSummaryRows(bal) {
+            var t = bal.totales;
+            var difRes = bal.resultado;
+            var actMasPerd = difRes < 0 ? Math.abs(difRes) : 0;
+            var pasMasGan = difRes > 0 ? difRes : 0;
+            return {
+                subtotales: ['', 'Subtotales de columnas', t.debito, t.credito, t.deudor, t.acreedor, t.activo, t.pasivo, t.perdida, t.ganancia],
+                resultado: ['', difRes >= 0 ? 'Resultado del ejercicio (Utilidad)' : 'Resultado del ejercicio (Pérdida)', 0, 0, 0, 0, actMasPerd, pasMasGan, pasMasGan, actMasPerd],
+                sumasIguales: ['', 'SUMAS IGUALES', t.debito, t.credito, t.deudor, t.acreedor, t.activo + actMasPerd, t.pasivo + pasMasGan, t.perdida + pasMasGan, t.ganancia + actMasPerd]
+            };
+        }
+
+        function buildRliExportRows(rli) {
+            return [
+                ['Resultado contable (Balance 8 Columnas)', rli.resultadoContable],
+                ['Ingresos devengados netos (ventas)', rli.ingresosDevengadosNetos],
+                ['Menos: Ventas aún no cobradas al cierre', -rli.ventasNoCobradasNetas],
+                ['Ingresos percibidos computables', rli.ingresosPercibidos],
+                ['Compras y gastos operativos devengados', -rli.comprasGastosDevengados],
+                ['Más: Compras/gastos impagos al cierre', rli.comprasNoPagadasNetas],
+                ['Menos: Compras y gastos pagados', -rli.comprasGastosPagados],
+                ['Menos: Remuneraciones y honorarios pagados', -rli.remuneracionesHonorariosPagados],
+                ['Depreciación contable reversada (informativo, no deducida)', rli.depreciacionContableReversada],
+                ['Menos: Activo fijo pagado (depreciación instantánea)', -rli.activoFijoPagadoNeto],
+                ['Más: Multas / gastos no aceptados Art. 21', rli.multasGastosRechazados],
+                ['Base imponible / RLI ProPyme Art. 14 D N°3', rli.baseImponible],
+                ['IDPC simulado (' + String(rli.tasaIdpcSimulada).replace('.', ',') + '%)', rli.idpcSimulado],
+                ['Menos: PPM acumulado en cuenta 11090', -rli.ppmAcumulado],
+                ['Diferencia estimada F22 (IDPC - PPM)', rli.diferenciaF22Simulada]
+            ];
+        }
+
+        $('btn-b8-xlsx').addEventListener('click', function () {
+            if (!ultimoBalance || !window.CLPymeExcel) return;
+            var t = ultimoBalance.totales;
+            var diffSumas = Math.abs(t.debito - t.credito);
+            var estadoTxt = ultimoBalance.filas.length === 0
+                ? 'Sin movimientos ($0)'
+                : (diffSumas === 0 && ultimoBalance.cuadra ? 'Balance cuadrado' : 'Balance descuadrado (dif. ' + fmt(diffSumas) + ')');
+
+            var sumRows = buildBalanceSummaryRows(ultimoBalance);
+            var filasB8 = [
+                ['Balance Tributario Clasificado de 8 Columnas · Simulador 2026'],
+                ['Estado: ' + estadoTxt + '   ·   Generado en calculolaboral.cl/balance-8-columnas-rli-propyme-excel'],
+                [],
+                ['Código', 'Cuenta contable', 'Sumas', '', 'Saldos', '', 'Inventario', '', 'Resultados', ''],
+                ['', '', 'Débito ($)', 'Crédito ($)', 'Deudor ($)', 'Acreedor ($)', 'Activo ($)', 'Pasivo ($)', 'Pérdida ($)', 'Ganancia ($)']
             ];
             ultimoBalance.filas.forEach(function (f) {
-                rows.push([f.codigo, f.nombre, f.tipo, f.debito, f.credito, f.deudor, f.acreedor, f.activo, f.pasivo, f.perdida, f.ganancia]);
+                filasB8.push([f.codigo, f.nombre, f.debito, f.credito, f.deudor, f.acreedor, f.activo, f.pasivo, f.perdida, f.ganancia]);
             });
-            var t = ultimoBalance.totales;
-            rows.push(['', 'Totales', '', t.debito, t.credito, t.deudor, t.acreedor, t.activo, t.pasivo, t.perdida, t.ganancia]);
+            var idxSub = filasB8.length;
+            filasB8.push(sumRows.subtotales);
+            filasB8.push(sumRows.resultado);
+            var idxSum = filasB8.length;
+            filasB8.push(sumRows.sumasIguales);
+
+            var hojas = [{
+                nombre: 'Balance 8 Columnas',
+                filas: filasB8,
+                textos: { 0: true },
+                monedas: { 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true },
+                alinear: { 0: 'center', 1: 'left' },
+                anchos: { 0: 11, 1: 36, 2: 14, 3: 14, 4: 14, 5: 14, 6: 14, 7: 14, 8: 14, 9: 14 },
+                estilo: {
+                    tituloFilas: [0],
+                    metaFilas: [1],
+                    grupoFilas: [3],
+                    encabezadoFila: 4,
+                    subtotalesFilas: [idxSub],
+                    totalesFilas: [idxSum],
+                    merges: [
+                        { s: { r: 3, c: 0 }, e: { r: 4, c: 0 } },
+                        { s: { r: 3, c: 1 }, e: { r: 4, c: 1 } },
+                        { s: { r: 3, c: 2 }, e: { r: 3, c: 3 } },
+                        { s: { r: 3, c: 4 }, e: { r: 3, c: 5 } },
+                        { s: { r: 3, c: 6 }, e: { r: 3, c: 7 } },
+                        { s: { r: 3, c: 8 }, e: { r: 3, c: 9 } }
+                    ],
+                    congelarFila: 5,
+                    orientacion: 'landscape',
+                    zebra: true
+                }
+            }];
+
+            if (ultimaRli) {
+                var filasRli = [
+                    ['Determinación RLI ProPyme General (Art. 14 D N°3 LIR) · 2026'],
+                    ['Flujo percibido/pagado + depreciación instantánea activo fijo · CalculoLaboral'],
+                    [],
+                    ['Concepto RLI Art. 14 D N°3', 'Monto CLP ($)']
+                ];
+                buildRliExportRows(ultimaRli).forEach(function (ln) { filasRli.push(ln); });
+                filasRli.push([]);
+                filasRli.push(['Hoja de trabajo referencial. Valida agregados Art. 21, remesas y créditos con tu contador antes de declarar F22.']);
+                hojas.push({
+                    nombre: 'RLI ProPyme 14 D N3',
+                    filas: filasRli,
+                    monedas: { 1: true },
+                    alinear: { 0: 'left', 1: 'right' },
+                    anchos: { 0: 54, 1: 18 },
+                    estilo: {
+                        tituloFilas: [0],
+                        metaFilas: [1],
+                        encabezadoFila: 3,
+                        subtotalesFilas: [7, 10],
+                        totalesFilas: [15, 18],
+                        notasFilas: [filasRli.length - 1],
+                        congelarFila: 4,
+                        orientacion: 'portrait',
+                        zebra: true
+                    }
+                });
+            }
+
+            window.CLPymeExcel.descargarXlsx('balance-8-columnas-rli-propyme-2026.xlsx', hojas);
+        });
+
+        $('btn-b8-csv').addEventListener('click', function () {
+            if (!ultimoBalance) return;
+            var sumRows = buildBalanceSummaryRows(ultimoBalance);
+            var rows = [
+                ['Codigo', 'Cuenta', 'Debito', 'Credito', 'Deudor', 'Acreedor', 'Activo', 'Pasivo', 'Perdida', 'Ganancia']
+            ];
+            ultimoBalance.filas.forEach(function (f) {
+                rows.push([f.codigo, f.nombre, f.debito, f.credito, f.deudor, f.acreedor, f.activo, f.pasivo, f.perdida, f.ganancia]);
+            });
+            rows.push(sumRows.subtotales);
+            rows.push(sumRows.resultado);
+            rows.push(sumRows.sumasIguales);
             if (ultimaRli) {
                 rows.push([]);
                 rows.push(['RLI ProPyme Art 14 D N 3', 'Monto CLP']);
-                rows.push(['Resultado contable', ultimaRli.resultadoContable]);
-                rows.push(['Ingresos percibidos', ultimaRli.ingresosPercibidos]);
-                rows.push(['Compras y gastos pagados', ultimaRli.comprasGastosPagados]);
-                rows.push(['Remuneraciones y honorarios pagados', ultimaRli.remuneracionesHonorariosPagados]);
-                rows.push(['Depreciacion contable reversada', ultimaRli.depreciacionContableReversada]);
-                rows.push(['Activo fijo pagado neto', ultimaRli.activoFijoPagadoNeto]);
-                rows.push(['Base imponible estimada', ultimaRli.baseImponible]);
-                rows.push(['IDPC simulado', ultimaRli.idpcSimulado]);
-                rows.push(['Diferencia estimada F22', ultimaRli.diferenciaF22Simulada]);
+                buildRliExportRows(ultimaRli).forEach(function (ln) { rows.push(ln); });
             }
-            var csv = '\uFEFF' + rows.map(function (r) { return r.join(';'); }).join('\r\n');
+            var csv = '\uFEFF' + rows.map(function (r) { return r.map(csvCell).join(';'); }).join('\r\n');
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var a = document.createElement('a');
             a.href = URL.createObjectURL(blob);

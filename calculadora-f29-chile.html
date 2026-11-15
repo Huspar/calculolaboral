@@ -344,8 +344,9 @@
         }
         .f29-file::file-selector-button:hover { background-color: #002820; }
         #btn-rcv-ejemplo { background-color: #ECF5F2; color: #00382E; border-color: rgba(0, 56, 46, 0.35); font-weight: 700; }
-        #btn-f29-copiar { background-color: #FFFFFF; color: #00382E; }
-        #btn-f29-csv { background-color: #FFB703; color: #111827; }
+        #btn-f29-copiar, #btn-f29-csv { background-color: #FFFFFF; color: #00382E; }
+        #btn-f29-xlsx { background-color: #FFB703; color: #111827; }
+        @media print { .no-print, header, footer, .cl-promo, .cl-breadcrumbs { display: none !important; } }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
     <link rel="stylesheet" href="/assets/css/promo-contadores.css?v=1.0.0">
@@ -650,13 +651,17 @@
                             <p class="text-xs text-slate-200 mt-1.5 mb-0" id="res-sub-meta">Período 2026-11 · 14 D N°3 ProPyme</p>
                         </div>
                         <div class="flex flex-wrap gap-2 no-print">
+                            <button type="button" id="btn-f29-xlsx" class="min-h-[44px] px-4 py-2 rounded-full font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:opacity-95">
+                                <span class="material-icons text-sm" aria-hidden="true">download</span>
+                                <span>Descargar Excel (.xlsx)</span>
+                            </button>
+                            <button type="button" id="btn-f29-csv" class="min-h-[44px] px-4 py-2 rounded-full font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-slate-100">
+                                <span class="material-icons text-sm" aria-hidden="true">table_view</span>
+                                <span>CSV</span>
+                            </button>
                             <button type="button" id="btn-f29-copiar" class="min-h-[44px] px-4 py-2 rounded-full font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-slate-100">
                                 <span class="material-icons text-sm" aria-hidden="true">content_copy</span>
                                 <span id="btn-f29-copiar-txt">Copiar resumen</span>
-                            </button>
-                            <button type="button" id="btn-f29-csv" class="min-h-[44px] px-4 py-2 rounded-full font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:opacity-95">
-                                <span class="material-icons text-sm" aria-hidden="true">download</span>
-                                <span>Descargar CSV</span>
                             </button>
                             <button type="button" onclick="window.print()" class="min-h-[44px] px-3.5 py-2 rounded-full border border-white/30 text-white font-semibold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-white/10">
                                 <span class="material-icons text-sm" aria-hidden="true">print</span>
@@ -863,6 +868,7 @@
     <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
     <script src="/js/contadores_f29.js?v=1.0.0"></script>
+    <script src="/js/pyme_excel.js?v=2.0.0"></script>
     <script>
     (function () {
         'use strict';
@@ -938,11 +944,22 @@
             };
         }
 
-        function renderTabla(res) {
+        function buildF29Filas(res) {
             var c = res.codigos;
+            var r = res.resumen || {};
             var filas = [
-                { cod: '503 / 502', glosa: 'Facturas emitidas del giro (débito fiscal)', cant: c[503], monto: c[502] },
-                { cod: '110 / 111', glosa: 'Boletas de ventas y servicios emitidas', cant: c[110], monto: c[111] },
+                { cod: '503 / 502', glosa: 'Facturas emitidas del giro (débito fiscal)', cant: c[503], monto: c[502] }
+            ];
+            if (c[717] || c[716]) {
+                filas.push({ cod: '716 / 717', glosa: 'Facturas ventas fuera del giro o activo fijo', cant: c[716], monto: c[717] });
+            }
+            if (r.ivaBoletasElectronicas > 0 || r.cantBoletasElectronicas > 0) {
+                filas.push({ cod: 'RCV T-39', glosa: 'Boletas electrónicas (resumen RCV SII)', cant: r.cantBoletasElectronicas || 0, monto: r.ivaBoletasElectronicas || 0 });
+            }
+            if (c[110] || c[111]) {
+                filas.push({ cod: '110 / 111', glosa: 'Boletas de ventas manuales en papel', cant: c[110], monto: c[111] });
+            }
+            filas.push(
                 { cod: '758 / 759', glosa: 'Comprobantes de pago electrónico', cant: c[758], monto: c[759] },
                 { cod: '512 / 513', glosa: 'Notas de débito emitidas', cant: c[512], monto: c[513] },
                 { cod: '509 / 510', glosa: 'Notas de crédito emitidas (rebaja débito)', cant: c[509], monto: -c[510] },
@@ -950,23 +967,29 @@
                 { cod: '519 / 520', glosa: 'Facturas de compra del giro (crédito fiscal)', cant: c[519], monto: c[520] },
                 { cod: '761 / 762', glosa: 'Compras en supermercados y comercios similares', cant: c[761], monto: c[762] },
                 { cod: '524 / 525', glosa: 'Facturas por adquisición de activo fijo', cant: c[524], monto: c[525] },
+                { cod: '531 / 532', glosa: 'Notas de débito recibidas', cant: c[531], monto: c[532] },
                 { cod: '527 / 528', glosa: 'Notas de crédito recibidas (rebaja crédito)', cant: c[527], monto: -c[528] },
                 { cod: '504', glosa: 'Remanente de crédito fiscal mes anterior', cant: '-', monto: c[504] },
                 { cod: '537', glosa: 'Total Créditos Fiscales del período', cant: '-', monto: c[537], tipo: 'subtotal' },
                 { cod: '89', glosa: 'IVA determinado a pagar del mes', cant: '-', monto: c[89] },
                 { cod: '77', glosa: 'Remanente de crédito fiscal para mes siguiente', cant: '-', monto: c[77] },
                 { cod: '48', glosa: 'Impuesto Único Segunda Categoría (trabajadores)', cant: '-', monto: c[48] },
-                { cod: '151', glosa: 'Retención boletas de honorarios (' + res.resumen.tasaHonorariosPct.toString().replace('.', ',') + '%)', cant: '-', monto: c[151] },
-                { cod: '563 / 62', glosa: 'PPM neto (base ' + fmt(c[563]) + ' × ' + c[115].toString().replace('.', ',') + '%)', cant: '-', monto: c[62] },
+                { cod: '151', glosa: 'Retención boletas de honorarios (' + String(r.tasaHonorariosPct || 15.25).replace('.', ',') + '%)', cant: '-', monto: c[151] },
+                { cod: '563 / 115 / 62', glosa: 'PPM neto (base ' + fmt(c[563]) + ' × ' + String(c[115]).replace('.', ',') + '%)', cant: c[563], monto: c[62], cantEsBase: true },
                 { cod: '91', glosa: 'Total determinado a pagar en el período', cant: '-', monto: c[91], tipo: 'total' }
-            ];
+            );
+            return filas;
+        }
 
+        function renderTabla(res) {
+            var filas = buildF29Filas(res);
             $('f29-codigos-body').innerHTML = filas.map(function (f) {
                 var cls = f.tipo === 'total' ? ' class="is-total"' : (f.tipo === 'subtotal' ? ' class="is-subtotal"' : '');
+                var cantTxt = f.cantEsBase ? fmt(f.cant) : f.cant;
                 return '<tr' + cls + '>' +
                     '<td><span class="f29-code">' + f.cod + '</span></td>' +
                     '<td class="text-slate-800">' + f.glosa + '</td>' +
-                    '<td class="font-mono-num text-slate-600">' + f.cant + '</td>' +
+                    '<td class="font-mono-num text-slate-600">' + cantTxt + '</td>' +
                     '<td class="num">' + fmt(f.monto) + '</td>' +
                 '</tr>';
             }).join('');
@@ -989,7 +1012,7 @@
                 remanenteAnterior: rem,
                 impuestoUnico48: parsePesos($('f29-impuesto-unico')),
                 honorariosBruto: parsePesos($('f29-honorarios')),
-                honorariosRetencionDirecta: !$('f29-hon-empresa').checked,
+                honorariosRetencionDirecta: $('f29-hon-empresa').checked ? null : 0,
                 tasaPpm: tasaPpm
             });
             state.ultimo = res;
@@ -1143,6 +1166,18 @@
             calcular();
         });
 
+        function csvCell(v) {
+            if (typeof v === 'number' && isFinite(v)) return String(v);
+            var s = String(v == null ? '' : v);
+            if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+
+        function mostrarCopiado() {
+            $('btn-f29-copiar-txt').textContent = 'Copiado';
+            setTimeout(function () { $('btn-f29-copiar-txt').textContent = 'Copiar resumen'; }, 2000);
+        }
+
         $('btn-f29-copiar').addEventListener('click', function () {
             if (!state.ultimo) return;
             var c = state.ultimo.codigos;
@@ -1153,42 +1188,87 @@
                 'IVA a pagar (89): ' + fmt(c[89]) + ' | Remanente (77): ' + fmt(c[77]),
                 'Impuesto Único (48): ' + fmt(c[48]),
                 'Retención Honorarios (151): ' + fmt(c[151]),
-                'PPM neto (62): ' + fmt(c[62]) + ' (base ' + fmt(c[563]) + ' al ' + c[115] + '%)',
+                'PPM neto (62): ' + fmt(c[62]) + ' (base ' + fmt(c[563]) + ' al ' + String(c[115]).replace('.', ',') + '%)',
                 'Total estimado F29 (91): ' + fmt(c[91]),
                 'Calculado en https://calculolaboral.cl/calculadora-f29-chile'
             ].join('\n');
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(txt).then(function () {
-                    $('btn-f29-copiar-txt').textContent = 'Copiado';
-                    setTimeout(function () { $('btn-f29-copiar-txt').textContent = 'Copiar resumen'; }, 2000);
-                });
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(txt).then(mostrarCopiado).catch(function () {});
+            } else {
+                var ta = document.createElement('textarea');
+                ta.value = txt;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { if (document.execCommand('copy')) mostrarCopiado(); } catch (e) {}
+                ta.remove();
             }
+        });
+
+        $('btn-f29-xlsx').addEventListener('click', function () {
+            if (!state.ultimo || !window.CLPymeExcel) return;
+            var res = state.ultimo;
+            var filasCalc = buildF29Filas(res);
+            var filasExcel = [
+                ['Hoja Guía Formulario 29 · Período ' + res.periodo],
+                ['Régimen: ' + res.regimenNombre + '   ·   Origen: ' + (state.modo === 'rcv' ? 'RCV SII (CSV)' : 'Ingreso directo')],
+                [],
+                ['Código SII', 'Concepto tributario', 'Cantidad / Base ($)', 'Monto CLP ($)']
+            ];
+            var subIdx = [], totIdx = [];
+            filasCalc.forEach(function (f) {
+                var rowIdx = filasExcel.length;
+                if (f.tipo === 'subtotal') subIdx.push(rowIdx);
+                if (f.tipo === 'total') totIdx.push(rowIdx);
+                filasExcel.push([f.cod, f.glosa, f.cant === '-' ? '' : f.cant, f.monto]);
+            });
+            filasExcel.push([]);
+            filasExcel.push(['Borrador referencial generado en calculolaboral.cl/calculadora-f29-chile. Confirma códigos en sii.cl antes de declarar.']);
+
+            window.CLPymeExcel.descargarXlsx('hoja-guia-f29-' + res.periodo + '.xlsx', [{
+                nombre: 'Guía F29',
+                filas: filasExcel,
+                textos: { 0: true },
+                monedas: { 3: true },
+                alinear: { 0: 'center', 1: 'left', 2: 'right', 3: 'right' },
+                anchos: { 0: 16, 1: 46, 2: 18, 3: 18 },
+                estilo: {
+                    tituloFilas: [0],
+                    metaFilas: [1],
+                    encabezadoFila: 3,
+                    subtotalesFilas: subIdx,
+                    totalesFilas: totIdx,
+                    notasFilas: [filasExcel.length - 1],
+                    congelarFila: 4,
+                    orientacion: 'portrait',
+                    zebra: true
+                }
+            }]);
         });
 
         $('btn-f29-csv').addEventListener('click', function () {
             if (!state.ultimo) return;
-            var c = state.ultimo.codigos;
+            var res = state.ultimo;
+            var filasCalc = buildF29Filas(res);
             var rows = [
-                ['Periodo', 'Regimen', 'Codigo_F29', 'Concepto', 'Valor_CLP'],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '502', 'Debito facturas giro', c[502]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '111', 'Debito boletas', c[111]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '538', 'Total debito fiscal', c[538]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '520', 'Credito compras giro', c[520]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '504', 'Remanente anterior', c[504]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '537', 'Total creditos fiscales', c[537]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '89', 'IVA determinado a pagar', c[89]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '77', 'Remanente periodo siguiente', c[77]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '48', 'Impuesto Unico 2da Categoria', c[48]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '151', 'Retencion honorarios', c[151]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '563', 'Base imponible PPM', c[563]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '62', 'PPM neto determinado', c[62]],
-                [state.ultimo.periodo, state.ultimo.regimenNombre, '91', 'Total determinado a pagar', c[91]]
+                ['Periodo', 'Regimen', 'Codigo_F29', 'Concepto', 'Cantidad_o_Base', 'Valor_CLP']
             ];
-            var csv = '\uFEFF' + rows.map(function (r) { return r.join(';'); }).join('\r\n');
+            filasCalc.forEach(function (f) {
+                rows.push([
+                    res.periodo,
+                    res.regimenNombre,
+                    f.cod,
+                    f.glosa,
+                    f.cant === '-' ? '' : f.cant,
+                    f.monto
+                ]);
+            });
+            var csv = '\uFEFF' + rows.map(function (r) { return r.map(csvCell).join(';'); }).join('\r\n');
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'borrador-f29-' + state.ultimo.periodo + '.csv';
+            a.download = 'borrador-f29-' + res.periodo + '.csv';
             document.body.appendChild(a);
             a.click();
             a.remove();
