@@ -145,7 +145,7 @@ gtag('js', new Date());
 <a href="/app/vacaciones" data-ruta="vacaciones" data-nav="vacaciones"><span class="material-icons" aria-hidden="true">beach_access</span>Vacaciones y permisos</a>
 <a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
 <a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos laborales</a>
-<a href="/app/datos-personales" data-ruta="datos-personales" data-nav="datos-personales"><span class="material-icons" aria-hidden="true">shield</span>Datos personales (Ley 21.719)<span class="app-nav-chip" id="nav-chip-datos-personales" hidden></span></a>
+<a href="/app/cumplimiento" data-ruta="cumplimiento" data-nav="cumplimiento"><span class="material-icons" aria-hidden="true">shield</span>Cumplimiento y DT<span class="app-nav-chip" id="nav-chip-datos-personales" hidden></span></a>
 <p class="app-nav-grupo" data-mas>Negocio y contador</p>
 <a href="/app/flujo-caja" data-ruta="flujo-caja" data-nav="flujo-caja" data-mas><span class="material-icons" aria-hidden="true">account_balance_wallet</span>Flujo de caja</a>
 <a href="/app/cobranzas" data-ruta="cobranzas" data-nav="cobranzas" data-mas><span class="material-icons" aria-hidden="true">call_received</span>Cobranzas<span class="app-nav-cuenta" id="nav-cobranzas-pendientes"></span></a>
@@ -433,6 +433,7 @@ gtag('js', new Date());
 <div class="lq-field"><label for="pm-t-nacion">Nacionalidad <span class="lq-opt">(opcional)</span></label><input id="pm-t-nacion" data-k="nacionalidad" type="text" maxlength="40" placeholder="Chilena"></div>
 <div class="lq-field lq-span2"><label for="pm-t-dom">Domicilio <span class="lq-opt">(opcional)</span></label><input id="pm-t-dom" data-k="domicilio" type="text" maxlength="120" placeholder="Calle 123, Temuco"></div>
 <div class="lq-field"><label for="pm-t-comuna">Comuna <span class="lq-opt">(opcional)</span></label><input id="pm-t-comuna" data-k="comuna" type="text" maxlength="60" placeholder="Temuco"></div>
+<div class="lq-field"><label for="pm-t-correo">Correo personal <span class="lq-opt">(opcional · firma simple)</span></label><input id="pm-t-correo" data-k="correoPersonal" type="email" maxlength="120" placeholder="persona@correo.cl"><p class="pm-error" data-error="correoPersonal" hidden></p></div>
 <div class="lq-field"><label for="pm-t-jornada">Jornada semanal (horas)</label><input id="pm-t-jornada" data-k="jornadaHoras" data-tipo="num" type="text" inputmode="numeric" maxlength="2" placeholder="42"><p class="pm-error" data-error="jornadaHoras" hidden></p></div>
 <div class="lq-field"><label for="pm-t-dist">Días de trabajo a la semana</label>
 <select id="pm-t-dist" data-k="distribucion"><option value="5">5 días (lunes a viernes)</option><option value="6">6 días (lunes a sábado)</option></select></div>
@@ -458,10 +459,23 @@ gtag('js', new Date());
 </div>
 <div class="form-bloque">
 <p class="h-seccion">Ley 21.719 · Protección de datos personales</p>
-<p class="lq-help">Registra cuándo entregaste o formalizaste el anexo de tratamiento de datos laborales. Puedes generarlo prellenado desde «Documentos» o en «Datos personales».</p>
+<p class="lq-help">Registra cuándo entregaste o formalizaste el anexo de tratamiento de datos laborales. Puedes generarlo prellenado desde «Documentos» o en «Cumplimiento y DT».</p>
 <div class="lq-grid">
 <div class="lq-field"><label for="pm-t-anexodatos">Anexo datos entregado el <span class="lq-opt">(opcional)</span></label><input id="pm-t-anexodatos" data-k="anexoDatosEntrega" type="date"><p class="pm-error" data-error="anexoDatosEntrega" hidden></p></div>
 <div class="lq-field pm-check"><label><input id="pm-t-anexodatos-firma" data-k="anexoDatosConstancia" type="checkbox"> Anexo firmado por el trabajador <span class="lq-opt">(recomendado)</span></label></div>
+</div>
+</div>
+<div class="form-bloque">
+<p class="h-seccion">Carpeta DT, DS 44/2024 y Firma Simple</p>
+<p class="lq-help">Respaldos exigidos en fiscalización DT (IRL ex ODI antes de iniciar labores, reglamentos y registro en Mi DT dentro de 15 días) y autorización de documentación digital (Ley 19.799 / Dictamen 789/15 DT).</p>
+<div class="lq-grid">
+<div class="lq-field pm-check lq-span2"><label><input id="pm-t-midt-reg" data-k="midtRegistrado" type="checkbox"> Contrato registrado en portal Mi DT (plazo legal 15 días desde la firma)</label></div>
+<div class="lq-field"><label for="pm-t-irl">IRL (ex ODI) entregada el <span class="lq-opt">(opcional)</span></label><input id="pm-t-irl" data-k="irlEntrega" type="date"><p class="pm-error" data-error="irlEntrega" hidden></p></div>
+<div class="lq-field pm-check"><label><input id="pm-t-irl-firma" data-k="irlConstancia" type="checkbox"> Constancia IRL firmada</label></div>
+<div class="lq-field"><label for="pm-t-riohs">RIHS / RIOHS entregado el <span class="lq-opt">(opcional)</span></label><input id="pm-t-riohs" data-k="riohsEntrega" type="date"><p class="pm-error" data-error="riohsEntrega" hidden></p></div>
+<div class="lq-field pm-check"><label><input id="pm-t-riohs-firma" data-k="riohsConstancia" type="checkbox"> Constancia RIHS/RIOHS firmada</label></div>
+<div class="lq-field pm-check"><label><input id="pm-t-consentimiento-elec" data-k="consentimientoElectronico" type="checkbox"> Consintió recepción y firma electrónica simple (Dictamen 789/15)</label></div>
+<div class="lq-field"><label for="pm-t-consentimiento-fecha">Fecha consentimiento <span class="lq-opt">(opcional)</span></label><input id="pm-t-consentimiento-fecha" data-k="consentimientoFecha" type="date"></div>
 </div>
 </div>
 </div>
@@ -847,10 +861,15 @@ gtag('js', new Date());
 <section class="vista" data-vista="documentos" aria-labelledby="doc-titulo" hidden>
 <div class="v-head">
 <div>
-<h1 class="v-titulo" id="doc-titulo">Documentos</h1>
+<h1 class="v-titulo" id="doc-titulo">Documentos laborales</h1>
 <p class="v-sub">Se arman con los datos que ya guardaste. Son modelos de referencia basados en la normativa vigente: no constituyen asesoría legal y no han sido revisados por un abogado.</p>
 </div>
 </div>
+<div class="fin-filtros" role="tablist" aria-label="Modos de documentos laborales" style="margin-bottom:14px">
+<button type="button" class="fin-chip activo" data-doc-modo="individual" role="tab" aria-selected="true">Preparador individual</button>
+<button type="button" class="fin-chip" data-doc-modo="matriz" role="tab" aria-selected="false">Matriz por lote y firma simple <span class="app-nav-chip" id="doc-chip-matriz" hidden></span></button>
+</div>
+<div id="doc-modo-individual">
 <div class="panel" id="pm-doc-vacio-panel" hidden><div class="panel-cuerpo"><p class="h-seccion">Faltan datos para preparar documentos</p><p class="texto-ayuda" id="pm-doc-vacio"></p></div></div>
 <div class="editor" id="doc-editor" style="margin-top:0">
 <div class="editor-izq">
@@ -881,6 +900,22 @@ gtag('js', new Date());
 <div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Documentos emitidos</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Trabajador</th><th scope="col">Documento</th><th scope="col"><span class="sr-only">Acción</span></th></tr></thead><tbody id="doc-hist-filas"></tbody></table></div>
 <p class="texto-ayuda panel-pie">Guardamos solo el tipo de documento y la fecha, nunca su texto. Al prepararlo de nuevo se arma con los datos de hoy, que pueden no coincidir con los del documento que entregaste.</p>
 </div>
+</div>
+<div id="doc-modo-matriz" hidden>
+<div class="lq-aviso lq-aviso-info" style="margin-bottom:14px">
+<span class="material-icons" aria-hidden="true">verified_user</span>
+<div>
+<strong>Firma electrónica simple con trazabilidad (Ley N° 19.799 · criterios Dictamen N° 789/15 DT)</strong>
+<p>Válida para anexos, comprobantes de feriado, IRL, RIHS/RIOHS, Protocolo Ley Karin y Anexo de Datos Personales mediante correo personal del trabajador, consentimiento expreso y huella SHA-256. <strong>Excluidos por ley:</strong> el finiquito laboral (art. 177 CT requiere Mi DT o ministro de fe) y las cartas de despido (art. 162 CT, Ord. 5378/2016) no se tramitan por firma simple.</p>
+</div>
+</div>
+<div id="doc-matriz-panel"></div>
+</div>
+<dialog class="app-dialogo app-dialogo-medio" id="doc-dialogo-traza" aria-labelledby="doc-traza-titulo">
+<div class="midt-cabeza"><h2 id="doc-traza-titulo">Trazabilidad de firma electrónica simple</h2><button type="button" class="app-icono-btn" id="doc-traza-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<div class="midt-cuerpo" id="doc-traza-cuerpo"></div>
+<div class="form-acciones" style="padding:12px 20px;border-top:1px solid var(--line)"><button type="button" class="btn btn-primario" id="doc-traza-ok">Cerrar</button></div>
+</dialog>
 </section>
 
 <!-- Vacaciones -->
@@ -976,20 +1011,30 @@ gtag('js', new Date());
 </div>
 </section>
 
-<!-- Protección de datos personales (Ley 21.719) -->
+<!-- Centro de Cumplimiento y DT (Carpeta DT, Ley Karin y Ley 21.719) -->
 <section class="vista" data-vista="datos-personales" aria-labelledby="dp-titulo" hidden>
 <div class="v-head">
 <div>
-<h1 class="v-titulo" id="dp-titulo">Protección de datos (Ley 21.719)</h1>
-<p class="v-sub">Paso a paso para poner tu empresa al día: trabajadores, proveedores externos, qué datos guardas y canal de atención para personas.</p>
+<h1 class="v-titulo" id="dp-titulo">Cumplimiento laboral, Ley Karin y Datos</h1>
+<p class="v-sub">Carpeta de fiscalización DT, reglamento DS 44/2024, canal y plazos reservados Ley Karin, y protección de datos Ley N° 21.719 en un solo centro.</p>
 </div>
 <div class="v-acciones">
+<button type="button" class="btn btn-chico btn-primario" id="comp-btn-indice-dt"><span class="material-icons" aria-hidden="true">print</span>Índice Carpeta DT</button>
 <button type="button" class="btn btn-chico" id="dp-btn-politica-modal"><span class="material-icons" aria-hidden="true">description</span>Política web</button>
 <button type="button" class="btn btn-chico" id="dp-btn-canal-modal"><span class="material-icons" aria-hidden="true">link</span>Canal de solicitudes</button>
 </div>
 </div>
-<div class="panel" id="dp-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero guarda los datos de tu empresa</p><p class="texto-ayuda">Los anexos laborales, acuerdos con proveedores y políticas usan la razón social y el RUT de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/empresa" data-ruta="empresa">Ir a Empresa</a></div></div></div>
+<div class="panel" id="dp-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero guarda los datos de tu empresa</p><p class="texto-ayuda">La Carpeta DT, los registros de Ley Karin y los anexos de Ley 21.719 usan la razón social, el RUT y los trabajadores de tu empresa.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/empresa" data-ruta="empresa">Ir a Empresa</a></div></div></div>
 <div id="dp-contenido">
+<div class="fin-filtros comp-tabs-principales" role="tablist" aria-label="Áreas de cumplimiento" style="margin-bottom:14px">
+<button type="button" class="fin-chip activo" data-comp-tab="carpeta" role="tab" aria-selected="true">Carpeta DT</button>
+<button type="button" class="fin-chip" data-comp-tab="karin" role="tab" aria-selected="false">Ley Karin</button>
+<button type="button" class="fin-chip" data-comp-tab="datos" role="tab" aria-selected="false">Datos 21.719</button>
+<button type="button" class="fin-chip" data-comp-tab="diagnostico" role="tab" aria-selected="false">Diagnóstico</button>
+</div>
+<p id="dp-estado-msg" class="lq-estado" role="status"></p>
+<div id="comp-panel-principal"></div>
+<div id="dp-subseccion" hidden>
 <dl class="cifras cifras-4" id="dp-cifras">
 <div><dt>Paso a paso</dt><dd class="mono" id="dp-kpi-avance">0 / 4</dd><span class="texto-ayuda" id="dp-kpi-avance-sub">Por iniciar</span></div>
 <div><dt>Trabajadores con anexo</dt><dd class="mono" id="dp-kpi-anexos">0 / 0</dd><span class="texto-ayuda" id="dp-kpi-anexos-sub">Cruce con personal activo</span></div>
@@ -1003,8 +1048,8 @@ gtag('js', new Date());
 <button type="button" class="fin-chip" data-dp-tab="inventario" role="tab" aria-selected="false">Qué datos guardas</button>
 <button type="button" class="fin-chip" data-dp-tab="solicitudes" role="tab" aria-selected="false">Solicitudes y brechas</button>
 </div>
-<p id="dp-estado-msg" class="lq-estado" role="status"></p>
 <div id="dp-panel-activo"></div>
+</div>
 </div>
 </section>
 
@@ -1617,6 +1662,17 @@ gtag('js', new Date());
 </div>
 </div>
 
+<div class="portal-alerta-firmas" id="portal-alerta-firmas" hidden>
+<div class="portal-alerta-firmas-izq">
+<span class="material-icons" aria-hidden="true">draw</span>
+<div>
+<strong id="portal-alerta-firmas-titulo">Tienes documentos pendientes de firma</strong>
+<p id="portal-alerta-firmas-sub">Revísalos y fírmalos con firma electrónica simple en 1 paso.</p>
+</div>
+</div>
+<button type="button" class="btn btn-primario" id="btn-portal-firmar-ahora"><span class="material-icons" aria-hidden="true">verified</span><span>Revisar y firmar en 1 paso</span></button>
+</div>
+
 <div class="fin-kpis fin-kpis-3 portal-kpis-grid">
 <div class="fin-kpi portal-kpi-destacado">
 <span class="fin-kpi-label" id="portal-liq-label">Última liquidación</span>
@@ -1679,6 +1735,23 @@ gtag('js', new Date());
 </table>
 </div>
 </div>
+<dialog class="app-dialogo app-dialogo-ancho" id="portal-dialogo-firma" aria-labelledby="portal-firma-titulo">
+<div class="midt-cabeza"><h2 id="portal-firma-titulo">Revisar y firmar documento</h2><button type="button" class="app-icono-btn" id="portal-firma-cerrar" aria-label="Cerrar"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<form id="portal-firma-form" class="midt-cuerpo" novalidate>
+<p class="texto-ayuda" id="portal-firma-sub"></p>
+<div class="panel" style="margin:10px 0 14px;background:var(--surface-2)"><div class="panel-cuerpo" id="portal-firma-contenido" style="font-size:13.5px;line-height:1.5"></div></div>
+<div class="lq-grid">
+<div class="lq-field"><label for="portal-firma-correo">Tu correo personal de respaldo <span class="lq-opt">(Dictamen 789/15 DT)</span></label><input id="portal-firma-correo" type="email" maxlength="120" placeholder="tu.nombre@correo.cl" required></div>
+<div class="lq-field"><label for="portal-firma-rut4">Últimos 4 caracteres de tu RUT (sin puntos)</label><input id="portal-firma-rut4" type="text" maxlength="6" class="mono" placeholder="Ej: 5674" required></div>
+<div class="lq-field pm-check lq-span2"><label><input id="portal-firma-consentimiento" type="checkbox" required> <span>Acepto recibir y firmar este documento laboral mediante firma electrónica simple al correo personal indicado (Ley N° 19.799 y criterios del Dictamen N° 789/15 DT; excluye finiquitos y cartas de despido).</span></label></div>
+</div>
+<p id="portal-firma-estado" class="lq-estado" role="status" style="margin-top:8px"></p>
+<div class="form-acciones" style="margin-top:14px">
+<button type="button" class="btn" id="portal-firma-cancelar">Cancelar</button>
+<button type="submit" class="btn btn-primario" id="portal-firma-enviar"><span class="material-icons" aria-hidden="true">verified</span>Firmar electrónicamente</button>
+</div>
+</form>
+</dialog>
 </section>
 
 
@@ -1839,9 +1912,10 @@ gtag('js', new Date());
 <script src="/js/kit_zip_engine.js?v=1.0.0"></script>
 <script src="/js/finiquito_docx.js?v=1.3.0"></script>
 <script src="/js/pyme_finanzas.js?v=1.4.3"></script>
-<script src="/js/pyme_datos_ley.js?v=1.4.0"></script>
-<script src="/js/pyme_equipo_ui.js?v=1.0.0"></script>
+<script src="/js/pyme_cumplimiento.js?v=1.0.0"></script>
+<script src="/js/pyme_datos_ley.js?v=1.5.0"></script>
+<script src="/js/pyme_equipo_ui.js?v=1.1.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.48.0" defer></script>
+<script src="/js/app_pyme.js?v=1.49.0" defer></script>
 </body>
 </html>

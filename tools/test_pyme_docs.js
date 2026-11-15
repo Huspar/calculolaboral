@@ -16,8 +16,9 @@ const MESB = (liquido) => ({ calculo: Object.assign({}, MES(liquido).calculo, { 
 const valido = (tipo, c, extra) => Object.assign(D.valoresIniciales(tipo, c), extra);
 const HECHOS = 'Desde marzo las ventas de la sucursal cayeron un 40% respecto del año anterior y se cerró el turno de tarde, por lo que el cargo de vendedora de ese turno dejó de ser necesario.';
 
-caso('hay once tipos en tres grupos y todos tienen campos y generador', () => {
-    assert.strictEqual(D.TIPOS.length, 11);
+caso('hay trece tipos en tres grupos y todos tienen campos y generador', () => {
+    assert.strictEqual(D.TIPOS.length, 13);
+    assert.deepStrictEqual(D.TIPOS_FIRMA_EXCLUIDOS, ['finiquito', 'carta_161', 'carta_159_4']);
     D.TIPOS.forEach(t => assert.ok(D.campos(t.id).length > 0 && D.GRUPOS.some(g => g[0] === t.grupo), t.id));
 });
 caso('sin completar los datos obligatorios no se puede emitir ni generar', () => {
@@ -231,6 +232,21 @@ caso('anexo de datos: cláusulas fijas y opcionales, numeradas en orden', () => 
     assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: 'no-es-correo' })).errores.correoPrivacidad);
     assert.ok(D.validar('anexo_datos', c, Object.assign({}, base, { correoPrivacidad: '' })).errores.correoPrivacidad);
     assert.strictEqual(D.valoresIniciales('anexo_datos', ctx(TRAB(), { correoPrivacidad: 'datos@laespiga.cl' })).correoPrivacidad, 'datos@laespiga.cl');
+});
+caso('constancia RIHS/RIOHS, IRL y Ley Karin y consentimiento de firma simple (Ley 19.799 + Ord. 789/15)', () => {
+    const c = ctx(TRAB({ correoPersonal: 'maria.perez@gmail.com' }));
+    const vBase = valido('constancia_rihs_irl', c, {});
+    assert.ok(D.validar('constancia_rihs_irl', c, vBase).puedeEmitir);
+    assert.ok(!D.validar('constancia_rihs_irl', c, Object.assign({}, vBase, { incluyeRihs: false, incluyeRiohs: false, incluyeIrl: false, incluyeKarin: false })).puedeEmitir);
+    const htmlRihs = D.generar('constancia_rihs_irl', c, vBase, { pagada: true }).html;
+    ['DS N° 44/2024', 'IRL', 'Ley N° 21.643', 'María Pérez Soto'].forEach(t => assert.ok(htmlRihs.includes(t), t));
+
+    const vFirma = valido('consentimiento_firma', c, {});
+    assert.strictEqual(vFirma.correoPersonal, 'maria.perez@gmail.com');
+    assert.ok(D.validar('consentimiento_firma', c, vFirma).puedeEmitir);
+    assert.ok(D.validar('consentimiento_firma', c, Object.assign({}, vFirma, { correoPersonal: 'invalido' })).errores.correoPersonal);
+    const htmlFirma = D.generar('consentimiento_firma', c, vFirma, { pagada: true }).html;
+    ['19.799', '789/15', 'finiquito laboral (art. 177 CT)', 'maria.perez@gmail.com'].forEach(t => assert.ok(htmlFirma.includes(t), t));
 });
 caso('ningún documento deja corchetes de relleno ni la palabra undefined/null/NaN', () => {
     const pf = TRAB({ contrato: 'plazo_fijo', fechaIngreso: '2026-01-10', fechaTerminoPlazo: '2026-10-31' });

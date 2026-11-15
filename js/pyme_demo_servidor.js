@@ -126,6 +126,15 @@ const CAMPOS_TRABAJADOR = {
     // Ley 21.719: anexo o deber de información sobre tratamiento de datos personales laborales
     anexoDatosEntrega: { t: 'fecha' },
     anexoDatosConstancia: { t: 'bool', def: false },
+    // Carpeta laboral DT y firma electrónica simple (Ley 19.799 + Dictamen 789/15 DT)
+    correoPersonal: { t: 'texto', max: 120 },
+    irlEntrega: { t: 'fecha' },
+    irlConstancia: { t: 'bool', def: false },
+    riohsEntrega: { t: 'fecha' },
+    riohsConstancia: { t: 'bool', def: false },
+    midtRegistrado: { t: 'bool', def: false },
+    consentimientoElectronico: { t: 'bool', def: false },
+    consentimientoFecha: { t: 'fecha' },
     activo: { t: 'bool', def: true }
 };
 
@@ -279,6 +288,7 @@ function validarTrabajador(entrada) {
         if (!v.causalTermino) errores.causalTermino = 'Elige la causal del término del contrato.';
         if (v.fechaIngreso && v.fechaTermino < v.fechaIngreso) errores.fechaTermino = 'No puede ser anterior a la fecha de ingreso.';
     } else v.causalTermino = '';
+    if (v.correoPersonal && !esCorreoSimple(v.correoPersonal)) errores.correoPersonal = 'El correo personal no parece válido.';
     if (v.fechaNacimiento && v.fechaIngreso && v.fechaIngreso < v.fechaNacimiento) errores.fechaIngreso = 'No puede ser anterior a la fecha de nacimiento.';
     return Object.keys(errores).length ? { ok: false, errores } : { ok: true, valor: v };
 }
@@ -518,9 +528,12 @@ function validarListaObjetos(lista, max, claveErr, msgFormato, validarItem, erro
     return salida;
 }
 
-/** Valida el estado de cumplimiento Ley 21.719 (encargados DPA, ARCOPS+bloqueo, brechas art. 14 sexies, inventario y canal). */
+const TIPOS_FIRMA_EXCLUIDOS = ['finiquito', 'carta_161', 'carta_159_4'];
+const TIPOS_FIRMA_PERMITIDOS = ['contrato', 'anexo_contrato', 'pacto_horas_extra', 'anexo_datos', 'constancia_rihs_irl', 'consentimiento_firma', 'comprobante_feriado', 'cert_antiguedad', 'cert_remuneraciones', 'amonestacion'];
+
+/** Valida el estado de cumplimiento laboral DT, Ley Karin, Ley 21.719 y firmas electrónicas simples. */
 function validarDatosLey21719(entrada) {
-    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos de protección de datos no tienen el formato esperado.' } };
+    if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) return { ok: false, errores: { _: 'Los datos de cumplimiento y protección de datos no tienen el formato esperado.' } };
     const errores = {};
     const correoPrivacidad = normalizar('correoPrivacidad', { t: 'texto', max: 120 }, entrada.correoPrivacidad, errores);
     if (correoPrivacidad && !esCorreoSimple(correoPrivacidad)) errores.correoPrivacidad = 'El correo de privacidad no parece válido.';
@@ -589,11 +602,74 @@ function validarDatosLey21719(entrada) {
         return { ok: true, valor: { id, actividad, baseLegal, datosTratados, plazoConservacion } };
     }, errores);
 
+    const cd = entrada.cumplimientoDt && typeof entrada.cumplimientoDt === 'object' && !Array.isArray(entrada.cumplimientoDt) ? entrada.cumplimientoDt : {};
+    const cErr = {};
+    const cumplimientoDt = {
+        trabajadoresPermanentes: normalizar('trabajadoresPermanentes', { t: 'entero', min: 0, max: 5000, def: 0 }, cd.trabajadoresPermanentes, cErr),
+        riohsVigente: normalizar('riohsVigente', { t: 'bool', def: false }, cd.riohsVigente, cErr),
+        riohsFecha: normalizar('riohsFecha', { t: 'fecha' }, cd.riohsFecha, cErr),
+        riohsRegistroDtIsp: normalizar('riohsRegistroDtIsp', { t: 'bool', def: false }, cd.riohsRegistroDtIsp, cErr),
+        rihsVigente: normalizar('rihsVigente', { t: 'bool', def: false }, cd.rihsVigente, cErr),
+        rihsFecha: normalizar('rihsFecha', { t: 'fecha' }, cd.rihsFecha, cErr),
+        cphsActivo: normalizar('cphsActivo', { t: 'bool', def: false }, cd.cphsActivo, cErr),
+        asistenciaSistema: normalizar('asistenciaSistema', { t: 'enum', valores: ['', 'libro_papel', 'electronico_res38', 'reloj_control', 'no_aplica'], def: '' }, cd.asistenciaSistema, cErr),
+        asistenciaResolucion: normalizar('asistenciaResolucion', { t: 'texto', max: 60 }, cd.asistenciaResolucion, cErr),
+        canalKarinActivo: normalizar('canalKarinActivo', { t: 'bool', def: false }, cd.canalKarinActivo, cErr),
+        canalKarinMedio: normalizar('canalKarinMedio', { t: 'texto', max: 140 }, cd.canalKarinMedio, cErr),
+        canalKarinFecha: normalizar('canalKarinFecha', { t: 'fecha' }, cd.canalKarinFecha, cErr),
+        previredAlDia: normalizar('previredAlDia', { t: 'bool', def: false }, cd.previredAlDia, cErr),
+        jornadaRevisada42h: normalizar('jornadaRevisada42h', { t: 'bool', def: false }, cd.jornadaRevisada42h, cErr),
+        carpetaLinkNotas: normalizar('carpetaLinkNotas', { t: 'texto', max: 300 }, cd.carpetaLinkNotas, cErr)
+    };
+    if (Object.keys(cErr).length) errores.cumplimientoDt = 'Revisa los campos de la carpeta laboral DT.';
+
+    const denunciasKarin = validarListaObjetos(entrada.denunciasKarin, 60, 'denunciasKarin', 'El registro reservado de denuncias Ley Karin no tiene el formato esperado.', (it, id, n) => {
+        const e = {};
+        const codigo = normalizar('codigo', { t: 'texto', max: 24 }, it.codigo, e) || `KARIN-${String(n).padStart(3, '0')}`;
+        const fechaRecepcion = normalizar('fechaRecepcion', { t: 'fecha', req: true }, it.fechaRecepcion, e);
+        const via = normalizar('via', { t: 'enum', valores: ['interna', 'dt', 'suseso'], def: 'interna' }, it.via, e);
+        const clasificacion = normalizar('clasificacion', { t: 'enum', valores: ['acoso_sexual', 'acoso_laboral', 'violencia_trabajo'], def: 'acoso_laboral' }, it.clasificacion, e);
+        const denunciadoInvolucraEmpleador = normalizar('denunciadoInvolucraEmpleador', { t: 'bool', def: false }, it.denunciadoInvolucraEmpleador, e);
+        const medidasResguardo = normalizar('medidasResguardo', { t: 'texto', max: 240 }, it.medidasResguardo, e);
+        const fechaResguardo = normalizar('fechaResguardo', { t: 'fecha' }, it.fechaResguardo, e);
+        const investigadorInterno = normalizar('investigadorInterno', { t: 'texto', max: 80 }, it.investigadorInterno, e);
+        const fechaDerivacionDt = normalizar('fechaDerivacionDt', { t: 'fecha' }, it.fechaDerivacionDt, e);
+        const fechaInformeDt = normalizar('fechaInformeDt', { t: 'fecha' }, it.fechaInformeDt, e);
+        const fechaPronunciamientoDt = normalizar('fechaPronunciamientoDt', { t: 'fecha' }, it.fechaPronunciamientoDt, e);
+        const fechaMedidasFinales = normalizar('fechaMedidasFinales', { t: 'fecha' }, it.fechaMedidasFinales, e);
+        const estado = normalizar('estado', { t: 'enum', valores: ['recibida', 'resguardo', 'investigando', 'derivada_dt', 'informe_dt', 'medidas_aplicadas', 'cerrada'], def: 'recibida' }, it.estado, e);
+        const notas = normalizar('notas', { t: 'texto', max: 300 }, it.notas, e);
+        if (Object.keys(e).length) return { ok: false, error: `Denuncia Ley Karin ${n}: revisa las fechas o clasificación.` };
+        return { ok: true, valor: { id, codigo, fechaRecepcion, via, clasificacion, denunciadoInvolucraEmpleador, medidasResguardo, fechaResguardo, investigadorInterno, fechaDerivacionDt, fechaInformeDt, fechaPronunciamientoDt, fechaMedidasFinales, estado, notas } };
+    }, errores);
+
+    const documentosFirma = validarListaObjetos(entrada.documentosFirma, 300, 'documentosFirma', 'La matriz de firmas electrónicas no tiene el formato esperado.', (it, id, n) => {
+        const e = {};
+        if (TIPOS_FIRMA_EXCLUIDOS.indexOf(String(it.tipo || '')) >= 0) {
+            return { ok: false, error: `Documento ${n}: finiquitos y cartas de despido no pueden tramitarse por firma electrónica simple.` };
+        }
+        const trabajadorId = normalizar('trabajadorId', { t: 'texto', max: 64, req: true }, it.trabajadorId, e);
+        const tipo = normalizar('tipo', { t: 'enum', valores: TIPOS_FIRMA_PERMITIDOS, req: true }, it.tipo, e);
+        const titulo = normalizar('titulo', { t: 'texto', max: 140, req: true }, it.titulo, e);
+        const fechaEmision = normalizar('fechaEmision', { t: 'fecha', req: true }, it.fechaEmision, e);
+        const correoEnvio = normalizar('correoEnvio', { t: 'texto', max: 120 }, it.correoEnvio, e);
+        if (correoEnvio && !esCorreoSimple(correoEnvio)) e.correoEnvio = true;
+        const estado = normalizar('estado', { t: 'enum', valores: ['pendiente_envio', 'pendiente_firma', 'firmado', 'anulado'], def: 'pendiente_firma' }, it.estado, e);
+        const enviadoAt = normalizar('enviadoAt', { t: 'texto', max: 35 }, it.enviadoAt, e);
+        const firmadoAt = normalizar('firmadoAt', { t: 'texto', max: 35 }, it.firmadoAt, e);
+        const rutUlt4 = normalizar('rutUlt4', { t: 'texto', max: 6 }, it.rutUlt4, e);
+        const hashSha256 = normalizar('hashSha256', { t: 'texto', max: 80 }, it.hashSha256, e);
+        const consentido = normalizar('consentido', { t: 'bool', def: false }, it.consentido, e);
+        const resumenContenido = normalizar('resumenContenido', { t: 'texto', max: 400 }, it.resumenContenido, e);
+        if (Object.keys(e).length) return { ok: false, error: `Documento para firma ${n}: revisa tipo, trabajador, correo o fechas.` };
+        return { ok: true, valor: { id, trabajadorId, tipo, titulo, fechaEmision, correoEnvio, estado, enviadoAt, firmadoAt, rutUlt4, hashSha256, consentido, resumenContenido } };
+    }, errores);
+
     if (Object.keys(errores).length) return { ok: false, errores };
-    return { ok: true, valor: { correoPrivacidad, responsableDatos, checklist, encargados, solicitudesArcop, brechas, rat } };
+    return { ok: true, valor: { correoPrivacidad, responsableDatos, checklist, encargados, solicitudesArcop, brechas, rat, cumplimientoDt, denunciasKarin, documentosFirma } };
 }
 
-module.exports = { validarMes, validarHonorarios, validarAusencias, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, validarDatosLey21719, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS };
+module.exports = { validarMes, validarHonorarios, validarAusencias, validarPeriodo, validarEmpresa, validarTrabajador, validarPrestamos, validarVacacion, validarDatosLey21719, esFechaIso, CAMPOS_EMPRESA, CAMPOS_TRABAJADOR, CAMPOS_MES, AFPS, MAX_LOGO, MAX_PRESTAMOS, MAX_CUOTAS, TIPOS_FIRMA_EXCLUIDOS, TIPOS_FIRMA_PERMITIDOS };
 
     });
 
@@ -629,7 +705,7 @@ const PLANES_ESTUDIO = {
 const MAX_TOTAL = 100;
 const MAX_MESES_POR_TRABAJADOR = 120;
 const MAX_DOCUMENTOS_POR_TRABAJADOR = 500;
-const TIPOS_DOCUMENTO = ['anexo_contrato', 'pacto_horas_extra', 'cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
+const TIPOS_DOCUMENTO = ['anexo_contrato', 'pacto_horas_extra', 'cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'constancia_rihs_irl', 'consentimiento_firma', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
 const MAX_VACACIONES_POR_TRABAJADOR = 200;
 const MAX_MESES_HONORARIOS = 120;
 const VERSION_EXPORTACION = 5;
@@ -691,7 +767,34 @@ function crear({ almacen, cifrado, ahora, piloto }) {
     }
 
     function datosLeyDefecto() {
-        return { correoPrivacidad: '', responsableDatos: '', checklist: { protocoloBrechas: false, ratRevisado: false }, encargados: [], solicitudesArcop: [], brechas: [], rat: [] };
+        return {
+            correoPrivacidad: '',
+            responsableDatos: '',
+            checklist: { protocoloBrechas: false, ratRevisado: false },
+            encargados: [],
+            solicitudesArcop: [],
+            brechas: [],
+            rat: [],
+            cumplimientoDt: {
+                trabajadoresPermanentes: 0,
+                riohsVigente: false,
+                riohsFecha: '',
+                riohsRegistroDtIsp: false,
+                rihsVigente: false,
+                rihsFecha: '',
+                cphsActivo: false,
+                asistenciaSistema: '',
+                asistenciaResolucion: '',
+                canalKarinActivo: false,
+                canalKarinMedio: '',
+                canalKarinFecha: '',
+                previredAlDia: false,
+                jornadaRevisada42h: false,
+                carpetaLinkNotas: ''
+            },
+            denunciasKarin: [],
+            documentosFirma: []
+        };
     }
 
     /** Todo lo que el panel necesita para dibujarse. Con `cuenta.empresaId` es esa empresa; sin él, la primera. */

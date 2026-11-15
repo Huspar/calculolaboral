@@ -148,8 +148,8 @@
     }
 
     // ---------- rutas ----------
-    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', 'flujo-caja': 'flujo-caja', cobranzas: 'cobranzas', pagos: 'pagos', conciliacion: 'conciliacion', 'mi-contador': 'mi-contador', 'mi-portal': 'mi-portal', contratos: 'contratos', 'datos-personales': 'datos-personales', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
-    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones y permisos', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', 'flujo-caja': 'Flujo de caja', cobranzas: 'Cobranzas', pagos: 'Cuentas por pagar', conciliacion: 'Conciliación bancaria', 'mi-contador': 'Mi Contador y Cierre', 'mi-portal': 'Mi Portal del Colaborador', contratos: 'Contratos y finiquitos', 'datos-personales': 'Protección de Datos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', 'flujo-caja': 'flujo-caja', cobranzas: 'cobranzas', pagos: 'pagos', conciliacion: 'conciliacion', 'mi-contador': 'mi-contador', 'mi-portal': 'mi-portal', contratos: 'contratos', cumplimiento: 'datos-personales', 'datos-personales': 'datos-personales', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones y permisos', liquidaciones: 'Liquidaciones', documentos: 'Documentos laborales', calendario: 'Calendario', 'flujo-caja': 'Flujo de caja', cobranzas: 'Cobranzas', pagos: 'Cuentas por pagar', conciliacion: 'Conciliación bancaria', 'mi-contador': 'Mi Contador y Cierre', 'mi-portal': 'Mi Portal del Colaborador', contratos: 'Contratos y finiquitos', 'datos-personales': 'Cumplimiento laboral, Ley Karin y Datos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
     var vistaActual = null;
     var finanzasUI = null;
     var datosLeyUI = null;
@@ -191,8 +191,9 @@
         if (vista !== 'empresa') empresaNueva = false;
         vistaActual = vista;
         Array.prototype.forEach.call(document.querySelectorAll('.vista'), function (s) { s.hidden = s.getAttribute('data-vista') !== vista; });
+        var navActivo = base === 'datos-personales' ? 'cumplimiento' : base;
         Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
-            if (a.getAttribute('data-nav') === base) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+            if (a.getAttribute('data-nav') === navActivo) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
         });
         if (['', 'trabajadores', 'flujo-caja', 'liquidaciones'].indexOf(base) < 0) $('app-mas').setAttribute('aria-current', 'page'); else $('app-mas').removeAttribute('aria-current');
         document.title = TITULOS[vista] + ' · Asistente Laboral Pyme';
@@ -2558,6 +2559,7 @@ function dibujarEquipo() {
 
     // ---------- documentos ----------
     var docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
+    var docModo = 'individual';
 
     function ufHoy() { try { return typeof CONSTANTS !== 'undefined' && CONSTANTS.UF > 30000 ? CONSTANTS.UF : 0; } catch (e) { return 0; } }
 
@@ -2569,9 +2571,10 @@ function dibujarEquipo() {
         return { empresa: estado.empresa, t: t, hoy: hoyIso(), meses: meses, uf: ufHoy(), F: F, vac: vacDe(t.id), correoPrivacidad: (estado.datosLey21719 && estado.datosLey21719.correoPrivacidad) || '', saldoPrestamos: function (p) { return L.saldoPrestamos(t, p); } };
     }
 
-    // /app/documentos?t=<trabajador>&d=<tipo>: deja elegidos a la persona y el documento
+    // /app/documentos?t=<trabajador>&d=<tipo>&modo=matriz: deja elegidos persona, documento o modo
     function rutaDocumentos() {
-        var q = new URLSearchParams(window.location.search), t = q.get('t'), d = q.get('d'), forzar = false;
+        var q = new URLSearchParams(window.location.search), t = q.get('t'), d = q.get('d'), modo = q.get('modo'), forzar = false;
+        if (modo === 'matriz' || modo === 'individual') docModo = modo;
         if (d === 'comprobante_feriado' && t && q.get('inicio')) {
             docPrefill = { t: t, tipo: d, valores: { fechaInicio: q.get('inicio'), diasHabiles: String(+q.get('dias') || ''), saldoAntes: String(+q.get('saldo') || 0) } };
             forzar = true;
@@ -2583,6 +2586,18 @@ function dibujarEquipo() {
 
     function dibujarDocumentos(forzar) {
         if (!estado) return;
+        Array.prototype.forEach.call(document.querySelectorAll('[data-doc-modo]'), function (b) {
+            var act = b.getAttribute('data-doc-modo') === docModo;
+            b.classList.toggle('activo', act);
+            b.setAttribute('aria-selected', act ? 'true' : 'false');
+        });
+        var indWrap = $('doc-modo-individual'), matWrap = $('doc-modo-matriz');
+        if (indWrap) indWrap.hidden = docModo !== 'individual';
+        if (matWrap) matWrap.hidden = docModo !== 'matriz';
+
+        dibujarMatrizDocs();
+
+        if (docModo === 'matriz') return;
         var lista = estado.trabajadores || [], hay = lista.length > 0 && !!estado.empresa;
         $('pm-doc-vacio-panel').hidden = hay;
         $('pm-doc-vacio').textContent = !estado.empresa ? 'Primero guarda los datos de la empresa y agrega a un trabajador.' : 'Agrega primero a un trabajador para preparar sus documentos.';
@@ -2604,6 +2619,227 @@ function dibujarEquipo() {
         // Si se cargaron los documentos emitidos después, los avisos del contrato se actualizan
         dibujarPendientes();
     }
+
+    function dibujarMatrizDocs() {
+        var cont = $('doc-matriz-panel');
+        var chip = $('doc-chip-matriz');
+        if (!cont || !window.CLPymeCumplimiento) return;
+        if (!estado || !estado.empresa) {
+            cont.innerHTML = '<div class="panel"><div class="panel-cuerpo"><p class="vacio">Primero guarda los datos de la empresa y agrega trabajadores.</p></div></div>';
+            if (chip) chip.hidden = true;
+            return;
+        }
+        var res = window.CLPymeCumplimiento.resumenMatrizDocumentos(estado, estado.datosLey21719 || {});
+        if (chip) {
+            if (res.pendientesFirmaTotal > 0) { chip.textContent = String(res.pendientesFirmaTotal); chip.className = 'app-nav-chip'; chip.hidden = false; }
+            else chip.hidden = true;
+        }
+        function badgeCell(ok, lblOk, lblNo, tId, tipoDoc) {
+            var q = 't=' + encodeURIComponent(tId) + '&d=' + encodeURIComponent(tipoDoc);
+            return ok
+                ? '<span class="sello sello-emitida">' + esc(lblOk) + '</span>'
+                : '<a class="sello sello-preparada" style="text-decoration:none" href="/app/documentos?' + esc(q) + '" data-ruta="documentos" data-query="' + esc(q) + '">' + esc(lblNo) + '</a>';
+        }
+        var filasHtml = res.filas.map(function (f) {
+            var t = f.trabajador;
+            var estadoFirma = f.pendientesFirma.length
+                ? '<span class="sello sello-preparada">' + f.pendientesFirma.length + ' por firmar</span>'
+                : (f.firmados.length ? '<span class="sello sello-emitida">' + f.firmados.length + ' firmado(s)</span>' : '<span class="sello sello-guardada">Sin envíos</span>');
+            var acc = '<button type="button" class="btn btn-chico" data-matriz-enviar="' + esc(t.id) + '">Enviar a Portal</button>' +
+                (f.docsFirma.length ? ' <button type="button" class="btn-texto" data-matriz-traza="' + esc(t.id) + '">Traza SHA-256</button>' : '');
+            return {
+                html: '<tr><td><strong>' + esc(t.nombre) + '</strong><br><span class="mono" style="font-size:12px;color:var(--muted)">' + esc(t.rut) + (t.correoPersonal ? ' · ' + esc(t.correoPersonal) : ' · sin email personal') + '</span></td>' +
+                    '<td>' + badgeCell(f.okContrato, 'Mi DT OK', 'Pendiente', t.id, 'contrato') + '</td>' +
+                    '<td>' + badgeCell(f.okKarin, 'Entregado', 'Falta', t.id, 'constancia_rihs_irl') + '</td>' +
+                    '<td>' + badgeCell(f.okIrl, 'IRL OK', 'Falta IRL', t.id, 'constancia_rihs_irl') + '</td>' +
+                    '<td>' + badgeCell(f.okDatos, 'Anexo OK', 'Falta Anexo', t.id, 'anexo_datos') + '</td>' +
+                    '<td>' + badgeCell(f.okFirma, 'Consintió', 'Sin consent.', t.id, 'consentimiento_firma') + '<br><span style="display:inline-block;margin-top:4px">' + estadoFirma + '</span></td>' +
+                    '<td class="mono"><strong>' + f.pct + '%</strong></td>' +
+                    '<td class="celda-acciones"><div class="acciones-pila">' + acc + '</div></td></tr>',
+                card: '<div class="fin-card-item"><div class="fin-card-top"><strong>' + esc(t.nombre) + '</strong><span class="mono"><strong>' + f.pct + '%</strong></span></div>' +
+                    '<p class="texto-ayuda" style="margin:4px 0">' + esc(t.rut) + (t.correoPersonal ? ' · ' + esc(t.correoPersonal) : ' · sin correo personal') + '</p>' +
+                    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">' +
+                    badgeCell(f.okContrato, 'Contrato/Mi DT', 'Mi DT pend.', t.id, 'contrato') +
+                    badgeCell(f.okKarin, 'Karin OK', 'Falta Karin', t.id, 'constancia_rihs_irl') +
+                    badgeCell(f.okIrl, 'IRL OK', 'Falta IRL', t.id, 'constancia_rihs_irl') +
+                    badgeCell(f.okDatos, 'Datos OK', 'Falta Datos', t.id, 'anexo_datos') +
+                    estadoFirma +
+                    '</div><div class="acciones-pila">' + acc + '</div></div>'
+            };
+        });
+
+        cont.innerHTML = '<dl class="cifras cifras-4" style="margin-bottom:16px">' +
+            '<div><dt>Nómina activa</dt><dd class="mono">' + res.totalTrabajadores + '</dd><span class="texto-ayuda">Cruce documental automático</span></div>' +
+            '<div><dt>Con correo y consentimiento</dt><dd class="mono">' + res.conConsentimiento + ' / ' + res.totalTrabajadores + '</dd><span class="texto-ayuda">Requisito Dictamen 789/15 DT</span></div>' +
+            '<div><dt>Pendientes en Mi Portal</dt><dd class="mono">' + res.pendientesFirmaTotal + '</dd><span class="texto-ayuda">Listos para firma simple en 1 paso</span></div>' +
+            '<div><dt>Firmados con SHA-256</dt><dd class="mono">' + res.firmadosTotal + '</dd><span class="texto-ayuda">Respaldos electrónicos trazables</span></div>' +
+            '</dl>' +
+            '<div class="panel"><div class="panel-head"><div><h2>Matriz documental por trabajador</h2><p class="texto-ayuda">Haz clic en cualquier estado pendiente para preparar el documento o envíalos en lote a Mi Portal.</p></div>' +
+            '<div class="v-acciones"><button type="button" class="btn btn-chico btn-primario" id="doc-lote-enviar"><span class="material-icons" aria-hidden="true">send</span>Enviar faltantes a Mi Portal</button>' +
+            '<button type="button" class="btn btn-chico" id="doc-lote-imprimir"><span class="material-icons" aria-hidden="true">print</span>Imprimir lote IRL/Karin</button>' +
+            '<button type="button" class="btn btn-chico" id="doc-lote-csv"><span class="material-icons" aria-hidden="true">download</span>CSV matriz</button></div></div>' +
+            '<p id="doc-matriz-estado" class="lq-estado" role="status" style="padding:0 18px"></p>' +
+            (filasHtml.length
+                ? '<div class="tabla-wrap tabla-financiera-escritorio"><table class="tabla"><caption class="sr-only">Matriz de documentos por trabajador</caption><thead><tr><th scope="col">Trabajador</th><th scope="col">Contrato / Mi DT</th><th scope="col">Ley Karin</th><th scope="col">IRL (ex ODI)</th><th scope="col">Datos 21.719</th><th scope="col">Firma simple</th><th scope="col">%</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + filasHtml.map(function (x) { return x.html; }).join('') + '</tbody></table></div><div class="panel-cuerpo fin-cards-lista">' + filasHtml.map(function (x) { return x.card; }).join('') + '</div>'
+                : '<div class="panel-cuerpo"><p class="vacio">Agrega trabajadores activos para armar la matriz documental por lote.</p></div>') +
+            '</div>';
+    }
+
+    function enviarDocumentosPortalPara(trabIds) {
+        if (!estado || !estado.empresa || !window.CLPymeCumplimiento) return;
+        var Comp = window.CLPymeCumplimiento;
+        var dl = Object.assign({ correoPrivacidad: '', responsableDatos: '', checklist: { protocoloBrechas: false, ratRevisado: false }, encargados: [], solicitudesArcop: [], brechas: [], rat: [], documentosFirma: [] }, estado.datosLey21719 || {});
+        var lista = Array.isArray(dl.documentosFirma) ? dl.documentosFirma.slice() : [];
+        var hoy = hoyIso(), ahoraIso = new Date().toISOString();
+        var promesas = [];
+
+        trabIds.forEach(function (tid) {
+            var t = trabajadorPorId(tid);
+            if (!t || t.activo === false) return;
+            var yaPend = function (tipo) {
+                return lista.some(function (x) { return x.trabajadorId === tid && x.tipo === tipo && x.estado !== 'anulado'; });
+            };
+            var candidatos = [];
+            if (!t.consentimientoElectronico && !yaPend('consentimiento_firma')) {
+                candidatos.push({
+                    tipo: 'consentimiento_firma',
+                    titulo: 'Consentimiento de documentación electrónica (Dictamen 789/15 DT)',
+                    resumenContenido: 'Autorización de recepción y firma electrónica simple al correo personal ' + (t.correoPersonal || '(completar correo personal al firmar)') + '. Excluye finiquitos y cartas de despido.'
+                });
+            }
+            if ((!t.irlEntrega || !t.karinEntrega) && !yaPend('constancia_rihs_irl')) {
+                candidatos.push({
+                    tipo: 'constancia_rihs_irl',
+                    titulo: 'Constancia de entrega RIHS (DS 44), IRL y Protocolo Ley Karin',
+                    resumenContenido: 'Recepción íntegra del Reglamento Interno DS 44/2024, Información de Riesgos Laborales (IRL) y Protocolo de Prevención Ley Karin (art. 211-A CT).'
+                });
+            }
+            if (!t.anexoDatosEntrega && !yaPend('anexo_datos')) {
+                candidatos.push({
+                    tipo: 'anexo_datos',
+                    titulo: 'Anexo de protección de datos personales (Ley N° 21.719)',
+                    resumenContenido: 'Deber de información y resguardo de datos laborales y sensibles (art. 154 ter CT y Ley 21.719). Canal de privacidad: ' + (dl.correoPrivacidad || 'definido por la empresa') + '.'
+                });
+            }
+            candidatos.forEach(function (cand) {
+                var baseHash = [estado.empresa.rut || '', t.rut || '', cand.tipo, hoy, cand.resumenContenido].join('|');
+                promesas.push(Comp.hashTextoSha256(baseHash).then(function (h) {
+                    lista.push({
+                        trabajadorId: tid,
+                        tipo: cand.tipo,
+                        titulo: cand.titulo,
+                        fechaEmision: hoy,
+                        correoEnvio: t.correoPersonal || '',
+                        estado: 'pendiente_firma',
+                        enviadoAt: ahoraIso,
+                        firmadoAt: '',
+                        rutUlt4: '',
+                        hashSha256: h,
+                        consentido: false,
+                        resumenContenido: cand.resumenContenido
+                    });
+                }));
+            });
+        });
+
+        if (!promesas.length) {
+            mensaje($('doc-matriz-estado'), '', 'Todos los documentos elegibles de estos trabajadores ya están firmados o pendientes en Mi Portal.');
+            return;
+        }
+        Promise.all(promesas).then(function () {
+            dl.documentosFirma = lista.slice(-300);
+            return api('datos-personales', { metodo: 'PUT', cuerpo: { datosLey21719: dl } });
+        }).then(function (r) {
+            if (!r.ok) {
+                mensaje($('doc-matriz-estado'), 'error', (r.datos && r.datos.error) || 'No pudimos enviar documentos a Mi Portal.');
+                return;
+            }
+            estado.datosLey21719 = r.datos.datosLey21719;
+            dibujarMatrizDocs();
+            if (equipoUI) equipoUI.dibujarMiPortal();
+            mensaje($('doc-matriz-estado'), 'ok', 'Enviados ' + promesas.length + ' documento(s) a Mi Portal del Colaborador para firma simple en 1 paso.');
+        });
+    }
+
+    function imprimirConstanciasFaltantes() {
+        if (!estado || !estado.empresa) return;
+        var activos = (estado.trabajadores || []).filter(function (t) { return t.activo !== false && (!t.irlEntrega || !t.karinEntrega); });
+        if (!activos.length) {
+            mensaje($('doc-matriz-estado'), '', 'Todos tus trabajadores activos ya tienen registrada su constancia IRL y Ley Karin.');
+            return;
+        }
+        var hojas = [];
+        var hoy = hoyIso(), pagada = docPagado('constancia_rihs_irl');
+        activos.forEach(function (t) {
+            var c = { empresa: estado.empresa, t: t, hoy: hoy, meses: {}, uf: ufHoy(), F: F, vac: vacDe(t.id), correoPrivacidad: (estado.datosLey21719 && estado.datosLey21719.correoPrivacidad) || '', saldoPrestamos: function () { return 0; } };
+            var d = PD.valoresIniciales('constancia_rihs_irl', c);
+            hojas.push(PD.generar('constancia_rihs_irl', c, d, { pagada: pagada }).html);
+        });
+        imprimirHojas(hojas, 'Constancias RIHS IRL Ley Karin (' + activos.length + ')');
+    }
+
+    function exportarMatrizCsv() {
+        if (!estado || !estado.empresa || !window.CLPymeCumplimiento) return;
+        var res = window.CLPymeCumplimiento.resumenMatrizDocumentos(estado, estado.datosLey21719 || {});
+        var q = function (s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; };
+        var lineas = [['Trabajador', 'RUT', 'Correo Personal', 'Mi DT', 'Ley Karin', 'IRL (ex ODI)', 'Anexo Datos 21.719', 'Consentimiento Firma', 'Pendientes Portal', 'Firmados SHA-256', 'Avance %'].map(q).join(';')];
+        res.filas.forEach(function (f) {
+            var t = f.trabajador;
+            lineas.push([
+                t.nombre, t.rut, t.correoPersonal || '', f.okContrato ? 'OK' : 'Pendiente',
+                t.karinEntrega || 'Pendiente', t.irlEntrega || 'Pendiente', t.anexoDatosEntrega || 'Pendiente',
+                f.okFirma ? 'Si' : 'No', f.pendientesFirma.length, f.firmados.length, f.pct + '%'
+            ].map(q).join(';'));
+        });
+        var blob = new Blob(['\ufeff' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'matriz-documental-' + (estado.empresa.rut || 'empresa') + '.csv';
+        document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    }
+
+    function abrirTrazaModal(trabId) {
+        var t = trabajadorPorId(trabId), dlg = $('doc-dialogo-traza'), body = $('doc-traza-cuerpo');
+        if (!t || !dlg || !body) return;
+        var docs = ((estado.datosLey21719 && estado.datosLey21719.documentosFirma) || []).filter(function (x) { return x.trabajadorId === trabId; });
+        body.innerHTML = '<p style="margin-bottom:10px"><strong>' + esc(t.nombre) + '</strong> · <span class="mono">' + esc(t.rut) + '</span></p>' +
+            (docs.length ? docs.map(function (d) {
+                var estCls = d.estado === 'firmado' ? 'sello-emitida' : 'sello-preparada';
+                var estTxt = d.estado === 'firmado' ? 'Firmado (Ley 19.799)' : 'Pendiente de firma en Portal';
+                return '<div class="panel" style="margin-bottom:10px"><div class="panel-cuerpo" style="font-size:13px">' +
+                    '<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px"><strong>' + esc(d.titulo) + '</strong><span class="sello ' + estCls + '">' + estTxt + '</span></div>' +
+                    '<p class="texto-ayuda" style="margin:2px 0">Emisión: <span class="mono">' + esc(d.fechaEmision) + '</span> · Correo destino: <span class="mono">' + esc(d.correoEnvio || 'Por confirmar') + '</span></p>' +
+                    (d.firmadoAt ? '<p class="texto-ayuda" style="margin:2px 0">Firmado: <span class="mono">' + esc(d.firmadoAt) + '</span> · RUT últ.4: <span class="mono">' + esc(d.rutUlt4) + '</span> · Consentimiento: ' + (d.consentido ? 'Sí' : 'No') + '</p>' : '') +
+                    '<p class="texto-ayuda" style="margin:4px 0 0;word-break:break-all">SHA-256: <span class="mono">' + esc(d.hashSha256 || '-') + '</span></p>' +
+                    '</div></div>';
+            }).join('') : '<p class="vacio">Sin registros de firma electrónica simple aún.</p>');
+        if (typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+        else dlg.setAttribute('open', '');
+    }
+
+    document.addEventListener('click', function (e) {
+        var btnModo = e.target.closest('[data-doc-modo]');
+        if (btnModo) {
+            docModo = btnModo.getAttribute('data-doc-modo');
+            dibujarDocumentos(false);
+            return;
+        }
+        if (e.target.closest('#doc-lote-enviar')) {
+            enviarDocumentosPortalPara((estado && estado.trabajadores || []).filter(function (x) { return x.activo !== false; }).map(function (x) { return x.id; }));
+            return;
+        }
+        var btnInd = e.target.closest('[data-matriz-enviar]');
+        if (btnInd) { enviarDocumentosPortalPara([btnInd.getAttribute('data-matriz-enviar')]); return; }
+        var btnTr = e.target.closest('[data-matriz-traza]');
+        if (btnTr) { abrirTrazaModal(btnTr.getAttribute('data-matriz-traza')); return; }
+        if (e.target.closest('#doc-lote-imprimir')) { imprimirConstanciasFaltantes(); return; }
+        if (e.target.closest('#doc-lote-csv')) { exportarMatrizCsv(); return; }
+        if (e.target.closest('#doc-traza-cerrar') || e.target.closest('#doc-traza-ok')) {
+            var dlg = $('doc-dialogo-traza');
+            if (dlg) { if (typeof dlg.close === 'function' && dlg.open) dlg.close(); else dlg.removeAttribute('open'); }
+        }
+    });
 
     // El finiquito sale sin marca solo con el Pase de 12 meses (igual que el generador de finiquitos); el contrato según la cobertura del pase; los demás, con cualquier pase
     function docPagado(tipo) { return tipo === 'finiquito' || tipo === 'contrato' ? cubiertoPorPase(tipo) : tienePase(); }
@@ -4688,7 +4924,18 @@ function dibujarEquipo() {
 
     if (window.CLPymeEquipoUI && window.CLPymeEquipoUI.montarUI) {
         equipoUI = window.CLPymeEquipoUI.montarUI({
+            api: api,
             getEstado: function () { return estado; },
+            setDatosLey: function (d) { if (estado) estado.datosLey21719 = d; },
+            actualizarTrabajadorLocal: function (t) {
+                if (!estado || !estado.trabajadores) return;
+                estado.trabajadores = estado.trabajadores.map(function (x) { return x.id === t.id ? t : x; });
+            },
+            alCambiarDatosLey: function () {
+                dibujarPendientes();
+                if (datosLeyUI) datosLeyUI.actualizarInsignia();
+                dibujarMatrizDocs();
+            },
             getPeriodo: function () { return periodoSel || periodoPorDefecto(); },
             esEjemplo: function () { return !!ejemplo; },
             hoyIso: hoyIso,

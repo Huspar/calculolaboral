@@ -28,7 +28,7 @@ const PLANES_ESTUDIO = {
 const MAX_TOTAL = 100;
 const MAX_MESES_POR_TRABAJADOR = 120;
 const MAX_DOCUMENTOS_POR_TRABAJADOR = 500;
-const TIPOS_DOCUMENTO = ['anexo_contrato', 'pacto_horas_extra', 'cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
+const TIPOS_DOCUMENTO = ['anexo_contrato', 'pacto_horas_extra', 'cert_antiguedad', 'cert_remuneraciones', 'comprobante_feriado', 'carta_159_4', 'carta_161', 'amonestacion', 'anexo_datos', 'constancia_rihs_irl', 'consentimiento_firma', 'contrato', 'anexo_42h', 'finiquito', 'liquidacion'];
 const MAX_VACACIONES_POR_TRABAJADOR = 200;
 const MAX_MESES_HONORARIOS = 120;
 const VERSION_EXPORTACION = 5;
@@ -90,7 +90,34 @@ function crear({ almacen, cifrado, ahora, piloto }) {
     }
 
     function datosLeyDefecto() {
-        return { correoPrivacidad: '', responsableDatos: '', checklist: { protocoloBrechas: false, ratRevisado: false }, encargados: [], solicitudesArcop: [], brechas: [], rat: [] };
+        return {
+            correoPrivacidad: '',
+            responsableDatos: '',
+            checklist: { protocoloBrechas: false, ratRevisado: false },
+            encargados: [],
+            solicitudesArcop: [],
+            brechas: [],
+            rat: [],
+            cumplimientoDt: {
+                trabajadoresPermanentes: 0,
+                riohsVigente: false,
+                riohsFecha: '',
+                riohsRegistroDtIsp: false,
+                rihsVigente: false,
+                rihsFecha: '',
+                cphsActivo: false,
+                asistenciaSistema: '',
+                asistenciaResolucion: '',
+                canalKarinActivo: false,
+                canalKarinMedio: '',
+                canalKarinFecha: '',
+                previredAlDia: false,
+                jornadaRevisada42h: false,
+                carpetaLinkNotas: ''
+            },
+            denunciasKarin: [],
+            documentosFirma: []
+        };
     }
 
     /** Todo lo que el panel necesita para dibujarse. Con `cuenta.empresaId` es esa empresa; sin él, la primera. */

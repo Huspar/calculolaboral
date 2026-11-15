@@ -49,15 +49,34 @@
         return {
             empresa: { razonSocial: 'Panadería Los Aromos SpA', mutual: 'ACHS', rut: '76.543.210-3', giro: 'Panadería y pastelería', representante: 'Manuel Lagos Rojas', rutRepresentante: '12.345.678-5', direccion: 'Av. Alemania 0450', comuna: 'Temuco', ciudad: 'Temuco', tasaMutual: '0,93' },
             trabajadores: [
-                { nombre: 'Ana Pérez González', rut: '15.234.567-4', cargo: 'Panadera', sexo: 'F', banco: 'BancoEstado', tipoCuenta: 'vista', numeroCuenta: '12345678', fechaNacimiento: '1988-06-12', nacionalidad: 'Chilena', domicilio: 'Los Aromos 123', comuna: 'Temuco', fechaIngreso: '2022-03-15', contrato: 'indefinido', jornadaHoras: 42, distribucion: '6', sueldoBase: 650000, gratificacion: 'legal', colacion: 40000, movilizacion: 30000, afp: 'Modelo', salud: 'fonasa', karinEntrega: '2024-08-01', anexoDatosEntrega: '2026-10-15', anexoDatosConstancia: true },
+                { nombre: 'Ana Pérez González', rut: '15.234.567-4', correoPersonal: 'ana.perez.personal@ejemplo.cl', cargo: 'Panadera', sexo: 'F', banco: 'BancoEstado', tipoCuenta: 'vista', numeroCuenta: '12345678', fechaNacimiento: '1988-06-12', nacionalidad: 'Chilena', domicilio: 'Los Aromos 123', comuna: 'Temuco', fechaIngreso: '2022-03-15', contrato: 'indefinido', midtRegistrado: true, jornadaHoras: 42, distribucion: '6', sueldoBase: 650000, gratificacion: 'legal', colacion: 40000, movilizacion: 30000, afp: 'Modelo', salud: 'fonasa', karinEntrega: '2024-08-01', karinConstancia: true, irlEntrega: '2025-02-10', irlConstancia: true, riohsEntrega: '2025-02-10', riohsConstancia: true, anexoDatosEntrega: '2026-10-15', anexoDatosConstancia: true, consentimientoElectronico: true, consentimientoFecha: '2026-10-15' },
                 // Plazo fijo que vence en 12 días, con comisiones (semana corrida), una licencia médica en curso y sin el protocolo de la Ley Karin ni anexo 21.719 anotado
-                { nombre: 'Bruno Castillo Muñoz', rut: '19.876.543-0', cargo: 'Vendedor', sexo: 'M', banco: 'Banco de Chile', tipoCuenta: 'corriente', numeroCuenta: '000123456789', fechaNacimiento: '1999-11-03', nacionalidad: 'Chilena', domicilio: 'Pasaje Ñielol 45', comuna: 'Temuco', fechaIngreso: sumarMeses(P, -4) + '-01', contrato: 'plazo_fijo', fechaTerminoPlazo: sumarDias(hoy, 12), renovaciones: 1, jornadaHoras: 42, distribucion: '6', sueldoBase: 560000, gratificacion: 'legal', afp: 'Uno', salud: 'fonasa', ausencias: [{ tipo: 'licencia', desde: sumarDias(hoy, -1), hasta: sumarDias(hoy, 3) }] },
-                { nombre: 'Carla Rojas Vidal', rut: '13.456.789-9', cargo: 'Encargada de local', sexo: 'F', fechaNacimiento: '1979-02-21', nacionalidad: 'Chilena', domicilio: 'Caupolicán 980', comuna: 'Temuco', fechaIngreso: '2014-08-01', contrato: 'indefinido', jornadaHoras: 42, distribucion: '5', sueldoBase: 900000, gratificacion: 'legal', colacion: 50000, movilizacion: 40000, afp: 'Habitat', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: 3.2, aniosOtrosEmpleadores: 6, anticipoMensual: 150000, karinEntrega: '2024-08-01', anexoDatosEntrega: '2026-10-15', anexoDatosConstancia: true }
+                { nombre: 'Bruno Castillo Muñoz', rut: '19.876.543-0', correoPersonal: 'bruno.castillo@ejemplo.cl', cargo: 'Vendedor', sexo: 'M', banco: 'Banco de Chile', tipoCuenta: 'corriente', numeroCuenta: '000123456789', fechaNacimiento: '1999-11-03', nacionalidad: 'Chilena', domicilio: 'Pasaje Ñielol 45', comuna: 'Temuco', fechaIngreso: sumarMeses(P, -4) + '-01', contrato: 'plazo_fijo', fechaTerminoPlazo: sumarDias(hoy, 12), renovaciones: 1, jornadaHoras: 42, distribucion: '6', sueldoBase: 560000, gratificacion: 'legal', afp: 'Uno', salud: 'fonasa', ausencias: [{ tipo: 'licencia', desde: sumarDias(hoy, -1), hasta: sumarDias(hoy, 3) }] },
+                { nombre: 'Carla Rojas Vidal', rut: '13.456.789-9', correoPersonal: 'carla.rojas.v@ejemplo.cl', cargo: 'Encargada de local', sexo: 'F', fechaNacimiento: '1979-02-21', nacionalidad: 'Chilena', domicilio: 'Caupolicán 980', comuna: 'Temuco', fechaIngreso: '2014-08-01', contrato: 'indefinido', midtRegistrado: true, jornadaHoras: 42, distribucion: '5', sueldoBase: 900000, gratificacion: 'legal', colacion: 50000, movilizacion: 40000, afp: 'Habitat', salud: 'isapre', isapreNombre: 'Colmena', isaprePlanUF: 3.2, aniosOtrosEmpleadores: 6, anticipoMensual: 150000, karinEntrega: '2024-08-01', karinConstancia: true, irlEntrega: '2025-02-10', irlConstancia: true, anexoDatosEntrega: '2026-10-15', anexoDatosConstancia: true }
             ],
             datosLey21719: {
                 correoPrivacidad: 'privacidad@losaromos.cl',
                 responsableDatos: 'Manuel Lagos Rojas',
                 checklist: { protocoloBrechas: true, ratRevisado: false },
+                cumplimientoDt: {
+                    trabajadoresPermanentes: 3,
+                    riohsVigente: false,
+                    riohsFecha: '',
+                    riohsRegistroDtIsp: false,
+                    rihsVigente: true,
+                    rihsFecha: '2025-02-10',
+                    cphsActivo: false,
+                    asistenciaSistema: 'electronico_res38',
+                    asistenciaResolucion: 'Sistema certificado Res. Ex. N°38 DT',
+                    canalKarinActivo: true,
+                    canalKarinMedio: 'karin@losaromos.cl / Buzón interno RRHH',
+                    canalKarinFecha: '2024-08-01',
+                    previredAlDia: true,
+                    jornadaRevisada42h: true,
+                    carpetaLinkNotas: 'Respaldo físico en oficina local Av. Alemania 0450 + copias digitales en Mi Portal.'
+                },
+                denunciasKarin: [],
+                documentosFirma: [],
                 encargados: [
                     { nombre: 'Contadora Paula Soto', servicio: 'Estudio contable / remuneraciones', datosTratados: 'Liquidaciones, RUT, licencias y Previred', dpaFirmado: true, fechaFirma: '2026-10-10', notas: 'Anexo DPA incorporado al contrato de honorarios.' },
                     { nombre: 'Cálculo Laboral', servicio: 'Software de remuneraciones', datosTratados: 'Cálculo de sueldos, cotizaciones y documentos', dpaFirmado: true, fechaFirma: '2026-10-15', notas: 'Cifrado AES-256-GCM en servidor.' },
@@ -113,7 +132,38 @@
             }, Promise.resolve([]));
         }).then(function (ids) {
             var Pa = sumarMeses(P, -1);
+            sem.datosLey21719.documentosFirma = [
+                {
+                    trabajadorId: ids[0],
+                    tipo: 'anexo_contrato',
+                    titulo: 'Anexo jornada 42 horas semanales (Ley 21.561)',
+                    fechaEmision: hoy,
+                    correoEnvio: 'ana.perez.personal@ejemplo.cl',
+                    estado: 'pendiente_firma',
+                    enviadoAt: hoy + 'T09:30:00Z',
+                    firmadoAt: '',
+                    rutUlt4: '',
+                    hashSha256: '',
+                    consentido: false,
+                    resumenContenido: 'Adecuación de jornada ordinaria semanal a 42 horas con distribución en 6 días (Panadera), manteniéndose íntegra la remuneración base.'
+                },
+                {
+                    trabajadorId: ids[1],
+                    tipo: 'constancia_rihs_irl',
+                    titulo: 'Constancia de entrega RIHS (DS 44), IRL y Protocolo Ley Karin',
+                    fechaEmision: hoy,
+                    correoEnvio: 'bruno.castillo@ejemplo.cl',
+                    estado: 'pendiente_firma',
+                    enviadoAt: hoy + 'T09:35:00Z',
+                    firmadoAt: '',
+                    rutUlt4: '',
+                    hashSha256: '',
+                    consentido: false,
+                    resumenContenido: 'Recepción del Reglamento Interno DS 44/2024, Información de Riesgos Laborales (IRL) y Protocolo de Prevención Ley Karin (art. 211-A CT).'
+                }
+            ];
             return Promise.all([
+                datos.guardarDatosLey21719(s, sem.datosLey21719).then(function (r) { exigir(r, 'documentos firma ejemplo'); }),
                 datos.guardarPrestamos(s, ids[0], [{ concepto: 'Préstamo para reparar el techo', fecha: Pa + '-02', monto: 360000, cuotas: 6, desde: Pa }]).then(function (r) { exigir(r, 'el préstamo'); }),
                 datos.guardarVacacion(s, ids[0], { tipo: 'ajuste', dias: 18, nota: 'Tomados antes de usar el asistente' }).then(function (r) { exigir(r, 'las vacaciones'); }),
                 datos.guardarVacacion(s, ids[2], { tipo: 'ajuste', dias: 160, nota: 'Tomados antes de usar el asistente' }).then(function (r) { exigir(r, 'las vacaciones'); }),

@@ -58,8 +58,11 @@
         { id: 'carta_161', grupo: 'termino', titulo: 'Carta de término por necesidades de la empresa (art. 161)', descripcion: 'Con los hechos, las indemnizaciones, el estado de las cotizaciones y la copia a la Inspección.' },
         { id: 'amonestacion', grupo: 'relacion', titulo: 'Amonestación escrita', descripcion: 'Deja constancia de un incumplimiento y de la obligación que se incumplió.' },
         { id: 'anexo_datos', grupo: 'contratacion', titulo: 'Anexo de protección de datos personales', descripcion: 'Anexo al contrato sobre el tratamiento de los datos del trabajador (Ley 21.719, rige desde el 1-dic-2026).' },
+        { id: 'constancia_rihs_irl', grupo: 'contratacion', titulo: 'Constancia de entrega RIHS/RIOHS, IRL y Protocolo Ley Karin', descripcion: 'Comprobante conjunto de recepción del Reglamento Interno (RIHS DS 44 / RIOHS art. 153), Información de Riesgos Laborales (IRL ex ODI) y Protocolo Ley Karin (art. 211-A CT).' },
+        { id: 'consentimiento_firma', grupo: 'contratacion', titulo: 'Consentimiento de documentación y firma electrónica simple', descripcion: 'Autorización del trabajador para recibir y suscribir documentos laborales por medios electrónicos en su correo personal (Ley 19.799 y criterios del Dictamen 789/15 DT).' },
         { id: 'finiquito', grupo: 'termino', titulo: 'Finiquito', descripcion: 'Con el feriado pendiente y proporcional calculado desde el registro de vacaciones, las indemnizaciones si corresponden y los descuentos. Se firma ante ministro de fe.' }
     ];
+    var TIPOS_FIRMA_EXCLUIDOS = ['finiquito', 'carta_161', 'carta_159_4'];
 
     var CAUSALES_FINIQUITO = {
         '159_4': 'vencimiento del plazo convenido en el contrato (artículo 159 N°4 del Código del Trabajo)',
@@ -267,6 +270,20 @@
             { k: 'encargados', tipo: 'check', etiqueta: 'La empresa usa proveedores externos con datos de los trabajadores (contador, software de remuneraciones, nube)', ayuda: 'Agrega la cláusula de encargados de tratamiento (art. 15 bis) y transferencias externas.' },
             { k: 'geolocalizacion', tipo: 'check', etiqueta: 'La empresa usa GPS en vehículos o equipos corporativos asignados al trabajador', ayuda: 'Agrega el aviso obligatorio de geolocalización dentro de la jornada (art. 16 sexies).' }
         ],
+        constancia_rihs_irl: [
+            { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
+            { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de entrega', req: true },
+            { k: 'incluyeRihs', tipo: 'check', etiqueta: 'Reglamento Interno de Higiene y Seguridad (RIHS · DS 44/2024)', ayuda: 'Obligatorio para toda empresa desde febrero 2025; incluye prevención de riesgos laborales.' },
+            { k: 'incluyeRiohs', tipo: 'check', etiqueta: 'Reglamento Interno de Orden, Higiene y Seguridad (RIOHS · art. 153 CT)', ayuda: 'Obligatorio cuando la empresa tiene 10 o más trabajadores permanentes (copia a DT y Seremi de Salud).' },
+            { k: 'incluyeIrl', tipo: 'check', etiqueta: 'Información de Riesgos Laborales (IRL · art. 15 DS 44/2024, ex ODI)', ayuda: 'Debe entregarse antes de iniciar labores y ante cada cambio de proceso o tecnología.' },
+            { k: 'incluyeKarin', tipo: 'check', etiqueta: 'Protocolo de Prevención Ley Karin (art. 211-A CT y DS 21/2024)', ayuda: 'Incluye canal de denuncia confidencial e información de procedimiento ante acoso o violencia.' },
+            { k: 'riesgosCargo', tipo: 'textarea', etiqueta: 'Riesgos y medidas preventivas específicas del cargo', max: 600, ayuda: 'Ej.: manejo de maquinaria u hornos, posturas ergonómicas, uso de EPP y salidas de emergencia.' }
+        ],
+        consentimiento_firma: [
+            { k: 'ciudad', tipo: 'texto', etiqueta: 'Ciudad', req: true, max: 60 },
+            { k: 'fecha', tipo: 'fecha', etiqueta: 'Fecha de aceptación', req: true },
+            { k: 'correoPersonal', tipo: 'texto', etiqueta: 'Correo electrónico personal del trabajador', req: true, max: 120, ayuda: 'Criterio DT (Dictamen 789/15): debe enviarse al correo privado del trabajador, nunca solo a casillas internas o corporativas controladas por el empleador.' }
+        ],
         finiquito: [
             { k: 'causal', tipo: 'select', etiqueta: 'Causal de término', req: true, opciones: [['159_4', 'Vencimiento del plazo convenido (art. 159 N°4)'], ['159_2', 'Renuncia del trabajador (art. 159 N°2)'], ['159_1', 'Mutuo acuerdo de las partes (art. 159 N°1)'], ['161', 'Necesidades de la empresa (art. 161)']] },
             { k: 'fechaTermino', tipo: 'fecha', etiqueta: 'Fecha de término del contrato', req: true },
@@ -326,6 +343,8 @@
             case 'carta_161': Object.assign(v, { fechaTermino: '', hechos: '', aviso: 'sustitutiva', remuneracion: baseIndemnizacionPropuesta(ctx), entrega: 'personal', finiquito: 'presencial', sinLicencia: false, sinFuero: false, cotizaciones: false }); break;
             case 'amonestacion': Object.assign(v, { fechaHechos: '', obligacion: '', hechos: '', reglamento: 'si' }); break;
             case 'anexo_datos': Object.assign(v, { correoPrivacidad: ctx.correoPrivacidad || (ctx.datosLey21719 && ctx.datosLey21719.correoPrivacidad) || '', biometria: false, herramientas: false, encargados: false, geolocalizacion: false }); break;
+            case 'constancia_rihs_irl': Object.assign(v, { incluyeRihs: true, incluyeRiohs: false, incluyeIrl: true, incluyeKarin: true, riesgosCargo: t.cargo ? ('Labores propias del cargo de ' + t.cargo + ': orden y aseo del puesto de trabajo, ergonomía y manejo de cargas (Ley 20.949), uso de elementos de protección personal y protocolos ante emergencias.') : '' }); break;
+            case 'consentimiento_firma': Object.assign(v, { correoPersonal: t.correoPersonal || '' }); break;
             case 'finiquito': Object.assign(v, { causal: t.contrato === 'plazo_fijo' ? '159_4' : '159_2', fechaTermino: t.contrato === 'plazo_fijo' ? (t.fechaTerminoPlazo || '') : '', remFeriado: baseFeriadoPropuesta(ctx), diasFeriado: '', remuneracion: baseIndemnizacionPropuesta(ctx), aviso: 'sustitutiva', remPendiente: '', descuentoAfc: '', otrosDescuentos: '', formaPago: 'transferencia', cotizaciones: false }); break;
         }
         return v;
@@ -358,6 +377,8 @@
         carta_161: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }]),
         amonestacion: BASE_FICHA,
         anexo_datos: BASE_FICHA,
+        constancia_rihs_irl: BASE_FICHA,
+        consentimiento_firma: BASE_FICHA,
         finiquito: BASE_FICHA.concat([{ de: 't', k: 'fechaIngreso', etiqueta: 'la fecha de ingreso' }])
     };
 
@@ -407,6 +428,13 @@
             avisos.push({ nivel: 'info', texto: 'Si los hechos son de acoso sexual, laboral o violencia en el trabajo, no uses este documento: corresponde seguir el protocolo de prevención de tu empresa.' });
         }
         if (tipo === 'anexo_datos' && !vacio(f('correoPrivacidad')) && !/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(String(f('correoPrivacidad')).trim())) errores.correoPrivacidad = 'Escribe un correo válido.';
+        if (tipo === 'constancia_rihs_irl' && d.incluyeRihs !== true && d.incluyeRiohs !== true && d.incluyeIrl !== true && d.incluyeKarin !== true) {
+            bloqueos.push('Selecciona al menos un documento o constancia entregada al trabajador.');
+        }
+        if (tipo === 'consentimiento_firma') {
+            if (!vacio(f('correoPersonal')) && !/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(String(f('correoPersonal')).trim())) errores.correoPersonal = 'Escribe un correo electrónico personal válido.';
+            avisos.push({ nivel: 'info', texto: 'La firma electrónica simple es válida bajo la Ley 19.799 y criterios del Dictamen 789/15 DT, salvo en finiquitos (art. 177 CT) y cartas de despido (art. 162 CT).' });
+        }
 
         var puedeEmitir = !Object.keys(errores).length && !bloqueos.length && !falta.length;
         return { errores: errores, faltaFicha: falta, bloqueos: bloqueos, avisos: avisos, puedeEmitir: puedeEmitir };
@@ -963,10 +991,40 @@
         return envolver(e, 'Finiquito de contrato de trabajo', cuerpo, pagada);
     }
 
+    function generarConstanciaRihsIrl(ctx, d, pagada) {
+        var e = ctx.empresa, t = ctx.t, items = [];
+        if (d.incluyeRihs) items.push('<li><strong>Reglamento Interno de Higiene y Seguridad (RIHS · DS N° 44/2024 del Ministerio del Trabajo y Previsión Social):</strong> ejemplar completo con las normas preventivas vigentes.</li>');
+        if (d.incluyeRiohs) items.push('<li><strong>Reglamento Interno de Orden, Higiene y Seguridad (RIOHS · art. 153 del Código del Trabajo):</strong> ejemplar entregado de forma gratuita y confidencial conforme a la ley.</li>');
+        if (d.incluyeIrl) items.push('<li><strong>Información de los Riesgos Laborales (IRL · art. 15 del DS N° 44/2024, ex Derecho a Saber / ODI):</strong> descripción oportuna y previa al inicio de labores sobre los riesgos que entraña su cargo, medidas preventivas y métodos de trabajo correcto.</li>');
+        if (d.incluyeKarin) items.push('<li><strong>Protocolo de Prevención del Acoso Sexual, Laboral y la Violencia en el Trabajo (Ley N° 21.643 · Ley Karin, art. 211-A CT y DS N° 21/2024):</strong> canales confidenciales de denuncia, medidas de resguardo inmediatas y procedimiento aplicable.</li>');
+        var bloqueRiesgos = !vacio(d.riesgosCargo)
+            ? '<p class="dc-p"><strong>Detalle de riesgos y medidas preventivas asociadas al cargo (' + esc(t.cargo || 'Trabajador') + '):</strong></p>' + parrafos(d.riesgosCargo)
+            : '';
+        var cuerpo = '<p class="dc-lugar">' + esc(lugar(ctx, d)) + '</p>' +
+            '<p class="dc-p">Por medio del presente documento, don/doña <strong>' + esc(t.nombre) + '</strong>, cédula de identidad N° ' + esc(rutFmt(t.rut)) + (t.cargo ? ', quien se desempeña como <strong>' + esc(t.cargo) + '</strong>' : '') + ' en la empresa <strong>' + esc(e.razonSocial) + '</strong>, RUT ' + esc(rutFmt(e.rut)) + ', declara haber recibido copia íntegra y tomado conocimiento oportuno de la siguiente documentación obligatoria:</p>' +
+            '<ul class="dc-lista">' + items.join('') + '</ul>' +
+            bloqueRiesgos +
+            '<p class="dc-p">Se deja constancia de que la entrega se efectúa de forma gratuita y que cualquier actualización por cambio de procesos, sustancias, maquinarias o tecnología será informada oportunamente conforme al artículo 15 del DS N° 44/2024.</p>' +
+            '<div class="dc-firmas">' + firmaEmpleador(e) + firmaTrabajador(t, 'Trabajador · recibe conforme') + '</div>';
+        return envolver(e, 'Constancia de entrega de reglamentos, IRL y Protocolo Ley Karin', cuerpo, pagada);
+    }
+
+    function generarConsentimientoFirma(ctx, d, pagada) {
+        var e = ctx.empresa, t = ctx.t;
+        var cuerpo = '<p class="dc-lugar">' + esc(lugar(ctx, d)) + '</p>' +
+            '<p class="dc-p">Entre <strong>' + esc(e.razonSocial) + '</strong>, RUT ' + esc(rutFmt(e.rut)) + (e.representante ? ', representada por ' + esc(e.representante) : '') + ', en adelante el «Empleador», y don/doña <strong>' + esc(t.nombre) + '</strong>, cédula de identidad N° ' + esc(rutFmt(t.rut)) + ', en adelante el «Trabajador», se deja constancia de lo siguiente:</p>' +
+            '<p class="dc-p"><strong>PRIMERO (Consentimiento expreso):</strong> En conformidad con la Ley N° 19.799 sobre documentos electrónicos y firma electrónica y los criterios establecidos por la Dirección del Trabajo (Dictamen N° 789/15), el Trabajador autoriza expresamente al Empleador a remitir y tramitar en formato electrónico su documentación laboral (liquidaciones de remuneraciones, anexos de jornada/remuneraciones, constancias de recepción de reglamentos, comprobantes de feriado y certificados).</p>' +
+            '<p class="dc-p"><strong>SEGUNDO (Casilla personal designada):</strong> Para garantizar el acceso libre y no controlado por el empleador, toda documentación electrónica será enviada o notificada a la casilla personal del Trabajador: <strong>' + esc(textoUsuario(d.correoPersonal)) + '</strong>. El Trabajador se compromete a informar por escrito cualquier cambio de dirección electrónica, pudiendo revocar este consentimiento en cualquier momento y solicitar copias impresas en papel sin costo.</p>' +
+            '<p class="dc-p"><strong>TERCERO (Documentos excluidos por ley):</strong> Se deja expresa constancia de que quedan excluidos de la firma electrónica simple del presente acuerdo los actos que exigen solemnidad o ministro de fe legal especial, en particular el <strong>finiquito laboral (art. 177 CT)</strong> y las <strong>cartas de aviso de término de contrato (art. 162 CT)</strong>.</p>' +
+            '<div class="dc-firmas">' + firmaEmpleador(e) + firmaTrabajador(t, 'Trabajador · autoriza domicilio digital') + '</div>';
+        return envolver(e, 'Consentimiento de documentación y firma electrónica simple', cuerpo, pagada);
+    }
+
     var GENERADORES = {
         contrato: generarContrato, anexo_contrato: generarAnexoContrato, pacto_horas_extra: generarPactoHE,
         cert_antiguedad: generarCertAntiguedad, cert_remuneraciones: generarCertRemuneraciones, comprobante_feriado: generarComprobanteFeriado,
         carta_159_4: generarCarta1594, carta_161: generarCarta161, amonestacion: generarAmonestacion, anexo_datos: generarAnexoDatos,
+        constancia_rihs_irl: generarConstanciaRihsIrl, consentimiento_firma: generarConsentimientoFirma,
         finiquito: generarFiniquito
     };
 
@@ -978,11 +1036,11 @@
     }
 
     var api = {
-        TIPOS: TIPOS, GRUPOS: GRUPOS, VERSION_TEXTOS: VERSION_TEXTOS, PIE: PIE, campos: campos, campoVisible: campoVisible, valoresIniciales: valoresIniciales, validar: validar, generar: generar,
+        TIPOS: TIPOS, TIPOS_FIRMA_EXCLUIDOS: TIPOS_FIRMA_EXCLUIDOS, GRUPOS: GRUPOS, VERSION_TEXTOS: VERSION_TEXTOS, PIE: PIE, campos: campos, campoVisible: campoVisible, valoresIniciales: valoresIniciales, validar: validar, generar: generar,
         pesosEnLetras: pesosEnLetras, horarioPropuesto: horarioPropuesto,
         periodosPromedio: periodosPromedio, indemnizacion: indemnizacion, antiguedad: antiguedad, antiguedadTxt: antiguedadTxt, plazoComunicacion: plazoComunicacion,
         propuestaFeriado: propuestaFeriado, diasCorridos: diasCorridos, calcularFiniquito: calcularFiniquito,
-        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.4.0'
+        MIN_HECHOS_161: MIN_HECHOS_161, MIN_HECHOS_AMON: MIN_HECHOS_AMON, version: '1.5.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeDocs = api;

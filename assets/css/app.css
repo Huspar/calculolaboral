@@ -2291,3 +2291,109 @@ a.cal-ev:hover { filter: brightness(0.97); }
         text-align: center;
     }
 }
+
+/* ---------- Centro Cumplimiento DT, Matriz Documental y Firma 1 Paso ---------- */
+.portal-alerta-firmas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+}
+.portal-alerta-firmas[hidden] { display: none; }
+.portal-alerta-firmas-izq {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+}
+.portal-alerta-firmas-izq .material-icons {
+    color: var(--forest);
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.portal-alerta-firmas-izq strong {
+    display: block;
+    font-size: 14.5px;
+    color: var(--ink);
+}
+.portal-alerta-firmas-izq p {
+    margin: 3px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+[data-vista="datos-personales"] .panel,
+[data-vista="documentos"] .panel {
+    min-width: 0;
+    max-width: 100%;
+}
+[data-vista="datos-personales"] .panel-head,
+[data-vista="documentos"] .panel-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+[data-vista="datos-personales"] .panel-head > div,
+[data-vista="documentos"] .panel-head > div {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+[data-vista="datos-personales"] .panel-head .texto-ayuda,
+[data-vista="documentos"] .panel-head .texto-ayuda {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+#doc-modo-matriz .tabla th,
+#doc-modo-matriz .tabla td {
+    padding: 10px 10px;
+    font-size: 13px;
+}
+#doc-modo-matriz .celda-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    height: auto;
+    min-height: 52px;
+}
+@media screen and (max-width: 768px) {
+    .portal-alerta-firmas {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .portal-alerta-firmas .btn {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+    #portal-dialogo-firma .midt-cabeza {
+        padding: 12px 16px;
+    }
+    #portal-dialogo-firma .midt-cuerpo {
+        padding: 10px 16px 14px;
+    }
+    #portal-dialogo-firma .panel-cuerpo {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    #portal-dialogo-firma .form-acciones {
+        padding: 12px 0 4px;
+    }
+    [data-vista="documentos"] .fin-filtros button,
+    [data-vista="documentos"] .v-acciones .btn,
+    [data-vista="documentos"] .acciones-pila .btn,
+    [data-vista="documentos"] .acciones-pila .btn-texto,
+    [data-vista="mi-portal"] #portal-docs-filas .btn,
+    [data-vista="mi-portal"] #portal-docs-filas .btn-texto,
+    #portal-dialogo-firma .btn {
+        min-height: 44px;
+        height: auto;
+        display: inline-flex;
+        align-items: center;
+    }
+}

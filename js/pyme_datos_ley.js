@@ -173,6 +173,7 @@
     function normDatos(raw) {
         var r = raw && typeof raw === 'object' ? raw : {};
         var ck = r.checklist && typeof r.checklist === 'object' ? r.checklist : {};
+        var Comp = window.CLPymeCumplimiento;
         return {
             correoPrivacidad: String(r.correoPrivacidad || ''),
             responsableDatos: String(r.responsableDatos || ''),
@@ -180,7 +181,10 @@
             encargados: Array.isArray(r.encargados) ? r.encargados.slice() : [],
             solicitudesArcop: Array.isArray(r.solicitudesArcop) ? r.solicitudesArcop.slice() : [],
             brechas: Array.isArray(r.brechas) ? r.brechas.slice() : [],
-            rat: Array.isArray(r.rat) ? r.rat.slice() : []
+            rat: Array.isArray(r.rat) ? r.rat.slice() : [],
+            cumplimientoDt: Comp ? Comp.normCumplimientoDt(r.cumplimientoDt) : (r.cumplimientoDt || {}),
+            denunciasKarin: Array.isArray(r.denunciasKarin) ? r.denunciasKarin.slice() : [],
+            documentosFirma: Array.isArray(r.documentosFirma) ? r.documentosFirma.slice() : []
         };
     }
 
@@ -235,12 +239,26 @@
         }
     }
 
+    var MAPA_COMP_TABS = {
+        carpeta: 'carpeta',
+        karin: 'karin',
+        datos: 'datos',
+        diagnostico: 'diagnostico'
+    };
+    var SEL_SELLO_COMP = { ok: 'sello-emitida', parcial: 'sello-preparada', pendiente: 'sello-preparada', riesgo: 'sello-riesgo', no_aplica: 'sello-guardada', aviso: 'sello-preparada' };
+    var ETIQ_SELLO_COMP = { ok: 'Al día', parcial: 'Parcial', pendiente: 'Pendiente', riesgo: 'Alerta', no_aplica: 'No exigible (<10)', aviso: 'Revisar' };
+    var KARIN_VIAS = { interna: 'Canal interno empresa', dt: 'Derivada / ante DT', suseso: 'Derivada vía OAL / SUSESO' };
+    var KARIN_CLASIF = { acoso_sexual: 'Acoso sexual', acoso_laboral: 'Acoso laboral', violencia_trabajo: 'Violencia en el trabajo' };
+    var KARIN_ESTADOS = { recibida: 'Recibida (resguardo pendiente)', resguardo: 'Resguardo aplicado (decisión 3d)', investigando: 'Investigación interna (máx. 30d háb.)', derivada_dt: 'Derivada a DT', informe_dt: 'Informe enviado a DT (2d háb.)', medidas_aplicadas: 'Medidas / sanciones aplicadas (15d)', cerrada: 'Cerrada con respaldo' };
+
     function montarUI(ctx) {
         var esc = ctx.esc;
+        var compTab = 'carpeta';
         var tabActual = 'inicio';
         var guardando = false;
         var configAbierta = false;
         var polFmt = 'texto';
+        var karinFormAbierto = false;
 
         function dActual() {
             var e = ctx.getEstado();
@@ -283,8 +301,15 @@
             var chip = $('nav-chip-datos-personales');
             var est = ctx.getEstado();
             if (!chip || !est || !est.empresa) { if (chip) chip.hidden = true; return; }
-            var r = resumenControles(est, dActual(), ctx.hoyIso());
-            var alertas = r.arcopUrgentes + r.brechasAbiertas;
+            var d = dActual(), hoy = ctx.hoyIso();
+            var r = resumenControles(est, d, hoy);
+            var alertasKarin = 0;
+            if (window.CLPymeCumplimiento) {
+                alertasKarin = (d.denunciasKarin || []).filter(function (c) {
+                    return window.CLPymeCumplimiento.evaluarCasoKarin(c, hoy, window.CLFeriados).vencido;
+                }).length;
+            }
+            var alertas = r.arcopUrgentes + r.brechasAbiertas + alertasKarin;
             if (alertas > 0) {
                 chip.textContent = String(alertas);
                 chip.className = 'app-nav-chip cerrado';
@@ -308,7 +333,7 @@
                 ctx.setDatosLey(r.datos.datosLey21719);
                 if (msgEl) { msgEl.className = 'lq-estado ok'; msgEl.textContent = textoOk || 'Cambios guardados.'; }
                 actualizarInsignia();
-                dibujar(tabActual);
+                dibujar(compTab === 'datos' ? tabActual : compTab);
                 if (typeof ctx.alCambiar === 'function') ctx.alCambiar();
                 if (luego) luego();
             });
@@ -815,6 +840,179 @@
                 '</div>';
         }
 
+        function imprimirIndiceCarpetaDt() {
+            var est = ctx.getEstado(), d = dActual(), hoy = ctx.hoyIso();
+            if (!est || !est.empresa || !window.CLPymeCumplimiento) return;
+            var html = window.CLPymeCumplimiento.construirIndiceCarpetaDtHtml(est, d, hoy);
+            var w = window.open('', '_blank');
+            if (!w) {
+                var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'indice-carpeta-dt-' + (est.empresa.rut || 'empresa') + '.html';
+                document.body.appendChild(a); a.click();
+                setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+                return;
+            }
+            w.document.open(); w.document.write(html); w.document.close();
+            w.focus();
+            setTimeout(function () { try { w.print(); } catch (e) {} }, 250);
+        }
+
+        function irDesdeRutaComp(ruta) {
+            if (!ruta) return;
+            if (ruta === 'carpeta' || ruta === 'karin' || ruta === 'datos' || ruta === 'diagnostico') { dibujar(ruta); return; }
+            ctx.navegar(ruta);
+        }
+
+        function pintarCarpetaDt(est, d, hoy) {
+            var Comp = window.CLPymeCumplimiento;
+            if (!Comp) return '';
+            var ev = Comp.evaluarCarpetaDt(est, d, hoy);
+            var cd = ev.cumplimientoDt;
+            var conIrl = activosCount(est, 'irlEntrega');
+            var totalAct = activosDe(est).length;
+            var textoRiohs = ev.requiereRiohs
+                ? ('Obligatorio (' + ev.permanentes + ' trab. perm. ≥ 10 · art. 153 CT)')
+                : ('No exigible hoy (' + ev.permanentes + ' trab. perm. < 10) · Sí rige RIHS DS 44');
+
+            function badge(estadoItem) {
+                return '<span class="sello ' + (SEL_SELLO_COMP[estadoItem] || 'sello-preparada') + '">' + esc(ETIQ_SELLO_COMP[estadoItem] || estadoItem) + '</span>';
+            }
+
+            var filasDt = ev.itemsDt.map(function (it) {
+                var btn = '<button type="button" class="btn-texto" data-comp-ir="' + esc(it.ruta) + '">Revisar</button>';
+                return {
+                    html: '<tr><td><strong>' + esc(it.titulo) + '</strong><br><span style="font-size:12px;color:var(--muted)">' + esc(it.grupo) + ' · ' + esc(it.norma) + '</span></td>' +
+                        '<td>' + badge(it.estado) + '</td><td>' + esc(it.detalle) + '</td><td class="celda-acciones">' + btn + '</td></tr>',
+                    card: '<div class="fin-card-item"><div class="fin-card-top"><strong>' + esc(it.titulo) + '</strong>' + badge(it.estado) + '</div>' +
+                        '<p class="texto-ayuda" style="margin:4px 0">' + esc(it.norma) + '</p><p style="font-size:13px;margin:4px 0">' + esc(it.detalle) + '</p>' +
+                        '<div class="acciones-pila" style="margin-top:6px">' + btn + '</div></div>'
+                };
+            });
+
+            var filasPriv = ev.anexoPrivacidad.map(function (it) {
+                var btnPriv = '<button type="button" class="btn-texto" data-comp-ir="datos">Ir a Datos 21.719</button>';
+                return {
+                    html: '<tr><td><strong>' + esc(it.titulo) + '</strong></td><td>' + badge(it.estado) + '</td><td>' + esc(it.detalle) + '</td><td class="celda-acciones">' + btnPriv + '</td></tr>',
+                    card: '<div class="fin-card-item"><div class="fin-card-top"><strong>' + esc(it.titulo) + '</strong>' + badge(it.estado) + '</div>' +
+                        '<p style="font-size:13px;margin:4px 0">' + esc(it.detalle) + '</p>' +
+                        '<div class="acciones-pila" style="margin-top:6px">' + btnPriv + '</div></div>'
+                };
+            });
+
+            return '<dl class="cifras cifras-4" style="margin-bottom:16px">' +
+                '<div><dt>Carpeta DT</dt><dd class="mono">' + ev.pctDt + '%</dd><span class="texto-ayuda">' + ev.dtListos + ' de ' + ev.dtTotalExigibles + ' ítems exigibles al día</span></div>' +
+                '<div><dt>RIHS / RIOHS</dt><dd class="mono">' + (ev.requiereRiohs ? (cd.riohsVigente ? 'RIOHS OK' : 'Pendiente') : (cd.rihsVigente ? 'RIHS DS 44' : 'Pendiente')) + '</dd><span class="texto-ayuda">' + esc(textoRiohs) + '</span></div>' +
+                '<div><dt>IRL (ex ODI)</dt><dd class="mono">' + conIrl + ' / ' + totalAct + '</dd><span class="texto-ayuda">Art. 15 DS 44/2024 antes de labores</span></div>' +
+                '<div><dt>Jornada máxima</dt><dd class="mono">42 hrs</dd><span class="texto-ayuda">Vigente 2026 (40h desde 26-04-2028)</span></div>' +
+                '</dl>' +
+                '<div class="panel" style="margin-bottom:16px"><div class="panel-head"><div><h2>Parámetros de fiscalización DT y DS N° 44/2024</h2><p class="texto-ayuda">Desde febrero de 2025 el DS N° 44 exige RIHS e IRL a toda empresa (reemplazó DS 40 y 54). El RIOHS con orden + higiene aplica desde 10 trabajadores permanentes.</p></div></div>' +
+                '<form class="panel-cuerpo" id="comp-form-dt"><div class="lq-grid">' +
+                '<div class="lq-field"><label for="comp-dt-perm">Trabajadores permanentes en la empresa</label><input id="comp-dt-perm" type="number" min="0" max="5000" value="' + esc(cd.trabajadoresPermanentes || totalAct || 0) + '"><p class="lq-help">Define si exige RIOHS (≥10), CPHS (&gt;25) o Depto. Prevención (&gt;100).</p></div>' +
+                '<div class="lq-field"><label for="comp-dt-asist">Control de asistencia</label><select id="comp-dt-asist">' +
+                '<option value="">Sin configurar</option>' +
+                '<option value="electronico_res38"' + (cd.asistenciaSistema === 'electronico_res38' ? ' selected' : '') + '>Sistema electrónico certificado (Res. Ex. N° 38/2024 DT)</option>' +
+                '<option value="libro_papel"' + (cd.asistenciaSistema === 'libro_papel' ? ' selected' : '') + '>Libro de asistencia foliado (papel)</option>' +
+                '<option value="reloj_control"' + (cd.asistenciaSistema === 'reloj_control' ? ' selected' : '') + '>Reloj control con tarjetas</option>' +
+                '<option value="no_aplica"' + (cd.asistenciaSistema === 'no_aplica' ? ' selected' : '') + '>Personal exento (art. 22 inc. 2° CT)</option>' +
+                '</select></div>' +
+                '<div class="lq-field"><label for="comp-dt-res">N° Ordinario DT o referencia sistema asistencia <span class="lq-opt">(opcional)</span></label><input id="comp-dt-res" type="text" maxlength="60" value="' + esc(cd.asistenciaResolucion) + '" placeholder="Ej. Ord. DT / Proveedor certificado Res. 38"></div>' +
+                '<div class="lq-field"><label for="comp-dt-rihs-fecha">Fecha RIHS (DS 44/2024)</label><input id="comp-dt-rihs-fecha" type="date" value="' + esc(cd.rihsFecha) + '"></div>' +
+                '<div class="lq-field pm-check"><label><input id="comp-dt-rihs" type="checkbox"' + (cd.rihsVigente ? ' checked' : '') + '> RIHS vigente y difundido (obligatorio toda empresa)</label></div>' +
+                '<div class="lq-field pm-check"><label><input id="comp-dt-previred" type="checkbox"' + (cd.previredAlDia ? ' checked' : '') + '> Cotizaciones Previred declaradas y pagadas al día</label></div>' +
+                '<div class="lq-field pm-check"><label><input id="comp-dt-riohs" type="checkbox"' + (cd.riohsVigente ? ' checked' : '') + '> RIOHS vigente (obligatorio con ≥10 trab. permanentes)</label></div>' +
+                '<div class="lq-field pm-check"><label><input id="comp-dt-riohs-dt" type="checkbox"' + (cd.riohsRegistroDtIsp ? ' checked' : '') + '> Copia RIOHS enviada a DT y Seremi de Salud (5 días)</label></div>' +
+                '<div class="lq-field pm-check"><label><input id="comp-dt-cphs" type="checkbox"' + (cd.cphsActivo ? ' checked' : '') + '> Comité Paritario (CPHS) constituido (si &gt;25 trab.)</label></div>' +
+                '<div class="lq-field pm-check"><label><input id="comp-dt-42h" type="checkbox"' + (cd.jornadaRevisada42h ? ' checked' : '') + '> Jornada revisada a máximo 42h semanales (2026)</label></div>' +
+                '<div class="lq-field lq-span2"><label for="comp-dt-notas">Ubicación física/digital de respaldos <span class="lq-opt">(opcional)</span></label><input id="comp-dt-notas" type="text" maxlength="300" value="' + esc(cd.carpetaLinkNotas) + '" placeholder="Ej. Archivador oficina central + carpeta Drive compartida con contador"></div>' +
+                '</div><div class="form-acciones"><button type="button" class="btn" id="comp-btn-indice-dt-2"><span class="material-icons" aria-hidden="true">print</span>Imprimir / PDF Índice DT</button><button type="submit" class="btn btn-primario">Guardar estado Carpeta DT</button></div></form></div>' +
+                '<div class="panel" style="margin-bottom:16px"><div class="panel-head"><div><h2>Checklist de Fiscalización Laboral (DT)</h2><p class="texto-ayuda">Cruce automático con tus trabajadores, contratos, reglamentos y registro de asistencia.</p></div><a class="btn btn-chico" href="/app/documentos?d=constancia_rihs_irl" data-ruta="documentos" data-query="d=constancia_rihs_irl">Emitir constancias RIHS / IRL</a></div>' +
+                '<div class="tabla-wrap tabla-financiera-escritorio"><table class="tabla"><caption class="sr-only">Checklist carpeta DT</caption><thead><tr><th scope="col">Ítem y norma</th><th scope="col">Estado</th><th scope="col">Situación actual</th><th scope="col"><span class="sr-only">Ir</span></th></tr></thead><tbody>' + filasDt.map(function (f) { return f.html; }).join('') + '</tbody></table></div>' +
+                '<div class="panel-cuerpo fin-cards-lista">' + filasDt.map(function (f) { return f.card; }).join('') + '</div></div>' +
+                '<div class="panel"><div class="panel-head"><div><h2>Anexo separado · Ley N° 21.719 (Protección de Datos)</h2><p class="texto-ayuda">Fiscalizada por la <strong>Agencia de Protección de Datos Personales</strong> desde el 1-dic-2026 (no por la DT). Se incluye aquí para mantener tu cumplimiento unificado sin mezclar jurisdicciones.</p></div><button type="button" class="btn btn-chico" data-comp-ir="datos">Gestionar en Datos 21.719</button></div>' +
+                '<div class="tabla-wrap tabla-financiera-escritorio"><table class="tabla"><caption class="sr-only">Anexo privacidad Ley 21.719</caption><thead><tr><th scope="col">Control</th><th scope="col">Estado</th><th scope="col">Detalle</th><th scope="col"><span class="sr-only">Ir</span></th></tr></thead><tbody>' + filasPriv.map(function (f) { return f.html; }).join('') + '</tbody></table></div>' +
+                '<div class="panel-cuerpo fin-cards-lista">' + filasPriv.map(function (f) { return f.card; }).join('') + '</div></div>';
+        }
+
+        function activosCount(est, k) {
+            return activosDe(est).filter(function (t) { return !!t[k]; }).length;
+        }
+        function activosDe(est) {
+            return ((est && est.trabajadores) || []).filter(function (t) { return t.activo !== false; });
+        }
+
+        function pintarLeyKarin(est, d, hoy) {
+            var Comp = window.CLPymeCumplimiento;
+            var cd = Comp ? Comp.normCumplimientoDt(d.cumplimientoDt) : (d.cumplimientoDt || {});
+            var activos = activosDe(est);
+            var conKarin = activosCount(est, 'karinEntrega');
+            var casos = Array.isArray(d.denunciasKarin) ? d.denunciasKarin : [];
+            var msgCanal = 'Canal confidencial de denuncias Ley Karin (Ley 21.643): puedes enviar tu denuncia reservada por escrito a ' + (cd.canalKarinMedio || '[definir correo o buzón reservado]') + ' o directamente ante la Inspección del Trabajo (Mi DT) / Organismo Administrador (Ley 16.744). Medidas de resguardo inmediatas garantizadas.';
+
+            var filasCasos = casos.map(function (c) {
+                var pl = Comp ? Comp.evaluarCasoKarin(c, hoy, window.CLFeriados) : { hitoActivo: '', vencido: false };
+                var cls = pl.vencido ? 'sello-riesgo' : (c.estado === 'cerrada' || c.estado === 'medidas_aplicadas' ? 'sello-emitida' : 'sello-preparada');
+                var btns = (c.estado === 'recibida' ? '<button type="button" class="btn btn-chico" data-karin-act="resguardo" data-karin-id="' + esc(c.id) + '">Marcar resguardo hoy</button> ' : '') +
+                    (c.estado !== 'derivada_dt' && c.estado !== 'cerrada' ? '<button type="button" class="btn-texto" data-karin-act="derivar" data-karin-id="' + esc(c.id) + '">Derivada a DT</button> ' : '') +
+                    (c.estado === 'investigando' ? '<button type="button" class="btn-texto" data-karin-act="informe" data-karin-id="' + esc(c.id) + '">Informe enviado DT</button> ' : '') +
+                    (c.estado !== 'cerrada' ? '<button type="button" class="btn-texto" data-karin-act="cerrar" data-karin-id="' + esc(c.id) + '">Cerrar con medidas</button> ' : '') +
+                    '<button type="button" class="btn-texto lq-danger" data-karin-del="' + esc(c.id) + '">Quitar</button>';
+                var alertaEmp = c.denunciadoInvolucraEmpleador ? '<br><span class="dp-amber-texto" style="font-size:12px">Involucra empleador/rep. legal: derivación obligatoria a DT (≤3 días háb.)</span>' : '';
+                return {
+                    html: '<tr><td><strong class="mono">' + esc(c.codigo) + '</strong><br><span style="font-size:12px;color:var(--muted)">' + esc(KARIN_CLASIF[c.clasificacion] || c.clasificacion) + ' · ' + esc(KARIN_VIAS[c.via] || c.via) + '</span>' + alertaEmp + '</td>' +
+                        '<td class="mono">' + fecha(c.fechaRecepcion) + '<br><span style="font-size:11.5px;color:var(--muted)">Decisión 3d: ' + fecha(pl.venceDecision3d) + '<br>Tope 30d háb.: ' + fecha(pl.venceInvestigacion30d) + '</span></td>' +
+                        '<td><span class="sello ' + cls + '">' + esc(KARIN_ESTADOS[c.estado] || c.estado) + '</span><br><span style="font-size:12px;color:var(--muted)">' + esc(pl.hitoActivo) + '</span></td>' +
+                        '<td class="celda-acciones"><div class="acciones-pila">' + btns + '</div></td></tr>',
+                    card: '<div class="fin-card-item"><div class="fin-card-top"><strong class="mono">' + esc(c.codigo) + '</strong><span class="sello ' + cls + '">' + esc(KARIN_ESTADOS[c.estado] || c.estado) + '</span></div>' +
+                        '<p class="texto-ayuda" style="margin:4px 0">' + esc(KARIN_CLASIF[c.clasificacion] || c.clasificacion) + ' · Recibida ' + fecha(c.fechaRecepcion) + ' · Tope 30d háb.: ' + fecha(pl.venceInvestigacion30d) + '</p>' +
+                        '<p style="font-size:12.5px;margin:4px 0">' + esc(pl.hitoActivo) + '</p><div class="acciones-pila" style="margin-top:6px">' + btns + '</div></div>'
+                };
+            });
+
+            return '<div class="lq-aviso lq-aviso-aviso" style="margin-bottom:16px"><span class="material-icons" aria-hidden="true">gavel</span><div><strong>Plazos obligatorios Ley Karin (Ley N° 21.643 y DS N° 21/2024)</strong><p>1) Medidas de resguardo <strong>inmediatas</strong>. 2) <strong>3 días hábiles</strong> para iniciar investigación interna o remitir a la DT (obligatorio derivar a la DT si la denuncia involucra al empleador o representante legal, art. 4 inc. 1° CT). 3) Investigación interna máxima de <strong>30 días hábiles sin prórroga</strong> (el plazo de 60 días del art. 486 es tutela laboral, no extensión). 4) <strong>2 días hábiles</strong> para enviar informe a DT, 30 días de pronunciamiento DT y <strong>15 días corridos</strong> para aplicar sanciones. Nunca iniciar investigación «de oficio» sin denuncia escrita o verbal registrada.</p></div></div>' +
+                '<div class="panel" style="margin-bottom:16px"><div class="panel-head"><div><h2>Protocolo y canal confidencial de denuncias (Art. 211-A CT)</h2><p class="texto-ayuda">Cobertura entrega protocolo al equipo: <strong>' + conKarin + ' de ' + activos.length + '</strong> trabajadores activos.</p></div><a class="btn btn-chico" href="/app/documentos" data-ruta="documentos">Matriz y firma de constancias</a></div>' +
+                '<form class="panel-cuerpo" id="comp-form-karin-canal"><div class="lq-grid">' +
+                '<div class="lq-field lq-span2"><label for="comp-kar-medio">Canal confidencial habilitado (correo reservado / buzón / encargado)</label><input id="comp-kar-medio" type="text" maxlength="140" value="' + esc(cd.canalKarinMedio) + '" placeholder="Ej. comite.karin@empresa.cl o buzón físico reservado RRHH"></div>' +
+                '<div class="lq-field"><label for="comp-kar-fecha">Fecha publicación protocolo</label><input id="comp-kar-fecha" type="date" value="' + esc(cd.canalKarinFecha) + '"></div>' +
+                '<div class="lq-field pm-check"><label><input id="comp-kar-activo" type="checkbox"' + (cd.canalKarinActivo ? ' checked' : '') + '> Canal confidencial activo e informado al equipo</label></div>' +
+                '<div class="lq-field lq-span2"><label for="comp-kar-texto-difusion">Aviso listo para compartir con los trabajadores</label><textarea id="comp-kar-texto-difusion" rows="2" readonly>' + esc(msgCanal) + '</textarea></div>' +
+                '</div><div class="form-acciones"><button type="button" class="btn" id="comp-btn-copiar-karin"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar aviso de canal</button><button type="submit" class="btn btn-primario">Guardar canal Ley Karin</button></div></form></div>' +
+                '<div class="panel"><div class="panel-head"><div><h2>Bitácora reservada de denuncias y control de plazos</h2><p class="texto-ayuda">Registra solo código correlativo y fechas procesales (sin datos sensibles innecesarios).</p></div><button type="button" class="btn btn-chico btn-primario" id="comp-btn-abrir-karin"><span class="material-icons" aria-hidden="true">add</span>Registrar denuncia recibida</button></div>' +
+                '<form class="panel-cuerpo" id="comp-form-karin-caso"' + (karinFormAbierto ? '' : ' hidden') + ' style="border-bottom:1px solid var(--line);background:var(--surface-2)"><div class="lq-grid">' +
+                '<div class="lq-field"><label for="kar-cod">Código reservado</label><input id="kar-cod" type="text" maxlength="24" value="KARIN-' + esc((hoy || '2026').slice(0, 4)) + '-' + String(casos.length + 1).padStart(3, '0') + '" required></div>' +
+                '<div class="lq-field"><label for="kar-fecha">Fecha denuncia formal</label><input id="kar-fecha" type="date" value="' + esc(hoy) + '" required></div>' +
+                '<div class="lq-field"><label for="kar-clasif">Materia</label><select id="kar-clasif"><option value="acoso_laboral">Acoso laboral</option><option value="acoso_sexual">Acoso sexual</option><option value="violencia_trabajo">Violencia en el trabajo (incl. terceros)</option></select></div>' +
+                '<div class="lq-field"><label for="kar-via">Vía de ingreso</label><select id="kar-via"><option value="interna">Canal interno empresa</option><option value="dt">Inspección del Trabajo (DT)</option><option value="suseso">Organismo Administrador Ley 16.744</option></select></div>' +
+                '<div class="lq-field pm-check lq-span2"><label><input id="kar-emp" type="checkbox"> Denuncia involucra al empleador o representante legal (exige derivar a la DT en ≤3 días hábiles)</label></div>' +
+                '<div class="lq-field lq-span2"><label for="kar-resguardo">Medidas de resguardo inmediatas adoptadas (art. 211-B)</label><input id="kar-resguardo" type="text" maxlength="240" placeholder="Ej. Separación inmediata de espacios, cambio de horario o teletrabajo preventivo"></div>' +
+                '</div><div class="form-acciones"><button type="button" class="btn-texto" id="comp-karin-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Registrar e iniciar cómputo de plazos</button></div></form>' +
+                (filasCasos.length
+                    ? '<div class="tabla-wrap tabla-financiera-escritorio"><table class="tabla"><caption class="sr-only">Denuncias Ley Karin</caption><thead><tr><th scope="col">Caso y materia</th><th scope="col">Plazos legales</th><th scope="col">Estado</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead><tbody>' + filasCasos.map(function (x) { return x.html; }).join('') + '</tbody></table></div><div class="panel-cuerpo fin-cards-lista">' + filasCasos.map(function (x) { return x.card; }).join('') + '</div>'
+                    : '<div class="panel-cuerpo"><p class="vacio">No hay denuncias registradas. Si se presenta una, regístrala aquí para controlar automáticamente los plazos de resguardo inmediato, 3 días hábiles y tope de 30 días hábiles.</p></div>') +
+                '</div>';
+        }
+
+        function pintarDiagnostico(est, d, hoy) {
+            var Comp = window.CLPymeCumplimiento;
+            if (!Comp) return '';
+            var diag = Comp.diagnosticoCumplimiento(est, d, hoy, window.CLFeriados);
+            var lista = diag.brechasPrioritarias.map(function (b) {
+                var cls = b.prioridad <= 1 ? 'sello-riesgo' : 'sello-preparada';
+                var btn = '<button type="button" class="btn btn-chico" data-comp-ir="' + esc(b.ruta) + '">Ir a resolver</button>';
+                return '<div class="dp-paso-item"><div class="dp-paso-info"><span class="sello ' + cls + '" style="margin-bottom:4px">' + esc(b.origen) + '</span><strong>' + esc(b.titulo) + '</strong><span>' + esc(b.detalle) + '</span></div><div class="dp-paso-accion">' + btn + '</div></div>';
+            }).join('');
+
+            return '<dl class="cifras cifras-4" style="margin-bottom:16px">' +
+                '<div><dt>Nivel de blindaje integral</dt><dd class="mono">' + diag.score + '%</dd><span class="texto-ayuda">' + esc(diag.nivel) + '</span></div>' +
+                '<div><dt>Carpeta DT y DS 44</dt><dd class="mono">' + diag.bloques.dt + '%</dd><span class="texto-ayuda">Contratos, Mi DT, RIHS/RIOHS, IRL</span></div>' +
+                '<div><dt>Ley Karin (21.643)</dt><dd class="mono">' + diag.bloques.karin + '%</dd><span class="texto-ayuda">Protocolo, canal y entregas</span></div>' +
+                '<div><dt>Datos 21.719 (Agencia)</dt><dd class="mono">' + diag.bloques.datos + '%</dd><span class="texto-ayuda">Anexos, DPA, RAT y ARCOP</span></div>' +
+                '</dl>' +
+                '<div class="panel"><div class="panel-head"><div><h2>Brechas prioritarias ordenadas por impacto</h2><p class="texto-ayuda">Cierra estos puntos para reducir exposición a multas DT, DS 44 o Ley 21.719.</p></div><button type="button" class="btn btn-chico btn-primario" id="comp-btn-indice-dt-3"><span class="material-icons" aria-hidden="true">print</span>Descargar Índice DT</button></div>' +
+                '<div class="panel-cuerpo">' + (lista ? '<div class="dp-pasos-lista">' + lista + '</div>' : '<p class="vacio">¡Sin brechas abiertas! Tu carpeta DT, canal Ley Karin y controles Ley 21.719 están al día.</p>') + '</div></div>';
+        }
+
         function dibujar(tab) {
             var vista = document.querySelector('[data-vista="datos-personales"]');
             if (!vista) return;
@@ -827,9 +1025,38 @@
             $('dp-vacio').hidden = true;
             $('dp-contenido').hidden = false;
 
-            var destinoRaw = tab || tabActual;
-            if (destinoRaw && MAPA_TABS[destinoRaw]) tabActual = MAPA_TABS[destinoRaw];
-            var hoy = ctx.hoyIso(), d = dActual(), res = resumenControles(est, d, hoy);
+            var destinoRaw = tab || '';
+            if (destinoRaw && MAPA_COMP_TABS[destinoRaw]) {
+                compTab = MAPA_COMP_TABS[destinoRaw];
+            } else if (destinoRaw && MAPA_TABS[destinoRaw]) {
+                compTab = 'datos';
+                tabActual = MAPA_TABS[destinoRaw];
+            }
+
+            Array.prototype.forEach.call(vista.querySelectorAll('[data-comp-tab]'), function (b) {
+                var activo = b.getAttribute('data-comp-tab') === compTab;
+                b.classList.toggle('activo', activo);
+                b.setAttribute('aria-selected', activo ? 'true' : 'false');
+            });
+
+            var hoy = ctx.hoyIso(), d = dActual();
+            var principal = $('comp-panel-principal');
+            var subDatos = $('dp-subseccion');
+            if (compTab !== 'datos') {
+                if (subDatos) subDatos.hidden = true;
+                if (principal) {
+                    principal.hidden = false;
+                    if (compTab === 'carpeta') principal.innerHTML = pintarCarpetaDt(est, d, hoy);
+                    else if (compTab === 'karin') principal.innerHTML = pintarLeyKarin(est, d, hoy);
+                    else principal.innerHTML = pintarDiagnostico(est, d, hoy);
+                }
+                return;
+            }
+
+            if (principal) { principal.hidden = true; principal.innerHTML = ''; }
+            if (subDatos) subDatos.hidden = false;
+
+            var res = resumenControles(est, d, hoy);
 
             $('dp-kpi-avance').textContent = res.completados + ' / 4';
             $('dp-kpi-avance-sub').textContent = res.completados === 4 ? 'Empresa al día' : (res.completados === 0 ? 'Por iniciar' : 'Faltan ' + plural(4 - res.completados, 'paso', 'pasos'));
@@ -879,6 +1106,48 @@
 
             vista.addEventListener('click', function (e) {
                 var t = e.target;
+                var compBtn = t.closest('[data-comp-tab]');
+                if (compBtn) {
+                    dibujar(compBtn.getAttribute('data-comp-tab'));
+                    return;
+                }
+                var compIr = t.closest('[data-comp-ir]');
+                if (compIr) {
+                    irDesdeRutaComp(compIr.getAttribute('data-comp-ir'));
+                    return;
+                }
+                if (t.closest('#comp-btn-indice-dt') || t.closest('#comp-btn-indice-dt-2') || t.closest('#comp-btn-indice-dt-3')) {
+                    imprimirIndiceCarpetaDt();
+                    return;
+                }
+                if (t.closest('#comp-btn-copiar-karin') && $('comp-kar-texto-difusion')) {
+                    copiarTexto($('comp-kar-texto-difusion').value, $('dp-estado-msg'), 'Aviso de canal Ley Karin copiado.');
+                    return;
+                }
+                if (t.closest('#comp-btn-abrir-karin')) { karinFormAbierto = true; if ($('comp-form-karin-caso')) { $('comp-form-karin-caso').hidden = false; $('kar-cod').focus(); } return; }
+                if (t.closest('#comp-karin-cancelar')) { karinFormAbierto = false; if ($('comp-form-karin-caso')) $('comp-form-karin-caso').hidden = true; return; }
+
+                var karAct = t.closest('[data-karin-act]');
+                if (karAct) {
+                    var dk = dActual(), ak = karAct.getAttribute('data-karin-act'), idk = karAct.getAttribute('data-karin-id'), hoyK = ctx.hoyIso();
+                    dk.denunciasKarin.forEach(function (c) {
+                        if (c.id !== idk) return;
+                        if (ak === 'resguardo') { c.fechaResguardo = hoyK; if (c.estado === 'recibida') c.estado = 'resguardo'; }
+                        else if (ak === 'derivar') { c.fechaDerivacionDt = hoyK; c.estado = 'derivada_dt'; }
+                        else if (ak === 'informe') { c.fechaInformeDt = hoyK; c.estado = 'informe_dt'; }
+                        else if (ak === 'cerrar') { c.fechaMedidasFinales = hoyK; c.estado = 'cerrada'; }
+                    });
+                    guardarDatos(dk, 'Estado de denuncia Ley Karin actualizado.');
+                    return;
+                }
+                var karDel = t.closest('[data-karin-del]');
+                if (karDel) {
+                    var dkd = dActual(), idkd = karDel.getAttribute('data-karin-del');
+                    dkd.denunciasKarin = dkd.denunciasKarin.filter(function (c) { return c.id !== idkd; });
+                    guardarDatos(dkd, 'Registro eliminado de la bitácora.');
+                    return;
+                }
+
                 var tabBtn = t.closest('[data-dp-tab]') || t.closest('[data-dp-ir]');
                 if (tabBtn) {
                     dibujar(tabBtn.getAttribute('data-dp-tab') || tabBtn.getAttribute('data-dp-ir'));
@@ -1153,6 +1422,51 @@
                         plazoConservacion: $('dp-rat-plazo').value.trim()
                     });
                     guardarDatos(dr, 'Actividad agregada a la lista.');
+                } else if (f.id === 'comp-form-dt') {
+                    var ddt = dActual();
+                    ddt.cumplimientoDt = Object.assign({}, ddt.cumplimientoDt, {
+                        trabajadoresPermanentes: Math.max(0, parseInt($('comp-dt-perm').value, 10) || 0),
+                        asistenciaSistema: $('comp-dt-asist').value,
+                        asistenciaResolucion: $('comp-dt-res').value.trim(),
+                        rihsFecha: $('comp-dt-rihs-fecha').value,
+                        rihsVigente: $('comp-dt-rihs').checked,
+                        previredAlDia: $('comp-dt-previred').checked,
+                        riohsVigente: $('comp-dt-riohs').checked,
+                        riohsRegistroDtIsp: $('comp-dt-riohs-dt').checked,
+                        cphsActivo: $('comp-dt-cphs').checked,
+                        jornadaRevisada42h: $('comp-dt-42h').checked,
+                        carpetaLinkNotas: $('comp-dt-notas').value.trim()
+                    });
+                    guardarDatos(ddt, 'Estado de Carpeta DT y DS 44 guardado.');
+                } else if (f.id === 'comp-form-karin-canal') {
+                    var dkc = dActual();
+                    dkc.cumplimientoDt = Object.assign({}, dkc.cumplimientoDt, {
+                        canalKarinMedio: $('comp-kar-medio').value.trim(),
+                        canalKarinFecha: $('comp-kar-fecha').value,
+                        canalKarinActivo: $('comp-kar-activo').checked
+                    });
+                    guardarDatos(dkc, 'Canal confidencial Ley Karin guardado.');
+                } else if (f.id === 'comp-form-karin-caso') {
+                    var dkn = dActual();
+                    var fResg = $('kar-resguardo').value.trim() ? ($('kar-fecha').value || ctx.hoyIso()) : '';
+                    dkn.denunciasKarin.push({
+                        codigo: $('kar-cod').value.trim() || ('KARIN-' + (dkn.denunciasKarin.length + 1)),
+                        fechaRecepcion: $('kar-fecha').value || ctx.hoyIso(),
+                        clasificacion: $('kar-clasif').value,
+                        via: $('kar-via').value,
+                        denunciadoInvolucraEmpleador: $('kar-emp').checked,
+                        medidasResguardo: $('kar-resguardo').value.trim(),
+                        fechaResguardo: fResg,
+                        investigadorInterno: '',
+                        fechaDerivacionDt: $('kar-via').value === 'dt' ? ($('kar-fecha').value || ctx.hoyIso()) : '',
+                        fechaInformeDt: '',
+                        fechaPronunciamientoDt: '',
+                        fechaMedidasFinales: '',
+                        estado: $('kar-via').value === 'dt' ? 'derivada_dt' : (fResg ? 'resguardo' : 'recibida'),
+                        notas: ''
+                    });
+                    karinFormAbierto = false;
+                    guardarDatos(dkn, 'Denuncia Ley Karin registrada con cálculo automático de plazos.');
                 }
             });
 

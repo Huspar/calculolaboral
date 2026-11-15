@@ -430,16 +430,43 @@
                 }).join('');
             }
 
+            var firmasEmp = (est.datosLey21719 && Array.isArray(est.datosLey21719.documentosFirma)) ? est.datosLey21719.documentosFirma : [];
+            var firmasTrab = firmasEmp.filter(function (f) { return f.trabajadorId === t.id && f.estado !== 'anulado'; });
+            var firmasPend = firmasTrab.filter(function (f) { return f.estado === 'pendiente_firma'; });
+
+            var alertaFirmas = $('portal-alerta-firmas');
+            if (alertaFirmas) {
+                alertaFirmas.hidden = !firmasPend.length;
+                if (firmasPend.length) {
+                    $('portal-alerta-firmas-titulo').textContent = firmasPend.length === 1
+                        ? ('Tienes 1 documento pendiente de firma: ' + firmasPend[0].titulo)
+                        : ('Tienes ' + firmasPend.length + ' documentos pendientes de firma simple');
+                    $('portal-alerta-firmas-sub').textContent = 'Firma electrónica simple en 1 paso (Ley 19.799 + Dictamen 789/15 DT, sin trasladarte a oficina).';
+                }
+            }
+
+            var filasFirma = firmasTrab.map(function (f) {
+                var firmado = f.estado === 'firmado';
+                var hashCorto = f.hashSha256 ? String(f.hashSha256).slice(0, 10) + '…' : '';
+                var acc = firmado
+                    ? '<button type="button" class="btn-texto" data-portal-comprobante="' + esc(f.id) + '"><span class="material-icons" aria-hidden="true">verified</span>Comprobante</button>'
+                    : '<button type="button" class="btn btn-chico btn-primario" data-portal-firmar="' + esc(f.id) + '">Firmar en 1 paso</button>';
+                return '<tr><td><strong>' + esc(f.titulo) + '</strong>' + (firmado && hashCorto ? '<br><span class="mono" style="font-size:11.5px;color:var(--muted)">SHA-256: ' + esc(hashCorto) + '</span>' : '') + '</td>' +
+                    '<td class="fecha">' + esc(firmado && f.firmadoAt ? fechaCorta(f.firmadoAt.slice(0, 10)) : fechaCorta(f.fechaEmision)) + '</td>' +
+                    '<td><span class="sello ' + (firmado ? 'sello-emitida' : 'sello-preparada') + '">' + (firmado ? 'Firmado (Ley 19.799)' : 'Por firmar') + '</span></td>' +
+                    '<td class="celda-acciones">' + acc + '</td></tr>';
+            });
+
             var docs = [
                 { doc: 'Contrato de trabajo (' + (t.contrato === 'plazo_fijo' ? 'plazo fijo' : 'indefinido') + ')', fecha: fechaCorta(t.fechaIngreso || ctx.hoyIso()), ok: true, label: 'Vigente', tipoDoc: 'contrato' },
-                { doc: 'Anexo adecuación Ley 40 Horas (' + (t.jornadaHoras || 42) + ' hrs semanales)', fecha: fechaCorta(t.anexoDatosEntrega || '2026-04-26'), ok: true, label: 'Firmado', tipoDoc: 'anexo_40h' },
-                { doc: 'Constancia Protocolo Ley Karin', fecha: t.karinEntrega ? fechaCorta(t.karinEntrega) : 'Pendiente', ok: !!t.karinEntrega, label: t.karinEntrega ? 'Recibido' : 'Por entregar', tipoDoc: 'karin' }
+                { doc: 'Anexo adecuación Ley 40 Horas (' + (t.jornadaHoras || 42) + ' hrs semanales)', fecha: fechaCorta(t.anexoDatosEntrega || '2026-04-26'), ok: true, label: 'Firmado', tipoDoc: 'anexo_contrato' },
+                { doc: 'Constancia Protocolo Ley Karin e IRL', fecha: t.karinEntrega ? fechaCorta(t.karinEntrega) : 'Pendiente', ok: !!t.karinEntrega, label: t.karinEntrega ? 'Recibido' : 'Por entregar', tipoDoc: 'constancia_rihs_irl' }
             ];
-            $('portal-docs-filas').innerHTML = docs.map(function (d) {
+            $('portal-docs-filas').innerHTML = filasFirma.concat(docs.map(function (d) {
                 return '<tr><td><strong>' + esc(d.doc) + '</strong></td><td class="fecha">' + esc(d.fecha) + '</td>' +
                     '<td><span class="sello ' + (d.ok ? 'sello-emitida' : 'sello-preparada') + '">' + esc(d.label) + '</span></td>' +
                     '<td class="celda-acciones"><button type="button" class="btn-texto" data-portal-doc="' + esc(d.tipoDoc) + '"><span class="material-icons" aria-hidden="true">description</span>Ver</button></td></tr>';
-            }).join('');
+            })).join('');
         }
 
         function abrirFormPortal(tipo) {
@@ -694,8 +721,140 @@
                 ctx.avisoGlobal('ok', 'Solicitud enviada. Cambia a Dueño Pyme > Vacaciones y permisos para aprobarla en 1 clic.');
             });
         }
+        var docFirmaActivoId = null;
+
+        function cerrarDialogoFirma() {
+            var dlg = $('portal-dialogo-firma');
+            if (!dlg) return;
+            if (typeof dlg.close === 'function' && dlg.open) dlg.close();
+            else dlg.removeAttribute('open');
+        }
+
+        function abrirDialogoFirma(docId) {
+            var est = ctx.getEstado(), t = trabajadorPortal(), dlg = $('portal-dialogo-firma');
+            if (!est || !t || !dlg) return;
+            var lista = (est.datosLey21719 && est.datosLey21719.documentosFirma) || [];
+            var doc = docId
+                ? lista.find(function (f) { return f.id === docId && f.trabajadorId === t.id; })
+                : lista.find(function (f) { return f.trabajadorId === t.id && f.estado === 'pendiente_firma'; });
+            if (!doc) return;
+            docFirmaActivoId = doc.id;
+            $('portal-firma-titulo').textContent = doc.titulo;
+            $('portal-firma-sub').textContent = (est.empresa && est.empresa.razonSocial ? est.empresa.razonSocial + ' · ' : '') + 'Emisión ' + fechaCorta(doc.fechaEmision) + ' · Colaborador: ' + t.nombre + ' (' + t.rut + ')';
+            $('portal-firma-contenido').innerHTML = '<p style="margin:0 0 8px">' + esc(doc.resumenContenido || 'Documento laboral emitido electrónicamente para revisión y firma simple.') + '</p>' +
+                '<p class="texto-ayuda" style="margin:0">Huella previa de documento: <span class="mono">' + esc(doc.hashSha256 || 'se calculará al firmar') + '</span></p>';
+            $('portal-firma-correo').value = doc.correoEnvio || t.correoPersonal || '';
+            $('portal-firma-rut4').value = '';
+            $('portal-firma-consentimiento').checked = false;
+            $('portal-firma-estado').className = 'lq-estado';
+            $('portal-firma-estado').textContent = '';
+            if (typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+            else dlg.setAttribute('open', '');
+            $('portal-firma-correo').focus();
+        }
+
+        if ($('btn-portal-firmar-ahora')) {
+            $('btn-portal-firmar-ahora').addEventListener('click', function () { abrirDialogoFirma(null); });
+        }
+        if ($('portal-firma-cerrar')) $('portal-firma-cerrar').addEventListener('click', cerrarDialogoFirma);
+        if ($('portal-firma-cancelar')) $('portal-firma-cancelar').addEventListener('click', cerrarDialogoFirma);
+
+        if ($('portal-firma-form')) {
+            $('portal-firma-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var est = ctx.getEstado(), t = trabajadorPortal(), Comp = root.CLPymeCumplimiento;
+                if (!est || !t || !Comp || !ctx.api) return;
+                var st = $('portal-firma-estado');
+                var correo = $('portal-firma-correo').value.trim();
+                var rut4Ing = Comp.normalizarRutUlt4($('portal-firma-rut4').value);
+                var rut4Real = Comp.normalizarRutUlt4(t.rut);
+                if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) {
+                    st.className = 'lq-estado error'; st.textContent = 'Ingresa un correo electrónico personal válido (Dictamen 789/15 DT).';
+                    return;
+                }
+                if (!$('portal-firma-consentimiento').checked) {
+                    st.className = 'lq-estado error'; st.textContent = 'Debes aceptar el consentimiento expreso para firma electrónica simple.';
+                    return;
+                }
+                if (!rut4Ing || rut4Ing !== rut4Real) {
+                    st.className = 'lq-estado error'; st.textContent = 'Los últimos 4 caracteres no coinciden con tu RUT (' + t.rut + ').';
+                    return;
+                }
+
+                var dl = JSON.parse(JSON.stringify(est.datosLey21719 || {}));
+                var lista = Array.isArray(dl.documentosFirma) ? dl.documentosFirma : [];
+                var idx = lista.findIndex(function (x) { return x.id === docFirmaActivoId && x.trabajadorId === t.id; });
+                if (idx < 0) return;
+                var item = lista[idx];
+                if (Comp.TIPOS_FIRMA_EXCLUIDOS.indexOf(item.tipo) >= 0) {
+                    st.className = 'lq-estado error'; st.textContent = 'Finiquitos y cartas de despido están excluidos de firma electrónica simple por ley.';
+                    return;
+                }
+
+                var ahoraIso = new Date().toISOString();
+                var hoy = ctx.hoyIso();
+                var canonico = [est.empresa && est.empresa.rut || '', t.rut, item.tipo, item.fechaEmision, correo, ahoraIso, item.resumenContenido || ''].join('|');
+                var btnEnv = $('portal-firma-enviar');
+                if (btnEnv) btnEnv.disabled = true;
+                st.className = 'lq-estado'; st.textContent = 'Sellando hash SHA-256 y registrando firma...';
+
+                Comp.hashTextoSha256(canonico).then(function (hash) {
+                    lista[idx] = Object.assign({}, item, {
+                        correoEnvio: correo,
+                        estado: 'firmado',
+                        firmadoAt: ahoraIso,
+                        rutUlt4: rut4Ing,
+                        hashSha256: hash,
+                        consentido: true
+                    });
+                    dl.documentosFirma = lista;
+                    return ctx.api('datos-personales', { metodo: 'PUT', cuerpo: { datosLey21719: dl } }).then(function (r) {
+                        return { r: r, hash: hash, tipo: item.tipo };
+                    });
+                }).then(function (res) {
+                    if (btnEnv) btnEnv.disabled = false;
+                    if (!res.r.ok) {
+                        st.className = 'lq-estado error';
+                        st.textContent = (res.r.datos && res.r.datos.error) || 'No pudimos guardar la firma.';
+                        return;
+                    }
+                    if (ctx.setDatosLey) ctx.setDatosLey(res.r.datos.datosLey21719);
+
+                    // Actualizar ficha del trabajador con los respaldos correspondientes
+                    var copiaT = JSON.parse(JSON.stringify(t));
+                    delete copiaT.id;
+                    copiaT.correoPersonal = correo;
+                    copiaT.consentimientoElectronico = true;
+                    copiaT.consentimientoFecha = copiaT.consentimientoFecha || hoy;
+                    if (res.tipo === 'constancia_rihs_irl') {
+                        copiaT.irlEntrega = copiaT.irlEntrega || hoy; copiaT.irlConstancia = true;
+                        copiaT.riohsEntrega = copiaT.riohsEntrega || hoy; copiaT.riohsConstancia = true;
+                        copiaT.karinEntrega = copiaT.karinEntrega || hoy; copiaT.karinConstancia = true;
+                    } else if (res.tipo === 'anexo_datos') {
+                        copiaT.anexoDatosEntrega = copiaT.anexoDatosEntrega || hoy; copiaT.anexoDatosConstancia = true;
+                    }
+                    ctx.api('trabajador', { metodo: 'PUT', query: { id: t.id }, cuerpo: { trabajador: copiaT } }).then(function (rt) {
+                        if (rt.ok && ctx.actualizarTrabajadorLocal) ctx.actualizarTrabajadorLocal(rt.datos.trabajador);
+                        cerrarDialogoFirma();
+                        dibujarMiPortal();
+                        if (typeof ctx.alCambiarDatosLey === 'function') ctx.alCambiarDatosLey();
+                        ctx.avisoGlobal('ok', 'Documento firmado electrónicamente · SHA-256: ' + res.hash.slice(0, 12) + '…');
+                    });
+                });
+            });
+        }
+
         if ($('portal-docs-filas')) {
             $('portal-docs-filas').addEventListener('click', function (e) {
+                var bFirmar = e.target.closest('[data-portal-firmar]');
+                if (bFirmar) { abrirDialogoFirma(bFirmar.getAttribute('data-portal-firmar')); return; }
+                var bComp = e.target.closest('[data-portal-comprobante]');
+                if (bComp) {
+                    var est = ctx.getEstado(), idF = bComp.getAttribute('data-portal-comprobante');
+                    var f = ((est && est.datosLey21719 && est.datosLey21719.documentosFirma) || []).find(function (x) { return x.id === idF; });
+                    if (f) ctx.avisoGlobal('ok', 'Comprobante firma simple · ' + f.titulo + ' · Enviado a ' + (f.correoEnvio || '-') + ' · SHA-256: ' + f.hashSha256);
+                    return;
+                }
                 var btn = e.target.closest('[data-portal-doc]');
                 if (!btn) return;
                 var t = trabajadorPortal();
