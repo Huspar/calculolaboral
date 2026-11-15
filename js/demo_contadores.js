@@ -379,6 +379,11 @@
         document.getElementById('btn-template-fin').addEventListener('click', plantilla);
         document.getElementById('btn-csv-fin').addEventListener('click', exportar);
         document.getElementById('btn-print-fin').addEventListener('click', function () {
+            var ok = state.results.filter(function (r) { return !r.error; });
+            if (!ok.length) {
+                D.avisar('Primero carga una planilla o usa el lote de ejemplo de finiquitos.');
+                return;
+            }
             construirImpresion();
             window.print();
         });

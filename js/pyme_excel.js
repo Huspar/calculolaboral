@@ -342,12 +342,17 @@
             } else if (sEntrada[r] && esVacia) {
                 alturas[r] = 21;
             } else {
-                var maxLineasDato = fila.reduce(function (mx, v) {
+                var maxLineasDato = fila.reduce(function (mx, v, ci) {
                     if (v == null || v === '') return mx;
-                    var ls = String(v).split(/\r?\n/).length;
+                    var s = String(v);
+                    var enM = !!mergeMap[r + ':' + ci];
+                    var cap = Math.max(8, ((colsWch[ci] && colsWch[ci].wch) || 12) - 2);
+                    var ls = s.split(/\r?\n/).reduce(function (acc, linea) {
+                        return acc + (enM || typeof v !== 'string' ? 1 : Math.max(1, Math.ceil(linea.length / cap)));
+                    }, 0);
                     return Math.max(mx, ls);
                 }, 1);
-                alturas[r] = maxLineasDato > 1 ? (maxLineasDato * 14 + 6) : 20;
+                alturas[r] = maxLineasDato > 1 ? Math.min(72, maxLineasDato * 14 + 6) : 20;
             }
 
             if (!rolFila) continue;
@@ -388,7 +393,8 @@
                         align = align || 'left';
                     }
                 }
-                var wrapDato = typeof val === 'string' && val.indexOf('\n') >= 0;
+                var colW = (colsWch[c] && colsWch[c].wch) || 12;
+                var wrapDato = typeof val === 'string' && (val.indexOf('\n') >= 0 || (!enMerge && val.length > Math.max(8, colW - 2)));
                 cellStyleAt[colLetra(c) + (r + 1)] = regEstilos.obtener(rolFila, align, fmt, wrapDato);
             }
         }

@@ -180,8 +180,9 @@
 
     function estudio() {
         var input = document.getElementById('study-name');
+        var disp = document.getElementById('study-name-display');
         return {
-            nombre: (input && input.value.trim()) || 'Estudio contable',
+            nombre: (input && input.value.trim()) || (disp && disp.textContent.trim()) || 'Estudio Contable Chile',
             logo: state.logo
         };
     }
@@ -204,6 +205,10 @@
         'CálculoLaboral no presta asesoría legal.</div>';
 
     function imprimir(paginas) {
+        if (!paginas || !paginas.length) {
+            avisar('No hay información lista para generar el PDF.');
+            return;
+        }
         document.getElementById('print-area').innerHTML = paginas.join('');
         window.print();
     }

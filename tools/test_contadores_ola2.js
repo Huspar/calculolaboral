@@ -125,6 +125,15 @@ caso('DJ 1887 acumula renta neta (no bruto) y Certificado N6 invierte col 7 Exen
     assert.strictEqual(cert6.col7_rentaExenta, 25000);
     assert.strictEqual(cert6.col8_rentaNoGravada, 80000);
     assert.strictEqual(cert6.col9_rebajaZonasExtremas, 12000);
+
+    // Regresion: demo_liquidaciones pasa { record, detalle } en lugar de { trabajador, detalle }
+    const acumDesdeRecord = Renta.acumularLiquidacionesParaDj1887([
+        { record: trabajador, detalle: calc }
+    ]);
+    assert.strictEqual(acumDesdeRecord.length, 1);
+    assert.strictEqual(acumDesdeRecord[0].rut, '16.543.210-3');
+    assert.strictEqual(acumDesdeRecord[0].rentaNeta, calc.bases.baseTributable);
+    assert.strictEqual(acumDesdeRecord[0].rentaNoGravada, 80000);
 });
 
 caso('DJ 1879 y Certificado N1 suman retencion real 15,25% (no tasa obsoleta 13%)', () => {

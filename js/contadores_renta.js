@@ -45,7 +45,7 @@
         (resultados || []).forEach(function (item) {
             if (!item || item.error) return;
             var det = item.detalle || null;
-            var trab = item.trabajador || item.fila || item;
+            var trab = item.trabajador || item.record || item.fila || item;
             var rutRaw = trab.rut || item.rut || '';
             var rutClean = limpiarRut(rutRaw);
             if (!rutClean) return;

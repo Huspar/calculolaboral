@@ -44,8 +44,9 @@
     }
 
     function leerMembrete() {
+        var e = D && D.estudio ? D.estudio() : {};
         var base = {
-            estudio: 'Estudio Contable Chile',
+            estudio: e.nombre || 'Estudio Contable Chile',
             rut: '76.543.210-K',
             contador: 'Contador Auditor',
             pie: 'Documento de trabajo y referencia tributaria emitido para el cliente.'
@@ -55,13 +56,19 @@
             if (!raw) return base;
             var parsed = JSON.parse(raw);
             return Object.assign({}, base, parsed && typeof parsed === 'object' ? parsed : {});
-        } catch (e) {
+        } catch (err) {
             return base;
         }
     }
 
     function guardarMembrete(obj) {
         try { window.localStorage.setItem(K_MEMBRETE, JSON.stringify(obj)); } catch (e) { }
+    }
+
+    function clienteSlug() {
+        var s = clienteClave().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        return s || 'cliente';
     }
 
     cargarPlanPersonalizado();
@@ -1206,21 +1213,33 @@
     }
 
     // ------------------------------------------------------------- Exportaciones e Impresion
-    function imprimirHtmlModulo(titulo, subtitulo, tablaHtml, notaExtra) {
+    function imprimirHtmlModulo(titulo, subtitulo, tablaHtml, notaExtra, opts) {
+        opts = opts || {};
         var mb = leerMembrete();
+        var estInfo = D && D.estudio ? D.estudio() : {};
+        var logoHtml = estInfo.logo ? '<img src="' + estInfo.logo + '" alt="">' : '';
         var memHtml = '<div class="print-membrete-estudio">' +
-            '<div><strong>' + D.esc(mb.estudio) + '</strong><br><span>RUT ' + D.esc(mb.rut) + ' · ' + D.esc(mb.contador) + '</span></div>' +
-            '<div style="text-align:right"><span>Cliente: <strong>' + D.esc(clienteNombre()) + '</strong><br>Período: ' + D.esc(periodoActual()) + '</span></div>' +
+            '<div>' + logoHtml + '<strong>' + D.esc(mb.estudio) + '</strong><br><span>RUT ' + D.esc(mb.rut) + ' · ' + D.esc(mb.contador) + '</span></div>' +
+            '<div class="print-meta"><span>Cliente: <strong>' + D.esc(clienteNombre()) + '</strong><br>Período: ' + D.esc(periodoActual()) + ' · Emitido el ' + D.esc(D.hoy()) + '</span></div>' +
             '</div>';
-        var pieHtml = '<div class="print-pie-estudio"><span>' + D.esc(mb.pie) + '</span><span>Emitido con Suite Contadores</span></div>';
-        var pag = '<div class="print-page">' +
-            memHtml +
-            D.encabezado(titulo, D.esc(clienteNombre()) + ' · Período ' + D.esc(periodoActual()) + (subtitulo ? ' · ' + D.esc(subtitulo) : '')) +
-            tablaHtml +
-            (notaExtra ? '<div class="print-note">' + D.esc(notaExtra) + '</div>' : '') +
-            pieHtml +
-            '</div>';
-        D.imprimir([pag]);
+        var pieHtml = '<div class="print-pie-estudio"><span>' + D.esc(mb.pie || 'Documento de trabajo tributario.') + '</span><span>Emitido con CálculoLaboral · Suite Contadores</span></div>';
+        var bloques = Array.isArray(opts.paginas)
+            ? opts.paginas
+            : [{ html: tablaHtml, titulo: titulo, subtitulo: subtitulo, paisa: !!opts.paisa, nota: notaExtra }];
+        var pags = bloques.map(function (b) {
+            var t = b.titulo || titulo;
+            var sub = b.subtitulo !== undefined ? b.subtitulo : subtitulo;
+            var nota = b.nota !== undefined ? b.nota : notaExtra;
+            return '<div class="print-page' + (b.paisa ? ' print-page--paisa' : '') + '">' +
+                memHtml +
+                '<div class="print-title">' + D.esc(t) + '</div>' +
+                '<div class="print-sub">' + D.esc(clienteNombre()) + ' · Período ' + D.esc(periodoActual()) + (sub ? ' · ' + D.esc(sub) : '') + '</div>' +
+                b.html +
+                (nota ? '<div class="print-note">' + D.esc(nota) + '</div>' : '') +
+                pieHtml +
+                '</div>';
+        });
+        D.imprimir(pags);
     }
 
     function subirArchivoRcv(file, modo) {
@@ -1488,10 +1507,16 @@
         if ($('btn-f29-pdf')) {
             $('btn-f29-pdf').addEventListener('click', function () {
                 var m = calcularModelo();
+                pintarF29(m);
+                var tb = $('tbody-f29') ? $('tbody-f29').innerHTML.trim() : '';
+                if (!tb) {
+                    D.avisar('No hay líneas del F29 para imprimir en este período.');
+                    return;
+                }
                 imprimirHtmlModulo(
                     'Hoja Guía Formulario 29',
                     m.f29.regimenNombre,
-                    '<table class="print-table"><thead><tr><th>Concepto</th><th class="r">Cant.</th><th class="r">Código</th><th class="r">Monto</th></tr></thead><tbody>' + $('tbody-f29').innerHTML + '</tbody></table>',
+                    '<table class="print-table"><thead><tr><th>Concepto</th><th class="r">Cant.</th><th class="r">Código</th><th class="r">Monto</th></tr></thead><tbody>' + tb + '</tbody></table>',
                     'Borrador de trabajo para revisión del contador antes de declarar en sii.cl.'
                 );
             });
@@ -1680,15 +1705,41 @@
         if ($('btn-libros-pdf')) {
             $('btn-libros-pdf').addEventListener('click', function () {
                 var m = calcularModelo();
-                var html = m.asientos.map(function (a, i) {
+                if (!m.asientos.length) {
+                    D.avisar('Aún no hay asientos registrados en este período. Carga RCV, ejemplo o crea un asiento manual.');
+                    return;
+                }
+                var diarioHtml = m.asientos.map(function (a, i) {
                     return '<div class="print-h3">Asiento #' + (i + 1) + ' · ' + D.esc(a.fecha) + ' · ' + D.esc(a.glosa) + '</div>' +
                         '<table class="print-table"><thead><tr><th>Código</th><th>Cuenta</th><th class="r">Debe</th><th class="r">Haber</th></tr></thead><tbody>' +
                         a.lineas.map(function (l) {
-                            return '<tr><td>' + D.esc(l.cuenta) + '</td><td>' + D.esc(l.nombre) + '</td><td class="r">' + (l.debe ? D.money(l.debe) : '-') + '</td><td class="r">' + (l.haber ? D.money(l.haber) : '-') + '</td></tr>';
+                            return '<tr><td class="mono">' + D.esc(l.cuenta) + '</td><td>' + D.esc(l.nombre) + '</td><td class="r">' + (l.debe ? D.money(l.debe) : '-') + '</td><td class="r">' + (l.haber ? D.money(l.haber) : '-') + '</td></tr>';
                         }).join('') +
                         '<tr class="total"><td colspan="2">Total asiento</td><td class="r">' + D.money(a.debe) + '</td><td class="r">' + D.money(a.haber) + '</td></tr></tbody></table>';
                 }).join('');
-                imprimirHtmlModulo('Libro Diario Contable', m.asientos.length + ' asientos cuadrados', html || '<p>Sin asientos registrados.</p>');
+                var mayorHtml = '<table class="print-table"><thead><tr><th>Código</th><th>Cuenta contable</th><th class="r">Débito</th><th class="r">Crédito</th><th class="r">Saldo Deudor</th><th class="r">Saldo Acreedor</th></tr></thead><tbody>' +
+                    m.mayor.map(function (cta) {
+                        return '<tr><td class="mono">' + D.esc(cta.codigo) + '</td><td>' + D.esc(cta.nombre) + '</td>' +
+                            '<td class="r">' + D.money(cta.debito) + '</td><td class="r">' + D.money(cta.credito) + '</td>' +
+                            '<td class="r">' + (cta.saldoDeudor ? D.money(cta.saldoDeudor) : '-') + '</td>' +
+                            '<td class="r">' + (cta.saldoAcreedor ? D.money(cta.saldoAcreedor) : '-') + '</td></tr>';
+                    }).join('') + '</tbody></table>';
+                imprimirHtmlModulo('Libros Contables del Período', '', '', '', {
+                    paginas: [
+                        {
+                            titulo: 'Libro Diario Contable',
+                            subtitulo: m.asientos.length + ' asientos cuadrados',
+                            html: diarioHtml,
+                            nota: 'Libro Diario generado automáticamente según RCV, nómina, BHE y ajustes manuales.'
+                        },
+                        {
+                            titulo: 'Libro Mayor (Resumen por Cuenta)',
+                            subtitulo: m.mayor.length + ' cuentas con movimiento',
+                            html: mayorHtml,
+                            nota: 'Saldos acumulados del período para respaldo de auditoría.'
+                        }
+                    ]
+                });
             });
         }
 
@@ -1803,11 +1854,32 @@
         if ($('btn-balance-pdf')) {
             $('btn-balance-pdf').addEventListener('click', function () {
                 var m = calcularModelo();
-                var html = '<table class="print-table"><thead><tr><th>Cód.</th><th>Cuenta</th><th class="r">Débito</th><th class="r">Crédito</th><th class="r">Deudor</th><th class="r">Acreedor</th><th class="r">Activo</th><th class="r">Pasivo</th><th class="r">Pérdida</th><th class="r">Ganancia</th></tr></thead><tbody>' +
-                    $('tbody-balance8').innerHTML + '</tbody></table>' +
-                    '<div class="print-h3" style="margin-top:14px">Hoja de Trabajo RLI ProPyme (Art. 14 D N°3)</div>' +
-                    '<table class="print-table"><tbody>' + $('tbody-rli').innerHTML + '</tbody></table>';
-                imprimirHtmlModulo('Balance Tributario de 8 Columnas y RLI', m.f29.regimenNombre, html);
+                pintarBalance(m);
+                if (!m.balance.filas.length) {
+                    D.avisar('Aún no hay movimientos contables para emitir el Balance de 8 Columnas.');
+                    return;
+                }
+                var balHtml = '<table class="print-table print-table--compact"><thead><tr><th>Cód.</th><th>Cuenta</th><th class="r">Débito</th><th class="r">Crédito</th><th class="r">Deudor</th><th class="r">Acreedor</th><th class="r">Activo</th><th class="r">Pasivo</th><th class="r">Pérdida</th><th class="r">Ganancia</th></tr></thead><tbody>' +
+                    $('tbody-balance8').innerHTML + '</tbody></table>';
+                var rliHtml = '<table class="print-table"><thead><tr><th>Partida Tributaria (Art. 14 D N°3)</th><th class="r">Monto</th></tr></thead><tbody>' +
+                    $('tbody-rli').innerHTML + '</tbody></table>';
+                imprimirHtmlModulo('Balance Tributario de 8 Columnas y RLI', m.f29.regimenNombre, '', '', {
+                    paginas: [
+                        {
+                            titulo: 'Balance Tributario de 8 Columnas',
+                            subtitulo: m.f29.regimenNombre,
+                            html: balHtml,
+                            paisa: true,
+                            nota: 'Balance de comprobación, saldos, inventario y resultado por naturaleza contable.'
+                        },
+                        {
+                            titulo: 'Hoja de Trabajo RLI ProPyme (Art. 14 D N°3)',
+                            subtitulo: m.f29.regimenNombre,
+                            html: rliHtml,
+                            nota: 'Determinación referencial en base percibida/pagada pre-cierre Formulario 22.'
+                        }
+                    ]
+                });
             });
         }
 
@@ -1864,11 +1936,13 @@
         }
         if ($('btn-pnl-pdf')) {
             $('btn-pnl-pdf').addEventListener('click', function () {
+                var m = calcularModelo();
+                pintarPnl(m);
                 var html = '<div class="print-h3">Estado de Resultados (Base Devengada)</div>' +
-                    '<table class="print-table"><tbody>' + $('tbody-pnl').innerHTML + '</tbody></table>' +
+                    '<table class="print-table"><thead><tr><th>Partida</th><th class="r">Monto</th></tr></thead><tbody>' + $('tbody-pnl').innerHTML + '</tbody></table>' +
                     '<div class="print-h3" style="margin-top:14px">Flujo de Caja Operativo y Tributario</div>' +
-                    '<table class="print-table"><tbody>' + $('tbody-flujo').innerHTML + '</tbody></table>';
-                imprimirHtmlModulo('Estado de Resultados y Flujo de Caja', '', html);
+                    '<table class="print-table"><thead><tr><th>Concepto</th><th class="r">Monto</th></tr></thead><tbody>' + $('tbody-flujo').innerHTML + '</tbody></table>';
+                imprimirHtmlModulo('Estado de Resultados y Flujo de Caja', m.f29.regimenNombre, html, 'Estado financiero gerencial y proyección de compromisos tributarios y previsionales.');
             });
         }
 
@@ -2208,21 +2282,21 @@
             $('btn-dj1887-csv').addEventListener('click', function () {
                 var dj = calcularModelo().ddjj.dj1887;
                 if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1887.'); return; }
-                descargarCsvTexto('Borrador_DJ_1887_' + clienteClave() + '_AT2026.csv', dj.csv);
+                descargarCsvTexto('Borrador_DJ_1887_' + clienteSlug() + '_AT2026.csv', dj.csv);
             });
         }
         if ($('btn-dj1879-csv')) {
             $('btn-dj1879-csv').addEventListener('click', function () {
                 var dj = calcularModelo().ddjj.dj1879;
                 if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1879.'); return; }
-                descargarCsvTexto('Borrador_DJ_1879_' + clienteClave() + '_AT2026.csv', dj.csv);
+                descargarCsvTexto('Borrador_DJ_1879_' + clienteSlug() + '_AT2026.csv', dj.csv);
             });
         }
         if ($('btn-dj194x-csv')) {
             $('btn-dj194x-csv').addEventListener('click', function () {
                 var dj = calcularModelo().ddjj.dj194x;
                 if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1947/1948.'); return; }
-                descargarCsvTexto('Borrador_DJ_' + dj.codigoDj + '_' + clienteClave() + '_AT2026.csv', dj.csv);
+                descargarCsvTexto('Borrador_DJ_' + dj.codigoDj + '_' + clienteSlug() + '_AT2026.csv', dj.csv);
             });
         }
         if ($('btn-dj1887-cert-pdf')) $('btn-dj1887-cert-pdf').addEventListener('click', imprimirCertificadoN6);
@@ -2246,12 +2320,21 @@
         if ($('btn-rep-resumen')) {
             $('btn-rep-resumen').addEventListener('click', function () {
                 var m = calcularModelo();
-                var html = '<table class="print-table"><tbody>' +
-                    '<tr><td>Régimen Tributario SII</td><td class="r">' + D.esc(m.f29.regimenNombre) + '</td></tr>' +
-                    '<tr><td>Total a Pagar F29 (cód. 91)</td><td class="r"><strong>' + D.money(m.f29.codigos[91]) + '</strong></td></tr>' +
-                    '<tr><td>Ingresos Operacionales (P&amp;L)</td><td class="r">' + D.money(m.pnl.totalIngresos) + '</td></tr>' +
+                var cantTrab = resultadosNominaActiva().filter(function (r) { return !r.error; }).length;
+                var html = '<div class="print-data">' +
+                    '<div><b>Régimen Tributario SII:</b> ' + D.esc(m.f29.regimenNombre) + '</div>' +
+                    '<div><b>Trabajadores en nómina:</b> ' + cantTrab + '</div>' +
+                    '<div><b>Débito Fiscal IVA (cód. 538):</b> ' + D.money(m.f29.codigos[538]) + '</div>' +
+                    '<div><b>Crédito Fiscal IVA (cód. 537):</b> ' + D.money(m.f29.codigos[537]) + '</div>' +
+                    '</div>' +
+                    '<table class="print-table"><thead><tr><th>Indicador del Período</th><th class="r">Valor</th></tr></thead><tbody>' +
+                    '<tr><td>Ingresos de Explotación (P&amp;L)</td><td class="r">' + D.money(m.pnl.ingresosGiro) + '</td></tr>' +
+                    '<tr><td>Margen Bruto de Explotación</td><td class="r">' + moneySigno(m.pnl.margenBruto) + ' (' + D.num(m.pnl.margenBrutoPct, 1) + '%)</td></tr>' +
                     '<tr><td>Resultado Antes de Impuesto</td><td class="r">' + moneySigno(m.pnl.resultadoAntesImpuesto) + '</td></tr>' +
-                    '<tr><td>Base RLI ProPyme</td><td class="r">' + moneySigno(m.rli.rli) + '</td></tr>' +
+                    '<tr><td>Base RLI ProPyme (Art. 14 D N°3)</td><td class="r">' + moneySigno(m.rli.baseImponible) + '</td></tr>' +
+                    '<tr><td>Impuesto 1ª Categoría Simulado (' + D.num(m.rli.tasaIdpcSimulada, 2) + '%)</td><td class="r">' + D.money(m.rli.idpcSimulado) + '</td></tr>' +
+                    '<tr><td>Caja Libre Proyectada Post Impuestos</td><td class="r">' + moneySigno(m.flujo.cajaProyectadaPostImpuestos) + '</td></tr>' +
+                    '<tr class="total"><td>Total a Pagar F29 (cód. 91)</td><td class="r">' + D.money(m.f29.codigos[91]) + '</td></tr>' +
                     '</tbody></table>';
                 imprimirHtmlModulo('Resumen Mensual para el Cliente', m.f29.regimenNombre, html, 'Incluye F29 borrador, resultados del período y base tributaria.');
             });

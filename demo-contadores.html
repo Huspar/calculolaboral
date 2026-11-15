@@ -14,9 +14,9 @@
 <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/app.css?v=1.25.0">
-<link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.3.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
+<link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.4.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -338,7 +338,8 @@
                 <div class="lq-field"><label for="liq-utm">UTM del mes ($)</label><input type="number" id="liq-utm" step="1" min="1"></div>
                 <div class="lq-field"><label for="liq-mutual">Mutualidad</label><select id="liq-mutual"><option value="Mutual de Seguridad">Mutual de Seguridad</option><option value="ACHS">ACHS</option><option value="IST">IST</option><option value="ISL">ISL (sin mutual)</option></select></div>
                 <div class="lq-field"><label for="liq-ccaf">Caja de compensación</label><select id="liq-ccaf"><option value="">Sin CCAF</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
-                <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.123.456-7" autocomplete="off"></div>
+                <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.543.210-3" autocomplete="off"></div>
+                <div class="lq-field"><label for="liq-comuna">Comuna empresa (LRE)</label><input type="text" id="liq-comuna" maxlength="40" placeholder="Santiago" autocomplete="off"></div>
               </div>
               <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:12px">UF y UTM se aplican según los parámetros vigentes del período.</p>
               <div class="fin-dropzone" id="drop-liq" role="button" tabindex="0" aria-label="Subir nómina del mes">
@@ -1271,9 +1272,9 @@
 <script src="/js/liquidacion_engine.js"></script>
 <script src="/js/liquidacion_valores.js"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
-<script src="/js/pyme_excel.js?v=2.0.0"></script>
-<script src="/js/demo_comun.js?v=1.7.0"></script>
-<script src="/js/demo_contadores.js?v=1.3.0"></script>
+<script src="/js/pyme_excel.js?v=2.0.1"></script>
+<script src="/js/demo_comun.js?v=1.7.1"></script>
+<script src="/js/demo_contadores.js?v=1.3.1"></script>
 <script src="/js/previred_generador.js?v=1.4.1"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
@@ -1285,12 +1286,12 @@
 <script src="/js/demo_validaciones.js?v=1.0.0"></script>
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.1.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.8.0"></script>
+<script src="/js/demo_liquidaciones.js?v=2.8.1"></script>
 <script src="/js/contadores_f29.js?v=1.1.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
-<script src="/js/contadores_renta.js?v=1.0.0"></script>
-<script src="/js/demo_suite.js?v=2.0.0"></script>
+<script src="/js/contadores_renta.js?v=1.0.1"></script>
+<script src="/js/demo_suite.js?v=2.1.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {
@@ -1402,11 +1403,24 @@
             }, 80);
         });
     }
-    ['btn-previred-liq', 'btn-lre-liq', 'btn-print-liq', 'btn-print-fin'].forEach(function (idBtn) {
+    ['btn-previred-liq', 'btn-lre-liq'].forEach(function (idBtn) {
         var b = document.getElementById(idBtn);
         if (!b) return;
         b.addEventListener('click', function () {
             setTimeout(function () { intentarAbrirTrasValor(idBtn); }, 700);
+        });
+    });
+    ['btn-print-liq', 'btn-print-fin'].forEach(function (idBtn) {
+        var b = document.getElementById(idBtn);
+        if (!b) return;
+        b.addEventListener('click', function () {
+            var pa = document.getElementById('print-area');
+            if (!pa || !pa.innerHTML.trim()) return;
+            var alTerminar = function () {
+                window.removeEventListener('afterprint', alTerminar);
+                setTimeout(function () { intentarAbrirTrasValor(idBtn); }, 250);
+            };
+            window.addEventListener('afterprint', alTerminar);
         });
     });
 

@@ -455,6 +455,7 @@
             paginas.push('<div class="print-page">' +
                 D.encabezado('Liquidación de sueldo · ' + periodo, D.esc(r.record.nombre) + ' · ' + D.esc(r.record.rut || 'sin RUT')) +
                 '<div class="print-data">' +
+                (clienteActual() ? '<div><b>Cliente:</b> ' + D.esc(clienteActual()) + '</div>' : '') +
                 '<div><b>Sueldo base:</b> ' + D.money(r.record.sueldo) + '</div>' +
                 '<div><b>Días trabajados:</b> ' + D.num(r.record.dias, 0) + ' de 30</div>' +
                 '<div><b>AFP:</b> ' + D.esc(r.record.afp) + '</div>' +
@@ -462,7 +463,6 @@
                 '<div><b>Contrato:</b> ' + (r.record.contrato === 'indefinido' ? 'Indefinido' : 'Plazo fijo') + '</div>' +
                 '<div><b>Fecha de ingreso:</b> ' + D.fechaCorta(r.record.ingreso) + '</div>' +
                 '</div>' +
-                (clienteActual() ? '<div><b>Cliente:</b> ' + D.esc(clienteActual()) + '</div>' : '') +
                 '<div class="print-h3">Haberes</div>' +
                 '<table class="print-table"><tbody>' + filas(d.haberesImponibles.concat(d.haberesNoImponibles)) +
                 '<tr class="total"><td>Total haberes</td><td class="r">' + D.money(d.totalHaberes) + '</td></tr></tbody></table>' +
@@ -475,6 +475,7 @@
                     filas(d.empleador.lineas) +
                     '<tr class="total"><td>Costo total</td><td class="r">' + D.money(d.empleador.costoTotal) + '</td></tr></tbody></table>' : '') +
                 (r.avisos.length ? '<div class="print-flag">Observaciones: ' + D.esc(r.avisos.join(' ')) + '</div>' : '') +
+                '<div class="print-firmas"><div>Firma del trabajador</div><div>Firma y timbre del empleador</div></div>' +
                 D.NOTA + '</div>');
         });
 
@@ -535,6 +536,12 @@
             var x = EXTRA[row.RUT];
             if (x) { row['Sexo'] = x[0]; row['Isapre'] = x[1]; row['Banco'] = x[2]; row['Tipo de cuenta'] = x[3]; row['Número de cuenta'] = x[4]; }
         });
+        var rutEmp = document.getElementById('liq-rut-empresa');
+        if (rutEmp && !rutEmp.value.trim()) rutEmp.value = '76.543.210-3';
+        var comEmp = document.getElementById('liq-comuna');
+        if (comEmp && !comEmp.value.trim()) comEmp.value = 'Santiago';
+        var cliEl = document.getElementById('liq-cliente');
+        if (cliEl && !cliEl.value.trim()) cliEl.value = 'Panadería San Isidro SpA';
         cargar(rows, 'ejemplo-liquidaciones-' + document.getElementById('periodo').value + '.xlsx');
     }
 
@@ -1080,6 +1087,11 @@
             calcularTodo();
         });
         document.getElementById('btn-print-liq').addEventListener('click', function () {
+            var ok = state.results.filter(function (r) { return !r.error; });
+            if (!ok.length) {
+                D.avisar('Primero carga una nómina o usa el ejemplo de liquidaciones.');
+                return;
+            }
             construirImpresion();
             window.print();
         });

@@ -134,6 +134,7 @@
                     padding: 0 !important;
                     max-width: 100% !important;
                     width: 100% !important;
+                    overflow: visible !important;
                 }
             }
 
