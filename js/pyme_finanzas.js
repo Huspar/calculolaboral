@@ -373,13 +373,28 @@
             [],
             ['RUT Proveedor', 'Razón Social', 'Banco', 'Tipo de cuenta', 'Número de cuenta', 'Monto a pagar', 'Glosa', 'Correo aviso']
         ].concat(nom.filasDatos).concat([
-            [],
             ['', 'Total seleccionado', '', '', '', nom.total, '', '']
         ]);
         var ex = typeof module !== 'undefined' && module.exports ? require('./pyme_excel.js') : root.CLPymeExcel;
         return {
             nom: nom,
-            bytes: ex.construirLibro([{ nombre: 'Nomina proveedores', filas: filas, textos: { 0: true, 4: true } }], xlsxMod)
+            bytes: ex.construirLibro([{
+                nombre: 'Nomina proveedores',
+                filas: filas,
+                textos: { 0: true, 4: true },
+                monedas: { 5: true },
+                alinear: { 0: 'center', 1: 'left', 2: 'left', 3: 'center', 4: 'center', 5: 'right', 6: 'left', 7: 'left' },
+                anchos: { 0: 15, 1: 28, 2: 20, 3: 18, 4: 20, 5: 16, 6: 24, 7: 26 },
+                estilo: {
+                    tituloFilas: [0],
+                    subtituloFilas: [1],
+                    encabezadoFila: 3,
+                    totalesFilas: [filas.length - 1],
+                    congelarFila: 4,
+                    orientacion: 'landscape',
+                    zebra: true
+                }
+            }], xlsxMod)
         };
     }
 

@@ -113,43 +113,75 @@
 
     function nominaFilas(datos, r) {
         var out = [
-            ['Nómina de pagos de ' + datos.periodoNombre],
+            ['Nómina de pagos · ' + datos.periodoNombre],
             ['Planilla genérica para revisar: no es el formato de ningún banco y no transfiere nada.'],
             [],
             ['RUT', 'Nombre', 'Banco', 'Tipo de cuenta', 'Número de cuenta', 'Monto a pagar', 'Glosa']
         ];
         r.filasDatos.forEach(function (f) { out.push(f); });
-        out.push([]);
         out.push(['', 'Total', '', '', '', r.total, '']);
         return out;
     }
 
     function nominaXlsx(datos, xlsxMod) {
         var r = nomina(datos);
+        var filas = nominaFilas(datos, r);
         return {
             res: r,
-            bytes: EX().construirLibro([{ nombre: 'Nomina de pagos', filas: nominaFilas(datos, r), textos: { 0: true, 4: true } }], xlsxMod)
+            bytes: EX().construirLibro([{
+                nombre: 'Nomina de pagos',
+                filas: filas,
+                textos: { 0: true, 4: true },
+                monedas: { 5: true },
+                alinear: { 0: 'center', 1: 'left', 2: 'left', 3: 'center', 4: 'center', 5: 'right', 6: 'left' },
+                anchos: { 0: 15, 1: 28, 2: 20, 3: 19, 4: 20, 5: 16, 6: 28 },
+                estilo: {
+                    tituloFilas: [0],
+                    subtituloFilas: [1],
+                    encabezadoFila: 3,
+                    totalesFilas: [filas.length - 1],
+                    congelarFila: 4,
+                    orientacion: 'landscape',
+                    zebra: true
+                }
+            }], xlsxMod)
         };
     }
 
     function asientoFilas(datos, s) {
         var out = [
-            ['Asiento de remuneraciones de ' + datos.periodoNombre],
+            ['Asiento de remuneraciones · ' + datos.periodoNombre],
             ['Hecho con el Asistente Laboral Pyme a partir de las liquidaciones guardadas. Revísalo antes de contabilizarlo.'],
             [],
             ['Cuenta', 'Glosa', 'Debe', 'Haber']
         ];
         s.filas.forEach(function (f) { out.push([f.cuenta, f.glosa, f.debe || '', f.haber || '']); });
-        out.push([]);
         out.push(['', 'Totales', s.debe, s.haber]);
         return out;
     }
 
     function asientoXlsx(datos, xlsxMod) {
         var s = asiento(datos);
+        var filas = asientoFilas(datos, s);
         return {
             res: s,
-            bytes: EX().construirLibro([{ nombre: 'Asiento remuneraciones', filas: asientoFilas(datos, s), textos: { 0: true } }], xlsxMod)
+            bytes: EX().construirLibro([{
+                nombre: 'Asiento remuneraciones',
+                filas: filas,
+                textos: { 0: true },
+                monedas: { 2: true, 3: true },
+                alinear: { 0: 'center', 1: 'left', 2: 'right', 3: 'right' },
+                anchos: { 0: 15, 1: 48, 2: 18, 3: 18 },
+                estilo: {
+                    tituloFilas: [0],
+                    subtituloFilas: [1],
+                    encabezadoFila: 3,
+                    totalesFilas: [filas.length - 1],
+                    congelarFila: 4,
+                    orientacion: 'portrait',
+                    zebra: true
+                }
+            }], xlsxMod)
         };
     }
 

@@ -73,8 +73,8 @@
 
     function hojaFilas(meta, filas) {
         var datos = [
-            ['Libro de remuneraciones de ' + meta.periodoNombre],
-            [meta.empresa.razonSocial || '', 'RUT ' + (meta.empresa.rut || '')],
+            ['Libro de remuneraciones · ' + meta.periodoNombre],
+            ['Empresa: ' + ((meta.empresa && meta.empresa.razonSocial) || '—') + '   ·   RUT ' + ((meta.empresa && meta.empresa.rut) || '—')],
             [],
             COLUMNAS.map(function (c) { return c.titulo; })
         ];
@@ -82,13 +82,35 @@
             datos.push(COLUMNAS.map(function (c) { return f[c.k]; }));
         });
         datos.push([]);
-        datos.push(['Montos en pesos, calculados con el Asistente Laboral Pyme de calculolaboral.cl a partir de las liquidaciones guardadas. Las cotizaciones del empleador son una estimación: el monto exacto lo calcula Previred.']);
+        datos.push(['Montos en pesos chilenos (CLP), calculados con el Asistente Laboral Pyme de calculolaboral.cl a partir de las liquidaciones guardadas. Las cotizaciones del empleador son una estimación: el monto exacto lo calcula Previred.']);
         datos.push(['No reemplaza al Libro de Remuneraciones Electrónico de la Dirección del Trabajo, obligatorio para empleadores con 5 o más trabajadores (art. 62 del Código del Trabajo).']);
         return datos;
     }
 
     function xlsx(meta, filas, xlsxMod) {
-        return EX().construirLibro([{ nombre: 'Libro remuneraciones', filas: hojaFilas(meta, filas), textos: { 0: true } }], xlsxMod);
+        var datos = hojaFilas(meta, filas);
+        var totIdx = 4 + filas.length;
+        var monedas = {};
+        for (var i = 3; i < COLUMNAS.length; i++) monedas[i] = true;
+        return EX().construirLibro([{
+            nombre: 'Libro remuneraciones',
+            filas: datos,
+            textos: { 0: true },
+            monedas: monedas,
+            alinear: { 0: 'center', 1: 'left', 2: 'center' },
+            anchos: { 0: 15, 1: 28, 2: 12 },
+            estilo: {
+                tituloFilas: [0],
+                metaFilas: [1],
+                encabezadoFila: 3,
+                totalesFilas: [totIdx],
+                notasFilas: [totIdx + 2, totIdx + 3],
+                congelarFila: 4,
+                autoFiltro: true,
+                orientacion: 'landscape',
+                zebra: true
+            }
+        }], xlsxMod);
     }
 
     var api = { COLUMNAS: COLUMNAS, fila: fila, totales: totales, csv: csv, xlsx: xlsx, _hojaFilas: hojaFilas, version: '1.1.0' };

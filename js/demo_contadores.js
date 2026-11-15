@@ -257,15 +257,47 @@
     }
 
     function exportar() {
-        var filas = state.results.map(function (r) {
+        var est = D.estudio();
+        var ufEl = document.getElementById('uf-value');
+        var ufTxt = ufEl && ufEl.value ? (' · UF ref.: $' + Number(ufEl.value).toLocaleString('es-CL')) : '';
+        var tIas = 0, tAviso = 0, tVac = 0, tPend = 0, tAfc = 0, tTot = 0;
+        var filasDatos = state.results.map(function (r) {
+            var ias = Math.round(r.ias), nav = Math.round(r.notice), vac = Math.round(r.vacation),
+                pend = Math.round(r.pending), afc = Math.round(r.afc), tot = Math.round(r.total);
+            tIas += ias; tAviso += nav; tVac += vac; tPend += pend; tAfc += afc; tTot += tot;
             return [r.record.rut, r.record.nombre, r.record.inicio, r.record.termino, r.record.causal,
-                r.serviceTime.indemnityYears || 0, Math.round(r.ias), Math.round(r.notice),
-                Math.round(r.vacation), Math.round(r.pending), Math.round(r.afc), Math.round(r.total)];
+                r.serviceTime.indemnityYears || 0, ias, nav, vac, pend, afc, tot];
         });
-        D.descargarXlsx('finiquitos-lote.xlsx',
-            ['RUT', 'Trabajador', 'Fecha ingreso', 'Fecha término', 'Causal', 'Años', 'Indemnización', 'Aviso previo', 'Vacaciones', 'Rem. pendiente', 'AFC', 'Total'],
-            filas,
-            { nombreHoja: 'Finiquitos', textos: { 0: true, 2: true, 3: true } });
+        var filas = [
+            ['Cálculo Masivo de Finiquitos — Resumen del Lote'],
+            ['Estudio: ' + est.nombre + ufTxt + '   ·   Emitido: ' + D.hoy()],
+            [],
+            ['RUT', 'Trabajador', 'Fecha ingreso', 'Fecha término', 'Causal', 'Años', 'Indemnización', 'Aviso previo', 'Vacaciones', 'Rem. pendiente', 'AFC', 'Total']
+        ].concat(filasDatos).concat([
+            ['', 'Totales (' + filasDatos.length + ')', '', '', '', '', tIas, tAviso, tVac, tPend, tAfc, tTot],
+            [],
+            ['Montos referenciales calculados con CálculoLaboral. Revisa las bases, días de vacaciones y causal antes de emitir el finiquito definitivo.']
+        ]);
+        D.descargarXlsx('finiquitos-lote.xlsx', null, null, {
+            nombreHoja: 'Finiquitos',
+            filasCompletas: filas,
+            textos: { 0: true, 2: true, 3: true, 4: true },
+            decimales: { 5: true },
+            monedas: { 6: true, 7: true, 8: true, 9: true, 10: true, 11: true },
+            alinear: { 0: 'center', 1: 'left', 2: 'center', 3: 'center', 4: 'center', 5: 'right' },
+            anchos: { 0: 15, 1: 28, 2: 14, 3: 14, 4: 10, 5: 10 },
+            estilo: {
+                tituloFilas: [0],
+                metaFilas: [1],
+                encabezadoFila: 3,
+                totalesFilas: [4 + filasDatos.length],
+                notasFilas: [6 + filasDatos.length],
+                congelarFila: 4,
+                autoFiltro: true,
+                orientacion: 'landscape',
+                zebra: true
+            }
+        });
     }
 
     function plantilla() {
@@ -273,13 +305,41 @@
             ['RUT', 'Nombre', 'Fecha ingreso', 'Fecha término', 'Sueldo base', 'Gratificación', 'Colación y movilización', 'Promedio variables', 'Días vacaciones pendientes', 'Causal'],
             ['12.345.678-9', 'María González Pérez', '2019-03-01', '2026-11-30', 1200000, 0, 150000, 0, 7.5, '161'],
             ['9.876.543-2', 'Pedro Soto Ramírez', '2022-07-15', '2026-11-30', 850000, 0, 100000, 60000, 0, '159'],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
             ['', '', '', '', '', '', '', '', '', '']
         ];
-        var ws = XLSX.utils.aoa_to_sheet(data);
-        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 14 }, { wch: 14 }, { wch: 13 }, { wch: 13 }, { wch: 21 }, { wch: 16 }, { wch: 21 }, { wch: 9 }];
-        var wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Nomina');
-        XLSX.writeFile(wb, 'plantilla-finiquitos-calculolaboral.xlsx');
+        var instr = [
+            ['Instrucciones · Plantilla de Finiquitos en Lote'],
+            ['No cambies los encabezados de la fila 1 en la pestaña «Nomina». Completa desde la fila 2 en adelante.'],
+            [],
+            ['Columna', 'Formato esperado'],
+            ['RUT', 'Con puntos y guion (ej. 12.345.678-9).'],
+            ['Fechas ingreso / término', 'Formato AAAA-MM-DD (ej. 2019-03-01) o DD-MM-AAAA.'],
+            ['Montos en pesos', 'Números enteros sin puntos ni símbolo $. Gratificación 0 calcula tope legal automático si aplica.'],
+            ['Días vacaciones pendientes', 'Número decimal (ej. 7.5).'],
+            ['Causal', 'Código artículo CT: 161 (necesidades), 159 (plazo/renuncia/mutuo acuerdo), 160 (disciplinaria).']
+        ];
+        D.descargarXlsx('plantilla-finiquitos-calculolaboral.xlsx', null, null, {
+            hojas: [
+                {
+                    nombre: 'Nomina',
+                    filas: data,
+                    textos: { 0: true, 2: true, 3: true, 9: true },
+                    monedas: { 4: true, 5: true, 6: true, 7: true },
+                    decimales: { 8: true },
+                    alinear: { 0: 'center', 1: 'left', 2: 'center', 3: 'center', 9: 'center' },
+                    anchos: { 0: 15, 1: 28, 2: 14, 3: 14, 4: 14, 5: 14, 6: 22, 7: 18, 8: 22, 9: 10 },
+                    estilo: { encabezadoFila: 0, filasEntrada: [3, 4, 5], congelarFila: 1, orientacion: 'landscape', zebra: true }
+                },
+                {
+                    nombre: 'Instrucciones',
+                    filas: instr,
+                    anchos: { 0: 26, 1: 72 },
+                    estilo: { tituloFilas: [0], subtituloFilas: [1], encabezadoFila: 3, congelarFila: 4, orientacion: 'portrait', zebra: true }
+                }
+            ]
+        });
     }
 
     // ----------------------------------------------------------------- boot

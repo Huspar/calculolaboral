@@ -1082,8 +1082,14 @@
         }
         if ($('btn-f29-csv')) {
             $('btn-f29-csv').addEventListener('click', function () {
-                var c = calcularModelo().f29.codigos;
+                var m = calcularModelo();
+                var c = m.f29.codigos;
+                var per = periodoActual();
                 var filas = [
+                    ['Hoja Guía Formulario 29 · ' + per],
+                    ['Cliente: ' + clienteNombre() + '   ·   Régimen: ' + m.f29.regimenNombre],
+                    [],
+                    ['Código SII', 'Concepto tributario', 'Cantidad / Base', 'Monto ($)'],
                     ['503 / 502', 'Facturas emitidas del giro', c[503], c[502]],
                     ['509 / 510', 'Notas de crédito emitidas (restan)', c[509], -c[510]],
                     ['538', 'Total débito fiscal', '', c[538]],
@@ -1098,9 +1104,28 @@
                     ['48', 'Impuesto Único 2ª Categoría', '', c[48]],
                     ['151', 'Retención boletas de honorarios', '', c[151]],
                     ['563 / 115 / 62', 'PPM neto determinado (tasa ' + c[115] + '%)', c[563], c[62]],
-                    ['91', 'Total a pagar dentro del plazo legal', '', c[91]]
+                    ['91', 'Total a pagar dentro del plazo legal', '', c[91]],
+                    [],
+                    ['Borrador referencial generado con CálculoLaboral. Confirma los códigos en sii.cl antes de declarar.']
                 ];
-                D.descargarCsv('hoja-guia-f29-' + periodoActual() + '.csv', ['Código SII', 'Concepto', 'Cantidad / Base', 'Monto ($)'], filas);
+                D.descargarXlsx('hoja-guia-f29-' + per + '.xlsx', null, null, {
+                    nombreHoja: 'Guía F29',
+                    filasCompletas: filas,
+                    textos: { 0: true },
+                    monedas: { 3: true },
+                    alinear: { 0: 'center', 1: 'left', 2: 'right', 3: 'right' },
+                    anchos: { 0: 15, 1: 42, 2: 18, 3: 18 },
+                    estilo: {
+                        tituloFilas: [0],
+                        metaFilas: [1],
+                        encabezadoFila: 3,
+                        totalesFilas: [6, 12, 13, 18],
+                        notasFilas: [20],
+                        congelarFila: 4,
+                        orientacion: 'portrait',
+                        zebra: true
+                    }
+                });
             });
         }
         if ($('btn-f29-pdf')) {
@@ -1220,13 +1245,79 @@
         if ($('btn-libros-csv')) {
             $('btn-libros-csv').addEventListener('click', function () {
                 var m = calcularModelo();
-                var filas = [];
-                m.asientos.forEach(function (a) {
+                var per = periodoActual();
+                var filasDiario = [
+                    ['Libro Diario Contable · ' + per],
+                    ['Cliente: ' + clienteNombre() + '   ·   Asientos: ' + m.asientos.length],
+                    [],
+                    ['Asiento', 'Fecha', 'Origen', 'Glosa', 'Código', 'Cuenta', 'Debe', 'Haber']
+                ];
+                var sDebe = 0, sHaber = 0;
+                m.asientos.forEach(function (a, i) {
+                    var numA = '#' + (i + 1);
                     a.lineas.forEach(function (l) {
-                        filas.push([a.id, a.fecha, a.origen, a.glosa, l.cuenta, l.nombre, l.debe, l.haber]);
+                        var d = Math.round(l.debe || 0), h = Math.round(l.haber || 0);
+                        sDebe += d; sHaber += h;
+                        filasDiario.push([numA, a.fecha, a.origen, a.glosa, l.cuenta, l.nombre, d || '', h || '']);
                     });
                 });
-                D.descargarCsv('libro-diario-' + periodoActual() + '.csv', ['Asiento', 'Fecha', 'Origen', 'Glosa', 'Código', 'Cuenta', 'Debe', 'Haber'], filas);
+                filasDiario.push(['', '', '', 'Sumas iguales Libro Diario', '', '', sDebe, sHaber]);
+
+                var filasMayor = [
+                    ['Libro Mayor (Saldos por Cuenta) · ' + per],
+                    ['Cliente: ' + clienteNombre() + '   ·   Régimen: ' + m.f29.regimenNombre],
+                    [],
+                    ['Código', 'Cuenta', 'Total Debe', 'Total Haber', 'Saldo Deudor', 'Saldo Acreedor']
+                ];
+                var md = 0, mh = 0, msd = 0, msa = 0;
+                (m.mayor || []).forEach(function (c) {
+                    var d = Math.round(c.debe || 0), h = Math.round(c.haber || 0);
+                    var sd = d > h ? (d - h) : 0, sa = h > d ? (h - d) : 0;
+                    md += d; mh += h; msd += sd; msa += sa;
+                    filasMayor.push([c.codigo, c.nombre, d, h, sd, sa]);
+                });
+                filasMayor.push(['', 'Totales', md, mh, msd, msa]);
+
+                D.descargarXlsx('libro-diario-' + per + '.xlsx', null, null, {
+                    hojas: [
+                        {
+                            nombre: 'Libro Diario',
+                            filas: filasDiario,
+                            textos: { 0: true, 1: true, 4: true },
+                            monedas: { 6: true, 7: true },
+                            alinear: { 0: 'center', 1: 'center', 2: 'center', 3: 'left', 4: 'center', 5: 'left' },
+                            anchos: { 0: 10, 1: 13, 2: 14, 3: 36, 4: 12, 5: 32, 6: 16, 7: 16 },
+                            estilo: {
+                                tituloFilas: [0],
+                                metaFilas: [1],
+                                encabezadoFila: 3,
+                                totalesFilas: [filasDiario.length - 1],
+                                congelarFila: 4,
+                                autoFiltro: true,
+                                orientacion: 'landscape',
+                                zebra: true
+                            }
+                        },
+                        {
+                            nombre: 'Libro Mayor',
+                            filas: filasMayor,
+                            textos: { 0: true },
+                            monedas: { 2: true, 3: true, 4: true, 5: true },
+                            alinear: { 0: 'center', 1: 'left' },
+                            anchos: { 0: 12, 1: 34, 2: 16, 3: 16, 4: 16, 5: 16 },
+                            estilo: {
+                                tituloFilas: [0],
+                                metaFilas: [1],
+                                encabezadoFila: 3,
+                                totalesFilas: [filasMayor.length - 1],
+                                congelarFila: 4,
+                                autoFiltro: true,
+                                orientacion: 'landscape',
+                                zebra: true
+                            }
+                        }
+                    ]
+                });
             });
         }
         if ($('btn-libros-pdf')) {
@@ -1268,20 +1359,59 @@
 
         if ($('btn-balance-csv')) {
             $('btn-balance-csv').addEventListener('click', function () {
-                var b = calcularModelo().balance;
-                var filas = b.filas.map(function (f) {
-                    return [f.codigo, f.nombre, f.debito, f.credito, f.deudor, f.acreedor, f.activo, f.pasivo, f.perdida, f.ganancia];
+                var m = calcularModelo();
+                var b = m.balance;
+                var per = periodoActual();
+                var filas = [
+                    ['Balance Tributario Clasificado de 8 Columnas · ' + per],
+                    ['Cliente: ' + clienteNombre() + '   ·   Régimen: ' + m.f29.regimenNombre + '   ·   Cuadratura SII'],
+                    [],
+                    ['Código', 'Cuenta contable', 'Sumas', '', 'Saldos', '', 'Inventario', '', 'Resultados', ''],
+                    ['', '', 'Débito', 'Crédito', 'Deudor', 'Acreedor', 'Activo', 'Pasivo', 'Pérdida', 'Ganancia']
+                ];
+                b.filas.forEach(function (f) {
+                    filas.push([f.codigo, f.nombre, f.debito, f.credito, f.deudor, f.acreedor, f.activo, f.pasivo, f.perdida, f.ganancia]);
                 });
                 var si = b.sumasIguales;
                 filas.push(['', 'SUMAS IGUALES', si.debito, si.credito, si.deudor, si.acreedor, si.activo, si.pasivo, si.perdida, si.ganancia]);
-                D.descargarCsv('balance-8-columnas-' + periodoActual() + '.csv',
-                    ['Código', 'Cuenta', 'Débito', 'Crédito', 'Saldo Deudor', 'Saldo Acreedor', 'Activo', 'Pasivo', 'Pérdida', 'Ganancia'], filas);
+                D.descargarXlsx('balance-8-columnas-' + per + '.xlsx', null, null, {
+                    nombreHoja: 'Balance 8 Columnas',
+                    filasCompletas: filas,
+                    textos: { 0: true },
+                    monedas: { 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true },
+                    alinear: { 0: 'center', 1: 'left' },
+                    anchos: { 0: 11, 1: 32, 2: 14, 3: 14, 4: 14, 5: 14, 6: 14, 7: 14, 8: 14, 9: 14 },
+                    estilo: {
+                        tituloFilas: [0],
+                        metaFilas: [1],
+                        grupoFilas: [3],
+                        encabezadoFila: 4,
+                        totalesFilas: [filas.length - 1],
+                        merges: [
+                            { s: { r: 3, c: 0 }, e: { r: 4, c: 0 } },
+                            { s: { r: 3, c: 1 }, e: { r: 4, c: 1 } },
+                            { s: { r: 3, c: 2 }, e: { r: 3, c: 3 } },
+                            { s: { r: 3, c: 4 }, e: { r: 3, c: 5 } },
+                            { s: { r: 3, c: 6 }, e: { r: 3, c: 7 } },
+                            { s: { r: 3, c: 8 }, e: { r: 3, c: 9 } }
+                        ],
+                        congelarFila: 5,
+                        orientacion: 'landscape',
+                        zebra: true
+                    }
+                });
             });
         }
         if ($('btn-rli-csv')) {
             $('btn-rli-csv').addEventListener('click', function () {
-                var r = calcularModelo().rli;
+                var m = calcularModelo();
+                var r = m.rli;
+                var per = periodoActual();
                 var filas = [
+                    ['Determinación RLI ProPyme General (Art. 14 D N°3 LIR) · ' + per],
+                    ['Cliente: ' + clienteNombre() + '   ·   Flujo percibido y pagado'],
+                    [],
+                    ['Concepto RLI Art. 14 D N°3', 'Monto ($)'],
                     ['Ingresos devengados netos', r.ingresosDevengadosNetos],
                     ['Menos: Ventas no cobradas (CxC netas)', -r.ventasNoCobradasNetas],
                     ['Más: Cobros períodos anteriores', r.cobrosAnterioresNetos],
@@ -1290,9 +1420,27 @@
                     ['Menos: Remuneraciones y honorarios pagados', -r.remuneracionesHonorariosPagados],
                     ['Menos: Activo fijo pagado (depreciación instantánea)', -r.activoFijoPagadoNeto],
                     ['Más: Agregados art. 21 y 31 LIR', r.multasGastosRechazados],
-                    ['Base Imponible / RLI ProPyme 14 D N°3', r.baseImponible]
+                    ['Base Imponible / RLI ProPyme 14 D N°3', r.baseImponible],
+                    [],
+                    ['Hoja de trabajo referencial para declaración F22. Revisa respaldos y exenciones con el contador responsable.']
                 ];
-                D.descargarCsv('hoja-rli-propyme-' + periodoActual() + '.csv', ['Concepto RLI Art. 14 D N°3', 'Monto ($)'], filas);
+                D.descargarXlsx('hoja-rli-propyme-' + per + '.xlsx', null, null, {
+                    nombreHoja: 'RLI ProPyme',
+                    filasCompletas: filas,
+                    monedas: { 1: true },
+                    alinear: { 0: 'left', 1: 'right' },
+                    anchos: { 0: 52, 1: 18 },
+                    estilo: {
+                        tituloFilas: [0],
+                        metaFilas: [1],
+                        encabezadoFila: 3,
+                        totalesFilas: [7, 12],
+                        notasFilas: [14],
+                        congelarFila: 4,
+                        orientacion: 'portrait',
+                        zebra: true
+                    }
+                });
             });
         }
         if ($('btn-balance-pdf')) {
@@ -1311,21 +1459,26 @@
             $('btn-pnl-csv').addEventListener('click', function () {
                 var m = calcularModelo();
                 var p = m.pnl, fl = m.flujo;
+                var per = periodoActual();
                 var filas = [
-                    ['ESTADO DE RESULTADOS', ''],
+                    ['Estado de Resultados y Flujo de Caja · ' + per],
+                    ['Cliente: ' + clienteNombre() + '   ·   Cifras netas en pesos chilenos (CLP)'],
+                    [],
+                    ['Rubro / Concepto', 'Monto ($)'],
+                    ['ESTADO DE RESULTADOS (BASE DEVENGADA)', ''],
                     ['Ingresos de explotación', p.ingresosGiro],
                     ['Costo de ventas', -p.costoVentas],
                     ['Margen bruto', p.margenBruto],
                     ['Gasto laboral', -p.gastoLaboral],
                     ['Honorarios profesionales', -p.gastoHonorarios],
-                    ['Gastos administración', -p.gastoAdmin],
-                    ['Resultado operacional', p.resultadoOperacional],
+                    ['Gastos de administración', -p.gastoAdmin],
+                    ['Resultado operacional (EBIT)', p.resultadoOperacional],
                     ['Resultado antes de impuestos', p.resultadoAntesImpuesto],
-                    ['', ''],
-                    ['FLUJO DE CAJA DEL PERÍODO', ''],
+                    [],
+                    ['FLUJO DE CAJA DEL PERÍODO Y COMPROMISOS', ''],
                     ['Saldo inicial banco', fl.saldoInicialBanco],
-                    ['Cobros clientes', fl.entradasCobrosClientes],
-                    ['Pagos proveedores', -fl.salidasProveedores],
+                    ['Cobros a clientes', fl.entradasCobrosClientes],
+                    ['Pagos a proveedores', -fl.salidasProveedores],
                     ['Pagos sueldos líquidos', -fl.salidasSueldos],
                     ['Pagos honorarios líquidos', -fl.salidasHonorarios],
                     ['Saldo disponible banco al cierre', fl.saldoDisponibleBanco],
@@ -1333,7 +1486,23 @@
                     ['Compromiso F29 cód. 91 día 20', -fl.compromisoF29Dia20],
                     ['Caja libre proyectada post-impuestos', fl.cajaProyectadaPostImpuestos]
                 ];
-                D.descargarCsv('estado-resultados-flujo-' + periodoActual() + '.csv', ['Concepto', 'Monto ($)'], filas);
+                D.descargarXlsx('estado-resultados-flujo-' + per + '.xlsx', null, null, {
+                    nombreHoja: 'Resultados y Flujo',
+                    filasCompletas: filas,
+                    monedas: { 1: true },
+                    alinear: { 0: 'left', 1: 'right' },
+                    anchos: { 0: 46, 1: 20 },
+                    estilo: {
+                        tituloFilas: [0],
+                        metaFilas: [1],
+                        encabezadoFila: 3,
+                        seccionFilas: [4, 14],
+                        totalesFilas: [7, 11, 12, 20, 23],
+                        congelarFila: 4,
+                        orientacion: 'portrait',
+                        zebra: true
+                    }
+                });
             });
         }
         if ($('btn-pnl-pdf')) {

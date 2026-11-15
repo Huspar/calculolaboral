@@ -168,8 +168,26 @@
 
     function plantillaXlsx(xlsxMod) {
         var enc = COLUMNAS.map(function (c) { return c.titulo; });
-        var anchos = COLUMNAS.map(function (c) { return Math.min(Math.max(c.titulo.length + 3, 14), 38); });
-        return EX().construirLibro([{ nombre: 'Trabajadores', filas: [enc], anchos: anchos, textos: { 1: true, 3: true, 5: true, 16: true } }], xlsxMod);
+        var anchos = COLUMNAS.map(function (c) { return Math.min(Math.max(Math.ceil(c.titulo.length * 0.72) + 4, 15), 34); });
+        anchos[0] = 28; anchos[1] = 15; anchos[2] = 22;
+        var filas = [enc];
+        for (var i = 0; i < 8; i++) filas.push(new Array(COLUMNAS.length).fill(''));
+        return EX().construirLibro([{
+            nombre: 'Trabajadores',
+            filas: filas,
+            anchos: anchos,
+            textos: { 1: true, 3: true, 5: true, 16: true },
+            monedas: { 8: true, 9: true, 10: true },
+            decimales: { 15: true },
+            alinear: { 1: 'center', 3: 'center', 5: 'center', 6: 'center', 7: 'center', 16: 'center' },
+            estilo: {
+                encabezadoFila: 0,
+                filasEntrada: [1, 2, 3, 4, 5, 6, 7, 8],
+                congelarFila: 1,
+                orientacion: 'landscape',
+                zebra: true
+            }
+        }], xlsxMod);
     }
 
     function leerXlsx(buffer, xlsxMod) {

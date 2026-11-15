@@ -75,8 +75,8 @@
 
     function hojaFilas(meta, filas) {
         var out = [
-            ['Resumen de ' + meta.periodoNombre + ' de todas las empresas'],
-            ['Montos en pesos calculados con el Asistente Laboral Pyme a partir de las liquidaciones y boletas guardadas. Previred y el F29 son una estimación: confirma los montos en Previred y en sii.cl antes de declarar.'],
+            ['Resumen mensual multiempresa · ' + meta.periodoNombre],
+            ['Montos en pesos chilenos calculados con el Asistente Laboral Pyme a partir de las liquidaciones y boletas guardadas. Previred y el F29 son una estimación: confirma los montos en Previred y en sii.cl antes de declarar.'],
             [],
             COLUMNAS.map(function (c) { return c.titulo; })
         ];
@@ -87,7 +87,25 @@
     }
 
     function xlsx(meta, filas, xlsxMod) {
-        return EX().construirLibro([{ nombre: 'Resumen empresas', filas: hojaFilas(meta, filas), textos: { 1: true } }], xlsxMod);
+        var datos = hojaFilas(meta, filas);
+        return EX().construirLibro([{
+            nombre: 'Resumen empresas',
+            filas: datos,
+            textos: { 1: true },
+            monedas: { 5: true, 6: true, 7: true, 8: true, 9: true },
+            alinear: { 0: 'left', 1: 'center', 2: 'center', 3: 'center', 4: 'center' },
+            anchos: { 0: 30, 1: 15, 2: 14, 3: 15, 4: 15 },
+            estilo: {
+                tituloFilas: [0],
+                subtituloFilas: [1],
+                encabezadoFila: 3,
+                totalesFilas: [datos.length - 1],
+                congelarFila: 4,
+                autoFiltro: true,
+                orientacion: 'landscape',
+                zebra: true
+            }
+        }], xlsxMod);
     }
 
     var api = { resumenEmpresa: resumenEmpresa, totales: totales, csv: csv, xlsx: xlsx, COLUMNAS: COLUMNAS, version: '1.1.0' };

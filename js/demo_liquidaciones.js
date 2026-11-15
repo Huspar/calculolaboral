@@ -539,15 +539,46 @@
     }
 
     function exportar() {
-        var filas = state.results.map(function (r) {
+        var opc = opcionesArchivos();
+        var nomCli = clienteActual() === 'sin-nombre' ? D.estudio().nombre : (document.getElementById('liq-cliente').value || '').trim();
+        var metaTxt = 'Cliente: ' + nomCli + (opc.empresa.rut ? ('   ·   RUT ' + opc.empresa.rut) : '') +
+            '   ·   Período: ' + opc.periodoNombre + '   ·   Mutual: ' + tasaMutualElegida() + '%';
+        var tHab = 0, tDesc = 0, tLiq = 0, tCosto = 0;
+        var filasDatos = state.results.map(function (r) {
+            var hab = Math.round(r.haberes), desc = Math.round(r.descuentos), liq = Math.round(r.liquido), cost = Math.round(r.costo);
+            if (!r.error) { tHab += hab; tDesc += desc; tLiq += liq; tCosto += cost; }
             return [r.record.rut, r.record.nombre, r.record.afp, r.record.salud === 'isapre' ? 'Isapre' : 'Fonasa',
-                r.record.contrato, r.record.dias, Math.round(r.haberes), Math.round(r.descuentos),
-                Math.round(r.liquido), Math.round(r.costo), r.error];
+                r.record.contrato, r.record.dias, hab, desc, liq, cost, r.error || ''];
         });
-        D.descargarXlsx('liquidaciones-' + sufijoCliente() + document.getElementById('periodo').value + '.xlsx',
-            ['RUT', 'Trabajador', 'AFP', 'Salud', 'Contrato', 'Días', 'Haberes', 'Descuentos', 'Líquido', 'Costo empresa', 'Observación'],
-            filas,
-            { nombreHoja: 'Liquidaciones', textos: { 0: true } });
+        var filas = [
+            ['Resumen de Liquidaciones de Sueldo · ' + opc.periodoNombre],
+            [metaTxt],
+            [],
+            ['RUT', 'Trabajador', 'AFP', 'Salud', 'Contrato', 'Días', 'Haberes', 'Descuentos', 'Líquido', 'Costo empresa', 'Observación']
+        ].concat(filasDatos).concat([
+            ['', 'Totales (' + filasDatos.length + ')', '', '', '', '', tHab, tDesc, tLiq, tCosto, ''],
+            [],
+            ['Montos referenciales en pesos chilenos (CLP) calculados con CálculoLaboral. Confirma cotizaciones y topes antes del pago en Previred.']
+        ]);
+        D.descargarXlsx('liquidaciones-' + sufijoCliente() + document.getElementById('periodo').value + '.xlsx', null, null, {
+            nombreHoja: 'Liquidaciones',
+            filasCompletas: filas,
+            textos: { 0: true },
+            monedas: { 6: true, 7: true, 8: true, 9: true },
+            alinear: { 0: 'center', 1: 'left', 2: 'center', 3: 'center', 4: 'center', 5: 'center', 10: 'left' },
+            anchos: { 0: 15, 1: 28, 2: 13, 3: 11, 4: 13, 5: 9, 6: 15, 7: 15, 8: 15, 9: 16, 10: 28 },
+            estilo: {
+                tituloFilas: [0],
+                metaFilas: [1],
+                encabezadoFila: 3,
+                totalesFilas: [4 + filasDatos.length],
+                notasFilas: [6 + filasDatos.length],
+                congelarFila: 4,
+                autoFiltro: true,
+                orientacion: 'landscape',
+                zebra: true
+            }
+        });
     }
 
     // ------------------------------------------------------------- Previred
@@ -735,21 +766,58 @@
             ['RUT', 'Nombre', 'Sueldo base', 'Días trabajados', 'AFP', 'Salud', 'Plan Isapre UF', 'Contrato', 'Jornada', 'Fecha ingreso', 'Colación', 'Movilización', 'Comisiones', 'Horas extra', 'Gratificación'],
             ['12.345.678-5', 'María González Pérez', 1200000, 30, 'Modelo', 'Isapre', 3.4, 'indefinido', 42, '2019-03-01', 0, 150000, 0, 0, ''],
             ['9.876.543-3', 'Pedro Soto Ramírez', 850000, 30, 'Uno', 'Fonasa', '', 'plazo', 42, '2025-07-15', 0, 100000, 0, 0, ''],
-            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+            new Array(15).fill('')
         ];
         data[0] = data[0].concat(['Sexo', 'Apellido paterno', 'Apellido materno', 'Nombres', 'Isapre', 'Centro de costos', 'Movimiento', 'Fecha desde', 'Fecha hasta', 'Tramo AF', 'Cargas', 'Días de licencia', 'Renta imponible mes anterior', 'Subsidio licencia', 'Nacionalidad', 'Pensionado', 'Contrato APV', 'APV trabajador']);
         data[1] = data[1].concat(['F', 'Gonzalez', 'Perez', 'Maria', 'Colmena', 'Casa central', 'sin movimiento', '', '', 'B', 2, 0, '', '', 'Chilena', 'no', '', 0]);
         data[2] = data[2].concat(['M', 'Soto', 'Ramirez', 'Pedro', '', 'Sucursal 2', 'retiro', '', '31-10-2026', 'D', 0, 5, 850000, 120000, 'Chilena', 'no', '', 0]);
-        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data[3] = data[3].concat(new Array(18).fill(''));
         data[0] = data[0].concat(['Banco', 'Tipo de cuenta', 'Número de cuenta', 'Fecha de término', 'Causal de término', 'RUT sindicato', 'Cuota sindical', 'Crédito CCAF', 'Indemnización años de servicio', 'Indemnización aviso previo', 'Feriado proporcional']);
         data[1] = data[1].concat(['Banco de Chile', 'vista', '12345678', '', '', '', 0, 0, 0, 0, 0]);
         data[2] = data[2].concat(['BancoEstado', 'corriente', '000111222', '31-10-2026', 'renuncia', '', 0, 0, 0, 0, 120000]);
-        data[3] = data[3].concat(['', '', '', '', '', '', '', '', '', '', '']);
-        var ws = XLSX.utils.aoa_to_sheet(data);
-        ws['!cols'] = [{ wch: 14 }, { wch: 26 }, { wch: 13 }, { wch: 15 }, { wch: 11 }, { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 11 }, { wch: 12 }, { wch: 12 }, { wch: 11 }, { wch: 13 }, { wch: 7 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 9 }, { wch: 8 }, { wch: 13 }, { wch: 18 }, { wch: 14 }];
-        var wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
-        XLSX.writeFile(wb, 'plantilla-liquidaciones-calculolaboral.xlsx');
+        data[3] = data[3].concat(new Array(11).fill(''));
+        data.push(new Array(44).fill(''));
+        data.push(new Array(44).fill(''));
+
+        var anchos = [
+            15, 26, 14, 14, 12, 10, 14, 13, 10, 14, 13, 13, 13, 12, 13,
+            8, 16, 16, 18, 13, 16, 16, 13, 13, 10, 9, 14, 20, 15, 13, 12, 13, 14,
+            17, 15, 18, 15, 18, 15, 14, 14, 20, 20, 18
+        ];
+        var textos = { 0: true, 9: true, 22: true, 23: true, 35: true, 36: true, 37: true, 38: true };
+        var monedas = { 2: true, 10: true, 11: true, 12: true, 14: true, 27: true, 28: true, 32: true, 39: true, 40: true, 41: true, 42: true, 43: true };
+        var decimales = { 6: true, 13: true };
+        var alinear = { 0: 'center', 3: 'center', 4: 'center', 5: 'center', 7: 'center', 8: 'center', 9: 'center', 15: 'center', 22: 'center', 23: 'center', 24: 'center', 25: 'center', 34: 'center', 35: 'center', 36: 'center' };
+        var instr = [
+            ['Instrucciones · Plantilla de Liquidaciones, LRE y Previred'],
+            ['No cambies ni borres la fila 1 de la pestaña «Liquidaciones». Puedes agregar tus trabajadores desde la fila 2.'],
+            [],
+            ['Bloque de columnas', 'Uso'],
+            ['Columnas A–O (Básicas)', 'Obligatorias/principales para calcular sueldo líquido, imponibles y cotizaciones.'],
+            ['Columnas P–AG (Previsión / LRE / Previred)', 'Opcionales para enriquecer archivos de Previred (105 campos) y LRE Mi DT (147 cols).'],
+            ['Columnas AH–AR (Pago y Finiquito en el mes)', 'Cuenta bancaria para nómina de pagos y causales/montos de término en el mes.'],
+            ['Fechas y números de cuenta', 'Ya vienen formateados como Texto (@) para no perder ceros iniciales ni fechas.']
+        ];
+        D.descargarXlsx('plantilla-liquidaciones-calculolaboral.xlsx', null, null, {
+            hojas: [
+                {
+                    nombre: 'Liquidaciones',
+                    filas: data,
+                    anchos: anchos,
+                    textos: textos,
+                    monedas: monedas,
+                    decimales: decimales,
+                    alinear: alinear,
+                    estilo: { encabezadoFila: 0, filasEntrada: [3, 4, 5], congelarFila: 1, congelarCol: 2, orientacion: 'landscape', zebra: true }
+                },
+                {
+                    nombre: 'Instrucciones',
+                    filas: instr,
+                    anchos: { 0: 36, 1: 68 },
+                    estilo: { tituloFilas: [0], subtituloFilas: [1], encabezadoFila: 3, congelarFila: 4, orientacion: 'portrait', zebra: true }
+                }
+            ]
+        });
     }
 
     // ----------------------------------------------------------------- boot

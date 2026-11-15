@@ -2538,7 +2538,9 @@ function dibujarEquipo() {
         var nombreBase = (d.titulo + ' ' + c.t.nombre).replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ').trim();
         var blob, ext;
         if (window.FiniquitoDocx && typeof window.FiniquitoDocx.toBlob === 'function') {
-            blob = window.FiniquitoDocx.toBlob(d.html, d.titulo);
+            blob = window.FiniquitoDocx.toBlob(d.html, d.titulo, {
+                pieTexto: ((c && c.empresa && c.empresa.razonSocial) || 'CálculoLaboral') + ' · ' + d.titulo
+            });
             ext = '.docx';
         } else {
             var archivo = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' + esc(d.titulo) + '</title><style>' + ESTILO_WORD + '</style></head><body>' + htmlParaWord(d.html) + '</body></html>';
@@ -4057,12 +4059,31 @@ function dibujarEquipo() {
                 if (fallo) return;
                 return cargarEnlaces(p).then(function () {
                     if (!nuevos.length) { det.innerHTML = '<p><strong>No se crearon enlaces nuevos.</strong></p>' + listaHtml('Sin enlace nuevo', saltados); return; }
-                    var filas = [['RUT', 'Nombre', 'Enlace', 'Vence']].concat(nuevos.map(function (n) {
+                    var filas = [
+                        ['Enlaces de liquidaciones · ' + nombrePeriodo(p)],
+                        ['Cada enlace muestra solo la liquidación de esa persona, vence a los 60 días y puede anularse desde su liquidación.'],
+                        [],
+                        ['RUT', 'Nombre', 'Enlace de descarga', 'Vence']
+                    ].concat(nuevos.map(function (n) {
                         var e = (enlacesCache[p] || {})[n.t.id];
                         return [n.t.rut, n.t.nombre, n.enlace, e && e.vence ? e.vence.slice(0, 10) : ''];
                     }));
                     return bajarArchivoExcel('enlaces-liquidacion-' + p + '.xlsx', function (XLSX) {
-                        return EX.construirLibro([{ nombre: 'Enlaces', filas: filas, textos: { 0: true, 3: true } }], XLSX);
+                        return EX.construirLibro([{
+                            nombre: 'Enlaces',
+                            filas: filas,
+                            textos: { 0: true, 3: true },
+                            alinear: { 0: 'center', 1: 'left', 2: 'left', 3: 'center' },
+                            anchos: { 0: 15, 1: 28, 2: 58, 3: 14 },
+                            estilo: {
+                                tituloFilas: [0],
+                                subtituloFilas: [1],
+                                encabezadoFila: 3,
+                                congelarFila: 4,
+                                orientacion: 'landscape',
+                                zebra: true
+                            }
+                        }], XLSX);
                     }).then(function () {
                         avisarDescarga('descarga_enlaces');
                         det.innerHTML = '<p><strong>' + plural(nuevos.length, 'enlace creado', 'enlaces creados') + ' y descargados en Excel (.xlsx).</strong> Cada enlace muestra solo la liquidación de esa persona, vence a los 60 días y se puede anular desde su liquidación. Envíaselo tú a cada trabajador (WhatsApp o correo): el asistente no guarda ni envía correos de trabajadores. Un revisor automático de enlaces también cuenta como apertura; no es firma ni aceptación.</p>' + listaHtml('Sin enlace nuevo', saltados);

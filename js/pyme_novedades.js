@@ -136,8 +136,51 @@
             for (var i = 2; i < COLUMNAS.length; i++) fila.push('');
             filas.push(fila);
         });
-        var anchos = COLUMNAS.map(function (c) { return Math.min(Math.max(c.titulo.length + 3, 14), 34); });
-        return EX().construirLibro([{ nombre: 'Novedades', filas: filas, anchos: anchos, textos: { 0: true } }], xlsxMod);
+        var anchos = COLUMNAS.map(function (c) { return Math.min(Math.max(c.titulo.length + 3, 14), 32); });
+        anchos[0] = 15; anchos[1] = 28;
+        var instr = [
+            ['Instrucciones · Plantilla de novedades del mes'],
+            ['Usa la primera pestaña «Novedades» sin cambiar el orden ni borrar la fila de encabezados.'],
+            [],
+            ['Regla', 'Detalle'],
+            ['Celda vacía', 'Si dejas una celda vacía, se mantiene el valor base del trabajador para ese mes.'],
+            ['Cero explícito (0)', 'Si escribes 0, reemplaza el valor base por cero (por ejemplo, anticipo 0 o horas extra 0).'],
+            ['Días trabajados', 'Número entero entre 0 y 30.'],
+            ['Horas extra', 'Acepta decimales (ejemplo: 2,5 o 4).'],
+            ['Montos en pesos', 'Ingresa solo números enteros sin puntos ni símbolo $ (ejemplo: 45000).'],
+            ['Bono no imponible', 'No se carga por planilla; debe registrarse directamente en la liquidación según art. 41 CT.']
+        ];
+        return EX().construirLibro([
+            {
+                nombre: 'Novedades',
+                filas: filas,
+                anchos: anchos,
+                textos: { 0: true },
+                monedas: { 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true },
+                decimales: { 3: true },
+                alinear: { 0: 'center', 1: 'left', 2: 'center' },
+                estilo: {
+                    encabezadoFila: 0,
+                    congelarFila: 1,
+                    orientacion: 'landscape',
+                    zebra: true
+                }
+            },
+            {
+                nombre: 'Instrucciones',
+                filas: instr,
+                anchos: { 0: 24, 1: 76 },
+                alinear: { 0: 'left', 1: 'left' },
+                estilo: {
+                    tituloFilas: [0],
+                    subtituloFilas: [1],
+                    encabezadoFila: 3,
+                    congelarFila: 4,
+                    orientacion: 'portrait',
+                    zebra: true
+                }
+            }
+        ], xlsxMod);
     }
 
     var api = { COLUMNAS: COLUMNAS, plantilla: plantilla, plantillaXlsx: plantillaXlsx, revisar: revisar, aplicar: aplicar, version: '1.1.0' };

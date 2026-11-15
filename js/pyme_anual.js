@@ -78,15 +78,20 @@
             .concat(act ? ['Renta afecta actualizada', 'Impuesto retenido actualizado', 'Renta no gravada actualizada'] : []);
         var filas = [
             ['Resumen anual de remuneraciones ' + meta.anio + (act ? '' : ' (montos sin actualizar)')],
-            [meta.empresa.razonSocial || '', 'RUT ' + (meta.empresa.rut || '')],
+            ['Empresa: ' + ((meta.empresa && meta.empresa.razonSocial) || '—') + '   ·   RUT ' + ((meta.empresa && meta.empresa.rut) || '—')],
             [],
             enc
         ];
+        var sum = [0, 0, 0, 0, 0, 0, 0, 0];
         lista.forEach(function (x) {
             var r = x.resumen, t = r.totales;
-            filas.push([x.t.rut, x.t.nombre, r.filas.map(function (f) { return +f.periodo.slice(5, 7); }).join(' '), t.rentaBruta, t.cotizaciones, t.rentaAfecta, t.impuesto, t.noGravada]
-                .concat(act ? [t.afectaAct, t.impuestoAct, t.noGravadaAct] : []));
+            var vals = [t.rentaBruta || 0, t.cotizaciones || 0, t.rentaAfecta || 0, t.impuesto || 0, t.noGravada || 0]
+                .concat(act ? [t.afectaAct || 0, t.impuestoAct || 0, t.noGravadaAct || 0] : []);
+            vals.forEach(function (v, i) { sum[i] += v; });
+            filas.push([x.t.rut, x.t.nombre, r.filas.map(function (f) { return +f.periodo.slice(5, 7); }).join(' ')].concat(vals));
         });
+        var tot = ['', 'Totales', ''].concat(sum.slice(0, act ? 8 : 5));
+        filas.push(tot);
         filas.push([]);
         filas.push([act ? 'Montos actualizados con los factores publicados por el SII para ' + meta.anio + '.' : 'Montos sin actualizar: el SII publica los factores de actualización de ' + meta.anio + ' al cerrar el año. Con ellos se emite el Certificado N°6 y se declara la DDJJ 1887.']);
         filas.push(['Hecho con el Asistente Laboral Pyme a partir de las liquidaciones guardadas. Revísalo con tu contador antes de declarar; el asistente no genera el archivo de la DDJJ 1887.']);
@@ -94,7 +99,31 @@
     }
 
     function xlsx(meta, lista, xlsxMod) {
-        return EX().construirLibro([{ nombre: 'Resumen anual ' + meta.anio, filas: hojaFilas(meta, lista), textos: { 0: true, 2: true } }], xlsxMod);
+        var filas = hojaFilas(meta, lista);
+        var act = lista.some(function (x) { return x.resumen.actualizado; });
+        var numCols = act ? 11 : 8;
+        var monedas = {};
+        for (var i = 3; i < numCols; i++) monedas[i] = true;
+        var totIdx = 4 + lista.length;
+        return EX().construirLibro([{
+            nombre: 'Resumen anual ' + meta.anio,
+            filas: filas,
+            textos: { 0: true, 2: true },
+            monedas: monedas,
+            alinear: { 0: 'center', 1: 'left', 2: 'center' },
+            anchos: { 0: 15, 1: 28, 2: 24 },
+            estilo: {
+                tituloFilas: [0],
+                metaFilas: [1],
+                encabezadoFila: 3,
+                totalesFilas: [totIdx],
+                notasFilas: [totIdx + 2, totIdx + 3],
+                congelarFila: 4,
+                autoFiltro: true,
+                orientacion: 'landscape',
+                zebra: true
+            }
+        }], xlsxMod);
     }
 
     var api = { FACTORES: FACTORES, MESES: MESES, filaDesdeCalculo: filaDesdeCalculo, filaDesdeResultado: filaDesdeResultado, resumen: resumen, csv: csv, xlsx: xlsx, version: '1.1.0' };

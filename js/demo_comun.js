@@ -158,13 +158,22 @@
     function descargarXlsx(nombre, encabezados, filas, opts) {
         opts = opts || {};
         var ex = window.CLPymeExcel;
-        var hojas = [{
+        var hojas = Array.isArray(opts.hojas) ? opts.hojas : [{
             nombre: opts.nombreHoja || 'Datos',
-            filas: [encabezados].concat(filas || []),
-            textos: opts.textos || { 0: true }
+            filas: opts.filasCompletas || [encabezados].concat(filas || []),
+            anchos: opts.anchos,
+            textos: opts.textos || { 0: true },
+            monedas: opts.monedas,
+            decimales: opts.decimales,
+            alinear: opts.alinear,
+            formatoEntero: opts.formatoEntero,
+            estilo: opts.estilo
         }];
-        var bytes = ex.construirLibro(hojas, window.XLSX);
-        descargar(new Blob([bytes], { type: ex.MIME_XLSX }), nombre);
+        return ex.asegurarXlsx().then(function (XLSX) {
+            var bytes = ex.construirLibro(hojas, XLSX);
+            descargar(new Blob([bytes], { type: ex.MIME_XLSX }), nombre);
+            return bytes;
+        });
     }
 
     // ------------------------------------------------------------- estudio

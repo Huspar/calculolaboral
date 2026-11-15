@@ -322,7 +322,10 @@
             var baseNombre = nombreArchivo.replace(/[^a-zA-Z0-9._-]+/g, '-');
             var blob, ext;
             if (window.FiniquitoDocx && typeof window.FiniquitoDocx.toBlob === 'function') {
-                blob = window.FiniquitoDocx.toBlob(encabezado + cuerpoHtml + pieDoc, titulo);
+                blob = window.FiniquitoDocx.toBlob(encabezado + cuerpoHtml + pieDoc, titulo, {
+                    estilo: 'moderno',
+                    pieTexto: (emp.razonSocial || 'Mi Empresa') + ' · Ley N° 21.719'
+                });
                 ext = '.docx';
             } else {
                 var estilo = 'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#111827;line-height:1.45;margin:28px;}h1{font-size:14pt;color:#00382E;margin:0 0 6px;}h2{font-size:11.5pt;color:#00382E;margin:14px 0 4px;}p,li{margin:4px 0 8px;}table{width:100%;border-collapse:collapse;margin:10px 0;}th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:left;font-size:10pt;}th{background:#f3f6f4;} .meta{color:#4b5563;font-size:9.5pt;margin-bottom:14px;}';

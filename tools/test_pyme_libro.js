@@ -66,6 +66,19 @@ caso('xlsx genera un libro .xlsx real con tipos numéricos, RUT como texto y anc
     const totCell = ws[XLSX.utils.encode_cell({ r: totIdx, c: liqCol })];
     assert.strictEqual(totCell.t, 'n');
     assert.strictEqual(totCell.v, tot.liquido);
+
+    // Regresión OOXML: estilos de marca, paneles congelados, autofiltro, pageSetup y sin fugas s="1" en filas espaciadoras
+    assert.ok(Array.isArray(ws['!merges']) && ws['!merges'].length >= 3);
+    const cfb = XLSX.CFB.read(bytes, { type: 'array' });
+    const stylesXml = Buffer.from(XLSX.CFB.find(cfb, '/xl/styles.xml').content).toString('utf8');
+    const sheetXml = Buffer.from(XLSX.CFB.find(cfb, '/xl/worksheets/sheet1.xml').content).toString('utf8');
+    assert.ok(stylesXml.includes('FF00382E') && stylesXml.includes('FFEDF5F2'), 'debe incluir colores CalculoLaboral');
+    assert.ok(stylesXml.includes('"$ "#,##0') || stylesXml.includes('&quot;$ &quot;#,##0'), 'debe incluir formato moneda CLP');
+    assert.ok(stylesXml.includes('style="double"'), 'debe incluir borde doble en totales');
+    assert.ok(sheetXml.includes('<pane ') && sheetXml.includes('state="frozen"'), 'debe congelar encabezados');
+    assert.ok(sheetXml.includes('<autoFilter '), 'debe incluir autofiltro');
+    assert.ok(sheetXml.includes('<pageSetup ') && sheetXml.includes('orientation="landscape"'), 'debe configurar página horizontal');
+    assert.ok(!/<row r="3"[^>]*>[\s\S]*?<c [^>]*s="1"/.test(sheetXml), 'la fila espaciadora 3 no debe heredar el estilo s=1');
 });
 
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

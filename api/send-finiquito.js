@@ -6,6 +6,8 @@
  * (p, o, e, sig; ver api/_flow.js). La venta ya la avisa /api/flow-confirm.
  */
 const { verifyDownload, SITE_URL } = require('./_flow');
+require('../js/kit_zip_engine');
+require('../js/finiquito_docx');
 
 // Correos permitidos por orden de pago (el original y hasta dos reenvíos con datos corregidos)
 const MAX_ENVIOS = 3;
@@ -180,12 +182,24 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        // El navegador arma el .docx real (js/finiquito_docx.js); el HTML .doc queda solo de respaldo
-        // para páginas antiguas en caché. Se acepta solo si es un zip de Word de tamaño razonable.
+        // El navegador arma el .docx real (js/finiquito_docx.js); si llega un cliente antiguo sin docxBase64,
+        // el servidor genera igualmente el .docx real con FiniquitoDocx y deja .doc HTML solo si falla XML.
         let docx = null;
         if (typeof docxBase64 === 'string' && docxBase64.length > 100 && docxBase64.length < 400000) {
             const buf = Buffer.from(docxBase64, 'base64');
             if (buf.slice(0, 4).toString('binary') === 'PK\x03\x04' && buf.includes('word/document.xml')) docx = buf;
+        }
+        if (!docx && globalThis.FiniquitoDocx && typeof globalThis.FiniquitoDocx.build === 'function') {
+            try {
+                const bytes = globalThis.FiniquitoDocx.build(
+                    docBodyContent,
+                    `Finiquito - ${cleanTrabajador}`,
+                    { pieTexto: `${cleanEmpresa} · Finiquito para Notaría` }
+                );
+                if (bytes && bytes.length > 100) docx = Buffer.from(bytes);
+            } catch (e) {
+                console.warn('send-finiquito docx server fallback:', e.message);
+            }
         }
         const wordBufferBase64 = docx ? docx.toString('base64') : Buffer.from('\ufeff' + wordHtml, 'utf-8').toString('base64');
         const wordExt = docx ? 'docx' : 'doc';

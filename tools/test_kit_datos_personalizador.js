@@ -147,6 +147,40 @@ async function main() {
         }
     });
 
+    await test('FiniquitoDocx.build works in Node without DOM, adds header1/footer1 pagination, brand colors and PNG logo', async () => {
+        const prevDoc = globalThis.document;
+        delete globalThis.document;
+        try {
+            // 1x1 valid transparent PNG data URL
+            const logo1x1 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+            const html = '<div class="dc-head"><img src="' + logo1x1 + '" alt="logo"><div><strong>Panadería Sur SpA</strong><span>RUT 76.543.210-3</span></div></div>' +
+                '<h1>Política Interna</h1><p class="meta">Empresa ejemplo · Ley 21.719</p>' +
+                '<table><thead><tr><th>Ítem</th><th>Monto</th></tr></thead><tbody><tr><td>Base</td><td class="text-right">$100.000</td></tr></tbody></table>' +
+                '<div data-docx="recuadro"><p>Cláusula destacada de cumplimiento.</p></div>';
+            const bytes = FD.build(html, 'Política Interna', { estilo: 'moderno', pieTexto: 'Panadería Sur SpA' });
+            const entries = await Zip.parseZip(bytes);
+            const names = entries.map((e) => e.name);
+            assert.ok(names.includes('word/header1.xml'), 'Expected word/header1.xml');
+            assert.ok(names.includes('word/footer1.xml'), 'Expected word/footer1.xml');
+            assert.ok(names.includes('word/media/logo1.png'), 'Expected embedded word/media/logo1.png');
+
+            const dec = new TextDecoder();
+            const docXml = dec.decode(entries.find((e) => e.name === 'word/document.xml').data);
+            const hdrXml = dec.decode(entries.find((e) => e.name === 'word/header1.xml').data);
+            const ftrXml = dec.decode(entries.find((e) => e.name === 'word/footer1.xml').data);
+            const styXml = dec.decode(entries.find((e) => e.name === 'word/styles.xml').data);
+
+            assert.ok(docXml.includes('<wp:inline ') && docXml.includes('r:embed="rId4"'), 'Expected embedded logo drawing');
+            assert.ok(docXml.includes('00382E') && docXml.includes('Calibri'), 'Expected modern brand colors and Calibri');
+            assert.ok(docXml.includes('<w:keepTogether/>'), 'Expected keepTogether on callout');
+            assert.ok(hdrXml.includes('Política Interna'), 'Expected running header text');
+            assert.ok(ftrXml.includes('Panadería Sur SpA') && ftrXml.includes('PAGE') && ftrXml.includes('NUMPAGES'), 'Expected footer with page numbers');
+            assert.ok(styXml.includes('Heading1') && styXml.includes('<w:widowControl/>'), 'Expected heading styles and widowControl');
+        } finally {
+            globalThis.document = prevDoc;
+        }
+    });
+
     console.log(`\nALL PASSED: ${passed}/${passed}`);
 }
 
