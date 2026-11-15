@@ -11,7 +11,9 @@ const ESPERADAS = [
     'liquidacion-de-sueldo',
     'generador-liquidacion-sueldo',
     'impuesto-unico-segunda-categoria',
-    'como-generar-archivo-previred-lre-f29-chile'
+    'como-generar-archivo-previred-lre-f29-chile',
+    'calculadora-f29-chile',
+    'balance-8-columnas-rli-propyme-excel'
 ];
 
 const PROHIBIDAS = [

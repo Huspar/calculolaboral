@@ -36,6 +36,16 @@ const PAGINAS = {
         titulo: 'Genera el TXT Previred, el CSV LRE y el borrador F29 por cliente',
         texto: 'Calcula la nómina del período y descarga el archivo plano de 105 campos y el Libro LRE de 147 columnas listos para revisar y cargar en Previred y Mi DT, sin entregar claves.',
         antes: '<section aria-labelledby="fuentes-titulo" class="mt-10 pt-6 border-t border-slate-200 no-print">'
+    },
+    'calculadora-f29-chile': {
+        titulo: '¿Preparas F29 y nóminas de varios clientes cada mes?',
+        texto: 'En Suite Contadores cruzas el código 48 directo desde las liquidaciones del período, lees los CSV del RCV por cliente y armas F29 y Balance de 8 Columnas en tu navegador, sin pedir claves.',
+        antes: '<section class="cl-sources" aria-labelledby="fuentes-titulo">'
+    },
+    'balance-8-columnas-rli-propyme-excel': {
+        titulo: 'Lleva el Libro Diario, RCV y Balance de cada cliente en un lugar',
+        texto: 'Suite Contadores alimenta el Balance de 8 Columnas y la base ProPyme 14 D N°3 desde las liquidaciones y compras del mes, junto con Previred (105 campos) y LRE (147 columnas).',
+        antes: '<section class="cl-sources" aria-labelledby="fuentes-titulo">'
     }
 };
 

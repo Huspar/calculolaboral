@@ -298,6 +298,10 @@ El despido motivado por causales imputables al trabajador (conductas graves de f
 - Aguinaldo de Fiestas Patrias 2026 (sector público Ley 21.724; sector privado por contrato o costumbre): `https://calculolaboral.cl/aguinaldo-fiestas-patrias-chile-2026`
 - Aguinaldo de Navidad y Cierre Laboral Diciembre 2026: `https://calculolaboral.cl/aguinaldo-navidad-cierre-laboral-diciembre-2026`
 - Archivo Previred (105 Campos), LRE en Mi DT y F29 SII: `https://calculolaboral.cl/como-generar-archivo-previred-lre-f29-chile`
+- Calculadora F29 Chile (IVA, PPM, Honorarios 15,25% y lector CSV RCV SII): `https://calculolaboral.cl/calculadora-f29-chile`
+- Carpeta Laboral de Empresa en Chile (checklist descargable CSV y guía 2026): `https://calculolaboral.cl/carpeta-laboral-empresa-chile`
+- Balance Tributario de 8 Columnas y RLI ProPyme 14 D N°3 en Excel: `https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel`
+- Suite Contadores (multicliente Previred, LRE, RCV F29, Balance 8 col. y ProPyme): `https://calculolaboral.cl/suite-contadores`
 - Blog: `https://calculolaboral.cl/blog`
 - Sobre Nosotros: `https://calculolaboral.cl/sobre-nosotros`
 - Contacto: `https://calculolaboral.cl/contacto`

@@ -330,4 +330,22 @@
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
   </url>
+  <url>
+    <loc>https://calculolaboral.cl/calculadora-f29-chile</loc>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://calculolaboral.cl/carpeta-laboral-empresa-chile</loc>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel</loc>
+    <lastmod>2026-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

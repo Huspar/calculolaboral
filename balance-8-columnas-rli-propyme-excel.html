@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance 8 Columnas y RLI ProPyme en Excel (14 D N°3 Chile)</title>
+    <meta name="description" content="Simula y descarga gratis tu Balance Tributario de 8 Columnas y base de RLI ProPyme 14 D N°3 para Excel (CSV listo con BOM). Cuadratura automática en línea.">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="canonical" href="https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel">
+
+    <meta property="og:title" content="Balance 8 Columnas y RLI ProPyme en Excel (14 D N°3 Chile)">
+    <meta property="og:description" content="Simulador interactivo de Balance Tributario de 8 Columnas y Renta Líquida Imponible ProPyme Art. 14 D N°3 en Chile, descargable en CSV para Excel.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Balance 8 Columnas y RLI ProPyme en Excel (14 D N°3 Chile)">
+    <meta name="twitter:description" content="Armado de Balance Tributario de 8 Columnas y RLI ProPyme 14 D N°3 sobre flujo percibido y pagado, descargable para Excel.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel#app",
+          "name": "Simulador Balance 8 Columnas y RLI ProPyme · Cálculo Laboral",
+          "url": "https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel",
+          "description": "Simulador en navegador del Balance Tributario de 8 Columnas (Sumas, Saldos, Inventario y Resultado) y determinación base de Renta Líquida Imponible ProPyme General (Art. 14 D N°3), descargable como archivo CSV para Excel.",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "es-CL",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
+          "publisher": { "@id": "https://calculolaboral.cl/#organization" }
+        },
+        {
+          "@type": "Article",
+          "@id": "https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel#article",
+          "headline": "Cómo armar el Balance de 8 Columnas y la RLI ProPyme 14 D N°3 para Excel",
+          "description": "Explicación práctica de las cuatro parejas de columnas del Balance Tributario chileno y el ajuste desde resultado contable devengado a flujo percibido y pagado ProPyme.",
+          "datePublished": "2026-11-15",
+          "dateModified": "2026-11-15",
+          "inLanguage": "es-CL",
+          "author": { "@id": "https://calculolaboral.cl/#organization" },
+          "publisher": { "@id": "https://calculolaboral.cl/#organization" },
+          "mainEntityOfPage": "https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+            { "@type": "ListItem", "position": 2, "name": "Suite Contadores", "item": "https://calculolaboral.cl/suite-contadores" },
+            { "@type": "ListItem", "position": 3, "name": "Balance 8 Columnas y RLI ProPyme", "item": "https://calculolaboral.cl/balance-8-columnas-rli-propyme-excel" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Qué mide cada pareja de columnas del Balance Tributario?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Las columnas 1 y 2 (Sumas) muestran Débitos y Créditos acumulados del Libro Mayor; 3 y 4 (Saldos) calculan el Saldo Deudor o Acreedor de cada cuenta; 5 y 6 (Inventario) clasifican Activos y Pasivos; y 7 y 8 (Resultado) separan Pérdidas y Ganancias. La diferencia entre Activo y Pasivo coincide exactamente con la diferencia entre Ganancia y Pérdida."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Por qué la RLI ProPyme 14 D N°3 difiere del resultado contable?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Porque el régimen ProPyme General determina su base imponible sobre ingresos percibidos y egresos efectivamente pagados, además de permitir la depreciación instantánea del activo fijo pagado en el ejercicio y exigir el agregado de multas o gastos no aceptados del Art. 21."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿El archivo descargado abre bien las columnas y acentos en Excel?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí. El botón de descarga genera un CSV codificado en UTF-8 con marca BOM y separador de punto y coma, formato estándar que Microsoft Excel en español abre directamente con todas las columnas alineadas."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+
+    <script>
+    window.addEventListener('load', function () {
+        var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+        if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+    });
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        try {
+            if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+            if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+            if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+        } catch (e) {}
+        gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+    </script>
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.4.0">
+    <style>
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body { font-family: 'Geist', sans-serif; background-color: #F8FAF9; color: #111827; margin: 0; overflow-x: hidden; }
+        main.site-container { min-width: 0; }
+        .font-mono-num { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+        .nav-dropdown-menu { opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s; pointer-events: none; }
+        .nav-dropdown-group:hover .nav-dropdown-menu, .nav-dropdown-group:focus-within .nav-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+        .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow); color: #111827 !important; font-weight: 700; border-radius: 9999px; padding: 12px 24px; font-size: 14px; min-height: 44px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s var(--ease-spring); text-decoration: none; border: none; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.28);
+        }
+        .btn-yellow-pill:hover { background-color: var(--teal-yellow-hover); transform: translateY(-1px); }
+        .btn-outline-pill {
+            background-color: #FFFFFF; color: #1E293B !important; font-weight: 600; border-radius: 9999px; padding: 10px 18px; font-size: 13.5px; min-height: 44px;
+            border: 1.5px solid #CBD5E1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s var(--ease-spring); text-decoration: none; cursor: pointer;
+        }
+        .btn-outline-pill:hover { border-color: var(--teal-forest); color: var(--teal-forest) !important; background-color: #F8FAF9; }
+        .btn-yellow-pill.hidden, .btn-outline-pill.hidden { display: none !important; }
+        @media (min-width: 768px) { .btn-yellow-pill.md\:inline-flex, .btn-outline-pill.md\:inline-flex { display: inline-flex !important; } }
+        @media (min-width: 1024px) { .btn-yellow-pill.lg\:inline-flex, .btn-outline-pill.lg\:inline-flex { display: inline-flex !important; } }
+        .teal-footer-curve { background-color: var(--teal-forest); color: #FFFFFF; border-top-left-radius: 48px; }
+        .teal-footer-curve .footer-inner-container { max-width: 1240px; margin-left: auto; margin-right: auto; }
+        @media (min-width: 1024px) {
+            .teal-footer-curve { border-top-left-radius: 96px; }
+            .teal-footer-curve .footer-inner-container { padding-left: 5rem !important; padding-right: 2rem !important; }
+        }
+        @media (min-width: 1200px) and (max-width: 1439px) { .teal-footer-curve .footer-inner-container { padding-left: 3.5rem !important; padding-right: 2rem !important; } }
+        .site-container,
+        .max-w-\[1240px\],
+        [class*="max-w-[1240px]"] {
+            max-width: 1240px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .b8-table-wrap { overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 20px; background: #FFFFFF; }
+        .b8-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 820px; }
+        .b8-table th, .b8-table td { padding: 9px 10px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+        .b8-table thead th { background: #F4F7F6; color: #00382E; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; text-align: right; }
+        .b8-table thead th.col-cta { text-align: left; }
+        .b8-table td.num { text-align: right; font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; color: #0F172A; }
+        .b8-table tfoot td { background: #ECF5F2; color: #00382E; font-weight: 800; font-family: 'Geist Mono', ui-monospace, monospace; text-align: right; white-space: nowrap; }
+        .b8-table tfoot td.col-cta { text-align: left; font-family: 'Geist', sans-serif; }
+        .b8-input-cell { width: 106px; min-height: 44px; padding: 6px 8px; border-radius: 10px; border: 1px solid #CBD5E1; background: #F8FAFC; text-align: right; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12.5px; font-weight: 600; color: #0F172A; }
+        .b8-input-cell:focus { outline: none; border-color: #00382E; background: #FFFFFF; box-shadow: 0 0 0 2px rgba(0, 56, 46, 0.15); }
+        .rli-row { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 9px 0; border-bottom: 1px solid #F1F5F9; font-size: 13.5px; }
+        .rli-row:last-child { border-bottom: 0; }
+        .rli-row .val { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+        .min-h-\[44px\] { min-height: 44px; }
+        .min-w-\[44px\] { min-width: 44px; }
+        .rli-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: start; }
+        @media (min-width: 1024px) { .rli-grid { grid-template-columns: 5fr 7fr; } }
+        .rli-kpi-label { color: #A7F3D0; }
+        .rli-base-val { color: #FFB703; }
+    </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
+    <link rel="stylesheet" href="/assets/css/promo-contadores.css?v=1.0.0">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Ticker -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Contabilidad ProPyme Art. 14 D N°3 · Balance de 8 Columnas y RLI en navegador</span>
+            </div>
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
+                <span class="text-white/50">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$72.440</strong></span>
+                <span class="text-white/50">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm shrink-0" style="background-color: #00382E;">
+                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700" aria-label="Menú principal">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">Simulador Finiquito</a>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="balance-8-columnas-rli-propyme-excel" class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/70 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-[#00382E] text-white flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">table_chart</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Balance 8 Columnas y RLI</div><div class="text-xs text-slate-600 mt-0.5">Cuadratura ProPyme 14 D N°3.</div></div>
+                                </a>
+                                <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">receipt_long</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Calculadora F29</div><div class="text-xs text-slate-500 mt-0.5">IVA, PPM, honorarios y RCV.</div></div>
+                                </a>
+                                <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">percent</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Impuesto Único</div><div class="text-xs text-slate-500 mt-0.5">Tabla mensual y calculadora.</div></div>
+                                </a>
+                                <a href="liquidacion-de-sueldo" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">receipt</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Liquidación de Sueldo</div><div class="text-xs text-slate-500 mt-0.5">Modelo Excel y guía laboral.</div></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+                            <div class="space-y-1">
+                                <a href="como-generar-archivo-previred-lre-f29-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Guía Previred, LRE y F29</a>
+                                <a href="suite-contadores" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Suite Contadores</a>
+                                <a href="carpeta-laboral-empresa-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Carpeta Laboral de Empresa</a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">Ver todas las guías →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <a href="suite-contadores" class="hidden md:inline-flex btn-yellow-pill !py-2 !px-5 !text-xs">Suite Contadores</a>
+                    <a href="para-empleadores" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">Portal Empleadores</a>
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 min-w-[44px] min-h-[44px] text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer inline-flex items-center justify-center" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-2">
+            <a href="suite-contadores" class="flex items-center min-h-[44px] text-sm font-bold text-[#00382E]">Suite Contadores</a>
+            <a href="balance-8-columnas-rli-propyme-excel" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Balance 8 Columnas y RLI</a>
+            <a href="calculadora-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Calculadora F29</a>
+            <a href="como-generar-archivo-previred-lre-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Guía Previred, LRE y F29</a>
+            <a href="blog" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Blog de Guías</a>
+            <div class="pt-2">
+                <a href="suite-contadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Suite Contadores</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+
+        <nav class="flex flex-wrap items-center gap-2 text-xs text-slate-600 mb-4" aria-label="Breadcrumb">
+            <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <a href="suite-contadores" class="hover:text-[#00382E] transition-colors">Suite Contadores</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <span class="text-slate-900 font-semibold">Balance 8 Columnas y RLI ProPyme</span>
+        </nav>
+
+        <header class="mb-7 max-w-4xl">
+            <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                Balance de 8 columnas y RLI ProPyme 14 D N°3 en Excel<span class="text-[#FFB703]">.</span>
+            </h1>
+            <p class="cl-meta">Actualizado noviembre 2026 · Simulador referencial de Balance Tributario (Sumas, Saldos, Inventario y Resultado) y base imponible ProPyme sobre flujo percibido y pagado</p>
+            <p class="text-sm sm:text-base text-slate-700 max-w-2xl mt-2 leading-relaxed">
+                Edita débitos y créditos por cuenta contable, verifica al instante las cuatro sumas iguales y exporta el cuadro completo junto con la Renta Líquida Imponible en CSV listo para abrir en Excel.
+            </p>
+        </header>
+
+        <nav class="cl-calcnav no-print" aria-label="Herramientas contables y tributarias">
+            <div class="cl-calcnav-track">
+                <a href="balance-8-columnas-rli-propyme-excel" aria-current="page">Balance 8 Columnas y RLI</a>
+                <a href="calculadora-f29-chile">Calculadora F29</a>
+                <a href="como-generar-archivo-previred-lre-f29-chile">Guía Previred, LRE y F29</a>
+                <a href="impuesto-unico-segunda-categoria">Impuesto Único</a>
+                <a href="liquidacion-de-sueldo">Liquidación de sueldo</a>
+                <a href="suite-contadores">Suite Contadores</a>
+            </div>
+        </nav>
+
+        <!-- SIMULADOR INTERACTIVO -->
+        <section aria-labelledby="sim-title" class="space-y-6 mb-14">
+            <div class="flex flex-wrap items-center justify-between gap-3 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs">
+                <div>
+                    <h2 id="sim-title" class="text-base sm:text-lg font-bold text-slate-900 m-0">Cuentas del ejercicio comercial</h2>
+                    <p class="text-xs text-slate-600 mt-0.5 mb-0">Puedes editar cualquier débito o crédito, cargar un ejercicio equilibrado de pyme o exportar a Excel.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 no-print">
+                    <button type="button" id="btn-b8-ejemplo" class="btn-outline-pill !py-2 !px-4 !text-xs">Cargar ejemplo pyme</button>
+                    <button type="button" id="btn-b8-cero" class="btn-outline-pill !py-2 !px-4 !text-xs">Limpiar a $0</button>
+                    <button type="button" id="btn-b8-csv" class="btn-yellow-pill !py-2 !px-4 !text-xs">
+                        <span class="material-icons text-sm" aria-hidden="true">download</span>
+                        <span>Descargar Excel (CSV)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estado de Cuadratura -->
+            <div id="b8-cuadratura-alert" aria-live="polite" class="p-4 rounded-2xl border text-sm font-medium"></div>
+
+            <!-- Tabla Balance de 8 Columnas -->
+            <div class="b8-table-wrap shadow-sm">
+                <table class="b8-table">
+                    <thead>
+                        <tr>
+                            <th class="col-cta" style="min-width: 210px;">Cuenta (Plan base)</th>
+                            <th>Débito ($)</th>
+                            <th>Crédito ($)</th>
+                            <th>Deudor</th>
+                            <th>Acreedor</th>
+                            <th>Activo</th>
+                            <th>Pasivo</th>
+                            <th>Pérdida</th>
+                            <th>Ganancia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="b8-body"></tbody>
+                    <tfoot id="b8-foot"></tfoot>
+                </table>
+            </div>
+
+            <!-- Panel RLI ProPyme 14 D N°3 -->
+            <div class="rli-grid">
+                <div class="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 space-y-4">
+                    <h3 class="text-base font-bold text-slate-900 m-0">Parámetros de flujo ProPyme (Art. 14 D N°3)</h3>
+                    <p class="text-xs text-slate-600 m-0">El artículo 14 D N°3 tributa por ingresos percibidos y egresos pagados dentro del año comercial.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="rli-pct-cobrado" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">% Ventas cobradas</label>
+                            <input type="number" id="rli-pct-cobrado" value="90" min="0" max="100" step="1" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono-num font-bold text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                        </div>
+                        <div>
+                            <label for="rli-pct-pagado" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">% Compras/gastos pagados</label>
+                            <input type="number" id="rli-pct-pagado" value="95" min="0" max="100" step="1" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono-num font-bold text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                        </div>
+                        <div>
+                            <label for="rli-af-pagado" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Activo fijo pagado neto ($)</label>
+                            <input type="text" id="rli-af-pagado" value="1.200.000" inputmode="numeric" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono-num font-bold text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                        </div>
+                        <div>
+                            <label for="rli-tasa-idpc" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tasa IDPC simulada (%)</label>
+                            <select id="rli-tasa-idpc" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                                <option value="12.5" selected>12,5% (tasa transitoria ProPyme)</option>
+                                <option value="25">25% (tasa general Art. 14 D N°3)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm" aria-live="polite">
+                    <div class="p-5 sm:p-6 text-white flex flex-wrap items-center justify-between gap-4" style="background-color: #00382E;">
+                        <div>
+                            <p class="rli-kpi-label text-xs font-bold uppercase tracking-wider mb-1">Renta Líquida Imponible ProPyme estimada</p>
+                            <div class="rli-base-val text-3xl sm:text-4xl font-extrabold font-mono-num" id="rli-base">$0</div>
+                        </div>
+                        <div class="text-right">
+                            <p class="rli-kpi-label text-xs mb-1">Resultado contable balance</p>
+                            <div class="text-lg font-bold font-mono-num text-white" id="rli-res-contable">$0</div>
+                        </div>
+                    </div>
+                    <div id="rli-detalle" class="p-5 sm:p-6"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUÍA EDITORIAL -->
+        <div class="cl-reading">
+            <article class="cl-article">
+                <figure class="cl-cover-frame">
+                    <img src="/assets/covers/balance-8-columnas.svg" alt="Ilustración de Balance Tributario de 8 columnas con columnas de resultado destacadas" width="800" height="450" loading="eager">
+                </figure>
+
+                <section id="estructura-8-columnas">
+                    <h2>Cómo se lee el Balance Tributario de 8 Columnas en Chile</h2>
+                    <p>
+                        El Balance de 8 Columnas (o Balance Tributario) resume en una hoja horizontal todas las cuentas con movimiento del Libro Mayor al cierre del ejercicio o de un mes intermedio:
+                    </p>
+                    <ul>
+                        <li><strong>Columnas 1 y 2 (Sumas: Débito y Crédito):</strong> suman todos los cargos y abonos registrados en el Libro Diario. Ambas columnas deben ser iguales entre sí.</li>
+                        <li><strong>Columnas 3 y 4 (Saldos: Deudor y Acreedor):</strong> restan el débito menos el crédito de cada cuenta. Sus totales también deben cuadrar exactamente.</li>
+                        <li><strong>Columnas 5 y 6 (Inventario: Activo y Pasivo):</strong> reciben las cuentas patrimoniales (disponible, clientes, activo fijo, proveedores, remuneraciones por pagar, capital).</li>
+                        <li><strong>Columnas 7 y 8 (Resultado: Pérdida y Ganancia):</strong> muestran las cuentas de resultado (costos, sueldos, leyes sociales, honorarios, depreciación, ingresos).</li>
+                    </ul>
+                    <p>
+                        La prueba final de cuadratura consiste en que <strong>Activo menos Pasivo</strong> coincida exactamente con <strong>Ganancia menos Pérdida</strong>, determinando la utilidad o pérdida contable del período.
+                    </p>
+                </section>
+
+                <section id="ajuste-rli-14d3">
+                    <h2>Del resultado contable a la Renta Líquida Imponible ProPyme (Art. 14 D N°3)</h2>
+                    <p>
+                        En una pyme acogida al régimen ProPyme General (Art. 14 letra D N°3 de la LIR), el balance contable sirve de punto de partida, pero la base tributaria anual se determina según flujos efectivos:
+                    </p>
+                    <ul>
+                        <li><strong>Ingresos percibidos:</strong> se descuentan ventas devengadas que siguen pendientes de cobro en clientes al 31 de diciembre y se suman cobros de ejercicios anteriores.</li>
+                        <li><strong>Egresos pagados:</strong> se ajustan compras, sueldos y honorarios que quedaron provisionados por pagar al cierre.</li>
+                        <li><strong>Activo fijo pagado e inventario:</strong> las adquisiciones de activo fijo pagado se deducen de manera instantánea, reversando la depreciación financiera cargada a pérdida contable.</li>
+                        <li><strong>Gastos rechazados y multas (Art. 21):</strong> las multas fiscales o gastos sin respaldo se agregan para no rebajar indebidamente la base.</li>
+                    </ul>
+                </section>
+
+                <section id="conexion-suite">
+                    <h2>Lleva el Libro Diario, RCV y F29 conectados por cliente</h2>
+                    <p>
+                        Si administras varios clientes y quieres evitar digitar sumas manualmente, en <a href="suite-contadores">Suite Contadores</a> los asientos nacen desde las liquidaciones de sueldo mensuales y el RCV del SII para alimentar automáticamente el Libro Mayor, el Balance de 8 Columnas y la hoja base ProPyme, junto con la <a href="calculadora-f29-chile">calculadora de F29</a> y los <a href="como-generar-archivo-previred-lre-f29-chile">archivos de Previred y LRE</a>.
+                    </p>
+                </section>
+<!-- cl-suite:inicio (lo genera tools/promo_contadores.js: no editar a mano) -->
+<aside class="cl-suite no-print" aria-labelledby="cl-suite-t">
+<div class="cl-suite-cuerpo">
+<p class="cl-suite-kicker">Suite Contadores · Acceso anticipado 90 días gratis</p>
+<p class="cl-suite-titulo" id="cl-suite-t">Lleva el Libro Diario, RCV y Balance de cada cliente en un lugar</p>
+<p>Suite Contadores alimenta el Balance de 8 Columnas y la base ProPyme 14 D N°3 desde las liquidaciones y compras del mes, junto con Previred (105 campos) y LRE (147 columnas).</p>
+</div>
+<div class="cl-suite-acciones">
+<a class="cl-suite-btn" href="suite-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="balance-8-columnas-rli-propyme-excel-contadores-bloque">Ver Suite Contadores</a>
+<a class="cl-suite-link" href="demo-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="balance-8-columnas-rli-propyme-excel-contadores-demo">Probar demo con ejemplo</a>
+</div>
+</aside>
+<!-- cl-suite:fin -->
+<section class="cl-sources" aria-labelledby="fuentes-titulo">
+                    <h2 id="fuentes-titulo">Fuentes y referencias normativas</h2>
+                    <ul>
+                        <li>Ley sobre Impuesto a la Renta (artículo 14 letra D N°3 sobre régimen ProPyme General y base por ingresos percibidos y gastos pagados).</li>
+                        <li>Código de Comercio (arts. 25 a 32 sobre libros contables y balance general) y normativa tributaria SII sobre Balance de 8 Columnas.</li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+                                <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                                </svg>
+                            </div>
+                            <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+                        </a>
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
+                            Plataforma independiente con herramientas laborales y contables actualizadas para trabajadores, pymes y contadores en Chile (2026).
+                        </p>
+                        <div class="pt-1 text-xs font-mono-num text-white/60">Versión 2.6 · Actualizada Noviembre 2026</div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Calculadoras</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="impuesto-unico-segunda-categoria" class="text-white/80 hover:text-[#FFB703] transition-colors">Impuesto Único</a></li>
+                            <li><a href="calculadora-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Calculadora F29</a></li>
+                            <li><a href="balance-8-columnas-rli-propyme-excel" class="text-white/80 hover:text-[#FFB703] transition-colors">Balance 8 Columnas</a></li>
+                            <li><a href="liquidacion-de-sueldo" class="text-white/80 hover:text-[#FFB703] transition-colors">Liquidación de Sueldo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Guías Legales</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Guía Previred, LRE y F29</a></li>
+                            <li><a href="carpeta-laboral-empresa-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carpeta Laboral Empresa</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Para Empresas</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
+                            <li><a href="asistente-laboral-pyme" class="text-white/80 hover:text-[#FFB703] transition-colors">Asistente Laboral Pyme</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/60 text-center md:text-left">
+                    <div>&copy; 2026 Cálculo Laboral Chile. Herramienta referencial basada en normativa contable y tributaria vigente.</div>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a href="terminos" class="hover:text-white transition-colors">Términos</a>
+                        <span>·</span>
+                        <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
+                        <span>·</span>
+                        <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/constants.js?v=2.1.3"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/contadores_contabilidad.js?v=1.0.0"></script>
+    <script>
+    (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+        var fmt = function (n) {
+            var sign = n < 0 ? '-' : '';
+            var val = Math.abs(Math.round(Number(n) || 0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return sign + '$' + val;
+        };
+        var parsePesos = function (val) {
+            return parseInt(String(val || '').replace(/[^0-9]/g, ''), 10) || 0;
+        };
+
+        // Ejercicio base equilibrado (Sumas Debito == Credito = 38.400.000)
+        var EJEMPLO = {
+            '11010': { debe: 24500000, haber: 16200000 }, // Banco: saldo deudor 8.300.000
+            '11050': { debe: 18500000, haber: 16650000 }, // Clientes: saldo deudor 1.850.000
+            '11090': { debe: 420000, haber: 0 },          // PPM acumulado: 420.000
+            '12010': { debe: 3200000, haber: 0 },         // Activo fijo: 3.200.000
+            '12015': { debe: 0, haber: 400000 },          // Deprec. acum.: 400.000
+            '21010': { debe: 6800000, haber: 7600000 },   // Proveedores: saldo acreedor 800.000
+            '21030': { debe: 5400000, haber: 5400000 },   // Remuneraciones x pagar: saldada
+            '21035': { debe: 1100000, haber: 1350000 },   // Cotiz. x pagar: saldo acreedor 250.000
+            '31010': { debe: 0, haber: 8000000 },         // Capital social: 8.000.000
+            '41010': { debe: 4800000, haber: 0 },         // Costo ventas: 4.800.000
+            '42010': { debe: 6000000, haber: 0 },         // Sueldos: 6.000.000
+            '42015': { debe: 1350000, haber: 0 },         // Leyes sociales: 1.350.000
+            '42020': { debe: 1200000, haber: 0 },         // Honorarios: 1.200.000
+            '42040': { debe: 950000, haber: 0 },          // Gastos generales: 950.000
+            '42060': { debe: 400000, haber: 0 },          // Depreciacion: 400.000
+            '42095': { debe: 80000, haber: 0 },           // Multas Art. 21: 80.000
+            '51010': { debe: 0, haber: 18500000 },        // Ventas afectas: 18.500.000
+            '51020': { debe: 0, haber: 600000 }           // Ventas exentas: 600.000
+        };
+
+        var saldos = {};
+        var ultimoBalance = null;
+        var ultimaRli = null;
+
+        function resetTo(sourceObj) {
+            var plan = window.CLContabilidad.PLAN_CUENTAS_BASE || [];
+            saldos = {};
+            plan.forEach(function (meta) {
+                var cod = meta.codigo;
+                if (sourceObj && sourceObj[cod]) {
+                    saldos[cod] = { debe: sourceObj[cod].debe, haber: sourceObj[cod].haber };
+                } else {
+                    saldos[cod] = { debe: 0, haber: 0 };
+                }
+            });
+        }
+
+        function recalcular() {
+            var C = window.CLContabilidad;
+            if (!C) return;
+            var plan = C.PLAN_CUENTAS_BASE || [];
+            var mayor = [];
+            plan.forEach(function (meta) {
+                var cod = meta.codigo;
+                var s = saldos[cod] || { debe: 0, haber: 0 };
+                var deb = Math.max(0, Math.round(Number(s.debe) || 0));
+                var hab = Math.max(0, Math.round(Number(s.haber) || 0));
+                if (deb > 0 || hab > 0) {
+                    mayor.push({
+                        codigo: meta.codigo,
+                        nombre: meta.nombre,
+                        tipo: meta.tipo,
+                        grupo: meta.grupo,
+                        debito: deb,
+                        credito: hab,
+                        saldoDeudor: deb >= hab ? deb - hab : 0,
+                        saldoAcreedor: hab > deb ? hab - deb : 0
+                    });
+                }
+            });
+
+            var bal = C.calcularBalance8Columnas(mayor);
+            ultimoBalance = bal;
+
+            var t = bal.totales;
+            var diffSumas = Math.abs(t.debito - t.credito);
+            var alertBox = $('b8-cuadratura-alert');
+            if (mayor.length === 0) {
+                alertBox.className = 'p-4 rounded-2xl border border-slate-200 bg-slate-100 text-slate-800 text-sm font-medium';
+                alertBox.textContent = 'Todas las cuentas están en $0. Edita montos en la tabla o haz clic en "Cargar ejemplo pyme".';
+            } else if (diffSumas === 0 && bal.cuadra) {
+                alertBox.className = 'p-4 rounded-2xl border border-emerald-200 bg-emerald-50 text-[#00382E] text-sm font-semibold';
+                alertBox.textContent = 'Balance cuadrado: Sumas iguales en ' + fmt(t.debito) + ' y resultado del ejercicio ' + fmt(bal.resultado) + ' (' + (bal.resultado >= 0 ? 'Utilidad' : 'Pérdida') + ').';
+            } else {
+                alertBox.className = 'p-4 rounded-2xl border border-amber-300 bg-amber-50 text-amber-950 text-sm font-semibold';
+                alertBox.textContent = 'Balance descuadrado: la suma de Débitos (' + fmt(t.debito) + ') difiere de Créditos (' + fmt(t.credito) + ') en ' + fmt(diffSumas) + '. Ajusta la contrapartida (por ejemplo en Banco o Capital) para cuadrar las 8 columnas.';
+            }
+
+            // Render footer totals + row de resultado
+            var difRes = bal.resultado;
+            var actMasPerd = difRes < 0 ? Math.abs(difRes) : 0;
+            var pasMasGan = difRes > 0 ? difRes : 0;
+            $('b8-foot').innerHTML =
+                '<tr>' +
+                    '<td class="col-cta">Subtotales de columnas</td>' +
+                    '<td>' + fmt(t.debito) + '</td>' +
+                    '<td>' + fmt(t.credito) + '</td>' +
+                    '<td>' + fmt(t.deudor) + '</td>' +
+                    '<td>' + fmt(t.acreedor) + '</td>' +
+                    '<td>' + fmt(t.activo) + '</td>' +
+                    '<td>' + fmt(t.pasivo) + '</td>' +
+                    '<td>' + fmt(t.perdida) + '</td>' +
+                    '<td>' + fmt(t.ganancia) + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td class="col-cta">' + (difRes >= 0 ? 'Resultado del ejercicio (Utilidad)' : 'Resultado del ejercicio (Pérdida)') + '</td>' +
+                    '<td colspan="4" style="text-align:center;">Diferencia de cuadre</td>' +
+                    '<td>' + (actMasPerd ? fmt(actMasPerd) : '-') + '</td>' +
+                    '<td>' + (pasMasGan ? fmt(pasMasGan) : '-') + '</td>' +
+                    '<td>' + (pasMasGan ? fmt(pasMasGan) : '-') + '</td>' +
+                    '<td>' + (actMasPerd ? fmt(actMasPerd) : '-') + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td class="col-cta">Sumas iguales</td>' +
+                    '<td>' + fmt(t.debito) + '</td>' +
+                    '<td>' + fmt(t.credito) + '</td>' +
+                    '<td>' + fmt(t.deudor) + '</td>' +
+                    '<td>' + fmt(t.acreedor) + '</td>' +
+                    '<td>' + fmt(t.activo + actMasPerd) + '</td>' +
+                    '<td>' + fmt(t.pasivo + pasMasGan) + '</td>' +
+                    '<td>' + fmt(t.perdida + pasMasGan) + '</td>' +
+                    '<td>' + fmt(t.ganancia + actMasPerd) + '</td>' +
+                '</tr>';
+
+            // Update computed cells per row without destroying input focus
+            var filaMap = {};
+            bal.filas.forEach(function (f) { filaMap[f.codigo] = f; });
+            document.querySelectorAll('tr[data-cod]').forEach(function (tr) {
+                var cod = tr.getAttribute('data-cod');
+                var f = filaMap[cod] || { deudor: 0, acreedor: 0, activo: 0, pasivo: 0, perdida: 0, ganancia: 0 };
+                tr.querySelector('[data-col="deudor"]').textContent = f.deudor ? fmt(f.deudor) : '-';
+                tr.querySelector('[data-col="acreedor"]').textContent = f.acreedor ? fmt(f.acreedor) : '-';
+                tr.querySelector('[data-col="activo"]').textContent = f.activo ? fmt(f.activo) : '-';
+                tr.querySelector('[data-col="pasivo"]').textContent = f.pasivo ? fmt(f.pasivo) : '-';
+                tr.querySelector('[data-col="perdida"]').textContent = f.perdida ? fmt(f.perdida) : '-';
+                tr.querySelector('[data-col="ganancia"]').textContent = f.ganancia ? fmt(f.ganancia) : '-';
+            });
+
+            // Calcular RLI ProPyme
+            var pctCob = Math.min(100, Math.max(0, parseFloat($('rli-pct-cobrado').value) || 0));
+            var pctPag = Math.min(100, Math.max(0, parseFloat($('rli-pct-pagado').value) || 0));
+            var afPag = parsePesos($('rli-af-pagado').value);
+            var tasaIdpc = parseFloat($('rli-tasa-idpc').value) || 12.5;
+            var rli = C.calcularRliProPyme(bal, { pctVentasCobradas: pctCob, pctComprasPagadas: pctPag }, { activoFijoPagadoNeto: afPag, tasaIdpc: tasaIdpc });
+            ultimaRli = rli;
+
+            $('rli-base').textContent = fmt(rli.baseImponible);
+            $('rli-res-contable').textContent = fmt(rli.resultadoContable);
+            var lineas = [
+                ['Ingresos devengados netos (ventas)', fmt(rli.ingresosDevengadosNetos)],
+                ['Menos ventas aún no cobradas al cierre', '-' + fmt(rli.ventasNoCobradasNetas)],
+                ['Ingresos percibidos del período', fmt(rli.ingresosPercibidos)],
+                ['Compras y gastos operativos devengados', fmt(rli.comprasGastosDevengados)],
+                ['Menos compras/gastos impagos al cierre', '-' + fmt(rli.comprasNoPagadasNetas)],
+                ['Gasto laboral y honorarios pagados', fmt(rli.remuneracionesHonorariosPagados)],
+                ['Más depreciación contable reversada', '+' + fmt(rli.depreciacionContableReversada)],
+                ['Menos activo fijo pagado (deprec. instantánea)', '-' + fmt(rli.activoFijoPagadoNeto)],
+                ['Más multas / gastos no aceptados Art. 21', '+' + fmt(rli.multasGastosRechazados)],
+                ['Base imponible estimada Art. 14 D N°3', fmt(rli.baseImponible)],
+                ['IDPC simulado (' + String(rli.tasaIdpcSimulada).replace('.', ',') + '%)', fmt(rli.idpcSimulado)],
+                ['Menos PPM acumulado en cuenta 11090', '-' + fmt(rli.ppmAcumulado)],
+                ['Diferencia estimada F22', fmt(rli.diferenciaF22Simulada)]
+            ];
+            $('rli-detalle').innerHTML = lineas.map(function (ln, idx) {
+                var bold = idx === 9 || idx === 12 ? ' font-bold text-[#00382E]' : ' text-slate-700';
+                return '<div class="rli-row' + bold + '"><span>' + ln[0] + '</span><span class="val">' + ln[1] + '</span></div>';
+            }).join('');
+        }
+
+        function buildTableRows() {
+            var plan = window.CLContabilidad.PLAN_CUENTAS_BASE || [];
+            var rowsHtml = plan.filter(function (meta) {
+                return Boolean(EJEMPLO[meta.codigo]);
+            }).map(function (meta) {
+                var cod = meta.codigo;
+                var s = saldos[cod] || { debe: 0, haber: 0 };
+                return '<tr data-cod="' + cod + '">' +
+                    '<td><div class="font-bold text-slate-900 text-xs">' + cod + ' · ' + meta.nombre + '</div><div class="text-[11px] text-slate-500 uppercase">' + meta.tipo + '</div></td>' +
+                    '<td class="num"><label for="debe-' + cod + '" class="sr-only">Débito ' + meta.nombre + '</label><input id="debe-' + cod + '" data-input="debe" data-cod="' + cod + '" type="number" min="0" step="1000" value="' + s.debe + '" class="b8-input-cell"></td>' +
+                    '<td class="num"><label for="haber-' + cod + '" class="sr-only">Crédito ' + meta.nombre + '</label><input id="haber-' + cod + '" data-input="haber" data-cod="' + cod + '" type="number" min="0" step="1000" value="' + s.haber + '" class="b8-input-cell"></td>' +
+                    '<td class="num" data-col="deudor">-</td>' +
+                    '<td class="num" data-col="acreedor">-</td>' +
+                    '<td class="num" data-col="activo">-</td>' +
+                    '<td class="num" data-col="pasivo">-</td>' +
+                    '<td class="num" data-col="perdida">-</td>' +
+                    '<td class="num" data-col="ganancia">-</td>' +
+                '</tr>';
+            }).join('');
+            $('b8-body').innerHTML = rowsHtml;
+
+            document.querySelectorAll('.b8-input-cell').forEach(function (inp) {
+                inp.addEventListener('input', function () {
+                    var cod = inp.getAttribute('data-cod');
+                    var side = inp.getAttribute('data-input');
+                    saldos[cod][side] = Math.max(0, Math.round(Number(inp.value) || 0));
+                    recalcular();
+                });
+            });
+        }
+
+        $('btn-b8-ejemplo').addEventListener('click', function () {
+            resetTo(EJEMPLO);
+            buildTableRows();
+            recalcular();
+        });
+
+        $('btn-b8-cero').addEventListener('click', function () {
+            resetTo(null);
+            buildTableRows();
+            recalcular();
+        });
+
+        ['rli-pct-cobrado', 'rli-pct-pagado', 'rli-af-pagado', 'rli-tasa-idpc'].forEach(function (id) {
+            $(id).addEventListener('input', recalcular);
+            $(id).addEventListener('change', recalcular);
+        });
+
+        $('btn-b8-csv').addEventListener('click', function () {
+            if (!ultimoBalance) return;
+            var rows = [
+                ['Codigo', 'Cuenta', 'Tipo', 'Debito', 'Credito', 'Deudor', 'Acreedor', 'Activo', 'Pasivo', 'Perdida', 'Ganancia']
+            ];
+            ultimoBalance.filas.forEach(function (f) {
+                rows.push([f.codigo, f.nombre, f.tipo, f.debito, f.credito, f.deudor, f.acreedor, f.activo, f.pasivo, f.perdida, f.ganancia]);
+            });
+            var t = ultimoBalance.totales;
+            rows.push(['', 'Totales', '', t.debito, t.credito, t.deudor, t.acreedor, t.activo, t.pasivo, t.perdida, t.ganancia]);
+            if (ultimaRli) {
+                rows.push([]);
+                rows.push(['RLI ProPyme Art 14 D N 3', 'Monto CLP']);
+                rows.push(['Resultado contable', ultimaRli.resultadoContable]);
+                rows.push(['Ingresos percibidos', ultimaRli.ingresosPercibidos]);
+                rows.push(['Compras y gastos pagados', ultimaRli.comprasGastosPagados]);
+                rows.push(['Remuneraciones y honorarios pagados', ultimaRli.remuneracionesHonorariosPagados]);
+                rows.push(['Depreciacion contable reversada', ultimaRli.depreciacionContableReversada]);
+                rows.push(['Activo fijo pagado neto', ultimaRli.activoFijoPagadoNeto]);
+                rows.push(['Base imponible estimada', ultimaRli.baseImponible]);
+                rows.push(['IDPC simulado', ultimaRli.idpcSimulado]);
+                rows.push(['Diferencia estimada F22', ultimaRli.diferenciaF22Simulada]);
+            }
+            var csv = '\uFEFF' + rows.map(function (r) { return r.join(';'); }).join('\r\n');
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'balance-8-columnas-rli-propyme-2026.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+        });
+
+        resetTo(EJEMPLO);
+        buildTableRows();
+        recalcular();
+    })();
+    </script>
+    <script src="/js/origen.js?v=1.0.0" defer></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
+    <script src="/js/medir_promo.js?v=1.0.0" defer></script>
+</body>
+</html>

@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora F29 Chile 2026: IVA, PPM, Honorarios y RCV</title>
+    <meta name="description" content="Calcula tu borrador del Formulario 29 en Chile: IVA débito y crédito fiscal, PPM por régimen ProPyme, retención de honorarios 15,25% y lector CSV del RCV SII.">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="canonical" href="https://calculolaboral.cl/calculadora-f29-chile">
+
+    <meta property="og:title" content="Calculadora F29 Chile 2026: IVA, PPM, Honorarios y RCV">
+    <meta property="og:description" content="Borrador mensual del Formulario 29 en Chile con lector de CSV del RCV del SII, tasa PPM ProPyme, retención de honorarios 15,25% e Impuesto Único.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/calculadora-f29-chile">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Calculadora F29 Chile 2026: IVA, PPM, Honorarios y RCV">
+    <meta name="twitter:description" content="Calcula IVA débito y crédito, remanente, PPM ProPyme y código 151 de honorarios en minutos, directo desde tus montos o CSV del RCV.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://calculolaboral.cl/calculadora-f29-chile#app",
+          "name": "Calculadora F29 Chile 2026 · Cálculo Laboral",
+          "url": "https://calculolaboral.cl/calculadora-f29-chile",
+          "description": "Calculadora referencial en navegador del Formulario 29 en Chile: IVA débito y crédito fiscal, remanente, PPM según régimen tributario, código 48 de Impuesto Único, código 151 de honorarios y lectura de CSV del Registro de Compras y Ventas (RCV) del SII.",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "es-CL",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CLP"
+          },
+          "publisher": {
+            "@id": "https://calculolaboral.cl/#organization"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+            { "@type": "ListItem", "position": 2, "name": "Suite Contadores", "item": "https://calculolaboral.cl/suite-contadores" },
+            { "@type": "ListItem", "position": 3, "name": "Calculadora F29 Chile", "item": "https://calculolaboral.cl/calculadora-f29-chile" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Cómo se calcula el código 91 del Formulario 29?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "El código 91 suma el IVA determinado a pagar del mes (código 89, si los débitos superan a los créditos y al remanente anterior), el Impuesto Único de Segunda Categoría retenido a trabajadores (código 48), las retenciones de boletas de honorarios de cargo de la empresa (código 151) y el Pago Provisional Mensual neto (código 62)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué tasa de retención de honorarios aplica en 2026?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Por la gradualidad de la Ley 21.133, las boletas de honorarios emitidas entre el 1 de enero y el 31 de diciembre de 2026 tienen una retención de 15,25%. En 2027 sube a 16% y desde 2028 queda en 17%."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Puedo subir los CSV del RCV del SII sin entregar claves?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí. La calculadora lee los archivos CSV de Ventas y Compras que descargas desde el Registro de Compras y Ventas del SII directamente en tu navegador, sin enviar datos a un servidor externo ni solicitar clave tributaria."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué tasa de PPM corresponde a ProPyme General 14 D N°3?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "En el régimen ProPyme General (Art. 14 D N°3), la tasa base legal de PPM obligatorio es 0,25% sobre los ingresos brutos percibidos del mes, con tasa transitoria rebajada de 0,125% aplicable según la ventana legal vigente. Puedes ajustar el porcentaje directo en la calculadora."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+
+    <script>
+    window.addEventListener('load', function () {
+        var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+        if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+    });
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        try {
+            if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+            if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+            if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+        } catch (e) {}
+        gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+    </script>
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.4.0">
+    <style>
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #F8FAF9;
+            color: #111827;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        main.site-container { min-width: 0; }
+        .font-mono-num {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-variant-numeric: tabular-nums;
+        }
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+            pointer-events: none;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu,
+        .nav-dropdown-group:focus-within .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.28);
+        }
+        .btn-yellow-pill:hover { background-color: var(--teal-yellow-hover); transform: translateY(-1px); }
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #1E293B !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 10px 18px;
+            font-size: 13.5px;
+            min-height: 44px;
+            border: 1.5px solid #CBD5E1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover { border-color: var(--teal-forest); color: var(--teal-forest) !important; background-color: #F8FAF9; }
+        .btn-yellow-pill.hidden, .btn-outline-pill.hidden { display: none !important; }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex, .btn-outline-pill.md\:inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex, .btn-outline-pill.lg\:inline-flex { display: inline-flex !important; }
+        }
+        .teal-footer-curve {
+            background-color: var(--teal-forest);
+            color: #FFFFFF;
+            border-top-left-radius: 48px;
+        }
+        .teal-footer-curve .footer-inner-container { max-width: 1240px; margin-left: auto; margin-right: auto; }
+        @media (min-width: 1024px) {
+            .teal-footer-curve { border-top-left-radius: 96px; }
+            .teal-footer-curve .footer-inner-container { padding-left: 5rem !important; padding-right: 2rem !important; }
+        }
+        @media (min-width: 1200px) and (max-width: 1439px) {
+            .teal-footer-curve .footer-inner-container { padding-left: 3.5rem !important; padding-right: 2rem !important; }
+        }
+        .site-container,
+        .max-w-\[1240px\],
+        [class*="max-w-[1240px]"] {
+            max-width: 1240px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .f29-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
+            background: #F1F5F9;
+            padding: 5px;
+            border-radius: 16px;
+            border: 1px solid #E2E8F0;
+        }
+        .f29-tab {
+            min-height: 44px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            padding: 8px 12px;
+            transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .f29-tab[aria-selected="true"] {
+            background: #FFFFFF;
+            color: #00382E;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+        }
+        .f29-tab:focus-visible { outline: 2px solid #00382E; outline-offset: 2px; }
+        .f29-chip {
+            min-height: 44px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12.5px;
+            font-weight: 600;
+            background: #FFFFFF;
+            color: #1E293B;
+            border: 1px solid #CBD5E1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .f29-chip:hover { border-color: #00382E; background: #F1F7F5; color: #00382E; }
+        .f29-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            background: #FFFFFF;
+        }
+        .f29-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+        .f29-table th, .f29-table td {
+            padding: 11px 16px;
+            border-bottom: 1px solid #F1F5F9;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .f29-table thead th {
+            background: #F4F7F6;
+            color: #00382E;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+        .f29-table td.num {
+            text-align: right;
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            color: #0F172A;
+            white-space: nowrap;
+        }
+        .f29-table tr.is-subtotal td, .f29-table tr.is-subtotal th {
+            background: #F8FAF9;
+            font-weight: 800;
+            color: #00382E;
+        }
+        .f29-table tr.is-total td, .f29-table tr.is-total th {
+            background: #ECF5F2;
+            font-weight: 800;
+            color: #00382E;
+            border-bottom: 0;
+        }
+        .f29-code {
+            display: inline-block;
+            min-width: 44px;
+            text-align: center;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: #ECF5F2;
+            color: #00382E;
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .drop-box {
+            border: 1.5px dashed #94A3B8;
+            border-radius: 16px;
+            padding: 14px;
+            background: #F8FAFC;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+        .drop-box.is-loaded {
+            border-color: #00382E;
+            border-style: solid;
+            background: #ECF5F2;
+        }
+        .min-h-\[44px\] { min-height: 44px; }
+        .min-w-\[44px\] { min-width: 44px; }
+        .f29-layout { display: flex; flex-direction: column; gap: 2rem; align-items: flex-start; margin-bottom: 3.5rem; }
+        .f29-sidebar { width: 100%; }
+        @media (min-width: 1024px) {
+            .f29-layout { flex-direction: row; }
+            .f29-sidebar { flex: 0 0 440px; width: 440px; }
+        }
+        .f29-kpi-label { color: #A7F3D0; }
+        .f29-total-val { color: #FFB703; }
+        .f29-file::file-selector-button {
+            min-height: 44px; padding: 0 14px; margin-right: 12px; border: 0; border-radius: 9999px;
+            background-color: #00382E; color: #FFFFFF; font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+        .f29-file::file-selector-button:hover { background-color: #002820; }
+        #btn-rcv-ejemplo { background-color: #ECF5F2; color: #00382E; border-color: rgba(0, 56, 46, 0.35); font-weight: 700; }
+        #btn-f29-copiar { background-color: #FFFFFF; color: #00382E; }
+        #btn-f29-csv { background-color: #FFB703; color: #111827; }
+    </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
+    <link rel="stylesheet" href="/assets/css/promo-contadores.css?v=1.0.0">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Ticker -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Formulario 29 SII · IVA 19%, retención boletas 15,25% y PPM ProPyme</span>
+            </div>
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
+                <span class="text-white/50">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$72.440</strong></span>
+                <span class="text-white/50">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm shrink-0" style="background-color: #00382E;">
+                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700" aria-label="Menú principal">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">Simulador Finiquito</a>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">payments</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Sueldo Líquido</div><div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, salud e IUSC.</div></div>
+                                </a>
+                                <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">percent</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Impuesto Único</div><div class="text-xs text-slate-500 mt-0.5">Tabla SII y cálculo mensual.</div></div>
+                                </a>
+                                <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/70 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-[#00382E] text-white flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">receipt_long</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Calculadora F29</div><div class="text-xs text-slate-600 mt-0.5">IVA, PPM, honorarios y RCV.</div></div>
+                                </a>
+                                <a href="balance-8-columnas-rli-propyme-excel" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">table_chart</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Balance 8 Columnas y RLI</div><div class="text-xs text-slate-500 mt-0.5">ProPyme 14 D N°3 y Excel.</div></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+                            <div class="space-y-1">
+                                <a href="como-generar-archivo-previred-lre-f29-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Archivo Previred, LRE y F29</a>
+                                <a href="carpeta-laboral-empresa-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Carpeta Laboral de Empresa</a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Checklist Fiscalización DT</a>
+                                <a href="suite-contadores" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Suite Contadores</a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">Ver todas las guías →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <a href="suite-contadores" class="hidden md:inline-flex btn-yellow-pill !py-2 !px-5 !text-xs">Suite Contadores</a>
+                    <a href="para-empleadores" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">Portal Empleadores</a>
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 min-w-[44px] min-h-[44px] text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer inline-flex items-center justify-center" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-2">
+            <a href="finiquito_calculator" class="flex items-center min-h-[44px] text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="calculadora-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Calculadora F29</a>
+            <a href="balance-8-columnas-rli-propyme-excel" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Balance 8 Columnas y RLI</a>
+            <a href="impuesto-unico-segunda-categoria" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Impuesto Único</a>
+            <a href="como-generar-archivo-previred-lre-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Guía Previred, LRE y F29</a>
+            <a href="blog" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Blog de Guías</a>
+            <div class="pt-2">
+                <a href="suite-contadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Suite Contadores</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+
+        <nav class="flex flex-wrap items-center gap-2 text-xs text-slate-600 mb-4" aria-label="Breadcrumb">
+            <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <a href="suite-contadores" class="hover:text-[#00382E] transition-colors">Suite Contadores</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <span class="text-slate-900 font-semibold">Calculadora F29</span>
+        </nav>
+
+        <header class="mb-7 max-w-4xl">
+            <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                Calculadora F29 Chile 2026: IVA, PPM, honorarios y RCV<span class="text-[#FFB703]">.</span>
+            </h1>
+            <p class="cl-meta">Actualizado noviembre 2026 · Borrador referencial del Formulario 29 (IVA 19%, retención de boletas 15,25% Ley 21.133, regímenes 14 D N°3, 14 D N°8 y 14 A)</p>
+            <p class="text-sm sm:text-base text-slate-700 max-w-2xl mt-2 leading-relaxed">
+                Estima tu F29 del mes ingresando ventas, compras y honorarios directo, o cargando tus archivos CSV del Registro de Compras y Ventas (RCV) del SII en tu navegador, sin subir datos ni ingresar claves.
+            </p>
+        </header>
+
+        <nav class="cl-calcnav no-print" aria-label="Herramientas contables y tributarias">
+            <div class="cl-calcnav-track">
+                <a href="calculadora-f29-chile" aria-current="page">Calculadora F29</a>
+                <a href="balance-8-columnas-rli-propyme-excel">Balance 8 Columnas y RLI</a>
+                <a href="impuesto-unico-segunda-categoria">Impuesto Único</a>
+                <a href="sueldo_liquido">Sueldo líquido</a>
+                <a href="liquidacion-de-sueldo">Liquidación de sueldo</a>
+                <a href="como-generar-archivo-previred-lre-f29-chile">Guía Previred, LRE y F29</a>
+                <a href="suite-contadores">Suite Contadores</a>
+            </div>
+        </nav>
+
+        <!-- CALCULADORA F29 -->
+        <section aria-labelledby="calc-heading" class="f29-layout">
+            <div class="f29-sidebar bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-5">
+                <div class="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-slate-100">
+                    <h2 id="calc-heading" class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 m-0">
+                        <span class="material-icons text-[#00382E]" aria-hidden="true">tune</span>
+                        <span>Parámetros del período</span>
+                    </h2>
+                    <span class="text-xs font-mono-num text-slate-700 font-semibold bg-slate-100 px-2.5 py-1 rounded-full">IVA 19%</span>
+                </div>
+
+                <!-- Período y Régimen -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label for="f29-periodo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Período tributario</label>
+                        <input type="month" id="f29-periodo" value="2026-11" class="w-full min-h-[44px] px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-semibold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                    </div>
+                    <div>
+                        <label for="f29-regimen" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Régimen tributario</label>
+                        <select id="f29-regimen" class="w-full min-h-[44px] px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <option value="14D3">14 D N°3 ProPyme (PPM 0,125%)</option>
+                            <option value="14D3_MAYOR">14 D N°3 &gt;50.000 UF (PPM 0,25%)</option>
+                            <option value="14D8">14 D N°8 Transparente (PPM 0,2%)</option>
+                            <option value="14D8_MAYOR">14 D N°8 &gt;50.000 UF (PPM 0,5%)</option>
+                            <option value="14A">14 A Semi Integrado (tasa fija)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Mode switch -->
+                <div>
+                    <p class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Origen de ventas y compras</p>
+                    <div class="f29-tabs" role="tablist" aria-label="Modo de ingreso de datos">
+                        <button type="button" role="tab" id="tab-manual" aria-selected="true" aria-controls="panel-manual" class="f29-tab">Ingreso directo</button>
+                        <button type="button" role="tab" id="tab-rcv" aria-selected="false" aria-controls="panel-rcv" class="f29-tab">Importar CSV RCV SII</button>
+                    </div>
+                </div>
+
+                <!-- Presets -->
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" data-f29-preset="pyme" class="f29-chip">Pyme servicios ($4,5M)</button>
+                    <button type="button" data-f29-preset="comercio" class="f29-chip">Comercio + honorarios</button>
+                    <button type="button" data-f29-preset="cero" class="f29-chip">Sin movimiento</button>
+                </div>
+
+                <!-- Panel 1: Manual -->
+                <div id="panel-manual" role="tabpanel" aria-labelledby="tab-manual" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="f29-ventas-neto" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ventas netas afectas</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                                <input type="text" id="f29-ventas-neto" value="4.500.000" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="f29-ventas-exento" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ventas exentas</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                                <input type="text" id="f29-ventas-exento" value="0" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="f29-compras-neto" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Compras netas con IVA</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                                <input type="text" id="f29-compras-neto" value="1.800.000" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="f29-boletas-cant" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Boletas afectas (cant.)</label>
+                            <input type="number" id="f29-boletas-cant" value="12" min="0" step="1" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                        </div>
+                        <div>
+                            <label for="f29-boletas-neto" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Boletas neto del mes</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                                <input type="text" id="f29-boletas-neto" value="500.000" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="f29-remanente" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Remanente mes anterior ($)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                                <input type="text" id="f29-remanente" value="0" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel 2: RCV CSV -->
+                <div id="panel-rcv" role="tabpanel" aria-labelledby="tab-rcv" hidden class="space-y-3.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <button type="button" id="btn-rcv-ejemplo" class="f29-chip !bg-[#ECF5F2] !text-[#00382E] !border-[#00382E]/30 font-bold">Cargar ejemplo RCV SII</button>
+                        <button type="button" id="btn-rcv-limpiar" class="f29-chip text-slate-700">Limpiar CSV</button>
+                    </div>
+                    <div id="rcv-ventas-box" class="drop-box">
+                        <label for="input-rcv-ventas" class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">CSV RCV de Ventas (SII)</label>
+                        <input type="file" id="input-rcv-ventas" accept=".csv,.txt" class="f29-file block w-full text-xs text-slate-700 cursor-pointer">
+                        <p id="rcv-ventas-estado" class="text-xs text-slate-600 mt-1.5 mb-0">Sin archivo cargado. Admite formato estándar SII separado por punto y coma.</p>
+                    </div>
+                    <div id="rcv-compras-box" class="drop-box">
+                        <label for="input-rcv-compras" class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">CSV RCV de Compras (SII)</label>
+                        <input type="file" id="input-rcv-compras" accept=".csv,.txt" class="f29-file block w-full text-xs text-slate-700 cursor-pointer">
+                        <p id="rcv-compras-estado" class="text-xs text-slate-600 mt-1.5 mb-0">Sin archivo cargado. Detecta supermercado, activo fijo e IVA no recuperable.</p>
+                    </div>
+                    <div id="rcv-error" hidden class="p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-950 font-medium" role="alert"></div>
+                </div>
+
+                <!-- Impuesto Único, Honorarios y Tasa PPM -->
+                <div class="pt-3 border-t border-slate-100 space-y-3.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="f29-honorarios" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Boletas honorarios bruto</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                                <input type="text" id="f29-honorarios" value="400.000" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="f29-impuesto-unico" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Impuesto Único nómina (Cód. 48)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                                <input type="text" id="f29-impuesto-unico" value="42.500" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-end">
+                        <div>
+                            <label for="f29-tasa-ppm" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tasa PPM (%)</label>
+                            <input type="number" id="f29-tasa-ppm" value="0.125" min="0" max="15" step="0.025" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                        </div>
+                        <label for="f29-hon-empresa" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer text-xs font-semibold text-slate-800">
+                            <input type="checkbox" id="f29-hon-empresa" checked class="w-4 h-4 accent-[#00382E]">
+                            <span>Retiene la empresa (Art. 74 N°2)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Result + Codes Table -->
+            <div class="flex-1 min-w-0 w-full space-y-6">
+
+                <!-- Forest Result Panel -->
+                <div class="rounded-3xl p-6 sm:p-8 text-white shadow-lg" style="background-color: #00382E;" aria-live="polite">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p class="f29-kpi-label text-xs font-bold uppercase tracking-wider mb-1" id="res-label">Total estimado a pagar en F29 (Cód. 91)</p>
+                            <div class="f29-total-val text-4xl sm:text-5xl font-extrabold font-mono-num tracking-tight" id="res-total-91">$649.125</div>
+                            <p class="text-xs text-slate-200 mt-1.5 mb-0" id="res-sub-meta">Período 2026-11 · 14 D N°3 ProPyme</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 no-print">
+                            <button type="button" id="btn-f29-copiar" class="min-h-[44px] px-4 py-2 rounded-full font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-slate-100">
+                                <span class="material-icons text-sm" aria-hidden="true">content_copy</span>
+                                <span id="btn-f29-copiar-txt">Copiar resumen</span>
+                            </button>
+                            <button type="button" id="btn-f29-csv" class="min-h-[44px] px-4 py-2 rounded-full font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:opacity-95">
+                                <span class="material-icons text-sm" aria-hidden="true">download</span>
+                                <span>Descargar CSV</span>
+                            </button>
+                            <button type="button" onclick="window.print()" class="min-h-[44px] px-3.5 py-2 rounded-full border border-white/30 text-white font-semibold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-white/10">
+                                <span class="material-icons text-sm" aria-hidden="true">print</span>
+                                <span class="hidden sm:inline">Imprimir</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-white/15">
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">IVA a pagar (89)</div>
+                            <div class="text-lg font-bold font-mono-num text-white mt-0.5" id="res-c89">$542.000</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Remanente (77)</div>
+                            <div class="text-lg font-bold font-mono-num text-white mt-0.5" id="res-c77">$0</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Honorarios (151)</div>
+                            <div class="text-lg font-bold font-mono-num text-white mt-0.5" id="res-c151">$61.000</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">PPM neto (62)</div>
+                            <div class="text-lg font-bold font-mono-num text-white mt-0.5" id="res-c62">$6.250</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notices / Empty states -->
+                <div id="f29-empty-notice" hidden class="p-4 rounded-2xl bg-slate-100 border border-slate-200 text-sm text-slate-700">
+                    Todos los montos están en cero. Si tu empresa no tuvo movimientos en el período, verifica en el portal del SII la declaración sin movimiento (F29 en cero) dentro del plazo.
+                </div>
+                <div id="f29-avisos-box" hidden class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm text-amber-950 space-y-1"></div>
+
+                <!-- Desglose por Códigos F29 -->
+                <div class="f29-table-wrap">
+                    <div class="px-5 py-4 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
+                        <h3 class="text-sm sm:text-base font-bold text-slate-900 m-0">Desglose por códigos del Formulario 29</h3>
+                        <span class="text-xs text-slate-600" id="res-origen-tag">Ingreso directo del período</span>
+                    </div>
+                    <table class="f29-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 72px;">Código</th>
+                                <th>Glosa del Formulario 29</th>
+                                <th style="width: 90px;">Cant.</th>
+                                <th style="text-align: right;">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="f29-codigos-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUIA EDITORIAL -->
+        <div class="cl-reading">
+            <article class="cl-article">
+                <figure class="cl-cover-frame">
+                    <img src="/assets/covers/calculadora-f29.svg" alt="Ilustración de un borrador del Formulario 29 junto a una calculadora" width="800" height="450" loading="eager">
+                </figure>
+
+                <section id="como-se-lee">
+                    <h2>Cómo se ordenan los códigos clave del F29</h2>
+                    <p>
+                        El Formulario 29 concentra en una sola declaración mensual el <strong>IVA débito y crédito fiscal</strong> (D.L. 825), las <strong>retenciones de trabajadores y honorarios</strong> (Impuesto Único de Segunda Categoría en el código 48 y boletas de honorarios en el código 151) y el <strong>Pago Provisional Mensual (PPM)</strong> como abono a cuenta del impuesto anual de la Ley sobre Impuesto a la Renta.
+                    </p>
+                    <p>
+                        Esta calculadora usa el mismo motor de cálculo del módulo F29 de <a href="suite-contadores">Suite Contadores</a>: separa facturas del giro, notas de crédito, boletas electrónicas, compras de supermercado y activo fijo, y aplica la retención de <strong>15,25% vigente en 2026</strong> para boletas de honorarios según el año del período elegido.
+                    </p>
+                </section>
+
+                <section id="plazos-ppm">
+                    <h2>Plazos de declaración y tasas PPM por régimen</h2>
+                    <ul>
+                        <li><strong>Día 12 del mes siguiente:</strong> vencimiento general para declaraciones sin emisión tributaria electrónica o con pago en sucursal.</li>
+                        <li><strong>Día 20 del mes siguiente:</strong> plazo ampliado para contribuyentes que emiten documentos tributarios electrónicos (DTE) y declaran por Internet en el portal del SII. Si cae sábado, domingo o festivo, el vencimiento pasa al día hábil siguiente.</li>
+                        <li><strong>ProPyme General 14 D N°3:</strong> base imponible de PPM calculada sobre ingresos brutos netos percibidos/devengados del giro declarados en el mes (código 563), con tasa de 0,25% general (o 0,125% según ventana legal aplicable) e incremental hasta 0,5% cuando superas 50.000 UF en ejercicios previos.</li>
+                        <li><strong>ProPyme Transparente 14 D N°8:</strong> tasa fija de 0,2% mientras los ingresos anuales no excedan 50.000 UF, o 0,5% sobre ese umbral.</li>
+                    </ul>
+                </section>
+
+                <section id="puente-suite">
+                    <h2>Cuando llevas el F29 de varios clientes cada mes</h2>
+                    <p>
+                        Si preparas el F29 de múltiples pymes junto con liquidaciones de sueldo, Previred y contabilidad mensual, puedes llevar esa operación a <a href="suite-contadores">Suite Contadores</a>: importa en lote los CSV de Compras y Ventas del RCV, cruza automáticamente el código 48 desde las liquidaciones del mes y descarga el <a href="como-generar-archivo-previred-lre-f29-chile">archivo plano Previred de 105 campos</a> y el LRE de 147 columnas sin entregar claves de tus clientes.
+                    </p>
+                    <p>
+                        También puedes complementar este borrador mensual con la <a href="balance-8-columnas-rli-propyme-excel">planilla de Balance de 8 Columnas y RLI ProPyme en Excel</a> y la <a href="impuesto-unico-segunda-categoria">calculadora de Impuesto Único</a> para validar la retención de trabajadores antes de declarar.
+                    </p>
+                </section>
+
+                <section id="faq-f29">
+                    <h2>Preguntas frecuentes sobre el F29</h2>
+                    <h3>¿Reemplaza el cálculo a la propuesta del SII?</h3>
+                    <p>
+                        No. Es una herramienta de revisión previa y cuadratura. La declaración oficial se presenta y valida siempre dentro del portal del Servicio de Impuestos Internos, contrastando los códigos aquí obtenidos con el asistente F29 y el RCV oficial.
+                    </p>
+                    <h3>¿Cómo se reajusta el remanente de crédito fiscal?</h3>
+                    <p>
+                        En tu F29 oficial del SII, el remanente de crédito fiscal del mes anterior (código 504) viene expresado en UTM de ese período y se convierte a pesos multiplicando por la UTM del mes en que presentas la declaración. Aquí puedes ingresar el monto ya convertido a pesos para simular el saldo neto entre débitos y créditos.
+                    </p>
+                </section>
+<!-- cl-suite:inicio (lo genera tools/promo_contadores.js: no editar a mano) -->
+<aside class="cl-suite no-print" aria-labelledby="cl-suite-t">
+<div class="cl-suite-cuerpo">
+<p class="cl-suite-kicker">Suite Contadores · Acceso anticipado 90 días gratis</p>
+<p class="cl-suite-titulo" id="cl-suite-t">¿Preparas F29 y nóminas de varios clientes cada mes?</p>
+<p>En Suite Contadores cruzas el código 48 directo desde las liquidaciones del período, lees los CSV del RCV por cliente y armas F29 y Balance de 8 Columnas en tu navegador, sin pedir claves.</p>
+</div>
+<div class="cl-suite-acciones">
+<a class="cl-suite-btn" href="suite-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="calculadora-f29-chile-contadores-bloque">Ver Suite Contadores</a>
+<a class="cl-suite-link" href="demo-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="calculadora-f29-chile-contadores-demo">Probar demo con ejemplo</a>
+</div>
+</aside>
+<!-- cl-suite:fin -->
+<section class="cl-sources" aria-labelledby="fuentes-titulo">
+                    <h2 id="fuentes-titulo">Fuentes y referencias normativas</h2>
+                    <ul>
+                        <li>Servicio de Impuestos Internos (SII) · Cartilla e instrucciones del Formulario 29 de Declaración Mensual y Pago Simultáneo.</li>
+                        <li>Decreto Ley N° 825 sobre Impuesto a las Ventas y Servicios (arts. 20 a 27 sobre Débito, Crédito Fiscal y Remanente).</li>
+                        <li>Ley sobre Impuesto a la Renta (art. 14 letra D N°3 y N°8, art. 74 N°2 y art. 84 sobre PPM y retenciones).</li>
+                        <li>Ley N° 21.133 · Gradualidad de retención de boletas de honorarios (15,25% en 2026, 16% en 2027, 17% desde 2028).</li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+                                <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                                </svg>
+                            </div>
+                            <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+                        </a>
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
+                            Plataforma independiente con herramientas laborales y tributarias actualizadas para trabajadores, pymes y contadores en Chile (2026).
+                        </p>
+                        <div class="pt-1 text-xs font-mono-num text-white/60">Versión 2.6 · Actualizada Noviembre 2026</div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Calculadoras</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="impuesto-unico-segunda-categoria" class="text-white/80 hover:text-[#FFB703] transition-colors">Impuesto Único</a></li>
+                            <li><a href="calculadora-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Calculadora F29</a></li>
+                            <li><a href="balance-8-columnas-rli-propyme-excel" class="text-white/80 hover:text-[#FFB703] transition-colors">Balance 8 Columnas</a></li>
+                            <li><a href="liquidacion-de-sueldo" class="text-white/80 hover:text-[#FFB703] transition-colors">Liquidación de Sueldo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Guías Legales</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Guía Previred, LRE y F29</a></li>
+                            <li><a href="carpeta-laboral-empresa-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carpeta Laboral Empresa</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Para Empresas</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
+                            <li><a href="asistente-laboral-pyme" class="text-white/80 hover:text-[#FFB703] transition-colors">Asistente Laboral Pyme</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/60 text-center md:text-left">
+                    <div>&copy; 2026 Cálculo Laboral Chile. Herramienta referencial basada en normativa tributaria y laboral vigente.</div>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a href="terminos" class="hover:text-white transition-colors">Términos</a>
+                        <span>·</span>
+                        <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
+                        <span>·</span>
+                        <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/constants.js?v=2.1.3"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
+    <script src="/js/contadores_f29.js?v=1.0.0"></script>
+    <script>
+    (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+        var fmt = function (n) {
+            var sign = n < 0 ? '-' : '';
+            var val = Math.abs(Math.round(Number(n) || 0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return sign + '$' + val;
+        };
+        var miles = function (n) {
+            return Math.max(0, Math.round(Number(n) || 0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        };
+        var parsePesos = function (el) {
+            return parseInt((el.value || '').replace(/[^0-9]/g, ''), 10) || 0;
+        };
+
+        var state = {
+            modo: 'manual',
+            rcvVentas: null,
+            rcvCompras: null,
+            ultimo: null
+        };
+
+        function setModo(modo) {
+            state.modo = modo;
+            var esManual = modo === 'manual';
+            $('tab-manual').setAttribute('aria-selected', esManual ? 'true' : 'false');
+            $('tab-rcv').setAttribute('aria-selected', !esManual ? 'true' : 'false');
+            $('panel-manual').hidden = !esManual;
+            $('panel-rcv').hidden = esManual;
+            calcular();
+        }
+
+        function buildManualVentas() {
+            var neto = parsePesos($('f29-ventas-neto'));
+            var exento = parsePesos($('f29-ventas-exento'));
+            var cantBol = Math.max(0, parseInt($('f29-boletas-cant').value, 10) || 0);
+            var netoBol = parsePesos($('f29-boletas-neto'));
+            return {
+                cantFacturasGiro: neto > 0 || exento > 0 ? 1 : 0,
+                netoGiro: neto,
+                ivaGiro: Math.round(neto * 0.19),
+                exentoGiro: exento,
+                cantBoletas39: cantBol,
+                netoBoletas39: netoBol,
+                ivaBoletas39: Math.round(netoBol * 0.19),
+                exentoBoletas41: 0,
+                cantNotasDebito: 0,
+                netoNotasDebito: 0,
+                ivaNotasDebito: 0,
+                cantNotasCredito: 0,
+                netoNotasCredito: 0,
+                ivaNotasCredito: 0
+            };
+        }
+
+        function buildManualCompras() {
+            var neto = parsePesos($('f29-compras-neto'));
+            return {
+                cantFacturasGiro: neto > 0 ? 1 : 0,
+                netoGiro: neto,
+                ivaGiro: Math.round(neto * 0.19),
+                cantSupermercado: 0,
+                netoSupermercado: 0,
+                ivaSupermercado: 0,
+                cantActivoFijo: 0,
+                netoActivoFijo: 0,
+                ivaActivoFijo: 0,
+                ivaNoRecuperable: 0,
+                cantNotasCredito: 0,
+                netoNotasCredito: 0,
+                ivaNotasCredito: 0
+            };
+        }
+
+        function renderTabla(res) {
+            var c = res.codigos;
+            var filas = [
+                { cod: '503 / 502', glosa: 'Facturas emitidas del giro (débito fiscal)', cant: c[503], monto: c[502] },
+                { cod: '110 / 111', glosa: 'Boletas de ventas y servicios emitidas', cant: c[110], monto: c[111] },
+                { cod: '758 / 759', glosa: 'Comprobantes de pago electrónico', cant: c[758], monto: c[759] },
+                { cod: '512 / 513', glosa: 'Notas de débito emitidas', cant: c[512], monto: c[513] },
+                { cod: '509 / 510', glosa: 'Notas de crédito emitidas (rebaja débito)', cant: c[509], monto: -c[510] },
+                { cod: '538', glosa: 'Total Débito Fiscal del período', cant: '-', monto: c[538], tipo: 'subtotal' },
+                { cod: '519 / 520', glosa: 'Facturas de compra del giro (crédito fiscal)', cant: c[519], monto: c[520] },
+                { cod: '761 / 762', glosa: 'Compras en supermercados y comercios similares', cant: c[761], monto: c[762] },
+                { cod: '524 / 525', glosa: 'Facturas por adquisición de activo fijo', cant: c[524], monto: c[525] },
+                { cod: '527 / 528', glosa: 'Notas de crédito recibidas (rebaja crédito)', cant: c[527], monto: -c[528] },
+                { cod: '504', glosa: 'Remanente de crédito fiscal mes anterior', cant: '-', monto: c[504] },
+                { cod: '537', glosa: 'Total Créditos Fiscales del período', cant: '-', monto: c[537], tipo: 'subtotal' },
+                { cod: '89', glosa: 'IVA determinado a pagar del mes', cant: '-', monto: c[89] },
+                { cod: '77', glosa: 'Remanente de crédito fiscal para mes siguiente', cant: '-', monto: c[77] },
+                { cod: '48', glosa: 'Impuesto Único Segunda Categoría (trabajadores)', cant: '-', monto: c[48] },
+                { cod: '151', glosa: 'Retención boletas de honorarios (' + res.resumen.tasaHonorariosPct.toString().replace('.', ',') + '%)', cant: '-', monto: c[151] },
+                { cod: '563 / 62', glosa: 'PPM neto (base ' + fmt(c[563]) + ' × ' + c[115].toString().replace('.', ',') + '%)', cant: '-', monto: c[62] },
+                { cod: '91', glosa: 'Total determinado a pagar en el período', cant: '-', monto: c[91], tipo: 'total' }
+            ];
+
+            $('f29-codigos-body').innerHTML = filas.map(function (f) {
+                var cls = f.tipo === 'total' ? ' class="is-total"' : (f.tipo === 'subtotal' ? ' class="is-subtotal"' : '');
+                return '<tr' + cls + '>' +
+                    '<td><span class="f29-code">' + f.cod + '</span></td>' +
+                    '<td class="text-slate-800">' + f.glosa + '</td>' +
+                    '<td class="font-mono-num text-slate-600">' + f.cant + '</td>' +
+                    '<td class="num">' + fmt(f.monto) + '</td>' +
+                '</tr>';
+            }).join('');
+        }
+
+        function calcular() {
+            if (!window.CLContadoresF29) return;
+            var reg = $('f29-regimen').value;
+            var periodo = $('f29-periodo').value || '2026-11';
+            var tasaPpm = Math.max(0, parseFloat($('f29-tasa-ppm').value) || 0);
+            var rem = state.modo === 'manual' ? parsePesos($('f29-remanente')) : parsePesos($('f29-remanente'));
+            var ventas = state.modo === 'rcv' ? state.rcvVentas : buildManualVentas();
+            var compras = state.modo === 'rcv' ? state.rcvCompras : buildManualCompras();
+
+            var res = window.CLContadoresF29.calcularF29({
+                periodo: periodo,
+                regimen: reg,
+                ventas: ventas,
+                compras: compras,
+                remanenteAnterior: rem,
+                impuestoUnico48: parsePesos($('f29-impuesto-unico')),
+                honorariosBruto: parsePesos($('f29-honorarios')),
+                honorariosRetencionDirecta: !$('f29-hon-empresa').checked,
+                tasaPpm: tasaPpm
+            });
+            state.ultimo = res;
+
+            var c = res.codigos;
+            $('res-total-91').textContent = fmt(c[91]);
+            $('res-sub-meta').textContent = 'Período ' + res.periodo + ' · ' + res.regimenNombre + ' · Ret. honorarios ' + res.resumen.tasaHonorariosPct.toString().replace('.', ',') + '%';
+            $('res-c89').textContent = fmt(c[89]);
+            $('res-c77').textContent = fmt(c[77]);
+            $('res-c151').textContent = fmt(c[151]);
+            $('res-c62').textContent = fmt(c[62]);
+            $('res-origen-tag').textContent = state.modo === 'rcv'
+                ? 'Calculado desde CSV del RCV SII'
+                : 'Calculado con ingreso directo';
+
+            var sinMovimiento = c[91] === 0 && c[538] === 0 && c[537] === 0 && c[151] === 0 && c[48] === 0;
+            $('f29-empty-notice').hidden = !sinMovimiento;
+
+            var avisosBox = $('f29-avisos-box');
+            if (res.avisos && res.avisos.length) {
+                avisosBox.hidden = false;
+                avisosBox.innerHTML = res.avisos.map(function (a) {
+                    return '<p class="m-0"><strong>Nota:</strong> ' + a + '</p>';
+                }).join('');
+            } else {
+                avisosBox.hidden = true;
+                avisosBox.innerHTML = '';
+            }
+
+            renderTabla(res);
+        }
+
+        function leerCsvArchivo(file, tipo) {
+            var errBox = $('rcv-error');
+            errBox.hidden = true;
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function () {
+                try {
+                    var parsed = window.CLContadoresF29.parsearRcv(reader.result, tipo);
+                    if (!parsed.docs) {
+                        errBox.hidden = false;
+                        errBox.textContent = 'El archivo de ' + tipo + ' no contiene filas válidas de documentos tributarios. Revisa que corresponda al CSV exportado desde el RCV del SII.';
+                        return;
+                    }
+                    if (tipo === 'ventas') {
+                        state.rcvVentas = parsed;
+                        $('rcv-ventas-box').classList.add('is-loaded');
+                        $('rcv-ventas-estado').textContent = 'Cargado: ' + parsed.docs + ' documentos · Neto del giro ' + fmt(parsed.netoGiro);
+                    } else {
+                        state.rcvCompras = parsed;
+                        $('rcv-compras-box').classList.add('is-loaded');
+                        $('rcv-compras-estado').textContent = 'Cargado: ' + parsed.docs + ' documentos · Neto del giro ' + fmt(parsed.netoGiro);
+                    }
+                    calcular();
+                } catch (e) {
+                    errBox.hidden = false;
+                    errBox.textContent = 'No se pudo procesar el archivo CSV de ' + tipo + '. Verifica su codificación o prueba con el ejemplo RCV SII.';
+                }
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+
+        // Eventos
+        $('tab-manual').addEventListener('click', function () { setModo('manual'); });
+        $('tab-rcv').addEventListener('click', function () { setModo('rcv'); });
+
+        $('f29-regimen').addEventListener('change', function () {
+            var info = window.CLContadoresF29 && window.CLContadoresF29.REGIMENES[this.value];
+            if (info) $('f29-tasa-ppm').value = info.tasaPpmDefecto;
+            calcular();
+        });
+
+        ['f29-ventas-neto', 'f29-ventas-exento', 'f29-compras-neto', 'f29-boletas-neto', 'f29-remanente', 'f29-honorarios', 'f29-impuesto-unico'].forEach(function (id) {
+            $(id).addEventListener('input', function () {
+                var v = parsePesos(this);
+                this.value = v ? miles(v) : '0';
+                calcular();
+            });
+        });
+
+        ['f29-periodo', 'f29-boletas-cant', 'f29-tasa-ppm', 'f29-hon-empresa'].forEach(function (id) {
+            $(id).addEventListener('change', calcular);
+            $(id).addEventListener('input', calcular);
+        });
+
+        document.querySelectorAll('[data-f29-preset]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var p = btn.getAttribute('data-f29-preset');
+                setModo('manual');
+                if (p === 'pyme') {
+                    $('f29-regimen').value = '14D3';
+                    $('f29-tasa-ppm').value = '0.125';
+                    $('f29-ventas-neto').value = '4.500.000';
+                    $('f29-ventas-exento').value = '0';
+                    $('f29-compras-neto').value = '1.800.000';
+                    $('f29-boletas-cant').value = '12';
+                    $('f29-boletas-neto').value = '500.000';
+                    $('f29-remanente').value = '0';
+                    $('f29-honorarios').value = '400.000';
+                    $('f29-impuesto-unico').value = '42.500';
+                    $('f29-hon-empresa').checked = true;
+                } else if (p === 'comercio') {
+                    $('f29-regimen').value = '14D3_MAYOR';
+                    $('f29-tasa-ppm').value = '0.25';
+                    $('f29-ventas-neto').value = '12.400.000';
+                    $('f29-ventas-exento').value = '350.000';
+                    $('f29-compras-neto').value = '8.200.000';
+                    $('f29-boletas-cant').value = '68';
+                    $('f29-boletas-neto').value = '2.950.000';
+                    $('f29-remanente').value = '180.000';
+                    $('f29-honorarios').value = '750.000';
+                    $('f29-impuesto-unico').value = '115.000';
+                    $('f29-hon-empresa').checked = true;
+                } else {
+                    ['f29-ventas-neto', 'f29-ventas-exento', 'f29-compras-neto', 'f29-boletas-neto', 'f29-remanente', 'f29-honorarios', 'f29-impuesto-unico'].forEach(function (k) { $(k).value = '0'; });
+                    $('f29-boletas-cant').value = '0';
+                }
+                calcular();
+            });
+        });
+
+        $('input-rcv-ventas').addEventListener('change', function () {
+            if (this.files && this.files[0]) leerCsvArchivo(this.files[0], 'ventas');
+        });
+        $('input-rcv-compras').addEventListener('change', function () {
+            if (this.files && this.files[0]) leerCsvArchivo(this.files[0], 'compras');
+        });
+
+        $('btn-rcv-ejemplo').addEventListener('click', function () {
+            $('rcv-error').hidden = true;
+            state.rcvVentas = window.CLContadoresF29.parsearRcv(window.CLContadoresF29.ejemploRcvVentasCsv(), 'ventas');
+            state.rcvCompras = window.CLContadoresF29.parsearRcv(window.CLContadoresF29.ejemploRcvComprasCsv(), 'compras');
+            $('rcv-ventas-box').classList.add('is-loaded');
+            $('rcv-compras-box').classList.add('is-loaded');
+            $('rcv-ventas-estado').textContent = 'Ejemplo cargado: ' + state.rcvVentas.docs + ' documentos · Neto del giro ' + fmt(state.rcvVentas.netoGiro);
+            $('rcv-compras-estado').textContent = 'Ejemplo cargado: ' + state.rcvCompras.docs + ' documentos · Neto del giro ' + fmt(state.rcvCompras.netoGiro);
+            calcular();
+        });
+
+        $('btn-rcv-limpiar').addEventListener('click', function () {
+            state.rcvVentas = null;
+            state.rcvCompras = null;
+            $('input-rcv-ventas').value = '';
+            $('input-rcv-compras').value = '';
+            $('rcv-ventas-box').classList.remove('is-loaded');
+            $('rcv-compras-box').classList.remove('is-loaded');
+            $('rcv-ventas-estado').textContent = 'Sin archivo cargado. Admite formato estándar SII separado por punto y coma.';
+            $('rcv-compras-estado').textContent = 'Sin archivo cargado. Detecta supermercado, activo fijo e IVA no recuperable.';
+            $('rcv-error').hidden = true;
+            calcular();
+        });
+
+        $('btn-f29-copiar').addEventListener('click', function () {
+            if (!state.ultimo) return;
+            var c = state.ultimo.codigos;
+            var txt = [
+                'Borrador F29 · Período ' + state.ultimo.periodo + ' (' + state.ultimo.regimenNombre + ')',
+                'Débito Fiscal (538): ' + fmt(c[538]),
+                'Créditos Fiscales (537): ' + fmt(c[537]),
+                'IVA a pagar (89): ' + fmt(c[89]) + ' | Remanente (77): ' + fmt(c[77]),
+                'Impuesto Único (48): ' + fmt(c[48]),
+                'Retención Honorarios (151): ' + fmt(c[151]),
+                'PPM neto (62): ' + fmt(c[62]) + ' (base ' + fmt(c[563]) + ' al ' + c[115] + '%)',
+                'Total estimado F29 (91): ' + fmt(c[91]),
+                'Calculado en https://calculolaboral.cl/calculadora-f29-chile'
+            ].join('\n');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(txt).then(function () {
+                    $('btn-f29-copiar-txt').textContent = 'Copiado';
+                    setTimeout(function () { $('btn-f29-copiar-txt').textContent = 'Copiar resumen'; }, 2000);
+                });
+            }
+        });
+
+        $('btn-f29-csv').addEventListener('click', function () {
+            if (!state.ultimo) return;
+            var c = state.ultimo.codigos;
+            var rows = [
+                ['Periodo', 'Regimen', 'Codigo_F29', 'Concepto', 'Valor_CLP'],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '502', 'Debito facturas giro', c[502]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '111', 'Debito boletas', c[111]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '538', 'Total debito fiscal', c[538]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '520', 'Credito compras giro', c[520]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '504', 'Remanente anterior', c[504]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '537', 'Total creditos fiscales', c[537]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '89', 'IVA determinado a pagar', c[89]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '77', 'Remanente periodo siguiente', c[77]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '48', 'Impuesto Unico 2da Categoria', c[48]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '151', 'Retencion honorarios', c[151]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '563', 'Base imponible PPM', c[563]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '62', 'PPM neto determinado', c[62]],
+                [state.ultimo.periodo, state.ultimo.regimenNombre, '91', 'Total determinado a pagar', c[91]]
+            ];
+            var csv = '\uFEFF' + rows.map(function (r) { return r.join(';'); }).join('\r\n');
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'borrador-f29-' + state.ultimo.periodo + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+        });
+
+        calcular();
+    })();
+    </script>
+    <script src="/js/origen.js?v=1.0.0" defer></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
+    <script src="/js/medir_promo.js?v=1.0.0" defer></script>
+</body>
+</html>

@@ -343,6 +343,57 @@ def m_carta_despido():
     return letter + env
 
 
+def m_f29():
+    doc = document(198, 72, 250, 316, [120, 170, 140, 160], highlight=1, header=True)
+    total_bar = (f'<rect x="228" y="324" width="190" height="36" rx="8" fill="{AMBER}" stroke-width="4"/>'
+                 + line(246, 342, 342, 342, w=6))
+    calc_x, calc_y = 438, 134
+    calc = (shadow_rect(calc_x, calc_y, 172, 232, r=16)
+            + f'<rect x="{calc_x}" y="{calc_y}" width="172" height="232" rx="16" fill="{PAPER}"/>'
+            + f'<rect x="{calc_x + 20}" y="{calc_y + 22}" width="132" height="46" rx="8" fill="{BG}" stroke-width="4"/>'
+            + line(calc_x + 36, calc_y + 45, calc_x + 130, calc_y + 45, color=AMBER, w=7))
+    keys = ""
+    for r in range(3):
+        for c in range(3):
+            kx = calc_x + 24 + c * 44
+            ky = calc_y + 92 + r * 42
+            fill = AMBER if (r == 2 and c == 2) else PAPER
+            keys += f'<rect x="{kx}" y="{ky}" width="34" height="28" rx="6" fill="{fill}" stroke-width="4"/>'
+    return doc + total_bar + calc + keys
+
+
+def m_carpeta_laboral():
+    back = shadow_rect(176, 102, 448, 286, r=18)
+    tab = f'<path d="M176 116 a18 18 0 0 1 18 -18 h138 l28 32 h246 a18 18 0 0 1 18 18 v220 a18 18 0 0 1 -18 18 H194 a18 18 0 0 1 -18 -18 Z" fill="{PAPER}"/>'
+    sheet = paper(228, 144, 344, 214, r=12)
+    rows = ""
+    for idx, width in enumerate([164, 196, 148]):
+        ry = 186 + idx * 54
+        fill = AMBER if idx == 0 else PAPER
+        rows += f'<circle cx="268" cy="{ry}" r="14" fill="{fill}" stroke-width="4"/>'
+        rows += line(302, ry, 302 + width, ry, w=6, op="0.85")
+    seal = f'<circle cx="522" cy="316" r="38" fill="{AMBER}"/>' + check(522, 316, s=1.4, w=7)
+    return back + tab + sheet + rows + seal
+
+
+def m_balance_8col():
+    sheet = shadow_rect(170, 82, 460, 294, r=14) + paper(170, 82, 460, 294, r=14)
+    head = f'<rect x="170" y="82" width="460" height="52" rx="14" fill="{BG}" stroke-width="0"/><line x1="170" y1="134" x2="630" y2="134" stroke-width="5"/>'
+    cols = ""
+    for x in (296, 376, 456, 540):
+        cols += line(x, 100, x, 356, w=4, op="0.35")
+    rows = ""
+    for i in range(4):
+        ry = 176 + i * 44
+        rows += line(196, ry, 274, ry, w=6, op="0.85")
+        rows += line(312, ry, 360, ry, w=5, op="0.55")
+        rows += line(392, ry, 440, ry, w=5, op="0.55")
+        rows += line(472, ry, 524, ry, w=5, color=AMBER if i in (1, 3) else FOREST, op="0.9")
+        rows += line(556, ry, 608, ry, w=5, op="0.65")
+    badge = f'<rect x="466" y="344" width="152" height="44" rx="22" fill="{AMBER}" stroke-width="5"/>' + line(492, 366, 592, 366, w=6)
+    return sheet + head + cols + rows + badge
+
+
 COVERS = {
     "ley-21719-datos-personales": (m_datos, "Escudo de protección sobre un documento con datos personales"),
     "cuentas-sueldo": (m_cuentas, "Tarjeta bancaria y monedas"),
@@ -364,6 +415,9 @@ COVERS = {
     "reclamar-despido": (m_reclamar, "Balanza de la justicia y mazo"),
     "renuncia-voluntaria": (m_renuncia, "Puerta de salida con carta de renuncia"),
     "carta-despido": (m_carta_despido, "Carta de despido dentro de un sobre sellado"),
+    "calculadora-f29": (m_f29, "Formulario F29 mensual junto a una calculadora tributaria"),
+    "carpeta-laboral": (m_carpeta_laboral, "Carpeta laboral de empresa con lista de documentos al día"),
+    "balance-8-columnas": (m_balance_8col, "Balance tributario de ocho columnas con columnas de resultado"),
 }
 
 

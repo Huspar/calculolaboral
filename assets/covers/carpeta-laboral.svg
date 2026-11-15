@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="t">
+<title id="t">Carpeta laboral de empresa con lista de documentos al día</title>
+<rect width="800" height="450" fill="#EEF6F3"/>
+<g stroke="#D6EBE4" stroke-width="2"><line x1="0" y1="54" x2="800" y2="54"/><line x1="0" y1="90" x2="800" y2="90"/><line x1="0" y1="126" x2="800" y2="126"/><line x1="0" y1="162" x2="800" y2="162"/><line x1="0" y1="198" x2="800" y2="198"/><line x1="0" y1="234" x2="800" y2="234"/><line x1="0" y1="270" x2="800" y2="270"/><line x1="0" y1="306" x2="800" y2="306"/><line x1="0" y1="342" x2="800" y2="342"/><line x1="0" y1="378" x2="800" y2="378"/><line x1="0" y1="414" x2="800" y2="414"/></g>
+<line x1="112" y1="0" x2="112" y2="450" stroke="#FFB703" stroke-width="2.5" opacity=".55"/>
+<g fill="none" stroke="#00382E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<rect x="192" y="118" width="448" height="286" rx="18" fill="#ADD6C9" stroke="none"/><path d="M176 116 a18 18 0 0 1 18 -18 h138 l28 32 h246 a18 18 0 0 1 18 18 v220 a18 18 0 0 1 -18 18 H194 a18 18 0 0 1 -18 -18 Z" fill="#FFFFFF"/><rect x="228" y="144" width="344" height="214" rx="12" fill="#FFFFFF"/><circle cx="268" cy="186" r="14" fill="#FFB703" stroke-width="4"/><line x1="302" y1="186" x2="466" y2="186" stroke-width="6" opacity="0.85"/><circle cx="268" cy="240" r="14" fill="#FFFFFF" stroke-width="4"/><line x1="302" y1="240" x2="498" y2="240" stroke-width="6" opacity="0.85"/><circle cx="268" cy="294" r="14" fill="#FFFFFF" stroke-width="4"/><line x1="302" y1="294" x2="450" y2="294" stroke-width="6" opacity="0.85"/><circle cx="522" cy="316" r="38" fill="#FFB703"/><path d="M505.2 316 l12.6 12.6 l22.4 -25.2" stroke-width="7"/>
+</g>
+</svg>
