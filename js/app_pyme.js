@@ -1357,8 +1357,8 @@ function dibujarEquipo() {
     }
     $('pm-trab-nuevo').addEventListener('click', function () { navegar('trabajadores/nuevo'); });
 
-    // --- importar trabajadores desde una planilla Excel o CSV ---
-    var IMP = window.CLPymeImportar, EX = window.CLPymeExcel, planillaFilas = null;
+    // --- importar trabajadores desde Previred, LRE, Excel o CSV ---
+    var IMP = window.CLPymeImportar, EX = window.CLPymeExcel, planillaFilas = null, planillaMeta = null;
     function bajarArchivoExcel(nombreArchivo, generarBytes) {
         return EX.asegurarXlsx().then(function (XLSX) {
             var bytes = generarBytes(XLSX);
@@ -1388,14 +1388,25 @@ function dibujarEquipo() {
         var lector = new FileReader();
         lector.onload = function () {
             var texto = String(lector.result || '');
-            // Excel antiguo guarda en Windows-1252: si hay caracteres inválidos, se vuelve a leer con esa codificación
+            // Excel antiguo y Previred/LRE guardan en Windows-1252: si hay caracteres inválidos, reintenta
             if (texto.indexOf('\uFFFD') >= 0 && !lector.reintento) { lector.reintento = true; lector.readAsText(archivo, 'windows-1252'); return; }
             alTerminar(IMP.leerCsv(texto));
         };
         lector.onerror = function () { alError('No pudimos leer el archivo.'); };
         lector.readAsText(archivo, 'utf-8');
     }
-    function cerrarPlanilla() { $('pm-planilla').hidden = true; $('pm-planilla-archivo').value = ''; $('pm-planilla-revision').innerHTML = ''; $('pm-planilla-importar').hidden = true; planillaFilas = null; mensaje($('pm-planilla-estado'), '', ''); }
+    function cerrarPlanilla() {
+        $('pm-planilla').hidden = true;
+        $('pm-planilla-archivo').value = '';
+        $('pm-planilla-deteccion').innerHTML = '';
+        $('pm-planilla-revision').innerHTML = '';
+        $('pm-planilla-importar').hidden = true;
+        $('pm-planilla-cambiar-archivo').hidden = true;
+        $('pm-planilla-dropzone').hidden = false;
+        planillaFilas = null;
+        planillaMeta = null;
+        mensaje($('pm-planilla-estado'), '', '');
+    }
     $('pm-planilla-abrir').addEventListener('click', function () {
         if (!estado.empresa) { avisoGlobal('error', 'Primero guarda los datos de la empresa.'); return; }
         $('pm-planilla').hidden = false;
@@ -1407,41 +1418,226 @@ function dibujarEquipo() {
             return IMP.plantillaXlsx(XLSX);
         });
     });
-    $('pm-planilla-archivo').addEventListener('change', function () {
-        var archivo = this.files && this.files[0], est = $('pm-planilla-estado');
+
+    function procesarArchivoPlanilla(archivo) {
+        var est = $('pm-planilla-estado');
         planillaFilas = null;
+        planillaMeta = null;
         $('pm-planilla-importar').hidden = true;
+        $('pm-planilla-cambiar-archivo').hidden = true;
+        $('pm-planilla-deteccion').innerHTML = '';
         $('pm-planilla-revision').innerHTML = '';
+        mensaje(est, '', '');
         if (!archivo) return;
         if (archivo.size > 2097152) { mensaje(est, 'error', 'La planilla es demasiado grande (máximo 2 MB).'); return; }
         leerArchivoPlanilla(archivo, function (filas) {
-            if (filas.length < 2) { mensaje(est, 'error', 'La planilla no tiene filas con trabajadores debajo de los encabezados.'); return; }
-            planillaFilas = IMP.revisar(filas, { rut: Rut, afps: Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp) });
-            dibujarRevisionPlanilla(filas.length - 1);
+            if (!filas.length) { mensaje(est, 'error', 'El archivo está vacío o no tiene filas legibles.'); return; }
+            var analisis = IMP.analizar(filas, { rut: Rut, afps: Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp) });
+            if (analisis.formato !== 'previred' && filas.length < 2) {
+                mensaje(est, 'error', 'La planilla no tiene filas con trabajadores debajo de los encabezados.');
+                return;
+            }
+            if (!analisis.filas.length) {
+                mensaje(est, 'error', 'No encontramos filas con trabajadores en este archivo.');
+                return;
+            }
+            // Si el LRE de la DT viene sin nombres, autocompletar si el RUT ya está en la empresa
+            var existentesPorRut = {};
+            (estado.trabajadores || []).forEach(function (t) { existentesPorRut[Rut.formatear(t.rut)] = t; });
+            analisis.filas.forEach(function (r) {
+                if (r.faltaNombre && r.datos.rut && existentesPorRut[r.datos.rut]) {
+                    r.datos.nombre = existentesPorRut[r.datos.rut].nombre;
+                    r.faltaNombre = false;
+                    r.errores = r.errores.filter(function (er) { return er.indexOf('falta el nombre') !== 0; });
+                }
+            });
+            planillaMeta = analisis;
+            planillaFilas = analisis.filas;
+            $('pm-planilla-dropzone').hidden = true;
+            $('pm-planilla-cambiar-archivo').hidden = false;
+            dibujarDeteccionPlanilla(analisis);
+            dibujarRevisionPlanilla(analisis.totalFilas);
         }, function (err) { mensaje(est, 'error', err); });
+    }
+
+    var dropzonePlanilla = $('pm-planilla-dropzone');
+    dropzonePlanilla.addEventListener('click', function () { $('pm-planilla-archivo').click(); });
+    dropzonePlanilla.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('pm-planilla-archivo').click(); }
     });
-    function dibujarRevisionPlanilla(totalFilas) {
-        var buenas = planillaFilas.filter(function (r) { return !r.errores.length; }), est = $('pm-planilla-estado');
+    dropzonePlanilla.addEventListener('dragover', function (e) { e.preventDefault(); dropzonePlanilla.classList.add('arrastrando'); });
+    dropzonePlanilla.addEventListener('dragleave', function () { dropzonePlanilla.classList.remove('arrastrando'); });
+    dropzonePlanilla.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropzonePlanilla.classList.remove('arrastrando');
+        var archivo = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (archivo) procesarArchivoPlanilla(archivo);
+    });
+    $('pm-planilla-cambiar-archivo').addEventListener('click', function () {
+        $('pm-planilla-archivo').value = '';
+        $('pm-planilla-archivo').click();
+    });
+    $('pm-planilla-archivo').addEventListener('change', function () {
+        var archivo = this.files && this.files[0];
+        if (archivo) procesarArchivoPlanilla(archivo);
+    });
+
+    function dibujarDeteccionPlanilla(analisis) {
+        var n = analisis.filas.length;
+        var cantTxt = plural(n, 'trabajador encontrado', 'trabajadores encontrados');
+        var titulo = '', detalle = '', avisoExtra = '';
+        if (analisis.formato === 'previred') {
+            titulo = 'Detectamos nómina de Previred (105 campos) · ' + cantTxt;
+            detalle = 'Leímos RUT, nombres, previsión (AFP y Fonasa/Isapre), plan pactado y remuneración imponible.';
+            avisoExtra = 'Previred no desglosa el tipo de contrato ni el sueldo base pactado. Importaremos a las personas con contrato indefinido y usaremos la remuneración informada como base inicial. Podrás ajustar el contrato o el sueldo base desde la ficha de cada trabajador.';
+        } else if (analisis.formato === 'lre') {
+            titulo = 'Detectamos archivo LRE de la Dirección del Trabajo · ' + cantTxt;
+            detalle = 'Leímos RUT, fecha de inicio, previsión, colación, movilización y sueldo informado a la DT.';
+            if (analisis.filas.some(function (r) { return r.faltaNombre; })) {
+                avisoExtra = 'El archivo oficial del LRE no incluye nombres de trabajadores nuevos: escríbelos abajo para habilitar su importación.';
+            }
+        } else if (analisis.formato === 'generica') {
+            titulo = 'Planilla reconocida · ' + cantTxt;
+            detalle = analisis.columnasDetectadas && analisis.columnasDetectadas.length
+                ? 'Reconocimos automáticamente estas columnas: ' + analisis.columnasDetectadas.join(', ') + '.'
+                : 'Reconocimos automáticamente las columnas principales de tu planilla.';
+        } else {
+            titulo = 'Plantilla CálculoLaboral · ' + cantTxt;
+            detalle = 'Columnas validadas correctamente.';
+        }
+        var html = '<div class="lq-aviso lq-aviso-info"><span class="material-icons" aria-hidden="true">check_circle</span><div><p><strong>' + esc(titulo) + '</strong></p><p>' + esc(detalle) + '</p></div></div>';
+        if (avisoExtra) {
+            html += '<div class="lq-aviso lq-aviso-aviso"><span class="material-icons" aria-hidden="true">info</span><p>' + esc(avisoExtra) + '</p></div>';
+        }
+        $('pm-planilla-deteccion').innerHTML = html;
+    }
+
+    function previsionTexto(d) {
+        var partes = [];
+        if (d.afp) partes.push('AFP ' + d.afp);
+        if (d.salud === 'fonasa') partes.push('Fonasa');
+        else if (d.salud === 'isapre') partes.push((d.isapreNombre || 'Isapre') + (d.isaprePlanUF ? ' (' + String(d.isaprePlanUF).replace('.', ',') + ' UF)' : ''));
+        return partes.length ? partes : ['—'];
+    }
+
+    function estadoFilaPlanilla(r, existentes) {
+        var mal = r.errores.length > 0;
+        var repetido = !mal && r.datos.rut && existentes[r.datos.rut];
+        if (mal) return { tipo: 'error', sello: 'sello-riesgo', texto: 'Corregir' };
+        if (repetido) return { tipo: 'repetido', sello: 'sello-guardada', texto: 'Ya registrado' };
+        if (r.necesitaRevisar) return { tipo: 'revisar', sello: 'sello-preparada', texto: 'Revisar contrato' };
+        return { tipo: 'listo', sello: 'sello-emitida', texto: 'Listo' };
+    }
+
+    function actualizarResumenYBotonPlanilla() {
         var existentes = {};
         (estado.trabajadores || []).forEach(function (t) { existentes[Rut.formatear(t.rut)] = true; });
-        $('pm-planilla-revision').innerHTML = '<div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Trabajadores leídos de la planilla</caption>' +
-            '<thead><tr><th scope="col">Fila</th><th scope="col">Nombre</th><th scope="col" class="ocultar-movil">RUT</th><th scope="col" class="num ocultar-movil">Sueldo base</th><th scope="col">Revisión</th></tr></thead><tbody>' +
-            planillaFilas.map(function (r) {
-                var d = r.datos, mal = r.errores.length, repetido = d.rut && existentes[d.rut];
-                return '<tr' + (mal ? ' class="planilla-fila-error"' : '') + '><td class="mono">' + r.fila + '</td><td><strong>' + esc(d.nombre || '—') + '</strong>' +
-                    (mal ? '<span class="planilla-errores">' + esc(mayuscula(r.errores.join('; ')) + '.') + '</span>' : '') + '</td>' +
-                    '<td class="ocultar-movil mono">' + esc(d.rut || '—') + '</td><td class="num ocultar-movil">' + (d.sueldoBase ? pesos(d.sueldoBase) : '—') + '</td>' +
-                    '<td>' + (mal ? 'Corregir' : repetido ? 'Ya está' : 'Lista') + '</td></tr>';
-            }).join('') + '</tbody></table></div>' +
-            (totalFilas > IMP.MAX_FILAS ? '<p class="texto-ayuda">Solo se leen las primeras ' + IMP.MAX_FILAS + ' filas.</p>' : '');
-        var nuevas = buenas.filter(function (r) { return !existentes[r.datos.rut]; });
+        var cListos = 0, cRevisar = 0, cRepetidos = 0, cErrores = 0, nuevas = [];
+        planillaFilas.forEach(function (r) {
+            var st = estadoFilaPlanilla(r, existentes);
+            if (st.tipo === 'error') cErrores++;
+            else if (st.tipo === 'repetido') cRepetidos++;
+            else {
+                nuevas.push(r);
+                if (st.tipo === 'revisar') cRevisar++;
+                else cListos++;
+            }
+        });
+        var badges = [];
+        if (cListos) badges.push('<span><span class="sello sello-emitida">Listos</span><strong>' + cListos + '</strong></span>');
+        if (cRevisar) badges.push('<span><span class="sello sello-preparada">Por confirmar ficha</span><strong>' + cRevisar + '</strong></span>');
+        if (cRepetidos) badges.push('<span><span class="sello sello-guardada">Ya registrados</span><strong>' + cRepetidos + '</strong></span>');
+        if (cErrores) badges.push('<span><span class="sello sello-riesgo">Con error</span><strong>' + cErrores + '</strong></span>');
+        var resEl = $('pm-planilla-resumen');
+        if (resEl) resEl.innerHTML = badges.join('');
+
         $('pm-planilla-importar').hidden = !nuevas.length;
-        $('pm-planilla-importar').lastChild.textContent = 'Importar ' + plural(nuevas.length, 'trabajador', 'trabajadores');
+        $('pm-planilla-importar').querySelector('span:last-child').textContent = 'Importar ' + plural(nuevas.length, 'trabajador', 'trabajadores');
         var lim = estado.limites || {}, activos = (estado.trabajadores || []).filter(function (t) { return t.activo; }).length, cupo = Math.max(0, (lim.maxActivos || 1) - activos);
-        var txt = planillaFilas.length - buenas.length ? 'Corrige en la planilla las filas marcadas y vuelve a elegirla, o importa ahora las que están listas. ' : '';
+        var txt = cErrores ? 'Completa o corrige las filas marcadas, o importa ahora las que están listas. ' : '';
         if (nuevas.length > cupo) txt += 'Tu cuenta admite ' + plural(cupo, 'trabajador activo más', 'trabajadores activos más') + ': los demás no se importarán.';
-        mensaje(est, '', txt);
+        mensaje($('pm-planilla-estado'), '', txt);
     }
+
+    function dibujarRevisionPlanilla(totalFilas) {
+        var existentes = {};
+        (estado.trabajadores || []).forEach(function (t) { existentes[Rut.formatear(t.rut)] = true; });
+        var filasHtml = planillaFilas.map(function (r, idx) {
+            var d = r.datos, st = estadoFilaPlanilla(r, existentes), mal = st.tipo === 'error';
+            var prev = previsionTexto(d);
+            var sueldoHtml = d.sueldoBase
+                ? (pesos(d.sueldoBase) + (r.meta && r.meta.sueldoEsImponible ? '<small class="bloque-chico">Imponible Previred</small>' : '<small class="bloque-chico">Sueldo base</small>'))
+                : '—';
+            var nombreHtml = r.faltaNombre
+                ? '<input type="text" class="planilla-nombre-input" data-planilla-idx="' + idx + '" value="' + esc(d.nombre || '') + '" placeholder="Escribe el nombre completo" aria-label="Nombre para RUT ' + esc(d.rut || '') + '">'
+                : '<strong>' + esc(d.nombre || '—') + '</strong>';
+            var errHtml = mal ? '<span class="planilla-errores" data-planilla-err="' + idx + '">' + esc(mayuscula(r.errores.join('; ')) + '.') + '</span>' : '<span class="planilla-errores" data-planilla-err="' + idx + '" hidden></span>';
+            return '<tr' + (mal ? ' class="planilla-fila-error"' : '') + ' data-planilla-row="' + idx + '">' +
+                '<td class="mono">' + r.fila + '</td>' +
+                '<td>' + nombreHtml + '<small class="bloque-chico mono">' + esc(d.rut || '—') + '</small>' + errHtml + '</td>' +
+                '<td>' + prev.map(esc).join('<br>') + '</td>' +
+                '<td class="num">' + sueldoHtml + '</td>' +
+                '<td><span class="sello ' + st.sello + '" data-planilla-badge="' + idx + '">' + esc(st.texto) + '</span></td>' +
+                '</tr>';
+        }).join('');
+
+        var cardsHtml = planillaFilas.map(function (r, idx) {
+            var d = r.datos, st = estadoFilaPlanilla(r, existentes), mal = st.tipo === 'error';
+            var prev = previsionTexto(d).join(' / ');
+            var sueldo = d.sueldoBase ? pesos(d.sueldoBase) + (r.meta && r.meta.sueldoEsImponible ? ' (Previred)' : '') : 'Sin sueldo';
+            var nombreHtml = r.faltaNombre
+                ? '<input type="text" class="planilla-nombre-input" data-planilla-idx="' + idx + '" value="' + esc(d.nombre || '') + '" placeholder="Escribe el nombre completo" aria-label="Nombre para RUT ' + esc(d.rut || '') + '">'
+                : '<strong>' + esc(d.nombre || '—') + '</strong>';
+            var errHtml = mal ? '<span class="planilla-errores" data-planilla-merr="' + idx + '">' + esc(mayuscula(r.errores.join('; ')) + '.') + '</span>' : '<span class="planilla-errores" data-planilla-merr="' + idx + '" hidden></span>';
+            return '<div class="planilla-card-item' + (mal ? ' con-error' : '') + '" data-planilla-card="' + idx + '">' +
+                '<div class="planilla-card-head">' + nombreHtml + '<span class="sello ' + st.sello + '" data-planilla-mbadge="' + idx + '">' + esc(st.texto) + '</span></div>' +
+                '<div class="planilla-card-meta"><span>' + esc(d.rut || 'Sin RUT') + '</span><span>·</span><span>' + esc(prev) + '</span><span>·</span><span>' + esc(sueldo) + '</span></div>' +
+                errHtml + '</div>';
+        }).join('');
+
+        $('pm-planilla-revision').innerHTML =
+            '<div class="planilla-resumen-badges" id="pm-planilla-resumen"></div>' +
+            '<div class="tabla-wrap planilla-tabla-desktop"><table class="tabla"><caption class="sr-only">Trabajadores leídos de la planilla</caption>' +
+            '<thead><tr><th scope="col">Fila</th><th scope="col">Trabajador</th><th scope="col">Previsión</th><th scope="col" class="num">Sueldo informado</th><th scope="col">Estado</th></tr></thead><tbody>' +
+            filasHtml + '</tbody></table></div>' +
+            '<div class="planilla-cards-mobile">' + cardsHtml + '</div>' +
+            (totalFilas > IMP.MAX_FILAS ? '<p class="texto-ayuda">Solo se leen las primeras ' + IMP.MAX_FILAS + ' filas.</p>' : '');
+
+        actualizarResumenYBotonPlanilla();
+    }
+
+    $('pm-planilla-revision').addEventListener('input', function (e) {
+        var inp = e.target.closest('input[data-planilla-idx]');
+        if (!inp || !planillaFilas) return;
+        var idx = +inp.getAttribute('data-planilla-idx');
+        var r = planillaFilas[idx];
+        if (!r) return;
+        var val = inp.value.replace(/\s+/g, ' ').trim();
+        r.datos.nombre = val.slice(0, 80);
+        r.errores = r.errores.filter(function (er) { return er.indexOf('falta el nombre') !== 0 && er.indexOf('más de 80') < 0; });
+        if (!r.datos.nombre) r.errores.push('falta el nombre');
+        // Sincronizar el input espejo (desktop/móvil) sin mover el foco del input activo
+        $('pm-planilla-revision').querySelectorAll('input[data-planilla-idx="' + idx + '"]').forEach(function (otro) {
+            if (otro !== inp) otro.value = inp.value;
+        });
+        var existentes = {};
+        (estado.trabajadores || []).forEach(function (t) { existentes[Rut.formatear(t.rut)] = true; });
+        var st = estadoFilaPlanilla(r, existentes), mal = st.tipo === 'error';
+        var row = $('pm-planilla-revision').querySelector('[data-planilla-row="' + idx + '"]');
+        var card = $('pm-planilla-revision').querySelector('[data-planilla-card="' + idx + '"]');
+        if (row) row.classList.toggle('planilla-fila-error', mal);
+        if (card) card.classList.toggle('con-error', mal);
+        ['data-planilla-badge', 'data-planilla-mbadge'].forEach(function (attr) {
+            var b = $('pm-planilla-revision').querySelector('[' + attr + '="' + idx + '"]');
+            if (b) { b.className = 'sello ' + st.sello; b.textContent = st.texto; }
+        });
+        ['data-planilla-err', 'data-planilla-merr'].forEach(function (attr) {
+            var el = $('pm-planilla-revision').querySelector('[' + attr + '="' + idx + '"]');
+            if (el) { el.hidden = !mal; el.textContent = mal ? mayuscula(r.errores.join('; ')) + '.' : ''; }
+        });
+        actualizarResumenYBotonPlanilla();
+    });
+
     $('pm-planilla-importar').addEventListener('click', function () {
         if (!planillaFilas) return;
         var boton = this, est = $('pm-planilla-estado');

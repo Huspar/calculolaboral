@@ -85,4 +85,90 @@ caso('plantillaXlsx y leerXlsx preservan fechas Excel, números y ceros a la izq
     assert.strictEqual(r.datos.colacion, 40000);
 });
 
+caso('Previred 105 campos: lee muestra real, fusiona líneas y valida en servidor', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const muestra = fs.readFileSync(path.join(__dirname, 'previred', 'muestra-2026-10.txt'), 'utf8');
+    const res = I.analizar(I.leerCsv(muestra), OPC);
+    assert.strictEqual(res.formato, 'previred');
+    assert.strictEqual(res.periodo, '2026-10');
+    assert.strictEqual(res.filas.length, 2);
+
+    const [camila, rodrigo] = res.filas;
+    assert.deepStrictEqual(camila.errores, []);
+    assert.strictEqual(camila.datos.nombre, 'Camila Rojas Perez');
+    assert.strictEqual(camila.datos.rut, '12.345.678-5');
+    assert.strictEqual(camila.datos.afp, 'Cuprum');
+    assert.strictEqual(camila.datos.salud, 'fonasa');
+    assert.strictEqual(camila.datos.sexo, 'F');
+    assert.strictEqual(camila.meta.rentaImponible, 1419115);
+    assert.ok(V.validarTrabajador(camila.datos).ok);
+
+    assert.deepStrictEqual(rodrigo.errores, []);
+    assert.strictEqual(rodrigo.datos.salud, 'isapre');
+    assert.strictEqual(rodrigo.datos.isapreNombre, 'Colmena');
+    assert.strictEqual(rodrigo.datos.fun, 'FUN123');
+    assert.ok(V.validarTrabajador(rodrigo.datos).ok);
+
+    // Prueba plan Isapre en UF (campo 78=2, campo 79=00040241) + línea secundaria de contratación
+    const f1 = new Array(105).fill('0');
+    f1[0] = '15234567'; f1[1] = '4'; f1[2] = 'Perez'; f1[3] = 'Gonzalez'; f1[4] = 'Ana';
+    f1[5] = 'F'; f1[6] = '0'; f1[8] = '112026'; f1[10] = 'AFP'; f1[13] = '00';
+    f1[25] = '34'; f1[26] = '950000'; f1[74] = '04'; f1[77] = '2'; f1[78] = '00040241';
+    const f2 = f1.slice();
+    f2[13] = '01'; f2[14] = '1'; f2[15] = '15-03-2022'; f2[16] = '';
+    const rUf = I.analizar([f1, f2], OPC);
+    assert.strictEqual(rUf.filas.length, 1);
+    assert.strictEqual(rUf.filas[0].datos.isaprePlanUF, 4.02);
+    assert.strictEqual(rUf.filas[0].datos.fechaIngreso, '2022-03-15');
+    assert.strictEqual(rUf.filas[0].datos.afp, 'Modelo');
+    assert.ok(V.validarTrabajador(rUf.filas[0].datos).ok);
+});
+
+caso('LRE de la Dirección del Trabajo: detecta códigos DT, sueldo 2101 y nombre faltante', () => {
+    const lre = [
+        'Rut trabajador;Fecha inicio contrato;Código tipo de jornada;AFP;FONASA / ISAPRE;Sueldo;Colación total mensual;Movilización total mensual',
+        '15234567-4;15/03/2022;101;103;102;650000;40000;30000',
+        '12345678-5;01/05/2024;201;13;4;520000;0;0'
+    ].join('\r\n');
+    const res = I.analizar(I.leerCsv(lre), OPC);
+    assert.strictEqual(res.formato, 'lre');
+    assert.strictEqual(res.filas.length, 2);
+    assert.strictEqual(res.filas[0].faltaNombre, true);
+    assert.strictEqual(res.filas[0].datos.rut, '15.234.567-4');
+    assert.strictEqual(res.filas[0].datos.fechaIngreso, '2022-03-15');
+    assert.strictEqual(res.filas[0].datos.afp, 'Modelo');
+    assert.strictEqual(res.filas[0].datos.salud, 'fonasa');
+    assert.strictEqual(res.filas[0].datos.sueldoBase, 650000);
+    assert.strictEqual(res.filas[0].datos.colacion, 40000);
+    assert.strictEqual(res.filas[0].datos.movilizacion, 30000);
+    assert.strictEqual(res.filas[1].datos.isapreNombre, 'Colmena');
+    assert.ok(res.filas[1].avisos.some(a => /Jornada parcial/i.test(a)));
+});
+
+caso('Excel/CSV genérico de otro sistema: filas de título arriba, nombres separados e Isapre directa', () => {
+    const XLSX = require('../assets/vendor/xlsx.full.min.js');
+    const ws = XLSX.utils.aoa_to_sheet([
+        ['Reporte de Nómina Empresa Demo'],
+        ['Generado 15-11-2026'],
+        ['RUN', 'Nombres', 'Apellido paterno', 'Apellido materno', 'Cargo', 'Salario base', 'Prevision', 'Institucion salud', 'Plan UF'],
+        ['15234567-4', 'Ana', 'Pérez', 'González', 'Vendedora', '$720.000', 'AFP Habitat', 'Consalud', '3,8']
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Nomina');
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    const res = I.analizar(I.leerXlsx(buf, XLSX), OPC);
+    assert.strictEqual(res.formato, 'generica');
+    assert.strictEqual(res.filas.length, 1);
+    const [r] = res.filas;
+    assert.deepStrictEqual(r.errores, []);
+    assert.strictEqual(r.datos.nombre, 'Ana Pérez González');
+    assert.strictEqual(r.datos.sueldoBase, 720000);
+    assert.strictEqual(r.datos.afp, 'Habitat');
+    assert.strictEqual(r.datos.salud, 'isapre');
+    assert.strictEqual(r.datos.isapreNombre, 'Consalud');
+    assert.strictEqual(r.datos.isaprePlanUF, 3.8);
+    assert.ok(V.validarTrabajador(r.datos).ok);
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

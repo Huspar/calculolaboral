@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.31.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.32.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -234,16 +234,25 @@ gtag('js', new Date());
 </div>
 </div>
 <div class="panel" id="pm-planilla" hidden>
-<div class="panel-head"><h2>Importar trabajadores desde una planilla</h2><button type="button" class="app-icono-btn" id="pm-planilla-cerrar" aria-label="Cerrar la importación"><span class="material-icons" aria-hidden="true">close</span></button></div>
+<div class="panel-head"><h2>Importar trabajadores</h2><button type="button" class="app-icono-btn" id="pm-planilla-cerrar" aria-label="Cerrar la importación"><span class="material-icons" aria-hidden="true">close</span></button></div>
 <div class="panel-cuerpo planilla-cuerpo">
-<ol class="planilla-pasos">
-<li>Descarga la plantilla y ábrela en Excel. Llena una fila por trabajador; solo el nombre y el RUT son obligatorios. <button type="button" class="lq-link" id="pm-planilla-plantilla">Descargar plantilla Excel</button></li>
-<li>Guárdala en Excel (.xlsx) o como CSV y súbela aquí.</li>
-<li>Revisa lo que leímos y confirma.</li>
-</ol>
-<div class="lq-field"><label for="pm-planilla-archivo">Planilla Excel o CSV</label><input type="file" id="pm-planilla-archivo" accept=".xlsx,.xls,.csv,text/csv"></div>
+<div class="fin-dropzone planilla-dropzone" id="pm-planilla-dropzone" role="button" tabindex="0" aria-label="Subir nómina Previred, LRE o archivo Excel">
+<span class="material-icons" aria-hidden="true">upload_file</span>
+<strong>Arrastra tu archivo aquí o haz clic para buscarlo</strong>
+<span>Acepta archivos de Previred (.txt / .csv), LRE de la Dirección del Trabajo, o cualquier Excel (.xlsx/.xls) y CSV.</span>
+<div class="planilla-formatos-chips" aria-hidden="true">
+<span class="planilla-chip">Nómina Previred 105 campos</span>
+<span class="planilla-chip">LRE Dirección del Trabajo</span>
+<span class="planilla-chip">Planilla Excel / CSV</span>
+</div>
+<input type="file" id="pm-planilla-archivo" accept=".xlsx,.xls,.csv,.txt,text/plain,text/csv" hidden aria-label="Archivo de trabajadores">
+</div>
+<div class="planilla-plantilla-secundaria">
+<p class="texto-ayuda">¿No tienes un archivo listo? <button type="button" class="lq-link" id="pm-planilla-plantilla">Descarga nuestra plantilla Excel</button> para llenar tus datos.</p>
+</div>
+<div id="pm-planilla-deteccion" class="lq-avisos" role="status"></div>
 <div id="pm-planilla-revision"></div>
-<div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-planilla-importar" hidden><span class="material-icons" aria-hidden="true">group_add</span>Importar</button><p class="lq-estado" id="pm-planilla-estado" role="status"></p></div>
+<div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-planilla-importar" hidden><span class="material-icons" aria-hidden="true">group_add</span><span>Importar</span></button><button type="button" class="btn btn-texto" id="pm-planilla-cambiar-archivo" hidden>Elegir otro archivo</button><p class="lq-estado" id="pm-planilla-estado" role="status"></p></div>
 </div>
 </div>
 <div class="panel" id="trab-panel">
@@ -1549,7 +1558,7 @@ gtag('js', new Date());
 <script src="/js/semana_corrida.js?v=1.0.0"></script>
 <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
 <script src="/js/pyme_excel.js?v=2.0.0"></script>
-<script src="/js/pyme_importar.js?v=1.2.0"></script>
+<script src="/js/pyme_importar.js?v=2.0.0"></script>
 <script src="/js/pyme_proyeccion.js?v=1.0.0"></script>
 <script src="/js/pyme_midt.js?v=1.0.0"></script>
 <script src="/js/pyme_libro.js?v=1.2.0"></script>
@@ -1571,6 +1580,6 @@ gtag('js', new Date());
 <script src="/js/pyme_finanzas.js?v=1.4.0"></script>
 <script src="/js/pyme_datos_ley.js?v=1.4.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.44.0" defer></script>
+<script src="/js/app_pyme.js?v=1.45.0" defer></script>
 </body>
 </html>
