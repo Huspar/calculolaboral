@@ -12,6 +12,7 @@
     var C = window.CLContabilidad;
     var Imp = window.CLImportadores;
     var Renta = window.CLRenta;
+    var Pro = window.CLContadoresAsistentePro;
     var K_STORAGE = 'cl-suite-contable';
     var K_PLAN_CUENTAS = 'cl-plan-cuentas-estudio';
     var K_MEMBRETE = 'cl-membrete-estudio';
@@ -227,7 +228,9 @@
             tasaPpm: est.tasaPpmPersonalizada,
             impuestoUnico48: iusc48,
             honorariosBruto: est.honorariosBruto,
-            honorariosRetencionDirecta: est.honorariosRetencionDirecta || 0
+            honorariosRetencionDirecta: (est.honorariosRetencionDirecta > 0 || (Array.isArray(est.bheBoletas) && est.bheBoletas.length > 0))
+                ? est.honorariosRetencionDirecta
+                : ''
         });
 
         var hayMovimientos = (
@@ -283,6 +286,15 @@
             }));
         }
 
+        var auditoria = Pro ? Pro.auditarF29PreSii({
+            periodo: periodo,
+            f29: f29,
+            ventas: ventas,
+            compras: compras,
+            nomina: nomina,
+            estado: est
+        }) : null;
+
         return {
             estado: est,
             periodo: periodo,
@@ -292,6 +304,7 @@
             ventas: ventas,
             compras: compras,
             f29: f29,
+            auditoria: auditoria,
             asientos: gen.asientos,
             metricasFlujo: gen.metricasFlujo,
             mayor: mayor,
@@ -361,10 +374,12 @@
         if (!tieneDatosF29) {
             vacio.hidden = false;
             resPanel.hidden = true;
+            if ($('f29-semaforo-auditoria')) $('f29-semaforo-auditoria').hidden = true;
             return;
         }
         vacio.hidden = true;
         resPanel.hidden = false;
+        pintarSemaforoF29(m);
 
         $('f29-k-debito').textContent = moneySigno(c[538]);
         $('f29-k-credito').textContent = moneySigno(c[537]);
@@ -446,6 +461,89 @@
             if (inp.id === 'f29-iusc-manual' && m.nomina) return;
             inp.disabled = bloqueado && inp.type !== 'file';
         });
+    }
+
+    function pintarSemaforoF29(m) {
+        var box = $('f29-semaforo-auditoria');
+        if (!box) return;
+        var a = m && m.auditoria;
+        if (!a || !Array.isArray(a.hallazgos) || !a.hallazgos.length) {
+            box.hidden = true;
+            return;
+        }
+        box.hidden = false;
+        box.className = 'f29-semaforo-box estado-' + a.estadoGeneral;
+
+        var icono = a.estadoGeneral === 'rojo' ? 'error' : (a.estadoGeneral === 'amarillo' ? 'warning' : 'verified');
+        var pills = [];
+        if (a.conteo.rojo > 0) pills.push('<span class="f29-sem-pill rojo">' + a.conteo.rojo + ' crítico(s)</span>');
+        if (a.conteo.amarillo > 0) pills.push('<span class="f29-sem-pill amarillo">' + a.conteo.amarillo + ' por revisar</span>');
+        pills.push('<span class="f29-sem-pill verde">' + a.conteo.verde + ' OK</span>');
+
+        var cardsHtml = a.hallazgos.map(function (h) {
+            return '<div class="f29-sem-item nivel-' + D.esc(h.nivel) + '">' +
+                '<span class="f29-sem-dot ' + D.esc(h.nivel) + '" aria-hidden="true"></span>' +
+                '<div>' +
+                '<div class="f29-sem-item-top"><strong>' + D.esc(h.titulo) + '</strong><span class="f29-sem-cod">' + D.esc(h.codigoSii) + '</span></div>' +
+                '<p>' + D.esc(h.detalle) + '</p>' +
+                '<span class="f29-sem-norma">' + D.esc(h.norma) + '</span>' +
+                '</div>' +
+                '</div>';
+        }).join('');
+
+        box.innerHTML = '<div class="f29-sem-head">' +
+            '<div class="f29-sem-titulo"><span class="material-icons" aria-hidden="true">' + icono + '</span><div><strong>Semáforo Pre-SII del F29</strong><div class="f29-sem-resumen">' + D.esc(a.resumenEstado) + '</div></div></div>' +
+            '<div class="f29-sem-pills">' + pills.join('') + '</div>' +
+            '</div>' +
+            '<div class="f29-sem-grid">' + cardsHtml + '</div>';
+    }
+
+    function generarTextoWhatsapp(m) {
+        if (!Pro || !m) return '';
+        return Pro.generarResumenWhatsappCliente({
+            cliente: clienteNombre(),
+            periodo: m.periodo,
+            regimenNombre: m.f29 ? m.f29.regimenNombre : '',
+            f29: m.f29,
+            pnl: m.pnl,
+            flujo: m.flujo,
+            nomina: m.nomina,
+            auditoria: m.auditoria,
+            estudio: leerMembrete()
+        });
+    }
+
+    function copiarTextoPortapapeles(texto, mensajeOk) {
+        if (!texto) {
+            D.avisar('No hay datos calculados para copiar.');
+            return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(texto).then(function () {
+                D.avisar(mensajeOk || 'Texto copiado al portapapeles.');
+            }).catch(function () {
+                copiarFallbackTextarea(texto, mensajeOk);
+            });
+            return;
+        }
+        copiarFallbackTextarea(texto, mensajeOk);
+    }
+
+    function copiarFallbackTextarea(texto, mensajeOk) {
+        try {
+            var ta = document.createElement('textarea');
+            ta.value = texto;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            D.avisar(mensajeOk || 'Texto copiado al portapapeles.');
+        } catch (e) {
+            D.avisar('Copia manual disponible en la vista previa.');
+        }
     }
 
     // ------------------------------------------------------------- Render Diario y Mayor
@@ -1019,7 +1117,9 @@
                     tasaPpm: st.tasaPpmPersonalizada || '',
                     impuestoUnico48: st.iuscManual || 0,
                     honorariosBruto: st.honorariosBruto || 0,
-                    honorariosRetencionDirecta: st.honorariosRetencionDirecta || 0
+                    honorariosRetencionDirecta: (st.honorariosRetencionDirecta > 0 || (Array.isArray(st.bheBoletas) && st.bheBoletas.length > 0))
+                        ? st.honorariosRetencionDirecta
+                        : ''
                 });
                 f29Total = f.codigos[91] || 0;
             }
@@ -1184,7 +1284,7 @@
         }
     }
 
-    function pintarReportes() {
+    function pintarReportes(m) {
         var mb = leerMembrete();
         if ($('rep-estudio-nombre') && document.activeElement !== $('rep-estudio-nombre')) $('rep-estudio-nombre').value = mb.estudio;
         if ($('rep-estudio-rut') && document.activeElement !== $('rep-estudio-rut')) $('rep-estudio-rut').value = mb.rut;
@@ -1194,6 +1294,18 @@
             $('rep-preview-box').innerHTML = '<div><strong>' + D.esc(mb.estudio) + '</strong> · RUT ' + D.esc(mb.rut) + '</div>' +
                 '<div>Responsable: ' + D.esc(mb.contador) + ' · Cliente activo: <strong>' + D.esc(clienteNombre()) + '</strong></div>' +
                 '<div class="texto-ayuda" style="margin-top:4px">' + D.esc(mb.pie) + '</div>';
+        }
+        var boxWa = $('rep-whatsapp-preview');
+        var txtWa = $('rep-whatsapp-texto');
+        if (boxWa && txtWa && Pro) {
+            var modelo = m || calcularModelo();
+            var mensaje = generarTextoWhatsapp(modelo);
+            if (mensaje) {
+                boxWa.hidden = false;
+                txtWa.textContent = mensaje;
+            } else {
+                boxWa.hidden = true;
+            }
         }
     }
 
@@ -1209,7 +1321,7 @@
         pintarLibros(m);
         pintarBalance(m);
         pintarPnl(m);
-        pintarReportes();
+        pintarReportes(m);
     }
 
     // ------------------------------------------------------------- Exportaciones e Impresion
@@ -1376,7 +1488,10 @@
                     est.comprasRows = null;
                     est.comprasArchivo = 'RCV_Compras_SII_ejemplo.csv';
                     est.remanenteAnterior = 120000;
+                    est.bheBoletas = [];
+                    est.bheAlertas = [];
                     est.honorariosBruto = 800000;
+                    est.honorariosRetencionDirecta = '';
                     est.tesoreria.saldoInicialBanco = 6500000;
                 });
                 refrescarTodo();
@@ -1416,7 +1531,10 @@
                     if (id === 'f29-remanente') est.remanenteAnterior = Math.max(0, Math.round(D.parseNumber(el.value)));
                     if (id === 'f29-tasa-ppm') est.tasaPpmPersonalizada = el.value;
                     if (id === 'f29-iusc-manual') est.iuscManual = el.value;
-                    if (id === 'f29-hon-bruto') est.honorariosBruto = Math.max(0, Math.round(D.parseNumber(el.value)));
+                    if (id === 'f29-hon-bruto') {
+                        est.honorariosBruto = Math.max(0, Math.round(D.parseNumber(el.value)));
+                        est.honorariosRetencionDirecta = '';
+                    }
                 });
                 refrescarTodo();
             });
@@ -1448,6 +1566,12 @@
                 } else {
                     D.avisar('Total cód. 91: ' + D.money(c[91]));
                 }
+            });
+        }
+        if ($('btn-f29-whatsapp')) {
+            $('btn-f29-whatsapp').addEventListener('click', function () {
+                var texto = generarTextoWhatsapp(calcularModelo());
+                copiarTextoPortapapeles(texto, 'Reporte ejecutivo copiado para enviar por WhatsApp.');
             });
         }
         if ($('btn-f29-ir-diario')) {
@@ -2317,6 +2441,14 @@
         }
         if ($('btn-rep-cert6')) $('btn-rep-cert6').addEventListener('click', imprimirCertificadoN6);
         if ($('btn-rep-cert1')) $('btn-rep-cert1').addEventListener('click', imprimirCertificadoN1);
+        if ($('btn-rep-whatsapp')) {
+            $('btn-rep-whatsapp').addEventListener('click', function () {
+                var m = calcularModelo();
+                pintarReportes(m);
+                var texto = generarTextoWhatsapp(m);
+                copiarTextoPortapapeles(texto, 'Resumen ejecutivo copiado para WhatsApp del cliente.');
+            });
+        }
         if ($('btn-rep-resumen')) {
             $('btn-rep-resumen').addEventListener('click', function () {
                 var m = calcularModelo();

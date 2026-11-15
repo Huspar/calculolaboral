@@ -582,59 +582,217 @@
 }
 
 /* ========================================================
-   Alineación y Centrado de Botones en Pie de Sidebar
+   Layout Ampliado + Barra de Contexto Suite Contadores
    ======================================================== */
+@media screen and (min-width: 901px) {
+    .suite-contadores-app {
+        grid-template-columns: 284px minmax(0, 1fr);
+    }
+}
+@media screen and (min-width: 1440px) {
+    .suite-contadores-app {
+        grid-template-columns: 300px minmax(0, 1fr);
+    }
+}
+
+.suite-contadores-app .app-side {
+    gap: 12px;
+    padding: 14px 12px;
+    overflow-y: hidden;
+}
+.suite-contadores-app .app-empresa {
+    padding: 8px 10px 10px;
+}
+.suite-contadores-app .app-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    align-content: start;
+    gap: 3px;
+    padding-right: 2px;
+}
+.suite-contadores-app .app-nav-grupo {
+    margin: 10px 8px 3px;
+    font-size: 11px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+.suite-contadores-app #suite-modulos .suite-mod-btn {
+    height: 36px;
+    min-height: 36px;
+    padding: 0 10px;
+    gap: 9px;
+    font-size: 13.5px;
+    white-space: nowrap;
+}
+.suite-contadores-app #suite-modulos .suite-mod-btn > span:not(.material-icons):not(.app-nav-chip) {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.suite-contadores-app #suite-modulos .app-nav-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .app-side-pie {
-    display: grid !important;
-    gap: 8px !important;
-    padding: 14px !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    display: grid;
+    gap: 8px;
+    padding: 12px 10px 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    margin-top: auto;
 }
 
+/* Barra de Contexto Superior del Cliente Activo */
+.suite-context-bar {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 18px;
+}
+.suite-ctx-grupo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1 1 460px;
+    min-width: 0;
+}
+.suite-ctx-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--forest);
+    white-space: nowrap;
+}
+.suite-ctx-input {
+    height: 36px;
+    min-width: 180px;
+    flex: 1 1 200px;
+    max-width: 280px;
+    padding: 0 10px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+.suite-ctx-input:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+}
+.suite-ctx-select {
+    height: 36px;
+    min-width: 170px;
+    max-width: 240px;
+    padding: 0 8px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+.suite-ctx-select:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+}
+.suite-ctx-btn-save {
+    min-height: 36px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.suite-ctx-btn-save .material-icons {
+    font-size: 16px;
+}
+.suite-ctx-acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.suite-regimen-fila {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--ink-2);
+    font-size: 12.5px;
+}
+.suite-regimen-label {
+    font-weight: 600;
+    white-space: nowrap;
+}
+.suite-regimen-select {
+    height: 36px;
+    min-width: 165px;
+    padding: 0 8px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.suite-regimen-select:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+}
 #btn-cierre-tributario {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    width: 100% !important;
-    height: 36px !important;
-    padding: 0 12px !important;
-    border-radius: var(--radius-sm) !important;
-    background: var(--amber) !important;
-    color: var(--forest-deep) !important;
-    border: 0 !important;
-    font-size: 12.5px !important;
-    font-weight: 700 !important;
-    gap: 7px !important;
-    cursor: pointer !important;
-    box-sizing: border-box !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    background: var(--amber);
+    color: var(--forest-deep);
+    border: 0;
+    font-size: 13px;
+    font-weight: 700;
+    gap: 6px;
+    cursor: pointer;
+    white-space: nowrap;
 }
-
+#btn-cierre-tributario:hover {
+    filter: brightness(0.96);
+}
 #btn-cierre-tributario .material-icons {
-    color: var(--forest-deep) !important;
-    font-size: 16px !important;
-    margin: 0 !important;
+    color: var(--forest-deep);
+    font-size: 16px;
+    margin: 0;
 }
 
 #btn-respaldo,
 #btn-restaurar {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    height: 30px !important;
-    font-size: 11.5px !important;
-    font-weight: 500 !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    color: rgba(255, 255, 255, 0.9) !important;
-    border-radius: 6px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 32px;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
 }
 
 #btn-respaldo:hover,
 #btn-restaurar:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
 }
 
 /* En escritorio ocultar botón de cerrar el menú */
@@ -644,101 +802,14 @@
     }
 }
 
-/* ---------- Componentes limpios del Sidebar de Suite Contadores ---------- */
-.suite-cliente-caja {
-    margin-top: 10px;
-    display: grid;
-    gap: 6px;
-}
-.suite-cliente-input {
-    width: 100%;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-sm);
-    background: #FFFFFF;
-    color: var(--ink);
-    font: inherit;
-    font-size: 13px;
-    font-weight: 500;
-}
-.suite-cliente-input:focus-visible {
-    outline: 2px solid var(--amber);
-    outline-offset: 1px;
-}
-.suite-clientes-select {
-    width: 100%;
-    height: 28px;
-    padding: 0 6px;
-    border: 0;
-    border-radius: 6px;
-    background: var(--forest-600);
-    color: #FFFFFF;
-    font: inherit;
-    font-size: 11.5px;
-    cursor: pointer;
-}
-.suite-clientes-select:focus-visible {
-    outline: 2px solid var(--amber);
-}
-.suite-btn-guardar {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 0;
-    font-size: 12px;
-    color: var(--side-muted);
-    text-align: left;
-    white-space: nowrap;
-    background: transparent;
-    border: 0;
-    cursor: pointer;
-}
-.suite-btn-guardar .material-icons {
-    font-size: 15px;
-}
-.suite-btn-guardar:hover {
-    color: #FFFFFF;
-}
-
-/* Pie del sidebar y Régimen */
-.suite-regimen-fila {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    gap: 8px;
-    color: var(--side-muted);
-    font-size: 12px;
-}
-.suite-regimen-label {
-    white-space: nowrap;
-}
-.suite-regimen-select {
-    width: 100%;
-    min-width: 0;
-    height: 26px;
-    padding: 0 6px;
-    border: 0;
-    border-radius: 6px;
-    background: var(--forest-600);
-    color: #FFFFFF;
-    font: inherit;
-    font-size: 11.5px;
-    cursor: pointer;
-}
-.suite-regimen-select:focus-visible {
-    outline: 2px solid var(--amber);
-}
 .suite-respaldo-fila {
     display: flex;
     gap: 6px;
-    margin-top: 2px;
 }
 .suite-respaldo-fila .btn {
     flex: 1;
 }
 .suite-btn-importar {
-    margin-top: 6px;
     width: 100%;
     justify-content: center;
 }
@@ -752,8 +823,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 6px;
-    font-size: 12px;
+    margin-top: 2px;
+    font-size: 12.5px;
     color: var(--side-muted);
     text-decoration: none;
 }
@@ -928,61 +999,207 @@
     outline: 2px solid var(--amber);
 }
 
-/* Compactación de sidebar de Suite Contadores en laptops (1366x768) */
+/* Ajuste de altura en laptops (1366x768) sin encoger los módulos */
 @media screen and (min-width: 901px) and (max-height: 800px) {
-    .app-side {
-        gap: 2px;
-        padding: 6px 8px;
+    .suite-contadores-app .app-side {
+        gap: 8px;
+        padding: 10px;
     }
-    .app-marca {
-        padding: 2px 4px;
-        font-size: 13.5px;
+    .suite-contadores-app .app-empresa {
+        padding: 4px 8px 6px;
     }
-    .app-empresa {
-        padding: 2px 6px;
+    .suite-contadores-app #suite-modulos .app-nav-grupo {
+        margin: 6px 8px 2px;
     }
-    .suite-cliente-caja {
-        margin-top: 3px;
-        gap: 2px;
+    .suite-contadores-app #suite-modulos .suite-mod-btn {
+        height: 34px;
+        min-height: 34px;
+        font-size: 13px;
     }
-    .suite-cliente-input {
-        height: 27px;
-        font-size: 12px;
+    .suite-contadores-app #suite-side-pie.app-side-pie {
+        gap: 6px;
+        padding: 8px 6px 2px;
     }
-    .suite-clientes-select,
-    .suite-regimen-select {
-        height: 23px;
-    }
-    #suite-modulos {
-        gap: 0;
-    }
-    #suite-modulos .app-nav-grupo {
-        margin: 4px 8px 1px;
-    }
-    #suite-modulos .suite-mod-btn {
-        height: 27px;
-        font-size: 12px;
-    }
-    #suite-side-pie.app-side-pie {
-        gap: 3px !important;
-        padding: 5px 8px !important;
-    }
-    #suite-side-pie #btn-cierre-tributario {
-        height: 27px !important;
-        font-size: 11.5px !important;
-    }
-    #suite-side-pie #btn-respaldo,
-    #suite-side-pie #btn-restaurar {
-        height: 24px !important;
-    }
-    #suite-side-pie .suite-btn-importar {
-        margin-top: 1px;
-        height: 25px;
-    }
-    #suite-side-pie .suite-link-pyme {
-        margin-top: 1px;
-        height: 20px;
-    }
+}
+
+/* ========================================================
+   Semáforo Pre-SII F29 + Vista Previa WhatsApp Cliente
+   ======================================================== */
+.f29-semaforo-box {
+    margin: 14px 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+}
+.f29-sem-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--canvas);
+}
+.f29-semaforo-box.estado-verde .f29-sem-head {
+    background: #F0FAF5;
+    border-bottom-color: #C7E8D8;
+}
+.f29-semaforo-box.estado-amarillo .f29-sem-head {
+    background: #FFFBEB;
+    border-bottom-color: #F3D998;
+}
+.f29-semaforo-box.estado-rojo .f29-sem-head {
+    background: #FEF2F2;
+    border-bottom-color: #F5C2C0;
+}
+.f29-sem-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.f29-sem-titulo strong {
+    font-size: 13.5px;
+    color: var(--ink);
+}
+.f29-sem-resumen {
+    font-size: 12.5px;
+    color: var(--ink-2);
+}
+.f29-sem-pills {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.f29-sem-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.f29-sem-pill.verde {
+    background: #E7F7EF;
+    color: #065F46;
+    border-color: #B7E4CE;
+}
+.f29-sem-pill.amarillo {
+    background: #FEF3C7;
+    color: #92400E;
+    border-color: #F6D88C;
+}
+.f29-sem-pill.rojo {
+    background: #FEE2E2;
+    color: #991B1B;
+    border-color: #F5B7B7;
+}
+.f29-sem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px 14px;
+}
+.f29-sem-item {
+    display: grid;
+    grid-template-columns: 10px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+}
+.f29-sem-item.nivel-amarillo {
+    border-color: #F4D58D;
+    background: #FFFEFA;
+}
+.f29-sem-item.nivel-rojo {
+    border-color: #F3B7B5;
+    background: #FFF9F9;
+}
+.f29-sem-dot {
+    width: 10px;
+    height: 10px;
+    margin-top: 5px;
+    border-radius: 50%;
+}
+.f29-sem-dot.verde { background: #10B981; }
+.f29-sem-dot.amarillo { background: #F59E0B; }
+.f29-sem-dot.rojo { background: #DC2626; }
+.f29-sem-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 3px;
+}
+.f29-sem-item-top strong {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.3;
+}
+.f29-sem-cod {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--forest);
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    border-radius: 4px;
+    padding: 1px 6px;
+    white-space: nowrap;
+}
+.f29-sem-item p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--ink-2);
+}
+.f29-sem-norma {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.suite-wa-preview {
+    margin-top: 14px;
+    border: 1px solid #C2E5D4;
+    background: #F4FBF7;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+}
+.suite-wa-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+.suite-wa-head strong {
+    font-size: 13px;
+    color: var(--forest);
+}
+.suite-wa-texto {
+    margin: 0;
+    padding: 10px 12px;
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 /* ---------- Barra compacta Modo Demo Suite Contadores ---------- */
@@ -1229,5 +1446,64 @@
     }
     .suite-plan-nuevo-fila {
         grid-template-columns: 1fr;
+    }
+    .suite-context-bar {
+        padding: 10px 16px;
+        gap: 10px;
+    }
+    .suite-ctx-grupo,
+    .suite-ctx-acciones {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+    .suite-ctx-input,
+    .suite-ctx-select,
+    .suite-regimen-select,
+    .suite-ctx-btn-save,
+    #btn-cierre-tributario {
+        min-height: 44px;
+        height: 44px;
+    }
+    .f29-sem-grid {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 10px 12px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .suite-contadores-app .app-side {
+        width: min(296px, 88vw);
+    }
+    .suite-context-bar {
+        padding: 10px 18px;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .suite-ctx-label {
+        width: 100%;
+    }
+    .suite-ctx-input,
+    .suite-ctx-select,
+    .suite-ctx-btn-save {
+        flex: 1 1 100%;
+        max-width: none;
+        width: 100%;
+        justify-content: center;
+    }
+    .suite-ctx-acciones {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+    .suite-regimen-fila {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        width: 100%;
+    }
+    .suite-regimen-select,
+    #btn-cierre-tributario {
+        width: 100%;
+        min-width: 0;
     }
 }

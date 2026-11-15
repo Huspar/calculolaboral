@@ -16,12 +16,12 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.4.1">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.5.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
 
-<div id="pm-panel" class="app">
+<div id="pm-panel" class="app suite-contadores-app">
 
   <!-- ========================================================
        1. SIDEBAR LATERAL PROFUNDA (#app-side)
@@ -41,22 +41,10 @@
       <span class="app-logo-texto">Cálculo<span>Laboral</span></span>
     </a>
 
-    <!-- Bloque del Estudio y Selector Multiempresa de Cliente -->
+    <!-- Bloque del Estudio -->
     <div class="app-empresa">
       <strong id="study-name-display">Asesorías Pérez Ltda.</strong>
       <span class="mono" style="font-size:11.5px;color:var(--side-muted)">Suite Estudios Contables</span>
-
-      <div class="suite-cliente-caja">
-        <label class="sr-only" for="liq-cliente">Cliente o empresa en trabajo</label>
-        <input type="text" id="liq-cliente" class="suite-cliente-input" value="Panadería San Isidro SpA" placeholder="Nombre del cliente">
-        <label class="sr-only" for="liq-clientes-guardados">Clientes guardados</label>
-        <select id="liq-clientes-guardados" class="suite-clientes-select">
-          <option value="">Clientes guardados (0)</option>
-        </select>
-        <button type="button" class="btn-texto suite-btn-guardar" id="btn-guardar-cliente">
-          <span class="material-icons" aria-hidden="true">save</span> Guardar cliente actual
-        </button>
-      </div>
     </div>
 
     <!-- Navegación por Grupos Estructurados -->
@@ -87,7 +75,7 @@
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="ddjj" aria-current="false">
         <span class="material-icons" aria-hidden="true">description</span>
-        <span>Operación Renta DDJJ</span>
+        <span>Renta y DDJJ</span>
         <span class="app-nav-chip" id="nav-ddjj-at">AT 2026</span>
       </button>
       <button type="button" class="suite-mod-btn" id="nav-cierre-btn" data-modulo="f29" aria-current="false">
@@ -99,7 +87,7 @@
       <p class="app-nav-grupo">Contabilidad y Reportes</p>
       <button type="button" class="suite-mod-btn" data-modulo="libros" aria-current="false">
         <span class="material-icons" aria-hidden="true">menu_book</span>
-        <span>Libros y Plan de Cuentas</span>
+        <span>Libros y Cuentas</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="balance" aria-current="false">
         <span class="material-icons" aria-hidden="true">table_chart</span>
@@ -115,21 +103,8 @@
       </button>
     </nav>
 
-    <!-- Pie del Sidebar con Régimen, Cierre y Enlace al Asistente Pyme -->
+    <!-- Pie del Sidebar con Respaldo, Puente Pyme y Enlace al Asistente Pyme -->
     <div class="app-side-pie" id="suite-side-pie">
-      <div class="suite-regimen-fila">
-        <label for="suite-regimen" class="suite-regimen-label">Régimen SII:</label>
-        <select id="suite-regimen" class="suite-regimen-select">
-          <option value="14D3">ProPyme (14 D3)</option>
-          <option value="14D3_MAYOR">ProPyme &gt;50k UF</option>
-          <option value="14D8">Transparente (14 D8)</option>
-          <option value="14D8_MAYOR">Transparente &gt;50k UF</option>
-          <option value="14A">Semi Integrado (14 A)</option>
-        </select>
-      </div>
-      <button type="button" class="btn btn-chico" id="btn-cierre-tributario">
-        <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
-      </button>
       <div class="suite-respaldo-fila">
         <button type="button" class="btn btn-chico" id="btn-respaldo">Respaldo</button>
         <button type="button" class="btn btn-chico" id="btn-restaurar">Restaurar</button>
@@ -191,6 +166,36 @@
         </div>
       </div>
     </header>
+
+    <!-- Barra de Contexto del Cliente Activo -->
+    <section class="suite-context-bar" id="suite-context-bar" aria-label="Contexto del cliente activo">
+      <div class="suite-ctx-grupo">
+        <label class="suite-ctx-label" for="liq-cliente">Cliente:</label>
+        <input type="text" id="liq-cliente" class="suite-ctx-input" value="Panadería San Isidro SpA" placeholder="Nombre del cliente">
+        <label class="sr-only" for="liq-clientes-guardados">Clientes guardados</label>
+        <select id="liq-clientes-guardados" class="suite-ctx-select">
+          <option value="">Clientes guardados (0)</option>
+        </select>
+        <button type="button" class="btn btn-chico suite-ctx-btn-save" id="btn-guardar-cliente">
+          <span class="material-icons" aria-hidden="true">save</span><span>Guardar cliente</span>
+        </button>
+      </div>
+      <div class="suite-ctx-acciones">
+        <div class="suite-regimen-fila">
+          <label for="suite-regimen" class="suite-regimen-label">Régimen SII:</label>
+          <select id="suite-regimen" class="suite-regimen-select">
+            <option value="14D3">ProPyme (14 D3)</option>
+            <option value="14D3_MAYOR">ProPyme &gt;50k UF</option>
+            <option value="14D8">Transparente (14 D8)</option>
+            <option value="14D8_MAYOR">Transparente &gt;50k UF</option>
+            <option value="14A">Semi Integrado (14 A)</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-chico" id="btn-cierre-tributario">
+          <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
+        </button>
+      </div>
+    </section>
 
     <!-- Banner de Cierre Tributario Global -->
     <div class="cierre-banner-bloqueo" id="suite-banner-bloqueo" hidden style="margin:16px 24px 0">
@@ -510,6 +515,7 @@
               <div class="fin-kpi"><span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span><span class="fin-kpi-val mono" id="f29-k-iva">$0</span></div>
               <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span><span class="fin-kpi-val mono ok" id="f29-k-total">$0</span></div>
             </div>
+            <div class="f29-semaforo-box" id="f29-semaforo-auditoria" hidden aria-live="polite"></div>
             <div class="tabla-contable-wrap">
               <table class="tabla-contable">
                 <thead>
@@ -527,7 +533,8 @@
             <div class="form-acciones" style="margin-top:14px">
               <button class="btn btn-primario" type="button" id="btn-f29-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir / PDF F29</button>
               <button class="btn" type="button" id="btn-f29-csv">Exportar Excel</button>
-              <button class="btn" type="button" id="btn-f29-copiar"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar resumen</button>
+              <button class="btn" type="button" id="btn-f29-copiar"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar códigos SII</button>
+              <button class="btn" type="button" id="btn-f29-whatsapp"><span class="material-icons" aria-hidden="true">chat</span>Copiar reporte WhatsApp</button>
               <button class="btn" type="button" id="btn-f29-ir-diario"><span class="material-icons" aria-hidden="true">menu_book</span>Ver centralización en Diario</button>
             </div>
           </div>
@@ -1193,7 +1200,15 @@
                 <button type="button" class="btn btn-primario" id="btn-rep-cert6"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Certificado N°6 Sueldos (Col. 7 Exenta / Col. 8 No Gravada)</button>
                 <button type="button" class="btn" id="btn-rep-cert1"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Certificado N°1 Honorarios BHE (Retención real)</button>
                 <button type="button" class="btn" id="btn-rep-resumen"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Resumen Ejecutivo Mensual del Cliente (F29 + P&amp;L)</button>
+                <button type="button" class="btn" id="btn-rep-whatsapp"><span class="material-icons" aria-hidden="true">chat</span>Copiar resumen ejecutivo WhatsApp cliente</button>
                 <button type="button" class="btn" id="btn-rep-f29"><span class="material-icons" aria-hidden="true">print</span>Borrador Formulario 29 con Membrete</button>
+              </div>
+              <div class="suite-wa-preview" id="rep-whatsapp-preview" hidden>
+                <div class="suite-wa-head">
+                  <strong>Vista previa mensaje WhatsApp para el cliente</strong>
+                  <span class="texto-ayuda">Actualizado con el F29 y caja del período</span>
+                </div>
+                <pre class="suite-wa-texto" id="rep-whatsapp-texto"></pre>
               </div>
             </div>
           </div>
@@ -1286,7 +1301,8 @@
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
-<script src="/js/demo_suite.js?v=2.1.0"></script>
+<script src="/js/contadores_asistente_pro.js?v=1.0.0"></script>
+<script src="/js/demo_suite.js?v=2.2.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {
