@@ -82,10 +82,11 @@ function crear({ almacen, productos, flow, venta, ahora, piloto }) {
     const CORREO_OK = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
     const KIT_GRATIS_DIAS = 60;
     const KIT_PRODUCTO_PASE = 'pyme12';
+    const PRODUCTOS_CORTESIA = new Set(['blindaje', 'datos', 'despido', 'finiquito', 'contrato', 'informe', 'liquidacion', 'anexo']);
 
-    /** Registra 60 dias de pase pyme12 por compra del Kit Ley 21.719 (anclado al fin del piloto si sigue activo). */
+    /** Registra 60 dias de pase pyme12 por compra de cualquier kit o documento (anclado al fin del piloto si sigue activo). */
     async function otorgarPorKit(pay) {
-        if (!pay || !pay.paid || pay.product !== 'datos') return { ok: false, motivo: 'no_aplica' };
+        if (!pay || !pay.paid || !PRODUCTOS_CORTESIA.has(pay.product)) return { ok: false, motivo: 'no_aplica' };
         const correo = typeof pay.email === 'string' ? pay.email.trim().toLowerCase() : '';
         if (!CORREO_OK.test(correo)) return { ok: false, motivo: 'correo_invalido' };
         const ts = iso();

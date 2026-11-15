@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.32.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.33.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
 </head>
 <body class="app-body">
@@ -188,12 +188,58 @@ gtag('js', new Date());
 <tbody id="ini-empresas-filas"></tbody></table></div>
 <div class="panel-pie"><p class="texto-ayuda">Son los mismos avisos del cierre del mes de cada empresa (plazos fijos, liquidaciones sin emitir, cotizaciones, Mi DT). Con los avisos por correo activados te llegan todos juntos.</p></div>
 </div>
-<div class="piloto-invita" id="ini-opinion" hidden>
-<span class="material-icons" aria-hidden="true">forum</span>
-<p><strong>Estás en el piloto gratuito.</strong> Cuéntanos qué funciona, qué no y qué te falta: lo usamos para mejorar el asistente.</p>
-<div class="piloto-invita-acciones"><button type="button" class="btn btn-chico" data-abrir-opinion="cierre">Dar mi opinión</button><button type="button" class="btn-texto" id="ini-opinion-ahora-no">Ahora no</button></div>
+<div class="panel ini-opinion-rapida" id="ini-opinion" hidden>
+  <div class="ini-opinion-cabeza">
+    <span class="material-icons" aria-hidden="true">rate_review</span>
+    <div class="ini-opinion-titulares">
+      <strong>¿Usarías el asistente para el próximo mes?</strong>
+      <p class="texto-ayuda">Tu respuesta es anónima y nos ayuda a saber si vamos por buen camino.</p>
+    </div>
+    <button type="button" class="btn-texto" id="ini-opinion-ahora-no">Ahora no</button>
+  </div>
+  <div class="ini-opinion-opciones" id="ini-opinion-opciones">
+    <button type="button" class="btn btn-chico" data-uso="si">Sí, me sirvió</button>
+    <button type="button" class="btn btn-chico" data-uso="cambios">Con cambios</button>
+    <button type="button" class="btn btn-chico" data-uso="no">No</button>
+  </div>
+  <div class="ini-opinion-extendida" id="ini-opinion-extendida" hidden>
+    <div class="lq-field" style="margin-top:10px">
+      <label for="ini-opinion-cambio-txt">¿Qué cambiarías o qué te gustaría que tuviera? <span class="lq-opt">(opcional)</span></label>
+      <input type="text" id="ini-opinion-cambio-txt" maxlength="250" placeholder="Ej: Me gustaría enviar la liquidación por WhatsApp directo.">
+    </div>
+    <div class="lq-field pm-check" style="margin-top:8px">
+      <label>
+        <input type="checkbox" id="ini-opinion-escribir">
+        Podemos escribirte a tu correo si tenemos dudas sobre tu comentario
+      </label>
+    </div>
+    <div class="form-acciones" style="margin-top:12px">
+      <button type="button" class="btn btn-chico btn-primario" id="btn-enviar-opinion-rapida">Enviar respuesta</button>
+      <p class="lq-estado" id="ini-opinion-estado" role="status"></p>
+    </div>
+  </div>
+  <div class="ini-opinion-gracias" id="ini-opinion-gracias" hidden>
+    <span class="material-icons" aria-hidden="true">check_circle</span>
+    <p>Gracias por tu opinión. La tendremos en cuenta para las próximas mejoras.</p>
+  </div>
 </div>
 <dl class="cifras" id="ini-cifras"></dl>
+
+<div class="panel ini-gestion-strip" id="ini-gestion-strip" hidden>
+  <div class="ini-gestion-cuerpo">
+    <div class="ini-gestion-pregunta">
+      <span class="material-icons" aria-hidden="true">help_outline</span>
+      <strong>¿Cómo llevas hoy las liquidaciones de sueldo?</strong>
+    </div>
+    <div class="ini-gestion-opciones" role="group" aria-label="Cómo gestionas las liquidaciones hoy">
+      <button type="button" class="btn-chip" data-gestion="excel">Excel</button>
+      <button type="button" class="btn-chip" data-gestion="software">Software</button>
+      <button type="button" class="btn-chip" data-gestion="contador">Mi contador</button>
+      <button type="button" class="btn-chip" data-gestion="mano">A mano</button>
+    </div>
+    <p class="texto-ayuda ini-gestion-feedback" id="ini-gestion-feedback" hidden>Anotado. Adaptaremos las ayudas para ti.</p>
+  </div>
+</div>
 
 <div class="panel" id="ini-primeros" hidden>
 <div class="panel-head"><h2>Para empezar</h2></div>
@@ -551,6 +597,29 @@ gtag('js', new Date());
 </div>
 <div id="pm-liq-valores" class="lq-avisos" role="status" style="margin-bottom:14px"></div>
 <div id="pm-liq-nov-detalle" class="lq-help" role="status" style="margin-bottom:14px"></div>
+<div class="panel liq-feedback-panel" id="liq-activacion-feedback" hidden>
+  <div class="liq-feedback-head">
+    <span class="material-icons" aria-hidden="true">check_circle</span>
+    <strong>¿Qué te faltó para cerrar el mes?</strong>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-feedback-cierre" aria-label="Omitir">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="liq-feedback-cuerpo">
+    <div class="liq-feedback-chips" role="group" aria-label="Qué faltó para cerrar el mes">
+      <button type="button" class="btn-chip" data-fb="listo">Nada, quedó listo</button>
+      <button type="button" class="btn-chip" data-fb="dato">Un dato del trabajador</button>
+      <button type="button" class="btn-chip" data-fb="documento">Un documento</button>
+      <button type="button" class="btn-chip" data-fb="paso">No entendí un paso</button>
+    </div>
+    <div class="liq-feedback-detalle" id="liq-feedback-detalle" hidden>
+      <label for="liq-feedback-txt" class="sr-only">Detalle opcional</label>
+      <input type="text" id="liq-feedback-txt" maxlength="160" placeholder="¿Quieres contarnos algo más? (opcional)">
+      <button type="button" class="btn btn-chico btn-primario" id="btn-enviar-feedback-cierre">Enviar</button>
+    </div>
+    <p class="texto-ayuda liq-feedback-ok" id="liq-feedback-ok" hidden>Gracias por contarnos. Tu respuesta nos ayuda a simplificar el asistente.</p>
+  </div>
+</div>
 <div class="panel" id="pm-liq-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">No hay trabajadores activos</p><p class="texto-ayuda">Agrega primero a un trabajador activo para preparar su liquidación.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
 <div class="panel" id="liq-panel">
 <div class="tabla-wrap">
@@ -1580,6 +1649,6 @@ gtag('js', new Date());
 <script src="/js/pyme_finanzas.js?v=1.4.0"></script>
 <script src="/js/pyme_datos_ley.js?v=1.4.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.45.0" defer></script>
+<script src="/js/app_pyme.js?v=1.46.0" defer></script>
 </body>
 </html>

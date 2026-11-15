@@ -310,6 +310,32 @@
         track('purchase', u.p, { transaction_id: u.o });
     }
 
+    function showCortesiaBanner() {
+        try {
+            if (sessionStorage.getItem('cl_cortesia_cerrado') === '1') return;
+        } catch (e) {}
+        if (document.getElementById('cl-cortesia-banner')) return;
+        var box = document.createElement('aside');
+        box.id = 'cl-cortesia-banner';
+        box.className = 'no-print';
+        box.setAttribute('aria-label', 'Pase incluido del Asistente Laboral Pyme');
+        box.style.cssText = 'position:fixed;bottom:16px;right:16px;left:16px;max-width:460px;margin-left:auto;z-index:9990;background:#00382E;color:#ffffff;border-radius:16px;padding:14px 16px;box-shadow:0 14px 36px rgba(0,20,16,.28);border:1px solid rgba(255,183,3,.45);display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:inherit;';
+        box.innerHTML =
+            '<div style="min-width:0;flex:1">' +
+            '<p style="margin:0 0 3px;font-size:12px;font-weight:800;color:#FFB703;text-transform:uppercase;letter-spacing:.04em">Incluido en tu compra</p>' +
+            '<p style="margin:0;font-size:13px;line-height:1.4;color:#ffffff">Tienes <strong>60 días gratis</strong> del Asistente Laboral Pyme con tu correo, sin renovación automática.</p>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">' +
+            '<a href="app" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="generador-postcompra" style="background:#FFB703;color:#111827 !important;text-decoration:none;font-weight:800;font-size:12px;padding:9px 12px;border-radius:999px;white-space:nowrap">Entrar con mi correo</a>' +
+            '<button type="button" id="cl-cortesia-cerrar" aria-label="Cerrar aviso" style="background:transparent;border:0;color:#ffffff;font-size:18px;line-height:1;cursor:pointer;padding:6px 8px">×</button>' +
+            '</div>';
+        document.body.appendChild(box);
+        document.getElementById('cl-cortesia-cerrar').addEventListener('click', function () {
+            try { sessionStorage.setItem('cl_cortesia_cerrado', '1'); } catch (e) {}
+            box.remove();
+        });
+    }
+
     function unlockFromUrl(product) {
         var q = new URLSearchParams(window.location.search);
         if (q.get('p') !== product || !q.get('sig')) return Promise.resolve(storedUnlock(product));
@@ -328,7 +354,10 @@
             u.expiresAt = d.expiresAt;
             try { localStorage.setItem('cl_unlock_' + product, JSON.stringify(u)); } catch (e) {}
             // Un desbloqueo que viene del Pase Pyme (orden PYME-...) no es una venta del generador: no se cuenta en GA4
-            if (String(u.o || '').indexOf('PYME-') !== 0) trackPurchase(u);
+            if (String(u.o || '').indexOf('PYME-') !== 0) {
+                trackPurchase(u);
+                showCortesiaBanner();
+            }
             return u;
         }).catch(function () { return storedUnlock(product); });
     }

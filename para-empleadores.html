@@ -40,6 +40,17 @@
       "description": "Soluciones de cumplimiento normativo laboral para micro, pequeñas y medianas empresas en Chile."
     },
     {
+      "@type": "VideoObject",
+      "@id": "https://calculolaboral.cl/para-empleadores#video",
+      "name": "Asistente Laboral Pyme: recorrido en 1 minuto",
+      "description": "Cómo el Asistente Laboral Pyme ordena sueldos, archivos Previred y Excel, Mi DT, 11 modelos de documentos, Ley 21.719, control de caja desde CSV del SII y Formulario 29.",
+      "thumbnailUrl": "https://calculolaboral.cl/assets/video/asistente-laboral-pyme-poster.jpg",
+      "contentUrl": "https://calculolaboral.cl/assets/video/asistente-laboral-pyme.mp4",
+      "uploadDate": "2026-11-15",
+      "duration": "PT1M13S",
+      "inLanguage": "es-CL"
+    },
+    {
       "@type": "BreadcrumbList",
       "itemListElement": [
         {
@@ -617,6 +628,15 @@ body { overflow-x: hidden; }
                                         <div class="text-xs text-slate-500 mt-0.5">Contrato de trabajo en Word a la medida.</div>
                                     </div>
                                 </a>
+                                <a href="para-empleadores#estudios-contables" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg">business_center</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Para Contadores</div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5">Previred 105 campos, LRE y F29.</div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -760,7 +780,7 @@ body { overflow-x: hidden; }
                             <li class="flex gap-2"><span class="material-icons text-base" style="color: #00382E;" aria-hidden="true">check_circle</span><span>Te avisa los plazos: contratos a plazo fijo, licencias, cotizaciones y registro en Mi DT.</span></li>
                             <li class="flex gap-2"><span class="material-icons text-base" style="color: #00382E;" aria-hidden="true">check_circle</span><span>Datos cifrados; los descargas o eliminas cuando quieras.</span></li>
                         </ul>
-                        <p class="text-xs text-slate-500 leading-relaxed m-0">Hasta 50 trabajadores, sin datos de pago. A cambio te pedimos tu opinión, que es voluntaria. No declara en Previred ni genera el Libro de Remuneraciones Electrónico.</p>
+                        <p class="text-xs text-slate-500 leading-relaxed m-0">Hasta 50 trabajadores en el piloto, sin datos de pago. Calcula sueldos del mes y te deja descargar los archivos de carga de Previred (105 campos) y del Libro de Remuneraciones Electrónico para revisarlos y subirlos tú con tu clave.</p>
                         <div class="flex flex-wrap gap-3 pt-1">
                             <a href="app" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-sm font-bold shadow-sm" style="background-color: #00382E; color: #ffffff !important;" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="empleadores-entrar"><span class="material-icons text-base" aria-hidden="true" style="color: #FFB703;">login</span>Entrar gratis al piloto</a>
                             <a href="app/ejemplo" class="btn-outline-pill justify-center whitespace-nowrap text-sm !py-3 !px-6" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="empleadores-ejemplo">Ver un ejemplo sin cuenta</a>
@@ -1165,47 +1185,6 @@ body { overflow-x: hidden; }
                     </div>
                 </div>
 
-                <!-- Tool: Generador de Liquidaciones de Sueldo -->
-                <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
-                    <div class="p-5 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="cl-tag">Remuneraciones</span>
-                            <span class="text-xs text-slate-600 font-mono font-medium">Art. 54 CT</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-900 leading-snug">Generador de Liquidaciones de Sueldo</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            Arma la liquidación mensual de cada trabajador en PDF, con AFP, salud, seguro de cesantía e impuesto único calculados con los valores oficiales del mes.
-                        </p>
-                        <ul class="space-y-1.5 text-xs text-slate-700">
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check</span>
-                                <span>Topes en UF y tabla del impuesto del mes</span>
-                            </li>
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check</span>
-                                <span>Horas extra, bonos, gratificación y descuentos</span>
-                            </li>
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check</span>
-                                <span>Trabajadores guardados en tu navegador</span>
-                            </li>
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check</span>
-                                <span>Vista previa gratis antes de pagar</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="p-5 bg-slate-50 border-t border-slate-100">
-                        <div class="flex items-baseline justify-between mb-2">
-                            <span class="text-base font-bold text-slate-900 font-mono-num">$2.990 CLP <span class="text-xs font-medium text-slate-600">por liquidación</span></span>
-                        </div>
-                        <a href="generador-liquidacion-sueldo" class="btn-outline-pill w-full !py-2.5 !text-xs" data-cta="liquidacion" data-cta-slot="portal-empleadores">
-                            <span>Generar Liquidación ($2.990)</span>
-                            <span class="material-icons text-sm">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-
                 <!-- Tool: Asistente Laboral Pyme -->
                 <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
                     <div class="p-5 space-y-3">
@@ -1565,6 +1544,9 @@ body { overflow-x: hidden; }
                     <a href="como-generar-archivo-previred-lre-f29-chile" class="block text-center text-xs font-semibold text-[#00382E] underline pt-1">
                         Ver guía: Previred 105 campos, LRE y F29 →
                     </a>
+                    <a href="generador-liquidacion-sueldo" class="block text-center text-xs text-slate-600 hover:text-slate-900 underline">
+                        ¿Solo una liquidación puntual? Ir al generador único →
+                    </a>
                 </div>
             </div>
         </section>
@@ -1821,6 +1803,8 @@ body { overflow-x: hidden; }
                         <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="para-empleadores#estudios-contables" class="text-white/80 hover:text-[#FFB703] transition-colors">Para Contadores</a></li>
+                            <li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Guía Previred, LRE y F29</a></li>
                             <li><a href="demo-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
                             <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos</a></li>
                             <li><a href="kit-cumplimiento-laboral-pymes" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Blindaje Laboral</a></li>

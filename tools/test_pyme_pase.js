@@ -442,4 +442,16 @@ caso('script retroactivo otorgar_pase_kit: parseo CSV, idempotencia y vista prev
     assert.ok(sqls.every(s => s.indexOf('INSERT') === -1));
 });
 
+caso('otorgarPorKit aplica también a otros kits (blindaje) y generadores (liquidacion) incluyendo bloque en el correo', async () => {
+    const m = montar({ conPiloto: true, fecha: '2026-11-15T12:00:00Z' });
+    const rKit = await m.pase.otorgarPorKit({ paid: true, product: 'blindaje', order: 9501, email: 'blindaje@pyme.cl' });
+    assert.strictEqual(rKit.ok, true);
+    assert.strictEqual(rKit.producto, 'pyme12');
+    const rGen = await m.pase.otorgarPorKit({ paid: true, product: 'liquidacion', order: 9502, email: 'liq@pyme.cl' });
+    assert.strictEqual(rGen.ok, true);
+    assert.strictEqual(rGen.producto, 'pyme12');
+    const rOtro = await m.pase.otorgarPorKit({ paid: true, product: 'desconocido', order: 9503, email: 'x@pyme.cl' });
+    assert.strictEqual(rOtro.ok, false);
+});
+
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

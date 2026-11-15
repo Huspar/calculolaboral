@@ -19,10 +19,10 @@ async function procesarPagoPase(pay, { pase, deliverPase, notifyOwner }) {
 }
 
 /**
- * Que hace flow-confirm cuando Flow avisa la compra del Kit Ley 21.719 (producto: 'datos').
- * Asigna 60 dias de pase pyme12 (anclado al fin del piloto si sigue activo) antes de enviar el kit
- * para incluir la vigencia y el enlace de acceso en el mismo correo de entrega.
- * Si falla el registro en BD, avisa al dueno pero no bloquea el envio del kit pagado.
+ * Que hace flow-confirm cuando Flow avisa la compra de un kit o documento (productos con cortesia).
+ * Asigna 60 dias de pase pyme12 (anclado al fin del piloto si sigue activo) antes de enviar el correo
+ * de entrega para incluir la vigencia y el enlace de acceso en el mismo mensaje.
+ * Si falla el registro en BD, avisa al dueno pero no bloquea la entrega pagada.
  */
 async function procesarKitConPase(pay, { pase, notifyOwner }) {
     try {
@@ -32,13 +32,14 @@ async function procesarKitConPase(pay, { pase, notifyOwner }) {
         if (r && r.ok) {
             return { paseVence: r.vence, paseEmail: r.email, paseRepetido: r.repetido };
         }
+        if (r && r.motivo === 'no_aplica') return null;
         if (notifyOwner) {
-            await notifyOwner(pay, 'Venta Kit Ley 21.719 sin pase automático (' + ((r && r.motivo) || 'sin detalle') + ').');
+            await notifyOwner(pay, 'Venta ' + String((pay && pay.product) || 'producto') + ' sin pase automático (' + ((r && r.motivo) || 'sin detalle') + ').');
         }
     } catch (err) {
         console.error('flow-confirm: error otorgando pase por kit', pay && pay.commerceOrder, err);
         if (notifyOwner) {
-            try { await notifyOwner(pay, 'Venta Kit Ley 21.719 confirmada, pero falló asignar pase automático: ' + err.message); } catch (_) {}
+            try { await notifyOwner(pay, 'Venta ' + String((pay && pay.product) || 'producto') + ' confirmada, pero falló asignar pase automático: ' + err.message); } catch (_) {}
         }
     }
     return null;

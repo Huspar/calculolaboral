@@ -113,6 +113,13 @@
             var n = $('pm-entrada-nota');
             n.hidden = !nota;
             if (nota) n.querySelector('p').textContent = nota;
+            var emailEl = $('pm-email');
+            if (emailEl && !emailEl.value) {
+                try {
+                    var qc = new URLSearchParams(window.location.search).get('correo');
+                    if (qc && /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(qc.trim())) emailEl.value = qc.trim();
+                } catch (e) {}
+            }
         }
     }
 
@@ -216,9 +223,16 @@
         contarVista(vista === 'trabajador' ? 'trabajadores/' + (partes[1] === 'nuevo' ? 'nuevo' : 'carpeta/' + (partes[2] || 'ficha')) : base);
     }
 
+    var ejemploDesdeUrl = false;
+    function medirEvento(nombre, params) {
+        try { if (window.gtag) window.gtag('event', nombre, params || {}); } catch (e) { /* sin analítica */ }
+    }
     // Visitas en GA4 con rutas genéricas: nunca se envían ids de trabajadores
     function contarVista(ruta) {
-        try { if (window.gtag) window.gtag('event', 'page_view', { page_title: document.title, page_location: window.location.origin + '/app' + (ruta ? '/' + ruta : '') }); } catch (e) { /* sin analítica */ }
+        var r = ejemploDesdeUrl && !ruta ? 'ejemplo' : ruta;
+        if (ejemploDesdeUrl && !ruta) ejemploDesdeUrl = false;
+        var path = '/app' + (r ? '/' + r : '');
+        medirEvento('page_view', { page_title: document.title, page_path: path, page_location: window.location.origin + path });
     }
 
     // Menú en pantallas chicas
@@ -310,7 +324,12 @@
         btn.disabled = true;
         api('entrar', { metodo: 'POST', cuerpo: { email: correo } }).then(function (r) {
             btn.disabled = false;
-            if (r.ok) { $('pm-entrar-form').hidden = true; $('pm-entrar-listo').hidden = false; return; }
+            if (r.ok) {
+                var qOrigen = '';
+                try { qOrigen = new URLSearchParams(window.location.search).get('correo') ? 'postcompra' : 'directo'; } catch (ex) { qOrigen = 'directo'; }
+                medirEvento('app_signup', { origen: qOrigen });
+                $('pm-entrar-form').hidden = true; $('pm-entrar-listo').hidden = false; return;
+            }
             err.textContent = r.datos.error || 'No pudimos enviar el enlace. Intenta de nuevo.';
             err.hidden = false;
         });
@@ -325,7 +344,7 @@
     });
 
     // ---------- opiniones del piloto ----------
-    var KEY_OPINION = 'cl_pyme_opinion';
+    var KEY_OPINION = 'cl_pyme_opinion', KEY_GESTION = 'cl_pyme_gestion', KEY_FB_CIERRE = 'cl_pyme_fb_cierre', usoRapido = '';
     function estadoOpinion() { try { return JSON.parse(guardado(KEY_OPINION) || '{}') || {}; } catch (e) { return {}; } }
     function marcarOpinion(clave) { var o = estadoOpinion(); o[clave] = new Date().toISOString(); guardar(KEY_OPINION, JSON.stringify(o)); }
     // La invitación del cierre del mes aparece durante el piloto, salvo si ya opinó (30 días) o dijo «ahora no» (7 días)
@@ -335,6 +354,61 @@
         var sinUso = !estado || !estado.empresa || !(estado.trabajadores || []).length || !filasDelMes().some(function (f) { return f.est === 'guardada' || f.est === 'emitida'; });
         var oculta = sinUso || !enPiloto() || (o.enviada && ahora - Date.parse(o.enviada) < 30 * dia) || (o.cerrada && ahora - Date.parse(o.cerrada) < 7 * dia);
         caja.hidden = !!oculta;
+    }
+    var stripGestion = $('ini-gestion-strip');
+    if (stripGestion) {
+        stripGestion.addEventListener('click', function (e) {
+            var btn = e.target.closest && e.target.closest('[data-gestion]');
+            if (!btn) return;
+            var val = btn.getAttribute('data-gestion');
+            guardar(KEY_GESTION, val);
+            Array.prototype.forEach.call(stripGestion.querySelectorAll('[data-gestion]'), function (b) { b.classList.toggle('seleccionado', b === btn); });
+            var fb = $('ini-gestion-feedback');
+            if (fb) fb.hidden = false;
+            medirEvento('app_gestion_inicial', { metodo: val });
+            window.setTimeout(function () { if (stripGestion) stripGestion.hidden = true; }, 2500);
+        });
+    }
+    var opOpciones = $('ini-opinion-opciones');
+    if (opOpciones) {
+        opOpciones.addEventListener('click', function (e) {
+            var b = e.target.closest && e.target.closest('[data-uso]');
+            if (!b) return;
+            usoRapido = b.getAttribute('data-uso');
+            Array.prototype.forEach.call(opOpciones.querySelectorAll('[data-uso]'), function (x) { x.classList.toggle('btn-primario', x === b); });
+            if ($('ini-opinion-extendida')) $('ini-opinion-extendida').hidden = false;
+            if ($('ini-opinion-cambio-txt')) $('ini-opinion-cambio-txt').focus();
+        });
+    }
+    if ($('btn-enviar-opinion-rapida')) {
+        $('btn-enviar-opinion-rapida').addEventListener('click', function () {
+            if (!usoRapido) return;
+            var est = $('ini-opinion-estado'), btn = $('btn-enviar-opinion-rapida');
+            var extra = ($('ini-opinion-cambio-txt') && $('ini-opinion-cambio-txt').value || '').trim();
+            var contacto = !!($('ini-opinion-escribir') && $('ini-opinion-escribir').checked);
+            var TIPO = { si: 'funciona', cambios: 'sugerencia', no: 'no_funciona' };
+            var ETIQUETA = { si: 'Sí, me sirvió', cambios: 'Con cambios', no: 'No' };
+            var texto = 'Próximo mes: ' + (ETIQUETA[usoRapido] || usoRapido) + (extra ? '. ' + extra : '.');
+            if (ejemplo) {
+                marcarOpinion('enviada');
+                if ($('ini-opinion-opciones')) $('ini-opinion-opciones').hidden = true;
+                if ($('ini-opinion-extendida')) $('ini-opinion-extendida').hidden = true;
+                if ($('ini-opinion-gracias')) $('ini-opinion-gracias').hidden = false;
+                return;
+            }
+            btn.disabled = true;
+            mensaje(est, '', 'Enviando…');
+            api('comentario', { metodo: 'POST', cuerpo: { comentario: { tipo: TIPO[usoRapido] || 'otro', texto: texto, pantalla: 'cierre_rapido', contacto: contacto } } }).then(function (r) {
+                btn.disabled = false;
+                if (sinSesion(r)) return;
+                if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos enviarla. Intenta de nuevo.'); return; }
+                marcarOpinion('enviada');
+                medirEvento('app_opinion', { uso: usoRapido, canal: 'cierre_rapido' });
+                if ($('ini-opinion-opciones')) $('ini-opinion-opciones').hidden = true;
+                if ($('ini-opinion-extendida')) $('ini-opinion-extendida').hidden = true;
+                if ($('ini-opinion-gracias')) $('ini-opinion-gracias').hidden = false;
+            });
+        });
     }
     function abrirOpinion(origen) {
         var dlg = $('pm-opinion');
@@ -371,6 +445,7 @@
             if (sinSesion(r)) { $('pm-opinion').close(); return; }
             if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos enviarla. Intenta de nuevo.'); return; }
             marcarOpinion('enviada');
+            medirEvento('app_opinion', { uso: marcada.value, canal: 'modal' });
             dibujarInvitacionOpinion();
             $('pm-opinion-form').hidden = true;
             $('pm-opinion-gracias').hidden = false;
@@ -404,7 +479,10 @@
             recordarEjemplo(true);
             return sembrarMesesEjemplo(periodo);
         }).then(function () {
-            if (rutaActual() === 'ejemplo') { try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ } }
+            if (rutaActual() === 'ejemplo') {
+                ejemploDesdeUrl = true;
+                try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ }
+            }
             return cargar();
         }).catch(function () {
             ejemplo = null;
@@ -1411,6 +1489,7 @@ function dibujarEquipo() {
         if (!estado.empresa) { avisoGlobal('error', 'Primero guarda los datos de la empresa.'); return; }
         $('pm-planilla').hidden = false;
         $('pm-planilla').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        medirEvento('import_previred_start');
     });
     $('pm-planilla-cerrar').addEventListener('click', cerrarPlanilla);
     $('pm-planilla-plantilla').addEventListener('click', function () {
@@ -1651,12 +1730,70 @@ function dibujarEquipo() {
             if (sinSesion(r)) return;
             if (!r.ok) { mensaje(est, 'error', r.datos.error || 'No pudimos importar la planilla.'); return; }
             var d = r.datos, omit = d.omitidos || [];
+            var fmtPlanilla = (planillaMeta && planillaMeta.formato) || 'planilla';
             var txt = plural(d.importados, 'trabajador importado', 'trabajadores importados') + '.';
             if (omit.length) txt += ' No se importaron ' + omit.length + ': ' + omit.map(function (o) { return o.nombre + ' (' + { limite: 'supera el límite de tu cuenta', repetido: 'ya estaba', invalido: 'datos inválidos' }[o.motivo] + ')'; }).join('; ') + '.';
+            medirEvento('app_import', { formato: fmtPlanilla, importados: d.importados });
+            if (fmtPlanilla === 'previred') medirEvento('import_previred_done', { importados: d.importados });
             cerrarPlanilla();
-            cargar().then(function () { avisoGlobal(omit.length ? 'info' : 'ok', txt); });
+            cargar().then(function () {
+                if (d.importados > 0) {
+                    navegar('liquidaciones');
+                    mostrarFeedbackCierre();
+                }
+                avisoGlobal(omit.length ? 'info' : 'ok', txt);
+            });
         });
     });
+
+    var fbCierreMotivo = '';
+    function mostrarFeedbackCierre() {
+        var p = $('liq-activacion-feedback');
+        if (!p || guardado(KEY_FB_CIERRE)) return;
+        fbCierreMotivo = '';
+        p.hidden = false;
+        if ($('liq-feedback-detalle')) $('liq-feedback-detalle').hidden = true;
+        if ($('liq-feedback-ok')) $('liq-feedback-ok').hidden = true;
+        if ($('liq-feedback-txt')) $('liq-feedback-txt').value = '';
+        Array.prototype.forEach.call(p.querySelectorAll('[data-fb]'), function (c) { c.classList.remove('seleccionado'); });
+    }
+    var panelFbCierre = $('liq-activacion-feedback');
+    if (panelFbCierre) {
+        panelFbCierre.addEventListener('click', function (e) {
+            var chip = e.target.closest && e.target.closest('[data-fb]');
+            if (!chip) return;
+            fbCierreMotivo = chip.getAttribute('data-fb');
+            Array.prototype.forEach.call(panelFbCierre.querySelectorAll('[data-fb]'), function (c) { c.classList.toggle('seleccionado', c === chip); });
+            if ($('liq-feedback-detalle')) $('liq-feedback-detalle').hidden = false;
+            if ($('liq-feedback-txt')) $('liq-feedback-txt').focus();
+        });
+    }
+    if ($('btn-cerrar-feedback-cierre')) {
+        $('btn-cerrar-feedback-cierre').addEventListener('click', function () {
+            guardar(KEY_FB_CIERRE, '1');
+            if (panelFbCierre) panelFbCierre.hidden = true;
+        });
+    }
+    if ($('btn-enviar-feedback-cierre')) {
+        $('btn-enviar-feedback-cierre').addEventListener('click', function () {
+            if (!fbCierreMotivo) return;
+            var btn = $('btn-enviar-feedback-cierre'), det = ($('liq-feedback-txt') && $('liq-feedback-txt').value || '').trim();
+            var texto = 'Feedback cierre post-importación (' + fbCierreMotivo + ')' + (det ? ': ' + det : '.');
+            guardar(KEY_FB_CIERRE, '1');
+            medirEvento('app_feedback_cierre', { motivo: fbCierreMotivo });
+            if (ejemplo) {
+                if ($('liq-feedback-detalle')) $('liq-feedback-detalle').hidden = true;
+                if ($('liq-feedback-ok')) $('liq-feedback-ok').hidden = false;
+                return;
+            }
+            btn.disabled = true;
+            api('comentario', { metodo: 'POST', cuerpo: { comentario: { tipo: fbCierreMotivo === 'listo' ? 'funciona' : 'sugerencia', texto: texto, pantalla: 'liquidaciones', contacto: false } } }).then(function () {
+                btn.disabled = false;
+                if ($('liq-feedback-detalle')) $('liq-feedback-detalle').hidden = true;
+                if ($('liq-feedback-ok')) $('liq-feedback-ok').hidden = false;
+            });
+        });
+    }
     function abrirFilaTrabajador(e) {
         var fila = e.target.closest('tr[data-id]');
         if (fila) navegar('trabajadores/' + fila.getAttribute('data-id'));
@@ -2185,6 +2322,7 @@ function dibujarEquipo() {
         $('ini-caption').textContent = 'Trabajadores y estado de su liquidación de ' + nombreMes;
         var sinEmpresa = !estado.empresa, sinTrabajadores = !(estado.trabajadores || []).length;
         var arranque = sinEmpresa || sinTrabajadores;
+        if ($('ini-gestion-strip')) $('ini-gestion-strip').hidden = !(arranque && !guardado(KEY_GESTION));
         $('ini-primeros').hidden = !arranque;
         $('ini-avisos').hidden = arranque; // en el primer uso los pasos de arriba ya dicen qué falta
         $('ini-tabla-panel').hidden = arranque;
@@ -2198,8 +2336,8 @@ function dibujarEquipo() {
             $('ini-cifras').hidden = true;
             var pasos = [
                 { hecho: !sinEmpresa, bloqueado: false, titulo: 'Datos de la empresa', texto: 'Razón social y RUT para el membrete de cada documento.', ruta: 'empresa', boton: sinEmpresa ? 'Completar' : 'Revisar' },
-                { hecho: !sinTrabajadores, bloqueado: sinEmpresa, titulo: 'Tu primer trabajador', texto: 'Su ficha: contrato, jornada, sueldo, AFP y salud.', ruta: 'trabajadores/nuevo', boton: 'Agregar' },
-                { hecho: false, bloqueado: true, titulo: 'Liquidaciones del mes', texto: 'Con la empresa y un trabajador guardados, preparas el mes en un clic.', ruta: '', boton: '' }
+                { hecho: !sinTrabajadores, bloqueado: sinEmpresa, titulo: 'Tus trabajadores o planilla', texto: 'Sube tu archivo Previred (105 campos), LRE de la DT o Excel, o ingresa a mano en 1 minuto.', ruta: 'trabajadores', boton: 'Cargar o agregar' },
+                { hecho: false, bloqueado: true, titulo: 'Liquidaciones del mes', texto: 'Con la empresa y tu personal guardados, preparas el mes en un clic.', ruta: '', boton: '' }
             ];
             $('ini-primeros-lista').innerHTML = pasos.map(function (p) {
                 return '<li class="' + (p.hecho ? 'hecho' : p.bloqueado ? 'bloqueado' : '') + '"><div><strong>' + esc(p.titulo) + '</strong><p>' + esc(p.texto) + '</p></div>' +
@@ -3101,10 +3239,17 @@ function dibujarEquipo() {
         }).join('');
     }
 
+    function registrarPrimeraLiquidacion(origen) {
+        if (ejemplo || guardado('cl_pyme_primera_liq')) return;
+        guardar('cl_pyme_primera_liq', '1');
+        medirEvento('app_first_liquidation', { origen: origen });
+    }
+
     $('pm-pase-opciones').addEventListener('click', function (e) {
         var b = e.target.closest('[data-comprar]');
         if (!b || !window.CLCheckout) return;
         var producto = b.getAttribute('data-comprar'), est = $('pm-pase-msg');
+        medirEvento('app_pase_click', { producto: producto });
         mensaje(est, '', '');
         window.CLCheckout.buyKit(producto, {}, {
             endpoint: '/api/pyme/comprar',
@@ -3981,6 +4126,7 @@ function dibujarEquipo() {
             dibujarEnlaceMes();
             $('pm-liq-quitar').hidden = false;
             mensaje(est, 'ok', 'Guardado.');
+            registrarPrimeraLiquidacion('editor');
             dibujarLiquidaciones();
             dibujarPendientes();
             if (finanzasUI) finanzasUI.redibujarVistaActiva();
@@ -4035,7 +4181,10 @@ function dibujarEquipo() {
             dibujarLiquidaciones();
             dibujarPendientes();
             if (fallo) mensaje(est, 'error', 'Preparamos ' + hechas + ' y paramos: ' + (fallo.datos.error || 'no pudimos guardar.'));
-            else mensaje(est, 'ok', 'Preparamos ' + plural(hechas, 'liquidación', 'liquidaciones') + ' con los valores base (días según el ingreso, gratificación según la ficha, sin horas extra ni descuentos). Ábrelas para agregar lo del mes antes de imprimir.');
+            else {
+                if (hechas > 0) registrarPrimeraLiquidacion('preparar_mes');
+                mensaje(est, 'ok', 'Preparamos ' + plural(hechas, 'liquidación', 'liquidaciones') + ' con los valores base (días según el ingreso, gratificación según la ficha, sin horas extra ni descuentos). Ábrelas para agregar lo del mes antes de imprimir.');
+            }
         });
     }
     $('pm-liq-preparar').addEventListener('click', function () { prepararMes($('pm-liq-estado')); });

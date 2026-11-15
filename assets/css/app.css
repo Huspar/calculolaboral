@@ -1232,3 +1232,38 @@ a.cal-ev:hover { filter: brightness(0.97); }
 @media screen and (min-width: 769px) {
     .planilla-cards-mobile { display: none; }
 }
+
+/* ---------- Chips Táctiles y Strips de Activación ---------- */
+.btn-chip { min-height: 44px; padding: 0 16px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line-2); color: var(--ink); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all .15s ease; display: inline-flex; align-items: center; justify-content: center; }
+.btn-chip:hover { border-color: var(--forest); background: var(--forest-50); color: var(--forest); }
+.btn-chip.seleccionado { background: var(--forest); border-color: var(--forest); color: #FFFFFF; }
+.ini-gestion-strip { margin-bottom: 16px; background: var(--surface); border: 1px solid var(--line); padding: 14px 18px; }
+.ini-gestion-cuerpo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.ini-gestion-pregunta { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); }
+.ini-gestion-pregunta .material-icons { color: var(--forest-600); font-size: 20px; }
+.ini-gestion-opciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.ini-gestion-feedback { width: 100%; margin: 4px 0 0; color: var(--forest-700); font-weight: 600; }
+.liq-feedback-panel { margin-bottom: 18px; border: 1px solid var(--forest-100); background: var(--forest-50); padding: 14px 18px; }
+.liq-feedback-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.liq-feedback-head strong { flex: 1; font-size: 14px; color: var(--forest); }
+.liq-feedback-head .material-icons { color: var(--forest-600); font-size: 20px; }
+.liq-feedback-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.liq-feedback-detalle { display: flex; gap: 8px; margin-top: 12px; }
+.liq-feedback-detalle input { flex: 1; min-height: 40px; }
+.liq-feedback-ok { margin: 10px 0 0; color: var(--forest-700); font-weight: 600; }
+.ini-opinion-rapida { margin-bottom: 16px; border: 1px solid var(--amber-line); background: var(--amber-bg); padding: 16px 20px; }
+.ini-opinion-cabeza { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.ini-opinion-cabeza .material-icons { color: var(--amber-icon, var(--amber)); font-size: 22px; }
+.ini-opinion-titulares { flex: 1; }
+.ini-opinion-titulares strong { font-size: 14.5px; color: var(--amber-ink); }
+.ini-opinion-titulares p { margin: 2px 0 0; font-size: 12.5px; color: var(--amber-ink); }
+.ini-opinion-opciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.ini-opinion-gracias { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--forest); font-weight: 600; font-size: 13.5px; }
+.ini-opinion-gracias .material-icons { color: var(--forest); font-size: 20px; }
+.ini-opinion-gracias p { margin: 0; }
+@media screen and (max-width: 560px) {
+    .ini-gestion-cuerpo { flex-direction: column; align-items: stretch; }
+    .ini-gestion-opciones, .liq-feedback-chips, .ini-opinion-opciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .liq-feedback-detalle { flex-direction: column; }
+    .liq-feedback-detalle .btn { width: 100%; min-height: 44px; }
+}

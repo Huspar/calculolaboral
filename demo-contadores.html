@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.1.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.2.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -185,6 +185,52 @@
 
     <!-- Contenido de Pantallas (.app-content) -->
     <main class="app-content" id="app-content">
+
+      <!-- Encabezado de Valor Comercial Suite Contadores -->
+      <section class="suite-header-venta" id="suite-header-venta" aria-label="Información comercial del acceso anticipado">
+        <div class="suite-header-venta-cuerpo">
+          <div class="suite-header-venta-textos">
+            <div class="suite-header-badge">Acceso anticipado para estudios contables</div>
+            <h1 class="suite-header-titulo">Suite para Estudios Contables</h1>
+            <p class="suite-header-sub">Remuneraciones y finiquitos en lote, PDF por trabajador, Excel, Previred (105 campos), LRE y F29 desde el RCV del SII.</p>
+            <p class="suite-header-aviso">
+              <span class="material-icons" aria-hidden="true">info</span>
+              <span>Estás viendo datos de ejemplo. Para usar la suite con las empresas de tus clientes, postula al acceso anticipado.</span>
+            </p>
+          </div>
+          <div class="suite-header-venta-acciones">
+            <button type="button" class="btn btn-primario" id="btn-abrir-postulacion">
+              <span class="material-icons" aria-hidden="true">badge</span>
+              <span>Postular al acceso anticipado</span>
+            </button>
+            <button type="button" class="btn-texto" id="btn-toggle-incluye" aria-expanded="false" aria-controls="suite-incluye-panel">
+              <span class="material-icons" aria-hidden="true">expand_more</span>
+              <span>Ver qué incluye</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="suite-incluye-panel" id="suite-incluye-panel" hidden>
+          <div class="suite-incluye-grid">
+            <div class="suite-incluye-card">
+              <strong>1. Remuneraciones en lote</strong>
+              <p>Cálculo simultáneo de sueldos y finiquitos con cálculo automático de feriado proporcional e indemnizaciones.</p>
+            </div>
+            <div class="suite-incluye-card">
+              <strong>2. Archivos oficiales</strong>
+              <p>Generación de archivo de nómina Previred en formato 105 campos y archivo CSV de LRE para subir a Mi DT.</p>
+            </div>
+            <div class="suite-incluye-card">
+              <strong>3. Impuestos y F29</strong>
+              <p>Cálculo del F29 cruzando compras y ventas del RCV del SII con retenciones de sueldos (cód. 48) y honorarios (cód. 151).</p>
+            </div>
+            <div class="suite-incluye-card">
+              <strong>4. Balance y RLI</strong>
+              <p>Balance tributario de 8 columnas, Libro Diario/Mayor y base para RLI ProPyme (Art. 14 D3 y D8) con exportación a Excel.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- ==================== VISTA 1: REMUNERACIONES ==================== -->
       <section class="vista" id="suite-remuneraciones">
@@ -825,6 +871,47 @@
 
 <div id="print-area"></div>
 
+<!-- Modal de Postulación al Acceso Anticipado -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-postulacion-estudio" aria-labelledby="post-titulo">
+  <div class="midt-cabeza">
+    <h2 id="post-titulo">Postular al acceso anticipado</h2>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-postulacion" aria-label="Cerrar ventana">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <form id="form-postulacion-estudio" class="opinion-form" novalidate>
+    <p class="texto-ayuda">Habilita el acceso para tu equipo y clientes. Te contactaremos para coordinar la puesta en marcha de tu estudio.</p>
+    <div class="lq-field">
+      <label for="post-email">Correo electrónico del estudio o contador titular</label>
+      <input type="email" id="post-email" maxlength="120" placeholder="contacto@estudiocontable.cl" required>
+    </div>
+    <div class="lq-field">
+      <label for="post-nombre">Nombre del estudio o profesional</label>
+      <input type="text" id="post-nombre" maxlength="100" placeholder="Ej: Consultores Tributarios SpA" required>
+    </div>
+    <div class="lq-field">
+      <label for="post-clientes">Cantidad estimada de empresas clientes</label>
+      <select id="post-clientes" required>
+        <option value="">Selecciona un rango</option>
+        <option value="1-5">De 1 a 5 empresas</option>
+        <option value="6-15">De 6 a 15 empresas</option>
+        <option value="16-30">De 16 a 30 empresas</option>
+        <option value="30+">Más de 30 empresas</option>
+      </select>
+    </div>
+    <div class="form-acciones" style="margin-top:16px">
+      <button type="button" class="btn-texto" id="btn-cancelar-postulacion">Cancelar</button>
+      <button type="submit" class="btn btn-primario" id="btn-enviar-postulacion">Enviar postulación</button>
+      <p class="lq-estado" id="post-estado" role="status"></p>
+    </div>
+  </form>
+  <div id="post-gracias" class="opinion-gracias" hidden>
+    <span class="material-icons" aria-hidden="true">check_circle</span>
+    <p><strong>Postulación recibida.</strong> Nos pondremos en contacto contigo para coordinar el acceso de tu estudio.</p>
+    <div class="form-acciones"><button type="button" class="btn btn-primario" id="btn-post-listo">Listo</button></div>
+  </div>
+</dialog>
+
 <!-- Scripts de Motor y Suite Contable -->
 <script src="/js/constants.js"></script>
 <script src="/js/logic.js"></script>
@@ -900,6 +987,105 @@
             }
         });
     });
+
+    // Encabezado comercial y postulación a acceso anticipado
+    var btnToggleIncluye = document.getElementById('btn-toggle-incluye');
+    var panelIncluye = document.getElementById('suite-incluye-panel');
+    if (btnToggleIncluye && panelIncluye) {
+        btnToggleIncluye.addEventListener('click', function () {
+            var abierto = panelIncluye.hidden;
+            panelIncluye.hidden = !abierto;
+            btnToggleIncluye.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+            var ic = btnToggleIncluye.querySelector('.material-icons');
+            if (ic) ic.textContent = abierto ? 'expand_less' : 'expand_more';
+        });
+    }
+
+    var dlgPost = document.getElementById('dlg-postulacion-estudio');
+    var btnAbrirPost = document.getElementById('btn-abrir-postulacion');
+    var btnCerrarPost = document.getElementById('btn-cerrar-postulacion');
+    var btnCancelarPost = document.getElementById('btn-cancelar-postulacion');
+    var btnPostListo = document.getElementById('btn-post-listo');
+    var formPost = document.getElementById('form-postulacion-estudio');
+    var postGracias = document.getElementById('post-gracias');
+    var postEstado = document.getElementById('post-estado');
+    var btnEnviarPost = document.getElementById('btn-enviar-postulacion');
+
+    function abrirModalPost() {
+        if (!dlgPost) return;
+        if (formPost) formPost.hidden = false;
+        if (postGracias) postGracias.hidden = true;
+        if (postEstado) { postEstado.className = 'lq-estado'; postEstado.textContent = ''; }
+        if (typeof dlgPost.showModal === 'function') dlgPost.showModal();
+        var em = document.getElementById('post-email');
+        if (em) em.focus();
+    }
+    function cerrarModalPost() {
+        if (dlgPost && dlgPost.open) dlgPost.close();
+    }
+    if (btnAbrirPost) btnAbrirPost.addEventListener('click', abrirModalPost);
+    if (btnCerrarPost) btnCerrarPost.addEventListener('click', cerrarModalPost);
+    if (btnCancelarPost) btnCancelarPost.addEventListener('click', cerrarModalPost);
+    if (btnPostListo) btnPostListo.addEventListener('click', cerrarModalPost);
+
+    if (formPost) {
+        formPost.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var email = (document.getElementById('post-email').value || '').trim();
+            var nombre = (document.getElementById('post-nombre').value || '').trim();
+            var clientes = document.getElementById('post-clientes').value;
+            if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(email)) {
+                postEstado.className = 'lq-estado lq-estado-error';
+                postEstado.textContent = 'Ingresa un correo electrónico válido.';
+                document.getElementById('post-email').focus();
+                return;
+            }
+            if (!nombre) {
+                postEstado.className = 'lq-estado lq-estado-error';
+                postEstado.textContent = 'Escribe el nombre de tu estudio o nombre completo.';
+                document.getElementById('post-nombre').focus();
+                return;
+            }
+            if (!clientes) {
+                postEstado.className = 'lq-estado lq-estado-error';
+                postEstado.textContent = 'Selecciona la cantidad aproximada de empresas clientes.';
+                document.getElementById('post-clientes').focus();
+                return;
+            }
+            btnEnviarPost.disabled = true;
+            postEstado.className = 'lq-estado';
+            postEstado.textContent = 'Enviando postulación...';
+            fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    correo: email,
+                    telefono: '',
+                    tipo: 'Pyme',
+                    fuente: 'Demo Suite Contadores - Acceso anticipado',
+                    detalle: 'Empresas clientes estimadas: ' + clientes,
+                    monto_calculado: '0'
+                })
+            }).then(function (r) {
+                return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, datos: d }; });
+            }).then(function (res) {
+                btnEnviarPost.disabled = false;
+                if (!res.ok) {
+                    postEstado.className = 'lq-estado lq-estado-error';
+                    postEstado.textContent = (res.datos && res.datos.error) || 'No pudimos enviar la postulación. Intenta nuevamente.';
+                    return;
+                }
+                formPost.hidden = true;
+                postGracias.hidden = false;
+                if (typeof gtag === 'function') gtag('event', 'lead_suite_contadores', { empresas: clientes });
+            }).catch(function () {
+                btnEnviarPost.disabled = false;
+                postEstado.className = 'lq-estado lq-estado-error';
+                postEstado.textContent = 'Error de conexión. Intenta nuevamente.';
+            });
+        });
+    }
 })();
 </script>
 </body>
