@@ -6,7 +6,7 @@
 (function (root) {
     'use strict';
 
-    var PLAN_CUENTAS = [
+    var PLAN_CUENTAS_BASE = [
         { codigo: '11010', nombre: 'Banco cuenta corriente', tipo: 'activo', grupo: 'disponible' },
         { codigo: '11050', nombre: 'Clientes por cobrar', tipo: 'activo', grupo: 'cxc' },
         { codigo: '11080', nombre: 'IVA crédito fiscal', tipo: 'activo', grupo: 'impuestos' },
@@ -39,8 +39,43 @@
         { codigo: '52010', nombre: 'Otros ingresos fuera del giro', tipo: 'ganancia', grupo: 'ingreso_otro' }
     ];
 
+    var PLAN_CUENTAS = [];
     var MAPA_CUENTAS = {};
-    PLAN_CUENTAS.forEach(function (c) { MAPA_CUENTAS[c.codigo] = c; });
+    var TIPOS_CUENTA_VALIDOS = { activo: true, pasivo: true, patrimonio: true, perdida: true, ganancia: true };
+
+    function clonarListaCuentas(lista) {
+        return (lista || []).map(function (c) {
+            return {
+                codigo: String(c.codigo || '').trim(),
+                nombre: String(c.nombre || '').trim(),
+                tipo: TIPOS_CUENTA_VALIDOS[c.tipo] ? c.tipo : 'activo',
+                grupo: String(c.grupo || 'otro').trim() || 'otro'
+            };
+        }).filter(function (c) { return c.codigo && c.nombre; });
+    }
+
+    function establecerPlanCuentas(lista) {
+        var limpia = clonarListaCuentas(lista);
+        if (!limpia.length) limpia = clonarListaCuentas(PLAN_CUENTAS_BASE);
+        PLAN_CUENTAS.length = 0;
+        MAPA_CUENTAS = {};
+        limpia.forEach(function (c) {
+            if (MAPA_CUENTAS[c.codigo]) return;
+            PLAN_CUENTAS.push(c);
+            MAPA_CUENTAS[c.codigo] = c;
+        });
+        return obtenerPlanCuentas();
+    }
+
+    function obtenerPlanCuentas() {
+        return clonarListaCuentas(PLAN_CUENTAS);
+    }
+
+    function restaurarPlanCuentas() {
+        return establecerPlanCuentas(PLAN_CUENTAS_BASE);
+    }
+
+    establecerPlanCuentas(PLAN_CUENTAS_BASE);
 
     function entero(v) { return Math.max(0, Math.round(Number(v) || 0)); }
     function enteroConSigno(v) { return Math.round(Number(v) || 0); }
@@ -96,7 +131,7 @@
 
     /*
      * Construye los asientos automaticos del periodo mas los ajustes manuales del contador.
-     * Todo asiento automatico nace cuadrado al peso.
+     * Todo asiento automatico nace cuadrado (debitos iguales a creditos).
      */
     function generarAsientos(entrada) {
         var e = entrada || {};
@@ -646,17 +681,66 @@
         };
     }
 
+    function inferirContrapartidaCartola(mov) {
+        if (mov && mov.cuentaContrapartida) return String(mov.cuentaContrapartida).trim();
+        var gl = String((mov && mov.glosa) || '').toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        var esAbono = mov && mov.tipo === 'abono';
+        if (esAbono) {
+            if (/venta|boleta|transbank|getnet|flow|webpay|mercadopago/.test(gl)) return '11050';
+            if (/interes|devolucion|reembolso|otros ingresos/.test(gl)) return '52010';
+            return '11050';
+        }
+        if (/previred|afp|fonasa|isapre|ips|leyes sociales|cotizacion/.test(gl)) return '21035';
+        if (/sueldo|remuneracion|nomina|finiquito|anticipo/.test(gl)) return '21030';
+        if (/honorario|bhe|boleta/.test(gl)) return '21025';
+        if (/sii|f29|f50|tesoreria|iva|impuesto/.test(gl)) return '21070';
+        if (/proveedor|factura|compra|insumo|arriendo/.test(gl)) return '21010';
+        return '42040';
+    }
+
+    function asientosDesdeCartola(movimientos, opciones) {
+        var opts = opciones || {};
+        var ctaBanco = String(opts.cuentaBanco || '11010').trim() || '11010';
+        var prefijo = String(opts.prefijo || 'CART');
+        var lista = Array.isArray(movimientos) ? movimientos : [];
+        var salida = [];
+        lista.forEach(function (m, idx) {
+            var monto = entero(m && m.monto);
+            if (!monto) return;
+            var esAbono = m.tipo === 'abono';
+            var contra = inferirContrapartidaCartola(m);
+            var lineas = esAbono
+                ? [{ cuenta: ctaBanco, debe: monto, haber: 0 }, { cuenta: contra, debe: 0, haber: monto }]
+                : [{ cuenta: contra, debe: monto, haber: 0 }, { cuenta: ctaBanco, debe: 0, haber: monto }];
+            var asiento = crearAsiento(
+                prefijo + '-' + (idx + 1),
+                String((m && m.fecha) || opts.fechaFallback || '2026-11-30'),
+                'Cartola bancaria: ' + String((m && m.glosa) || (esAbono ? 'Abono' : 'Cargo')),
+                opts.origen || 'ajuste',
+                lineas
+            );
+            if (asiento) salida.push(asiento);
+        });
+        return salida;
+    }
+
     var api = {
         PLAN_CUENTAS: PLAN_CUENTAS,
+        PLAN_CUENTAS_BASE: clonarListaCuentas(PLAN_CUENTAS_BASE),
+        obtenerPlanCuentas: obtenerPlanCuentas,
+        establecerPlanCuentas: establecerPlanCuentas,
+        restaurarPlanCuentas: restaurarPlanCuentas,
         cuentaInfo: cuentaInfo,
         crearAsiento: crearAsiento,
+        asientosDesdeCartola: asientosDesdeCartola,
         resumenNominaDesdeResultados: resumenNominaDesdeResultados,
         generarAsientos: generarAsientos,
         calcularMayor: calcularMayor,
         calcularBalance8Columnas: calcularBalance8Columnas,
         calcularRliProPyme: calcularRliProPyme,
         calcularEstadoResultadosYFlujo: calcularEstadoResultadosYFlujo,
-        version: '1.0.0'
+        version: '1.1.0'
     };
 
     if (typeof module !== 'undefined' && module.exports) module.exports = api;

@@ -57,6 +57,14 @@ Acceso gratis mientras dure el piloto, sin tarjeta y sin compromiso. Si el archi
 - Que calcule casos que no están en la lista de arriba.
 - Asesoría legal: los cálculos son referencia y el estudio responde por lo que firma.
 
+## Verificación pendiente con portal real de Previred
+
+Antes de activar el cobro comercial anual en `/suite-contadores`, se mantiene el aviso de «archivo de referencia para revisar y subir» y se exige validar el TXT de 105 campos (formulario v100) subiendo un lote real de prueba en una cuenta Previred activa:
+
+- Cargar al menos 3 trabajadores (con AFP, salud Fonasa/Isapre, AFC, cargas familiares y un movimiento de personal) en el ambiente real de Previred.
+- Registrar si Previred acepta el archivo sin rechazos de formato ni diferencias de un peso en cotizaciones obligatorias y SIS.
+- Solo tras pasar esa prueba real se habilitará la pasarela de pago de los planes anuales (`estudio_independiente`, `estudio_estudio`, `estudio_ilimitado`).
+
 ## Contacto
 
 Jhon Contreras — contacto@calculolaboral.cl

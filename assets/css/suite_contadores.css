@@ -894,3 +894,122 @@
         min-height: 44px;
     }
 }
+
+/* ---------------- Ola 2: Torre, Plan Editable, DDJJ y Membrete ---------------- */
+.lq-input-compacto {
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    background: #fff;
+    color: var(--ink);
+    min-width: 240px;
+}
+.suite-plan-nuevo-fila {
+    display: grid;
+    grid-template-columns: 110px 1.6fr 140px 1fr auto;
+    gap: 10px;
+    align-items: end;
+    padding: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+}
+.suite-membrete-preview {
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px dashed var(--forest);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    line-height: 1.5;
+}
+.suite-reportes-lista {
+    display: grid;
+    gap: 10px;
+}
+.suite-reportes-lista .btn {
+    justify-content: flex-start;
+    min-height: 44px;
+    text-align: left;
+}
+.print-membrete-estudio {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #064E3B;
+    font-size: 12px;
+}
+.print-membrete-estudio strong {
+    font-size: 15px;
+    color: #064E3B;
+}
+.print-pie-estudio {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid #d1d5db;
+    font-size: 11px;
+    color: #4b5563;
+    display: flex;
+    justify-content: space-between;
+}
+@media screen and (max-width: 768px) {
+    .app {
+        grid-template-columns: minmax(0, 1fr) !important;
+        max-width: 100%;
+    }
+    .app-content,
+    .vista,
+    .panel,
+    .panel-head,
+    .panel-head > *,
+    .panel-cuerpo,
+    .tabla-contable-wrap,
+    .asiento-lista,
+    .asiento-card,
+    #sub-diario,
+    #sub-mayor,
+    #sub-tesoreria,
+    #sub-plan,
+    .fin-form-grid,
+    .fin-filtros,
+    .fin-cols-2,
+    .fin-cols-2 > * {
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    .app-content {
+        overflow-x: clip;
+    }
+    .panel-head > div {
+        flex: 1 1 100%;
+    }
+    .lq-select,
+    .lq-input-plan {
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    .fin-filtros {
+        flex-wrap: wrap;
+    }
+    .v-head,
+    .v-acciones,
+    .panel-head,
+    .f29-upload-acciones {
+        flex-wrap: wrap;
+        min-width: 0;
+        max-width: 100%;
+    }
+    .lq-input-compacto {
+        width: 100%;
+        min-width: 0;
+    }
+    .suite-plan-nuevo-fila {
+        grid-template-columns: 1fr;
+    }
+}

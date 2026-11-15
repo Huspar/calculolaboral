@@ -61,27 +61,46 @@
 
     <!-- Navegación por Grupos Estructurados -->
     <nav class="app-nav" id="suite-modulos" aria-label="Módulos contables">
-      <p class="app-nav-grupo">Nómina y Personas</p>
+      <p class="app-nav-grupo">Gestión del Estudio</p>
+      <button type="button" class="suite-mod-btn" data-modulo="torre" aria-current="false">
+        <span class="material-icons" aria-hidden="true">apartment</span>
+        <span>Torre de Control</span>
+        <span class="app-nav-chip" id="nav-count-clientes">0</span>
+      </button>
+      <button type="button" class="suite-mod-btn" data-modulo="importador" aria-current="false">
+        <span class="material-icons" aria-hidden="true">cloud_upload</span>
+        <span>Importador Unificado</span>
+      </button>
+
+      <p class="app-nav-grupo">Nómina y Laboral</p>
       <button type="button" class="suite-mod-btn activo" data-modulo="remuneraciones" aria-current="page">
         <span class="material-icons" aria-hidden="true">receipt_long</span>
         <span>Remuneraciones</span>
         <span class="app-nav-chip" id="nav-count-liq">10</span>
       </button>
 
-      <p class="app-nav-grupo">Impuestos</p>
+      <p class="app-nav-grupo">Tributario y Renta</p>
       <button type="button" class="suite-mod-btn" data-modulo="f29" aria-current="false">
         <span class="material-icons" aria-hidden="true">receipt</span>
         <span>Formulario 29 SII</span>
         <span class="app-nav-chip" id="nav-f29-estado">F29</span>
       </button>
-
-      <p class="app-nav-grupo">Contabilidad</p>
-      <button type="button" class="suite-mod-btn" data-modulo="libros" aria-current="false">
-        <span class="material-icons" aria-hidden="true">menu_book</span>
-        <span>Libro Diario y Mayor</span>
+      <button type="button" class="suite-mod-btn" data-modulo="ddjj" aria-current="false">
+        <span class="material-icons" aria-hidden="true">description</span>
+        <span>Operación Renta DDJJ</span>
+        <span class="app-nav-chip" id="nav-ddjj-at">AT 2026</span>
+      </button>
+      <button type="button" class="suite-mod-btn" id="nav-cierre-btn" data-modulo="f29" aria-current="false">
+        <span class="material-icons" aria-hidden="true">lock</span>
+        <span>Cierre Tributario</span>
+        <span class="app-nav-chip abierto" id="suite-estado-chip">Abierto</span>
       </button>
 
-      <p class="app-nav-grupo">Estados Financieros</p>
+      <p class="app-nav-grupo">Contabilidad y Reportes</p>
+      <button type="button" class="suite-mod-btn" data-modulo="libros" aria-current="false">
+        <span class="material-icons" aria-hidden="true">menu_book</span>
+        <span>Libros y Plan de Cuentas</span>
+      </button>
       <button type="button" class="suite-mod-btn" data-modulo="balance" aria-current="false">
         <span class="material-icons" aria-hidden="true">table_chart</span>
         <span>Balance 8 Col. y RLI</span>
@@ -90,12 +109,9 @@
         <span class="material-icons" aria-hidden="true">assessment</span>
         <span>Resultados y Flujo</span>
       </button>
-
-      <p class="app-nav-grupo">Cierre y Resguardo</p>
-      <button type="button" class="suite-mod-btn" id="nav-cierre-btn" data-modulo="f29" aria-current="false">
-        <span class="material-icons" aria-hidden="true">lock</span>
-        <span>Cierre Tributario</span>
-        <span class="app-nav-chip abierto" id="suite-estado-chip">Abierto</span>
+      <button type="button" class="suite-mod-btn" data-modulo="reportes" aria-current="false">
+        <span class="material-icons" aria-hidden="true">picture_as_pdf</span>
+        <span>Reportes PDF Estudio</span>
       </button>
     </nav>
 
@@ -546,6 +562,7 @@
           <button type="button" class="fin-chip activo" data-sublibro="diario" role="tab" aria-selected="true">Libro Diario</button>
           <button type="button" class="fin-chip" data-sublibro="mayor" role="tab" aria-selected="false">Libro Mayor</button>
           <button type="button" class="fin-chip" data-sublibro="tesoreria" role="tab" aria-selected="false">Tesorería y Parámetros</button>
+          <button type="button" class="fin-chip" data-sublibro="plan" role="tab" aria-selected="false">Plan de Cuentas</button>
         </div>
 
         <!-- Subvista Diario -->
@@ -599,78 +616,70 @@
           </div>
         </div>
 
-        <div class="panel" id="panel-mapeo-cuentas" style="margin-bottom:16px">
-          <div class="panel-head">
-            <div>
-              <h2>Plan de cuentas y equivalencia de software contable</h2>
-              <p class="texto-ayuda">Homologa códigos de tu software de escritorio para centralización y Balance de 8 Columnas.</p>
-            </div>
-            <div class="v-acciones">
-              <button type="button" class="btn btn-chico" id="btn-importar-plan-csv">
-                <span class="material-icons" aria-hidden="true">upload_file</span>Importar plan CSV personalizado
-              </button>
-              <input type="file" id="file-plan-csv" accept=".csv" class="sr-only" aria-label="Importar archivo CSV de plan de cuentas">
-            </div>
-          </div>
-          <div class="panel-cuerpo">
-            <div class="fin-form-grid">
-              <div class="lq-field">
-                <label for="suite-erp-origen">Estructura o ERP contable de origen</label>
-                <select id="suite-erp-origen">
-                  <option value="sii_estandar" selected>Estándar Pyme SII (1-Activo, 2-Pasivo, 3-Patrimonio, 4-Resultados)</option>
-                  <option value="softland">Softland Contabilidad (Formato 8 dígitos X-XX-XXXX)</option>
-                  <option value="transtecnia">Transtecnia ERP (Codificación alfanumérica)</option>
-                  <option value="laudus">Laudus Software Contable (Árbol multinivel)</option>
-                  <option value="personalizado">Mapeo personalizado mediante archivo CSV</option>
+        <!-- Subvista Plan de Cuentas Editable -->
+        <div id="sub-plan" hidden>
+          <div class="panel" id="panel-plan-editable" style="margin-bottom:16px">
+            <div class="panel-head">
+              <div>
+                <h2>Plan de cuentas configurable del estudio</h2>
+                <p class="texto-ayuda">Edita nombres o agrega cuentas propias. Se guarda en tu navegador y actualiza Diario, Mayor y Balance al instante.</p>
+              </div>
+              <div class="v-acciones">
+                <select id="suite-erp-origen" class="lq-select lq-select-sm" aria-label="Formato contable de referencia">
+                  <option value="sii_estandar" selected>Plan base Suite (Estándar)</option>
+                  <option value="softland">Referencia Softland</option>
+                  <option value="transtecnia">Referencia Transtecnia</option>
+                  <option value="laudus">Referencia Laudus</option>
                 </select>
-              </div>
-              <div class="lq-field">
-                <span class="lq-label">Estado de homologación</span>
-                <div id="suite-plan-estado" class="suite-status-pill ok">
-                  <span class="material-icons" aria-hidden="true">check_circle</span>
-                  <span id="suite-plan-estado-txt">42 cuentas base homologadas (SII Estándar)</span>
-                </div>
+                <button type="button" class="btn btn-chico" id="btn-plan-restaurar">Restaurar base</button>
+                <button type="button" class="btn btn-chico" id="btn-importar-plan-csv">Importar CSV</button>
+                <input type="file" id="file-plan-csv" accept=".csv,.txt" class="sr-only" aria-label="Importar archivo CSV de plan de cuentas">
               </div>
             </div>
-
-            <div class="tabla-wrap" style="margin-top:10px">
-              <table class="tabla tabla-compacta">
-                <caption class="sr-only">Cuentas rectoras del Balance y homologación</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Concepto contable</th>
-                    <th scope="col">Cuenta sugerida (Cálculo Laboral)</th>
-                    <th scope="col">Código en tu software</th>
-                    <th scope="col">Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>IVA Débito Fiscal</strong></td>
-                    <td><code>2105-01</code> IVA Débito Fiscal</td>
-                    <td><input type="text" class="input-codigo-mapeo mono" value="2-1-03-01" aria-label="Código IVA Débito"></td>
-                    <td><span class="sello sello-activo">Vinculada</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>IVA Crédito Fiscal</strong></td>
-                    <td><code>1107-01</code> IVA Crédito Fiscal</td>
-                    <td><input type="text" class="input-codigo-mapeo mono" value="1-1-05-01" aria-label="Código IVA Crédito"></td>
-                    <td><span class="sello sello-activo">Vinculada</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Leyes Sociales por Pagar</strong></td>
-                    <td><code>2104-01</code> Previred / Imposiciones por Pagar</td>
-                    <td><input type="text" class="input-codigo-mapeo mono" value="2-1-02-04" aria-label="Código Previred"></td>
-                    <td><span class="sello sello-activo">Vinculada</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Sueldos por Pagar</strong></td>
-                    <td><code>2103-01</code> Remuneraciones por Pagar Líquidas</td>
-                    <td><input type="text" class="input-codigo-mapeo mono" value="2-1-02-01" aria-label="Código Sueldos"></td>
-                    <td><span class="sello sello-activo">Vinculada</span></td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="panel-cuerpo">
+              <div class="suite-plan-nuevo-fila">
+                <div class="lq-field"><label for="plan-nuevo-codigo">Código</label><input type="text" id="plan-nuevo-codigo" placeholder="11015"></div>
+                <div class="lq-field"><label for="plan-nuevo-nombre">Nombre de cuenta</label><input type="text" id="plan-nuevo-nombre" placeholder="Banco cuenta vista"></div>
+                <div class="lq-field"><label for="plan-nuevo-tipo">Tipo</label>
+                  <select id="plan-nuevo-tipo" class="lq-select">
+                    <option value="activo">Activo</option>
+                    <option value="pasivo">Pasivo</option>
+                    <option value="patrimonio">Patrimonio</option>
+                    <option value="perdida">Pérdida</option>
+                    <option value="ganancia">Ganancia</option>
+                  </select>
+                </div>
+                <div class="lq-field"><label for="plan-nuevo-grupo">Grupo tributario</label>
+                  <select id="plan-nuevo-grupo" class="lq-select">
+                    <option value="disponible">Disponible / Banco</option>
+                    <option value="cxc">Clientes por cobrar</option>
+                    <option value="cxp">Proveedores por pagar</option>
+                    <option value="impuestos">Impuestos / F29</option>
+                    <option value="laboral">Laboral / Previred</option>
+                    <option value="costo_ventas">Costo de ventas</option>
+                    <option value="opex_admin">Gasto administración</option>
+                    <option value="ingreso_giro">Ingreso del giro</option>
+                    <option value="gasto_rechazado">Gasto rechazado</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+                <div class="lq-field" style="align-self:end"><button type="button" class="btn btn-primario" id="btn-plan-agregar">Agregar cuenta</button></div>
+              </div>
+              <p class="panel-ayuda" id="suite-plan-estado-txt" style="margin:8px 0 12px"></p>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Código</th>
+                      <th scope="col">Nombre contable</th>
+                      <th scope="col">Naturaleza</th>
+                      <th scope="col">Grupo</th>
+                      <th scope="col" class="num">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-plan-cuentas"></tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -852,6 +861,349 @@
         </div>
       </section>
 
+      <!-- ==================== VISTA 6: TORRE DE CONTROL ==================== -->
+      <section class="vista" id="suite-torre" hidden>
+        <div class="v-head">
+          <div>
+            <h1 class="v-titulo">Torre de Control Multiempresa</h1>
+            <p class="v-sub">Resumen operativo por cliente, régimen SII, estado de cierre tributario y cambio en un clic para el período <span class="mono" id="torre-periodo-badge">2026-11</span>.</p>
+          </div>
+          <div class="v-acciones">
+            <input type="text" id="torre-nuevo-nombre" class="lq-input-compacto" placeholder="Nombre o razón social del nuevo cliente" aria-label="Nombre nuevo cliente">
+            <button class="btn btn-primario" type="button" id="btn-torre-crear-cliente">Crear y trabajar</button>
+          </div>
+        </div>
+
+        <div class="fin-kpis fin-kpis-4" style="margin-bottom:16px">
+          <div class="fin-kpi"><span class="fin-kpi-label">Clientes en estudio</span><span class="fin-kpi-val mono" id="torre-k-clientes">0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Períodos abiertos</span><span class="fin-kpi-val mono" id="torre-k-abiertos">0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Períodos cerrados</span><span class="fin-kpi-val mono ok" id="torre-k-cerrados">0</span></div>
+          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">F29 consolidado (cód. 91)</span><span class="fin-kpi-val mono" id="torre-k-f29total">$0</span></div>
+        </div>
+
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Cartera activa de clientes del estudio</h2>
+              <p class="panel-ayuda">Cambia de cliente con «Trabajar» para abrir sus liquidaciones, RCV, F29, libros y DDJJ en el mismo período.</p>
+            </div>
+            <span class="texto-ayuda">Planes anuales: Independiente (10) · Estudio (30) · Ilimitado</span>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="tabla-contable-wrap">
+              <table class="tabla-contable">
+                <thead>
+                  <tr>
+                    <th scope="col">Cliente / Empresa</th>
+                    <th scope="col">Régimen</th>
+                    <th scope="col" class="num">Trabajadores</th>
+                    <th scope="col" class="num">F29 cód. 91</th>
+                    <th scope="col">Estado cierre</th>
+                    <th scope="col" class="num">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-torre-clientes"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VISTA 7: IMPORTADOR UNIFICADO ==================== -->
+      <section class="vista" id="suite-importador" hidden>
+        <div class="v-head">
+          <div>
+            <h1 class="v-titulo">Importador Unificado del Estudio</h1>
+            <p class="v-sub">Centraliza Boletas de Honorarios Electrónicas (BHE SII) y cartolas bancarias reales directo a F29, DJ 1879 y Libro Diario.</p>
+          </div>
+          <div class="v-acciones">
+            <button class="btn" type="button" id="btn-imp-ir-nomina">Ir a Nómina</button>
+            <button class="btn" type="button" id="btn-imp-ir-f29">Ir a RCV / F29</button>
+          </div>
+        </div>
+
+        <div class="fin-cols-2" style="margin-bottom:16px">
+          <!-- BHE SII -->
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>BHE Recibidas (SII CSV / TXT)</h2>
+                <p class="panel-ayuda">Tasa Ley 21.133: 15,25% en 2026 (16% en 2027, 17% en 2028). Omite boletas ANULADAS y lleva la retención real al cód. 151 del F29.</p>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="f29-upload-acciones" style="margin-bottom:12px">
+                <button type="button" class="btn btn-primario" id="btn-imp-bhe-subir">Subir CSV BHE SII</button>
+                <button type="button" class="btn btn-chico" id="btn-imp-bhe-ejemplo">Cargar BHE ejemplo (15,25%)</button>
+                <button type="button" class="btn btn-chico" id="btn-imp-bhe-limpiar">Limpiar</button>
+                <input type="file" id="file-imp-bhe" accept=".csv,.txt,.tsv" hidden>
+              </div>
+              <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
+                <div class="fin-kpi"><span class="fin-kpi-label">Vigentes</span><span class="fin-kpi-val mono" id="imp-bhe-vigentes">0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Anuladas omitidas</span><span class="fin-kpi-val mono" id="imp-bhe-anuladas">0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Bruto total</span><span class="fin-kpi-val mono" id="imp-bhe-bruto">$0</span></div>
+                <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Retenido (Cód. 151)</span><span class="fin-kpi-val mono" id="imp-bhe-retencion">$0</span></div>
+              </div>
+              <div id="imp-bhe-alertas" class="panel-ayuda" style="margin-bottom:8px"></div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Folio</th>
+                      <th scope="col">RUT Emisor</th>
+                      <th scope="col">Prestador</th>
+                      <th scope="col" class="num">Bruto</th>
+                      <th scope="col" class="num">Retención</th>
+                      <th scope="col" class="num">Líquido</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-imp-bhe"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cartola Bancaria -->
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Cartola Bancaria (CSV / TSV)</h2>
+                <p class="panel-ayuda">Reconoce abonos, cargos y saldo para crear asientos de partida doble en Libro Diario con un clic.</p>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="f29-upload-acciones" style="margin-bottom:12px">
+                <button type="button" class="btn btn-primario" id="btn-imp-cartola-subir">Subir Cartola CSV</button>
+                <button type="button" class="btn btn-chico" id="btn-imp-cartola-ejemplo">Cargar cartola ejemplo</button>
+                <button type="button" class="btn btn-chico" id="btn-imp-cartola-centralizar">Centralizar en Diario</button>
+                <input type="file" id="file-imp-cartola" accept=".csv,.txt,.tsv" hidden>
+              </div>
+              <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
+                <div class="fin-kpi"><span class="fin-kpi-label">Movimientos</span><span class="fin-kpi-val mono" id="imp-car-movs">0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Abonos</span><span class="fin-kpi-val mono ok" id="imp-car-abonos">$0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Cargos</span><span class="fin-kpi-val mono" id="imp-car-cargos">$0</span></div>
+                <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Último saldo</span><span class="fin-kpi-val mono" id="imp-car-saldo">$0</span></div>
+              </div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Glosa bancaria</th>
+                      <th scope="col">Tipo</th>
+                      <th scope="col" class="num">Monto</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-imp-cartola"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VISTA 8: OPERACIÓN RENTA Y DDJJ ==================== -->
+      <section class="vista" id="suite-ddjj" hidden>
+        <div class="v-head">
+          <div>
+            <h1 class="v-titulo">Operación Renta y Declaraciones Juradas</h1>
+            <p class="v-sub">Borradores de revisión previa para SII AT 2026: DJ 1887 + Certificado N°6, DJ 1879 + Certificado N°1, DJ 1947/1948 y CPT Simplificado.</p>
+          </div>
+          <div class="v-acciones">
+            <label for="ddjj-anio" class="sr-only">Año Tributario</label>
+            <select id="ddjj-anio" class="lq-select lq-select-sm">
+              <option value="2026" selected>AT 2026 (Parámetros vigentes)</option>
+              <option value="2027" disabled>AT 2027 (Bloqueado por falta de resoluciones SII)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-nota-normativa" id="ddjj-at2027-aviso" style="margin-bottom:14px">
+          <span class="material-icons" aria-hidden="true">info</span>
+          <span>Año Tributario <strong>2027 bloqueado</strong> hasta que el SII publique las resoluciones de DDJJ, suplemento normativo y factores de IPC. Los exportables generados son archivos de referencia para revisar antes de subir al SII.</span>
+        </div>
+
+        <div class="fin-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
+          <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true">DJ 1887 y Cert. N°6</button>
+          <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false">DJ 1879 y Cert. N°1</button>
+          <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false">DJ 1947 / 1948</button>
+          <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false">CPT Simplificado</button>
+        </div>
+
+        <!-- DJ 1887 -->
+        <div id="subddjj-1887">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>DJ 1887 · Sueldos y Renta Total Neta Pagada (Art. 42 N°1)</h2>
+                <p class="panel-ayuda">Usa renta neta (imponible menos AFP, salud 7% y AFC), nunca sueldo bruto. Recuerda: Certificado N°6 invierte columna (7) Exenta y columna (8) No Gravada frente a DJ 1887 C6/C7.</p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="btn btn-primario" id="btn-dj1887-cert-pdf">PDF Certificado N°6</button>
+                <button type="button" class="btn" id="btn-dj1887-csv">Descargar borrador CSV 1887</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">RUT (C2)</th>
+                      <th scope="col">Trabajador</th>
+                      <th scope="col" class="num">Renta Neta (C3)</th>
+                      <th scope="col" class="num">Imp. Único (C4)</th>
+                      <th scope="col" class="num">No Gravada (C6)</th>
+                      <th scope="col" class="num">Exenta (C7)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-dj1887"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DJ 1879 -->
+        <div id="subddjj-1879" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>DJ 1879 · Retenciones de Honorarios (Tasa Real Ley 21.133)</h2>
+                <p class="panel-ayuda">Suma la retención efectivamente practicada por cada BHE (15,25% en 2026). No utiliza la tasa histórica obsoleta del 13%.</p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="btn btn-primario" id="btn-dj1879-cert-pdf">PDF Certificado N°1</button>
+                <button type="button" class="btn" id="btn-dj1879-csv">Descargar borrador CSV 1879</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">RUT Prestador</th>
+                      <th scope="col">Nombre o Razón Social</th>
+                      <th scope="col" class="num">Cant. BHE</th>
+                      <th scope="col" class="num">Honorarios Brutos</th>
+                      <th scope="col" class="num">Retención Real</th>
+                      <th scope="col" class="num">Tasa %</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-dj1879"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DJ 1947 / 1948 -->
+        <div id="subddjj-1947" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 id="dj194x-titulo">DJ 1948 · Retiros, Remesas y Dividendos</h2>
+                <p class="panel-ayuda" id="dj194x-subtitulo">Se selecciona automáticamente DJ 1947 para 14 D N°8 y DJ 1948 para 14 D N°3 o 14 A.</p>
+              </div>
+              <button type="button" class="btn" id="btn-dj194x-csv">Descargar borrador CSV</button>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="fin-form-grid" style="margin-bottom:14px">
+                <div class="lq-field"><label for="ddjj-socios-rut">RUT Propietario principal</label><input type="text" id="ddjj-socios-rut" value="12.345.678-5"></div>
+                <div class="lq-field"><label for="ddjj-socios-nombre">Nombre propietario</label><input type="text" id="ddjj-socios-nombre" value="Socio titular"></div>
+                <div class="lq-field"><label for="ddjj-socios-pct">% Participación</label><input type="number" id="ddjj-socios-pct" min="1" max="100" value="100"></div>
+                <div class="lq-field"><label for="ddjj-retiros-totales">Retiros / Dividendos ($)</label><input type="number" id="ddjj-retiros-totales" min="0" step="1" value="0"></div>
+              </div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">RUT Socio</th>
+                      <th scope="col">Nombre</th>
+                      <th scope="col" class="num">Participación</th>
+                      <th scope="col" class="num">Base / Retiro asignado</th>
+                      <th scope="col" class="num">Crédito PPM / IDPC</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-dj194x"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CPT Simplificado -->
+        <div id="subddjj-cpt" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Capital Propio Tributario Simplificado (Circular SII 62/2020)</h2>
+                <p class="panel-ayuda">Toma automáticamente la RLI calculada y determina el CPT de cierre y RAI estimado.</p>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="fin-form-grid" style="margin-bottom:14px">
+                <div class="lq-field"><label for="cpt-anterior">CPT Anterior ($)</label><input type="number" id="cpt-anterior" step="1" value="10000000"></div>
+                <div class="lq-field"><label for="cpt-aumentos">Aumentos de capital ($)</label><input type="number" id="cpt-aumentos" min="0" step="1" value="0"></div>
+                <div class="lq-field"><label for="cpt-disminuciones">Disminuciones de capital ($)</label><input type="number" id="cpt-disminuciones" min="0" step="1" value="0"></div>
+                <div class="lq-field"><label for="cpt-retiros">Retiros o dividendos ($)</label><input type="number" id="cpt-retiros" min="0" step="1" value="0"></div>
+                <div class="lq-field"><label for="cpt-rechazados">Gastos rechazados ($)</label><input type="number" id="cpt-rechazados" min="0" step="1" value="0"></div>
+                <div class="lq-field"><label for="cpt-idpc">IDPC pagado ($)</label><input type="number" id="cpt-idpc" min="0" step="1" value="0"></div>
+                <div class="lq-field"><label for="cpt-cap-aportado">Capital aportado reajustado ($)</label><input type="number" id="cpt-cap-aportado" min="0" step="1" value="10000000"></div>
+              </div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Componente CPT Simplificado (Circular 62/2020)</th>
+                      <th scope="col" class="num">Monto ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-cpt"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VISTA 9: REPORTES PDF CON MEMBRETE ==================== -->
+      <section class="vista" id="suite-reportes" hidden>
+        <div class="v-head">
+          <div>
+            <h1 class="v-titulo">Reportes PDF con Membrete del Estudio</h1>
+            <p class="v-sub">Configura el encabezado y firma de tu estudio contable para emitir certificados y resúmenes para tus clientes.</p>
+          </div>
+        </div>
+
+        <div class="fin-cols-2">
+          <div class="panel">
+            <div class="panel-head"><h2>Membrete y firma del estudio</h2></div>
+            <div class="panel-cuerpo">
+              <div class="fin-form-grid" style="margin-bottom:14px">
+                <div class="lq-field"><label for="rep-estudio-nombre">Nombre del estudio contable</label><input type="text" id="rep-estudio-nombre" value="Estudio Contable Chile"></div>
+                <div class="lq-field"><label for="rep-estudio-rut">RUT del estudio</label><input type="text" id="rep-estudio-rut" value="76.543.210-K"></div>
+                <div class="lq-field"><label for="rep-contador-nombre">Contador responsable</label><input type="text" id="rep-contador-nombre" value="Contador Auditor"></div>
+                <div class="lq-field"><label for="rep-estudio-pie">Pie de documento</label><input type="text" id="rep-estudio-pie" value="Documento de trabajo y referencia tributaria emitido para el cliente."></div>
+              </div>
+              <button type="button" class="btn btn-primario" id="btn-rep-guardar-membrete">Guardar membrete</button>
+              <div class="suite-membrete-preview" id="rep-preview-box" style="margin-top:14px"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Emisión rápida de informes PDF / Impresión</h2></div>
+            <div class="panel-cuerpo">
+              <div class="suite-reportes-lista">
+                <button type="button" class="btn btn-primario" id="btn-rep-cert6"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Certificado N°6 Sueldos (Col. 7 Exenta / Col. 8 No Gravada)</button>
+                <button type="button" class="btn" id="btn-rep-cert1"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Certificado N°1 Honorarios BHE (Retención real)</button>
+                <button type="button" class="btn" id="btn-rep-resumen"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Resumen Ejecutivo Mensual del Cliente (F29 + P&amp;L)</button>
+                <button type="button" class="btn" id="btn-rep-f29"><span class="material-icons" aria-hidden="true">print</span>Borrador Formulario 29 con Membrete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -859,10 +1211,10 @@
        3. BARRA INFERIOR MÓVIL (#app-barra)
        ======================================================== -->
   <nav class="app-barra" id="app-barra" aria-label="Secciones principales de la suite">
+    <button type="button" class="suite-mod-btn" data-modulo="torre"><span class="material-icons" aria-hidden="true">apartment</span><span>Torre</span></button>
     <button type="button" class="suite-mod-btn activo" data-modulo="remuneraciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Nómina</span></button>
     <button type="button" class="suite-mod-btn" data-modulo="f29"><span class="material-icons" aria-hidden="true">receipt</span><span>F29</span></button>
-    <button type="button" class="suite-mod-btn" data-modulo="libros"><span class="material-icons" aria-hidden="true">menu_book</span><span>Libros</span></button>
-    <button type="button" class="suite-mod-btn" data-modulo="balance"><span class="material-icons" aria-hidden="true">table_chart</span><span>Balance</span></button>
+    <button type="button" class="suite-mod-btn" data-modulo="ddjj"><span class="material-icons" aria-hidden="true">description</span><span>DDJJ</span></button>
     <button type="button" id="app-mas" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">more_horiz</span><span>Más</span></button>
   </nav>
 
@@ -935,8 +1287,10 @@
 <script src="/js/demo_respaldo.js?v=1.1.0"></script>
 <script src="/js/demo_liquidaciones.js?v=2.8.0"></script>
 <script src="/js/contadores_f29.js?v=1.1.0"></script>
-<script src="/js/contadores_contabilidad.js?v=1.1.0"></script>
-<script src="/js/demo_suite.js?v=1.3.0"></script>
+<script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
+<script src="/js/contadores_importadores.js?v=1.0.0"></script>
+<script src="/js/contadores_renta.js?v=1.0.0"></script>
+<script src="/js/demo_suite.js?v=2.0.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

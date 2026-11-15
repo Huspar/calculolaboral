@@ -618,9 +618,14 @@ const V = require('./validar');
 const MAX_SIN_PASE = 1;
 const MAX_CON_PASE = 5;
 const MAX_PILOTO = 50;
-// Empresas por cuenta (estudios contables): durante el piloto hasta 25; después, una sola, como hasta ahora (los planes por tamaño están por definir)
+// Empresas por cuenta (estudios contables): durante el piloto hasta 25; después, una sola o según el plan de estudio
 const MAX_EMPRESAS_PILOTO = 25;
 const MAX_EMPRESAS = 1;
+const PLANES_ESTUDIO = {
+    estudio_independiente: { maxActivos: 50, maxEmpresas: 10 },
+    estudio_estudio: { maxActivos: 50, maxEmpresas: 30 },
+    estudio_ilimitado: { maxActivos: 50, maxEmpresas: 999 }
+};
 const MAX_TOTAL = 100;
 const MAX_MESES_POR_TRABAJADOR = 120;
 const MAX_DOCUMENTOS_POR_TRABAJADOR = 500;
@@ -651,6 +656,10 @@ function crear({ almacen, cifrado, ahora, piloto }) {
             return { maxActivos: MAX_PILOTO, maxEmpresas: MAX_EMPRESAS_PILOTO, paseVence: piloto.vence(), paseProducto: piloto.producto, piloto: true, pilotoHasta: piloto.fechaFin() };
         }
         const actual = vence ? await almacen.paseActual(cuentaId, iso()) : null;
+        const planEstudio = actual && actual.producto ? PLANES_ESTUDIO[actual.producto] : null;
+        if (planEstudio) {
+            return { maxActivos: planEstudio.maxActivos, maxEmpresas: planEstudio.maxEmpresas, paseVence: new Date(vence).toISOString(), paseProducto: actual.producto };
+        }
         return { maxActivos: vence ? MAX_CON_PASE : MAX_SIN_PASE, maxEmpresas: MAX_EMPRESAS, paseVence: vence ? new Date(vence).toISOString() : null, paseProducto: actual ? actual.producto : null };
     }
 
@@ -1027,16 +1036,19 @@ function crear({ almacen, cifrado, ahora, piloto }) {
 }
 
 function limiteTexto(lim) {
-    return lim.piloto
-        ? `El piloto gratuito permite hasta ${MAX_PILOTO} trabajadores activos.`
-        : lim.paseVence
-        ? `Tu pase permite hasta ${MAX_CON_PASE} trabajadores activos.`
-        : `Sin pase puedes tener ${MAX_SIN_PASE} trabajador activo. Con el Pase Pyme son hasta ${MAX_CON_PASE}.`;
+    if (lim.piloto) return `El piloto gratuito permite hasta ${MAX_PILOTO} trabajadores activos.`;
+    if (lim.paseVence) {
+        const cap = lim.maxActivos || MAX_CON_PASE;
+        return cap > MAX_CON_PASE
+            ? `Tu plan de estudio permite hasta ${cap} trabajadores activos.`
+            : `Tu pase permite hasta ${MAX_CON_PASE} trabajadores activos.`;
+    }
+    return `Sin pase puedes tener ${MAX_SIN_PASE} trabajador activo. Con el Pase Pyme son hasta ${MAX_CON_PASE}.`;
 }
 
 function esUuid(s) { return typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
 
-module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_PILOTO, MAX_EMPRESAS, MAX_EMPRESAS_PILOTO, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_MESES_HONORARIOS, MAX_DOCUMENTOS_POR_TRABAJADOR, MAX_VACACIONES_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };
+module.exports = { crear, MAX_SIN_PASE, MAX_CON_PASE, MAX_PILOTO, MAX_EMPRESAS, MAX_EMPRESAS_PILOTO, PLANES_ESTUDIO, MAX_TOTAL, MAX_MESES_POR_TRABAJADOR, MAX_MESES_HONORARIOS, MAX_DOCUMENTOS_POR_TRABAJADOR, MAX_VACACIONES_POR_TRABAJADOR, TIPOS_DOCUMENTO, VERSION_EXPORTACION };
 
     });
 

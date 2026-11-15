@@ -10,18 +10,61 @@
     var D = window.DemoCL;
     var F29 = window.CLContadoresF29;
     var C = window.CLContabilidad;
+    var Imp = window.CLImportadores;
+    var Renta = window.CLRenta;
     var K_STORAGE = 'cl-suite-contable';
+    var K_PLAN_CUENTAS = 'cl-plan-cuentas-estudio';
+    var K_MEMBRETE = 'cl-membrete-estudio';
 
     var ui = {
         modulo: 'remuneraciones',
         subLibro: 'diario',
         subBalance: 'balance8',
+        subDdjj: '1887',
         filtroMayor: '',
         lineasManualesDraft: [
             { cuenta: '42040', debe: '', haber: '' },
             { cuenta: '11010', debe: '', haber: '' }
         ]
     };
+
+    function cargarPlanPersonalizado() {
+        if (!C || !C.establecerPlanCuentas) return;
+        try {
+            var raw = window.localStorage.getItem(K_PLAN_CUENTAS);
+            if (!raw) return;
+            var parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length) C.establecerPlanCuentas(parsed);
+        } catch (e) { /* usar plan base */ }
+    }
+
+    function guardarPlanPersonalizado() {
+        if (!C || !C.obtenerPlanCuentas) return;
+        try { window.localStorage.setItem(K_PLAN_CUENTAS, JSON.stringify(C.obtenerPlanCuentas())); } catch (e) { }
+    }
+
+    function leerMembrete() {
+        var base = {
+            estudio: 'Estudio Contable Chile',
+            rut: '76.543.210-K',
+            contador: 'Contador Auditor',
+            pie: 'Documento de trabajo y referencia tributaria emitido para el cliente.'
+        };
+        try {
+            var raw = window.localStorage.getItem(K_MEMBRETE);
+            if (!raw) return base;
+            var parsed = JSON.parse(raw);
+            return Object.assign({}, base, parsed && typeof parsed === 'object' ? parsed : {});
+        } catch (e) {
+            return base;
+        }
+    }
+
+    function guardarMembrete(obj) {
+        try { window.localStorage.setItem(K_MEMBRETE, JSON.stringify(obj)); } catch (e) { }
+    }
+
+    cargarPlanPersonalizado();
 
     function $(id) { return document.getElementById(id); }
 
@@ -72,6 +115,27 @@
             tasaPpmPersonalizada: '',
             iuscManual: '',
             honorariosBruto: 0,
+            honorariosRetencionDirecta: 0,
+            bheBoletas: [],
+            bheAnuladas: 0,
+            bheAlertas: [],
+            cartolaMovimientos: [],
+            cartolaTotalAbonos: 0,
+            cartolaTotalCargos: 0,
+            cartolaUltimoSaldo: null,
+            ddjjAnio: 2026,
+            socios: [
+                { rut: '12.345.678-5', nombre: 'Socio titular', porcentaje: 100, retiros: 0 }
+            ],
+            cptAjustes: {
+                cptAnterior: 10000000,
+                aumentosCapital: 0,
+                disminucionesCapital: 0,
+                retirosDividendos: 0,
+                gastosRechazados: 0,
+                idpcPagado: 0,
+                capitalAportadoReajustado: 10000000
+            },
             tesoreria: {
                 saldoInicialBanco: 0,
                 pctVentasCobradas: 80,
@@ -105,6 +169,11 @@
         return Object.assign({}, base, guardado, {
             tesoreria: Object.assign({}, base.tesoreria, guardado.tesoreria || {}),
             rliAjustes: Object.assign({}, base.rliAjustes, guardado.rliAjustes || {}),
+            cptAjustes: Object.assign({}, base.cptAjustes, guardado.cptAjustes || {}),
+            bheBoletas: Array.isArray(guardado.bheBoletas) ? guardado.bheBoletas : [],
+            bheAlertas: Array.isArray(guardado.bheAlertas) ? guardado.bheAlertas : [],
+            cartolaMovimientos: Array.isArray(guardado.cartolaMovimientos) ? guardado.cartolaMovimientos : [],
+            socios: Array.isArray(guardado.socios) && guardado.socios.length ? guardado.socios : base.socios,
             manuales: Array.isArray(guardado.manuales) ? guardado.manuales : [],
             auditados: (guardado.auditados && typeof guardado.auditados === 'object') ? guardado.auditados : {}
         });
@@ -150,7 +219,8 @@
             remanenteAnterior: est.remanenteAnterior,
             tasaPpm: est.tasaPpmPersonalizada,
             impuestoUnico48: iusc48,
-            honorariosBruto: est.honorariosBruto
+            honorariosBruto: est.honorariosBruto,
+            honorariosRetencionDirecta: est.honorariosRetencionDirecta || 0
         });
 
         var hayMovimientos = (
@@ -158,6 +228,7 @@
             compras.documentos.length > 0 ||
             (nomina && nomina.totalDebe > 0) ||
             est.honorariosBruto > 0 ||
+            (est.honorariosRetencionDirecta || 0) > 0 ||
             est.remanenteAnterior > 0 ||
             est.tesoreria.saldoInicialBanco > 0 ||
             est.manuales.length > 0
@@ -179,6 +250,32 @@
         var rli = C.calcularRliProPyme(balance, gen.metricasFlujo, est.rliAjustes);
         var pyf = C.calcularEstadoResultadosYFlujo(balance, gen.metricasFlujo, hayMovimientos ? f29 : null);
 
+        var ddjjAnio = Number(est.ddjjAnio || 2026);
+        var dj1887 = null, dj1879 = null, dj194x = null, cptSimp = null;
+        if (Renta) {
+            var nomRegs = Renta.acumularLiquidacionesParaDj1887(resLiq);
+            dj1887 = Renta.generarDj1887(nomRegs, { anioTributario: ddjjAnio });
+
+            var bheLista = Array.isArray(est.bheBoletas) && est.bheBoletas.length
+                ? est.bheBoletas
+                : (est.honorariosBruto > 0
+                    ? [{ rut: '12.345.678-5', razonSocial: 'Honorarios consolidados del período', bruto: est.honorariosBruto, retenido: f29.codigos[151], estado: 'VIGENTE' }]
+                    : []);
+            dj1879 = Renta.generarDj1879(bheLista, { anioTributario: ddjjAnio });
+
+            dj194x = Renta.generarDj1947o1948(est.regimen, {
+                baseImponible: rli.rli,
+                ppmDisponible: f29.codigos[62],
+                retirosTotales: (est.socios && est.socios[0] && est.socios[0].retiros) || 0,
+                tasaIdpc: est.rliAjustes.tasaIdpc,
+                socios: est.socios
+            }, { anioTributario: ddjjAnio });
+
+            cptSimp = Renta.calcularCptSimplificado(Object.assign({}, est.cptAjustes, {
+                baseImponibleRli: rli.rli
+            }));
+        }
+
         return {
             estado: est,
             periodo: periodo,
@@ -194,7 +291,8 @@
             balance: balance,
             rli: rli,
             pnl: pyf.pnl,
-            flujo: pyf.flujo
+            flujo: pyf.flujo,
+            ddjj: { anio: ddjjAnio, dj1887: dj1887, dj1879: dj1879, dj194x: dj194x, cpt: cptSimp }
         };
     }
 
@@ -331,7 +429,7 @@
         }).join('');
 
         var avisos = f.avisos.concat(m.ventas.avisos).concat(m.compras.avisos);
-        var notaHtml = '<b>Borrador referencial:</b> confirma siempre los montos con la propuesta oficial en sii.cl antes de declarar y pagar. Tasa PPM ProPyme General 2026 rebajada transitoriamente por Ley 21.755 y Circular SII N°53/2025 (configurable en código 115).';
+        var notaHtml = '<b>Borrador referencial:</b> confirma siempre los montos con la propuesta en sii.cl antes de declarar y pagar. Tasa PPM ProPyme General 2026 rebajada transitoriamente por Ley 21.755 y Circular SII N°53/2025 (configurable en código 115).';
         if (avisos.length) {
             notaHtml += '<br>' + avisos.map(function (a) { return '· ' + D.esc(a); }).join('<br>');
         }
@@ -356,6 +454,8 @@
         $('sub-diario').hidden = ui.subLibro !== 'diario';
         $('sub-mayor').hidden = ui.subLibro !== 'mayor';
         $('sub-tesoreria').hidden = ui.subLibro !== 'tesoreria';
+        if ($('sub-plan')) $('sub-plan').hidden = ui.subLibro !== 'plan';
+        pintarPlanCuentas();
 
         // Sincronizar campos de tesoreria
         var t = est.tesoreria;
@@ -532,7 +632,7 @@
             if ($('bal-m-rli')) $('bal-m-rli').textContent = moneySigno(rli.baseImponible);
             var dif = Math.abs((b.sumasIguales && b.sumasIguales.debito || 0) - (b.sumasIguales && b.sumasIguales.credito || 0));
             if ($('bal-m-dif')) $('bal-m-dif').textContent = D.money(dif);
-            if ($('bal-m-cuadratura')) $('bal-m-cuadratura').textContent = dif === 0 ? 'Cuadrado al peso' : 'Revisar cuadratura';
+            if ($('bal-m-cuadratura')) $('bal-m-cuadratura').textContent = dif === 0 ? 'Cuadrado (Débitos = Créditos)' : 'Revisar cuadratura';
         }
 
         if (!b.filas.length) {
@@ -611,7 +711,7 @@
             { sec: 'II. Egresos efectivamente pagados y depreciación instantánea (Art. 14 D N°3)' },
             { glosa: '(-) Compras, existencias y gastos del giro efectivamente pagados (sin ajuste de inventario final)', monto: -rli.comprasGastosPagados },
             { glosa: '(-) Remuneraciones, cotizaciones y honorarios efectivamente pagados (excluye pasivos devengados no pagados por ' + D.money(rli.pasivosLaboralesPendientes) + ')', monto: -rli.remuneracionesHonorariosPagados },
-            { glosa: '(-) Depreciación instantánea 100% de activo fijo pagado en el ejercicio', monto: -rli.activoFijoPagadoNeto },
+            { glosa: '(-) Depreciación instantánea íntegra de activo fijo pagado en el ejercicio', monto: -rli.activoFijoPagadoNeto },
             { glosa: '(+) Agregados por multas fiscales o gastos rechazados no deducibles (art. 21 y 31 LIR)', monto: rli.multasGastosRechazados },
 
             { sec: 'III. Base imponible pre-cierre F22' },
@@ -702,12 +802,12 @@
         }
     }
 
-    var MODULOS_VALIDOS = /^(remuneraciones|f29|libros|balance|pnl)$/;
+    var MODULOS_VALIDOS = /^(torre|importador|remuneraciones|f29|ddjj|libros|balance|pnl|reportes)$/;
 
     function moduloDesdeUbicacion() {
         var hash = String(location.hash || '').replace(/^#/, '');
         if (MODULOS_VALIDOS.test(hash)) return hash;
-        var modUrl = (/[?&]mod=(remuneraciones|f29|libros|balance|pnl)/.exec(location.search) || [])[1];
+        var modUrl = (/[?&]mod=(torre|importador|remuneraciones|f29|ddjj|libros|balance|pnl|reportes)/.exec(location.search) || [])[1];
         return modUrl || 'remuneraciones';
     }
 
@@ -715,11 +815,15 @@
         var modNorm = MODULOS_VALIDOS.test(mod) ? mod : 'remuneraciones';
         ui.modulo = modNorm;
         var mapPanes = {
+            torre: $('suite-torre'),
+            importador: $('suite-importador'),
             remuneraciones: $('suite-remuneraciones'),
             f29: $('suite-f29'),
+            ddjj: $('suite-ddjj'),
             libros: $('suite-libros'),
             balance: $('suite-balance'),
-            pnl: $('suite-pnl')
+            pnl: $('suite-pnl'),
+            reportes: $('suite-reportes')
         };
         Object.keys(mapPanes).forEach(function (k) {
             if (mapPanes[k]) mapPanes[k].hidden = (k !== modNorm);
@@ -844,24 +948,277 @@
         D.avisar('Paquete Pyme importado: ' + (paquete.empresa && paquete.empresa.razonSocial ? paquete.empresa.razonSocial : 'Empresa') + ' (' + (paquete.periodo || periodoActual()) + ').');
     }
 
+    function cambiarACliente(nombre) {
+        var limpio = String(nombre || '').trim();
+        if (!limpio) return;
+        var cli = $('liq-cliente');
+        if (cli) cli.value = limpio;
+        try { window.localStorage.setItem('cl-cliente-liq', limpio); } catch (e) { }
+        var sel = $('liq-clientes-guardados');
+        if (sel) {
+            var existeOpc = Array.prototype.some.call(sel.options, function (o) { return o.value === limpio; });
+            if (existeOpc) {
+                sel.value = limpio;
+                sel.dispatchEvent(new Event('change', { bubbles: true }));
+                return;
+            }
+        }
+        document.dispatchEvent(new CustomEvent('demo:cliente', { detail: { cliente: limpio } }));
+    }
+
+    function pintarTorre(m) {
+        var p = m.periodo;
+        if ($('torre-periodo-badge')) $('torre-periodo-badge').textContent = p;
+        var guardados = (window.CLClientes && window.CLClientes.listar) ? window.CLClientes.listar() : [];
+        var almacen = leerTodoAlmacen();
+        var porKey = {};
+
+        function regCliente(nombre, filasCount, origen) {
+            var nom = String(nombre || '').trim();
+            if (!nom) return;
+            var k = nom.toLowerCase();
+            if (!porKey[k]) porKey[k] = { nombre: nom, trabajadores: 0, origen: origen };
+            if (filasCount > porKey[k].trabajadores) porKey[k].trabajadores = filasCount;
+        }
+
+        regCliente(clienteNombre(), resultadosNominaActiva().length, 'activo');
+        guardados.forEach(function (g) {
+            regCliente(g.nombre, Array.isArray(g.filas) ? g.filas.length : 0, 'nomina');
+        });
+        Object.keys(almacen).forEach(function (k) {
+            var parts = k.split('::');
+            if (parts[0]) regCliente(parts[0], 0, 'suite');
+        });
+
+        var lista = Object.keys(porKey).sort().map(function (k) {
+            var item = porKey[k];
+            var st = almacen[k + '::' + p] || null;
+            var reg = st && st.regimen ? st.regimen : '14D3';
+            var cerrado = !!(st && st.cerradoTributario);
+            var f29Total = 0;
+            if (k === clienteClave()) {
+                f29Total = m.f29.codigos[91] || 0;
+                cerrado = !!m.estado.cerradoTributario;
+                reg = m.estado.regimen;
+            } else if (st && F29) {
+                var v = st.ventasRows ? F29.parsearRcv(st.ventasRows, 'ventas') : F29.parsearRcv(st.ventasCsv || '', 'ventas');
+                var c = st.comprasRows ? F29.parsearRcv(st.comprasRows, 'compras') : F29.parsearRcv(st.comprasCsv || '', 'compras');
+                var f = F29.calcularF29({
+                    periodo: p,
+                    regimen: reg,
+                    ventas: v,
+                    compras: c,
+                    remanenteAnterior: st.remanenteAnterior || 0,
+                    tasaPpm: st.tasaPpmPersonalizada || '',
+                    impuestoUnico48: st.iuscManual || 0,
+                    honorariosBruto: st.honorariosBruto || 0,
+                    honorariosRetencionDirecta: st.honorariosRetencionDirecta || 0
+                });
+                f29Total = f.codigos[91] || 0;
+            }
+            return {
+                key: k,
+                nombre: item.nombre,
+                trabajadores: item.trabajadores,
+                regimen: reg,
+                cerrado: cerrado,
+                f29Total: f29Total,
+                esActivo: k === clienteClave()
+            };
+        });
+
+        var cerrados = lista.filter(function (x) { return x.cerrado; }).length;
+        var f29Sum = lista.reduce(function (s, x) { return s + x.f29Total; }, 0);
+        if ($('nav-count-clientes')) $('nav-count-clientes').textContent = lista.length;
+        if ($('torre-k-clientes')) $('torre-k-clientes').textContent = lista.length;
+        if ($('torre-k-abiertos')) $('torre-k-abiertos').textContent = Math.max(0, lista.length - cerrados);
+        if ($('torre-k-cerrados')) $('torre-k-cerrados').textContent = cerrados;
+        if ($('torre-k-f29total')) $('torre-k-f29total').textContent = D.money(f29Sum);
+
+        var tbody = $('tbody-torre-clientes');
+        if (tbody) {
+            tbody.innerHTML = lista.map(function (c) {
+                return '<tr>' +
+                    '<td><strong>' + D.esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip">En uso</span>' : '') + '</td>' +
+                    '<td class="mono">' + D.esc(c.regimen) + '</td>' +
+                    '<td class="mono num">' + c.trabajadores + '</td>' +
+                    '<td class="mono num">' + D.money(c.f29Total) + '</td>' +
+                    '<td><span class="app-nav-chip ' + (c.cerrado ? '' : 'abierto') + '">' + (c.cerrado ? 'Cerrado' : 'Abierto') + '</span></td>' +
+                    '<td class="num"><button type="button" class="btn btn-chico" data-torre-trabajar="' + D.esc(c.nombre) + '">' + (c.esActivo ? 'Activo' : 'Trabajar') + '</button></td>' +
+                    '</tr>';
+            }).join('');
+        }
+    }
+
+    function pintarImportador(m) {
+        var est = m.estado;
+        var bhe = est.bheBoletas || [];
+        var bruto = bhe.reduce(function (s, x) { return s + (x.bruto || 0); }, 0);
+        var ret = bhe.reduce(function (s, x) { return s + (x.retenido || 0); }, 0);
+        if ($('imp-bhe-vigentes')) $('imp-bhe-vigentes').textContent = bhe.length;
+        if ($('imp-bhe-anuladas')) $('imp-bhe-anuladas').textContent = est.bheAnuladas || 0;
+        if ($('imp-bhe-bruto')) $('imp-bhe-bruto').textContent = D.money(bruto);
+        if ($('imp-bhe-retencion')) $('imp-bhe-retencion').textContent = D.money(ret);
+        if ($('imp-bhe-alertas')) {
+            $('imp-bhe-alertas').innerHTML = (est.bheAlertas || []).map(function (a) {
+                return '<div class="texto-ayuda">' + D.esc(a.mensaje || a) + '</div>';
+            }).join('');
+        }
+        if ($('tbody-imp-bhe')) {
+            $('tbody-imp-bhe').innerHTML = bhe.length
+                ? bhe.map(function (b) {
+                    return '<tr><td class="mono">' + D.esc(b.folio) + '</td><td class="mono">' + D.esc(b.rut) + '</td><td>' + D.esc(b.razonSocial) + '</td><td class="mono num">' + D.money(b.bruto) + '</td><td class="mono num">' + D.money(b.retenido) + '</td><td class="mono num">' + D.money(b.liquido) + '</td></tr>';
+                }).join('')
+                : '<tr><td colspan="6" class="texto-ayuda">Sin boletas BHE cargadas aún. Sube el CSV del SII o carga el ejemplo (15,25%).</td></tr>';
+        }
+
+        var movs = est.cartolaMovimientos || [];
+        if ($('imp-car-movs')) $('imp-car-movs').textContent = movs.length;
+        if ($('imp-car-abonos')) $('imp-car-abonos').textContent = D.money(est.cartolaTotalAbonos || 0);
+        if ($('imp-car-cargos')) $('imp-car-cargos').textContent = D.money(est.cartolaTotalCargos || 0);
+        if ($('imp-car-saldo')) $('imp-car-saldo').textContent = est.cartolaUltimoSaldo != null ? D.money(est.cartolaUltimoSaldo) : '-';
+        if ($('tbody-imp-cartola')) {
+            $('tbody-imp-cartola').innerHTML = movs.length
+                ? movs.map(function (mv) {
+                    return '<tr><td class="mono">' + D.esc(mv.fecha) + '</td><td>' + D.esc(mv.glosa) + '</td><td class="cap">' + D.esc(mv.tipo) + '</td><td class="mono num">' + D.money(mv.monto) + '</td></tr>';
+                }).join('')
+                : '<tr><td colspan="4" class="texto-ayuda">Sin cartola bancaria importada aún.</td></tr>';
+        }
+    }
+
+    function pintarPlanCuentas() {
+        var tbody = $('tbody-plan-cuentas');
+        if (!tbody || !C || !C.obtenerPlanCuentas) return;
+        var lista = C.obtenerPlanCuentas();
+        if ($('suite-plan-estado-txt')) {
+            $('suite-plan-estado-txt').textContent = lista.length + ' cuentas activas · Cambios sincronizados en Diario, Mayor y Balance.';
+        }
+        tbody.innerHTML = lista.map(function (c) {
+            return '<tr>' +
+                '<td class="mono">' + D.esc(c.codigo) + '</td>' +
+                '<td><input type="text" class="lq-input-plan" data-plan-nombre="' + D.esc(c.codigo) + '" value="' + D.esc(c.nombre) + '" aria-label="Nombre cuenta ' + D.esc(c.codigo) + '"></td>' +
+                '<td class="cap">' + D.esc(c.tipo) + '</td>' +
+                '<td class="mono">' + D.esc(c.grupo) + '</td>' +
+                '<td class="num"><button type="button" class="btn btn-chico" data-plan-borrar="' + D.esc(c.codigo) + '">Quitar</button></td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function pintarDdjj(m) {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-subddjj]'), function (btn) {
+            var act = btn.getAttribute('data-subddjj') === ui.subDdjj;
+            btn.classList.toggle('activo', act);
+            btn.setAttribute('aria-selected', act ? 'true' : 'false');
+        });
+        ['1887', '1879', '1947', 'cpt'].forEach(function (k) {
+            var pan = $('subddjj-' + k);
+            if (pan) pan.hidden = (ui.subDdjj !== k);
+        });
+        var d = m.ddjj || {};
+        if (d.dj1887 && d.dj1887.ok && $('tbody-dj1887')) {
+            var filas87 = d.dj1887.filas || [];
+            var t87 = d.dj1887.totales || {};
+            $('tbody-dj1887').innerHTML = filas87.length
+                ? filas87.map(function (f) {
+                    return '<tr><td class="mono">' + D.esc(f.C2_rut) + '</td><td>' + D.esc(f.nombre) + '</td><td class="mono num">' + D.money(f.C3_rentaNeta) + '</td><td class="mono num">' + D.money(f.C4_impuestoUnico) + '</td><td class="mono num">' + D.money(f.C6_rentaNoGravada) + '</td><td class="mono num">' + D.money(f.C7_rentaExenta) + '</td></tr>';
+                }).join('') +
+                    '<tr class="fila-total"><td colspan="2"><strong>Totales DJ 1887</strong></td><td class="mono num"><strong>' + D.money(t87.rentaNeta || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t87.impuestoUnico || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t87.rentaNoGravada || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t87.rentaExenta || 0) + '</strong></td></tr>'
+                : '<tr><td colspan="6" class="texto-ayuda">Calcula liquidaciones en Nómina para poblar automáticamente la DJ 1887 con renta neta pagada.</td></tr>';
+        }
+        if (d.dj1879 && d.dj1879.ok && $('tbody-dj1879')) {
+            var filas79 = d.dj1879.filas || [];
+            var t79 = d.dj1879.totales || {};
+            $('tbody-dj1879').innerHTML = filas79.length
+                ? filas79.map(function (f) {
+                    return '<tr><td class="mono">' + D.esc(f.rut) + '</td><td>' + D.esc(f.razonSocial) + '</td><td class="mono num">' + f.cantidadBoletas + '</td><td class="mono num">' + D.money(f.brutoTotal) + '</td><td class="mono num">' + D.money(f.retenidoTotal) + '</td><td class="mono num">' + D.num(f.tasaPromedioPct, 2) + '%</td></tr>';
+                }).join('') +
+                    '<tr class="fila-total"><td colspan="2"><strong>Totales DJ 1879</strong></td><td class="mono num"><strong>' + (t79.boletas || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t79.brutoTotal || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t79.retenidoTotal || 0) + '</strong></td><td class="mono num">' + D.num(t79.brutoTotal > 0 ? (t79.retenidoTotal / t79.brutoTotal) * 100 : 15.25, 2) + '%</td></tr>'
+                : '<tr><td colspan="6" class="texto-ayuda">Importa tus boletas BHE SII o ingresa honorarios en F29 para poblar la DJ 1879.</td></tr>';
+        }
+        if (d.dj194x && d.dj194x.ok) {
+            if ($('dj194x-titulo')) $('dj194x-titulo').textContent = 'DJ ' + d.dj194x.codigoDj + ' · Régimen ' + m.estado.regimen;
+            var s0 = (m.estado.socios && m.estado.socios[0]) || {};
+            if ($('ddjj-socios-rut') && document.activeElement !== $('ddjj-socios-rut')) $('ddjj-socios-rut').value = s0.rut || '12.345.678-5';
+            if ($('ddjj-socios-nombre') && document.activeElement !== $('ddjj-socios-nombre')) $('ddjj-socios-nombre').value = s0.nombre || 'Socio titular';
+            if ($('ddjj-socios-pct') && document.activeElement !== $('ddjj-socios-pct')) $('ddjj-socios-pct').value = s0.porcentaje != null ? s0.porcentaje : 100;
+            if ($('ddjj-retiros-totales') && document.activeElement !== $('ddjj-retiros-totales')) $('ddjj-retiros-totales').value = s0.retiros || 0;
+            if ($('tbody-dj194x')) {
+                $('tbody-dj194x').innerHTML = (d.dj194x.filas || []).map(function (f) {
+                    var monto = d.dj194x.codigoDj === '1947' ? f.baseImponibleAsignada : f.montoRetiroODividendo;
+                    var cred = d.dj194x.codigoDj === '1947' ? f.creditoPpmAsignado : f.creditoIdpc;
+                    return '<tr><td class="mono">' + D.esc(f.rutSocio) + '</td><td>' + D.esc(f.nombreSocio) + '</td><td class="mono num">' + f.porcentajeParticipacion + '%</td><td class="mono num">' + moneySigno(monto) + '</td><td class="mono num">' + D.money(cred) + '</td></tr>';
+                }).join('');
+            }
+        }
+        if (d.cpt && $('tbody-cpt')) {
+            var comp = d.cpt.componentes || {};
+            var ca = m.estado.cptAjustes || {};
+            if ($('cpt-anterior') && document.activeElement !== $('cpt-anterior')) $('cpt-anterior').value = ca.cptAnterior || 0;
+            if ($('cpt-aumentos') && document.activeElement !== $('cpt-aumentos')) $('cpt-aumentos').value = ca.aumentosCapital || 0;
+            if ($('cpt-disminuciones') && document.activeElement !== $('cpt-disminuciones')) $('cpt-disminuciones').value = ca.disminucionesCapital || 0;
+            if ($('cpt-retiros') && document.activeElement !== $('cpt-retiros')) $('cpt-retiros').value = ca.retirosDividendos || 0;
+            if ($('cpt-rechazados') && document.activeElement !== $('cpt-rechazados')) $('cpt-rechazados').value = ca.gastosRechazados || 0;
+            if ($('cpt-idpc') && document.activeElement !== $('cpt-idpc')) $('cpt-idpc').value = ca.idpcPagado || 0;
+            if ($('cpt-cap-aportado') && document.activeElement !== $('cpt-cap-aportado')) $('cpt-cap-aportado').value = ca.capitalAportadoReajustado || 0;
+
+            $('tbody-cpt').innerHTML = [
+                ['(+) CPT inicial del ejercicio anterior', comp.cptAnterior],
+                ['(+) Aumentos efectivos de capital', comp.aumentosCapital],
+                ['(+/-) Base imponible o RLI del período', comp.baseImponibleRli],
+                ['(-) Disminuciones formales de capital', -comp.disminucionesCapital],
+                ['(-) Retiros o dividendos distribuidos', -comp.retirosDividendos],
+                ['(-) Gastos rechazados no afectos Art. 21', -comp.gastosRechazados],
+                ['(-) IDPC pagado en el ejercicio', -comp.idpcPagado]
+            ].map(function (r) {
+                return '<tr><td>' + r[0] + '</td><td class="mono num">' + moneySigno(r[1]) + '</td></tr>';
+            }).join('') +
+                '<tr class="fila-total"><td><strong>(=) Capital Propio Tributario Simplificado de cierre</strong></td><td class="mono num"><strong>' + moneySigno(d.cpt.cptFinal) + '</strong></td></tr>' +
+                '<tr><td>RAI estimado (sobre capital aportado reajustado)</td><td class="mono num">' + D.money(d.cpt.raiEstimado) + '</td></tr>';
+        }
+    }
+
+    function pintarReportes() {
+        var mb = leerMembrete();
+        if ($('rep-estudio-nombre') && document.activeElement !== $('rep-estudio-nombre')) $('rep-estudio-nombre').value = mb.estudio;
+        if ($('rep-estudio-rut') && document.activeElement !== $('rep-estudio-rut')) $('rep-estudio-rut').value = mb.rut;
+        if ($('rep-contador-nombre') && document.activeElement !== $('rep-contador-nombre')) $('rep-contador-nombre').value = mb.contador;
+        if ($('rep-estudio-pie') && document.activeElement !== $('rep-estudio-pie')) $('rep-estudio-pie').value = mb.pie;
+        if ($('rep-preview-box')) {
+            $('rep-preview-box').innerHTML = '<div><strong>' + D.esc(mb.estudio) + '</strong> · RUT ' + D.esc(mb.rut) + '</div>' +
+                '<div>Responsable: ' + D.esc(mb.contador) + ' · Cliente activo: <strong>' + D.esc(clienteNombre()) + '</strong></div>' +
+                '<div class="texto-ayuda" style="margin-top:4px">' + D.esc(mb.pie) + '</div>';
+        }
+    }
+
     function refrescarTodo() {
         var est = leerEstadoActual();
         pintarEstadoPuentePyme(est);
         var m = calcularModelo();
         pintarEstadoCierre(m);
+        pintarTorre(m);
+        pintarImportador(m);
         pintarF29(m);
+        pintarDdjj(m);
         pintarLibros(m);
         pintarBalance(m);
         pintarPnl(m);
+        pintarReportes();
     }
 
     // ------------------------------------------------------------- Exportaciones e Impresion
     function imprimirHtmlModulo(titulo, subtitulo, tablaHtml, notaExtra) {
+        var mb = leerMembrete();
+        var memHtml = '<div class="print-membrete-estudio">' +
+            '<div><strong>' + D.esc(mb.estudio) + '</strong><br><span>RUT ' + D.esc(mb.rut) + ' · ' + D.esc(mb.contador) + '</span></div>' +
+            '<div style="text-align:right"><span>Cliente: <strong>' + D.esc(clienteNombre()) + '</strong><br>Período: ' + D.esc(periodoActual()) + '</span></div>' +
+            '</div>';
+        var pieHtml = '<div class="print-pie-estudio"><span>' + D.esc(mb.pie) + '</span><span>Emitido con Suite Contadores</span></div>';
         var pag = '<div class="print-page">' +
+            memHtml +
             D.encabezado(titulo, D.esc(clienteNombre()) + ' · Período ' + D.esc(periodoActual()) + (subtitulo ? ' · ' + D.esc(subtitulo) : '')) +
             tablaHtml +
             (notaExtra ? '<div class="print-note">' + D.esc(notaExtra) + '</div>' : '') +
-            D.NOTA +
+            pieHtml +
             '</div>';
         D.imprimir([pag]);
     }
@@ -1530,46 +1887,378 @@
             });
         }
 
-        // Mapeo referencial de plan de cuentas por software contable y carga CSV
-        var erpPreset = {
-            sii_estandar: { texto: '42 cuentas base homologadas (SII Estándar)', cods: ['2-1-03-01', '1-1-05-01', '2-1-02-04', '2-1-02-01'] },
-            softland: { texto: 'Esquema Softland 8 dígitos activo', cods: ['2-01-0301', '1-01-0501', '2-01-0204', '2-01-0201'] },
-            transtecnia: { texto: 'Esquema Transtecnia ERP activo', cods: ['210301', '110501', '210204', '210201'] },
-            laudus: { texto: 'Esquema Laudus multinivel activo', cods: ['2.1.03.01', '1.1.05.01', '2.1.02.04', '2.1.02.01'] },
-            personalizado: { texto: 'Edición manual o plan CSV personalizado activo', cods: null }
-        };
+        function descargarCsvTexto(nombre, contenido) {
+            if (window.CLDemoArchivos && window.CLDemoArchivos.descargarCsv) {
+                window.CLDemoArchivos.descargarCsv(nombre, '\uFEFF' + contenido);
+            } else {
+                var blob = new Blob(['\uFEFF' + contenido], { type: 'text/csv;charset=utf-8;' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = nombre;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+            }
+        }
+
+        function aplicarTextoBhe(txt) {
+            if (!Imp) return;
+            var res = Imp.parsearBheSii(txt, { periodo: periodoActual() });
+            if (!res.ok) {
+                D.avisar(res.error || 'No se reconocieron boletas BHE.');
+                return;
+            }
+            if (leerEstadoActual().cerradoTributario) {
+                D.avisar('El período está cerrado. Reábrelo para importar BHE.');
+                return;
+            }
+            guardarEstadoActual(function (est) {
+                est.bheBoletas = res.boletas;
+                est.bheAnuladas = res.anuladasOmitidas;
+                est.bheAlertas = res.advertencias || [];
+                est.honorariosBruto = res.totalBruto;
+                est.honorariosRetencionDirecta = res.codigo151;
+            });
+            refrescarTodo();
+            D.avisar('BHE importadas: ' + res.boletas.length + ' vigentes (' + res.anuladasOmitidas + ' anuladas omitidas). F29 cód. 151 = ' + D.money(res.codigo151) + '.');
+        }
+
+        function aplicarTextoCartola(txt) {
+            if (!Imp) return;
+            var res = Imp.parsearCartola(txt, { periodo: periodoActual() });
+            if (!res.ok) {
+                D.avisar(res.error || 'No se reconocieron movimientos de cartola.');
+                return;
+            }
+            if (leerEstadoActual().cerradoTributario) {
+                D.avisar('El período está cerrado. Reábrelo para importar cartola.');
+                return;
+            }
+            guardarEstadoActual(function (est) {
+                est.cartolaMovimientos = res.movimientos;
+                est.cartolaTotalAbonos = res.totalAbonos;
+                est.cartolaTotalCargos = res.totalCargos;
+                est.cartolaUltimoSaldo = res.ultimoSaldo;
+                if (res.saldoInicialEstimado != null && !est.tesoreria.saldoInicialBanco) {
+                    est.tesoreria.saldoInicialBanco = Math.max(0, res.saldoInicialEstimado);
+                }
+            });
+            refrescarTodo();
+            D.avisar('Cartola leída: ' + res.movimientos.length + ' movimientos bancarios listos para centralizar.');
+        }
+
+        function imprimirCertificadoN6() {
+            var m = calcularModelo();
+            var dj = m.ddjj && m.ddjj.dj1887;
+            if (!dj || !dj.ok || !(dj.certificadosN6 || []).length) {
+                D.avisar('Calcula liquidaciones en Remuneraciones para emitir el Certificado N°6.');
+                return;
+            }
+            var rows = dj.certificadosN6.map(function (c) {
+                return '<tr>' +
+                    '<td class="mono">' + D.esc(c.rut) + '</td>' +
+                    '<td>' + D.esc(c.nombre) + '</td>' +
+                    '<td class="r">' + D.money(c.col4_rentaNeta) + '</td>' +
+                    '<td class="r">' + D.money(c.col5_impuestoUnico) + '</td>' +
+                    '<td class="r">' + D.money(c.col7_rentaExenta) + '</td>' +
+                    '<td class="r">' + D.money(c.col8_rentaNoGravada) + '</td>' +
+                    '<td class="r">' + D.money(c.col9_rebajaZonasExtremas) + '</td>' +
+                    '</tr>';
+            }).join('');
+            var html = '<p style="font-size:12px;margin-bottom:8px">' + D.esc(dj.notaColumnas) + '</p>' +
+                '<table class="print-table"><thead><tr><th>RUT</th><th>Trabajador</th><th class="r">Col. 4 Renta Neta</th><th class="r">Col. 5 Imp. Único</th><th class="r">Col. 7 Exenta</th><th class="r">Col. 8 No Gravada</th><th class="r">Col. 9 Z. Extremas</th></tr></thead><tbody>' + rows + '</tbody></table>';
+            imprimirHtmlModulo('Certificado N°6 sobre Sueldos', 'AT ' + dj.anioTributario, html, 'Emitido conforme al mapeo SII de Certificado N°6 (col. 7 Exenta / col. 8 No Gravada).');
+        }
+
+        function imprimirCertificadoN1() {
+            var m = calcularModelo();
+            var dj = m.ddjj && m.ddjj.dj1879;
+            if (!dj || !dj.ok || !(dj.certificadosN1 || []).length) {
+                D.avisar('Carga boletas BHE o ingresa honorarios para emitir el Certificado N°1.');
+                return;
+            }
+            var rows = dj.certificadosN1.map(function (c) {
+                return '<tr>' +
+                    '<td class="mono">' + D.esc(c.rutPrestador) + '</td>' +
+                    '<td>' + D.esc(c.nombrePrestador) + '</td>' +
+                    '<td class="r">' + c.cantidadBoletas + '</td>' +
+                    '<td class="r">' + D.money(c.honorariosBrutos) + '</td>' +
+                    '<td class="r">' + D.money(c.impuestoRetenido) + '</td>' +
+                    '<td class="r">' + D.num(c.tasaPromedioPct, 2) + '%</td>' +
+                    '</tr>';
+            }).join('');
+            var html = '<table class="print-table"><thead><tr><th>RUT Prestador</th><th>Nombre</th><th class="r">BHE</th><th class="r">Honorario Bruto</th><th class="r">Retención Practicada</th><th class="r">Tasa</th></tr></thead><tbody>' + rows + '</tbody></table>';
+            imprimirHtmlModulo('Certificado N°1 sobre Honorarios', 'AT ' + dj.anioTributario, html, dj.notaNormativa);
+        }
+
+        // Torre de Control Multiempresa
+        if ($('btn-torre-crear-cliente')) {
+            $('btn-torre-crear-cliente').addEventListener('click', function () {
+                var nom = $('torre-nuevo-nombre') ? $('torre-nuevo-nombre').value.trim() : '';
+                if (!nom) { D.avisar('Escribe el nombre o razón social del cliente.'); return; }
+                guardarTodoAlmacen((function () {
+                    var todo = leerTodoAlmacen();
+                    var k = nom.toLowerCase() + '::' + periodoActual();
+                    if (!todo[k]) todo[k] = estadoDefecto(periodoActual());
+                    return todo;
+                })());
+                if ($('torre-nuevo-nombre')) $('torre-nuevo-nombre').value = '';
+                cambiarACliente(nom);
+                refrescarTodo();
+                D.avisar('Cliente activo cambiado a ' + nom + '.');
+            });
+        }
+        if ($('tbody-torre-clientes')) {
+            $('tbody-torre-clientes').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-torre-trabajar]');
+                if (!btn) return;
+                cambiarACliente(btn.getAttribute('data-torre-trabajar'));
+                refrescarTodo();
+                D.avisar('Trabajando con ' + btn.getAttribute('data-torre-trabajar') + '.');
+            });
+        }
+
+        // Importador Unificado (BHE + Cartola Bancaria + Navegación rápida)
+        if ($('btn-imp-ir-nomina')) $('btn-imp-ir-nomina').addEventListener('click', function () { cambiarModulo('remuneraciones'); });
+        if ($('btn-imp-ir-f29')) $('btn-imp-ir-f29').addEventListener('click', function () { cambiarModulo('f29'); });
+
+        if ($('btn-imp-bhe-subir') && $('file-imp-bhe')) {
+            $('btn-imp-bhe-subir').addEventListener('click', function () { $('file-imp-bhe').value = ''; $('file-imp-bhe').click(); });
+            $('file-imp-bhe').addEventListener('change', function () {
+                var f = $('file-imp-bhe').files && $('file-imp-bhe').files[0];
+                if (f) f.text().then(aplicarTextoBhe);
+            });
+        }
+        if ($('btn-imp-bhe-ejemplo') && Imp) {
+            $('btn-imp-bhe-ejemplo').addEventListener('click', function () {
+                aplicarTextoBhe(Imp.ejemploBheCsv(periodoActual()));
+            });
+        }
+        if ($('btn-imp-bhe-limpiar')) {
+            $('btn-imp-bhe-limpiar').addEventListener('click', function () {
+                guardarEstadoActual(function (est) {
+                    est.bheBoletas = []; est.bheAnuladas = 0; est.bheAlertas = [];
+                    est.honorariosBruto = 0; est.honorariosRetencionDirecta = 0;
+                });
+                refrescarTodo();
+                D.avisar('Registro de boletas BHE limpio.');
+            });
+        }
+
+        if ($('btn-imp-cartola-subir') && $('file-imp-cartola')) {
+            $('btn-imp-cartola-subir').addEventListener('click', function () { $('file-imp-cartola').value = ''; $('file-imp-cartola').click(); });
+            $('file-imp-cartola').addEventListener('change', function () {
+                var f = $('file-imp-cartola').files && $('file-imp-cartola').files[0];
+                if (f) f.text().then(aplicarTextoCartola);
+            });
+        }
+        if ($('btn-imp-cartola-ejemplo') && Imp) {
+            $('btn-imp-cartola-ejemplo').addEventListener('click', function () {
+                aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));
+            });
+        }
+        if ($('btn-imp-cartola-centralizar')) {
+            $('btn-imp-cartola-centralizar').addEventListener('click', function () {
+                var estAct = leerEstadoActual();
+                if (estAct.cerradoTributario) { D.avisar('Período cerrado.'); return; }
+                var movs = estAct.cartolaMovimientos || [];
+                if (!movs.length) { D.avisar('Primero carga una cartola o usa el ejemplo.'); return; }
+                var nuevos = C.asientosDesdeCartola(movs, { prefijo: 'CART', origen: 'ajuste' });
+                guardarEstadoActual(function (est) {
+                    var sinCartola = (est.manuales || []).filter(function (a) { return !/^CART-/.test(String(a.id || '')); });
+                    est.manuales = sinCartola.concat(nuevos);
+                });
+                ui.subLibro = 'diario';
+                refrescarTodo();
+                D.avisar('Cartola centralizada en Libro Diario (' + nuevos.length + ' asientos cuadrados).');
+            });
+        }
+
+        // Plan de Cuentas editable
+        if ($('tbody-plan-cuentas')) {
+            $('tbody-plan-cuentas').addEventListener('change', function (ev) {
+                var inp = ev.target.closest('[data-plan-nombre]');
+                if (!inp || !C || !C.obtenerPlanCuentas) return;
+                var cod = inp.getAttribute('data-plan-nombre');
+                var lista = C.obtenerPlanCuentas().map(function (c) {
+                    if (c.codigo === cod && inp.value.trim()) c.nombre = inp.value.trim();
+                    return c;
+                });
+                C.establecerPlanCuentas(lista);
+                guardarPlanPersonalizado();
+                refrescarTodo();
+                D.avisar('Cuenta ' + cod + ' actualizada.');
+            });
+            $('tbody-plan-cuentas').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-plan-borrar]');
+                if (!btn || !C || !C.obtenerPlanCuentas) return;
+                var cod = btn.getAttribute('data-plan-borrar');
+                var actual = C.obtenerPlanCuentas();
+                if (actual.length <= 10) { D.avisar('Conserva al menos 10 cuentas base en el plan.'); return; }
+                C.establecerPlanCuentas(actual.filter(function (c) { return c.codigo !== cod; }));
+                guardarPlanPersonalizado();
+                refrescarTodo();
+            });
+        }
+        if ($('btn-plan-agregar')) {
+            $('btn-plan-agregar').addEventListener('click', function () {
+                var cod = $('plan-nuevo-codigo') ? $('plan-nuevo-codigo').value.trim() : '';
+                var nom = $('plan-nuevo-nombre') ? $('plan-nuevo-nombre').value.trim() : '';
+                var tipo = $('plan-nuevo-tipo') ? $('plan-nuevo-tipo').value : 'activo';
+                var grupo = $('plan-nuevo-grupo') ? $('plan-nuevo-grupo').value : 'otro';
+                if (!cod || !nom) { D.avisar('Ingresa código y nombre para la nueva cuenta.'); return; }
+                var actual = C.obtenerPlanCuentas();
+                if (actual.some(function (c) { return c.codigo === cod; })) { D.avisar('Ya existe la cuenta ' + cod + '.'); return; }
+                actual.push({ codigo: cod, nombre: nom, tipo: tipo, grupo: grupo });
+                C.establecerPlanCuentas(actual);
+                guardarPlanPersonalizado();
+                if ($('plan-nuevo-codigo')) $('plan-nuevo-codigo').value = '';
+                if ($('plan-nuevo-nombre')) $('plan-nuevo-nombre').value = '';
+                refrescarTodo();
+                D.avisar('Cuenta ' + cod + ' agregada al plan contable.');
+            });
+        }
+        if ($('btn-plan-restaurar')) {
+            $('btn-plan-restaurar').addEventListener('click', function () {
+                C.restaurarPlanCuentas();
+                try { window.localStorage.removeItem(K_PLAN_CUENTAS); } catch (e) { }
+                refrescarTodo();
+                D.avisar('Plan de cuentas restaurado a valores base.');
+            });
+        }
         if ($('suite-erp-origen')) {
             $('suite-erp-origen').addEventListener('change', function () {
-                var p = erpPreset[this.value] || erpPreset.sii_estandar;
-                var txt = $('suite-plan-estado-txt');
-                if (txt) txt.textContent = p.texto;
-                if (p.cods) {
-                    var inputs = document.querySelectorAll('#panel-mapeo-cuentas .input-codigo-mapeo');
-                    Array.prototype.forEach.call(inputs, function (inp, idx) {
-                        if (p.cods[idx]) inp.value = p.cods[idx];
-                    });
-                }
+                var desc = {
+                    sii_estandar: 'Plan base Suite activo y editable.',
+                    softland: 'Referencia Softland activa para exportación CSV.',
+                    transtecnia: 'Referencia Transtecnia activa para exportación CSV.',
+                    laudus: 'Referencia Laudus activa para exportación CSV.'
+                }[this.value] || 'Plan activo.';
+                if ($('suite-plan-estado-txt')) $('suite-plan-estado-txt').textContent = desc;
             });
         }
         if ($('btn-importar-plan-csv') && $('file-plan-csv')) {
-            $('btn-importar-plan-csv').addEventListener('click', function () {
-                $('file-plan-csv').value = '';
-                $('file-plan-csv').click();
-            });
+            $('btn-importar-plan-csv').addEventListener('click', function () { $('file-plan-csv').value = ''; $('file-plan-csv').click(); });
             $('file-plan-csv').addEventListener('change', function () {
                 var f = $('file-plan-csv').files && $('file-plan-csv').files[0];
                 if (!f) return;
                 f.text().then(function (raw) {
                     var lineas = String(raw || '').split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
-                    var count = Math.max(0, lineas.length - 1);
-                    if ($('suite-erp-origen')) $('suite-erp-origen').value = 'personalizado';
-                    if ($('suite-plan-estado-txt')) {
-                        $('suite-plan-estado-txt').textContent = (count || 1) + ' filas leídas desde ' + f.name;
-                    }
-                    D.avisar('Plan CSV cargado (' + f.name + ').');
-                }).catch(function () {
-                    D.avisar('No se pudo leer el archivo CSV del plan de cuentas.');
+                    var nuevas = [];
+                    lineas.forEach(function (l, idx) {
+                        var sep = l.indexOf(';') >= 0 ? ';' : ',';
+                        var cols = l.split(sep).map(function (s) { return s.trim().replace(/^"|"$/g, ''); });
+                        if (idx === 0 && /cod/i.test(cols[0] || '')) return;
+                        if (cols[0] && cols[1]) {
+                            nuevas.push({ codigo: cols[0], nombre: cols[1], tipo: (cols[2] || 'activo').toLowerCase(), grupo: cols[3] || 'otro' });
+                        }
+                    });
+                    if (!nuevas.length) { D.avisar('El CSV debe tener columnas Código;Nombre;Tipo;Grupo.'); return; }
+                    C.establecerPlanCuentas(nuevas);
+                    guardarPlanPersonalizado();
+                    refrescarTodo();
+                    D.avisar('Plan personalizado importado (' + nuevas.length + ' cuentas).');
                 });
+            });
+        }
+
+        // Operación Renta DDJJ
+        Array.prototype.forEach.call(document.querySelectorAll('[data-subddjj]'), function (btn) {
+            btn.addEventListener('click', function () {
+                ui.subDdjj = btn.getAttribute('data-subddjj');
+                refrescarTodo();
+            });
+        });
+        ['ddjj-socios-rut', 'ddjj-socios-nombre', 'ddjj-socios-pct', 'ddjj-retiros-totales'].forEach(function (id) {
+            var el = $(id);
+            if (!el) return;
+            el.addEventListener('change', function () {
+                guardarEstadoActual(function (est) {
+                    est.socios = [{
+                        rut: ($('ddjj-socios-rut') && $('ddjj-socios-rut').value.trim()) || '12.345.678-5',
+                        nombre: ($('ddjj-socios-nombre') && $('ddjj-socios-nombre').value.trim()) || 'Socio titular',
+                        porcentaje: Math.max(1, Math.min(100, Number($('ddjj-socios-pct') && $('ddjj-socios-pct').value) || 100)),
+                        retiros: Math.max(0, Math.round(D.parseNumber($('ddjj-retiros-totales') && $('ddjj-retiros-totales').value)))
+                    }];
+                });
+                refrescarTodo();
+            });
+        });
+        [
+            ['cpt-anterior', 'cptAnterior'],
+            ['cpt-aumentos', 'aumentosCapital'],
+            ['cpt-disminuciones', 'disminucionesCapital'],
+            ['cpt-retiros', 'retirosDividendos'],
+            ['cpt-rechazados', 'gastosRechazados'],
+            ['cpt-idpc', 'idpcPagado'],
+            ['cpt-cap-aportado', 'capitalAportadoReajustado']
+        ].forEach(function (par) {
+            var el = $(par[0]);
+            if (!el) return;
+            el.addEventListener('change', function () {
+                guardarEstadoActual(function (est) {
+                    est.cptAjustes[par[1]] = Math.round(D.parseNumber(el.value));
+                });
+                refrescarTodo();
+            });
+        });
+        if ($('btn-dj1887-csv')) {
+            $('btn-dj1887-csv').addEventListener('click', function () {
+                var dj = calcularModelo().ddjj.dj1887;
+                if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1887.'); return; }
+                descargarCsvTexto('Borrador_DJ_1887_' + clienteClave() + '_AT2026.csv', dj.csv);
+            });
+        }
+        if ($('btn-dj1879-csv')) {
+            $('btn-dj1879-csv').addEventListener('click', function () {
+                var dj = calcularModelo().ddjj.dj1879;
+                if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1879.'); return; }
+                descargarCsvTexto('Borrador_DJ_1879_' + clienteClave() + '_AT2026.csv', dj.csv);
+            });
+        }
+        if ($('btn-dj194x-csv')) {
+            $('btn-dj194x-csv').addEventListener('click', function () {
+                var dj = calcularModelo().ddjj.dj194x;
+                if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1947/1948.'); return; }
+                descargarCsvTexto('Borrador_DJ_' + dj.codigoDj + '_' + clienteClave() + '_AT2026.csv', dj.csv);
+            });
+        }
+        if ($('btn-dj1887-cert-pdf')) $('btn-dj1887-cert-pdf').addEventListener('click', imprimirCertificadoN6);
+        if ($('btn-dj1879-cert-pdf')) $('btn-dj1879-cert-pdf').addEventListener('click', imprimirCertificadoN1);
+
+        // Reportes PDF con Membrete
+        if ($('btn-rep-guardar-membrete')) {
+            $('btn-rep-guardar-membrete').addEventListener('click', function () {
+                guardarMembrete({
+                    estudio: ($('rep-estudio-nombre') && $('rep-estudio-nombre').value.trim()) || 'Estudio Contable Chile',
+                    rut: ($('rep-estudio-rut') && $('rep-estudio-rut').value.trim()) || '76.543.210-K',
+                    contador: ($('rep-contador-nombre') && $('rep-contador-nombre').value.trim()) || 'Contador Auditor',
+                    pie: ($('rep-estudio-pie') && $('rep-estudio-pie').value.trim()) || ''
+                });
+                pintarReportes();
+                D.avisar('Membrete del estudio guardado.');
+            });
+        }
+        if ($('btn-rep-cert6')) $('btn-rep-cert6').addEventListener('click', imprimirCertificadoN6);
+        if ($('btn-rep-cert1')) $('btn-rep-cert1').addEventListener('click', imprimirCertificadoN1);
+        if ($('btn-rep-resumen')) {
+            $('btn-rep-resumen').addEventListener('click', function () {
+                var m = calcularModelo();
+                var html = '<table class="print-table"><tbody>' +
+                    '<tr><td>Régimen Tributario SII</td><td class="r">' + D.esc(m.f29.regimenNombre) + '</td></tr>' +
+                    '<tr><td>Total a Pagar F29 (cód. 91)</td><td class="r"><strong>' + D.money(m.f29.codigos[91]) + '</strong></td></tr>' +
+                    '<tr><td>Ingresos Operacionales (P&amp;L)</td><td class="r">' + D.money(m.pnl.totalIngresos) + '</td></tr>' +
+                    '<tr><td>Resultado Antes de Impuesto</td><td class="r">' + moneySigno(m.pnl.resultadoAntesImpuesto) + '</td></tr>' +
+                    '<tr><td>Base RLI ProPyme</td><td class="r">' + moneySigno(m.rli.rli) + '</td></tr>' +
+                    '</tbody></table>';
+                imprimirHtmlModulo('Resumen Mensual para el Cliente', m.f29.regimenNombre, html, 'Incluye F29 borrador, resultados del período y base tributaria.');
+            });
+        }
+        if ($('btn-rep-f29')) {
+            $('btn-rep-f29').addEventListener('click', function () {
+                if ($('btn-f29-pdf')) $('btn-f29-pdf').click();
             });
         }
 
