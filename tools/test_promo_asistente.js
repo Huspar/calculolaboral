@@ -74,7 +74,7 @@ caso('todo anuncio del asistente (data-cta="asistente-pyme") se mide: la página
         assert.ok(consent || medir, f + ': sus clics no se miden');
         assert.ok(!(consent && medir), f + ': mediría cada clic dos veces');
     });
-    assert.ok(paginas >= 32, 'se esperaban al menos 32 páginas con anuncios, hay ' + paginas);
+    assert.ok(paginas >= 28, 'se esperaban al menos 28 páginas con anuncios, hay ' + paginas);
 });
 
 caso('los anuncios del asistente en el cuerpo de las páginas llevan un lugar propio (data-cta-slot) sin repetirse en la página', () => {

@@ -842,6 +842,10 @@
     gap: 8px;
     flex-shrink: 0;
 }
+.suite-header-venta-acciones .btn,
+.suite-header-venta-acciones .btn-texto {
+    min-height: 44px;
+}
 .suite-incluye-panel {
     margin-top: 16px;
     padding-top: 16px;

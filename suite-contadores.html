@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Herramienta de Liquidaciones, Previred y F29 para Estudios | Cálculo Laboral</title>
+<meta content="Prepara nóminas de varios clientes, finiquitos en lote, archivo plano de 105 campos para Previred, LRE, borrador F29 desde RCV SII y Balance de 8 Columnas en tu navegador, sin entregar claves." name="description"/>
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="/favicon.ico" rel="icon"/>
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="https://calculolaboral.cl/suite-contadores" rel="canonical"/>
+<meta content="Herramienta de Liquidaciones, Previred y F29 para Estudios | Cálculo Laboral" property="og:title"/>
+<meta content="Prepara nóminas de varios clientes, finiquitos en lote, archivo plano de 105 campos para Previred, LRE, borrador F29 desde RCV SII y Balance de 8 Columnas en tu navegador, sin entregar claves." property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="https://calculolaboral.cl/suite-contadores" property="og:url"/>
+<meta content="https://calculolaboral.cl/assets/og/default.png" property="og:image"/>
+<meta content="es_CL" property="og:locale"/>
+<meta content="Cálculo Laboral" property="og:site_name"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Herramienta de Liquidaciones, Previred y F29 para Estudios | Cálculo Laboral" name="twitter:title"/>
+<meta content="Prepara nóminas de varios clientes, finiquitos en lote, archivo plano de 105 campos para Previred, LRE, borrador F29 desde RCV SII y Balance de 8 Columnas en tu navegador, sin entregar claves." name="twitter:description"/>
+<meta content="https://calculolaboral.cl/assets/og/default.png" property="twitter:image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://calculolaboral.cl/suite-contadores#app",
+      "name": "Suite Contadores · Cálculo Laboral",
+      "url": "https://calculolaboral.cl/suite-contadores",
+      "description": "Herramienta web para contadores y estudios contables en Chile: nóminas y finiquitos en lote por cliente, archivo plano Previred (105 campos), CSV LRE (147 columnas), borrador F29 desde RCV SII y Balance Tributario de 8 Columnas sin pedir claves.",
+      "applicationCategory": "BusinessApplication",
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "Contadores y estudios contables en Chile"
+      },
+      "featureList": [
+        "Liquidaciones de sueldo y finiquitos en lote por empresa cliente",
+        "Generación de archivo plano Previred (105 campos) para revisar y subir",
+        "Exportación de Libro de Remuneraciones Electrónico (147 columnas)",
+        "Lectura de CSV de Compras y Ventas (RCV SII) para borrador de Formulario 29",
+        "Libro Diario, Libro Mayor y Balance Tributario de 8 Columnas exportables a Excel",
+        "Hoja base de Renta Líquida Imponible ProPyme (Art. 14 D N°3 y D8)",
+        "Procesamiento local en el navegador sin solicitar claves del SII, Previred ni bancos"
+      ],
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": "es-CL",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Contador independiente (prepago anual, hasta 10 empresas, 1 usuario)",
+          "price": "249900",
+          "priceCurrency": "CLP"
+        },
+        {
+          "@type": "Offer",
+          "name": "Estudio (prepago anual, hasta 30 empresas, 3 usuarios)",
+          "price": "499900",
+          "priceCurrency": "CLP"
+        },
+        {
+          "@type": "Offer",
+          "name": "Estudio ilimitado (prepago anual, empresas sin tope, 5 usuarios)",
+          "price": "899900",
+          "priceCurrency": "CLP"
+        }
+      ],
+      "publisher": {
+        "@id": "https://calculolaboral.cl/#organization"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://calculolaboral.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Para empleadores",
+          "item": "https://calculolaboral.cl/para-empleadores"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Suite Contadores",
+          "item": "https://calculolaboral.cl/suite-contadores"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Qué es Suite Contadores y qué incluye hoy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Es una herramienta de trabajo para contadores independientes y estudios contables en Chile. Permite calcular remuneraciones y finiquitos en lote por cliente, descargar archivos de carga TXT para Previred (105 campos) y CSV para el LRE (147 columnas), leer los CSV del RCV del SII para preparar un borrador de Formulario 29, revisar Libro Diario/Mayor, Balance de 8 Columnas y hoja base ProPyme (Art. 14 D N°3 y D8)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Pide claves del SII, Previred o del banco?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Trabaja con los archivos que tú exportas (Excel de nómina, TXT Previred, CSV del RCV del SII). En la demo interactiva todo se procesa y guarda localmente en tu navegador sin enviar credenciales ni conectarse a tus portales."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Declara directamente en Previred, Mi DT o el SII?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Suite Contadores genera borradores y archivos de carga para que tú los revises, valides los montos y los subas con tus propias claves en cada portal."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo funciona el acceso anticipado de 90 días y los planes anuales?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Actualmente el pago público todavía no está abierto. Contamos con un programa de acceso anticipado de 90 días gratis desde el alta para los primeros 20 estudios, sin tarjeta ni cobro automático y con aviso 15 días antes de cumplir los 90 días. Los planes anuales referenciales son de $249.900, $499.900 y $899.900 + IVA al año ($0 de habilitación)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿En qué se diferencia del Asistente Laboral Pyme?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El Asistente Laboral Pyme está diseñado para que el dueño de una sola empresa administre contratos, anexos, vacaciones y liquidaciones de su propio equipo. Suite Contadores está enfocada en contadores que llevan múltiples empresas clientes, incluyendo RCV del SII para borrador de F29, Diario, Mayor, Balance de 8 Columnas y RLI ProPyme."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+<script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    try {
+        if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+        if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+        if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+    } catch (e) {}
+    gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+</script>
+<link href="/assets/css/style.css?v=3.4.0" rel="stylesheet"/>
+<style>
+    :root {
+        --teal-forest: #00382E;
+        --teal-forest-hover: #002820;
+        --teal-forest-deep: #00261F;
+        --teal-yellow: #FFB703;
+        --teal-yellow-hover: #FFAA00;
+        --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body { overflow-x: hidden; }
+    main.site-container { min-width: 0; }
+    .btn-yellow-pill:not(.hidden) {
+        display: inline-flex;
+    }
+    .btn-yellow-pill {
+        background-color: var(--teal-yellow);
+        color: #111827 !important;
+        font-weight: 700;
+        border-radius: 9999px;
+        padding: 12px 26px;
+        font-size: 14.5px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s var(--ease-spring);
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
+    }
+    .btn-yellow-pill:hover { background-color: var(--teal-yellow-hover); transform: translateY(-1.5px); }
+    .btn-outline-pill:not(.hidden) {
+        display: inline-flex;
+    }
+    .btn-outline-pill {
+        background-color: #FFFFFF;
+        color: #374151 !important;
+        font-weight: 600;
+        border-radius: 9999px;
+        padding: 11px 22px;
+        font-size: 14px;
+        border: 1.5px solid #D1D5DB;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s var(--ease-spring);
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .btn-outline-pill:hover { border-color: var(--teal-forest); color: var(--teal-forest) !important; background-color: #F8FAF9; }
+    .nav-dropdown-menu {
+        opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px);
+        transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+    }
+    .nav-dropdown-group:hover .nav-dropdown-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+    .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }
+    .teal-footer-curve {
+        background-color: #00382E; color: #FFFFFF; border-top-left-radius: 40px; border-top-right-radius: 40px;
+        position: relative; overflow: hidden;
+    }
+    .teal-footer-curve .footer-inner-container { max-width: 1240px; margin-left: auto; margin-right: auto; padding-left: 1.5rem; padding-right: 1.5rem; }
+    @media (min-width: 1024px) {
+        .teal-footer-curve { border-top-left-radius: 96px; border-top-right-radius: 0px; }
+        .teal-footer-curve .footer-inner-container { padding-left: 5rem !important; padding-right: 2rem !important; }
+    }
+    .site-container, .max-w-\[1240px\] { max-width: 1240px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
+
+    /* Estilos Suite Contadores */
+    .ls-wrap { max-width: 920px; width: 100%; min-width: 0; margin: 0 auto; color: #334155; }
+    .ls-crumbs { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .75rem; color: #64748b; margin-bottom: 1.5rem; }
+    .ls-crumbs a { color: #64748b; font-weight: 500; }
+    .ls-crumbs a:hover { color: #00382E; }
+    .ls-crumbs [aria-current] { color: #334155; font-weight: 600; }
+
+    .ls-hero { padding-bottom: 1.75rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 1.75rem; }
+    .ls-kicker { display: inline-block; font-size: .82rem; font-weight: 700; letter-spacing: .01em; color: #00382E; background: #e8f0ee; border-radius: 999px; padding: .3rem .75rem; margin: 0 0 1rem; }
+    .ls-h1 { font-size: clamp(1.65rem, 3.6vw, 2.2rem); max-width: 34ch; line-height: 1.12; font-weight: 800; letter-spacing: -.025em; color: #0f172a; margin: 0 0 1rem; text-wrap: balance; }
+    .ls-lead { font-size: 1.05rem; line-height: 1.65; color: #475569; margin: 0 0 1.35rem; max-width: 48rem; }
+    .ls-hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 1rem; }
+    .ls-meta { font-size: .82rem; line-height: 1.55; color: #475569; margin: .4rem 0 0; }
+
+    .ls-btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 44px; font-weight: 700; font-size: .92rem; border-radius: 999px; padding: .75rem 1.35rem; text-decoration: none !important; transition: background-color .18s ease, transform .12s ease, border-color .18s ease; cursor: pointer; }
+    .ls-btn:active { transform: scale(.98); }
+    .ls-btn .material-icons { font-size: 1.15rem; }
+    .ls-btn-primary { background: #00382E; color: #ffffff !important; border: 0; }
+    .ls-btn-primary:hover { background: #00261F; }
+    .ls-btn-ghost { background: #ffffff; color: #00382E !important; border: 1.5px solid #cbd5e1; }
+    .ls-btn-ghost:hover { border-color: #00382E; background: #f8faf9; }
+
+    .ls-toc { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1rem 1.25rem; margin-bottom: 2.25rem; }
+    .ls-toc-title { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 0 0 .5rem; }
+    .ls-toc ol { margin: 0; padding-left: 1.2rem; columns: 2; column-gap: 2rem; font-size: .9rem; }
+    .ls-toc li { margin: .2rem 0; break-inside: avoid; }
+    .ls-toc a { color: #0f4c41; font-weight: 500; }
+    .ls-toc a:hover { color: #00382E; text-decoration: underline; }
+
+    .ls-section { margin-bottom: 2.75rem; scroll-margin-top: 6rem; }
+    .ls-article h2 { font-size: clamp(1.35rem, 3vw, 1.7rem); line-height: 1.2; font-weight: 800; letter-spacing: -.02em; color: #0f172a; margin: 0 0 .9rem; text-wrap: balance; }
+    .ls-article p { line-height: 1.7; margin: 0 0 1rem; }
+    .ls-article a:not(.ls-btn) { color: #0f5e4f; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(15,94,79,.3); text-underline-offset: 2px; }
+    .ls-note { font-size: .88rem; color: #475569; }
+
+    .sc-pilares { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1.1rem 0; }
+    .sc-pilar { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.15rem 1.2rem; }
+    .sc-pilar-tag { display: inline-block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #00382E; background: #e8f0ee; border-radius: 999px; padding: .2rem .55rem; margin-bottom: .55rem; }
+    .sc-pilar h3 { margin: 0 0 .4rem; font-size: 1.02rem; font-weight: 700; color: #0f172a; }
+    .sc-pilar p { margin: 0 !important; font-size: .92rem; color: #475569; line-height: 1.55; }
+
+    .sc-soberania { background: #F8FAF9; border: 1px solid #D6EBE4; border-radius: 1rem; padding: 1.3rem 1.4rem; }
+    .sc-soberania ul { list-style: disc outside; padding-left: 1.2rem; margin: .6rem 0 0; display: grid; gap: .4rem; font-size: .94rem; }
+
+    .sc-table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #e2e8f0; border-radius: 1rem; background: #ffffff; margin: 1rem 0; }
+    .sc-table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: .9rem; }
+    .sc-table th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; background: #f8fafc; padding: .8rem 1rem; border-bottom: 1px solid #e2e8f0; }
+    .sc-table td { padding: .85rem 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; }
+    .sc-table tbody tr:last-child td { border-bottom: 0; }
+    .sc-table tr.sc-dest td { background: #F8FAF9; color: #0f172a; font-weight: 600; }
+
+    .ap-piloto { background: #EEF6F3; border: 1px solid #D6EBE4; border-radius: 1rem; padding: 1.15rem 1.25rem; margin: 1.1rem 0; display: grid; gap: .45rem; }
+    .ap-piloto p { margin: 0 !important; font-size: .94rem; line-height: 1.6; color: #334155; }
+    .ap-piloto-t { font-size: 1.02rem !important; font-weight: 800; color: #00382E !important; }
+
+    .ap-planes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .ap-plan { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
+    .ap-plan h3 { margin: 0 !important; font-size: 1rem !important; font-weight: 750; color: #0f172a; }
+    .ap-plan-precio { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 1.5rem; font-weight: 800; color: #00382E; margin: 0 !important; line-height: 1.15; }
+    .ap-plan-mes { font-size: .82rem; color: #475569; margin: 0 !important; }
+    .ap-plan ul { list-style: disc outside; margin: .35rem 0 0; padding-left: 1.1rem; font-size: .9rem; line-height: 1.5; color: #334155; display: grid; gap: .3rem; }
+    .ap-plan-dest { border: 2px solid #00382E; }
+
+    .sc-form-box { margin-top: 1.25rem; padding: 1.35rem; border: 1px solid #cbd5e1; border-radius: 1rem; background: #ffffff; }
+    .sc-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; align-items: end; margin-top: .85rem; }
+    .sc-field label { display: block; font-size: .78rem; font-weight: 700; color: #334155; margin-bottom: .25rem; }
+    .sc-field input, .sc-field select { width: 100%; min-height: 44px; padding: .6rem .8rem; border: 1px solid #cbd5e1; border-radius: .75rem; font-size: .92rem; color: #0f172a; background: #f8fafc; }
+
+    .ap-no { background: #fff1f2; border-left: 3px solid #be123c; border-radius: 0 .75rem .75rem 0; padding: 1rem 1.2rem; font-size: .93rem; margin: 1rem 0; }
+    .ap-no ul { list-style: disc outside; margin: .5rem 0 0; padding-left: 1.1rem; display: grid; gap: .35rem; }
+
+    .ls-cta-inline { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; background: #e8f0ee; border-radius: 1rem; padding: 1.2rem 1.35rem; margin-top: 1.25rem; }
+    .ls-cta-inline p { margin: 0 !important; font-size: .92rem; color: #334155; }
+    .ls-cta-title { font-weight: 750; color: #0f172a !important; font-size: 1.02rem !important; margin-bottom: .2rem !important; }
+
+    .ls-faq { display: grid; gap: .55rem; }
+    .ls-faq details { background: #ffffff; border: 1px solid #e2e8f0; border-radius: .85rem; padding: 0 1.1rem; }
+    .ls-faq details[open] { border-color: #b7cbc6; }
+    .ls-faq summary { cursor: pointer; list-style: none; padding: .95rem 1.75rem .95rem 0; font-weight: 650; color: #0f172a; position: relative; }
+    .ls-faq summary::-webkit-details-marker { display: none; }
+    .ls-faq summary::after { content: "+"; position: absolute; right: 0; top: .8rem; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 1.2rem; color: #00382E; }
+    .ls-faq details[open] summary::after { content: "-"; }
+    .ls-faq details p { font-size: .93rem; color: #475569; padding-bottom: 1rem; margin: 0 !important; line-height: 1.6; }
+
+    .ls-legal { font-size: .82rem !important; color: #475569; background: #f1f5f4; border-radius: .75rem; padding: .95rem 1.15rem; line-height: 1.6; }
+
+    @media (max-width: 767px) {
+        .ls-toc ol, .sc-pilares, .ap-planes, .sc-form-grid { grid-template-columns: 1fr; columns: 1; }
+        .ls-cta-inline { flex-direction: column; align-items: stretch; }
+        .ls-hero-actions .ls-btn { flex: 1 1 100%; }
+    }
+</style>
+<link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
+</head>
+<body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
+<div class="text-white text-xs py-2 border-b border-white/10 no-print" style="background-color: var(--teal-forest-deep);">
+<div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+<div class="hidden sm:flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+<span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas según el Código del Trabajo</span>
+</div>
+<div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
+<span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
+<span class="text-white/50">|</span>
+<span>UTM: <strong class="utm-value text-white font-bold">$72.440</strong></span>
+<span class="text-white/50">|</span>
+<span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+</div>
+</div>
+</div>
+
+<header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+<div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
+<div class="flex justify-between items-center h-20">
+<a class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity" href="./">
+<div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition-transform shrink-0" style="background-color: #00382E;">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5" style="color: #FFB703;" viewbox="0 0 100 100">
+<path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+<path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+<path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+<path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+<path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+</svg>
+</div>
+<span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+</a>
+
+<nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700">
+<a class="px-3.5 py-2 hover:text-[#00382E] transition-colors" href="finiquito_calculator">Simulador Finiquito</a>
+<div class="nav-dropdown-group relative">
+<button class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer" type="button">
+<span>Herramientas</span>
+<svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" viewbox="0 0 20 20">
+<path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+<div class="grid grid-cols-2 gap-2">
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="finiquito_calculator"><div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">calculate</span></div><div><div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div><div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="sueldo_liquido"><div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">payments</span></div><div><div class="font-bold text-xs text-slate-900">Sueldo Líquido</div><div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="gratificacion-legal-chile"><div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">redeem</span></div><div><div class="font-bold text-xs text-slate-900">Gratificación Legal</div><div class="text-xs text-slate-500 mt-0.5">25% del sueldo con tope 4,75 IMM.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="impuesto-unico-segunda-categoria"><div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">receipt_long</span></div><div><div class="font-bold text-xs text-slate-900">Impuesto Único</div><div class="text-xs text-slate-500 mt-0.5">Tabla del mes y cálculo por tramo.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-despido-injustificado-chile"><div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0"><span class="material-icons text-lg">gavel</span></div><div><div class="font-bold text-xs text-slate-900">Despido Injustificado</div><div class="text-xs text-slate-500 mt-0.5">Recargo del Art. 168 según la causal.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-horas-extras"><div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0"><span class="material-icons text-lg">schedule</span></div><div><div class="font-bold text-xs text-slate-900">Horas Extras 42h</div><div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-vacaciones"><div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0"><span class="material-icons text-lg">beach_access</span></div><div><div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div><div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="simulador-seguro-cesantia-afc"><div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0"><span class="material-icons text-lg">account_balance_wallet</span></div><div><div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div><div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-despido-articulo-160"><div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0"><span class="material-icons text-lg">gavel</span></div><div><div class="font-bold text-xs text-slate-900">Despido Art. 160</div><div class="text-xs text-slate-500 mt-0.5">Causales sin indemnización y riesgos.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-sueldo-part-time"><div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0"><span class="material-icons text-lg">schedule</span></div><div><div class="font-bold text-xs text-slate-900">Sueldo Part-Time</div><div class="text-xs text-slate-500 mt-0.5">Sueldo proporcional y mínimo legal.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="calculadora-costo-empresa-chile"><div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0"><span class="material-icons text-lg">business_center</span></div><div><div class="font-bold text-xs text-slate-900">Costo Empresa</div><div class="text-xs text-slate-500 mt-0.5">Cuánto cuesta realmente un trabajador.</div></div></a>
+<a class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors" href="generador-contrato-trabajo-chile"><div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0"><span class="material-icons text-lg">description</span></div><div><div class="font-bold text-xs text-slate-900">Generador de Contrato</div><div class="text-xs text-slate-500 mt-0.5">Contrato de trabajo en Word a la medida.</div></div></a>
+<a href="suite-contadores" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors"><div class="w-9 h-9 rounded-full bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg">business_center</span></div><div><div class="font-bold text-xs text-slate-900">Para Contadores</div><div class="text-[11px] text-slate-500 mt-0.5">Previred 105 campos, LRE y F29.</div></div></a>
+</div>
+</div>
+</div>
+<div class="nav-dropdown-group relative">
+<button class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer" type="button">
+<span>Guías</span>
+<svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" viewbox="0 0 20 20">
+<path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+<div class="space-y-1">
+<a class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors" href="reclamar-despido-injustificado-chile">Cómo Reclamar Despido Injustificado</a>
+<a class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors" href="carta-de-renuncia-chile">Generador de Carta de Renuncia</a>
+<a class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors" href="carta-de-despido-chile">Cartas de Despido en Word (gratis)</a>
+<a class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors" href="finiquito-por-renuncia-voluntaria">Finiquito por Renuncia Voluntaria</a>
+<a class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors" href="despido-necesidades-empresa-articulo-161">Art. 161 Necesidades de la Empresa</a>
+<a class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors" href="checklist-fiscalizacion-dt-pymes-chile">Checklist Fiscalización DT Pymes</a>
+<a class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors" href="ley-40-horas-chile-2026">Ley 40 Horas (42 Horas en 2026)</a>
+<div class="pt-2 border-t border-slate-100 mt-2">
+<a class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline" href="blog">Ver todas las guías en el Blog →</a>
+</div>
+</div>
+</div>
+</div>
+</nav>
+
+<div class="flex items-center gap-2">
+<a class="hidden md:inline-flex btn-yellow-pill !py-2.5 !px-5 !text-xs !shadow-xs" href="para-empleadores">Portal Empleadores</a>
+<a class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs" href="contacto">Contacto</a>
+<button aria-label="Abrir menú" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" type="button">
+<span class="material-icons text-2xl">menu</span>
+</button>
+</div>
+</div>
+</div>
+
+<div class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-3" id="mobile-drawer">
+<a class="block text-sm font-bold text-[#00382E]" href="finiquito_calculator">Simulador Finiquito</a>
+<a class="block text-sm font-semibold text-slate-700" href="sueldo_liquido">Sueldo Líquido</a>
+<a class="block text-sm font-semibold text-slate-700" href="suite-contadores">Suite Contadores</a>
+<a class="block text-sm font-semibold text-slate-700" href="impuesto-unico-segunda-categoria">Impuesto Único</a>
+<a class="block text-sm font-semibold text-slate-700" href="como-generar-archivo-previred-lre-f29-chile">Guía Previred, LRE y F29</a>
+<a class="block text-sm font-semibold text-slate-700" href="blog">Blog de Guías Laborales</a>
+<div class="pt-2">
+<a class="btn-yellow-pill w-full !text-xs text-center justify-center" href="para-empleadores">Portal Empleadores</a>
+</div>
+</div>
+</header>
+
+<main class="site-container flex-grow flex-1 mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
+<div class="ls-wrap">
+<nav class="ls-crumbs" aria-label="Ruta">
+<a href="./">Inicio</a><span aria-hidden="true">/</span><a href="para-empleadores">Para empleadores</a><span aria-hidden="true">/</span><span aria-current="page">Suite Contadores</span>
+</nav>
+
+<header class="ls-hero">
+<p class="ls-kicker">Para contadores y estudios contables · Acceso anticipado 90 días</p>
+<h1 class="ls-h1">Suite Contadores: liquidaciones, Previred y F29 de varios clientes sin entregar claves</h1>
+<p class="ls-lead">Calcula remuneraciones y finiquitos en lote por cliente, genera el archivo plano de 105 campos para revisar y subir a Previred, exporta el borrador CSV de LRE (147 columnas) y arma el borrador de F29 y Balance de 8 Columnas desde el RCV del SII, directo en tu navegador.</p>
+<div class="ls-hero-actions">
+<a class="ls-btn ls-btn-primary" href="#acceso-anticipado" style="color:#ffffff !important;" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="hero-postulacion">
+<span class="material-icons" aria-hidden="true">badge</span><span>Postular al acceso anticipado (90 días gratis)</span>
+</a>
+<a class="ls-btn ls-btn-ghost" href="demo-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="hero-demo" data-demo-track="1">
+<span class="material-icons" aria-hidden="true">play_circle</span><span>Probar demo con datos de ejemplo</span>
+</a>
+</div>
+<p class="ls-meta">Herramienta de cálculo y organización referencial para contadores y estudios. Genera archivos de apoyo (TXT Previred, CSV LRE, borradores F29 y Balance de 8 columnas) para revisar y subir con tus propias claves; no reemplaza tu criterio profesional ni envía declaraciones al SII, Previred o la DT.</p>
+</header>
+
+<nav class="ls-toc" aria-label="Contenido">
+<p class="ls-toc-title">En esta página</p>
+<ol>
+<li><a href="#que-hace">Qué puedes hacer hoy</a></li>
+<li><a href="#sin-claves">Trabajo con archivos sin claves</a></li>
+<li><a href="#comparativa">Comparativa de mercado</a></li>
+<li><a href="#planes">Planes anuales y acceso anticipado</a></li>
+<li><a href="#no-hace">Qué no hace esta herramienta</a></li>
+<li><a href="#preguntas">Preguntas frecuentes</a></li>
+</ol>
+</nav>
+
+<article class="ls-article">
+<section id="que-hace" class="ls-section">
+<h2>Qué puedes hacer hoy en Suite Contadores</h2>
+<p>Todo lo que listamos aquí funciona hoy en la <a href="demo-contadores" data-demo-track="1">demo interactiva con datos de ejemplo</a> y con tus propios archivos exportados desde Excel, Previred o el SII.</p>
+<div class="sc-pilares">
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Nómina por cliente</span>
+<h3>1. Liquidaciones y finiquitos en lote</h3>
+<p>Cargas tu nómina desde Excel (.xlsx), calculas las liquidaciones del mes o lotes de finiquitos con UF, UTM, topes imponibles y gratificación vigentes, y descargas el resumen e impresión por trabajador.</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Previred y Mi DT</span>
+<h3>2. Archivo Previred (105 campos) y LRE CSV</h3>
+<p>Generas el archivo plano TXT de 105 campos para Previred y el CSV de 147 columnas del Libro de Remuneraciones Electrónico para revisarlos y cargarlos con tus credenciales.</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Borrador tributario</span>
+<h3>3. Borrador de F29 desde RCV SII</h3>
+<p>Subes los archivos CSV de Compras y Ventas del SII y cruzas débito, crédito y remanente con el impuesto único retenido de sueldos (cód. 48) y retenciones de boletas de honorarios (cód. 151 al 15,25% en 2026).</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Contabilidad ProPyme</span>
+<h3>4. Diario, Mayor, Balance 8 Columnas y RLI</h3>
+<p>Centralizas la nómina y el RCV en asientos contables revisables, obtienes el Balance Tributario de 8 Columnas (débitos igual a créditos) y la hoja base RLI ProPyme (Art. 14 D N°3 y D8) en Excel.</p>
+</div>
+</div>
+</section>
+
+<section id="sin-claves" class="ls-section">
+<h2>Soberanía por archivos: cero claves del SII, Previred o bancos</h2>
+<div class="sc-soberania">
+<p>Muchos softwares contables piden la clave tributaria del SII de cada cliente o accesos bancarios para sincronizar movimientos. En Suite Contadores trabajas bajo un esquema de soberanía por archivos:</p>
+<ul>
+<li><strong>Sin entrega de credenciales:</strong> no pedimos clave única, clave SII, clave Previred ni contraseñas bancarias de tus clientes.</li>
+<li><strong>Entradas estándar del contador:</strong> trabajas directamente con planillas Excel, archivos planos TXT y CSV descargados desde tus portales.</li>
+<li><strong>Control local en la demo:</strong> en la demo con datos de ejemplo, tus pruebas y nóminas por cliente quedan solo en tu navegador y puedes exportar respaldos JSON en cualquier momento.</li>
+</ul>
+</div>
+</section>
+
+<section id="comparativa" class="ls-section">
+<h2>Comparativa referencial frente a otras opciones en Chile</h2>
+<p>El modelo está pensado para estudios pequeños y medianos que no quieren pagar costos de habilitación ni tarifas separadas por cada empresa agregada.</p>
+<div class="sc-table-wrap">
+<table class="sc-table">
+<thead>
+<tr>
+<th scope="col">Aspecto</th>
+<th scope="col">Suite Contadores (referencia anual)</th>
+<th scope="col">Softwares tradicionales en Chile</th>
+</tr>
+</thead>
+<tbody>
+<tr class="sc-dest">
+<td><strong>Precio y modalidad</strong></td>
+<td>$249.900 a $899.900 + IVA/año (prepago anual · $0,6 a 2,2 UF/mes equivalente con UF $41.322,93)</td>
+<td>Suscripciones desde ~1 UF/mes por módulo o cobros adicionales por cada RUT/trabajador</td>
+</tr>
+<tr>
+<td><strong>Costo de habilitación (setup)</strong></td>
+<td>$0</td>
+<td>Frecuente entre 1 UF y 6 UF iniciales</td>
+</tr>
+<tr>
+<td><strong>Claves SII / Previred</strong></td>
+<td>No las solicita (archivos RCV CSV, TXT y Excel)</td>
+<td>Habitualmente solicita clave SII o credenciales de portales</td>
+</tr>
+<tr>
+<td><strong>Límite de empresas</strong></td>
+<td>10, 30 o sin tope según plan</td>
+<td>Escala por tramo o cobra adicional por empresa extra</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="ls-note">Valores de referencia pública de competidores consultados en 2026; verifica el plan vigente en el sitio de cada proveedor.</p>
+</section>
+
+<section id="planes" class="ls-section">
+<h2>Planes anuales de referencia y acceso anticipado</h2>
+<div class="ap-piloto">
+<p class="ap-piloto-t">Hoy estamos en acceso anticipado: 90 días gratis (cupo 20 estudios)</p>
+<p>El pago público todavía no está abierto. Si postulas ahora y tu estudio entra al cupo inicial, recibes <strong>90 días gratis desde el alta</strong> para probar el flujo con tu cartera, sin tarjeta ni cobro automático. Te avisamos 15 días antes de cumplir tus 90 días para decidir si contratas un plan anual.</p>
+</div>
+
+<div class="ap-planes">
+<div class="ap-plan">
+<h3>Contador independiente</h3>
+<p class="ap-plan-precio">$249.900 <span style="font-size:.82rem;font-weight:600;color:#475569;">+ IVA/año</span></p>
+<p class="ap-plan-mes">Equivale a $24.990/mes · 0,6 UF aprox.</p>
+<ul>
+<li>Hasta 10 empresas clientes</li>
+<li>1 usuario del estudio</li>
+<li>Liquidaciones y finiquitos en lote, TXT Previred, LRE, borrador F29 y Balance 8 col.</li>
+</ul>
+</div>
+<div class="ap-plan ap-plan-dest">
+<h3>Estudio</h3>
+<p class="ap-plan-precio">$499.900 <span style="font-size:.82rem;font-weight:600;color:#475569;">+ IVA/año</span></p>
+<p class="ap-plan-mes">Equivale a $49.990/mes · 1,2 UF aprox.</p>
+<ul>
+<li>Hasta 30 empresas clientes</li>
+<li>Hasta 3 usuarios del estudio</li>
+<li>Soporte prioritario durante los 90 días de acceso anticipado</li>
+</ul>
+</div>
+<div class="ap-plan">
+<h3>Estudio ilimitado</h3>
+<p class="ap-plan-precio">$899.900 <span style="font-size:.82rem;font-weight:600;color:#475569;">+ IVA/año</span></p>
+<p class="ap-plan-mes">Equivale a $89.990/mes · 2,2 UF aprox.</p>
+<ul>
+<li>Empresas clientes sin tope</li>
+<li>Hasta 5 usuarios del estudio</li>
+<li>Diseñado para carteras amplias con cierres mensuales en lote</li>
+</ul>
+</div>
+</div>
+<p class="ls-note">Equivalencias calculadas sobre 10 meses respecto al valor anual prepagado, usando la UF de referencia del sitio ($41.322,93). Costo de habilitación: $0.</p>
+
+<div id="acceso-anticipado" class="sc-form-box">
+<p style="margin:0 0 .25rem;font-weight:800;color:#0f172a;font-size:1.05rem;">Postular a los 90 días de acceso anticipado</p>
+<p style="margin:0;font-size:.9rem;color:#475569;">Déjanos tu correo, el nombre de tu estudio y cuántas empresas administras. Te contactamos por orden de llegada (sin cobro automático).</p>
+<form id="form-acceso-estudio" novalidate>
+<div class="sc-form-grid">
+<div class="sc-field">
+<label for="sc-email">Correo del estudio</label>
+<input id="sc-email" type="email" required placeholder="contacto@tuestudio.cl">
+</div>
+<div class="sc-field">
+<label for="sc-nombre">Nombre o estudio contable</label>
+<input id="sc-nombre" type="text" required placeholder="Ej. Asesorías Pérez Ltda.">
+</div>
+<div class="sc-field">
+<label for="sc-empresas">Empresas clientes aprox.</label>
+<select id="sc-empresas" required>
+<option value="">Selecciona un rango</option>
+<option value="1-10">De 1 a 10 empresas</option>
+<option value="11-30">De 11 a 30 empresas</option>
+<option value="31+">Más de 30 empresas</option>
+</select>
+</div>
+</div>
+<div style="margin-top:.85rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;">
+<button id="sc-submit-btn" type="submit" class="ls-btn ls-btn-primary">Solicitar acceso anticipado (90 días gratis)</button>
+<p id="sc-form-msg" role="status" aria-live="polite" style="margin:0;font-size:.88rem;font-weight:600;"></p>
+</div>
+</form>
+</div>
+</section>
+
+<section id="no-hace" class="ls-section">
+<h2>Qué NO hace esta herramienta</h2>
+<div class="ap-no">
+<p style="margin:0;font-weight:700;color:#881337;">Para que decidas con claridad antes de probar:</p>
+<ul>
+<li>No solicita tus claves ni se conecta directamente al SII, Previred, Mi DT ni bancos, y no presenta ni paga declaraciones por ti.</li>
+<li>Los archivos TXT Previred (105 campos), CSV LRE (147 columnas), borrador F29 y Balance de 8 columnas son borradores de trabajo: debes revisarlos antes de cargarlos en cada portal.</li>
+<li>No emite facturas, guías ni boletas electrónicas en el SII, ni reemplaza el criterio profesional del contador o la revisión legal de un abogado.</li>
+<li>En esta etapa inicial aún no incluye importación de cartolas bancarias, generación de Declaraciones Juradas de Renta (1887/1879/1947/1948) ni sincronización multiusuario en la nube: en la demo todo se guarda localmente en tu navegador.</li>
+</ul>
+</div>
+
+<div class="ls-cta-inline">
+<div>
+<p class="ls-cta-title">¿Quieres recorrer el flujo completo antes de postular?</p>
+<p>Abre la demo con datos ficticios cargados (Panadería San Isidro SpA) o revisa el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a> si llevas internamente una sola empresa.</p>
+</div>
+<a class="ls-btn ls-btn-primary" href="demo-contadores" style="color:#ffffff !important;" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="puente-demo" data-demo-track="1">
+<span>Abrir demo interactiva</span><span class="material-icons" aria-hidden="true">arrow_forward</span>
+</a>
+</div>
+</section>
+
+<section id="preguntas" class="ls-section">
+<h2>Preguntas frecuentes sobre Suite Contadores</h2>
+<div class="ls-faq">
+<details>
+<summary>¿Qué archivos puedo subir y descargar hoy mismo en la demo?</summary>
+<p>Puedes subir planillas Excel (.xlsx) de nómina y finiquitos, los CSV de Compras y Ventas del RCV descargados del SII y respaldos JSON por cliente. Puedes descargar liquidaciones y finiquitos en PDF e Excel, archivo plano de 105 campos para Previred, CSV de LRE (147 columnas), hoja guía F29, Libro Diario y Balance de 8 Columnas en Excel.</p>
+</details>
+<details>
+<summary>¿La plataforma pide la clave tributaria o de Previred de mis clientes?</summary>
+<p>No. Todo funciona a partir de archivos que tú cargas. Nunca te pediremos claves del SII, Previred ni cartolas conectadas por scraping bancario.</p>
+</details>
+<details>
+<summary>¿Sirve si también soy dueño de una sola pyme y necesito emitir contratos o anexos?</summary>
+<p>Si administras internamente una sola empresa y buscas fichas de trabajadores, avisos de vencimientos, contratos y anexos en Word, te conviene usar el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a>. Suite Contadores está enfocada en contadores con varios clientes, F29 desde RCV y contabilidad tributaria.</p>
+</details>
+<details>
+<summary>¿Por qué los planes se expresan como prepago anual?</summary>
+<p>El cobro futuro operará como prepago anual en pesos más IVA ($249.900, $499.900 u $899.900 al año según tramo, $0 de habilitación), sin suscripción automática. Hoy el pago no está habilitado y el acceso anticipado entrega 90 días gratis para los primeros 20 estudios.</p>
+</details>
+<details>
+<summary>¿Los borradores reemplazan la revisión de Previred o del SII?</summary>
+<p>No. La plataforma calcula con base en parámetros y fórmulas vigentes para acelerar tu revisión, pero Previred, Mi DT y el SII determinan la validación definitiva al momento en que subes los archivos o presentas la declaración.</p>
+</details>
+</div>
+</section>
+
+<p class="ls-legal"><strong>Aviso normativo:</strong> Cálculo Laboral es una plataforma de cálculo y automatización de borradores de apoyo para estudios contables. Las fórmulas laborales y tributarias siguen las reglas vigentes en Chile publicadas por el Código del Trabajo, la Dirección del Trabajo, Previred y el Servicio de Impuestos Internos, elaboradas con apoyo de tecnología automatizada. No constituye asesoría legal, tributaria ni contable. Cada contador o usuario es responsable de revisar los resultados y archivos generados antes de presentarlos ante organismos fiscalizadores.</p>
+</article>
+
+<section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="fuentes-titulo">
+<h2 id="fuentes-titulo" class="text-lg font-bold text-slate-900 mb-3">Fuentes de referencia</h2>
+<ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+<li><a href="https://www.bcn.cl/leychile/navegar?idNorma=207436" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Código del Trabajo (BCN)</a></li>
+<li><a href="https://www.dt.gob.cl/portal/1626/w3-article-120116.html" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Libro de Remuneraciones Electrónico (Mi DT)</a></li>
+<li><a href="https://www.previred.com/" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Previred (diseño de nómina 105 campos)</a></li>
+<li><a href="https://www.sii.cl/servicios_online/1039-1182.html" rel="noopener" target="_blank" class="font-semibold text-[#00382E] underline">Servicio de Impuestos Internos (RCV y F29)</a></li>
+</ul>
+</section>
+</div>
+</main>
+
+<footer class="no-print mt-16">
+<div class="teal-footer-curve">
+<div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
+<div class="space-y-4">
+<a class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity" href="./">
+<div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5" style="color: #00382E;" viewbox="0 0 100 100">
+<path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+<path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+<path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+<path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+<path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+</svg>
+</div>
+<span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+</a>
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
+Plataforma independiente con herramientas laborales y simuladores legales actualizados para trabajadores, pymes y contadores en Chile (2026).
+</p>
+<div class="pt-1 text-xs font-mono-num text-white/50">Versión 2.6 · Actualizada Noviembre 2026</div>
+</div>
+<div class="space-y-3">
+<p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Calculadoras</p>
+<ul class="space-y-2 text-xs">
+<li><a class="text-white hover:text-[#FFB703] font-bold transition-colors" href="finiquito_calculator">Finiquito Legal</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="simulador-despido-injustificado-chile">Despido Injustificado</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="sueldo_liquido">Sueldo Líquido</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="calculadora-horas-extras">Horas Extras 42h</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="calculadora-vacaciones">Vacaciones Proporcionales</a></li>
+<li><a href="liquidacion-de-sueldo" class="text-white/80 hover:text-[#FFB703] transition-colors">Liquidación de Sueldo</a></li>
+</ul>
+</div>
+<div class="space-y-3">
+<p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Guías Legales</p>
+<ul class="space-y-2 text-xs">
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="reclamar-despido-injustificado-chile">Cómo Reclamar Despido</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="carta-de-renuncia-chile">Carta de Renuncia</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="despido-necesidades-empresa-articulo-161">Art. 161 Necesidades</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="checklist-fiscalizacion-dt-pymes-chile">Checklist Fiscalización DT</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="ley-40-horas-chile-2026">Ley 40 Horas</a></li>
+<li><a class="text-[#FFB703] hover:underline font-semibold block pt-1" href="blog">Ver todas las guías →</a></li>
+</ul>
+</div>
+<div class="space-y-3">
+<p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
+<ul class="space-y-2 text-xs">
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="para-empleadores">Portal Empleadores</a></li>
+<li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Para Contadores</a></li>
+<li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Guía Previred, LRE y F29</a></li>
+<li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="kit-cumplimiento-ley-datos-personales-chile">Kit Ley 21.719 Datos</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="kit-cumplimiento-laboral-pymes">Kit Blindaje Laboral</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="generador-finiquito-chile">Generador Finiquito</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="sobre-nosotros">Sobre Nosotros</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="contacto">Contacto Directo</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
+<div>© 2026 Cálculo Laboral Chile. Fórmulas basadas en el Código del Trabajo y los dictámenes de la Dirección del Trabajo.</div>
+<div class="flex flex-wrap items-center justify-center gap-4">
+<a class="hover:text-white transition-colors" href="terminos">Términos</a><span>·</span>
+<a class="hover:text-white transition-colors" href="privacidad">Privacidad</a><span>·</span>
+<a class="hover:text-white transition-colors" href="disclaimer">Disclaimer</a><span>·</span>
+<span class="inline-flex items-center gap-1 text-emerald-400 font-medium"><span aria-hidden="true" class="material-icons text-xs">menu_book</span>Basado en el Código del Trabajo</span>
+</div>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="/js/constants.js?v=2.1.2"></script>
+<script src="/js/indicators.js?v=2.9.2"></script>
+<script src="/js/checkout_consent.js?v=1.5.0" defer></script>
+<script src="/js/origen.js?v=1.0.0" defer></script>
+<script src="/js/motion.js?v=1.0.0" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-demo-track="1"]').forEach(function (el) {
+        el.addEventListener('click', function () {
+            if (typeof window.gtag === 'function') {
+                window.gtag('event', 'suite_demo_click', { ubicacion: el.getAttribute('data-cta-slot') || 'suite_contadores' });
+            }
+        });
+    });
+
+    var form = document.getElementById('form-acceso-estudio');
+    var emailEl = document.getElementById('sc-email');
+    var nombreEl = document.getElementById('sc-nombre');
+    var empEl = document.getElementById('sc-empresas');
+    var btn = document.getElementById('sc-submit-btn');
+    var msg = document.getElementById('sc-form-msg');
+    if (!form || !emailEl || !nombreEl || !empEl || !btn || !msg) return;
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var correo = (emailEl.value || '').trim();
+        var nombre = (nombreEl.value || '').trim();
+        var empresas = (empEl.value || '').trim();
+        if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(correo)) {
+            msg.style.color = '#b91c1c';
+            msg.textContent = 'Ingresa un correo electrónico válido.';
+            emailEl.focus();
+            return;
+        }
+        if (!nombre) {
+            msg.style.color = '#b91c1c';
+            msg.textContent = 'Escribe el nombre de tu estudio o tu nombre completo.';
+            nombreEl.focus();
+            return;
+        }
+        if (!empresas) {
+            msg.style.color = '#b91c1c';
+            msg.textContent = 'Selecciona cuántas empresas administras aproximadamente.';
+            empEl.focus();
+            return;
+        }
+        btn.disabled = true;
+        var orig = btn.textContent;
+        btn.textContent = 'Enviando...';
+        msg.textContent = '';
+        try {
+            var res = await fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    correo: correo,
+                    telefono: '',
+                    tipo: 'Pyme',
+                    fuente: 'Suite Contadores - Acceso anticipado',
+                    detalle: 'Postulación 90 días gratis. Empresas estimadas: ' + empresas,
+                    monto_calculado: '0'
+                })
+            });
+            var data = await res.json().catch(function () { return {}; });
+            if (res.ok && data && data.ok) {
+                msg.style.color = '#047857';
+                msg.textContent = 'Postulación recibida para ' + correo + '. Te contactaremos para coordinar tus 90 días de acceso anticipado.';
+                form.reset();
+                if (typeof window.gtag === 'function') {
+                    window.gtag('event', 'suite_pilot_apply', { empresas: empresas });
+                }
+            } else {
+                throw new Error((data && data.error) || 'No pudimos registrar la postulación.');
+            }
+        } catch (err) {
+            msg.style.color = '#b91c1c';
+            msg.textContent = 'No pudimos enviar la postulación en este momento. Intenta de nuevo en unos minutos.';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = orig;
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -496,7 +496,7 @@ body { overflow-x: hidden; }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 
-<link rel="stylesheet" href="/assets/css/promo-asistente.css?v=1.0.1">
+<link rel="stylesheet" href="/assets/css/promo-contadores.css?v=1.0.0">
 </head>
 <body class="bg-canvas text-slate-700 min-h-screen flex flex-col font-sans">
 <!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
@@ -672,7 +672,7 @@ body { overflow-x: hidden; }
 <div class="text-xs text-slate-500 mt-0.5">Contrato de trabajo en Word a la medida.</div>
 </div>
 </a>
-<a href="para-empleadores#estudios-contables" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+<a href="suite-contadores" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
     <div class="w-9 h-9 rounded-full bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0">
         <span class="material-icons text-lg">business_center</span>
     </div>
@@ -847,25 +847,24 @@ Si ya declaraste un mes anterior en Previred o llevas una nómina en Excel y qui
 
 <h2>5. Cómo Probar Este Flujo Mensual sin Cargar Claves Reales</h2>
 <p>
-Si eres contador independiente o dueño de pyme, puedes revisar el ciclo completo de remuneraciones y borrador tributario en nuestra <a href="demo-contadores">Suite para Estudios Contables (demo en vivo)</a>: permite simular liquidaciones del mes, exportar el archivo plano de 105 campos de referencia para Previred, generar el borrador CSV del LRE, cruzar ventas y compras con un borrador F29 y revisar el Balance de 8 Columnas en tu propio navegador, sin ingresar contraseñas del SII, bancos ni Previred.
+Si eres contador independiente o llevas varias empresas, puedes conocer la <a href="suite-contadores">Suite Contadores</a> o probar el ciclo completo en la <a href="demo-contadores">demo interactiva con datos de ejemplo</a>: permite simular liquidaciones del mes, exportar el archivo plano de 105 campos de referencia para Previred, generar el borrador CSV del LRE, cruzar ventas y compras con un borrador F29 y revisar el Balance de 8 Columnas en tu propio navegador, sin ingresar contraseñas del SII, bancos ni Previred.
 </p>
 <p>
 Si llevas la gestión interna de una sola empresa, también puedes conocer el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a> o consultar los recursos del <a href="para-empleadores">Portal para Empleadores</a>.
 </p>
-
-<!-- cl-asistente:inicio (lo genera tools/promo_asistente.js: no editar a mano) -->
-<aside class="cl-asistente no-print" aria-labelledby="cl-asistente-t">
-<div class="cl-asistente-cuerpo">
-<p class="cl-asistente-kicker">Asistente Laboral Pyme · Piloto gratuito hasta el 31 de diciembre</p>
-<p class="cl-asistente-titulo" id="cl-asistente-t">Prepara las liquidaciones del mes antes de declarar</p>
-<p>En el asistente guardas los datos de tus trabajadores una sola vez, calculas las liquidaciones del mes con topes vigentes y revisas el impuesto único retenido para el F29.</p>
+<!-- cl-suite:inicio (lo genera tools/promo_contadores.js: no editar a mano) -->
+<aside class="cl-suite no-print" aria-labelledby="cl-suite-t">
+<div class="cl-suite-cuerpo">
+<p class="cl-suite-kicker">Suite Contadores · Acceso anticipado 90 días gratis</p>
+<p class="cl-suite-titulo" id="cl-suite-t">Genera el TXT Previred, el CSV LRE y el borrador F29 por cliente</p>
+<p>Calcula la nómina del período y descarga el archivo plano de 105 campos y el Libro LRE de 147 columnas listos para revisar y cargar en Previred y Mi DT, sin entregar claves.</p>
 </div>
-<div class="cl-asistente-acciones">
-<a class="cl-asistente-btn" href="app" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="como-generar-archivo-previred-lre-f29-chile-bloque">Entrar al piloto</a>
-<a class="cl-asistente-link" href="app/ejemplo" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="como-generar-archivo-previred-lre-f29-chile-ejemplo">Ver un ejemplo, sin cuenta</a>
+<div class="cl-suite-acciones">
+<a class="cl-suite-btn" href="suite-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="como-generar-archivo-previred-lre-f29-chile-contadores-bloque">Ver Suite Contadores</a>
+<a class="cl-suite-link" href="demo-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="como-generar-archivo-previred-lre-f29-chile-contadores-demo">Probar demo con ejemplo</a>
 </div>
 </aside>
-<!-- cl-asistente:fin -->
+<!-- cl-suite:fin -->
 <section aria-labelledby="fuentes-titulo" class="mt-10 pt-6 border-t border-slate-200 no-print">
 <h2 id="fuentes-titulo" class="text-base font-bold text-slate-900 mb-3">Fuentes y referencias normativas</h2>
 <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-5">
@@ -879,7 +878,7 @@ Si llevas la gestión interna de una sola empresa, también puedes conocer el <a
 <section aria-labelledby="relacionados-titulo" class="mt-10 pt-6 border-t border-slate-200 no-print">
 <h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
 <ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
-<li><a href="demo-contadores" class="font-semibold text-[#00382E] underline">Suite para Estudios Contables (Demo en vivo)</a></li>
+<li><a href="suite-contadores" class="font-semibold text-[#00382E] underline">Suite Contadores (Planes y acceso anticipado)</a></li>
 <li><a href="impuesto-unico-segunda-categoria" class="font-semibold text-[#00382E] underline">Tabla Impuesto Único 2026</a></li>
 <li><a href="calculadora-costo-empresa-chile" class="font-semibold text-[#00382E] underline">Calculadora de Costo Empresa (Ley 21.735)</a></li>
 <li><a href="para-empleadores" class="font-semibold text-[#00382E] underline">Portal Empleadores y Kits Pymes</a></li>
@@ -958,9 +957,8 @@ Si llevas la gestión interna de una sola empresa, también puedes conocer el <a
 <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
 <ul class="space-y-2 text-xs">
 <li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="para-empleadores">Portal Empleadores</a></li>
-<li><a href="para-empleadores#estudios-contables" class="text-white/80 hover:text-[#FFB703] transition-colors">Para Contadores</a></li>
+<li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
 <li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Guía Previred, LRE y F29</a></li>
-<li><a href="demo-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
 <li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="kit-cumplimiento-ley-datos-personales-chile">Kit Ley 21.719 Datos</a></li>
 <li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="kit-cumplimiento-laboral-pymes">Kit Blindaje Laboral</a></li>
 <li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="generador-finiquito-chile">Generador Finiquito</a></li>

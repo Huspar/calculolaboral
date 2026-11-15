@@ -31,7 +31,7 @@
       <span class="material-icons" aria-hidden="true">close</span>
     </button>
 
-    <!-- Logo Oficial Blanco y Ámbar -->
+    <!-- Logo CálculoLaboral Blanco y Ámbar -->
     <a class="app-logo" href="/demo-contadores" aria-label="Cálculo Laboral Suite Contable">
       <span class="app-logo-isotipo">
         <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -186,26 +186,26 @@
     <!-- Contenido de Pantallas (.app-content) -->
     <main class="app-content" id="app-content">
 
-      <!-- Encabezado de Valor Comercial Suite Contadores -->
-      <section class="suite-header-venta" id="suite-header-venta" aria-label="Información comercial del acceso anticipado">
+      <!-- Encabezado discreto Modo Demo Suite Contadores -->
+      <section class="suite-header-venta" id="suite-header-venta" aria-label="Información de modo demo y acceso anticipado">
         <div class="suite-header-venta-cuerpo">
           <div class="suite-header-venta-textos">
-            <div class="suite-header-badge">Acceso anticipado para estudios contables</div>
-            <h1 class="suite-header-titulo">Suite para Estudios Contables</h1>
-            <p class="suite-header-sub">Remuneraciones y finiquitos en lote, PDF por trabajador, Excel, Previred (105 campos), LRE y F29 desde el RCV del SII.</p>
+            <div class="suite-header-badge">Modo demo · Datos de ejemplo</div>
+            <h1 class="suite-header-titulo">Suite Contadores: demo interactiva</h1>
+            <p class="suite-header-sub">Lo que edites o guardes queda solo en este navegador. Trabaja sin entregar claves del SII, Previred ni bancos.</p>
             <p class="suite-header-aviso">
               <span class="material-icons" aria-hidden="true">info</span>
-              <span>Estás viendo datos de ejemplo. Para usar la suite con las empresas de tus clientes, postula al acceso anticipado.</span>
+              <span>Acceso anticipado abierto: 90 días gratis (cupo inicial 20 estudios), sin tarjeta ni cobro automático. <a href="/suite-contadores" style="color:#00382E;font-weight:700;text-decoration:underline;">Ver planes anuales y qué incluye</a></span>
             </p>
           </div>
           <div class="suite-header-venta-acciones">
             <button type="button" class="btn btn-primario" id="btn-abrir-postulacion">
               <span class="material-icons" aria-hidden="true">badge</span>
-              <span>Postular al acceso anticipado</span>
+              <span>Postular al acceso anticipado (90 días gratis)</span>
             </button>
             <button type="button" class="btn-texto" id="btn-toggle-incluye" aria-expanded="false" aria-controls="suite-incluye-panel">
               <span class="material-icons" aria-hidden="true">expand_more</span>
-              <span>Ver qué incluye</span>
+              <span>Ver qué incluye hoy</span>
             </button>
           </div>
         </div>
@@ -214,19 +214,19 @@
           <div class="suite-incluye-grid">
             <div class="suite-incluye-card">
               <strong>1. Remuneraciones en lote</strong>
-              <p>Cálculo simultáneo de sueldos y finiquitos con cálculo automático de feriado proporcional e indemnizaciones.</p>
+              <p>Cálculo simultáneo de sueldos y finiquitos por cliente con UF, UTM, gratificación y topes vigentes.</p>
             </div>
             <div class="suite-incluye-card">
-              <strong>2. Archivos oficiales</strong>
-              <p>Generación de archivo de nómina Previred en formato 105 campos y archivo CSV de LRE para subir a Mi DT.</p>
+              <strong>2. Archivos Previred y LRE</strong>
+              <p>Generación de archivo de nómina Previred (105 campos) y borrador CSV de LRE (147 columnas) para revisar y subir.</p>
             </div>
             <div class="suite-incluye-card">
-              <strong>3. Impuestos y F29</strong>
-              <p>Cálculo del F29 cruzando compras y ventas del RCV del SII con retenciones de sueldos (cód. 48) y honorarios (cód. 151).</p>
+              <strong>3. Borrador de F29 desde RCV</strong>
+              <p>Lectura de CSV de Compras y Ventas del SII con cruce de impuesto único (cód. 48) y retención de honorarios (cód. 151).</p>
             </div>
             <div class="suite-incluye-card">
-              <strong>4. Balance y RLI</strong>
-              <p>Balance tributario de 8 columnas, Libro Diario/Mayor y base para RLI ProPyme (Art. 14 D3 y D8) con exportación a Excel.</p>
+              <strong>4. Balance 8 columnas y RLI</strong>
+              <p>Balance tributario de 8 columnas, Libro Diario/Mayor y hoja base RLI ProPyme (Art. 14 D3 y D8) exportable a Excel.</p>
             </div>
           </div>
         </div>
@@ -324,7 +324,7 @@
                 <div class="lq-field"><label for="liq-ccaf">Caja de compensación</label><select id="liq-ccaf"><option value="">Sin CCAF</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
                 <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.123.456-7" autocomplete="off"></div>
               </div>
-              <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:12px">UF y UTM se calculan automáticamente según el período oficial.</p>
+              <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:12px">UF y UTM se aplican según los parámetros vigentes del período.</p>
               <div class="fin-dropzone" id="drop-liq" role="button" tabindex="0" aria-label="Subir nómina del mes">
                 <span class="material-icons" aria-hidden="true">upload_file</span>
                 <strong>Arrastra la nómina mensual o haz clic para buscarla</strong>
@@ -694,7 +694,7 @@
           <div class="resumen-movil-card">
             <div class="resumen-movil-head">
               <span class="mono resumen-movil-tag">Balance 8 Columnas</span>
-              <span class="sello sello-activo" id="bal-m-cuadratura">Cuadrado al peso</span>
+              <span class="sello sello-activo" id="bal-m-cuadratura">Débitos = Créditos</span>
             </div>
             <div class="resumen-movil-grid">
               <div class="resumen-movil-kpi">
@@ -735,10 +735,10 @@
         <div id="sub-balance8">
           <div class="demo-vacio" id="bal-vacio">
             <p class="demo-vacio-t">Balance sin movimientos registrados</p>
-            <p class="texto-ayuda">Carga el RCV en Formulario 29 o la nómina en Remuneraciones para generar el Balance de 8 Columnas cuadrado al peso.</p>
+            <p class="texto-ayuda">Carga el RCV en Formulario 29 o la nómina en Remuneraciones para generar el Balance de 8 Columnas con débitos iguales a créditos.</p>
           </div>
           <div class="panel" id="bal-tabla-panel" hidden>
-            <div class="panel-head"><h2>Balance Tributario Clasificado de 8 Columnas</h2><span class="texto-ayuda">Cuadratura matemática SII</span></div>
+            <div class="panel-head"><h2>Balance Tributario Clasificado de 8 Columnas</h2><span class="texto-ayuda">Borrador referencial (Débitos = Créditos)</span></div>
             <div class="panel-cuerpo">
               <div class="tabla-contable-wrap">
                 <table class="tabla-contable balance-ocho">
@@ -880,7 +880,7 @@
     </button>
   </div>
   <form id="form-postulacion-estudio" class="opinion-form" novalidate>
-    <p class="texto-ayuda">Habilita el acceso para tu equipo y clientes. Te contactaremos para coordinar la puesta en marcha de tu estudio.</p>
+    <p class="texto-ayuda">Postula a los 90 días gratis de acceso anticipado (cupo inicial de 20 estudios), sin tarjeta ni cobro automático. Te avisamos 15 días antes de cumplir los 90 días.</p>
     <div class="lq-field">
       <label for="post-email">Correo electrónico del estudio o contador titular</label>
       <input type="email" id="post-email" maxlength="120" placeholder="contacto@estudiocontable.cl" required>
@@ -938,7 +938,7 @@
 <script src="/js/contadores_contabilidad.js?v=1.1.0"></script>
 <script src="/js/demo_suite.js?v=1.3.0"></script>
 <script>
-// Manejo del menú móvil y selector de mes para coincidir 100% con /app
+// Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {
     var panel = document.getElementById('pm-panel');
     var menuBtn = document.getElementById('app-menu-btn');
@@ -1027,6 +1027,34 @@
     if (btnCerrarPost) btnCerrarPost.addEventListener('click', cerrarModalPost);
     if (btnCancelarPost) btnCancelarPost.addEventListener('click', cerrarModalPost);
     if (btnPostListo) btnPostListo.addEventListener('click', cerrarModalPost);
+
+    // Mostrar modal una sola vez por sesion al guardar 2+ clientes o descargar el primer lote
+    function intentarAbrirTrasValor(motivo) {
+        try {
+            if (sessionStorage.getItem('cl_suite_modal_visto') === '1') return;
+            sessionStorage.setItem('cl_suite_modal_visto', '1');
+        } catch (e) {}
+        if (typeof gtag === 'function') gtag('event', 'suite_demo_cliente2', { motivo: motivo });
+        abrirModalPost();
+    }
+    var btnGuardarCli = document.getElementById('btn-guardar-cliente');
+    var selClientesGuardados = document.getElementById('liq-clientes-guardados');
+    if (btnGuardarCli && selClientesGuardados) {
+        btnGuardarCli.addEventListener('click', function () {
+            setTimeout(function () {
+                if (selClientesGuardados.options.length >= 3) {
+                    intentarAbrirTrasValor('segundo_cliente');
+                }
+            }, 80);
+        });
+    }
+    ['btn-previred-liq', 'btn-lre-liq', 'btn-print-liq', 'btn-print-fin'].forEach(function (idBtn) {
+        var b = document.getElementById(idBtn);
+        if (!b) return;
+        b.addEventListener('click', function () {
+            setTimeout(function () { intentarAbrirTrasValor(idBtn); }, 700);
+        });
+    });
 
     if (formPost) {
         formPost.addEventListener('submit', function (e) {
