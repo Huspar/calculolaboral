@@ -455,8 +455,31 @@
 
     // ---------- modo de ejemplo ----------
     var SCRIPTS_EJEMPLO = ['/js/pyme_demo_servidor.js?v=1.0.7', '/js/pyme_demo.js?v=1.0.7'];
+    var KEY_PERFIL_DEMO = 'cl_pyme_demo_perfil';
+    var perfilDemo = 'dueno';
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
+    function recordarPerfilDemo(p) { try { if (p) window.sessionStorage.setItem(KEY_PERFIL_DEMO, p); else window.sessionStorage.removeItem(KEY_PERFIL_DEMO); } catch (e) { /* sin almacenamiento */ } }
+    function perfilDemoRecordado() { try { return window.sessionStorage.getItem(KEY_PERFIL_DEMO) === 'contador' ? 'contador' : 'dueno'; } catch (e) { return 'dueno'; } }
+    function actualizarBarraPerfilDemo() {
+        var bDueno = $('pm-ver-dueno');
+        var bCont = $('pm-ver-contador');
+        var txt = $('pm-demo-empresa-txt');
+        var esCont = perfilDemo === 'contador';
+        if (bDueno) bDueno.setAttribute('aria-pressed', esCont ? 'false' : 'true');
+        if (bCont) bCont.setAttribute('aria-pressed', esCont ? 'true' : 'false');
+        if (txt) {
+            txt.innerHTML = '<strong>Panadería Los Aromos SpA</strong> · ' +
+                (esCont ? 'Vista Contador (ProPyme 14 D3 · F29 y cierre)' : 'Vista Dueño Pyme (caja, cobros y pagos)');
+        }
+        if ($('pm-panel')) $('pm-panel').classList.toggle('demo-vista-contador', esCont);
+    }
+    function cambiarPerfilDemo(nuevo) {
+        perfilDemo = nuevo === 'contador' ? 'contador' : 'dueno';
+        recordarPerfilDemo(perfilDemo);
+        actualizarBarraPerfilDemo();
+        if (finanzasUI) finanzasUI.redibujarVistaActiva();
+    }
     function cargarScript(src) {
         return new Promise(function (resolver, rechazar) {
             var s = document.createElement('script');
@@ -467,8 +490,14 @@
         });
     }
     function mesAnteriorDe(p) { var a = p.split('-').map(Number); return a[1] === 1 ? (a[0] - 1) + '-12' : a[0] + '-' + dos(a[1] - 1); }
-    function entrarEjemplo() {
+    function entrarEjemplo(perfilOpcional, rutaDestino) {
         mostrar('cargando');
+        if (perfilOpcional === 'contador' || perfilOpcional === 'dueno') {
+            perfilDemo = perfilOpcional;
+        } else {
+            perfilDemo = perfilDemoRecordado();
+        }
+        recordarPerfilDemo(perfilDemo);
         var periodo = periodoPorDefecto();
         var listos = window.CLPymeDemo && window.CLPymeDemoServidor ? Promise.resolve() : SCRIPTS_EJEMPLO.reduce(function (p, src) { return p.then(function () { return cargarScript(src); }); }, Promise.resolve());
         return listos.then(function () {
@@ -484,6 +513,9 @@
                 try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ }
             }
             return cargar();
+        }).then(function () {
+            actualizarBarraPerfilDemo();
+            if (rutaDestino) navegar(rutaDestino, { reemplazar: true });
         }).catch(function () {
             ejemplo = null;
             recordarEjemplo(false);
@@ -512,14 +544,20 @@
     // Al salir del ejemplo se vuelve a la cuenta (si hay sesión) o a la entrada
     function salirEjemplo() {
         ejemplo = null;
+        perfilDemo = 'dueno';
         recordarEjemplo(false);
+        recordarPerfilDemo('');
         reiniciar();
         $('pm-ejemplo-franja').hidden = true;
         try { window.history.replaceState({}, '', '/app'); } catch (e) { /* sigue igual */ }
         mostrar('cargando');
         arrancar();
     }
-    $('pm-ejemplo').addEventListener('click', entrarEjemplo);
+    if ($('pm-ejemplo')) $('pm-ejemplo').addEventListener('click', function () { entrarEjemplo('dueno', 'flujo-caja'); });
+    if ($('pm-demo-dueno')) $('pm-demo-dueno').addEventListener('click', function () { entrarEjemplo('dueno', 'flujo-caja'); });
+    if ($('pm-demo-contador')) $('pm-demo-contador').addEventListener('click', function () { entrarEjemplo('contador', 'mi-contador'); });
+    if ($('pm-ver-dueno')) $('pm-ver-dueno').addEventListener('click', function () { cambiarPerfilDemo('dueno'); });
+    if ($('pm-ver-contador')) $('pm-ver-contador').addEventListener('click', function () { cambiarPerfilDemo('contador'); });
     $('pm-ejemplo-salir').addEventListener('click', salirEjemplo);
     $('pm-ejemplo-entrar').addEventListener('click', salirEjemplo);
 
@@ -626,6 +664,7 @@
         $('pm-ejemplo-franja').hidden = !estado.ejemplo;
         $('pm-opinion-abrir').hidden = !!estado.ejemplo;
         if (estado.ejemplo) {
+            actualizarBarraPerfilDemo();
             caja.classList.add('ejemplo');
             txt.textContent = 'Modo de ejemplo';
         } else if (lim.paseVence && Date.parse(lim.paseVence) > Date.now()) {
@@ -4613,6 +4652,7 @@ function dibujarEquipo() {
             getPeriodo: function () { return periodoSel || periodoPorDefecto(); },
             getVistaActual: function () { return vistaActual; },
             esEjemplo: function () { return !!ejemplo; },
+            getPerfilDemo: function () { return perfilDemo; },
             hoyIso: hoyIso,
             mesAnteriorDe: mesAnteriorDe,
             nombrePeriodo: nombrePeriodo,
@@ -4641,6 +4681,13 @@ function dibujarEquipo() {
         });
     }
     function arrancar() {
+        var qs = new URLSearchParams(window.location.search || '');
+        var demoParam = qs.get('demo');
+        if (demoParam) {
+            var pDemo = (demoParam === 'contador' || qs.get('perfil') === 'contador') ? 'contador' : 'dueno';
+            entrarEjemplo(pDemo, pDemo === 'contador' ? 'mi-contador' : 'flujo-caja');
+            return;
+        }
         if (rutaActual() === 'ejemplo' || ejemploRecordado()) { entrarEjemplo(); return; }
         api('sesion').then(function (r) {
             if (r.estado === 0 || r.estado >= 500) { mostrar('fallo'); return; }

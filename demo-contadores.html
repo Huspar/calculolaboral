@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.4.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.4.1">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -202,26 +202,21 @@
     <!-- Contenido de Pantallas (.app-content) -->
     <main class="app-content" id="app-content">
 
-      <!-- Encabezado discreto Modo Demo Suite Contadores -->
-      <section class="suite-header-venta" id="suite-header-venta" aria-label="Información de modo demo y acceso anticipado">
-        <div class="suite-header-venta-cuerpo">
-          <div class="suite-header-venta-textos">
-            <div class="suite-header-badge">Modo demo · Datos de ejemplo</div>
-            <h1 class="suite-header-titulo">Suite Contadores: demo interactiva</h1>
-            <p class="suite-header-sub">Lo que edites o guardes queda solo en este navegador. Trabaja sin entregar claves del SII, Previred ni bancos.</p>
-            <p class="suite-header-aviso">
-              <span class="material-icons" aria-hidden="true">info</span>
-              <span>Acceso anticipado abierto: 90 días gratis (cupo inicial 20 estudios), sin tarjeta ni cobro automático. <a href="/suite-contadores" style="color:#00382E;font-weight:700;text-decoration:underline;">Ver planes anuales y qué incluye</a></span>
-            </p>
+      <!-- Barra compacta Modo Demo Suite Contadores -->
+      <section class="suite-bar-compacta" id="suite-header-venta" aria-label="Información de modo demo y acceso anticipado">
+        <div class="suite-bar-fila">
+          <div class="suite-bar-izq">
+            <span class="suite-bar-badge">Modo demo</span>
+            <p class="suite-bar-txt">Datos locales sin claves SII · Acceso anticipado 90 días gratis (20 estudios). <a href="/suite-contadores" class="suite-bar-link">Ver planes</a></p>
           </div>
-          <div class="suite-header-venta-acciones">
-            <button type="button" class="btn btn-primario" id="btn-abrir-postulacion">
-              <span class="material-icons" aria-hidden="true">badge</span>
-              <span>Postular al acceso anticipado (90 días gratis)</span>
-            </button>
-            <button type="button" class="btn-texto" id="btn-toggle-incluye" aria-expanded="false" aria-controls="suite-incluye-panel">
+          <div class="suite-bar-der">
+            <button type="button" class="btn-texto suite-bar-toggle" id="btn-toggle-incluye" aria-expanded="false" aria-controls="suite-incluye-panel">
               <span class="material-icons" aria-hidden="true">expand_more</span>
-              <span>Ver qué incluye hoy</span>
+              <span>Qué incluye hoy</span>
+            </button>
+            <button type="button" class="btn btn-primario suite-bar-cta" id="btn-abrir-postulacion">
+              <span class="material-icons" aria-hidden="true">badge</span>
+              <span>Postular 90 días gratis</span>
             </button>
           </div>
         </div>
@@ -406,7 +401,7 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Formulario 29 Tributario</h1>
-            <p class="v-sub">Hoja guía espejo del SII con RCV de compras y ventas, retenciones de honorarios, sueldos y PPM.</p>
+            <p class="v-sub">Cuánto IVA y retenciones paga la empresa este mes: sube el RCV del SII y te armamos la hoja guía para el Formulario 29.</p>
           </div>
           <div class="v-acciones">
             <button class="btn btn-primario" type="button" id="btn-rcv-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo SII completo</button>
@@ -544,7 +539,7 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Libro Diario y Libro Mayor</h1>
-            <p class="v-sub">Asientos automáticos centralizados desde RCV y nómina, ajustes manuales y balance de comprobación.</p>
+            <p class="v-sub">Registro ordenado de cada movimiento contable del mes, listo para cuadrar sin planillas paralelas ni fórmulas manuales.</p>
           </div>
           <div class="v-acciones">
             <button class="btn btn-primario" type="button" id="btn-libros-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Libro Diario</button>
@@ -691,7 +686,7 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Balance de 8 Columnas y RLI</h1>
-            <p class="v-sub">Balance tributario clasificado y hoja de cálculo de la Renta Líquida Imponible ProPyme.</p>
+            <p class="v-sub">Fotografía tributaria del año y cálculo de cuánto paga de impuesto a la renta la empresa bajo ProPyme 14 D3 o 14 D8.</p>
           </div>
           <div class="v-acciones">
             <button class="btn btn-primario" type="button" id="btn-balance-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Balance + RLI</button>
@@ -810,7 +805,7 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Estado de Resultados y Flujo de Caja</h1>
-            <p class="v-sub">Rentabilidad devengada del ejercicio y proyección de liquidez con vencimientos día 13 y 20.</p>
+            <p class="v-sub">Cuánto ganó o perdió realmente la empresa este mes, más la plata disponible en caja para sueldos, Previred y F29.</p>
           </div>
           <div class="v-acciones">
             <button class="btn btn-primario" type="button" id="btn-pnl-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir informe ejecutivo (PDF)</button>

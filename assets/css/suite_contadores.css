@@ -985,77 +985,77 @@
     }
 }
 
-/* ---------- Encabezado de Venta Suite Contadores ---------- */
-.suite-header-venta {
+/* ---------- Barra compacta Modo Demo Suite Contadores ---------- */
+.suite-bar-compacta {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    padding: 20px 24px;
-    margin-bottom: 20px;
+    padding: 8px 14px;
+    margin-bottom: 16px;
 }
-.suite-header-venta-cuerpo {
+.suite-bar-fila {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 24px;
+    gap: 12px 18px;
+    flex-wrap: wrap;
 }
-.suite-header-badge {
-    display: inline-block;
+.suite-bar-izq {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 320px;
+    min-width: 0;
+}
+.suite-bar-badge {
+    display: inline-flex;
+    align-items: center;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .05em;
+    letter-spacing: .04em;
     color: var(--forest-700);
     background: var(--forest-50);
     border: 1px solid var(--forest-100);
     padding: 3px 8px;
-    border-radius: var(--radius-sm);
-    margin-bottom: 8px;
-}
-.suite-header-titulo {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--forest);
-    margin: 0 0 4px;
-    letter-spacing: -0.01em;
-}
-.suite-header-sub {
-    font-size: 13.5px;
-    color: var(--ink-2);
-    margin: 0 0 10px;
-    max-width: 680px;
-    line-height: 1.4;
-}
-.suite-header-aviso {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
-    color: var(--amber-ink);
-    background: var(--amber-bg);
-    border: 1px solid var(--amber-line);
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    margin: 0;
-}
-.suite-header-aviso .material-icons {
-    font-size: 16px;
-    color: var(--amber-icon, var(--amber));
-}
-.suite-header-venta-acciones {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
+    border-radius: 999px;
+    white-space: nowrap;
     flex-shrink: 0;
 }
-.suite-header-venta-acciones .btn,
-.suite-header-venta-acciones .btn-texto {
-    min-height: 44px;
+.suite-bar-txt {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin: 0;
+    line-height: 1.35;
+}
+.suite-bar-link {
+    color: var(--forest);
+    font-weight: 600;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+.suite-bar-der {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.suite-bar-toggle {
+    min-height: 36px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+}
+.suite-bar-cta {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 13px;
 }
 .suite-incluye-panel {
-    margin-top: 16px;
-    padding-top: 16px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--line);
 }
 .suite-incluye-grid {
@@ -1082,23 +1082,34 @@
     line-height: 1.35;
 }
 @media screen and (max-width: 768px) {
-    .suite-header-venta {
-        padding: 16px;
-        margin-bottom: 16px;
+    .suite-bar-compacta {
+        padding: 10px 12px;
+        margin-bottom: 14px;
     }
-    .suite-header-venta-cuerpo {
+    .suite-bar-fila {
         flex-direction: column;
-        gap: 16px;
-    }
-    .suite-header-venta-acciones {
-        width: 100%;
         align-items: stretch;
+        gap: 10px;
     }
-    .suite-header-venta-acciones .btn,
-    .suite-header-venta-acciones .btn-texto {
+    .suite-bar-izq {
+        flex: 0 0 auto;
+        align-items: flex-start;
+    }
+    .suite-bar-der {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    .suite-bar-toggle,
+    .suite-bar-cta {
         width: 100%;
         justify-content: center;
         min-height: 44px;
+    }
+}
+@media screen and (max-width: 420px) {
+    .suite-bar-der {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 

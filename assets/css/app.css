@@ -1270,3 +1270,698 @@ a.cal-ev:hover { filter: brightness(0.97); }
     .liq-feedback-detalle { flex-direction: column; }
     .liq-feedback-detalle .btn { width: 100%; min-height: 44px; }
 }
+
+/* ---------------- Entrada 1-clic Split + Barra Demo + Revisar hoy + Neto/IVA + Grafico 6m ---------------- */
+.entrada-split {
+    width: min(940px, 100%);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+.entrada-split > * { min-width: 0; }
+.entrada-caja-login {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+}
+.entrada-caja-demo {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: grid;
+    gap: 12px;
+}
+.entrada-demo-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--forest-700);
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+.entrada-demo-titulo {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--forest);
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+.entrada-demo-sub {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    margin: 0;
+    line-height: 1.45;
+}
+.entrada-perfil-lista {
+    display: grid;
+    gap: 10px;
+    margin-top: 2px;
+}
+.entrada-perfil-card {
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    background: var(--surface);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    min-height: 44px;
+    transition: border-color 150ms var(--ease), background-color 150ms var(--ease);
+}
+.entrada-perfil-card:hover {
+    border-color: var(--forest);
+    background: var(--hover);
+}
+.entrada-perfil-card:focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 2px;
+}
+.entrada-perfil-ico {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: var(--forest-50);
+    color: var(--forest);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.entrada-perfil-ico .material-icons { font-size: 20px; }
+.entrada-perfil-cuerpo {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+}
+.entrada-perfil-cuerpo strong {
+    font-size: 14.5px;
+    font-weight: 650;
+    color: var(--ink);
+}
+.entrada-perfil-cuerpo span {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+.entrada-perfil-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 12.5px;
+    font-weight: 650;
+    color: var(--forest);
+}
+.entrada-perfil-cta .material-icons { font-size: 16px; }
+.entrada-demo-pie {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 2px 0 0;
+    line-height: 1.4;
+}
+
+/* Barra superior slim del modo demo (/app) */
+.demo-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    flex-wrap: wrap;
+    padding: 8px 14px;
+    margin: 0 0 16px;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    border-radius: var(--radius-sm);
+}
+.demo-top-izq {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1 1 260px;
+}
+.demo-top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--amber-line);
+    color: var(--amber-ink);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+.demo-top-badge .material-icons { font-size: 14px; color: var(--amber-icon); }
+.demo-top-txt {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin: 0;
+    line-height: 1.35;
+}
+.demo-top-txt strong { color: var(--amber-ink); }
+.demo-top-der {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.demo-perfil-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.demo-perfil-lbl {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--amber-ink);
+    white-space: nowrap;
+}
+.demo-perfil-switch {
+    display: inline-flex;
+    padding: 2px;
+    background: var(--surface);
+    border: 1px solid var(--amber-line);
+    border-radius: var(--radius-sm);
+    gap: 2px;
+}
+.demo-perfil-btn {
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 5px 10px;
+    min-height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 140ms var(--ease), color 140ms var(--ease);
+}
+.demo-perfil-btn:hover { background: var(--forest-50); color: var(--forest); }
+.demo-perfil-btn[aria-pressed="true"] {
+    background: var(--forest);
+    color: #FFFFFF;
+}
+.demo-perfil-btn:focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 1px;
+}
+.demo-top-acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Bloque accionable "Para revisar hoy" */
+.revisar-hoy-panel {
+    margin-bottom: 18px;
+}
+.revisar-hoy-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 500;
+}
+.revisar-hoy-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 14px 16px;
+}
+.revisar-hoy-vacio {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--forest-700);
+    font-size: 13.5px;
+    font-weight: 500;
+}
+.revisar-hoy-vacio .material-icons { font-size: 20px; color: var(--forest-600); }
+.revisar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--forest-600);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: inherit;
+    min-height: 44px;
+    transition: background-color 140ms var(--ease), border-color 140ms var(--ease);
+}
+.revisar-item:hover {
+    background: var(--hover);
+    border-color: var(--line-3);
+}
+.revisar-item.riesgo {
+    border-left-color: var(--risk);
+    background: var(--risk-bg);
+    border-color: var(--risk-line);
+}
+.revisar-item.aviso {
+    border-left-color: var(--amber-icon);
+    background: var(--amber-bg);
+    border-color: var(--amber-line);
+}
+.revisar-item.ok {
+    border-left-color: var(--forest-600);
+    background: var(--forest-50);
+    border-color: var(--forest-100);
+}
+.revisar-item-info {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+}
+.revisar-item-info strong {
+    font-size: 13.5px;
+    font-weight: 650;
+    color: var(--ink);
+}
+.revisar-item-info span {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.35;
+}
+.revisar-item-der {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex-shrink: 0;
+}
+.revisar-item-monto {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+}
+.revisar-item-cta {
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--forest);
+    white-space: nowrap;
+}
+.revisar-item.riesgo .revisar-item-cta { color: var(--risk-ink); }
+.revisar-item.aviso .revisar-item-cta { color: var(--amber-ink); }
+
+/* Grafico SVG de 6 meses en Flujo de Caja */
+.fc-grafico-panel {
+    margin-bottom: 18px;
+}
+.fc-grafico-legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var(--ink-2);
+}
+.fc-leg-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.fc-leg-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+}
+.fc-leg-dot.entradas { background: var(--forest); }
+.fc-leg-dot.salidas { background: #D99B00; }
+.fc-grafico-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+.fc-grafico-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    min-width: 300px;
+}
+.fc-grafico-resumen {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* Widget bidireccional Neto / IVA 19% / Total */
+.fin-desglose-widget {
+    grid-column: 1 / -1;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: grid;
+    gap: 10px;
+}
+.fin-desglose-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    flex-wrap: wrap;
+}
+.fin-desglose-titulo {
+    font-size: 12.5px;
+    font-weight: 650;
+    color: var(--forest);
+}
+.fin-desglose-exento {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink-2);
+    cursor: pointer;
+    min-height: 28px;
+}
+.fin-desglose-exento input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+.fin-desglose-campos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 12px;
+}
+.fin-desglose-campos > * { min-width: 0; }
+.fin-desglose-campos .lq-field input[readonly] {
+    background: var(--surface);
+    color: var(--ink);
+}
+.fin-desglose-nota {
+    margin: 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+@media screen and (max-width: 900px) {
+    .entrada-split {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+        width: min(520px, 100%);
+    }
+    .entrada-caja-login,
+    .entrada-caja-demo {
+        padding: 20px 18px;
+    }
+}
+@media screen and (max-width: 768px) {
+    .demo-top-bar {
+        padding: 10px 12px;
+    }
+    .demo-top-der {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .demo-perfil-wrap {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .demo-perfil-btn {
+        min-height: 40px;
+        padding: 6px 12px;
+    }
+    .demo-top-acciones {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .demo-top-acciones .btn,
+    .demo-top-acciones .btn-texto {
+        min-height: 44px;
+    }
+    .revisar-hoy-grid {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px;
+    }
+    .fin-desglose-campos {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .fin-desglose-exento {
+        min-height: 44px;
+    }
+}
+
+/* ---------------- Fase 3: Conciliacion explicada, crear movimiento y sin cartola ---------------- */
+.conc-crear-panel {
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    display: grid;
+    gap: 10px;
+}
+.conc-crear-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.conc-crear-head strong {
+    font-size: 13px;
+    color: var(--forest);
+}
+.conc-crear-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.conc-crear-grid > * { min-width: 0; }
+.conc-crear-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.conc-crear-resumen {
+    font-size: 12px;
+    color: var(--muted);
+}
+.conc-libro-lista {
+    display: grid;
+}
+.conc-libro-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.conc-libro-item:last-child { border-bottom: 0; }
+.conc-libro-info {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+}
+.conc-libro-info strong {
+    font-size: 13.5px;
+    color: var(--ink);
+}
+.conc-libro-info span {
+    font-size: 12px;
+    color: var(--muted);
+}
+.conc-libro-der {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.conc-explicacion-panel {
+    margin-top: 18px;
+}
+.conc-diff-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.conc-diff-box {
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    display: grid;
+    gap: 4px;
+}
+.conc-diff-box.estado-ok {
+    background: var(--forest-50);
+    border-color: var(--forest-100);
+}
+.conc-diff-box.estado-aviso {
+    background: var(--amber-bg);
+    border-color: var(--amber-line);
+}
+.conc-diff-lbl {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+}
+.conc-diff-val {
+    font-family: var(--mono);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+}
+.conc-diff-meta {
+    font-size: 11.5px;
+    color: var(--ink-2);
+}
+.conc-diff-nota {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.45;
+}
+.conc-diff-nota strong { color: var(--forest); }
+@media screen and (max-width: 900px) {
+    .conc-diff-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media screen and (max-width: 640px) {
+    .conc-crear-grid,
+    .conc-diff-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .conc-libro-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .conc-libro-der {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .conc-crear-pie .btn {
+        width: 100%;
+        min-height: 44px;
+    }
+}
+
+/* ---------------- Fase 4: Proyectos / Centros de costo y Bandeja de correos ---------------- */
+.fc-proyectos-panel,
+.mc-correos-panel {
+    margin-top: 18px;
+}
+.proy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    padding: 14px 16px;
+}
+.proy-card {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: grid;
+    gap: 8px;
+}
+.proy-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.proy-card-head strong {
+    font-size: 13.5px;
+    color: var(--forest);
+}
+.proy-margen {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+}
+.proy-margen.ok { color: var(--forest-700); }
+.proy-margen.riesgo { color: var(--risk-ink); }
+.proy-cifras {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.proy-barra-bg {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--line);
+    overflow: hidden;
+}
+.proy-barra-fill {
+    height: 100%;
+    background: var(--forest-600);
+    border-radius: 999px;
+}
+.correos-lista {
+    display: grid;
+}
+.correo-item {
+    display: grid;
+    gap: 4px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.correo-item:last-child { border-bottom: 0; }
+.correo-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.correo-item-top strong {
+    font-size: 13.5px;
+    color: var(--ink);
+}
+.correo-meta {
+    font-size: 12px;
+    color: var(--muted);
+}
+.correo-extracto {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    margin: 0;
+    line-height: 1.4;
+}
+@media screen and (max-width: 900px) {
+    .proy-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media screen and (max-width: 640px) {
+    .proy-grid {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px;
+    }
+}

@@ -40,6 +40,13 @@
         '14A': 'Régimen General Semi Integrado (Art. 14 A)'
     };
 
+    var PROYECTOS_PYME = [
+        'General / Casa Matriz',
+        'Panadería Central',
+        'Despacho a Minimarkets',
+        'Eventos y Banquetería'
+    ];
+
     function esc(s) {
         return String(s == null ? '' : s)
             .replace(/&/g, '&amp;')
@@ -501,6 +508,90 @@
         });
     }
 
+    function explicarDiferenciaConciliacion(datos) {
+        datos = datos || {};
+        var movs = datos.movimientos || [];
+        var cxc = datos.cobranzas || [];
+        var cxp = datos.pagos || [];
+        var saldoCartola = datos.ultimoSaldoCartola !== null && datos.ultimoSaldoCartola !== undefined
+            ? entero(datos.ultimoSaldoCartola)
+            : entero(datos.saldoInicial);
+
+        var idsMovCxc = {};
+        var idsMovCxp = {};
+        movs.forEach(function (m) {
+            if (!m.conciliadoCon) return;
+            if (m.conciliadoCon.tipoDestino === 'cxc' && m.conciliadoCon.destinoId) idsMovCxc[m.conciliadoCon.destinoId] = true;
+            if (m.conciliadoCon.tipoDestino === 'cxp' && m.conciliadoCon.destinoId) idsMovCxp[m.conciliadoCon.destinoId] = true;
+        });
+
+        var sinConc = movs.filter(function (m) { return !m.conciliadoCon; });
+        var abonosSinConc = sinConc.filter(function (m) { return m.tipo === 'abono'; });
+        var cargosSinConc = sinConc.filter(function (m) { return m.tipo === 'cargo'; });
+        var totalAbonosSinConc = abonosSinConc.reduce(function (s, m) { return s + entero(m.monto); }, 0);
+        var totalCargosSinConc = cargosSinConc.reduce(function (s, m) { return s + entero(m.monto); }, 0);
+
+        var cobrosPagSinCartola = cxc.filter(function (c) { return !!c.pagada && !idsMovCxc[c.id]; });
+        var pagosPagSinCartola = cxp.filter(function (p) { return !!p.pagada && !idsMovCxp[p.id]; });
+        var totalCobrosSinCartola = cobrosPagSinCartola.reduce(function (s, c) { return s + entero(c.monto); }, 0);
+        var totalPagosSinCartola = pagosPagSinCartola.reduce(function (s, p) { return s + entero(p.monto); }, 0);
+
+        var cxcPendientes = cxc.filter(function (c) { return !c.pagada; });
+        var cxpPendientes = cxp.filter(function (p) { return !p.pagada; });
+
+        var ajusteNetoLibro = (totalCargosSinConc - totalAbonosSinConc) + (totalCobrosSinCartola - totalPagosSinCartola);
+        var saldoLibroExplicado = saldoCartola + ajusteNetoLibro;
+        var cuadrado = sinConc.length === 0 && cobrosPagSinCartola.length === 0 && pagosPagSinCartola.length === 0;
+
+        return {
+            saldoCartola: saldoCartola,
+            saldoLibroExplicado: saldoLibroExplicado,
+            diferenciaNeta: saldoLibroExplicado - saldoCartola,
+            abonosSinConciliar: { count: abonosSinConc.length, total: totalAbonosSinConc, items: abonosSinConc },
+            cargosSinConciliar: { count: cargosSinConc.length, total: totalCargosSinConc, items: cargosSinConc },
+            cobrosLibroSinCartola: { count: cobrosPagSinCartola.length, total: totalCobrosSinCartola, items: cobrosPagSinCartola },
+            pagosLibroSinCartola: { count: pagosPagSinCartola.length, total: totalPagosSinCartola, items: pagosPagSinCartola },
+            pendientesEnLibro: {
+                cobranzas: cxcPendientes,
+                pagos: cxpPendientes,
+                totalCount: cxcPendientes.length + cxpPendientes.length
+            },
+            cuadrado: cuadrado
+        };
+    }
+
+    function resumenPorProyecto(cobranzas, pagos) {
+        var mapa = {};
+        function asegurar(nombre) {
+            var key = String(nombre || '').trim() || 'General / Casa Matriz';
+            if (!mapa[key]) {
+                mapa[key] = { proyecto: key, ingresos: 0, porCobrar: 0, gastos: 0, porPagar: 0, margen: 0, docs: 0 };
+            }
+            return mapa[key];
+        }
+        (cobranzas || []).forEach(function (c) {
+            var p = asegurar(c.proyecto);
+            var m = entero(c.monto);
+            p.ingresos += m;
+            if (!c.pagada) p.porCobrar += m;
+            p.docs++;
+        });
+        (pagos || []).forEach(function (g) {
+            var p = asegurar(g.proyecto);
+            var m = entero(g.monto);
+            p.gastos += m;
+            if (!g.pagada) p.porPagar += m;
+            p.docs++;
+        });
+        var lista = Object.keys(mapa).map(function (k) {
+            var r = mapa[k];
+            r.margen = r.ingresos - r.gastos;
+            return r;
+        });
+        lista.sort(function (a, b) { return (b.ingresos + b.gastos) - (a.ingresos + a.gastos); });
+        return lista;
+    }
+
     function puntajeMonto(a, b) {
         var ma = Math.abs(entero(a)), mb = Math.abs(entero(b));
         if (!ma || !mb) return 0;
@@ -516,6 +607,32 @@
         var y = p[0] || 2026, m = (p[1] || 10) + 1;
         if (m > 12) { m = 1; y++; }
         return y + '-' + dos(m);
+    }
+
+    function mesAnterior(periodo) {
+        var p = String(periodo || '2026-10').split('-').map(Number);
+        var y = p[0] || 2026, m = (p[1] || 10) - 1;
+        if (m < 1) { m = 12; y--; }
+        return y + '-' + dos(m);
+    }
+
+    var MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    function nombreCortoMes(periodo) {
+        var p = String(periodo || '2026-10').split('-').map(Number);
+        var m = p[1] || 1;
+        return (MESES_CORTOS[m - 1] || String(m)) + ' ' + String(p[0] || 2026).slice(-2);
+    }
+
+    function pesosCompacto(n) {
+        var abs = Math.abs(Math.round(Number(n) || 0));
+        var signo = n < 0 ? '-' : '';
+        if (abs >= 1000000) {
+            return signo + '$' + (abs / 1000000).toFixed(1).replace('.', ',') + 'M';
+        }
+        if (abs >= 1000) {
+            return signo + '$' + Math.round(abs / 1000) + 'k';
+        }
+        return signo + '$' + abs;
     }
 
     function finDeMes(periodo) {
@@ -697,6 +814,55 @@
         };
 
         var porPeriodo = {};
+
+        // Meses historicos m-5 .. m-2 cerrados para dar contexto de 6 meses en flujo e historial
+        var plantillasHist = [
+            { ventas: [618800, 844900], compras: [583100, 297500], saldoIni: 2680000, saldoFin: 2940000, f29: 312400, ivaDeb: 698500, ivaCre: 412100, sueldos: 1780000, prev: 515000 },
+            { ventas: [761600, 928200], compras: [666400, 321300], saldoIni: 2940000, saldoFin: 3185000, f29: 354200, ivaDeb: 765200, ivaCre: 441800, sueldos: 1810000, prev: 522000 },
+            { ventas: [892500, 1047200], compras: [737800, 357000], saldoIni: 3185000, saldoFin: 3340000, f29: 389600, ivaDeb: 834100, ivaCre: 479300, sueldos: 1840000, prev: 534000 },
+            { ventas: [809200, 987700], compras: [714000, 345100], saldoIni: 3340000, saldoFin: 3420000, f29: 368900, ivaDeb: 801400, ivaCre: 462100, sueldos: 1860000, prev: 541000 }
+        ];
+        var cursorHist = periodoAnterior;
+        for (var hi = plantillasHist.length - 1; hi >= 0; hi--) {
+            cursorHist = mesAnterior(cursorHist);
+            var tpl = plantillasHist[hi];
+            var mesPost = mesSiguiente(cursorHist);
+            porPeriodo[cursorHist] = {
+                saldoInicialManual: tpl.saldoIni,
+                ultimoSaldoCartola: tpl.saldoFin,
+                fechaCartola: finDeMes(cursorHist),
+                cobranzas: [
+                    { id: 'cxc-h-' + cursorHist + '-1', rut: '76.112.340-8', razonSocial: 'Cafetería El Rincón del Sur Ltda.', folio: String(1040 + hi * 8), tipoDte: 33, fecha: cursorHist + '-07', vencimiento: cursorHist + '-22', monto: tpl.ventas[0], telefono: '+56991234567', pagada: true, fechaPago: cursorHist + '-21', origen: 'RCV SII' },
+                    { id: 'cxc-h-' + cursorHist + '-2', rut: '77.450.890-1', razonSocial: 'Hotel Frontera Temuco SpA', folio: String(1043 + hi * 8), tipoDte: 33, fecha: cursorHist + '-15', vencimiento: cursorHist + '-28', monto: tpl.ventas[1], telefono: '+56992345678', pagada: true, fechaPago: cursorHist + '-27', origen: 'RCV SII' }
+                ],
+                pagos: [
+                    { id: 'cxp-h-' + cursorHist + '-1', tipoDoc: 'cxp', rut: '96.540.110-K', razonSocial: 'Molinos Cunco S.A.', folio: String(44800 + hi * 75), tipoDte: 33, fecha: cursorHist + '-04', vencimiento: cursorHist + '-18', monto: tpl.compras[0], banco: 'Banco de Chile', tipoCuenta: 'corriente', numeroCuenta: '0018945002', correo: 'cobranzas@molinoscunco.cl', pagada: true, fechaPago: cursorHist + '-18', origen: 'RCV SII' },
+                    { id: 'cxp-h-' + cursorHist + '-2', tipoDoc: 'cxp', rut: '76.204.990-7', razonSocial: 'Lácteos y Mantequillas del Sur Ltda.', folio: String(9120 + hi * 42), tipoDte: 33, fecha: cursorHist + '-11', vencimiento: cursorHist + '-24', monto: tpl.compras[1], banco: 'Banco Santander', tipoCuenta: 'corriente', numeroCuenta: '0681239901', correo: 'pagos@lacteosdelsur.cl', pagada: true, fechaPago: cursorHist + '-24', origen: 'RCV SII' }
+                ],
+                movimientos: [
+                    { id: 'mov-h-' + cursorHist + '-1', fecha: cursorHist + '-18', glosa: 'TEF A MOLINOS CUNCO FACT ' + (44800 + hi * 75), tipo: 'cargo', monto: tpl.compras[0], saldo: tpl.saldoFin - tpl.ventas[1], conciliadoCon: { tipoDestino: 'cxp', destinoId: 'cxp-h-' + cursorHist + '-1', titulo: 'Molinos Cunco S.A.' } },
+                    { id: 'mov-h-' + cursorHist + '-2', fecha: cursorHist + '-27', glosa: 'ABONO HOTEL FRONTERA TEMUCO', tipo: 'abono', monto: tpl.ventas[1], saldo: tpl.saldoFin, conciliadoCon: { tipoDestino: 'cxc', destinoId: 'cxc-h-' + cursorHist + '-2', titulo: 'Hotel Frontera Temuco SpA' } }
+                ],
+                obligacionesConciliadas: { sueldos: true, previred: true, f29: true },
+                remuneracionesHistoricas: { sueldos: tpl.sueldos, previred: tpl.prev },
+                puenteLocal: {
+                    regimen: '14D3',
+                    cerradoTributario: true,
+                    fechaCierre: mesPost + '-18',
+                    estudio: estudioDemo,
+                    f29Resumen: {
+                        ivaDebito: tpl.ivaDeb,
+                        ivaCredito: tpl.ivaCre,
+                        iusc48: 0,
+                        retencion151: 24500,
+                        ppm: 5400,
+                        totalPagar91: tpl.f29
+                    },
+                    solicitudesReapertura: []
+                }
+            };
+        }
+
         porPeriodo[periodoAnterior] = {
             saldoInicialManual: 3420000,
             ultimoSaldoCartola: 4180000,
@@ -735,17 +901,36 @@
             ultimoSaldoCartola: 4685800,
             fechaCartola: hoyIso,
             cobranzas: [
-                { id: 'cxc-p-1', rut: '76.112.340-8', razonSocial: 'Cafetería El Rincón del Sur Ltda.', folio: '1102', tipoDte: 33, fecha: sumarDias(hoyIso, -34), vencimiento: sumarDias(hoyIso, -4), monto: 749700, telefono: '+56991234567', pagada: false, fechaPago: '', origen: 'RCV SII' },
-                { id: 'cxc-p-2', rut: '78.320.410-5', razonSocial: 'Minimarket Araucanía SpA', folio: '1108', tipoDte: 33, fecha: sumarDias(hoyIso, -12), vencimiento: sumarDias(hoyIso, 3), monto: 535500, telefono: '+56993456789', pagada: false, fechaPago: '', origen: 'RCV SII' },
-                { id: 'cxc-p-3', rut: '77.450.890-1', razonSocial: 'Hotel Frontera Temuco SpA', folio: '1115', tipoDte: 33, fecha: sumarDias(hoyIso, -5), vencimiento: sumarDias(hoyIso, 18), monto: 1190000, telefono: '+56992345678', pagada: false, fechaPago: '', origen: 'RCV SII' },
-                { id: 'cxc-p-4', rut: '76.890.230-2', razonSocial: 'Banquetería Cautín Ltda.', folio: '1099', tipoDte: 33, fecha: sumarDias(hoyIso, -18), vencimiento: sumarDias(hoyIso, -2), monto: 428400, telefono: '+56994567890', pagada: true, fechaPago: sumarDias(hoyIso, -3), origen: 'RCV SII' }
+                { id: 'cxc-p-1', rut: '76.112.340-8', razonSocial: 'Cafetería El Rincón del Sur Ltda.', folio: '1102', tipoDte: 33, fecha: sumarDias(hoyIso, -34), vencimiento: sumarDias(hoyIso, -4), monto: 749700, proyecto: 'Panadería Central', telefono: '+56991234567', pagada: false, fechaPago: '', origen: 'RCV SII' },
+                { id: 'cxc-p-2', rut: '78.320.410-5', razonSocial: 'Minimarket Araucanía SpA', folio: '1108', tipoDte: 33, fecha: sumarDias(hoyIso, -12), vencimiento: sumarDias(hoyIso, 3), monto: 535500, proyecto: 'Despacho a Minimarkets', telefono: '+56993456789', pagada: false, fechaPago: '', origen: 'RCV SII' },
+                { id: 'cxc-p-3', rut: '77.450.890-1', razonSocial: 'Hotel Frontera Temuco SpA', folio: '1115', tipoDte: 33, fecha: sumarDias(hoyIso, -5), vencimiento: sumarDias(hoyIso, 18), monto: 1190000, proyecto: 'Eventos y Banquetería', telefono: '+56992345678', pagada: false, fechaPago: '', origen: 'RCV SII' },
+                { id: 'cxc-p-4', rut: '76.890.230-2', razonSocial: 'Banquetería Cautín Ltda.', folio: '1099', tipoDte: 33, fecha: sumarDias(hoyIso, -18), vencimiento: sumarDias(hoyIso, -2), monto: 428400, proyecto: 'Eventos y Banquetería', telefono: '+56994567890', pagada: true, fechaPago: sumarDias(hoyIso, -3), origen: 'RCV SII' }
             ],
             pagos: [
-                { id: 'cxp-p-1', tipoDoc: 'cxp', rut: '96.540.110-K', razonSocial: 'Molinos Cunco S.A.', folio: '46088', tipoDte: 33, fecha: sumarDias(hoyIso, -20), vencimiento: sumarDias(hoyIso, 2), monto: 844900, banco: 'Banco de Chile', tipoCuenta: 'corriente', numeroCuenta: '0018945002', correo: 'cobranzas@molinoscunco.cl', pagada: false, fechaPago: '', origen: 'RCV SII' },
-                { id: 'cxp-p-2', tipoDoc: 'cxp', rut: '76.204.990-7', razonSocial: 'Lácteos y Mantequillas del Sur Ltda.', folio: '9314', tipoDte: 33, fecha: sumarDias(hoyIso, -25), vencimiento: sumarDias(hoyIso, -3), monto: 464100, banco: 'Banco Santander', tipoCuenta: 'corriente', numeroCuenta: '0681239901', correo: 'pagos@lacteosdelsur.cl', pagada: false, fechaPago: '', origen: 'RCV SII' },
-                { id: 'cxp-p-3', tipoDoc: 'cxp', rut: '88.272.600-2', razonSocial: 'Distribuidora Envases BioBío SpA', folio: '1820', tipoDte: 33, fecha: sumarDias(hoyIso, -6), vencimiento: sumarDias(hoyIso, 14), monto: 297500, banco: '', tipoCuenta: '', numeroCuenta: '', correo: '', pagada: false, fechaPago: '', origen: 'RCV SII' }
+                { id: 'cxp-p-1', tipoDoc: 'cxp', rut: '96.540.110-K', razonSocial: 'Molinos Cunco S.A.', folio: '46088', tipoDte: 33, fecha: sumarDias(hoyIso, -20), vencimiento: sumarDias(hoyIso, 2), monto: 844900, proyecto: 'Panadería Central', banco: 'Banco de Chile', tipoCuenta: 'corriente', numeroCuenta: '0018945002', correo: 'cobranzas@molinoscunco.cl', pagada: false, fechaPago: '', origen: 'RCV SII' },
+                { id: 'cxp-p-2', tipoDoc: 'cxp', rut: '76.204.990-7', razonSocial: 'Lácteos y Mantequillas del Sur Ltda.', folio: '9314', tipoDte: 33, fecha: sumarDias(hoyIso, -25), vencimiento: sumarDias(hoyIso, -3), monto: 464100, proyecto: 'Panadería Central', banco: 'Banco Santander', tipoCuenta: 'corriente', numeroCuenta: '0681239901', correo: 'pagos@lacteosdelsur.cl', pagada: false, fechaPago: '', origen: 'RCV SII' },
+                { id: 'cxp-p-3', tipoDoc: 'cxp', rut: '88.272.600-2', razonSocial: 'Distribuidora Envases BioBío SpA', folio: '1820', tipoDte: 33, fecha: sumarDias(hoyIso, -6), vencimiento: sumarDias(hoyIso, 14), monto: 297500, proyecto: 'Despacho a Minimarkets', banco: '', tipoCuenta: '', numeroCuenta: '', correo: '', pagada: false, fechaPago: '', origen: 'RCV SII' }
+            ],
+            correosSimulados: [
+                {
+                    id: 'mail-demo-1',
+                    fecha: sumarDias(hoyIso, -2),
+                    tipo: 'Cobranza',
+                    destinatario: 'Cafetería El Rincón del Sur Ltda.',
+                    asunto: 'Recordatorio formal de pago · Factura N° 1102 ($749.700)',
+                    extracto: 'Se adjuntó detalle de transferencia a BancoEstado cta. cte. 6250014892.'
+                },
+                {
+                    id: 'mail-demo-2',
+                    fecha: sumarDias(hoyIso, -1),
+                    tipo: 'Contabilidad',
+                    destinatario: 'Paula Soto Riquelme (Soto y Asociados)',
+                    asunto: 'Respaldo mensual ' + periodo + ' · RCV, cartola y sueldos listos para F29',
+                    extracto: 'Paquete colaborativo compartido para revisión previa al vencimiento día 20.'
+                }
             ],
             movimientos: [
+                { id: 'mov-p-0', fecha: sumarDias(hoyIso, -4), glosa: 'CARGO COMISION MANTENCION CTA CTE BANCO', tipo: 'cargo', monto: 14900, saldo: 4566800, conciliadoCon: null },
                 { id: 'mov-p-1', fecha: sumarDias(hoyIso, -3), glosa: 'TRANSF BANQUETERIA CAUTIN F1099', tipo: 'abono', monto: 428400, saldo: 4995200, conciliadoCon: { tipoDestino: 'cxc', destinoId: 'cxc-p-4', titulo: 'Banquetería Cautín Ltda. · Factura 1099' } },
                 { id: 'mov-p-2', fecha: sumarDias(hoyIso, -1), glosa: 'ABONO TEF MINIMARKET ARAUCANIA FACT 1108', tipo: 'abono', monto: 535500, saldo: 5530700, conciliadoCon: null },
                 { id: 'mov-p-3', fecha: hoyIso, glosa: 'CARGO PAC MOLINOS CUNCO 46088', tipo: 'cargo', monto: 844900, saldo: 4685800, conciliadoCon: null }
@@ -987,10 +1172,210 @@
         }
 
         // ---------------- 1. FLUJO DE CAJA ----------------
+        function leerPeriodoSoloLectura(emp, periodo) {
+            return (emp && emp.periodos && emp.periodos[periodo]) || null;
+        }
+
+        function renderRevisarHoy(p, ctx, puente) {
+            var caja = $('fc-revisar-hoy');
+            if (!caja) return;
+            var hoy = app.hoyIso();
+            var esContador = app.getPerfilDemo && app.getPerfilDemo() === 'contador';
+            var items = [];
+
+            var cobVencidas = (ctx.per.cobranzas || []).filter(function (c) {
+                return estadoVencimiento(c, hoy).codigo === 'vencida';
+            });
+            if (cobVencidas.length) {
+                var totVenc = cobVencidas.reduce(function (s, c) { return s + entero(c.monto); }, 0);
+                var prim = cobVencidas[0];
+                items.push({
+                    tono: 'riesgo',
+                    titulo: cobVencidas.length === 1 ? '1 factura por cobrar vencida' : cobVencidas.length + ' facturas por cobrar vencidas',
+                    detalle: prim.razonSocial + ' (Fact. ' + (prim.folio || 'S/N') + ') · ' + estadoVencimiento(prim, hoy).etiqueta,
+                    monto: pesos(totVenc),
+                    ruta: 'cobranzas',
+                    cta: 'Cobrar ahora'
+                });
+            }
+
+            var pagUrgentes = (ctx.per.pagos || []).filter(function (d) {
+                var cod = estadoVencimiento(d, hoy).codigo;
+                return cod === 'vencida' || cod === 'por_vencer';
+            });
+            if (pagUrgentes.length) {
+                var totPag = pagUrgentes.reduce(function (s, d) { return s + entero(d.monto); }, 0);
+                var pag0 = pagUrgentes[0];
+                items.push({
+                    tono: 'aviso',
+                    titulo: pagUrgentes.length === 1 ? '1 pago a proveedor urgente' : pagUrgentes.length + ' pagos a proveedores urgentes',
+                    detalle: pag0.razonSocial + ' · ' + estadoVencimiento(pag0, hoy).etiqueta,
+                    monto: pesos(totPag),
+                    ruta: 'pagos',
+                    cta: 'Preparar nómina'
+                });
+            }
+
+            var sinConc = (ctx.per.movimientos || []).filter(function (m) { return !m.conciliadoCon; });
+            if (sinConc.length) {
+                var totSin = sinConc.reduce(function (s, m) { return s + entero(m.monto); }, 0);
+                items.push({
+                    tono: 'aviso',
+                    titulo: sinConc.length === 1 ? '1 movimiento de cartola sin conciliar' : sinConc.length + ' movimientos de cartola por conciliar',
+                    detalle: esContador
+                        ? 'Crúzalos en 1 clic antes de cuadrar el Libro de Caja y F29.'
+                        : 'Asocia las transferencias de tu banco con tus facturas o sueldos.',
+                    monto: pesos(totSin),
+                    ruta: 'conciliacion',
+                    cta: 'Conciliar 1 clic'
+                });
+            }
+
+            var f29Total = entero(puente && puente.f29Resumen && puente.f29Resumen.totalPagar91);
+            if (!puente.cerradoTributario && f29Total > 0) {
+                items.push({
+                    tono: 'ok',
+                    titulo: esContador ? 'Borrador F29 del mes listo para revisión' : 'Tu contador prepara el cierre F29 del mes',
+                    detalle: esContador
+                        ? 'Revisa IVA Débito/Crédito, retención 15,25% y cierra el período.'
+                        : 'Estimado F29 (cód. 91) con vencimiento día 20 · Revisa el respaldo.',
+                    monto: pesos(f29Total),
+                    ruta: 'mi-contador',
+                    cta: esContador ? 'Revisar y cerrar' : 'Ver F29'
+                });
+            }
+
+            var sub = esContador
+                ? 'Prioridades contables del período (' + app.nombrePeriodo(p) + ')'
+                : 'Acciones concretas para cuidar la caja hoy';
+
+            var htmlHead = '<div class="panel-head"><h2 id="fc-revisar-titulo">Para revisar hoy</h2><span class="revisar-hoy-sub">' + esc(sub) + '</span></div>';
+            if (!items.length) {
+                caja.innerHTML = htmlHead + '<div class="revisar-hoy-vacio"><span class="material-icons" aria-hidden="true">check_circle</span><span>Todo al día en este período: sin facturas vencidas ni cartola pendiente por conciliar.</span></div>';
+                return;
+            }
+            caja.innerHTML = htmlHead + '<div class="revisar-hoy-grid">' + items.map(function (it) {
+                return '<a href="/app/' + esc(it.ruta) + '" data-ruta="' + esc(it.ruta) + '" class="revisar-item ' + esc(it.tono) + '">' +
+                    '<div class="revisar-item-info"><strong>' + esc(it.titulo) + '</strong><span>' + esc(it.detalle) + '</span></div>' +
+                    '<div class="revisar-item-der"><span class="revisar-item-monto">' + esc(it.monto) + '</span><span class="revisar-item-cta">' + esc(it.cta) + ' →</span></div>' +
+                '</a>';
+            }).join('') + '</div>';
+        }
+
+        function dibujarGraficoCaja6Meses(p) {
+            var wrap = $('fc-svg-grafico');
+            var resumenEl = $('fc-grafico-resumen');
+            if (!wrap) return;
+            var d = datosEmpresaFinanzas();
+            var meses = [];
+            var cur = p;
+            for (var i = 0; i < 6; i++) {
+                meses.unshift(cur);
+                cur = mesAnterior(cur);
+            }
+
+            var serie = meses.map(function (pm) {
+                var per = leerPeriodoSoloLectura(d.emp, pm);
+                var lab = app.resumenLaboralMes(pm);
+                var ob = per ? obligacionesDelMes(pm) : { sueldosLiquidos: 0, previred: 0, f29Total: 0 };
+                var cxcSum = per ? (per.cobranzas || []).reduce(function (s, c) { return s + entero(c.monto); }, 0) : 0;
+                var cxpSum = per ? (per.pagos || []).reduce(function (s, pg) { return s + entero(pg.monto); }, 0) : 0;
+                var histRem = per && per.remuneracionesHistoricas ? per.remuneracionesHistoricas : null;
+                var sueldos = ob.sueldosLiquidos || (histRem ? entero(histRem.sueldos) : entero(lab && lab.liquido));
+                var prev = ob.previred || (histRem ? entero(histRem.previred) : entero(lab && lab.previred));
+                var f29 = ob.f29Total || (per && per.puenteLocal && per.puenteLocal.f29Resumen ? entero(per.puenteLocal.f29Resumen.totalPagar91) : 0);
+                // Si el mes tiene pocos documentos cargados en RCV pero si abonos bancarios, usar el mayor para reflejar entradas reales
+                var abonos = per ? (per.movimientos || []).filter(function (m) { return m.tipo === 'abono'; }).reduce(function (s, m) { return s + entero(m.monto); }, 0) : 0;
+                var entradas = Math.max(cxcSum, abonos);
+                var salidas = cxpSum + sueldos + prev + f29;
+                return { periodo: pm, etiqueta: nombreCortoMes(pm), entradas: entradas, salidas: salidas };
+            });
+
+            var maxVal = serie.reduce(function (mx, s) { return Math.max(mx, s.entradas, s.salidas); }, 0);
+            if (maxVal <= 0) maxVal = 1000000;
+            // Redondear techo limpio hacia arriba (multiplos de 500k o 1M)
+            var paso = maxVal >= 3000000 ? 1000000 : 500000;
+            var techo = Math.ceil(maxVal / paso) * paso;
+
+            var W = 640, H = 205, padL = 56, padR = 16, padT = 20, padB = 34;
+            var chartW = W - padL - padR;
+            var chartH = H - padT - padB;
+            var groupW = chartW / serie.length;
+            var barW = Math.min(22, Math.max(12, Math.floor(groupW * 0.28)));
+            var gapBars = 5;
+
+            var gridLines = [0, 0.5, 1].map(function (frac) {
+                var y = Math.round((padT + chartH * (1 - frac)) * 10) / 10;
+                var val = Math.round(techo * frac);
+                return '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#E3E8E5" stroke-width="1" />' +
+                    '<text x="' + (padL - 8) + '" y="' + (y + 4) + '" text-anchor="end" fill="#4B5563" font-size="10.5" font-family="Geist Mono, monospace">' + esc(pesosCompacto(val)) + '</text>';
+            }).join('');
+
+            var barsSvg = serie.map(function (s, idx) {
+                var cx = padL + groupW * idx + groupW / 2;
+                var hEnt = Math.max(s.entradas > 0 ? 4 : 0, Math.round((s.entradas / techo) * chartH));
+                var hSal = Math.max(s.salidas > 0 ? 4 : 0, Math.round((s.salidas / techo) * chartH));
+                var yEnt = padT + chartH - hEnt;
+                var ySal = padT + chartH - hSal;
+                var xEnt = Math.round((cx - barW - gapBars / 2) * 10) / 10;
+                var xSal = Math.round((cx + gapBars / 2) * 10) / 10;
+                var esMesActual = s.periodo === p;
+                var txtPeso = esMesActual ? '700' : '500';
+                var txtColor = esMesActual ? '#00382E' : '#4B5563';
+                return '<g>' +
+                    '<rect x="' + xEnt + '" y="' + yEnt + '" width="' + barW + '" height="' + hEnt + '" rx="3" fill="' + (esMesActual ? '#00382E' : '#0F5E4F') + '"><title>Entradas ' + esc(s.etiqueta) + ': ' + esc(pesos(s.entradas)) + '</title></rect>' +
+                    '<rect x="' + xSal + '" y="' + ySal + '" width="' + barW + '" height="' + hSal + '" rx="3" fill="#D99B00"><title>Salidas ' + esc(s.etiqueta) + ': ' + esc(pesos(s.salidas)) + '</title></rect>' +
+                    (s.entradas > 0 ? '<text x="' + (xEnt + barW / 2) + '" y="' + Math.max(11, yEnt - 4) + '" text-anchor="middle" fill="#00382E" font-size="9.5" font-family="Geist Mono, monospace">' + esc(pesosCompacto(s.entradas)) + '</text>' : '') +
+                    '<text x="' + Math.round(cx) + '" y="' + (H - 12) + '" text-anchor="middle" fill="' + txtColor + '" font-size="11" font-weight="' + txtPeso + '">' + esc(s.etiqueta) + '</text>' +
+                '</g>';
+            }).join('');
+
+            wrap.innerHTML = '<svg class="fc-grafico-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-labelledby="fc-svg-title">' +
+                '<title id="fc-svg-title">Evolución de entradas y salidas de caja en los últimos 6 meses</title>' +
+                gridLines + barsSvg +
+            '</svg>';
+
+            if (resumenEl) {
+                var conDatos = serie.filter(function (s) { return s.entradas > 0 || s.salidas > 0; });
+                if (conDatos.length) {
+                    var totEnt = conDatos.reduce(function (a, b) { return a + b.entradas; }, 0);
+                    var totSal = conDatos.reduce(function (a, b) { return a + b.salidas; }, 0);
+                    resumenEl.textContent = 'Acumulado en ' + conDatos.length + (conDatos.length === 1 ? ' mes con registros: ' : ' meses con registros: ') +
+                        pesos(totEnt) + ' en entradas y ' + pesos(totSal) + ' en salidas totales (incluye proveedores, sueldos, Previred y F29).';
+                } else {
+                    resumenEl.textContent = 'Aún no hay movimientos registrados en estos 6 meses.';
+                }
+            }
+        }
+
+        function renderResumenProyectos(ctx) {
+            var box = $('fc-proyectos-panel');
+            if (!box) return;
+            var lista = resumenPorProyecto(ctx.per.cobranzas, ctx.per.pagos);
+            var maxMov = lista.reduce(function (mx, r) { return Math.max(mx, r.ingresos, r.gastos); }, 0) || 1;
+            var head = '<div class="panel-head"><h2 id="fc-proy-titulo">Resultados por proyecto / centro de costo</h2><span class="revisar-hoy-sub">Ingresos y gastos agrupados por área</span></div>';
+            if (!lista.length) {
+                box.innerHTML = head + '<div class="revisar-hoy-vacio">Asigna un proyecto al registrar tus facturas para comparar la rentabilidad por línea de negocio.</div>';
+                return;
+            }
+            box.innerHTML = head + '<div class="proy-grid">' + lista.map(function (r) {
+                var pctIng = Math.max(4, Math.round((r.ingresos / maxMov) * 100));
+                var clsM = r.margen < 0 ? 'riesgo' : 'ok';
+                return '<div class="proy-card">' +
+                    '<div class="proy-card-head"><strong>' + esc(r.proyecto) + '</strong><span class="proy-margen ' + clsM + '">' + pesos(r.margen) + '</span></div>' +
+                    '<div class="proy-barra-bg" aria-hidden="true"><div class="proy-barra-fill" style="width:' + pctIng + '%"></div></div>' +
+                    '<div class="proy-cifras"><span>Ingresos: <strong class="mono">' + pesos(r.ingresos) + '</strong></span><span>Gastos: <strong class="mono">' + pesos(r.gastos) + '</strong></span></div>' +
+                    (r.porCobrar > 0 ? '<div class="proy-cifras"><span>Por cobrar: <span class="mono">' + pesos(r.porCobrar) + '</span></span><span>' + r.docs + ' doc(s).</span></div>' : '<div class="proy-cifras"><span>Sin cobros pendientes</span><span>' + r.docs + ' doc(s).</span></div>') +
+                '</div>';
+            }).join('') + '</div>';
+        }
+
         function dibujarFlujoCaja() {
             actualizarInsigniasYBanner();
             var p = app.getPeriodo();
             var ctx = datosPeriodoActual(p);
+            var puente = puenteDePeriodo(p);
+            var esContador = app.getPerfilDemo && app.getPerfilDemo() === 'contador';
             var saldoBanco = ctx.per.ultimoSaldoCartola !== null && ctx.per.ultimoSaldoCartola !== undefined
                 ? ctx.per.ultimoSaldoCartola
                 : ctx.per.saldoInicialManual;
@@ -1003,7 +1388,13 @@
             });
 
             $('fc-titulo').textContent = 'Flujo de caja de ' + app.nombrePeriodo(p);
-            $('fc-sub').textContent = 'Tu liquidez real y los próximos pagos laborales, previsionales y de proveedores en palabras simples.';
+            $('fc-sub').textContent = esContador
+                ? 'Resumen de caja, conciliación bancaria, obligaciones previsionales y borrador F29 del período.'
+                : 'Tu liquidez real y los próximos pagos laborales, previsionales y de proveedores en palabras simples.';
+
+            renderRevisarHoy(p, ctx, puente);
+            dibujarGraficoCaja6Meses(p);
+            renderResumenProyectos(ctx);
 
             var notaBanco = ctx.per.fechaCartola
                 ? 'Según cartola al ' + ctx.per.fechaCartola.split('-').reverse().join('-')
@@ -1248,6 +1639,42 @@
         }
 
         // ---------------- 4. CONCILIACION BANCARIA ----------------
+        function sugerirNombreDesdeGlosa(glosa) {
+            var limpia = String(glosa || '')
+                .replace(/\b(ABONO|CARGO|TEF|TRANSF|TRANSFERENCIA|PAC|PAGO|FACT|FACTURA|NRO|F)\b/gi, ' ')
+                .replace(/\b\d{3,}\b/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            if (!limpia) return String(glosa || 'Movimiento bancario').slice(0, 60);
+            return limpia.toLowerCase().replace(/(^|\s)\S/g, function (c) { return c.toUpperCase(); }).slice(0, 80);
+        }
+
+        function renderExplicacionConciliacion(exp, esContador) {
+            var box = $('conc-explicacion-panel');
+            if (!box) return;
+            var sinConcCount = exp.abonosSinConciliar.count + exp.cargosSinConciliar.count;
+            var libPagSinCount = exp.cobrosLibroSinCartola.count + exp.pagosLibroSinCartola.count;
+            var claseEstado = exp.cuadrado ? 'estado-ok' : 'estado-aviso';
+            var veredicto = exp.cuadrado
+                ? 'Cartola y libro están 100% cuadrados al peso en este período.'
+                : (esContador
+                    ? 'Hay ' + sinConcCount + ' movimientos bancarios sin cruzar y ' + libPagSinCount + ' registros pagados en libro sin movimiento bancario asociado.'
+                    : 'Faltan ' + sinConcCount + ' movimientos del banco por asociar a tus facturas o gastos para que el libro cuadre con el banco.');
+
+            box.innerHTML =
+                '<div class="panel-head"><h2 id="conc-exp-titulo">Cómo se explica la diferencia</h2>' +
+                '<span class="sello ' + (exp.cuadrado ? 'sello-emitida' : 'sello-preparada') + '">' + (exp.cuadrado ? 'Cuadrado al peso' : 'Diferencia explicada') + '</span></div>' +
+                '<div class="panel-cuerpo">' +
+                    '<div class="conc-diff-grid">' +
+                        '<div class="conc-diff-box"><span class="conc-diff-lbl">Saldo en cartola banco</span><strong class="conc-diff-val">' + pesos(exp.saldoCartola) + '</strong><span class="conc-diff-meta">Último saldo importado</span></div>' +
+                        '<div class="conc-diff-box"><span class="conc-diff-lbl">Cartola sin conciliar</span><strong class="conc-diff-val">' + pesos(exp.abonosSinConciliar.total - exp.cargosSinConciliar.total) + '</strong><span class="conc-diff-meta">+' + pesos(exp.abonosSinConciliar.total) + ' abonos · -' + pesos(exp.cargosSinConciliar.total) + ' cargos</span></div>' +
+                        '<div class="conc-diff-box"><span class="conc-diff-lbl">En libro pagado, sin cartola</span><strong class="conc-diff-val">' + pesos(exp.cobrosLibroSinCartola.total - exp.pagosLibroSinCartola.total) + '</strong><span class="conc-diff-meta">' + exp.cobrosLibroSinCartola.count + ' cobros · ' + exp.pagosLibroSinCartola.count + ' pagos (' + exp.pendientesEnLibro.totalCount + ' abiertas)</span></div>' +
+                        '<div class="conc-diff-box ' + claseEstado + '"><span class="conc-diff-lbl">Saldo libro conciliado</span><strong class="conc-diff-val">' + pesos(exp.saldoLibroExplicado) + '</strong><span class="conc-diff-meta">Diferencia neta: ' + pesos(exp.diferenciaNeta) + '</span></div>' +
+                    '</div>' +
+                    '<p class="conc-diff-nota"><strong>Resumen:</strong> ' + esc(veredicto) + '</p>' +
+                '</div>';
+        }
+
         function dibujarConciliacion() {
             actualizarInsigniasYBanner();
             var p = app.getPeriodo();
@@ -1255,6 +1682,7 @@
             var ctx = datosPeriodoActual(p);
             var movs = ctx.per.movimientos || [];
             var ob = obligacionesDelMes(p);
+            var esContador = app.getPerfilDemo && app.getPerfilDemo() === 'contador';
 
             $('conc-titulo').textContent = 'Conciliación bancaria · ' + app.nombrePeriodo(p);
             $('conc-btn-cartola').disabled = cerrado;
@@ -1264,10 +1692,28 @@
                 pagos: ctx.per.pagos,
                 obligacionesMes: ob
             });
+            var exp = explicarDiferenciaConciliacion({
+                saldoInicial: ctx.per.saldoInicialManual,
+                ultimoSaldoCartola: ctx.per.ultimoSaldoCartola,
+                movimientos: movs,
+                cobranzas: ctx.per.cobranzas,
+                pagos: ctx.per.pagos
+            });
+            renderExplicacionConciliacion(exp, esContador);
 
             var conciliados = movs.filter(function (m) { return !!m.conciliadoCon; }).length;
             var sinConciliar = movs.length - conciliados;
-            var sugeridos1Clic = cruces.filter(function (c) { return !!c.mejorMatch; }).length;
+            var sugeridos1Clic = cruces.filter(function (c) { return !c.movimiento.conciliadoCon && !!c.mejorMatch; }).length;
+            var totalLibroSinCartola = exp.cobrosLibroSinCartola.count + exp.pagosLibroSinCartola.count + exp.pendientesEnLibro.totalCount;
+
+            var btnMasivo = $('conc-btn-masivo');
+            var spanMasivoN = $('conc-masivo-n');
+            if (btnMasivo && spanMasivoN) {
+                spanMasivoN.textContent = String(sugeridos1Clic);
+                btnMasivo.hidden = cerrado || sugeridos1Clic === 0;
+            }
+            var tabLibroN = $('conc-tab-libro-n');
+            if (tabLibroN) tabLibroN.textContent = totalLibroSinCartola ? '(' + totalLibroSinCartola + ')' : '';
 
             $('conc-kpis').innerHTML =
                 '<div class="fin-kpi"><span class="fin-kpi-label">Movimientos en cartola</span><strong class="fin-kpi-val mono">' + movs.length + '</strong></div>' +
@@ -1281,6 +1727,50 @@
                 b.setAttribute('aria-pressed', act ? 'true' : 'false');
             });
 
+            var colIzq = $('conc-lista-banco');
+            var colDer = $('conc-lista-empresa');
+            var titIzq = $('conc-izq-titulo');
+            var titDer = $('conc-der-titulo');
+
+            if (ui.filtroConciliacion === 'sin_cartola') {
+                if (titIzq) titIzq.textContent = 'Facturas del período sin movimiento en cartola';
+                if (titDer) titDer.textContent = 'Cómo cerrar estas partidas';
+
+                var filasLibro = [];
+                exp.cobrosLibroSinCartola.items.forEach(function (c) {
+                    filasLibro.push({ tipo: 'Pagado sin cartola (CxC)', titulo: c.razonSocial + ' · Fact. ' + (c.folio || 'S/N'), meta: 'Marcada pagada el ' + (c.fechaPago || c.fecha) + ' sin abono bancario enlazado', monto: c.monto, ruta: 'cobranzas', tono: 'aviso' });
+                });
+                exp.pagosLibroSinCartola.items.forEach(function (pg) {
+                    filasLibro.push({ tipo: 'Pagado sin cartola (CxP)', titulo: pg.razonSocial + ' · Fact. ' + (pg.folio || 'S/N'), meta: 'Marcada pagada sin cargo bancario (cheque en tránsito o caja)', monto: pg.monto, ruta: 'pagos', tono: 'aviso' });
+                });
+                exp.pendientesEnLibro.cobranzas.forEach(function (c) {
+                    filasLibro.push({ tipo: 'Por cobrar abierta', titulo: c.razonSocial + ' · Fact. ' + (c.folio || 'S/N'), meta: 'Vence ' + (c.vencimiento || c.fecha) + ' · Aún sin abono en cartola', monto: c.monto, ruta: 'cobranzas', tono: 'pendiente' });
+                });
+                exp.pendientesEnLibro.pagos.forEach(function (pg) {
+                    filasLibro.push({ tipo: 'Por pagar abierta', titulo: pg.razonSocial + ' · Fact. ' + (pg.folio || 'S/N'), meta: 'Vence ' + (pg.vencimiento || pg.fecha) + ' · Aún sin cargo en cartola', monto: pg.monto, ruta: 'pagos', tono: 'pendiente' });
+                });
+
+                colIzq.innerHTML = filasLibro.length
+                    ? '<div class="conc-libro-lista">' + filasLibro.map(function (it) {
+                        return '<div class="conc-libro-item">' +
+                            '<div class="conc-libro-info"><strong>' + esc(it.titulo) + '</strong><span>' + esc(it.tipo) + ' · ' + esc(it.meta) + '</span></div>' +
+                            '<div class="conc-libro-der"><strong class="mono">' + pesos(it.monto) + '</strong><a href="/app/' + esc(it.ruta) + '" data-ruta="' + esc(it.ruta) + '" class="btn btn-chico">Ver</a></div>' +
+                        '</div>';
+                    }).join('') + '</div>'
+                    : '<div class="detalle-vacio">Todas las facturas del período ya tienen movimiento bancario conciliado.</div>';
+
+                colDer.innerHTML = '<div class="panel-cuerpo">' +
+                    '<p class="h-seccion">Qué hacer con estas partidas</p>' +
+                    '<p class="texto-ayuda"><strong>1. Facturas pagadas sin cartola:</strong> ocurren cuando pagas por caja chica, recibes efectivo o giraste un cheque aún no cobrado en el banco.</p>' +
+                    '<p class="texto-ayuda" style="margin-top:8px"><strong>2. Facturas abiertas:</strong> cuando subas la próxima cartola con la transferencia, podrás conciliarlas en 1 clic desde la pestaña <em>Sin conciliar</em>.</p>' +
+                    '<div class="form-acciones" style="margin-top:14px"><button type="button" class="btn btn-chico" data-conc-filtro="pendientes">Volver a movimientos del banco</button></div>' +
+                    '</div>';
+                return;
+            }
+
+            if (titIzq) titIzq.textContent = 'Movimientos del banco';
+            if (titDer) titDer.textContent = 'Con qué cruzarlo en tu empresa';
+
             var visibles = cruces.filter(function (c) {
                 if (ui.filtroConciliacion === 'pendientes') return !c.movimiento.conciliadoCon;
                 if (ui.filtroConciliacion === 'conciliados') return !!c.movimiento.conciliadoCon;
@@ -1290,9 +1780,6 @@
             if (!ui.movSeleccionadoId || !visibles.some(function (c) { return c.movimiento.id === ui.movSeleccionadoId; })) {
                 ui.movSeleccionadoId = visibles[0] ? visibles[0].movimiento.id : null;
             }
-
-            var colIzq = $('conc-lista-banco');
-            var colDer = $('conc-lista-empresa');
 
             if (!visibles.length) {
                 colIzq.innerHTML = '<div class="detalle-vacio">No hay movimientos bancarios en esta vista. Sube tu cartola CSV o Excel arriba a la derecha.</div>';
@@ -1346,11 +1833,30 @@
                     '</div></div>';
             }).join('');
 
+            var netoSugerido = Math.round(movA.monto / 1.19);
+            var ivaSugerido = Math.max(0, movA.monto - netoSugerido);
+            var formCrear = cerrado ? '' :
+                '<form class="conc-crear-panel" id="conc-crear-form" data-mov-id="' + esc(movA.id) + '">' +
+                    '<div class="conc-crear-head">' +
+                        '<strong>¿No está en tu libro? Regístralo y concilia ahora</strong>' +
+                        '<label class="fin-desglose-exento" for="conc-cr-exento"><input id="conc-cr-exento" type="checkbox">Exento de IVA</label>' +
+                    '</div>' +
+                    '<div class="conc-crear-grid">' +
+                        '<div class="lq-field"><label for="conc-cr-nombre">' + (movA.tipo === 'abono' ? 'Cliente / Origen' : 'Proveedor / Concepto') + '</label><input id="conc-cr-nombre" type="text" maxlength="100" required value="' + esc(sugerirNombreDesdeGlosa(movA.glosa)) + '"></div>' +
+                        '<div class="lq-field"><label for="conc-cr-folio">N° Documento (opcional)</label><input id="conc-cr-folio" type="text" maxlength="20" placeholder="S/N"></div>' +
+                    '</div>' +
+                    '<div class="conc-crear-pie">' +
+                        '<span class="conc-crear-resumen" id="conc-cr-desglose" data-total="' + entero(movA.monto) + '">Total: ' + pesos(movA.monto) + ' · Neto: ' + pesos(netoSugerido) + ' + IVA: ' + pesos(ivaSugerido) + '</span>' +
+                        '<button type="submit" class="btn btn-chico btn-primario">Crear ' + (movA.tipo === 'abono' ? 'cobro' : 'pago/gasto') + ' y conciliar</button>' +
+                    '</div>' +
+                '</form>';
+
             var directoTxt = movA.tipo === 'abono' ? 'Otro ingreso bancario sin factura' : 'Gasto bancario / comisión directa';
             colDer.innerHTML = '<div class="panel-cuerpo">' +
                 '<p class="h-seccion">' + (movA.tipo === 'abono' ? 'Facturas por cobrar sugeridas' : 'Pagos y obligaciones sugeridas') + '</p>' +
                 '<p class="texto-ayuda" style="margin-bottom:12px">Para <strong>' + esc(movA.glosa) + '</strong> (<span class="mono">' + pesos(movA.monto) + '</span>):</p>' +
-                (htmlCand || '<p class="texto-ayuda">No encontramos una factura por ese mismo monto. Puedes conciliarlo como movimiento directo o registrar primero la factura.</p>') +
+                (htmlCand || '<p class="texto-ayuda">No encontramos una factura por ese mismo monto. Puedes crear el registro al instante abajo o marcarlo como movimiento directo.</p>') +
+                formCrear +
                 (cerrado ? '' : '<div class="conc-directo"><button type="button" class="btn-texto" data-conc-aplicar="' + esc(movA.id) + '" data-tipo="directo" data-destino="directo" data-titulo="' + esc(directoTxt) + '">Marcar como «' + esc(directoTxt) + '»</button></div>') +
                 '</div>';
         }
@@ -1431,6 +1937,40 @@
                     '<td class="celda-acciones"><button type="button" class="btn-texto" data-mc-ver-mes="' + esc(perItem) + '">Ir al mes</button></td>' +
                     '</tr>';
             }).join('');
+
+            renderCorreosSimulados(ctx);
+        }
+
+        function registrarCorreoSimulado(tipo, destinatario, asunto, extracto) {
+            mutarPeriodoActual(function (per) {
+                per.correosSimulados = per.correosSimulados || [];
+                per.correosSimulados.unshift({
+                    id: 'mail-' + Date.now(),
+                    fecha: app.hoyIso(),
+                    tipo: tipo,
+                    destinatario: destinatario,
+                    asunto: asunto,
+                    extracto: extracto
+                });
+            });
+        }
+
+        function renderCorreosSimulados(ctx) {
+            var box = $('mc-correos-panel');
+            if (!box) return;
+            var lista = (ctx && ctx.per && ctx.per.correosSimulados) || [];
+            var head = '<div class="panel-head"><h2 id="mc-correos-titulo">Bandeja de avisos y correos contables</h2><span class="revisar-hoy-sub">Registro local de envíos y recordatorios</span></div>';
+            if (!lista.length) {
+                box.innerHTML = head + '<div class="detalle-vacio">Aún no hay avisos registrados en este período. Cuando envíes un recordatorio de cobro, una solicitud o descargues el paquete contable, aparecerá aquí.</div>';
+                return;
+            }
+            box.innerHTML = head + '<div class="correos-lista">' + lista.map(function (m) {
+                return '<div class="correo-item">' +
+                    '<div class="correo-item-top"><strong>' + esc(m.asunto) + '</strong><span class="sello sello-guardada">' + esc(m.tipo || 'Aviso') + ' · ' + esc(m.fecha) + '</span></div>' +
+                    '<span class="correo-meta">Para: ' + esc(m.destinatario) + '</span>' +
+                    '<p class="correo-extracto">' + esc(m.extracto) + '</p>' +
+                '</div>';
+            }).join('') + '</div>';
         }
 
         // ---------------- ARCHIVOS Y EVENTOS ----------------
@@ -1490,31 +2030,124 @@
             redibujarVistaActiva();
         }
 
+        function enlazarConciliacionItem(per, mov, tipoDestino, destinoId, tituloCustom) {
+            var titulo = tituloCustom || '';
+            if (tipoDestino === 'cxc') {
+                var c = (per.cobranzas || []).filter(function (x) { return x.id === destinoId; })[0];
+                if (c) { c.pagada = true; c.fechaPago = mov.fecha; titulo = c.razonSocial + ' · Factura ' + c.folio; }
+            } else if (tipoDestino === 'cxp') {
+                var p = (per.pagos || []).filter(function (x) { return x.id === destinoId; })[0];
+                if (p) { p.pagada = true; p.fechaPago = mov.fecha; titulo = p.razonSocial + ' · Factura ' + p.folio; delete ui.seleccionPagos[p.id]; }
+            } else if (tipoDestino === 'sueldos') {
+                per.obligacionesConciliadas.sueldos = true;
+                titulo = 'Nómina de sueldos líquidos';
+            } else if (tipoDestino === 'previred') {
+                per.obligacionesConciliadas.previred = true;
+                titulo = 'Cotizaciones Previred';
+            } else if (tipoDestino === 'f29') {
+                per.obligacionesConciliadas.f29 = true;
+                titulo = 'Impuestos F29';
+            }
+            mov.conciliadoCon = { tipoDestino: tipoDestino, destinoId: destinoId, titulo: titulo || 'Movimiento conciliado' };
+        }
+
         function aplicarConciliacion(movId, tipoDestino, destinoId, tituloCustom) {
             if (estaCerrado()) return;
             mutarPeriodoActual(function (per) {
                 var mov = (per.movimientos || []).filter(function (m) { return m.id === movId; })[0];
                 if (!mov) return;
-                var titulo = tituloCustom || '';
-                if (tipoDestino === 'cxc') {
-                    var c = (per.cobranzas || []).filter(function (x) { return x.id === destinoId; })[0];
-                    if (c) { c.pagada = true; c.fechaPago = mov.fecha; titulo = c.razonSocial + ' · Factura ' + c.folio; }
-                } else if (tipoDestino === 'cxp') {
-                    var p = (per.pagos || []).filter(function (x) { return x.id === destinoId; })[0];
-                    if (p) { p.pagada = true; p.fechaPago = mov.fecha; titulo = p.razonSocial + ' · Factura ' + p.folio; delete ui.seleccionPagos[p.id]; }
-                } else if (tipoDestino === 'sueldos') {
-                    per.obligacionesConciliadas.sueldos = true;
-                    titulo = 'Nómina de sueldos líquidos';
-                } else if (tipoDestino === 'previred') {
-                    per.obligacionesConciliadas.previred = true;
-                    titulo = 'Cotizaciones Previred';
-                } else if (tipoDestino === 'f29') {
-                    per.obligacionesConciliadas.f29 = true;
-                    titulo = 'Impuestos F29';
-                }
-                mov.conciliadoCon = { tipoDestino: tipoDestino, destinoId: destinoId, titulo: titulo || 'Movimiento conciliado' };
+                enlazarConciliacionItem(per, mov, tipoDestino, destinoId, tituloCustom);
             });
             ui.movSeleccionadoId = null;
+            redibujarVistaActiva();
+        }
+
+        function conciliarSugeridasMasivo() {
+            if (estaCerrado()) return 0;
+            var count = 0;
+            var p = app.getPeriodo();
+            var ob = obligacionesDelMes(p);
+            mutarPeriodoActual(function (per) {
+                var cruces = sugerirConciliacion(per.movimientos || [], {
+                    cobranzas: per.cobranzas,
+                    pagos: per.pagos,
+                    obligacionesMes: ob
+                });
+                var usados = {};
+                cruces.forEach(function (c) {
+                    if (c.movimiento.conciliadoCon || !c.mejorMatch) return;
+                    var key = c.mejorMatch.tipoDestino + '::' + c.mejorMatch.destinoId;
+                    if (usados[key]) return;
+                    usados[key] = true;
+                    enlazarConciliacionItem(per, c.movimiento, c.mejorMatch.tipoDestino, c.mejorMatch.destinoId, c.mejorMatch.titulo);
+                    count++;
+                });
+            });
+            ui.movSeleccionadoId = null;
+            if (count > 0) {
+                app.avisoGlobal('ok', 'Conciliamos ' + count + (count === 1 ? ' movimiento sugerido automáticamente.' : ' movimientos sugeridos automáticamente.'));
+            }
+            redibujarVistaActiva();
+            return count;
+        }
+
+        function crearYConciliarMovimiento(movId, nombre, folio, exento) {
+            if (estaCerrado()) return;
+            mutarPeriodoActual(function (per) {
+                var mov = (per.movimientos || []).filter(function (m) { return m.id === movId; })[0];
+                if (!mov || mov.conciliadoCon) return;
+                var total = entero(mov.monto);
+                var neto = exento ? total : Math.round(total / 1.19);
+                var iva = exento ? 0 : Math.max(0, total - neto);
+                var fol = folio || 'S/N';
+                if (mov.tipo === 'abono') {
+                    var idCxc = 'cxc-cart-' + Date.now();
+                    per.cobranzas.unshift({
+                        id: idCxc,
+                        rut: '',
+                        razonSocial: nombre,
+                        folio: fol,
+                        tipoDte: exento ? 34 : 33,
+                        fecha: mov.fecha,
+                        vencimiento: mov.fecha,
+                        neto: neto,
+                        iva: iva,
+                        exento: !!exento,
+                        monto: total,
+                        telefono: '',
+                        pagada: true,
+                        fechaPago: mov.fecha,
+                        origen: 'Cartola'
+                    });
+                    mov.conciliadoCon = { tipoDestino: 'cxc', destinoId: idCxc, titulo: nombre + ' · Doc. ' + fol };
+                } else {
+                    var idCxp = 'cxp-cart-' + Date.now();
+                    per.pagos.unshift({
+                        id: idCxp,
+                        tipoDoc: 'cxp',
+                        rut: '',
+                        razonSocial: nombre,
+                        folio: fol,
+                        tipoDte: exento ? 34 : 33,
+                        fecha: mov.fecha,
+                        vencimiento: mov.fecha,
+                        neto: neto,
+                        iva: iva,
+                        exento: !!exento,
+                        monto: total,
+                        banco: '',
+                        tipoCuenta: '',
+                        numeroCuenta: '',
+                        correo: '',
+                        pagada: true,
+                        fechaPago: mov.fecha,
+                        origen: 'Cartola'
+                    });
+                    mov.conciliadoCon = { tipoDestino: 'cxp', destinoId: idCxp, titulo: nombre + ' · Doc. ' + fol };
+                }
+            });
+            ui.movSeleccionadoId = null;
+            app.avisoGlobal('ok', 'Movimiento registrado en tu libro y conciliado con la cartola.');
             redibujarVistaActiva();
         }
 
@@ -1614,10 +2247,83 @@
                 var el = $(id);
                 if (el) el.innerHTML = opts;
             });
+            var optsProy = PROYECTOS_PYME.map(function (pr) { return '<option value="' + esc(pr) + '">' + esc(pr) + '</option>'; }).join('');
+            ['cob-f-proyecto', 'pag-f-proyecto'].forEach(function (id) {
+                var el = $(id);
+                if (el) el.innerHTML = optsProy;
+            });
+        }
+
+        function enlazarDesgloseIva(prefijo) {
+            var netoEl = $(prefijo + '-f-neto');
+            var ivaEl = $(prefijo + '-f-iva');
+            var totalEl = $(prefijo + '-f-monto');
+            var exentoEl = $(prefijo + '-f-exento');
+            var notaEl = $(prefijo + '-desglose-nota');
+            if (!netoEl || !ivaEl || !totalEl || !exentoEl) return function () {};
+
+            var actualizando = false;
+            var ultimoEditado = 'total';
+
+            function textoPesos(n) { return n > 0 ? pesos(n) : ''; }
+            function actualizarNota(exento) {
+                if (!notaEl) return;
+                notaEl.textContent = exento
+                    ? 'Documento exento: IVA = $0, el Neto coincide con el Total.'
+                    : 'Ingresa el Neto o el Total: recalculamos el 19% de IVA al instante.';
+            }
+
+            function desdeNeto() {
+                if (actualizando) return;
+                actualizando = true;
+                ultimoEditado = 'neto';
+                var neto = Math.max(0, entero(netoEl.value));
+                var exento = !!exentoEl.checked;
+                var iva = exento ? 0 : Math.round(neto * 0.19);
+                var total = neto + iva;
+                ivaEl.value = neto > 0 ? pesos(iva) : '';
+                totalEl.value = textoPesos(total);
+                actualizarNota(exento);
+                actualizando = false;
+            }
+
+            function desdeTotal() {
+                if (actualizando) return;
+                actualizando = true;
+                ultimoEditado = 'total';
+                var total = Math.max(0, entero(totalEl.value));
+                var exento = !!exentoEl.checked;
+                var neto = exento ? total : Math.round(total / 1.19);
+                var iva = exento ? 0 : Math.max(0, total - neto);
+                netoEl.value = textoPesos(neto);
+                ivaEl.value = total > 0 ? pesos(iva) : '';
+                actualizarNota(exento);
+                actualizando = false;
+            }
+
+            netoEl.addEventListener('input', desdeNeto);
+            totalEl.addEventListener('input', desdeTotal);
+            exentoEl.addEventListener('change', function () {
+                if (ultimoEditado === 'neto' && entero(netoEl.value) > 0) desdeNeto();
+                else desdeTotal();
+            });
+
+            return function limpiarDesglose() {
+                actualizando = true;
+                netoEl.value = '';
+                ivaEl.value = '';
+                totalEl.value = '';
+                exentoEl.checked = false;
+                ultimoEditado = 'total';
+                actualizarNota(false);
+                actualizando = false;
+            };
         }
 
         function enlazarEventos() {
             poblarSelectsBancos();
+            var resetDesgloseCob = enlazarDesgloseIva('cob');
+            var resetDesglosePag = enlazarDesgloseIva('pag');
 
             // Banner global CERRADO_TRIBUTARIO
             var btnBannerReap = $('pm-cierre-solicitar');
@@ -1674,6 +2380,7 @@
             $('cob-btn-nueva').addEventListener('click', function () {
                 $('cob-form-panel').hidden = !$('cob-form-panel').hidden;
                 if (!$('cob-form-panel').hidden) {
+                    resetDesgloseCob();
                     $('cob-f-fecha').value = app.hoyIso();
                     $('cob-f-vence').value = sumarDias(app.hoyIso(), 30);
                     $('cob-f-razon').focus();
@@ -1685,6 +2392,11 @@
                 if (estaCerrado()) return;
                 var razon = $('cob-f-razon').value.trim();
                 var monto = entero($('cob-f-monto').value);
+                var exento = !!($('cob-f-exento') && $('cob-f-exento').checked);
+                var neto = $('cob-f-neto') && entero($('cob-f-neto').value) > 0
+                    ? entero($('cob-f-neto').value)
+                    : (exento ? monto : Math.round(monto / 1.19));
+                var iva = exento ? 0 : Math.max(0, monto - neto);
                 if (!razon || monto <= 0) {
                     $('cob-form-err').textContent = 'Ingresa la razón social del cliente y un monto mayor a cero.';
                     $('cob-form-err').hidden = false;
@@ -1698,10 +2410,14 @@
                         rut: Rut() && rutRaw ? Rut().formatear(rutRaw) : rutRaw,
                         razonSocial: razon,
                         folio: $('cob-f-folio').value.trim() || 'S/N',
-                        tipoDte: 33,
+                        tipoDte: exento ? 34 : 33,
                         fecha: $('cob-f-fecha').value || app.hoyIso(),
                         vencimiento: $('cob-f-vence').value || sumarDias(app.hoyIso(), 30),
+                        neto: neto,
+                        iva: iva,
+                        exento: exento,
                         monto: monto,
+                        proyecto: $('cob-f-proyecto') ? $('cob-f-proyecto').value : 'General / Casa Matriz',
                         telefono: $('cob-f-tel').value.trim(),
                         pagada: false,
                         fechaPago: '',
@@ -1709,6 +2425,7 @@
                     });
                 });
                 this.reset();
+                resetDesgloseCob();
                 $('cob-form-panel').hidden = true;
                 dibujarCobranzas();
             });
@@ -1777,6 +2494,18 @@
                 }
                 $('pm-cobro-copiado').textContent = 'Mensaje copiado al portapapeles.';
             });
+            if ($('pm-cobro-registrar')) {
+                $('pm-cobro-registrar').addEventListener('click', function () {
+                    if (!ui.cobroDocActivo) return;
+                    registrarCorreoSimulado(
+                        'Cobranza',
+                        ui.cobroDocActivo.razonSocial,
+                        'Recordatorio de pago · Factura N° ' + (ui.cobroDocActivo.folio || 'S/N') + ' (' + pesos(ui.cobroDocActivo.monto) + ')',
+                        $('pm-cobro-texto').value.slice(0, 140) + '…'
+                    );
+                    $('pm-cobro-copiado').textContent = 'Aviso guardado en tu Bandeja de avisos (Mi Contador).';
+                });
+            }
             $('pm-cobro-cerrar').addEventListener('click', function () { $('pm-cobro-dlg').close(); });
 
             // Guía RCV SII sin compartir claves
@@ -1796,6 +2525,7 @@
             $('pag-btn-nueva').addEventListener('click', function () {
                 $('pag-form-panel').hidden = !$('pag-form-panel').hidden;
                 if (!$('pag-form-panel').hidden) {
+                    resetDesglosePag();
                     $('pag-f-fecha').value = app.hoyIso();
                     $('pag-f-vence').value = sumarDias(app.hoyIso(), 30);
                     $('pag-f-razon').focus();
@@ -1807,6 +2537,11 @@
                 if (estaCerrado()) return;
                 var razon = $('pag-f-razon').value.trim();
                 var monto = entero($('pag-f-monto').value);
+                var exento = !!($('pag-f-exento') && $('pag-f-exento').checked);
+                var neto = $('pag-f-neto') && entero($('pag-f-neto').value) > 0
+                    ? entero($('pag-f-neto').value)
+                    : (exento ? monto : Math.round(monto / 1.19));
+                var iva = exento ? 0 : Math.max(0, monto - neto);
                 if (!razon || monto <= 0) {
                     $('pag-form-err').textContent = 'Ingresa la razón social del proveedor y un monto mayor a cero.';
                     $('pag-form-err').hidden = false;
@@ -1826,10 +2561,14 @@
                         rut: rutFmt,
                         razonSocial: razon,
                         folio: $('pag-f-folio').value.trim() || 'S/N',
-                        tipoDte: 33,
+                        tipoDte: exento ? 34 : 33,
                         fecha: $('pag-f-fecha').value || app.hoyIso(),
                         vencimiento: $('pag-f-vence').value || sumarDias(app.hoyIso(), 30),
+                        neto: neto,
+                        iva: iva,
+                        exento: exento,
                         monto: monto,
+                        proyecto: $('pag-f-proyecto') ? $('pag-f-proyecto').value : 'General / Casa Matriz',
                         banco: banco,
                         tipoCuenta: tipoCta,
                         numeroCuenta: numCta,
@@ -1840,6 +2579,7 @@
                     });
                 });
                 this.reset();
+                resetDesglosePag();
                 $('pag-form-panel').hidden = true;
                 dibujarPagos();
             });
@@ -1965,6 +2705,31 @@
 
             // Conciliacion
             $('conc-btn-cartola').addEventListener('click', function () { $('fc-cartola-file').click(); });
+            if ($('conc-btn-masivo')) $('conc-btn-masivo').addEventListener('click', conciliarSugeridasMasivo);
+            document.addEventListener('change', function (e) {
+                if (e.target && e.target.id === 'conc-cr-exento') {
+                    var box = $('conc-cr-desglose');
+                    if (!box) return;
+                    var total = entero(box.getAttribute('data-total'));
+                    var exento = !!e.target.checked;
+                    var neto = exento ? total : Math.round(total / 1.19);
+                    var iva = exento ? 0 : Math.max(0, total - neto);
+                    box.textContent = exento
+                        ? 'Total: ' + pesos(total) + ' · Documento exento (IVA $0)'
+                        : 'Total: ' + pesos(total) + ' · Neto: ' + pesos(neto) + ' + IVA: ' + pesos(iva);
+                }
+            });
+            document.addEventListener('submit', function (e) {
+                if (e.target && e.target.id === 'conc-crear-form') {
+                    e.preventDefault();
+                    var movId = e.target.getAttribute('data-mov-id');
+                    var nombre = $('conc-cr-nombre') ? $('conc-cr-nombre').value.trim() : '';
+                    var folio = $('conc-cr-folio') ? $('conc-cr-folio').value.trim() : '';
+                    var exento = !!($('conc-cr-exento') && $('conc-cr-exento').checked);
+                    if (!nombre) { if ($('conc-cr-nombre')) $('conc-cr-nombre').focus(); return; }
+                    crearYConciliarMovimiento(movId, nombre, folio, exento);
+                }
+            });
             document.addEventListener('click', function (e) {
                 var cf = e.target.closest('[data-conc-filtro]');
                 if (cf) { ui.filtroConciliacion = cf.getAttribute('data-conc-filtro'); dibujarConciliacion(); return; }
@@ -2072,7 +2837,10 @@
                     movimientosBancarios: ctx.per.movimientos
                 };
                 bajarTexto('paquete-contador-' + p + '.json', JSON.stringify(paquete, null, 2), 'application/json');
+                var dest = (ctx.emp && ctx.emp.estudio && ctx.emp.estudio.contadorNombre) || 'Tu contador';
+                registrarCorreoSimulado('Contabilidad', dest, 'Paquete mensual ' + app.nombrePeriodo(p) + ' descargado para estudio', 'Incluye cobranzas, pagos a proveedores, cartola y resumen laboral.');
                 app.avisoGlobal('ok', 'Descargamos el paquete del mes para tu contador.');
+                dibujarMiContador();
             });
 
             $('pm-reap-form').addEventListener('submit', function (e) {
@@ -2082,6 +2850,7 @@
                     $('pm-reap-estado').textContent = 'Explica brevemente qué necesitas corregir para que tu contador lo evalúe.';
                     return;
                 }
+                var ctxReap = datosPeriodoActual();
                 mutarPeriodoActual(function (per) {
                     per.puenteLocal.solicitudesReapertura = per.puenteLocal.solicitudesReapertura || [];
                     per.puenteLocal.solicitudesReapertura.unshift({
@@ -2089,6 +2858,8 @@
                         motivo: motivo
                     });
                 });
+                var destReap = (ctxReap.emp && ctxReap.emp.estudio && ctxReap.emp.estudio.contadorNombre) || 'Estudio contable';
+                registrarCorreoSimulado('Reapertura', destReap, 'Solicitud de reapertura período ' + app.nombrePeriodo(app.getPeriodo()), motivo);
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     var est = app.getEstado();
                     var borrador = 'Solicitud de reapertura período ' + app.nombrePeriodo(app.getPeriodo()) +
@@ -2131,6 +2902,8 @@
         generarNominaProveedores: generarNominaProveedores,
         generarNominaProveedoresXlsx: generarNominaProveedoresXlsx,
         sugerirConciliacion: sugerirConciliacion,
+        explicarDiferenciaConciliacion: explicarDiferenciaConciliacion,
+        resumenPorProyecto: resumenPorProyecto,
         calcularFlujoCaja: calcularFlujoCaja,
         resolverPuenteContable: resolverPuenteContable,
         semillaEjemploFinanzas: semillaEjemploFinanzas,

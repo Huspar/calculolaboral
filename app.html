@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.33.1">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.36.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
 </head>
 <body class="app-body">
@@ -48,7 +48,8 @@ gtag('js', new Date());
 
 <!-- Entrada -->
 <main id="pm-entrada" class="entrada" hidden>
-<div class="entrada-caja">
+<div class="entrada-split">
+<div class="entrada-caja entrada-caja-login">
 <a class="app-logo app-logo-claro" href="/" aria-label="Cálculo Laboral, ir al sitio">
 <span class="app-logo-isotipo"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 84h40M38 79h24"/><path d="M50 22v57"/><path d="M50 14l-2 4h4l-2-4v8"/><path d="M18 36c10-9 22-12 32-12s22 3 32 12"/><path d="M18 36l-8 18h16Z"/><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M82 36l-8 18h16Z"/><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M41 43.5a10 10 0 1 0 0 20h6"/><path d="M58 43.5v20h10"/></svg></span>
 <span class="app-logo-texto">Cálculo<span>Laboral</span></span>
@@ -73,12 +74,34 @@ gtag('js', new Date());
 <span class="material-icons" aria-hidden="true">mark_email_read</span>
 <p><strong>Revisa tu correo.</strong> Si el correo es correcto, te enviamos un enlace para entrar. Revisa también la carpeta de spam. <button type="button" id="pm-otro-correo" class="lq-link">Usar otro correo</button></p>
 </div>
-<div class="entrada-ejemplo">
-<p><strong>¿Quieres verlo antes?</strong> Recorre una panadería ficticia con tres trabajadores, liquidaciones, avisos y documentos. Sin cuenta y sin correo.</p>
-<button type="button" class="btn" id="pm-ejemplo"><span class="material-icons" aria-hidden="true">visibility</span>Ver un ejemplo</button>
-</div>
 <p class="entrada-legal">La primera vez te pediremos aceptar los <a href="/terminos#asistente-pyme">Términos</a> y la cláusula de encargo de tratamiento de datos. Más información en la <a href="/privacidad#asistente-pyme">Política de Privacidad</a>.</p>
 <p class="entrada-volver"><a href="/asistente-laboral-pyme">Qué incluye y cuánto cuesta</a> · <a href="/">Volver a calculolaboral.cl</a></p>
+</div>
+
+<section class="entrada-caja-demo" aria-labelledby="pm-demo-titulo">
+<span class="entrada-demo-etiqueta"><span class="material-icons" aria-hidden="true" style="font-size:15px">play_circle</span>Demo en 1 clic · Sin registro</span>
+<h2 id="pm-demo-titulo" class="entrada-demo-titulo">Prueba la empresa ficticia ahora</h2>
+<p class="entrada-demo-sub">Recorre <strong>Panadería Los Aromos SpA</strong> con 6 meses de caja, facturas por cobrar y pagar, cartola bancaria y sueldos listos.</p>
+<div class="entrada-perfil-lista">
+<button type="button" class="entrada-perfil-card" id="pm-demo-dueno">
+<span class="entrada-perfil-ico"><span class="material-icons" aria-hidden="true">storefront</span></span>
+<span class="entrada-perfil-cuerpo">
+<strong>Entrar como Dueño Pyme</strong>
+<span>Caja del mes, cobros pendientes, pagos a proveedores y conciliación en palabras simples.</span>
+<span class="entrada-perfil-cta">Abrir flujo de caja <span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+</span>
+</button>
+<button type="button" class="entrada-perfil-card" id="pm-demo-contador">
+<span class="entrada-perfil-ico"><span class="material-icons" aria-hidden="true">account_balance</span></span>
+<span class="entrada-perfil-cuerpo">
+<strong>Entrar como Contador / Asesor</strong>
+<span>Resumen F29, cierre tributario ProPyme, RCV del SII y exportación del paquete mensual.</span>
+<span class="entrada-perfil-cta">Abrir vista de cierre F29 <span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+</span>
+</button>
+</div>
+<p class="entrada-demo-pie">Todo corre en tu navegador con datos simulados. Nada se envía ni se guarda al salir. <a href="/demo-contadores">¿Buscas Balance 8 Columnas y RLI? Ir a Suite Contadores</a>.</p>
+</section>
 </div>
 </main>
 
@@ -154,10 +177,24 @@ gtag('js', new Date());
 </header>
 
 <main class="app-content" id="app-content">
-<div id="pm-ejemplo-franja" class="ejemplo-franja" hidden>
-<span class="material-icons" aria-hidden="true">science</span>
-<p><strong>Estás viendo un mes simulado con datos ficticios.</strong> Prueba liquidaciones, cobros y avisos: nada se guarda y todo se borra al salir. Los documentos salen con la marca «Vista previa».</p>
-<div class="ejemplo-franja-acciones"><button type="button" class="btn btn-chico btn-primario" id="pm-ejemplo-entrar">Usar con mi empresa</button><button type="button" class="btn-texto" id="pm-ejemplo-salir">Salir del ejemplo</button></div>
+<div id="pm-ejemplo-franja" class="demo-top-bar" hidden>
+<div class="demo-top-izq">
+<span class="demo-top-badge"><span class="material-icons" aria-hidden="true">science</span>Demo</span>
+<p class="demo-top-txt" id="pm-demo-empresa-txt"><strong>Panadería Los Aromos SpA</strong> · Datos simulados locales</p>
+</div>
+<div class="demo-top-der">
+<div class="demo-perfil-wrap">
+<span class="demo-perfil-lbl">Ver como:</span>
+<div class="demo-perfil-switch" role="group" aria-label="Cambiar perspectiva de la demo">
+<button type="button" class="demo-perfil-btn" id="pm-ver-dueno" data-perfil-demo="dueno" aria-pressed="true">Dueño Pyme</button>
+<button type="button" class="demo-perfil-btn" id="pm-ver-contador" data-perfil-demo="contador" aria-pressed="false">Contador</button>
+</div>
+</div>
+<div class="demo-top-acciones">
+<button type="button" class="btn btn-chico btn-primario" id="pm-ejemplo-entrar">Usar con mi empresa</button>
+<button type="button" class="btn-texto" id="pm-ejemplo-salir">Salir</button>
+</div>
+</div>
 </div>
 <div id="pm-cierre-banner" class="cierre-tributario-banner" role="status" hidden>
 <span class="material-icons" aria-hidden="true">lock</span>
@@ -1278,6 +1315,25 @@ gtag('js', new Date());
 
 <div class="fin-kpis fin-kpis-4" id="fc-kpis"></div>
 
+<section class="panel revisar-hoy-panel" id="fc-revisar-hoy" aria-labelledby="fc-revisar-titulo"></section>
+
+<section class="panel fc-grafico-panel" id="fc-grafico-panel" aria-labelledby="fc-grafico-titulo">
+<div class="panel-head">
+<div>
+<h2 id="fc-grafico-titulo">Evolución de caja · Últimos 6 meses</h2>
+<p class="revisar-hoy-sub" style="margin:2px 0 0">Entradas cobradas o por cobrar versus pagos y obligaciones del mes.</p>
+</div>
+<div class="fc-grafico-legend" aria-hidden="true">
+<span class="fc-leg-item"><span class="fc-leg-dot entradas"></span>Entradas</span>
+<span class="fc-leg-item"><span class="fc-leg-dot salidas"></span>Salidas</span>
+</div>
+</div>
+<div class="panel-cuerpo">
+<div class="fc-grafico-wrap" id="fc-svg-grafico"></div>
+<p class="fc-grafico-resumen" id="fc-grafico-resumen"></p>
+</div>
+</section>
+
 <div class="fin-split">
 <div class="panel">
 <div class="panel-head"><h2>Próximos compromisos del mes</h2><a href="/app/calendario" data-ruta="calendario" class="btn-texto">Ver calendario</a></div>
@@ -1299,6 +1355,8 @@ gtag('js', new Date());
 </div>
 </div>
 </div>
+
+<section class="panel fc-proyectos-panel" id="fc-proyectos-panel" aria-labelledby="fc-proy-titulo"></section>
 </section>
 
 <!-- Cobranzas (CxC) -->
@@ -1322,10 +1380,22 @@ gtag('js', new Date());
 <div class="lq-field"><label for="cob-f-razon">Cliente / Razón social</label><input id="cob-f-razon" type="text" maxlength="120" required></div>
 <div class="lq-field"><label for="cob-f-rut">RUT cliente</label><input id="cob-f-rut" type="text" data-tipo="rut" maxlength="15" placeholder="76.123.456-7"></div>
 <div class="lq-field"><label for="cob-f-folio">N° Factura / Folio</label><input id="cob-f-folio" type="text" maxlength="20" placeholder="1120"></div>
-<div class="lq-field"><label for="cob-f-monto">Monto total ($)</label><input id="cob-f-monto" type="text" data-tipo="pesos" inputmode="numeric" required placeholder="$595.000"></div>
 <div class="lq-field"><label for="cob-f-fecha">Fecha emisión</label><input id="cob-f-fecha" type="date"></div>
 <div class="lq-field"><label for="cob-f-vence">Fecha vencimiento</label><input id="cob-f-vence" type="date"></div>
 <div class="lq-field"><label for="cob-f-tel">WhatsApp contacto (opcional)</label><input id="cob-f-tel" type="text" maxlength="20" placeholder="+56991234567"></div>
+<div class="lq-field"><label for="cob-f-proyecto">Proyecto / Centro de costo</label><select id="cob-f-proyecto"></select></div>
+<div class="fin-desglose-widget" id="cob-desglose">
+<div class="fin-desglose-top">
+<span class="fin-desglose-titulo">Desglose tributario (calcula Neto + IVA 19% o desde el Total)</span>
+<label class="fin-desglose-exento" for="cob-f-exento"><input id="cob-f-exento" type="checkbox">Operación exenta de IVA</label>
+</div>
+<div class="fin-desglose-campos">
+<div class="lq-field"><label for="cob-f-neto">Neto ($)</label><input id="cob-f-neto" type="text" data-tipo="pesos" inputmode="numeric" placeholder="$500.000"></div>
+<div class="lq-field"><label for="cob-f-iva">IVA 19% ($)</label><input id="cob-f-iva" type="text" data-tipo="pesos" inputmode="numeric" readonly placeholder="$95.000"></div>
+<div class="lq-field"><label for="cob-f-monto">Total facturado ($)</label><input id="cob-f-monto" type="text" data-tipo="pesos" inputmode="numeric" required placeholder="$595.000"></div>
+</div>
+<p class="fin-desglose-nota" id="cob-desglose-nota">Ingresa el Neto o el Total: recalculamos el 19% de IVA al instante.</p>
+</div>
 <p id="cob-form-err" class="pm-error fin-span-all" role="alert" hidden></p>
 <div class="form-acciones fin-span-all"><button type="button" class="btn" id="cob-form-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Guardar factura</button></div>
 </form>
@@ -1375,12 +1445,24 @@ gtag('js', new Date());
 <div class="lq-field"><label for="pag-f-razon">Proveedor / Razón social</label><input id="pag-f-razon" type="text" maxlength="120" required></div>
 <div class="lq-field"><label for="pag-f-rut">RUT proveedor</label><input id="pag-f-rut" type="text" data-tipo="rut" maxlength="15" placeholder="96.540.110-K"></div>
 <div class="lq-field"><label for="pag-f-folio">N° Factura / Folio</label><input id="pag-f-folio" type="text" maxlength="20" placeholder="46110"></div>
-<div class="lq-field"><label for="pag-f-monto">Monto total ($)</label><input id="pag-f-monto" type="text" data-tipo="pesos" inputmode="numeric" required placeholder="$464.100"></div>
 <div class="lq-field"><label for="pag-f-fecha">Fecha emisión</label><input id="pag-f-fecha" type="date"></div>
 <div class="lq-field"><label for="pag-f-vence">Fecha vencimiento</label><input id="pag-f-vence" type="date"></div>
 <div class="lq-field"><label for="pag-f-banco">Banco destino</label><select id="pag-f-banco"></select></div>
 <div class="lq-field"><label for="pag-f-tipo">Tipo de cuenta</label><select id="pag-f-tipo"><option value="corriente">Cuenta corriente</option><option value="vista">Cuenta vista / RUT</option><option value="ahorro">Cuenta de ahorro</option></select></div>
 <div class="lq-field"><label for="pag-f-num">Número de cuenta</label><input id="pag-f-num" type="text" maxlength="22" placeholder="0018945002"></div>
+<div class="lq-field"><label for="pag-f-proyecto">Proyecto / Centro de costo</label><select id="pag-f-proyecto"></select></div>
+<div class="fin-desglose-widget" id="pag-desglose">
+<div class="fin-desglose-top">
+<span class="fin-desglose-titulo">Desglose tributario (calcula Neto + IVA 19% o desde el Total)</span>
+<label class="fin-desglose-exento" for="pag-f-exento"><input id="pag-f-exento" type="checkbox">Factura o boleta exenta de IVA</label>
+</div>
+<div class="fin-desglose-campos">
+<div class="lq-field"><label for="pag-f-neto">Neto ($)</label><input id="pag-f-neto" type="text" data-tipo="pesos" inputmode="numeric" placeholder="$390.000"></div>
+<div class="lq-field"><label for="pag-f-iva">IVA 19% ($)</label><input id="pag-f-iva" type="text" data-tipo="pesos" inputmode="numeric" readonly placeholder="$74.100"></div>
+<div class="lq-field"><label for="pag-f-monto">Total facturado ($)</label><input id="pag-f-monto" type="text" data-tipo="pesos" inputmode="numeric" required placeholder="$464.100"></div>
+</div>
+<p class="fin-desglose-nota" id="pag-desglose-nota">Ingresa el Neto o el Total: recalculamos el 19% de IVA al instante.</p>
+</div>
 <p id="pag-form-err" class="pm-error fin-span-all" role="alert" hidden></p>
 <div class="form-acciones fin-span-all"><button type="button" class="btn" id="pag-form-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Guardar factura</button></div>
 </form>
@@ -1417,7 +1499,8 @@ gtag('js', new Date());
 <p class="v-sub">Compara los movimientos de tu banco con tus facturas, sueldos, Previred y F29 en pocos clics.</p>
 </div>
 <div class="v-acciones">
-<button type="button" class="btn btn-primario" id="conc-btn-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (.csv / .xlsx)</button>
+<button type="button" class="btn btn-primario" id="conc-btn-masivo" hidden><span class="material-icons" aria-hidden="true">done_all</span><span>Conciliar sugeridas (<span id="conc-masivo-n">0</span>)</span></button>
+<button type="button" class="btn" id="conc-btn-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (.csv / .xlsx)</button>
 </div>
 </div>
 
@@ -1426,19 +1509,22 @@ gtag('js', new Date());
 <div class="fin-filtros" role="toolbar" aria-label="Filtrar movimientos bancarios">
 <button type="button" class="fin-chip activo" data-conc-filtro="pendientes" aria-pressed="true">Sin conciliar</button>
 <button type="button" class="fin-chip" data-conc-filtro="conciliados" aria-pressed="false">Conciliados</button>
+<button type="button" class="fin-chip" data-conc-filtro="sin_cartola" aria-pressed="false">En el libro, sin cartola <span id="conc-tab-libro-n"></span></button>
 <button type="button" class="fin-chip" data-conc-filtro="todos" aria-pressed="false">Todos</button>
 </div>
 
 <div class="concil-grid">
 <div class="panel">
-<div class="panel-head"><h2>Movimientos del banco</h2></div>
+<div class="panel-head"><h2 id="conc-izq-titulo">Movimientos del banco</h2></div>
 <div class="conc-lista" id="conc-lista-banco"></div>
 </div>
 <div class="panel">
-<div class="panel-head"><h2>Con qué cruzarlo en tu empresa</h2></div>
+<div class="panel-head"><h2 id="conc-der-titulo">Con qué cruzarlo en tu empresa</h2></div>
 <div id="conc-lista-empresa"></div>
 </div>
 </div>
+
+<section class="panel conc-explicacion-panel" id="conc-explicacion-panel" aria-labelledby="conc-exp-titulo"></section>
 </section>
 
 <!-- Mi Contador y Cierre Tributario -->
@@ -1489,6 +1575,8 @@ gtag('js', new Date());
 </table>
 </div>
 </div>
+
+<section class="panel mc-correos-panel" id="mc-correos-panel" aria-labelledby="mc-correos-titulo"></section>
 </section>
 
 </main>
@@ -1536,6 +1624,7 @@ gtag('js', new Date());
 <p class="lq-estado lq-estado-ok" id="pm-cobro-copiado" role="status"></p>
 <div class="form-acciones">
 <button type="button" class="btn" id="pm-cobro-copiar"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar texto</button>
+<button type="button" class="btn" id="pm-cobro-registrar"><span class="material-icons" aria-hidden="true">mark_email_read</span>Registrar aviso enviado</button>
 <a class="btn btn-primario" id="pm-cobro-wa" href="https://wa.me/" target="_blank" rel="noopener"><span class="material-icons" aria-hidden="true">open_in_new</span>Abrir en WhatsApp</a>
 </div>
 </div>
@@ -1646,9 +1735,9 @@ gtag('js', new Date());
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
 <script src="/js/kit_zip_engine.js?v=1.0.0"></script>
 <script src="/js/finiquito_docx.js?v=1.3.0"></script>
-<script src="/js/pyme_finanzas.js?v=1.4.0"></script>
+<script src="/js/pyme_finanzas.js?v=1.4.3"></script>
 <script src="/js/pyme_datos_ley.js?v=1.4.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.46.0" defer></script>
+<script src="/js/app_pyme.js?v=1.47.0" defer></script>
 </body>
 </html>

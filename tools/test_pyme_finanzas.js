@@ -185,4 +185,59 @@ caso('generarNominaProveedoresXlsx exporta .xlsx real con cuentas como texto (ce
     assert.strictEqual(montoCell.v, 844900);
 });
 
+caso('explicarDiferenciaConciliacion desglosa movimientos sin cruzar, pagos sin cartola y verifica cierre cuadrado', () => {
+    const expPend = FIN.explicarDiferenciaConciliacion({
+        ultimoSaldoCartola: 4685800,
+        movimientos: [
+            { id: 'm1', tipo: 'abono', monto: 535500, conciliadoCon: null },
+            { id: 'm2', tipo: 'cargo', monto: 844900, conciliadoCon: null },
+            { id: 'm3', tipo: 'abono', monto: 428400, conciliadoCon: { tipoDestino: 'cxc', destinoId: 'c1', titulo: 'C1' } }
+        ],
+        cobranzas: [
+            { id: 'c1', monto: 428400, pagada: true },
+            { id: 'c2', monto: 100000, pagada: true },
+            { id: 'c3', monto: 200000, pagada: false }
+        ],
+        pagos: [
+            { id: 'p1', monto: 50000, pagada: true }
+        ]
+    });
+
+    assert.strictEqual(expPend.cuadrado, false);
+    assert.strictEqual(expPend.abonosSinConciliar.total, 535500);
+    assert.strictEqual(expPend.cargosSinConciliar.total, 844900);
+    assert.strictEqual(expPend.cobrosLibroSinCartola.total, 100000);
+    assert.strictEqual(expPend.pagosLibroSinCartola.total, 50000);
+    assert.strictEqual(expPend.pendientesEnLibro.totalCount, 1);
+    assert.strictEqual(expPend.saldoLibroExplicado, 4685800 - 535500 + 844900 + 100000 - 50000);
+
+    const expCuadrado = FIN.explicarDiferenciaConciliacion({
+        ultimoSaldoCartola: 4685800,
+        movimientos: [
+            { id: 'm3', tipo: 'abono', monto: 428400, conciliadoCon: { tipoDestino: 'cxc', destinoId: 'c1', titulo: 'C1' } }
+        ],
+        cobranzas: [{ id: 'c1', monto: 428400, pagada: true }],
+        pagos: []
+    });
+    assert.strictEqual(expCuadrado.cuadrado, true);
+    assert.strictEqual(expCuadrado.diferenciaNeta, 0);
+});
+
+caso('resumenPorProyecto agrupa ingresos, gastos y margen por centro de costo', () => {
+    const proys = FIN.resumenPorProyecto(
+        [
+            { monto: 1190000, pagada: false, proyecto: 'Eventos y Banquetería' },
+            { monto: 749700, pagada: true, proyecto: 'Panadería Central' }
+        ],
+        [
+            { monto: 464100, pagada: false, proyecto: 'Panadería Central' }
+        ]
+    );
+    assert.strictEqual(proys.length, 2);
+    const pan = proys.find(x => x.proyecto === 'Panadería Central');
+    const ev = proys.find(x => x.proyecto === 'Eventos y Banquetería');
+    assert.strictEqual(pan.margen, 749700 - 464100);
+    assert.strictEqual(ev.porCobrar, 1190000);
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));
