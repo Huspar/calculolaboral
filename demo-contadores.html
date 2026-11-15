@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.5.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.6.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -565,6 +565,7 @@
           <button type="button" class="fin-chip activo" data-sublibro="diario" role="tab" aria-selected="true">Libro Diario</button>
           <button type="button" class="fin-chip" data-sublibro="mayor" role="tab" aria-selected="false">Libro Mayor</button>
           <button type="button" class="fin-chip" data-sublibro="tesoreria" role="tab" aria-selected="false">Tesorería y Parámetros</button>
+          <button type="button" class="fin-chip" data-sublibro="conciliacion" role="tab" aria-selected="false">Conciliación y Cartera</button>
           <button type="button" class="fin-chip" data-sublibro="plan" role="tab" aria-selected="false">Plan de Cuentas</button>
         </div>
 
@@ -614,6 +615,96 @@
                 <label class="pm-check"><input type="checkbox" id="tes-sueldos-pagados" checked> Sueldos líquidos pagados dentro del mes</label>
                 <label class="pm-check"><input type="checkbox" id="tes-hon-pagados" checked> Boletas de honorarios líquidas pagadas dentro del mes</label>
                 <label class="pm-check"><input type="checkbox" id="tes-cotiz-pagadas"> Cotizaciones Previred pagadas en el mismo mes (si no, vencen el día 13)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subvista Conciliación Inteligente y Cartera CxC/CxP -->
+        <div id="sub-conciliacion" hidden>
+          <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
+            <div class="fin-kpi"><span class="fin-kpi-label">Movimientos cartola</span><span class="fin-kpi-val mono" id="conc-k-movs">0</span></div>
+            <div class="fin-kpi"><span class="fin-kpi-label">Conciliación automática</span><span class="fin-kpi-val mono ok" id="conc-k-pct">0%</span></div>
+            <div class="fin-kpi"><span class="fin-kpi-label">CxC pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxc">$0</span></div>
+            <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">CxP pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxp">$0</span></div>
+          </div>
+
+          <div class="panel" style="margin-bottom:16px">
+            <div class="panel-head">
+              <div>
+                <h2>Conciliación Bancaria con Reglas de Contraparte</h2>
+                <p class="panel-ayuda">Cruza automáticamente tu cartola CSV con facturas RCV (±$100) y reglas repetitivas (Transbank, SII, Previred, comisiones).</p>
+              </div>
+              <div class="v-acciones">
+                <button type="button" class="btn btn-chico" id="btn-conc-cartola-ej">Cargar cartola ejemplo</button>
+                <button type="button" class="btn btn-chico btn-primario" id="btn-conc-centralizar">Centralizar conciliados en Diario</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="suite-plan-nuevo-fila" style="margin-bottom:12px">
+                <div class="lq-field"><label for="regla-tipo">Movimiento</label>
+                  <select id="regla-tipo" class="lq-select">
+                    <option value="cargo">Cargo (egreso)</option>
+                    <option value="abono">Abono (ingreso)</option>
+                    <option value="ambos">Ambos</option>
+                  </select>
+                </div>
+                <div class="lq-field"><label for="regla-patron">Palabra clave en glosa</label><input type="text" id="regla-patron" placeholder="Ej: arriendo bodega|entel"></div>
+                <div class="lq-field"><label for="regla-cuenta">Cuenta contable</label>
+                  <select id="regla-cuenta" class="lq-select">
+                    <option value="42040">42040 · Gastos generales</option>
+                    <option value="11050">11050 · Clientes por cobrar</option>
+                    <option value="21010">21010 · Proveedores por pagar</option>
+                    <option value="21070">21070 · Impuestos F29</option>
+                    <option value="21035">21035 · Previred por pagar</option>
+                    <option value="21030">21030 · Sueldos por pagar</option>
+                    <option value="21025">21025 · Honorarios por pagar</option>
+                  </select>
+                </div>
+                <div class="lq-field"><label for="regla-motivo">Descripción regla</label><input type="text" id="regla-motivo" placeholder="Pago servicio mensual"></div>
+                <div class="lq-field" style="align-self:end"><button type="button" class="btn btn-primario" id="btn-regla-agregar">Guardar regla</button></div>
+              </div>
+              <div class="suite-reglas-chips" id="conc-reglas-lista"></div>
+              <div class="tabla-contable-wrap" style="margin-top:10px">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Glosa bancaria</th>
+                      <th scope="col">Tipo</th>
+                      <th scope="col" class="num">Monto ($)</th>
+                      <th scope="col">Cruce / Regla aplicada</th>
+                      <th scope="col">Cuenta</th>
+                      <th scope="col">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-conciliacion"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="fin-cols-2">
+            <div class="panel">
+              <div class="panel-head"><div><h2>Antigüedad Cuentas por Cobrar (CxC)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
+              <div class="panel-cuerpo">
+                <div class="tabla-contable-wrap">
+                  <table class="tabla-contable compacta">
+                    <thead><tr><th scope="col">Folio</th><th scope="col">Cliente</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th></tr></thead>
+                    <tbody id="tbody-aging-cxc"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><div><h2>Antigüedad Cuentas por Pagar (CxP)</h2><p class="panel-ayuda" id="aging-cxp-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
+              <div class="panel-cuerpo">
+                <div class="tabla-contable-wrap">
+                  <table class="tabla-contable compacta">
+                    <thead><tr><th scope="col">Folio</th><th scope="col">Proveedor</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th></tr></thead>
+                    <tbody id="tbody-aging-cxp"></tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -742,6 +833,7 @@
         <div class="fin-filtros" role="tablist" aria-label="Subvistas de balance y RLI">
           <button type="button" class="fin-chip activo" data-subbal="balance8" role="tab" aria-selected="true">Balance de 8 Columnas</button>
           <button type="button" class="fin-chip" data-subbal="rli" role="tab" aria-selected="false">Hoja RLI ProPyme (Art. 14 D N°3)</button>
+          <button type="button" class="fin-chip" data-subbal="activo_fijo" role="tab" aria-selected="false">Activo Fijo y Deprec.</button>
         </div>
 
         <div id="sub-balance8">
@@ -800,6 +892,70 @@
                     </tr>
                   </thead>
                   <tbody id="tbody-rli"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subvista Activo Fijo y Depreciación -->
+        <div id="sub-activo-fijo" hidden>
+          <div class="panel-nota-normativa" id="af-norma-banner" style="margin-bottom:14px">
+            <span class="material-icons" aria-hidden="true">info</span>
+            <span id="af-norma-txt">ProPyme 14 D N°3 y N°8: depreciación instantánea del 100% sobre el valor neto pagado (sin IVA recuperable, sin terrenos y sin CM). Régimen 14 A: normal o acelerada 1/3 para bienes nuevos >= 3 años con control DDAN.</span>
+          </div>
+          <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
+            <div class="fin-kpi"><span class="fin-kpi-label">Base depreciable</span><span class="fin-kpi-val mono" id="af-k-base">$0</span></div>
+            <div class="fin-kpi"><span class="fin-kpi-label">Deprec. tributaria ejercicio</span><span class="fin-kpi-val mono ok" id="af-k-trib">$0</span></div>
+            <div class="fin-kpi"><span class="fin-kpi-label">Diferencia DDAN (14 A)</span><span class="fin-kpi-val mono" id="af-k-ddan">$0</span></div>
+            <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Valor libro cierre</span><span class="fin-kpi-val mono" id="af-k-libro">$0</span></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Control de Activo Fijo Tributario</h2>
+                <p class="panel-ayuda">Agrega activos manualmente o importa las compras clasificadas como activo fijo en el RCV SII (cód. 524/525).</p>
+              </div>
+              <div class="v-acciones">
+                <button type="button" class="btn btn-chico" id="btn-af-importar-rcv">Importar desde RCV</button>
+                <button type="button" class="btn btn-chico btn-primario" id="btn-af-asiento-diario">Registrar depreciación en Diario</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="fin-form-grid" style="margin-bottom:12px">
+                <div class="lq-field"><label for="af-desc">Descripción del bien</label><input type="text" id="af-desc" placeholder="Ej: Horno industrial / Furgón"></div>
+                <div class="lq-field"><label for="af-valor">Valor neto compra ($)</label><input type="number" id="af-valor" min="0" step="1" placeholder="1600000"></div>
+                <div class="lq-field"><label for="af-iva-norec">IVA no recuperable ($)</label><input type="number" id="af-iva-norec" min="0" step="1" value="0"></div>
+                <div class="lq-field"><label for="af-vida">Vida útil normal SII (años)</label><input type="number" id="af-vida" min="1" max="50" value="7"></div>
+                <div class="lq-field"><label for="af-meses">Meses uso en ejercicio</label><input type="number" id="af-meses" min="1" max="12" value="12"></div>
+                <div class="lq-field"><label for="af-mod14a">Método en Régimen 14 A</label>
+                  <select id="af-mod14a" class="lq-select">
+                    <option value="normal">Normal (Art. 31 N°5)</option>
+                    <option value="acelerada_1_3">Acelerada 1/3 (bienes nuevos >=3a)</option>
+                    <option value="ultra_1_10">Ultrarrápida 1/10 (Art. 31 N°5 bis &lt;=100k UF)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="suite-af-checks" style="margin-bottom:14px">
+                <label class="pm-check"><input type="checkbox" id="af-pagado" checked> Bien pagado en el ejercicio</label>
+                <label class="pm-check"><input type="checkbox" id="af-usado"> Bien usado</label>
+                <label class="pm-check"><input type="checkbox" id="af-terreno"> Corresponde a terreno (no depreciable)</label>
+                <button type="button" class="btn btn-primario btn-chico" id="btn-af-agregar">Agregar activo fijo</button>
+              </div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Bien / Activo</th>
+                      <th scope="col">Regla aplicada</th>
+                      <th scope="col" class="num">Base ($)</th>
+                      <th scope="col" class="num">Deprec. Trib. ($)</th>
+                      <th scope="col" class="num">DDAN ($)</th>
+                      <th scope="col" class="num">Valor Libro ($)</th>
+                      <th scope="col" class="num">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-activo-fijo"></tbody>
                 </table>
               </div>
             </div>
@@ -1031,6 +1187,7 @@
           <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false">DJ 1879 y Cert. N°1</button>
           <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false">DJ 1947 / 1948</button>
           <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false">CPT Simplificado</button>
+          <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false">Propuesta F22 (IDPC vs PPM)</button>
         </div>
 
         <!-- DJ 1887 -->
@@ -1162,6 +1319,51 @@
                     </tr>
                   </thead>
                   <tbody id="tbody-cpt"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Propuesta F22 (IDPC vs PPM Cód. 36 L85) -->
+        <div id="subddjj-f22" hidden>
+          <div class="panel-nota-normativa" id="f22-norma-banner" style="margin-bottom:14px">
+            <span class="material-icons" aria-hidden="true">info</span>
+            <span id="f22-norma-txt">AT 2026: IDPC ProPyme General 12,5% (art. 25 Ley 21.755), Régimen 14 A 27%, 14 D N°8 0% empresa (PPM va en DJ 1947 / cód. 1645 socios). En F22 el PPM pagado reajustado va en línea 85, código 36.</span>
+          </div>
+          <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
+            <div class="fin-kpi"><span class="fin-kpi-label">Base RLI considerada</span><span class="fin-kpi-val mono" id="f22-k-rli">$0</span></div>
+            <div class="fin-kpi"><span class="fin-kpi-label" id="f22-k-idpc-lbl">IDPC determinado</span><span class="fin-kpi-val mono" id="f22-k-idpc">$0</span></div>
+            <div class="fin-kpi"><span class="fin-kpi-label">PPM reajustado (Cód. 36 L85)</span><span class="fin-kpi-val mono ok" id="f22-k-ppm36">$0</span></div>
+            <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label" id="f22-k-saldo-lbl">Impuesto F22 estimado</span><span class="fin-kpi-val mono" id="f22-k-saldo">$0</span></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Cierre Preliminar Formulario 22 (IDPC vs PPM)</h2>
+                <p class="panel-ayuda" id="f22-fuente-tasa">Cruce automático desde RLI del período y PPM reajustados.</p>
+              </div>
+              <div class="v-acciones">
+                <button type="button" class="btn btn-chico" id="btn-f22-usar-f29">Usar PPM del F29 actual</button>
+                <button type="button" class="btn btn-primario btn-chico" id="btn-f22-pdf">PDF Propuesta F22</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="fin-form-grid" style="margin-bottom:14px">
+                <div class="lq-field"><label for="f22-ppm-anual">PPM acumulados nominales del año ($)</label><input type="number" id="f22-ppm-anual" min="0" step="1" placeholder="0"><span class="texto-ayuda">Si queda vacío usa el PPM del mes actual.</span></div>
+                <div class="lq-field"><label for="f22-factor-ppm">Factor actualización promedio SII</label><input type="number" id="f22-factor-ppm" min="1" step="0.001" value="1.018"></div>
+                <div class="lq-field"><label for="f22-otros-creditos">Otros créditos al IDPC ($)</label><input type="number" id="f22-otros-creditos" min="0" step="1" value="0"></div>
+              </div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Línea / Código F22</th>
+                      <th scope="col">Concepto</th>
+                      <th scope="col" class="num">Monto ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-f22"></tbody>
                 </table>
               </div>
             </div>
@@ -1301,8 +1503,8 @@
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
-<script src="/js/contadores_asistente_pro.js?v=1.0.0"></script>
-<script src="/js/demo_suite.js?v=2.2.0"></script>
+<script src="/js/contadores_asistente_pro.js?v=1.1.0"></script>
+<script src="/js/demo_suite.js?v=2.3.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

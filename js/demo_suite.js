@@ -159,6 +159,13 @@
                 otrosAgregados: 0,
                 tasaIdpc: 12.5
             },
+            activosFijos: [],
+            reglasConciliacion: [],
+            f22Ajustes: {
+                ppmManual: '',
+                factorPpm: 1.018,
+                otrosCreditos: 0
+            },
             manuales: [],
             auditados: {}
         };
@@ -181,6 +188,9 @@
             bheBoletas: Array.isArray(guardado.bheBoletas) ? guardado.bheBoletas : [],
             bheAlertas: Array.isArray(guardado.bheAlertas) ? guardado.bheAlertas : [],
             cartolaMovimientos: Array.isArray(guardado.cartolaMovimientos) ? guardado.cartolaMovimientos : [],
+            activosFijos: Array.isArray(guardado.activosFijos) ? guardado.activosFijos : [],
+            reglasConciliacion: Array.isArray(guardado.reglasConciliacion) ? guardado.reglasConciliacion : [],
+            f22Ajustes: Object.assign({}, base.f22Ajustes, guardado.f22Ajustes || {}),
             socios: Array.isArray(guardado.socios) && guardado.socios.length ? guardado.socios : base.socios,
             manuales: Array.isArray(guardado.manuales) ? guardado.manuales : [],
             auditados: (guardado.auditados && typeof guardado.auditados === 'object') ? guardado.auditados : {}
@@ -274,7 +284,7 @@
             dj1879 = Renta.generarDj1879(bheLista, { anioTributario: ddjjAnio });
 
             dj194x = Renta.generarDj1947o1948(est.regimen, {
-                baseImponible: rli.rli,
+                baseImponible: rli.baseImponible,
                 ppmDisponible: f29.codigos[62],
                 retirosTotales: (est.socios && est.socios[0] && est.socios[0].retiros) || 0,
                 tasaIdpc: est.rliAjustes.tasaIdpc,
@@ -282,7 +292,7 @@
             }, { anioTributario: ddjjAnio });
 
             cptSimp = Renta.calcularCptSimplificado(Object.assign({}, est.cptAjustes, {
-                baseImponibleRli: rli.rli
+                baseImponibleRli: rli.baseImponible
             }));
         }
 
@@ -295,6 +305,34 @@
             estado: est
         }) : null;
 
+        var activoFijo = Pro ? Pro.calcularActivoFijoTributario(est.activosFijos, {
+            regimen: est.regimen,
+            factorIpc: 1.018
+        }) : null;
+
+        var conciliacion = Pro ? Pro.conciliarCartolaConReglas(est.cartolaMovimientos, {
+            ventas: ventas,
+            compras: compras,
+            reglas: est.reglasConciliacion
+        }) : null;
+
+        var aging = Pro ? Pro.calcularAgingDocumentos(ventas, compras, periodo, {
+            pctVentasCobradas: est.tesoreria.pctVentasCobradas,
+            pctComprasPagadas: est.tesoreria.pctComprasPagadas
+        }) : null;
+
+        var ppmManualVal = (est.f22Ajustes && est.f22Ajustes.ppmManual !== '' && est.f22Ajustes.ppmManual != null)
+            ? Math.max(0, Math.round(Number(est.f22Ajustes.ppmManual) || 0))
+            : null;
+        var f22 = Pro ? Pro.calcularPropuestaF22({
+            regimen: est.regimen,
+            anioTributario: ddjjAnio,
+            baseImponibleRli: rli.baseImponible,
+            ppmPagadoTotal: ppmManualVal !== null ? ppmManualVal : (f29.codigos[62] || 0),
+            factorPromedioPpm: (est.f22Ajustes && Number(est.f22Ajustes.factorPpm)) || 1.018,
+            otrosCreditos: (est.f22Ajustes && Number(est.f22Ajustes.otrosCreditos)) || 0
+        }) : null;
+
         return {
             estado: est,
             periodo: periodo,
@@ -305,6 +343,10 @@
             compras: compras,
             f29: f29,
             auditoria: auditoria,
+            activoFijo: activoFijo,
+            conciliacion: conciliacion,
+            aging: aging,
+            f22: f22,
             asientos: gen.asientos,
             metricasFlujo: gen.metricasFlujo,
             mayor: mayor,
@@ -559,8 +601,10 @@
         $('sub-diario').hidden = ui.subLibro !== 'diario';
         $('sub-mayor').hidden = ui.subLibro !== 'mayor';
         $('sub-tesoreria').hidden = ui.subLibro !== 'tesoreria';
+        if ($('sub-conciliacion')) $('sub-conciliacion').hidden = ui.subLibro !== 'conciliacion';
         if ($('sub-plan')) $('sub-plan').hidden = ui.subLibro !== 'plan';
         pintarPlanCuentas();
+        pintarConciliacionYAgenda(m);
 
         // Sincronizar campos de tesoreria
         var t = est.tesoreria;
@@ -721,6 +765,8 @@
         });
         $('sub-balance8').hidden = ui.subBalance !== 'balance8';
         $('sub-rli').hidden = ui.subBalance !== 'rli';
+        if ($('sub-activo-fijo')) $('sub-activo-fijo').hidden = ui.subBalance !== 'activo_fijo';
+        pintarActivoFijo(m);
 
         $('bal-k-activo').textContent = D.money(b.totales.activo);
         $('bal-k-pasivo').textContent = D.money(b.totales.pasivo);
@@ -1217,10 +1263,11 @@
             btn.classList.toggle('activo', act);
             btn.setAttribute('aria-selected', act ? 'true' : 'false');
         });
-        ['1887', '1879', '1947', 'cpt'].forEach(function (k) {
+        ['1887', '1879', '1947', 'cpt', 'f22'].forEach(function (k) {
             var pan = $('subddjj-' + k);
             if (pan) pan.hidden = (ui.subDdjj !== k);
         });
+        pintarPropuestaF22(m);
         var d = m.ddjj || {};
         if (d.dj1887 && d.dj1887.ok && $('tbody-dj1887')) {
             var filas87 = d.dj1887.filas || [];
@@ -1281,6 +1328,176 @@
             }).join('') +
                 '<tr class="fila-total"><td><strong>(=) Capital Propio Tributario Simplificado de cierre</strong></td><td class="mono num"><strong>' + moneySigno(d.cpt.cptFinal) + '</strong></td></tr>' +
                 '<tr><td>RAI estimado (sobre capital aportado reajustado)</td><td class="mono num">' + D.money(d.cpt.raiEstimado) + '</td></tr>';
+        }
+    }
+
+    function pintarConciliacionYAgenda(m) {
+        if (!$('sub-conciliacion')) return;
+        var est = m.estado;
+        var bloqueado = !!est.cerradoTributario;
+        var conc = m.conciliacion || { filas: [], resumen: { totalMovimientos: 0, pctConciliado: 0 } };
+        var aging = m.aging || { cxc: { total: 0, buckets: { dias_0_30: 0, dias_31_60: 0, dias_mas_60: 0 }, items: [] }, cxp: { total: 0, buckets: { dias_0_30: 0, dias_31_60: 0, dias_mas_60: 0 }, items: [] } };
+
+        if ($('conc-k-movs')) $('conc-k-movs').textContent = conc.resumen.totalMovimientos;
+        if ($('conc-k-pct')) $('conc-k-pct').textContent = conc.resumen.pctConciliado + '%';
+        if ($('conc-k-cxc')) $('conc-k-cxc').textContent = D.money(aging.cxc.total);
+        if ($('conc-k-cxp')) $('conc-k-cxp').textContent = D.money(aging.cxp.total);
+
+        if ($('conc-reglas-lista')) {
+            var reglasUsr = Array.isArray(est.reglasConciliacion) ? est.reglasConciliacion : [];
+            var chipsUsr = reglasUsr.map(function (r) {
+                return '<span class="suite-regla-chip">' +
+                    '<span class="suite-regla-chip-tipo">' + D.esc(r.tipo || 'ambos') + '</span>' +
+                    '<span>"' + D.esc(r.patron) + '" → ' + D.esc(r.cuenta) + (r.motivo ? ' · ' + D.esc(r.motivo) : '') + '</span>' +
+                    (bloqueado ? '' : '<button type="button" class="suite-regla-chip-del" data-regla-del="' + D.esc(r.id) + '" aria-label="Eliminar regla">×</button>') +
+                    '</span>';
+            }).join('');
+            var chipsDef = (Pro ? Pro.REGLAS_CONCILIACION_DEFECTO : []).map(function (r) {
+                return '<span class="suite-regla-chip" title="Regla integrada del sistema">' +
+                    '<span class="suite-regla-chip-tipo">' + D.esc(r.tipo) + '</span>' +
+                    '<span>' + D.esc(r.motivo) + ' (' + D.esc(r.cuenta) + ')</span>' +
+                    '</span>';
+            }).join('');
+            $('conc-reglas-lista').innerHTML = chipsUsr + chipsDef;
+        }
+
+        if ($('tbody-conciliacion')) {
+            $('tbody-conciliacion').innerHTML = conc.filas.length
+                ? conc.filas.map(function (f) {
+                    var pillCls = f.metodo === 'factura_rcv' ? 'conc-pill-ok' : (f.metodo === 'regla' ? 'conc-pill-regla' : 'conc-pill-pend');
+                    var pillTxt = f.metodo === 'factura_rcv' ? 'Factura RCV' : (f.metodo === 'regla' ? 'Regla auto' : 'Pendiente');
+                    return '<tr>' +
+                        '<td class="mono">' + D.esc(f.fecha || '-') + '</td>' +
+                        '<td>' + D.esc(f.glosa || '-') + '</td>' +
+                        '<td class="cap">' + D.esc(f.tipo) + '</td>' +
+                        '<td class="mono num">' + D.money(f.monto) + '</td>' +
+                        '<td>' + D.esc(f.detalleMatch) + '</td>' +
+                        '<td class="mono">' + D.esc(f.cuenta) + '</td>' +
+                        '<td><span class="conc-pill ' + pillCls + '">' + pillTxt + '</span></td>' +
+                        '</tr>';
+                }).join('')
+                : '<tr><td colspan="7" class="texto-ayuda">Sin movimientos bancarios aún. Haz clic en "Cargar cartola ejemplo" o importa un CSV en F29 → Importar SII.</td></tr>';
+        }
+
+        if ($('aging-cxc-buckets')) {
+            var bc = aging.cxc.buckets;
+            $('aging-cxc-buckets').textContent = '0-30d: ' + D.money(bc.dias_0_30) + ' · 31-60d: ' + D.money(bc.dias_31_60) + ' · +60d: ' + D.money(bc.dias_mas_60);
+        }
+        if ($('tbody-aging-cxc')) {
+            $('tbody-aging-cxc').innerHTML = aging.cxc.items.length
+                ? aging.cxc.items.slice(0, 12).map(function (it) {
+                    return '<tr><td>DTE ' + D.esc(it.tipoDoc) + ' #' + D.esc(it.folio) + '<br><span class="texto-ayuda">' + D.esc(it.razonSocial) + '</span></td>' +
+                        '<td class="mono">' + it.dias + 'd (' + D.esc(it.tramo) + ')</td>' +
+                        '<td class="mono num">' + D.money(it.saldoPendiente) + '</td></tr>';
+                }).join('')
+                : '<tr><td colspan="3" class="texto-ayuda">Sin saldo CxC pendiente (100% cobrado o sin ventas RCV).</td></tr>';
+        }
+
+        if ($('aging-cxp-buckets')) {
+            var bp = aging.cxp.buckets;
+            $('aging-cxp-buckets').textContent = '0-30d: ' + D.money(bp.dias_0_30) + ' · 31-60d: ' + D.money(bp.dias_31_60) + ' · +60d: ' + D.money(bp.dias_mas_60);
+        }
+        if ($('tbody-aging-cxp')) {
+            $('tbody-aging-cxp').innerHTML = aging.cxp.items.length
+                ? aging.cxp.items.slice(0, 12).map(function (it) {
+                    return '<tr><td>DTE ' + D.esc(it.tipoDoc) + ' #' + D.esc(it.folio) + '<br><span class="texto-ayuda">' + D.esc(it.razonSocial) + '</span></td>' +
+                        '<td class="mono">' + it.dias + 'd (' + D.esc(it.tramo) + ')</td>' +
+                        '<td class="mono num">' + D.money(it.saldoPendiente) + '</td></tr>';
+                }).join('')
+                : '<tr><td colspan="3" class="texto-ayuda">Sin saldo CxP pendiente (100% pagado o sin compras RCV).</td></tr>';
+        }
+
+        Array.prototype.forEach.call(document.querySelectorAll('#sub-conciliacion input, #sub-conciliacion select, #btn-regla-agregar, #btn-conc-centralizar'), function (el) {
+            el.disabled = bloqueado;
+        });
+    }
+
+    function pintarActivoFijo(m) {
+        if (!$('sub-activo-fijo')) return;
+        var est = m.estado;
+        var bloqueado = !!est.cerradoTributario;
+        var af = m.activoFijo || { esProPyme: true, totalBaseDepreciable: 0, totalDepreciacionTributaria: 0, totalDiferenciaDdan: 0, items: [], notaNormativa: '' };
+
+        if ($('af-norma-txt') && af.notaNormativa) $('af-norma-txt').textContent = af.notaNormativa;
+        if ($('af-k-base')) $('af-k-base').textContent = D.money(af.totalBaseDepreciable);
+        if ($('af-k-trib')) $('af-k-trib').textContent = D.money(af.totalDepreciacionTributaria);
+        if ($('af-k-ddan')) $('af-k-ddan').textContent = D.money(af.totalDiferenciaDdan);
+        var libroTotal = (af.items || []).reduce(function (s, it) { return s + (it.valorLibroCierre || 0); }, 0);
+        if ($('af-k-libro')) $('af-k-libro').textContent = D.money(libroTotal);
+
+        if ($('af-mod14a')) {
+            $('af-mod14a').disabled = bloqueado || af.esProPyme;
+            $('af-mod14a').title = af.esProPyme ? 'En ProPyme 14 D3 / 14 D8 aplica depreciación instantánea del 100%.' : '';
+        }
+
+        if ($('tbody-activo-fijo')) {
+            $('tbody-activo-fijo').innerHTML = af.items.length
+                ? af.items.map(function (it) {
+                    return '<tr>' +
+                        '<td><strong>' + D.esc(it.descripcion) + '</strong><br><span class="texto-ayuda">' + D.esc(it.observacion) + '</span></td>' +
+                        '<td>' + D.esc(it.metodoAplicado) + '</td>' +
+                        '<td class="mono num">' + D.money(it.baseDepreciable) + '</td>' +
+                        '<td class="mono num">' + D.money(it.depreciacionTributaria) + '</td>' +
+                        '<td class="mono num">' + D.money(it.diferenciaDdan) + '</td>' +
+                        '<td class="mono num">' + D.money(it.valorLibroCierre) + '</td>' +
+                        '<td class="num">' + (bloqueado ? '-' : '<button type="button" class="btn btn-chico" data-af-borrar="' + D.esc(it.id) + '">Quitar</button>') + '</td>' +
+                        '</tr>';
+                }).join('')
+                : '<tr><td colspan="7" class="texto-ayuda">Sin bienes registrados. Usa "Importar desde RCV" o agrega un bien arriba.</td></tr>';
+        }
+
+        Array.prototype.forEach.call(document.querySelectorAll('#sub-activo-fijo input, #btn-af-agregar, #btn-af-importar-rcv, #btn-af-asiento-diario'), function (el) {
+            el.disabled = bloqueado;
+        });
+    }
+
+    function pintarPropuestaF22(m) {
+        if (!$('subddjj-f22')) return;
+        var est = m.estado;
+        var f22 = m.f22;
+        if (!f22) return;
+
+        var aj = est.f22Ajustes || {};
+        if ($('f22-ppm-anual') && document.activeElement !== $('f22-ppm-anual')) {
+            $('f22-ppm-anual').value = aj.ppmManual !== '' && aj.ppmManual != null ? aj.ppmManual : '';
+        }
+        if ($('f22-factor-ppm') && document.activeElement !== $('f22-factor-ppm')) {
+            $('f22-factor-ppm').value = aj.factorPpm || 1.018;
+        }
+        if ($('f22-otros-creditos') && document.activeElement !== $('f22-otros-creditos')) {
+            $('f22-otros-creditos').value = aj.otrosCreditos || 0;
+        }
+
+        if ($('f22-norma-txt')) $('f22-norma-txt').textContent = f22.notaNormativa;
+        if ($('f22-fuente-tasa')) $('f22-fuente-tasa').textContent = 'AT ' + f22.anioTributario + ' · ' + f22.fuenteTasa;
+        if ($('f22-k-rli')) $('f22-k-rli').textContent = moneySigno(f22.baseImponibleRli);
+        if ($('f22-k-idpc-lbl')) $('f22-k-idpc-lbl').textContent = 'IDPC determinado (' + D.num(f22.tasaIdpc, 1) + '%)';
+        if ($('f22-k-idpc')) $('f22-k-idpc').textContent = D.money(f22.idpcDeterminado);
+        if ($('f22-k-ppm36')) {
+            $('f22-k-ppm36').textContent = f22.esTransparente
+                ? D.money(f22.ppmDj1947Socios) + ' (DJ 1947)'
+                : D.money(f22.ppmCod36Empresa);
+        }
+        if ($('f22-k-saldo-lbl')) {
+            $('f22-k-saldo-lbl').textContent = f22.esTransparente
+                ? 'IDPC empresa (14 D N°8)'
+                : (f22.saldoAPagar > 0 ? 'Impuesto F22 a pagar' : 'Devolución PPM estimada');
+        }
+        if ($('f22-k-saldo')) {
+            $('f22-k-saldo').textContent = f22.esTransparente
+                ? '$0'
+                : D.money(f22.saldoAPagar > 0 ? f22.saldoAPagar : f22.devolucionF22);
+        }
+
+        if ($('tbody-f22')) {
+            $('tbody-f22').innerHTML = (f22.lineasF22 || []).map(function (ln) {
+                var cls = ln.destacado === 'pagar' ? ' class="f22-fila-pagar"' : (ln.destacado === 'devolucion' ? ' class="f22-fila-devolucion"' : '');
+                return '<tr' + cls + '>' +
+                    '<td class="mono">' + D.esc(ln.codigo) + '</td>' +
+                    '<td>' + D.esc(ln.concepto) + '</td>' +
+                    '<td class="mono num">' + moneySigno(ln.monto) + '</td>' +
+                    '</tr>';
+            }).join('');
         }
     }
 
@@ -2425,6 +2642,247 @@
         }
         if ($('btn-dj1887-cert-pdf')) $('btn-dj1887-cert-pdf').addEventListener('click', imprimirCertificadoN6);
         if ($('btn-dj1879-cert-pdf')) $('btn-dj1879-cert-pdf').addEventListener('click', imprimirCertificadoN1);
+
+        // Etapa 2 · TOP 2: Activo Fijo Tributario
+        if ($('btn-af-agregar')) {
+            $('btn-af-agregar').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var desc = ($('af-desc') && $('af-desc').value.trim()) || '';
+                var val = Math.max(0, Math.round(D.parseNumber($('af-valor') && $('af-valor').value)));
+                if (!desc || !val) {
+                    D.avisar('Ingresa descripción y valor neto del bien.');
+                    return;
+                }
+                var nuevo = {
+                    id: 'AF-' + Date.now(),
+                    descripcion: desc,
+                    fechaCompra: periodoActual() + '-15',
+                    valorNetoPagado: val,
+                    ivaNoRecuperable: Math.max(0, Math.round(D.parseNumber($('af-iva-norec') && $('af-iva-norec').value))),
+                    vidaUtilNormalAnios: Math.max(1, Math.round(Number($('af-vida') && $('af-vida').value) || 5)),
+                    mesesUsoEjercicio: Math.max(1, Math.min(12, Math.round(Number($('af-meses') && $('af-meses').value) || 12))),
+                    modalidad14A: ($('af-mod14a') && $('af-mod14a').value) || 'normal',
+                    pagado: $('af-pagado') ? $('af-pagado').checked : true,
+                    esUsado: $('af-usado') ? $('af-usado').checked : false,
+                    esTerreno: $('af-terreno') ? $('af-terreno').checked : false
+                };
+                guardarEstadoActual(function (est) {
+                    est.activosFijos.push(nuevo);
+                });
+                if ($('af-desc')) $('af-desc').value = '';
+                if ($('af-valor')) $('af-valor').value = '';
+                refrescarTodo();
+                D.avisar('Activo fijo "' + desc + '" agregado al cálculo tributario.');
+            });
+        }
+        if ($('tbody-activo-fijo')) {
+            $('tbody-activo-fijo').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-af-borrar]');
+                if (!btn) return;
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var idAf = btn.getAttribute('data-af-borrar');
+                guardarEstadoActual(function (est) {
+                    est.activosFijos = (est.activosFijos || []).filter(function (x) { return String(x.id) !== String(idAf); });
+                });
+                refrescarTodo();
+            });
+        }
+        if ($('btn-af-importar-rcv')) {
+            $('btn-af-importar-rcv').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var m = calcularModelo();
+                var docsAf = (m.compras && Array.isArray(m.compras.documentos) ? m.compras.documentos : []).filter(function (d) {
+                    return !d.esResumen && !d.resta && (Number(d.ivaActivoFijo) || 0) > 0;
+                });
+                var agregado = 0;
+                guardarEstadoActual(function (est) {
+                    var idsExist = {};
+                    (est.activosFijos || []).forEach(function (a) { idsExist[String(a.id)] = true; });
+                    if (docsAf.length) {
+                        docsAf.forEach(function (d, idx) {
+                            var aid = 'AF-RCV-' + (d.folio || idx);
+                            if (idsExist[aid]) return;
+                            var netoDoc = Math.max(0, Math.round(Number(d.neto) || Math.round((Number(d.ivaActivoFijo) || 0) / 0.19)));
+                            if (!netoDoc) return;
+                            est.activosFijos.push({
+                                id: aid,
+                                descripcion: (d.razonSocial || 'Compra activo fijo') + ' (DTE ' + (d.folio || idx) + ')',
+                                fechaCompra: d.fecha || (periodoActual() + '-15'),
+                                valorNetoPagado: netoDoc,
+                                ivaNoRecuperable: 0,
+                                vidaUtilNormalAnios: 7,
+                                mesesUsoEjercicio: 12,
+                                modalidad14A: 'acelerada_1_3',
+                                pagado: est.tesoreria ? !!est.tesoreria.activoFijoPagado : true,
+                                esUsado: false,
+                                esTerreno: false
+                            });
+                            agregado += 1;
+                        });
+                    } else if (m.compras && m.compras.netoActivoFijo > 0) {
+                        var aidGlob = 'AF-RCV-GLOBAL-' + periodoActual();
+                        if (!idsExist[aidGlob]) {
+                            est.activosFijos.push({
+                                id: aidGlob,
+                                descripcion: 'Compras activo fijo RCV ' + periodoActual(),
+                                fechaCompra: periodoActual() + '-15',
+                                valorNetoPagado: Math.round(m.compras.netoActivoFijo),
+                                ivaNoRecuperable: 0,
+                                vidaUtilNormalAnios: 7,
+                                mesesUsoEjercicio: 12,
+                                modalidad14A: 'acelerada_1_3',
+                                pagado: est.tesoreria ? !!est.tesoreria.activoFijoPagado : true,
+                                esUsado: false,
+                                esTerreno: false
+                            });
+                            agregado += 1;
+                        }
+                    }
+                });
+                refrescarTodo();
+                D.avisar(agregado ? ('Se importaron ' + agregado + ' bien(es) desde compras de activo fijo del RCV.') : 'No hay nuevos activos fijos detectados en el RCV actual.');
+            });
+        }
+        if ($('btn-af-asiento-diario')) {
+            $('btn-af-asiento-diario').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var m = calcularModelo();
+                var depTrib = m.activoFijo ? m.activoFijo.totalDepreciacionTributaria : 0;
+                if (!depTrib) { D.avisar('No hay depreciación tributaria > $0 para contabilizar.'); return; }
+                var fecha = periodoActual() + '-28';
+                var glosa = 'Depreciación tributaria del período (' + m.f29.regimenNombre + ')';
+                guardarEstadoActual(function (est) {
+                    est.manuales = (est.manuales || []).filter(function (a) { return !/^MAN-AF-/.test(String(a.id || '')); });
+                    est.manuales.push({
+                        id: 'MAN-AF-' + periodoActual(),
+                        fecha: fecha,
+                        glosa: glosa,
+                        origen: 'ajuste',
+                        lineas: [
+                            { cuenta: '42060', debe: depTrib, haber: 0 },
+                            { cuenta: '12015', debe: 0, haber: depTrib }
+                        ]
+                    });
+                });
+                ui.modulo = 'libros';
+                ui.subLibro = 'diario';
+                cambiarModulo('libros');
+                D.avisar('Asiento de depreciación (' + D.money(depTrib) + ') centralizado en Libro Diario.');
+            });
+        }
+
+        // Etapa 2 · TOP 3: Conciliación Bancaria con Reglas
+        if ($('btn-conc-cartola-ej') && Imp) {
+            $('btn-conc-cartola-ej').addEventListener('click', function () {
+                aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));
+            });
+        }
+        if ($('btn-regla-agregar')) {
+            $('btn-regla-agregar').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var patron = ($('regla-patron') && $('regla-patron').value.trim()) || '';
+                if (!patron || patron.length < 2) { D.avisar('Escribe al menos 2 caracteres en palabra clave.'); return; }
+                var nueva = {
+                    id: 'REG-' + Date.now(),
+                    tipo: ($('regla-tipo') && $('regla-tipo').value) || 'cargo',
+                    patron: patron,
+                    cuenta: ($('regla-cuenta') && $('regla-cuenta').value) || '42040',
+                    motivo: ($('regla-motivo') && $('regla-motivo').value.trim()) || ('Regla "' + patron + '"')
+                };
+                guardarEstadoActual(function (est) {
+                    est.reglasConciliacion.push(nueva);
+                });
+                if ($('regla-patron')) $('regla-patron').value = '';
+                if ($('regla-motivo')) $('regla-motivo').value = '';
+                refrescarTodo();
+                D.avisar('Regla de conciliación guardada y aplicada.');
+            });
+        }
+        if ($('conc-reglas-lista')) {
+            $('conc-reglas-lista').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-regla-del]');
+                if (!btn) return;
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var idR = btn.getAttribute('data-regla-del');
+                guardarEstadoActual(function (est) {
+                    est.reglasConciliacion = (est.reglasConciliacion || []).filter(function (x) { return String(x.id) !== String(idR); });
+                });
+                refrescarTodo();
+            });
+        }
+        if ($('btn-conc-centralizar')) {
+            $('btn-conc-centralizar').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var m = calcularModelo();
+                var filas = (m.conciliacion && m.conciliacion.filas) ? m.conciliacion.filas : [];
+                var conciliados = filas.filter(function (f) { return f.estado === 'conciliado' && f.monto > 0; });
+                if (!conciliados.length) {
+                    D.avisar('No hay movimientos conciliados para centralizar. Carga primero la cartola ejemplo.');
+                    return;
+                }
+                var nuevos = conciliados.map(function (f, i) {
+                    var lineas = f.tipo === 'abono'
+                        ? [{ cuenta: '11010', debe: f.monto, haber: 0 }, { cuenta: f.cuenta || '11050', debe: 0, haber: f.monto }]
+                        : [{ cuenta: f.cuenta || '42040', debe: f.monto, haber: 0 }, { cuenta: '11010', debe: 0, haber: f.monto }];
+                    return {
+                        id: 'MAN-CONC-' + periodoActual() + '-' + (i + 1),
+                        fecha: f.fecha || (periodoActual() + '-28'),
+                        glosa: 'Conciliación bancaria: ' + f.glosa + ' (' + f.detalleMatch + ')',
+                        origen: 'ajuste',
+                        lineas: lineas
+                    };
+                });
+                guardarEstadoActual(function (est) {
+                    est.manuales = (est.manuales || []).filter(function (a) { return !/^MAN-CONC-/.test(String(a.id || '')); }).concat(nuevos);
+                });
+                ui.subLibro = 'diario';
+                refrescarTodo();
+                D.avisar('Se centralizaron ' + nuevos.length + ' movimientos conciliados en Libro Diario.');
+            });
+        }
+
+        // Etapa 2 · TOP 4: Propuesta F22 (IDPC vs PPM Cód. 36 L85)
+        ['f22-ppm-anual', 'f22-factor-ppm', 'f22-otros-creditos'].forEach(function (id) {
+            var el = $(id);
+            if (!el) return;
+            el.addEventListener('input', function () {
+                guardarEstadoActual(function (est) {
+                    est.f22Ajustes.ppmManual = ($('f22-ppm-anual') && $('f22-ppm-anual').value.trim() !== '')
+                        ? Math.max(0, Math.round(D.parseNumber($('f22-ppm-anual').value)))
+                        : '';
+                    est.f22Ajustes.factorPpm = Math.max(1, Number($('f22-factor-ppm') && $('f22-factor-ppm').value) || 1);
+                    est.f22Ajustes.otrosCreditos = Math.max(0, Math.round(D.parseNumber($('f22-otros-creditos') && $('f22-otros-creditos').value)));
+                });
+                refrescarTodo();
+            });
+        });
+        if ($('btn-f22-usar-f29')) {
+            $('btn-f22-usar-f29').addEventListener('click', function () {
+                var m = calcularModelo();
+                var ppmF29 = (m.f29 && m.f29.codigos && m.f29.codigos[62]) ? m.f29.codigos[62] : 0;
+                guardarEstadoActual(function (est) {
+                    est.f22Ajustes.ppmManual = ppmF29;
+                });
+                refrescarTodo();
+                D.avisar('PPM del F29 actual (' + D.money(ppmF29) + ') cargado en Propuesta F22.');
+            });
+        }
+        if ($('btn-f22-pdf')) {
+            $('btn-f22-pdf').addEventListener('click', function () {
+                var m = calcularModelo();
+                var f22 = m.f22;
+                if (!f22) return;
+                var filasHtml = (f22.lineasF22 || []).map(function (ln) {
+                    return '<tr' + (ln.destacado ? ' class="total"' : '') + '><td>' + D.esc(ln.codigo) + '</td><td>' + D.esc(ln.concepto) + '</td><td class="r">' + moneySigno(ln.monto) + '</td></tr>';
+                }).join('');
+                imprimirHtmlModulo(
+                    'Propuesta Preliminar Formulario 22 (AT ' + f22.anioTributario + ')',
+                    m.f29.regimenNombre + ' · ' + f22.fuenteTasa,
+                    '<table class="print-table"><thead><tr><th>Línea / Código</th><th>Concepto</th><th class="r">Monto ($)</th></tr></thead><tbody>' + filasHtml + '</tbody></table>',
+                    f22.notaNormativa
+                );
+            });
+        }
 
         // Reportes PDF con Membrete
         if ($('btn-rep-guardar-membrete')) {

@@ -416,11 +416,432 @@
         return lineas.join('\n');
     }
 
+    // =========================================================
+    // TOP 2: Activo Fijo y Depreciación (14 D3 / 14 D8 / 14 A)
+    // =========================================================
+    function enteroPos(v) {
+        return Math.max(0, Math.round(num(v)));
+    }
+
+    function calcularActivoFijoTributario(activos, opciones) {
+        var opts = opciones || {};
+        var regimen = String(opts.regimen || '14D3').toUpperCase();
+        var esProPyme = regimen === '14D3' || regimen === '14D3_MAYOR' || regimen === '14D8' || regimen === '14D8_MAYOR';
+        var factorIpc = esProPyme ? 1 : Math.max(1, num(opts.factorIpc) || 1);
+        var pymesMenor100k = opts.pymesMenor100kUf !== false;
+
+        var totalBase = 0;
+        var totalTrib = 0;
+        var totalNorm = 0;
+        var totalDdan = 0;
+
+        var items = (Array.isArray(activos) ? activos : []).map(function (raw, idx) {
+            var a = raw || {};
+            var desc = String(a.descripcion || ('Activo fijo #' + (idx + 1))).trim();
+            var valorNeto = enteroPos(a.valorNetoPagado);
+            var ivaNoRec = enteroPos(a.ivaNoRecuperable);
+            var esTerreno = Boolean(a.esTerreno);
+            var esUsado = Boolean(a.esUsado);
+            var pagado = a.pagado !== false;
+            var vidaNormal = Math.max(1, Math.round(num(a.vidaUtilNormalAnios) || 5));
+            var mesesUso = Math.max(1, Math.min(12, Math.round(num(a.mesesUsoEjercicio) || 12)));
+            var modalidad = String(a.modalidad14A || 'normal');
+
+            var baseSinCm = esTerreno ? 0 : (valorNeto + ivaNoRec);
+            var baseDep = esProPyme ? baseSinCm : Math.round(baseSinCm * factorIpc);
+            var depNormal = 0;
+            var depTrib = 0;
+            var ddan = 0;
+            var vidaAplicada = vidaNormal;
+            var metodoAplicado = '';
+            var obs = '';
+
+            if (esTerreno) {
+                metodoAplicado = 'Terreno (no depreciable)';
+                obs = 'Los terrenos no se deprecian tributariamente (Oficio SII N°1292/2023).';
+            } else if (esProPyme) {
+                if (!pagado) {
+                    metodoAplicado = 'Pendiente de pago';
+                    obs = 'Régimen de flujo de caja: solo se rebaja el 100% cuando el activo queda pagado (Circ. SII 62/2020).';
+                } else {
+                    depTrib = baseDep;
+                    depNormal = baseDep;
+                    vidaAplicada = 1;
+                    metodoAplicado = regimen.indexOf('14D8') === 0
+                        ? 'Instantánea 100% (Art. 14 D N°8 -> N°3)'
+                        : 'Instantánea 100% imperativa (Art. 14 D N°3)';
+                    obs = esUsado
+                        ? 'Aplica 100% también a bienes físicos usados pagados (Oficio SII N°715/2025).'
+                        : 'Rebaja íntegra sin corrección monetaria y sin IVA recuperable.';
+                }
+            } else {
+                depNormal = Math.min(baseDep, Math.round((baseDep / vidaNormal) * (mesesUso / 12)));
+                if (modalidad === 'acelerada_1_3') {
+                    if (esUsado) {
+                        depTrib = depNormal;
+                        metodoAplicado = 'Normal (usado no califica 1/3)';
+                        obs = 'Art. 31 N°5: la acelerada 1/3 exige bienes nuevos o internados. Se aplica vida útil normal.';
+                    } else if (vidaNormal < 3) {
+                        depTrib = depNormal;
+                        metodoAplicado = 'Normal (vida < 3 años)';
+                        obs = 'Art. 31 N°5: requiere vida útil normal de al menos 3 años.';
+                    } else {
+                        vidaAplicada = Math.floor(vidaNormal / 3);
+                        depTrib = Math.min(baseDep, Math.round((baseDep / vidaAplicada) * (mesesUso / 12)));
+                        metodoAplicado = 'Acelerada 1/3 (' + vidaAplicada + ' años)';
+                        obs = 'Diferencia vs normal solo rebaja IDPC y se controla en registro DDAN.';
+                    }
+                } else if (modalidad === 'ultra_1_10') {
+                    if (!pymesMenor100k) {
+                        depTrib = depNormal;
+                        metodoAplicado = 'Normal (>100.000 UF)';
+                        obs = 'Art. 31 N°5 bis exige promedio ingresos 3 años <= 100.000 UF.';
+                    } else {
+                        vidaAplicada = Math.max(1, Math.floor(vidaNormal / 10));
+                        depTrib = Math.min(baseDep, Math.round((baseDep / vidaAplicada) * (mesesUso / 12)));
+                        metodoAplicado = 'Ultrarápida 1/10 Art. 31 N°5 bis (' + vidaAplicada + ' años)';
+                        obs = 'Aplica a bienes nuevos o usados; diferencia frente a normal va a DDAN.';
+                    }
+                } else {
+                    depTrib = depNormal;
+                    metodoAplicado = 'Normal LIR Art. 31 N°5 (' + vidaNormal + ' años)';
+                    obs = mesesUso < 12 ? ('Cuota proporcional por ' + mesesUso + ' mes(es) de uso.') : 'Cuota anual lineal con CM Art. 41.';
+                }
+                ddan = Math.max(0, depTrib - depNormal);
+            }
+
+            var valorLibroFinal = esTerreno ? valorNeto : Math.max(0, baseDep - depTrib);
+            totalBase += baseDep;
+            totalTrib += depTrib;
+            totalNorm += depNormal;
+            totalDdan += ddan;
+
+            return {
+                id: a.id || ('AF-' + (idx + 1)),
+                descripcion: desc,
+                fechaCompra: String(a.fechaCompra || '').trim(),
+                valorNetoPagado: valorNeto,
+                ivaNoRecuperable: ivaNoRec,
+                baseDepreciable: baseDep,
+                esTerreno: esTerreno,
+                esUsado: esUsado,
+                pagado: pagado,
+                vidaNormal: vidaNormal,
+                vidaAplicada: vidaAplicada,
+                mesesUso: mesesUso,
+                metodoAplicado: metodoAplicado,
+                depreciacionNormal: depNormal,
+                depreciacionTributaria: depTrib,
+                diferenciaDdan: ddan,
+                valorLibroCierre: valorLibroFinal,
+                observacion: obs
+            };
+        });
+
+        var notaNormativa = esProPyme
+            ? 'ProPyme (' + regimen + '): depreciación instantánea del 100% sobre valor neto pagado (sin IVA recuperable, sin terrenos y sin corrección monetaria). Obligatoria en 14 D N°3.'
+            : 'Régimen 14 A: depreciación normal o acelerada (1/3 de la vida útil entera para bienes nuevos >= 3 años) con CM Art. 41. La diferencia acelerada vs normal se controla en DDAN.';
+
+        return {
+            regimen: regimen,
+            esProPyme: esProPyme,
+            factorIpcAplicado: factorIpc,
+            totalBaseDepreciable: totalBase,
+            totalDepreciacionTributaria: totalTrib,
+            totalDepreciacionNormal: totalNorm,
+            totalDiferenciaDdan: totalDdan,
+            items: items,
+            notaNormativa: notaNormativa
+        };
+    }
+
+    // =========================================================
+    // TOP 3: Conciliación Bancaria con Reglas + CxC/CxP Aging
+    // =========================================================
+    var REGLAS_CONCILIACION_DEFECTO = [
+        { id: 'r-pos', patron: 'transbank|tbk|getnet|sumup|redelcom|webpay|mercado pago', tipo: 'abono', cuenta: '11050', nombreCuenta: 'Clientes por cobrar', motivo: 'Recaudación medios de pago' },
+        { id: 'r-sii', patron: 'sii|tesorer|tgr|f29|formulario 29', tipo: 'cargo', cuenta: '21070', nombreCuenta: 'Impuestos F29 por pagar', motivo: 'Pago impuestos F29 / TGR' },
+        { id: 'r-prev', patron: 'previred|afp|fonasa|isapre|ips|mutual|achs|ist', tipo: 'cargo', cuenta: '21035', nombreCuenta: 'Cotizaciones previsionales por pagar', motivo: 'Pago cotizaciones Previred' },
+        { id: 'r-suel', patron: 'sueldo|remunerac|nomina|anticipo', tipo: 'cargo', cuenta: '21030', nombreCuenta: 'Remuneraciones por pagar', motivo: 'Pago sueldos líquidos' },
+        { id: 'r-hon', patron: 'honorario|bhe', tipo: 'cargo', cuenta: '21025', nombreCuenta: 'Honorarios por pagar', motivo: 'Pago honorarios líquidos' },
+        { id: 'r-bco', patron: 'comision|mantencion|mantención|iva comision|seguro cta', tipo: 'cargo', cuenta: '42040', nombreCuenta: 'Gastos generales y bancarios', motivo: 'Comisión o gasto bancario' },
+        { id: 'r-gast', patron: 'arriendo|enel|chilectra|aguas|entel|movistar|vtr|supermercado|lider|jumbo', tipo: 'cargo', cuenta: '42040', nombreCuenta: 'Gastos generales y supermercados', motivo: 'Pago servicios o gasto operativo' }
+    ];
+
+    function normTxt(s) {
+        return String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function coincidePatron(texto, patron) {
+        var normGlosa = normTxt(texto);
+        return String(patron || '').split('|').some(function (tok) {
+            var t = normTxt(tok).trim();
+            return t.length >= 2 && normGlosa.indexOf(t) >= 0;
+        });
+    }
+
+    function conciliarCartolaConReglas(movimientos, contexto) {
+        var ctx = contexto || {};
+        var ventasDocs = (ctx.ventas && Array.isArray(ctx.ventas.documentos)) ? ctx.ventas.documentos : [];
+        var comprasDocs = (ctx.compras && Array.isArray(ctx.compras.documentos)) ? ctx.compras.documentos : [];
+        var reglasUsr = Array.isArray(ctx.reglas) ? ctx.reglas : [];
+        var todasReglas = reglasUsr.concat(REGLAS_CONCILIACION_DEFECTO);
+
+        var usadosVentas = {};
+        var usadosCompras = {};
+        var filas = [];
+        var porFactura = 0;
+        var porRegla = 0;
+        var sinConciliar = 0;
+        var montoSinConciliar = 0;
+
+        (Array.isArray(movimientos) ? movimientos : []).forEach(function (mov, idx) {
+            var monto = enteroPos(mov.monto);
+            var tipo = mov.tipo === 'abono' ? 'abono' : 'cargo';
+            var glosa = String(mov.glosa || '').trim();
+            var match = null;
+
+            // 1. Intentar calce exacto por monto (±$100) contra facturas RCV del período
+            var pool = tipo === 'abono' ? ventasDocs : comprasDocs;
+            var usados = tipo === 'abono' ? usadosVentas : usadosCompras;
+            for (var i = 0; i < pool.length; i++) {
+                if (usados[i]) continue;
+                var d = pool[i];
+                if (d.esResumen || d.resta) continue;
+                var totalDoc = enteroPos(d.total);
+                if (totalDoc > 0 && Math.abs(totalDoc - monto) <= 100) {
+                    usados[i] = true;
+                    match = {
+                        metodo: 'factura_rcv',
+                        estado: 'conciliado',
+                        cuenta: tipo === 'abono' ? '11050' : '21010',
+                        detalleMatch: 'DTE ' + d.tipoDoc + ' folio ' + (d.folio || 's/f') + ' · ' + (d.razonSocial || d.rut || 'Contraparte')
+                    };
+                    porFactura += 1;
+                    break;
+                }
+            }
+
+            // 2. Si no calza con factura exacta, evaluar reglas de contraparte (usuario primero, defecto después)
+            if (!match) {
+                for (var r = 0; r < todasReglas.length; r++) {
+                    var regla = todasReglas[r];
+                    var tipoOk = !regla.tipo || regla.tipo === 'ambos' || regla.tipo === tipo;
+                    if (tipoOk && coincidePatron(glosa, regla.patron)) {
+                        match = {
+                            metodo: 'regla',
+                            estado: 'conciliado',
+                            cuenta: String(regla.cuenta || '42040'),
+                            detalleMatch: regla.motivo || regla.nombreCuenta || ('Regla "' + regla.patron + '"')
+                        };
+                        porRegla += 1;
+                        break;
+                    }
+                }
+            }
+
+            if (!match) {
+                sinConciliar += 1;
+                montoSinConciliar += monto;
+                match = {
+                    metodo: 'pendiente',
+                    estado: 'pendiente',
+                    cuenta: mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'),
+                    detalleMatch: 'Sin regla ni factura coincidente; asignar o crear regla'
+                };
+            }
+
+            filas.push({
+                id: mov.id || ('MOV-' + (idx + 1)),
+                fecha: mov.fecha || '',
+                glosa: glosa,
+                tipo: tipo,
+                monto: monto,
+                estado: match.estado,
+                metodo: match.metodo,
+                cuenta: match.cuenta,
+                detalleMatch: match.detalleMatch
+            });
+        });
+
+        var total = filas.length;
+        var pctConciliado = total > 0 ? Math.round(((porFactura + porRegla) / total) * 100) : 0;
+
+        return {
+            filas: filas,
+            resumen: {
+                totalMovimientos: total,
+                porFactura: porFactura,
+                porRegla: porRegla,
+                sinConciliar: sinConciliar,
+                pctConciliado: pctConciliado,
+                montoSinConciliar: montoSinConciliar
+            }
+        };
+    }
+
+    function parseFechaIso(fechaRaw, periodoDefecto) {
+        var s = String(fechaRaw || '').trim();
+        var mIso = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+        if (mIso) return new Date(Number(mIso[1]), Number(mIso[2]) - 1, Number(mIso[3]));
+        var mCl = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/.exec(s);
+        if (mCl) return new Date(Number(mCl[3]), Number(mCl[2]) - 1, Number(mCl[1]));
+        var p = /^(\d{4})-(\d{2})$/.exec(String(periodoDefecto || '2026-11'));
+        if (p) return new Date(Number(p[1]), Number(p[2]) - 1, 15);
+        return new Date(2026, 10, 15);
+    }
+
+    function fechaCortePeriodo(periodo) {
+        var m = /^(\d{4})-(\d{2})$/.exec(String(periodo || '2026-11'));
+        if (!m) return new Date(2026, 10, 30);
+        return new Date(Number(m[1]), Number(m[2]), 0);
+    }
+
+    function calcularAgingDocumentos(ventas, compras, periodo, opciones) {
+        var opts = opciones || {};
+        var pctCobro = opts.pctVentasCobradas != null ? num(opts.pctVentasCobradas) : 80;
+        var pctPago = opts.pctComprasPagadas != null ? num(opts.pctComprasPagadas) : 75;
+        var corte = fechaCortePeriodo(periodo);
+
+        function armarCartera(docs, factorPendiente) {
+            var buckets = { dias_0_30: 0, dias_31_60: 0, dias_mas_60: 0 };
+            var items = [];
+            var total = 0;
+            (Array.isArray(docs) ? docs : []).forEach(function (d) {
+                if (!d || d.esResumen || d.resta) return;
+                var bruto = enteroPos(d.total);
+                if (!bruto) return;
+                var saldo = Math.round(bruto * (factorPendiente / 100));
+                if (saldo <= 0) return;
+                var fDoc = parseFechaIso(d.fecha, periodo);
+                var dias = Math.max(0, Math.round((corte.getTime() - fDoc.getTime()) / 86400000));
+                var tramo = dias <= 30 ? '0-30 días' : (dias <= 60 ? '31-60 días' : '+60 días');
+                if (dias <= 30) buckets.dias_0_30 += saldo;
+                else if (dias <= 60) buckets.dias_31_60 += saldo;
+                else buckets.dias_mas_60 += saldo;
+                total += saldo;
+                items.push({
+                    tipoDoc: d.tipoDoc,
+                    folio: d.folio || 's/f',
+                    rut: d.rut || '-',
+                    razonSocial: d.razonSocial || 'Sin razón social',
+                    fecha: d.fecha || String(periodo || ''),
+                    dias: dias,
+                    tramo: tramo,
+                    montoOriginal: bruto,
+                    saldoPendiente: saldo
+                });
+            });
+            items.sort(function (a, b) { return b.dias - a.dias || b.saldoPendiente - a.saldoPendiente; });
+            return { total: total, buckets: buckets, items: items };
+        }
+
+        return {
+            periodoCorte: String(periodo || '2026-11'),
+            cxc: armarCartera(ventas && ventas.documentos, Math.max(0, 100 - pctCobro)),
+            cxp: armarCartera(compras && compras.documentos, Math.max(0, 100 - pctPago))
+        };
+    }
+
+    // =========================================================
+    // TOP 4: Propuesta F22 (IDPC vs PPM reajustado Cód. 36 L85)
+    // =========================================================
+    function tasaIdpcPorRegimen(regimen, anioTributario) {
+        var r = String(regimen || '14D3').toUpperCase();
+        var at = Math.round(num(anioTributario) || 2026);
+        if (r === '14D8' || r === '14D8_MAYOR') {
+            return { tasa: 0, fuente: 'LIR art. 14 D N°8 (empresa liberada de IDPC; propietarios tributan con IGC/IA)' };
+        }
+        if (r === '14A') {
+            var tasa14a = at <= 2027 ? 27 : (at === 2028 ? 25.5 : (at === 2029 ? 24 : 23));
+            return { tasa: tasa14a, fuente: 'Régimen General 14 A (' + tasa14a + '% en AT ' + at + ')' };
+        }
+        var tasaPyme = at <= 2028 ? 12.5 : (at === 2029 ? 15 : 23);
+        return { tasa: tasaPyme, fuente: 'Art. 25 Ley 21.755 · Circ. SII N°53/2025 (' + tasaPyme + '% en AT ' + at + ')' };
+    }
+
+    function calcularPropuestaF22(entrada) {
+        var e = entrada || {};
+        var regimen = String(e.regimen || '14D3').toUpperCase();
+        var at = Math.round(num(e.anioTributario) || 2026);
+        var rliSigned = Math.round(num(e.baseImponibleRli));
+        var basePositiva = Math.max(0, rliSigned);
+        var infoIdpc = tasaIdpcPorRegimen(regimen, at);
+        var idpcDeterminado = Math.round(basePositiva * (infoIdpc.tasa / 100));
+
+        var ppmNominalTotal = 0;
+        var ppmReajustadoTotal = 0;
+        if (Array.isArray(e.ppmNominales) && e.ppmNominales.length) {
+            e.ppmNominales.forEach(function (item) {
+                var m = enteroPos(item.monto);
+                var f = Math.max(1, num(item.factor) || 1);
+                ppmNominalTotal += m;
+                ppmReajustadoTotal += Math.round(m * f);
+            });
+        } else {
+            ppmNominalTotal = enteroPos(e.ppmPagadoTotal);
+            var facProm = Math.max(1, num(e.factorPromedioPpm) || 1.018);
+            ppmReajustadoTotal = Math.round(ppmNominalTotal * facProm);
+        }
+
+        var esTransparente = regimen === '14D8' || regimen === '14D8_MAYOR';
+        var otrosCreditos = esTransparente ? 0 : enteroPos(e.otrosCreditos);
+        var ppmCod36Empresa = esTransparente ? 0 : ppmReajustadoTotal;
+        var ppmDj1947Socios = esTransparente ? ppmReajustadoTotal : 0;
+
+        var saldoAPagar = esTransparente ? 0 : Math.max(0, idpcDeterminado - ppmCod36Empresa - otrosCreditos);
+        var devolucionF22 = esTransparente ? 0 : Math.max(0, (ppmCod36Empresa + otrosCreditos) - idpcDeterminado);
+
+        var lineasF22 = esTransparente
+            ? [
+                { codigo: 'Base 14 D8', concepto: 'Renta líquida determinada a distribuir a propietarios (DJ 1947)', monto: basePositiva },
+                { codigo: 'IDPC', concepto: 'Impuesto de Primera Categoría empresa (0% · 14 D N°8)', monto: 0 },
+                { codigo: 'DJ 1947 / 1645', concepto: 'PPM reajustado puesto a disposición de socios (NO va en línea 85 cód. 36)', monto: ppmDj1947Socios },
+                { codigo: 'F22 Empresa', concepto: 'Saldo de IDPC a pagar por la sociedad', monto: 0 }
+            ]
+            : [
+                { codigo: 'RLI / 18', concepto: rliSigned >= 0 ? 'Renta Líquida Imponible / Base imponible ProPyme' : 'Pérdida tributaria del ejercicio', monto: rliSigned },
+                { codigo: 'Línea 54', concepto: 'IDPC determinado (' + infoIdpc.tasa + '%)', monto: idpcDeterminado },
+                { codigo: 'L85 / Cód. 36', concepto: 'Menos: PPM obligatorios y voluntarios reajustados (cód. 1904/1905/1906)', monto: -ppmCod36Empresa },
+                { codigo: 'Créditos', concepto: 'Menos: Otros créditos imputables al IDPC', monto: -otrosCreditos },
+                saldoAPagar > 0
+                    ? { codigo: 'Línea 91', concepto: 'Impuesto Renta F22 estimado a pagar', monto: saldoAPagar, destacado: 'pagar' }
+                    : { codigo: 'Línea 92', concepto: 'Remanente / Devolución de PPM a solicitar en F22', monto: devolucionF22, destacado: 'devolucion' }
+            ];
+
+        return {
+            regimen: regimen,
+            anioTributario: at,
+            esTransparente: esTransparente,
+            baseImponibleRli: rliSigned,
+            tasaIdpc: infoIdpc.tasa,
+            fuenteTasa: infoIdpc.fuente,
+            idpcDeterminado: idpcDeterminado,
+            ppmNominalTotal: ppmNominalTotal,
+            ppmReajustadoTotal: ppmReajustadoTotal,
+            ppmCod36Empresa: ppmCod36Empresa,
+            ppmDj1947Socios: ppmDj1947Socios,
+            otrosCreditos: otrosCreditos,
+            saldoAPagar: saldoAPagar,
+            devolucionF22: devolucionF22,
+            lineasF22: lineasF22,
+            notaNormativa: esTransparente
+                ? '14 D N°8: la empresa no paga IDPC (0%) ni imputa PPM en F22 línea 85 cód. 36; los PPM actualizados van en la DJ 1947 hacia el F22 código 1645 de cada socio.'
+                : 'En F22 el PPM se declara en línea 85, código 36 (sumatoria de 1904/1905/1906/1916 reajustados por factor SII del mes de pago efectivo).'
+        };
+    }
+
     var api = {
         auditarF29PreSii: auditarF29PreSii,
         generarResumenWhatsappCliente: generarResumenWhatsappCliente,
         tasaHonorariosEsperada: tasaHonorariosEsperada,
-        tasaPpmEsperadaProPyme: tasaPpmEsperadaProPyme
+        tasaPpmEsperadaProPyme: tasaPpmEsperadaProPyme,
+        calcularActivoFijoTributario: calcularActivoFijoTributario,
+        REGLAS_CONCILIACION_DEFECTO: REGLAS_CONCILIACION_DEFECTO,
+        conciliarCartolaConReglas: conciliarCartolaConReglas,
+        calcularAgingDocumentos: calcularAgingDocumentos,
+        tasaIdpcPorRegimen: tasaIdpcPorRegimen,
+        calcularPropuestaF22: calcularPropuestaF22
     };
 
     if (typeof module !== 'undefined' && module.exports) {

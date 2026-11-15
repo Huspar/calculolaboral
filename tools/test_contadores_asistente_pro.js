@@ -119,4 +119,75 @@ assert.ok(wa.indexOf('Total F29 a pagar (cód. 91)') >= 0);
 assert.ok(wa.indexOf('Asesorías Pérez Ltda.') >= 0);
 assert.ok(wa.indexOf('OK, sin observaciones') >= 0);
 
-console.log('OK test_contadores_asistente_pro (5/5 escenarios validados)');
+// 6. TOP 2 Activo Fijo 14 D3 (imperativa pagado nuevo/usado, terreno $0, impago $0)
+var af14d3 = Pro.calcularActivoFijoTributario([
+    { descripcion: 'Horno industrial', valorNetoPagado: 1600000, pagado: true, esUsado: false },
+    { descripcion: 'Furgón usado', valorNetoPagado: 4500000, pagado: true, esUsado: true },
+    { descripcion: 'Sitio industrial', valorNetoPagado: 20000000, pagado: true, esTerreno: true },
+    { descripcion: 'Maquinaria pendiente pago', valorNetoPagado: 2000000, pagado: false }
+], { regimen: '14D3' });
+assert.strictEqual(af14d3.totalBaseDepreciable, 8100000);
+assert.strictEqual(af14d3.totalDepreciacionTributaria, 6100000);
+assert.strictEqual(af14d3.items[2].depreciacionTributaria, 0, 'Terreno no se deprecia');
+assert.strictEqual(af14d3.items[3].depreciacionTributaria, 0, 'Impago no rebaja en ProPyme');
+
+// 7. TOP 2 Activo Fijo 14 A: acelerada 1/3 piso entero + DDAN solo para bien nuevo >=3 años
+var af14a = Pro.calcularActivoFijoTributario([
+    { descripcion: 'Máquina nueva 10 años', valorNetoPagado: 9000000, pagado: true, esUsado: false, vidaUtilNormalAnios: 10, mesesUsoEjercicio: 12, modalidad14A: 'acelerada_1_3' },
+    { descripcion: 'Camión usado', valorNetoPagado: 6000000, pagado: true, esUsado: true, vidaUtilNormalAnios: 6, mesesUsoEjercicio: 12, modalidad14A: 'acelerada_1_3' }
+], { regimen: '14A', factorIpc: 1.0 });
+assert.strictEqual(af14a.items[0].vidaAplicada, 3, '10/3 -> floor = 3 años');
+assert.strictEqual(af14a.items[0].depreciacionNormal, 900000);
+assert.strictEqual(af14a.items[0].depreciacionTributaria, 3000000);
+assert.strictEqual(af14a.items[0].diferenciaDdan, 2100000);
+assert.strictEqual(af14a.items[1].depreciacionTributaria, 1000000, 'Usado cae a normal en 14A');
+
+// 8. TOP 3 Conciliación con reglas + facturas + Aging
+var conc = Pro.conciliarCartolaConReglas([
+    { id: 'M1', fecha: '2026-11-10', glosa: 'Abono Transbank Ventas', tipo: 'abono', monto: 456000 },
+    { id: 'M2', fecha: '2026-11-12', glosa: 'Pago Previred Noviembre', tipo: 'cargo', monto: 540000 },
+    { id: 'M3', fecha: '2026-11-15', glosa: 'TEF Cliente A', tipo: 'abono', monto: 5950000 },
+    { id: 'M4', fecha: '2026-11-18', glosa: 'Giro sin identificar', tipo: 'cargo', monto: 85000 }
+], {
+    ventas: ventasLimpias,
+    compras: comprasLimpias,
+    reglas: [{ patron: 'giro sin identificar', tipo: 'cargo', cuenta: '42040', motivo: 'Caja menor' }]
+});
+assert.strictEqual(conc.resumen.totalMovimientos, 4);
+assert.strictEqual(conc.resumen.porFactura, 1);
+assert.strictEqual(conc.resumen.porRegla, 3);
+assert.strictEqual(conc.resumen.pctConciliado, 100);
+
+var aging = Pro.calcularAgingDocumentos(
+    { documentos: [{ tipoDoc: 33, folio: 1, fecha: '2026-09-01', total: 1000000 }, { tipoDoc: 33, folio: 2, fecha: '2026-11-15', total: 500000 }] },
+    comprasLimpias,
+    '2026-11',
+    { pctVentasCobradas: 50, pctComprasPagadas: 60 }
+);
+assert.ok(aging.cxc.buckets.dias_mas_60 === 500000, 'Factura sept debe quedar en +60 dias');
+assert.ok(aging.cxc.buckets.dias_0_30 === 250000);
+
+// 9. TOP 4 Propuesta F22 (14D3 12.5% Ley 21.755, 14A 27%, 14D8 0% y PPM a DJ1947; Cod 36 L85)
+var f22D3 = Pro.calcularPropuestaF22({
+    regimen: '14D3',
+    anioTributario: 2026,
+    baseImponibleRli: 20000000,
+    ppmNominales: [{ mes: '2025-01', monto: 1000000, factor: 1.036 }, { mes: '2025-12', monto: 500000, factor: 1.0 }]
+});
+assert.strictEqual(f22D3.tasaIdpc, 12.5);
+assert.strictEqual(f22D3.idpcDeterminado, 2500000);
+assert.strictEqual(f22D3.ppmCod36Empresa, 1536000);
+assert.strictEqual(f22D3.saldoAPagar, 964000);
+assert.ok(f22D3.notaNormativa.indexOf('código 36') >= 0 && f22D3.notaNormativa.indexOf('código 84') < 0);
+
+var f22D8 = Pro.calcularPropuestaF22({ regimen: '14D8', anioTributario: 2026, baseImponibleRli: 12000000, ppmPagadoTotal: 300000, factorPromedioPpm: 1.02 });
+assert.strictEqual(f22D8.tasaIdpc, 0);
+assert.strictEqual(f22D8.ppmCod36Empresa, 0);
+assert.strictEqual(f22D8.ppmDj1947Socios, 306000);
+
+var f22A = Pro.calcularPropuestaF22({ regimen: '14A', anioTributario: 2026, baseImponibleRli: 10000000, ppmPagadoTotal: 3000000, factorPromedioPpm: 1.0 });
+assert.strictEqual(f22A.tasaIdpc, 27);
+assert.strictEqual(f22A.idpcDeterminado, 2700000);
+assert.strictEqual(f22A.devolucionF22, 300000);
+
+console.log('OK test_contadores_asistente_pro (9/9 escenarios validados)');
