@@ -148,11 +148,12 @@
     }
 
     // ---------- rutas ----------
-    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', 'flujo-caja': 'flujo-caja', cobranzas: 'cobranzas', pagos: 'pagos', conciliacion: 'conciliacion', 'mi-contador': 'mi-contador', contratos: 'contratos', 'datos-personales': 'datos-personales', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
-    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', 'flujo-caja': 'Flujo de caja', cobranzas: 'Cobranzas', pagos: 'Cuentas por pagar', conciliacion: 'Conciliación bancaria', 'mi-contador': 'Mi Contador y Cierre', contratos: 'Contratos y finiquitos', 'datos-personales': 'Protección de Datos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
+    var VISTAS = { '': 'inicio', trabajadores: 'trabajadores', vacaciones: 'vacaciones', liquidaciones: 'liquidaciones', documentos: 'documentos', calendario: 'calendario', 'flujo-caja': 'flujo-caja', cobranzas: 'cobranzas', pagos: 'pagos', conciliacion: 'conciliacion', 'mi-contador': 'mi-contador', 'mi-portal': 'mi-portal', contratos: 'contratos', 'datos-personales': 'datos-personales', empresa: 'empresa', equipo: 'equipo', portal: 'portal', cuenta: 'cuenta' };
+    var TITULOS = { inicio: 'Cierre del mes', trabajadores: 'Trabajadores', trabajador: 'Trabajador', vacaciones: 'Vacaciones y permisos', liquidaciones: 'Liquidaciones', documentos: 'Documentos', calendario: 'Calendario', 'flujo-caja': 'Flujo de caja', cobranzas: 'Cobranzas', pagos: 'Cuentas por pagar', conciliacion: 'Conciliación bancaria', 'mi-contador': 'Mi Contador y Cierre', 'mi-portal': 'Mi Portal del Colaborador', contratos: 'Contratos y finiquitos', 'datos-personales': 'Protección de Datos', empresa: 'Empresa', equipo: 'Equipo', portal: 'Portal del cliente', cuenta: 'Mi cuenta' };
     var vistaActual = null;
     var finanzasUI = null;
     var datosLeyUI = null;
+    var equipoUI = null;
 
     function rutaActual() { return window.location.pathname.replace(/^\/app\/?/, '').replace(/\/+$/, ''); }
     function navegar(ruta, opciones) {
@@ -211,6 +212,7 @@
         else if (vista === 'pagos' && finanzasUI) finanzasUI.dibujarPagos();
         else if (vista === 'conciliacion' && finanzasUI) finanzasUI.dibujarConciliacion();
         else if (vista === 'mi-contador' && finanzasUI) finanzasUI.dibujarMiContador();
+        else if (vista === 'mi-portal' && equipoUI) equipoUI.dibujarMiPortal();
         else if (vista === 'contratos') dibujarContratos();
         else if (vista === 'datos-personales' && datosLeyUI) {
             var dpTab = new URLSearchParams(window.location.search).get('tab');
@@ -460,24 +462,39 @@
     function recordarEjemplo(si) { try { if (si) window.sessionStorage.setItem(KEY_EJEMPLO, '1'); else window.sessionStorage.removeItem(KEY_EJEMPLO); } catch (e) { /* sin almacenamiento */ } }
     function ejemploRecordado() { try { return window.sessionStorage.getItem(KEY_EJEMPLO) === '1'; } catch (e) { return false; } }
     function recordarPerfilDemo(p) { try { if (p) window.sessionStorage.setItem(KEY_PERFIL_DEMO, p); else window.sessionStorage.removeItem(KEY_PERFIL_DEMO); } catch (e) { /* sin almacenamiento */ } }
-    function perfilDemoRecordado() { try { return window.sessionStorage.getItem(KEY_PERFIL_DEMO) === 'contador' ? 'contador' : 'dueno'; } catch (e) { return 'dueno'; } }
+    function normalizarPerfilDemo(p) { return (p === 'contador' || p === 'trabajador') ? p : 'dueno'; }
+    function perfilDemoRecordado() { try { return normalizarPerfilDemo(window.sessionStorage.getItem(KEY_PERFIL_DEMO)); } catch (e) { return 'dueno'; } }
     function actualizarBarraPerfilDemo() {
         var bDueno = $('pm-ver-dueno');
         var bCont = $('pm-ver-contador');
+        var bTrab = $('pm-ver-trabajador');
         var txt = $('pm-demo-empresa-txt');
         var esCont = perfilDemo === 'contador';
-        if (bDueno) bDueno.setAttribute('aria-pressed', esCont ? 'false' : 'true');
+        var esTrab = perfilDemo === 'trabajador';
+        if (bDueno) bDueno.setAttribute('aria-pressed', perfilDemo === 'dueno' ? 'true' : 'false');
         if (bCont) bCont.setAttribute('aria-pressed', esCont ? 'true' : 'false');
+        if (bTrab) bTrab.setAttribute('aria-pressed', esTrab ? 'true' : 'false');
         if (txt) {
-            txt.innerHTML = '<strong>Panadería Los Aromos SpA</strong> · ' +
-                (esCont ? 'Vista Contador (ProPyme 14 D3 · F29 y cierre)' : 'Vista Dueño Pyme (caja, cobros y pagos)');
+            var desc = esTrab ? 'Vista Trabajador (Mi Portal personal)' : esCont ? 'Vista Contador (ProPyme 14 D3 · F29 y cierre)' : 'Vista Dueño Pyme (caja, cobros y pagos)';
+            txt.innerHTML = '<strong>Panadería Los Aromos SpA</strong> · ' + desc;
         }
-        if ($('pm-panel')) $('pm-panel').classList.toggle('demo-vista-contador', esCont);
+        if ($('pm-panel')) {
+            $('pm-panel').classList.toggle('demo-vista-contador', esCont);
+            $('pm-panel').classList.toggle('demo-vista-trabajador', esTrab);
+        }
     }
     function cambiarPerfilDemo(nuevo) {
-        perfilDemo = nuevo === 'contador' ? 'contador' : 'dueno';
+        perfilDemo = normalizarPerfilDemo(nuevo);
         recordarPerfilDemo(perfilDemo);
         actualizarBarraPerfilDemo();
+        if (perfilDemo === 'trabajador') {
+            navegar('mi-portal', { reemplazar: true });
+            return;
+        }
+        if (vistaActual === 'mi-portal') {
+            navegar(perfilDemo === 'contador' ? 'mi-contador' : 'flujo-caja', { reemplazar: true });
+            return;
+        }
         if (finanzasUI) finanzasUI.redibujarVistaActiva();
     }
     function cargarScript(src) {
@@ -492,7 +509,7 @@
     function mesAnteriorDe(p) { var a = p.split('-').map(Number); return a[1] === 1 ? (a[0] - 1) + '-12' : a[0] + '-' + dos(a[1] - 1); }
     function entrarEjemplo(perfilOpcional, rutaDestino) {
         mostrar('cargando');
-        if (perfilOpcional === 'contador' || perfilOpcional === 'dueno') {
+        if (perfilOpcional === 'contador' || perfilOpcional === 'dueno' || perfilOpcional === 'trabajador') {
             perfilDemo = perfilOpcional;
         } else {
             perfilDemo = perfilDemoRecordado();
@@ -556,8 +573,10 @@
     if ($('pm-ejemplo')) $('pm-ejemplo').addEventListener('click', function () { entrarEjemplo('dueno', 'flujo-caja'); });
     if ($('pm-demo-dueno')) $('pm-demo-dueno').addEventListener('click', function () { entrarEjemplo('dueno', 'flujo-caja'); });
     if ($('pm-demo-contador')) $('pm-demo-contador').addEventListener('click', function () { entrarEjemplo('contador', 'mi-contador'); });
+    if ($('pm-demo-trabajador')) $('pm-demo-trabajador').addEventListener('click', function () { entrarEjemplo('trabajador', 'mi-portal'); });
     if ($('pm-ver-dueno')) $('pm-ver-dueno').addEventListener('click', function () { cambiarPerfilDemo('dueno'); });
     if ($('pm-ver-contador')) $('pm-ver-contador').addEventListener('click', function () { cambiarPerfilDemo('contador'); });
+    if ($('pm-ver-trabajador')) $('pm-ver-trabajador').addEventListener('click', function () { cambiarPerfilDemo('trabajador'); });
     $('pm-ejemplo-salir').addEventListener('click', salirEjemplo);
     $('pm-ejemplo-entrar').addEventListener('click', salirEjemplo);
 
@@ -567,6 +586,7 @@
         vacSel = null; vacCache = []; docsCache = []; docPrefill = null;
         docSel = { trabajadorId: null, tipo: null, datos: {}, intento: false, listo: false };
         if (finanzasUI) finanzasUI.limpiarEjemplo();
+        if (equipoUI) equipoUI.limpiarEjemplo();
         $('print-section').innerHTML = '';
         $('pm-liq-editor').hidden = true;
     }
@@ -1471,6 +1491,7 @@ function dibujarEquipo() {
         $('pm-trab-limite').textContent = txt;
         $('pm-trab-nuevo').disabled = !estado.empresa;
         $('pm-trab-nuevo').title = estado.empresa ? '' : 'Primero guarda los datos de la empresa';
+        if (equipoUI) equipoUI.dibujarKpisYOrganigrama();
     }
     $('pm-trab-nuevo').addEventListener('click', function () { navegar('trabajadores/nuevo'); });
 
@@ -2435,6 +2456,7 @@ function dibujarEquipo() {
                 '<td class="chev"><span class="material-icons" aria-hidden="true">chevron_right</span></td></tr>';
         }).join('') : '<tr><td colspan="6" class="vacio">No tienes trabajadores activos. Actívalos desde su ficha.</td></tr>';
         if (inicioSel) dibujarDetalle(inicioSel, false); else $('ini-detalle-cuerpo').innerHTML = '<p class="detalle-vacio">Elige a un trabajador para ver el detalle.</p>';
+        if (equipoUI) equipoUI.dibujarNovedadesCierre();
     }
 
     // Vacaciones en la grilla: el período que cae en el mes o, si no hay, el saldo
@@ -3016,6 +3038,7 @@ function dibujarEquipo() {
         sel.value = vacSel;
         dibujarDetalleVac();
         calcularVac();
+        if (equipoUI) equipoUI.dibujarAprobaciones();
     }
     function dibujarDetalleVac() {
         var t = trabajadorPorId(vacSel);
@@ -4662,6 +4685,68 @@ function dibujarEquipo() {
             resumenLaboralMes: resumenLaboralMes
         });
     }
+
+    if (window.CLPymeEquipoUI && window.CLPymeEquipoUI.montarUI) {
+        equipoUI = window.CLPymeEquipoUI.montarUI({
+            getEstado: function () { return estado; },
+            getPeriodo: function () { return periodoSel || periodoPorDefecto(); },
+            esEjemplo: function () { return !!ejemplo; },
+            hoyIso: hoyIso,
+            mesAnteriorDe: mesAnteriorDe,
+            nombrePeriodo: nombrePeriodo,
+            getVacCache: function () { return vacCache || []; },
+            getMesesPeriodo: function (p) { return mesesDe(p); },
+            getMesTrabajador: function (p, id) { return mesesDe(p)[id] || null; },
+            asegurarMesesPeriodo: function (p) { return !p || mesesCache[p] ? Promise.resolve(true) : cargarMeses(p); },
+            confirmar: confirmar,
+            navegar: navegar,
+            avisoGlobal: avisoGlobal,
+            imprimirLiquidacionTrabajador: function (t, p) {
+                var mes = mesesDe(p)[t.id];
+                if (!mes) { avisoGlobal('error', 'Ese período aún no tiene liquidación preparada.'); return; }
+                var r = calcularMes(t, mes, p);
+                if (!r || r.error || !r.res.listo) { avisoGlobal('error', 'Completa los datos del mes antes de imprimir.'); return; }
+                imprimirHojas([DOC.documento(estado.empresa, t, mes, r.res, { periodo: p, pagada: tienePase(), fuentes: r.val.fuentes })], 'Liquidacion ' + t.nombre + ' ' + p);
+            },
+            imputarHorasExtraTrabajador: function (trabId, horas) {
+                var p = periodoSel || periodoPorDefecto();
+                var t = trabajadorPorId(trabId);
+                if (!t) return false;
+                if (finanzasUI && finanzasUI.estaCerrado(p)) {
+                    avisoGlobal('error', 'El período está cerrado por tu contador. Reábrelo en Mi Contador antes de imputar horas extra.');
+                    return false;
+                }
+                var base = Object.assign({}, L.mesBase(t, p), mesesDe(p)[trabId] || {});
+                base.horasExtra = Math.round(((Number(base.horasExtra) || 0) + (Number(horas) || 0)) * 100) / 100;
+                return guardarRegistro(trabId, base, p).then(function (r) {
+                    if (!r || !r.ok) {
+                        avisoGlobal('error', (r && r.datos && r.datos.error) || 'No pudimos imputar las horas extra.');
+                        return false;
+                    }
+                    dibujarPendientes();
+                    if (finanzasUI) finanzasUI.redibujarVistaActiva();
+                    avisoGlobal('ok', 'Aprobadas ' + horas + ' hrs extra e imputadas en la liquidación de ' + t.nombre + '.');
+                    return true;
+                });
+            },
+            registrarVacacionAprobada: function (trabId, sol) {
+                var cuerpo = { tipo: 'periodo', desde: sol.desde, hasta: sol.hasta, nota: sol.nota || 'Aprobada desde bandeja' };
+                return api('vacacion', { metodo: 'POST', query: { trabajador: trabId }, cuerpo: { vacacion: cuerpo } }).then(function (r) {
+                    if (!r.ok) {
+                        avisoGlobal('error', (r.datos && r.datos.error) || 'No pudimos registrar la vacación.');
+                        return false;
+                    }
+                    vacCache.push(r.datos.vacacion);
+                    vacSel = trabId;
+                    dibujarVacaciones();
+                    dibujarPendientes();
+                    avisoGlobal('ok', 'Solicitud aprobada y registrada en Vacaciones (' + r.datos.vacacion.dias + ' días hábiles).');
+                    return true;
+                });
+            }
+        });
+    }
+
     if (window.CLPymeDatosLey && window.CLPymeDatosLey.montarUI) {
         datosLeyUI = window.CLPymeDatosLey.montarUI({
             api: api,
@@ -4684,8 +4769,10 @@ function dibujarEquipo() {
         var qs = new URLSearchParams(window.location.search || '');
         var demoParam = qs.get('demo');
         if (demoParam) {
-            var pDemo = (demoParam === 'contador' || qs.get('perfil') === 'contador') ? 'contador' : 'dueno';
-            entrarEjemplo(pDemo, pDemo === 'contador' ? 'mi-contador' : 'flujo-caja');
+            var qPerf = qs.get('perfil');
+            var pDemo = (demoParam === 'trabajador' || qPerf === 'trabajador') ? 'trabajador' : (demoParam === 'contador' || qPerf === 'contador') ? 'contador' : 'dueno';
+            var rDemo = pDemo === 'trabajador' ? 'mi-portal' : pDemo === 'contador' ? 'mi-contador' : 'flujo-caja';
+            entrarEjemplo(pDemo, rDemo);
             return;
         }
         if (rutaActual() === 'ejemplo' || ejemploRecordado()) { entrarEjemplo(); return; }

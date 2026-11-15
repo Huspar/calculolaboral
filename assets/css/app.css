@@ -919,7 +919,7 @@ a.cal-ev:hover { filter: brightness(0.97); }
     transition: background-color .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease);
 }
 .fin-chip:hover { border-color: var(--line-3); background: var(--surface-2); }
-.fin-chip.activo { background: var(--forest); border-color: var(--forest); color: #FFFFFF; }
+.fin-chip.activo, .fin-chip.activo:hover { background: var(--forest); border-color: var(--forest); color: #FFFFFF; }
 
 .fin-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 14px; }
 .fin-form-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
@@ -1703,11 +1703,19 @@ a.cal-ev:hover { filter: brightness(0.97); }
     }
     .demo-perfil-wrap {
         width: 100%;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .demo-perfil-switch {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .demo-perfil-btn {
-        min-height: 40px;
-        padding: 6px 12px;
+        min-height: 44px;
+        padding: 6px 6px;
+        font-size: 12px;
+        text-align: center;
     }
     .demo-top-acciones {
         width: 100%;
@@ -1716,6 +1724,18 @@ a.cal-ev:hover { filter: brightness(0.97); }
     .demo-top-acciones .btn,
     .demo-top-acciones .btn-texto {
         min-height: 44px;
+    }
+    .vista[data-vista="mi-portal"] .panel {
+        min-width: 0;
+        max-width: 100%;
+    }
+    .vista[data-vista="mi-portal"] .panel-head {
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        padding: 12px 16px;
+    }
+    .vista[data-vista="mi-portal"] .panel-head .texto-ayuda {
+        white-space: normal;
     }
     .revisar-hoy-grid {
         grid-template-columns: minmax(0, 1fr);
@@ -1963,5 +1983,311 @@ a.cal-ev:hover { filter: brightness(0.97); }
     .proy-grid {
         grid-template-columns: minmax(0, 1fr);
         padding: 12px;
+    }
+}
+
+
+/* ---------------- Personal y Equipo: Mi Portal, Aprobaciones 1-Clic, Organigrama ---------------- */
+.app.demo-vista-trabajador {
+    grid-template-columns: minmax(0, 1fr);
+}
+.app.demo-vista-trabajador .app-side,
+.app.demo-vista-trabajador .app-barra,
+.app.demo-vista-trabajador .app-menu-btn,
+.app.demo-vista-trabajador .app-mes {
+    display: none;
+}
+.app.demo-vista-trabajador .app-content {
+    max-width: 1060px;
+    width: 100%;
+    margin: 0 auto;
+}
+.portal-trab-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+.portal-trab-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--forest-50);
+    color: var(--forest-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.portal-trab-avatar .material-icons { font-size: 28px; }
+.portal-trab-info { flex: 1 1 260px; min-width: 0; }
+.portal-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--forest-600);
+    margin-bottom: 4px;
+}
+.portal-trab-switcher {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 210px;
+}
+.portal-trab-switcher label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.portal-trab-switcher select {
+    min-height: 40px;
+    padding: 0 10px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font: inherit;
+    font-size: 13.5px;
+    color: var(--ink);
+}
+.portal-kpi-destacado {
+    background: var(--forest-50);
+    border-color: var(--forest-100);
+}
+.portal-kpi-acciones {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 56, 46, 0.08);
+}
+.portal-sol-box {
+    margin-top: 16px;
+}
+.portal-solicitudes-lista {
+    grid-template-columns: minmax(0, 1fr);
+}
+.portal-sol-ico {
+    color: var(--amber-icon);
+    font-size: 16px;
+    vertical-align: -3px;
+    margin-right: 6px;
+}
+
+/* Bandeja de Aprobaciones 1-Clic */
+.aprobaciones-panel {
+    margin-bottom: 18px;
+}
+.aprobaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+.aprobaciones-vacio {
+    grid-column: 1 / -1;
+}
+.aprobacion-card {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+.aprobacion-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.aprobacion-ico {
+    padding: 7px;
+    border-radius: 8px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.aprobacion-ico.vac { background: var(--amber-bg); color: var(--amber-ink); }
+.aprobacion-ico.he { background: var(--forest-50); color: var(--forest-700); }
+.aprobacion-titular { flex: 1 1 140px; min-width: 0; }
+.aprobacion-titular strong { display: block; font-size: 14px; color: var(--ink); }
+.aprobacion-cargo { font-size: 12px; color: var(--muted); }
+.aprobacion-fechas { font-size: 13.5px; margin: 0 0 8px 0; color: var(--ink); line-height: 1.4; }
+.aprobacion-impacto {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 8px 10px;
+    background: var(--surface);
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.4;
+}
+.aprobacion-impacto .material-icons {
+    font-size: 16px;
+    color: var(--forest-600);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+.aprobacion-impacto p { margin: 0; }
+.aprobacion-acciones {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Organigrama Liviano Pyme */
+#trab-subtabs {
+    margin-bottom: 14px;
+}
+.organigrama-wrap {
+    padding: 8px 0 18px;
+}
+.org-nivel-gerencia {
+    display: flex;
+    justify-content: center;
+}
+.org-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    width: 100%;
+}
+.org-card-btn {
+    cursor: pointer;
+    transition: border-color .15s var(--ease), background-color .15s var(--ease);
+}
+.org-card-btn:hover {
+    border-color: var(--forest-300);
+    background: var(--hover);
+}
+.org-card-btn.alerta {
+    border-left: 3px solid var(--amber);
+}
+.org-card-lider {
+    border-top: 3px solid var(--forest);
+    width: auto;
+    min-width: 250px;
+    max-width: 100%;
+}
+.org-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--forest-700);
+    flex-shrink: 0;
+}
+.org-datos { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.org-datos strong { display: block; font-size: 13.5px; color: var(--ink); }
+.org-datos span { font-size: 12px; color: var(--muted); }
+.org-datos .sello { align-self: flex-start; margin-top: 2px; }
+.org-rol-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--forest) !important;
+    letter-spacing: 0.04em;
+}
+.org-conector-vertical {
+    width: 2px;
+    height: 22px;
+    background: var(--line-3);
+    margin: 0 auto;
+}
+.org-areas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+.org-area-columna {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    min-width: 0;
+}
+.org-area-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+}
+.org-area-cabecera .material-icons { color: var(--forest-600); font-size: 20px; }
+.org-area-cabecera h3 { font-size: 14px; margin: 0; color: var(--forest); }
+.org-area-count { font-size: 12px; color: var(--muted); }
+.org-area-miembros { display: flex; flex-direction: column; gap: 8px; }
+
+/* Novedades en Cierre del mes */
+.ini-novedades-panel { margin-bottom: 16px; }
+.ini-novedades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+}
+.novedad-chip-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.35;
+}
+.novedad-chip-item .material-icons { font-size: 18px; flex-shrink: 0; color: var(--forest-600); }
+.novedad-chip-item.lic .material-icons { color: var(--risk); }
+.novedad-chip-item.vac .material-icons { color: var(--amber-icon); }
+
+@media screen and (max-width: 900px) {
+    .aprobaciones-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .portal-trab-head {
+        padding: 16px;
+    }
+    .portal-trab-switcher {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 640px) {
+    .portal-kpi-acciones .btn,
+    .aprobacion-acciones .btn,
+    .aprobacion-acciones .btn-texto,
+    #trab-subtabs .fin-chip {
+        min-height: 44px;
+    }
+    .aprobacion-acciones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .aprobacion-acciones .btn-texto {
+        text-align: center;
     }
 }

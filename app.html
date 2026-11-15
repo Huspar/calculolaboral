@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.36.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.37.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
 </head>
 <body class="app-body">
@@ -99,6 +99,14 @@ gtag('js', new Date());
 <span class="entrada-perfil-cta">Abrir vista de cierre F29 <span class="material-icons" aria-hidden="true">arrow_forward</span></span>
 </span>
 </button>
+<button type="button" class="entrada-perfil-card" id="pm-demo-trabajador">
+<span class="entrada-perfil-ico"><span class="material-icons" aria-hidden="true">badge</span></span>
+<span class="entrada-perfil-cuerpo">
+<strong>Entrar como Trabajador (Mi Portal)</strong>
+<span>Liquidación de sueldo, saldo de vacaciones y solicitudes directas desde el celular.</span>
+<span class="entrada-perfil-cta">Abrir Mi Portal <span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+</span>
+</button>
 </div>
 <p class="entrada-demo-pie">Todo corre en tu navegador con datos simulados. Nada se envía ni se guarda al salir. <a href="/demo-contadores">¿Buscas Balance 8 Columnas y RLI? Ir a Suite Contadores</a>.</p>
 </section>
@@ -134,7 +142,7 @@ gtag('js', new Date());
 <a href="/app/calendario" data-ruta="calendario" data-nav="calendario"><span class="material-icons" aria-hidden="true">calendar_month</span>Calendario y plazos</a>
 <p class="app-nav-grupo">Equipo y documentos</p>
 <a href="/app/trabajadores" data-ruta="trabajadores" data-nav="trabajadores"><span class="material-icons" aria-hidden="true">group</span>Trabajadores</a>
-<a href="/app/vacaciones" data-ruta="vacaciones" data-nav="vacaciones"><span class="material-icons" aria-hidden="true">beach_access</span>Vacaciones</a>
+<a href="/app/vacaciones" data-ruta="vacaciones" data-nav="vacaciones"><span class="material-icons" aria-hidden="true">beach_access</span>Vacaciones y permisos</a>
 <a href="/app/contratos" data-ruta="contratos" data-nav="contratos"><span class="material-icons" aria-hidden="true">draw</span>Contratos y finiquitos</a>
 <a href="/app/documentos" data-ruta="documentos" data-nav="documentos"><span class="material-icons" aria-hidden="true">description</span>Documentos laborales</a>
 <a href="/app/datos-personales" data-ruta="datos-personales" data-nav="datos-personales"><span class="material-icons" aria-hidden="true">shield</span>Datos personales (Ley 21.719)<span class="app-nav-chip" id="nav-chip-datos-personales" hidden></span></a>
@@ -188,6 +196,7 @@ gtag('js', new Date());
 <div class="demo-perfil-switch" role="group" aria-label="Cambiar perspectiva de la demo">
 <button type="button" class="demo-perfil-btn" id="pm-ver-dueno" data-perfil-demo="dueno" aria-pressed="true">Dueño Pyme</button>
 <button type="button" class="demo-perfil-btn" id="pm-ver-contador" data-perfil-demo="contador" aria-pressed="false">Contador</button>
+<button type="button" class="demo-perfil-btn" id="pm-ver-trabajador" data-perfil-demo="trabajador" aria-pressed="false">Trabajador</button>
 </div>
 </div>
 <div class="demo-top-acciones">
@@ -283,6 +292,10 @@ gtag('js', new Date());
 <ol class="primeros" id="ini-primeros-lista"></ol>
 </div>
 
+<div class="panel ini-novedades-panel" id="ini-novedades-widget" hidden>
+<div class="panel-head"><h2>Novedades imputadas a las liquidaciones de este mes</h2><span class="texto-ayuda">Impactan directo el líquido y Previred</span></div>
+<div class="panel-cuerpo ini-novedades-grid" id="ini-novedades-grid"></div>
+</div>
 <div class="cierre" id="ini-cierre">
 <div class="cierre-izq">
 <div class="panel ini-panel-avisos" id="ini-avisos">
@@ -338,6 +351,12 @@ gtag('js', new Date());
 <div class="form-acciones"><button type="button" class="btn btn-primario" id="pm-planilla-importar" hidden><span class="material-icons" aria-hidden="true">group_add</span><span>Importar</span></button><button type="button" class="btn btn-texto" id="pm-planilla-cambiar-archivo" hidden>Elegir otro archivo</button><p class="lq-estado" id="pm-planilla-estado" role="status"></p></div>
 </div>
 </div>
+<div class="fin-kpis fin-kpis-4" id="trab-equipo-kpis" hidden></div>
+<div class="fin-filtros" id="trab-subtabs" role="tablist" aria-label="Modo de visualización del equipo" hidden>
+<button type="button" class="fin-chip activo" id="tab-trab-lista" role="tab" aria-selected="true"><span id="tab-trab-lista-txt">Fichas y lista</span></button>
+<button type="button" class="fin-chip" id="tab-trab-organigrama" role="tab" aria-selected="false">Áreas y organigrama</button>
+</div>
+<div id="vista-organigrama-wrap" class="organigrama-wrap" hidden></div>
 <div class="panel" id="trab-panel">
 <div class="tabla-wrap">
 <table class="tabla">
@@ -868,12 +887,16 @@ gtag('js', new Date());
 <section class="vista" data-vista="vacaciones" aria-labelledby="vac-titulo" hidden>
 <div class="v-head">
 <div>
-<h1 class="v-titulo" id="vac-titulo">Vacaciones</h1>
+<h1 class="v-titulo" id="vac-titulo">Vacaciones y permisos</h1>
 <p class="v-sub">Saldo estimado: 15 días hábiles por año completo de servicio (20 en zona extrema) más el feriado progresivo, menos lo que registres (arts. 67 y 68). El sábado no cuenta como día de feriado (art. 69).</p>
 </div>
 </div>
 <div class="panel" id="vac-vacio" hidden><div class="panel-cuerpo"><p class="h-seccion">Primero agrega a un trabajador</p><p class="texto-ayuda">El saldo se calcula con su fecha de ingreso.</p><div class="form-acciones"><a class="btn btn-primario" href="/app/trabajadores/nuevo" data-ruta="trabajadores/nuevo">Agregar trabajador</a></div></div></div>
 <div id="vac-contenido">
+<div class="panel aprobaciones-panel" id="panel-aprobaciones-equipo" hidden>
+<div class="panel-head"><h2>Solicitudes pendientes de aprobación</h2><span class="sello sello-preparada" id="aprob-pendientes-n">0 pendientes</span></div>
+<div class="panel-cuerpo aprobaciones-grid" id="aprobaciones-grid"></div>
+</div>
 <div class="panel">
 <div class="tabla-wrap"><table class="tabla"><caption class="sr-only">Saldo de vacaciones por trabajador</caption>
 <thead><tr><th scope="col">Trabajador</th><th scope="col" class="num ocultar-movil">Corresponden</th><th scope="col" class="num ocultar-movil">Tomados</th><th scope="col" class="num">Saldo</th><th scope="col" class="ocultar-movil">Ahora o próximas</th><th scope="col" class="chev"><span class="sr-only">Elegir</span></th></tr></thead>
@@ -1579,6 +1602,86 @@ gtag('js', new Date());
 <section class="panel mc-correos-panel" id="mc-correos-panel" aria-labelledby="mc-correos-titulo"></section>
 </section>
 
+<!-- Mi Portal del Colaborador -->
+<section class="vista" data-vista="mi-portal" aria-labelledby="portal-trab-saludo" hidden>
+<div class="portal-trab-head">
+<div class="portal-trab-avatar"><span class="material-icons" aria-hidden="true">person</span></div>
+<div class="portal-trab-info">
+<span class="portal-tag">Portal del Colaborador</span>
+<h1 class="v-titulo" id="portal-trab-saludo">Hola</h1>
+<p class="v-sub" id="portal-trab-cargo"></p>
+</div>
+<div class="portal-trab-switcher" id="portal-demo-switcher" hidden>
+<label for="portal-demo-trab-sel">Ver ficha de:</label>
+<select id="portal-demo-trab-sel"></select>
+</div>
+</div>
+
+<div class="fin-kpis fin-kpis-3 portal-kpis-grid">
+<div class="fin-kpi portal-kpi-destacado">
+<span class="fin-kpi-label" id="portal-liq-label">Última liquidación</span>
+<strong class="fin-kpi-val mono" id="portal-liq-monto">—</strong>
+<span class="fin-kpi-meta" id="portal-liq-meta"></span>
+<div class="portal-kpi-acciones">
+<button type="button" class="btn btn-chico btn-primario" id="btn-portal-descargar-liq"><span class="material-icons" aria-hidden="true">download</span><span>Descargar liquidación PDF</span></button>
+</div>
+</div>
+<div class="fin-kpi">
+<span class="fin-kpi-label">Vacaciones legales disponibles</span>
+<strong class="fin-kpi-val mono ok" id="portal-vac-saldo">—</strong>
+<span class="fin-kpi-meta" id="portal-vac-meta"></span>
+<div class="portal-kpi-acciones">
+<button type="button" class="btn btn-chico" id="btn-portal-pedir-vac"><span class="material-icons" aria-hidden="true">beach_access</span><span>Pedir días</span></button>
+</div>
+</div>
+<div class="fin-kpi">
+<span class="fin-kpi-label">Horas extras aprobadas este mes</span>
+<strong class="fin-kpi-val mono" id="portal-he-total">0 horas</strong>
+<span class="fin-kpi-meta" id="portal-he-meta"></span>
+<div class="portal-kpi-acciones">
+<button type="button" class="btn btn-chico" id="btn-portal-pedir-he"><span class="material-icons" aria-hidden="true">more_time</span><span>Registrar horas extra</span></button>
+</div>
+</div>
+</div>
+
+<div class="panel portal-sol-box" id="portal-solicitud-box" hidden>
+<div class="panel-head"><h2 id="portal-sol-titulo">Nueva solicitud</h2></div>
+<form id="portal-solicitud-form" class="panel-cuerpo fin-form-grid-2" novalidate>
+<div id="portal-sol-vac-campos" class="fin-span-all fin-form-grid-2">
+<div class="lq-field"><label for="portal-sol-desde">Desde</label><input id="portal-sol-desde" type="date"></div>
+<div class="lq-field"><label for="portal-sol-hasta">Hasta</label><input id="portal-sol-hasta" type="date"></div>
+</div>
+<div id="portal-sol-he-campos" class="fin-span-all fin-form-grid-2" hidden>
+<div class="lq-field"><label for="portal-sol-fecha-he">Fecha realizada</label><input id="portal-sol-fecha-he" type="date"></div>
+<div class="lq-field"><label for="portal-sol-horas">Cantidad de horas extra</label><input id="portal-sol-horas" type="number" min="1" max="48" step="0.5" value="2"></div>
+</div>
+<div class="lq-field fin-span-all"><label for="portal-sol-nota">Motivo o comentario <span class="lq-opt">(opcional)</span></label><input id="portal-sol-nota" type="text" maxlength="120" placeholder="Ej: Descanso programado o apoyo de cierre"></div>
+<div class="form-acciones fin-span-all">
+<button type="submit" class="btn btn-primario">Enviar solicitud</button>
+<button type="button" class="btn-texto" id="portal-sol-cancelar">Cancelar</button>
+<p class="lq-estado" id="portal-sol-estado" role="status"></p>
+</div>
+</form>
+</div>
+
+<div class="panel" style="margin-top:18px">
+<div class="panel-head"><h2>Mis solicitudes en curso</h2><span class="texto-ayuda">Respuesta directa desde Vacaciones y permisos</span></div>
+<div class="revisar-hoy-grid portal-solicitudes-lista" id="portal-solicitudes-filas"></div>
+</div>
+
+<div class="panel" style="margin-top:16px">
+<div class="panel-head"><h2>Mis documentos laborales</h2><span class="texto-ayuda">Respaldos legales emitidos por tu empleador</span></div>
+<div class="tabla-wrap">
+<table class="tabla">
+<caption class="sr-only">Documentos laborales del colaborador</caption>
+<thead><tr><th scope="col">Documento</th><th scope="col">Fecha</th><th scope="col">Estado</th><th scope="col" class="celda-acciones">Ver</th></tr></thead>
+<tbody id="portal-docs-filas"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+
 </main>
 </div>
 
@@ -1737,7 +1840,8 @@ gtag('js', new Date());
 <script src="/js/finiquito_docx.js?v=1.3.0"></script>
 <script src="/js/pyme_finanzas.js?v=1.4.3"></script>
 <script src="/js/pyme_datos_ley.js?v=1.4.0"></script>
+<script src="/js/pyme_equipo_ui.js?v=1.0.0"></script>
 <script src="/js/checkout_consent.js?v=1.6.0" defer></script>
-<script src="/js/app_pyme.js?v=1.47.0" defer></script>
+<script src="/js/app_pyme.js?v=1.48.0" defer></script>
 </body>
 </html>
