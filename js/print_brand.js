@@ -97,5 +97,105 @@
         return prefix + '-' + day + '-' + Math.random().toString(36).substring(2, 7).toUpperCase();
     }
 
-    window.CLPrint = { css: css, header: header, folio: folio, esc: esc, isotipo: ISOTIPO };
+    function fechaHoy() {
+        return new Date().toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function ensureIsolationCss() {
+        if (document.getElementById('cl-print-isolation')) return;
+        var st = document.createElement('style');
+        st.id = 'cl-print-isolation';
+        st.textContent =
+            '#print-section { display: none; }\n' +
+            '@media print {\n' +
+            '  body.cl-has-print-report > *:not(#print-section) { display: none !important; }\n' +
+            '  body.cl-has-print-report #print-section {\n' +
+            '    display: block !important; width: 100% !important; max-width: 100% !important;\n' +
+            '    overflow: visible !important; height: auto !important; padding: 0 !important;\n' +
+            '    margin: 0 !important; background: #ffffff !important; color: #111827 !important;\n' +
+            '    box-sizing: border-box !important;\n' +
+            '  }\n' +
+            '  body.cl-has-print-report, html:has(body.cl-has-print-report) {\n' +
+            '    background: #ffffff !important; margin: 0 !important; padding: 0 !important;\n' +
+            '    width: 100% !important; height: auto !important; overflow: visible !important;\n' +
+            '  }\n' +
+            '}';
+        (document.head || document.documentElement).appendChild(st);
+    }
+
+    function mount(html, extraCss) {
+        ensureIsolationCss();
+        var prev = document.getElementById('print-section');
+        if (prev) prev.remove();
+        var sec = document.createElement('div');
+        sec.id = 'print-section';
+        sec.setAttribute('aria-hidden', 'true');
+        sec.innerHTML = '<style>' + css() + '\n' + (extraCss || '') + '</style><div class="clr">' + html + '</div>';
+        document.body.appendChild(sec);
+        document.body.classList.add('cl-has-print-report');
+        return sec;
+    }
+
+    function unmount() {
+        var sec = document.getElementById('print-section');
+        if (sec) sec.remove();
+        if (document.body) document.body.classList.remove('cl-has-print-report');
+    }
+
+    function imprimir(spec, extraCss) {
+        if (!spec) return;
+        var html = typeof spec === 'string' ? spec : spec.html;
+        var cssExtra = (typeof spec === 'object' && spec.css) ? spec.css : (extraCss || '');
+        if (!html) return;
+        mount(html, cssExtra);
+        var done = false;
+        var timer = null;
+        function limpiar() {
+            if (done) return;
+            if (window.matchMedia && window.matchMedia('print').matches) {
+                timer = setTimeout(limpiar, 1000);
+                return;
+            }
+            done = true;
+            window.removeEventListener('afterprint', limpiar);
+            if (timer) { clearTimeout(timer); timer = null; }
+            unmount();
+        }
+        window.addEventListener('afterprint', limpiar, { once: true });
+        window.print();
+        timer = setTimeout(limpiar, 2500);
+    }
+
+    function conectarImpresion(btnOrId, builderFn) {
+        ensureIsolationCss();
+        var btn = typeof btnOrId === 'string' ? document.getElementById(btnOrId) : btnOrId;
+        if (btn) {
+            btn.addEventListener('click', function () {
+                imprimir(builderFn());
+            });
+        }
+        window.addEventListener('beforeprint', function () {
+            if (!document.getElementById('print-section')) {
+                var spec = builderFn();
+                if (!spec) return;
+                var html = typeof spec === 'string' ? spec : spec.html;
+                var cssExtra = (typeof spec === 'object' && spec.css) ? spec.css : '';
+                if (html) mount(html, cssExtra);
+            }
+        });
+        window.addEventListener('afterprint', unmount);
+    }
+
+    window.CLPrint = {
+        css: css,
+        header: header,
+        folio: folio,
+        fechaHoy: fechaHoy,
+        esc: esc,
+        isotipo: ISOTIPO,
+        mount: mount,
+        unmount: unmount,
+        imprimir: imprimir,
+        conectarImpresion: conectarImpresion
+    };
 })();

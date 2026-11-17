@@ -167,7 +167,7 @@
         .min-h-\[44px\] { min-height: 44px; }
         .min-w-\[44px\] { min-width: 44px; }
         #cp-stat-ok { color: #FFB703; }
-        @media print { .no-print, header, footer, .cl-promo, .cl-breadcrumbs { display: none !important; } }
+        #print-section { display: none; }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
 <link rel="stylesheet" href="/assets/css/promo-asistente.css?v=1.0.1">
@@ -318,7 +318,7 @@
                                 <span>Descargar Excel (.xlsx)</span>
                             </button>
                             <button type="button" id="btn-cp-csv" class="btn-outline-pill !py-2 !px-4 !text-xs">CSV</button>
-                            <button type="button" onclick="window.print()" class="btn-outline-pill !py-2 !px-4 !text-xs">
+                            <button type="button" id="btn-cp-imprimir" aria-label="Imprimir índice de carpeta laboral" class="btn-outline-pill !py-2 !px-4 !text-xs">
                                 <span class="material-icons text-sm" aria-hidden="true">print</span>
                                 <span>Imprimir índice</span>
                             </button>
@@ -510,6 +510,7 @@
     <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/pyme_excel.js?v=2.0.0"></script>
+    <script src="/js/print_brand.js?v=1.3.0"></script>
     <script>
     (function () {
         'use strict';
@@ -710,6 +711,66 @@
             a.remove();
             setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
         });
+
+        function buildCarpetaPrintHtml() {
+            if (!window.CLPrint) return '';
+            var d = buildExportData();
+            var esc = CLPrint.esc;
+            var rowsHtml = d.items.map(function (it) {
+                var stColor = it.estado === 'Al día' ? '#00382E' : (it.estado === 'Pendiente' ? '#B91C1C' : '#6B7280');
+                return '<tr>' +
+                    '<td class="mono" style="width:6%;font-weight:700;color:#4B5563">' + it.nro + '</td>' +
+                    '<td class="k" style="width:36%;color:#111827;font-weight:600">' + esc(it.titulo) + '</td>' +
+                    '<td style="width:12%;font-size:8pt;color:#4B5563">' + esc(it.exig) + '</td>' +
+                    '<td style="width:34%;font-size:8pt;color:#4B5563">' + esc(it.norma) + '</td>' +
+                    '<td style="width:12%;text-align:right;font-weight:700;color:' + stColor + '">' + esc(it.estado) + '</td>' +
+                '</tr>';
+            }).join('');
+
+            var html = CLPrint.header({
+                doctype: 'Índice de carpeta laboral',
+                date: CLPrint.fechaHoy(),
+                folio: CLPrint.folio('CLD')
+            }) +
+                '<h1 class="clr-title">Índice de Carpeta Laboral por Trabajador</h1>' +
+                '<p class="clr-sub">Empresa: <strong>' + esc(d.emp) + '</strong> · Trabajador: <strong>' + esc(d.trab) + '</strong> · Fecha de corte: <strong>' + esc(d.hoy) + '</strong></p>' +
+                '<p class="clr-cite">Código del Trabajo · Ley 21.643 (Karin) · DS 44 MINSAL/MINTRAB · Ley 16.744 · Ley 21.561</p>' +
+                '<div class="clr-ind">' +
+                    '<span>Avance exigible: <b class="mono">' + d.pct + '%</b></span>' +
+                    '<span>Al día: <b class="mono">' + d.ok + '</b></span>' +
+                    '<span>Pendientes: <b class="mono">' + d.pend + '</b></span>' +
+                    '<span>No aplica: <b class="mono">' + d.na + '</b></span>' +
+                '</div>' +
+                '<div class="clr-sec">' +
+                    '<div class="clr-h">Checklist de 12 documentos exigibles por trabajador</div>' +
+                    '<table class="clr-t">' +
+                        '<thead><tr><th>N°</th><th>Documento exigible</th><th>Exigibilidad</th><th>Respaldo normativo</th><th style="text-align:right">Estado</th></tr></thead>' +
+                        '<tbody>' + rowsHtml + '</tbody>' +
+                    '</table>' +
+                '</div>' +
+                '<div class="clr-total">' +
+                    '<div class="lbl">Nivel de cumplimiento de carpeta' +
+                        '<small>' + d.ok + ' al día · ' + d.pend + ' pendientes · ' + d.na + ' no aplica (sobre 12 ítems)</small>' +
+                    '</div>' +
+                    '<div class="amt">' + d.pct + '%</div>' +
+                '</div>' +
+                '<div class="clr-grid" style="margin-top:18pt">' +
+                    '<div style="border-top:0.75pt solid #9CA3AF;padding-top:4pt;font-size:7.5pt;color:#4B5563">Revisado por (Empleador / RR.HH.)</div>' +
+                    '<div style="border-top:0.75pt solid #9CA3AF;padding-top:4pt;font-size:7.5pt;color:#4B5563">Ubicación física / respaldo digital y fecha</div>' +
+                '</div>' +
+                '<footer class="clr-foot">' +
+                    '<span class="brand">CálculoLaboral · calculolaboral.cl/carpeta-laboral-empresa-chile</span> · Índice referencial de control interno. Verifica exigibilidad adicional según rubro, jornada o faena.' +
+                '</footer>';
+
+            return {
+                html: html,
+                css: '.clr-t tr { break-inside: avoid; page-break-inside: avoid; } .clr-t thead { display: table-header-group; } .clr-t th, .clr-t td { padding-right: 8pt; } .clr-t th:last-child, .clr-t td:last-child { padding-right: 0; }'
+            };
+        }
+
+        if (window.CLPrint) {
+            CLPrint.conectarImpresion('btn-cp-imprimir', buildCarpetaPrintHtml);
+        }
 
         render();
     })();

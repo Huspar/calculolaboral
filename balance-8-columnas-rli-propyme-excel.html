@@ -180,6 +180,7 @@
         @media (min-width: 1024px) { .rli-grid { grid-template-columns: 5fr 7fr; } }
         .rli-kpi-label { color: #A7F3D0; }
         .rli-base-val { color: #FFB703; }
+        #print-section { display: none; }
     </style>
     <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
     <link rel="stylesheet" href="/assets/css/promo-contadores.css?v=1.0.0">
@@ -333,6 +334,10 @@
                     <button type="button" id="btn-b8-ejemplo" class="btn-outline-pill !py-2 !px-4 !text-xs">Cargar ejemplo pyme</button>
                     <button type="button" id="btn-b8-cero" class="btn-outline-pill !py-2 !px-4 !text-xs">Limpiar a $0</button>
                     <button type="button" id="btn-b8-csv" class="btn-outline-pill !py-2 !px-4 !text-xs">CSV</button>
+                    <button type="button" id="btn-b8-imprimir" aria-label="Imprimir informe de Balance 8 Columnas y RLI" class="btn-outline-pill !py-2 !px-4 !text-xs">
+                        <span class="material-icons text-sm" aria-hidden="true">print</span>
+                        <span>Imprimir informe</span>
+                    </button>
                     <button type="button" id="btn-b8-xlsx" class="btn-yellow-pill !py-2 !px-4 !text-xs">
                         <span class="material-icons text-sm" aria-hidden="true">download</span>
                         <span>Descargar Excel (.xlsx)</span>
@@ -551,6 +556,7 @@
     <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/contadores_contabilidad.js?v=1.0.0"></script>
     <script src="/js/pyme_excel.js?v=2.0.0"></script>
+    <script src="/js/print_brand.js?v=1.3.0"></script>
     <script>
     (function () {
         'use strict';
@@ -925,6 +931,133 @@
             a.remove();
             setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
         });
+
+        function buildBalancePrintHtml() {
+            if (!ultimoBalance || !window.CLPrint) return '';
+            var esc = CLPrint.esc;
+            var bal = ultimoBalance;
+            var t = bal.totales;
+            var diffSumas = Math.abs(t.debito - t.credito);
+            var estadoTxt = bal.filas.length === 0
+                ? 'Sin movimientos ($0)'
+                : (diffSumas === 0 && bal.cuadra
+                    ? 'Cuadrado (Débitos = Créditos = ' + fmt(t.debito) + ')'
+                    : 'Descuadrado por ' + fmt(diffSumas));
+
+            var cell = function (v, zeroDash) {
+                if (zeroDash && !v) return '-';
+                return fmt(v);
+            };
+
+            var bodyRows = bal.filas.map(function (f) {
+                return '<tr>' +
+                    '<td class="mono">' + esc(f.codigo) + '</td>' +
+                    '<td class="k">' + esc(f.nombre) + '</td>' +
+                    '<td class="v">' + esc(cell(f.debito, true)) + '</td>' +
+                    '<td class="v">' + esc(cell(f.credito, true)) + '</td>' +
+                    '<td class="v">' + esc(cell(f.deudor, true)) + '</td>' +
+                    '<td class="v">' + esc(cell(f.acreedor, true)) + '</td>' +
+                    '<td class="v">' + esc(cell(f.activo, true)) + '</td>' +
+                    '<td class="v">' + esc(cell(f.pasivo, true)) + '</td>' +
+                    '<td class="v">' + esc(cell(f.perdida, true)) + '</td>' +
+                    '<td class="v">' + esc(cell(f.ganancia, true)) + '</td>' +
+                '</tr>';
+            }).join('');
+
+            if (!bodyRows) {
+                bodyRows = '<tr><td colspan="10" style="text-align:center;color:#6B7280;padding:10pt">Sin movimientos contables registrados ($0).</td></tr>';
+            }
+
+            var sumRows = buildBalanceSummaryRows(bal);
+            var sumRowHtml = function (arr, cls) {
+                return '<tr class="' + cls + '">' +
+                    '<td></td>' +
+                    '<td class="k">' + esc(arr[1]) + '</td>' +
+                    arr.slice(2).map(function (v) { return '<td class="v">' + esc(fmt(v)) + '</td>'; }).join('') +
+                '</tr>';
+            };
+
+            var rliBlock = '';
+            if (ultimaRli) {
+                var rliRows = buildRliExportRows(ultimaRli).map(function (ln, idx) {
+                    var isKey = idx === 11 || idx === 14;
+                    var trCls = isKey ? ' class="sum"' : '';
+                    var vCls = 'v' + (ln[1] < 0 ? ' neg' : '');
+                    return '<tr' + trCls + '><td class="k">' + esc(ln[0]) + '</td><td class="' + vCls + '">' + esc(fmt(ln[1])) + '</td></tr>';
+                }).join('');
+
+                rliBlock =
+                    '<div style="page-break-before:always;break-before:page">' +
+                        CLPrint.header({
+                            doctype: 'Hoja de Trabajo RLI ProPyme',
+                            date: CLPrint.fechaHoy(),
+                            folio: CLPrint.folio('RLI')
+                        }) +
+                        '<h1 class="clr-title">Determinación Renta Líquida Imponible (Art. 14 D N°3)</h1>' +
+                        '<p class="clr-sub">Régimen ProPyme General (base percibida y pagada) · % Ventas cobradas: <strong>' + esc($('rli-pct-cobrado').value) + '%</strong> · % Compras pagadas: <strong>' + esc($('rli-pct-pagado').value) + '%</strong> · Tasa IDPC simulada: <strong>' + esc(String(ultimaRli.tasaIdpcSimulada).replace('.', ',')) + '%</strong></p>' +
+                        '<p class="clr-cite">Ley sobre Impuesto a la Renta, Art. 14 letra D N°3 · Código Tributario</p>' +
+                        '<div class="clr-sec">' +
+                            '<div class="clr-h">Ajuste de resultado contable a base tributaria percibida</div>' +
+                            '<table class="clr-t">' +
+                                '<thead><tr><th>Concepto RLI Art. 14 D N°3</th><th style="text-align:right">Monto CLP</th></tr></thead>' +
+                                '<tbody>' + rliRows + '</tbody>' +
+                            '</table>' +
+                        '</div>' +
+                        '<div class="clr-total">' +
+                            '<div class="lbl">Base imponible estimada Art. 14 D N°3' +
+                                '<small>IDPC simulado (' + esc(String(ultimaRli.tasaIdpcSimulada).replace('.', ',')) + '%): ' + esc(fmt(ultimaRli.idpcSimulado)) + ' · Diferencia F22 tras PPM: ' + esc(fmt(ultimaRli.diferenciaF22Simulada)) + '</small>' +
+                            '</div>' +
+                            '<div class="amt">' + esc(fmt(ultimaRli.baseImponible)) + '</div>' +
+                        '</div>' +
+                        '<footer class="clr-foot">' +
+                            '<span class="brand">CálculoLaboral · calculolaboral.cl/balance-8-columnas-rli-propyme-excel</span> · Hoja de trabajo referencial. Valida agregados Art. 21, remesas y créditos con tu contador antes de declarar F22.' +
+                        '</footer>' +
+                    '</div>';
+            }
+
+            var html = CLPrint.header({
+                doctype: 'Balance Tributario de 8 Columnas',
+                date: CLPrint.fechaHoy(),
+                folio: CLPrint.folio('BAL')
+            }) +
+                '<h1 class="clr-title">Balance Tributario de 8 Columnas</h1>' +
+                '<p class="clr-sub">Estado de cuadratura: <strong>' + esc(estadoTxt) + '</strong> · Resultado del ejercicio: <strong>' + esc(fmt(bal.resultado)) + '</strong></p>' +
+                '<p class="clr-cite">Plan de cuentas base · Sumas, saldos, inventario (Activo/Pasivo) y resultado por naturaleza (Pérdida/Ganancia)</p>' +
+                '<div class="clr-sec">' +
+                    '<table class="clr-t b8p-t">' +
+                        '<thead>' +
+                            '<tr><th rowspan="2">Cód.</th><th rowspan="2">Cuenta</th><th colspan="2" class="b8p-g">Sumas</th><th colspan="2" class="b8p-g">Saldos</th><th colspan="2" class="b8p-g">Inventario</th><th colspan="2" class="b8p-g">Resultado</th></tr>' +
+                            '<tr><th class="r">Débito</th><th class="r">Crédito</th><th class="r">Deudor</th><th class="r">Acreedor</th><th class="r">Activo</th><th class="r">Pasivo</th><th class="r">Pérdida</th><th class="r">Ganancia</th></tr>' +
+                        '</thead>' +
+                        '<tbody>' + bodyRows + '</tbody>' +
+                        '<tfoot>' +
+                            sumRowHtml(sumRows.subtotales, 'sum') +
+                            sumRowHtml(sumRows.resultado, 'b8p-res') +
+                            sumRowHtml(sumRows.sumasIguales, 'sum b8p-tot') +
+                        '</tfoot>' +
+                    '</table>' +
+                '</div>' +
+                '<footer class="clr-foot">' +
+                    '<span class="brand">CálculoLaboral · calculolaboral.cl/balance-8-columnas-rli-propyme-excel</span> · Cifras en pesos chilenos (CLP). Borrador referencial de cierre contable.' +
+                '</footer>' +
+                rliBlock;
+
+            return {
+                html: html,
+                css: '@page { size: A4 landscape; margin: 10mm 11mm; } ' +
+                    '.clr { zoom: 0.9; } ' +
+                    '.clr-t tr { break-inside: avoid; page-break-inside: avoid; } ' +
+                    '.b8p-t th, .b8p-t td { font-size: 7.4pt; padding: 2.6pt 3pt; } ' +
+                    '.b8p-t th.r { text-align: right; } ' +
+                    '.b8p-t th.b8p-g { text-align: center; background: #ECF5F2; color: #00382E; border-bottom: 0.75pt solid #ADD6C9; } ' +
+                    '.b8p-t tr.b8p-res td { font-weight: 600; color: #00382E; background: #F8FAFC; } ' +
+                    '.b8p-t tr.b8p-tot td { background: #ECF5F2; color: #00382E; border-top: 1pt solid #00382E; }'
+            };
+        }
+
+        if (window.CLPrint) {
+            CLPrint.conectarImpresion('btn-b8-imprimir', buildBalancePrintHtml);
+        }
 
         resetTo(EJEMPLO);
         buildTableRows();
