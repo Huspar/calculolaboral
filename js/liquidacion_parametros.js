@@ -47,8 +47,9 @@
     var EMP_ABR = { afp: 0.001, seguroSocial: 0.009, seguroSocialDetalle: 'expectativa de vida', sis: 0.0162 };
     var EMP_JUL = { afp: 0.001, seguroSocial: 0.009, seguroSocialDetalle: 'expectativa de vida', sis: 0.02 };
     var EMP_AGO = { afp: 0.001, seguroSocial: 0.0162, seguroSocialDetalle: 'rentabilidad protegida 0,9% y expectativa de vida 0,72%', sis: 0.0178 };
-    // El Oficio 15.295 fija el SIS de 1,78% para las remuneraciones de agosto a octubre de 2026; para noviembre en adelante aún no se publica.
-    var EMP_NOV = { afp: 0.001, seguroSocial: 0.0162, seguroSocialDetalle: 'rentabilidad protegida 0,9% y expectativa de vida 0,72%', sis: 0.0178, porConfirmar: true };
+    // Previred noviembre 2026: 0,1% AFP + 0,90% Rentabilidad Protegida + 0,71% Expectativa de Vida + 1,79% SIS = 3,50%.
+    var EMP_NOV = { afp: 0.001, seguroSocial: 0.0161, seguroSocialDetalle: 'rentabilidad protegida 0,9% y expectativa de vida 0,71%', sis: 0.0179 };
+    var EMP_DIC = { afp: 0.001, seguroSocial: 0.0161, seguroSocialDetalle: 'rentabilidad protegida 0,9% y expectativa de vida 0,71%', sis: 0.0179, porConfirmar: true };
 
     var NOTA_44H = 'La jornada máxima legal en este mes era de 44 horas semanales (bajó a 42 el 26 de abril de 2026). Revisa la jornada del trabajador: cambia el valor de la hora extra.';
 
@@ -118,13 +119,23 @@
         },
         {
             desde: '2026-11',
-            verificado: '2026-10-13',
+            verificado: '2026-11-18',
             imm: 553553,
             topeAfpUF: 90,
             topeAfcUF: 135.2,
             jornadaMaxima: 42,
             afp: AFP_2026,
             empleador: EMP_NOV
+        },
+        {
+            desde: '2026-12',
+            verificado: '2026-11-18',
+            imm: 553553,
+            topeAfpUF: 90,
+            topeAfcUF: 135.2,
+            jornadaMaxima: 42,
+            afp: AFP_2026,
+            empleador: EMP_DIC
         }
     ];
 

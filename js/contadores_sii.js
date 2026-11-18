@@ -497,6 +497,16 @@
                 ];
                 return llamar('sii-datos?' + params.join('&'));
             },
+            listarTokensMcp: function () {
+                return llamar('mcp-tokens');
+            },
+            crearTokenMcp: function (label) {
+                var body = label ? { label: String(label).trim().slice(0, 60) } : {};
+                return llamar('mcp-tokens', { method: 'POST', body: body });
+            },
+            revocarTokenMcp: function (tokenId) {
+                return llamar('mcp-tokens?id=' + encodeURIComponent(tokenId), { method: 'DELETE', body: { id: tokenId } });
+            },
             sincronizarYEsperar: async function (companyId, opts) {
                 var o = opts || {};
                 var inicio = await this.iniciarSync(companyId, { period: o.period, jobType: o.jobType || 'FULL_SYNC' });

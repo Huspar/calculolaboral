@@ -102,7 +102,8 @@ const PREVIRED_TOPES = {
     const ago = P.vigenciaDe('2026-08').empleador;
     if (Math.round((ago.afp + ago.seguroSocial + ago.sis) * 10000) !== 350) errores.push('agosto no suma 3,5%');
     if (P.vigenciaDe('2026-10').empleador.porConfirmar) errores.push('octubre no debe estar por confirmar');
-    if (!P.vigenciaDe('2026-11').empleador.porConfirmar) errores.push('noviembre debe estar por confirmar (SIS sin publicar)');
+    if (P.vigenciaDe('2026-11').empleador.porConfirmar || P.vigenciaDe('2026-11').empleador.sis !== 0.0179) errores.push('noviembre debe usar SIS 1,79% confirmado');
+    if (!P.vigenciaDe('2026-12').empleador.porConfirmar) errores.push('diciembre debe estar por confirmar (SIS sin publicar)');
     chequear('Parámetros · cotizaciones del empleador por mes (0,1% AFP, seguro social y SIS; 3,5% desde agosto)', errores);
 }
 {
@@ -131,9 +132,9 @@ const PREVIRED_TOPES = {
     // Julio: SIS 2,00% y seguro social 0,9% (antes de la Ley 21.735 en régimen)
     r = calcular(Object.assign(base({ sueldoBase: 1000000 }), { periodo: '2026-07', tasaMutual: 0.93 }), mesEmp('2026-07'));
     if (emp(r, 'sis') !== 20000 || emp(r, 'seguroSocial') !== 9000) errores.push('julio: ' + JSON.stringify(r.empleador.lineas));
-    // Noviembre: tasa del SIS por confirmar
-    r = calcular(Object.assign(base({ sueldoBase: 1000000 }), { periodo: '2026-11', tasaMutual: 0.93 }), Object.assign(mesDe('2026-10'), { empleador: P.vigenciaDe('2026-11').empleador }));
-    if (!r.empleador.avisos.some(a => /aún no está publicada/.test(a.texto))) errores.push('noviembre sin aviso de tasa por confirmar');
+    // Diciembre: tasa del SIS por confirmar
+    r = calcular(Object.assign(base({ sueldoBase: 1000000 }), { periodo: '2026-12', tasaMutual: 0.93 }), Object.assign(mesDe('2026-10'), { empleador: P.vigenciaDe('2026-12').empleador }));
+    if (!r.empleador.avisos.some(a => /aún no está publicada/.test(a.texto))) errores.push('diciembre sin aviso de tasa por confirmar');
     // 65 años o más: aviso
     r = calcular(Object.assign(base({ sueldoBase: 1000000, fechaNacimiento: '1960-05-01' }), { periodo: '2026-10', tasaMutual: 0.93 }), mesEmp('2026-10'));
     if (!r.empleador.avisos.some(a => /66 años/.test(a.texto))) errores.push('sin aviso de mayor de 65');
@@ -257,7 +258,7 @@ function crear(config, almacen = almacenFalso()) {
     chequear('Valores · meses después del último cargado: con valores estimados y aviso (solo el asistente)', [
         e1.ok && e1.estimado && e1.mes.uf === 41612.4 && e1.mes.utm === 72880 ? '' : 'enero de 2027 no se calculó con la UF y la UTM de la API',
         e1.ok && e1.mes.imm === P.vigenciaDe('2026-12').imm && e1.mes.topeAfpUF === 90 ? '' : 'no usó la última vigencia',
-        e1.ok && e1.mes.empleador.porConfirmar && e1.mes.empleador.sis === 0.0178 ? '' : 'tasas del empleador sin "por confirmar"',
+        e1.ok && e1.mes.empleador.porConfirmar && e1.mes.empleador.sis === 0.0179 ? '' : 'tasas del empleador sin "por confirmar"',
         e1.ok && e1.avisos.some(a => /aún no están cargados/.test(a) && /diciembre de 2026/.test(a)) ? '' : 'sin aviso de valores estimados',
         e1.ok && !e1.notas.some(n => /4,25%/.test(n)) && e9.ok && e9.notas.some(n => /4,25%/.test(n)) ? '' : 'nota del aporte de agosto de 2027',
         !e28.ok && !e25.ok ? '' : 'aceptó un mes fuera del tope de extensión',

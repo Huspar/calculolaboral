@@ -53,7 +53,9 @@ const ACTIVIDAD_RUTA = {
     'sii-empresas:POST': 'sii_empresa_vinculada', 'sii-empresas:DELETE': 'sii_empresa_desvinculada',
     'sii-credenciales:POST': 'sii_credencial_guardada', 'sii-credenciales:DELETE': 'sii_credencial_revocada',
     'sii-sync:POST': 'sii_sync_iniciado',
-    'sii-sync-all:POST': 'sii_sync_masivo_iniciado'
+    'sii-sync-all:POST': 'sii_sync_masivo_iniciado',
+    'mcp-tokens:POST': 'mcp_token_creado',
+    'mcp-tokens:DELETE': 'mcp_token_revocado'
 };
 
 function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo, portal, siiGateway }) {
@@ -608,7 +610,31 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 400, { ok: false, codigo: 'tipo_invalido', error: 'Indica tipo=rcv, bhe o f29.' });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos };
+    async function mcpTokens(req, res) {
+        if (!siiGateway) return faltaGateway(res);
+        const m = req.method;
+        if (m === 'GET') {
+            const s = await conSesion(req, res);
+            if (!s) return;
+            return responder(res, await siiGateway.listarTokensMcp(s.cuentaId));
+        }
+        if (m === 'POST') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            return responder(res, await siiGateway.crearTokenMcp(s.cuentaId, H.cuerpoDe(req)));
+        }
+        if (m === 'DELETE') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const id = typeof req.query?.id === 'string' ? req.query.id : (b.id || b.tokenId || '');
+            return responder(res, await siiGateway.revocarTokenMcp(s.cuentaId, id));
+        }
+        res.setHeader('Allow', 'GET, POST, DELETE');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos, 'mcp-tokens': mcpTokens };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {

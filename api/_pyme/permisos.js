@@ -39,7 +39,8 @@ const RUTAS = {
     'sii-credenciales': { POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
     'sii-sync': { GET: 'ver', POST: 'liquidar' },
     'sii-sync-all': { POST: 'liquidar' },
-    'sii-datos': { GET: 'ver' }
+    'sii-datos': { GET: 'ver' },
+    'mcp-tokens': { GET: 'ver', POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' }
 };
 
 function permitir(rol, accion) {

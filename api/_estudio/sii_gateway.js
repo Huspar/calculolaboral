@@ -369,6 +369,31 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         };
     }
 
+    async function listarTokensMcp(cuentaId) {
+        const r = await pedir(cuentaId, 'GET', '/api/v1/mcp/tokens');
+        if (!r.ok) return r;
+        const items = r.data && Array.isArray(r.data.items) ? r.data.items : [];
+        return { ok: true, items };
+    }
+
+    async function crearTokenMcp(cuentaId, entrada) {
+        const b = entrada && typeof entrada === 'object' ? entrada : {};
+        const label = typeof b.label === 'string' ? b.label.trim().slice(0, 60) : '';
+        const payload = label ? { label } : {};
+        const r = await pedir(cuentaId, 'POST', '/api/v1/mcp/tokens', payload);
+        if (!r.ok) return r;
+        return { ok: true, estado: r.estado, token: r.data };
+    }
+
+    async function revocarTokenMcp(cuentaId, tokenId) {
+        if (!idValido(tokenId)) {
+            return { ok: false, estado: 400, codigo: 'token_invalido', error: 'Identificador de token MCP inválido.' };
+        }
+        const r = await pedir(cuentaId, 'DELETE', '/api/v1/mcp/tokens/' + encodeURIComponent(tokenId.trim()));
+        if (!r.ok) return r;
+        return Object.assign({ ok: true, revoked: true }, r.data || { id: tokenId.trim() });
+    }
+
     /** Limpieza en cascada al eliminar la cuenta en CalculoLaboral (Ley 21.719). */
     async function desconectarCuenta(cuentaId) {
         if (!config().configured) return { ok: true, skipped: true, deletedCompanies: 0 };
@@ -398,6 +423,9 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         obtenerRcv,
         obtenerBhe,
         obtenerF29,
+        listarTokensMcp,
+        crearTokenMcp,
+        revocarTokenMcp,
         desconectarCuenta,
         normalizarPeriodo
     };

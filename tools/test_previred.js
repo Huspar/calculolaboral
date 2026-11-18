@@ -334,4 +334,21 @@ caso('sin APV los campos 40 a 43 quedan en cero', () => {
     assert.strictEqual(f[42], '0');
 });
 
+caso('desde noviembre 2026 expectativa de vida (campo 94) usa 0,71% y exime a pensionados', () => {
+    const r = G.generar({
+        periodo: '2026-11', empleador,
+        trabajadores: [
+            Object.assign({}, fonasa, { rentaAfp: 1000000 }),
+            Object.assign({}, fonasa, { rut: '9.876.543-3', rentaAfp: 1000000, tipoTrabajador: '1' })
+        ]
+    });
+    assert.deepStrictEqual(r.errores, []);
+    const activo = r.filas[0].split(';');
+    const pens = r.filas[1].split(';');
+    assert.strictEqual(activo[93], '7100');
+    assert.strictEqual(activo[94], '9000');
+    assert.strictEqual(pens[93], '0');
+    assert.strictEqual(pens[94], '0');
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : 'TODO OK (' + ok + ' comprobaciones)');

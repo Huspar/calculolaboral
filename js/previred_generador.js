@@ -228,10 +228,14 @@
         var rima = Math.max(0, Math.round(Number(t.rima) || 0));
         var baseSeguro = Math.max(0, Math.round(Number(t.rentaAfp) || 0));
         var jornadaHoras = Number(t.jornadaHoras) || 0;
+        var perGen = texto(e.periodo);
+        // Previred nov-2026: Expectativa de Vida baja de 0,72% a 0,71%; pensionados y >65 años quedan exentos de Seguro Social.
+        var tasaExpVida = (!perGen || perGen >= '2026-11') ? 0.0071 : 0.0072;
+        var exentoSeguro = tipoTrab === '1' || tipoTrab === '2' || tipoTrab === '3';
         c[92] = monto(rima);
         c[93] = jornadaHoras > 0 && jornadaHoras <= 30 ? '2' : '1';
-        c[94] = monto(Math.round((baseSeguro + rima) * 0.0072));
-        c[95] = monto(Math.round(baseSeguro * 0.0090));
+        c[94] = exentoSeguro ? '0' : monto(Math.round((baseSeguro + rima) * tasaExpVida));
+        c[95] = exentoSeguro ? '0' : monto(Math.round(baseSeguro * 0.0090));
         c[96] = mutualCodigo;
         c[97] = monto(t.rentaMutual || t.rentaAfp);
         c[98] = monto(t.cotizacionMutual);

@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.9.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.10.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -114,6 +114,9 @@
         <span class="material-icons" aria-hidden="true">drive_folder_upload</span>Importar paquete Pyme
       </button>
       <input type="file" id="file-paquete-pyme" accept=".json,application/json" class="sr-only" aria-label="Importar archivo paquete Pyme JSON">
+      <button type="button" class="btn btn-chico suite-btn-importar" id="btn-side-mcp" title="Conectar cartera del estudio con Claude (MCP)">
+        <span class="material-icons" aria-hidden="true">hub</span>Conectar Claude (MCP)
+      </button>
       <p id="puente-pyme-estado" hidden class="suite-puente-texto"></p>
       <a href="/app" class="suite-link-pyme">
         <span class="material-icons" aria-hidden="true">arrow_back</span>Ir al Asistente Pyme
@@ -412,16 +415,63 @@
                 </table>
               </div>
               <div class="demo-nota" id="warnings-liq"></div>
+              <section class="preval-panel" id="preval-panel" aria-labelledby="preval-titulo" hidden>
+                <div class="preval-cabeza">
+                  <div class="preval-cabeza-izq">
+                    <span class="sello sello-emitida" id="preval-sello-general">
+                      <span class="material-icons" aria-hidden="true">verified</span>
+                      <span id="preval-sello-txt">Listo para Previred y LRE</span>
+                    </span>
+                    <div class="preval-conteo-chips" id="preval-conteo-chips" aria-live="polite">
+                      <span class="preval-chip-cnt rojo" id="preval-cnt-rojo" hidden>0 bloqueantes</span>
+                      <span class="preval-chip-cnt amarillo" id="preval-cnt-amarillo" hidden>0 avisos</span>
+                      <span class="preval-chip-cnt verde" id="preval-cnt-verde">0 OK</span>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-chico preval-btn-toggle" id="btn-preval-toggle" aria-expanded="false" aria-controls="preval-cuerpo">
+                    <span class="material-icons" aria-hidden="true">expand_more</span>
+                    <span id="btn-preval-toggle-txt">Ver pre-validación y plazos</span>
+                  </button>
+                </div>
+                <p class="preval-subtitulo" id="preval-titulo">Pre-validación local de archivo Previred (105 campos), CSV LRE (Mi DT) y vencimientos legales 2026.</p>
+                <div class="preval-cuerpo" id="preval-cuerpo" hidden>
+                  <div class="preval-bloque" id="preval-generales-wrap" hidden>
+                    <h3 class="preval-bloque-titulo">Datos de la empresa requeridos</h3>
+                    <ul class="preval-lista-hallazgos" id="preval-generales-lista"></ul>
+                  </div>
+                  <div class="preval-bloque" id="preval-trabajadores-wrap">
+                    <div class="preval-bloque-head">
+                      <h3 class="preval-bloque-titulo">Revisión por trabajador</h3>
+                      <div class="fin-filtros preval-filtros" id="preval-filtros" role="tablist" aria-label="Filtrar hallazgos por estado">
+                        <button type="button" class="fin-chip activo" data-preval-filtro="hallazgos" role="tab" aria-selected="true">Con observaciones</button>
+                        <button type="button" class="fin-chip" data-preval-filtro="rojo" role="tab" aria-selected="false">Solo bloqueantes</button>
+                        <button type="button" class="fin-chip" data-preval-filtro="todos" role="tab" aria-selected="false">Todos</button>
+                      </div>
+                    </div>
+                    <div class="preval-trab-lista" id="preval-trabajadores-lista"></div>
+                    <p class="texto-ayuda" id="preval-trabajadores-vacio" hidden>Todos los trabajadores cumplen las validaciones previas para Previred y LRE.</p>
+                  </div>
+                  <div class="preval-bloque" id="preval-calendario-wrap">
+                    <div class="preval-bloque-head">
+                      <h3 class="preval-bloque-titulo">Calendario de vencimientos del período</h3>
+                      <span class="texto-ayuda">Plazos legales 2026 parametrizables</span>
+                    </div>
+                    <div class="preval-cal-grid" id="preval-calendario-grid"></div>
+                    <p class="texto-ayuda preval-cal-nota" id="preval-calendario-nota">Referencia 2026: Previred día 13 fijo (sin prórroga en inhábiles), LRE primeros 15 días hábiles del mes siguiente (obligatorio 5+ trab.), contratos y anexos 15 días hábiles en Mi DT, término de contrato 3/6/10 días hábiles según causal.</p>
+                  </div>
+                </div>
+              </section>
               <div class="form-acciones" style="margin-top:14px">
                 <button class="btn btn-primario" type="button" id="btn-print-liq"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes</button>
                 <button class="btn" type="button" id="btn-csv-liq">Exportar Excel</button>
-                <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred</button>
-                <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE</button>
+                <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred <span class="preval-btn-badge" id="badge-err-previred" hidden>0</span></button>
+                <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE <span class="preval-btn-badge" id="badge-err-lre" hidden>0</span></button>
                 <button class="btn" type="button" id="btn-nomina-liq"><span class="material-icons" aria-hidden="true">table_view</span>Nómina banco</button>
                 <button class="btn" type="button" id="btn-asiento-liq"><span class="material-icons" aria-hidden="true">account_balance</span>Asiento centralización</button>
                 <button class="btn" type="button" id="btn-asistente-liq"><span class="material-icons" aria-hidden="true">send</span>Enviar a Asistente Pyme</button>
                 <button class="btn" type="button" id="btn-cerrar-mes">Cerrar nómina</button>
               </div>
+              <div class="preval-botones-aviso" id="preval-botones-aviso" hidden role="status" aria-live="polite"></div>
             </div>
           </div>
         </div>
@@ -1274,6 +1324,9 @@
               <p class="panel-ayuda">Cambia de cliente con «Trabajar» para abrir sus liquidaciones, RCV, F29, libros y DDJJ en el mismo período.</p>
             </div>
             <div class="v-acciones">
+              <button type="button" class="btn btn-chico" id="btn-torre-mcp" title="Conectar tu cartera del estudio con Claude Desktop vía MCP">
+                <span class="material-icons" aria-hidden="true">hub</span><span>Claude (MCP)</span>
+              </button>
               <button type="button" class="btn btn-chico btn-primario suite-btn-sync-all" id="btn-torre-sync-all" title="Encolar sincronización SII para todas las empresas conectadas del estudio">
                 <span class="material-icons" aria-hidden="true">sync</span><span>Sincronizar cartera SII</span>
               </button>
@@ -1649,6 +1702,21 @@
             </div>
           </div>
         </div>
+
+        <div class="panel mcp-tarjeta-reportes" id="rep-mcp-card" style="margin-top:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Conectar estudio con Claude (MCP)</h2>
+              <p class="panel-ayuda">Consulta F29, RCV, BHE y alertas de acuse de 8 días de tus clientes desde Claude Desktop o Claude web en modo de solo lectura.</p>
+            </div>
+            <div class="v-acciones">
+              <span class="sello sello-guardada" id="rep-mcp-sello">Solo lectura</span>
+              <button type="button" class="btn btn-primario" id="btn-rep-abrir-mcp">
+                <span class="material-icons" aria-hidden="true">hub</span>Configurar Claude (MCP)
+              </button>
+            </div>
+          </div>
+        </div>
       </section>
 
     </main>
@@ -1808,18 +1876,157 @@
   </div>
 </dialog>
 
+<!-- Modal Conectar con Claude (MCP) -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-mcp-claude" aria-labelledby="mcp-dlg-titulo">
+  <div class="midt-cabeza">
+    <div>
+      <h2 id="mcp-dlg-titulo">Conectar con Claude (MCP)</h2>
+      <p class="midt-sub">Servidor de solo lectura: <code class="mono">https://connect.calculolaboral.cl/mcp</code></p>
+    </div>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-mcp-dlg" aria-label="Cerrar ventana">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="dialogo-cuerpo">
+    <div id="mcp-dlg-sin-sesion" class="sii-sin-sesion-aviso" hidden>
+      <p><strong>Inicia sesión en tu estudio para conectar Claude.</strong> Los tokens de acceso se asocian a tu cuenta y solo permiten lectura de tus empresas sincronizadas.</p>
+      <div>
+        <button type="button" class="btn btn-primario btn-chico" id="btn-mcp-ir-sesion">Iniciar sesión con mi correo</button>
+      </div>
+    </div>
+
+    <div id="mcp-dlg-no-config" class="sii-feedback-box aviso" hidden role="status">
+      <strong>Conector MCP en configuración.</strong> El endpoint remoto aún no está habilitado en este servidor; pronto podrás generar tu token desde aquí.
+    </div>
+
+    <div id="mcp-dlg-contenido-activo" hidden>
+      <div class="mcp-paso">
+        <div class="mcp-paso-head">
+          <span class="mcp-paso-num">1</span>
+          <strong>Genera un token de conexión para tu estudio</strong>
+        </div>
+        <form id="form-mcp-token" class="mcp-token-form" novalidate>
+          <div class="lq-field" style="flex:1 1 200px">
+            <label for="mcp-token-label">Etiqueta del dispositivo (opcional)</label>
+            <input type="text" id="mcp-token-label" maxlength="60" placeholder="Ej: Claude Desktop Oficina" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primario" id="btn-mcp-generar-token">
+            <span class="material-icons" aria-hidden="true">key</span>Generar token de conexión
+          </button>
+        </form>
+
+        <div id="mcp-token-creado-box" class="mcp-token-once" hidden role="status" aria-live="polite">
+          <p class="mcp-token-once-aviso">
+            <span class="material-icons" aria-hidden="true">warning</span>
+            <span><strong>Copia este token ahora:</strong> se muestra una sola vez y no podrá recuperarse después.</span>
+          </p>
+          <div class="mcp-copiar-fila">
+            <code id="mcp-token-valor" class="mono mcp-codigo-linea"></code>
+            <button type="button" class="btn btn-chico btn-primario" id="btn-mcp-copiar-token">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar token</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcp-paso">
+        <div class="mcp-paso-head">
+          <span class="mcp-paso-num">2</span>
+          <strong>Agrega el servidor en Claude Desktop o Claude web</strong>
+        </div>
+        <div class="mcp-copiar-fila" style="margin-bottom:10px">
+          <code id="mcp-server-url" class="mono mcp-codigo-linea">https://connect.calculolaboral.cl/mcp</code>
+          <button type="button" class="btn btn-chico" id="btn-mcp-copiar-url">
+            <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar URL</span>
+          </button>
+        </div>
+        <div class="mcp-json-wrap">
+          <div class="mcp-json-head">
+            <span class="texto-ayuda">Fragmento para <code class="mono">claude_desktop_config.json</code> (o usa <code class="mono">Authorization: Bearer &lt;TOKEN&gt;</code> en conectores HTTP directos)</span>
+            <button type="button" class="btn btn-chico" id="btn-mcp-copiar-json">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar JSON</span>
+            </button>
+          </div>
+          <pre class="mcp-json-pre mono" id="mcp-config-json">{
+  "mcpServers": {
+    "calculolaboral-sii": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://connect.calculolaboral.cl/mcp",
+        "--header",
+        "x-mcp-token:&lt;TU_TOKEN_MCP&gt;"
+      ]
+    }
+  }
+}</pre>
+        </div>
+      </div>
+
+      <div class="mcp-paso">
+        <div class="mcp-paso-head">
+          <span class="mcp-paso-num">3</span>
+          <strong>Prueba estas consultas en Claude (solo lectura)</strong>
+        </div>
+        <ul class="mcp-ejemplos-lista" id="mcp-ejemplos-lista">
+          <li>«Lista mis empresas conectadas al SII y revisa su último estado de sincronización»</li>
+          <li>«¿Qué facturas de compra en estado PENDIENTE están por vencer el plazo de acuse de 8 días?»</li>
+          <li>«Resume el F29 y las BHE del período actual para mi cliente»</li>
+        </ul>
+      </div>
+
+      <div class="mcp-tokens-wrap" id="mcp-tokens-wrap">
+        <h3 class="preval-bloque-titulo">Tokens activos del estudio</h3>
+        <div class="tabla-contable-wrap" id="mcp-tokens-tabla-wrap">
+          <table class="tabla-contable compacta">
+            <thead>
+              <tr>
+                <th scope="col">Etiqueta</th>
+                <th scope="col">Prefijo</th>
+                <th scope="col">Creado</th>
+                <th scope="col">Último uso</th>
+                <th scope="col" class="num">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-mcp-tokens"></tbody>
+          </table>
+        </div>
+        <p class="texto-ayuda" id="mcp-tokens-vacio" hidden>Aún no has generado tokens de conexión MCP para este estudio.</p>
+      </div>
+
+      <div class="sii-seguridad-aviso">
+        <span class="material-icons" aria-hidden="true">verified_user</span>
+        <div class="sii-seguridad-txt">
+          <strong>Conexión de solo lectura y revocable en 1 clic</strong>
+          <p>Los tokens solo autorizan consultas sobre los datos del estudio en el servidor conector. Claude no puede editar liquidaciones, modificar claves SII ni enviar declaraciones.</p>
+        </div>
+      </div>
+
+      <div id="mcp-dlg-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="sii-dlg-acciones">
+      <div class="sii-acciones-izq"></div>
+      <div class="sii-acciones-der">
+        <button type="button" class="btn btn-chico" id="btn-mcp-listo">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <!-- Scripts de Motor y Suite Contable -->
 <script src="/js/constants.js"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/logic.js"></script>
-<script src="/js/liquidacion_parametros.js"></script>
+<script src="/js/liquidacion_parametros.js?v=1.1.0"></script>
 <script src="/js/liquidacion_engine.js"></script>
 <script src="/js/liquidacion_valores.js"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/pyme_excel.js?v=2.0.1"></script>
 <script src="/js/demo_comun.js?v=1.7.1"></script>
 <script src="/js/demo_contadores.js?v=1.3.1"></script>
-<script src="/js/previred_generador.js?v=1.4.1"></script>
+<script src="/js/previred_generador.js?v=1.5.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
 <script src="/js/pyme_lre.js?v=1.0.1"></script>
@@ -1830,15 +2037,17 @@
 <script src="/js/demo_validaciones.js?v=1.0.0"></script>
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.2.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.8.1"></script>
+<script src="/js/contadores_prevalidador.js?v=1.1.0"></script>
+<script src="/js/demo_liquidaciones.js?v=2.9.0"></script>
 <script src="/js/contadores_f29.js?v=1.2.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
-<script src="/js/contadores_sii.js?v=1.1.0"></script>
+<script src="/js/contadores_sii.js?v=1.2.0"></script>
 <script src="/js/demo_suite.js?v=2.6.0"></script>
 <script src="/js/demo_sii.js?v=1.2.0"></script>
+<script src="/js/demo_mcp.js?v=1.0.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

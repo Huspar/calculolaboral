@@ -81,6 +81,16 @@ function montar({ apiKey = 'gw-secret-test-key', rolOverride = null, mockFetch }
         if (path === '/api/v1/accounting/cmp_1/sync/job_99' && opts.method === 'GET') {
             return { ok: true, status: 200, text: async () => JSON.stringify({ jobId: 'job_99', status: 'COMPLETED' }) };
         }
+        if (path === '/api/v1/mcp/tokens' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ items: [{ id: 'tok_1', label: 'Oficina', prefix: 'smcp_live_abc', createdAt: '2026-11-18T12:00:00Z', lastUsedAt: null, revokedAt: null }] }) };
+        }
+        if (path === '/api/v1/mcp/tokens' && opts.method === 'POST') {
+            const b = JSON.parse(opts.body || '{}');
+            return { ok: true, status: 201, text: async () => JSON.stringify({ id: 'tok_2', label: b.label || '', prefix: 'smcp_live_xyz', createdAt: '2026-11-18T13:00:00Z', lastUsedAt: null, revokedAt: null, token: 'smcp_live_xyz_secreto_unico' }) };
+        }
+        if (path === '/api/v1/mcp/tokens/tok_1' && opts.method === 'DELETE') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ revoked: true, id: 'tok_1', revokedAt: '2026-11-18T13:05:00Z' }) };
+        }
         if (path === '/api/v1/accounting/sync-all' && opts.method === 'POST') {
             return { ok: true, status: 202, text: async () => JSON.stringify({ period: '202611', enqueuedCount: 1, skippedCount: 0, jobs: [{ companyId: 'cmp_1', rut: '76.543.210-3', jobId: 'job_all_1' }] }) };
         }
@@ -260,6 +270,55 @@ caso('sii-sync-all encola sincronización batch por cuenta y valida período', a
     assert.strictEqual(okBatch.json.batch.enqueuedCount, 1);
     assert.strictEqual(m.llamadasFetch[0].headers['x-account-id'], cuenta.cuentaId);
     assert.deepStrictEqual(m.llamadasFetch[0].body, { period: '202611' });
+});
+
+caso('mcp-tokens lista, crea y revoca tokens con aislamiento por cuenta y permiso de rol', async () => {
+    const sinSes = await pedir(montar().rutas, { query: { ruta: 'mcp-tokens' } });
+    assert.strictEqual(sinSes.statusCode, 401);
+
+    const m = montar();
+    const { cookie, cuenta } = await m.entrar('mcp@ejemplo.cl');
+    const lista = await pedir(m.rutas, { query: { ruta: 'mcp-tokens' }, headers: { cookie } });
+    assert.strictEqual(lista.statusCode, 200);
+    assert.strictEqual(lista.json.items.length, 1);
+    assert.strictEqual(lista.json.items[0].id, 'tok_1');
+    assert.strictEqual(m.llamadasFetch[0].headers['x-account-id'], cuenta.cuentaId);
+
+    const creado = await pedir(m.rutas, {
+        query: { ruta: 'mcp-tokens' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { label: 'Claude Oficina' }
+    });
+    assert.strictEqual(creado.statusCode, 200);
+    assert.strictEqual(creado.json.token.token, 'smcp_live_xyz_secreto_unico');
+    assert.deepStrictEqual(m.llamadasFetch[1].body, { label: 'Claude Oficina' });
+
+    const revBad = await pedir(m.rutas, {
+        query: { ruta: 'mcp-tokens', id: 'bad/id' },
+        metodo: 'DELETE',
+        headers: Object.assign({}, JSON_OK, { cookie })
+    });
+    assert.strictEqual(revBad.statusCode, 400);
+
+    const revOk = await pedir(m.rutas, {
+        query: { ruta: 'mcp-tokens', id: 'tok_1' },
+        metodo: 'DELETE',
+        headers: Object.assign({}, JSON_OK, { cookie })
+    });
+    assert.strictEqual(revOk.statusCode, 200);
+    assert.strictEqual(revOk.json.revoked, true);
+
+    const rolLectura = { rol: 'lectura' };
+    const mLec = montar({ rolOverride: rolLectura });
+    const sesLec = await mLec.entrar('lector@ejemplo.cl');
+    const denegado = await pedir(mLec.rutas, {
+        query: { ruta: 'mcp-tokens' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie: sesLec.cookie }),
+        body: {}
+    });
+    assert.strictEqual(denegado.statusCode, 403);
 });
 
 cola.then(() => {

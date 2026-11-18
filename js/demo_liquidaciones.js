@@ -330,6 +330,194 @@
         document.dispatchEvent(new CustomEvent('demo:liquidaciones', { detail: { results: state.results } }));
     }
 
+    var prevalFiltro = 'hallazgos';
+    var prevalAbierto = null;
+    var prevalUltimoEstado = null;
+
+    function fechaCl(iso) {
+        var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+        return m ? (m[3] + '-' + m[2] + '-' + m[1]) : (iso || '');
+    }
+
+    function selloHtml(nivel, txt) {
+        var cls = nivel === 'rojo' ? 'sello-riesgo' : (nivel === 'amarillo' ? 'sello-preparada' : 'sello-emitida');
+        return '<span class="sello ' + cls + '">' + D.esc(txt) + '</span>';
+    }
+
+    function pintarListaTrabajadoresPreval(res) {
+        var lista = document.getElementById('preval-trabajadores-lista');
+        var vacio = document.getElementById('preval-trabajadores-vacio');
+        if (!lista) return;
+        var items = (res && res.trabajadores) || [];
+        var filtrados = items.filter(function (t) {
+            if (prevalFiltro === 'rojo') return t.nivel === 'rojo';
+            if (prevalFiltro === 'todos') return true;
+            return t.nivel === 'rojo' || t.nivel === 'amarillo';
+        });
+        if (!filtrados.length) {
+            lista.innerHTML = '';
+            if (vacio) {
+                vacio.hidden = false;
+                vacio.textContent = prevalFiltro === 'rojo'
+                    ? 'No hay trabajadores con errores bloqueantes.'
+                    : 'Todos los trabajadores cumplen las validaciones previas para Previred y LRE.';
+            }
+            return;
+        }
+        if (vacio) vacio.hidden = true;
+        lista.innerHTML = filtrados.map(function (t) {
+            var etiqueta = t.nivel === 'rojo' ? 'Bloqueante' : (t.nivel === 'amarillo' ? 'Aviso' : 'OK');
+            var hall = (t.hallazgos || []).map(function (h) {
+                return '<li><span class="preval-origen-tag">' + D.esc(h.origen) + '</span>' + D.esc(h.texto) + '</li>';
+            }).join('');
+            return '<div class="preval-trab-item">' +
+                '<div class="preval-trab-head">' +
+                '<div><strong>' + D.esc(t.nombre) + '</strong> <span class="mono texto-ayuda">' + D.esc(t.rut || 'Sin RUT') + '</span></div>' +
+                selloHtml(t.nivel, etiqueta) +
+                '</div>' +
+                (hall ? '<ul class="preval-trab-sub">' + hall + '</ul>' : '') +
+                '</div>';
+        }).join('');
+    }
+
+    function actualizarPrevalidador() {
+        var panel = document.getElementById('preval-panel');
+        if (!panel || !window.CLPrevalidador || !state.results.length) {
+            if (panel) panel.hidden = true;
+            return;
+        }
+        var val = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
+        var res = window.CLPrevalidador.evaluar({
+            resultados: state.results,
+            periodo: val('periodo'),
+            mutual: val('liq-mutual'),
+            ccaf: val('liq-ccaf'),
+            comuna: val('liq-comuna'),
+            rutEmpresa: val('liq-rut-empresa'),
+            uf: D.parseNumber(val('liq-uf')),
+            topeAfpUF: state.mes ? state.mes.topeAfpUF : undefined,
+            topeAfcUF: state.mes ? state.mes.topeAfcUF : undefined,
+            previred: window.CLPrevired,
+            archivos: window.CLDemoArchivos
+        });
+
+        panel.hidden = false;
+        var sello = document.getElementById('preval-sello-general');
+        var selloTxt = document.getElementById('preval-sello-txt');
+        if (sello && selloTxt) {
+            var ic = sello.querySelector('.material-icons');
+            if (res.estadoGeneral === 'rojo') {
+                sello.className = 'sello sello-riesgo';
+                if (ic) ic.textContent = 'error';
+                selloTxt.textContent = 'Con errores bloqueantes';
+            } else if (res.estadoGeneral === 'amarillo') {
+                sello.className = 'sello sello-preparada';
+                if (ic) ic.textContent = 'warning';
+                selloTxt.textContent = 'Avisos por revisar';
+            } else {
+                sello.className = 'sello sello-emitida';
+                if (ic) ic.textContent = 'verified';
+                selloTxt.textContent = 'Listo para Previred y LRE';
+            }
+        }
+
+        var cRojo = document.getElementById('preval-cnt-rojo');
+        var cAma = document.getElementById('preval-cnt-amarillo');
+        var cVer = document.getElementById('preval-cnt-verde');
+        if (cRojo) { cRojo.hidden = !res.conteo.rojo; cRojo.textContent = res.conteo.rojo + ' bloqueantes'; }
+        if (cAma) { cAma.hidden = !res.conteo.amarillo; cAma.textContent = res.conteo.amarillo + ' avisos'; }
+        if (cVer) { cVer.textContent = res.conteo.verde + ' OK'; }
+
+        if (prevalAbierto === null || (prevalUltimoEstado === 'verde' && res.estadoGeneral !== 'verde')) {
+            prevalAbierto = res.estadoGeneral !== 'verde';
+        }
+        prevalUltimoEstado = res.estadoGeneral;
+        var cuerpo = document.getElementById('preval-cuerpo');
+        var btnToggle = document.getElementById('btn-preval-toggle');
+        var btnToggleTxt = document.getElementById('btn-preval-toggle-txt');
+        if (cuerpo) cuerpo.hidden = !prevalAbierto;
+        if (btnToggle) btnToggle.setAttribute('aria-expanded', prevalAbierto ? 'true' : 'false');
+        if (btnToggleTxt) btnToggleTxt.textContent = prevalAbierto ? 'Ocultar detalle' : 'Ver pre-validación y plazos';
+
+        var genWrap = document.getElementById('preval-generales-wrap');
+        var genLista = document.getElementById('preval-generales-lista');
+        if (genWrap && genLista) {
+            if (!res.generales.length) {
+                genWrap.hidden = true;
+                genLista.innerHTML = '';
+            } else {
+                genWrap.hidden = false;
+                genLista.innerHTML = res.generales.map(function (g) {
+                    var btnIr = g.campo
+                        ? '<button type="button" class="btn-texto btn-chico" data-preval-campo="' + D.esc(g.campo) + '">Corregir campo</button>'
+                        : '';
+                    return '<li class="preval-hallazgo-item ' + D.esc(g.nivel) + '">' +
+                        '<div><span class="preval-origen-tag">' + D.esc(g.origen) + '</span><span>' + D.esc(g.texto) + '</span></div>' +
+                        btnIr + '</li>';
+                }).join('');
+            }
+        }
+
+        if (res.estadoGeneral === 'verde' && prevalFiltro === 'hallazgos') prevalFiltro = 'todos';
+        else if (res.estadoGeneral !== 'verde' && prevalFiltro === 'todos') prevalFiltro = 'hallazgos';
+        Array.prototype.forEach.call(document.querySelectorAll('#preval-filtros [data-preval-filtro]'), function (btn) {
+            var activo = btn.getAttribute('data-preval-filtro') === prevalFiltro;
+            btn.classList.toggle('activo', activo);
+            btn.setAttribute('aria-selected', activo ? 'true' : 'false');
+        });
+        pintarListaTrabajadoresPreval(res);
+
+        var calGrid = document.getElementById('preval-calendario-grid');
+        if (calGrid) {
+            calGrid.innerHTML = (res.calendario || []).map(function (c) {
+                var badgeCls = c.estado === 'vencido' || c.estado === 'critico' ? 'sello-riesgo' : (c.estado === 'proximo' ? 'sello-preparada' : 'sello-emitida');
+                var countdown = c.diasRestantes < 0
+                    ? ('Vencido hace ' + Math.abs(c.diasRestantes) + 'd')
+                    : (c.diasRestantes === 0 ? 'Vence hoy' : (c.estado === 'critico' ? ('Quedan ' + c.diasRestantes + 'd') : ('En ' + c.diasRestantes + 'd')));
+                return '<div class="preval-cal-card">' +
+                    '<div class="preval-cal-top"><strong>' + D.esc(c.titulo) + '</strong><span class="sello ' + badgeCls + '">' + D.esc(countdown) + '</span></div>' +
+                    '<div class="preval-cal-meta"><span class="mono">Límite: ' + D.esc(fechaCl(c.fechaLimite)) + '</span></div>' +
+                    '<p class="texto-ayuda" style="margin:2px 0 0">' + D.esc(c.detalle) + '</p>' +
+                    '</div>';
+            }).join('');
+        }
+
+        var errPrev = 0;
+        var errLre = 0;
+        res.generales.forEach(function (g) {
+            if (g.nivel !== 'rojo') return;
+            if (g.origen === 'Previred' || g.origen === 'Datos') errPrev++;
+            if (g.origen === 'LRE' || g.origen === 'Datos') errLre++;
+        });
+        res.trabajadores.forEach(function (t) {
+            (t.hallazgos || []).forEach(function (h) {
+                if (h.nivel !== 'rojo') return;
+                if (h.origen === 'Previred' || h.origen === 'Datos' || h.origen === 'Cálculo') errPrev++;
+                if (h.origen === 'LRE' || h.origen === 'Datos' || h.origen === 'Cálculo') errLre++;
+            });
+        });
+
+        var btnPrev = document.getElementById('btn-previred-liq');
+        var btnLre = document.getElementById('btn-lre-liq');
+        var bPrev = document.getElementById('badge-err-previred');
+        var bLre = document.getElementById('badge-err-lre');
+        var avisoBtns = document.getElementById('preval-botones-aviso');
+        if (btnPrev) btnPrev.classList.toggle('btn-bloqueo-aviso', errPrev > 0);
+        if (btnLre) btnLre.classList.toggle('btn-bloqueo-aviso', errLre > 0);
+        if (bPrev) { bPrev.hidden = errPrev === 0; bPrev.textContent = String(errPrev); }
+        if (bLre) { bLre.hidden = errLre === 0; bLre.textContent = String(errLre); }
+        if (avisoBtns) {
+            var totalErr = Math.max(errPrev, errLre);
+            avisoBtns.hidden = totalErr === 0;
+            if (totalErr > 0) {
+                avisoBtns.textContent = 'Hay errores bloqueantes detectados (' + errPrev + ' en Previred, ' + errLre + ' en LRE). Corrígelos arriba antes de subir el archivo.';
+            } else {
+                avisoBtns.textContent = '';
+            }
+        }
+        panel._ultimoResultado = res;
+    }
+
     function pintar() {
         var results = state.results;
         if (!results.length) return;
@@ -398,6 +586,8 @@
         }
 
         caja.innerHTML = partes.join('<div style="height:10px"></div>');
+
+        actualizarPrevalidador();
 
         if (!sinScroll && !document.getElementById('pane-liquidaciones').hasAttribute('hidden')) {
             document.getElementById('results-liq').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1064,6 +1254,50 @@
         bindClick('btn-nomina-liq', archivoNomina);
         bindClick('btn-asiento-liq', archivoAsiento);
         bindClick('btn-asistente-liq', llevarAlAsistente);
+        ['liq-mutual', 'liq-ccaf', 'liq-rut-empresa', 'liq-comuna'].forEach(function (idCampo) {
+            var elCampo = document.getElementById(idCampo);
+            if (!elCampo) return;
+            elCampo.addEventListener('change', actualizarPrevalidador);
+            if (elCampo.tagName === 'INPUT') elCampo.addEventListener('input', actualizarPrevalidador);
+        });
+        var btnPrevalToggle = document.getElementById('btn-preval-toggle');
+        if (btnPrevalToggle) {
+            btnPrevalToggle.addEventListener('click', function () {
+                prevalAbierto = !prevalAbierto;
+                var cuerpo = document.getElementById('preval-cuerpo');
+                var txt = document.getElementById('btn-preval-toggle-txt');
+                if (cuerpo) cuerpo.hidden = !prevalAbierto;
+                btnPrevalToggle.setAttribute('aria-expanded', prevalAbierto ? 'true' : 'false');
+                if (txt) txt.textContent = prevalAbierto ? 'Ocultar detalle' : 'Ver pre-validación y plazos';
+            });
+        }
+        var prevalFiltros = document.getElementById('preval-filtros');
+        if (prevalFiltros) {
+            prevalFiltros.addEventListener('click', function (ev) {
+                var btnF = ev.target.closest('[data-preval-filtro]');
+                if (!btnF) return;
+                prevalFiltro = btnF.getAttribute('data-preval-filtro') || 'hallazgos';
+                Array.prototype.forEach.call(prevalFiltros.querySelectorAll('[data-preval-filtro]'), function (b) {
+                    var on = b === btnF;
+                    b.classList.toggle('activo', on);
+                    b.setAttribute('aria-selected', on ? 'true' : 'false');
+                });
+                var panel = document.getElementById('preval-panel');
+                if (panel && panel._ultimoResultado) pintarListaTrabajadoresPreval(panel._ultimoResultado);
+            });
+        }
+        var prevalGenLista = document.getElementById('preval-generales-lista');
+        if (prevalGenLista) {
+            prevalGenLista.addEventListener('click', function (ev) {
+                var btnCampo = ev.target.closest('[data-preval-campo]');
+                if (!btnCampo) return;
+                var targetEl = document.getElementById(btnCampo.getAttribute('data-preval-campo'));
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetEl.focus();
+                }
+            });
+        }
         var detCuentas = document.getElementById('liq-cuentas');
         if (detCuentas) {
             detCuentas.addEventListener('toggle', function () { if (detCuentas.open) pintarCuentasAsiento(); });
