@@ -46,7 +46,7 @@
         isapreNombre: ['isapre', 'institucion_salud', 'isapre_nombre', 'nombre_isapre'],
         centroCosto: ['centro_de_costos', 'centro_costo', 'centro_costos', 'centro'],
         movimiento: ['movimiento', 'movimiento_personal', 'mov'],
-        movDesde: ['fecha_desde_movimiento', 'mov_desde', 'fecha_movimiento'],
+        movDesde: ['fecha_desde_movimiento', 'fecha_desde', 'mov_desde', 'fecha_movimiento'],
         movHasta: ['fecha_hasta_movimiento', 'mov_hasta'],
         nacionalidad: ['nacionalidad', 'pais'],
         pensionado: ['pensionado', 'tipo_trabajador', 'condicion'],
@@ -110,10 +110,14 @@
 
         return valoresApi().obtener(periodo).then(function (r) {
             if (r && r.ok && r.mes) {
+                var cambio = !state.mes || state.mes.uf !== r.mes.uf || state.mes.utm !== r.mes.utm;
                 state.mes = r.mes;
                 state.fuente = (r.fuentes && r.fuentes.uf) ? r.fuentes.uf : 'API';
                 state.avisos = r.avisos || [];
-                pintarValores(r.mes);
+                if (cambio) {
+                    pintarValores(r.mes);
+                    if (state.records.length) calcularTodo();
+                }
                 nota.textContent = 'UF y UTM cargadas del período' + (r.estimado ? ' (mes estimado)' : '') + '. Puedes corregirlas.';
             }
             return state.mes;
@@ -709,7 +713,11 @@
         state.raw = rows;
         state.records = mapped.map(registro);
 
-        cargarPeriodo(true).then(function () { calcularTodo(); });
+        if (!state.mes) {
+            state.mes = respaldo(document.getElementById('periodo').value || periodoActual());
+            if (state.mes) pintarValores(state.mes);
+        }
+        calcularTodo();
     }
 
     var EJEMPLO = [
@@ -740,17 +748,24 @@
     };
 
     function cargarEjemplo() {
+        var per = (document.getElementById('periodo') && document.getElementById('periodo').value) || periodoActual();
+        var desde11 = '11-' + per.slice(5, 7) + '-' + per.slice(0, 4);
         var rows = EJEMPLO.map(function (r) {
+            var ing = r[0] === '21.444.555-7' ? (per + '-11') : r[9];
             return {
                 'RUT': r[0], 'Nombre': r[1], 'Sueldo base': r[2], 'Días trabajados': r[3], 'AFP': r[4],
                 'Salud': r[5], 'Plan Isapre UF': r[6], 'Contrato': r[7], 'Jornada': r[8],
-                'Fecha ingreso': r[9], 'Colación': r[10], 'Movilización': r[11],
+                'Fecha ingreso': ing, 'Colación': r[10], 'Movilización': r[11],
                 'Comisiones': r[12], 'Horas extra': r[13]
             };
         });
         rows.forEach(function (row) {
             var x = EXTRA[row.RUT];
             if (x) { row['Sexo'] = x[0]; row['Isapre'] = x[1]; row['Banco'] = x[2]; row['Tipo de cuenta'] = x[3]; row['Número de cuenta'] = x[4]; }
+            if (row.RUT === '21.444.555-7') {
+                row['Movimiento'] = 'Contratación';
+                row['Fecha desde movimiento'] = desde11;
+            }
         });
         var rutEmp = document.getElementById('liq-rut-empresa');
         if (rutEmp && !rutEmp.value.trim()) rutEmp.value = '76.543.210-3';
@@ -758,7 +773,8 @@
         if (comEmp && !comEmp.value.trim()) comEmp.value = 'Santiago';
         var cliEl = document.getElementById('liq-cliente');
         if (cliEl && !cliEl.value.trim()) cliEl.value = 'Panadería San Isidro SpA';
-        cargar(rows, 'ejemplo-liquidaciones-' + document.getElementById('periodo').value + '.xlsx');
+        actualizarResumenEmpresaLiq();
+        cargar(rows, 'ejemplo-liquidaciones-' + per + '.xlsx');
     }
 
     function exportar() {
@@ -876,13 +892,24 @@
             tramoDe: function (rec) { return tramoSugerido(rec.sueldo, periodo); }
         };
     }
+    var CUENTAS_DEFECTO = {
+        sueldos: '42010', noImponibles: '42012', cotEmpleador: '42015',
+        liquido: '21030', afp: '21035', salud: '21035', cesantia: '21035',
+        seguros: '21035', mutual: '21035', impuesto: '21040', apv: '21035', otros: '21045'
+    };
     function cuentasAsiento() {
-        var g = {};
-        Array.prototype.forEach.call(document.querySelectorAll('#liq-cuentas-campos [data-cuenta]'), function (el) { if (el.value.trim()) g[el.getAttribute('data-cuenta')] = el.value.trim(); });
+        var g = Object.assign({}, CUENTAS_DEFECTO);
+        try {
+            var guardadas = JSON.parse(window.localStorage.getItem('cl_demo_cuentas_' + clienteActual()) || '{}') || {};
+            Object.keys(guardadas).forEach(function (k) { if (guardadas[k]) g[k] = guardadas[k]; });
+        } catch (e) { }
+        Array.prototype.forEach.call(document.querySelectorAll('#liq-cuentas-campos [data-cuenta]'), function (el) {
+            if (el.value.trim()) g[el.getAttribute('data-cuenta')] = el.value.trim();
+        });
         return g;
     }
     function listaAvisos(titulo, items) {
-        return items.length ? '<br><b>' + titulo + '</b><br>' + items.map(function (x) { return '— ' + D.esc(x); }).join('<br>') : '';
+        return items.length ? '<br><b>' + titulo + '</b><br>' + items.map(function (x) { return '· ' + D.esc(x); }).join('<br>') : '';
     }
     function bajar(nombre, partes, tipo) {
         var blob = new Blob(partes, { type: tipo });
@@ -896,9 +923,9 @@
         var caja = document.getElementById('warnings-liq');
         if (!state.results.some(function (r) { return !r.error; })) { D.avisar('Primero carga y calcula la nómina.'); return; }
         var s = window.CLDemoArchivos.lre(state.results, opcionesArchivos());
-        if (s.errores.length) { caja.innerHTML = '<b>No se generó el archivo del LRE:</b><br>' + s.errores.map(function (e) { return '— ' + D.esc(e); }).join('<br>'); return; }
-        bajar(s.nombreArchivo.replace(/\.csv$/, '') + (sufijoCliente() ? '-' + sufijoCliente().replace(/-$/, '') : '') + '.csv', [window.CLLre.bytesAnsi(s.texto)], 'text/csv');
-        caja.innerHTML = '<b>Archivo del LRE listo</b> — ' + s.incluidos + ' trabajadores, 147 columnas por línea. Es un archivo para revisar y cargar tú en Mi DT, «Libro de Remuneraciones Electrónico», con la clave del empleador: no se sube solo.' + listaAvisos('Revisa antes de cargarlo', s.avisos);
+        if (s.errores.length) { caja.innerHTML = '<b>No se generó el archivo del LRE:</b><br>' + s.errores.map(function (e) { return '· ' + D.esc(e); }).join('<br>'); return; }
+        bajar(s.nombreArchivo, [window.CLLre.bytesAnsi(s.texto)], 'text/csv');
+        caja.innerHTML = '<b>Archivo del LRE listo (' + D.esc(s.nombreArchivo) + ')</b>: ' + s.incluidos + ' trabajadores, 147 columnas en codificación ANSI (Windows-1252) listo para Mi DT.' + listaAvisos('Revisa antes de cargarlo', s.avisos);
     }
     function archivoNomina() {
         var caja = document.getElementById('warnings-liq');
@@ -980,7 +1007,7 @@
         var g = {};
         try { g = JSON.parse(window.localStorage.getItem('cl_demo_cuentas_' + clienteActual()) || '{}') || {}; } catch (e) { g = {}; }
         caja.innerHTML = window.CLPymePagos.CUENTAS.map(function (c) {
-            return '<div class="demo-field"><label for="cta-' + c.k + '">' + D.esc(c.glosa) + '</label><input type="text" id="cta-' + c.k + '" data-cuenta="' + c.k + '" maxlength="20" value="' + D.esc(g[c.k] || '') + '" autocomplete="off"></div>';
+            return '<div class="demo-field"><label for="cta-' + c.k + '">' + D.esc(c.glosa) + '</label><input type="text" id="cta-' + c.k + '" data-cuenta="' + c.k + '" maxlength="20" value="' + D.esc(g[c.k] || CUENTAS_DEFECTO[c.k] || '') + '" autocomplete="off"></div>';
         }).join('');
     }
 
@@ -1319,7 +1346,7 @@
             if (el) el.addEventListener('click', fn);
         };
         bindClick('btn-sample-liq', function () {
-            cargarPeriodo(true).then(cargarEjemplo);
+            cargarEjemplo();
         });
         bindClick('btn-template-liq', plantilla);
         bindClick('btn-csv-liq', exportar);
@@ -1414,11 +1441,13 @@
                 radio.checked = true;
                 radio.dispatchEvent(new Event('change'));
             }
-            cargarPeriodo(true).then(function () { sinScroll = true; cargarEjemplo(); });
+            sinScroll = true;
+            cargarEjemplo();
         }
     });
 
     window.CLDemoLiquidaciones = {
-        resultados: function () { return state.results ? state.results.slice() : []; }
+        resultados: function () { return state.results ? state.results.slice() : []; },
+        cargarEjemplo: cargarEjemplo
     };
 })();

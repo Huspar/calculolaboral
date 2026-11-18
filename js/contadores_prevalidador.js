@@ -388,8 +388,9 @@
                     if (!texto(rec.causalTermino)) hallazgos.push({ nivel: 'rojo', origen: 'LRE', texto: 'Retiro/término sin causal legal de término informada (obligatoria en LRE).' });
                 }
 
-                if (rec.contrato === 'plazo' && !aIso(rec.fechaTermino)) {
-                    hallazgos.push({ nivel: 'amarillo', origen: 'LRE', texto: 'Contrato a plazo fijo sin fecha de término del plazo.' });
+                var ftPlazo = aIso(rec.fechaTermino);
+                if (ftPlazo && partesPeriodo(op.periodo) && ftPlazo.slice(0, 7) !== texto(op.periodo)) {
+                    hallazgos.push({ nivel: 'rojo', origen: 'LRE', texto: 'La fecha de término (' + ftPlazo + ') no corresponde al período ' + texto(op.periodo) + ' (LRE Mi DT rechaza fechas de término de otros meses).' });
                 }
 
                 // Validaciones previsionales 2026 (pensionados, >65 años y topes imponibles)

@@ -24,7 +24,7 @@
         { nombre: 'mindicador.cl', base: 'https://mindicador.cl/api' },
         { nombre: 'findic.cl', base: 'https://findic.cl/api' }
     ];
-    var TIMEOUT_MS = 15000; // mindicador.cl a veces tarda más de 8 s
+    var TIMEOUT_MS = 4500; // mindicador.cl a veces tarda más de 8 s
     var CLAVE_CACHE = 'cl_liq_vals_';
     var MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 

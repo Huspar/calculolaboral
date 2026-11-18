@@ -2036,6 +2036,102 @@
         conectarDropRcv('drop-rcv-ventas', 'file-rcv-ventas', 'ventas');
         conectarDropRcv('drop-rcv-compras', 'file-rcv-compras', 'compras');
 
+        function cargarEjemploCompleto(opts) {
+            var o = opts || {};
+            if (leerEstadoActual().cerradoTributario) { D.avisar('Reabre el período antes de cargar el ejemplo completo.'); return; }
+            var cli = $('liq-cliente');
+            if (cli && !cli.value.trim()) {
+                cli.value = 'Panadería San Isidro SpA';
+                try { localStorage.setItem('cl-cliente-liq', cli.value); } catch (e) { }
+            }
+            var rutEmp = $('liq-rut-empresa');
+            if (rutEmp && !rutEmp.value.trim()) rutEmp.value = '76.543.210-3';
+            var comEmp = $('liq-comuna');
+            if (comEmp && !comEmp.value.trim()) comEmp.value = 'Santiago';
+            if ($('liq-rut') && !$('liq-rut').value.trim()) $('liq-rut').value = '76.543.210-3';
+            if (window.CLDemoSii && window.CLDemoSii.guardarRutCliente && cli && cli.value.trim()) {
+                window.CLDemoSii.guardarRutCliente(cli.value.trim(), '76.543.210-3');
+            }
+
+            if (window.CLDemoLiquidaciones && window.CLDemoLiquidaciones.cargarEjemplo) {
+                window.CLDemoLiquidaciones.cargarEjemplo();
+            } else if ($('btn-sample-liq')) {
+                $('btn-sample-liq').click();
+            }
+            if ($('btn-sample-fin')) $('btn-sample-fin').click();
+
+            var per = periodoActual();
+            var bheParsed = Imp ? Imp.parsearBheSii(Imp.ejemploBheCsv(per), { periodo: per }) : null;
+            var carParsed = Imp ? Imp.parsearCartola(Imp.ejemploCartolaCsv(per), { periodo: per }) : null;
+
+            guardarEstadoActual(function (est) {
+                est.ventasCsv = F29.ejemploRcvVentasCsv();
+                est.ventasRows = null;
+                est.ventasArchivo = 'RCV_Ventas_SII_ejemplo.csv';
+                est.comprasCsv = F29.ejemploRcvComprasCsv();
+                est.comprasRows = null;
+                est.comprasArchivo = 'RCV_Compras_SII_ejemplo.csv';
+                est.remanenteAnterior = 120000;
+                est.tesoreria.saldoInicialBanco = 6500000;
+                if (bheParsed && bheParsed.ok) {
+                    est.bheBoletas = bheParsed.boletas;
+                    est.bheAnuladas = bheParsed.anuladasOmitidas;
+                    est.bheAlertas = bheParsed.advertencias;
+                    est.honorariosBruto = bheParsed.totalBruto;
+                    est.honorariosRetencionDirecta = bheParsed.codigo151;
+                } else {
+                    est.honorariosBruto = 800000;
+                    est.honorariosRetencionDirecta = '';
+                }
+                if (carParsed && carParsed.ok) {
+                    est.cartolaMovimientos = carParsed.movimientos;
+                    est.cartolaTotalAbonos = carParsed.totalAbonos;
+                    est.cartolaTotalCargos = carParsed.totalCargos;
+                    est.cartolaUltimoSaldo = carParsed.ultimoSaldo;
+                }
+                if (!est.comprasPendientesAcuse || !est.comprasPendientesAcuse.length) {
+                    est.comprasPendientesAcuse = [
+                        {
+                            id: '33-4512-76111222-3',
+                            tipoDoc: 33,
+                            folio: 4512,
+                            rut: '76.111.222-3',
+                            razonSocial: 'Insumos Panaderos Ltda.',
+                            fechaRecepcion: per + '-15',
+                            diasRestantes: 2,
+                            estadoPlazo: 'critico',
+                            iva: 190000,
+                            total: 1190000
+                        },
+                        {
+                            id: '33-8891-77222333-4',
+                            tipoDoc: 33,
+                            folio: 8891,
+                            rut: '77.222.333-4',
+                            razonSocial: 'Servicios Eléctricos del Sur SpA',
+                            fechaRecepcion: per + '-17',
+                            diasRestantes: 5,
+                            estadoPlazo: 'proximo',
+                            iva: 85500,
+                            total: 535500
+                        }
+                    ];
+                }
+            });
+
+            if ($('btn-af-importar-rcv')) $('btn-af-importar-rcv').click();
+            refrescarTodo();
+            if (!o.silencioso) {
+                D.avisar('Ejemplo completo cargado en todos los módulos (Nómina, Finiquitos, F29, BHE, Bancos, Balance, P&L y DDJJ).');
+            }
+        }
+        if ($('btn-cargar-ejemplo-todo')) {
+            $('btn-cargar-ejemplo-todo').addEventListener('click', function () { cargarEjemploCompleto(); });
+        }
+        if (/[?&]demo=1/.test(location.search) && !/[?&]tab=/.test(location.search)) {
+            setTimeout(function () { cargarEjemploCompleto({ silencioso: true }); }, 40);
+        }
+
         // Cargar ejemplo completo RCV + Honorarios + Banco inicial
         if ($('btn-rcv-ejemplo')) {
             $('btn-rcv-ejemplo').addEventListener('click', function () {
