@@ -452,9 +452,11 @@
         $('rcv-ventas-estado').textContent = m.ventas.documentos.length
             ? (est.ventasArchivo || 'RCV Ventas') + ' · ' + m.ventas.documentos.length + ' registros'
             : 'Sin archivo cargado (.csv o .xlsx)';
+        if ($('drop-rcv-ventas')) $('drop-rcv-ventas').classList.toggle('cargada', m.ventas.documentos.length > 0);
         $('rcv-compras-estado').textContent = m.compras.documentos.length
             ? (est.comprasArchivo || 'RCV Compras') + ' · ' + m.compras.documentos.length + ' registros'
             : 'Sin archivo cargado (.csv o .xlsx)';
+        if ($('drop-rcv-compras')) $('drop-rcv-compras').classList.toggle('cargada', m.compras.documentos.length > 0);
 
         var vacio = $('f29-vacio');
         var resPanel = $('f29-resultados');
@@ -1114,6 +1116,8 @@
     function pintarPnl(m) {
         var p = m.pnl;
         var fl = m.flujo;
+        var sinDatosPnl = !(m.ventas && m.ventas.documentos.length) && !(m.compras && m.compras.documentos.length) && !m.nomina && !(m.estado && m.estado.manuales && m.estado.manuales.length);
+        if ($('pnl-vacio')) $('pnl-vacio').hidden = !sinDatosPnl;
 
         $('pnl-k-ingresos').textContent = D.money(p.ingresosGiro);
         $('pnl-k-margen').textContent = D.money(p.margenBruto) + ' (' + D.num(p.margenBrutoPct, 1) + '%)';
@@ -1513,6 +1517,23 @@
         });
         pintarPropuestaF22(m);
         var d = m.ddjj || {};
+        var barDdjj = $('ddjj-preval-bar');
+        if (barDdjj) {
+            var rutCli = (window.CLDemoSii && window.CLDemoSii.rutDeCliente && window.CLDemoSii.rutDeCliente(clienteNombre())) || ($('liq-rut-empresa') && $('liq-rut-empresa').value.trim()) || '';
+            var tiene87 = d.dj1887 && Array.isArray(d.dj1887.filas) && d.dj1887.filas.length > 0;
+            var tiene79 = d.dj1879 && Array.isArray(d.dj1879.filas) && d.dj1879.filas.length > 0;
+            var faltantesDdjj = [];
+            if (!rutCli) faltantesDdjj.push('RUT de empresa activo');
+            if (!tiene87) faltantesDdjj.push('nómina calculada para DJ 1887 / Cert. N°6');
+            if (!tiene79) faltantesDdjj.push('BHE o honorarios para DJ 1879 / Cert. N°1');
+            if (!faltantesDdjj.length) {
+                barDdjj.className = 'suite-preval-strip ok';
+                barDdjj.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">check_circle</span><strong>Pre-validación DDJJ OK</strong><span>RUT empresa, sueldos y honorarios completos para emitir borradores.</span></span>';
+            } else {
+                barDdjj.className = 'suite-preval-strip warn';
+                barDdjj.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">info</span><strong>Revisa antes de exportar DDJJ:</strong><span>falta ' + D.esc(faltantesDdjj.join(', ')) + '.</span></span>';
+            }
+        }
         if (d.dj1887 && d.dj1887.ok && $('tbody-dj1887')) {
             var filas87 = d.dj1887.filas || [];
             var t87 = d.dj1887.totales || {};
@@ -1924,6 +1945,17 @@
     document.addEventListener('DOMContentLoaded', function () {
         if (!$('suite-modulos')) return;
 
+        if ($('btn-ctx-indicadores')) {
+            $('btn-ctx-indicadores').addEventListener('click', function () {
+                cambiarModulo('remuneraciones');
+                var radLiq = document.querySelector('input[name="modo"][value="liquidaciones"]');
+                if (radLiq && !radLiq.checked) { radLiq.checked = true; radLiq.dispatchEvent(new Event('change')); }
+                if ($('liq-uf')) { $('liq-uf').focus(); $('liq-uf').select(); }
+            });
+        }
+        if ($('btn-pnl-ir-f29')) $('btn-pnl-ir-f29').addEventListener('click', function () { cambiarModulo('f29'); });
+        if ($('btn-pnl-ir-nomina')) $('btn-pnl-ir-nomina').addEventListener('click', function () { cambiarModulo('remuneraciones'); });
+
         // Navegacion de modulos
         Array.prototype.forEach.call(document.querySelectorAll('.suite-mod-btn'), function (btn) {
             btn.addEventListener('click', function () {
@@ -2060,6 +2092,17 @@
             var el = $(id);
             if (!el) return;
             el.addEventListener('input', function () {
+                if (id === 'f29-tasa-ppm') {
+                    var tVal = el.value.trim() === '' ? 0 : (D.parseDecimal ? D.parseDecimal(el.value) : D.parseNumber(el.value));
+                    var errPpm = $('f29-tasa-ppm-err');
+                    if (tVal < 0 || tVal > 10) {
+                        el.setAttribute('aria-invalid', 'true');
+                        if (errPpm) { errPpm.hidden = false; errPpm.textContent = 'Ingresa una tasa PPM entre 0% y 10%.'; }
+                        return;
+                    }
+                    el.removeAttribute('aria-invalid');
+                    if (errPpm) { errPpm.hidden = true; errPpm.textContent = ''; }
+                }
                 guardarEstadoActual(function (est) {
                     if (id === 'f29-remanente') est.remanenteAnterior = Math.max(0, Math.round(D.parseNumber(el.value)));
                     if (id === 'f29-tasa-ppm') est.tasaPpmPersonalizada = el.value.trim() === '' ? '' : (D.parseDecimal ? D.parseDecimal(el.value) : D.parseNumber(el.value));
@@ -2091,7 +2134,10 @@
         if ($('btn-f29-asistente-utm')) $('btn-f29-asistente-utm').addEventListener('click', function () { alternarUtmCard(); });
         if ($('btn-cerrar-asistente-utm')) $('btn-cerrar-asistente-utm').addEventListener('click', function () { alternarUtmCard(false); });
         ['utm-calc-rem-ant', 'utm-val-ant', 'utm-val-act'].forEach(function (id) {
-            if ($(id)) $(id).addEventListener('input', actualizarPreviewUtmCard);
+            if ($(id)) $(id).addEventListener('input', function () {
+                if (id === 'utm-val-act') $(id).dataset.editadoManual = '1';
+                actualizarPreviewUtmCard();
+            });
         });
         if ($('btn-utm-aplicar')) {
             $('btn-utm-aplicar').addEventListener('click', function () {
@@ -2585,6 +2631,17 @@
             var el = $(id);
             if (!el) return;
             el.addEventListener('change', function () {
+                if (id === 'ddjj-socios-pct') {
+                    var pSoc = D.parseDecimal(el.value);
+                    var errSoc = $('ddjj-socios-pct-err');
+                    if (pSoc < 1 || pSoc > 100) {
+                        el.setAttribute('aria-invalid', 'true');
+                        if (errSoc) { errSoc.hidden = false; errSoc.textContent = 'El porcentaje debe estar entre 1% y 100%.'; }
+                        return;
+                    }
+                    el.removeAttribute('aria-invalid');
+                    if (errSoc) { errSoc.hidden = true; errSoc.textContent = ''; }
+                }
                 guardarEstadoActual(function (est) {
                     est.tesoreria.saldoInicialBanco = Math.max(0, Math.round(D.parseNumber($('tes-banco-ini').value)));
                     est.tesoreria.pctVentasCobradas = Math.max(0, Math.min(100, D.parseDecimal($('tes-pct-cobro').value) || 0));
@@ -3048,10 +3105,15 @@
                 if (!nom) { D.avisar('Escribe el nombre o razón social del cliente.'); return; }
                 var rutRaw = $('torre-nuevo-rut') ? $('torre-nuevo-rut').value.trim() : '';
                 var regNuevo = $('torre-nuevo-regimen') ? $('torre-nuevo-regimen').value : '14D3';
+                var errTorreRut = $('torre-nuevo-rut-err');
                 if (rutRaw && window.CLSii && window.CLSii.rutValido && !window.CLSii.rutValido(rutRaw)) {
+                    if ($('torre-nuevo-rut')) { $('torre-nuevo-rut').setAttribute('aria-invalid', 'true'); $('torre-nuevo-rut').focus(); }
+                    if (errTorreRut) { errTorreRut.hidden = false; errTorreRut.textContent = 'RUT inválido (revisa dígito verificador).'; }
                     D.avisar('El RUT ingresado no es válido. Revísalo antes de crear el cliente.');
                     return;
                 }
+                if ($('torre-nuevo-rut')) $('torre-nuevo-rut').removeAttribute('aria-invalid');
+                if (errTorreRut) { errTorreRut.hidden = true; errTorreRut.textContent = ''; }
                 guardarTodoAlmacen((function () {
                     var todo = leerTodoAlmacen();
                     var k = nom.toLowerCase() + '::' + periodoActual();

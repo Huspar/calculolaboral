@@ -163,6 +163,21 @@
         if (!partes.length) partes.push('<b>Sin advertencias.</b> Todos los cálculos usaron los datos de la nómina.');
         document.getElementById('warnings-fin').innerHTML = partes.join('<div style="height:10px"></div>');
 
+        var prevalFin = document.getElementById('fin-preval-bar');
+        if (prevalFin) {
+            prevalFin.hidden = false;
+            if (errores > 0) {
+                prevalFin.className = 'suite-preval-strip err';
+                prevalFin.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">error</span><strong>' + errores + ' filas con error de fechas o datos.</strong><span>Corrígelas antes de descargar PDF o Excel.</span></span>';
+            } else if (warns.length > 0) {
+                prevalFin.className = 'suite-preval-strip warn';
+                prevalFin.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">warning</span><strong>Lote listo con ' + warns.length + ' observación(es) normativa(s)</strong><span>(revisa tope 90 UF / causales abajo antes de imprimir).</span></span>';
+            } else {
+                prevalFin.className = 'suite-preval-strip ok';
+                prevalFin.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">check_circle</span><strong>Lote validado · ' + ok.length + ' finiquitos listos para PDF y Excel.</strong></span>';
+            }
+        }
+
         var card = document.getElementById('results-fin');
         if (!sinScroll && card.scrollIntoView && !document.getElementById('pane-finiquitos').hasAttribute('hidden')) {
             card.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -358,9 +373,19 @@
         uf.value = D.num(ufDef, 2);
         uf.addEventListener('change', function () {
             var n = D.parseNumber(uf.value);
-            if (n > 0) uf.value = D.num(n, 2);
+            var errUf = document.getElementById('uf-value-err');
+            if (!(n > 0)) {
+                uf.setAttribute('aria-invalid', 'true');
+                if (errUf) { errUf.hidden = false; errUf.textContent = 'Ingresa un valor UF mayor a cero.'; }
+                return;
+            }
+            uf.removeAttribute('aria-invalid');
+            if (errUf) { errUf.hidden = true; errUf.textContent = ''; }
+            uf.value = D.num(n, 2);
             var liqUf = document.getElementById('liq-uf');
-            if (liqUf && n > 0 && liqUf.value !== uf.value) liqUf.value = uf.value;
+            if (liqUf && liqUf.value !== uf.value) liqUf.value = uf.value;
+            var ctxUf = document.getElementById('ctx-uf-val');
+            if (ctxUf) ctxUf.textContent = '$' + uf.value;
             if (state.records.length) calcularTodo(state.records);
         });
 

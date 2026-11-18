@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.13.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.14.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -220,6 +220,12 @@
             <option value="14A">Semi Integrado (14 A)</option>
           </select>
         </div>
+        <button type="button" class="ctx-indicadores-pill" id="btn-ctx-indicadores" title="Indicadores vigentes del período · clic para ajustar">
+          <span class="material-icons" aria-hidden="true">currency_exchange</span>
+          <span>UF <strong class="mono" id="ctx-uf-val">-</strong></span>
+          <span class="ctx-ind-sep" aria-hidden="true">|</span>
+          <span>UTM <strong class="mono" id="ctx-utm-val">-</strong></span>
+        </button>
         <button type="button" class="btn btn-chico suite-btn-cierre" id="btn-cierre-tributario">
           <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
         </button>
@@ -304,6 +310,7 @@
                     <span class="campo-addon" aria-hidden="true">$</span>
                     <input type="text" id="uf-value" inputmode="decimal" data-tipo="uf" placeholder="41.322,93" aria-describedby="fin-uf-ayuda">
                   </div>
+                  <span class="pm-error" id="uf-value-err" hidden role="alert"></span>
                 </div>
                 <div class="rem-uf-contexto" id="fin-uf-ayuda">
                   <span class="material-icons" aria-hidden="true">verified</span>
@@ -355,6 +362,7 @@
                 </table>
               </div>
               <div class="demo-nota" id="warnings-fin"></div>
+              <div class="suite-preval-strip" id="fin-preval-bar" role="status" aria-live="polite" hidden></div>
               <div class="form-acciones" style="margin-top:14px">
                 <button class="btn btn-primario" type="button" id="btn-print-fin"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del lote</button>
                 <button class="btn" type="button" id="btn-csv-fin">Exportar a Excel</button>
@@ -380,6 +388,7 @@
                       <span class="campo-addon" aria-hidden="true">$</span>
                       <input type="text" id="liq-uf" inputmode="decimal" data-tipo="uf" placeholder="41.322,93" aria-describedby="liq-fuente">
                     </div>
+                    <span class="pm-error" id="liq-uf-err" hidden role="alert"></span>
                   </div>
                   <div class="lq-field">
                     <label for="liq-utm">Valor UTM del período</label>
@@ -390,10 +399,14 @@
                   </div>
                 </div>
               </div>
-              <div class="param-grupo">
-                <div class="param-grupo-head">
+              <details class="param-grupo param-grupo-details" id="liq-empresa-details" open>
+                <summary class="param-grupo-head">
                   <span class="param-grupo-titulo">Datos previsionales y LRE de la empresa</span>
-                </div>
+                  <span class="param-grupo-summary-der">
+                    <span class="texto-ayuda mono" id="liq-empresa-resumen">Mutual de Seguridad (0,93%)</span>
+                    <span class="material-icons rcv-guia-chevron" aria-hidden="true">expand_more</span>
+                  </span>
+                </summary>
                 <div class="param-bar">
                   <div class="lq-field"><label for="liq-mutual">Mutualidad</label><select id="liq-mutual"><option value="Mutual de Seguridad">Mutual de Seguridad</option><option value="ACHS">ACHS</option><option value="IST">IST</option><option value="ISL">ISL (sin mutual)</option></select></div>
                   <div class="lq-field">
@@ -404,10 +417,10 @@
                     </div>
                   </div>
                   <div class="lq-field"><label for="liq-ccaf">Caja de compensación</label><select id="liq-ccaf"><option value="">Sin CCAF</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
-                  <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.543.210-3" autocomplete="off"></div>
+                  <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.543.210-3" autocomplete="off"><span class="pm-error" id="liq-rut-empresa-err" hidden role="alert"></span></div>
                   <div class="lq-field"><label for="liq-comuna">Comuna empresa (LRE)</label><input type="text" id="liq-comuna" maxlength="40" placeholder="Santiago" autocomplete="off"></div>
                 </div>
-              </div>
+              </details>
               <div class="fin-dropzone" id="drop-liq" role="button" tabindex="0" aria-label="Subir nómina del mes">
                 <span class="material-icons" aria-hidden="true">upload_file</span>
                 <strong>Arrastra la nómina mensual o haz clic para buscarla</strong>
@@ -570,6 +583,7 @@
                   <span class="campo-addon sufijo" aria-hidden="true">%</span>
                 </div>
                 <span class="texto-ayuda" id="f29-tasa-ppm-ayuda">ProPyme: 0,125% o 0,25% (Ley 21.850: 0,23% transitorio).</span>
+                <span class="pm-error" id="f29-tasa-ppm-err" hidden role="alert"></span>
               </div>
               <div class="lq-field f29-remanente-wrap">
                 <div class="f29-remanente-head">
@@ -667,18 +681,18 @@
                   <span class="material-icons" aria-hidden="true">north_east</span>
                   <strong>RCV Ventas SII (CSV o Excel)</strong>
                   <span>Facturas afectas, exentas, boletas y notas de crédito</span>
+                  <span class="rcv-drop-estado" id="rcv-ventas-estado">Sin archivo cargado (.csv o .xlsx)</span>
                   <input type="file" id="file-rcv-ventas" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1" aria-label="Archivo RCV Ventas SII">
                 </div>
-                <span class="rcv-drop-estado" id="rcv-ventas-estado">Sin archivo cargado</span>
               </div>
               <div class="rcv-drop-box">
                 <div class="fin-dropzone" id="drop-rcv-compras" role="button" tabindex="0" aria-label="Subir RCV Compras SII" aria-describedby="rcv-compras-estado">
                   <span class="material-icons" aria-hidden="true">south_west</span>
                   <strong>RCV Compras SII (CSV o Excel)</strong>
                   <span>Giro, supermercado, activo fijo y notas de crédito</span>
+                  <span class="rcv-drop-estado" id="rcv-compras-estado">Sin archivo cargado (.csv o .xlsx)</span>
                   <input type="file" id="file-rcv-compras" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1" aria-label="Archivo RCV Compras SII">
                 </div>
-                <span class="rcv-drop-estado" id="rcv-compras-estado">Sin archivo cargado</span>
               </div>
             </div>
             <div class="form-acciones" style="margin-top:12px">
@@ -1375,6 +1389,15 @@
           </div>
         </div>
 
+        <div class="demo-vacio" id="pnl-vacio" style="margin-bottom:14px" hidden>
+          <p class="demo-vacio-t">Aún no hay movimientos para armar Resultados y Flujo</p>
+          <p class="texto-ayuda">Carga tu RCV de Compras/Ventas en F29 o calcula la nómina en Remuneraciones para ver márgenes y caja proyectada.</p>
+          <div class="form-acciones" style="justify-content:center;margin-top:10px">
+            <button type="button" class="btn btn-primario btn-chico" id="btn-pnl-ir-f29">Ir a F29 y RCV</button>
+            <button type="button" class="btn btn-chico" id="btn-pnl-ir-nomina">Ir a Remuneraciones</button>
+          </div>
+        </div>
+
         <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
           <div class="fin-kpi"><span class="fin-kpi-label">Ingresos del giro (neto)</span><span class="fin-kpi-val mono ok" id="pnl-k-ingresos">$0</span></div>
           <div class="fin-kpi"><span class="fin-kpi-label">Margen bruto</span><span class="fin-kpi-val mono" id="pnl-k-margen">$0</span></div>
@@ -1428,7 +1451,7 @@
           </div>
           <div class="v-acciones torre-alta-grid">
             <input type="text" id="torre-nuevo-nombre" class="lq-input-compacto" placeholder="Razón social del nuevo cliente" aria-label="Nombre nuevo cliente">
-            <input type="text" id="torre-nuevo-rut" class="lq-input-compacto torre-input-rut" placeholder="RUT (ej. 76.543.210-3)" maxlength="12" aria-label="RUT nuevo cliente">
+            <div><input type="text" id="torre-nuevo-rut" class="lq-input-compacto torre-input-rut" placeholder="RUT (ej. 76.543.210-3)" maxlength="12" aria-label="RUT nuevo cliente"><span class="pm-error" id="torre-nuevo-rut-err" hidden role="alert"></span></div>
             <select id="torre-nuevo-regimen" class="torre-select-regimen" aria-label="Régimen tributario nuevo cliente">
               <option value="14D3">14 D3</option>
               <option value="14D3_MAYOR">14 D3 &gt;50k</option>
@@ -1616,6 +1639,8 @@
           <span>Año Tributario <strong>2027 bloqueado</strong> hasta que el SII publique las resoluciones de DDJJ, suplemento normativo y factores de IPC. Los exportables generados son archivos de referencia para revisar antes de subir al SII.</span>
         </div>
 
+        <div class="suite-preval-strip warn" id="ddjj-preval-bar" role="status" aria-live="polite"></div>
+
         <div class="fin-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
           <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true" aria-controls="subddjj-1887">DJ 1887 y Cert. N°6</button>
           <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false" aria-controls="subddjj-1879">DJ 1879 y Cert. N°1</button>
@@ -1710,6 +1735,7 @@
                     <input type="text" id="ddjj-socios-pct" inputmode="decimal" data-tipo="dec" value="100">
                     <span class="campo-addon sufijo" aria-hidden="true">%</span>
                   </div>
+                  <span class="pm-error" id="ddjj-socios-pct-err" hidden role="alert"></span>
                 </div>
                 <div class="lq-field">
                   <label for="ddjj-retiros-totales">Retiros / Dividendos</label>
@@ -1872,7 +1898,8 @@
           </div>
         </div>
 
-        <div class="panel" id="rep-portal-card" style="margin-top:16px">
+        <div class="fin-cols-2 suite-rep-integraciones" style="margin-top:16px">
+        <div class="panel" id="rep-portal-card">
           <div class="panel-head">
             <div>
               <h2>Portal Cliente Marca Blanca</h2>
@@ -1887,7 +1914,7 @@
           </div>
         </div>
 
-        <div class="panel mcp-tarjeta-reportes" id="rep-mcp-card" style="margin-top:16px">
+        <div class="panel mcp-tarjeta-reportes" id="rep-mcp-card">
           <div class="panel-head">
             <div>
               <h2>Conectar estudio con Claude (MCP)</h2>
@@ -1900,6 +1927,7 @@
               </button>
             </div>
           </div>
+        </div>
         </div>
       </section>
 
@@ -2502,7 +2530,7 @@
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/pyme_excel.js?v=2.0.1"></script>
 <script src="/js/demo_comun.js?v=1.8.0"></script>
-<script src="/js/demo_contadores.js?v=1.4.0"></script>
+<script src="/js/demo_contadores.js?v=1.5.0"></script>
 <script src="/js/previred_generador.js?v=1.5.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
@@ -2515,14 +2543,14 @@
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.2.0"></script>
 <script src="/js/contadores_prevalidador.js?v=1.1.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.10.0"></script>
+<script src="/js/demo_liquidaciones.js?v=2.11.0"></script>
 <script src="/js/contadores_f29.js?v=1.2.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
 <script src="/js/contadores_sii.js?v=1.3.0"></script>
-<script src="/js/demo_suite.js?v=2.8.0"></script>
+<script src="/js/demo_suite.js?v=2.9.0"></script>
 <script src="/js/demo_sii.js?v=1.3.0"></script>
 <script src="/js/demo_mcp.js?v=1.0.0"></script>
 <script src="/js/demo_portal_estudio.js?v=1.0.0"></script>

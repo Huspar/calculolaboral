@@ -123,6 +123,27 @@
         });
     }
 
+    function sincronizarIndicadoresGlobales(ufTxt, utmTxt, utmNum) {
+        var ctxUf = document.getElementById('ctx-uf-val');
+        var ctxUtm = document.getElementById('ctx-utm-val');
+        if (ctxUf && ufTxt) ctxUf.textContent = '$' + ufTxt;
+        if (ctxUtm && utmTxt) ctxUtm.textContent = '$' + utmTxt;
+        var utmActF29 = document.getElementById('utm-val-act');
+        if (utmActF29 && !utmActF29.dataset.editadoManual && utmNum > 0) {
+            utmActF29.value = Math.round(utmNum);
+        }
+    }
+
+    function actualizarResumenEmpresaLiq() {
+        var resEl = document.getElementById('liq-empresa-resumen');
+        if (!resEl) return;
+        var mut = (document.getElementById('liq-mutual') && document.getElementById('liq-mutual').value) || 'Mutual';
+        var tasa = (document.getElementById('liq-tasa-mutual') && document.getElementById('liq-tasa-mutual').value) || '0,93';
+        var rut = (document.getElementById('liq-rut-empresa') && document.getElementById('liq-rut-empresa').value.trim()) || 'Sin RUT';
+        var com = (document.getElementById('liq-comuna') && document.getElementById('liq-comuna').value.trim()) || '';
+        resEl.textContent = [mut + ' (' + tasa + '%)', rut, com].filter(Boolean).join(' · ');
+    }
+
     function pintarValores(mes) {
         var ufTxt = D && D.num ? D.num(mes.uf, 2) : mes.uf;
         var utmTxt = D && D.num ? D.num(mes.utm, 0) : mes.utm;
@@ -130,6 +151,7 @@
         document.getElementById('liq-utm').value = utmTxt;
         var ufFin = document.getElementById('uf-value');
         if (ufFin && document.activeElement !== ufFin) ufFin.value = ufTxt;
+        sincronizarIndicadoresGlobales(ufTxt, utmTxt, mes.utm);
     }
 
     function mesEfectivo() {
@@ -1226,21 +1248,53 @@
             el.addEventListener('change', function () {
                 if (id === 'liq-uf') {
                     var nUf = D.parseNumber(el.value);
-                    if (nUf > 0) {
-                        el.value = D.num(nUf, 2);
-                        var ufFin = document.getElementById('uf-value');
-                        if (ufFin && ufFin.value !== el.value) ufFin.value = el.value;
+                    var errEl = document.getElementById('liq-uf-err');
+                    if (!(nUf > 0)) {
+                        el.setAttribute('aria-invalid', 'true');
+                        if (errEl) { errEl.hidden = false; errEl.textContent = 'Ingresa una UF mayor a cero.'; }
+                        return;
                     }
+                    el.removeAttribute('aria-invalid');
+                    if (errEl) { errEl.hidden = true; errEl.textContent = ''; }
+                    el.value = D.num(nUf, 2);
+                    var ufFin = document.getElementById('uf-value');
+                    if (ufFin && ufFin.value !== el.value) ufFin.value = el.value;
+                    sincronizarIndicadoresGlobales(el.value, null, 0);
                 } else if (id === 'liq-utm') {
                     var nUtm = D.parseNumber(el.value);
-                    if (nUtm > 0) el.value = D.num(nUtm, 0);
+                    if (nUtm > 0) {
+                        el.value = D.num(nUtm, 0);
+                        sincronizarIndicadoresGlobales(null, el.value, nUtm);
+                    }
                 } else if (id === 'liq-tasa-mutual') {
                     var nTas = D.parseDecimal ? D.parseDecimal(el.value) : D.parseNumber(el.value);
                     if (nTas > 0) el.value = String(nTas).replace('.', ',');
+                    actualizarResumenEmpresaLiq();
                 }
                 if (state.records.length) calcularTodo();
             });
         });
+
+        ['liq-mutual', 'liq-rut-empresa', 'liq-comuna'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('change', function () {
+                if (id === 'liq-rut-empresa') {
+                    var v = el.value.trim();
+                    var errRut = document.getElementById('liq-rut-empresa-err');
+                    var valido = !v || (window.CLSii && window.CLSii.rutValido ? window.CLSii.rutValido(v) : /^[0-9.\-kK]+$/.test(v));
+                    if (!valido) {
+                        el.setAttribute('aria-invalid', 'true');
+                        if (errRut) { errRut.hidden = false; errRut.textContent = 'RUT inválido. Usa formato 76.543.210-3.'; }
+                    } else {
+                        el.removeAttribute('aria-invalid');
+                        if (errRut) { errRut.hidden = true; errRut.textContent = ''; }
+                    }
+                }
+                actualizarResumenEmpresaLiq();
+            });
+        });
+        actualizarResumenEmpresaLiq();
 
         var drop = document.getElementById('drop-liq');
         var file = document.getElementById('file-liq');
