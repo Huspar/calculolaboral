@@ -135,6 +135,11 @@
         if (inpRut && document.activeElement !== inpRut && inpRut.value !== rut) {
             inpRut.value = rut;
         }
+        var chipRut = $('ctx-rut-display');
+        if (chipRut) {
+            chipRut.textContent = rut || 'Sin RUT';
+            chipRut.classList.toggle('sin-rut', !rut);
+        }
         var inpLre = $('liq-rut-empresa');
         if (inpLre && rut && !inpLre.value.trim()) {
             inpLre.value = rut;
@@ -746,21 +751,27 @@
     // ---------- Boot & Listeners ----------
     document.addEventListener('DOMContentLoaded', function () {
         var inpRut = $('liq-rut');
+        function confirmarRutBarra(conAviso) {
+            if (!inpRut) return;
+            var val = inpRut.value.trim();
+            var nom = clienteActivoNombre();
+            if (!val) { guardarRutCliente(nom, ''); pintarContextBar(); return; }
+            if (!Sii.rutValido(val)) {
+                if (conAviso && D) D.avisar('El RUT ingresado en la barra de cliente no es válido.');
+                return;
+            }
+            var fmt = guardarRutCliente(nom, val);
+            inpRut.value = fmt;
+            if ($('liq-rut-empresa')) $('liq-rut-empresa').value = fmt;
+            var br = bridge();
+            if (br) br.refrescarTodo();
+        }
         if (inpRut) {
-            inpRut.addEventListener('blur', function () {
-                var val = inpRut.value.trim();
-                var nom = clienteActivoNombre();
-                if (!val) { guardarRutCliente(nom, ''); pintarContextBar(); return; }
-                if (!Sii.rutValido(val)) {
-                    if (D) D.avisar('El RUT ingresado en la barra de cliente no es válido.');
-                    return;
-                }
-                var fmt = guardarRutCliente(nom, val);
-                inpRut.value = fmt;
-                if ($('liq-rut-empresa')) $('liq-rut-empresa').value = fmt;
-                var br = bridge();
-                if (br) br.refrescarTodo();
-            });
+            inpRut.addEventListener('blur', function () { confirmarRutBarra(true); });
+            inpRut.addEventListener('change', function () { confirmarRutBarra(false); });
+        }
+        if ($('btn-guardar-cliente')) {
+            $('btn-guardar-cliente').addEventListener('click', function () { confirmarRutBarra(false); });
         }
 
         if ($('btn-ctx-sii-estado')) $('btn-ctx-sii-estado').addEventListener('click', function () { abrirModalSii(); });

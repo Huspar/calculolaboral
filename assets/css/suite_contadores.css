@@ -2119,3 +2119,122 @@
         min-height: 44px;
     }
 }
+
+/* ========================================================
+   OLA 1: Selector de Cliente Compacto, Cierre Unificado y Bancos
+   ======================================================== */
+.suite-cliente-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.suite-cliente-identidad {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    border: 1px solid var(--line-2);
+    min-height: 36px;
+}
+.suite-cliente-icono {
+    font-size: 18px;
+    color: var(--emerald);
+    flex-shrink: 0;
+}
+.suite-cliente-nombre {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+}
+.suite-rut-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: #EEF3F0;
+    color: var(--forest);
+    border: 1px solid var(--line-2);
+    white-space: nowrap;
+}
+.suite-rut-chip.sin-rut {
+    background: #FFFFFF;
+    color: var(--muted);
+    border-style: dashed;
+}
+.suite-ctx-btn-icono {
+    min-height: 36px;
+    min-width: 36px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+.suite-ctx-btn-icono .material-icons {
+    font-size: 16px;
+}
+.suite-ctx-edicion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    width: 100%;
+    padding-top: 8px;
+    margin-top: 2px;
+    border-top: 1px dashed var(--line);
+}
+.suite-ctx-edicion[hidden] {
+    display: none;
+}
+.suite-btn-cierre {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+.suite-btn-cierre .material-icons {
+    font-size: 16px;
+}
+.suite-btn-cierre.periodo-cerrado {
+    background: #FEF3C7;
+    color: #78350F;
+    border-color: #D97706;
+    font-weight: 600;
+}
+.suite-btn-cierre.periodo-cerrado:hover {
+    background: #FDE68A;
+}
+
+@media screen and (max-width: 640px) {
+    .suite-cliente-picker {
+        width: 100%;
+    }
+    .suite-cliente-identidad {
+        flex: 1 1 100%;
+        min-height: 44px;
+    }
+    .suite-cliente-nombre {
+        max-width: none;
+    }
+    .suite-ctx-btn-icono {
+        min-height: 44px;
+        min-width: 44px;
+        flex: 1 1 calc(50% - 4px);
+    }
+    .suite-ctx-edicion {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

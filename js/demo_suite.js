@@ -20,6 +20,7 @@
     var ui = {
         modulo: 'remuneraciones',
         subLibro: 'diario',
+        subBanco: 'conciliacion',
         subBalance: 'balance8',
         subDdjj: '1887',
         filtroMayor: '',
@@ -588,34 +589,58 @@
         }
     }
 
-    // ------------------------------------------------------------- Render Diario y Mayor
-    function pintarLibros(m) {
-        var est = m.estado;
-        var bloqueado = est.cerradoTributario;
+    // ------------------------------------------------------------- Render Bancos y Contabilidad General
+    function pintarIdentidadCliente() {
+        var disp = $('ctx-cliente-display');
+        if (disp) disp.textContent = clienteNombre();
+    }
 
-        Array.prototype.forEach.call(document.querySelectorAll('[data-sublibro]'), function (btn) {
-            var act = btn.getAttribute('data-sublibro') === ui.subLibro;
+    function pintarBancos(m) {
+        var est = m.estado;
+        var bloqueado = !!est.cerradoTributario;
+        var subB = (ui.subBanco === 'cartera' || ui.subBanco === 'tesoreria') ? ui.subBanco : 'conciliacion';
+
+        Array.prototype.forEach.call(document.querySelectorAll('[data-subbanco]'), function (btn) {
+            var act = btn.getAttribute('data-subbanco') === subB;
             btn.classList.toggle('activo', act);
             btn.setAttribute('aria-selected', act ? 'true' : 'false');
         });
-        $('sub-diario').hidden = ui.subLibro !== 'diario';
-        $('sub-mayor').hidden = ui.subLibro !== 'mayor';
-        $('sub-tesoreria').hidden = ui.subLibro !== 'tesoreria';
-        if ($('sub-conciliacion')) $('sub-conciliacion').hidden = ui.subLibro !== 'conciliacion';
-        if ($('sub-plan')) $('sub-plan').hidden = ui.subLibro !== 'plan';
-        pintarPlanCuentas();
-        pintarConciliacionYAgenda(m);
+        if ($('sub-conciliacion')) $('sub-conciliacion').hidden = subB !== 'conciliacion';
+        if ($('sub-bancos-cartera')) $('sub-bancos-cartera').hidden = subB !== 'cartera';
+        if ($('sub-tesoreria')) $('sub-tesoreria').hidden = subB !== 'tesoreria';
 
-        // Sincronizar campos de tesoreria
         var t = est.tesoreria;
-        if (document.activeElement !== $('tes-banco-ini')) $('tes-banco-ini').value = t.saldoInicialBanco || 0;
-        if (document.activeElement !== $('tes-pct-cobro')) $('tes-pct-cobro').value = t.pctVentasCobradas;
-        if (document.activeElement !== $('tes-pct-pago')) $('tes-pct-pago').value = t.pctComprasPagadas;
-        $('tes-af-pagado').checked = !!t.activoFijoPagado;
-        $('tes-sueldos-pagados').checked = !!t.sueldosPagados;
-        $('tes-hon-pagados').checked = !!t.honorariosPagados;
-        $('tes-cotiz-pagadas').checked = !!t.cotizacionesPagadas;
+        if ($('tes-banco-ini') && document.activeElement !== $('tes-banco-ini')) $('tes-banco-ini').value = t.saldoInicialBanco || 0;
+        if ($('tes-pct-cobro') && document.activeElement !== $('tes-pct-cobro')) $('tes-pct-cobro').value = t.pctVentasCobradas;
+        if ($('tes-pct-pago') && document.activeElement !== $('tes-pct-pago')) $('tes-pct-pago').value = t.pctComprasPagadas;
+        if ($('tes-af-pagado')) $('tes-af-pagado').checked = !!t.activoFijoPagado;
+        if ($('tes-sueldos-pagados')) $('tes-sueldos-pagados').checked = !!t.sueldosPagados;
+        if ($('tes-hon-pagados')) $('tes-hon-pagados').checked = !!t.honorariosPagados;
+        if ($('tes-cotiz-pagadas')) $('tes-cotiz-pagadas').checked = !!t.cotizacionesPagadas;
         Array.prototype.forEach.call(document.querySelectorAll('#sub-tesoreria input'), function (el) { el.disabled = bloqueado; });
+
+        var chipPct = $('nav-bancos-pct');
+        if (chipPct) {
+            var pct = (m.conciliacion && m.conciliacion.resumen) ? (m.conciliacion.resumen.pctConciliado || 0) : 0;
+            chipPct.textContent = pct + '%';
+        }
+        pintarConciliacionYAgenda(m);
+    }
+
+    function pintarLibros(m) {
+        var est = m.estado;
+        var bloqueado = est.cerradoTributario;
+        var subLib = (ui.subLibro === 'mayor' || ui.subLibro === 'plan') ? ui.subLibro : 'diario';
+
+        Array.prototype.forEach.call(document.querySelectorAll('[data-sublibro]'), function (btn) {
+            var act = btn.getAttribute('data-sublibro') === subLib;
+            btn.classList.toggle('activo', act);
+            btn.setAttribute('aria-selected', act ? 'true' : 'false');
+        });
+        $('sub-diario').hidden = subLib !== 'diario';
+        $('sub-mayor').hidden = subLib !== 'mayor';
+        if ($('sub-plan')) $('sub-plan').hidden = subLib !== 'plan';
+        pintarPlanCuentas();
 
         var totalDebe = m.asientos.reduce(function (s, a) { return s + a.debe; }, 0);
         var totalHaber = m.asientos.reduce(function (s, a) { return s + a.haber; }, 0);
@@ -944,6 +969,7 @@
         }
         var btnCierre = $('btn-cierre-tributario');
         if (btnCierre) {
+            btnCierre.classList.toggle('periodo-cerrado', !!cerrado);
             btnCierre.innerHTML = '<span class="material-icons" aria-hidden="true">' + (cerrado ? 'lock_open' : 'lock') + '</span>' +
                 (cerrado ? 'Reabrir período' : 'Cerrar período tributario');
         }
@@ -953,12 +979,12 @@
         }
     }
 
-    var MODULOS_VALIDOS = /^(torre|importador|remuneraciones|f29|ddjj|libros|balance|pnl|reportes)$/;
+    var MODULOS_VALIDOS = /^(torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)$/;
 
     function moduloDesdeUbicacion() {
         var hash = String(location.hash || '').replace(/^#/, '');
         if (MODULOS_VALIDOS.test(hash)) return hash;
-        var modUrl = (/[?&]mod=(torre|importador|remuneraciones|f29|ddjj|libros|balance|pnl|reportes)/.exec(location.search) || [])[1];
+        var modUrl = (/[?&]mod=(torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)/.exec(location.search) || [])[1];
         return modUrl || 'remuneraciones';
     }
 
@@ -971,6 +997,7 @@
             remuneraciones: $('suite-remuneraciones'),
             f29: $('suite-f29'),
             ddjj: $('suite-ddjj'),
+            bancos: $('suite-bancos'),
             libros: $('suite-libros'),
             balance: $('suite-balance'),
             pnl: $('suite-pnl'),
@@ -1382,7 +1409,7 @@
                         '<td><span class="conc-pill ' + pillCls + '">' + pillTxt + '</span></td>' +
                         '</tr>';
                 }).join('')
-                : '<tr><td colspan="7" class="texto-ayuda">Sin movimientos bancarios aún. Haz clic en "Cargar cartola ejemplo" o importa un CSV en F29 → Importar SII.</td></tr>';
+                : '<tr><td colspan="7" class="texto-ayuda">Sin movimientos bancarios aún. Haz clic en "Subir Cartola CSV" o "Cargar cartola ejemplo".</td></tr>';
         }
 
         if ($('aging-cxc-buckets')) {
@@ -1413,7 +1440,7 @@
                 : '<tr><td colspan="3" class="texto-ayuda">Sin saldo CxP pendiente (100% pagado o sin compras RCV).</td></tr>';
         }
 
-        Array.prototype.forEach.call(document.querySelectorAll('#sub-conciliacion input, #sub-conciliacion select, #btn-regla-agregar, #btn-conc-centralizar'), function (el) {
+        Array.prototype.forEach.call(document.querySelectorAll('#sub-conciliacion input, #sub-conciliacion select, #btn-regla-agregar, #btn-conc-centralizar, #btn-conc-cartola-ej, #btn-bancos-subir-cartola, #btn-bancos-ejemplo'), function (el) {
             el.disabled = bloqueado;
         });
     }
@@ -1534,6 +1561,7 @@
 
     function refrescarTodo() {
         var est = leerEstadoActual();
+        pintarIdentidadCliente();
         pintarEstadoPuentePyme(est);
         var m = calcularModelo();
         pintarEstadoCierre(m);
@@ -1541,6 +1569,7 @@
         pintarImportador(m);
         pintarF29(m);
         pintarDdjj(m);
+        pintarBancos(m);
         pintarLibros(m);
         pintarBalance(m);
         pintarPnl(m);
@@ -1881,6 +1910,54 @@
                 );
             });
         }
+
+        // Selector compacto de cliente y panel de edición inline
+        function alternarPanelCliente(mostrar) {
+            var panel = $('ctx-cliente-edicion');
+            if (!panel) return;
+            var abrir = typeof mostrar === 'boolean' ? mostrar : panel.hidden;
+            panel.hidden = !abrir;
+            if ($('btn-editar-cliente-trigger')) $('btn-editar-cliente-trigger').setAttribute('aria-expanded', abrir ? 'true' : 'false');
+            if ($('btn-nuevo-cliente-trigger')) $('btn-nuevo-cliente-trigger').setAttribute('aria-expanded', abrir ? 'true' : 'false');
+        }
+        if ($('btn-editar-cliente-trigger')) {
+            $('btn-editar-cliente-trigger').addEventListener('click', function () {
+                var panel = $('ctx-cliente-edicion');
+                var abrir = panel ? panel.hidden : true;
+                alternarPanelCliente(abrir);
+                if (abrir && $('liq-cliente')) { $('liq-cliente').focus(); $('liq-cliente').select(); }
+            });
+        }
+        if ($('btn-nuevo-cliente-trigger')) {
+            $('btn-nuevo-cliente-trigger').addEventListener('click', function () {
+                alternarPanelCliente(true);
+                if ($('liq-cliente')) {
+                    $('liq-cliente').value = '';
+                    $('liq-cliente').focus();
+                }
+                if ($('liq-rut')) $('liq-rut').value = '';
+                pintarIdentidadCliente();
+            });
+        }
+        if ($('liq-cliente')) {
+            $('liq-cliente').addEventListener('input', function () { pintarIdentidadCliente(); });
+        }
+        if ($('btn-guardar-cliente')) {
+            $('btn-guardar-cliente').addEventListener('click', function () {
+                setTimeout(function () {
+                    alternarPanelCliente(false);
+                    refrescarTodo();
+                }, 0);
+            });
+        }
+
+        // Subpestañas Bancos y Conciliación
+        Array.prototype.forEach.call(document.querySelectorAll('[data-subbanco]'), function (btn) {
+            btn.addEventListener('click', function () {
+                ui.subBanco = btn.getAttribute('data-subbanco');
+                refrescarTodo();
+            });
+        });
 
         // Subpestañas Libros
         Array.prototype.forEach.call(document.querySelectorAll('[data-sublibro]'), function (btn) {
@@ -2801,7 +2878,20 @@
             });
         }
 
-        // Etapa 2 · TOP 3: Conciliación Bancaria con Reglas
+        // Etapa 2 · TOP 3: Conciliación Bancaria con Reglas + Carga directa en Bancos
+        if ($('btn-bancos-subir-cartola') && $('file-bancos-cartola')) {
+            $('btn-bancos-subir-cartola').addEventListener('click', function () { $('file-bancos-cartola').click(); });
+            $('file-bancos-cartola').addEventListener('change', function () {
+                var f = $('file-bancos-cartola').files && $('file-bancos-cartola').files[0];
+                if (f) f.text().then(aplicarTextoCartola);
+                $('file-bancos-cartola').value = '';
+            });
+        }
+        if ($('btn-bancos-ejemplo') && Imp) {
+            $('btn-bancos-ejemplo').addEventListener('click', function () {
+                aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));
+            });
+        }
         if ($('btn-conc-cartola-ej') && Imp) {
             $('btn-conc-cartola-ej').addEventListener('click', function () {
                 aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));
@@ -2866,7 +2956,7 @@
                     est.manuales = (est.manuales || []).filter(function (a) { return !/^MAN-CONC-/.test(String(a.id || '')); }).concat(nuevos);
                 });
                 ui.subLibro = 'diario';
-                refrescarTodo();
+                cambiarModulo('libros');
                 D.avisar('Se centralizaron ' + nuevos.length + ' movimientos conciliados en Libro Diario.');
             });
         }
