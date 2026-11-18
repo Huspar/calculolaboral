@@ -255,7 +255,7 @@
 /* Parámetros de nómina / sueldos */
 .param-bar {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
     gap: 12px 14px;
     margin-bottom: 14px;
 }
@@ -3121,5 +3121,207 @@
     .btn-acuse-dec {
         min-height: 44px;
         padding: 0 12px;
+    }
+}
+
+/* ==========================================================================
+   DISENO INTERIOR P0/P1: CAMPOS CON UNIDAD, PARAMETROS Y ACCESIBILIDAD
+   ========================================================================== */
+.campo-unidad {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+    transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
+}
+.campo-unidad:hover {
+    border-color: var(--line-3);
+}
+.campo-unidad:focus-within {
+    outline: 2px solid var(--forest);
+    outline-offset: 1px;
+    border-color: var(--forest);
+}
+.campo-unidad:has(input[aria-invalid="true"]) {
+    border-color: var(--risk);
+}
+.campo-addon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 11px;
+    background: var(--surface-2);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    user-select: none;
+    border-right: 1px solid var(--line);
+    flex-shrink: 0;
+}
+.campo-addon.sufijo {
+    border-right: 0;
+    border-left: 1px solid var(--line);
+}
+.app .campo-unidad input,
+.app-dialogo .campo-unidad input {
+    border: 0 !important;
+    border-radius: 0 !important;
+    height: 100% !important;
+    min-width: 0;
+    width: 100%;
+    padding: 0 12px !important;
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 14.5px;
+}
+
+.param-grupo {
+    padding: 12px 14px;
+    background: var(--canvas);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+}
+.param-grupo-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 12px;
+    margin-bottom: 10px;
+}
+.param-grupo-titulo {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--forest-700);
+}
+.param-grupo .param-bar {
+    margin-bottom: 0;
+}
+.rem-uf-strip {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    align-items: end;
+    gap: 12px 16px;
+    margin-bottom: 14px;
+}
+.rem-uf-contexto {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--muted);
+}
+.rem-uf-contexto .material-icons {
+    font-size: 18px;
+    color: var(--forest-600);
+    flex-shrink: 0;
+}
+
+.acciones-liq-bloques {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+.acciones-liq-grupo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+}
+.acciones-liq-etiqueta {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--muted);
+    min-width: 142px;
+}
+
+.rcv-guia-details {
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--canvas);
+}
+.rcv-guia-details > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--forest-700);
+}
+.rcv-guia-details > summary::-webkit-details-marker {
+    display: none;
+}
+.rcv-guia-details > summary .rcv-guia-chevron {
+    margin-left: auto;
+    transition: transform .15s var(--ease);
+}
+.rcv-guia-details[open] > summary .rcv-guia-chevron {
+    transform: rotate(180deg);
+}
+.rcv-guia-details .rcv-guia-card {
+    margin-bottom: 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+@media screen and (max-width: 1120px) {
+    .fin-cols-2-tablas {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+@media screen and (max-width: 900px) {
+    .panel-head .texto-ayuda {
+        white-space: normal;
+    }
+}
+@media screen and (max-width: 640px) {
+    .rem-uf-strip {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .campo-unidad {
+        height: 44px;
+    }
+    .app .campo-unidad input,
+    .app-dialogo .campo-unidad input {
+        font-size: 16px;
+    }
+    .app-main .btn,
+    .app-main .btn-chico,
+    .app-main .fin-chip {
+        min-height: 44px;
+    }
+    .btn-icono-chico {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    .acciones-liq-etiqueta {
+        min-width: 100%;
     }
 }

@@ -46,9 +46,9 @@
         if (lastComma > -1 && lastDot > -1) {
             dec = lastComma > lastDot ? ',' : '.';
         } else if (lastComma > -1) {
-            dec = /^\d{1,3}(,\d{3})+$/.test(s) ? '' : ',';
+            dec = !/^0,/.test(s) && /^\d{1,3}(,\d{3})+$/.test(s) ? '' : ',';
         } else if (lastDot > -1) {
-            dec = /^\d{1,3}(\.\d{3})+$/.test(s) ? '' : '.';
+            dec = !/^0\./.test(s) && /^\d{1,3}(\.\d{3})+$/.test(s) ? '' : '.';
         }
 
         if (dec) {
@@ -58,6 +58,21 @@
             s = s.replace(/[.,]/g, '');
         }
 
+        var n = parseFloat(s);
+        return isNaN(n) ? 0 : n;
+    }
+
+    // Tasas y factores con coma o punto decimal ("0,125", "1.018", "12,5%")
+    function parseDecimal(v) {
+        if (v == null || v === '') return 0;
+        if (typeof v === 'number') return isNaN(v) ? 0 : v;
+        var s = String(v).trim().replace(/[^\d.,\-]/g, '');
+        if (!s) return 0;
+        if (s.indexOf(',') > -1 && s.indexOf('.') > -1) {
+            s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+        } else if (s.indexOf(',') > -1) {
+            s = s.replace(',', '.');
+        }
         var n = parseFloat(s);
         return isNaN(n) ? 0 : n;
     }
@@ -340,7 +355,7 @@
 
     root.DemoCL = {
         norm: norm, money: money, num: num, esc: esc,
-        parseNumber: parseNumber, parseDate: parseDate,
+        parseNumber: parseNumber, parseDecimal: parseDecimal, parseDate: parseDate,
         fechaCorta: fechaCorta, hoy: hoy,
         leerArchivo: leerArchivo, mapaColumnas: mapaColumnas,
         descargar: descargar, descargarCsv: descargarCsv, descargarXlsx: descargarXlsx,

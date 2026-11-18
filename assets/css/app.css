@@ -9,7 +9,7 @@
     --ink: #111827;
     --ink-2: #374151;
     --muted: #4B5563;
-    --faint: #6B7280;
+    --faint: #596472;
     --line: #E3E8E5;
     --line-2: #CFD8D4;
     --line-3: #AEBDB7;
@@ -346,12 +346,22 @@ tr[aria-current="true"] .celda-nombre strong { color: var(--forest); }
 .lq-field { display: grid; gap: 5px; min-width: 0; align-content: start; }
 .lq-field label, .lq-label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .lq-opt { font-weight: 400; color: var(--faint); }
-.app input[type="text"], .app input[type="email"], .app input[type="date"], .app select, .app textarea,
-.app-dialogo input[type="text"], .app-dialogo input[type="email"], .app-dialogo input[type="date"], .app-dialogo select, .app-dialogo textarea,
+.app input[type="text"], .app input[type="number"], .app input[type="email"], .app input[type="date"], .app select, .app textarea,
+.app-dialogo input[type="text"], .app-dialogo input[type="number"], .app-dialogo input[type="email"], .app-dialogo input[type="date"], .app-dialogo select, .app-dialogo textarea,
 .entrada input[type="email"] {
     width: 100%; min-width: 0; height: 40px; padding: 0 12px;
     border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: var(--ink);
     font-size: 14.5px; transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
+}
+.app input[type="number"], .app-dialogo input[type="number"] {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield; appearance: textfield;
+}
+.app input[type="number"]::-webkit-inner-spin-button,
+.app input[type="number"]::-webkit-outer-spin-button,
+.app-dialogo input[type="number"]::-webkit-inner-spin-button,
+.app-dialogo input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none; margin: 0;
 }
 .app textarea, .app-dialogo textarea { height: auto; padding: 10px 12px; resize: vertical; line-height: 1.5; }
 .app select, .app-dialogo select { appearance: none; -webkit-appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%234B5563' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
@@ -821,7 +831,7 @@ a.cal-ev:hover { filter: brightness(0.97); }
     .segmento label { min-height: 44px; }
     .pestanas a { height: 44px; }
     .pm-check label { min-height: 44px; align-items: center; }
-    .app input[type="text"], .app input[type="email"], .app input[type="date"], .app select, .app textarea, .entrada input[type="email"] { height: 44px; font-size: 16px; }
+    .app input[type="text"], .app input[type="number"], .app input[type="email"], .app input[type="date"], .app select, .app textarea, .entrada input[type="email"] { height: 44px; font-size: 16px; }
     .app textarea { height: auto; }
     .app .app-mes select { font-size: 15px; height: 44px; }
     /* Liquidaciones del mes en celular: cada trabajador es una ficha con sus acciones debajo, sin desplazamiento lateral */
@@ -908,6 +918,7 @@ a.cal-ev:hover { filter: brightness(0.97); }
     transition: border-color .15s var(--ease), background-color .15s var(--ease);
 }
 .fin-dropzone:hover, .fin-dropzone.arrastrando { border-color: var(--forest); background: var(--forest-50); }
+.fin-dropzone:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; border-color: var(--forest); background: var(--forest-50); }
 .fin-dropzone .material-icons { font-size: 28px; color: var(--forest-600); }
 .fin-dropzone strong { font-size: 14px; color: var(--ink); }
 .fin-dropzone span { font-size: 12.5px; color: var(--muted); }

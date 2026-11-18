@@ -259,7 +259,8 @@
     function exportar() {
         var est = D.estudio();
         var ufEl = document.getElementById('uf-value');
-        var ufTxt = ufEl && ufEl.value ? (' · UF ref.: $' + Number(ufEl.value).toLocaleString('es-CL')) : '';
+        var ufNum = ufEl && ufEl.value ? D.parseNumber(ufEl.value) : 0;
+        var ufTxt = ufNum > 0 ? (' · UF ref.: $' + D.num(ufNum, 2)) : '';
         var tIas = 0, tAviso = 0, tVac = 0, tPend = 0, tAfc = 0, tTot = 0;
         var filasDatos = state.results.map(function (r) {
             var ias = Math.round(r.ias), nav = Math.round(r.notice), vac = Math.round(r.vacation),
@@ -354,8 +355,14 @@
             var r = window.CLLiquidacionParametros.RESPALDO[p];
             if (r && r.uf) ufDef = r.uf;
         }
-        uf.value = ufDef;
-        uf.addEventListener('change', function () { if (state.records.length) calcularTodo(state.records); });
+        uf.value = D.num(ufDef, 2);
+        uf.addEventListener('change', function () {
+            var n = D.parseNumber(uf.value);
+            if (n > 0) uf.value = D.num(n, 2);
+            var liqUf = document.getElementById('liq-uf');
+            if (liqUf && n > 0 && liqUf.value !== uf.value) liqUf.value = uf.value;
+            if (state.records.length) calcularTodo(state.records);
+        });
 
         var drop = document.getElementById('drop-fin');
         var file = document.getElementById('file-fin');

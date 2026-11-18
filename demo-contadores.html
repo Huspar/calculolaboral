@@ -14,9 +14,9 @@
 <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.26.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.12.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.13.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -297,10 +297,17 @@
           <div class="panel" style="margin-bottom:16px">
             <div class="panel-head"><h2>Parámetros y carga de finiquitos</h2></div>
             <div class="panel-cuerpo">
-              <div class="param-bar">
+              <div class="rem-uf-strip">
                 <div class="lq-field">
                   <label for="uf-value">Valor UF del período</label>
-                  <input type="number" id="uf-value" step="0.01" min="1" placeholder="41.322,93">
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="uf-value" inputmode="decimal" data-tipo="uf" placeholder="41.322,93" aria-describedby="fin-uf-ayuda">
+                  </div>
+                </div>
+                <div class="rem-uf-contexto" id="fin-uf-ayuda">
+                  <span class="material-icons" aria-hidden="true">verified</span>
+                  <span>Indicador oficial del período sincronizado con Liquidaciones (tope legal 90 UF por año).</span>
                 </div>
               </div>
               <div class="fin-dropzone" id="drop-fin" role="button" tabindex="0" aria-label="Subir nómina de finiquitos">
@@ -361,16 +368,46 @@
           <div class="panel" style="margin-bottom:16px">
             <div class="panel-head"><h2>Parámetros previsionales y carga de nómina mensual</h2></div>
             <div class="panel-cuerpo">
-              <div class="param-bar">
-                <div class="lq-field"><label for="liq-tasa-mutual">Tasa mutual (%)</label><input type="number" id="liq-tasa-mutual" step="0.01" min="0.93" value="0.93"></div>
-                <div class="lq-field"><label for="liq-uf">UF del mes ($)</label><input type="number" id="liq-uf" step="0.01" min="1"></div>
-                <div class="lq-field"><label for="liq-utm">UTM del mes ($)</label><input type="number" id="liq-utm" step="1" min="1"></div>
-                <div class="lq-field"><label for="liq-mutual">Mutualidad</label><select id="liq-mutual"><option value="Mutual de Seguridad">Mutual de Seguridad</option><option value="ACHS">ACHS</option><option value="IST">IST</option><option value="ISL">ISL (sin mutual)</option></select></div>
-                <div class="lq-field"><label for="liq-ccaf">Caja de compensación</label><select id="liq-ccaf"><option value="">Sin CCAF</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
-                <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.543.210-3" autocomplete="off"></div>
-                <div class="lq-field"><label for="liq-comuna">Comuna empresa (LRE)</label><input type="text" id="liq-comuna" maxlength="40" placeholder="Santiago" autocomplete="off"></div>
+              <div class="param-grupo">
+                <div class="param-grupo-head">
+                  <span class="param-grupo-titulo">Indicadores del período</span>
+                  <span class="texto-ayuda" id="liq-fuente">UF y UTM vigentes del período (editables si tu cierre usa otro día).</span>
+                </div>
+                <div class="param-bar">
+                  <div class="lq-field">
+                    <label for="liq-uf">Valor UF del período</label>
+                    <div class="campo-unidad">
+                      <span class="campo-addon" aria-hidden="true">$</span>
+                      <input type="text" id="liq-uf" inputmode="decimal" data-tipo="uf" placeholder="41.322,93" aria-describedby="liq-fuente">
+                    </div>
+                  </div>
+                  <div class="lq-field">
+                    <label for="liq-utm">Valor UTM del período</label>
+                    <div class="campo-unidad">
+                      <span class="campo-addon" aria-hidden="true">$</span>
+                      <input type="text" id="liq-utm" inputmode="numeric" data-tipo="pesos" placeholder="67.294" aria-describedby="liq-fuente">
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p class="texto-ayuda" id="liq-fuente" style="margin-bottom:12px">UF y UTM se aplican según los parámetros vigentes del período.</p>
+              <div class="param-grupo">
+                <div class="param-grupo-head">
+                  <span class="param-grupo-titulo">Datos previsionales y LRE de la empresa</span>
+                </div>
+                <div class="param-bar">
+                  <div class="lq-field"><label for="liq-mutual">Mutualidad</label><select id="liq-mutual"><option value="Mutual de Seguridad">Mutual de Seguridad</option><option value="ACHS">ACHS</option><option value="IST">IST</option><option value="ISL">ISL (sin mutual)</option></select></div>
+                  <div class="lq-field">
+                    <label for="liq-tasa-mutual">Tasa mutual</label>
+                    <div class="campo-unidad">
+                      <input type="text" id="liq-tasa-mutual" inputmode="decimal" data-tipo="dec" value="0,93">
+                      <span class="campo-addon sufijo" aria-hidden="true">%</span>
+                    </div>
+                  </div>
+                  <div class="lq-field"><label for="liq-ccaf">Caja de compensación</label><select id="liq-ccaf"><option value="">Sin CCAF</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
+                  <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.543.210-3" autocomplete="off"></div>
+                  <div class="lq-field"><label for="liq-comuna">Comuna empresa (LRE)</label><input type="text" id="liq-comuna" maxlength="40" placeholder="Santiago" autocomplete="off"></div>
+                </div>
+              </div>
               <div class="fin-dropzone" id="drop-liq" role="button" tabindex="0" aria-label="Subir nómina del mes">
                 <span class="material-icons" aria-hidden="true">upload_file</span>
                 <strong>Arrastra la nómina mensual o haz clic para buscarla</strong>
@@ -461,16 +498,22 @@
                   </div>
                 </div>
               </section>
-              <div class="form-acciones" style="margin-top:14px">
-                <button class="btn btn-primario" type="button" id="btn-print-liq"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes</button>
-                <button class="btn" type="button" id="btn-csv-liq">Exportar Excel</button>
-                <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred <span class="preval-btn-badge" id="badge-err-previred" hidden>0</span></button>
-                <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE <span class="preval-btn-badge" id="badge-err-lre" hidden>0</span></button>
-                <button class="btn" type="button" id="btn-midt-lre-guia"><span class="material-icons" aria-hidden="true">checklist</span>Guía subir LRE a Mi DT</button>
-                <button class="btn" type="button" id="btn-nomina-liq"><span class="material-icons" aria-hidden="true">table_view</span>Nómina banco</button>
-                <button class="btn" type="button" id="btn-asiento-liq"><span class="material-icons" aria-hidden="true">account_balance</span>Asiento centralización</button>
-                <button class="btn" type="button" id="btn-asistente-liq"><span class="material-icons" aria-hidden="true">send</span>Enviar a Asistente Pyme</button>
-                <button class="btn" type="button" id="btn-cerrar-mes">Cerrar nómina</button>
+              <div class="acciones-liq-bloques">
+                <div class="acciones-liq-grupo">
+                  <span class="acciones-liq-etiqueta">Entregables oficiales</span>
+                  <button class="btn btn-primario" type="button" id="btn-print-liq"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes</button>
+                  <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred <span class="preval-btn-badge" id="badge-err-previred" hidden>0</span></button>
+                  <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE <span class="preval-btn-badge" id="badge-err-lre" hidden>0</span></button>
+                  <button class="btn" type="button" id="btn-midt-lre-guia"><span class="material-icons" aria-hidden="true">checklist</span>Guía subir LRE a Mi DT</button>
+                </div>
+                <div class="acciones-liq-grupo">
+                  <span class="acciones-liq-etiqueta">Contabilidad y cierre</span>
+                  <button class="btn" type="button" id="btn-csv-liq">Exportar Excel</button>
+                  <button class="btn" type="button" id="btn-nomina-liq"><span class="material-icons" aria-hidden="true">table_view</span>Nómina banco</button>
+                  <button class="btn" type="button" id="btn-asiento-liq"><span class="material-icons" aria-hidden="true">account_balance</span>Asiento centralización</button>
+                  <button class="btn" type="button" id="btn-asistente-liq"><span class="material-icons" aria-hidden="true">send</span>Enviar a Asistente Pyme</button>
+                  <button class="btn" type="button" id="btn-cerrar-mes">Cerrar nómina</button>
+                </div>
               </div>
               <div class="preval-botones-aviso" id="preval-botones-aviso" hidden role="status" aria-live="polite"></div>
             </div>
@@ -520,15 +563,25 @@
           <div class="panel-head"><h2>Carga de Registro de Compras y Ventas (RCV SII)</h2></div>
           <div class="panel-cuerpo">
             <div class="fin-form-grid" style="margin-bottom:14px">
-              <div class="lq-field"><label for="f29-tasa-ppm">Tasa PPM cód. 115 (%)</label><input type="number" id="f29-tasa-ppm" step="0.001" min="0" placeholder="0.125"><span class="texto-ayuda">ProPyme: 0,125% o 0,25% (Ley 21.850: 0,23% transitorio sujeto a circular SII; editable).</span></div>
+              <div class="lq-field">
+                <label for="f29-tasa-ppm">Tasa PPM cód. 115</label>
+                <div class="campo-unidad">
+                  <input type="text" id="f29-tasa-ppm" inputmode="decimal" data-tipo="dec" placeholder="0,125" aria-describedby="f29-tasa-ppm-ayuda">
+                  <span class="campo-addon sufijo" aria-hidden="true">%</span>
+                </div>
+                <span class="texto-ayuda" id="f29-tasa-ppm-ayuda">ProPyme: 0,125% o 0,25% (Ley 21.850: 0,23% transitorio).</span>
+              </div>
               <div class="lq-field f29-remanente-wrap">
                 <div class="f29-remanente-head">
-                  <label for="f29-remanente">Remanente anterior cód. 504 ($)</label>
+                  <label for="f29-remanente">Remanente anterior cód. 504</label>
                   <button type="button" class="btn-micro-calculo" id="btn-f29-asistente-utm" aria-expanded="false" aria-controls="f29-asistente-utm-card" title="Calcular reajuste oficial por variación de UTM (Art. 27 Ley de IVA)">
                     <span class="material-icons" aria-hidden="true">calculate</span><span>Reajuste UTM</span>
                   </button>
                 </div>
-                <input type="number" id="f29-remanente" step="1" min="0" placeholder="0">
+                <div class="campo-unidad">
+                  <span class="campo-addon" aria-hidden="true">$</span>
+                  <input type="text" id="f29-remanente" inputmode="numeric" data-tipo="pesos" placeholder="0" aria-describedby="f29-remanente-ayuda">
+                </div>
                 <span class="texto-ayuda" id="f29-remanente-ayuda">Reajuste UTM de presentación (evita objeción FM01).</span>
                 <div class="f29-asistente-utm-card" id="f29-asistente-utm-card" hidden>
                   <div class="asistente-utm-cabeza">
@@ -537,16 +590,25 @@
                   </div>
                   <div class="asistente-utm-grid">
                     <div class="utm-dato">
-                      <label class="utm-lbl" for="utm-calc-rem-ant">Remanente Cód. 77 previo ($)</label>
-                      <input type="number" id="utm-calc-rem-ant" class="mono" step="1" min="0" placeholder="Ej: 120000">
+                      <label class="utm-lbl" for="utm-calc-rem-ant">Remanente Cód. 77 previo</label>
+                      <div class="campo-unidad">
+                        <span class="campo-addon" aria-hidden="true">$</span>
+                        <input type="text" id="utm-calc-rem-ant" class="mono" inputmode="numeric" data-tipo="pesos" placeholder="120000">
+                      </div>
                     </div>
                     <div class="utm-dato">
                       <label class="utm-lbl" for="utm-val-ant">UTM declar. previa (<span id="utm-mes-ant-nom">Mes prev.</span>)</label>
-                      <input type="number" id="utm-val-ant" class="mono" step="1" min="1" value="66628">
+                      <div class="campo-unidad">
+                        <span class="campo-addon" aria-hidden="true">$</span>
+                        <input type="text" id="utm-val-ant" class="mono" inputmode="numeric" data-tipo="pesos" value="66628">
+                      </div>
                     </div>
                     <div class="utm-dato">
                       <label class="utm-lbl" for="utm-val-act">UTM declar. actual (<span id="utm-mes-act-nom">Mes decl.</span>)</label>
-                      <input type="number" id="utm-val-act" class="mono" step="1" min="1" value="66961">
+                      <div class="campo-unidad">
+                        <span class="campo-addon" aria-hidden="true">$</span>
+                        <input type="text" id="utm-val-act" class="mono" inputmode="numeric" data-tipo="pesos" value="66961">
+                      </div>
                     </div>
                   </div>
                   <div class="asistente-utm-resultado">
@@ -558,34 +620,50 @@
                   </button>
                 </div>
               </div>
-              <div class="lq-field"><label for="f29-hon-bruto">Boletas honorarios brutas ($)</label><input type="number" id="f29-hon-bruto" step="1" min="0" placeholder="0"></div>
-              <div class="lq-field fin-span-all"><label for="f29-iusc-manual">Impuesto Único trabajadores cód. 48 ($)</label><input type="number" id="f29-iusc-manual" step="1" min="0" placeholder="0"><span class="texto-ayuda" id="f29-iusc-ayuda">Se integra automáticamente cuando calculas Liquidaciones.</span></div>
+              <div class="lq-field">
+                <label for="f29-hon-bruto">Boletas honorarios brutas</label>
+                <div class="campo-unidad">
+                  <span class="campo-addon" aria-hidden="true">$</span>
+                  <input type="text" id="f29-hon-bruto" inputmode="numeric" data-tipo="pesos" placeholder="0">
+                </div>
+              </div>
+              <div class="lq-field fin-span-all">
+                <label for="f29-iusc-manual">Impuesto Único trabajadores cód. 48</label>
+                <div class="campo-unidad">
+                  <span class="campo-addon" aria-hidden="true">$</span>
+                  <input type="text" id="f29-iusc-manual" inputmode="numeric" data-tipo="pesos" placeholder="0" aria-describedby="f29-iusc-ayuda">
+                </div>
+                <span class="texto-ayuda" id="f29-iusc-ayuda">Se integra automáticamente cuando calculas Liquidaciones.</span>
+              </div>
             </div>
-            <div class="rcv-guia-card">
-              <div class="rcv-guia-head">
+            <details class="rcv-guia-details">
+              <summary>
                 <span class="material-icons" aria-hidden="true">help_outline</span>
-                <strong>¿Cómo descargar los archivos RCV desde el SII en 2 clics?</strong>
-              </div>
-              <div class="rcv-guia-pasos">
-                <div class="rcv-paso">
-                  <span class="rcv-paso-num">1</span>
-                  <div class="rcv-paso-info">
-                    <strong>Ingresa a sii.cl &gt; Servicios Online</strong>
-                    <p>Ve a <em>Impuestos Mensuales &gt; Registro de Compras y Ventas (RCV) &gt; Ingresar al RCV</em>. Elige el mes tributario.</p>
+                <span>¿Cómo descargar los archivos RCV desde el SII en 2 clics?</span>
+                <span class="material-icons rcv-guia-chevron" aria-hidden="true">expand_more</span>
+              </summary>
+              <div class="rcv-guia-card">
+                <div class="rcv-guia-pasos">
+                  <div class="rcv-paso">
+                    <span class="rcv-paso-num">1</span>
+                    <div class="rcv-paso-info">
+                      <strong>Ingresa a sii.cl &gt; Servicios Online</strong>
+                      <p>Ve a <em>Impuestos Mensuales &gt; Registro de Compras y Ventas (RCV) &gt; Ingresar al RCV</em>. Elige el mes tributario.</p>
+                    </div>
+                  </div>
+                  <div class="rcv-paso">
+                    <span class="rcv-paso-num">2</span>
+                    <div class="rcv-paso-info">
+                      <strong>Haz clic en «Descargar Detalles» (CSV o Excel)</strong>
+                      <p>Baja el archivo de <em>Ventas</em> y luego el de <em>Compras</em>. Arrástralos a las cajas de abajo; no necesitas abrirlos ni editarlos.</p>
+                    </div>
                   </div>
                 </div>
-                <div class="rcv-paso">
-                  <span class="rcv-paso-num">2</span>
-                  <div class="rcv-paso-info">
-                    <strong>Haz clic en «Descargar Detalles» (CSV o Excel)</strong>
-                    <p>Baja el archivo de <em>Ventas</em> y luego el de <em>Compras</em>. Arrástralos a las cajas de abajo; no necesitas abrirlos ni editarlos.</p>
-                  </div>
-                </div>
               </div>
-            </div>
+            </details>
             <div class="fin-split">
               <div class="rcv-drop-box">
-                <div class="fin-dropzone" id="drop-rcv-ventas" role="button" tabindex="0" aria-label="Subir RCV Ventas SII">
+                <div class="fin-dropzone" id="drop-rcv-ventas" role="button" tabindex="0" aria-label="Subir RCV Ventas SII" aria-describedby="rcv-ventas-estado">
                   <span class="material-icons" aria-hidden="true">north_east</span>
                   <strong>RCV Ventas SII (CSV o Excel)</strong>
                   <span>Facturas afectas, exentas, boletas y notas de crédito</span>
@@ -594,7 +672,7 @@
                 <span class="rcv-drop-estado" id="rcv-ventas-estado">Sin archivo cargado</span>
               </div>
               <div class="rcv-drop-box">
-                <div class="fin-dropzone" id="drop-rcv-compras" role="button" tabindex="0" aria-label="Subir RCV Compras SII">
+                <div class="fin-dropzone" id="drop-rcv-compras" role="button" tabindex="0" aria-label="Subir RCV Compras SII" aria-describedby="rcv-compras-estado">
                   <span class="material-icons" aria-hidden="true">south_west</span>
                   <strong>RCV Compras SII (CSV o Excel)</strong>
                   <span>Giro, supermercado, activo fijo y notas de crédito</span>
@@ -797,9 +875,9 @@
         </div>
 
         <div class="fin-filtros" role="tablist" aria-label="Subvistas de bancos y conciliación">
-          <button type="button" class="fin-chip activo" data-subbanco="conciliacion" role="tab" aria-selected="true">Conciliación Bancaria</button>
-          <button type="button" class="fin-chip" data-subbanco="cartera" role="tab" aria-selected="false">Cartera CxC / CxP (Aging)</button>
-          <button type="button" class="fin-chip" data-subbanco="tesoreria" role="tab" aria-selected="false">Tesorería y Parámetros</button>
+          <button type="button" class="fin-chip activo" data-subbanco="conciliacion" role="tab" aria-selected="true" aria-controls="sub-conciliacion">Conciliación Bancaria</button>
+          <button type="button" class="fin-chip" data-subbanco="cartera" role="tab" aria-selected="false" aria-controls="sub-bancos-cartera">Cartera CxC / CxP (Aging)</button>
+          <button type="button" class="fin-chip" data-subbanco="tesoreria" role="tab" aria-selected="false" aria-controls="sub-tesoreria">Tesorería y Parámetros</button>
         </div>
 
         <!-- Subvista Conciliación Inteligente -->
@@ -811,7 +889,6 @@
                 <p class="panel-ayuda">Cruza automáticamente tu cartola CSV con facturas RCV (±$100) y reglas repetitivas (Transbank, SII, Previred, comisiones).</p>
               </div>
               <div class="v-acciones">
-                <button type="button" class="btn btn-chico" id="btn-conc-cartola-ej">Cargar cartola ejemplo</button>
                 <button type="button" class="btn btn-chico btn-primario" id="btn-conc-centralizar">Centralizar conciliados en Diario</button>
               </div>
             </div>
@@ -862,7 +939,7 @@
 
         <!-- Subvista Cartera CxC / CxP (Aging) -->
         <div id="sub-bancos-cartera" hidden>
-          <div class="fin-cols-2">
+          <div class="fin-cols-2 fin-cols-2-tablas">
             <div class="panel">
               <div class="panel-head"><div><h2>Antigüedad Cuentas por Cobrar (CxC)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
               <div class="panel-cuerpo">
@@ -894,9 +971,27 @@
             <div class="panel-head"><h2>Parámetros de cobro, pago y banco para RLI y Flujo</h2></div>
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:16px">
-                <div class="lq-field"><label for="tes-banco-ini">Saldo inicial Banco ($)</label><input type="number" id="tes-banco-ini" step="1" min="0" value="0"></div>
-                <div class="lq-field"><label for="tes-pct-cobro">% Ventas del mes cobradas</label><input type="number" id="tes-pct-cobro" step="1" min="0" max="100" value="80"></div>
-                <div class="lq-field"><label for="tes-pct-pago">% Compras del giro pagadas</label><input type="number" id="tes-pct-pago" step="1" min="0" max="100" value="75"></div>
+                <div class="lq-field">
+                  <label for="tes-banco-ini">Saldo inicial Banco</label>
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="tes-banco-ini" inputmode="numeric" data-tipo="pesos" value="0">
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="tes-pct-cobro">Ventas del mes cobradas</label>
+                  <div class="campo-unidad">
+                    <input type="text" id="tes-pct-cobro" inputmode="decimal" data-tipo="dec" value="80">
+                    <span class="campo-addon sufijo" aria-hidden="true">%</span>
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="tes-pct-pago">Compras del giro pagadas</label>
+                  <div class="campo-unidad">
+                    <input type="text" id="tes-pct-pago" inputmode="decimal" data-tipo="dec" value="75">
+                    <span class="campo-addon sufijo" aria-hidden="true">%</span>
+                  </div>
+                </div>
               </div>
               <div style="display:grid;gap:10px">
                 <label class="pm-check"><input type="checkbox" id="tes-af-pagado" checked> Activo fijo del período efectivamente pagado (depreciación instantánea 14 D N°3)</label>
@@ -930,9 +1025,9 @@
         </div>
 
         <div class="fin-filtros" role="tablist" aria-label="Subvistas de contabilidad general">
-          <button type="button" class="fin-chip activo" data-sublibro="diario" role="tab" aria-selected="true">Libro Diario</button>
-          <button type="button" class="fin-chip" data-sublibro="mayor" role="tab" aria-selected="false">Libro Mayor</button>
-          <button type="button" class="fin-chip" data-sublibro="plan" role="tab" aria-selected="false">Plan de Cuentas</button>
+          <button type="button" class="fin-chip activo" data-sublibro="diario" role="tab" aria-selected="true" aria-controls="sub-diario">Libro Diario</button>
+          <button type="button" class="fin-chip" data-sublibro="mayor" role="tab" aria-selected="false" aria-controls="sub-mayor">Libro Mayor</button>
+          <button type="button" class="fin-chip" data-sublibro="plan" role="tab" aria-selected="false" aria-controls="sub-plan">Plan de Cuentas</button>
         </div>
 
         <!-- Subvista Diario -->
@@ -1087,9 +1182,9 @@
         </div>
 
         <div class="fin-filtros" role="tablist" aria-label="Subvistas de balance y RLI">
-          <button type="button" class="fin-chip activo" data-subbal="balance8" role="tab" aria-selected="true">Balance de 8 Columnas</button>
-          <button type="button" class="fin-chip" data-subbal="rli" role="tab" aria-selected="false">Hoja RLI ProPyme (Art. 14 D N°3)</button>
-          <button type="button" class="fin-chip" data-subbal="activo_fijo" role="tab" aria-selected="false">Activo Fijo y Deprec.</button>
+          <button type="button" class="fin-chip activo" data-subbal="balance8" role="tab" aria-selected="true" aria-controls="sub-balance8">Balance de 8 Columnas</button>
+          <button type="button" class="fin-chip" data-subbal="rli" role="tab" aria-selected="false" aria-controls="sub-rli">Hoja RLI ProPyme (Art. 14 D N°3)</button>
+          <button type="button" class="fin-chip" data-subbal="activo_fijo" role="tab" aria-selected="false" aria-controls="sub-activo-fijo">Activo Fijo y Deprec.</button>
         </div>
 
         <div id="sub-balance8">
@@ -1134,10 +1229,34 @@
             <div class="panel-head"><h2>Determinación de RLI ProPyme General (Art. 14 D N°3 LIR)</h2><span class="texto-ayuda">Flujo percibido y pagado</span></div>
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:14px">
-                <div class="lq-field"><label for="rli-cobros-ant">Cobros ventas ejercicios ant. ($)</label><input type="number" id="rli-cobros-ant" step="1" min="0" value="0"></div>
-                <div class="lq-field"><label for="rli-pagos-ant">Pagos egresos ejercicios ant. ($)</label><input type="number" id="rli-pagos-ant" step="1" min="0" value="0"></div>
-                <div class="lq-field"><label for="rli-agregados">Otros agregados art. 21/31 ($)</label><input type="number" id="rli-agregados" step="1" min="0" value="0"></div>
-                <div class="lq-field"><label for="rli-tasa-idpc">Tasa IDPC referencial (%)</label><input type="number" id="rli-tasa-idpc" step="0.1" min="0" max="35" value="12.5"></div>
+                <div class="lq-field">
+                  <label for="rli-cobros-ant">Cobros ventas ejercicios ant.</label>
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="rli-cobros-ant" inputmode="numeric" data-tipo="pesos" value="0">
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="rli-pagos-ant">Pagos egresos ejercicios ant.</label>
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="rli-pagos-ant" inputmode="numeric" data-tipo="pesos" value="0">
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="rli-agregados">Otros agregados art. 21/31</label>
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="rli-agregados" inputmode="numeric" data-tipo="pesos" value="0">
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="rli-tasa-idpc">Tasa IDPC referencial</label>
+                  <div class="campo-unidad">
+                    <input type="text" id="rli-tasa-idpc" inputmode="decimal" data-tipo="dec" value="12,5">
+                    <span class="campo-addon sufijo" aria-hidden="true">%</span>
+                  </div>
+                </div>
               </div>
               <div class="tabla-contable-wrap">
                 <table class="tabla-contable">
@@ -1180,10 +1299,34 @@
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:12px">
                 <div class="lq-field"><label for="af-desc">Descripción del bien</label><input type="text" id="af-desc" placeholder="Ej: Horno industrial / Furgón"></div>
-                <div class="lq-field"><label for="af-valor">Valor neto compra ($)</label><input type="number" id="af-valor" min="0" step="1" placeholder="1600000"></div>
-                <div class="lq-field"><label for="af-iva-norec">IVA no recuperable ($)</label><input type="number" id="af-iva-norec" min="0" step="1" value="0"></div>
-                <div class="lq-field"><label for="af-vida">Vida útil normal SII (años)</label><input type="number" id="af-vida" min="1" max="50" value="7"></div>
-                <div class="lq-field"><label for="af-meses">Meses uso en ejercicio</label><input type="number" id="af-meses" min="1" max="12" value="12"></div>
+                <div class="lq-field">
+                  <label for="af-valor">Valor neto compra</label>
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="af-valor" inputmode="numeric" data-tipo="pesos" placeholder="1600000">
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="af-iva-norec">IVA no recuperable</label>
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="af-iva-norec" inputmode="numeric" data-tipo="pesos" value="0">
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="af-vida">Vida útil normal SII</label>
+                  <div class="campo-unidad">
+                    <input type="text" id="af-vida" inputmode="numeric" data-tipo="num" value="7">
+                    <span class="campo-addon sufijo" aria-hidden="true">años</span>
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="af-meses">Meses uso en ejercicio</label>
+                  <div class="campo-unidad">
+                    <input type="text" id="af-meses" inputmode="numeric" data-tipo="num" value="12">
+                    <span class="campo-addon sufijo" aria-hidden="true">meses</span>
+                  </div>
+                </div>
                 <div class="lq-field"><label for="af-mod14a">Método en Régimen 14 A</label>
                   <select id="af-mod14a" class="lq-select">
                     <option value="normal">Normal (Art. 31 N°5)</option>
@@ -1371,7 +1514,7 @@
           </div>
         </div>
 
-        <div class="fin-cols-2" style="margin-bottom:16px">
+        <div class="fin-cols-2 fin-cols-2-tablas" style="margin-bottom:16px">
           <!-- BHE SII -->
           <div class="panel">
             <div class="panel-head">
@@ -1386,7 +1529,7 @@
                 <button type="button" class="btn" id="btn-imp-bhe-subir">Subir CSV BHE SII</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-bhe-ejemplo">Cargar BHE ejemplo (15,25%)</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-bhe-limpiar">Limpiar</button>
-                <input type="file" id="file-imp-bhe" accept=".csv,.txt,.tsv" hidden>
+                <input type="file" id="file-imp-bhe" accept=".csv,.txt,.tsv" class="sr-only" tabindex="-1" aria-label="Archivo CSV BHE recibidas SII">
               </div>
               <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
                 <div class="fin-kpi"><span class="fin-kpi-label">Vigentes</span><span class="fin-kpi-val mono" id="imp-bhe-vigentes">0</span></div>
@@ -1426,7 +1569,7 @@
                 <button type="button" class="btn btn-primario" id="btn-imp-cartola-subir">Subir Cartola CSV</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-cartola-ejemplo">Cargar cartola ejemplo</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-cartola-centralizar">Centralizar en Diario</button>
-                <input type="file" id="file-imp-cartola" accept=".csv,.txt,.tsv" hidden>
+                <input type="file" id="file-imp-cartola" accept=".csv,.txt,.tsv" class="sr-only" tabindex="-1" aria-label="Archivo CSV cartola bancaria">
               </div>
               <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
                 <div class="fin-kpi"><span class="fin-kpi-label">Movimientos</span><span class="fin-kpi-val mono" id="imp-car-movs">0</span></div>
@@ -1474,11 +1617,11 @@
         </div>
 
         <div class="fin-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
-          <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true">DJ 1887 y Cert. N°6</button>
-          <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false">DJ 1879 y Cert. N°1</button>
-          <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false">DJ 1947 / 1948</button>
-          <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false">CPT Simplificado</button>
-          <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false">Propuesta F22 (IDPC vs PPM)</button>
+          <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true" aria-controls="subddjj-1887">DJ 1887 y Cert. N°6</button>
+          <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false" aria-controls="subddjj-1879">DJ 1879 y Cert. N°1</button>
+          <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false" aria-controls="subddjj-1947">DJ 1947 / 1948</button>
+          <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false" aria-controls="subddjj-cpt">CPT Simplificado</button>
+          <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false" aria-controls="subddjj-f22">Propuesta F22 (IDPC vs PPM)</button>
         </div>
 
         <!-- DJ 1887 -->
@@ -1561,8 +1704,20 @@
               <div class="fin-form-grid" style="margin-bottom:14px">
                 <div class="lq-field"><label for="ddjj-socios-rut">RUT Propietario principal</label><input type="text" id="ddjj-socios-rut" value="12.345.678-5"></div>
                 <div class="lq-field"><label for="ddjj-socios-nombre">Nombre propietario</label><input type="text" id="ddjj-socios-nombre" value="Socio titular"></div>
-                <div class="lq-field"><label for="ddjj-socios-pct">% Participación</label><input type="number" id="ddjj-socios-pct" min="1" max="100" value="100"></div>
-                <div class="lq-field"><label for="ddjj-retiros-totales">Retiros / Dividendos ($)</label><input type="number" id="ddjj-retiros-totales" min="0" step="1" value="0"></div>
+                <div class="lq-field">
+                  <label for="ddjj-socios-pct">Participación</label>
+                  <div class="campo-unidad">
+                    <input type="text" id="ddjj-socios-pct" inputmode="decimal" data-tipo="dec" value="100">
+                    <span class="campo-addon sufijo" aria-hidden="true">%</span>
+                  </div>
+                </div>
+                <div class="lq-field">
+                  <label for="ddjj-retiros-totales">Retiros / Dividendos</label>
+                  <div class="campo-unidad">
+                    <span class="campo-addon" aria-hidden="true">$</span>
+                    <input type="text" id="ddjj-retiros-totales" inputmode="numeric" data-tipo="pesos" value="0">
+                  </div>
+                </div>
               </div>
               <div class="tabla-contable-wrap">
                 <table class="tabla-contable compacta">
@@ -1593,13 +1748,13 @@
             </div>
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:14px">
-                <div class="lq-field"><label for="cpt-anterior">CPT Anterior ($)</label><input type="number" id="cpt-anterior" step="1" value="10000000"></div>
-                <div class="lq-field"><label for="cpt-aumentos">Aumentos de capital ($)</label><input type="number" id="cpt-aumentos" min="0" step="1" value="0"></div>
-                <div class="lq-field"><label for="cpt-disminuciones">Disminuciones de capital ($)</label><input type="number" id="cpt-disminuciones" min="0" step="1" value="0"></div>
-                <div class="lq-field"><label for="cpt-retiros">Retiros o dividendos ($)</label><input type="number" id="cpt-retiros" min="0" step="1" value="0"></div>
-                <div class="lq-field"><label for="cpt-rechazados">Gastos rechazados ($)</label><input type="number" id="cpt-rechazados" min="0" step="1" value="0"></div>
-                <div class="lq-field"><label for="cpt-idpc">IDPC pagado ($)</label><input type="number" id="cpt-idpc" min="0" step="1" value="0"></div>
-                <div class="lq-field"><label for="cpt-cap-aportado">Capital aportado reajustado ($)</label><input type="number" id="cpt-cap-aportado" min="0" step="1" value="10000000"></div>
+                <div class="lq-field"><label for="cpt-anterior">CPT Anterior</label><div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="cpt-anterior" inputmode="numeric" data-tipo="pesos" value="10000000"></div></div>
+                <div class="lq-field"><label for="cpt-aumentos">Aumentos de capital</label><div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="cpt-aumentos" inputmode="numeric" data-tipo="pesos" value="0"></div></div>
+                <div class="lq-field"><label for="cpt-disminuciones">Disminuciones de capital</label><div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="cpt-disminuciones" inputmode="numeric" data-tipo="pesos" value="0"></div></div>
+                <div class="lq-field"><label for="cpt-retiros">Retiros o dividendos</label><div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="cpt-retiros" inputmode="numeric" data-tipo="pesos" value="0"></div></div>
+                <div class="lq-field"><label for="cpt-rechazados">Gastos rechazados</label><div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="cpt-rechazados" inputmode="numeric" data-tipo="pesos" value="0"></div></div>
+                <div class="lq-field"><label for="cpt-idpc">IDPC pagado</label><div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="cpt-idpc" inputmode="numeric" data-tipo="pesos" value="0"></div></div>
+                <div class="lq-field"><label for="cpt-cap-aportado">Capital aportado reajustado</label><div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="cpt-cap-aportado" inputmode="numeric" data-tipo="pesos" value="10000000"></div></div>
               </div>
               <div class="tabla-contable-wrap">
                 <table class="tabla-contable compacta">
@@ -1641,9 +1796,19 @@
             </div>
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:14px">
-                <div class="lq-field"><label for="f22-ppm-anual">PPM acumulados nominales del año ($)</label><input type="number" id="f22-ppm-anual" min="0" step="1" placeholder="0"><span class="texto-ayuda">Si queda vacío usa el PPM del mes actual.</span></div>
-                <div class="lq-field"><label for="f22-factor-ppm">Factor actualización promedio SII</label><input type="number" id="f22-factor-ppm" min="1" step="0.001" value="1.018"></div>
-                <div class="lq-field"><label for="f22-otros-creditos">Otros créditos al IDPC ($)</label><input type="number" id="f22-otros-creditos" min="0" step="1" value="0"></div>
+                <div class="lq-field">
+                  <label for="f22-ppm-anual">PPM acumulados nominales del año</label>
+                  <div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="f22-ppm-anual" inputmode="numeric" data-tipo="pesos" placeholder="0" aria-describedby="f22-ppm-anual-ayuda"></div>
+                  <span class="texto-ayuda" id="f22-ppm-anual-ayuda">Si queda vacío usa el PPM del mes actual.</span>
+                </div>
+                <div class="lq-field">
+                  <label for="f22-factor-ppm">Factor actualización promedio SII</label>
+                  <div class="campo-unidad"><input type="text" id="f22-factor-ppm" inputmode="decimal" data-tipo="dec" value="1,018"><span class="campo-addon sufijo" aria-hidden="true">×</span></div>
+                </div>
+                <div class="lq-field">
+                  <label for="f22-otros-creditos">Otros créditos al IDPC</label>
+                  <div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" id="f22-otros-creditos" inputmode="numeric" data-tipo="pesos" value="0"></div>
+                </div>
               </div>
               <div class="tabla-contable-wrap">
                 <table class="tabla-contable compacta">
@@ -1666,7 +1831,7 @@
       <section class="vista" id="suite-reportes" hidden>
         <div class="v-head">
           <div>
-            <h1 class="v-titulo">Informes y Certificados PDF</h1>
+            <h1 class="v-titulo">Informes, Certificados y WhatsApp</h1>
             <p class="v-sub">Configura el encabezado y firma de tu estudio contable para emitir certificados y resúmenes para tus clientes.</p>
           </div>
         </div>
@@ -2336,8 +2501,8 @@
 <script src="/js/liquidacion_valores.js"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/pyme_excel.js?v=2.0.1"></script>
-<script src="/js/demo_comun.js?v=1.7.1"></script>
-<script src="/js/demo_contadores.js?v=1.3.1"></script>
+<script src="/js/demo_comun.js?v=1.8.0"></script>
+<script src="/js/demo_contadores.js?v=1.4.0"></script>
 <script src="/js/previred_generador.js?v=1.5.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
@@ -2350,14 +2515,14 @@
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.2.0"></script>
 <script src="/js/contadores_prevalidador.js?v=1.1.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.9.0"></script>
+<script src="/js/demo_liquidaciones.js?v=2.10.0"></script>
 <script src="/js/contadores_f29.js?v=1.2.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
 <script src="/js/contadores_sii.js?v=1.3.0"></script>
-<script src="/js/demo_suite.js?v=2.7.0"></script>
+<script src="/js/demo_suite.js?v=2.8.0"></script>
 <script src="/js/demo_sii.js?v=1.3.0"></script>
 <script src="/js/demo_mcp.js?v=1.0.0"></script>
 <script src="/js/demo_portal_estudio.js?v=1.0.0"></script>

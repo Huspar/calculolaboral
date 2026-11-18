@@ -573,7 +573,7 @@
         var uAntEl = $('utm-val-ant');
         var uActEl = $('utm-val-act');
         if (!remEl || !uAntEl || !uActEl || !F29 || !F29.reajustarRemanenteUtm) return null;
-        var res = F29.reajustarRemanenteUtm(remEl.value, uAntEl.value, uActEl.value);
+        var res = F29.reajustarRemanenteUtm(D.parseNumber(remEl.value), D.parseNumber(uAntEl.value), D.parseNumber(uActEl.value));
         if ($('utm-var-pct')) {
             var sign = res.variacionPct >= 0 ? '+' : '';
             $('utm-var-pct').textContent = sign + D.num(res.variacionPct, 3) + '%';
@@ -954,11 +954,12 @@
         if (!cont) return;
         if (!$('manual-fecha').value) $('manual-fecha').value = periodoActual() + '-28';
         cont.innerHTML = ui.lineasManualesDraft.map(function (l, i) {
+            var nro = i + 1;
             return '<div class="manual-fila" data-idx="' + i + '">' +
-                '<select data-m-campo="cuenta" aria-label="Cuenta contable">' + opcionesPlanCuentas(l.cuenta) + '</select>' +
-                '<input type="number" min="0" step="1" placeholder="Debe ($)" data-m-campo="debe" value="' + (l.debe !== '' ? l.debe : '') + '">' +
-                '<input type="number" min="0" step="1" placeholder="Haber ($)" data-m-campo="haber" value="' + (l.haber !== '' ? l.haber : '') + '">' +
-                (ui.lineasManualesDraft.length > 2 ? '<button type="button" class="btn btn-chico" data-m-quitar="' + i + '" aria-label="Quitar línea">Quitar</button>' : '') +
+                '<select data-m-campo="cuenta" aria-label="Cuenta contable línea ' + nro + '">' + opcionesPlanCuentas(l.cuenta) + '</select>' +
+                '<div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" inputmode="numeric" data-tipo="pesos" placeholder="Debe" aria-label="Debe en pesos línea ' + nro + '" data-m-campo="debe" value="' + (l.debe !== '' ? D.esc(l.debe) : '') + '"></div>' +
+                '<div class="campo-unidad"><span class="campo-addon" aria-hidden="true">$</span><input type="text" inputmode="numeric" data-tipo="pesos" placeholder="Haber" aria-label="Haber en pesos línea ' + nro + '" data-m-campo="haber" value="' + (l.haber !== '' ? D.esc(l.haber) : '') + '"></div>' +
+                (ui.lineasManualesDraft.length > 2 ? '<button type="button" class="btn btn-chico" data-m-quitar="' + i + '" aria-label="Quitar línea ' + nro + '">Quitar</button>' : '') +
                 '</div>';
         }).join('');
         actualizarCuadreManual();
@@ -967,8 +968,8 @@
     function actualizarCuadreManual() {
         var debe = 0, haber = 0;
         ui.lineasManualesDraft.forEach(function (l) {
-            debe += Math.max(0, Math.round(Number(l.debe) || 0));
-            haber += Math.max(0, Math.round(Number(l.haber) || 0));
+            debe += Math.max(0, Math.round(D.parseNumber(l.debe) || 0));
+            haber += Math.max(0, Math.round(D.parseNumber(l.haber) || 0));
         });
         var el = $('manual-cuadre');
         if (!el) return;
@@ -1679,7 +1680,7 @@
             $('tbody-aging-cxp').innerHTML = renderFilasCartera(listaCxp, 'cxp', 'Sin facturas CxP en este período.');
         }
 
-        Array.prototype.forEach.call(document.querySelectorAll('#sub-conciliacion input, #sub-conciliacion select, #btn-regla-agregar, #btn-conc-centralizar, #btn-conc-cartola-ej, #btn-bancos-subir-cartola, #btn-bancos-ejemplo, .btn-match-confirmar, .btn-match-descartar, .btn-cartera-toggle'), function (el) {
+        Array.prototype.forEach.call(document.querySelectorAll('#sub-conciliacion input, #sub-conciliacion select, #btn-regla-agregar, #btn-conc-centralizar, #btn-bancos-subir-cartola, #btn-bancos-ejemplo, .btn-match-confirmar, .btn-match-descartar, .btn-cartera-toggle'), function (el) {
             el.disabled = bloqueado;
         });
     }
@@ -1923,11 +1924,38 @@
     document.addEventListener('DOMContentLoaded', function () {
         if (!$('suite-modulos')) return;
 
-        // Navegacion de 5 modulos
+        // Navegacion de modulos
         Array.prototype.forEach.call(document.querySelectorAll('.suite-mod-btn'), function (btn) {
             btn.addEventListener('click', function () {
                 cambiarModulo(btn.getAttribute('data-modulo'));
             });
+        });
+
+        // Teclado WAI-ARIA en pestañas internas (.fin-filtros[role="tablist"]) y dropzones
+        document.addEventListener('keydown', function (ev) {
+            var dz = ev.target && ev.target.classList && ev.target.classList.contains('fin-dropzone') ? ev.target : null;
+            if (dz && (ev.key === 'Enter' || ev.key === ' ')) {
+                ev.preventDefault();
+                dz.click();
+                return;
+            }
+            var tab = ev.target && ev.target.getAttribute && ev.target.getAttribute('role') === 'tab' ? ev.target : null;
+            if (!tab) return;
+            var list = tab.closest('[role="tablist"]');
+            if (!list) return;
+            var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+            var idx = tabs.indexOf(tab);
+            if (idx < 0) return;
+            var next = -1;
+            if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') next = (idx + 1) % tabs.length;
+            else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') next = (idx - 1 + tabs.length) % tabs.length;
+            else if (ev.key === 'Home') next = 0;
+            else if (ev.key === 'End') next = tabs.length - 1;
+            if (next >= 0) {
+                ev.preventDefault();
+                tabs[next].focus();
+                tabs[next].click();
+            }
         });
 
         // Sincronizar periodo entre F29 y Liquidaciones
@@ -2034,7 +2062,7 @@
             el.addEventListener('input', function () {
                 guardarEstadoActual(function (est) {
                     if (id === 'f29-remanente') est.remanenteAnterior = Math.max(0, Math.round(D.parseNumber(el.value)));
-                    if (id === 'f29-tasa-ppm') est.tasaPpmPersonalizada = el.value;
+                    if (id === 'f29-tasa-ppm') est.tasaPpmPersonalizada = el.value.trim() === '' ? '' : (D.parseDecimal ? D.parseDecimal(el.value) : D.parseNumber(el.value));
                     if (id === 'f29-iusc-manual') est.iuscManual = el.value;
                     if (id === 'f29-hon-bruto') {
                         est.honorariosBruto = Math.max(0, Math.round(D.parseNumber(el.value)));
@@ -2072,8 +2100,8 @@
                 if (!res || !res.reajustado) { D.avisar('Ingresa el remanente del período anterior y ambas UTM.'); return; }
                 guardarEstadoActual(function (est) {
                     est.remanente77MesAnterior = Math.max(0, Math.round(D.parseNumber($('utm-calc-rem-ant').value)));
-                    est.utmMesPresentacionAnterior = Number($('utm-val-ant').value) || '';
-                    est.utmMesPresentacionActual = Number($('utm-val-act').value) || '';
+                    est.utmMesPresentacionAnterior = Math.round(D.parseNumber($('utm-val-ant').value)) || '';
+                    est.utmMesPresentacionActual = Math.round(D.parseNumber($('utm-val-act').value)) || '';
                     est.remanenteAnterior = res.reajustado;
                 });
                 alternarUtmCard(false);
@@ -2559,8 +2587,8 @@
             el.addEventListener('change', function () {
                 guardarEstadoActual(function (est) {
                     est.tesoreria.saldoInicialBanco = Math.max(0, Math.round(D.parseNumber($('tes-banco-ini').value)));
-                    est.tesoreria.pctVentasCobradas = Math.max(0, Math.min(100, Number($('tes-pct-cobro').value) || 0));
-                    est.tesoreria.pctComprasPagadas = Math.max(0, Math.min(100, Number($('tes-pct-pago').value) || 0));
+                    est.tesoreria.pctVentasCobradas = Math.max(0, Math.min(100, D.parseDecimal($('tes-pct-cobro').value) || 0));
+                    est.tesoreria.pctComprasPagadas = Math.max(0, Math.min(100, D.parseDecimal($('tes-pct-pago').value) || 0));
                     est.tesoreria.activoFijoPagado = $('tes-af-pagado').checked;
                     est.tesoreria.sueldosPagados = $('tes-sueldos-pagados').checked;
                     est.tesoreria.honorariosPagados = $('tes-hon-pagados').checked;
@@ -2705,7 +2733,7 @@
                     est.rliAjustes.cobrosAnterioresNetos = Math.max(0, Math.round(D.parseNumber($('rli-cobros-ant').value)));
                     est.rliAjustes.pagosAnterioresNetos = Math.max(0, Math.round(D.parseNumber($('rli-pagos-ant').value)));
                     est.rliAjustes.otrosAgregados = Math.max(0, Math.round(D.parseNumber($('rli-agregados').value)));
-                    est.rliAjustes.tasaIdpc = Math.max(0, Number($('rli-tasa-idpc').value) || 0);
+                    est.rliAjustes.tasaIdpc = Math.max(0, D.parseDecimal($('rli-tasa-idpc').value) || 0);
                 });
                 refrescarTodo();
             });
@@ -3210,7 +3238,7 @@
                     est.socios = [{
                         rut: ($('ddjj-socios-rut') && $('ddjj-socios-rut').value.trim()) || '12.345.678-5',
                         nombre: ($('ddjj-socios-nombre') && $('ddjj-socios-nombre').value.trim()) || 'Socio titular',
-                        porcentaje: Math.max(1, Math.min(100, Number($('ddjj-socios-pct') && $('ddjj-socios-pct').value) || 100)),
+                        porcentaje: Math.max(1, Math.min(100, D.parseDecimal($('ddjj-socios-pct') && $('ddjj-socios-pct').value) || 100)),
                         retiros: Math.max(0, Math.round(D.parseNumber($('ddjj-retiros-totales') && $('ddjj-retiros-totales').value)))
                     }];
                 });
@@ -3275,8 +3303,8 @@
                     fechaCompra: periodoActual() + '-15',
                     valorNetoPagado: val,
                     ivaNoRecuperable: Math.max(0, Math.round(D.parseNumber($('af-iva-norec') && $('af-iva-norec').value))),
-                    vidaUtilNormalAnios: Math.max(1, Math.round(Number($('af-vida') && $('af-vida').value) || 5)),
-                    mesesUsoEjercicio: Math.max(1, Math.min(12, Math.round(Number($('af-meses') && $('af-meses').value) || 12))),
+                    vidaUtilNormalAnios: Math.max(1, Math.round(D.parseNumber($('af-vida') && $('af-vida').value) || 5)),
+                    mesesUsoEjercicio: Math.max(1, Math.min(12, Math.round(D.parseNumber($('af-meses') && $('af-meses').value) || 12))),
                     modalidad14A: ($('af-mod14a') && $('af-mod14a').value) || 'normal',
                     pagado: $('af-pagado') ? $('af-pagado').checked : true,
                     esUsado: $('af-usado') ? $('af-usado').checked : false,
@@ -3401,11 +3429,7 @@
                 aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));
             });
         }
-        if ($('btn-conc-cartola-ej') && Imp) {
-            $('btn-conc-cartola-ej').addEventListener('click', function () {
-                aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));
-            });
-        }
+
         if ($('btn-regla-agregar')) {
             $('btn-regla-agregar').addEventListener('click', function () {
                 if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
@@ -3531,7 +3555,7 @@
                     est.f22Ajustes.ppmManual = ($('f22-ppm-anual') && $('f22-ppm-anual').value.trim() !== '')
                         ? Math.max(0, Math.round(D.parseNumber($('f22-ppm-anual').value)))
                         : '';
-                    est.f22Ajustes.factorPpm = Math.max(1, Number($('f22-factor-ppm') && $('f22-factor-ppm').value) || 1);
+                    est.f22Ajustes.factorPpm = Math.max(1, D.parseDecimal($('f22-factor-ppm') && $('f22-factor-ppm').value) || 1);
                     est.f22Ajustes.otrosCreditos = Math.max(0, Math.round(D.parseNumber($('f22-otros-creditos') && $('f22-otros-creditos').value)));
                 });
                 refrescarTodo();

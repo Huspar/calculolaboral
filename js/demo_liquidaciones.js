@@ -124,8 +124,12 @@
     }
 
     function pintarValores(mes) {
-        document.getElementById('liq-uf').value = mes.uf;
-        document.getElementById('liq-utm').value = mes.utm;
+        var ufTxt = D && D.num ? D.num(mes.uf, 2) : mes.uf;
+        var utmTxt = D && D.num ? D.num(mes.utm, 0) : mes.utm;
+        document.getElementById('liq-uf').value = ufTxt;
+        document.getElementById('liq-utm').value = utmTxt;
+        var ufFin = document.getElementById('uf-value');
+        if (ufFin && document.activeElement !== ufFin) ufFin.value = ufTxt;
     }
 
     function mesEfectivo() {
@@ -219,7 +223,7 @@
     // se usa la minima legal 0,93% que trae el campo por defecto.
     function tasaMutualElegida() {
         var el = document.getElementById('liq-tasa-mutual');
-        var v = el ? D.parseNumber(el.value) : 0;
+        var v = el ? (D.parseDecimal ? D.parseDecimal(el.value) : D.parseNumber(el.value)) : 0;
         return v > 0 ? v : 0.93;
     }
 
@@ -1219,7 +1223,23 @@
 
         ['liq-uf', 'liq-utm', 'liq-tasa-mutual'].forEach(function (id) {
             var el = document.getElementById(id);
-            el.addEventListener('change', function () { if (state.records.length) calcularTodo(); });
+            el.addEventListener('change', function () {
+                if (id === 'liq-uf') {
+                    var nUf = D.parseNumber(el.value);
+                    if (nUf > 0) {
+                        el.value = D.num(nUf, 2);
+                        var ufFin = document.getElementById('uf-value');
+                        if (ufFin && ufFin.value !== el.value) ufFin.value = el.value;
+                    }
+                } else if (id === 'liq-utm') {
+                    var nUtm = D.parseNumber(el.value);
+                    if (nUtm > 0) el.value = D.num(nUtm, 0);
+                } else if (id === 'liq-tasa-mutual') {
+                    var nTas = D.parseDecimal ? D.parseDecimal(el.value) : D.parseNumber(el.value);
+                    if (nTas > 0) el.value = String(nTas).replace('.', ',');
+                }
+                if (state.records.length) calcularTodo();
+            });
         });
 
         var drop = document.getElementById('drop-liq');
