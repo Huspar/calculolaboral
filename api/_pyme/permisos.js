@@ -38,6 +38,7 @@ const RUTAS = {
     'sii-estado': { GET: 'ver' },
     'sii-credenciales': { POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
     'sii-sync': { GET: 'ver', POST: 'liquidar' },
+    'sii-sync-all': { POST: 'liquidar' },
     'sii-datos': { GET: 'ver' }
 };
 

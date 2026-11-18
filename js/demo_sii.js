@@ -30,6 +30,14 @@
         error: ''
     };
 
+    var batchSync = {
+        activo: false,
+        total: 0,
+        completadas: 0,
+        empresaActual: '',
+        estadosPorCompany: {}
+    };
+
     var modalState = {
         metodo: 'CLAVE_TRIBUTARIA',
         clienteNombre: ''
@@ -295,8 +303,18 @@
                 : est.codigo === 'error' ? 'sello-riesgo' : 'sello-guardada';
 
         if (est.vinculo && est.vinculo.hasCredentials) {
+            var estadoBatch = batchSync.estadosPorCompany[est.vinculo.companyId];
+            var badgeCls = cls;
+            var badgeIco = est.icono;
+            var badgeTxt = est.codigo === 'conectado' ? 'Conectado' : est.sello;
+            var spin = est.spin;
+            if (estadoBatch === 'QUEUED') { badgeCls = 'sello-guardada'; badgeIco = 'schedule'; badgeTxt = 'En cola'; spin = false; }
+            else if (estadoBatch === 'RUNNING') { badgeCls = 'sello-preparada'; badgeIco = 'sync'; badgeTxt = 'Sincronizando...'; spin = true; }
+            else if (estadoBatch === 'COMPLETED') { badgeCls = 'sello-emitida'; badgeIco = 'cloud_done'; badgeTxt = 'Sincronizado'; spin = false; }
+            else if (estadoBatch === 'ERROR') { badgeCls = 'sello-riesgo'; badgeIco = 'error_outline'; badgeTxt = 'Fallo'; spin = false; }
+
             return '<div class="torre-sii-celda">' +
-                '<span class="sello ' + cls + '" title="Empresa conectada al SII"><span class="material-icons' + (est.spin ? ' sii-spin' : '') + '" aria-hidden="true">' + est.icono + '</span>' + D.esc(est.codigo === 'conectado' ? 'Conectado' : est.sello) + '</span>' +
+                '<span class="sello ' + badgeCls + '" title="Empresa conectada al SII"><span class="material-icons' + (spin ? ' sii-spin' : '') + '" aria-hidden="true">' + badgeIco + '</span>' + D.esc(badgeTxt) + '</span>' +
                 '<button type="button" class="btn-icono-chico" title="Sincronizar período" aria-label="Sincronizar período de ' + D.esc(clienteInfo.nombre) + '" data-sii-sync="' + D.esc(clienteInfo.nombre) + '"><span class="material-icons" aria-hidden="true">sync</span></button>' +
                 '<button type="button" class="btn-icono-chico" title="Gestionar conexión SII" aria-label="Configurar SII de ' + D.esc(clienteInfo.nombre) + '" data-sii-config="' + D.esc(clienteInfo.nombre) + '"><span class="material-icons" aria-hidden="true">settings</span></button>' +
                 '</div>';
@@ -305,6 +323,11 @@
             '<span class="sello ' + cls + '">' + D.esc(rutTxt ? 'Sin clave SII' : 'Modo CSV') + '</span>' +
             '<button type="button" class="btn btn-chico" data-sii-config="' + D.esc(clienteInfo.nombre) + '">Conectar</button>' +
             '</div>';
+    }
+
+    function filaActivaSync(clienteInfo) {
+        var est = estadoVisualCliente(clienteInfo.nombre);
+        return !!(est.vinculo && batchSync.estadosPorCompany[est.vinculo.companyId] === 'RUNNING');
     }
 
     // ---------- Sesión y descubrimiento de empresas en SII Gateway ----------
@@ -691,16 +714,18 @@
                 return;
             }
 
-            // FULL_SYNC: traer RCV Ventas, RCV Compras, BHE Recibidas y F29 oficial en paralelo
+            // FULL_SYNC: traer RCV Ventas, RCV Compras (REGISTRO + PENDIENTE), BHE Recibidas y F29 oficial en paralelo
             var resultados = await Promise.all([
                 api.obtenerRcv(vinculo.companyId, { period: per, operacion: 'VENTA', all: true }),
                 api.obtenerRcv(vinculo.companyId, { period: per, operacion: 'COMPRA', all: true }),
                 api.obtenerBhe(vinculo.companyId, { period: per, direction: 'RECIBIDA', all: true }).catch(function () { return null; }),
-                api.obtenerF29(vinculo.companyId, { period: per }).catch(function () { return null; })
+                api.obtenerF29(vinculo.companyId, { period: per }).catch(function () { return null; }),
+                api.obtenerRcv(vinculo.companyId, { period: per, operacion: 'COMPRA', estadoContab: 'PENDIENTE', all: true }).catch(function () { return null; })
             ]);
 
             var ventasNorm = Sii.normalizarRcvDesdeGateway(resultados[0], 'ventas');
             var comprasNorm = Sii.normalizarRcvDesdeGateway(resultados[1], 'compras');
+            var pendientesAcuse = Sii.normalizarPendientesDesdeGateway ? Sii.normalizarPendientesDesdeGateway(resultados[4]) : [];
             var bheNormFull = resultados[2] ? Sii.normalizarBheDesdeGateway(resultados[2], { direction: 'RECIBIDA' }) : null;
             var bheParsedFull = (bheNormFull && Imp) ? Imp.parsearBheSii(bheNormFull.items, { periodo: per }) : null;
             var f29Sii = resultados[3] ? Sii.normalizarF29DesdeGateway(resultados[3]) : null;
@@ -713,6 +738,7 @@
                 est.comprasRows = comprasNorm.rows;
                 est.comprasCsv = '';
                 est.comprasArchivo = 'SII RCV Compras (' + per + ')';
+                est.comprasPendientesAcuse = pendientesAcuse;
                 if (bheParsedFull && bheParsedFull.ok) {
                     est.bheBoletas = bheParsedFull.boletas || [];
                     est.bheAnuladas = bheParsedFull.anuladasOmitidas || 0;
@@ -748,6 +774,169 @@
         }
     }
 
+    function pintarProgresoBatch() {
+        var panel = $('torre-sii-progreso-panel');
+        var btn = $('btn-torre-sync-all');
+        if (btn) btn.disabled = batchSync.activo;
+        if (!panel) return;
+        if (!batchSync.activo && batchSync.total === 0) {
+            panel.hidden = true;
+            return;
+        }
+        panel.hidden = false;
+        var pct = batchSync.total > 0 ? Math.min(100, Math.round((batchSync.completadas / batchSync.total) * 100)) : 0;
+        if ($('torre-sii-progreso-label')) {
+            $('torre-sii-progreso-label').textContent = batchSync.activo
+                ? ('Sincronizando ' + Math.min(batchSync.total, batchSync.completadas + 1) + ' de ' + batchSync.total + ' empresas conectadas...')
+                : ('Cartera sincronizada (' + batchSync.completadas + ' de ' + batchSync.total + ')');
+        }
+        if ($('torre-sii-progreso-empresa')) {
+            $('torre-sii-progreso-empresa').textContent = batchSync.empresaActual ? ('(' + batchSync.empresaActual + ')') : '';
+        }
+        if ($('torre-sii-progreso-pct')) $('torre-sii-progreso-pct').textContent = pct + '%';
+        if ($('torre-sii-barra-fill')) $('torre-sii-barra-fill').style.width = pct + '%';
+    }
+
+    async function sincronizarCarteraCompleta() {
+        var br = bridge();
+        if (!br || batchSync.activo) return;
+        if (!sesion.autenticado) {
+            abrirModalSii(br.clienteNombre());
+            return;
+        }
+        if (!sesion.gatewayConfigured) {
+            if (D) D.avisar('El conector SII automático aún no está configurado en el servidor.');
+            return;
+        }
+
+        var per = br.periodoActual();
+        batchSync = { activo: true, total: 0, completadas: 0, empresaActual: 'Iniciando cola SII...', estadosPorCompany: {} };
+        pintarProgresoBatch();
+
+        try {
+            var res = await api.iniciarSyncAll({ period: per });
+            var batch = res.batch || res || {};
+            var jobs = Array.isArray(batch.jobs) ? batch.jobs : [];
+            if (!jobs.length) {
+                batchSync = { activo: false, total: 0, completadas: 0, empresaActual: '', estadosPorCompany: {} };
+                pintarProgresoBatch();
+                if (D) D.avisar('No hay empresas con credenciales SII activas para sincronizar.');
+                return;
+            }
+
+            // Mapear companyId / RUT -> nombre de cliente en la Suite
+            var vinculos = tiendaVinculos.listar();
+            var porCompId = {};
+            Object.keys(vinculos).forEach(function (k) {
+                var v = vinculos[k];
+                if (v && v.companyId) porCompId[v.companyId] = v.razonSocial || k;
+            });
+
+            batchSync.total = jobs.length;
+            jobs.forEach(function (j) { batchSync.estadosPorCompany[j.companyId] = 'QUEUED'; });
+            pintarProgresoBatch();
+            br.refrescarTodo();
+
+            var terminadosOk = 0;
+            var fallidos = 0;
+            var JOB_FIN = { COMPLETED: true, PARTIAL: true, FAILED: true, ERROR: true, CANCELLED: true };
+
+            for (var idx = 0; idx < jobs.length; idx++) {
+                var jobItem = jobs[idx];
+                var cid = jobItem.companyId;
+                var nomCli = porCompId[cid] || jobItem.rut || cid;
+                batchSync.empresaActual = nomCli;
+                batchSync.estadosPorCompany[cid] = 'RUNNING';
+                pintarProgresoBatch();
+                br.refrescarTodo();
+
+                var jobSt = { status: 'QUEUED' };
+                for (var intento = 0; intento < 36; intento++) {
+                    try {
+                        var stRes = await api.estadoSync(cid, jobItem.jobId);
+                        jobSt = stRes.job || {};
+                    } catch (ePoll) {
+                        jobSt = { status: 'ERROR' };
+                        break;
+                    }
+                    var code = String(jobSt.status || 'QUEUED').toUpperCase();
+                    if (JOB_FIN[code]) break;
+                    await new Promise(function (r) { setTimeout(r, 1500); });
+                }
+
+                var codeFin = String(jobSt.status || '').toUpperCase();
+                if (codeFin === 'COMPLETED' || codeFin === 'PARTIAL') {
+                    try {
+                        var rRes = await Promise.all([
+                            api.obtenerRcv(cid, { period: per, operacion: 'VENTA', all: true }),
+                            api.obtenerRcv(cid, { period: per, operacion: 'COMPRA', all: true }),
+                            api.obtenerBhe(cid, { period: per, direction: 'RECIBIDA', all: true }).catch(function () { return null; }),
+                            api.obtenerF29(cid, { period: per }).catch(function () { return null; }),
+                            api.obtenerRcv(cid, { period: per, operacion: 'COMPRA', estadoContab: 'PENDIENTE', all: true }).catch(function () { return null; })
+                        ]);
+                        var vN = Sii.normalizarRcvDesdeGateway(rRes[0], 'ventas');
+                        var cN = Sii.normalizarRcvDesdeGateway(rRes[1], 'compras');
+                        var pN = Sii.normalizarPendientesDesdeGateway ? Sii.normalizarPendientesDesdeGateway(rRes[4]) : [];
+                        var bN = rRes[2] ? Sii.normalizarBheDesdeGateway(rRes[2], { direction: 'RECIBIDA' }) : null;
+                        var bP = (bN && Imp) ? Imp.parsearBheSii(bN.items, { periodo: per }) : null;
+                        var fN = rRes[3] ? Sii.normalizarF29DesdeGateway(rRes[3]) : null;
+                        var ts = new Date().toISOString();
+
+                        if (typeof br.guardarEstadoParaCliente === 'function') {
+                            br.guardarEstadoParaCliente(nomCli, per, function (est) {
+                                est.ventasRows = vN.rows;
+                                est.ventasCsv = '';
+                                est.ventasArchivo = 'SII RCV Ventas (' + per + ')';
+                                est.comprasRows = cN.rows;
+                                est.comprasCsv = '';
+                                est.comprasArchivo = 'SII RCV Compras (' + per + ')';
+                                est.comprasPendientesAcuse = pN;
+                                if (bP && bP.ok) {
+                                    est.bheBoletas = bP.boletas || [];
+                                    est.bheAnuladas = bP.anuladasOmitidas || 0;
+                                    est.bheAlertas = bP.advertencias || [];
+                                    est.honorariosBruto = bP.totalBruto || 0;
+                                    est.honorariosRetencionDirecta = bP.codigo151 || 0;
+                                }
+                                if (fN && fN.synced) {
+                                    est.siiF29Oficial = fN;
+                                    if (!est.remanenteAnterior && fN.remanenteAnterior > 0) est.remanenteAnterior = fN.remanenteAnterior;
+                                }
+                                est.siiSyncAt = ts;
+                            });
+                        }
+                        var vPrev = tiendaVinculos.obtener(nomCli) || { companyId: cid, rut: jobItem.rut || '', razonSocial: nomCli, hasCredentials: true };
+                        tiendaVinculos.guardar(nomCli, Object.assign({}, vPrev, { lastSyncAt: ts, lastErrorCode: '' }));
+                        batchSync.estadosPorCompany[cid] = 'COMPLETED';
+                        terminadosOk += 1;
+                    } catch (eData) {
+                        batchSync.estadosPorCompany[cid] = 'ERROR';
+                        fallidos += 1;
+                    }
+                } else {
+                    batchSync.estadosPorCompany[cid] = 'ERROR';
+                    fallidos += 1;
+                }
+                batchSync.completadas += 1;
+                pintarProgresoBatch();
+                br.refrescarTodo();
+            }
+
+            batchSync.activo = false;
+            batchSync.empresaActual = '';
+            pintarProgresoBatch();
+            br.refrescarTodo();
+            if (D) {
+                D.avisar('Sincronización de cartera finalizada: ' + terminadosOk + ' OK' + (fallidos ? (', ' + fallidos + ' con fallo') : '') + '.');
+            }
+        } catch (errBatch) {
+            batchSync = { activo: false, total: 0, completadas: 0, empresaActual: '', estadosPorCompany: {} };
+            pintarProgresoBatch();
+            br.refrescarTodo();
+            if (D) D.avisar((errBatch && errBatch.message) || 'No se pudo iniciar la sincronización masiva.');
+        }
+    }
+
     // ---------- Boot & Listeners ----------
     document.addEventListener('DOMContentLoaded', function () {
         var inpRut = $('liq-rut');
@@ -779,6 +968,7 @@
         if ($('btn-ctx-sii-sync')) $('btn-ctx-sii-sync').addEventListener('click', function () { sincronizarMes(); });
         if ($('btn-f29-sii-sync')) $('btn-f29-sii-sync').addEventListener('click', function () { sincronizarMes(); });
         if ($('btn-imp-bhe-sii')) $('btn-imp-bhe-sii').addEventListener('click', function () { sincronizarMes({ jobType: 'BHE_RECIBIDAS', soloBhe: true }); });
+        if ($('btn-torre-sync-all')) $('btn-torre-sync-all').addEventListener('click', function () { sincronizarCarteraCompleta(); });
 
         if ($('tbody-torre-clientes')) {
             $('tbody-torre-clientes').addEventListener('click', function (ev) {
@@ -838,8 +1028,10 @@
         rutDeCliente: rutDeCliente,
         guardarRutCliente: guardarRutCliente,
         celdaTorre: celdaTorre,
+        filaActivaSync: filaActivaSync,
         abrirModalSii: abrirModalSii,
         sincronizarMes: sincronizarMes,
+        sincronizarCarteraCompleta: sincronizarCarteraCompleta,
         revisarSesionYGateway: revisarSesionYGateway
     };
 })();

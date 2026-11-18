@@ -81,6 +81,9 @@ function montar({ apiKey = 'gw-secret-test-key', rolOverride = null, mockFetch }
         if (path === '/api/v1/accounting/cmp_1/sync/job_99' && opts.method === 'GET') {
             return { ok: true, status: 200, text: async () => JSON.stringify({ jobId: 'job_99', status: 'COMPLETED' }) };
         }
+        if (path === '/api/v1/accounting/sync-all' && opts.method === 'POST') {
+            return { ok: true, status: 202, text: async () => JSON.stringify({ period: '202611', enqueuedCount: 1, skippedCount: 0, jobs: [{ companyId: 'cmp_1', rut: '76.543.210-3', jobId: 'job_all_1' }] }) };
+        }
         if (path === '/api/v1/accounting/cmp_1/rcv' && opts.method === 'GET') {
             const offset = Number(u.searchParams.get('offset') || 0);
             const docs = offset === 0
@@ -234,6 +237,29 @@ caso('borrar-cuenta limpia empresas vinculadas en SII Gateway (Ley 21.719)', asy
     });
     assert.strictEqual(del.statusCode, 200);
     assert.ok(m.llamadasFetch.some(c => c.method === 'DELETE' && c.url.endsWith('/api/v1/companies/cmp_1')));
+});
+
+caso('sii-sync-all encola sincronización batch por cuenta y valida período', async () => {
+    const m = montar();
+    const { cookie, cuenta } = await m.entrar('batch@ejemplo.cl');
+    const bad = await pedir(m.rutas, {
+        query: { ruta: 'sii-sync-all' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { period: 'invalido' }
+    });
+    assert.strictEqual(bad.statusCode, 400);
+
+    const okBatch = await pedir(m.rutas, {
+        query: { ruta: 'sii-sync-all' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { period: '2026-11' }
+    });
+    assert.strictEqual(okBatch.statusCode, 200);
+    assert.strictEqual(okBatch.json.batch.enqueuedCount, 1);
+    assert.strictEqual(m.llamadasFetch[0].headers['x-account-id'], cuenta.cuentaId);
+    assert.deepStrictEqual(m.llamadasFetch[0].body, { period: '202611' });
 });
 
 cola.then(() => {

@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.8.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.9.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -470,7 +470,43 @@
           <div class="panel-cuerpo">
             <div class="fin-form-grid" style="margin-bottom:14px">
               <div class="lq-field"><label for="f29-tasa-ppm">Tasa PPM cód. 115 (%)</label><input type="number" id="f29-tasa-ppm" step="0.001" min="0" placeholder="0.125"><span class="texto-ayuda">ProPyme: 0,125% o 0,25% (Ley 21.850: 0,23% transitorio sujeto a circular SII; editable).</span></div>
-              <div class="lq-field"><label for="f29-remanente">Remanente anterior cód. 504 ($)</label><input type="number" id="f29-remanente" step="1" min="0" placeholder="0"></div>
+              <div class="lq-field f29-remanente-wrap">
+                <div class="f29-remanente-head">
+                  <label for="f29-remanente">Remanente anterior cód. 504 ($)</label>
+                  <button type="button" class="btn-micro-calculo" id="btn-f29-asistente-utm" aria-expanded="false" aria-controls="f29-asistente-utm-card" title="Calcular reajuste oficial por variación de UTM (Art. 27 Ley de IVA)">
+                    <span class="material-icons" aria-hidden="true">calculate</span><span>Reajuste UTM</span>
+                  </button>
+                </div>
+                <input type="number" id="f29-remanente" step="1" min="0" placeholder="0">
+                <span class="texto-ayuda" id="f29-remanente-ayuda">Reajuste UTM de presentación (evita objeción FM01).</span>
+                <div class="f29-asistente-utm-card" id="f29-asistente-utm-card" hidden>
+                  <div class="asistente-utm-cabeza">
+                    <strong>Asistente de Reajuste Art. 27 D.L. 825</strong>
+                    <button type="button" class="app-icono-btn" id="btn-cerrar-asistente-utm" aria-label="Cerrar asistente UTM"><span class="material-icons" aria-hidden="true">close</span></button>
+                  </div>
+                  <div class="asistente-utm-grid">
+                    <div class="utm-dato">
+                      <label class="utm-lbl" for="utm-calc-rem-ant">Remanente Cód. 77 previo ($)</label>
+                      <input type="number" id="utm-calc-rem-ant" class="mono" step="1" min="0" placeholder="Ej: 120000">
+                    </div>
+                    <div class="utm-dato">
+                      <label class="utm-lbl" for="utm-val-ant">UTM declar. previa (<span id="utm-mes-ant-nom">Mes prev.</span>)</label>
+                      <input type="number" id="utm-val-ant" class="mono" step="1" min="1" value="66628">
+                    </div>
+                    <div class="utm-dato">
+                      <label class="utm-lbl" for="utm-val-act">UTM declar. actual (<span id="utm-mes-act-nom">Mes decl.</span>)</label>
+                      <input type="number" id="utm-val-act" class="mono" step="1" min="1" value="66961">
+                    </div>
+                  </div>
+                  <div class="asistente-utm-resultado">
+                    <span>Variación: <strong class="mono" id="utm-var-pct">+0,500%</strong></span>
+                    <span>Reajustado Cód. 504: <strong class="mono" id="utm-rem-reajustado">$0</strong></span>
+                  </div>
+                  <button type="button" class="btn btn-chico btn-primario" id="btn-utm-aplicar">
+                    <span class="material-icons" aria-hidden="true">check</span>Aplicar al Código 504
+                  </button>
+                </div>
+              </div>
               <div class="lq-field"><label for="f29-hon-bruto">Boletas honorarios brutas ($)</label><input type="number" id="f29-hon-bruto" step="1" min="0" placeholder="0"></div>
               <div class="lq-field fin-span-all"><label for="f29-iusc-manual">Impuesto Único trabajadores cód. 48 ($)</label><input type="number" id="f29-iusc-manual" step="1" min="0" placeholder="0"><span class="texto-ayuda" id="f29-iusc-ayuda">Se integra automáticamente cuando calculas Liquidaciones.</span></div>
             </div>
@@ -523,6 +559,50 @@
           </div>
         </div>
 
+        <div class="panel f29-auditoria-panel" id="f29-auditoria-compras" hidden>
+          <div class="panel-head">
+            <div>
+              <h2>Auditoría Preventiva de Compras RCV (Ley 19.983)</h2>
+              <p class="panel-ayuda">Monitorea el plazo de 8 días corridos desde la recepción en el SII para reclamar facturas pendientes y revisa crédito de supermercados (cód. 761).</p>
+            </div>
+            <div class="f29-auditoria-badges">
+              <span class="sello sello-riesgo" id="badge-acuse-urgentes" hidden>
+                <span class="material-icons" aria-hidden="true">warning</span><span id="txt-acuse-urgentes">0 por vencer</span>
+              </span>
+            </div>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="f29-acuse-grid" id="f29-acuse-bloque">
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Folio</th>
+                      <th scope="col">Proveedor</th>
+                      <th scope="col">Recepción SII</th>
+                      <th scope="col">Plazo Legal (8 días)</th>
+                      <th scope="col" class="num">IVA / Total ($)</th>
+                      <th scope="col" class="num">Revisión estudio</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-f29-acuse-compras"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="f29-alerta-supermercado" id="f29-alerta-supermercado" hidden>
+              <span class="material-icons" aria-hidden="true">storefront</span>
+              <div class="f29-alerta-txt">
+                <strong id="supermercado-titulo">Facturas de supermercado detectadas (Cód. 761 / 762)</strong>
+                <p id="supermercado-desc">Hay <span id="super-cant">0</span> documento(s) con IVA por <span class="mono" id="super-monto">$0</span>. Requieren relación directa con el giro para usar el crédito fiscal.</p>
+              </div>
+              <div class="f29-alerta-acciones">
+                <button type="button" class="btn btn-chico" id="btn-super-no-incluir">Excluir crédito (No Incluir)</button>
+                <button type="button" class="btn btn-chico" id="btn-super-mantener">Acreditar con giro</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="demo-vacio" id="f29-vacio">
           <p class="demo-vacio-t">Aún no hay movimientos tributarios cargados</p>
           <p class="texto-ayuda">Pulsa "Cargar ejemplo SII completo" para ver la hoja de trabajo del F29 con débitos, créditos y PPM al día.</p>
@@ -565,6 +645,38 @@
               <div class="fin-kpi"><span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span><span class="fin-kpi-val mono" id="f29-k-credito">$0</span></div>
               <div class="fin-kpi"><span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span><span class="fin-kpi-val mono" id="f29-k-iva">$0</span></div>
               <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span><span class="fin-kpi-val mono ok" id="f29-k-total">$0</span></div>
+            </div>
+            <div class="f29-postergacion-card" id="f29-postergacion-card">
+              <div class="f29-postergacion-switch-fila">
+                <label class="pm-switch-label" for="f29-check-postergacion">
+                  <input type="checkbox" id="f29-check-postergacion" class="pm-switch-input">
+                  <span class="pm-switch-slider" aria-hidden="true"></span>
+                  <span class="pm-switch-txt">
+                    <strong>Acogerse a Postergación de Pago de IVA (Código 756)</strong>
+                    <span class="texto-ayuda" id="f29-postergacion-ayuda">Art. 64 D.L. 825 (14 D o 14 A con promedio &lt;= 100.000 UF en 3 años, sin morosidad reiterada): traslada el IVA (cód. 89) al cód. 755 (mes +2 sin intereses). PPM y retenciones se pagan en plazo.</span>
+                  </span>
+                </label>
+                <span class="sello sello-preparada" id="sello-postergacion-estado" hidden>IVA Postergado 60 días</span>
+              </div>
+              <div class="f29-postergacion-desglose" id="f29-postergacion-desglose" hidden>
+                <div class="fin-cols-3">
+                  <div class="post-item">
+                    <span class="post-lbl">IVA Postergado (Cód. 755/756)</span>
+                    <span class="post-val mono" id="post-monto-iva">$0</span>
+                    <span class="texto-ayuda" id="post-fecha-vence">Giro prorrogado +2 meses</span>
+                  </div>
+                  <div class="post-item">
+                    <span class="post-lbl">Retenciones + PPM a pagar hoy</span>
+                    <span class="post-val mono" id="post-monto-inmediato">$0</span>
+                    <span class="texto-ayuda">Cód. 48, 151 y 62 en plazo</span>
+                  </div>
+                  <div class="post-item">
+                    <span class="post-lbl">Nuevo Total F29 en plazo (Cód. 91)</span>
+                    <span class="post-val mono ok" id="post-total-final">$0</span>
+                    <span class="texto-ayuda">Monto a pagar en sii.cl</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="f29-semaforo-box" id="f29-semaforo-auditoria" hidden aria-live="polite"></div>
             <div class="tabla-contable-wrap">
@@ -685,9 +797,9 @@
                       <th scope="col">Glosa bancaria</th>
                       <th scope="col">Tipo</th>
                       <th scope="col" class="num">Monto ($)</th>
-                      <th scope="col">Cruce / Regla aplicada</th>
+                      <th scope="col">Cruce / Match</th>
                       <th scope="col">Cuenta</th>
-                      <th scope="col">Estado</th>
+                      <th scope="col">Estado / 1-Clic</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-conciliacion"></tbody>
@@ -705,7 +817,7 @@
               <div class="panel-cuerpo">
                 <div class="tabla-contable-wrap">
                   <table class="tabla-contable compacta">
-                    <thead><tr><th scope="col">Folio</th><th scope="col">Cliente</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th></tr></thead>
+                    <thead><tr><th scope="col">Documento</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
                     <tbody id="tbody-aging-cxc"></tbody>
                   </table>
                 </div>
@@ -716,7 +828,7 @@
               <div class="panel-cuerpo">
                 <div class="tabla-contable-wrap">
                   <table class="tabla-contable compacta">
-                    <thead><tr><th scope="col">Folio</th><th scope="col">Proveedor</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th></tr></thead>
+                    <thead><tr><th scope="col">Documento</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
                     <tbody id="tbody-aging-cxp"></tbody>
                   </table>
                 </div>
@@ -1141,13 +1253,31 @@
           <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">F29 consolidado (cód. 91)</span><span class="fin-kpi-val mono" id="torre-k-f29total">$0</span></div>
         </div>
 
+        <div class="torre-sii-progreso-panel" id="torre-sii-progreso-panel" hidden role="status" aria-live="polite">
+          <div class="torre-sii-progreso-cabeza">
+            <div class="torre-sii-progreso-txt">
+              <span class="material-icons sii-spin" aria-hidden="true">sync</span>
+              <strong id="torre-sii-progreso-label">Sincronizando cartera SII...</strong>
+              <span class="mono" id="torre-sii-progreso-empresa"></span>
+            </div>
+            <span class="mono torre-sii-progreso-pct" id="torre-sii-progreso-pct">0%</span>
+          </div>
+          <div class="torre-sii-barra-track" aria-hidden="true">
+            <div class="torre-sii-barra-fill" id="torre-sii-barra-fill" style="width:0%"></div>
+          </div>
+        </div>
+
         <div class="panel" style="margin-bottom:16px">
           <div class="panel-head">
             <div>
               <h2>Cartera activa de clientes del estudio</h2>
               <p class="panel-ayuda">Cambia de cliente con «Trabajar» para abrir sus liquidaciones, RCV, F29, libros y DDJJ en el mismo período.</p>
             </div>
-            <span class="texto-ayuda">Planes anuales: Independiente (10) · Estudio (30) · Ilimitado</span>
+            <div class="v-acciones">
+              <button type="button" class="btn btn-chico btn-primario suite-btn-sync-all" id="btn-torre-sync-all" title="Encolar sincronización SII para todas las empresas conectadas del estudio">
+                <span class="material-icons" aria-hidden="true">sync</span><span>Sincronizar cartera SII</span>
+              </button>
+            </div>
           </div>
           <div class="panel-cuerpo">
             <div class="tabla-contable-wrap">
@@ -1701,14 +1831,14 @@
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.2.0"></script>
 <script src="/js/demo_liquidaciones.js?v=2.8.1"></script>
-<script src="/js/contadores_f29.js?v=1.1.0"></script>
+<script src="/js/contadores_f29.js?v=1.2.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
-<script src="/js/contadores_asistente_pro.js?v=1.1.0"></script>
-<script src="/js/contadores_sii.js?v=1.0.0"></script>
-<script src="/js/demo_suite.js?v=2.5.0"></script>
-<script src="/js/demo_sii.js?v=1.1.0"></script>
+<script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
+<script src="/js/contadores_sii.js?v=1.1.0"></script>
+<script src="/js/demo_suite.js?v=2.6.0"></script>
+<script src="/js/demo_sii.js?v=1.2.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

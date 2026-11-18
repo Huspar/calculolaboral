@@ -230,4 +230,30 @@ caso('F29 conserva signos en cod. 538 y cod. 537 cuando notas de credito superan
     assert.strictEqual(cta21070.pasivo, fNeg.codigos[91]);
 });
 
+caso('Reajuste oficial UTM (cód. 77 -> 504), postergación IVA cód. 756/755 y exclusión supermercado', () => {
+    // Ejemplo oficial FAQ SII 001.130.1926.013: 2.500.000 / 43.000 = 58.14 UTM × 43.198 = 2.511.532
+    const rUtm = F29.reajustarRemanenteUtm(2500000, 43000, 43198);
+    assert.strictEqual(rUtm.utm, 58.14);
+    assert.strictEqual(rUtm.reajustado, 2511532);
+
+    const v = F29.parsearRcv(F29.ejemploRcvVentasCsv(), 'ventas');
+    const c = F29.parsearRcv(F29.ejemploRcvComprasCsv(), 'compras');
+    const fPost = F29.calcularF29({
+        periodo: '2026-11',
+        regimen: '14D3',
+        ventas: v,
+        compras: c,
+        remanenteAnterior: 120000,
+        postergarIva: true,
+        excluirSupermercado: true,
+        impuestoUnico48: 50000,
+        honorariosBruto: 800000
+    });
+    assert.strictEqual(fPost.codigos[761], 0);
+    assert.strictEqual(fPost.codigos[762], 0);
+    assert.strictEqual(fPost.codigos[756], 1);
+    assert.strictEqual(fPost.codigos[755], fPost.codigos[89]);
+    assert.strictEqual(fPost.codigos[91], fPost.codigos[48] + fPost.codigos[151] + fPost.codigos[62], 'Postergar IVA deja solo retenciones + PPM en cod. 91');
+});
+
 console.log(ok + ' pruebas correctas en Suite Contadores');

@@ -243,6 +243,18 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         return { ok: true, estado: r.estado, job: r.data };
     }
 
+    async function sincronizarTodas(cuentaId, { period } = {}) {
+        let payload = {};
+        if (period !== undefined && period !== null && String(period).trim() !== '') {
+            const per = normalizarPeriodo(period);
+            if (!per) return { ok: false, estado: 400, codigo: 'periodo_invalido', error: 'Indica un período válido (YYYY-MM).' };
+            payload = { period: per };
+        }
+        const r = await pedir(cuentaId, 'POST', '/api/v1/accounting/sync-all', payload);
+        if (!r.ok) return r;
+        return { ok: true, estado: r.estado, batch: r.data };
+    }
+
     async function estadoSync(cuentaId, companyId, jobId) {
         if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
         if (!idValido(jobId)) return { ok: false, estado: 400, codigo: 'job_invalido', error: 'Identificador de sincronización inválido.' };
@@ -381,6 +393,7 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         guardarCredenciales,
         eliminarCredenciales,
         iniciarSync,
+        sincronizarTodas,
         estadoSync,
         obtenerRcv,
         obtenerBhe,

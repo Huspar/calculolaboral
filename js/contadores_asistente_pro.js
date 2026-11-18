@@ -580,49 +580,178 @@
         });
     }
 
+    function extraerRutDeTexto(texto) {
+        var m = /(\d{1,2}\.?\d{3}\.?\d{3}-[\dkK])/.exec(String(texto || ''));
+        if (!m) return '';
+        return m[1].replace(/\./g, '').toUpperCase();
+    }
+
+    function normRutSimple(r) {
+        return String(r || '').replace(/[^0-9kK]/g, '').toUpperCase();
+    }
+
+    function buscarComboFacturas(pool, usados, targetMonto, maxN) {
+        // Agrupa facturas no usadas del mismo RUT/razonSocial que sumen targetMonto (+-100)
+        var grupos = {};
+        for (var i = 0; i < pool.length; i++) {
+            if (usados[i]) continue;
+            var d = pool[i];
+            if (!d || d.esResumen || d.resta) continue;
+            var tot = enteroPos(d.total);
+            if (!tot || tot >= targetMonto) continue;
+            var key = normRutSimple(d.rut) || normTxt(d.razonSocial || '');
+            if (!key) continue;
+            if (!grupos[key]) grupos[key] = [];
+            grupos[key].push({ idx: i, doc: d, total: tot });
+        }
+        var keys = Object.keys(grupos);
+        for (var k = 0; k < keys.length; k++) {
+            var arr = grupos[keys[k]];
+            if (arr.length < 2) continue;
+            // Busqueda exacta de 2 o 3 facturas (tope 25 items por emisor)
+            var lim = Math.min(arr.length, 25);
+            for (var a = 0; a < lim; a++) {
+                for (var b = a + 1; b < lim; b++) {
+                    var s2 = arr[a].total + arr[b].total;
+                    if (Math.abs(s2 - targetMonto) <= 100) {
+                        return [arr[a], arr[b]];
+                    }
+                    if (maxN >= 3) {
+                        for (var c = b + 1; c < lim; c++) {
+                            var s3 = s2 + arr[c].total;
+                            if (Math.abs(s3 - targetMonto) <= 100) {
+                                return [arr[a], arr[b], arr[c]];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    function docKeyFactura(d) {
+        return String(d.tipoDoc || 33) + '-' + String(d.folio || 'sf') + '-' + (normRutSimple(d.rut) || 'sr');
+    }
+
     function conciliarCartolaConReglas(movimientos, contexto) {
         var ctx = contexto || {};
         var ventasDocs = (ctx.ventas && Array.isArray(ctx.ventas.documentos)) ? ctx.ventas.documentos : [];
         var comprasDocs = (ctx.compras && Array.isArray(ctx.compras.documentos)) ? ctx.compras.documentos : [];
         var reglasUsr = Array.isArray(ctx.reglas) ? ctx.reglas : [];
         var todasReglas = reglasUsr.concat(REGLAS_CONCILIACION_DEFECTO);
+        var confirmados = (ctx.matchesConfirmados && typeof ctx.matchesConfirmados === 'object') ? ctx.matchesConfirmados : {};
+        var descartados = (ctx.matchesDescartados && typeof ctx.matchesDescartados === 'object') ? ctx.matchesDescartados : {};
+        var modoSug = !!ctx.modoSugerencias;
 
         var usadosVentas = {};
         var usadosCompras = {};
+        var foliosConciliados = { cxc: {}, cxp: {} };
         var filas = [];
         var porFactura = 0;
         var porRegla = 0;
+        var sugeridos = 0;
         var sinConciliar = 0;
         var montoSinConciliar = 0;
 
         (Array.isArray(movimientos) ? movimientos : []).forEach(function (mov, idx) {
+            var movId = mov.id || ('MOV-' + (idx + 1));
             var monto = enteroPos(mov.monto);
             var tipo = mov.tipo === 'abono' ? 'abono' : 'cargo';
             var glosa = String(mov.glosa || '').trim();
+            var rutMov = normRutSimple(mov.rut || extraerRutDeTexto(glosa));
             var match = null;
-
-            // 1. Intentar calce exacto por monto (±$100) contra facturas RCV del período
             var pool = tipo === 'abono' ? ventasDocs : comprasDocs;
             var usados = tipo === 'abono' ? usadosVentas : usadosCompras;
-            for (var i = 0; i < pool.length; i++) {
-                if (usados[i]) continue;
-                var d = pool[i];
-                if (d.esResumen || d.resta) continue;
-                var totalDoc = enteroPos(d.total);
-                if (totalDoc > 0 && Math.abs(totalDoc - monto) <= 100) {
-                    usados[i] = true;
-                    match = {
-                        metodo: 'factura_rcv',
-                        estado: 'conciliado',
-                        cuenta: tipo === 'abono' ? '11050' : '21010',
-                        detalleMatch: 'DTE ' + d.tipoDoc + ' folio ' + (d.folio || 's/f') + ' · ' + (d.razonSocial || d.rut || 'Contraparte')
-                    };
-                    porFactura += 1;
-                    break;
+            var carteraTipo = tipo === 'abono' ? 'cxc' : 'cxp';
+
+            // 1A. Match Tipo A: RUT coincidente + monto exacto (+-$100) -> Conciliado automatico
+            if (!descartados[movId] && rutMov) {
+                for (var i = 0; i < pool.length; i++) {
+                    if (usados[i]) continue;
+                    var dA = pool[i];
+                    if (dA.esResumen || dA.resta) continue;
+                    var totalA = enteroPos(dA.total);
+                    if (totalA > 0 && Math.abs(totalA - monto) <= 100 && normRutSimple(dA.rut) === rutMov) {
+                        usados[i] = true;
+                        var keyA = docKeyFactura(dA);
+                        foliosConciliados[carteraTipo][keyA] = movId;
+                        match = {
+                            metodo: 'factura_rcv',
+                            matchTipo: 'A',
+                            estado: 'conciliado',
+                            cuenta: tipo === 'abono' ? '11050' : '21010',
+                            matchedKeys: [keyA],
+                            matchedFolios: [String(dA.folio || 's/f')],
+                            detalleMatch: 'DTE ' + dA.tipoDoc + ' folio ' + (dA.folio || 's/f') + ' · ' + (dA.razonSocial || dA.rut || 'Contraparte')
+                        };
+                        porFactura += 1;
+                        break;
+                    }
                 }
             }
 
-            // 2. Si no calza con factura exacta, evaluar reglas de contraparte (usuario primero, defecto después)
+            // 1B. Match Tipo B: Monto exacto sin RUT (+-$100)
+            if (!match && !descartados[movId]) {
+                for (var j = 0; j < pool.length; j++) {
+                    if (usados[j]) continue;
+                    var dB = pool[j];
+                    if (dB.esResumen || dB.resta) continue;
+                    var totalB = enteroPos(dB.total);
+                    if (totalB > 0 && Math.abs(totalB - monto) <= 100) {
+                        usados[j] = true;
+                        var keyB = docKeyFactura(dB);
+                        var confirmadoB = !!confirmados[movId] || !modoSug;
+                        if (confirmadoB) {
+                            foliosConciliados[carteraTipo][keyB] = movId;
+                            porFactura += 1;
+                        } else {
+                            sugeridos += 1;
+                        }
+                        match = {
+                            metodo: 'factura_rcv',
+                            matchTipo: 'B',
+                            estado: confirmadoB ? 'conciliado' : 'sugerido',
+                            cuenta: tipo === 'abono' ? '11050' : '21010',
+                            matchedKeys: [keyB],
+                            matchedFolios: [String(dB.folio || 's/f')],
+                            detalleMatch: 'DTE ' + dB.tipoDoc + ' folio ' + (dB.folio || 's/f') + ' · ' + (dB.razonSocial || dB.rut || 'Contraparte')
+                        };
+                        break;
+                    }
+                }
+            }
+
+            // 1C. Match Tipo C: Pago agrupado (1 movimiento cubre 2 o 3 facturas del mismo emisor/receptor)
+            if (!match && !descartados[movId]) {
+                var combo = buscarComboFacturas(pool, usados, monto, 3);
+                if (combo && combo.length >= 2) {
+                    var fols = [];
+                    var keysC = [];
+                    var confirmadoC = !!confirmados[movId] || !modoSug;
+                    combo.forEach(function (it) {
+                        usados[it.idx] = true;
+                        var kC = docKeyFactura(it.doc);
+                        keysC.push(kC);
+                        fols.push('F.' + (it.doc.folio || 's/f'));
+                        if (confirmadoC) foliosConciliados[carteraTipo][kC] = movId;
+                    });
+                    if (confirmadoC) porFactura += 1;
+                    else sugeridos += 1;
+                    var emisorC = combo[0].doc.razonSocial || combo[0].doc.rut || 'Mismo RUT';
+                    match = {
+                        metodo: 'factura_rcv',
+                        matchTipo: 'C',
+                        estado: confirmadoC ? 'conciliado' : 'sugerido',
+                        cuenta: tipo === 'abono' ? '11050' : '21010',
+                        matchedKeys: keysC,
+                        matchedFolios: fols,
+                        detalleMatch: 'Pago agrupado (' + fols.join(' + ') + ') · ' + emisorC
+                    };
+                }
+            }
+
+            // 2. Si no calza con factura, evaluar reglas de contraparte (usuario primero, defecto después)
             if (!match) {
                 for (var r = 0; r < todasReglas.length; r++) {
                     var regla = todasReglas[r];
@@ -630,8 +759,11 @@
                     if (tipoOk && coincidePatron(glosa, regla.patron)) {
                         match = {
                             metodo: 'regla',
+                            matchTipo: 'REGLA',
                             estado: 'conciliado',
                             cuenta: String(regla.cuenta || '42040'),
+                            matchedKeys: [],
+                            matchedFolios: [],
                             detalleMatch: regla.motivo || regla.nombreCuenta || ('Regla "' + regla.patron + '"')
                         };
                         porRegla += 1;
@@ -645,21 +777,28 @@
                 montoSinConciliar += monto;
                 match = {
                     metodo: 'pendiente',
+                    matchTipo: 'PENDIENTE',
                     estado: 'pendiente',
                     cuenta: mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'),
+                    matchedKeys: [],
+                    matchedFolios: [],
                     detalleMatch: 'Sin regla ni factura coincidente; asignar o crear regla'
                 };
             }
 
             filas.push({
-                id: mov.id || ('MOV-' + (idx + 1)),
+                id: movId,
                 fecha: mov.fecha || '',
                 glosa: glosa,
+                rut: rutMov,
                 tipo: tipo,
                 monto: monto,
                 estado: match.estado,
                 metodo: match.metodo,
+                matchTipo: match.matchTipo,
                 cuenta: match.cuenta,
+                matchedKeys: match.matchedKeys,
+                matchedFolios: match.matchedFolios,
                 detalleMatch: match.detalleMatch
             });
         });
@@ -669,10 +808,12 @@
 
         return {
             filas: filas,
+            foliosConciliados: foliosConciliados,
             resumen: {
                 totalMovimientos: total,
                 porFactura: porFactura,
                 porRegla: porRegla,
+                sugeridos: sugeridos,
                 sinConciliar: sinConciliar,
                 pctConciliado: pctConciliado,
                 montoSinConciliar: montoSinConciliar
@@ -699,28 +840,59 @@
 
     function calcularAgingDocumentos(ventas, compras, periodo, opciones) {
         var opts = opciones || {};
+        var modoReal = !!opts.modoReal;
         var pctCobro = opts.pctVentasCobradas != null ? num(opts.pctVentasCobradas) : 80;
         var pctPago = opts.pctComprasPagadas != null ? num(opts.pctComprasPagadas) : 75;
+        var carteraEstado = (opts.carteraEstado && typeof opts.carteraEstado === 'object') ? opts.carteraEstado : {};
+        var foliosConc = (opts.foliosConciliados && typeof opts.foliosConciliados === 'object') ? opts.foliosConciliados : {};
         var corte = fechaCortePeriodo(periodo);
 
-        function armarCartera(docs, factorPendiente) {
+        function armarCartera(docs, factorPendiente, tipoCartera) {
             var buckets = { dias_0_30: 0, dias_31_60: 0, dias_mas_60: 0 };
             var items = [];
+            var todosItems = [];
             var total = 0;
+            var estManuales = carteraEstado[tipoCartera] || {};
+            var concMap = foliosConc[tipoCartera] || {};
+
             (Array.isArray(docs) ? docs : []).forEach(function (d) {
                 if (!d || d.esResumen || d.resta) return;
                 var bruto = enteroPos(d.total);
                 if (!bruto) return;
-                var saldo = Math.round(bruto * (factorPendiente / 100));
-                if (saldo <= 0) return;
+                var dKey = docKeyFactura(d);
+                var manualEst = estManuales[dKey];
+                var esConc = !!concMap[dKey];
+
+                var estadoPago = 'PENDIENTE';
+                var saldo = bruto;
+                if (modoReal || manualEst || esConc) {
+                    if (manualEst === 'PAGADA') {
+                        estadoPago = 'PAGADA';
+                        saldo = 0;
+                    } else if (manualEst === 'PENDIENTE') {
+                        estadoPago = 'PENDIENTE';
+                        saldo = bruto;
+                    } else if (esConc) {
+                        estadoPago = 'CONCILIADA';
+                        saldo = 0;
+                    }
+                } else {
+                    saldo = Math.round(bruto * (factorPendiente / 100));
+                    if (saldo <= 0) return;
+                }
+
                 var fDoc = parseFechaIso(d.fecha, periodo);
                 var dias = Math.max(0, Math.round((corte.getTime() - fDoc.getTime()) / 86400000));
                 var tramo = dias <= 30 ? '0-30 días' : (dias <= 60 ? '31-60 días' : '+60 días');
-                if (dias <= 30) buckets.dias_0_30 += saldo;
-                else if (dias <= 60) buckets.dias_31_60 += saldo;
-                else buckets.dias_mas_60 += saldo;
-                total += saldo;
-                items.push({
+                if (saldo > 0) {
+                    if (dias <= 30) buckets.dias_0_30 += saldo;
+                    else if (dias <= 60) buckets.dias_31_60 += saldo;
+                    else buckets.dias_mas_60 += saldo;
+                    total += saldo;
+                }
+
+                var row = {
+                    docKey: dKey,
                     tipoDoc: d.tipoDoc,
                     folio: d.folio || 's/f',
                     rut: d.rut || '-',
@@ -728,18 +900,26 @@
                     fecha: d.fecha || String(periodo || ''),
                     dias: dias,
                     tramo: tramo,
+                    estadoPago: estadoPago,
                     montoOriginal: bruto,
                     saldoPendiente: saldo
-                });
+                };
+                todosItems.push(row);
+                if (saldo > 0) items.push(row);
             });
             items.sort(function (a, b) { return b.dias - a.dias || b.saldoPendiente - a.saldoPendiente; });
-            return { total: total, buckets: buckets, items: items };
+            todosItems.sort(function (a, b) {
+                var aPend = a.saldoPendiente > 0 ? 0 : 1;
+                var bPend = b.saldoPendiente > 0 ? 0 : 1;
+                return aPend - bPend || b.dias - a.dias || b.montoOriginal - a.montoOriginal;
+            });
+            return { total: total, buckets: buckets, items: items, todosItems: todosItems };
         }
 
         return {
             periodoCorte: String(periodo || '2026-11'),
-            cxc: armarCartera(ventas && ventas.documentos, Math.max(0, 100 - pctCobro)),
-            cxp: armarCartera(compras && compras.documentos, Math.max(0, 100 - pctPago))
+            cxc: armarCartera(ventas && ventas.documentos, Math.max(0, 100 - pctCobro), 'cxc'),
+            cxp: armarCartera(compras && compras.documentos, Math.max(0, 100 - pctPago), 'cxp')
         };
     }
 

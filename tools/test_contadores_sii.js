@@ -157,4 +157,23 @@ caso('tienda de vínculos guarda solo metadatos y nunca secretos', () => {
     assert.ok(!JSON.stringify(mem).includes('NO_DEBE_GUARDARSE'));
 });
 
+caso('normalizarPendientesDesdeGateway calcula plazo legal de 8 días corridos desde recepción SII', () => {
+    const pendientes = Sii.normalizarPendientesDesdeGateway({
+        rcv: {
+            period: '202611',
+            documents: [
+                { id: 'd1', operacion: 'COMPRA', estadoContab: 'PENDIENTE', tipoDoc: 33, folio: 77, rutContraparte: '76.111.222-3', razonSocialContraparte: 'Proveedor Urgente', fechaEmision: '2026-11-10', fechaRecepcion: '2026-11-12', montoNeto: 100000, montoIvaRecuperable: 19000, montoTotal: 119000 },
+                { id: 'd2', operacion: 'COMPRA', estadoContab: 'PENDIENTE', tipoDoc: 33, folio: 78, rutContraparte: '76.333.444-5', razonSocialContraparte: 'Proveedor Nuevo', fechaEmision: '2026-11-16', fechaRecepcion: '2026-11-17', montoNeto: 200000, montoIvaRecuperable: 38000, montoTotal: 238000 },
+                { id: 'd3', operacion: 'VENTA', estadoContab: 'PENDIENTE', tipoDoc: 33, folio: 99, montoTotal: 50000 }
+            ]
+        }
+    }, '2026-11-18');
+    assert.strictEqual(pendientes.length, 2, 'Solo compras PENDIENTE');
+    assert.strictEqual(pendientes[0].folio, '77');
+    assert.strictEqual(pendientes[0].diasRestantes, 2);
+    assert.strictEqual(pendientes[0].estadoPlazo, 'critico');
+    assert.strictEqual(pendientes[1].diasRestantes, 7);
+    assert.strictEqual(pendientes[1].estadoPlazo, 'seguro');
+});
+
 console.log(process.exitCode ? 'HAY FALLAS' : (ok + ' pruebas correctas en Contadores SII'));

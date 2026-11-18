@@ -120,6 +120,69 @@
         };
     }
 
+    function parseFechaDiaUtc(fechaStr) {
+        var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(fechaStr || '').trim());
+        if (!m) return null;
+        return Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    }
+
+    function calcularPlazoAcuse(fechaRecepcion, fechaEmision, fechaRef) {
+        var baseStr = String(fechaRecepcion || fechaEmision || '').slice(0, 10);
+        var baseMs = parseFechaDiaUtc(baseStr);
+        var refMs = fechaRef instanceof Date
+            ? Date.UTC(fechaRef.getFullYear(), fechaRef.getMonth(), fechaRef.getDate())
+            : (parseFechaDiaUtc(fechaRef) || Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
+        if (baseMs == null) {
+            return { fechaBase: '', diasTranscurridos: 0, diasRestantes: 8, estadoPlazo: 'seguro' };
+        }
+        var dias = Math.max(0, Math.floor((refMs - baseMs) / 86400000));
+        var restantes = Math.max(0, 8 - dias);
+        var estadoPlazo = dias > 8 ? 'tacito' : (restantes <= 3 ? 'critico' : 'seguro');
+        return {
+            fechaBase: baseStr,
+            diasTranscurridos: dias,
+            diasRestantes: restantes,
+            estadoPlazo: estadoPlazo
+        };
+    }
+
+    function normalizarPendientesDesdeGateway(resp, fechaRef) {
+        var rcv = (resp && resp.rcv) ? resp.rcv : (resp || {});
+        var docs = Array.isArray(rcv.documents) ? rcv.documents : [];
+        var items = [];
+        docs.forEach(function (d) {
+            if (!d || typeof d !== 'object') return;
+            var op = String(d.operacion || '').toUpperCase();
+            if (op && op !== 'COMPRA') return;
+            var est = String(d.estadoContab || '').toUpperCase();
+            if (est && est !== 'PENDIENTE') return;
+            var fechaRec = String(d.fechaRecepcion || d.fechaRecepcionSii || d.fechaEmision || '').slice(0, 10);
+            var fechaEmi = String(d.fechaEmision || '').slice(0, 10);
+            var plazo = calcularPlazoAcuse(fechaRec, fechaEmi, fechaRef);
+            var iva = entero(d.montoIvaRecuperable !== undefined ? d.montoIvaRecuperable : d.montoIva);
+            var total = entero(d.montoTotal !== undefined ? d.montoTotal : (entero(d.montoNeto) + iva));
+            items.push({
+                id: String(d.id || (entero(d.tipoDoc) + '-' + String(d.folio || '') + '-' + String(d.rutContraparte || ''))),
+                tipoDoc: entero(d.tipoDoc),
+                folio: d.folio != null ? String(d.folio) : '',
+                rut: String(d.rutContraparte || '').trim(),
+                razonSocial: String(d.razonSocialContraparte || '').trim().slice(0, 120),
+                fechaEmision: fechaEmi,
+                fechaRecepcion: fechaRec,
+                fechaAcuse: d.fechaAcuse ? String(d.fechaAcuse).slice(0, 10) : '',
+                neto: entero(d.montoNeto),
+                iva: iva,
+                total: total,
+                diasTranscurridos: plazo.diasTranscurridos,
+                diasRestantes: plazo.diasRestantes,
+                estadoPlazo: plazo.estadoPlazo,
+                decisionLocal: ''
+            });
+        });
+        items.sort(function (a, b) { return a.diasRestantes - b.diasRestantes || b.total - a.total; });
+        return items;
+    }
+
     function normalizarBheDesdeGateway(resp, opts) {
         var bhe = (resp && resp.bhe) ? resp.bhe : (resp || {});
         var items = Array.isArray(bhe.items) ? bhe.items : [];
@@ -394,6 +457,11 @@
                     body: { period: periodoGateway(o.period), jobType: o.jobType || 'FULL_SYNC' }
                 });
             },
+            iniciarSyncAll: function (opts) {
+                var o = opts || {};
+                var body = o.period ? { period: periodoGateway(o.period) } : {};
+                return llamar('sii-sync-all', { method: 'POST', body: body });
+            },
             estadoSync: function (companyId, jobId) {
                 return llamar('sii-sync?companyId=' + encodeURIComponent(companyId) + '&jobId=' + encodeURIComponent(jobId));
             },
@@ -460,6 +528,8 @@
         periodoUi: periodoUi,
         compactarRcvFila: compactarRcvFila,
         normalizarRcvDesdeGateway: normalizarRcvDesdeGateway,
+        normalizarPendientesDesdeGateway: normalizarPendientesDesdeGateway,
+        calcularPlazoAcuse: calcularPlazoAcuse,
         normalizarBheDesdeGateway: normalizarBheDesdeGateway,
         normalizarF29DesdeGateway: normalizarF29DesdeGateway,
         compararF29ConSii: compararF29ConSii,

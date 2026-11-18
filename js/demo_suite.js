@@ -120,7 +120,14 @@
             comprasCsv: '',
             comprasArchivo: '',
             comprasRows: null,
+            comprasPendientesAcuse: [],
+            acuseDecisiones: {},
             remanenteAnterior: 0,
+            remanente77MesAnterior: '',
+            utmMesPresentacionAnterior: '',
+            utmMesPresentacionActual: '',
+            postergarIva: false,
+            excluirSupermercado: false,
             tasaPpmPersonalizada: '',
             iuscManual: '',
             honorariosBruto: 0,
@@ -162,6 +169,9 @@
             },
             activosFijos: [],
             reglasConciliacion: [],
+            matchesConfirmados: {},
+            matchesDescartados: {},
+            carteraEstado: { cxc: {}, cxp: {} },
             f22Ajustes: {
                 ppmManual: '',
                 factorPpm: 1.018,
@@ -188,9 +198,14 @@
             cptAjustes: Object.assign({}, base.cptAjustes, guardado.cptAjustes || {}),
             bheBoletas: Array.isArray(guardado.bheBoletas) ? guardado.bheBoletas : [],
             bheAlertas: Array.isArray(guardado.bheAlertas) ? guardado.bheAlertas : [],
+            comprasPendientesAcuse: Array.isArray(guardado.comprasPendientesAcuse) ? guardado.comprasPendientesAcuse : [],
+            acuseDecisiones: (guardado.acuseDecisiones && typeof guardado.acuseDecisiones === 'object') ? guardado.acuseDecisiones : {},
             cartolaMovimientos: Array.isArray(guardado.cartolaMovimientos) ? guardado.cartolaMovimientos : [],
             activosFijos: Array.isArray(guardado.activosFijos) ? guardado.activosFijos : [],
             reglasConciliacion: Array.isArray(guardado.reglasConciliacion) ? guardado.reglasConciliacion : [],
+            matchesConfirmados: (guardado.matchesConfirmados && typeof guardado.matchesConfirmados === 'object') ? guardado.matchesConfirmados : {},
+            matchesDescartados: (guardado.matchesDescartados && typeof guardado.matchesDescartados === 'object') ? guardado.matchesDescartados : {},
+            carteraEstado: Object.assign({ cxc: {}, cxp: {} }, guardado.carteraEstado || {}),
             f22Ajustes: Object.assign({}, base.f22Ajustes, guardado.f22Ajustes || {}),
             socios: Array.isArray(guardado.socios) && guardado.socios.length ? guardado.socios : base.socios,
             manuales: Array.isArray(guardado.manuales) ? guardado.manuales : [],
@@ -202,6 +217,25 @@
         var todo = leerTodoAlmacen();
         var k = claveRegistro();
         var actual = leerEstadoActual();
+        mutador(actual);
+        todo[k] = actual;
+        guardarTodoAlmacen(todo);
+        return actual;
+    }
+
+    function guardarEstadoParaCliente(nombreCliente, periodo, mutador) {
+        var nomKey = String(nombreCliente || '').trim().toLowerCase() || 'cliente-demo';
+        var per = String(periodo || periodoActual()).trim() || '2026-11';
+        var k = nomKey + '::' + per;
+        var todo = leerTodoAlmacen();
+        var base = estadoDefecto(per);
+        var guardado = todo[k];
+        var actual = (guardado && typeof guardado === 'object')
+            ? Object.assign({}, base, guardado, {
+                tesoreria: Object.assign({}, base.tesoreria, guardado.tesoreria || {}),
+                carteraEstado: Object.assign({ cxc: {}, cxp: {} }, guardado.carteraEstado || {})
+            })
+            : base;
         mutador(actual);
         todo[k] = actual;
         guardarTodoAlmacen(todo);
@@ -236,6 +270,8 @@
             ventas: ventas,
             compras: compras,
             remanenteAnterior: est.remanenteAnterior,
+            postergarIva: !!est.postergarIva,
+            excluirSupermercado: !!est.excluirSupermercado,
             tasaPpm: est.tasaPpmPersonalizada,
             impuestoUnico48: iusc48,
             honorariosBruto: est.honorariosBruto,
@@ -303,7 +339,10 @@
             ventas: ventas,
             compras: compras,
             nomina: nomina,
-            estado: est
+            estado: est,
+            remanente77MesAnterior: est.remanente77MesAnterior,
+            utmMesPresentacionAnterior: est.utmMesPresentacionAnterior,
+            utmMesPresentacionActual: est.utmMesPresentacionActual
         }) : null;
 
         var activoFijo = Pro ? Pro.calcularActivoFijoTributario(est.activosFijos, {
@@ -314,12 +353,18 @@
         var conciliacion = Pro ? Pro.conciliarCartolaConReglas(est.cartolaMovimientos, {
             ventas: ventas,
             compras: compras,
-            reglas: est.reglasConciliacion
+            reglas: est.reglasConciliacion,
+            modoSugerencias: true,
+            matchesConfirmados: est.matchesConfirmados,
+            matchesDescartados: est.matchesDescartados
         }) : null;
 
         var aging = Pro ? Pro.calcularAgingDocumentos(ventas, compras, periodo, {
+            modoReal: true,
             pctVentasCobradas: est.tesoreria.pctVentasCobradas,
-            pctComprasPagadas: est.tesoreria.pctComprasPagadas
+            pctComprasPagadas: est.tesoreria.pctComprasPagadas,
+            carteraEstado: est.carteraEstado,
+            foliosConciliados: conciliacion ? conciliacion.foliosConciliados : {}
         }) : null;
 
         var ppmManualVal = (est.f22Ajustes && est.f22Ajustes.ppmManual !== '' && est.f22Ajustes.ppmManual != null)
@@ -414,6 +459,8 @@
         var vacio = $('f29-vacio');
         var resPanel = $('f29-resultados');
         var tieneDatosF29 = m.ventas.documentos.length > 0 || m.compras.documentos.length > 0 || c[48] > 0 || c[151] > 0 || c[504] > 0;
+        pintarAuditoriaComprasF29(m);
+        pintarAsistenteUtm(m);
         if (!tieneDatosF29) {
             vacio.hidden = false;
             resPanel.hidden = true;
@@ -422,6 +469,7 @@
         }
         vacio.hidden = true;
         resPanel.hidden = false;
+        pintarPostergacionF29(m);
         pintarSemaforoF29(m);
 
         $('f29-k-debito').textContent = moneySigno(c[538]);
@@ -464,8 +512,9 @@
 
             { sec: 'III. Determinación de IVA (cód. 538 menos cód. 537)' },
             c[89] > 0
-                ? { glosa: 'Impuesto IVA determinado a pagar', cod: '89', monto: c[89], total: true }
+                ? { glosa: 'Impuesto IVA determinado', cod: '89', monto: c[89], total: !c[756] }
                 : { glosa: 'Remanente de crédito fiscal para el período siguiente (no suma al pago)', cod: '77', monto: c[77], ok: true },
+            { glosa: 'Menos: IVA postergado a 2 meses (art. 64 inc. 3° · cód. 756 activo)', cod: '755', monto: c[755], resta: true, ocultarCero: true },
 
             { sec: 'IV. Retenciones de Segunda Categoría y PPM obligatorio' },
             { glosa: 'Impuesto Único de 2ª Categoría retenido sobre sueldos (art. 42 N°1)', cod: '48', monto: c[48] },
@@ -473,7 +522,7 @@
             { glosa: 'Base imponible PPM (' + D.money(c[563]) + ') · Tasa cód. 115 (' + D.num(c[115], 3) + '%)', cod: '62', monto: c[62] },
 
             { sec: 'V. Total determinado' },
-            { glosa: 'Total a pagar en Formulario 29 dentro del plazo legal (día 20 del mes siguiente)', cod: '91', monto: c[91], granTotal: true }
+            { glosa: c[756] ? 'Total a pagar hoy en Formulario 29 (retenciones + PPM; IVA va en giro mes +2)' : 'Total a pagar en Formulario 29 dentro del plazo legal (día 20 del mes siguiente)', cod: '91', monto: c[91], granTotal: true }
         ];
 
         $('tbody-f29').innerHTML = filas.filter(function (r) {
@@ -502,8 +551,142 @@
 
         Array.prototype.forEach.call(document.querySelectorAll('#suite-f29 input:not(#f29-periodo), #suite-f29 select'), function (inp) {
             if (inp.id === 'f29-iusc-manual' && m.nomina) return;
+            if (inp.id === 'f29-check-postergacion' && (!(m.f29 && m.f29.codigos && m.f29.codigos[89] > 0) || bloqueado)) {
+                inp.disabled = true;
+                return;
+            }
             inp.disabled = bloqueado && inp.type !== 'file';
         });
+    }
+
+    var NOMBRES_MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    function sumarMesesNombre(periodo, deltaMeses) {
+        var mp = /^(\d{4})-(\d{2})$/.exec(String(periodo || '2026-11'));
+        if (!mp) return '';
+        var dt = new Date(Number(mp[1]), Number(mp[2]) - 1 + deltaMeses, 1);
+        return NOMBRES_MESES[dt.getMonth()] + ' ' + dt.getFullYear();
+    }
+
+    function actualizarPreviewUtmCard() {
+        var remEl = $('utm-calc-rem-ant');
+        var uAntEl = $('utm-val-ant');
+        var uActEl = $('utm-val-act');
+        if (!remEl || !uAntEl || !uActEl || !F29 || !F29.reajustarRemanenteUtm) return null;
+        var res = F29.reajustarRemanenteUtm(remEl.value, uAntEl.value, uActEl.value);
+        if ($('utm-var-pct')) {
+            var sign = res.variacionPct >= 0 ? '+' : '';
+            $('utm-var-pct').textContent = sign + D.num(res.variacionPct, 3) + '%';
+        }
+        if ($('utm-rem-reajustado')) {
+            $('utm-rem-reajustado').textContent = D.money(res.reajustado) + (res.utm > 0 ? (' (' + D.num(res.utm, 2) + ' UTM)') : '');
+        }
+        return res;
+    }
+
+    function pintarAsistenteUtm(m) {
+        var per = (m && m.periodo) || periodoActual();
+        if ($('utm-mes-ant-nom')) $('utm-mes-ant-nom').textContent = sumarMesesNombre(per, 0);
+        if ($('utm-mes-act-nom')) $('utm-mes-act-nom').textContent = sumarMesesNombre(per, 1);
+        var est = m && m.estado ? m.estado : leerEstadoActual();
+        if ($('utm-calc-rem-ant') && document.activeElement !== $('utm-calc-rem-ant') && est.remanente77MesAnterior !== '' && est.remanente77MesAnterior != null) {
+            $('utm-calc-rem-ant').value = est.remanente77MesAnterior;
+        }
+        if ($('utm-val-ant') && document.activeElement !== $('utm-val-ant') && est.utmMesPresentacionAnterior) {
+            $('utm-val-ant').value = est.utmMesPresentacionAnterior;
+        }
+        if ($('utm-val-act') && document.activeElement !== $('utm-val-act') && est.utmMesPresentacionActual) {
+            $('utm-val-act').value = est.utmMesPresentacionActual;
+        }
+        actualizarPreviewUtmCard();
+    }
+
+    function pintarAuditoriaComprasF29(m) {
+        var panel = $('f29-auditoria-compras');
+        if (!panel) return;
+        var est = m.estado || {};
+        var bloqueado = !!est.cerradoTributario;
+        var pendientes = Array.isArray(est.comprasPendientesAcuse) ? est.comprasPendientesAcuse : [];
+        var fRes = (m.f29 && m.f29.resumen) || {};
+        var superCant = fRes.comprasSupermercadoCantOrig || 0;
+        var superIva = fRes.comprasSupermercadoIvaOrig || 0;
+        var mostrar = m.compras.documentos.length > 0 || pendientes.length > 0 || superCant > 0;
+        panel.hidden = !mostrar;
+        if (!mostrar) return;
+
+        var urgentes = pendientes.filter(function (p) { return p.estadoPlazo === 'critico'; }).length;
+        if ($('badge-acuse-urgentes')) {
+            $('badge-acuse-urgentes').hidden = urgentes === 0;
+            if ($('txt-acuse-urgentes')) $('txt-acuse-urgentes').textContent = urgentes + ' por vencer';
+        }
+
+        var tbody = $('tbody-f29-acuse-compras');
+        if (tbody) {
+            var decs = est.acuseDecisiones || {};
+            tbody.innerHTML = pendientes.length
+                ? pendientes.map(function (p) {
+                    var selloCls = p.estadoPlazo === 'critico' ? 'sello-riesgo' : (p.estadoPlazo === 'tacito' ? 'sello-guardada' : 'sello-emitida');
+                    var plazoTxt = p.estadoPlazo === 'tacito'
+                        ? 'Aceptada tácita (+8d)'
+                        : (p.estadoPlazo === 'critico' ? ('¡Vence en ' + p.diasRestantes + 'd!') : (p.diasRestantes + ' días restantes'));
+                    var dec = decs[p.id] || '';
+                    var accHtml = dec
+                        ? '<span class="sello ' + (dec === 'reclamar' ? 'sello-riesgo' : 'sello-emitida') + '">' + (dec === 'reclamar' ? 'Reclamar en SII' : 'Acusar recibo en SII') + '</span>'
+                        : '<div class="match-acciones-fila">' +
+                            '<button type="button" class="btn btn-chico btn-acuse-dec" data-acuse-id="' + D.esc(p.id) + '" data-acuse-acc="aceptar"' + (bloqueado ? ' disabled' : '') + '>Aceptar</button>' +
+                            '<button type="button" class="btn-texto btn-acuse-dec" data-acuse-id="' + D.esc(p.id) + '" data-acuse-acc="reclamar"' + (bloqueado ? ' disabled' : '') + '>Reclamar</button>' +
+                          '</div>';
+                    return '<tr>' +
+                        '<td class="mono">DTE ' + D.esc(p.tipoDoc || 33) + ' #' + D.esc(p.folio || 's/f') + '</td>' +
+                        '<td>' + D.esc(p.razonSocial || 'Proveedor') + '<br><span class="texto-ayuda mono">' + D.esc(p.rut || '-') + '</span></td>' +
+                        '<td class="mono">' + D.esc(p.fechaRecepcion || p.fechaEmision || '-') + '</td>' +
+                        '<td><span class="sello ' + selloCls + '">' + D.esc(plazoTxt) + '</span></td>' +
+                        '<td class="mono num">' + D.money(p.iva || 0) + '<br><span class="texto-ayuda">' + D.money(p.total || 0) + '</span></td>' +
+                        '<td class="num">' + accHtml + '</td>' +
+                        '</tr>';
+                }).join('')
+                : '<tr><td colspan="6" class="texto-ayuda">Sin facturas en estado PENDIENTE de acuse de recibo (Ley 19.983) para este período.</td></tr>';
+        }
+
+        var boxSup = $('f29-alerta-supermercado');
+        if (boxSup) {
+            boxSup.hidden = superCant === 0;
+            if (superCant > 0) {
+                if ($('super-cant')) $('super-cant').textContent = superCant;
+                if ($('super-monto')) $('super-monto').textContent = D.money(superIva);
+                var excl = !!est.excluirSupermercado;
+                if ($('supermercado-titulo')) {
+                    $('supermercado-titulo').textContent = excl
+                        ? 'Supermercados excluidos temporalmente del crédito (No Incluir)'
+                        : 'Facturas de supermercado detectadas (Cód. 761 / 762)';
+                }
+                if ($('btn-super-no-incluir')) {
+                    $('btn-super-no-incluir').classList.toggle('btn-primario', excl);
+                    $('btn-super-no-incluir').disabled = bloqueado;
+                }
+                if ($('btn-super-mantener')) {
+                    $('btn-super-mantener').classList.toggle('btn-primario', !excl);
+                    $('btn-super-mantener').disabled = bloqueado;
+                }
+            }
+        }
+    }
+
+    function pintarPostergacionF29(m) {
+        var est = m.estado || {};
+        var c = (m.f29 && m.f29.codigos) || {};
+        var fRes = (m.f29 && m.f29.resumen) || {};
+        var chk = $('f29-check-postergacion');
+        if (chk) chk.checked = !!est.postergarIva;
+        var activo = !!c[756];
+        if ($('sello-postergacion-estado')) $('sello-postergacion-estado').hidden = !activo;
+        if ($('f29-postergacion-desglose')) $('f29-postergacion-desglose').hidden = !activo;
+        if (activo) {
+            if ($('post-monto-iva')) $('post-monto-iva').textContent = D.money(c[755] || 0);
+            if ($('post-monto-inmediato')) $('post-monto-inmediato').textContent = D.money(fRes.retencionesYPpm || 0);
+            if ($('post-total-final')) $('post-total-final').textContent = D.money(c[91] || 0);
+            if ($('post-fecha-vence')) $('post-fecha-vence').textContent = 'Vence día 12 o 20 de ' + sumarMesesNombre(m.periodo, 2);
+        }
     }
 
     function pintarSemaforoF29(m) {
@@ -1187,6 +1370,8 @@
                     ventas: v,
                     compras: c,
                     remanenteAnterior: st.remanenteAnterior || 0,
+                    postergarIva: !!st.postergarIva,
+                    excluirSupermercado: !!st.excluirSupermercado,
                     tasaPpm: st.tasaPpmPersonalizada || '',
                     impuestoUnico48: st.iuscManual || 0,
                     honorariosBruto: st.honorariosBruto || 0,
@@ -1222,7 +1407,8 @@
                 var siiCell = (window.CLDemoSii && window.CLDemoSii.celdaTorre)
                     ? window.CLDemoSii.celdaTorre(c, rutTxt)
                     : '<span class="sello sello-guardada">Modo CSV</span>';
-                return '<tr>' +
+                var esSyncActiva = (window.CLDemoSii && window.CLDemoSii.filaActivaSync && window.CLDemoSii.filaActivaSync(c, rutTxt));
+                return '<tr' + (esSyncActiva ? ' class="fila-sii-activa"' : '') + '>' +
                     '<td><strong>' + D.esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip">En uso</span>' : '') + '</td>' +
                     '<td class="mono">' + (rutTxt ? D.esc(rutTxt) : '<span class="texto-ayuda">Sin RUT</span>') + '</td>' +
                     '<td class="mono">' + D.esc(c.regimen) + '</td>' +
@@ -1397,19 +1583,58 @@
         if ($('tbody-conciliacion')) {
             $('tbody-conciliacion').innerHTML = conc.filas.length
                 ? conc.filas.map(function (f) {
-                    var pillCls = f.metodo === 'factura_rcv' ? 'conc-pill-ok' : (f.metodo === 'regla' ? 'conc-pill-regla' : 'conc-pill-pend');
-                    var pillTxt = f.metodo === 'factura_rcv' ? 'Factura RCV' : (f.metodo === 'regla' ? 'Regla auto' : 'Pendiente');
+                    var badgeHtml = '';
+                    if (f.matchTipo === 'A') badgeHtml = '<span class="sello-match-a"><span class="material-icons" aria-hidden="true">verified</span>Match A · RUT + Monto</span>';
+                    else if (f.matchTipo === 'B') badgeHtml = '<span class="sello-match-b"><span class="material-icons" aria-hidden="true">help_outline</span>Sugerencia B · Monto</span>';
+                    else if (f.matchTipo === 'C') badgeHtml = '<span class="sello-match-c"><span class="material-icons" aria-hidden="true">layers</span>Match C · Agrupado</span>';
+                    else if (f.metodo === 'regla') badgeHtml = '<span class="conc-pill conc-pill-regla">Regla auto</span>';
+                    else badgeHtml = '<span class="conc-pill conc-pill-pend">Sin match</span>';
+
+                    var accionHtml = '';
+                    if (f.estado === 'sugerido') {
+                        accionHtml = '<div class="match-acciones-fila">' +
+                            '<button type="button" class="btn btn-chico btn-primario btn-match-confirmar" data-match-confirmar="' + D.esc(f.id) + '"><span class="material-icons" aria-hidden="true">check</span>Confirmar</button>' +
+                            '<button type="button" class="btn-texto btn-match-descartar" data-match-descartar="' + D.esc(f.id) + '">Descartar</button>' +
+                            '</div>';
+                    } else if (f.estado === 'conciliado') {
+                        accionHtml = '<span class="conc-pill conc-pill-ok">Conciliado</span>';
+                    } else {
+                        accionHtml = '<span class="conc-pill conc-pill-pend">Pendiente</span>';
+                    }
+
                     return '<tr>' +
                         '<td class="mono">' + D.esc(f.fecha || '-') + '</td>' +
                         '<td>' + D.esc(f.glosa || '-') + '</td>' +
                         '<td class="cap">' + D.esc(f.tipo) + '</td>' +
                         '<td class="mono num">' + D.money(f.monto) + '</td>' +
-                        '<td>' + D.esc(f.detalleMatch) + '</td>' +
+                        '<td>' + badgeHtml + '<div class="texto-ayuda" style="margin-top:3px">' + D.esc(f.detalleMatch) + '</div></td>' +
                         '<td class="mono">' + D.esc(f.cuenta) + '</td>' +
-                        '<td><span class="conc-pill ' + pillCls + '">' + pillTxt + '</span></td>' +
+                        '<td>' + accionHtml + '</td>' +
                         '</tr>';
                 }).join('')
                 : '<tr><td colspan="7" class="texto-ayuda">Sin movimientos bancarios aún. Haz clic en "Subir Cartola CSV" o "Cargar cartola ejemplo".</td></tr>';
+        }
+
+        function renderFilasCartera(lista, tipoCartera, msgVacio) {
+            if (!lista || !lista.length) {
+                return '<tr><td colspan="5" class="texto-ayuda">' + D.esc(msgVacio) + '</td></tr>';
+            }
+            return lista.slice(0, 20).map(function (it) {
+                var pagada = it.saldoPendiente <= 0;
+                var selloCls = pagada ? 'sello-emitida' : 'sello-preparada';
+                var selloTxt = it.estadoPago === 'CONCILIADA'
+                    ? 'Bancos'
+                    : (pagada ? 'Pagada' : 'Pendiente');
+                var nextEst = pagada ? 'PENDIENTE' : 'PAGADA';
+                var btnTxt = pagada ? 'Reabrir' : 'Marcar pagada';
+                return '<tr>' +
+                    '<td>DTE ' + D.esc(it.tipoDoc) + ' #' + D.esc(it.folio) + '<br><span class="texto-ayuda">' + D.esc(it.razonSocial) + ' · <span class="mono">' + D.esc(it.rut || '-') + '</span></span></td>' +
+                    '<td class="mono">' + it.dias + 'd (' + D.esc(it.tramo) + ')</td>' +
+                    '<td class="mono num">' + D.money(it.saldoPendiente) + (pagada ? '<br><span class="texto-ayuda">Orig. ' + D.money(it.montoOriginal) + '</span>' : '') + '</td>' +
+                    '<td><span class="sello ' + selloCls + '">' + selloTxt + '</span></td>' +
+                    '<td class="num"><button type="button" class="btn btn-chico btn-cartera-toggle" data-cartera-tipo="' + tipoCartera + '" data-cartera-key="' + D.esc(it.docKey) + '" data-cartera-next="' + nextEst + '">' + btnTxt + '</button></td>' +
+                    '</tr>';
+            }).join('');
         }
 
         if ($('aging-cxc-buckets')) {
@@ -1417,13 +1642,8 @@
             $('aging-cxc-buckets').textContent = '0-30d: ' + D.money(bc.dias_0_30) + ' · 31-60d: ' + D.money(bc.dias_31_60) + ' · +60d: ' + D.money(bc.dias_mas_60);
         }
         if ($('tbody-aging-cxc')) {
-            $('tbody-aging-cxc').innerHTML = aging.cxc.items.length
-                ? aging.cxc.items.slice(0, 12).map(function (it) {
-                    return '<tr><td>DTE ' + D.esc(it.tipoDoc) + ' #' + D.esc(it.folio) + '<br><span class="texto-ayuda">' + D.esc(it.razonSocial) + '</span></td>' +
-                        '<td class="mono">' + it.dias + 'd (' + D.esc(it.tramo) + ')</td>' +
-                        '<td class="mono num">' + D.money(it.saldoPendiente) + '</td></tr>';
-                }).join('')
-                : '<tr><td colspan="3" class="texto-ayuda">Sin saldo CxC pendiente (100% cobrado o sin ventas RCV).</td></tr>';
+            var listaCxc = aging.cxc.todosItems || aging.cxc.items || [];
+            $('tbody-aging-cxc').innerHTML = renderFilasCartera(listaCxc, 'cxc', 'Sin facturas CxC en este período.');
         }
 
         if ($('aging-cxp-buckets')) {
@@ -1431,16 +1651,11 @@
             $('aging-cxp-buckets').textContent = '0-30d: ' + D.money(bp.dias_0_30) + ' · 31-60d: ' + D.money(bp.dias_31_60) + ' · +60d: ' + D.money(bp.dias_mas_60);
         }
         if ($('tbody-aging-cxp')) {
-            $('tbody-aging-cxp').innerHTML = aging.cxp.items.length
-                ? aging.cxp.items.slice(0, 12).map(function (it) {
-                    return '<tr><td>DTE ' + D.esc(it.tipoDoc) + ' #' + D.esc(it.folio) + '<br><span class="texto-ayuda">' + D.esc(it.razonSocial) + '</span></td>' +
-                        '<td class="mono">' + it.dias + 'd (' + D.esc(it.tramo) + ')</td>' +
-                        '<td class="mono num">' + D.money(it.saldoPendiente) + '</td></tr>';
-                }).join('')
-                : '<tr><td colspan="3" class="texto-ayuda">Sin saldo CxP pendiente (100% pagado o sin compras RCV).</td></tr>';
+            var listaCxp = aging.cxp.todosItems || aging.cxp.items || [];
+            $('tbody-aging-cxp').innerHTML = renderFilasCartera(listaCxp, 'cxp', 'Sin facturas CxP en este período.');
         }
 
-        Array.prototype.forEach.call(document.querySelectorAll('#sub-conciliacion input, #sub-conciliacion select, #btn-regla-agregar, #btn-conc-centralizar, #btn-conc-cartola-ej, #btn-bancos-subir-cartola, #btn-bancos-ejemplo'), function (el) {
+        Array.prototype.forEach.call(document.querySelectorAll('#sub-conciliacion input, #sub-conciliacion select, #btn-regla-agregar, #btn-conc-centralizar, #btn-conc-cartola-ej, #btn-bancos-subir-cartola, #btn-bancos-ejemplo, .btn-match-confirmar, .btn-match-descartar, .btn-cartera-toggle'), function (el) {
             el.disabled = bloqueado;
         });
     }
@@ -1583,6 +1798,7 @@
         periodoActual: periodoActual,
         leerEstadoActual: leerEstadoActual,
         guardarEstadoActual: guardarEstadoActual,
+        guardarEstadoParaCliente: guardarEstadoParaCliente,
         cambiarACliente: cambiarACliente,
         cambiarModulo: cambiarModulo,
         calcularModelo: calcularModelo,
@@ -1804,6 +2020,92 @@
                 refrescarTodo();
             });
         });
+
+        // Asistente Reajuste UTM (Cód. 77 -> Cód. 504)
+        function alternarUtmCard(abrir) {
+            var card = $('f29-asistente-utm-card');
+            var btn = $('btn-f29-asistente-utm');
+            if (!card) return;
+            var mostrar = typeof abrir === 'boolean' ? abrir : card.hidden;
+            card.hidden = !mostrar;
+            if (btn) btn.setAttribute('aria-expanded', mostrar ? 'true' : 'false');
+            if (mostrar) {
+                actualizarPreviewUtmCard();
+                if ($('utm-calc-rem-ant') && !$('utm-calc-rem-ant').value) {
+                    $('utm-calc-rem-ant').focus();
+                }
+            }
+        }
+        if ($('btn-f29-asistente-utm')) $('btn-f29-asistente-utm').addEventListener('click', function () { alternarUtmCard(); });
+        if ($('btn-cerrar-asistente-utm')) $('btn-cerrar-asistente-utm').addEventListener('click', function () { alternarUtmCard(false); });
+        ['utm-calc-rem-ant', 'utm-val-ant', 'utm-val-act'].forEach(function (id) {
+            if ($(id)) $(id).addEventListener('input', actualizarPreviewUtmCard);
+        });
+        if ($('btn-utm-aplicar')) {
+            $('btn-utm-aplicar').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                var res = actualizarPreviewUtmCard();
+                if (!res || !res.reajustado) { D.avisar('Ingresa el remanente del período anterior y ambas UTM.'); return; }
+                guardarEstadoActual(function (est) {
+                    est.remanente77MesAnterior = Math.max(0, Math.round(D.parseNumber($('utm-calc-rem-ant').value)));
+                    est.utmMesPresentacionAnterior = Number($('utm-val-ant').value) || '';
+                    est.utmMesPresentacionActual = Number($('utm-val-act').value) || '';
+                    est.remanenteAnterior = res.reajustado;
+                });
+                alternarUtmCard(false);
+                refrescarTodo();
+                D.avisar('Remanente reajustado (' + D.num(res.utm, 2) + ' UTM = ' + D.money(res.reajustado) + ') aplicado al Código 504.');
+            });
+        }
+
+        // Postergación pago IVA (Cód. 756)
+        if ($('f29-check-postergacion')) {
+            $('f29-check-postergacion').addEventListener('change', function () {
+                if (leerEstadoActual().cerradoTributario) {
+                    $('f29-check-postergacion').checked = !!leerEstadoActual().postergarIva;
+                    D.avisar('El período está cerrado tributariamente.');
+                    return;
+                }
+                guardarEstadoActual(function (est) {
+                    est.postergarIva = !!$('f29-check-postergacion').checked;
+                });
+                refrescarTodo();
+            });
+        }
+
+        // Auditoría preventiva Compras RCV (Acuse 8 días + Supermercado Cód. 761)
+        if ($('tbody-f29-acuse-compras')) {
+            $('tbody-f29-acuse-compras').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-acuse-id]');
+                if (!btn || leerEstadoActual().cerradoTributario) return;
+                var id = btn.getAttribute('data-acuse-id');
+                var acc = btn.getAttribute('data-acuse-acc');
+                guardarEstadoActual(function (est) {
+                    est.acuseDecisiones = est.acuseDecisiones || {};
+                    est.acuseDecisiones[id] = acc;
+                });
+                refrescarTodo();
+                D.avisar(acc === 'reclamar'
+                    ? 'Marcado para reclamo: ejecuta el reclamo en sii.cl (Registro de Aceptación o Reclamo DTE) antes del día 8.'
+                    : 'Marcado para acuse de recibo: confirma en sii.cl para habilitar el crédito fiscal en el período.');
+            });
+        }
+        if ($('btn-super-no-incluir')) {
+            $('btn-super-no-incluir').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                guardarEstadoActual(function (est) { est.excluirSupermercado = true; });
+                refrescarTodo();
+                D.avisar('Crédito de supermercados (cód. 761/762) excluido del cálculo F29 actual.');
+            });
+        }
+        if ($('btn-super-mantener')) {
+            $('btn-super-mantener').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                guardarEstadoActual(function (est) { est.excluirSupermercado = false; });
+                refrescarTodo();
+                D.avisar('Crédito de supermercados acreditado con giro (cód. 761/762 incluido en cód. 537).');
+            });
+        }
 
         // Botones F29
         if ($('btn-f29-copiar')) {
@@ -2960,6 +3262,58 @@
                 D.avisar('Se centralizaron ' + nuevos.length + ' movimientos conciliados en Libro Diario.');
             });
         }
+
+        // Confirmar / Descartar match bancario Tipo B / C
+        if ($('tbody-conciliacion')) {
+            $('tbody-conciliacion').addEventListener('click', function (ev) {
+                if (leerEstadoActual().cerradoTributario) return;
+                var btnOk = ev.target.closest('[data-match-confirmar]');
+                if (btnOk) {
+                    var idM = btnOk.getAttribute('data-match-confirmar');
+                    guardarEstadoActual(function (est) {
+                        est.matchesConfirmados = est.matchesConfirmados || {};
+                        est.matchesDescartados = est.matchesDescartados || {};
+                        est.matchesConfirmados[idM] = true;
+                        delete est.matchesDescartados[idM];
+                    });
+                    refrescarTodo();
+                    D.avisar('Match bancario confirmado y factura rebajada de la cartera.');
+                    return;
+                }
+                var btnNo = ev.target.closest('[data-match-descartar]');
+                if (btnNo) {
+                    var idD = btnNo.getAttribute('data-match-descartar');
+                    guardarEstadoActual(function (est) {
+                        est.matchesConfirmados = est.matchesConfirmados || {};
+                        est.matchesDescartados = est.matchesDescartados || {};
+                        est.matchesDescartados[idD] = true;
+                        delete est.matchesConfirmados[idD];
+                    });
+                    refrescarTodo();
+                    D.avisar('Sugerencia descartada; puedes asignar regla manual.');
+                }
+            });
+        }
+
+        // Toggle factura a factura en Cartera CxC / CxP
+        ['tbody-aging-cxc', 'tbody-aging-cxp'].forEach(function (tbodyId) {
+            var tb = $(tbodyId);
+            if (!tb) return;
+            tb.addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-cartera-key]');
+                if (!btn || leerEstadoActual().cerradoTributario) return;
+                var tipoC = btn.getAttribute('data-cartera-tipo');
+                var keyC = btn.getAttribute('data-cartera-key');
+                var nextC = btn.getAttribute('data-cartera-next');
+                guardarEstadoActual(function (est) {
+                    est.carteraEstado = est.carteraEstado || { cxc: {}, cxp: {} };
+                    est.carteraEstado[tipoC] = est.carteraEstado[tipoC] || {};
+                    est.carteraEstado[tipoC][keyC] = nextC;
+                });
+                refrescarTodo();
+                D.avisar(nextC === 'PAGADA' ? 'Factura marcada como pagada en cartera.' : 'Factura reabierta como pendiente.');
+            });
+        });
 
         // Etapa 2 · TOP 4: Propuesta F22 (IDPC vs PPM Cód. 36 L85)
         ['f22-ppm-anual', 'f22-factor-ppm', 'f22-otros-creditos'].forEach(function (id) {

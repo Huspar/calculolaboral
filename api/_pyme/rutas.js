@@ -52,7 +52,8 @@ const ACTIVIDAD_RUTA = {
     'honorarios:PUT': 'honorarios_guardados', 'importar:POST': 'datos_importados', 'exportar:GET': 'respaldo_descargado',
     'sii-empresas:POST': 'sii_empresa_vinculada', 'sii-empresas:DELETE': 'sii_empresa_desvinculada',
     'sii-credenciales:POST': 'sii_credencial_guardada', 'sii-credenciales:DELETE': 'sii_credencial_revocada',
-    'sii-sync:POST': 'sii_sync_iniciado'
+    'sii-sync:POST': 'sii_sync_iniciado',
+    'sii-sync-all:POST': 'sii_sync_masivo_iniciado'
 };
 
 function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo, portal, siiGateway }) {
@@ -564,6 +565,15 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
     }
 
+    async function siiSyncAll(req, res) {
+        if (!metodo(req, res, 'POST')) return;
+        if (!siiGateway) return faltaGateway(res);
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        const b = H.cuerpoDe(req);
+        return responder(res, await siiGateway.sincronizarTodas(s.cuentaId, { period: b.period }));
+    }
+
     async function siiDatos(req, res) {
         if (!metodo(req, res, 'GET')) return;
         if (!siiGateway) return faltaGateway(res);
@@ -598,7 +608,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 400, { ok: false, codigo: 'tipo_invalido', error: 'Indica tipo=rcv, bhe o f29.' });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-datos': siiDatos };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {

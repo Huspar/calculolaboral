@@ -190,4 +190,35 @@ assert.strictEqual(f22A.tasaIdpc, 27);
 assert.strictEqual(f22A.idpcDeterminado, 2700000);
 assert.strictEqual(f22A.devolucionF22, 300000);
 
-console.log('OK test_contadores_asistente_pro (9/9 escenarios validados)');
+// 10. Ola 2: Match Tipo A (auto RUT+monto), B (sugerencia monto), C (agrupado) y Cartera Real factura a factura
+var vOla2 = {
+    documentos: [
+        { tipoDoc: 33, folio: 101, rut: '76.111.222-3', razonSocial: 'Cliente A', fecha: '2026-11-05', total: 1000000 },
+        { tipoDoc: 33, folio: 102, rut: '76.222.333-4', razonSocial: 'Cliente B', fecha: '2026-11-08', total: 680000 },
+        { tipoDoc: 33, folio: 103, rut: '76.333.444-5', razonSocial: 'Constructora Sur', fecha: '2026-11-10', total: 2500000 },
+        { tipoDoc: 33, folio: 104, rut: '76.333.444-5', razonSocial: 'Constructora Sur', fecha: '2026-11-12', total: 2350000 }
+    ]
+};
+var concOla2 = Pro.conciliarCartolaConReglas([
+    { id: 'MA', fecha: '2026-11-06', glosa: 'TEF RUT 76.111.222-3 FACT 101', tipo: 'abono', monto: 1000000 },
+    { id: 'MB', fecha: '2026-11-09', glosa: 'DEPOSITO WEB BANCO', tipo: 'abono', monto: 680000 },
+    { id: 'MC', fecha: '2026-11-14', glosa: 'ABONO CONSTRUCTORA SUR', tipo: 'abono', monto: 4850000 }
+], { ventas: vOla2, compras: { documentos: [] }, modoSugerencias: true });
+
+assert.strictEqual(concOla2.filas[0].matchTipo, 'A');
+assert.strictEqual(concOla2.filas[0].estado, 'conciliado');
+assert.strictEqual(concOla2.filas[1].matchTipo, 'B');
+assert.strictEqual(concOla2.filas[1].estado, 'sugerido');
+assert.strictEqual(concOla2.filas[2].matchTipo, 'C');
+assert.strictEqual(concOla2.filas[2].estado, 'sugerido');
+assert.strictEqual(concOla2.filas[2].matchedFolios.length, 2);
+
+var agingReal = Pro.calcularAgingDocumentos(vOla2, { documentos: [] }, '2026-11', {
+    modoReal: true,
+    foliosConciliados: concOla2.foliosConciliados,
+    carteraEstado: { cxc: { '33-102-762223334': 'PAGADA' }, cxp: {} }
+});
+// Folio 101 conciliada auto ($1M) + Folio 102 pagada manual ($680k) => pendientes solo 103 + 104 = $4.850.000
+assert.strictEqual(agingReal.cxc.total, 4850000);
+
+console.log('OK test_contadores_asistente_pro (10/10 escenarios validados)');

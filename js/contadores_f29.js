@@ -311,8 +311,9 @@
         // Creditos F29
         var cod519 = entero(c.cantFacturasGiro);
         var cod520 = entero(c.ivaGiro);
-        var cod761 = entero(c.cantSupermercado);
-        var cod762 = entero(c.ivaSupermercado);
+        var excluirSuper = !!e.excluirSupermercado;
+        var cod761 = excluirSuper ? 0 : entero(c.cantSupermercado);
+        var cod762 = excluirSuper ? 0 : entero(c.ivaSupermercado);
         var cod524 = entero(c.cantActivoFijo);
         var cod525 = entero(c.ivaActivoFijo);
         var cod531 = entero(c.cantNotasDebito);
@@ -371,10 +372,19 @@
             : reg.tasaPpmDefecto;
         var cod62 = Math.round(cod563 * (tasa115 / 100));
 
-        // Total a pagar dentro del plazo legal (nunca suma remanente 77)
-        var cod91 = cod89 + cod48 + cod151 + cod62;
+        // Total a pagar dentro del plazo legal (nunca suma remanente 77; si posterga IVA [756], el IVA va a [755] fuera de [91])
+        var cod756 = (!!e.postergarIva && cod89 > 0) ? 1 : 0;
+        var cod755 = cod756 ? cod89 : 0;
+        var retencionesYPpm = cod48 + cod151 + cod62;
+        var cod91 = (cod756 ? 0 : cod89) + retencionesYPpm;
 
         var avisos = [];
+        if (excluirSuper && entero(c.cantSupermercado) > 0) {
+            avisos.push('Compras de supermercado (cód. 761/762: ' + entero(c.cantSupermercado) + ' doc.) marcadas como "No incluir": crédito fiscal rebajado de cód. 537.');
+        }
+        if (cod756) {
+            avisos.push('Postergación de IVA activa (cód. 756, Art. 64 inc. 3° D.L. 825): $' + cod755.toLocaleString('es-CL') + ' trasladados a cód. 755 (vencimiento día 12 o 20 del mes subsiguiente). Verifica promedio <= 100.000 UF y no registrar morosidad reiterada.');
+        }
         if (cantBoletasElectronicas > 0) {
             avisos.push('Resumen RCV boletas electrónicas (tipo 39): se sumó su IVA ($' + ivaBoletasElectronicas.toLocaleString('es-CL') + ') al total de débitos (cód. 538). Verifica que coincida con la propuesta automática del SII; los códigos 110/111 son solo para boletas manuales.');
         }
@@ -419,6 +429,8 @@
                 504: cod504,
                 537: cod537,
                 89: cod89,
+                756: cod756,
+                755: cod755,
                 77: cod77,
                 48: cod48,
                 151: cod151,
@@ -436,8 +448,15 @@
                 ingresosNetosGiro: ingresosNetosGiro,
                 comprasNetasGiro: Math.max(0, entero(c.netoGiro) + entero(c.exentoGiro) + entero(c.netoNotasDebito) - entero(c.netoNotasCredito)),
                 comprasSupermercadoNeto: entero(c.netoSupermercado),
+                comprasSupermercadoCantOrig: entero(c.cantSupermercado),
+                comprasSupermercadoIvaOrig: entero(c.ivaSupermercado),
+                excluirSupermercado: excluirSuper,
                 comprasActivoFijoNeto: entero(c.netoActivoFijo),
-                ivaNoRecuperable: entero(c.ivaNoRecuperable)
+                ivaNoRecuperable: entero(c.ivaNoRecuperable),
+                ivaDeterminado: cod89,
+                ivaPostergado: cod755,
+                postergacionIva: !!cod756,
+                retencionesYPpm: retencionesYPpm
             },
             avisos: avisos
         };
@@ -490,11 +509,26 @@
         ].join('\r\n');
     }
 
+    function reajustarRemanenteUtm(rem77, utmMesDeclAnterior, utmMesDeclActual) {
+        var r = Math.max(0, entero(rem77));
+        var uAnt = Number(utmMesDeclAnterior) || 0;
+        var uAct = Number(utmMesDeclActual) || 0;
+        if (!r || uAnt <= 0 || uAct <= 0) {
+            return { utm: 0, variacionPct: 0, reajustado: r };
+        }
+        // Fórmula oficial SII (FAQ 001.130.1926.013): round2(Cód.77 / UTM_decl_prev) × UTM_decl_act -> round0
+        var utm = Math.round((r / uAnt) * 100) / 100;
+        var reajustado = Math.round(utm * uAct);
+        var variacionPct = Math.round((((uAct / uAnt) - 1) * 100) * 1000) / 1000;
+        return { utm: utm, variacionPct: variacionPct, reajustado: reajustado };
+    }
+
     var api = {
         REGIMENES: REGIMENES,
         parsearCsvTexto: parsearCsvTexto,
         parsearRcv: parsearRcv,
         calcularF29: calcularF29,
+        reajustarRemanenteUtm: reajustarRemanenteUtm,
         CABECERA_VENTAS_SII: CABECERA_VENTAS_SII,
         CABECERA_COMPRAS_SII: CABECERA_COMPRAS_SII,
         ejemploRcvVentasCsv: ejemploRcvVentasCsv,
