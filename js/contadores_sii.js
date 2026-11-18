@@ -497,6 +497,11 @@
                 ];
                 return llamar('sii-datos?' + params.join('&'));
             },
+            enviarAcuseRcv: function (companyId, payload) {
+                var p = Object.assign({}, payload || {});
+                if (p.period) p.period = periodoGateway(p.period);
+                return llamar('sii-acuse?companyId=' + encodeURIComponent(companyId), { method: 'POST', body: p });
+            },
             listarTokensMcp: function () {
                 return llamar('mcp-tokens');
             },

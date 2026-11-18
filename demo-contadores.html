@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.11.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.12.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -466,6 +466,7 @@
                 <button class="btn" type="button" id="btn-csv-liq">Exportar Excel</button>
                 <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred <span class="preval-btn-badge" id="badge-err-previred" hidden>0</span></button>
                 <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE <span class="preval-btn-badge" id="badge-err-lre" hidden>0</span></button>
+                <button class="btn" type="button" id="btn-midt-lre-guia"><span class="material-icons" aria-hidden="true">checklist</span>Guía subir LRE a Mi DT</button>
                 <button class="btn" type="button" id="btn-nomina-liq"><span class="material-icons" aria-hidden="true">table_view</span>Nómina banco</button>
                 <button class="btn" type="button" id="btn-asiento-liq"><span class="material-icons" aria-hidden="true">account_balance</span>Asiento centralización</button>
                 <button class="btn" type="button" id="btn-asistente-liq"><span class="material-icons" aria-hidden="true">send</span>Enviar a Asistente Pyme</button>
@@ -1324,6 +1325,9 @@
               <p class="panel-ayuda">Cambia de cliente con «Trabajar» para abrir sus liquidaciones, RCV, F29, libros y DDJJ en el mismo período.</p>
             </div>
             <div class="v-acciones">
+              <button type="button" class="btn btn-chico" id="btn-torre-portal" title="Compartir portal de solo lectura con el cliente activo">
+                <span class="material-icons" aria-hidden="true">share</span><span>Portal cliente</span>
+              </button>
               <button type="button" class="btn btn-chico" id="btn-torre-mcp" title="Conectar tu cartera del estudio con Claude Desktop vía MCP">
                 <span class="material-icons" aria-hidden="true">hub</span><span>Claude (MCP)</span>
               </button>
@@ -1703,6 +1707,21 @@
           </div>
         </div>
 
+        <div class="panel" id="rep-portal-card" style="margin-top:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Portal Cliente Marca Blanca</h2>
+              <p class="panel-ayuda">Comparte con tu cliente un enlace privado de solo lectura con la identidad de tu estudio: F29, P&amp;L y resumen laboral sin datos bancarios.</p>
+            </div>
+            <div class="v-acciones">
+              <span class="sello sello-guardada" id="rep-portal-sello">Solo lectura</span>
+              <button type="button" class="btn btn-primario" id="btn-rep-abrir-portal">
+                <span class="material-icons" aria-hidden="true">share</span>Configurar Portal Cliente
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="panel mcp-tarjeta-reportes" id="rep-mcp-card" style="margin-top:16px">
           <div class="panel-head">
             <div>
@@ -2015,6 +2034,299 @@
   </div>
 </dialog>
 
+<!-- Modal Acuse de Recibo SII Directo -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-acuse-sii" aria-labelledby="acuse-dlg-titulo">
+  <div class="midt-cabeza">
+    <div>
+      <h2 id="acuse-dlg-titulo">Acuse de Recibo o Reclamo ante el SII</h2>
+      <p class="midt-sub" id="acuse-dlg-sub">Registro de Aceptación o Reclamo DTE (Ley 19.983)</p>
+    </div>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-acuse-dlg" aria-label="Cerrar ventana">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="dialogo-cuerpo">
+    <div class="acuse-resumen-box" id="acuse-dlg-resumen">
+      <div class="acuse-resumen-item">
+        <span class="acuse-lbl">Documento y folio</span>
+        <strong class="mono" id="acuse-dlg-dte">DTE 33 #0</strong>
+      </div>
+      <div class="acuse-resumen-item">
+        <span class="acuse-lbl">Emisor</span>
+        <strong id="acuse-dlg-emisor">Proveedor</strong>
+        <span class="mono texto-ayuda" id="acuse-dlg-rut">76.543.210-3</span>
+      </div>
+      <div class="acuse-resumen-item">
+        <span class="acuse-lbl">IVA crédito / Total</span>
+        <strong class="mono"><span id="acuse-dlg-iva">$0</span> / <span id="acuse-dlg-total">$0</span></strong>
+      </div>
+      <div class="acuse-resumen-item">
+        <span class="acuse-lbl">Plazo legal (8 días corridos)</span>
+        <span class="sello sello-preparada" id="acuse-dlg-plazo">Por revisar</span>
+      </div>
+    </div>
+
+    <div id="acuse-dlg-sin-sii" class="sii-sin-sesion-aviso" hidden>
+      <p><strong>Empresa sin conexión automática con .pfx al SII.</strong> Puedes guardar esta decisión como recordatorio local para ejecutarla en sii.cl, o conectar el certificado digital ahora.</p>
+      <div>
+        <button type="button" class="btn btn-chico" id="btn-acuse-conectar-sii">Ir a conectar SII (.pfx)</button>
+      </div>
+    </div>
+
+    <div id="acuse-dlg-con-sii" class="sii-feedback-box ok" hidden>
+      Conexión SII con certificado digital activa: el evento se enviará directamente al Registro de Aceptación o Reclamo DTE.
+    </div>
+
+    <div class="lq-field" style="margin:12px 0">
+      <label for="acuse-dlg-accion">Tipo de evento a registrar (SII)</label>
+      <select id="acuse-dlg-accion">
+        <option value="ERM">ERM · Recibo de Mercaderías o Servicios (habilita crédito fiscal IVA)</option>
+        <option value="ACD">ACD · Aceptación de Contenido (no habilita crédito fiscal por sí solo)</option>
+        <option value="RCD">RCD · Reclamo de Contenido del Documento (sin crédito fiscal)</option>
+        <option value="RFP">RFP · Reclamo por Falta Parcial de Mercaderías o Servicios</option>
+        <option value="RFT">RFT · Reclamo por Falta Total de Mercaderías o Servicios</option>
+      </select>
+      <span class="texto-ayuda" id="acuse-dlg-accion-ayuda"></span>
+    </div>
+
+    <div class="acuse-alerta-irrev" id="acuse-dlg-alerta-irrev" role="note">
+      <span class="material-icons" aria-hidden="true">gavel</span>
+      <div>
+        <strong>Acción irreversible (Ley 19.983)</strong>
+        <p id="acuse-dlg-alerta-txt">Una vez enviado un acuse o reclamo al SII, el evento queda registrado de forma definitiva y no puede anularse ni modificarse posteriormente.</p>
+      </div>
+    </div>
+
+    <label class="acuse-confirm-check" id="acuse-check-wrap" hidden>
+      <input type="checkbox" id="acuse-check-confirmar">
+      <span>Confirmo que revisé los datos del DTE y autorizo el envío definitivo al SII dentro de la ventana legal.</span>
+    </label>
+
+    <div id="acuse-dlg-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
+
+    <div class="sii-dlg-acciones">
+      <div class="sii-acciones-izq">
+        <button type="button" class="btn btn-chico" id="btn-acuse-solo-local">Guardar marca local</button>
+      </div>
+      <div class="sii-acciones-der">
+        <button type="button" class="btn-texto" id="btn-acuse-cancelar">Cancelar</button>
+        <button type="button" class="btn btn-primario" id="btn-acuse-enviar-sii" disabled>
+          <span class="material-icons" aria-hidden="true">send</span>Enviar evento al SII
+        </button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal Portal Cliente Marca Blanca -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-portal-estudio" aria-labelledby="portal-dlg-titulo">
+  <div class="midt-cabeza">
+    <div>
+      <h2 id="portal-dlg-titulo">Portal Cliente Marca Blanca</h2>
+      <p class="midt-sub">Cliente activo: <strong id="portal-dlg-cliente-nom">Panadería San Isidro SpA</strong> (<span class="mono" id="portal-dlg-cliente-rut">Sin RUT</span>)</p>
+    </div>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-portal-dlg" aria-label="Cerrar ventana">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="dialogo-cuerpo">
+    <div class="portal-identidad-preview" id="portal-identidad-preview">
+      <div>
+        <span class="acuse-lbl">Identidad visible para tu cliente</span>
+        <strong id="portal-dlg-estudio-nom">Estudio Contable Chile</strong>
+        <span class="texto-ayuda mono" id="portal-dlg-estudio-meta">RUT 76.543.210-K · Contador Auditor</span>
+      </div>
+      <button type="button" class="btn-texto" id="btn-portal-ir-membrete">Editar membrete</button>
+    </div>
+
+    <div id="portal-dlg-sin-sesion" class="sii-sin-sesion-aviso" hidden>
+      <p><strong>Inicia sesión en tu estudio para emitir enlaces públicos temporales.</strong> Mientras tanto, puedes usar Vista previa Marca Blanca para revisar cómo lo verá tu cliente con los datos actuales.</p>
+      <div>
+        <button type="button" class="btn btn-primario btn-chico" id="btn-portal-ir-sesion">Iniciar sesión con mi correo</button>
+      </div>
+    </div>
+
+    <form id="form-portal-estudio" class="portal-secciones-form" novalidate>
+      <h3 class="preval-bloque-titulo">Secciones habilitadas para este cliente</h3>
+      <label class="portal-switch-row" for="portal-opt-f29">
+        <span>
+          <strong>Resumen F29 y vencimientos</strong>
+          <span class="texto-ayuda">Total cód. 91, vencimiento día 20, estado de cierre y plazos próximos.</span>
+        </span>
+        <input type="checkbox" id="portal-opt-f29" checked>
+      </label>
+      <label class="portal-switch-row" for="portal-opt-pnl">
+        <span>
+          <strong>Estados financieros (P&amp;L resumido)</strong>
+          <span class="texto-ayuda">Ingresos, costos, gastos operativos y resultado del período.</span>
+        </span>
+        <input type="checkbox" id="portal-opt-pnl" checked>
+      </label>
+      <label class="portal-switch-row" for="portal-opt-laboral">
+        <span>
+          <strong>Resumen laboral (Ley N° 21.719)</strong>
+          <span class="texto-ayuda">Totales y listado con RUT enmascarado; omite cuentas bancarias y descuentos personales.</span>
+        </span>
+        <input type="checkbox" id="portal-opt-laboral" checked>
+      </label>
+      <div class="lq-field" style="margin-top:8px">
+        <label for="portal-vigencia-dias">Vigencia del enlace</label>
+        <select id="portal-vigencia-dias">
+          <option value="7">7 días corridos</option>
+          <option value="15" selected>15 días corridos (recomendado)</option>
+          <option value="30">30 días corridos</option>
+        </select>
+      </div>
+      <div class="portal-acciones-generar">
+        <button type="button" class="btn" id="btn-portal-vista-previa">
+          <span class="material-icons" aria-hidden="true">visibility</span>Vista previa Marca Blanca
+        </button>
+        <button type="submit" class="btn btn-primario" id="btn-portal-generar">
+          <span class="material-icons" aria-hidden="true">link</span>Generar enlace seguro
+        </button>
+      </div>
+    </form>
+
+    <div id="portal-enlace-creado-box" class="mcp-token-once" hidden role="status" aria-live="polite">
+      <p class="mcp-token-once-aviso">
+        <span class="material-icons" aria-hidden="true">info</span>
+        <span><strong>Enlace listo para compartir:</strong> cópialo ahora; por seguridad la URL completa solo se muestra al crearla.</span>
+      </p>
+      <div class="mcp-copiar-fila">
+        <code id="portal-enlace-url" class="mono mcp-codigo-linea"></code>
+        <button type="button" class="btn btn-chico btn-primario" id="btn-portal-copiar-url">
+          <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar enlace</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mcp-tokens-wrap" id="portal-enlaces-wrap">
+      <h3 class="preval-bloque-titulo">Enlaces activos del estudio</h3>
+      <div class="tabla-contable-wrap" id="portal-enlaces-tabla-wrap">
+        <table class="tabla-contable compacta">
+          <thead>
+            <tr>
+              <th scope="col">Cliente</th>
+              <th scope="col">Secciones</th>
+              <th scope="col">Expira</th>
+              <th scope="col" class="num">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-portal-enlaces"></tbody>
+        </table>
+      </div>
+      <p class="texto-ayuda" id="portal-enlaces-vacio" hidden>No hay enlaces activos emitidos para este estudio.</p>
+    </div>
+
+    <div id="portal-dlg-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
+
+    <div class="sii-dlg-acciones">
+      <div class="sii-acciones-izq"></div>
+      <div class="sii-acciones-der">
+        <button type="button" class="btn btn-chico" id="btn-portal-listo">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal Guía Carga Masiva LRE en Mi DT -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-midt-lre" aria-labelledby="midt-lre-titulo">
+  <div class="midt-cabeza">
+    <div>
+      <h2 id="midt-lre-titulo">Guía de carga LRE en Mi DT</h2>
+      <p class="midt-sub">Prepara, valida y cuadra el Libro de Remuneraciones Electrónico antes de declararlo.</p>
+    </div>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-midt-lre" aria-label="Cerrar ventana">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="dialogo-cuerpo">
+    <div id="midt-lre-semaforo" class="midt-lre-semaforo" role="status" aria-live="polite">
+      <span class="sello sello-emitida" id="midt-lre-sello">Listo para Mi DT</span>
+      <ul class="preval-lista-hallazgos" id="midt-lre-errores-lista" hidden style="margin-top:8px"></ul>
+    </div>
+
+    <div class="midt-lre-control-box" id="midt-lre-control-box">
+      <div class="mcp-copiar-fila" style="margin-bottom:8px">
+        <code id="midt-lre-archivo" class="mono mcp-codigo-linea">RUT_AAAAMM.csv</code>
+        <button type="button" class="btn btn-chico" id="btn-midt-copiar-archivo">
+          <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar nombre</span>
+        </button>
+      </div>
+      <p class="texto-ayuda" style="margin:0 0 10px">Codificación: ANSI (Windows-1252, sin BOM) · Separador: punto y coma (;). No abras ni re-guardes el CSV en Excel antes de subirlo.</p>
+
+      <div class="midt-totales-grid">
+        <div class="midt-total-item">
+          <span class="acuse-lbl">Trabajadores</span>
+          <strong class="mono" id="midt-lre-cnt-trab">0</strong>
+        </div>
+        <div class="midt-total-item">
+          <span class="acuse-lbl">Haberes imponibles (5210+5220)</span>
+          <strong class="mono" id="midt-lre-tot-imponible">$0</strong>
+        </div>
+        <div class="midt-total-item">
+          <span class="acuse-lbl">Total descuentos (5301)</span>
+          <strong class="mono" id="midt-lre-tot-descuentos">$0</strong>
+        </div>
+        <div class="midt-total-item">
+          <span class="acuse-lbl">Líquido a pagar (5501)</span>
+          <strong class="mono ok" id="midt-lre-tot-liquido">$0</strong>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <button type="button" class="btn btn-chico" id="btn-midt-copiar-totales">
+          <span class="material-icons" aria-hidden="true">content_copy</span>Copiar totales de control
+        </button>
+      </div>
+    </div>
+
+    <div class="mcp-paso">
+      <div class="mcp-paso-head">
+        <span class="mcp-paso-num">1</span>
+        <strong>Descarga el archivo CSV con el nombre exacto</strong>
+      </div>
+      <p class="texto-ayuda" style="margin:0 0 8px">Genera las 147 columnas con el formato exigido por la Dirección del Trabajo (RUT sin puntos ni guion + período).</p>
+      <button type="button" class="btn btn-primario btn-chico" id="btn-midt-descargar-lre">
+        <span class="material-icons" aria-hidden="true">description</span>Descargar CSV LRE exacto
+      </button>
+    </div>
+
+    <div class="mcp-paso">
+      <div class="mcp-paso-head">
+        <span class="mcp-paso-num">2</span>
+        <strong>Ingresa a Mi DT con ClaveÚnica del representante</strong>
+      </div>
+      <p class="texto-ayuda" style="margin:0 0 8px">Ruta en el portal: Empleador &gt; Trámites y servicios &gt; Libro de Remuneraciones Electrónico &gt; Declarar LRE.</p>
+      <a href="https://midt.dirtrab.cl" target="_blank" rel="noopener noreferrer" class="btn btn-chico" id="link-midt-portal">
+        <span class="material-icons" aria-hidden="true">open_in_new</span>Abrir midt.dirtrab.cl
+      </a>
+    </div>
+
+    <div class="mcp-paso">
+      <div class="mcp-paso-head">
+        <span class="mcp-paso-num">3</span>
+        <strong>Selecciona el mes tributario y sube el archivo sin editarlo</strong>
+      </div>
+      <p class="texto-ayuda" style="margin:0">Adjunta directamente el archivo descargado en el paso 1 para mantener intacta la codificación ANSI y los RUT.</p>
+    </div>
+
+    <div class="mcp-paso">
+      <div class="mcp-paso-head">
+        <span class="mcp-paso-num">4</span>
+        <strong>Cuadra los totales de Categoría 5 y confirma</strong>
+      </div>
+      <p class="texto-ayuda" style="margin:0">Verifica en el comprobante de Mi DT que trabajadores, haberes, descuentos y líquido coincidan con el cuadro superior.</p>
+    </div>
+
+    <div class="sii-dlg-acciones">
+      <div class="sii-acciones-izq"></div>
+      <div class="sii-acciones-der">
+        <button type="button" class="btn btn-chico" id="btn-midt-lre-cerrar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <!-- Scripts de Motor y Suite Contable -->
 <script src="/js/constants.js"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
@@ -2044,10 +2356,12 @@
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
-<script src="/js/contadores_sii.js?v=1.2.0"></script>
-<script src="/js/demo_suite.js?v=2.6.0"></script>
-<script src="/js/demo_sii.js?v=1.2.0"></script>
+<script src="/js/contadores_sii.js?v=1.3.0"></script>
+<script src="/js/demo_suite.js?v=2.7.0"></script>
+<script src="/js/demo_sii.js?v=1.3.0"></script>
 <script src="/js/demo_mcp.js?v=1.0.0"></script>
+<script src="/js/demo_portal_estudio.js?v=1.0.0"></script>
+<script src="/js/demo_midt.js?v=1.0.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

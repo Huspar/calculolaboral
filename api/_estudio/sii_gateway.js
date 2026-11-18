@@ -18,6 +18,7 @@ const OPERACIONES_RCV = ['COMPRA', 'VENTA'];
 const ESTADOS_CONTAB = ['REGISTRO', 'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO'];
 const DIRECCIONES_BHE = ['EMITIDA', 'RECIBIDA', 'TERCEROS'];
 const ENVS_SII = ['PRODUCTION', 'CERTIFICATION'];
+const ACCIONES_ACUSE = ['ACD', 'RCD', 'ERM', 'RFP', 'RFT'];
 
 function idValido(v) {
     return typeof v === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(v.trim());
@@ -369,6 +370,48 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         };
     }
 
+    async function enviarAcuseRcv(cuentaId, companyId, entrada) {
+        if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
+        const b = entrada && typeof entrada === 'object' ? entrada : {};
+        const tipoDoc = Number(b.tipoDoc);
+        if (!Number.isInteger(tipoDoc) || tipoDoc < 1 || tipoDoc > 999) {
+            return { ok: false, estado: 400, codigo: 'tipo_doc_invalido', error: 'Tipo de DTE inválido.' };
+        }
+        const folioNum = Number(b.folio);
+        if (!Number.isInteger(folioNum) || folioNum <= 0) {
+            return { ok: false, estado: 400, codigo: 'folio_invalido', error: 'El folio del documento debe ser mayor a cero.' };
+        }
+        if (!Rut.valido(b.rutEmisor)) {
+            return { ok: false, estado: 400, codigo: 'rut_emisor_invalido', error: 'El RUT del emisor no es válido.' };
+        }
+        const accion = String(b.accion || '').trim().toUpperCase();
+        if (ACCIONES_ACUSE.indexOf(accion) < 0) {
+            return { ok: false, estado: 400, codigo: 'accion_invalida', error: 'Acción SII inválida (usa ACD, ERM, RCD, RFP o RFT).' };
+        }
+        const payload = {
+            tipoDoc,
+            folio: folioNum,
+            rutEmisor: Rut.formatear(b.rutEmisor),
+            accion
+        };
+        if (b.period) {
+            const per = normalizarPeriodo(b.period);
+            if (!per) return { ok: false, estado: 400, codigo: 'periodo_invalido', error: 'Indica un período válido (YYYY-MM).' };
+            payload.period = per;
+        }
+        if (typeof b.idempotencyKey === 'string' && b.idempotencyKey.trim()) {
+            payload.idempotencyKey = b.idempotencyKey.trim().slice(0, 120);
+        }
+        const r = await pedir(
+            cuentaId,
+            'POST',
+            '/api/v1/accounting/' + encodeURIComponent(companyId.trim()) + '/rcv/acuse',
+            payload
+        );
+        if (!r.ok) return r;
+        return { ok: true, acuse: r.data };
+    }
+
     async function listarTokensMcp(cuentaId) {
         const r = await pedir(cuentaId, 'GET', '/api/v1/mcp/tokens');
         if (!r.ok) return r;
@@ -423,6 +466,7 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         obtenerRcv,
         obtenerBhe,
         obtenerF29,
+        enviarAcuseRcv,
         listarTokensMcp,
         crearTokenMcp,
         revocarTokenMcp,

@@ -1,3 +1,4 @@
+const PortalEstudio = require('./portal_estudio');
 /**
  * Datos del estudio contable (capa de cuentas).
  *
@@ -8,7 +9,8 @@
  */
 const LIMITE_BYTES = 2 * 1024 * 1024;
 
-function crear({ consulta, cifrado }) {
+function crear({ consulta, cifrado, ahora }) {
+    const portalEst = PortalEstudio.crear({ consulta, cifrado, ahora });
     async function leer(cuentaId) {
         const filas = await consulta(
             'SELECT datos_cifrados, version_clave, actualizado FROM estudios WHERE cuenta_id = $1::uuid',
@@ -46,7 +48,15 @@ function crear({ consulta, cifrado }) {
         return { ok: true };
     }
 
-    return { leer: leer, guardar: guardar, LIMITE_BYTES: LIMITE_BYTES };
+    return {
+        leer: leer,
+        guardar: guardar,
+        portalCrear: portalEst.crearEnlace,
+        portalListar: portalEst.listarEnlaces,
+        portalRevocar: portalEst.revocarEnlace,
+        portalAbrir: portalEst.abrirEnlace,
+        LIMITE_BYTES: LIMITE_BYTES
+    };
 }
 
 module.exports = { crear, LIMITE_BYTES };

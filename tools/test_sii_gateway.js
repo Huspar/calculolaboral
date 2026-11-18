@@ -81,6 +81,13 @@ function montar({ apiKey = 'gw-secret-test-key', rolOverride = null, mockFetch }
         if (path === '/api/v1/accounting/cmp_1/sync/job_99' && opts.method === 'GET') {
             return { ok: true, status: 200, text: async () => JSON.stringify({ jobId: 'job_99', status: 'COMPLETED' }) };
         }
+        if (path === '/api/v1/accounting/cmp_1/rcv/acuse' && opts.method === 'POST') {
+            const b = JSON.parse(opts.body || '{}');
+            if (b.folio === 999) {
+                return { ok: false, status: 422, text: async () => JSON.stringify({ code: 'PFX_REQUIRED_FOR_ACUSE', message: 'Se requiere certificado digital .pfx para enviar acuses al SII.' }) };
+            }
+            return { ok: true, status: 200, text: async () => JSON.stringify({ ok: true, idempotent: false, companyId: 'cmp_1', tipoDoc: b.tipoDoc, folio: b.folio, rutEmisor: b.rutEmisor, accion: b.accion, estadoContab: (b.accion === 'ACD' || b.accion === 'ERM') ? 'REGISTRO' : 'RECLAMADO', fechaAcuse: '2026-11-18T13:30:00Z' }) };
+        }
         if (path === '/api/v1/mcp/tokens' && opts.method === 'GET') {
             return { ok: true, status: 200, text: async () => JSON.stringify({ items: [{ id: 'tok_1', label: 'Oficina', prefix: 'smcp_live_abc', createdAt: '2026-11-18T12:00:00Z', lastUsedAt: null, revokedAt: null }] }) };
         }
@@ -319,6 +326,37 @@ caso('mcp-tokens lista, crea y revoca tokens con aislamiento por cuenta y permis
         body: {}
     });
     assert.strictEqual(denegado.statusCode, 403);
+});
+
+caso('sii-acuse valida campos, reenvía PFX_REQUIRED_FOR_ACUSE y envía ERM al gateway', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('acuse@ejemplo.cl');
+    const badAcc = await pedir(m.rutas, {
+        query: { ruta: 'sii-acuse', companyId: 'cmp_1' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { tipoDoc: 33, folio: 120, rutEmisor: rutValido(76111222), accion: 'XYZ' }
+    });
+    assert.strictEqual(badAcc.statusCode, 400);
+
+    const sinPfx = await pedir(m.rutas, {
+        query: { ruta: 'sii-acuse', companyId: 'cmp_1' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { tipoDoc: 33, folio: 999, rutEmisor: rutValido(76111222), accion: 'ERM' }
+    });
+    assert.strictEqual(sinPfx.statusCode, 422);
+    assert.strictEqual(sinPfx.json.codigo, 'PFX_REQUIRED_FOR_ACUSE');
+
+    const okErm = await pedir(m.rutas, {
+        query: { ruta: 'sii-acuse', companyId: 'cmp_1' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { tipoDoc: 33, folio: 120, rutEmisor: rutValido(76111222), accion: 'ERM', period: '2026-11' }
+    });
+    assert.strictEqual(okErm.statusCode, 200);
+    assert.strictEqual(okErm.json.acuse.estadoContab, 'REGISTRO');
+    assert.strictEqual(m.llamadasFetch[1].body.period, '202611');
 });
 
 cola.then(() => {

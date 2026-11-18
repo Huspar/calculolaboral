@@ -629,13 +629,37 @@
                     var plazoTxt = p.estadoPlazo === 'tacito'
                         ? 'Aceptada tácita (+8d)'
                         : (p.estadoPlazo === 'critico' ? ('¡Vence en ' + p.diasRestantes + 'd!') : (p.diasRestantes + ' días restantes'));
-                    var dec = decs[p.id] || '';
-                    var accHtml = dec
-                        ? '<span class="sello ' + (dec === 'reclamar' ? 'sello-riesgo' : 'sello-emitida') + '">' + (dec === 'reclamar' ? 'Reclamar en SII' : 'Acusar recibo en SII') + '</span>'
-                        : '<div class="match-acciones-fila">' +
+                    var decRaw = decs[p.id];
+                    var decObj = typeof decRaw === 'string'
+                        ? { modo: 'local', accion: decRaw === 'reclamar' ? 'RCD' : 'ERM' }
+                        : (decRaw && typeof decRaw === 'object' ? decRaw : null);
+                    var accHtml = '';
+                    if (decObj && decObj.modo === 'sii') {
+                        var esRec = decObj.accion === 'RCD' || decObj.accion === 'RFP' || decObj.accion === 'RFT';
+                        var fAcc = decObj.fechaAcuse ? String(decObj.fechaAcuse).slice(0, 10) : '';
+                        accHtml = '<div class="acuse-fila-confirmada">' +
+                            '<span class="sello ' + (esRec ? 'sello-riesgo' : 'sello-emitida') + '">Enviado SII · ' + D.esc(decObj.accion || 'ERM') + '</span>' +
+                            '<span class="texto-ayuda mono">' + D.esc(fAcc ? (fAcc + ' · ') : '') + 'Irreversible (Ley 19.983)</span>' +
+                            '</div>';
+                    } else if (decObj && decObj.modo === 'enviando') {
+                        accHtml = '<span class="sello sello-preparada"><span class="material-icons sii-spin" aria-hidden="true" style="font-size:14px">sync</span>Enviando...</span>';
+                    } else if (decObj && decObj.modo === 'error') {
+                        accHtml = '<div class="acuse-fila-confirmada">' +
+                            '<span class="sello sello-riesgo" title="' + D.esc(decObj.error || '') + '">Error al enviar</span>' +
+                            '<button type="button" class="btn-texto btn-acuse-dec" data-acuse-id="' + D.esc(p.id) + '" data-acuse-acc="reintentar"' + (bloqueado ? ' disabled' : '') + '>Reintentar</button>' +
+                            '</div>';
+                    } else if (decObj && decObj.modo === 'local') {
+                        var esLocRec = decObj.accion === 'RCD' || decObj.accion === 'RFP' || decObj.accion === 'RFT';
+                        accHtml = '<div class="acuse-fila-confirmada">' +
+                            '<span class="sello ' + (esLocRec ? 'sello-riesgo' : 'sello-preparada') + '">Marca local: ' + D.esc(decObj.accion || 'ERM') + '</span>' +
+                            '<button type="button" class="btn-texto btn-acuse-dec" data-acuse-id="' + D.esc(p.id) + '" data-acuse-acc="cambiar"' + (bloqueado ? ' disabled' : '') + '>Enviar o cambiar</button>' +
+                            '</div>';
+                    } else {
+                        accHtml = '<div class="match-acciones-fila">' +
                             '<button type="button" class="btn btn-chico btn-acuse-dec" data-acuse-id="' + D.esc(p.id) + '" data-acuse-acc="aceptar"' + (bloqueado ? ' disabled' : '') + '>Aceptar</button>' +
                             '<button type="button" class="btn-texto btn-acuse-dec" data-acuse-id="' + D.esc(p.id) + '" data-acuse-acc="reclamar"' + (bloqueado ? ' disabled' : '') + '>Reclamar</button>' +
                           '</div>';
+                    }
                     return '<tr>' +
                         '<td class="mono">DTE ' + D.esc(p.tipoDoc || 33) + ' #' + D.esc(p.folio || 's/f') + '</td>' +
                         '<td>' + D.esc(p.razonSocial || 'Proveedor') + '<br><span class="texto-ayuda mono">' + D.esc(p.rut || '-') + '</span></td>' +
@@ -2074,20 +2098,203 @@
         }
 
         // Auditoría preventiva Compras RCV (Acuse 8 días + Supermercado Cód. 761)
+        var acuseActivo = null;
+        var TEXTOS_ACUSE = {
+            ERM: {
+                ayuda: 'Habilita el uso del crédito fiscal IVA en el período actual, impide reclamar después y otorga mérito ejecutivo a la factura (Ley 19.983).',
+                alerta: 'Acción irreversible: habilita el uso del crédito fiscal IVA en el período actual, impide reclamar la factura (RCD/RFP/RFT) y la deja apta para cesión y mérito ejecutivo.'
+            },
+            ACD: {
+                ayuda: 'Acepta el contenido del documento e impide reclamar después, pero NO habilita el crédito fiscal por sí solo.',
+                alerta: 'Acción irreversible: ya no podrás reclamar esta factura (RCD/RFP/RFT). Ojo: ACD por sí solo NO habilita el crédito fiscal IVA; el DTE seguirá en Pendientes hasta que otorgues ERM o venzan los 8 días corridos.'
+            },
+            RCD: {
+                ayuda: 'Rechaza contenido, montos o glosas del documento. Anula derecho a crédito fiscal IVA.',
+                alerta: 'Acción irreversible para el crédito fiscal: la factura pasará a Reclamados, NO dará derecho a crédito fiscal IVA y no podrás aceptarla ni otorgar recibo (ACD/ERM) después.'
+            },
+            RFP: {
+                ayuda: 'Reclama entrega parcial de mercaderías o servicios. Anula derecho a crédito fiscal IVA.',
+                alerta: 'Acción irreversible para el crédito fiscal: la factura pasará a Reclamados, NO dará derecho a crédito fiscal IVA y no podrás aceptarla ni otorgar recibo (ACD/ERM) después.'
+            },
+            RFT: {
+                ayuda: 'Reclama falta total de mercaderías o servicios. Anula derecho a crédito fiscal IVA.',
+                alerta: 'Acción irreversible para el crédito fiscal: la factura pasará a Reclamados, NO dará derecho a crédito fiscal IVA y no podrás aceptarla ni otorgar recibo (ACD/ERM) después.'
+            }
+        };
+
+        function actualizarTextosAcuseDlg() {
+            var acc = ($('acuse-dlg-accion') && $('acuse-dlg-accion').value) || 'ERM';
+            var info = TEXTOS_ACUSE[acc] || TEXTOS_ACUSE.ERM;
+            if ($('acuse-dlg-accion-ayuda')) $('acuse-dlg-accion-ayuda').textContent = info.ayuda;
+            if ($('acuse-dlg-alerta-txt')) $('acuse-dlg-alerta-txt').textContent = info.alerta;
+        }
+
+        function refrescarEstadoSiiAcuseDlg() {
+            var st = (window.CLDemoSii && window.CLDemoSii.estadoConexionCliente)
+                ? window.CLDemoSii.estadoConexionCliente(clienteNombre())
+                : { autenticado: false, gatewayConfigured: false, companyId: '', hasCredentials: false, tienePfx: false };
+            var sinSii = $('acuse-dlg-sin-sii');
+            var conSii = $('acuse-dlg-con-sii');
+            var chkWrap = $('acuse-check-wrap');
+            var chk = $('acuse-check-confirmar');
+            var btnEnviar = $('btn-acuse-enviar-sii');
+
+            if (st.autenticado && st.gatewayConfigured && st.companyId && st.tienePfx) {
+                if (sinSii) sinSii.hidden = true;
+                if (conSii) conSii.hidden = false;
+                if (chkWrap) chkWrap.hidden = false;
+                if (btnEnviar) btnEnviar.disabled = !(chk && chk.checked);
+            } else {
+                if (sinSii) {
+                    sinSii.hidden = false;
+                    var pSin = sinSii.querySelector('p');
+                    if (pSin) {
+                        pSin.innerHTML = (st.autenticado && st.hasCredentials && !st.tienePfx)
+                            ? '<strong>Se requiere Certificado Digital (.pfx) para enviar acuses al SII.</strong> Esta empresa está conectada solo con Clave Tributaria. Puedes guardar una marca local o cargar el .pfx ahora.'
+                            : '<strong>Empresa sin conexión automática con .pfx al SII.</strong> Puedes guardar esta decisión como recordatorio local para ejecutarla en sii.cl, o conectar el certificado digital ahora.';
+                    }
+                }
+                if (conSii) conSii.hidden = true;
+                if (chkWrap) chkWrap.hidden = true;
+                if (btnEnviar) btnEnviar.disabled = true;
+            }
+            return st;
+        }
+
+        function abrirDialogoAcuse(id, accBtn) {
+            var est = leerEstadoActual();
+            var lista = Array.isArray(est.comprasPendientesAcuse) ? est.comprasPendientesAcuse : [];
+            var doc = null;
+            for (var i = 0; i < lista.length; i++) {
+                if (lista[i] && lista[i].id === id) { doc = lista[i]; break; }
+            }
+            if (!doc) return;
+            acuseActivo = doc;
+
+            var decPrev = (est.acuseDecisiones && typeof est.acuseDecisiones[id] === 'object') ? est.acuseDecisiones[id] : null;
+            var accionInicial = (decPrev && decPrev.accion) ? decPrev.accion : (accBtn === 'reclamar' ? 'RCD' : 'ERM');
+
+            if ($('acuse-dlg-dte')) $('acuse-dlg-dte').textContent = 'DTE ' + (doc.tipoDoc || 33) + ' #' + (doc.folio || 's/f');
+            if ($('acuse-dlg-emisor')) $('acuse-dlg-emisor').textContent = doc.razonSocial || 'Proveedor';
+            if ($('acuse-dlg-rut')) $('acuse-dlg-rut').textContent = doc.rut || 'Sin RUT';
+            if ($('acuse-dlg-iva')) $('acuse-dlg-iva').textContent = D.money(doc.iva || 0);
+            if ($('acuse-dlg-total')) $('acuse-dlg-total').textContent = D.money(doc.total || 0);
+            if ($('acuse-dlg-plazo')) {
+                $('acuse-dlg-plazo').textContent = doc.estadoPlazo === 'tacito'
+                    ? 'Plazo 8 días cumplido'
+                    : (doc.estadoPlazo === 'critico' ? ('Vence en ' + doc.diasRestantes + 'd') : (doc.diasRestantes + ' días restantes'));
+                $('acuse-dlg-plazo').className = 'sello ' + (doc.estadoPlazo === 'critico' ? 'sello-riesgo' : (doc.estadoPlazo === 'tacito' ? 'sello-guardada' : 'sello-emitida'));
+            }
+            if ($('acuse-dlg-accion')) $('acuse-dlg-accion').value = accionInicial;
+            if ($('acuse-check-confirmar')) $('acuse-check-confirmar').checked = false;
+            if ($('acuse-dlg-feedback')) {
+                if (decPrev && decPrev.modo === 'error' && decPrev.error) {
+                    $('acuse-dlg-feedback').hidden = false;
+                    $('acuse-dlg-feedback').className = 'sii-feedback-box error';
+                    $('acuse-dlg-feedback').textContent = decPrev.error;
+                } else {
+                    $('acuse-dlg-feedback').hidden = true;
+                    $('acuse-dlg-feedback').textContent = '';
+                }
+            }
+            actualizarTextosAcuseDlg();
+            refrescarEstadoSiiAcuseDlg();
+
+            var dlg = $('dlg-acuse-sii');
+            if (dlg && typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+        }
+
         if ($('tbody-f29-acuse-compras')) {
             $('tbody-f29-acuse-compras').addEventListener('click', function (ev) {
-                var btn = ev.target.closest('[data-acuse-id]');
-                if (!btn || leerEstadoActual().cerradoTributario) return;
-                var id = btn.getAttribute('data-acuse-id');
-                var acc = btn.getAttribute('data-acuse-acc');
+                var btn = ev.target.closest('.btn-acuse-dec');
+                if (!btn) return;
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                abrirDialogoAcuse(btn.getAttribute('data-acuse-id'), btn.getAttribute('data-acuse-acc'));
+            });
+        }
+        if ($('acuse-dlg-accion')) $('acuse-dlg-accion').addEventListener('change', actualizarTextosAcuseDlg);
+        if ($('acuse-check-confirmar')) {
+            $('acuse-check-confirmar').addEventListener('change', function () {
+                refrescarEstadoSiiAcuseDlg();
+            });
+        }
+        if ($('btn-cerrar-acuse-dlg')) $('btn-cerrar-acuse-dlg').addEventListener('click', function () { if ($('dlg-acuse-sii') && $('dlg-acuse-sii').open) $('dlg-acuse-sii').close(); });
+        if ($('btn-acuse-cancelar')) $('btn-acuse-cancelar').addEventListener('click', function () { if ($('dlg-acuse-sii') && $('dlg-acuse-sii').open) $('dlg-acuse-sii').close(); });
+        if ($('btn-acuse-conectar-sii')) {
+            $('btn-acuse-conectar-sii').addEventListener('click', function () {
+                if ($('dlg-acuse-sii') && $('dlg-acuse-sii').open) $('dlg-acuse-sii').close();
+                if (window.CLDemoSii && window.CLDemoSii.abrirModalSii) {
+                    window.CLDemoSii.abrirModalSii(clienteNombre(), { metodo: 'PFX_CERTIFICATE' });
+                }
+            });
+        }
+        if ($('btn-acuse-solo-local')) {
+            $('btn-acuse-solo-local').addEventListener('click', function () {
+                if (!acuseActivo) return;
+                var acc = ($('acuse-dlg-accion') && $('acuse-dlg-accion').value) || 'ERM';
                 guardarEstadoActual(function (est) {
                     est.acuseDecisiones = est.acuseDecisiones || {};
-                    est.acuseDecisiones[id] = acc;
+                    est.acuseDecisiones[acuseActivo.id] = { modo: 'local', accion: acc };
+                });
+                if ($('dlg-acuse-sii') && $('dlg-acuse-sii').open) $('dlg-acuse-sii').close();
+                refrescarTodo();
+                D.avisar('Marca local (' + acc + ') guardada para ejecutar en sii.cl.');
+            });
+        }
+        if ($('btn-acuse-enviar-sii')) {
+            $('btn-acuse-enviar-sii').addEventListener('click', async function () {
+                if (!acuseActivo || !window.CLSii) return;
+                var st = refrescarEstadoSiiAcuseDlg();
+                if (!st.companyId || !st.tienePfx) return;
+                var chk = $('acuse-check-confirmar');
+                if (!chk || !chk.checked) return;
+                var acc = ($('acuse-dlg-accion') && $('acuse-dlg-accion').value) || 'ERM';
+                var docId = acuseActivo.id;
+                var docRef = acuseActivo;
+
+                $('btn-acuse-enviar-sii').disabled = true;
+                guardarEstadoActual(function (est) {
+                    est.acuseDecisiones = est.acuseDecisiones || {};
+                    est.acuseDecisiones[docId] = { modo: 'enviando', accion: acc };
                 });
                 refrescarTodo();
-                D.avisar(acc === 'reclamar'
-                    ? 'Marcado para reclamo: ejecuta el reclamo en sii.cl (Registro de Aceptación o Reclamo DTE) antes del día 8.'
-                    : 'Marcado para acuse de recibo: confirma en sii.cl para habilitar el crédito fiscal en el período.');
+
+                try {
+                    var apiSii = window.CLSii.crearClienteApi();
+                    var resp = await apiSii.enviarAcuseRcv(st.companyId, {
+                        tipoDoc: Number(docRef.tipoDoc) || 33,
+                        folio: Number(docRef.folio),
+                        rutEmisor: docRef.rut,
+                        accion: acc,
+                        period: periodoActual()
+                    });
+                    var ac = (resp && resp.acuse) || {};
+                    guardarEstadoActual(function (est) {
+                        est.acuseDecisiones = est.acuseDecisiones || {};
+                        est.acuseDecisiones[docId] = {
+                            modo: 'sii',
+                            accion: acc,
+                            estadoContab: ac.estadoContab || ((acc === 'ACD' || acc === 'ERM') ? 'REGISTRO' : 'RECLAMADO'),
+                            fechaAcuse: ac.fechaAcuse || new Date().toISOString()
+                        };
+                    });
+                    if ($('dlg-acuse-sii') && $('dlg-acuse-sii').open) $('dlg-acuse-sii').close();
+                    refrescarTodo();
+                    D.avisar('Evento ' + acc + ' registrado en el SII para DTE #' + docRef.folio + '.');
+                } catch (err) {
+                    var msgErr = (err && err.message) || 'No pudimos registrar el acuse en el SII.';
+                    guardarEstadoActual(function (est) {
+                        est.acuseDecisiones = est.acuseDecisiones || {};
+                        est.acuseDecisiones[docId] = { modo: 'error', accion: acc, error: msgErr };
+                    });
+                    if ($('acuse-dlg-feedback')) {
+                        $('acuse-dlg-feedback').hidden = false;
+                        $('acuse-dlg-feedback').className = 'sii-feedback-box error';
+                        $('acuse-dlg-feedback').textContent = msgErr;
+                    }
+                    $('btn-acuse-enviar-sii').disabled = false;
+                    refrescarTodo();
+                }
             });
         }
         if ($('btn-super-no-incluir')) {

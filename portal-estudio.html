@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#00382E">
+<title>Portal Cliente · Resumen Contable y Laboral</title>
+<meta name="description" content="Portal informativo de solo lectura emitido por tu estudio contable.">
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
+<link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.12.0">
+</head>
+<body class="app-body">
+<main class="pe-shell" id="pe-shell">
+  <div class="pe-banner-preview" id="pe-banner-preview" hidden>
+    <strong>Vista previa Marca Blanca:</strong> así verá tu cliente su portal de solo lectura.
+  </div>
+
+  <section class="pe-estado-card" id="pe-estado-cargando" role="status" aria-live="polite">
+    <span class="material-icons sii-spin" aria-hidden="true">sync</span>
+    <p>Cargando resumen contable de tu empresa...</p>
+  </section>
+
+  <section class="pe-estado-card" id="pe-estado-error" hidden role="alert">
+    <span class="sello sello-riesgo" id="pe-error-sello">Enlace no disponible</span>
+    <h1 id="pe-error-titulo">Este enlace venció o fue revocado</h1>
+    <p id="pe-error-desc">Solicita un nuevo enlace de acceso a tu estudio contable para revisar los documentos del período.</p>
+  </section>
+
+  <section class="pe-estado-card" id="pe-estado-vacio" hidden>
+    <span class="sello sello-guardada">Sin publicaciones en el período</span>
+    <h1>Aún no hay información publicada</h1>
+    <p>Tu estudio contable todavía no habilita documentos para este mes. Intenta nuevamente más tarde.</p>
+  </section>
+
+  <div id="pe-contenido" hidden>
+    <header class="pe-header" id="pe-header">
+      <div class="pe-estudio-bloque">
+        <span class="pe-kicker">Estudio Contable</span>
+        <h1 id="pe-estudio-nombre">Estudio Contable</h1>
+        <p class="mono" id="pe-estudio-meta"></p>
+      </div>
+      <div class="pe-cliente-bloque">
+        <span class="pe-kicker">Empresa</span>
+        <strong id="pe-cliente-nombre">Cliente</strong>
+        <p class="mono"><span id="pe-cliente-rut"></span> · Período <span id="pe-periodo-badge"></span></p>
+      </div>
+    </header>
+
+    <section class="panel" id="pe-card-f29" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>Formulario 29 y vencimientos del período</h2>
+          <p class="panel-ayuda">Vencimiento legal: día 20 del mes siguiente</p>
+        </div>
+        <span class="sello sello-emitida" id="pe-f29-estado">Período abierto</span>
+      </div>
+      <div class="panel-cuerpo">
+        <div class="fin-kpis fin-kpis-4">
+          <div class="fin-kpi"><span class="fin-kpi-label">IVA determinado (cód. 89)</span><span class="fin-kpi-val mono" id="pe-f29-iva">$0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Retenciones (48 + 151)</span><span class="fin-kpi-val mono" id="pe-f29-ret">$0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">PPM mensual (cód. 115)</span><span class="fin-kpi-val mono" id="pe-f29-ppm">$0</span></div>
+          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Total F29 (cód. 91)</span><span class="fin-kpi-val mono ok" id="pe-f29-total">$0</span></div>
+        </div>
+        <p class="texto-ayuda" id="pe-f29-nota" hidden style="margin:10px 0 0"></p>
+        <ul class="pe-vencimientos-lista" id="pe-lista-vencimientos"></ul>
+      </div>
+    </section>
+
+    <section class="panel" id="pe-card-pnl" hidden>
+      <div class="panel-head"><h2>Estado de Resultados resumido (P&amp;L)</h2></div>
+      <div class="panel-cuerpo">
+        <div class="fin-kpis fin-kpis-4">
+          <div class="fin-kpi"><span class="fin-kpi-label">Ingresos netos</span><span class="fin-kpi-val mono" id="pe-pnl-ingresos">$0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Costos directos</span><span class="fin-kpi-val mono" id="pe-pnl-costos">$0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Remuneraciones y gastos</span><span class="fin-kpi-val mono" id="pe-pnl-gastos">$0</span></div>
+          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Resultado del período</span><span class="fin-kpi-val mono" id="pe-pnl-resultado">$0</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="pe-card-laboral" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>Resumen laboral del período</h2>
+          <p class="panel-ayuda">Totales de nómina y detalle sin datos bancarios ni descuentos personales (Ley N° 21.719)</p>
+        </div>
+      </div>
+      <div class="panel-cuerpo">
+        <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
+          <div class="fin-kpi"><span class="fin-kpi-label">Trabajadores</span><span class="fin-kpi-val mono" id="pe-lab-cnt">0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Total haberes</span><span class="fin-kpi-val mono" id="pe-lab-haberes">$0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Total líquido</span><span class="fin-kpi-val mono ok" id="pe-lab-liquido">$0</span></div>
+          <div class="fin-kpi"><span class="fin-kpi-label">Costo empresa</span><span class="fin-kpi-val mono" id="pe-lab-costo">$0</span></div>
+        </div>
+        <div class="tabla-contable-wrap" id="pe-lab-tabla-wrap" hidden>
+          <table class="tabla-contable compacta">
+            <thead>
+              <tr>
+                <th scope="col">Trabajador</th>
+                <th scope="col">RUT</th>
+                <th scope="col" class="num">Días</th>
+                <th scope="col" class="num">Haberes</th>
+                <th scope="col" class="num">Líquido a pagar</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-pe-trabajadores"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pe-footer" id="pe-footer">
+      <div>
+        <p id="pe-estudio-pie" style="margin:0 0 4px"></p>
+        <p class="texto-ayuda" id="pe-leyenda-legal" style="margin:0"></p>
+      </div>
+      <span class="texto-ayuda" id="pe-vence-txt"></span>
+    </footer>
+  </div>
+</main>
+<script src="/js/portal_estudio.js?v=1.0.0"></script>
+</body>
+</html>

@@ -54,8 +54,11 @@ const ACTIVIDAD_RUTA = {
     'sii-credenciales:POST': 'sii_credencial_guardada', 'sii-credenciales:DELETE': 'sii_credencial_revocada',
     'sii-sync:POST': 'sii_sync_iniciado',
     'sii-sync-all:POST': 'sii_sync_masivo_iniciado',
+    'sii-acuse:POST': 'sii_acuse_enviado',
     'mcp-tokens:POST': 'mcp_token_creado',
-    'mcp-tokens:DELETE': 'mcp_token_revocado'
+    'mcp-tokens:DELETE': 'mcp_token_revocado',
+    'portal-estudio:POST': 'portal_estudio_creado',
+    'portal-estudio:DELETE': 'portal_estudio_revocado'
 };
 
 function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo, portal, siiGateway }) {
@@ -610,6 +613,16 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 400, { ok: false, codigo: 'tipo_invalido', error: 'Indica tipo=rcv, bhe o f29.' });
     }
 
+    async function siiAcuse(req, res) {
+        if (!metodo(req, res, 'POST')) return;
+        if (!siiGateway) return faltaGateway(res);
+        const s = await sesionParaEscribir(req, res);
+        if (!s) return;
+        const b = H.cuerpoDe(req);
+        const companyId = typeof req.query?.companyId === 'string' ? req.query.companyId : (b.companyId || '');
+        return responder(res, await siiGateway.enviarAcuseRcv(s.cuentaId, companyId, b));
+    }
+
     async function mcpTokens(req, res) {
         if (!siiGateway) return faltaGateway(res);
         const m = req.method;
@@ -634,7 +647,43 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos, 'mcp-tokens': mcpTokens };
+    async function portalEstudioRuta(req, res) {
+        if (!estudio) return H.json(res, 503, { ok: false, error: 'El módulo de estudio no está disponible.' });
+        const secretoPortal = (env && env.PYME_SESSION_SECRET)
+            ? T.secretoDesdeEntorno(env)
+            : Buffer.from('portal-estudio:' + (siteUrl || 'local'));
+        const m = req.method;
+        if (m === 'GET') {
+            const tok = typeof req.query?.t === 'string' ? req.query.t.trim() : '';
+            if (tok) {
+                const r = await estudio.portalAbrir(tok, { secreto: secretoPortal });
+                res.setHeader('Cache-Control', 'no-store, max-age=0');
+                return responder(res, r);
+            }
+            const s = await conSesion(req, res);
+            if (!s) return;
+            if (!PERM.permitir(s.rol || 'titular', 'portal_gestionar')) {
+                return H.json(res, 403, { ok: false, codigo: 'sin_permiso', error: 'Tu rol no tiene permiso para gestionar el portal.' });
+            }
+            return responder(res, await estudio.portalListar(s.cuentaId));
+        }
+        if (m === 'POST') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            return responder(res, await estudio.portalCrear(s.cuentaId, H.cuerpoDe(req), { secreto: secretoPortal, siteUrl }));
+        }
+        if (m === 'DELETE') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const id = typeof req.query?.id === 'string' ? req.query.id : (b.id || '');
+            return responder(res, await estudio.portalRevocar(s.cuentaId, id));
+        }
+        res.setHeader('Allow', 'GET, POST, DELETE');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos, 'sii-acuse': siiAcuse, 'mcp-tokens': mcpTokens, 'portal-estudio': portalEstudioRuta };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {

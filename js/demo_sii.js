@@ -456,7 +456,19 @@
         });
     }
 
-    async function abrirModalSii(nombreCliente) {
+    function estadoConexionCliente(nombreCliente) {
+        var v = vinculoDeCliente(nombreCliente);
+        return {
+            autenticado: sesion.autenticado,
+            gatewayConfigured: sesion.gatewayConfigured,
+            companyId: v ? (v.companyId || '') : '',
+            hasCredentials: Boolean(v && v.hasCredentials),
+            credentialKind: v ? (v.credentialKind || '') : '',
+            tienePfx: Boolean(v && v.hasCredentials && v.credentialKind === 'PFX_CERTIFICATE')
+        };
+    }
+
+    async function abrirModalSii(nombreCliente, opts) {
         var nom = nombreCliente || clienteActivoNombre();
         modalState.clienteNombre = nom;
         var rut = rutDeCliente(nom);
@@ -498,7 +510,8 @@
         if (btnRevocar) btnRevocar.hidden = !(sesion.autenticado && vinculo && vinculo.hasCredentials);
         if (btnEliminar) btnEliminar.hidden = !(sesion.autenticado && vinculo && vinculo.companyId);
 
-        cambiarTabMetodo(vinculo && vinculo.credentialKind === 'PFX_CERTIFICATE' ? 'PFX_CERTIFICATE' : 'CLAVE_TRIBUTARIA');
+        var met = (opts && opts.metodo) || (vinculo && vinculo.credentialKind === 'PFX_CERTIFICATE' ? 'PFX_CERTIFICATE' : 'CLAVE_TRIBUTARIA');
+        cambiarTabMetodo(met);
 
         var dlg = $('dlg-sii-conexion');
         if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
@@ -1030,6 +1043,7 @@
         celdaTorre: celdaTorre,
         filaActivaSync: filaActivaSync,
         abrirModalSii: abrirModalSii,
+        estadoConexionCliente: estadoConexionCliente,
         sincronizarMes: sincronizarMes,
         sincronizarCarteraCompleta: sincronizarCarteraCompleta,
         revisarSesionYGateway: revisarSesionYGateway

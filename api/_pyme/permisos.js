@@ -40,7 +40,9 @@ const RUTAS = {
     'sii-sync': { GET: 'ver', POST: 'liquidar' },
     'sii-sync-all': { POST: 'liquidar' },
     'sii-datos': { GET: 'ver' },
-    'mcp-tokens': { GET: 'ver', POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' }
+    'sii-acuse': { POST: 'liquidar' },
+    'mcp-tokens': { GET: 'ver', POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
+    'portal-estudio': { POST: 'portal_gestionar', DELETE: 'portal_gestionar' }
 };
 
 function permitir(rol, accion) {

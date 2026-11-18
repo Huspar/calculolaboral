@@ -2887,3 +2887,239 @@
         padding: 0 12px;
     }
 }
+
+
+/* ==========================================================================
+   OLA 3B: ACUSE SII DIRECTO, PORTAL MARCA BLANCA Y ASISTENTE LRE MI DT
+   ========================================================================== */
+.acuse-resumen-box {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+}
+.acuse-resumen-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.acuse-lbl {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--muted);
+}
+.acuse-alerta-irrev {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    border-radius: var(--radius-sm);
+    color: var(--amber-ink);
+    margin-bottom: 12px;
+}
+.acuse-alerta-irrev .material-icons { font-size: 20px; color: var(--amber-ink); }
+.acuse-alerta-irrev strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.acuse-alerta-irrev p { margin: 0; font-size: 12.5px; line-height: 1.4; }
+.acuse-confirm-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    margin-bottom: 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.acuse-confirm-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--forest-700);
+    flex-shrink: 0;
+}
+.acuse-fila-confirmada {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+}
+
+.portal-identidad-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+}
+.portal-identidad-preview strong { display: block; font-size: 14px; color: var(--forest); }
+.portal-secciones-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.portal-switch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    cursor: pointer;
+}
+.portal-switch-row strong { display: block; font-size: 13.5px; color: var(--forest); }
+.portal-switch-row .texto-ayuda { display: block; margin-top: 2px; }
+.portal-switch-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--forest-700);
+    flex-shrink: 0;
+}
+.portal-acciones-generar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Página autónoma /portal-estudio */
+.pe-shell {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.pe-banner-preview {
+    padding: 10px 14px;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    border-radius: var(--radius-sm);
+    color: var(--amber-ink);
+    font-size: 13px;
+}
+.pe-estado-card {
+    max-width: 520px;
+    margin: 40px auto;
+    padding: 24px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.pe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    background: var(--forest);
+    color: #FFFFFF;
+}
+.pe-kicker {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--amber);
+    margin-bottom: 4px;
+}
+.pe-header h1 { margin: 0 0 4px; font-size: 20px; color: #FFFFFF; }
+.pe-header p { margin: 0; font-size: 12.5px; color: #E2E8E6; }
+.pe-cliente-bloque { text-align: right; }
+.pe-cliente-bloque strong { display: block; font-size: 16px; color: #FFFFFF; }
+.pe-vencimientos-lista {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+.pe-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+/* Asistente LRE Mi DT (#dlg-midt-lre) */
+.midt-lre-semaforo { margin-bottom: 12px; }
+.midt-lre-control-box {
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+}
+.midt-totales-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.midt-total-item {
+    padding: 8px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+}
+.midt-total-item strong { display: block; font-size: 14px; color: var(--forest); margin-top: 2px; }
+
+@media screen and (max-width: 640px) {
+    .acuse-resumen-box,
+    .midt-totales-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .pe-cliente-bloque { text-align: left; }
+    .portal-acciones-generar .btn,
+    .btn-portal-revocar,
+    #btn-rep-abrir-portal,
+    #btn-torre-portal,
+    #btn-midt-lre-guia,
+    #btn-acuse-enviar-sii,
+    #btn-acuse-solo-local,
+    #btn-midt-descargar-lre,
+    #link-midt-portal,
+    #btn-midt-copiar-archivo,
+    #btn-midt-copiar-totales,
+    #btn-portal-copiar-url {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+    .btn-acuse-dec {
+        min-height: 44px;
+        padding: 0 12px;
+    }
+}
