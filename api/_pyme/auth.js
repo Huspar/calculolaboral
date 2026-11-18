@@ -46,13 +46,22 @@ function inicioDeHora(ms) {
 }
 
 function crear(deps) {
-    const { almacen, enviarCorreo, secreto, siteUrl } = deps;
+    const { almacen, enviarCorreo, notificarRegistro, secreto, siteUrl } = deps;
     const ahora = deps.ahora || Date.now;
 
     async function auditar(evento, cuentaId, ip) {
         try {
             await almacen.registrarAuditoria({ cuentaId: cuentaId || null, evento, ipHash: T.huellaIp(secreto, ip), cuando: new Date(ahora()).toISOString() });
         } catch (e) { /* la auditoria no debe impedir el acceso */ }
+    }
+
+    async function avisarRegistro(evento) {
+        if (!notificarRegistro) return;
+        try {
+            await notificarRegistro(evento);
+        } catch (e) {
+            console.error('pyme registro aviso:', String((e && e.message) || '').slice(0, 120));
+        }
     }
 
     /** Actividad de la cuenta (quién hizo qué): nunca montos ni datos de trabajadores. No impide la acción si falla. */
@@ -93,6 +102,15 @@ function crear(deps) {
         // clave: identifica este envio (el servicio de correo descarta un duplicado con la misma clave)
         await enviarCorreo({ to: correo, enlace: `${siteUrl}/api/pyme/verificar?t=${token}`, vence, clave: tokenHash.slice(0, 40) });
         await auditar('acceso_solicitado', null, ip);
+        const existente = await almacen.buscarCuentaPorEmail(correo);
+        await avisarRegistro({
+            tipo: 'solicitud',
+            email: correo,
+            esNueva: !existente,
+            cuentaId: existente ? existente.id : null,
+            fecha: new Date(ms).toISOString(),
+            clave: 'reg-sol-' + tokenHash.slice(0, 32)
+        });
         return { ok: true };
     }
 
@@ -132,6 +150,16 @@ function crear(deps) {
         const vence = new Date(ms + DIAS_SESION * 86400000);
         await almacen.crearSesion({ cuentaId: cuenta.id, tokenHash: T.huellaToken(secreto, 'sesion', tokenSesion), creada: iso, vence: vence.toISOString() });
         await auditar(hayAceptacion ? 'acceso_ok' : 'acceso_ok_acepta_encargo', cuenta.id, ip);
+        if (!hayAceptacion) {
+            await avisarRegistro({
+                tipo: 'activacion',
+                email: correo,
+                esNueva: true,
+                cuentaId: cuenta.id,
+                fecha: iso,
+                clave: 'reg-act-' + cuenta.id
+            });
+        }
         return { ok: true, sesion: { token: tokenSesion, vence: vence.getTime() } };
     }
 

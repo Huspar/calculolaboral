@@ -144,4 +144,37 @@ function paginaBajaAvisos({ token }) {
 </form>`);
 }
 
-module.exports = { correoAcceso, correoAvisos, correoComentario, TIPOS_COMENTARIO, paginaConfirmar, paginaMensaje, paginaBajaAvisos, paginaLiquidacion };
+/** Aviso interno al dueño cuando alguien solicita acceso o activa una cuenta nueva (sin tokens ni enlaces). */
+function correoRegistroAdmin({ tipo, email, esNueva, cuentaId, fecha }) {
+    const esAct = tipo === 'activacion';
+    const etiqueta = esAct
+        ? 'Nueva cuenta activada'
+        : (esNueva ? 'Nueva solicitud de acceso' : 'Solicitud de reingreso');
+    const asunto = `[Asistente Pyme] ${etiqueta}: ${email}`;
+    const texto = [
+        `${etiqueta} en el Asistente Laboral Pyme.`,
+        '',
+        `Correo: ${email}`,
+        `Tipo de cuenta: ${esNueva || esAct ? 'Nueva' : 'Existente'}`,
+        cuentaId ? `ID cuenta: ${cuentaId}` : null,
+        `Fecha (UTC): ${fecha}`,
+        '',
+        esAct
+            ? 'La persona confirmó su enlace, aceptó el encargo e inició sesión.'
+            : 'Se envió el enlace de acceso de un solo uso (vigencia 15 minutos).'
+    ].filter(x => x !== null).join('\n');
+    const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
+<div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+  <p style="margin:0 0 12px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:${MARCA}">Laboral</span></p>
+  <p style="margin:0 0 16px;font-size:16px;font-weight:700">${escapeHtml(etiqueta)}</p>
+  <p style="margin:0 0 6px;font-size:14px;color:#334155"><strong>Correo:</strong> ${escapeHtml(email)}</p>
+  <p style="margin:0 0 6px;font-size:14px;color:#334155"><strong>Estado:</strong> ${esNueva || esAct ? 'Cuenta nueva' : 'Cuenta existente'}</p>
+  ${cuentaId ? `<p style="margin:0 0 6px;font-size:13px;color:#475569"><strong>ID cuenta:</strong> ${escapeHtml(cuentaId)}</p>` : ''}
+  <p style="margin:0 0 16px;font-size:13px;color:#475569"><strong>Fecha (UTC):</strong> ${escapeHtml(fecha)}</p>
+  <p style="margin:0;font-size:13px;color:#64748b">${esAct ? 'La persona confirmó su enlace, aceptó los términos e inició sesión.' : 'Se envió el enlace de acceso de un solo uso (15 minutos).'}</p>
+</div></body></html>`;
+    return { asunto, texto, html };
+}
+
+module.exports = { correoAcceso, correoAvisos, correoComentario, correoRegistroAdmin, TIPOS_COMENTARIO, paginaConfirmar, paginaMensaje, paginaBajaAvisos, paginaLiquidacion };

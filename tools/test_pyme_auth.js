@@ -353,5 +353,49 @@ caso('la página de confirmación no muestra la casilla a quien ya aceptó', () 
     assert.ok(/#asistente-pyme/.test(con));
     assert.ok(!/sky-|blue-|indigo|violet|purple|orange/.test(con));
 });
+caso('notificarRegistro avisa en solicitud nueva, reingreso y primera activación sin exponer tokens ni bloquear si falla', async () => {
+    const reloj = { t: Date.parse('2026-10-12T15:00:00Z') };
+    const almacen = crearAlmacenMemoria();
+    const enviados = [], avisos = [];
+    const auth = A.crear({
+        almacen, secreto: SECRETO, siteUrl: SITIO, ahora: () => reloj.t,
+        enviarCorreo: async (m) => { enviados.push(m); },
+        notificarRegistro: async (ev) => { avisos.push(ev); }
+    });
+
+    await auth.solicitarAcceso({ email: 'Nueva.Pyme@Ejemplo.cl', ip: '1.1.1.1' });
+    assert.strictEqual(avisos.length, 1);
+    assert.strictEqual(avisos[0].tipo, 'solicitud');
+    assert.strictEqual(avisos[0].email, 'nueva.pyme@ejemplo.cl');
+    assert.strictEqual(avisos[0].esNueva, true);
+
+    const token1 = new URL(enviados[0].enlace).searchParams.get('t');
+    const cMail = C.correoRegistroAdmin(avisos[0]);
+    assert.ok(cMail.asunto.includes('Nueva solicitud') && cMail.html.indexOf(token1) < 0);
+
+    await auth.completar({ token: token1, acepto: true, ip: '1.1.1.1' });
+    assert.strictEqual(avisos.length, 2);
+    assert.strictEqual(avisos[1].tipo, 'activacion');
+    assert.strictEqual(avisos[1].esNueva, true);
+    assert.ok(avisos[1].cuentaId);
+
+    // Reingreso: solicitud marcada esNueva=false y completar no repite 'activacion'
+    reloj.t += 60000;
+    await auth.solicitarAcceso({ email: 'nueva.pyme@ejemplo.cl', ip: '1.1.1.1' });
+    assert.strictEqual(avisos.length, 3);
+    assert.strictEqual(avisos[2].tipo, 'solicitud');
+    assert.strictEqual(avisos[2].esNueva, false);
+    const token2 = new URL(enviados[1].enlace).searchParams.get('t');
+    assert.ok((await auth.completar({ token: token2, ip: '1.1.1.1' })).ok);
+    assert.strictEqual(avisos.length, 3);
+
+    // Si notificarRegistro falla, el acceso sigue funcionando
+    const authFalla = A.crear({
+        almacen, secreto: SECRETO, siteUrl: SITIO, ahora: () => reloj.t,
+        enviarCorreo: async (m) => { enviados.push(m); },
+        notificarRegistro: async () => { throw new Error('resend caido'); }
+    });
+    assert.deepStrictEqual(await authFalla.solicitarAcceso({ email: 'otra@ejemplo.cl', ip: '1.1.1.2' }), { ok: true });
+});
 
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

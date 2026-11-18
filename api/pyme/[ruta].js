@@ -37,7 +37,12 @@ function armar() {
         await sendEmail({ to: [to], reply_to: 'contacto@calculolaboral.cl', subject: c.asunto, html: c.html, text: c.texto }, 'pyme-acceso-' + clave);
     }
 
-    const auth = crear({ almacen, enviarCorreo, secreto, siteUrl: SITE_URL });
+    async function notificarRegistro(ev) {
+        const c = C.correoRegistroAdmin(ev);
+        await sendEmail({ to: ['contacto@calculolaboral.cl'], subject: c.asunto, html: c.html, text: c.texto }, 'pyme-' + ev.clave);
+    }
+
+    const auth = crear({ almacen, enviarCorreo, notificarRegistro, secreto, siteUrl: SITE_URL });
     // El servicio de datos (y con el la clave de cifrado) se arma recien al primer uso: entrar y salir no la necesitan
     let datosReal = null;
     const datos = new Proxy({}, {
