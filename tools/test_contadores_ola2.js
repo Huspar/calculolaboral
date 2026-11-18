@@ -83,6 +83,31 @@ caso('Cartola bancaria CSV genera asientos cuadrados para Libro Diario y Mayor',
     });
 });
 
+caso('Cartola bancaria Excel 2D (encabezado en fila 6, Date ISO, variantes Chile y fila Total omitida)', () => {
+    const filasExcel = [
+        ['BancoEstado - Cartola Cuenta Vista'],
+        ['Cuenta', '000-123456-78'],
+        ['Periodo', 'Noviembre 2026'],
+        [],
+        ['Fecha Movimiento', 'Descripción Movimiento', 'Cheques / Otros Cargos', 'Depósitos / Otros Abonos', 'Saldo Contable'],
+        [new Date(Date.UTC(2026, 10, 5)), 'Pago Transbank liquidacion', '', 980000, 3980000],
+        [new Date(Date.UTC(2026, 10, 8)), 'Transferencia Previred', -245000, '', 3735000],
+        ['TOTALES', '', 245000, 980000, '']
+    ];
+    const parsed = Imp.parsearCartola(filasExcel, { periodo: '2026-11' });
+    assert.strictEqual(parsed.ok, true);
+    assert.strictEqual(parsed.movimientos.length, 2);
+    assert.strictEqual(parsed.movimientos[0].fecha, '2026-11-05');
+    assert.strictEqual(parsed.movimientos[0].tipo, 'abono');
+    assert.strictEqual(parsed.movimientos[0].monto, 980000);
+    assert.strictEqual(parsed.movimientos[1].fecha, '2026-11-08');
+    assert.strictEqual(parsed.movimientos[1].tipo, 'cargo');
+    assert.strictEqual(parsed.movimientos[1].monto, 245000);
+    assert.strictEqual(parsed.totalAbonos, 980000);
+    assert.strictEqual(parsed.totalCargos, 245000);
+    assert.strictEqual(parsed.ultimoSaldo, 3735000);
+});
+
 caso('DJ 1887 acumula renta neta (no bruto) y Certificado N6 invierte col 7 Exenta / col 8 No Gravada', () => {
     const vals = Object.assign({}, Param.vigenciaDe('2026-10'), Param.RESPALDO['2026-10']);
     const trabajador = {

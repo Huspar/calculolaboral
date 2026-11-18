@@ -879,8 +879,8 @@
             <p class="v-sub">Cruza cartolas bancarias con tus facturas RCV del SII, controla la cartera CxC/CxP y ajusta tus parámetros de tesorería.</p>
           </div>
           <div class="v-acciones">
-            <button type="button" class="btn btn-primario" id="btn-bancos-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir Cartola CSV</button>
-            <input type="file" id="file-bancos-cartola" accept=".csv,.txt,.tsv" class="sr-only" aria-label="Subir cartola bancaria CSV">
+            <button type="button" class="btn btn-primario" id="btn-bancos-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir Cartola (CSV / Excel)</button>
+            <input type="file" id="file-bancos-cartola" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" aria-label="Subir cartola bancaria CSV o Excel">
             <button type="button" class="btn" id="btn-bancos-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar cartola ejemplo</button>
           </div>
         </div>
@@ -904,7 +904,7 @@
             <div class="panel-head">
               <div>
                 <h2>Conciliación Bancaria con Reglas de Contraparte</h2>
-                <p class="panel-ayuda">Cruza automáticamente tu cartola CSV con facturas RCV (±$100) y reglas repetitivas (Transbank, SII, Previred, comisiones).</p>
+                <p class="panel-ayuda">Cruza automáticamente tu cartola CSV o Excel (.xlsx/.xls) con facturas RCV (±$100) y reglas repetitivas (Transbank, SII, Previred, comisiones).</p>
               </div>
               <div class="v-acciones">
                 <button type="button" class="btn btn-chico btn-primario" id="btn-conc-centralizar">Centralizar conciliados en Diario</button>
@@ -1587,16 +1587,16 @@
           <div class="panel">
             <div class="panel-head">
               <div>
-                <h2>Cartola Bancaria (CSV / TSV)</h2>
-                <p class="panel-ayuda">Reconoce abonos, cargos y saldo para crear asientos de partida doble en Libro Diario con un clic.</p>
+                <h2>Cartola Bancaria (CSV / Excel)</h2>
+                <p class="panel-ayuda">Reconoce abonos, cargos y saldo en .xlsx, .xls o .csv para crear asientos de partida doble en Libro Diario con un clic.</p>
               </div>
             </div>
             <div class="panel-cuerpo">
               <div class="f29-upload-acciones" style="margin-bottom:12px">
-                <button type="button" class="btn btn-primario" id="btn-imp-cartola-subir">Subir Cartola CSV</button>
+                <button type="button" class="btn btn-primario" id="btn-imp-cartola-subir">Subir Cartola (CSV / Excel)</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-cartola-ejemplo">Cargar cartola ejemplo</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-cartola-centralizar">Centralizar en Diario</button>
-                <input type="file" id="file-imp-cartola" accept=".csv,.txt,.tsv" class="sr-only" tabindex="-1" aria-label="Archivo CSV cartola bancaria">
+                <input type="file" id="file-imp-cartola" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" tabindex="-1" aria-label="Archivo CSV o Excel de cartola bancaria">
               </div>
               <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
                 <div class="fin-kpi"><span class="fin-kpi-label">Movimientos</span><span class="fin-kpi-val mono" id="imp-car-movs">0</span></div>
@@ -2550,11 +2550,11 @@
 <script src="/js/demo_liquidaciones.js?v=2.12.0"></script>
 <script src="/js/contadores_f29.js?v=1.2.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
-<script src="/js/contadores_importadores.js?v=1.0.0"></script>
+<script src="/js/contadores_importadores.js?v=1.1.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
 <script src="/js/contadores_sii.js?v=1.3.0"></script>
-<script src="/js/demo_suite.js?v=2.10.0"></script>
+<script src="/js/demo_suite.js?v=2.11.0"></script>
 <script src="/js/demo_sii.js?v=1.3.0"></script>
 <script src="/js/demo_mcp.js?v=1.0.0"></script>
 <script src="/js/demo_portal_estudio.js?v=1.0.0"></script>

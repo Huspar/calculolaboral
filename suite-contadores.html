@@ -490,7 +490,7 @@ window.addEventListener('load', function () {
 <div class="sc-pilar">
 <span class="sc-pilar-tag">Honorarios y bancos</span>
 <h3>4. Importador BHE y Conciliación Bancaria</h3>
-<p>Lees el CSV de Boletas de Honorarios Electrónicas del SII (retención 15,25% en 2026) y cartolas bancarias CSV para cruzar automáticamente contra el RCV (±$100), aplicar reglas repetitivas, centralizar en Diario y controlar cartera CxC/CxP.</p>
+<p>Lees el CSV de Boletas de Honorarios Electrónicas del SII (retención 15,25% en 2026) y cartolas bancarias en Excel (<code>.xlsx</code> / <code>.xls</code>) o CSV para cruzar automáticamente contra el RCV (±$100), aplicar reglas repetitivas, centralizar en Diario y controlar cartera CxC/CxP.</p>
 </div>
 <div class="sc-pilar">
 <span class="sc-pilar-tag">Contabilidad ProPyme</span>
@@ -650,7 +650,7 @@ window.addEventListener('load', function () {
 <p style="margin:0;font-weight:700;color:#881337;">Alcances reales y límites que conviene conocer antes de usarla:</p>
 <ul>
 <li><strong>No presenta ni paga declaraciones por ti en SII, Previred o Mi DT:</strong> los TXT Previred (105 campos), CSV LRE (147 columnas), borradores F29, DDJJ y Propuesta F22 son archivos de apoyo que debes revisar y cargar con tus credenciales. La conexión SII opcional solo sincroniza RCV/F29/BHE y, si lo confirmas factura por factura, envía Acuses de Recibo Ley 19.983.</li>
-<li><strong>No hace scraping bancario ni solicita claves de Previred o bancos:</strong> la conciliación bancaria trabaja únicamente a partir de cartolas CSV que tú subes y revisas.</li>
+<li><strong>No hace scraping bancario ni solicita claves de Previred o bancos:</strong> la conciliación bancaria trabaja únicamente a partir de cartolas CSV o Excel (<code>.xlsx</code> / <code>.xls</code>) que tú subes y revisas.</li>
 <li><strong>No emite DTE (facturas, boletas ni guías de despacho) en el SII</strong>, ni reemplaza el criterio profesional del contador o la revisión legal de un abogado.</li>
 <li><strong>Marco Renta AT 2027 bloqueado y edición simultánea:</strong> los borradores CSV de DDJJ (1887, 1879, 1947/1948) corresponden al año tributario vigente (AT 2026); AT 2027 permanecerá bloqueado hasta que el SII publique las resoluciones e instrucciones oficiales. Con sesión activa del estudio dispones de conexión SII cifrada, Portal Cliente Marca Blanca y tokens MCP; el cálculo sin sesión se mantiene local en tu navegador con respaldo JSON.</li>
 </ul>
@@ -672,7 +672,7 @@ window.addEventListener('load', function () {
 <div class="ls-faq">
 <details>
 <summary>¿Qué archivos puedo subir y descargar hoy mismo en la suite?</summary>
-<p>Puedes subir planillas Excel (.xlsx) de nómina y finiquitos, CSV de Compras y Ventas del RCV, CSV de Boletas de Honorarios (BHE), cartolas bancarias CSV, Plan de Cuentas CSV, paquetes de <code>/app</code> y respaldos JSON por cliente. Puedes descargar liquidaciones y finiquitos en PDF y Excel, TXT de 105 campos para Previred, CSV LRE (<code>RUT_AAAAMM.csv</code>, 147 columnas), Nómina banco y Asiento de centralización en Excel, Hoja guía F29, Libro Diario/Mayor, Balance de 8 Columnas, Hoja RLI ProPyme, P&amp;L/Flujo y borradores CSV de DDJJ 1887, 1879 y 1947/1948, junto con Certificados N°6, N°1 y resumen WhatsApp/PDF con membrete.</p>
+<p>Puedes subir planillas Excel (.xlsx) de nómina y finiquitos, CSV de Compras y Ventas del RCV, CSV de Boletas de Honorarios (BHE), cartolas bancarias en Excel (<code>.xlsx</code> / <code>.xls</code>) o CSV, Plan de Cuentas CSV, paquetes de <code>/app</code> y respaldos JSON por cliente. Puedes descargar liquidaciones y finiquitos en PDF y Excel, TXT de 105 campos para Previred, CSV LRE (<code>RUT_AAAAMM.csv</code>, 147 columnas), Nómina banco y Asiento de centralización en Excel, Hoja guía F29, Libro Diario/Mayor, Balance de 8 Columnas, Hoja RLI ProPyme, P&amp;L/Flujo y borradores CSV de DDJJ 1887, 1879 y 1947/1948, junto con Certificados N°6, N°1 y resumen WhatsApp/PDF con membrete.</p>
 </details>
 <details>
 <summary>¿La plataforma pide la clave del SII, de Previred o del banco?</summary>

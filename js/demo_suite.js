@@ -3126,11 +3126,9 @@
             D.avisar('BHE importadas: ' + res.boletas.length + ' vigentes (' + res.anuladasOmitidas + ' anuladas omitidas). F29 cód. 151 = ' + D.money(res.codigo151) + '.');
         }
 
-        function aplicarTextoCartola(txt) {
-            if (!Imp) return;
-            var res = Imp.parsearCartola(txt, { periodo: periodoActual() });
-            if (!res.ok) {
-                D.avisar(res.error || 'No se reconocieron movimientos de cartola.');
+        function aplicarResultadoCartola(res) {
+            if (!res || !res.ok) {
+                D.avisar((res && res.error) || 'No se reconocieron movimientos de cartola.');
                 return;
             }
             if (leerEstadoActual().cerradoTributario) {
@@ -3148,6 +3146,66 @@
             });
             refrescarTodo();
             D.avisar('Cartola leída: ' + res.movimientos.length + ' movimientos bancarios listos para centralizar.');
+        }
+
+        function aplicarTextoCartola(txt) {
+            if (!Imp) return;
+            aplicarResultadoCartola(Imp.parsearCartola(txt, { periodo: periodoActual() }));
+        }
+
+        function decodificarTextoBanco(buf) {
+            if (typeof TextDecoder === 'undefined') return '';
+            var txt = new TextDecoder('utf-8').decode(buf);
+            if (txt.indexOf('\uFFFD') >= 0) {
+                try { txt = new TextDecoder('windows-1252').decode(buf); } catch (e) { }
+            }
+            return txt;
+        }
+
+        function aplicarArchivoCartola(file) {
+            if (!file || !Imp) return;
+            var per = periodoActual();
+            var esExcel = /\.(xlsx|xls|ods)$/i.test(file.name);
+            file.arrayBuffer().then(function (buf) {
+                var res = null;
+                if (esExcel && typeof XLSX !== 'undefined') {
+                    try {
+                        var wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true });
+                        var firstErr = null;
+                        for (var i = 0; i < (wb.SheetNames || []).length; i++) {
+                            var sh = wb.Sheets[wb.SheetNames[i]];
+                            var rows = XLSX.utils.sheet_to_json(sh, { header: 1, defval: '', raw: true });
+                            var cand = Imp.parsearCartola(rows, { periodo: per });
+                            if (cand && cand.ok) { res = cand; break; }
+                            if (!firstErr) firstErr = cand;
+                        }
+                        if (!res) res = firstErr;
+                    } catch (e) {
+                        res = null;
+                    }
+                }
+                if (!res || (!res.ok && esExcel)) {
+                    var txtFallback = decodificarTextoBanco(buf);
+                    var candTxt = txtFallback ? Imp.parsearCartola(txtFallback, { periodo: per }) : null;
+                    if (candTxt && candTxt.ok) res = candTxt;
+                    else if (!res) res = candTxt;
+                }
+                aplicarResultadoCartola(res);
+            }).catch(function () {
+                D.avisar('No pudimos leer el archivo de cartola.');
+            });
+        }
+
+        function conectarInputCartola(btnId, inputId) {
+            var btn = $(btnId);
+            var inp = $(inputId);
+            if (!btn || !inp) return;
+            btn.addEventListener('click', function () { inp.value = ''; inp.click(); });
+            inp.addEventListener('change', function () {
+                var f = inp.files && inp.files[0];
+                if (f) aplicarArchivoCartola(f);
+                inp.value = '';
+            });
         }
 
         function imprimirCertificadoN6() {
@@ -3264,13 +3322,7 @@
             });
         }
 
-        if ($('btn-imp-cartola-subir') && $('file-imp-cartola')) {
-            $('btn-imp-cartola-subir').addEventListener('click', function () { $('file-imp-cartola').value = ''; $('file-imp-cartola').click(); });
-            $('file-imp-cartola').addEventListener('change', function () {
-                var f = $('file-imp-cartola').files && $('file-imp-cartola').files[0];
-                if (f) f.text().then(aplicarTextoCartola);
-            });
-        }
+        conectarInputCartola('btn-imp-cartola-subir', 'file-imp-cartola');
         if ($('btn-imp-cartola-ejemplo') && Imp) {
             $('btn-imp-cartola-ejemplo').addEventListener('click', function () {
                 aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));
@@ -3574,14 +3626,7 @@
         }
 
         // Etapa 2 · TOP 3: Conciliación Bancaria con Reglas + Carga directa en Bancos
-        if ($('btn-bancos-subir-cartola') && $('file-bancos-cartola')) {
-            $('btn-bancos-subir-cartola').addEventListener('click', function () { $('file-bancos-cartola').click(); });
-            $('file-bancos-cartola').addEventListener('change', function () {
-                var f = $('file-bancos-cartola').files && $('file-bancos-cartola').files[0];
-                if (f) f.text().then(aplicarTextoCartola);
-                $('file-bancos-cartola').value = '';
-            });
-        }
+        conectarInputCartola('btn-bancos-subir-cartola', 'file-bancos-cartola');
         if ($('btn-bancos-ejemplo') && Imp) {
             $('btn-bancos-ejemplo').addEventListener('click', function () {
                 aplicarTextoCartola(Imp.ejemploCartolaCsv(periodoActual()));

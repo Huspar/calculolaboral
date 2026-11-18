@@ -66,6 +66,9 @@
     }
 
     function normalizarFecha(raw, periodoFallback) {
+        if (raw instanceof Date && !isNaN(raw.getTime())) {
+            return raw.toISOString().slice(0, 10);
+        }
         if (typeof raw === 'number' && isFinite(raw) && raw > 25000 && raw < 80000) {
             var ms = Math.round((raw - 25569) * 86400 * 1000);
             var dt = new Date(ms);
@@ -308,10 +311,10 @@
                 var h = cols[j];
                 if (!h) continue;
                 if (iFecha < 0 && /fecha/.test(h)) iFecha = j;
-                else if (iGlosa < 0 && /(descripcion|detalle|glosa|movimiento|concepto|referencia)/.test(h)) iGlosa = j;
-                else if (iCargo < 0 && /(cargo|egreso|giro|debito|salida)/.test(h)) iCargo = j;
+                else if (iGlosa < 0 && /(descripcion|detalle|glosa|movimiento|concepto|referencia|operacion)/.test(h)) iGlosa = j;
+                else if (iCargo < 0 && /(cargo|egreso|giro|debito|salida|cheque|retiro)/.test(h)) iCargo = j;
                 else if (iAbono < 0 && /(abono|ingreso|deposito|credito|entrada)/.test(h)) iAbono = j;
-                else if (iMonto < 0 && /^(monto|importe|valor)$/.test(h)) iMonto = j;
+                else if (iMonto < 0 && /^(monto|importe|valor)/.test(h)) iMonto = j;
                 else if (iSaldo < 0 && /saldo/.test(h)) iSaldo = j;
                 else if (iCta < 0 && /(cuenta|contrapartida|cod_cta)/.test(h)) iCta = j;
             }
@@ -354,6 +357,10 @@
             var rawFecha = fila[mapa.fecha];
             var glosa = String(fila[mapa.glosa] == null ? '' : fila[mapa.glosa]).trim();
             if (!rawFecha && !glosa) continue;
+            var fechaNorm = normalizarTexto(rawFecha);
+            var glosaNorm = normalizarTexto(glosa);
+            if (/^(total|subtotal|totales|saldo\s*(inicial|final|anterior|contable|disponible))/.test(fechaNorm)) continue;
+            if (!rawFecha && /^(total|totales|sub\s*total|resumen)/.test(glosaNorm)) continue;
 
             var cargo = mapa.cargo >= 0 ? Math.abs(enteroChileno(fila[mapa.cargo])) : 0;
             var abono = mapa.abono >= 0 ? Math.abs(enteroChileno(fila[mapa.abono])) : 0;
