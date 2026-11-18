@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Suite Contadores: liquidaciones, Previred y F29 sin claves</title>
-<meta content="Liquida varios clientes, exporta Previred de 105 campos y LRE, y prepara el F29 desde el RCV. Sin entregar claves del SII. 90 días gratis." name="description"/>
+<title>Suite Contadores: Nómina, F29, Balance, DDJJ y conexión SII opcional</title>
+<meta content="Suite para contadores en Chile: nómina, Previred (105 campos), LRE, F29, Acuse SII, BHE, conciliación, Balance 8 col. y DDJJ. Con archivos o conexión SII opcional." name="description"/>
 <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
 <link href="/favicon.ico" rel="icon"/>
 <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
 <link href="https://calculolaboral.cl/suite-contadores" rel="canonical"/>
-<meta content="Suite Contadores: liquidaciones, Previred y F29 sin claves" property="og:title"/>
-<meta content="Liquida varios clientes, exporta Previred de 105 campos y LRE, y prepara el F29 desde el RCV. Sin entregar claves del SII. 90 días gratis." property="og:description"/>
+<meta content="Suite Contadores: Nómina, F29, Balance, DDJJ y conexión SII opcional" property="og:title"/>
+<meta content="Suite para contadores en Chile: nómina, Previred (105 campos), LRE, F29, Acuse SII, BHE, conciliación, Balance 8 col. y DDJJ. Con archivos o conexión SII opcional." property="og:description"/>
 <meta content="website" property="og:type"/>
 <meta content="https://calculolaboral.cl/suite-contadores" property="og:url"/>
 <meta content="https://calculolaboral.cl/assets/og/default.png" property="og:image"/>
 <meta content="es_CL" property="og:locale"/>
 <meta content="Cálculo Laboral" property="og:site_name"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<meta content="Suite Contadores: liquidaciones, Previred y F29 sin claves" name="twitter:title"/>
-<meta content="Liquida varios clientes, exporta Previred de 105 campos y LRE, y prepara el F29 desde el RCV. Sin entregar claves del SII. 90 días gratis." name="twitter:description"/>
+<meta content="Suite Contadores: Nómina, F29, Balance, DDJJ y conexión SII opcional" name="twitter:title"/>
+<meta content="Suite para contadores en Chile: nómina, Previred (105 campos), LRE, F29, Acuse SII, BHE, conciliación, Balance 8 col. y DDJJ. Con archivos o conexión SII opcional." name="twitter:description"/>
 <meta content="https://calculolaboral.cl/assets/og/default.png" property="twitter:image"/>
 <script type="application/ld+json">
 {
@@ -30,20 +30,21 @@
       "@id": "https://calculolaboral.cl/suite-contadores#app",
       "name": "Suite Contadores · Cálculo Laboral",
       "url": "https://calculolaboral.cl/suite-contadores",
-      "description": "Herramienta web para contadores y estudios contables en Chile: nóminas y finiquitos en lote por cliente, archivo plano Previred (105 campos), CSV LRE (147 columnas), borrador F29 desde RCV SII y Balance Tributario de 8 Columnas sin pedir claves.",
+      "description": "Suite web para contadores y estudios contables en Chile: nóminas y finiquitos en lote, TXT Previred (105 campos), CSV LRE (147 columnas), F29 desde RCV, Acuse SII (Ley 19.983), BHE, conciliación bancaria, Balance 8 Columnas, RLI, DDJJ, Portal Cliente Marca Blanca y conexión SII opcional por empresa.",
       "applicationCategory": "BusinessApplication",
       "audience": {
         "@type": "BusinessAudience",
         "audienceType": "Contadores y estudios contables en Chile"
       },
       "featureList": [
-        "Liquidaciones de sueldo y finiquitos en lote por empresa cliente",
-        "Generación de archivo plano Previred (105 campos) para revisar y subir",
-        "Exportación de Libro de Remuneraciones Electrónico (147 columnas)",
-        "Lectura de CSV de Compras y Ventas (RCV SII) para borrador de Formulario 29",
-        "Libro Diario, Libro Mayor y Balance Tributario de 8 Columnas exportables a Excel",
-        "Hoja base de Renta Líquida Imponible ProPyme (Art. 14 D N°3 y D8)",
-        "Procesamiento local en el navegador sin solicitar claves del SII, Previred ni bancos"
+        "Liquidaciones de sueldo y finiquitos en lote por empresa cliente con pre-validación y calendario de vencimientos 2026",
+        "Generación de archivo plano Previred (105 campos), CSV LRE Mi DT (147 columnas), nómina bancaria y asiento de centralización Excel",
+        "Borrador de Formulario 29 desde RCV SII (cód. 48, cód. 151, crédito supermercado cód. 761 y contraste SII) y Acuse de Recibo Ley 19.983",
+        "Importador de boletas BHE (15,25% en 2026) y cartolas bancarias CSV con conciliación automática y cartera CxC/CxP",
+        "Libro Diario, Libro Mayor, Plan de Cuentas editable, Activo Fijo, Balance de 8 Columnas, RLI ProPyme (14 D3 y D8) y P&L / Flujo",
+        "Borradores CSV de DDJJ 1887 (Cert. N°6), 1879 (Cert. N°1), 1947/1948, CPT Simplificado y Propuesta F22",
+        "Portal Cliente Marca Blanca, resumen ejecutivo WhatsApp/PDF y conector MCP de solo lectura para Claude",
+        "Trabajo local por archivos por defecto o conexión SII opcional por empresa (Clave Tributaria o Certificado .pfx cifrado AES-256-GCM)"
       ],
       "operatingSystem": "Web",
       "browserRequirements": "Requires JavaScript",
@@ -103,7 +104,7 @@
           "name": "¿Qué es Suite Contadores y qué incluye hoy?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Es una herramienta de trabajo para contadores independientes y estudios contables en Chile. Permite calcular remuneraciones y finiquitos en lote por cliente, descargar archivos de carga TXT para Previred (105 campos) y CSV para el LRE (147 columnas), leer los CSV del RCV del SII para preparar un borrador de Formulario 29, revisar Libro Diario/Mayor, Balance de 8 Columnas y hoja base ProPyme (Art. 14 D N°3 y D8)."
+            "text": "Es una plataforma de trabajo para contadores independientes y estudios contables en Chile. Incluye liquidaciones y finiquitos en lote con pre-validación, TXT Previred (105 campos), CSV LRE (147 columnas), F29 desde RCV SII y Acuse de Recibo Ley 19.983, importador de BHE (15,25% en 2026) y cartolas bancarias con conciliación, Diario/Mayor, Activo Fijo, Balance de 8 Columnas, RLI ProPyme (14 D N°3 y D8), Estados Financieros, DDJJ (1887, 1879, 1947/1948), CPT Simplificado, Propuesta F22, Portal Cliente Marca Blanca y conector MCP para Claude."
           }
         },
         {
@@ -111,15 +112,15 @@
           "name": "¿Pide claves del SII, Previred o del banco?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Trabaja con los archivos que tú exportas (Excel de nómina, TXT Previred, CSV del RCV del SII). En la demo interactiva todo se procesa y guarda localmente en tu navegador sin enviar credenciales ni conectarse a tus portales."
+            "text": "Por defecto trabajas 100% con tus archivos (Excel, TXT y CSV) sin entregar credenciales. La conexión automática con el SII es opcional por empresa cliente: solo si tú o tu cliente desean activarla, puedes ingresar Clave Tributaria SII o Certificado Digital (.pfx/.p12), los que se cifran con AES-256-GCM en servidor y se pueden revocar en cualquier momento. Previred, Mi DT y bancos nunca solicitan claves."
           }
         },
         {
           "@type": "Question",
-          "name": "¿Declara directamente en Previred, Mi DT o el SII?",
+          "name": "¿Declara o envía trámites directamente en Previred, Mi DT o el SII?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Suite Contadores genera borradores y archivos de carga para que tú los revises, valides los montos y los subas con tus propias claves en cada portal."
+            "text": "Genera archivos de carga (TXT Previred 105 campos, CSV LRE 147 columnas) y borradores de F29, DDJJ y F22 para que los revises y presentes con tus credenciales. Si activas la conexión SII opcional con sesión del estudio, puedes sincronizar RCV/F29/BHE y enviar Acuses de Recibo de facturas (Ley 19.983) al SII."
           }
         },
         {
@@ -135,7 +136,7 @@
           "name": "¿En qué se diferencia del Asistente Laboral Pyme?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "El Asistente Laboral Pyme está diseñado para que el dueño de una sola empresa administre contratos, anexos, vacaciones y liquidaciones de su propio equipo. Suite Contadores está enfocada en contadores que llevan múltiples empresas clientes, incluyendo RCV del SII para borrador de F29, Diario, Mayor, Balance de 8 Columnas y RLI ProPyme."
+            "text": "El Asistente Laboral Pyme está diseñado para que el dueño de una sola empresa administre contratos, anexos, vacaciones y liquidaciones de su equipo. Suite Contadores está enfocada en contadores que llevan múltiples empresas clientes: nómina y Previred/LRE en lote, RCV y F29, Acuse SII, BHE, conciliación bancaria, Diario/Mayor, Balance de 8 Columnas, RLI ProPyme, DDJJ/F22 y Portal Marca Blanca."
           }
         }
       ]
@@ -441,8 +442,8 @@ window.addEventListener('load', function () {
 
 <header class="ls-hero">
 <p class="ls-kicker">Para contadores y estudios contables · Acceso anticipado 90 días</p>
-<h1 class="ls-h1">Suite Contadores: liquidaciones, Previred y F29 de varios clientes sin entregar claves</h1>
-<p class="ls-lead">Calcula remuneraciones y finiquitos en lote por cliente, genera el archivo plano de 105 campos para revisar y subir a Previred, exporta el borrador CSV de LRE (147 columnas) y arma el borrador de F29 y Balance de 8 Columnas desde el RCV del SII, directo en tu navegador.</p>
+<h1 class="ls-h1">Suite Contadores: nómina, Previred, F29, Balance, DDJJ y conexión SII opcional por cliente</h1>
+<p class="ls-lead">Calcula liquidaciones y finiquitos en lote, exporta Previred (105 campos) y LRE (147 columnas), arma el F29 desde CSV o sincronizando con el SII cuando tú quieras, concilia bancos y cierra Balance de 8 Columnas, RLI y DDJJ en un solo panel.</p>
 <div class="ls-hero-actions">
 <a class="ls-btn ls-btn-primary" href="#acceso-anticipado" style="color:#ffffff !important;" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="hero-postulacion">
 <span class="material-icons" aria-hidden="true">badge</span><span>Postular al acceso anticipado (90 días gratis)</span>
@@ -451,15 +452,15 @@ window.addEventListener('load', function () {
 <span class="material-icons" aria-hidden="true">play_circle</span><span>Probar demo con datos de ejemplo</span>
 </a>
 </div>
-<p class="ls-meta">Herramienta de cálculo y organización referencial para contadores y estudios. Genera archivos de apoyo (TXT Previred, CSV LRE, borradores F29 y Balance de 8 columnas) para revisar y subir con tus propias claves; no reemplaza tu criterio profesional ni envía declaraciones al SII, Previred o la DT.</p>
+<p class="ls-meta">Trabaja por defecto con tus archivos locales (Excel, TXT y CSV) sin compartir claves, o conecta de forma opcional cada empresa al SII (Clave Tributaria o Certificado Digital .pfx cifrados con AES-256-GCM) cuando el estudio o el cliente así lo desee. No reemplaza la revisión profesional ni declara automáticamente en Previred, Mi DT o SII.</p>
 </header>
 
 <nav class="ls-toc" aria-label="Contenido">
 <p class="ls-toc-title">En esta página</p>
 <ol>
 <li><a href="#que-hace">Qué puedes hacer hoy</a></li>
-<li><a href="#sin-claves">Trabajo con archivos sin claves</a></li>
-<li><a href="#comparativa">Comparativa de mercado</a></li>
+<li><a href="#sin-claves">Trabajo por archivos o conexión SII opcional</a></li>
+<li><a href="#comparativa">Condiciones operativas</a></li>
 <li><a href="#planes">Planes anuales y acceso anticipado</a></li>
 <li><a href="#no-hace">Qué no hace esta herramienta</a></li>
 <li><a href="#preguntas">Preguntas frecuentes</a></li>
@@ -469,46 +470,67 @@ window.addEventListener('load', function () {
 <article class="ls-article">
 <section id="que-hace" class="ls-section">
 <h2>Qué puedes hacer hoy en Suite Contadores</h2>
-<p>Todo lo que listamos aquí funciona hoy en la <a href="demo-contadores" data-demo-track="1">demo interactiva con datos de ejemplo</a> y con tus propios archivos exportados desde Excel, Previred o el SII.</p>
+<p>Todos estos módulos ya operan en la <a href="demo-contadores" data-demo-track="1">suite interactiva</a> con el botón «Cargar ejemplo completo» (Panadería San Isidro SpA) o con tus propios archivos y empresas:</p>
 <div class="sc-pilares">
 <div class="sc-pilar">
-<span class="sc-pilar-tag">Nómina por cliente</span>
-<h3>1. Liquidaciones y finiquitos en lote</h3>
-<p>Cargas tu nómina desde Excel (.xlsx), calculas las liquidaciones del mes o lotes de finiquitos con UF, UTM, topes imponibles y gratificación vigentes, y descargas el resumen e impresión por trabajador.</p>
+<span class="sc-pilar-tag">Nómina y plazos</span>
+<h3>1. Liquidaciones, finiquitos y pre-validación</h3>
+<p>Cargas tu nómina desde Excel (.xlsx), calculas liquidaciones o finiquitos en lote por cliente con UF, UTM y topes 2026 vigentes, pre-validas errores antes de exportar y revisas vencimientos legales (Mi DT, Previred día 13 y LRE).</p>
 </div>
 <div class="sc-pilar">
 <span class="sc-pilar-tag">Previred y Mi DT</span>
-<h3>2. Archivo Previred (105 campos) y LRE CSV</h3>
-<p>Generas el archivo plano TXT de 105 campos para Previred y el CSV de 147 columnas del Libro de Remuneraciones Electrónico para revisarlos y cargarlos con tus credenciales.</p>
+<h3>2. TXT Previred, LRE, Nómina y Asiento</h3>
+<p>Generas el TXT plano de 105 campos para Previred, el CSV LRE con nombre oficial <code>RUT_AAAAMM.csv</code> (147 columnas en ANSI/Windows-1252 y guía de carga a Mi DT), la nómina bancaria y el asiento de centralización con códigos del Plan Base en Excel.</p>
 </div>
 <div class="sc-pilar">
-<span class="sc-pilar-tag">Borrador tributario</span>
-<h3>3. Borrador de F29 desde RCV SII</h3>
-<p>Subes los archivos CSV de Compras y Ventas del SII y cruzas débito, crédito y remanente con el impuesto único retenido de sueldos (cód. 48) y retenciones de boletas de honorarios (cód. 151 al 15,25% en 2026). <a href="calculadora-f29-chile" class="font-semibold text-[#00382E] underline">Probar la calculadora F29 gratuita</a>.</p>
+<span class="sc-pilar-tag">Impuestos mensuales</span>
+<h3>3. RCV, Borrador F29 y Acuse SII (Ley 19.983)</h3>
+<p>Importas CSV de Compras y Ventas del SII o sincronizas el período desde el SII si conectas la empresa. Cruzas cód. 48 y 151, crédito de supermercado (cód. 761), reajuste UTM, contraste contra resumen SII y plazo de 8 días para aceptar o reclamar facturas. <a href="calculadora-f29-chile" class="font-semibold text-[#00382E] underline">Calculadora F29</a>.</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Honorarios y bancos</span>
+<h3>4. Importador BHE y Conciliación Bancaria</h3>
+<p>Lees el CSV de Boletas de Honorarios Electrónicas del SII (retención 15,25% en 2026) y cartolas bancarias CSV para cruzar automáticamente contra el RCV (±$100), aplicar reglas repetitivas, centralizar en Diario y controlar cartera CxC/CxP.</p>
 </div>
 <div class="sc-pilar">
 <span class="sc-pilar-tag">Contabilidad ProPyme</span>
-<h3>4. Diario, Mayor, Balance 8 Columnas y RLI</h3>
-<p>Centralizas la nómina y el RCV en asientos contables revisables, obtienes el Balance Tributario de 8 Columnas (débitos igual a créditos) y la hoja base RLI ProPyme (Art. 14 D N°3 y D8) en Excel. <a href="balance-8-columnas-rli-propyme-excel" class="font-semibold text-[#00382E] underline">Abrir simulador de Balance 8 Columnas</a>.</p>
+<h3>5. Diario, Mayor, Activo Fijo y Balance 8 Col.</h3>
+<p>Centralizas nómina, F29, bancos y depreciación de activo fijo con Plan de Cuentas editable. Obtienes Balance Tributario de 8 Columnas, hoja RLI ProPyme (Art. 14 D N°3 y D8) y Estados Financieros (P&amp;L y Flujo) en Excel y PDF. <a href="balance-8-columnas-rli-propyme-excel" class="font-semibold text-[#00382E] underline">Simulador Balance</a>.</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Operación Renta</span>
+<h3>6. DDJJ (1887, 1879, 1947/1948), CPT y F22</h3>
+<p>Generas borradores CSV y certificados de apoyo sobre el marco vigente (AT 2026): DJ 1887 y Cert. N°6 de sueldos, DJ 1879 y Cert. N°1 de honorarios con tasa real 15,25%, DJ 1947/1948, CPT Simplificado y Propuesta F22 (IDPC vs. PPM).</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Estudio y clientes</span>
+<h3>7. Cartera Multiempresa, Membrete y Portal</h3>
+<p>Cambias de empresa y período en un clic, aplicas cierre tributario por mes, copias el resumen ejecutivo por WhatsApp o PDF con membrete y compartes enlaces privados de solo lectura en el Portal Cliente Marca Blanca sin exponer cartolas bancarias.</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Integraciones</span>
+<h3>8. Conexión SII opcional y Conector MCP</h3>
+<p>Cuando el usuario quiera, conecta empresas al SII (Clave Tributaria o <code>.pfx</code>) para sincronizar RCV/F29/BHE y enviar Acuses SII, y genera tokens MCP de solo lectura para consultar F29, RCV, BHE y alertas de 8 días desde Claude.</p>
 </div>
 </div>
 </section>
 
 <section id="sin-claves" class="ls-section">
-<h2>Soberanía por archivos: cero claves del SII, Previred o bancos</h2>
+<h2>Tú eliges cómo trabajar: archivos locales o conexión SII opcional</h2>
 <div class="sc-soberania">
-<p>Muchos softwares contables piden la clave tributaria del SII de cada cliente o accesos bancarios para sincronizar movimientos. En Suite Contadores trabajas bajo un esquema de soberanía por archivos:</p>
+<p>En Suite Contadores las credenciales no son obligatorias. Cada estudio decide por empresa cliente si trabaja solo con archivos exportados o si conecta voluntariamente el SII:</p>
 <ul>
-<li><strong>Sin entrega de credenciales:</strong> no pedimos clave única, clave SII, clave Previred ni contraseñas bancarias de tus clientes.</li>
-<li><strong>Entradas estándar del contador:</strong> trabajas directamente con planillas Excel, archivos planos TXT y CSV descargados desde tus portales.</li>
-<li><strong>Control local en la demo:</strong> en la demo con datos de ejemplo, tus pruebas y nóminas por cliente quedan solo en tu navegador y puedes exportar respaldos JSON en cualquier momento.</li>
+<li><strong>Modo por archivos (por defecto, sin claves):</strong> no entregas credenciales del SII, Previred ni bancos. Subes tus planillas Excel, CSV del RCV/BHE y cartolas CSV; en la demo sin sesión todo queda guardado localmente en tu navegador con respaldos JSON.</li>
+<li><strong>Conexión SII opcional por empresa (solo cuando el cliente lo desee):</strong> con tu sesión activa en el estudio puedes registrar la <strong>Clave Tributaria SII</strong> o el <strong>Certificado Digital (<code>.pfx</code> / <code>.p12</code>)</strong> del contribuyente para sincronizar RCV, resumen F29 y BHE en un clic y enviar Acuses de Recibo Ley 19.983.</li>
+<li><strong>Cifrado y control de revocación:</strong> las credenciales del SII viajan por HTTPS, se cifran con <strong>AES-256-GCM</strong> en servidor (nunca se guardan en <code>localStorage</code> ni se vuelven a mostrar) y puedes desconectarlas o eliminar la empresa del conector cuando quieras.</li>
+<li><strong>Previred, Mi DT y bancos siempre por archivo:</strong> nunca solicitamos claves de Previred, ClaveÚnica laboral ni accesos de scraping bancario; esos módulos operan 100% con archivos revisados por el contador.</li>
 </ul>
 </div>
 </section>
 
 <section id="comparativa" class="ls-section">
-<h2>Condiciones operativas y diferenciadores verificables</h2>
-<p>El modelo está pensado para estudios pequeños y medianos que buscan operar nóminas, archivos SII/Previred y contabilidad sin costos de habilitación ni entrega de credenciales.</p>
+<h2>Condiciones operativas y entregables verificables</h2>
+<p>Pensado para contadores independientes y estudios que necesitan nómina, impuestos, contabilidad y trazabilidad de cartera en un solo lugar, sin costos de habilitación ni amarres de credenciales.</p>
 <div class="sc-table-wrap">
 <table class="sc-table">
 <thead>
@@ -527,17 +549,17 @@ window.addEventListener('load', function () {
 <tr>
 <td><strong>Costo de habilitación (setup)</strong></td>
 <td>$0</td>
-<td>Sin pagos iniciales de puesta en marcha ni cobros ocultos por módulo</td>
+<td>Sin pagos iniciales de puesta en marcha ni cobros por módulo habilitado</td>
 </tr>
 <tr>
-<td><strong>Claves SII / Previred</strong></td>
-<td>No las solicita en ningún paso</td>
-<td>Trabaja localmente en tu navegador con tus propios archivos CSV RCV, TXT y Excel</td>
+<td><strong>Claves SII, Previred y bancos</strong></td>
+<td>SII opcional por empresa (Clave Tributaria o <code>.pfx</code>); Previred y bancos 100% sin claves</td>
+<td>Por defecto opera localmente con archivos; si conectas SII, se cifra con AES-256-GCM y es revocable en cualquier momento</td>
 </tr>
 <tr>
 <td><strong>Entregables incluidos</strong></td>
-<td>Liquidaciones y finiquitos en lote, TXT 105 campos, CSV LRE 147 columnas, F29, Diario/Mayor, Balance 8 col. y ProPyme 14 D3/D8</td>
-<td>Exportables a TXT, CSV, Excel y PDF listos para revisar y subir a tus portales</td>
+<td>Liquidaciones y finiquitos PDF/XLSX, TXT Previred 105 campos, CSV LRE 147 col., F29, Acuse SII, BHE, Conciliación, Diario/Mayor, Activo Fijo, Balance 8 col., RLI, P&amp;L, DDJJ (1887/1879/1947-1948), CPT, F22 y Portal Cliente</td>
+<td>Exportables en TXT, CSV, Excel y PDF listos para revisar, respaldar en JSON y presentar</td>
 </tr>
 <tr>
 <td><strong>Capacidad de cartera</strong></td>
@@ -554,7 +576,7 @@ window.addEventListener('load', function () {
 <h2>Planes anuales de referencia y acceso anticipado</h2>
 <div class="ap-piloto">
 <p class="ap-piloto-t">Hoy estamos en acceso anticipado: 90 días gratis (cupo 20 estudios)</p>
-<p>El pago público todavía no está abierto. Si postulas ahora y tu estudio entra al cupo inicial, recibes <strong>90 días gratis desde el alta</strong> para probar el flujo con tu cartera, sin tarjeta ni cobro automático. Te avisamos 15 días antes de cumplir tus 90 días para decidir si contratas un plan anual.</p>
+<p>El pago público todavía no está abierto. Si postulas ahora y tu estudio entra al cupo inicial, recibes <strong>90 días gratis desde el alta</strong> para probar la suite completa con tu cartera, sin tarjeta ni cobro automático. Te avisamos 15 días antes de cumplir tus 90 días para decidir si contratas un plan anual.</p>
 </div>
 
 <div class="ap-planes">
@@ -565,7 +587,7 @@ window.addEventListener('load', function () {
 <ul>
 <li>Hasta 10 empresas clientes</li>
 <li>1 usuario del estudio</li>
-<li>Liquidaciones y finiquitos en lote, TXT Previred, LRE, borrador F29 y Balance 8 col.</li>
+<li>Nómina, Previred, LRE, F29, BHE, Conciliación, Balance 8 col., RLI y DDJJ</li>
 </ul>
 </div>
 <div class="ap-plan ap-plan-dest">
@@ -575,7 +597,7 @@ window.addEventListener('load', function () {
 <ul>
 <li>Hasta 30 empresas clientes</li>
 <li>Hasta 3 usuarios del estudio</li>
-<li>Soporte prioritario durante los 90 días de acceso anticipado</li>
+<li>Incluye Portal Cliente Marca Blanca, conexión SII opcional y conector MCP</li>
 </ul>
 </div>
 <div class="ap-plan">
@@ -585,7 +607,7 @@ window.addEventListener('load', function () {
 <ul>
 <li>Empresas clientes sin tope</li>
 <li>Hasta 5 usuarios del estudio</li>
-<li>Diseñado para carteras amplias con cierres mensuales en lote</li>
+<li>Pensado para carteras amplias con cierres mensuales en lote y soporte prioritario</li>
 </ul>
 </div>
 </div>
@@ -623,21 +645,21 @@ window.addEventListener('load', function () {
 </section>
 
 <section id="no-hace" class="ls-section">
-<h2>Qué NO hace esta herramienta</h2>
+<h2>Qué NO hace hoy esta herramienta</h2>
 <div class="ap-no">
-<p style="margin:0;font-weight:700;color:#881337;">Para que decidas con claridad antes de probar:</p>
+<p style="margin:0;font-weight:700;color:#881337;">Alcances reales y límites que conviene conocer antes de usarla:</p>
 <ul>
-<li>No solicita tus claves ni se conecta directamente al SII, Previred, Mi DT ni bancos, y no presenta ni paga declaraciones por ti.</li>
-<li>Los archivos TXT Previred (105 campos), CSV LRE (147 columnas), borrador F29 y Balance de 8 columnas son borradores de trabajo: debes revisarlos antes de cargarlos en cada portal.</li>
-<li>No emite facturas, guías ni boletas electrónicas en el SII, ni reemplaza el criterio profesional del contador o la revisión legal de un abogado.</li>
-<li>En esta etapa inicial aún no incluye importación de cartolas bancarias, generación de Declaraciones Juradas de Renta (1887/1879/1947/1948) ni sincronización multiusuario en la nube: en la demo todo se guarda localmente en tu navegador.</li>
+<li><strong>No presenta ni paga declaraciones por ti en SII, Previred o Mi DT:</strong> los TXT Previred (105 campos), CSV LRE (147 columnas), borradores F29, DDJJ y Propuesta F22 son archivos de apoyo que debes revisar y cargar con tus credenciales. La conexión SII opcional solo sincroniza RCV/F29/BHE y, si lo confirmas factura por factura, envía Acuses de Recibo Ley 19.983.</li>
+<li><strong>No hace scraping bancario ni solicita claves de Previred o bancos:</strong> la conciliación bancaria trabaja únicamente a partir de cartolas CSV que tú subes y revisas.</li>
+<li><strong>No emite DTE (facturas, boletas ni guías de despacho) en el SII</strong>, ni reemplaza el criterio profesional del contador o la revisión legal de un abogado.</li>
+<li><strong>Marco Renta AT 2027 bloqueado y edición simultánea:</strong> los borradores CSV de DDJJ (1887, 1879, 1947/1948) corresponden al año tributario vigente (AT 2026); AT 2027 permanecerá bloqueado hasta que el SII publique las resoluciones e instrucciones oficiales. Con sesión activa del estudio dispones de conexión SII cifrada, Portal Cliente Marca Blanca y tokens MCP; el cálculo sin sesión se mantiene local en tu navegador con respaldo JSON.</li>
 </ul>
 </div>
 
 <div class="ls-cta-inline">
 <div>
-<p class="ls-cta-title">¿Quieres recorrer el flujo completo antes de postular?</p>
-<p>Abre la demo con datos ficticios cargados (Panadería San Isidro SpA) o revisa el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a> si llevas internamente una sola empresa.</p>
+<p class="ls-cta-title">¿Quieres recorrer todos los módulos cargados antes de postular?</p>
+<p>Abre la suite y pulsa «Cargar ejemplo completo» (Panadería San Isidro SpA) o revisa el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a> si llevas internamente una sola empresa.</p>
 </div>
 <a class="ls-btn ls-btn-primary" href="demo-contadores" style="color:#ffffff !important;" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="puente-demo" data-demo-track="1">
 <span>Abrir demo interactiva</span><span class="material-icons" aria-hidden="true">arrow_forward</span>
@@ -649,29 +671,33 @@ window.addEventListener('load', function () {
 <h2>Preguntas frecuentes sobre Suite Contadores</h2>
 <div class="ls-faq">
 <details>
-<summary>¿Qué archivos puedo subir y descargar hoy mismo en la demo?</summary>
-<p>Puedes subir planillas Excel (.xlsx) de nómina y finiquitos, los CSV de Compras y Ventas del RCV descargados del SII y respaldos JSON por cliente. Puedes descargar liquidaciones y finiquitos en PDF e Excel, archivo plano de 105 campos para Previred, CSV de LRE (147 columnas), hoja guía F29, Libro Diario y Balance de 8 Columnas en Excel.</p>
+<summary>¿Qué archivos puedo subir y descargar hoy mismo en la suite?</summary>
+<p>Puedes subir planillas Excel (.xlsx) de nómina y finiquitos, CSV de Compras y Ventas del RCV, CSV de Boletas de Honorarios (BHE), cartolas bancarias CSV, Plan de Cuentas CSV, paquetes de <code>/app</code> y respaldos JSON por cliente. Puedes descargar liquidaciones y finiquitos en PDF y Excel, TXT de 105 campos para Previred, CSV LRE (<code>RUT_AAAAMM.csv</code>, 147 columnas), Nómina banco y Asiento de centralización en Excel, Hoja guía F29, Libro Diario/Mayor, Balance de 8 Columnas, Hoja RLI ProPyme, P&amp;L/Flujo y borradores CSV de DDJJ 1887, 1879 y 1947/1948, junto con Certificados N°6, N°1 y resumen WhatsApp/PDF con membrete.</p>
 </details>
 <details>
-<summary>¿La plataforma pide la clave tributaria o de Previred de mis clientes?</summary>
-<p>No. Todo funciona a partir de archivos que tú cargas. Nunca te pediremos claves del SII, Previred ni cartolas conectadas por scraping bancario.</p>
+<summary>¿La plataforma pide la clave del SII, de Previred o del banco?</summary>
+<p>De Previred y bancos <strong>nunca</strong>: esos flujos trabajan 100% con archivos que tú cargas. Para el <strong>SII es opcional por empresa</strong>: si no quieres entregar claves, cargas tus CSV manualmente igual que siempre; si el usuario o su cliente decide conectar la empresa al SII (para sincronizar RCV/F29/BHE o enviar Acuses de Recibo Ley 19.983), puede usar Clave Tributaria SII o Certificado Digital (<code>.pfx</code> / <code>.p12</code>). Se almacenan cifrados con AES-256-GCM en servidor y se pueden revocar en cualquier momento.</p>
 </details>
 <details>
-<summary>¿Sirve si también soy dueño de una sola pyme y necesito emitir contratos o anexos?</summary>
-<p>Si administras internamente una sola empresa y buscas fichas de trabajadores, avisos de vencimientos, contratos y anexos en Word, te conviene usar el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a>. Suite Contadores está enfocada en contadores con varios clientes, F29 desde RCV y contabilidad tributaria.</p>
+<summary>¿Qué incluye exactamente la conexión SII y el Acuse de Recibo Ley 19.983?</summary>
+<p>Al conectar una empresa con tu sesión del estudio puedes traer RCV de compras y ventas, resumen F29 para contraste cruzado y boletas BHE del período, además de gestionar facturas pendientes dentro del plazo legal de 8 días corridos y enviar al SII los Acuses (ERM, RCD, RFP o RFT) si el cliente tiene certificado <code>.pfx</code> o credencial habilitada. También puedes usar marcas locales sin enviar nada al SII.</p>
+</details>
+<details>
+<summary>¿Sirve si también soy dueño de una sola pyme y necesito contratos o anexos?</summary>
+<p>Si administras internamente una sola empresa y buscas fichas de trabajadores, avisos de vencimientos, contratos y anexos en Word, te conviene usar el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a>. Suite Contadores está enfocada en contadores y estudios que llevan varios clientes: nómina y Previred/LRE en lote, RCV y F29, BHE, conciliación bancaria, Diario/Mayor, Balance 8 Columnas, DDJJ y Portal Marca Blanca.</p>
 </details>
 <details>
 <summary>¿Por qué los planes se expresan como prepago anual?</summary>
 <p>El cobro futuro operará como prepago anual en pesos más IVA ($249.900, $499.900 u $899.900 al año según tramo, $0 de habilitación), sin suscripción automática. Hoy el pago no está habilitado y el acceso anticipado entrega 90 días gratis para los primeros 20 estudios.</p>
 </details>
 <details>
-<summary>¿Los borradores reemplazan la revisión de Previred o del SII?</summary>
-<p>No. La plataforma calcula con base en parámetros y fórmulas vigentes para acelerar tu revisión, pero Previred, Mi DT y el SII determinan la validación definitiva al momento en que subes los archivos o presentas la declaración.</p>
+<summary>¿Los borradores reemplazan la revisión en Previred, Mi DT o el SII?</summary>
+<p>No. La plataforma calcula con base en parámetros y fórmulas vigentes (incluyendo pre-validación previa de Previred y LRE) para acelerar tu revisión, pero Previred, Mi DT y el SII determinan la validación definitiva al cargar los archivos o presentar cada declaración.</p>
 </details>
 </div>
 </section>
 
-<p class="ls-legal"><strong>Aviso normativo:</strong> Cálculo Laboral es una plataforma de cálculo y automatización de borradores de apoyo para estudios contables. Las fórmulas laborales y tributarias siguen las reglas vigentes en Chile publicadas por el Código del Trabajo, la Dirección del Trabajo, Previred y el Servicio de Impuestos Internos, elaboradas con apoyo de tecnología automatizada. No constituye asesoría legal, tributaria ni contable. Cada contador o usuario es responsable de revisar los resultados y archivos generados antes de presentarlos ante organismos fiscalizadores.</p>
+<p class="ls-legal"><strong>Aviso normativo:</strong> Cálculo Laboral es una plataforma de cálculo y automatización de borradores de apoyo para estudios contables. Las fórmulas laborales y tributarias siguen las reglas vigentes en Chile publicadas por el Código del Trabajo, la Dirección del Trabajo, Previred y el Servicio de Impuestos Internos, elaboradas con apoyo de tecnología automatizada. No constituye asesoría legal, tributaria ni contable. Cada contador o usuario es responsable de revisar los resultados, archivos y acuses antes de presentarlos ante organismos fiscalizadores.</p>
 </article>
 
 <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="fuentes-titulo">

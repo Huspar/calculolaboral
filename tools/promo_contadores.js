@@ -19,7 +19,7 @@ const MEDIR = '<script src="/js/medir_promo.js?v=1.1.0" defer></script>';
 const PAGINAS = {
     'liquidacion-de-sueldo': {
         titulo: '¿Preparas liquidaciones y nóminas de varios clientes cada mes?',
-        texto: 'En Suite Contadores cargas la nómina por Excel o TXT, calculas liquidaciones y finiquitos en lote por empresa y generas Previred (105 campos) y LRE (147 columnas) sin pedir claves.',
+        texto: 'En Suite Contadores cargas la nómina por Excel o TXT, calculas liquidaciones y finiquitos en lote por empresa y generas Previred (105 campos) y LRE (147 columnas) directo en el navegador.',
         antes: '<section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="fuentes-titulo">'
     },
     'generador-liquidacion-sueldo': {
@@ -34,12 +34,12 @@ const PAGINAS = {
     },
     'como-generar-archivo-previred-lre-f29-chile': {
         titulo: 'Genera el TXT Previred, el CSV LRE y el borrador F29 por cliente',
-        texto: 'Calcula la nómina del período y descarga el archivo plano de 105 campos y el Libro LRE de 147 columnas listos para revisar y cargar en Previred y Mi DT, sin entregar claves.',
+        texto: 'Calcula la nómina del período y descarga el archivo plano de 105 campos y el Libro LRE de 147 columnas listos para revisar y cargar en Previred y Mi DT sin pedir claves laborales.',
         antes: '<section aria-labelledby="fuentes-titulo" class="mt-10 pt-6 border-t border-slate-200 no-print">'
     },
     'calculadora-f29-chile': {
         titulo: '¿Preparas F29 y nóminas de varios clientes cada mes?',
-        texto: 'En Suite Contadores cruzas el código 48 directo desde las liquidaciones del período, lees los CSV del RCV por cliente y armas F29 y Balance de 8 Columnas en tu navegador, sin pedir claves.',
+        texto: 'En Suite Contadores cruzas el código 48 directo desde las liquidaciones del período, lees RCV por CSV o conexión SII opcional por empresa y armas F29 y Balance de 8 Columnas.',
         antes: '<section class="cl-sources" aria-labelledby="fuentes-titulo">'
     },
     'balance-8-columnas-rli-propyme-excel': {
