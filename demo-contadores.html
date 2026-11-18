@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.6.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.7.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -172,6 +172,8 @@
       <div class="suite-ctx-grupo">
         <label class="suite-ctx-label" for="liq-cliente">Cliente:</label>
         <input type="text" id="liq-cliente" class="suite-ctx-input" value="Panadería San Isidro SpA" placeholder="Nombre del cliente">
+        <label class="sr-only" for="liq-rut">RUT de la empresa</label>
+        <input type="text" id="liq-rut" class="suite-ctx-input suite-ctx-rut" placeholder="RUT empresa" maxlength="12" autocomplete="off">
         <label class="sr-only" for="liq-clientes-guardados">Clientes guardados</label>
         <select id="liq-clientes-guardados" class="suite-ctx-select">
           <option value="">Clientes guardados (0)</option>
@@ -181,6 +183,15 @@
         </button>
       </div>
       <div class="suite-ctx-acciones">
+        <div class="suite-ctx-sii-wrap">
+          <button type="button" class="sii-pill-estado" id="btn-ctx-sii-estado" aria-haspopup="dialog" title="Configurar conexión SII de esta empresa">
+            <span class="material-icons" aria-hidden="true">folder_open</span>
+            <span class="sii-pill-txt">SII: Modo CSV</span>
+          </button>
+          <button type="button" class="btn btn-chico sii-btn-sync-quick" id="btn-ctx-sii-sync" hidden title="Sincronizar período actual desde SII" aria-label="Sincronizar período actual desde SII">
+            <span class="material-icons" aria-hidden="true">sync</span>
+          </button>
+        </div>
         <div class="suite-regimen-fila">
           <label for="suite-regimen" class="suite-regimen-label">Régimen SII:</label>
           <select id="suite-regimen" class="suite-regimen-select">
@@ -212,7 +223,7 @@
         <div class="suite-bar-fila">
           <div class="suite-bar-izq">
             <span class="suite-bar-badge">Modo demo</span>
-            <p class="suite-bar-txt">Datos locales sin claves SII · Acceso anticipado 90 días gratis (20 estudios). <a href="/suite-contadores" class="suite-bar-link">Ver planes</a></p>
+            <p class="suite-bar-txt">Datos locales por defecto sin claves SII · Conexión SII automática opcional con sesión activa · <a href="/suite-contadores" class="suite-bar-link">Ver planes</a></p>
           </div>
           <div class="suite-bar-der">
             <button type="button" class="btn-texto suite-bar-toggle" id="btn-toggle-incluye" aria-expanded="false" aria-controls="suite-incluye-panel">
@@ -414,6 +425,31 @@
           </div>
         </div>
 
+        <div class="panel f29-sii-panel" id="f29-sii-bloque">
+          <div class="f29-sii-cabeza">
+            <div class="f29-sii-info">
+              <div>
+                <span class="sello sello-guardada" id="f29-sii-sello">
+                  <span class="material-icons" aria-hidden="true">folder_open</span>Modo CSV local
+                </span>
+              </div>
+              <p class="f29-sii-meta" id="f29-sii-meta">Operando con archivos descargados manualmente desde sii.cl. También puedes vincular la empresa para sincronizar automático.</p>
+            </div>
+            <div class="f29-sii-acciones">
+              <button type="button" class="btn btn-primario" id="btn-f29-sii-sync" hidden>
+                <span class="material-icons" aria-hidden="true">sync</span>Sincronizar RCV y F29 del mes
+              </button>
+              <button type="button" class="btn" id="btn-f29-sii-credenciales">
+                <span class="material-icons" aria-hidden="true">link</span><span id="btn-f29-sii-cred-txt">Conectar empresa al SII</span>
+              </button>
+            </div>
+          </div>
+          <div class="f29-sii-progreso" id="f29-sii-progreso" hidden role="status" aria-live="polite">
+            <span class="sii-spin material-icons" aria-hidden="true">sync</span>
+            <span id="f29-sii-progreso-txt">Consultando RCV y F29 en el SII...</span>
+          </div>
+        </div>
+
         <div class="panel" style="margin-bottom:16px">
           <div class="panel-head"><h2>Carga de Registro de Compras y Ventas (RCV SII)</h2></div>
           <div class="panel-cuerpo">
@@ -530,6 +566,26 @@
               </table>
             </div>
             <div class="demo-nota" id="f29-notas"></div>
+            <div class="f29-contraste-panel" id="f29-contraste-panel" hidden>
+              <div class="f29-contraste-head">
+                <h3>Auditoría cruzada: cálculo RCV vs. resumen F29 SII</h3>
+                <span class="sello sello-guardada" id="f29-contraste-sello">Sin comparar</span>
+              </div>
+              <p class="f29-contraste-sub" id="f29-contraste-sub"></p>
+              <div class="tabla-contable-wrap">
+                <table class="f29-contraste-tabla">
+                  <thead>
+                    <tr>
+                      <th scope="col">Concepto tributario</th>
+                      <th scope="col" class="num">Suite RCV</th>
+                      <th scope="col" class="num">Resumen SII</th>
+                      <th scope="col">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-f29-contraste"></tbody>
+                </table>
+              </div>
+            </div>
             <div class="form-acciones" style="margin-top:14px">
               <button class="btn btn-primario" type="button" id="btn-f29-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir / PDF F29</button>
               <button class="btn" type="button" id="btn-f29-csv">Exportar Excel</button>
@@ -1027,8 +1083,16 @@
             <h1 class="v-titulo">Torre de Control Multiempresa</h1>
             <p class="v-sub">Resumen operativo por cliente, régimen SII, estado de cierre tributario y cambio en un clic para el período <span class="mono" id="torre-periodo-badge">2026-11</span>.</p>
           </div>
-          <div class="v-acciones">
-            <input type="text" id="torre-nuevo-nombre" class="lq-input-compacto" placeholder="Nombre o razón social del nuevo cliente" aria-label="Nombre nuevo cliente">
+          <div class="v-acciones torre-alta-grid">
+            <input type="text" id="torre-nuevo-nombre" class="lq-input-compacto" placeholder="Razón social del nuevo cliente" aria-label="Nombre nuevo cliente">
+            <input type="text" id="torre-nuevo-rut" class="lq-input-compacto torre-input-rut" placeholder="RUT (ej. 76.543.210-3)" maxlength="12" aria-label="RUT nuevo cliente">
+            <select id="torre-nuevo-regimen" class="torre-select-regimen" aria-label="Régimen tributario nuevo cliente">
+              <option value="14D3">14 D3</option>
+              <option value="14D3_MAYOR">14 D3 &gt;50k</option>
+              <option value="14D8">14 D8</option>
+              <option value="14D8_MAYOR">14 D8 &gt;50k</option>
+              <option value="14A">14 A</option>
+            </select>
             <button class="btn btn-primario" type="button" id="btn-torre-crear-cliente">Crear y trabajar</button>
           </div>
         </div>
@@ -1054,7 +1118,9 @@
                 <thead>
                   <tr>
                     <th scope="col">Cliente / Empresa</th>
+                    <th scope="col">RUT</th>
                     <th scope="col">Régimen</th>
+                    <th scope="col">Conexión SII</th>
                     <th scope="col" class="num">Trabajadores</th>
                     <th scope="col" class="num">F29 cód. 91</th>
                     <th scope="col">Estado cierre</th>
@@ -1092,7 +1158,8 @@
             </div>
             <div class="panel-cuerpo">
               <div class="f29-upload-acciones" style="margin-bottom:12px">
-                <button type="button" class="btn btn-primario" id="btn-imp-bhe-subir">Subir CSV BHE SII</button>
+                <button type="button" class="btn btn-primario" id="btn-imp-bhe-sii"><span class="material-icons" aria-hidden="true">cloud_download</span>Traer BHE del mes desde SII</button>
+                <button type="button" class="btn" id="btn-imp-bhe-subir">Subir CSV BHE SII</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-bhe-ejemplo">Cargar BHE ejemplo (15,25%)</button>
                 <button type="button" class="btn btn-chico" id="btn-imp-bhe-limpiar">Limpiar</button>
                 <input type="file" id="file-imp-bhe" accept=".csv,.txt,.tsv" hidden>
@@ -1477,8 +1544,106 @@
   </div>
 </dialog>
 
+<!-- Modal de Conexión SII por Empresa -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-sii-conexion" aria-labelledby="sii-dlg-titulo">
+  <div class="midt-cabeza">
+    <div>
+      <h2 id="sii-dlg-titulo">Conexión automática con el SII</h2>
+      <p class="midt-sub" id="sii-dlg-sub">Empresa: <strong id="sii-dlg-empresa-nom">Panadería San Isidro SpA</strong> (<span class="mono" id="sii-dlg-empresa-rut">Sin RUT</span>)</p>
+    </div>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-sii-dlg" aria-label="Cerrar ventana">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+
+  <div class="dialogo-cuerpo">
+    <div id="sii-dlg-sin-sesion" class="sii-sin-sesion-aviso" hidden>
+      <p><strong>Inicia sesión en tu estudio para conectar con el SII.</strong> Las credenciales tributarias solo se guardan cifradas en el servidor asociadas a tu cuenta; el modo local sin cuenta sigue operando con CSV.</p>
+      <div>
+        <button type="button" class="btn btn-primario btn-chico" id="btn-sii-ir-sesion">Iniciar sesión con mi correo</button>
+      </div>
+    </div>
+
+    <div id="sii-dlg-estado-actual" class="sii-feedback-box ok" hidden></div>
+
+    <div class="sii-metodo-selector" role="tablist" aria-label="Método de conexión SII">
+      <button type="button" role="tab" class="sii-metodo-btn activo" id="tab-metodo-clave" aria-selected="true" aria-controls="panel-metodo-clave">
+        <span class="material-icons" aria-hidden="true">password</span>Clave Tributaria SII
+      </button>
+      <button type="button" role="tab" class="sii-metodo-btn" id="tab-metodo-pfx" aria-selected="false" aria-controls="panel-metodo-pfx">
+        <span class="material-icons" aria-hidden="true">verified_user</span>Certificado Digital (.pfx)
+      </button>
+    </div>
+
+    <div class="lq-field" style="margin-bottom:12px">
+      <label for="sii-input-rut">RUT de la empresa contribuyente</label>
+      <input type="text" id="sii-input-rut" class="mono" placeholder="76.543.210-3" maxlength="12" autocomplete="off">
+      <span class="texto-ayuda">RUT de la empresa a consultar en el SII (se valida dígito verificador).</span>
+    </div>
+
+    <form id="panel-metodo-clave" class="sii-form-panel" role="tabpanel" aria-labelledby="tab-metodo-clave" novalidate>
+      <div class="lq-field">
+        <label for="sii-input-clave">Clave Tributaria SII</label>
+        <div class="campo-password-wrap">
+          <input type="password" id="sii-input-clave" placeholder="Ingresa la Clave Tributaria" autocomplete="off">
+          <button type="button" class="btn-toggle-pass" id="btn-toggle-sii-pass" aria-label="Mostrar u ocultar clave">
+            <span class="material-icons" aria-hidden="true">visibility</span>
+          </button>
+        </div>
+      </div>
+      <div class="lq-field">
+        <label for="sii-input-env">Ambiente SII</label>
+        <select id="sii-input-env">
+          <option value="PRODUCTION" selected>Producción (sii.cl)</option>
+          <option value="CERTIFICATION">Certificación / Maqueta</option>
+        </select>
+      </div>
+    </form>
+
+    <form id="panel-metodo-pfx" class="sii-form-panel" role="tabpanel" aria-labelledby="tab-metodo-pfx" hidden novalidate>
+      <div class="lq-field">
+        <label for="sii-file-pfx">Archivo de Certificado Digital (.pfx o .p12)</label>
+        <input type="file" id="sii-file-pfx" accept=".pfx,.p12">
+        <span class="texto-ayuda" id="sii-file-pfx-info">Se lee en memoria solo para enviarlo cifrado al servidor.</span>
+      </div>
+      <div class="lq-field">
+        <label for="sii-pass-pfx">Contraseña del Certificado Digital</label>
+        <input type="password" id="sii-pass-pfx" placeholder="Contraseña del archivo .pfx" autocomplete="off">
+      </div>
+    </form>
+
+    <div class="sii-seguridad-aviso">
+      <span class="material-icons" aria-hidden="true">security</span>
+      <div class="sii-seguridad-txt">
+        <strong>Tratamiento seguro de credenciales tributarias</strong>
+        <p>Las credenciales viajan por HTTPS y se cifran con AES-256-GCM en el servidor conector. Nunca se guardan en localStorage ni se vuelven a mostrar. Puedes revocar el acceso o eliminar la empresa del conector en cualquier momento.</p>
+      </div>
+    </div>
+
+    <div id="sii-dlg-feedback" class="sii-feedback-box" hidden role="alert"></div>
+
+    <div class="sii-dlg-acciones">
+      <div class="sii-acciones-izq">
+        <button type="button" class="btn-peligro-texto" id="btn-sii-revocar" hidden>
+          <span class="material-icons" aria-hidden="true">link_off</span>Desconectar credenciales
+        </button>
+        <button type="button" class="btn-peligro-texto" id="btn-sii-eliminar-empresa" hidden>
+          <span class="material-icons" aria-hidden="true">delete</span>Eliminar empresa del conector
+        </button>
+      </div>
+      <div class="sii-acciones-der">
+        <button type="button" class="btn-texto" id="btn-sii-cancelar">Cancelar</button>
+        <button type="button" class="btn btn-primario" id="btn-sii-guardar">
+          <span class="material-icons" aria-hidden="true">check</span>Guardar y conectar
+        </button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <!-- Scripts de Motor y Suite Contable -->
 <script src="/js/constants.js"></script>
+<script src="/js/rut_cl.js?v=1.0.0"></script>
 <script src="/js/logic.js"></script>
 <script src="/js/liquidacion_parametros.js"></script>
 <script src="/js/liquidacion_engine.js"></script>
@@ -1497,14 +1662,16 @@
 <script src="/js/demo_clientes.js?v=1.0.0"></script>
 <script src="/js/demo_validaciones.js?v=1.0.0"></script>
 <script src="/js/demo_historial.js?v=1.0.0"></script>
-<script src="/js/demo_respaldo.js?v=1.1.0"></script>
+<script src="/js/demo_respaldo.js?v=1.2.0"></script>
 <script src="/js/demo_liquidaciones.js?v=2.8.1"></script>
 <script src="/js/contadores_f29.js?v=1.1.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.0.0"></script>
 <script src="/js/contadores_renta.js?v=1.0.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.1.0"></script>
-<script src="/js/demo_suite.js?v=2.3.0"></script>
+<script src="/js/contadores_sii.js?v=1.0.0"></script>
+<script src="/js/demo_suite.js?v=2.4.0"></script>
+<script src="/js/demo_sii.js?v=1.0.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

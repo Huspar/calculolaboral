@@ -1665,3 +1665,457 @@
         max-width: 100%;
     }
 }
+
+/* ==========================================================================
+   CONECTOR SII AUTOMÁTICO (sii-gateway) · SUITE CONTADORES
+   ========================================================================== */
+.suite-ctx-rut {
+    width: 132px;
+    max-width: 140px;
+    flex: 0 0 auto;
+    font-family: var(--mono);
+}
+
+.suite-ctx-sii-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sii-pill-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--forest);
+    white-space: nowrap;
+    transition: background .15s ease, border-color .15s ease;
+}
+.sii-pill-estado:hover {
+    background: var(--surface-2);
+    border-color: var(--forest-700);
+}
+.sii-pill-estado:focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 2px;
+}
+.sii-pill-estado .material-icons {
+    font-size: 16px;
+}
+.sii-pill-conectado {
+    background: #EEF6F3;
+    border-color: #064A3E;
+    color: #064A3E;
+}
+.sii-pill-sync {
+    background: #FFF7E0;
+    border-color: #F3C44E;
+    color: #7A4F00;
+}
+.sii-pill-error {
+    background: #FFF1F2;
+    border-color: #FECDD3;
+    color: #9F1239;
+}
+.sii-pill-aviso {
+    background: #FFF7E0;
+    border-color: #F3C44E;
+    color: #7A4F00;
+}
+
+.sii-btn-sync-quick {
+    padding: 0 9px;
+    min-width: 36px;
+}
+.sii-btn-sync-quick .material-icons {
+    font-size: 17px;
+}
+
+@keyframes siiGiro {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.sii-spin {
+    animation: siiGiro 1.1s linear infinite;
+    display: inline-block;
+}
+
+/* Torre de control: alta con RUT + columna SII */
+.torre-alta-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.torre-input-rut {
+    width: 140px;
+    font-family: var(--mono);
+}
+.torre-select-regimen {
+    height: 38px;
+    padding: 0 28px 0 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 13px;
+}
+.torre-sii-celda {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+.btn-icono-chico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--forest);
+    cursor: pointer;
+}
+.btn-icono-chico:hover {
+    background: var(--surface-2);
+    border-color: var(--forest-700);
+}
+.btn-icono-chico .material-icons {
+    font-size: 16px;
+}
+
+/* Banner Superior SII en F29 */
+.f29-sii-panel {
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+.f29-sii-cabeza {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.f29-sii-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+.f29-sii-meta {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+.f29-sii-acciones {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.f29-sii-progreso {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--forest);
+}
+.f29-sii-progreso.es-error {
+    color: #9F1239;
+}
+
+/* Auditoría Cruzada F29 */
+.f29-contraste-panel {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+}
+.f29-contraste-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.f29-contraste-head h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+}
+.f29-contraste-sub {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+.f29-diferencia-aviso {
+    color: #9F1239;
+    font-weight: 700;
+}
+
+/* Diálogo Conexión SII */
+.dialogo-cuerpo {
+    padding: 18px 20px 20px;
+}
+.midt-sub {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+.app-dialogo input[type="password"],
+.app-dialogo input[type="file"] {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 14px;
+}
+.app-dialogo input[type="file"] {
+    height: auto;
+    padding: 8px 10px;
+    font-size: 13px;
+}
+.sii-sin-sesion-aviso {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: #FFF7E0;
+    border: 1px solid #F3C44E;
+    color: #7A4F00;
+    margin-bottom: 14px;
+}
+.sii-sin-sesion-aviso p {
+    margin: 0;
+    color: #7A4F00;
+    font-size: 13px;
+}
+.sii-metodo-selector {
+    display: flex;
+    gap: 6px;
+    background: var(--surface-2);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+}
+.sii-metodo-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 38px;
+    font-size: 13px;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+.sii-metodo-btn .material-icons {
+    font-size: 17px;
+}
+.sii-metodo-btn.activo {
+    background: var(--surface);
+    color: var(--forest);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.sii-form-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.sii-form-panel[hidden] {
+    display: none;
+}
+.campo-password-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.campo-password-wrap input {
+    padding-right: 42px;
+}
+.btn-toggle-pass {
+    position: absolute;
+    right: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+}
+.sii-seguridad-aviso {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 12px;
+    margin: 16px 0 12px;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+}
+.sii-seguridad-aviso .material-icons {
+    font-size: 20px;
+    color: #064A3E;
+}
+.sii-seguridad-txt strong {
+    display: block;
+    font-size: 12.5px;
+    color: var(--forest);
+    margin-bottom: 2px;
+}
+.sii-seguridad-txt p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+    margin: 0;
+}
+.sii-feedback-box {
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+.sii-feedback-box.ok {
+    background: #EEF6F3;
+    border: 1px solid #064A3E;
+    color: #064A3E;
+}
+.sii-feedback-box.error {
+    background: #FFF1F2;
+    border: 1px solid #FECDD3;
+    color: #9F1239;
+}
+.sii-dlg-acciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+.sii-acciones-izq,
+.sii-acciones-der {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.btn-peligro-texto {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    padding: 6px 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #9F1239;
+    cursor: pointer;
+}
+.btn-peligro-texto:hover {
+    text-decoration: underline;
+}
+.btn-peligro-texto .material-icons {
+    font-size: 16px;
+}
+
+@media screen and (max-width: 640px) {
+    .suite-ctx-rut {
+        width: 100%;
+        max-width: none;
+        min-height: 44px;
+        height: 44px;
+    }
+    .suite-ctx-sii-wrap {
+        width: 100%;
+    }
+    .sii-pill-estado {
+        flex: 1 1 auto;
+        justify-content: center;
+        min-height: 44px;
+        height: 44px;
+    }
+    .sii-btn-sync-quick {
+        min-width: 44px;
+        min-height: 44px;
+        height: 44px;
+    }
+    .torre-alta-grid {
+        width: 100%;
+    }
+    .torre-input-rut,
+    .torre-select-regimen,
+    #btn-torre-crear-cliente {
+        width: 100%;
+        min-height: 44px;
+        height: 44px;
+    }
+    .btn-icono-chico {
+        min-width: 40px;
+        min-height: 40px;
+    }
+    .f29-sii-cabeza {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .f29-sii-acciones {
+        width: 100%;
+        flex-direction: column;
+    }
+    .f29-sii-acciones .btn {
+        width: 100%;
+        min-height: 44px;
+    }
+    .sii-metodo-selector {
+        flex-direction: column;
+    }
+    .sii-metodo-btn {
+        min-height: 44px;
+    }
+    .sii-dlg-acciones {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    .sii-acciones-der,
+    .sii-acciones-izq {
+        width: 100%;
+        justify-content: stretch;
+    }
+    .sii-acciones-der .btn {
+        flex: 1 1 auto;
+        min-height: 44px;
+    }
+}

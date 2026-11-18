@@ -1191,9 +1191,15 @@
         var tbody = $('tbody-torre-clientes');
         if (tbody) {
             tbody.innerHTML = lista.map(function (c) {
+                var rutTxt = (window.CLDemoSii && window.CLDemoSii.rutDeCliente) ? window.CLDemoSii.rutDeCliente(c.nombre) : '';
+                var siiCell = (window.CLDemoSii && window.CLDemoSii.celdaTorre)
+                    ? window.CLDemoSii.celdaTorre(c, rutTxt)
+                    : '<span class="sello sello-guardada">Modo CSV</span>';
                 return '<tr>' +
                     '<td><strong>' + D.esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip">En uso</span>' : '') + '</td>' +
+                    '<td class="mono">' + (rutTxt ? D.esc(rutTxt) : '<span class="texto-ayuda">Sin RUT</span>') + '</td>' +
                     '<td class="mono">' + D.esc(c.regimen) + '</td>' +
+                    '<td>' + siiCell + '</td>' +
                     '<td class="mono num">' + c.trabajadores + '</td>' +
                     '<td class="mono num">' + D.money(c.f29Total) + '</td>' +
                     '<td><span class="app-nav-chip ' + (c.cerrado ? '' : 'abierto') + '">' + (c.cerrado ? 'Cerrado' : 'Abierto') + '</span></td>' +
@@ -1539,7 +1545,20 @@
         pintarBalance(m);
         pintarPnl(m);
         pintarReportes(m);
+        document.dispatchEvent(new CustomEvent('suite:refrescado', { detail: m }));
     }
+
+    window.CLSuiteSiiBridge = {
+        clienteNombre: clienteNombre,
+        clienteClave: clienteClave,
+        periodoActual: periodoActual,
+        leerEstadoActual: leerEstadoActual,
+        guardarEstadoActual: guardarEstadoActual,
+        cambiarACliente: cambiarACliente,
+        cambiarModulo: cambiarModulo,
+        calcularModelo: calcularModelo,
+        refrescarTodo: refrescarTodo
+    };
 
     // ------------------------------------------------------------- Exportaciones e Impresion
     function imprimirHtmlModulo(titulo, subtitulo, tablaHtml, notaExtra, opts) {
@@ -2413,13 +2432,24 @@
             $('btn-torre-crear-cliente').addEventListener('click', function () {
                 var nom = $('torre-nuevo-nombre') ? $('torre-nuevo-nombre').value.trim() : '';
                 if (!nom) { D.avisar('Escribe el nombre o razón social del cliente.'); return; }
+                var rutRaw = $('torre-nuevo-rut') ? $('torre-nuevo-rut').value.trim() : '';
+                var regNuevo = $('torre-nuevo-regimen') ? $('torre-nuevo-regimen').value : '14D3';
+                if (rutRaw && window.CLSii && window.CLSii.rutValido && !window.CLSii.rutValido(rutRaw)) {
+                    D.avisar('El RUT ingresado no es válido. Revísalo antes de crear el cliente.');
+                    return;
+                }
                 guardarTodoAlmacen((function () {
                     var todo = leerTodoAlmacen();
                     var k = nom.toLowerCase() + '::' + periodoActual();
                     if (!todo[k]) todo[k] = estadoDefecto(periodoActual());
+                    todo[k].regimen = regNuevo || todo[k].regimen;
                     return todo;
                 })());
+                if (rutRaw && window.CLDemoSii && window.CLDemoSii.guardarRutCliente) {
+                    window.CLDemoSii.guardarRutCliente(nom, rutRaw);
+                }
                 if ($('torre-nuevo-nombre')) $('torre-nuevo-nombre').value = '';
+                if ($('torre-nuevo-rut')) $('torre-nuevo-rut').value = '';
                 cambiarACliente(nom);
                 refrescarTodo();
                 D.avisar('Cliente activo cambiado a ' + nom + '.');

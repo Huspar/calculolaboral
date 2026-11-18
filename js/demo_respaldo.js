@@ -29,13 +29,18 @@
             var clientes = leerJson(K_CLIENTES, []);
             var historial = leerJson(K_HISTORIAL, {});
             var contable = leerJson(K_CONTABLE, {});
+            var contableObj = (contable && !Array.isArray(contable)) ? contable : {};
+            var siiMod = (typeof window !== 'undefined' && window.CLSii) ? window.CLSii : null;
+            if (siiMod && typeof siiMod.podarRespaldoParaLimite === 'function') {
+                contableObj = siiMod.podarRespaldoParaLimite(contableObj, 1700 * 1024);
+            }
             return JSON.stringify({
                 version: VERSION,
                 aplicacion: 'CalculoLaboral demo contadores',
                 generado: new Date().toISOString(),
                 clientes: Array.isArray(clientes) ? clientes : [],
                 historial: historial,
-                contable: (contable && !Array.isArray(contable)) ? contable : {}
+                contable: contableObj
             }, null, 1);
         }
 

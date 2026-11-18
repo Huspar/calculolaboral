@@ -33,7 +33,12 @@ const RUTAS = {
     mes: { PUT: 'liquidar', DELETE: 'liquidar' }, 'enlace-liquidacion': { POST: 'liquidar', DELETE: 'liquidar' },
     exportar: { GET: 'respaldo' },
     'portal-gestion': { GET: 'portal_gestionar', POST: 'portal_gestionar', PUT: 'portal_gestionar', DELETE: 'portal_gestionar' }, equipo: { GET: 'equipo_gestionar', POST: 'equipo_gestionar', PUT: 'equipo_gestionar', DELETE: 'equipo_gestionar' },
-    'avisos-correo': { GET: 'equipo_gestionar', PUT: 'equipo_gestionar', POST: 'equipo_gestionar' }, comprar: { POST: 'facturacion', GET: 'facturacion' }, desbloqueo: { POST: 'facturacion', GET: 'facturacion' }, actividad: { GET: 'actividad_ver', POST: 'ver' }, 'borrar-cuenta': { POST: 'cuenta_borrar' }
+    'avisos-correo': { GET: 'equipo_gestionar', PUT: 'equipo_gestionar', POST: 'equipo_gestionar' }, comprar: { POST: 'facturacion', GET: 'facturacion' }, desbloqueo: { POST: 'facturacion', GET: 'facturacion' }, actividad: { GET: 'actividad_ver', POST: 'ver' }, 'borrar-cuenta': { POST: 'cuenta_borrar' },
+    'sii-empresas': { GET: 'ver', POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
+    'sii-estado': { GET: 'ver' },
+    'sii-credenciales': { POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
+    'sii-sync': { GET: 'ver', POST: 'liquidar' },
+    'sii-datos': { GET: 'ver' }
 };
 
 function permitir(rol, accion) {

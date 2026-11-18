@@ -49,10 +49,13 @@ const ACTIVIDAD_RUTA = {
     'enlace-liquidacion:POST': 'enlace_creado', 'enlace-liquidacion:DELETE': 'enlace_anulado',
     'equipo:POST': 'equipo_invitado', 'equipo:PUT': 'equipo_cambiado', 'equipo:DELETE': 'equipo_quitado',
     'portal-gestion:POST': 'portal_invitado', 'portal-gestion:PUT': 'portal_cambiado', 'portal-gestion:DELETE': 'portal_quitado',
-    'honorarios:PUT': 'honorarios_guardados', 'importar:POST': 'datos_importados', 'exportar:GET': 'respaldo_descargado'
+    'honorarios:PUT': 'honorarios_guardados', 'importar:POST': 'datos_importados', 'exportar:GET': 'respaldo_descargado',
+    'sii-empresas:POST': 'sii_empresa_vinculada', 'sii-empresas:DELETE': 'sii_empresa_desvinculada',
+    'sii-credenciales:POST': 'sii_credencial_guardada', 'sii-credenciales:DELETE': 'sii_credencial_revocada',
+    'sii-sync:POST': 'sii_sync_iniciado'
 };
 
-function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo, portal }) {
+function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo, portal, siiGateway }) {
     function metodo(req, res, permitido) {
         if (req.method === permitido) return true;
         res.setHeader('Allow', permitido);
@@ -470,11 +473,132 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         if (!s) return;
         const r = await datos.borrarCuenta(s, H.cuerpoDe(req).confirmar);
         if (!r.ok) return responder(res, r);
+        if (siiGateway && typeof siiGateway.desconectarCuenta === 'function') {
+            try { await siiGateway.desconectarCuenta(s.cuentaId); } catch (e) { /* no bloquear borrado de cuenta */ }
+        }
         await auth.auditar('cuenta_borrada', s.cuentaId, H.ipDe(req));
         return H.json(res, 200, { ok: true }, { cookie: H.cookieBorrada() });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta };
+    // ---------- Proxy SII Gateway (Suite Contadores) ----------
+    function faltaGateway(res) {
+        return H.json(res, 503, { ok: false, codigo: 'sii_gateway_no_configurado', error: 'Conexión SII no disponible en este servidor.' });
+    }
+
+    async function siiEmpresas(req, res) {
+        if (!siiGateway) return faltaGateway(res);
+        const m = req.method;
+        if (m === 'GET') {
+            const s = await conSesion(req, res);
+            if (!s) return;
+            const rut = typeof req.query?.rut === 'string' ? req.query.rut : undefined;
+            return responder(res, await siiGateway.listarEmpresas(s.cuentaId, { rut }));
+        }
+        if (m === 'POST') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            return responder(res, await siiGateway.crearEmpresa(s.cuentaId, H.cuerpoDe(req)));
+        }
+        if (m === 'DELETE') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const id = typeof req.query?.id === 'string' ? req.query.id : (b.companyId || '');
+            return responder(res, await siiGateway.eliminarEmpresa(s.cuentaId, id));
+        }
+        res.setHeader('Allow', 'GET, POST, DELETE');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
+    async function siiEstado(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        if (!siiGateway) return faltaGateway(res);
+        const s = await conSesion(req, res);
+        if (!s) return;
+        const companyId = typeof req.query?.companyId === 'string' ? req.query.companyId.trim() : '';
+        if (!companyId) return H.json(res, 200, siiGateway.estadoConfiguracion());
+        return responder(res, await siiGateway.estadoEmpresa(s.cuentaId, companyId));
+    }
+
+    async function siiCredenciales(req, res) {
+        if (!siiGateway) return faltaGateway(res);
+        const m = req.method;
+        if (m === 'POST') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const companyId = typeof req.query?.companyId === 'string' ? req.query.companyId : (b.companyId || '');
+            return responder(res, await siiGateway.guardarCredenciales(s.cuentaId, companyId, b));
+        }
+        if (m === 'DELETE') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const companyId = typeof req.query?.companyId === 'string' ? req.query.companyId : (b.companyId || '');
+            const kind = typeof req.query?.kind === 'string' ? req.query.kind : undefined;
+            const siiEnv = typeof req.query?.siiEnv === 'string' ? req.query.siiEnv : undefined;
+            return responder(res, await siiGateway.eliminarCredenciales(s.cuentaId, companyId, { kind, siiEnv }));
+        }
+        res.setHeader('Allow', 'POST, DELETE');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
+    async function siiSync(req, res) {
+        if (!siiGateway) return faltaGateway(res);
+        const m = req.method;
+        if (m === 'POST') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const companyId = typeof req.query?.companyId === 'string' ? req.query.companyId : (b.companyId || '');
+            return responder(res, await siiGateway.iniciarSync(s.cuentaId, companyId, { period: b.period, jobType: b.jobType }));
+        }
+        if (m === 'GET') {
+            const s = await conSesion(req, res);
+            if (!s) return;
+            const companyId = typeof req.query?.companyId === 'string' ? req.query.companyId : '';
+            const jobId = typeof req.query?.jobId === 'string' ? req.query.jobId : '';
+            return responder(res, await siiGateway.estadoSync(s.cuentaId, companyId, jobId));
+        }
+        res.setHeader('Allow', 'GET, POST');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
+    async function siiDatos(req, res) {
+        if (!metodo(req, res, 'GET')) return;
+        if (!siiGateway) return faltaGateway(res);
+        const s = await conSesion(req, res);
+        if (!s) return;
+        const q = req.query || {};
+        const companyId = typeof q.companyId === 'string' ? q.companyId : '';
+        const tipo = typeof q.tipo === 'string' ? q.tipo : '';
+        const period = typeof q.period === 'string' ? q.period : '';
+        if (tipo === 'rcv') {
+            return responder(res, await siiGateway.obtenerRcv(s.cuentaId, companyId, {
+                period,
+                operacion: typeof q.operacion === 'string' ? q.operacion : undefined,
+                estadoContab: typeof q.estadoContab === 'string' ? q.estadoContab : undefined,
+                limit: q.limit,
+                offset: q.offset,
+                all: q.all
+            }));
+        }
+        if (tipo === 'bhe') {
+            return responder(res, await siiGateway.obtenerBhe(s.cuentaId, companyId, {
+                period,
+                direction: typeof q.direction === 'string' ? q.direction : undefined,
+                limit: q.limit,
+                offset: q.offset,
+                all: q.all
+            }));
+        }
+        if (tipo === 'f29') {
+            return responder(res, await siiGateway.obtenerF29(s.cuentaId, companyId, { period }));
+        }
+        return H.json(res, 400, { ok: false, codigo: 'tipo_invalido', error: 'Indica tipo=rcv, bhe o f29.' });
+    }
+
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-datos': siiDatos };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
     if (estudio) {
