@@ -586,44 +586,50 @@
    ======================================================== */
 @media screen and (min-width: 901px) {
     .suite-contadores-app {
-        grid-template-columns: 284px minmax(0, 1fr);
-    }
-}
-@media screen and (min-width: 1440px) {
-    .suite-contadores-app {
-        grid-template-columns: 300px minmax(0, 1fr);
+        grid-template-columns: 248px minmax(0, 1fr);
     }
 }
 
 .suite-contadores-app .app-side {
-    gap: 12px;
-    padding: 14px 12px;
-    overflow-y: hidden;
+    gap: 10px;
+    padding: 14px 10px 12px;
+    overflow: hidden;
 }
 .suite-contadores-app .app-empresa {
-    padding: 8px 10px 10px;
+    padding: 8px 8px 10px;
 }
 .suite-contadores-app .app-nav {
     flex: 1 1 auto;
     min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
     overflow-y: auto;
+    overflow-x: hidden;
     align-content: start;
-    gap: 3px;
-    padding-right: 2px;
+    gap: 2px;
+    padding-right: 0;
 }
 .suite-contadores-app .app-nav-grupo {
-    margin: 10px 8px 3px;
-    font-size: 11px;
+    margin: 9px 8px 2px;
+    font-size: 10.5px;
     letter-spacing: .04em;
     text-transform: uppercase;
 }
 .suite-contadores-app #suite-modulos .suite-mod-btn {
-    height: 36px;
-    min-height: 36px;
-    padding: 0 10px;
-    gap: 9px;
-    font-size: 13.5px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 35px;
+    min-height: 35px;
+    padding: 0 8px;
+    gap: 7px;
+    font-size: 12.8px;
     white-space: nowrap;
+    overflow: hidden;
+}
+.suite-contadores-app #suite-modulos .suite-mod-btn .material-icons {
+    font-size: 18px;
+    flex-shrink: 0;
 }
 .suite-contadores-app #suite-modulos .suite-mod-btn > span:not(.material-icons):not(.app-nav-chip) {
     flex: 1 1 auto;
@@ -635,12 +641,14 @@
 .suite-contadores-app #suite-modulos .app-nav-chip {
     flex-shrink: 0;
     white-space: nowrap;
+    padding: 1px 6px;
+    font-size: 10.5px;
 }
 
 .app-side-pie {
     display: grid;
     gap: 8px;
-    padding: 12px 10px 4px;
+    padding: 10px 4px 2px;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     margin-top: auto;
 }
@@ -1014,7 +1022,7 @@
     .suite-contadores-app #suite-modulos .suite-mod-btn {
         height: 34px;
         min-height: 34px;
-        font-size: 13px;
+        font-size: 12.5px;
     }
     .suite-contadores-app #suite-side-pie.app-side-pie {
         gap: 6px;
@@ -1472,7 +1480,7 @@
 
 @media screen and (max-width: 900px) {
     .suite-contadores-app .app-side {
-        width: min(296px, 88vw);
+        width: min(248px, 84vw);
     }
     .suite-context-bar {
         padding: 10px 18px;
