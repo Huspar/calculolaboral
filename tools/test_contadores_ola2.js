@@ -229,4 +229,52 @@ caso('Backend PLANES_ESTUDIO define limites 10/30/999 empresas sin alterar MAX_E
     assert.deepStrictEqual(DatosPyme.PLANES_ESTUDIO.estudio_ilimitado, { maxActivos: 50, maxEmpresas: 999 });
 });
 
+caso('consolidarEjercicioAnual consolida 2+ meses, evita duplicar BHE y soporta honorarios manuales', () => {
+    const bheNov = Imp.parsearBheSii(Imp.ejemploBheCsv('2026-11'), { periodo: '2026-11' }).boletas;
+    const nomNov = [
+        {
+            trabajador: { rut: '11.111.111-1', nombre: 'Ana Pérez' },
+            totales: { totalTributable: 1200000, impuestoUnico: 15000, liquidoPagar: 980000, totalNoImponible: 50000 }
+        }
+    ];
+    const nomDic = [
+        {
+            trabajador: { rut: '11.111.111-1', nombre: 'Ana Pérez' },
+            totales: { totalTributable: 1300000, impuestoUnico: 20000, liquidoPagar: 1050000, totalNoImponible: 50000 }
+        }
+    ];
+    const cons = Renta.consolidarEjercicioAnual([
+        { periodo: '2026-11', nominaResultados: nomNov, bheBoletas: bheNov, f29: { codigos: { 62: 110000 } } },
+        { periodo: '2026-12', nominaResultados: nomDic, bheBoletas: [], honorariosBruto: 500000, f29: { codigos: { 62: 125000 } } }
+    ], 2026, { factoresPorMes: { '2026-11': 1.01, '2026-12': 1.00 } });
+
+    assert.strictEqual(cons.anio, 2026);
+    assert.strictEqual(cons.mesesConDatos.length, 2);
+    assert.strictEqual(cons.cantidadMeses, 2);
+    assert.strictEqual(cons.nominaRegistros.length, 1);
+    assert.strictEqual(cons.bheLista.length, bheNov.length + 1);
+    assert.strictEqual(cons.ppmTotal, 235000);
+});
+
+caso('asientoDesdeFiniquitos centraliza finiquitos cuadrados en 42018 y 42010 vs 11010/21030', () => {
+    const asientoPagado = C.asientoDesdeFiniquitos([
+        { name: 'Pedro Soto', rut: '12.345.678-9', pending: 450000, total: 4450000 }
+    ], { periodo: '2026-11', pagado: true });
+
+    assert.ok(asientoPagado, 'debe generar asiento');
+    assert.strictEqual(asientoPagado.cuadra, true);
+    const totalDebe = asientoPagado.lineas.reduce((s, l) => s + l.debe, 0);
+    const totalHaber = asientoPagado.lineas.reduce((s, l) => s + l.haber, 0);
+    assert.strictEqual(totalDebe, 4450000);
+    assert.strictEqual(totalHaber, 4450000);
+    assert.ok(asientoPagado.lineas.some((l) => l.cuenta === '42018' && l.debe === 4000000));
+    assert.ok(asientoPagado.lineas.some((l) => l.cuenta === '42010' && l.debe === 450000));
+    assert.ok(asientoPagado.lineas.some((l) => l.cuenta === '11010' && l.haber === 4450000));
+
+    const asientoPorPagar = C.asientoDesdeFiniquitos([
+        { name: 'Pedro Soto', rut: '12.345.678-9', pending: 200000, total: 1200000 }
+    ], { periodo: '2026-11', pagado: false });
+    assert.ok(asientoPorPagar.lineas.some((l) => l.cuenta === '21030' && l.haber === 1200000));
+});
+
 console.log('\n' + ok + ' pruebas correctas en motores Ola 2');

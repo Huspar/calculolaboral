@@ -8,6 +8,7 @@
     var D = window.DemoCL;
     var state = { records: [], results: [], archivo: '' };
     var sinScroll = false;
+    var filaEditando = -1;
 
     var ALIAS = {
         rut: ['rut', 'rut_trabajador', 'rut_empleado'],
@@ -104,6 +105,19 @@
         });
 
         pintar();
+        document.dispatchEvent(new CustomEvent('demo:finiquitos', { detail: { results: state.results } }));
+    }
+
+    function opcionesCausalFin(sel) {
+        var opts = [
+            { v: '161', l: 'Art. 161 · Necesidades de la empresa' },
+            { v: '159', l: 'Art. 159 · Renuncia / Mutuo acuerdo / Plazo' },
+            { v: '160', l: 'Art. 160 · Causal disciplinaria' },
+            { v: '163', l: 'Art. 163 · Obra o faena' }
+        ];
+        return opts.map(function (o) {
+            return '<option value="' + o.v + '"' + (o.v === sel ? ' selected' : '') + '>' + D.esc(o.l) + '</option>';
+        }).join('');
     }
 
     function pintar() {
@@ -136,25 +150,43 @@
         });
         function et(i) { return ' data-l="' + D.esc(cols[i] || '') + '"'; }
 
-        document.getElementById('tbody-fin').innerHTML = results.map(function (r) {
+        document.getElementById('tbody-fin').innerHTML = results.map(function (r, idx) {
+            var abierto = filaEditando === idx;
+            var btnEdit = '<button type="button" class="btn-icono-chico btn-fila-edit" data-fin-edit="' + idx + '" aria-expanded="' + (abierto ? 'true' : 'false') + '" aria-label="Editar finiquito de ' + D.esc(r.record.nombre) + '" title="Editar causal, vacaciones, sueldo o fecha"><span class="material-icons" aria-hidden="true">' + (abierto ? 'expand_less' : 'edit') + '</span></button>';
+            var rowHtml = '';
             if (r.error) {
-                return '<tr>' +
+                rowHtml = '<tr>' +
                     '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) + '</td>' +
-                    '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '—') + '</td>' +
+                    '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '-') + '</td>' +
                     '<td colspan="6" style="color:var(--danger)">' + D.esc(r.error) + '</td>' +
+                    '<td class="num"' + et(8) + '>' + btnEdit + '</td>' +
+                    '</tr>';
+            } else {
+                rowHtml = '<tr>' +
+                    '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) +
+                    (r.warnings.length ? '<span class="demo-badge" title="' + D.esc(r.warnings.join(' ')) + '">Tope 90 UF</span>' : '') + '</td>' +
+                    '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '-') + '</td>' +
+                    '<td class="num"' + et(2) + '>' + D.num(r.serviceTime.indemnityYears) + '</td>' +
+                    '<td class="num"' + et(3) + '>' + D.money(r.ias) + '</td>' +
+                    '<td class="num"' + et(4) + '>' + D.money(r.notice) + '</td>' +
+                    '<td class="num"' + et(5) + '>' + D.money(r.vacation) + '</td>' +
+                    '<td class="num"' + et(6) + '>' + D.money(r.pending) + '</td>' +
+                    '<td class="num"' + et(7) + '><b>' + D.money(r.total) + '</b></td>' +
+                    '<td class="num"' + et(8) + '>' + btnEdit + '</td>' +
                     '</tr>';
             }
-            return '<tr>' +
-                '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) +
-                (r.warnings.length ? '<span class="demo-badge" title="' + D.esc(r.warnings.join(' ')) + '">Tope 90 UF</span>' : '') + '</td>' +
-                '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '—') + '</td>' +
-                '<td class="num"' + et(2) + '>' + D.num(r.serviceTime.indemnityYears) + '</td>' +
-                '<td class="num"' + et(3) + '>' + D.money(r.ias) + '</td>' +
-                '<td class="num"' + et(4) + '>' + D.money(r.notice) + '</td>' +
-                '<td class="num"' + et(5) + '>' + D.money(r.vacation) + '</td>' +
-                '<td class="num"' + et(6) + '>' + D.money(r.pending) + '</td>' +
-                '<td class="num"' + et(7) + '><b>' + D.money(r.total) + '</b></td>' +
-                '</tr>';
+            if (!abierto) return rowHtml;
+            var edHtml = '<tr class="fila-inline-editor" data-fin-editor="' + idx + '">' +
+                '<td colspan="9">' +
+                '<div class="inline-editor-grid">' +
+                '<div class="lq-field"><label for="fin-ed-causal-' + idx + '">Causal legal</label><select id="fin-ed-causal-' + idx + '" data-fin-campo="causal" data-fin-fila="' + idx + '">' + opcionesCausalFin(r.record.causal) + '</select></div>' +
+                '<div class="lq-field"><label for="fin-ed-vac-' + idx + '">Días vacaciones pend.</label><input type="number" id="fin-ed-vac-' + idx + '" data-fin-campo="vacaciones" data-fin-fila="' + idx + '" min="0" step="0.25" value="' + (r.record.vacaciones || 0) + '"></div>' +
+                '<div class="lq-field"><label for="fin-ed-sueldo-' + idx + '">Sueldo base ($)</label><input type="number" id="fin-ed-sueldo-' + idx + '" data-fin-campo="sueldo" data-fin-fila="' + idx + '" min="0" step="1000" value="' + (r.record.sueldo || 0) + '"></div>' +
+                '<div class="lq-field"><label for="fin-ed-termino-' + idx + '">Fecha término</label><input type="date" id="fin-ed-termino-' + idx + '" data-fin-campo="termino" data-fin-fila="' + idx + '" value="' + D.esc(r.record.termino || '') + '"></div>' +
+                '</div>' +
+                '<div class="inline-editor-foot"><button type="button" class="btn btn-chico" data-fin-cerrar="' + idx + '">Listo</button></div>' +
+                '</td></tr>';
+            return rowHtml + edHtml;
         }).join('');
 
         var partes = [];
@@ -240,6 +272,7 @@
         var mapped = rows.map(function (r) { return D.mapaColumnas(r, ALIAS); })
             .filter(function (m) { return Object.keys(m).some(function (k) { return m[k] !== ''; }); });
         if (!mapped.length) { D.avisar('No encontramos columnas reconocibles. Revisa la plantilla.'); return; }
+        filaEditando = -1;
         state.archivo = archivo || '';
         state.records = mapped.map(registro);
         calcularTodo(state.records);
@@ -424,6 +457,75 @@
             if (state.results.length) construirImpresion();
         });
 
+        function aplicarCampoInlineFin(el) {
+            var idxStr = el && el.getAttribute('data-fin-fila');
+            if (idxStr === null) return false;
+            var rec = state.records[Number(idxStr)];
+            if (!rec) return false;
+            var campo = el.getAttribute('data-fin-campo');
+            if (campo === 'causal') rec.causal = el.value;
+            if (campo === 'vacaciones') rec.vacaciones = Math.max(0, Number(el.value) || 0);
+            if (campo === 'sueldo') rec.sueldo = Math.max(0, Math.round(Number(el.value) || 0));
+            if (campo === 'termino') rec.termino = el.value;
+            return true;
+        }
+        function sincronizarEditorFinAbierto() {
+            var hubo = false;
+            if (!tbodyFin) return false;
+            tbodyFin.querySelectorAll('.fila-inline-editor [data-fin-fila]').forEach(function (el) {
+                if (aplicarCampoInlineFin(el)) hubo = true;
+            });
+            return hubo;
+        }
+        var tbodyFin = document.getElementById('tbody-fin');
+        if (tbodyFin) {
+            tbodyFin.addEventListener('mousedown', function (ev) {
+                if (ev.target.closest('[data-fin-edit], [data-fin-cerrar]')) ev.preventDefault();
+            });
+            tbodyFin.addEventListener('click', function (ev) {
+                var btnEd = ev.target.closest('[data-fin-edit]');
+                if (btnEd) {
+                    var cambioEd = sincronizarEditorFinAbierto();
+                    var idx = Number(btnEd.getAttribute('data-fin-edit'));
+                    filaEditando = (filaEditando === idx) ? -1 : idx;
+                    sinScroll = true;
+                    if (cambioEd) {
+                        calcularTodo(state.records);
+                    } else {
+                        pintar();
+                    }
+                    return;
+                }
+                var btnCer = ev.target.closest('[data-fin-cerrar]');
+                if (btnCer) {
+                    var cambioCer = sincronizarEditorFinAbierto();
+                    filaEditando = -1;
+                    sinScroll = true;
+                    if (cambioCer) {
+                        calcularTodo(state.records);
+                    } else {
+                        pintar();
+                    }
+                }
+            });
+            tbodyFin.addEventListener('change', function (ev) {
+                var el = ev.target;
+                if (!aplicarCampoInlineFin(el)) return;
+                var focoId = document.activeElement && document.activeElement.id;
+                sinScroll = true;
+                calcularTodo(state.records);
+                if (focoId && focoId.indexOf('fin-ed-') === 0) {
+                    var target = document.getElementById(focoId);
+                    if (target) target.focus();
+                }
+            });
+        }
+
         if (/[?&]demo=1/.test(location.search) && !/[?&]tab=liq/.test(location.search)) { sinScroll = true; cargarEjemplo(); }
     });
+
+    window.CLDemoFiniquitos = {
+        resultados: function () { return state.results ? state.results.slice() : []; },
+        cargarEjemplo: cargarEjemplo
+    };
 })();

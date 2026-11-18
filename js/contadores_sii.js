@@ -398,6 +398,15 @@
         return { obtener: obtener, guardar: guardar, eliminar: eliminar, listar: listar };
     }
 
+    function estudioActivoId() {
+        try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+                return String(window.localStorage.getItem('cl-estudio-activo') || '').trim();
+            }
+        } catch (e) { /* sin almacenamiento */ }
+        return '';
+    }
+
     // ---------- Cliente HTTP hacia /api/pyme/sii-* ----------
     function crearClienteApi(fetchFn) {
         var f = fetchFn || (typeof fetch === 'function' ? fetch.bind(typeof window !== 'undefined' ? window : globalThis) : null);
@@ -406,6 +415,8 @@
             if (!f) throw new Error('fetch no disponible');
             var o = opts || {};
             var headers = Object.assign({ accept: 'application/json' }, o.headers || {});
+            var estId = estudioActivoId();
+            if (estId && !headers['x-cl-estudio']) headers['x-cl-estudio'] = estId;
             var reqOpts = { method: o.method || 'GET', credentials: 'same-origin', headers: headers };
             if (o.method && o.method !== 'GET' && o.method !== 'HEAD') {
                 headers['x-cl-pyme'] = '1';
@@ -550,8 +561,9 @@
         compararF29ConSii: compararF29ConSii,
         podarRespaldoParaLimite: podarRespaldoParaLimite,
         crearTiendaVinculos: crearTiendaVinculos,
+        estudioActivoId: estudioActivoId,
         crearClienteApi: crearClienteApi,
-        version: '1.0.0'
+        version: '1.1.0'
     };
 
     if (typeof module !== 'undefined' && module.exports) module.exports = apiExport;

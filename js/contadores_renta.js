@@ -469,15 +469,101 @@
         };
     }
 
+    function consolidarEjercicioAnual(entradas, anio, opciones) {
+        var opts = opciones || {};
+        var anioStr = String(Math.round(Number(anio) || ANIO_TRIBUTARIO_MAXIMO));
+        var pref = anioStr + '-';
+        var lista = [];
+        if (Array.isArray(entradas)) {
+            lista = entradas.filter(function (e) { return e && String(e.periodo || '').indexOf(pref) === 0; });
+        } else if (entradas && typeof entradas === 'object') {
+            Object.keys(entradas).forEach(function (per) {
+                if (per.indexOf(pref) === 0 && entradas[per] && typeof entradas[per] === 'object') {
+                    lista.push(Object.assign({ periodo: per }, entradas[per]));
+                }
+            });
+        }
+        lista.sort(function (a, b) { return String(a.periodo).localeCompare(String(b.periodo)); });
+
+        var todosNom = [];
+        var todasBhe = [];
+        var bheSeen = {};
+        var ppmTotal = 0;
+        var mesesConDatos = [];
+        var asientosAnuales = [];
+        var factoresPorMes = (opts.factoresPorMes && typeof opts.factoresPorMes === 'object') ? opts.factoresPorMes : {};
+        var factorDef = Number(opts.factorActualizacion || 1) || 1;
+
+        lista.forEach(function (item) {
+            var per = String(item.periodo || '');
+            var factorMes = Number(factoresPorMes[per] || item.factorActualizacion || factorDef) || 1;
+            var hayDatoMes = false;
+            if (Array.isArray(item.nominaResultados) && item.nominaResultados.length) {
+                hayDatoMes = true;
+                item.nominaResultados.forEach(function (r) {
+                    if (!r) return;
+                    todosNom.push(Object.assign({}, r, { factorActualizacion: r.factorActualizacion || factorMes }));
+                });
+            }
+            if (Array.isArray(item.bheBoletas) && item.bheBoletas.length) {
+                hayDatoMes = true;
+                item.bheBoletas.forEach(function (b, idx) {
+                    if (!b) return;
+                    var folioKey = b.folio ? (limpiarRut(b.rut) + '|' + String(b.folio) + '|' + String(b.fecha || per)) : (per + '|' + idx);
+                    if (b.folio && bheSeen[folioKey]) return;
+                    if (b.folio) bheSeen[folioKey] = true;
+                    todasBhe.push(Object.assign({}, b, { factorActualizacion: b.factorActualizacion || factorMes }));
+                });
+            } else if (entero(item.honorariosBruto) > 0) {
+                hayDatoMes = true;
+                var retMan = entero(item.honorariosRetencion) || Math.round(entero(item.honorariosBruto) * 0.1525);
+                todasBhe.push({
+                    rut: '12.345.678-5',
+                    razonSocial: 'Honorarios consolidados (' + per + ')',
+                    bruto: entero(item.honorariosBruto),
+                    retenido: retMan,
+                    estado: 'VIGENTE',
+                    factorActualizacion: factorMes
+                });
+            }
+            if (item.f29 && item.f29.codigos && entero(item.f29.codigos[62]) > 0) {
+                hayDatoMes = true;
+                ppmTotal += entero(item.f29.codigos[62]);
+            }
+            if (Array.isArray(item.asientos) && item.asientos.length) {
+                hayDatoMes = true;
+                item.asientos.forEach(function (a) {
+                    if (!a) return;
+                    asientosAnuales.push(Object.assign({}, a, {
+                        id: per + '-' + (a.id || 'AS'),
+                        periodo: per
+                    }));
+                });
+            }
+            if (hayDatoMes && mesesConDatos.indexOf(per) < 0) mesesConDatos.push(per);
+        });
+
+        return {
+            anio: Number(anioStr),
+            mesesConDatos: mesesConDatos,
+            cantidadMeses: mesesConDatos.length,
+            nominaRegistros: acumularLiquidacionesParaDj1887(todosNom, { factorActualizacion: factorDef }),
+            bheLista: todasBhe,
+            ppmTotal: ppmTotal,
+            asientosAnuales: asientosAnuales
+        };
+    }
+
     var api = {
         ANIO_TRIBUTARIO_MAXIMO: ANIO_TRIBUTARIO_MAXIMO,
         validarAnioTributario: validarAnioTributario,
         acumularLiquidacionesParaDj1887: acumularLiquidacionesParaDj1887,
+        consolidarEjercicioAnual: consolidarEjercicioAnual,
         generarDj1887: generarDj1887,
         generarDj1879: generarDj1879,
         generarDj1947o1948: generarDj1947o1948,
         calcularCptSimplificado: calcularCptSimplificado,
-        version: '1.0.0'
+        version: '1.1.0'
     };
 
     if (typeof module !== 'undefined' && module.exports) module.exports = api;

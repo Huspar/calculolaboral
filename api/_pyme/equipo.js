@@ -37,14 +37,15 @@ function crear({ almacen, datos, ahora }) {
         return { ok: true, miembros: filas.map(m => ({ id: m.id, email: m.email, rol: m.rol, empresas: m.empresas, ultimoAcceso: m.ultimoAcceso })), maximo: MAX_PERSONAS, rolesQueSePuedenDar: rolesPara(cuenta) };
     }
 
-    async function validarEntrada(cuenta, rol, empresas) {
+    async function validarEntrada(cuenta, rol, empresas, alcance) {
         if (rolesPara(cuenta).indexOf(rol) < 0) return fallo(403, 'rol', rol === 'admin' ? 'Solo el titular puede nombrar administradores.' : 'Ese rol no existe.');
         const propias = await empresasDelEstudio(cuenta);
         const lista = Array.isArray(empresas) ? empresas.filter(x => typeof x === 'string' && UUID.test(x)).map(x => x.toLowerCase()) : [];
         const unicas = lista.filter((x, i) => lista.indexOf(x) === i);
         if (unicas.some(x => propias.indexOf(x) < 0)) return fallo(400, 'empresa', 'Una de las empresas no es de este estudio.');
-        // El administrador ve todo; el resto necesita al menos una empresa para poder trabajar
-        if (rol !== 'admin' && !unicas.length) return fallo(400, 'empresa', 'Elige al menos una empresa para esa persona.');
+        // El administrador ve todo; el resto necesita al menos una empresa de /app salvo cuando el estudio solo opera en la Suite Contable sin empresas en /app
+        const permiteSinEmpresas = alcance === 'suite' && propias.length === 0;
+        if (rol !== 'admin' && !unicas.length && !permiteSinEmpresas) return fallo(400, 'empresa', 'Elige al menos una empresa para esa persona.');
         return { ok: true, empresas: rol === 'admin' ? [] : unicas };
     }
 
@@ -52,7 +53,7 @@ function crear({ almacen, datos, ahora }) {
         const email = String((entrada && entrada.email) || '').trim().toLowerCase();
         if (!CORREO.test(email)) return fallo(400, 'correo', 'Escribe un correo válido.');
         if (email === String(cuenta.email || '').toLowerCase()) return fallo(400, 'correo', 'Ese es tu propio correo: ya eres el titular.');
-        const v = await validarEntrada(cuenta, entrada.rol, entrada.empresas);
+        const v = await validarEntrada(cuenta, entrada.rol, entrada.empresas, entrada.alcance);
         if (!v.ok) return v;
         const existentes = await almacen.listarMiembros(cuenta.cuentaId);
         if (existentes.some(m => m.email === email)) return fallo(409, 'repetido', 'Esa persona ya está en el equipo.');
@@ -69,7 +70,7 @@ function crear({ almacen, datos, ahora }) {
         // Un administrador no toca a otro administrador
         if (actual.rol === 'admin' && cuenta.rol !== 'titular') return fallo(403, 'rol', 'Solo el titular puede cambiar a un administrador.');
         const rol = entrada && entrada.rol ? entrada.rol : actual.rol;
-        const v = await validarEntrada(cuenta, rol, entrada && entrada.empresas !== undefined ? entrada.empresas : actual.empresas);
+        const v = await validarEntrada(cuenta, rol, entrada && entrada.empresas !== undefined ? entrada.empresas : actual.empresas, entrada && entrada.alcance);
         if (!v.ok) return v;
         await almacen.actualizarMiembro(cuenta.cuentaId, id, { rol, empresas: v.empresas });
         return { ok: true };

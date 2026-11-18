@@ -7,6 +7,19 @@
 
     var LEYENDA_DEFECTO = 'Acceso de solo lectura e informativo. Esta vista contiene información tributaria y laboral confidencial puesta a disposición exclusivamente para el representante autorizado de la empresa cliente por su estudio contable (en calidad de encargado del tratamiento, Ley N° 21.719 y art. 154 ter del Código del Trabajo). Este enlace temporal y revocable no permite modificar datos ni constituye declaración oficial presentada ante el SII, Previred o la Dirección del Trabajo. Prohibida su difusión o reenvío a terceros no autorizados.';
 
+    var MAX_ARCHIVO_BYTES = 1024 * 1024;
+    var EXT_PERMITIDAS = /\.(csv|xlsx|xls|pdf|txt|tsv|json)$/i;
+    var TIPO_LABELS = {
+        cartola: 'Cartola bancaria',
+        novedades: 'Novedades de sueldo',
+        otro: 'Documento del mes'
+    };
+    var buzonState = {
+        token: '',
+        esPreview: false,
+        archivo: null
+    };
+
     function $(id) { return document.getElementById(id); }
 
     function esc(v) {
@@ -43,7 +56,8 @@
         if ($('pe-estado-error')) $('pe-estado-error').hidden = true;
         if ($('pe-banner-preview')) $('pe-banner-preview').hidden = !esPreview;
 
-        if (!portal || (!portal.f29 && !portal.pnl && !portal.laboral)) {
+        var tieneBuzon = Boolean(portal && (!portal.secciones || portal.secciones.buzon !== false));
+        if (!portal || (!portal.f29 && !portal.pnl && !portal.laboral && !tieneBuzon)) {
             if ($('pe-estado-vacio')) $('pe-estado-vacio').hidden = false;
             return;
         }
@@ -134,6 +148,10 @@
             }
         }
 
+        if ($('pe-card-buzon')) {
+            $('pe-card-buzon').hidden = !tieneBuzon;
+        }
+
         if ($('pe-estudio-pie')) $('pe-estudio-pie').textContent = est.pie || 'Documento informativo emitido por tu estudio contable.';
         if ($('pe-leyenda-legal')) $('pe-leyenda-legal').textContent = portal.leyendaLegal || LEYENDA_DEFECTO;
         if ($('pe-vence-txt')) {
@@ -141,10 +159,172 @@
         }
     }
 
+    function feedbackBuzon(texto, tipo) {
+        var box = $('pe-buzon-feedback');
+        if (!box) return;
+        if (!texto) {
+            box.hidden = true;
+            box.textContent = '';
+            return;
+        }
+        box.hidden = false;
+        box.className = 'sii-feedback-box ' + (tipo === 'error' ? 'error' : 'ok');
+        box.textContent = texto;
+    }
+
+    function pintarListaBuzon(items) {
+        var ul = $('pe-buzon-lista');
+        var vacio = $('pe-buzon-vacio');
+        if (!ul || !vacio) return;
+        var lista = Array.isArray(items) ? items : [];
+        if (!lista.length) {
+            ul.innerHTML = '';
+            vacio.hidden = false;
+            return;
+        }
+        vacio.hidden = true;
+        ul.innerHTML = lista.map(function (it) {
+            var estCls = it.estado === 'procesado' ? 'sello-emitida' : 'sello-guardada';
+            var estTxt = it.estado === 'procesado' ? 'Procesado por el estudio' : 'Enviado';
+            var tipoTxt = TIPO_LABELS[it.tipo] || 'Documento';
+            var kb = Math.max(1, Math.round((Number(it.tamanoBytes) || 0) / 1024));
+            return '<li class="pe-buzon-item">' +
+                '<div>' +
+                '<strong>' + esc(it.nombreArchivo) + '</strong> <span class="app-nav-chip">' + esc(tipoTxt) + '</span>' +
+                '<div class="texto-ayuda mono" style="margin-top:2px">' + esc(fechaCorta(it.creado)) + ' · ' + kb + ' KB</div>' +
+                (it.nota ? '<p class="texto-ayuda" style="margin:4px 0 0">' + esc(it.nota) + '</p>' : '') +
+                '</div>' +
+                '<span class="sello ' + estCls + '">' + esc(estTxt) + '</span>' +
+                '</li>';
+        }).join('');
+    }
+
+    async function cargarHistorialBuzon() {
+        if (!buzonState.token || buzonState.esPreview) {
+            pintarListaBuzon([]);
+            return;
+        }
+        try {
+            var res = await fetch('/api/pyme/portal-estudio-buzon?t=' + encodeURIComponent(buzonState.token), {
+                headers: { accept: 'application/json' }
+            });
+            var j = res.ok ? await res.json().catch(function () { return {}; }) : {};
+            if (res.ok && j.ok !== false) pintarListaBuzon(j.items || []);
+        } catch (e) { /* silencioso */ }
+    }
+
+    function seleccionarArchivoBuzon(file) {
+        var estEl = $('pe-buzon-file-estado');
+        if (!file) {
+            buzonState.archivo = null;
+            if (estEl) estEl.textContent = 'Ningún archivo seleccionado · Máx. 1 MB';
+            return;
+        }
+        if (!EXT_PERMITIDAS.test(file.name)) {
+            buzonState.archivo = null;
+            if (estEl) estEl.textContent = 'Formato no admitido';
+            feedbackBuzon('Usa archivos CSV, Excel (.xlsx/.xls), TXT o PDF.', 'error');
+            return;
+        }
+        if (file.size > MAX_ARCHIVO_BYTES) {
+            buzonState.archivo = null;
+            if (estEl) estEl.textContent = 'Archivo supera 1 MB';
+            feedbackBuzon('El archivo supera el límite de 1 MB. Comprime o exporta solo el mes.', 'error');
+            return;
+        }
+        feedbackBuzon('');
+        buzonState.archivo = file;
+        var kb = Math.max(1, Math.round(file.size / 1024));
+        if (estEl) estEl.textContent = file.name + ' (' + kb + ' KB)';
+    }
+
+    function leerArchivoBase64(file) {
+        return new Promise(function (resolve, reject) {
+            var rd = new FileReader();
+            rd.onload = function () {
+                var res = String(rd.result || '');
+                var idx = res.indexOf(',');
+                resolve(idx >= 0 ? res.slice(idx + 1) : res);
+            };
+            rd.onerror = function () { reject(new Error('No pudimos leer el archivo seleccionado.')); };
+            rd.readAsDataURL(file);
+        });
+    }
+
+    async function enviarAlBuzon(ev) {
+        if (ev) ev.preventDefault();
+        if (buzonState.esPreview) {
+            feedbackBuzon('Vista previa Marca Blanca: con un enlace real emitido al cliente, los archivos llegan cifrados a tu bandeja en /demo-contadores.', 'ok');
+            return;
+        }
+        var notaEl = $('pe-buzon-nota');
+        var tipoEl = $('pe-buzon-tipo');
+        var btn = $('btn-pe-buzon-enviar');
+        var nota = notaEl ? notaEl.value.trim() : '';
+        var tipo = tipoEl ? tipoEl.value : 'cartola';
+
+        if (!buzonState.archivo && !nota) {
+            feedbackBuzon('Adjunta un archivo o escribe una nota para tu contador.', 'error');
+            return;
+        }
+
+        feedbackBuzon('Enviando documento cifrado al estudio...', 'ok');
+        if (btn) btn.disabled = true;
+        try {
+            var base64 = buzonState.archivo ? await leerArchivoBase64(buzonState.archivo) : '';
+            var res = await fetch('/api/pyme/portal-estudio-buzon?t=' + encodeURIComponent(buzonState.token), {
+                method: 'POST',
+                headers: { 'content-type': 'application/json', accept: 'application/json' },
+                body: JSON.stringify({
+                    tipo: tipo,
+                    nota: nota,
+                    nombreArchivo: buzonState.archivo ? buzonState.archivo.name : '',
+                    mimeType: buzonState.archivo ? (buzonState.archivo.type || 'application/octet-stream') : 'text/plain',
+                    contenidoBase64: base64
+                })
+            });
+            var json = await res.json().catch(function () { return {}; });
+            if (!res.ok || json.ok === false) {
+                throw new Error(json.error || 'No pudimos enviar el documento.');
+            }
+            if (notaEl) notaEl.value = '';
+            if ($('pe-buzon-archivo')) $('pe-buzon-archivo').value = '';
+            seleccionarArchivoBuzon(null);
+            feedbackBuzon('Enviado de forma segura a tu estudio contable.', 'ok');
+            await cargarHistorialBuzon();
+        } catch (err) {
+            feedbackBuzon((err && err.message) || 'Error al enviar el documento.', 'error');
+        } finally {
+            if (btn) btn.disabled = false;
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', async function () {
         var qs = new URLSearchParams(window.location.search || '');
         var preview = qs.get('preview') === '1';
         var token = (qs.get('t') || '').trim();
+        buzonState.esPreview = preview;
+        buzonState.token = token;
+
+        var drop = $('pe-buzon-drop');
+        var inp = $('pe-buzon-archivo');
+        if (drop && inp) {
+            drop.addEventListener('click', function () { inp.click(); });
+            drop.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); inp.click(); }
+            });
+            drop.addEventListener('dragover', function (ev) { ev.preventDefault(); drop.classList.add('over'); });
+            drop.addEventListener('dragleave', function () { drop.classList.remove('over'); });
+            drop.addEventListener('drop', function (ev) {
+                ev.preventDefault();
+                drop.classList.remove('over');
+                if (ev.dataTransfer.files && ev.dataTransfer.files[0]) seleccionarArchivoBuzon(ev.dataTransfer.files[0]);
+            });
+            inp.addEventListener('change', function () {
+                if (inp.files && inp.files[0]) seleccionarArchivoBuzon(inp.files[0]);
+            });
+        }
+        if ($('form-pe-buzon')) $('form-pe-buzon').addEventListener('submit', enviarAlBuzon);
 
         if (preview) {
             try {
@@ -154,6 +334,7 @@
                     return;
                 }
                 pintarPortal(JSON.parse(raw), true);
+                pintarListaBuzon([]);
             } catch (e) {
                 mostrarError('No pudimos cargar la vista previa', 'Vuelve a generar la vista previa desde el panel del estudio.', 'Error local');
             }
@@ -178,6 +359,7 @@
                 return;
             }
             pintarPortal(json.portal, false);
+            cargarHistorialBuzon();
         } catch (err) {
             mostrarError('Error de conexión', 'No pudimos conectar con el servidor. Intenta nuevamente en unos minutos.', 'Sin conexión');
         }

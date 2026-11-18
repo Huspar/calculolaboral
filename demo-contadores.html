@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.14.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.15.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -45,6 +45,7 @@
     <div class="app-empresa">
       <strong id="study-name-display">Asesorías Pérez Ltda.</strong>
       <span class="mono" style="font-size:11.5px;color:var(--side-muted)">Suite Estudios Contables</span>
+      <select id="estudio-selector-side" class="side-estudio-select" hidden aria-label="Estudio contable activo en menú móvil"></select>
     </div>
 
     <!-- Navegación por Grupos Estructurados -->
@@ -163,8 +164,17 @@
           <span class="material-icons" aria-hidden="true">lock_open</span>Período abierto
         </span>
 
+        <button type="button" class="cloud-sync-pill" id="cloud-sync-pill" aria-label="Modo local sin sesión. Clic para iniciar sesión.">
+          <span class="material-icons" aria-hidden="true">cloud_queue</span>
+          <span class="cloud-sync-txt">Solo local</span>
+        </button>
+
         <div class="app-cuenta">
-          <span id="cuenta-estado" class="mono" style="font-size:12.5px;color:var(--muted)">estudio@calculolaboral.cl</span>
+          <select id="estudio-selector" class="top-estudio-select" hidden aria-label="Estudio contable activo"></select>
+          <span id="cuenta-estado" class="mono" style="font-size:12.5px;color:var(--muted)">sin sesión</span>
+          <button type="button" class="btn btn-chico" id="btn-equipo-estudio" title="Administrar miembros del estudio">
+            <span class="material-icons" aria-hidden="true">group</span><span class="top-btn-txt">Equipo</span>
+          </button>
           <button type="button" class="btn btn-chico" id="btn-entrar">Mi Estudio</button>
         </div>
       </div>
@@ -360,6 +370,7 @@
                       <th scope="col" class="num">Vacaciones</th>
                       <th scope="col" class="num">Rem. pendiente</th>
                       <th scope="col" class="num">Total</th>
+                      <th scope="col" class="num">Editar</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-fin"></tbody>
@@ -370,6 +381,8 @@
               <div class="form-acciones" style="margin-top:14px">
                 <button class="btn btn-primario" type="button" id="btn-print-fin"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del lote</button>
                 <button class="btn" type="button" id="btn-csv-fin">Exportar a Excel</button>
+                <button class="btn" type="button" id="btn-asiento-fin"><span class="material-icons" aria-hidden="true">account_balance</span>Centralizar finiquitos en Diario</button>
+                <span class="sello sello-guardada" id="fin-diario-sello">Sin centralizar</span>
               </div>
             </div>
           </div>
@@ -433,18 +446,32 @@
               </div>
               <div class="form-acciones" style="margin-top:12px">
                 <button class="btn btn-chico btn-primario" type="button" id="btn-sample-liq"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo (10 trabajadores)</button>
+                <button class="btn btn-chico" type="button" id="btn-liq-traer-ant" hidden><span class="material-icons" aria-hidden="true">history</span>Traer mes anterior (<span id="liq-mes-ant-lbl">Oct</span>)</button>
                 <button class="btn btn-chico" type="button" id="btn-template-liq">Descargar plantilla</button>
               </div>
             </div>
           </div>
 
           <div class="demo-vacio" data-modo="liquidaciones">
+            <div class="suite-preval-strip ok" id="liq-aviso-herencia" hidden style="margin-bottom:14px">
+              <span class="suite-preval-strip-izq">
+                <span class="material-icons" aria-hidden="true">history</span>
+                <span id="liq-aviso-herencia-txt">Existe una nómina guardada del mes anterior para este cliente.</span>
+              </span>
+              <button type="button" class="btn btn-chico btn-primario" id="btn-liq-banner-traer">Traer nómina anterior</button>
+            </div>
             <p class="demo-vacio-t">Aún no hay liquidaciones calculadas en este período</p>
             <p class="texto-ayuda">Pulsa "Cargar ejemplo (10 trabajadores)" o sube la planilla de tu cliente para calcular el lote en un clic.</p>
           </div>
 
           <div class="panel" id="results-liq" hidden style="margin-bottom:16px">
-            <div class="panel-head"><h2>Resumen de nómina procesada</h2><span class="texto-ayuda" id="rows-liq"></span></div>
+            <div class="panel-head">
+              <h2>Resumen de nómina procesada</h2>
+              <div class="campo-head-acciones">
+                <span class="sello sello-guardada" id="liq-estado-guardado" hidden></span>
+                <span class="texto-ayuda" id="rows-liq"></span>
+              </div>
+            </div>
             <div class="panel-cuerpo">
               <div class="fin-kpis fin-kpis-4">
                 <div class="fin-kpi"><span class="fin-kpi-label">Trabajadores</span><span class="fin-kpi-val" id="l-workers">0</span></div>
@@ -463,6 +490,7 @@
                       <th scope="col" class="num">Descuentos</th>
                       <th scope="col" class="num">Líquido</th>
                       <th scope="col" class="num">Costo empresa</th>
+                      <th scope="col" class="num">Editar</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-liq"></tbody>
@@ -592,9 +620,14 @@
               <div class="lq-field f29-remanente-wrap">
                 <div class="f29-remanente-head">
                   <label for="f29-remanente">Remanente anterior cód. 504</label>
-                  <button type="button" class="btn-micro-calculo" id="btn-f29-asistente-utm" aria-expanded="false" aria-controls="f29-asistente-utm-card" title="Calcular reajuste oficial por variación de UTM (Art. 27 Ley de IVA)">
-                    <span class="material-icons" aria-hidden="true">calculate</span><span>Reajuste UTM</span>
-                  </button>
+                  <div class="campo-head-acciones">
+                    <button type="button" class="btn-micro-calculo" id="btn-f29-traer-rem-ant" hidden title="Importar remanente cód. 77 del período anterior y reajustar por UTM">
+                      <span class="material-icons" aria-hidden="true">history</span><span>Traer cód. 77 anterior</span>
+                    </button>
+                    <button type="button" class="btn-micro-calculo" id="btn-f29-asistente-utm" aria-expanded="false" aria-controls="f29-asistente-utm-card" title="Calcular reajuste oficial por variación de UTM (Art. 27 Ley de IVA)">
+                      <span class="material-icons" aria-hidden="true">calculate</span><span>Reajuste UTM</span>
+                    </button>
+                  </div>
                 </div>
                 <div class="campo-unidad">
                   <span class="campo-addon" aria-hidden="true">$</span>
@@ -892,6 +925,14 @@
           <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">CxP pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxp">$0</span></div>
         </div>
 
+        <div class="suite-preval-strip ok" id="bancos-buzon-alerta" hidden role="status" aria-live="polite">
+          <span class="suite-preval-strip-izq">
+            <span class="material-icons" aria-hidden="true">inbox</span>
+            <span id="bancos-buzon-txt">Tu cliente envió archivos desde el Portal en este período.</span>
+          </span>
+          <button type="button" class="btn btn-chico btn-primario" id="btn-bancos-ver-buzon">Revisar envíos</button>
+        </div>
+
         <div class="fin-filtros" role="tablist" aria-label="Subvistas de bancos y conciliación">
           <button type="button" class="fin-chip activo" data-subbanco="conciliacion" role="tab" aria-selected="true" aria-controls="sub-conciliacion">Conciliación Bancaria</button>
           <button type="button" class="fin-chip" data-subbanco="cartera" role="tab" aria-selected="false" aria-controls="sub-bancos-cartera">Cartera CxC / CxP (Aging)</button>
@@ -990,7 +1031,12 @@
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:16px">
                 <div class="lq-field">
-                  <label for="tes-banco-ini">Saldo inicial Banco</label>
+                  <div class="f29-remanente-head">
+                    <label for="tes-banco-ini">Saldo inicial Banco</label>
+                    <button type="button" class="btn-micro-calculo" id="btn-tes-traer-saldo-ant" hidden title="Importar saldo final de banco del período anterior">
+                      <span class="material-icons" aria-hidden="true">history</span><span>Traer cierre anterior</span>
+                    </button>
+                  </div>
                   <div class="campo-unidad">
                     <span class="campo-addon" aria-hidden="true">$</span>
                     <input type="text" id="tes-banco-ini" inputmode="numeric" data-tipo="pesos" value="0">
@@ -1156,11 +1202,17 @@
             <p class="v-sub">Fotografía tributaria del año y cálculo de cuánto paga de impuesto a la renta la empresa bajo ProPyme 14 D3 o 14 D8.</p>
           </div>
           <div class="v-acciones">
+            <div class="segmento" id="bal-alcance-seg" role="radiogroup" aria-label="Alcance temporal del balance y RLI">
+              <label><input type="radio" name="bal-alcance" value="mes" checked><span>Mes activo (<span id="bal-seg-mes">Nov</span>)</span></label>
+              <label><input type="radio" name="bal-alcance" value="anual"><span>Acumulado anual <span id="bal-seg-anio">2026</span></span></label>
+            </div>
             <button class="btn btn-primario" type="button" id="btn-balance-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Balance + RLI</button>
             <button class="btn" type="button" id="btn-balance-csv">Excel Balance</button>
             <button class="btn" type="button" id="btn-rli-csv">Excel RLI</button>
           </div>
         </div>
+
+        <div class="suite-preval-strip ok" id="bal-cobertura-strip" hidden role="status" aria-live="polite"></div>
 
         <div class="tabla-resumen-movil" id="bal-resumen-movil" hidden>
           <div class="resumen-movil-card">
@@ -1643,6 +1695,8 @@
           <span>Año Tributario <strong>2027 bloqueado</strong> hasta que el SII publique las resoluciones de DDJJ, suplemento normativo y factores de IPC. Los exportables generados son archivos de referencia para revisar antes de subir al SII.</span>
         </div>
 
+        <div class="suite-preval-strip ok" id="ddjj-cobertura-strip" hidden role="status" aria-live="polite"></div>
+
         <div class="suite-preval-strip warn" id="ddjj-preval-bar" role="status" aria-live="polite"></div>
 
         <div class="fin-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
@@ -1910,6 +1964,7 @@
               <p class="panel-ayuda">Comparte con tu cliente un enlace privado de solo lectura con la identidad de tu estudio: F29, P&amp;L y resumen laboral sin datos bancarios.</p>
             </div>
             <div class="v-acciones">
+              <span class="sello sello-preparada" id="rep-portal-badge" hidden>0 nuevo(s)</span>
               <span class="sello sello-guardada" id="rep-portal-sello">Solo lectura</span>
               <button type="button" class="btn btn-primario" id="btn-rep-abrir-portal">
                 <span class="material-icons" aria-hidden="true">share</span>Configurar Portal Cliente
@@ -2366,6 +2421,13 @@
         </span>
         <input type="checkbox" id="portal-opt-laboral" checked>
       </label>
+      <label class="portal-switch-row" for="portal-opt-buzon">
+        <span>
+          <strong>Buzón para recibir archivos del cliente</strong>
+          <span class="texto-ayuda">Permite al cliente subir cartolas, boletas, facturas o documentos (máx. 1 MB, cifrados).</span>
+        </span>
+        <input type="checkbox" id="portal-opt-buzon" checked>
+      </label>
       <div class="lq-field" style="margin-top:8px">
         <label for="portal-vigencia-dias">Vigencia del enlace</label>
         <select id="portal-vigencia-dias">
@@ -2415,12 +2477,104 @@
       <p class="texto-ayuda" id="portal-enlaces-vacio" hidden>No hay enlaces activos emitidos para este estudio.</p>
     </div>
 
+    <div class="mcp-tokens-wrap" id="portal-buzon-wrap">
+      <h3 class="preval-bloque-titulo">Buzón de documentos recibidos</h3>
+      <div class="tabla-contable-wrap" id="portal-buzon-tabla-wrap" hidden>
+        <table class="tabla-contable compacta">
+          <thead>
+            <tr>
+              <th scope="col">Recibido</th>
+              <th scope="col">Cliente / Tipo</th>
+              <th scope="col">Archivo</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="num">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-portal-buzon"></tbody>
+        </table>
+      </div>
+      <p class="texto-ayuda" id="portal-buzon-vacio">Todavía no hay archivos recibidos en el buzón del cliente.</p>
+    </div>
+
     <div id="portal-dlg-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
 
     <div class="sii-dlg-acciones">
       <div class="sii-acciones-izq"></div>
       <div class="sii-acciones-der">
         <button type="button" class="btn btn-chico" id="btn-portal-listo">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal Equipo del estudio y compartición -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-equipo-estudio" aria-labelledby="equipo-titulo">
+  <div class="sii-dlg-cabeza">
+    <div>
+      <h2 id="equipo-titulo">Equipo del estudio y sincronización</h2>
+      <p class="texto-ayuda" style="margin:2px 0 0">Comparte tu cartera, nóminas y cierres mensuales en la nube con tu equipo (hasta 5 usuarios).</p>
+    </div>
+    <span class="sello sello-emitida" id="equipo-cupo-badge">0 / 5 cupos</span>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-equipo-dlg" aria-label="Cerrar equipo del estudio">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="sii-dlg-cuerpo">
+    <div id="equipo-dlg-sin-sesion" class="sii-banner-estado" hidden>
+      <span class="material-icons" aria-hidden="true">cloud_off</span>
+      <div>
+        <strong>Inicia sesión para compartir y respaldar en la nube</strong>
+        <p class="texto-ayuda" style="margin:2px 0 0">Mientras tanto, tu trabajo sigue guardado en este navegador y puedes abrir otros estudios donde ya te invitaron.</p>
+      </div>
+      <button type="button" class="btn btn-primario btn-chico" id="btn-equipo-ir-sesion">Iniciar sesión</button>
+    </div>
+
+    <form id="form-equipo-invitar" class="equipo-inv-form">
+      <div class="lq-field">
+        <label for="equipo-inv-email">Correo del colega o asistente</label>
+        <input type="email" id="equipo-inv-email" class="input-chico" placeholder="colega@estudio.cl" required autocomplete="email">
+      </div>
+      <div class="lq-field">
+        <label for="equipo-inv-rol">Rol de acceso</label>
+        <select id="equipo-inv-rol" class="input-chico">
+          <option value="contador">Contador (editar y calcular)</option>
+          <option value="asistente">Asistente (liquidaciones y RCV)</option>
+          <option value="admin">Administrador (equipo completo)</option>
+          <option value="lectura">Solo lectura</option>
+        </select>
+      </div>
+      <div class="lq-field equipo-inv-accion">
+        <button type="submit" class="btn btn-primario btn-chico" id="btn-equipo-invitar">
+          <span class="material-icons" aria-hidden="true">person_add</span>
+          Invitar al estudio
+        </button>
+      </div>
+    </form>
+
+    <div class="mcp-tokens-wrap">
+      <h3 class="preval-bloque-titulo">Integrantes con acceso al estudio activo</h3>
+      <div class="tabla-contable-wrap">
+        <table class="tabla-contable compacta">
+          <thead>
+            <tr>
+              <th scope="col">Usuario</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="num">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-equipo-miembros"></tbody>
+        </table>
+      </div>
+      <p class="texto-ayuda" id="equipo-vacio-nota" hidden>Aún no has invitado integrantes a este estudio.</p>
+    </div>
+
+    <div id="equipo-dlg-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
+
+    <div class="sii-dlg-acciones">
+      <div class="sii-acciones-izq"></div>
+      <div class="sii-acciones-der">
+        <button type="button" class="btn btn-chico" id="btn-equipo-listo">Cerrar</button>
       </div>
     </div>
   </div>
@@ -2534,7 +2688,7 @@
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/pyme_excel.js?v=2.0.1"></script>
 <script src="/js/demo_comun.js?v=1.8.0"></script>
-<script src="/js/demo_contadores.js?v=1.5.0"></script>
+<script src="/js/demo_contadores.js?v=1.6.0"></script>
 <script src="/js/previred_generador.js?v=1.5.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
 <script src="/js/lre_generador.js?v=1.0.0"></script>
@@ -2547,17 +2701,18 @@
 <script src="/js/demo_historial.js?v=1.0.0"></script>
 <script src="/js/demo_respaldo.js?v=1.2.0"></script>
 <script src="/js/contadores_prevalidador.js?v=1.2.0"></script>
-<script src="/js/demo_liquidaciones.js?v=2.12.0"></script>
+<script src="/js/demo_liquidaciones.js?v=2.13.0"></script>
 <script src="/js/contadores_f29.js?v=1.2.0"></script>
-<script src="/js/contadores_contabilidad.js?v=1.2.0"></script>
+<script src="/js/contadores_contabilidad.js?v=1.3.0"></script>
 <script src="/js/contadores_importadores.js?v=1.1.0"></script>
-<script src="/js/contadores_renta.js?v=1.0.1"></script>
+<script src="/js/contadores_renta.js?v=1.1.0"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
-<script src="/js/contadores_sii.js?v=1.3.0"></script>
-<script src="/js/demo_suite.js?v=2.11.0"></script>
+<script src="/js/contadores_sii.js?v=1.4.0"></script>
+<script src="/js/demo_suite.js?v=2.12.0"></script>
+<script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.3.0"></script>
 <script src="/js/demo_mcp.js?v=1.0.0"></script>
-<script src="/js/demo_portal_estudio.js?v=1.0.0"></script>
+<script src="/js/demo_portal_estudio.js?v=1.1.0"></script>
 <script src="/js/demo_midt.js?v=1.0.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)

@@ -6,8 +6,188 @@
     'use strict';
 
     var D = window.DemoCL;
-    var state = { records: [], results: [], archivo: '', mes: null, fuente: '', avisos: [] };
+    var state = { records: [], results: [], archivo: '', mes: null, fuente: '', avisos: [], origen: 'borrador' };
     var sinScroll = false;
+    var filaEditando = -1;
+    var K_SUITE = 'cl-suite-contable';
+    var MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    function leerAlmacenSuite() {
+        try {
+            var raw = window.localStorage.getItem(K_SUITE);
+            var p = raw ? JSON.parse(raw) : {};
+            return (p && typeof p === 'object' && !Array.isArray(p)) ? p : {};
+        } catch (e) { return {}; }
+    }
+
+    function guardarAlmacenSuite(obj) {
+        try { window.localStorage.setItem(K_SUITE, JSON.stringify(obj)); } catch (e) { }
+    }
+
+    function claveClientePeriodo(per) {
+        var c = clienteActual() || 'cliente-demo';
+        return c.toLowerCase() + '::' + (per || (document.getElementById('periodo') && document.getElementById('periodo').value) || periodoActual());
+    }
+
+    function periodoAnteriorDe(per) {
+        var m = /^(\d{4})-(\d{2})$/.exec(String(per || ''));
+        if (!m) return '';
+        var y = Number(m[1]), mo = Number(m[2]) - 1;
+        if (mo < 1) { y -= 1; mo = 12; }
+        return y + '-' + (mo < 10 ? '0' + mo : String(mo));
+    }
+
+    function etiquetaMes(per) {
+        var m = /^(\d{4})-(\d{2})$/.exec(String(per || ''));
+        if (!m) return String(per || '');
+        return (MESES_CORTOS[Number(m[2]) - 1] || m[2]) + ' ' + m[1];
+    }
+
+    function etiquetaMesCorto(per) {
+        var m = /^(\d{4})-(\d{2})$/.exec(String(per || ''));
+        if (!m) return String(per || '');
+        return MESES_CORTOS[Number(m[2]) - 1] || m[2];
+    }
+
+    function compactarResultadosNomina(results) {
+        return (results || []).filter(function (r) { return r && !r.error && r.detalle; }).map(function (r) {
+            var det = r.detalle;
+            var rec = r.record || {};
+            var montos = det.montos || {};
+            var rebSalud = (det.bases && det.bases.rebajaSalud != null) ? det.bases.rebajaSalud : (montos.salud || 0);
+            return {
+                rut: rec.rut || '',
+                nombre: rec.nombre || '',
+                sueldoImponible: Math.round(Number(det.totalImponible) || 0),
+                cotizacionesPrevisionales: Math.round((Number(montos.afp) || 0) + (Number(rebSalud) || 0) + (Number(montos.afc) || 0)),
+                rentaNeta: Math.round(Number(det.bases && det.bases.baseTributable) || 0),
+                impuestoUnico: Math.round(Number(montos.impuesto) || 0),
+                rentaNoGravada: Math.round(Number(det.totalNoImponible) || 0),
+                rentaExenta: 0
+            };
+        });
+    }
+
+    function guardarNominaEnPeriodo(per) {
+        if (!state.records || !state.records.length) return;
+        var todo = leerAlmacenSuite();
+        var k = claveClientePeriodo(per);
+        var actual = (todo[k] && typeof todo[k] === 'object') ? todo[k] : { periodo: per || periodoActual() };
+        actual.nominaRecords = state.records.map(function (r) { return Object.assign({}, r); });
+        actual.nominaArchivo = state.archivo || '';
+        actual.nominaOrigen = state.origen || 'guardada';
+        actual.nominaResultados = compactarResultadosNomina(state.results);
+        if (window.CLContabilidad && window.CLContabilidad.resumenNominaDesdeResultados) {
+            var okRes = (state.results || []).filter(function (r) { return r && !r.error && r.detalle; });
+            actual.nominaResumen = window.CLContabilidad.resumenNominaDesdeResultados(okRes, window.CLDemoArchivos);
+        }
+        todo[k] = actual;
+        guardarAlmacenSuite(todo);
+        if (window.CLSuiteNube && typeof window.CLSuiteNube.programarSubida === 'function') {
+            window.CLSuiteNube.programarSubida();
+        }
+    }
+
+    function buscarNominaMesPrevio(perActual) {
+        var todo = leerAlmacenSuite();
+        var cliPref = (clienteActual() || 'cliente-demo').toLowerCase() + '::';
+        var prev = periodoAnteriorDe(perActual);
+        if (prev && todo[cliPref + prev] && Array.isArray(todo[cliPref + prev].nominaRecords) && todo[cliPref + prev].nominaRecords.length) {
+            return { periodo: prev, entry: todo[cliPref + prev] };
+        }
+        var candidatos = Object.keys(todo).filter(function (k) {
+            return k.indexOf(cliPref) === 0 && k.slice(cliPref.length) < perActual &&
+                todo[k] && Array.isArray(todo[k].nominaRecords) && todo[k].nominaRecords.length > 0;
+        }).sort();
+        if (!candidatos.length) return null;
+        var ultKey = candidatos[candidatos.length - 1];
+        return { periodo: ultKey.slice(cliPref.length), entry: todo[ultKey] };
+    }
+
+    function actualizarControlesHerencia(per) {
+        var perAct = per || (document.getElementById('periodo') && document.getElementById('periodo').value) || periodoActual();
+        var previo = buscarNominaMesPrevio(perAct);
+        var btnTop = document.getElementById('btn-liq-traer-ant');
+        var lblTop = document.getElementById('liq-mes-ant-lbl');
+        var banner = document.getElementById('liq-aviso-herencia');
+        var bannerTxt = document.getElementById('liq-aviso-herencia-txt');
+
+        if (previo) {
+            if (lblTop) lblTop.textContent = etiquetaMesCorto(previo.periodo);
+            if (btnTop) btnTop.hidden = false;
+            if (banner && bannerTxt) {
+                bannerTxt.textContent = 'Existe una nómina guardada en ' + etiquetaMes(previo.periodo) + ' (' + previo.entry.nominaRecords.length + ' trabajadores) para este cliente.';
+                banner.hidden = state.records.length > 0;
+            }
+        } else {
+            if (btnTop) btnTop.hidden = true;
+            if (banner) banner.hidden = true;
+        }
+    }
+
+    function limpiarNominaActiva(per) {
+        filaEditando = -1;
+        state.records = [];
+        state.results = [];
+        state.archivo = '';
+        state.origen = 'borrador';
+        var resEl = document.getElementById('results-liq');
+        var tbody = document.getElementById('tbody-liq');
+        var preval = document.getElementById('preval-panel');
+        var printArea = document.getElementById('print-area');
+        if (resEl) resEl.setAttribute('hidden', '');
+        if (tbody) tbody.innerHTML = '';
+        if (preval) preval.hidden = true;
+        if (printArea) printArea.innerHTML = '';
+        actualizarControlesHerencia(per);
+        document.dispatchEvent(new CustomEvent('demo:liquidaciones', { detail: { results: [] } }));
+    }
+
+    function cargarNominaDePeriodo(per) {
+        var perAct = per || (document.getElementById('periodo') && document.getElementById('periodo').value) || periodoActual();
+        var todo = leerAlmacenSuite();
+        var est = todo[claveClientePeriodo(perAct)];
+        if (est && Array.isArray(est.nominaRecords) && est.nominaRecords.length) {
+            filaEditando = -1;
+            state.records = est.nominaRecords.map(function (r) { return Object.assign({}, r); });
+            state.archivo = est.nominaArchivo || ('nomina-' + perAct + '.xlsx');
+            state.origen = est.nominaOrigen || 'guardada';
+            sinScroll = true;
+            calcularTodo({ sinGuardar: true });
+            return true;
+        }
+        return false;
+    }
+
+    function traerNominaMesAnterior() {
+        var perAct = (document.getElementById('periodo') && document.getElementById('periodo').value) || periodoActual();
+        var previo = buscarNominaMesPrevio(perAct);
+        if (!previo) {
+            D.avisar('No hay nómina guardada de un mes anterior para este cliente.');
+            return;
+        }
+        filaEditando = -1;
+        state.records = previo.entry.nominaRecords.map(function (r) {
+            var c = Object.assign({}, r);
+            c.dias = 30;
+            c.licenciaDias = 0;
+            c.subsidioLicencia = 0;
+            c.movimiento = '';
+            c.movDesde = '';
+            c.movHasta = '';
+            c.fechaTermino = '';
+            c.causalTermino = '';
+            c.indemAnos = 0;
+            c.indemAviso = 0;
+            c.feriadoProp = 0;
+            return c;
+        });
+        state.archivo = 'nomina-heredada-' + previo.periodo + '.xlsx';
+        state.origen = 'heredada';
+        sinScroll = true;
+        calcularTodo();
+        D.avisar('Nómina traída desde ' + etiquetaMes(previo.periodo) + ' (' + state.records.length + ' trabajadores). Ya puedes editar las novedades del mes.');
+    }
 
     var AFP = { cuprum: 'Cuprum', habitat: 'Habitat', modelo: 'Modelo', planvital: 'Planvital', provida: 'Provida', uno: 'Uno' };
 
@@ -281,7 +461,8 @@
         return (v[t] || 0) * (Number(cargas) || 0);
     }
 
-    function calcularTodo() {
+    function calcularTodo(opts) {
+        var o = opts || {};
         var mes = mesEfectivo();
         var periodo = document.getElementById('periodo').value;
 
@@ -356,7 +537,9 @@
             return out;
         });
 
+        if (!o.sinGuardar) guardarNominaEnPeriodo(periodo);
         pintar();
+        actualizarControlesHerencia(periodo);
         document.dispatchEvent(new CustomEvent('demo:liquidaciones', { detail: { results: state.results } }));
     }
 
@@ -560,6 +743,20 @@
 
         document.getElementById('results-liq').removeAttribute('hidden');
         document.getElementById('rows-liq').textContent = state.archivo;
+        var selloG = document.getElementById('liq-estado-guardado');
+        if (selloG) {
+            selloG.hidden = false;
+            if (state.origen === 'heredada') {
+                selloG.className = 'sello sello-preparada';
+                selloG.textContent = 'Heredada · editable';
+            } else if (state.origen === 'guardada') {
+                selloG.className = 'sello sello-emitida';
+                selloG.textContent = 'Guardada en el período';
+            } else {
+                selloG.className = 'sello sello-guardada';
+                selloG.textContent = 'Borrador local';
+            }
+        }
         document.getElementById('l-workers').textContent = ok.length + (errores ? ' / ' + results.length : '');
         document.getElementById('l-liquido').textContent = D.money(totalLiq);
         document.getElementById('l-haberes').textContent = D.money(totalHab);
@@ -572,26 +769,44 @@
         function et(i) { return ' data-l="' + D.esc(cols[i] || '') + '"'; }
 
         document.getElementById('tbody-liq').innerHTML = results.map(function (r, i) {
+            var abierto = filaEditando === i;
+            var btnEdit = '<button type="button" class="btn-icono-chico btn-fila-edit" data-liq-edit="' + i + '" aria-expanded="' + (abierto ? 'true' : 'false') + '" aria-label="Editar novedades de ' + D.esc(r.record.nombre) + '" title="Editar sueldo, días, comisiones o horas extra"><span class="material-icons" aria-hidden="true">' + (abierto ? 'expand_less' : 'edit') + '</span></button>';
+            var rowHtml = '';
             if (r.error) {
-                return '<tr><td class="nom">' + D.esc(r.record.nombre) + '</td>' +
-                    '<td class="mono">' + D.esc(r.record.rut || '—') + '</td>' +
+                rowHtml = '<tr><td class="nom">' + D.esc(r.record.nombre) + '</td>' +
+                    '<td class="mono">' + D.esc(r.record.rut || '-') + '</td>' +
                     '<td colspan="5"><span style="color:var(--danger)">' + D.esc(r.error) + '</span>' +
                     '<div class="corregir">' +
                     '<select data-fila="' + i + '" data-campo="afp" aria-label="AFP">' + opcionesAFP(r.record.afp) + '</select>' +
                     '<select data-fila="' + i + '" data-campo="salud" aria-label="Salud">' + opcionesSalud(r.record.salud) + '</select>' +
                     '<input type="number" data-fila="' + i + '" data-campo="plan" value="' + (r.record.planUF || '') + '" placeholder="Plan UF" min="0" step="0.01">' +
                     '<input type="number" data-fila="' + i + '" data-campo="sueldo" value="' + (r.record.sueldo || '') + '" placeholder="Sueldo" min="0" step="1000">' +
-                    '</div></td></tr>';
+                    '</div></td>' +
+                    '<td class="num"' + et(7) + '>' + btnEdit + '</td></tr>';
+            } else {
+                rowHtml = '<tr>' +
+                    '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) + '</td>' +
+                    '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '-') + '</td>' +
+                    '<td' + et(2) + '>' + D.esc(r.record.afp) + '</td>' +
+                    '<td class="num"' + et(3) + '>' + D.money(r.haberes) + '</td>' +
+                    '<td class="num"' + et(4) + '>' + D.money(r.descuentos) + '</td>' +
+                    '<td class="num"' + et(5) + '><b>' + D.money(r.liquido) + '</b></td>' +
+                    '<td class="num"' + et(6) + '>' + D.money(r.costo) + '</td>' +
+                    '<td class="num"' + et(7) + '>' + btnEdit + '</td>' +
+                    '</tr>';
             }
-            return '<tr>' +
-                '<td class="nom"' + et(0) + '>' + D.esc(r.record.nombre) + '</td>' +
-                '<td class="mono"' + et(1) + '>' + D.esc(r.record.rut || '—') + '</td>' +
-                '<td' + et(2) + '>' + D.esc(r.record.afp) + '</td>' +
-                '<td class="num"' + et(3) + '>' + D.money(r.haberes) + '</td>' +
-                '<td class="num"' + et(4) + '>' + D.money(r.descuentos) + '</td>' +
-                '<td class="num"' + et(5) + '><b>' + D.money(r.liquido) + '</b></td>' +
-                '<td class="num"' + et(6) + '>' + D.money(r.costo) + '</td>' +
-                '</tr>';
+            if (!abierto) return rowHtml;
+            var edHtml = '<tr class="fila-inline-editor" data-liq-editor="' + i + '">' +
+                '<td colspan="8">' +
+                '<div class="inline-editor-grid">' +
+                '<div class="lq-field"><label for="liq-ed-sueldo-' + i + '">Sueldo base ($)</label><input type="number" id="liq-ed-sueldo-' + i + '" data-fila="' + i + '" data-campo="sueldo" min="0" step="1000" value="' + (r.record.sueldo || 0) + '"></div>' +
+                '<div class="lq-field"><label for="liq-ed-dias-' + i + '">Días trabajados</label><input type="number" id="liq-ed-dias-' + i + '" data-fila="' + i + '" data-campo="dias" min="1" max="30" step="1" value="' + (r.record.dias || 30) + '"></div>' +
+                '<div class="lq-field"><label for="liq-ed-com-' + i + '">Comisiones / bonos ($)</label><input type="number" id="liq-ed-com-' + i + '" data-fila="' + i + '" data-campo="comisiones" min="0" step="1000" value="' + (r.record.comisiones || 0) + '"></div>' +
+                '<div class="lq-field"><label for="liq-ed-he-' + i + '">Horas extra</label><input type="number" id="liq-ed-he-' + i + '" data-fila="' + i + '" data-campo="horasExtra" min="0" step="0.5" value="' + (r.record.horasExtra || 0) + '"></div>' +
+                '</div>' +
+                '<div class="inline-editor-foot"><button type="button" class="btn btn-chico" data-liq-cerrar="' + i + '">Listo</button></div>' +
+                '</td></tr>';
+            return rowHtml + edHtml;
         }).join('');
 
         var avisos = [];
@@ -704,14 +919,17 @@
 
     // ---------------------------------------------------------------- datos
 
-    function cargar(rows, archivo) {
+    function cargar(rows, archivo, opts) {
+        var o = opts || {};
         var mapped = rows.map(function (r) { return D.mapaColumnas(r, ALIAS); })
             .filter(function (m) { return Object.keys(m).some(function (k) { return m[k] !== ''; }); });
         if (!mapped.length) { D.avisar('No encontramos columnas reconocibles. Revisa la plantilla.'); return; }
 
+        filaEditando = -1;
         state.archivo = archivo || '';
         state.raw = rows;
         state.records = mapped.map(registro);
+        state.origen = o.origen || 'guardada';
 
         if (!state.mes) {
             state.mes = respaldo(document.getElementById('periodo').value || periodoActual());
@@ -774,7 +992,7 @@
         var cliEl = document.getElementById('liq-cliente');
         if (cliEl && !cliEl.value.trim()) cliEl.value = 'Panadería San Isidro SpA';
         actualizarResumenEmpresaLiq();
-        cargar(rows, 'ejemplo-liquidaciones-' + per + '.xlsx');
+        cargar(rows, 'ejemplo-liquidaciones-' + per + '.xlsx', { origen: 'borrador' });
     }
 
     function exportar() {
@@ -1108,7 +1326,11 @@
                     });
                     mostrarHistorial();
                     D.avisar('Mes cerrado y guardado en este navegador.');
-                    if (cuentaActiva) subirNube(true);
+                    if (window.CLSuiteNube && typeof window.CLSuiteNube.programarSubida === 'function') {
+                        window.CLSuiteNube.programarSubida();
+                    } else if (cuentaActiva) {
+                        subirNube(true);
+                    }
                 } catch (e) { D.avisar(e.message); }
             });
         }
@@ -1172,13 +1394,20 @@
         }
 
         function subirNube(silencioso) {
+            if (window.CLSuiteNube && typeof window.CLSuiteNube.subirAhora === 'function') {
+                return window.CLSuiteNube.subirAhora(silencioso);
+            }
             if (!respaldo) return;
             var payload;
             try { payload = JSON.parse(respaldo.exportar()); }
             catch (e) { if (!silencioso) D.avisar('No se pudo preparar el respaldo.'); return; }
+            var estId = (window.CLSii && window.CLSii.estudioActivoId) ? window.CLSii.estudioActivoId() : '';
+            var hdrs = { 'content-type': 'application/json', 'x-cl-pyme': '1' };
+            if (estId) hdrs['x-cl-estudio'] = estId;
             fetch('/api/pyme/estudio', {
                 method: 'PUT',
-                headers: { 'content-type': 'application/json', 'x-cl-pyme': '1' },
+                credentials: 'same-origin',
+                headers: hdrs,
                 body: JSON.stringify({ datos: payload })
             }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
                 .then(function (x) {
@@ -1228,21 +1457,48 @@
                     tienda.guardar(clienteActual(), state.raw || [], state.archivo);
                     refrescarClientes();
                     D.avisar('Cliente guardado en este navegador.');
-                    if (cuentaActiva) subirNube(true);
+                    if (window.CLSuiteNube && typeof window.CLSuiteNube.programarSubida === 'function') {
+                        window.CLSuiteNube.programarSubida();
+                    } else if (cuentaActiva) {
+                        subirNube(true);
+                    }
                 } catch (e) { D.avisar(e.message); }
             });
         }
 
+        function clienteTieneMesesGuardados(nom) {
+            var todo = leerAlmacenSuite();
+            var pref = String(nom || '').trim().toLowerCase() + '::';
+            return Object.keys(todo).some(function (k) {
+                return k.indexOf(pref) === 0 && todo[k] && Array.isArray(todo[k].nominaRecords) && todo[k].nominaRecords.length > 0;
+            });
+        }
+
+        function sincronizarNominaAlCambiarCliente(nombreCli, legacyFilas, legacyArchivo) {
+            var perAct = periodo.value || periodoActual();
+            if (cargarNominaDePeriodo(perAct)) return;
+            if (!clienteTieneMesesGuardados(nombreCli) && Array.isArray(legacyFilas) && legacyFilas.length) {
+                sinScroll = true;
+                cargar(legacyFilas, legacyArchivo || '', { origen: 'borrador' });
+                return;
+            }
+            limpiarNominaActiva(perAct);
+        }
+
+        var cambiandoDesdeSelector = false;
         if (selClientes) {
             selClientes.addEventListener('change', function () {
                 if (!tienda || !selClientes.value) return;
                 var c = tienda.obtener(selClientes.value);
-                if (!c || !c.filas.length) return;
+                if (!c) return;
                 var cli = document.getElementById('liq-cliente');
                 if (cli) cli.value = c.nombre;
                 try { localStorage.setItem('cl-cliente-liq', c.nombre); } catch (e) { }
-                cargar(c.filas, c.archivo);
+                cambiandoDesdeSelector = true;
+                sincronizarNominaAlCambiarCliente(c.nombre, c.filas, c.archivo);
+                mostrarHistorial();
                 document.dispatchEvent(new CustomEvent('demo:cliente', { detail: { cliente: c.nombre } }));
+                cambiandoDesdeSelector = false;
             });
         }
 
@@ -1250,24 +1506,45 @@
 
         var cli = document.getElementById('liq-cliente');
         if (cli) {
-            try { cli.value = localStorage.getItem('cl-cliente-liq') || ''; } catch (e) { }
+            try {
+                var cliGuardado = localStorage.getItem('cl-cliente-liq');
+                if (cliGuardado) cli.value = cliGuardado;
+            } catch (e) { }
             cli.addEventListener('change', function () {
                 try { localStorage.setItem('cl-cliente-liq', cli.value.trim()); } catch (e) { }
+                sincronizarNominaAlCambiarCliente(cli.value.trim(), null, '');
+                mostrarHistorial();
                 document.dispatchEvent(new CustomEvent('demo:cliente', { detail: { cliente: cli.value.trim() } }));
             });
             cli.addEventListener('input', function () {
                 if (state.results.length) construirImpresion();
             });
         }
+        document.addEventListener('demo:cliente', function (ev) {
+            if (cambiandoDesdeSelector) return;
+            var nom = (ev && ev.detail && ev.detail.cliente) || clienteActual();
+            var c = tienda && nom ? tienda.obtener(nom) : null;
+            sincronizarNominaAlCambiarCliente(nom, c && c.filas, c && c.archivo);
+            mostrarHistorial();
+        });
+
         var mes = periodoActual();
         if (+mes.slice(0, 4) === 2026 || +mes.slice(0, 4) > 2026) periodo.value = mes;
 
-        cargarPeriodo(true);
+        cargarPeriodo(true).then(function () {
+            if (!/[?&]demo=1/.test(location.search) && !state.records.length) {
+                if (!cargarNominaDePeriodo(periodo.value)) {
+                    actualizarControlesHerencia(periodo.value);
+                }
+            }
+        });
 
         periodo.addEventListener('change', function () {
-            cargarPeriodo(true).then(function () {
-                if (state.records.length) calcularTodo();
-            });
+            var nuevoPer = periodo.value;
+            cargarPeriodo(true);
+            if (!cargarNominaDePeriodo(nuevoPer)) {
+                limpiarNominaActiva(nuevoPer);
+            }
         });
 
         ['liq-uf', 'liq-utm', 'liq-tasa-mutual'].forEach(function (id) {
@@ -1348,6 +1625,8 @@
         bindClick('btn-sample-liq', function () {
             cargarEjemplo();
         });
+        bindClick('btn-liq-traer-ant', traerNominaMesAnterior);
+        bindClick('btn-liq-banner-traer', traerNominaMesAnterior);
         bindClick('btn-template-liq', plantilla);
         bindClick('btn-csv-liq', exportar);
         bindClick('btn-previred-liq', archivoPrevired);
@@ -1407,20 +1686,76 @@
             });
         }
 
-        // Corregir una fila con error sin volver a subir el Excel.
-        document.getElementById('tbody-liq').addEventListener('change', function (ev) {
-            var el = ev.target;
-            var idx = el.getAttribute('data-fila');
-            if (idx === null) return;
+        // Editor inline acordeon y correccion rapida sin volver a subir Excel.
+        function aplicarCampoInlineLiq(el) {
+            var idx = el && el.getAttribute('data-fila');
+            if (idx === null) return false;
             var r = state.records[Number(idx)];
-            if (!r) return;
+            if (!r) return false;
             var campo = el.getAttribute('data-campo');
             if (campo === 'afp') r.afp = el.value;
             if (campo === 'salud') r.salud = el.value;
             if (campo === 'plan') r.planUF = D.parseNumber(el.value);
-            if (campo === 'sueldo') r.sueldo = D.parseNumber(el.value);
-            calcularTodo();
-        });
+            if (campo === 'sueldo') r.sueldo = Math.max(0, Math.round(D.parseNumber(el.value)));
+            if (campo === 'dias') r.dias = Math.max(1, Math.min(30, Math.round(Number(el.value) || 30)));
+            if (campo === 'comisiones') r.comisiones = Math.max(0, Math.round(D.parseNumber(el.value)));
+            if (campo === 'horasExtra') r.horasExtra = Math.max(0, Number(el.value) || 0);
+            return true;
+        }
+        function sincronizarEditorLiqAbierto() {
+            var hubo = false;
+            if (!tbodyLiq) return false;
+            tbodyLiq.querySelectorAll('.fila-inline-editor [data-fila]').forEach(function (el) {
+                if (aplicarCampoInlineLiq(el)) hubo = true;
+            });
+            return hubo;
+        }
+        var tbodyLiq = document.getElementById('tbody-liq');
+        if (tbodyLiq) {
+            tbodyLiq.addEventListener('mousedown', function (ev) {
+                if (ev.target.closest('[data-liq-edit], [data-liq-cerrar]')) ev.preventDefault();
+            });
+            tbodyLiq.addEventListener('click', function (ev) {
+                var btnEd = ev.target.closest('[data-liq-edit]');
+                if (btnEd) {
+                    var cambioEd = sincronizarEditorLiqAbierto();
+                    var idx = Number(btnEd.getAttribute('data-liq-edit'));
+                    filaEditando = (filaEditando === idx) ? -1 : idx;
+                    sinScroll = true;
+                    if (cambioEd) {
+                        state.origen = 'guardada';
+                        calcularTodo();
+                    } else {
+                        pintar();
+                    }
+                    return;
+                }
+                var btnCer = ev.target.closest('[data-liq-cerrar]');
+                if (btnCer) {
+                    var cambioCer = sincronizarEditorLiqAbierto();
+                    filaEditando = -1;
+                    sinScroll = true;
+                    if (cambioCer) {
+                        state.origen = 'guardada';
+                        calcularTodo();
+                    } else {
+                        pintar();
+                    }
+                }
+            });
+            tbodyLiq.addEventListener('change', function (ev) {
+                var el = ev.target;
+                if (!aplicarCampoInlineLiq(el)) return;
+                var focoId = document.activeElement && document.activeElement.id;
+                state.origen = 'guardada';
+                sinScroll = true;
+                calcularTodo();
+                if (focoId && focoId.indexOf('liq-ed-') === 0) {
+                    var target = document.getElementById(focoId);
+                    if (target) target.focus();
+                }
+            });
+        }
         document.getElementById('btn-print-liq').addEventListener('click', function () {
             var ok = state.results.filter(function (r) { return !r.error; });
             if (!ok.length) {
@@ -1448,6 +1783,17 @@
 
     window.CLDemoLiquidaciones = {
         resultados: function () { return state.results ? state.results.slice() : []; },
-        cargarEjemplo: cargarEjemplo
+        cargarEjemplo: cargarEjemplo,
+        traerMesAnterior: traerNominaMesAnterior,
+        cargarDePeriodo: function () {
+            var perAct = (document.getElementById('periodo') && document.getElementById('periodo').value) || periodoActual();
+            if (!cargarNominaDePeriodo(perAct)) limpiarNominaActiva(perAct);
+        },
+        refrescarTrasImportar: function () {
+            refrescarClientes();
+            mostrarHistorial();
+            var perAct = (document.getElementById('periodo') && document.getElementById('periodo').value) || periodoActual();
+            if (!cargarNominaDePeriodo(perAct)) limpiarNominaActiva(perAct);
+        }
     };
 })();

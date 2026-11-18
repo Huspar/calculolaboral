@@ -55,6 +55,12 @@ function crear({ consulta, cifrado, ahora }) {
         portalListar: portalEst.listarEnlaces,
         portalRevocar: portalEst.revocarEnlace,
         portalAbrir: portalEst.abrirEnlace,
+        buzonSubir: portalEst.subirAlBuzon,
+        buzonListarCliente: portalEst.listarBuzonCliente,
+        buzonListar: portalEst.listarBuzonEstudio,
+        buzonLeer: portalEst.leerItemBuzon,
+        buzonEstado: portalEst.actualizarEstadoBuzon,
+        buzonEliminar: portalEst.eliminarItemBuzon,
         LIMITE_BYTES: LIMITE_BYTES
     };
 }

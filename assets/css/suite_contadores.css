@@ -3510,3 +3510,256 @@
         align-items: flex-start;
     }
 }
+
+/* ==========================================================================
+   6 NUEVAS CAPACIDADES · SUITE CONTADORES Y PORTAL CLIENTE
+   ========================================================================== */
+
+/* 1. Editor Inline Acordeón en Liquidaciones y Finiquitos */
+.btn-icono-chico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+.btn-icono-chico:hover {
+    background: var(--surface-2);
+    border-color: var(--forest-700);
+    color: var(--forest-700);
+}
+.btn-icono-chico:focus-visible,
+.cloud-sync-pill:focus-visible {
+    outline: 2px solid var(--forest-700);
+    outline-offset: 2px;
+}
+.btn-icono-chico .material-icons {
+    font-size: 17px;
+}
+.fila-inline-editor td {
+    background: var(--surface-2);
+    border-left: 3px solid var(--forest-700);
+    padding: 12px 14px;
+}
+.inline-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 12px;
+    align-items: end;
+}
+.inline-editor-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+/* 2. Cobertura Anual 12 Meses (Balance y DDJJ) */
+.anual-meses-dots {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.anual-mes-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    border: 1px dashed var(--line-2);
+    background: var(--surface);
+    color: var(--muted);
+}
+.anual-mes-dot.activo {
+    border-style: solid;
+    border-color: var(--forest-700);
+    background: var(--forest-700);
+    color: #FFFFFF;
+}
+
+/* 3. Acciones Múltiples sobre Campos de Saldos (F29 y Tesorería) */
+.campo-head-acciones {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* 4. Nube Automática y Selector Multiusuario en Topbar */
+.cloud-sync-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.cloud-sync-pill .material-icons { font-size: 15px; }
+.cloud-sync-pill.ok { background: var(--forest-50); border-color: var(--forest-100); color: var(--forest-700); }
+.cloud-sync-pill.sync { background: var(--amber-bg); border-color: var(--amber-line); color: var(--amber-ink); }
+.cloud-sync-pill.err { background: var(--risk-bg); border-color: var(--risk-line); color: var(--risk-ink); }
+
+.top-estudio-select {
+    height: 32px;
+    max-width: 170px;
+    font-size: 12.5px;
+    padding: 0 28px 0 10px;
+}
+.side-estudio-select {
+    display: none;
+    width: 100%;
+    margin-top: 8px;
+    height: 36px;
+    font-size: 12.5px;
+    background: rgba(255, 255, 255, .1);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: var(--radius-sm);
+    padding: 0 8px;
+}
+.side-estudio-select option {
+    color: var(--ink);
+    background: var(--surface);
+}
+.equipo-inv-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(130px, 0.8fr) auto;
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 14px;
+}
+
+/* 5. Buzón de Documentos en /portal-estudio */
+.pe-buzon-form {
+    display: grid;
+    gap: 12px;
+}
+.pe-buzon-lista {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+.pe-buzon-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+}
+
+@media screen and (max-width: 1080px) {
+    #cuenta-estado { display: none; }
+}
+@media screen and (max-width: 900px) {
+    .inline-editor-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media screen and (max-width: 768px) {
+    .top-estudio-select { display: none; }
+    .side-estudio-select:not([hidden]) { display: block; }
+}
+@media screen and (max-width: 700px) {
+    #results-liq .tabla thead,
+    #results-fin .tabla thead {
+        position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+    }
+    #tbody-liq tr:not(.fila-inline-editor),
+    #tbody-fin tr:not(.fila-inline-editor) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 6px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+    }
+    #tbody-liq td[data-l],
+    #tbody-fin td[data-l] {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        height: auto;
+        padding: 2px 0;
+        border: 0;
+    }
+    #tbody-liq td[data-l]::before,
+    #tbody-fin td[data-l]::before {
+        content: attr(data-l);
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+    }
+    .fila-inline-editor,
+    .fila-inline-editor td { display: block; width: 100%; }
+    .fila-inline-editor td::before { display: none; }
+    .btn-icono-chico { min-width: 44px; min-height: 44px; }
+}
+@media screen and (max-width: 640px) {
+    .app-top {
+        padding: 0 10px;
+        gap: 6px;
+    }
+    .app-top-der {
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    #btn-mes-ant,
+    #btn-mes-sig {
+        display: none;
+    }
+    .app-mes {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+    .app-mes select {
+        max-width: 100%;
+        min-width: 0;
+        font-size: 13px;
+        min-height: 44px;
+    }
+    #btn-entrar {
+        min-height: 44px;
+        padding: 0 10px;
+        font-size: 12.5px;
+        white-space: nowrap;
+    }
+    .inline-editor-grid,
+    .equipo-inv-form {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #suite-estado-badge { display: none; }
+    .cloud-sync-pill { min-width: 44px; min-height: 44px; padding: 0 10px; justify-content: center; }
+    .cloud-sync-pill .cloud-sync-txt,
+    #btn-equipo-estudio .top-btn-txt { display: none; }
+    #btn-equipo-estudio { min-width: 44px; min-height: 44px; padding: 0 10px; justify-content: center; }
+    #btn-liq-traer-ant,
+    #btn-liq-banner-traer,
+    #btn-asiento-fin,
+    #btn-pe-buzon-enviar,
+    #btn-equipo-invitar {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+}

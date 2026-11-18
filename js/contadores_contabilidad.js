@@ -29,6 +29,7 @@
         { codigo: '42010', nombre: 'Sueldos y haberes imponibles', tipo: 'perdida', grupo: 'opex_laboral' },
         { codigo: '42012', nombre: 'Asignaciones no imponibles', tipo: 'perdida', grupo: 'opex_laboral' },
         { codigo: '42015', nombre: 'Aporte empleador y leyes sociales', tipo: 'perdida', grupo: 'opex_laboral' },
+        { codigo: '42018', nombre: 'Indemnizaciones y finiquitos legales', tipo: 'perdida', grupo: 'opex_laboral' },
         { codigo: '42020', nombre: 'Honorarios profesionales', tipo: 'perdida', grupo: 'opex_honorarios' },
         { codigo: '42040', nombre: 'Gastos generales y supermercados', tipo: 'perdida', grupo: 'opex_admin' },
         { codigo: '42060', nombre: 'Depreciación del ejercicio', tipo: 'perdida', grupo: 'depreciacion' },
@@ -725,6 +726,40 @@
         return salida;
     }
 
+    function asientoDesdeFiniquitos(resultados, opciones) {
+        var opts = opciones || {};
+        var lista = (Array.isArray(resultados) ? resultados : []).filter(function (r) {
+            return r && !r.error && entero(r.total) > 0;
+        });
+        if (!lista.length) return null;
+
+        var totalPendiente = 0;
+        var totalIndem = 0;
+        var totalPagar = 0;
+        lista.forEach(function (r) {
+            var tot = entero(r.total);
+            var pend = Math.min(tot, entero(r.pending));
+            totalPendiente += pend;
+            totalIndem += Math.max(0, tot - pend);
+            totalPagar += tot;
+        });
+        if (!totalPagar) return null;
+
+        var ctaHaber = opts.pagado ? '11010' : '21030';
+        var lineas = [];
+        if (totalPendiente > 0) lineas.push({ cuenta: '42010', debe: totalPendiente, haber: 0 });
+        if (totalIndem > 0) lineas.push({ cuenta: '42018', debe: totalIndem, haber: 0 });
+        lineas.push({ cuenta: ctaHaber, debe: 0, haber: totalPagar });
+
+        return crearAsiento(
+            String(opts.id || 'AS-FIN'),
+            String(opts.fecha || ultimoDiaMes(opts.periodo || '2026-11')),
+            'Centralización lote de finiquitos (' + lista.length + (lista.length === 1 ? ' trabajador)' : ' trabajadores)'),
+            opts.origen || 'finiquitos',
+            lineas
+        );
+    }
+
     var api = {
         PLAN_CUENTAS: PLAN_CUENTAS,
         PLAN_CUENTAS_BASE: clonarListaCuentas(PLAN_CUENTAS_BASE),
@@ -733,6 +768,7 @@
         restaurarPlanCuentas: restaurarPlanCuentas,
         cuentaInfo: cuentaInfo,
         crearAsiento: crearAsiento,
+        asientoDesdeFiniquitos: asientoDesdeFiniquitos,
         asientosDesdeCartola: asientosDesdeCartola,
         resumenNominaDesdeResultados: resumenNominaDesdeResultados,
         generarAsientos: generarAsientos,
@@ -740,7 +776,7 @@
         calcularBalance8Columnas: calcularBalance8Columnas,
         calcularRliProPyme: calcularRliProPyme,
         calcularEstadoResultadosYFlujo: calcularEstadoResultadosYFlujo,
-        version: '1.1.0'
+        version: '1.2.0'
     };
 
     if (typeof module !== 'undefined' && module.exports) module.exports = api;

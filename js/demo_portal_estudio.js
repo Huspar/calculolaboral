@@ -44,11 +44,23 @@
         return '****' + c.slice(-4) + '-' + p[1];
     }
 
+    function headersEstudio(esEscritura) {
+        var h = { accept: 'application/json' };
+        var estId = (Sii && Sii.estudioActivoId) ? Sii.estudioActivoId() : '';
+        if (estId) h['x-cl-estudio'] = estId;
+        if (esEscritura) {
+            h['content-type'] = 'application/json';
+            h['x-cl-pyme'] = '1';
+        }
+        return h;
+    }
+
     function seccionesSeleccionadas() {
         return {
             f29: $('portal-opt-f29') ? $('portal-opt-f29').checked : true,
             pnl: $('portal-opt-pnl') ? $('portal-opt-pnl').checked : true,
-            laboral: $('portal-opt-laboral') ? $('portal-opt-laboral').checked : true
+            laboral: $('portal-opt-laboral') ? $('portal-opt-laboral').checked : true,
+            buzon: $('portal-opt-buzon') ? $('portal-opt-buzon').checked : true
         };
     }
 
@@ -198,6 +210,7 @@
             if (s.f29) tags.push('F29');
             if (s.pnl) tags.push('P&L');
             if (s.laboral) tags.push('Laboral');
+            if (s.buzon !== false) tags.push('Buzón');
             return '<tr>' +
                 '<td><strong>' + esc(it.clienteNombre) + '</strong><br><span class="texto-ayuda mono">' + esc(it.periodo) + ' · ' + esc(it.accesos || 0) + ' visitas</span></td>' +
                 '<td>' + esc(tags.join(', ')) + '</td>' +
@@ -207,10 +220,99 @@
         }).join('');
     }
 
+    var TIPO_BUZON_LBL = {
+        cartola: 'Cartola bancaria',
+        novedades: 'Novedades sueldo',
+        otro: 'Documento'
+    };
+
+    function base64ABytes(b64) {
+        var bin = window.atob(String(b64 || ''));
+        var arr = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        return arr;
+    }
+
+    function actualizarAlertasBuzon(items) {
+        var lista = Array.isArray(items) ? items : [];
+        var pendientes = lista.filter(function (x) { return x && x.estado !== 'procesado'; });
+        var br = window.CLSuiteSiiBridge;
+        var cliAct = (br && br.clienteNombre) ? String(br.clienteNombre() || '').trim().toLowerCase() : '';
+        var perAct = (br && br.periodoActual) ? br.periodoActual() : '';
+        var delCliente = pendientes.filter(function (x) {
+            var mCli = !cliAct || String(x.clienteNombre || '').trim().toLowerCase() === cliAct;
+            var mPer = !perAct || !x.periodo || x.periodo === perAct;
+            return mCli && mPer;
+        });
+
+        var alertaBancos = $('bancos-buzon-alerta');
+        var alertaTxt = $('bancos-buzon-txt');
+        if (alertaBancos && alertaTxt) {
+            if (delCliente.length > 0) {
+                alertaBancos.hidden = false;
+                alertaTxt.textContent = 'Tu cliente envió ' + delCliente.length + ' archivo(s) desde el Portal en este período.';
+            } else {
+                alertaBancos.hidden = true;
+            }
+        }
+
+        var badgeRep = $('rep-portal-badge');
+        if (badgeRep) {
+            badgeRep.hidden = pendientes.length === 0;
+            badgeRep.textContent = pendientes.length + ' nuevo(s)';
+        }
+    }
+
+    function pintarTablaBuzon(items) {
+        var tbody = $('tbody-portal-buzon');
+        var vacio = $('portal-buzon-vacio');
+        var wrap = $('portal-buzon-tabla-wrap');
+        if (!tbody) return;
+        var lista = Array.isArray(items) ? items : [];
+        actualizarAlertasBuzon(lista);
+        if (!lista.length) {
+            tbody.innerHTML = '';
+            if (vacio) vacio.hidden = false;
+            if (wrap) wrap.hidden = true;
+            return;
+        }
+        if (vacio) vacio.hidden = true;
+        if (wrap) wrap.hidden = false;
+        tbody.innerHTML = lista.map(function (it) {
+            var proc = it.estado === 'procesado';
+            var selloCls = proc ? 'sello-emitida' : 'sello-preparada';
+            var selloTxt = proc ? 'Procesado' : 'Pendiente';
+            var esCartola = it.tipo === 'cartola' && /\.(csv|txt|tsv|xlsx|xls)$/i.test(String(it.nombreArchivo || ''));
+            return '<tr>' +
+                '<td><strong>' + esc(it.nombreArchivo) + '</strong><br><span class="texto-ayuda">' + esc(it.clienteNombre) + ' · <span class="mono">' + esc(it.periodo) + '</span> · ' + esc(TIPO_BUZON_LBL[it.tipo] || it.tipo) + '</span></td>' +
+                '<td>' + (it.nota ? esc(it.nota) : '<span class="texto-ayuda">Sin nota</span>') + '</td>' +
+                '<td><span class="sello ' + selloCls + '">' + selloTxt + '</span></td>' +
+                '<td class="num"><div class="match-acciones-fila" style="justify-content:flex-end">' +
+                (esCartola ? '<button type="button" class="btn btn-chico btn-primario" data-buzon-aplicar="' + esc(it.id) + '">Aplicar a período</button>' : '') +
+                '<button type="button" class="btn btn-chico" data-buzon-descargar="' + esc(it.id) + '">Descargar</button>' +
+                '<button type="button" class="btn-texto" data-buzon-estado="' + esc(it.id) + '" data-buzon-next="' + (proc ? 'nuevo' : 'procesado') + '">' + (proc ? 'Reabrir' : 'Procesado') + '</button>' +
+                '</div></td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    async function cargarBuzonEstudio() {
+        if (!sesion.autenticado) {
+            actualizarAlertasBuzon([]);
+            return;
+        }
+        try {
+            var res = await fetch('/api/pyme/portal-estudio-buzon', { credentials: 'same-origin', headers: headersEstudio(false) });
+            var data = await res.json().catch(function () { return {}; });
+            if (res.ok && data.ok !== false) pintarTablaBuzon(data.items || []);
+        } catch (e) { /* silencioso */ }
+    }
+
     async function cargarSesionYEnlaces() {
         var sinSes = $('portal-dlg-sin-sesion');
         var btnGen = $('btn-portal-generar');
         var wrap = $('portal-enlaces-wrap');
+        var buzonWrap = $('portal-buzon-wrap');
         try {
             var r = await fetch('/api/pyme/sesion', { credentials: 'same-origin' });
             var j = r.ok ? await r.json().catch(function () { return {}; }) : {};
@@ -222,15 +324,20 @@
         if (sinSes) sinSes.hidden = sesion.autenticado;
         if (btnGen) btnGen.disabled = !sesion.autenticado;
         if (wrap) wrap.hidden = !sesion.autenticado;
+        if (buzonWrap) buzonWrap.hidden = !sesion.autenticado;
 
-        if (!sesion.autenticado) return;
+        if (!sesion.autenticado) {
+            actualizarAlertasBuzon([]);
+            return;
+        }
         try {
-            var res = await fetch('/api/pyme/portal-estudio', { credentials: 'same-origin', headers: { accept: 'application/json' } });
+            var res = await fetch('/api/pyme/portal-estudio', { credentials: 'same-origin', headers: headersEstudio(false) });
             var data = await res.json().catch(function () { return {}; });
             if (res.ok && data.ok !== false) pintarTablaEnlaces(data.items || []);
         } catch (err) {
             feedback('No pudimos cargar los enlaces activos del portal.', 'error');
         }
+        await cargarBuzonEstudio();
     }
 
     async function abrirDialogoPortal() {
@@ -271,7 +378,7 @@
             var res = await fetch('/api/pyme/portal-estudio', {
                 method: 'POST',
                 credentials: 'same-origin',
-                headers: { 'content-type': 'application/json', 'x-cl-pyme': '1', accept: 'application/json' },
+                headers: headersEstudio(true),
                 body: JSON.stringify({ diasVigencia: dias, secciones: sec, snapshot: snap })
             });
             var data = await res.json().catch(function () { return {}; });
@@ -297,7 +404,7 @@
             var res = await fetch('/api/pyme/portal-estudio?id=' + encodeURIComponent(id), {
                 method: 'DELETE',
                 credentials: 'same-origin',
-                headers: { 'content-type': 'application/json', 'x-cl-pyme': '1', accept: 'application/json' },
+                headers: headersEstudio(true),
                 body: JSON.stringify({ id: id })
             });
             var data = await res.json().catch(function () { return {}; });
@@ -325,7 +432,7 @@
         var dlg = $('dlg-portal-estudio');
         if (!dlg) return;
 
-        ['btn-rep-abrir-portal', 'btn-torre-portal'].forEach(function (id) {
+        ['btn-rep-abrir-portal', 'btn-torre-portal', 'btn-bancos-ver-buzon'].forEach(function (id) {
             var b = $(id);
             if (b) b.addEventListener('click', abrirDialogoPortal);
         });
@@ -361,6 +468,85 @@
                 if (btn) revocarEnlace(btn.getAttribute('data-portal-revocar'));
             });
         }
+
+        if ($('tbody-portal-buzon')) {
+            $('tbody-portal-buzon').addEventListener('click', async function (ev) {
+                var btnAp = ev.target.closest('[data-buzon-aplicar]');
+                var btnDesc = ev.target.closest('[data-buzon-descargar]');
+                var btnEst = ev.target.closest('[data-buzon-estado]');
+
+                if (btnEst) {
+                    var idE = btnEst.getAttribute('data-buzon-estado');
+                    var nextE = btnEst.getAttribute('data-buzon-next') || 'procesado';
+                    try {
+                        var rEst = await fetch('/api/pyme/portal-estudio-buzon?id=' + encodeURIComponent(idE), {
+                            method: 'PUT',
+                            credentials: 'same-origin',
+                            headers: headersEstudio(true),
+                            body: JSON.stringify({ id: idE, estado: nextE })
+                        });
+                        var jEst = await rEst.json().catch(function () { return {}; });
+                        if (!rEst.ok || jEst.ok === false) throw new Error(jEst.error || 'No pudimos cambiar el estado.');
+                        await cargarBuzonEstudio();
+                    } catch (err) {
+                        feedback((err && err.message) || 'Error al actualizar estado.', 'error');
+                    }
+                    return;
+                }
+
+                var idItem = (btnAp && btnAp.getAttribute('data-buzon-aplicar')) || (btnDesc && btnDesc.getAttribute('data-buzon-descargar'));
+                if (!idItem) return;
+
+                try {
+                    var rIt = await fetch('/api/pyme/portal-estudio-buzon?id=' + encodeURIComponent(idItem), {
+                        credentials: 'same-origin',
+                        headers: headersEstudio(false)
+                    });
+                    var jIt = await rIt.json().catch(function () { return {}; });
+                    if (!rIt.ok || jIt.ok === false || !jIt.item) throw new Error(jIt.error || 'No pudimos descargar el archivo.');
+                    var it = jIt.item;
+
+                    if (btnAp) {
+                        var br = window.CLSuiteSiiBridge;
+                        if (!br || !br.importarCartolaBuffer) throw new Error('El importador bancario no está disponible.');
+                        if (it.clienteNombre && br.cambiarACliente && String(br.clienteNombre() || '').trim().toLowerCase() !== String(it.clienteNombre).trim().toLowerCase()) {
+                            br.cambiarACliente(it.clienteNombre);
+                        }
+                        var bytes = it.contenidoBase64 ? base64ABytes(it.contenidoBase64) : new TextEncoder().encode(it.nota || '');
+                        var okCart = br.importarCartolaBuffer(it.nombreArchivo, bytes.buffer);
+                        if (okCart) {
+                            await fetch('/api/pyme/portal-estudio-buzon?id=' + encodeURIComponent(it.id), {
+                                method: 'PUT',
+                                credentials: 'same-origin',
+                                headers: headersEstudio(true),
+                                body: JSON.stringify({ id: it.id, estado: 'procesado' })
+                            });
+                            cerrar();
+                            if (br.cambiarModulo) br.cambiarModulo('bancos');
+                            await cargarBuzonEstudio();
+                        }
+                    } else if (btnDesc) {
+                        var blob = it.contenidoBase64
+                            ? new Blob([base64ABytes(it.contenidoBase64)], { type: it.mimeType || 'application/octet-stream' })
+                            : new Blob([it.nota || ''], { type: 'text/plain;charset=utf-8' });
+                        var url = URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = it.nombreArchivo || 'archivo-cliente';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+                    }
+                } catch (err) {
+                    feedback((err && err.message) || 'No pudimos procesar el archivo.', 'error');
+                }
+            });
+        }
+
+        document.addEventListener('demo:cliente', cargarBuzonEstudio);
+        document.addEventListener('demo:estudio-cambiado', cargarBuzonEstudio);
+        cargarSesionYEnlaces();
 
         window.addEventListener('focus', function () {
             if (dlg.open && !sesion.autenticado) cargarSesionYEnlaces();

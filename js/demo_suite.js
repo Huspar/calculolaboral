@@ -22,6 +22,7 @@
         subLibro: 'diario',
         subBanco: 'conciliacion',
         subBalance: 'balance8',
+        balAlcance: 'mes',
         subDdjj: '1887',
         filtroMayor: '',
         lineasManualesDraft: [
@@ -106,6 +107,216 @@
 
     function guardarTodoAlmacen(obj) {
         try { window.localStorage.setItem(K_STORAGE, JSON.stringify(obj)); } catch (e) { /* sin espacio */ }
+        if (window.CLSuiteNube && typeof window.CLSuiteNube.programarSubida === 'function') {
+            window.CLSuiteNube.programarSubida();
+        }
+    }
+
+    function periodoAnteriorDe(per) {
+        var m = /^(\d{4})-(\d{2})$/.exec(String(per || ''));
+        if (!m) return '';
+        var y = Number(m[1]), mo = Number(m[2]) - 1;
+        if (mo < 1) { y -= 1; mo = 12; }
+        return y + '-' + (mo < 10 ? '0' + mo : String(mo));
+    }
+
+    function utmDePeriodo(per) {
+        var P = window.CLLiquidacionParametros;
+        if (!P || !P.RESPALDO) return 0;
+        var item = P.RESPALDO[per];
+        return item && item.utm ? Math.round(Number(item.utm)) : 0;
+    }
+
+    function construirF29YAsientosDeEstado(st, per, opts) {
+        var o = opts || {};
+        var ventas = st.ventasRows ? F29.parsearRcv(st.ventasRows, 'ventas') : F29.parsearRcv(st.ventasCsv || '', 'ventas');
+        var compras = st.comprasRows ? F29.parsearRcv(st.comprasRows, 'compras') : F29.parsearRcv(st.comprasCsv || '', 'compras');
+        var nomina = o.nominaOverride !== undefined ? o.nominaOverride : (st.nominaResumen || null);
+        var iuscAuto = nomina ? (nomina.impuesto48 || 0) : 0;
+        var usaIuscManual = !nomina && st.iuscManual !== '' && st.iuscManual != null;
+        var iusc48 = usaIuscManual ? D.parseNumber(st.iuscManual) : iuscAuto;
+
+        var f29 = F29.calcularF29({
+            periodo: per,
+            regimen: st.regimen || '14D3',
+            ventas: ventas,
+            compras: compras,
+            remanenteAnterior: st.remanenteAnterior || 0,
+            postergarIva: !!st.postergarIva,
+            excluirSupermercado: !!st.excluirSupermercado,
+            tasaPpm: st.tasaPpmPersonalizada,
+            impuestoUnico48: iusc48,
+            honorariosBruto: st.honorariosBruto || 0,
+            honorariosRetencionDirecta: (st.honorariosRetencionDirecta > 0 || (Array.isArray(st.bheBoletas) && st.bheBoletas.length > 0))
+                ? st.honorariosRetencionDirecta
+                : ''
+        });
+
+        var hayMov = (
+            ventas.documentos.length > 0 ||
+            compras.documentos.length > 0 ||
+            (nomina && nomina.totalDebe > 0) ||
+            (st.honorariosBruto || 0) > 0 ||
+            (st.honorariosRetencionDirecta || 0) > 0 ||
+            (st.remanenteAnterior || 0) > 0 ||
+            (st.tesoreria && st.tesoreria.saldoInicialBanco > 0) ||
+            (Array.isArray(st.manuales) && st.manuales.length > 0)
+        );
+        var tes = Object.assign({}, st.tesoreria || {});
+        if (o.omitirSaldoInicialBanco) tes.saldoInicialBanco = 0;
+
+        var gen = C.generarAsientos({
+            periodo: per,
+            ventas: ventas,
+            compras: compras,
+            f29: hayMov ? f29 : null,
+            nomina: nomina,
+            tesoreria: tes,
+            manuales: st.manuales || [],
+            auditados: st.auditados || {}
+        });
+        return { ventas: ventas, compras: compras, nomina: nomina, f29: f29, hayMovimientos: hayMov, gen: gen };
+    }
+
+    function obtenerCierreMesAnterior(per) {
+        var prev = periodoAnteriorDe(per || periodoActual());
+        if (!prev) return null;
+        var todo = leerTodoAlmacen();
+        var stPrev = todo[clienteClave() + '::' + prev];
+        if (!stPrev || typeof stPrev !== 'object') return null;
+
+        var calc = construirF29YAsientosDeEstado(stPrev, prev, {});
+        var rem77 = calc.f29 && calc.f29.codigos ? (calc.f29.codigos[77] || 0) : 0;
+
+        var mayorPrev = C.calcularMayor(calc.gen.asientos);
+        var balPrev = C.calcularBalance8Columnas(mayorPrev);
+        var pyfPrev = C.calcularEstadoResultadosYFlujo(balPrev, calc.gen.metricasFlujo, calc.hayMovimientos ? calc.f29 : null);
+        var saldoBanco = null;
+        if (stPrev.cartolaUltimoSaldo != null && stPrev.cartolaUltimoSaldo !== '') {
+            saldoBanco = Math.round(Number(stPrev.cartolaUltimoSaldo) || 0);
+        } else if (calc.hayMovimientos && pyfPrev && pyfPrev.flujo) {
+            saldoBanco = Math.round(Number(pyfPrev.flujo.saldoDisponibleBanco) || 0);
+        }
+
+        return {
+            periodo: prev,
+            remanente77: rem77,
+            utmAnterior: utmDePeriodo(prev),
+            utmActual: utmDePeriodo(per || periodoActual()),
+            saldoFinalBanco: saldoBanco,
+            cerrado: !!stPrev.cerradoTributario
+        };
+    }
+
+    function construirConsolidadoAnual(anio, estActivo, perActivo, resLiqActivo, f29Activo, nominaActiva) {
+        var anioStr = String(anio || 2026);
+        var todo = leerTodoAlmacen();
+        var cliPref = clienteClave() + '::' + anioStr + '-';
+        var periodos = [];
+        Object.keys(todo).forEach(function (k) {
+            if (k.indexOf(cliPref) === 0) {
+                var p = k.slice(clienteClave().length + 2);
+                if (/^\d{4}-\d{2}$/.test(p) && periodos.indexOf(p) < 0) periodos.push(p);
+            }
+        });
+        if (String(perActivo || '').indexOf(anioStr + '-') === 0 && periodos.indexOf(perActivo) < 0) {
+            periodos.push(perActivo);
+        }
+        periodos.sort();
+
+        var entradas = [];
+        var asientosBalanceAnual = [];
+        var mfAnual = {
+            saldoInicialBanco: 0,
+            cobroClientes: 0,
+            pagoProveedores: 0,
+            pagoSueldos: 0,
+            pagoCotizaciones: 0,
+            pagoHonorarios: 0,
+            totalEgresos: 0,
+            pctVentasCobradas: 100,
+            pctComprasPagadas: 100,
+            activoFijoNetoPagado: 0,
+            activoFijoNetoPendiente: 0,
+            sueldosPagados: true,
+            honorariosPagados: true,
+            cotizacionesPagadas: true
+        };
+        var ingresosCalcAnual = 0;
+        var cobradosCalcAnual = 0;
+        var comprasCalcAnual = 0;
+        var pagadasCalcAnual = 0;
+        var primerMesSaldoFijado = false;
+
+        periodos.forEach(function (per) {
+            var esActual = per === perActivo;
+            var st = esActual ? estActivo : todo[clienteClave() + '::' + per];
+            if (!st || typeof st !== 'object') return;
+
+            var resMes = esActual
+                ? resLiqActivo
+                : (Array.isArray(st.nominaResultados) ? st.nominaResultados : []);
+            var calc = construirF29YAsientosDeEstado(st, per, {
+                nominaOverride: esActual ? nominaActiva : (st.nominaResumen || null),
+                omitirSaldoInicialBanco: primerMesSaldoFijado
+            });
+            if (calc.hayMovimientos && !primerMesSaldoFijado) {
+                primerMesSaldoFijado = true;
+                mfAnual.saldoInicialBanco = calc.gen.metricasFlujo.saldoInicialBanco || 0;
+            }
+            if (calc.hayMovimientos) {
+                var mf = calc.gen.metricasFlujo;
+                mfAnual.cobroClientes += mf.cobroClientes || 0;
+                mfAnual.pagoProveedores += mf.pagoProveedores || 0;
+                mfAnual.pagoSueldos += mf.pagoSueldos || 0;
+                mfAnual.pagoCotizaciones += mf.pagoCotizaciones || 0;
+                mfAnual.pagoHonorarios += mf.pagoHonorarios || 0;
+                mfAnual.totalEgresos += mf.totalEgresos || 0;
+                mfAnual.activoFijoNetoPagado += mf.activoFijoNetoPagado || 0;
+                mfAnual.activoFijoNetoPendiente += mf.activoFijoNetoPendiente || 0;
+
+                var vNeto = (calc.ventas && calc.ventas.netoGiro) || 0;
+                var cNeto = (calc.compras && calc.compras.netoGiro) || 0;
+                ingresosCalcAnual += vNeto;
+                cobradosCalcAnual += Math.round(vNeto * ((mf.pctVentasCobradas || 0) / 100));
+                comprasCalcAnual += cNeto;
+                pagadasCalcAnual += Math.round(cNeto * ((mf.pctComprasPagadas || 0) / 100));
+
+                calc.gen.asientos.forEach(function (a) {
+                    if (!a) return;
+                    asientosBalanceAnual.push(Object.assign({}, a, {
+                        id: per + '-' + (a.id || 'AS'),
+                        periodo: per
+                    }));
+                });
+            }
+
+            entradas.push({
+                periodo: per,
+                nominaResultados: resMes,
+                bheBoletas: Array.isArray(st.bheBoletas) ? st.bheBoletas : [],
+                honorariosBruto: st.honorariosBruto || 0,
+                honorariosRetencion: esActual ? (f29Activo && f29Activo.codigos ? f29Activo.codigos[151] : 0) : (calc.f29 && calc.f29.codigos ? calc.f29.codigos[151] : 0),
+                f29: calc.hayMovimientos ? (esActual ? f29Activo : calc.f29) : null,
+                asientos: calc.hayMovimientos ? calc.gen.asientos : []
+            });
+        });
+
+        if (ingresosCalcAnual > 0) mfAnual.pctVentasCobradas = Math.round((cobradosCalcAnual / ingresosCalcAnual) * 1000) / 10;
+        if (comprasCalcAnual > 0) mfAnual.pctComprasPagadas = Math.round((pagadasCalcAnual / comprasCalcAnual) * 1000) / 10;
+
+        var cons = Renta ? Renta.consolidarEjercicioAnual(entradas, Number(anioStr)) : {
+            anio: Number(anioStr), mesesConDatos: [], cantidadMeses: 0, nominaRegistros: [], bheLista: [], ppmTotal: 0, asientosAnuales: []
+        };
+        var mayorAnual = C.calcularMayor(asientosBalanceAnual);
+        var balanceAnual = C.calcularBalance8Columnas(mayorAnual);
+        var rliAnual = C.calcularRliProPyme(balanceAnual, mfAnual, estActivo.rliAjustes);
+
+        return Object.assign({}, cons, {
+            mayor: mayorAnual,
+            balance: balanceAnual,
+            rli: rliAnual
+        });
     }
 
     function estadoDefecto(periodo) {
@@ -308,28 +519,37 @@
         var pyf = C.calcularEstadoResultadosYFlujo(balance, gen.metricasFlujo, hayMovimientos ? f29 : null);
 
         var ddjjAnio = Number(est.ddjjAnio || 2026);
+        var anual = construirConsolidadoAnual(ddjjAnio, est, periodo, resLiq, f29, nomina);
+        var cierrePrevio = obtenerCierreMesAnterior(periodo);
+        var rliParaRenta = (anual && anual.cantidadMeses > 0) ? anual.rli : rli;
+        var ppmAnualCalc = (anual && anual.cantidadMeses > 0) ? anual.ppmTotal : (f29.codigos[62] || 0);
+
         var dj1887 = null, dj1879 = null, dj194x = null, cptSimp = null;
         if (Renta) {
-            var nomRegs = Renta.acumularLiquidacionesParaDj1887(resLiq);
+            var nomRegs = (anual && anual.nominaRegistros && anual.nominaRegistros.length)
+                ? anual.nominaRegistros
+                : Renta.acumularLiquidacionesParaDj1887(resLiq);
             dj1887 = Renta.generarDj1887(nomRegs, { anioTributario: ddjjAnio });
 
-            var bheLista = Array.isArray(est.bheBoletas) && est.bheBoletas.length
-                ? est.bheBoletas
-                : (est.honorariosBruto > 0
-                    ? [{ rut: '12.345.678-5', razonSocial: 'Honorarios consolidados del período', bruto: est.honorariosBruto, retenido: f29.codigos[151], estado: 'VIGENTE' }]
-                    : []);
+            var bheLista = (anual && anual.bheLista && anual.bheLista.length)
+                ? anual.bheLista
+                : (Array.isArray(est.bheBoletas) && est.bheBoletas.length
+                    ? est.bheBoletas
+                    : (est.honorariosBruto > 0
+                        ? [{ rut: '12.345.678-5', razonSocial: 'Honorarios consolidados del período', bruto: est.honorariosBruto, retenido: f29.codigos[151], estado: 'VIGENTE' }]
+                        : []));
             dj1879 = Renta.generarDj1879(bheLista, { anioTributario: ddjjAnio });
 
             dj194x = Renta.generarDj1947o1948(est.regimen, {
-                baseImponible: rli.baseImponible,
-                ppmDisponible: f29.codigos[62],
+                baseImponible: rliParaRenta.baseImponible,
+                ppmDisponible: ppmAnualCalc,
                 retirosTotales: (est.socios && est.socios[0] && est.socios[0].retiros) || 0,
                 tasaIdpc: est.rliAjustes.tasaIdpc,
                 socios: est.socios
             }, { anioTributario: ddjjAnio });
 
             cptSimp = Renta.calcularCptSimplificado(Object.assign({}, est.cptAjustes, {
-                baseImponibleRli: rli.baseImponible
+                baseImponibleRli: rliParaRenta.baseImponible
             }));
         }
 
@@ -373,8 +593,8 @@
         var f22 = Pro ? Pro.calcularPropuestaF22({
             regimen: est.regimen,
             anioTributario: ddjjAnio,
-            baseImponibleRli: rli.baseImponible,
-            ppmPagadoTotal: ppmManualVal !== null ? ppmManualVal : (f29.codigos[62] || 0),
+            baseImponibleRli: rliParaRenta.baseImponible,
+            ppmPagadoTotal: ppmManualVal !== null ? ppmManualVal : ppmAnualCalc,
             factorPromedioPpm: (est.f22Ajustes && Number(est.f22Ajustes.factorPpm)) || 1.018,
             otrosCreditos: (est.f22Ajustes && Number(est.f22Ajustes.otrosCreditos)) || 0
         }) : null;
@@ -382,6 +602,8 @@
         return {
             estado: est,
             periodo: periodo,
+            cierrePrevio: cierrePrevio,
+            anual: anual,
             hayMovimientos: hayMovimientos,
             nomina: nomina,
             iuscAuto: iuscAuto,
@@ -457,6 +679,18 @@
             ? (est.comprasArchivo || 'RCV Compras') + ' · ' + m.compras.documentos.length + ' registros'
             : 'Sin archivo cargado (.csv o .xlsx)';
         if ($('drop-rcv-compras')) $('drop-rcv-compras').classList.toggle('cargada', m.compras.documentos.length > 0);
+
+        var btnTraerRem = $('btn-f29-traer-rem-ant');
+        if (btnTraerRem) {
+            var prevRem = m.cierrePrevio;
+            if (prevRem && prevRem.remanente77 > 0 && !bloqueado) {
+                var mesNom = sumarMesesNombre(prevRem.periodo, 0).split(' ')[0] || prevRem.periodo;
+                btnTraerRem.hidden = false;
+                btnTraerRem.innerHTML = '<span class="material-icons" aria-hidden="true">history</span><span>Traer cód. 77 de ' + D.esc(mesNom) + ' (' + D.money(prevRem.remanente77) + ')</span>';
+            } else {
+                btnTraerRem.hidden = true;
+            }
+        }
 
         var vacio = $('f29-vacio');
         var resPanel = $('f29-resultados');
@@ -820,6 +1054,17 @@
 
         var t = est.tesoreria;
         if ($('tes-banco-ini') && document.activeElement !== $('tes-banco-ini')) $('tes-banco-ini').value = t.saldoInicialBanco || 0;
+        var btnTraerBanco = $('btn-tes-traer-saldo-ant');
+        if (btnTraerBanco) {
+            var prevB = m.cierrePrevio;
+            if (prevB && prevB.saldoFinalBanco != null && !bloqueado) {
+                var mesNomB = sumarMesesNombre(prevB.periodo, 0).split(' ')[0] || prevB.periodo;
+                btnTraerBanco.hidden = false;
+                btnTraerBanco.innerHTML = '<span class="material-icons" aria-hidden="true">history</span><span>Traer cierre banco ' + D.esc(mesNomB) + ' (' + D.money(prevB.saldoFinalBanco) + ')</span>';
+            } else {
+                btnTraerBanco.hidden = true;
+            }
+        }
         if ($('tes-pct-cobro') && document.activeElement !== $('tes-pct-cobro')) $('tes-pct-cobro').value = t.pctVentasCobradas;
         if ($('tes-pct-pago') && document.activeElement !== $('tes-pct-pago')) $('tes-pct-pago').value = t.pctComprasPagadas;
         if ($('tes-af-pagado')) $('tes-af-pagado').checked = !!t.activoFijoPagado;
@@ -987,11 +1232,54 @@
         }
     }
 
+    function renderStripCobertura(elId, anual, perActual) {
+        var el = $(elId);
+        if (!el || !anual) return;
+        var anio = anual.anio || 2026;
+        var conDatos = Array.isArray(anual.mesesConDatos) ? anual.mesesConDatos : [];
+        var letras = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+        var dotsHtml = letras.map(function (ltr, idx) {
+            var mm = (idx + 1 < 10 ? '0' : '') + (idx + 1);
+            var p = anio + '-' + mm;
+            var activo = conDatos.indexOf(p) >= 0;
+            return '<span class="anual-mes-dot' + (activo ? ' activo' : '') + '" title="' + D.esc(NOMBRES_MESES[idx] + ' ' + anio + (activo ? ' (con datos)' : ' (sin datos)')) + '">' + ltr + '</span>';
+        }).join('');
+        var mesesNombres = conDatos.map(function (p) {
+            var idxM = Number(String(p).slice(5, 7)) - 1;
+            return NOMBRES_MESES[idxM] || p;
+        });
+        var primerFaltante = '';
+        for (var mIdx = 1; mIdx <= 12; mIdx++) {
+            var cand = anio + '-' + (mIdx < 10 ? '0' + mIdx : String(mIdx));
+            if (conDatos.indexOf(cand) < 0) { primerFaltante = cand; break; }
+        }
+        el.hidden = false;
+        el.className = 'suite-preval-strip ' + (conDatos.length >= 12 ? 'ok' : (conDatos.length > 0 ? 'ok' : 'warn'));
+        var resumenTxt = conDatos.length
+            ? ('Consolidado AT ' + anio + ': ' + conDatos.length + ' ' + (conDatos.length === 1 ? 'mes' : 'meses') + ' con datos (' + mesesNombres.join(', ') + ')')
+            : ('Sin meses guardados en ' + anio + ' para este cliente.');
+        var btnCompletar = primerFaltante
+            ? '<button type="button" class="btn btn-chico" data-ir-mes-faltante="' + D.esc(primerFaltante) + '">Ir a ' + D.esc(NOMBRES_MESES[Number(primerFaltante.slice(5, 7)) - 1]) + '</button>'
+            : '';
+        el.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">calendar_month</span><span><strong>' + D.esc(resumenTxt) + '</strong></span></span>' +
+            '<span class="anual-meses-dots" aria-label="Cobertura mensual ' + anio + '">' + dotsHtml + '</span>' +
+            btnCompletar;
+    }
+
     // ------------------------------------------------------------- Render Balance 8 Columnas y RLI
     function pintarBalance(m) {
-        var b = m.balance;
-        var rli = m.rli;
+        var esAnual = ui.balAlcance === 'anual' && m.anual;
+        var b = esAnual ? m.anual.balance : m.balance;
+        var rli = esAnual ? m.anual.rli : m.rli;
         var est = m.estado;
+
+        if ($('bal-seg-mes')) $('bal-seg-mes').textContent = sumarMesesNombre(m.periodo, 0).split(' ')[0] || m.periodo;
+        if ($('bal-seg-anio')) $('bal-seg-anio').textContent = (m.anual && m.anual.anio) || '2026';
+        Array.prototype.forEach.call(document.querySelectorAll('input[name="bal-alcance"]'), function (rad) {
+            rad.checked = (rad.value === (esAnual ? 'anual' : 'mes'));
+        });
+        renderStripCobertura('bal-cobertura-strip', m.anual, m.periodo);
+        if ($('bal-cobertura-strip')) $('bal-cobertura-strip').hidden = !esAnual;
 
         Array.prototype.forEach.call(document.querySelectorAll('[data-subbal]'), function (btn) {
             var act = btn.getAttribute('data-subbal') === ui.subBalance;
@@ -1516,6 +1804,7 @@
             if (pan) pan.hidden = (ui.subDdjj !== k);
         });
         pintarPropuestaF22(m);
+        renderStripCobertura('ddjj-cobertura-strip', m.anual, m.periodo);
         var d = m.ddjj || {};
         var barDdjj = $('ddjj-preval-bar');
         if (barDdjj) {
@@ -1820,12 +2109,37 @@
         }
     }
 
+    function pintarSelloFiniquitos(m) {
+        var sello = $('fin-diario-sello');
+        if (!sello) return;
+        var res = (window.CLDemoFiniquitos && window.CLDemoFiniquitos.resultados) ? window.CLDemoFiniquitos.resultados() : [];
+        var ok = res.filter(function (r) { return r && !r.error && r.total > 0; });
+        var est = (m && m.estado) || leerEstadoActual();
+        var idFin = 'MAN-FIN-' + periodoActual();
+        var asiento = (est.manuales || []).filter(function (a) { return a && a.id === idFin; })[0];
+        if (!asiento) {
+            sello.className = 'sello sello-guardada';
+            sello.textContent = 'Sin centralizar';
+            return;
+        }
+        var totalLote = ok.reduce(function (s, r) { return s + Math.round(Number(r.total) || 0); }, 0);
+        var totalAsiento = (asiento.lineas || []).reduce(function (s, l) { return s + Math.round(Number(l.debe) || 0); }, 0);
+        if (ok.length && totalLote !== totalAsiento) {
+            sello.className = 'sello sello-preparada';
+            sello.textContent = 'Cambios sin centralizar · Actualizar';
+        } else {
+            sello.className = 'sello sello-emitida';
+            sello.textContent = 'Centralizado en Diario';
+        }
+    }
+
     function refrescarTodo() {
         var est = leerEstadoActual();
         pintarIdentidadCliente();
         pintarEstadoPuentePyme(est);
         var m = calcularModelo();
         pintarEstadoCierre(m);
+        pintarSelloFiniquitos(m);
         pintarTorre(m);
         pintarImportador(m);
         pintarF29(m);
@@ -2235,6 +2549,29 @@
                 actualizarPreviewUtmCard();
             });
         });
+        if ($('btn-f29-traer-rem-ant')) {
+            $('btn-f29-traer-rem-ant').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                var cierre = obtenerCierreMesAnterior(periodoActual());
+                if (!cierre || !(cierre.remanente77 > 0)) {
+                    D.avisar('No hay remanente cód. 77 guardado en el período anterior.');
+                    return;
+                }
+                var uAnt = cierre.utmAnterior || Math.round(D.parseNumber($('utm-val-ant') && $('utm-val-ant').value)) || 66628;
+                var uAct = cierre.utmActual || Math.round(D.parseNumber($('utm-val-act') && $('utm-val-act').value)) || uAnt;
+                var reaj = (F29 && F29.reajustarRemanenteUtm)
+                    ? F29.reajustarRemanenteUtm(cierre.remanente77, uAnt, uAct)
+                    : { reajustado: cierre.remanente77, utm: 0 };
+                guardarEstadoActual(function (est) {
+                    est.remanente77MesAnterior = cierre.remanente77;
+                    est.utmMesPresentacionAnterior = uAnt;
+                    est.utmMesPresentacionActual = uAct;
+                    est.remanenteAnterior = reaj.reajustado || cierre.remanente77;
+                });
+                refrescarTodo();
+                D.avisar('Remanente cód. 77 de ' + cierre.periodo + ' (' + D.money(cierre.remanente77) + ') reajustado por UTM a ' + D.money(reaj.reajustado || cierre.remanente77) + ' en cód. 504.');
+            });
+        }
         if ($('btn-utm-aplicar')) {
             $('btn-utm-aplicar').addEventListener('click', function () {
                 if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
@@ -2870,11 +3207,58 @@
             });
         }
 
+        if ($('btn-tes-traer-saldo-ant')) {
+            $('btn-tes-traer-saldo-ant').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                var cierre = obtenerCierreMesAnterior(periodoActual());
+                if (!cierre || cierre.saldoFinalBanco == null) {
+                    D.avisar('No hay saldo final bancario en el período anterior.');
+                    return;
+                }
+                var saldo = Math.max(0, Math.round(cierre.saldoFinalBanco));
+                guardarEstadoActual(function (est) {
+                    est.tesoreria.saldoInicialBanco = saldo;
+                });
+                refrescarTodo();
+                D.avisar('Saldo inicial banco actualizado desde cierre de ' + cierre.periodo + ': ' + D.money(saldo) + '.');
+            });
+        }
+
         // Subpestañas Balance / RLI
         Array.prototype.forEach.call(document.querySelectorAll('[data-subbal]'), function (btn) {
             btn.addEventListener('click', function () {
                 ui.subBalance = btn.getAttribute('data-subbal');
                 refrescarTodo();
+            });
+        });
+
+        Array.prototype.forEach.call(document.querySelectorAll('input[name="bal-alcance"]'), function (rad) {
+            rad.addEventListener('change', function () {
+                ui.balAlcance = (this.value === 'anual') ? 'anual' : 'mes';
+                refrescarTodo();
+            });
+        });
+
+        ['ddjj-cobertura-strip', 'bal-cobertura-strip'].forEach(function (stripId) {
+            var stripEl = $(stripId);
+            if (!stripEl) return;
+            stripEl.addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-ir-mes-faltante]');
+                if (!btn) return;
+                var targetPer = btn.getAttribute('data-ir-mes-faltante');
+                var selPer = $('periodo');
+                if (!selPer || !targetPer) return;
+                var existeOpc = Array.prototype.some.call(selPer.options, function (o) { return o.value === targetPer; });
+                if (!existeOpc) {
+                    var opt = document.createElement('option');
+                    opt.value = targetPer;
+                    var idxM = Number(targetPer.slice(5, 7)) - 1;
+                    opt.textContent = (NOMBRES_MESES[idxM] || targetPer) + ' ' + targetPer.slice(0, 4);
+                    selPer.appendChild(opt);
+                }
+                selPer.value = targetPer;
+                selPer.dispatchEvent(new Event('change'));
+                D.avisar('Cambiaste al período ' + targetPer + ' para completar sus datos.');
             });
         });
 
@@ -2895,8 +3279,9 @@
         if ($('btn-balance-csv')) {
             $('btn-balance-csv').addEventListener('click', function () {
                 var m = calcularModelo();
-                var b = m.balance;
-                var per = periodoActual();
+                var esAnual = ui.balAlcance === 'anual' && m.anual;
+                var b = esAnual ? m.anual.balance : m.balance;
+                var per = esAnual ? ('AT' + m.anual.anio) : periodoActual();
                 var filas = [
                     ['Balance Tributario Clasificado de 8 Columnas · ' + per],
                     ['Cliente: ' + clienteNombre() + '   ·   Régimen: ' + m.f29.regimenNombre + '   ·   Cuadratura SII'],
@@ -2940,8 +3325,9 @@
         if ($('btn-rli-csv')) {
             $('btn-rli-csv').addEventListener('click', function () {
                 var m = calcularModelo();
-                var r = m.rli;
-                var per = periodoActual();
+                var esAnual = ui.balAlcance === 'anual' && m.anual;
+                var r = esAnual ? m.anual.rli : m.rli;
+                var per = esAnual ? ('AT' + m.anual.anio) : periodoActual();
                 var filas = [
                     ['Determinación RLI ProPyme General (Art. 14 D N°3 LIR) · ' + per],
                     ['Cliente: ' + clienteNombre() + '   ·   Flujo percibido y pagado'],
@@ -2982,7 +3368,9 @@
             $('btn-balance-pdf').addEventListener('click', function () {
                 var m = calcularModelo();
                 pintarBalance(m);
-                if (!m.balance.filas.length) {
+                var esAnual = ui.balAlcance === 'anual' && m.anual;
+                var b = esAnual ? m.anual.balance : m.balance;
+                if (!b.filas.length) {
                     D.avisar('Aún no hay movimientos contables para emitir el Balance de 8 Columnas.');
                     return;
                 }
@@ -2990,18 +3378,19 @@
                     $('tbody-balance8').innerHTML + '</tbody></table>';
                 var rliHtml = '<table class="print-table"><thead><tr><th>Partida Tributaria (Art. 14 D N°3)</th><th class="r">Monto</th></tr></thead><tbody>' +
                     $('tbody-rli').innerHTML + '</tbody></table>';
-                imprimirHtmlModulo('Balance Tributario de 8 Columnas y RLI', m.f29.regimenNombre, '', '', {
+                var subTit = m.f29.regimenNombre + (esAnual ? (' · Acumulado anual ' + m.anual.anio) : '');
+                imprimirHtmlModulo('Balance Tributario de 8 Columnas y RLI', subTit, '', '', {
                     paginas: [
                         {
                             titulo: 'Balance Tributario de 8 Columnas',
-                            subtitulo: m.f29.regimenNombre,
+                            subtitulo: subTit,
                             html: balHtml,
                             paisa: true,
                             nota: 'Balance de comprobación, saldos, inventario y resultado por naturaleza contable.'
                         },
                         {
                             titulo: 'Hoja de Trabajo RLI ProPyme (Art. 14 D N°3)',
-                            subtitulo: m.f29.regimenNombre,
+                            subtitulo: subTit,
                             html: rliHtml,
                             nota: 'Determinación referencial en base percibida/pagada pre-cierre Formulario 22.'
                         }
@@ -3162,35 +3551,42 @@
             return txt;
         }
 
+        function procesarBufferCartola(nombre, buf) {
+            if (!Imp || !buf) return false;
+            var per = periodoActual();
+            var esExcel = /\.(xlsx|xls|ods)$/i.test(String(nombre || ''));
+            var res = null;
+            if (esExcel && typeof XLSX !== 'undefined') {
+                try {
+                    var wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true });
+                    var firstErr = null;
+                    for (var i = 0; i < (wb.SheetNames || []).length; i++) {
+                        var sh = wb.Sheets[wb.SheetNames[i]];
+                        var rows = XLSX.utils.sheet_to_json(sh, { header: 1, defval: '', raw: true });
+                        var cand = Imp.parsearCartola(rows, { periodo: per });
+                        if (cand && cand.ok) { res = cand; break; }
+                        if (!firstErr) firstErr = cand;
+                    }
+                    if (!res) res = firstErr;
+                } catch (e) {
+                    res = null;
+                }
+            }
+            if (!res || (!res.ok && esExcel)) {
+                var txtFallback = decodificarTextoBanco(buf);
+                var candTxt = txtFallback ? Imp.parsearCartola(txtFallback, { periodo: per }) : null;
+                if (candTxt && candTxt.ok) res = candTxt;
+                else if (!res) res = candTxt;
+            }
+            aplicarResultadoCartola(res);
+            return Boolean(res && res.ok);
+        }
+        window.CLSuiteSiiBridge.importarCartolaBuffer = procesarBufferCartola;
+
         function aplicarArchivoCartola(file) {
             if (!file || !Imp) return;
-            var per = periodoActual();
-            var esExcel = /\.(xlsx|xls|ods)$/i.test(file.name);
             file.arrayBuffer().then(function (buf) {
-                var res = null;
-                if (esExcel && typeof XLSX !== 'undefined') {
-                    try {
-                        var wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true });
-                        var firstErr = null;
-                        for (var i = 0; i < (wb.SheetNames || []).length; i++) {
-                            var sh = wb.Sheets[wb.SheetNames[i]];
-                            var rows = XLSX.utils.sheet_to_json(sh, { header: 1, defval: '', raw: true });
-                            var cand = Imp.parsearCartola(rows, { periodo: per });
-                            if (cand && cand.ok) { res = cand; break; }
-                            if (!firstErr) firstErr = cand;
-                        }
-                        if (!res) res = firstErr;
-                    } catch (e) {
-                        res = null;
-                    }
-                }
-                if (!res || (!res.ok && esExcel)) {
-                    var txtFallback = decodificarTextoBanco(buf);
-                    var candTxt = txtFallback ? Imp.parsearCartola(txtFallback, { periodo: per }) : null;
-                    if (candTxt && candTxt.ok) res = candTxt;
-                    else if (!res) res = candTxt;
-                }
-                aplicarResultadoCartola(res);
+                procesarBufferCartola(file.name, buf);
             }).catch(function () {
                 D.avisar('No pudimos leer el archivo de cartola.');
             });
@@ -3843,8 +4239,47 @@
             });
         }
 
-        // Eventos cruzados desde Liquidaciones / Cliente
+        if ($('btn-asiento-fin')) {
+            $('btn-asiento-fin').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                var resFin = (window.CLDemoFiniquitos && window.CLDemoFiniquitos.resultados) ? window.CLDemoFiniquitos.resultados() : [];
+                var okFin = resFin.filter(function (r) { return r && !r.error && r.total > 0; });
+                if (!okFin.length || !C.asientoDesdeFiniquitos) {
+                    D.avisar('Calcula primero un lote válido de finiquitos para centralizar.');
+                    return;
+                }
+                var estActual = leerEstadoActual();
+                var asientoFin = C.asientoDesdeFiniquitos(okFin, {
+                    id: 'MAN-FIN-' + periodoActual(),
+                    periodo: periodoActual(),
+                    origen: 'ajuste',
+                    pagado: estActual.tesoreria ? !!estActual.tesoreria.sueldosPagados : true
+                });
+                if (!asientoFin) {
+                    D.avisar('No hay montos positivos de finiquito para contabilizar.');
+                    return;
+                }
+                guardarEstadoActual(function (est) {
+                    est.manuales = (est.manuales || []).filter(function (a) { return String(a.id || '') !== asientoFin.id; });
+                    est.manuales.push({
+                        id: asientoFin.id,
+                        fecha: asientoFin.fecha,
+                        glosa: asientoFin.glosa,
+                        origen: 'ajuste',
+                        lineas: asientoFin.lineas.map(function (l) {
+                            return { cuenta: l.cuenta, debe: l.debe, haber: l.haber };
+                        })
+                    });
+                });
+                ui.subLibro = 'diario';
+                cambiarModulo('libros');
+                D.avisar('Finiquitos centralizados en Libro Diario (' + D.money(asientoFin.debe) + ').');
+            });
+        }
+
+        // Eventos cruzados desde Liquidaciones / Finiquitos / Cliente
         document.addEventListener('demo:liquidaciones', refrescarTodo);
+        document.addEventListener('demo:finiquitos', function () { pintarSelloFiniquitos(); });
         document.addEventListener('demo:cliente', refrescarTodo);
         window.addEventListener('hashchange', function () {
             var mHash = String(location.hash || '').replace(/^#/, '');

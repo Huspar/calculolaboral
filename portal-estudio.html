@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.12.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.15.0">
 </head>
 <body class="app-body">
 <main class="pe-shell" id="pe-shell">
@@ -117,6 +117,46 @@
       </div>
     </section>
 
+    <section class="panel" id="pe-card-buzon" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>Enviar archivos al estudio contable</h2>
+          <p class="panel-ayuda">Sube tu cartola bancaria o novedades de sueldo del período (máximo 1 MB por archivo, cifrado en tránsito y en reposo).</p>
+        </div>
+      </div>
+      <div class="panel-cuerpo">
+        <form id="form-pe-buzon" class="pe-buzon-form" novalidate>
+          <div class="lq-field">
+            <label for="pe-buzon-tipo">Tipo de envío</label>
+            <select id="pe-buzon-tipo">
+              <option value="cartola" selected>Cartola bancaria (CSV o Excel)</option>
+              <option value="novedades">Novedades de sueldo, licencias o vacaciones</option>
+              <option value="otro">Otro documento o respaldo del mes</option>
+            </select>
+          </div>
+          <div class="fin-dropzone" id="pe-buzon-drop" role="button" tabindex="0" aria-label="Adjuntar archivo para el estudio contable">
+            <span class="material-icons" aria-hidden="true">cloud_upload</span>
+            <strong>Arrastra tu archivo o haz clic para seleccionarlo</strong>
+            <span class="rcv-drop-estado" id="pe-buzon-file-estado">Ningún archivo seleccionado · Máx. 1 MB (.csv, .xlsx, .xls, .pdf, .txt)</span>
+            <input type="file" id="pe-buzon-archivo" accept=".csv,.xlsx,.xls,.pdf,.txt,.tsv,.json" class="sr-only" tabindex="-1" aria-label="Archivo para enviar al estudio">
+          </div>
+          <div class="lq-field">
+            <label for="pe-buzon-nota">Nota breve para tu contador (opcional)</label>
+            <textarea id="pe-buzon-nota" rows="2" maxlength="280" placeholder="Ej: Cartola Banco de Chile octubre y 2 licencias médicas del mes."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primario" id="btn-pe-buzon-enviar">
+            <span class="material-icons" aria-hidden="true">send</span><span>Enviar documento al estudio</span>
+          </button>
+        </form>
+        <div id="pe-buzon-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite" style="margin-top:12px"></div>
+        <div id="pe-buzon-historial" style="margin-top:16px">
+          <h3 class="preval-bloque-titulo">Archivos enviados en este período</h3>
+          <ul class="pe-buzon-lista" id="pe-buzon-lista"></ul>
+          <p class="texto-ayuda" id="pe-buzon-vacio" style="margin-top:6px">Aún no envías archivos en este período.</p>
+        </div>
+      </div>
+    </section>
+
     <footer class="pe-footer" id="pe-footer">
       <div>
         <p id="pe-estudio-pie" style="margin:0 0 4px"></p>
@@ -126,6 +166,6 @@
     </footer>
   </div>
 </main>
-<script src="/js/portal_estudio.js?v=1.0.0"></script>
+<script src="/js/portal_estudio.js?v=1.1.0"></script>
 </body>
 </html>

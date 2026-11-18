@@ -58,7 +58,10 @@ const ACTIVIDAD_RUTA = {
     'mcp-tokens:POST': 'mcp_token_creado',
     'mcp-tokens:DELETE': 'mcp_token_revocado',
     'portal-estudio:POST': 'portal_estudio_creado',
-    'portal-estudio:DELETE': 'portal_estudio_revocado'
+    'portal-estudio:DELETE': 'portal_estudio_revocado',
+    'portal-estudio-buzon:PUT': 'portal_buzon_estado',
+    'portal-estudio-buzon:DELETE': 'portal_buzon_borrado',
+    'estudio:PUT': 'estudio_guardado'
 };
 
 function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentarios, estudio, equipo, portal, siiGateway }) {
@@ -683,36 +686,85 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos, 'sii-acuse': siiAcuse, 'mcp-tokens': mcpTokens, 'portal-estudio': portalEstudioRuta };
+    async function portalEstudioBuzonRuta(req, res) {
+        if (!estudio) return H.json(res, 503, { ok: false, error: 'El módulo de estudio no está disponible.' });
+        const secretoPortal = (env && env.PYME_SESSION_SECRET)
+            ? T.secretoDesdeEntorno(env)
+            : Buffer.from('portal-estudio:' + (siteUrl || 'local'));
+        const m = req.method;
+        const tok = typeof req.query?.t === 'string' ? req.query.t.trim() : '';
 
-    // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada.
+        if (tok) {
+            res.setHeader('Cache-Control', 'no-store, max-age=0');
+            if (m === 'GET') {
+                return responder(res, await estudio.buzonListarCliente(tok, { secreto: secretoPortal }));
+            }
+            if (m === 'POST') {
+                const origen = req.headers && req.headers.origin;
+                if (origen && H.origenesPermitidos(env, siteUrl).indexOf(origen) < 0) {
+                    return H.json(res, 403, { ok: false, error: 'Solicitud no permitida.' });
+                }
+                return responder(res, await estudio.buzonSubir(tok, H.cuerpoDe(req), { secreto: secretoPortal }));
+            }
+            res.setHeader('Allow', 'GET, POST');
+            return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+        }
+
+        if (m === 'GET') {
+            const s = await conSesion(req, res);
+            if (!s) return;
+            const id = typeof req.query?.id === 'string' ? req.query.id.trim() : '';
+            if (id) return responder(res, await estudio.buzonLeer(s.cuentaId, id));
+            return responder(res, await estudio.buzonListar(s.cuentaId));
+        }
+        if (m === 'PUT') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const id = typeof req.query?.id === 'string' ? req.query.id : (b.id || '');
+            return responder(res, await estudio.buzonEstado(s.cuentaId, id, b.estado));
+        }
+        if (m === 'DELETE') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const id = typeof req.query?.id === 'string' ? req.query.id : (b.id || '');
+            return responder(res, await estudio.buzonEliminar(s.cuentaId, id));
+        }
+        res.setHeader('Allow', 'GET, POST, PUT, DELETE');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos, 'sii-acuse': siiAcuse, 'mcp-tokens': mcpTokens, 'portal-estudio': portalEstudioRuta, 'portal-estudio-buzon': portalEstudioBuzonRuta };
+
+    // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada (compatible con equipo multiusuario via X-CL-Estudio).
     if (estudio) {
         tabla.estudio = async function (req, res) {
-            let s;
-            try { s = await auth.leerSesion(H.leerCookie(req, H.NOMBRE_COOKIE)); }
-            catch (e) { return H.json(res, 500, { ok: false, error: 'No pudimos revisar tu sesión.' }); }
-            if (s.renovada) res.setHeader('Set-Cookie', H.cookieSesion(s.renovada.token, s.renovada.vence, Date.now()));
-            if (!s.autenticado) return H.json(res, 401, { ok: false, error: 'Entra con tu correo para usar tu cuenta.' });
-
-            try {
-                if (req.method === 'GET') {
+            if (req.method === 'GET') {
+                const s = await conSesion(req, res);
+                if (!s) return;
+                try {
                     const r = await estudio.leer(s.cuentaId);
                     if (!r.ok) return H.json(res, r.estado || 500, { ok: false, error: r.error });
-                    return H.json(res, 200, { ok: true, email: s.email, datos: r.datos, actualizado: r.actualizado });
+                    return H.json(res, 200, { ok: true, email: s.email, estudioId: s.cuentaId, rol: s.rol || 'titular', datos: r.datos, actualizado: r.actualizado });
+                } catch (e) {
+                    return H.json(res, 500, { ok: false, error: 'No pudimos leer tu estudio.' });
                 }
-                if (req.method === 'PUT') {
-                    if (!H.escrituraPermitida(req, env, siteUrl)) {
-                        return H.json(res, 403, { ok: false, error: 'Petición no permitida.' });
-                    }
+            }
+            if (req.method === 'PUT') {
+                const s = await sesionParaEscribir(req, res);
+                if (!s) return;
+                try {
                     const cuerpo = H.cuerpoDe(req);
                     const r = await estudio.guardar(s.cuentaId, cuerpo.datos);
                     if (!r.ok) return H.json(res, r.estado || 500, { ok: false, codigo: r.codigo, error: r.error });
-                    return H.json(res, 200, { ok: true, actualizado: new Date().toISOString() });
+                    return H.json(res, 200, { ok: true, estudioId: s.cuentaId, actualizado: new Date().toISOString() });
+                } catch (e) {
+                    return H.json(res, 500, { ok: false, error: 'No pudimos guardar tu estudio.' });
                 }
-                return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
-            } catch (e) {
-                return H.json(res, 500, { ok: false, error: 'No pudimos guardar o leer tu estudio.' });
             }
+            res.setHeader('Allow', 'GET, PUT');
+            return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
         };
     }
 
