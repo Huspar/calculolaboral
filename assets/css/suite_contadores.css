@@ -4060,3 +4060,309 @@
         justify-content: center;
     }
 }
+
+/* ========================================================
+   INTEGRACIÓN GATEWAY (Alertas, PreviRed, TGR, F22/DDJJ, Webhooks)
+   ======================================================== */
+.rem-ley-bustos-alerta[hidden],
+#ddjj-sii-estado-panel[hidden],
+#f22-sii-resumen-panel[hidden],
+#torre-alertas-vacio[hidden],
+#wh-secret-box[hidden],
+#wh-deliveries-panel[hidden],
+#previred-estado-boveda[hidden],
+#wh-receptor-panel[hidden] {
+    display: none !important;
+}
+
+.fin-cards-lista {
+    display: none;
+}
+
+.torre-alerta-total-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 22px;
+    padding: 0 7px;
+    margin-left: 6px;
+    border-radius: 999px;
+    background: #00382E;
+    color: #FFFFFF;
+    font-size: 12px;
+}
+
+.torre-alertas-filtros {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.torre-alertas-controles {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.torre-riesgo-total {
+    font-size: 13px;
+    color: var(--ink);
+}
+
+.fin-chip-cnt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 6px;
+    margin-left: 4px;
+    border-radius: 999px;
+    background: rgba(0, 56, 46, 0.1);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.fin-chip-cnt.crit { background: #FFF1F2; color: #9F1239; }
+.fin-chip-cnt.warn { background: #FEF3C7; color: #7C4A03; }
+
+.torre-sync-select {
+    max-width: 230px;
+}
+
+.torre-acciones-celda {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.f29-tgr-cabeza,
+.rem-previred-cabeza {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+.f29-tgr-izq,
+.rem-previred-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+
+.rem-previred-titulo-fila {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rem-previred-h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--forest);
+}
+
+.f29-tgr-periodo {
+    font-size: 12.5px;
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.f29-tgr-cifras,
+.rem-previred-cifras {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.f29-tgr-lbl {
+    display: block;
+    font-size: 11.5px;
+    color: var(--muted);
+}
+
+.f29-tgr-acciones,
+.rem-previred-acciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rem-ley-bustos-alerta {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    margin: 0 16px 14px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: #FFF1F2;
+    border: 1px solid #FECDD3;
+    color: #9F1239;
+}
+
+.rem-ley-bustos-txt strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.rem-ley-bustos-txt p { margin: 0; font-size: 12.5px; line-height: 1.45; }
+
+.wh-receptor-box {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: #F8FAF9;
+    margin-bottom: 14px;
+}
+
+.wh-receptor-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.wh-receptor-meta {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+.wh-crear-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.wh-url-ayuda-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.wh-eventos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+    margin-top: 6px;
+}
+
+.wh-lista-wrap,
+.wh-deliveries-wrap {
+    margin-top: 16px;
+}
+
+.fin-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fin-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.fin-card-datos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+}
+
+.fin-card-pie,
+.wh-card-acciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.wh-url-txt {
+    word-break: break-all;
+    font-size: 12.5px;
+}
+
+@media screen and (max-width: 768px) {
+    #torre-alertas-tabla-wrap,
+    #ddjj-sii-estado-panel .tabla-contable-wrap,
+    .wh-lista-wrap .tabla-contable-wrap {
+        display: none;
+    }
+    #torre-alertas-cards,
+    #ddjj-sii-cards,
+    #wh-lista-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .rem-ley-bustos-alerta {
+        grid-template-columns: 22px minmax(0, 1fr);
+        margin: 0 12px 12px;
+    }
+    .rem-ley-bustos-alerta .btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 44px;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .torre-alertas-controles,
+    .torre-alertas-select-wrap,
+    #torre-alerta-modulo,
+    .f29-tgr-acciones,
+    .f29-tgr-acciones .btn,
+    .rem-previred-acciones,
+    .rem-previred-acciones .btn,
+    #btn-torre-webhooks,
+    #torre-sync-tipo,
+    #btn-wh-crear,
+    .wh-card-acciones .btn,
+    .fin-card-pie .btn,
+    #torre-alertas-cards .btn,
+    #ddjj-sii-cards .btn,
+    #wh-lista-cards .btn,
+    #btn-previred-revocar,
+    #btn-ddjj-sii-sync-ddjj,
+    #btn-ddjj-sii-sync-f22 {
+        width: 100%;
+        max-width: none;
+        min-height: 44px;
+    }
+    .wh-eventos-grid {
+        grid-template-columns: 1fr;
+    }
+    .f29-tgr-cabeza,
+    .rem-previred-cabeza {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .app-dialogo {
+        max-width: calc(100vw - 24px);
+    }
+}

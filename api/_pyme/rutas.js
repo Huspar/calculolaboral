@@ -579,7 +579,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const s = await sesionParaEscribir(req, res);
         if (!s) return;
         const b = H.cuerpoDe(req);
-        return responder(res, await siiGateway.sincronizarTodas(s.cuentaId, { period: b.period }));
+        return responder(res, await siiGateway.sincronizarTodas(s.cuentaId, { period: b.period, jobType: b.jobType }));
     }
 
     async function siiDatos(req, res) {
@@ -613,7 +613,35 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         if (tipo === 'f29') {
             return responder(res, await siiGateway.obtenerF29(s.cuentaId, companyId, { period }));
         }
-        return H.json(res, 400, { ok: false, codigo: 'tipo_invalido', error: 'Indica tipo=rcv, bhe o f29.' });
+        if (tipo === 'f22') {
+            return responder(res, await siiGateway.obtenerF22(s.cuentaId, companyId, {
+                anioTributario: typeof q.anioTributario === 'string' ? q.anioTributario : undefined
+            }));
+        }
+        if (tipo === 'ddjj') {
+            return responder(res, await siiGateway.obtenerDdjj(s.cuentaId, companyId, {
+                anioTributario: typeof q.anioTributario === 'string' ? q.anioTributario : undefined
+            }));
+        }
+        if (tipo === 'tgr') {
+            return responder(res, await siiGateway.obtenerTgr(s.cuentaId, companyId, {
+                period,
+                estadoPago: typeof q.estadoPago === 'string' ? q.estadoPago : undefined
+            }));
+        }
+        if (tipo === 'previred') {
+            return responder(res, await siiGateway.obtenerPrevired(s.cuentaId, companyId, {
+                period,
+                estado: typeof q.estado === 'string' ? q.estado : undefined
+            }));
+        }
+        if (tipo === 'alerts') {
+            return responder(res, await siiGateway.obtenerAlertas(s.cuentaId, companyId, { period }));
+        }
+        if (tipo === 'alerts-all') {
+            return responder(res, await siiGateway.obtenerAlertasEstudio(s.cuentaId, { period }));
+        }
+        return H.json(res, 400, { ok: false, codigo: 'tipo_invalido', error: 'Indica tipo=rcv, bhe, f29, f22, ddjj, tgr, previred, alerts o alerts-all.' });
     }
 
     async function siiAcuse(req, res) {
@@ -624,6 +652,136 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         const b = H.cuerpoDe(req);
         const companyId = typeof req.query?.companyId === 'string' ? req.query.companyId : (b.companyId || '');
         return responder(res, await siiGateway.enviarAcuseRcv(s.cuentaId, companyId, b));
+    }
+
+    async function siiWebhooks(req, res) {
+        if (!siiGateway) return faltaGateway(res);
+        const m = req.method;
+        if (m === 'GET') {
+            const s = await conSesion(req, res);
+            if (!s) return;
+            const q = req.query || {};
+            if (q.recibidos === '1' || q.recibidos === 1) {
+                let receptor = { configurado: Boolean(env && env.SII_GATEWAY_WEBHOOK_SECRET), ultimoEvento: null, ultimosAvisos: [] };
+                if (estudio) {
+                    const er = await estudio.leer(s.cuentaId).catch(() => null);
+                    const gwData = er && er.ok && er.datos ? er.datos.gatewayWebhooks : null;
+                    const gwCfg = er && er.ok && er.datos ? er.datos.gatewayWebhookConfig : null;
+                    if (gwCfg && gwCfg.signingSecret) receptor.configurado = true;
+                    if (gwData && typeof gwData === 'object') {
+                        receptor.ultimoEvento = gwData.ultimoEvento || null;
+                        receptor.ultimosAvisos = Array.isArray(gwData.ultimosAvisos) ? gwData.ultimosAvisos : [];
+                    }
+                }
+                return H.json(res, 200, { ok: true, receptor });
+            }
+            const webhookId = typeof q.webhookId === 'string' ? q.webhookId : '';
+            if (webhookId && (q.deliveries === '1' || q.deliveries === 1)) {
+                return responder(res, await siiGateway.entregasWebhook(s.cuentaId, webhookId));
+            }
+            return responder(res, await siiGateway.listarWebhooks(s.cuentaId));
+        }
+        if (m === 'POST') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const webhookId = typeof req.query?.webhookId === 'string' ? req.query.webhookId : (b.webhookId || '');
+            if (req.query?.action === 'test' || b.action === 'test') {
+                return responder(res, await siiGateway.probarWebhook(s.cuentaId, webhookId));
+            }
+            const r = await siiGateway.crearWebhook(s.cuentaId, b);
+            if (r.ok && r.webhook && r.webhook.signingSecret && estudio && /\/api\/pyme\/gateway-webhook(?:\?|$)/i.test(String(b.url || ''))) {
+                try {
+                    const er = await estudio.leer(s.cuentaId);
+                    const base = (er && er.ok && er.datos && typeof er.datos === 'object') ? er.datos : {};
+                    base.gatewayWebhookConfig = { webhookId: r.webhook.id || '', signingSecret: r.webhook.signingSecret };
+                    await estudio.guardar(s.cuentaId, base);
+                } catch (e) { /* no bloquea entrega del secreto */ }
+            }
+            return responder(res, r);
+        }
+        if (m === 'DELETE') {
+            const s = await sesionParaEscribir(req, res);
+            if (!s) return;
+            const b = H.cuerpoDe(req);
+            const webhookId = typeof req.query?.webhookId === 'string' ? req.query.webhookId : (b.id || b.webhookId || '');
+            const r = await siiGateway.eliminarWebhook(s.cuentaId, webhookId);
+            if (r.ok && estudio) {
+                try {
+                    const er = await estudio.leer(s.cuentaId);
+                    const base = (er && er.ok && er.datos && typeof er.datos === 'object') ? er.datos : null;
+                    if (base && base.gatewayWebhookConfig && (!webhookId || base.gatewayWebhookConfig.webhookId === webhookId)) {
+                        delete base.gatewayWebhookConfig;
+                        await estudio.guardar(s.cuentaId, base);
+                    }
+                } catch (e) { /* ok */ }
+            }
+            return responder(res, r);
+        }
+        res.setHeader('Allow', 'GET, POST, DELETE');
+        return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
+    }
+
+    async function gatewayWebhook(req, res) {
+        if (!metodo(req, res, 'POST')) return;
+        const { verificarFirmaWebhook } = require('../_estudio/sii_gateway');
+        const h = req.headers || {};
+        const sig = h['x-sii-signature'] || h['X-Sii-Signature'] || '';
+        const event = String(h['x-sii-event'] || h['X-Sii-Event'] || '').trim() || 'unknown';
+        const deliveryId = String(h['x-sii-delivery'] || h['X-Sii-Delivery'] || '').trim();
+        const b = H.cuerpoDe(req);
+        const rawBody = typeof req.rawBody === 'string'
+            ? req.rawBody
+            : (typeof req.body === 'string' ? req.body : JSON.stringify(b));
+
+        const accountId = typeof b.externalAccountId === 'string' ? b.externalAccountId.trim()
+            : (typeof b.accountId === 'string' ? b.accountId.trim()
+                : (b.data && typeof b.data.externalAccountId === 'string' ? b.data.externalAccountId.trim() : ''));
+        const uuidOk = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(accountId);
+
+        let secret = (env && typeof env.SII_GATEWAY_WEBHOOK_SECRET === 'string') ? env.SII_GATEWAY_WEBHOOK_SECRET.trim() : '';
+        let estudioActual = null;
+        if (estudio && uuidOk) {
+            try {
+                const er = await estudio.leer(accountId);
+                if (er && er.ok && er.datos && typeof er.datos === 'object') {
+                    estudioActual = er.datos;
+                    if (!secret && estudioActual.gatewayWebhookConfig && estudioActual.gatewayWebhookConfig.signingSecret) {
+                        secret = String(estudioActual.gatewayWebhookConfig.signingSecret);
+                    }
+                }
+            } catch (e) { /* sigue con secreto global si existe */ }
+        }
+
+        const verif = verificarFirmaWebhook({ rawBody, signatureHeader: String(sig), secret });
+        if (!verif.ok) {
+            return H.json(res, 401, { ok: false, codigo: 'firma_invalida', error: 'Firma de webhook inválida o expirada.' });
+        }
+
+        if (estudio && uuidOk) {
+            try {
+                const base = estudioActual || ((await estudio.leer(accountId)).datos) || {};
+                const actual = (base.gatewayWebhooks && typeof base.gatewayWebhooks === 'object') ? base.gatewayWebhooks : {};
+                const lista = Array.isArray(actual.ultimosAvisos) ? actual.ultimosAvisos.slice() : [];
+                const registro = {
+                    deliveryId: deliveryId || ('wh-' + Date.now()),
+                    event,
+                    companyId: typeof b.companyId === 'string' ? b.companyId.slice(0, 80) : '',
+                    severity: typeof b.severity === 'string' ? b.severity.slice(0, 20) : 'INFO',
+                    title: typeof b.title === 'string' ? b.title.slice(0, 140) : (typeof b.message === 'string' ? b.message.slice(0, 140) : event),
+                    receivedAt: new Date().toISOString()
+                };
+                if (!deliveryId || !lista.some(x => x && x.deliveryId === deliveryId)) {
+                    lista.unshift(registro);
+                }
+                base.gatewayWebhooks = {
+                    ultimoEvento: registro.receivedAt,
+                    ultimosAvisos: lista.slice(0, 25)
+                };
+                await estudio.guardar(accountId, base);
+            } catch (e) { /* no falla el ACK si el JSON de estudio supera tope */ }
+        }
+        return H.json(res, 200, { ok: true, received: true, event, deliveryId });
     }
 
     async function mcpTokens(req, res) {
@@ -735,7 +893,7 @@ function crearRutas({ auth, datos, env, siteUrl, pase, avisos, enlaces, comentar
         return H.json(res, 405, { ok: false, error: 'Método no permitido.' });
     }
 
-    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos, 'sii-acuse': siiAcuse, 'mcp-tokens': mcpTokens, 'portal-estudio': portalEstudioRuta, 'portal-estudio-buzon': portalEstudioBuzonRuta };
+    const tabla = { entrar, verificar, sesion, salir, estado, empresa, empresas, 'datos-personales': datosPersonales, actividad, equipo: equipoRuta, 'portal-gestion': portalGestion, 'portal-datos': portalDatos, trabajador, prestamos, ausencias, meses, mes, honorarios, 'enlace-liquidacion': enlaceLiquidacion, 'enlaces-liquidacion': enlacesLiquidacion, liquidacion: liquidacionPublica, comentario, 'avisos-correo': avisosCorreo, 'avisos-cron': avisosCron, 'avisos-baja': avisosBaja, documento, documentos, vacaciones, vacacion, comprar, desbloqueo, importar, exportar, 'borrar-cuenta': borrarCuenta, 'sii-empresas': siiEmpresas, 'sii-estado': siiEstado, 'sii-credenciales': siiCredenciales, 'sii-sync': siiSync, 'sii-sync-all': siiSyncAll, 'sii-datos': siiDatos, 'sii-acuse': siiAcuse, 'mcp-tokens': mcpTokens, 'sii-webhooks': siiWebhooks, 'gateway-webhook': gatewayWebhook, 'portal-estudio': portalEstudioRuta, 'portal-estudio-buzon': portalEstudioBuzonRuta };
 
     // Capa de cuentas del contador: su estudio (clientes, nóminas, historial) en una fila cifrada (compatible con equipo multiusuario via X-CL-Estudio).
     if (estudio) {

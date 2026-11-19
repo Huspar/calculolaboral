@@ -381,6 +381,8 @@
                 siiEnv: meta.siiEnv || 'PRODUCTION',
                 hasCredentials: Boolean(meta.hasCredentials),
                 credentialKind: meta.credentialKind || '',
+                hasPreviredCredentials: Boolean(meta.hasPreviredCredentials),
+                previredRutUsuario: meta.previredRutUsuario ? normalizarRut(meta.previredRutUsuario) : '',
                 lastSyncAt: meta.lastSyncAt || null,
                 updatedAt: new Date().toISOString()
             };
@@ -463,14 +465,19 @@
             },
             iniciarSync: function (companyId, opts) {
                 var o = opts || {};
+                var jt = o.jobType || o.type || 'FULL_SYNC';
+                if (jt === 'ALL') jt = 'FULL_SYNC';
                 return llamar('sii-sync?companyId=' + encodeURIComponent(companyId), {
                     method: 'POST',
-                    body: { period: periodoGateway(o.period), jobType: o.jobType || 'FULL_SYNC' }
+                    body: { period: periodoGateway(o.period), jobType: jt }
                 });
             },
             iniciarSyncAll: function (opts) {
                 var o = opts || {};
-                var body = o.period ? { period: periodoGateway(o.period) } : {};
+                var body = {};
+                if (o.period) body.period = periodoGateway(o.period);
+                var jt = o.jobType || o.type || '';
+                if (jt && jt !== 'ALL') body.jobType = jt;
                 return llamar('sii-sync-all', { method: 'POST', body: body });
             },
             estadoSync: function (companyId, jobId) {
@@ -507,6 +514,68 @@
                     'period=' + encodeURIComponent(periodoGateway(o.period))
                 ];
                 return llamar('sii-datos?' + params.join('&'));
+            },
+            obtenerF22: function (companyId, opts) {
+                var o = opts || {};
+                var params = ['companyId=' + encodeURIComponent(companyId), 'tipo=f22'];
+                if (o.anioTributario) params.push('anioTributario=' + encodeURIComponent(String(o.anioTributario)));
+                return llamar('sii-datos?' + params.join('&'));
+            },
+            obtenerDdjj: function (companyId, opts) {
+                var o = opts || {};
+                var params = ['companyId=' + encodeURIComponent(companyId), 'tipo=ddjj'];
+                if (o.anioTributario) params.push('anioTributario=' + encodeURIComponent(String(o.anioTributario)));
+                return llamar('sii-datos?' + params.join('&'));
+            },
+            obtenerTgr: function (companyId, opts) {
+                var o = opts || {};
+                var params = ['companyId=' + encodeURIComponent(companyId), 'tipo=tgr'];
+                if (o.period) params.push('period=' + encodeURIComponent(periodoGateway(o.period)));
+                if (o.estadoPago) params.push('estadoPago=' + encodeURIComponent(o.estadoPago));
+                return llamar('sii-datos?' + params.join('&'));
+            },
+            obtenerPrevired: function (companyId, opts) {
+                var o = opts || {};
+                var params = ['companyId=' + encodeURIComponent(companyId), 'tipo=previred'];
+                if (o.period) params.push('period=' + encodeURIComponent(periodoGateway(o.period)));
+                if (o.estado) params.push('estado=' + encodeURIComponent(o.estado));
+                return llamar('sii-datos?' + params.join('&'));
+            },
+            obtenerAlertas: function (companyId, opts) {
+                var o = opts || {};
+                var params = ['companyId=' + encodeURIComponent(companyId), 'tipo=alerts'];
+                if (o.period) params.push('period=' + encodeURIComponent(periodoGateway(o.period)));
+                return llamar('sii-datos?' + params.join('&'));
+            },
+            obtenerAlertasEstudio: function (opts) {
+                var o = opts || {};
+                var params = ['tipo=alerts-all'];
+                if (o.period) params.push('period=' + encodeURIComponent(periodoGateway(o.period)));
+                return llamar('sii-datos?' + params.join('&'));
+            },
+            listarWebhooks: function () {
+                return llamar('sii-webhooks');
+            },
+            estadoReceptorWebhook: function () {
+                return llamar('sii-webhooks?recibidos=1');
+            },
+            crearWebhook: function (payload) {
+                return llamar('sii-webhooks', { method: 'POST', body: payload });
+            },
+            eliminarWebhook: function (webhookId) {
+                return llamar('sii-webhooks?webhookId=' + encodeURIComponent(webhookId), {
+                    method: 'DELETE',
+                    body: { webhookId: webhookId }
+                });
+            },
+            probarWebhook: function (webhookId) {
+                return llamar('sii-webhooks?action=test&webhookId=' + encodeURIComponent(webhookId), {
+                    method: 'POST',
+                    body: { webhookId: webhookId, action: 'test' }
+                });
+            },
+            entregasWebhook: function (webhookId) {
+                return llamar('sii-webhooks?webhookId=' + encodeURIComponent(webhookId) + '&deliveries=1');
             },
             enviarAcuseRcv: function (companyId, payload) {
                 var p = Object.assign({}, payload || {});
@@ -546,6 +615,166 @@
         };
     }
 
+    // ---------- Normalizadores TGR, PreviRed, DDJJ, F22 y Alertas ----------
+    var WEBHOOK_EVENTOS = [
+        { id: '*', label: 'Todos los eventos (*)' },
+        { id: 'sync.completed', label: 'Sincronización lista (sync.completed)' },
+        { id: 'sync.failed', label: 'Error de sincronización (sync.failed)' },
+        { id: 'rcv.acuse_expiring', label: 'Acuse RCV por vencer (rcv.acuse_expiring)' },
+        { id: 'f29.due_alert', label: 'Alerta vencimiento F29 (f29.due_alert)' },
+        { id: 'tgr.debt_detected', label: 'Deuda TGR detectada (tgr.debt_detected)' },
+        { id: 'previred.overdue_detected', label: 'Mora PreviRed detectada (previred.overdue_detected)' },
+        { id: 'webhook.test', label: 'Evento de prueba (webhook.test)' }
+    ];
+
+    function metaModuloAlerta(alerta) {
+        var code = String((alerta && alerta.code) || '').toUpperCase();
+        if (code === 'RCV_ACUSE_EXPIRING' || code.indexOf('RCV') === 0) {
+            return { modulo: 'RCV', etiqueta: 'RCV (Acuses)', vista: 'f29', textoDefecto: 'Acuse de recibo RCV por vencer (plazo 8 días)' };
+        }
+        if (code === 'F29_DUE_PENDING' || code.indexOf('F29') === 0) {
+            return { modulo: 'F29', etiqueta: 'Formulario 29', vista: 'f29', textoDefecto: 'F29 del período pendiente de declaración' };
+        }
+        if (code === 'TGR_DEBT_OR_UNPAID' || code.indexOf('TGR') === 0) {
+            return { modulo: 'TGR', etiqueta: 'TGR (Tesorería)', vista: 'f29', textoDefecto: 'Deuda o giro impago registrado en Tesorería' };
+        }
+        if (code === 'PREVIRED_UNPAID_OR_OVERDUE' || code.indexOf('PREVIRED') === 0) {
+            return { modulo: 'PREVIRED', etiqueta: 'PreviRed', vista: 'remuneraciones', textoDefecto: 'Cotizaciones PreviRed impagas o atrasadas' };
+        }
+        if (code === 'DDJJ_OBSERVED' || code.indexOf('DDJJ') === 0 || code.indexOf('F22') === 0) {
+            return { modulo: 'DDJJ', etiqueta: 'DDJJ / Renta', vista: 'ddjj', textoDefecto: 'Declaración Jurada observada por el SII' };
+        }
+        return { modulo: 'SII', etiqueta: 'SII', vista: 'f29', textoDefecto: 'Alerta tributaria detectada' };
+    }
+
+    function resumirTgrDesdeGateway(resp) {
+        if (!resp || resp.synced === false) {
+            return { synced: false, estado: '', selloCls: 'sello-guardada', selloTexto: 'TGR: Sin consultar', totalAdeudado: 0, totalMultasIntereses: 0, totalCount: 0, items: [] };
+        }
+        var items = Array.isArray(resp.items) ? resp.items : [];
+        var deuda = Math.round(Number(resp.totalAdeudado || 0)) || 0;
+        var multas = Math.round(Number(resp.totalMultasIntereses || 0)) || 0;
+        var estado = '';
+        for (var i = 0; i < items.length; i++) {
+            var ep = String(items[i].estadoPago || items[i].estado || '').toUpperCase();
+            if (ep === 'MOROSO' || ep === 'IMPAGO') { estado = ep; break; }
+            if (ep === 'CONVENIO' && !estado) estado = ep;
+            if (!estado && ep) estado = ep;
+        }
+        if (!estado) estado = deuda > 0 ? 'MOROSO' : 'SIN_DEUDA';
+        var mapa = {
+            PAGADO: { cls: 'sello-emitida', txt: 'TGR: Pagado' },
+            SIN_DEUDA: { cls: 'sello-emitida', txt: 'TGR: Sin deuda' },
+            CONVENIO: { cls: 'sello-preparada', txt: 'TGR: Con convenio vigente' },
+            PENDIENTE: { cls: 'sello-preparada', txt: 'TGR: Pendiente' },
+            IMPAGO: { cls: 'sello-riesgo', txt: 'TGR: Impago' },
+            MOROSO: { cls: 'sello-riesgo', txt: 'TGR: Moroso' }
+        };
+        var info = mapa[estado] || (deuda > 0 ? mapa.MOROSO : mapa.SIN_DEUDA);
+        return {
+            synced: true,
+            estado: estado,
+            selloCls: info.cls,
+            selloTexto: info.txt,
+            totalAdeudado: deuda,
+            totalMultasIntereses: multas,
+            totalCount: Number(resp.totalCount || items.length) || 0,
+            items: items
+        };
+    }
+
+    function resumirPreviredDesdeGateway(resp) {
+        if (!resp || resp.synced === false) {
+            return { synced: false, estado: '', selloCls: 'sello-guardada', selloTexto: 'Sin consultar', badgeCorto: 'Sin conectar', totalDeudaEstimada: 0, hasLeyBustosRisk: false, period: '', items: [] };
+        }
+        var items = Array.isArray(resp.items) ? resp.items : [];
+        var deuda = Math.round(Number(resp.totalDeudaEstimada || 0)) || 0;
+        var riesgo = Boolean(resp.hasLeyBustosRisk);
+        var estado = '';
+        var perItem = '';
+        for (var i = 0; i < items.length; i++) {
+            var st = String(items[i].estado || '').toUpperCase();
+            if (!perItem && items[i].periodo) perItem = String(items[i].periodo);
+            if (st === 'ATRASADO' || st === 'MOROSO') { estado = 'ATRASADO'; break; }
+            if (st === 'DECLARADO_NO_PAGADO') estado = 'DECLARADO_NO_PAGADO';
+            else if (!estado && st) estado = st;
+        }
+        if (!estado) {
+            if (riesgo || deuda > 0) estado = 'ATRASADO';
+            else if (items.length === 0) estado = 'SIN_MOVIMIENTO';
+            else estado = 'PAGADO';
+        }
+        var mapa = {
+            PAGADO: { cls: 'sello-emitida', txt: 'Pagado', corto: 'Pagado' },
+            SIN_MOVIMIENTO: { cls: 'sello-guardada', txt: 'Sin movimiento', corto: 'Sin mov.' },
+            DECLARADO_NO_PAGADO: { cls: 'sello-preparada', txt: 'Declarado sin pago', corto: 'Declarado sin pago' },
+            ATRASADO: { cls: 'sello-riesgo', txt: 'Atrasado / Con deuda', corto: 'Atrasado' }
+        };
+        var info = mapa[estado] || mapa.SIN_MOVIMIENTO;
+        return {
+            synced: true,
+            estado: estado,
+            selloCls: info.cls,
+            selloTexto: info.txt,
+            badgeCorto: info.corto,
+            totalDeudaEstimada: deuda,
+            hasLeyBustosRisk: riesgo,
+            period: periodoUi(perItem),
+            items: items
+        };
+    }
+
+    function normalizarDdjjDesdeGateway(resp) {
+        if (!resp || resp.synced === false) return { synced: false, totalCount: 0, observadasCount: 0, items: [] };
+        var items = Array.isArray(resp.items) ? resp.items : [];
+        var norm = items.map(function (it) {
+            var cod = String(it.codigo || it.formulario || it.formCode || '').replace(/^DJ\s*/i, '').trim();
+            var est = String(it.estado || it.status || 'RECIBIDA').toUpperCase();
+            var tab = '1887';
+            if (cod === '1879') tab = '1879';
+            else if (cod === '1947' || cod === '1948') tab = '1947';
+            else if (cod === 'CPT') tab = 'cpt';
+            return {
+                codigo: cod || 'DDJJ',
+                estado: est,
+                esObservada: est.indexOf('OBSERV') >= 0 || est.indexOf('RECHAZ') >= 0,
+                folio: String(it.folio || it.numeroAtencion || ''),
+                fechaEnvio: String(it.fechaEnvio || it.submittedAt || '').slice(0, 10),
+                observacion: String(it.observacion || it.observation || it.detalle || ''),
+                tabDestino: tab
+            };
+        });
+        return {
+            synced: true,
+            totalCount: Number(resp.totalCount || norm.length) || 0,
+            observadasCount: norm.filter(function (x) { return x.esObservada; }).length,
+            items: norm
+        };
+    }
+
+    function compararF22ConSii(f22Local, f22Resp) {
+        var localSaldo = f22Local
+            ? (f22Local.esTransparente ? 0 : (f22Local.saldoAPagar > 0 ? f22Local.saldoAPagar : -Number(f22Local.devolucionF22 || 0)))
+            : 0;
+        if (!f22Resp || f22Resp.synced === false || !f22Resp.summary) {
+            return { synced: false, folio: 'Sin folio', estado: 'Sin datos SII', selloCls: 'sello-guardada', resultadoSii: 0, resultadoLocal: localSaldo, diferencia: 0 };
+        }
+        var s = f22Resp.summary;
+        var est = String(s.estado || s.status || 'PROPUESTA').toUpperCase();
+        var resSii = Math.round(Number(s.montoResultado != null ? s.montoResultado : (s.saldoAPagar != null ? s.saldoAPagar : (s.devolucion != null ? -Number(s.devolucion) : 0)))) || 0;
+        var selloCls = est.indexOf('OBSERV') >= 0 ? 'sello-riesgo' : (est.indexOf('PRESENT') >= 0 || est.indexOf('ACEPT') >= 0 ? 'sello-emitida' : 'sello-preparada');
+        return {
+            synced: true,
+            anioTributario: s.anioTributario || '',
+            folio: (s.folio ? ('Folio ' + s.folio + ' · ') : '') + est,
+            estado: est,
+            selloCls: selloCls,
+            resultadoSii: resSii,
+            resultadoLocal: localSaldo,
+            diferencia: resSii - localSaldo
+        };
+    }
+
     var apiExport = {
         K_VINCULOS: K_VINCULOS,
         normalizarRut: normalizarRut,
@@ -563,7 +792,13 @@
         crearTiendaVinculos: crearTiendaVinculos,
         estudioActivoId: estudioActivoId,
         crearClienteApi: crearClienteApi,
-        version: '1.1.0'
+        WEBHOOK_EVENTOS: WEBHOOK_EVENTOS,
+        metaModuloAlerta: metaModuloAlerta,
+        resumirTgrDesdeGateway: resumirTgrDesdeGateway,
+        resumirPreviredDesdeGateway: resumirPreviredDesdeGateway,
+        normalizarDdjjDesdeGateway: normalizarDdjjDesdeGateway,
+        compararF22ConSii: compararF22ConSii,
+        version: '1.2.0'
     };
 
     if (typeof module !== 'undefined' && module.exports) module.exports = apiExport;

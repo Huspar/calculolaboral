@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.19.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.20.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -313,6 +313,47 @@
           </div>
         </div>
 
+        <section class="panel rem-previred-card" id="rem-previred-card" aria-labelledby="rem-previred-titulo" style="margin-bottom:14px">
+          <div class="rem-previred-cabeza">
+            <div class="rem-previred-info">
+              <div class="rem-previred-titulo-fila">
+                <h2 id="rem-previred-titulo" class="rem-previred-h2">Estado PreviRed sincronizado</h2>
+                <span class="sello sello-guardada" id="rem-previred-sello">
+                  <span class="material-icons" aria-hidden="true">cloud_off</span>
+                  <span id="rem-previred-sello-txt">Sin consultar</span>
+                </span>
+              </div>
+              <p class="texto-ayuda" id="rem-previred-meta">Conecta la clave PreviRed de la empresa para verificar cotizaciones declaradas y pagadas.</p>
+            </div>
+            <div class="rem-previred-cifras">
+              <div class="rem-previred-dato">
+                <span class="f29-tgr-lbl">Deuda estimada</span>
+                <strong class="mono" id="rem-previred-deuda">$0</strong>
+              </div>
+              <div class="rem-previred-dato">
+                <span class="f29-tgr-lbl">Período consultado</span>
+                <strong class="mono" id="rem-previred-periodo">Sin sync</strong>
+              </div>
+            </div>
+            <div class="rem-previred-acciones">
+              <button type="button" class="btn btn-chico" id="btn-rem-previred-cred">
+                <span class="material-icons" aria-hidden="true">vpn_key</span><span>Clave PreviRed</span>
+              </button>
+              <button type="button" class="btn btn-chico btn-primario" id="btn-rem-previred-sync">
+                <span class="material-icons" aria-hidden="true">sync</span><span>Consultar PreviRed</span>
+              </button>
+            </div>
+          </div>
+          <div class="rem-ley-bustos-alerta" id="rem-ley-bustos-alert" hidden role="alert">
+            <span class="material-icons" aria-hidden="true">gavel</span>
+            <div class="rem-ley-bustos-txt">
+              <strong>Riesgo Ley Bustos activo (Art. 162 Código del Trabajo)</strong>
+              <p id="rem-ley-bustos-detalle">Existen cotizaciones previsionales impagas o atrasadas. Mientras no se acrediten íntegramente antes del finiquito, el despido no pone término a la obligación de seguir pagando remuneraciones.</p>
+            </div>
+            <button type="button" class="btn btn-chico" id="btn-rem-ley-bustos-ver">Ir a Finiquitos</button>
+          </div>
+        </section>
+
         <!-- Panel Finiquitos en Lote -->
         <div id="pane-finiquitos" hidden>
           <div class="panel" style="margin-bottom:16px">
@@ -605,6 +646,7 @@
                       <th scope="col">Dotación</th>
                       <th scope="col">Archivo CSV</th>
                       <th scope="col">Estado LRE (manual)</th>
+                      <th scope="col">PreviRed (sync)</th>
                       <th scope="col">Acciones</th>
                     </tr>
                   </thead>
@@ -660,6 +702,34 @@
           <div class="f29-sii-progreso" id="f29-sii-progreso" hidden role="status" aria-live="polite">
             <span class="sii-spin material-icons" aria-hidden="true">sync</span>
             <span id="f29-sii-progreso-txt">Consultando RCV y F29 en el SII...</span>
+          </div>
+        </div>
+
+        <div class="panel f29-tgr-panel" id="f29-tgr-bloque" style="margin-bottom:16px">
+          <div class="f29-tgr-cabeza">
+            <div class="f29-tgr-izq">
+              <span class="sello sello-guardada" id="f29-tgr-sello">
+                <span class="material-icons" aria-hidden="true">account_balance</span>
+                <span id="f29-tgr-sello-txt">TGR: Sin consultar</span>
+              </span>
+              <span class="f29-tgr-periodo mono" id="f29-tgr-periodo">Período 2026-11</span>
+              <span class="texto-ayuda" id="f29-tgr-meta">Consulta el estado real de pago, convenios o morosidades en Tesorería General de la República.</span>
+            </div>
+            <div class="f29-tgr-cifras" id="f29-tgr-cifras">
+              <div class="f29-tgr-dato">
+                <span class="f29-tgr-lbl">Total adeudado TGR</span>
+                <strong class="mono" id="f29-tgr-total">$0</strong>
+              </div>
+              <div class="f29-tgr-dato">
+                <span class="f29-tgr-lbl">Multas e intereses</span>
+                <strong class="mono" id="f29-tgr-multas">$0</strong>
+              </div>
+            </div>
+            <div class="f29-tgr-acciones">
+              <button type="button" class="btn btn-chico" id="btn-f29-tgr-sync">
+                <span class="material-icons" aria-hidden="true">sync</span><span>Actualizar TGR</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1585,6 +1655,75 @@
           <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">F29 consolidado (cód. 91)</span><span class="fin-kpi-val mono" id="torre-k-f29total">$0</span></div>
         </div>
 
+        <div class="panel torre-alertas-panel" id="torre-alertas-panel" style="margin-bottom:16px">
+          <div class="panel-head">
+            <div>
+              <h2>
+                Bandeja de alertas de cartera
+                <span class="torre-alerta-total-pill mono" id="torre-alertas-total-pill">0</span>
+              </h2>
+              <p class="panel-ayuda">Vencimientos RCV, F29, deudas en TGR, mora PreviRed y observaciones SII en todas tus empresas conectadas.</p>
+            </div>
+            <div class="v-acciones torre-alertas-controles">
+              <span class="torre-riesgo-total" id="torre-alertas-riesgo-wrap">
+                Monto en riesgo: <strong class="mono" id="torre-alerta-riesgo-total">$0</strong>
+              </span>
+              <button type="button" class="btn btn-chico" id="btn-torre-alertas-refresh">
+                <span class="material-icons" aria-hidden="true">refresh</span><span>Actualizar alertas</span>
+              </button>
+            </div>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="torre-alertas-filtros">
+              <div class="fin-filtros" id="torre-alertas-sev-filtros" role="tablist" aria-label="Filtrar alertas por severidad">
+                <button type="button" class="fin-chip activo" data-alerta-sev="TODAS" role="tab" aria-selected="true">
+                  Todas <span class="fin-chip-cnt" id="torre-sev-cnt-todas">0</span>
+                </button>
+                <button type="button" class="fin-chip" data-alerta-sev="CRITICAL" role="tab" aria-selected="false">
+                  Críticas <span class="fin-chip-cnt crit" id="torre-sev-cnt-crit">0</span>
+                </button>
+                <button type="button" class="fin-chip" data-alerta-sev="WARNING" role="tab" aria-selected="false">
+                  Preventivas <span class="fin-chip-cnt warn" id="torre-sev-cnt-warn">0</span>
+                </button>
+                <button type="button" class="fin-chip" data-alerta-sev="INFO" role="tab" aria-selected="false">
+                  Informativas <span class="fin-chip-cnt" id="torre-sev-cnt-info">0</span>
+                </button>
+              </div>
+              <div class="torre-alertas-select-wrap">
+                <label for="torre-alerta-modulo" class="sr-only">Filtrar por módulo</label>
+                <select id="torre-alerta-modulo" class="lq-select lq-select-sm">
+                  <option value="TODOS">Todos los módulos</option>
+                  <option value="RCV">RCV (Acuses)</option>
+                  <option value="F29">Formulario 29</option>
+                  <option value="TGR">TGR (Tesorería)</option>
+                  <option value="PREVIRED">PreviRed</option>
+                  <option value="DDJJ">DDJJ / Renta</option>
+                </select>
+              </div>
+            </div>
+            <div class="demo-vacio" id="torre-alertas-vacio" hidden>
+              <p class="demo-vacio-t">Sin alertas activas para este filtro</p>
+              <p class="texto-ayuda">Las empresas conectadas no registran plazos críticos ni morosidades pendientes.</p>
+            </div>
+            <div class="tabla-contable-wrap" id="torre-alertas-tabla-wrap">
+              <table class="tabla-contable compacta">
+                <thead>
+                  <tr>
+                    <th scope="col">Severidad</th>
+                    <th scope="col">Empresa / RUT</th>
+                    <th scope="col">Módulo</th>
+                    <th scope="col">Detalle de alerta</th>
+                    <th scope="col" class="num">Monto en riesgo</th>
+                    <th scope="col" class="num">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-torre-alertas"></tbody>
+              </table>
+            </div>
+            <div class="fin-cards-lista" id="torre-alertas-cards"></div>
+          </div>
+        </div>
+
         <div class="torre-sii-progreso-panel" id="torre-sii-progreso-panel" hidden role="status" aria-live="polite">
           <div class="torre-sii-progreso-cabeza">
             <div class="torre-sii-progreso-txt">
@@ -1609,9 +1748,19 @@
               <button type="button" class="btn btn-chico" id="btn-torre-portal" title="Compartir portal de solo lectura con el cliente activo">
                 <span class="material-icons" aria-hidden="true">share</span><span>Portal cliente</span>
               </button>
+              <button type="button" class="btn btn-chico" id="btn-torre-webhooks" title="Configurar webhooks HMAC-SHA256 y receptor automático del estudio">
+                <span class="material-icons" aria-hidden="true">webhook</span><span>Webhooks</span>
+              </button>
               <button type="button" class="btn btn-chico" id="btn-torre-mcp" title="Conectar tu cartera del estudio con Claude Desktop vía MCP">
                 <span class="material-icons" aria-hidden="true">hub</span><span>Claude (MCP)</span>
               </button>
+              <select id="torre-sync-tipo" class="lq-select lq-select-sm torre-sync-select" aria-label="Módulo a sincronizar">
+                <option value="ALL" selected>Todo (SII + TGR + PreviRed)</option>
+                <option value="F22_SUMMARY">Solo F22 SII</option>
+                <option value="DDJJ_SUMMARY">Solo DDJJ SII</option>
+                <option value="TGR_DEBT">Solo TGR</option>
+                <option value="PREVIRED_STATUS">Solo PreviRed</option>
+              </select>
               <button type="button" class="btn btn-chico btn-primario suite-btn-sync-all" id="btn-torre-sync-all" title="Encolar sincronización SII para todas las empresas conectadas del estudio">
                 <span class="material-icons" aria-hidden="true">sync</span><span>Sincronizar cartera SII</span>
               </button>
@@ -1758,12 +1907,61 @@
 
         <div class="suite-preval-strip warn" id="ddjj-preval-bar" role="status" aria-live="polite"></div>
 
+        <div class="panel f29-sii-panel" id="ddjj-sii-bloque" style="margin-bottom:14px">
+          <div class="f29-sii-cabeza">
+            <div class="f29-sii-info">
+              <div>
+                <span class="sello sello-guardada" id="ddjj-sii-sello">
+                  <span class="material-icons" aria-hidden="true">cloud_off</span>
+                  <span id="ddjj-sii-sello-txt">Renta SII sin sincronizar</span>
+                </span>
+              </div>
+              <p class="f29-sii-meta" id="ddjj-sii-meta">Contrasta tus borradores locales con las DDJJ recibidas y la propuesta o declaración F22 del SII para AT 2026.</p>
+            </div>
+            <div class="f29-sii-acciones">
+              <button type="button" class="btn btn-chico" id="btn-ddjj-sii-sync-ddjj">
+                <span class="material-icons" aria-hidden="true">sync</span><span>Sincronizar DDJJ SII</span>
+              </button>
+              <button type="button" class="btn btn-chico btn-primario" id="btn-ddjj-sii-sync-f22">
+                <span class="material-icons" aria-hidden="true">sync</span><span>Sincronizar F22 SII</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="fin-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
           <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true" aria-controls="subddjj-1887">DJ 1887 y Cert. N°6</button>
           <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false" aria-controls="subddjj-1879">DJ 1879 y Cert. N°1</button>
           <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false" aria-controls="subddjj-1947">DJ 1947 / 1948</button>
           <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false" aria-controls="subddjj-cpt">CPT Simplificado</button>
           <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false" aria-controls="subddjj-f22">Propuesta F22 (IDPC vs PPM)</button>
+        </div>
+
+        <div class="panel ddjj-sii-panel" id="ddjj-sii-estado-panel" hidden style="margin-bottom:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Estado oficial de DDJJ en SII (<span class="mono" id="ddjj-sii-at-lbl">AT 2026</span>)</h2>
+              <p class="panel-ayuda">Declaraciones recibidas u observadas directamente en sii.cl. Haz clic en «Abrir borrador» para contrastar en esta pantalla.</p>
+            </div>
+            <span class="sello sello-guardada" id="ddjj-sii-obs-badge" hidden>0 observadas</span>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="tabla-contable-wrap">
+              <table class="tabla-contable compacta">
+                <thead>
+                  <tr>
+                    <th scope="col">Formulario DJ</th>
+                    <th scope="col">Estado SII</th>
+                    <th scope="col">Fecha envío / folio</th>
+                    <th scope="col">Observación SII</th>
+                    <th scope="col" class="num">Contraste</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-ddjj-sii"></tbody>
+              </table>
+            </div>
+            <div class="fin-cards-lista" id="ddjj-sii-cards"></div>
+          </div>
         </div>
 
         <!-- DJ 1887 -->
@@ -1925,6 +2123,23 @@
             <div class="fin-kpi"><span class="fin-kpi-label" id="f22-k-idpc-lbl">IDPC determinado</span><span class="fin-kpi-val mono" id="f22-k-idpc">$0</span></div>
             <div class="fin-kpi"><span class="fin-kpi-label">PPM reajustado (Cód. 36 L85)</span><span class="fin-kpi-val mono ok" id="f22-k-ppm36">$0</span></div>
             <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label" id="f22-k-saldo-lbl">Impuesto F22 estimado</span><span class="fin-kpi-val mono" id="f22-k-saldo">$0</span></div>
+          </div>
+          <div class="panel f22-sii-cruce-panel" id="f22-sii-resumen-panel" hidden style="margin-bottom:14px">
+            <div class="panel-head">
+              <div>
+                <h2>F22 en el SII vs. borrador local (<span class="mono" id="f22-sii-at-lbl">AT 2026</span>)</h2>
+                <p class="panel-ayuda" id="f22-sii-sub">Comparación referencial entre propuesta/declaración SII y los cálculos de tu cierre preliminar.</p>
+              </div>
+              <span class="sello sello-guardada" id="f22-sii-estado-sello">Sin datos SII</span>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="fin-kpis fin-kpis-4">
+                <div class="fin-kpi"><span class="fin-kpi-label">Folio / Estado F22 SII</span><span class="fin-kpi-val mono" id="f22-sii-folio">Sin folio</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Resultado según SII</span><span class="fin-kpi-val mono" id="f22-sii-monto">$0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Borrador local</span><span class="fin-kpi-val mono" id="f22-sii-local">$0</span></div>
+                <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Diferencia a revisar</span><span class="fin-kpi-val mono" id="f22-sii-diff">$0</span></div>
+              </div>
+            </div>
           </div>
           <div class="panel">
             <div class="panel-head">
@@ -2138,6 +2353,9 @@
       <button type="button" role="tab" class="sii-metodo-btn" id="tab-metodo-pfx" aria-selected="false" aria-controls="panel-metodo-pfx">
         <span class="material-icons" aria-hidden="true">verified_user</span>Certificado Digital (.pfx)
       </button>
+      <button type="button" role="tab" class="sii-metodo-btn" id="tab-metodo-previred" aria-selected="false" aria-controls="panel-metodo-previred">
+        <span class="material-icons" aria-hidden="true">badge</span>PreviRed
+      </button>
     </div>
 
     <div class="lq-field" style="margin-bottom:12px">
@@ -2177,6 +2395,27 @@
       </div>
     </form>
 
+    <form id="panel-metodo-previred" class="sii-form-panel" role="tabpanel" aria-labelledby="tab-metodo-previred" hidden novalidate>
+      <div id="previred-estado-boveda" class="sii-feedback-box ok" hidden role="status">
+        <strong id="previred-boveda-titulo">Credenciales PreviRed guardadas en bóveda</strong>
+        <span id="previred-boveda-meta">RUT usuario conectado. La clave permanece oculta y cifrada.</span>
+      </div>
+      <div class="lq-field">
+        <label for="previred-input-rut-usuario">RUT usuario o representante PreviRed</label>
+        <input type="text" id="previred-input-rut-usuario" class="mono" placeholder="12.345.678-9" maxlength="12" autocomplete="off">
+        <span class="texto-ayuda">RUT de quien inicia sesión en previred.com para esta empresa.</span>
+      </div>
+      <div class="lq-field">
+        <label for="previred-input-pass">Clave PreviRed</label>
+        <div class="campo-password-wrap">
+          <input type="password" id="previred-input-pass" placeholder="Ingresa o reemplaza la clave PreviRed" autocomplete="new-password">
+          <button type="button" class="btn-toggle-pass" id="btn-toggle-previred-pass" aria-label="Mostrar u ocultar clave PreviRed">
+            <span class="material-icons" aria-hidden="true">visibility</span>
+          </button>
+        </div>
+      </div>
+    </form>
+
     <div class="sii-seguridad-aviso">
       <span class="material-icons" aria-hidden="true">security</span>
       <div class="sii-seguridad-txt">
@@ -2192,6 +2431,9 @@
         <button type="button" class="btn-peligro-texto" id="btn-sii-revocar" hidden>
           <span class="material-icons" aria-hidden="true">link_off</span>Desconectar credenciales
         </button>
+        <button type="button" class="btn-peligro-texto" id="btn-previred-revocar" hidden>
+          <span class="material-icons" aria-hidden="true">link_off</span>Desconectar PreviRed
+        </button>
         <button type="button" class="btn-peligro-texto" id="btn-sii-eliminar-empresa" hidden>
           <span class="material-icons" aria-hidden="true">delete</span>Eliminar empresa del conector
         </button>
@@ -2201,6 +2443,119 @@
         <button type="button" class="btn btn-primario" id="btn-sii-guardar">
           <span class="material-icons" aria-hidden="true">check</span>Guardar y conectar
         </button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal Webhooks del Estudio (HMAC-SHA256) -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-webhooks-estudio" aria-labelledby="wh-dlg-titulo">
+  <div class="midt-cabeza">
+    <div>
+      <h2 id="wh-dlg-titulo">Webhooks del Estudio (HMAC-SHA256)</h2>
+      <p class="midt-sub">Recibe eventos de sincronización, alertas y cambios de estado en tiempo real.</p>
+    </div>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-wh-dlg" aria-label="Cerrar ventana">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+
+  <div class="dialogo-cuerpo">
+    <div class="wh-receptor-box" id="wh-receptor-panel">
+      <div class="wh-receptor-head">
+        <div>
+          <strong>Receptor automático CalculoLaboral</strong>
+          <p class="texto-ayuda">Mantiene actualizados los saldos en Asistente Pyme vía <code class="mono">/api/pyme/gateway-webhook</code>.</p>
+        </div>
+        <span class="sello sello-guardada" id="wh-receptor-sello">Sin verificar</span>
+      </div>
+      <div class="wh-receptor-meta">
+        <span>Último evento recibido: <strong class="mono" id="wh-receptor-ultimo">Sin registros</strong></span>
+      </div>
+    </div>
+
+    <form id="form-wh-crear" class="wh-crear-form" novalidate>
+      <div class="lq-field">
+        <label for="wh-input-url">URL destino HTTPS</label>
+        <input type="url" id="wh-input-url" class="mono" placeholder="https://tu-sistema.cl/webhooks/calculolaboral" required autocomplete="off">
+        <div class="wh-url-ayuda-fila">
+          <span class="texto-ayuda">Debe responder HTTPS (o usar el receptor propio de CalculoLaboral).</span>
+          <button type="button" class="btn btn-chico" id="btn-wh-usar-receptor">Usar receptor CalculoLaboral</button>
+        </div>
+        <span class="pm-error" id="wh-input-url-err" hidden role="alert"></span>
+      </div>
+
+      <div class="lq-field">
+        <span class="lq-label-texto">Eventos suscritos</span>
+        <div class="wh-eventos-grid" id="wh-eventos-grupo">
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="sync.completed" checked> Sincronización lista (<code class="mono">sync.completed</code>)</label>
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="sync.failed"> Error de sincronización (<code class="mono">sync.failed</code>)</label>
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="rcv.acuse_expiring" checked> Acuse RCV por vencer (<code class="mono">rcv.acuse_expiring</code>)</label>
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="f29.due_alert"> Alerta vencimiento F29 (<code class="mono">f29.due_alert</code>)</label>
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="tgr.debt_detected" checked> Deuda TGR detectada (<code class="mono">tgr.debt_detected</code>)</label>
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="previred.overdue_detected" checked> Mora PreviRed detectada (<code class="mono">previred.overdue_detected</code>)</label>
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="webhook.test"> Evento de prueba (<code class="mono">webhook.test</code>)</label>
+          <label class="pm-check"><input type="checkbox" name="wh-evento" value="*"> Todos los eventos (<code class="mono">*</code>)</label>
+        </div>
+      </div>
+
+      <div class="wh-crear-acciones">
+        <button type="submit" class="btn btn-primario" id="btn-wh-crear">
+          <span class="material-icons" aria-hidden="true">add_link</span><span>Crear webhook</span>
+        </button>
+      </div>
+    </form>
+
+    <div id="wh-secret-box" class="mcp-token-once" hidden role="status" aria-live="polite">
+      <p class="mcp-token-once-aviso">
+        <span class="material-icons" aria-hidden="true">warning</span>
+        <span><strong>Copia este secreto HMAC ahora:</strong> se muestra una sola vez para verificar la firma de tus entregas.</span>
+      </p>
+      <div class="mcp-copiar-fila">
+        <code id="wh-secret-valor" class="mono mcp-codigo-linea"></code>
+        <button type="button" class="btn btn-chico btn-primario" id="btn-wh-copiar-secret">
+          <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar secreto</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="wh-dlg-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
+
+    <div class="wh-lista-wrap">
+      <h3 class="preval-bloque-titulo">Webhooks configurados</h3>
+      <div class="tabla-contable-wrap">
+        <table class="tabla-contable compacta">
+          <thead>
+            <tr>
+              <th scope="col">URL / Eventos</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="num">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-wh-lista"></tbody>
+        </table>
+      </div>
+      <div class="fin-cards-lista" id="wh-lista-cards"></div>
+      <p class="texto-ayuda" id="wh-lista-vacio" hidden>Aún no has registrado webhooks externos para este estudio.</p>
+    </div>
+
+    <div class="wh-deliveries-wrap" id="wh-deliveries-panel" hidden>
+      <div class="preval-bloque-head">
+        <h3 class="preval-bloque-titulo">Últimos envíos (<span class="mono" id="wh-deliveries-url"></span>)</h3>
+        <button type="button" class="btn btn-chico" id="btn-wh-cerrar-deliveries">Ocultar envíos</button>
+      </div>
+      <div class="tabla-contable-wrap">
+        <table class="tabla-contable compacta">
+          <thead>
+            <tr>
+              <th scope="col">Fecha</th>
+              <th scope="col">Evento</th>
+              <th scope="col">HTTP</th>
+              <th scope="col" class="num">Intentos</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-wh-deliveries"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -2768,16 +3123,16 @@
 <script src="/js/contadores_importadores.js?v=1.1.0"></script>
 <script src="/js/contadores_renta.js?v=1.1.0"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.2.0"></script>
-<script src="/js/contadores_sii.js?v=1.4.0"></script>
-<script src="/js/demo_suite.js?v=2.12.0"></script>
+<script src="/js/contadores_sii.js?v=1.5.0"></script>
+<script src="/js/demo_suite.js?v=2.13.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
-<script src="/js/demo_sii.js?v=1.3.0"></script>
+<script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.0.0"></script>
 <script src="/js/demo_portal_estudio.js?v=1.1.0"></script>
 <script src="/js/demo_midt.js?v=1.1.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
 <script src="/js/bandeja_lre.js?v=1.0.0"></script>
-<script src="/js/demo_bandeja_lre.js?v=1.1.0"></script>
+<script src="/js/demo_bandeja_lre.js?v=1.2.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

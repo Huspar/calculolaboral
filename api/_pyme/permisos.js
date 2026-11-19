@@ -42,6 +42,7 @@ const RUTAS = {
     'sii-datos': { GET: 'ver' },
     'sii-acuse': { POST: 'liquidar' },
     'mcp-tokens': { GET: 'ver', POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
+    'sii-webhooks': { GET: 'ver', POST: 'empresa_gestionar', DELETE: 'empresa_gestionar' },
     'portal-estudio': { POST: 'portal_gestionar', DELETE: 'portal_gestionar' },
     'portal-estudio-buzon': { GET: 'ver', PUT: 'ficha_editar', DELETE: 'portal_gestionar' },
     estudio: { GET: 'ver', PUT: 'ficha_editar' }

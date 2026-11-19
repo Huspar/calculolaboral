@@ -1733,7 +1733,10 @@
                     '<td class="mono num">' + c.trabajadores + '</td>' +
                     '<td class="mono num">' + D.money(c.f29Total) + '</td>' +
                     '<td><span class="app-nav-chip ' + (c.cerrado ? '' : 'abierto') + '">' + (c.cerrado ? 'Cerrado' : 'Abierto') + '</span></td>' +
-                    '<td class="num"><button type="button" class="btn btn-chico" data-torre-trabajar="' + D.esc(c.nombre) + '">' + (c.esActivo ? 'Activo' : 'Trabajar') + '</button></td>' +
+                    '<td class="num"><div class="torre-acciones-celda">' +
+                    '<button type="button" class="btn btn-chico" data-torre-sync-id="' + D.esc((window.CLDemoSii && window.CLDemoSii.estadoConexionCliente && window.CLDemoSii.estadoConexionCliente(c.nombre).companyId) || c.nombre) + '" data-torre-sync-nombre="' + D.esc(c.nombre) + '">Sincronizar</button>' +
+                    '<button type="button" class="btn btn-chico" data-torre-trabajar="' + D.esc(c.nombre) + '">' + (c.esActivo ? 'Activo' : 'Trabajar') + '</button>' +
+                    '</div></td>' +
                     '</tr>';
             }).join('');
         }

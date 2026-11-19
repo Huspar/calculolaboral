@@ -78,8 +78,46 @@ function armar() {
     return crearRutas({ auth, datos, env: process.env, siteUrl: SITE_URL, pase: Servicios.pase(), avisos, enlaces, comentarios, estudio, equipo, portal, siiGateway });
 }
 
+const MAX_BODY_BYTES = 4 * 1024 * 1024;
+
+function leerCuerpoCrudo(req) {
+    return new Promise((resolve, reject) => {
+        if (req.body !== undefined || typeof req.on !== 'function' || req.method === 'GET' || req.method === 'HEAD') {
+            resolve();
+            return;
+        }
+        const chunks = [];
+        let total = 0;
+        req.on('data', (chunk) => {
+            total += chunk.length;
+            if (total > MAX_BODY_BYTES) {
+                reject(new Error('cuerpo_demasiado_grande'));
+                return;
+            }
+            chunks.push(chunk);
+        });
+        req.on('end', () => {
+            const raw = Buffer.concat(chunks).toString('utf8');
+            req.rawBody = raw;
+            const ct = String((req.headers && req.headers['content-type']) || '').toLowerCase();
+            if (!raw) {
+                req.body = {};
+            } else if (ct.indexOf('application/json') === 0) {
+                try { req.body = JSON.parse(raw); } catch (e) { req.body = {}; }
+            } else if (ct.indexOf('application/x-www-form-urlencoded') === 0) {
+                try { req.body = Object.fromEntries(new URLSearchParams(raw)); } catch (e) { req.body = {}; }
+            } else {
+                req.body = raw;
+            }
+            resolve();
+        });
+        req.on('error', reject);
+    });
+}
+
 module.exports = async (req, res) => {
     try {
+        await leerCuerpoCrudo(req);
         if (!manejador) manejador = armar();
         await manejador(req, res);
     } catch (e) {
@@ -90,3 +128,4 @@ module.exports = async (req, res) => {
         if (!res.headersSent) H.json(res, 500, { ok: false, error: 'No pudimos completar la solicitud. Intenta de nuevo en unos minutos.' });
     }
 };
+module.exports.config = { api: { bodyParser: false } };

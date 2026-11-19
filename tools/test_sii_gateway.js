@@ -114,6 +114,40 @@ function montar({ apiKey = 'gw-secret-test-key', rolOverride = null, mockFetch }
         if (path === '/api/v1/accounting/cmp_1/f29' && opts.method === 'GET') {
             return { ok: false, status: 404, text: async () => JSON.stringify({ code: 'F29_NOT_SYNCED', message: 'Sin F29' }) };
         }
+        if (path === '/api/v1/accounting/cmp_1/f22' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ companyId: 'cmp_1', rut: '76.543.210-3', source: 'SII_PORTAL', summary: { anioTributario: 2026, estado: 'OBSERVADO', montoResultado: 1250000 } }) };
+        }
+        if (path === '/api/v1/accounting/cmp_1/ddjj' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ companyId: 'cmp_1', rut: '76.543.210-3', source: 'SII_PORTAL', totalCount: 1, items: [{ codigo: '1887', estado: 'ACEPTADA', anioTributario: 2026 }] }) };
+        }
+        if (path === '/api/v1/accounting/cmp_1/tgr' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ companyId: 'cmp_1', rut: '76.543.210-3', source: 'TGR_PORTAL', totalCount: 1, totalAdeudado: 450000, totalMultasIntereses: 25000, items: [{ folio: 'F-901', estadoPago: 'PENDIENTE', montoTotal: 450000 }] }) };
+        }
+        if (path === '/api/v1/accounting/cmp_1/previred' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ companyId: 'cmp_1', rut: '76.543.210-3', source: 'PREVIRED_PORTAL', totalCount: 1, totalDeudaEstimada: 380000, hasLeyBustosRisk: true, items: [{ periodo: '202611', estado: 'MOROSO', deudaEstimada: 380000 }] }) };
+        }
+        if (path === '/api/v1/accounting/cmp_1/alerts' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ companyId: 'cmp_1', rut: '76.543.210-3', period: '202611', totalAlerts: 1, alerts: [{ code: 'PREVIRED_UNPAID_OR_OVERDUE', severity: 'CRITICAL', amountAtRisk: 380000, title: 'Cotizaciones impagas', detail: 'Riesgo Ley Bustos' }] }) };
+        }
+        if (path === '/api/v1/accounting/alerts' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ period: '202611', externalAccountId: 'acct_1', totalAlerts: 2, alerts: [{ companyId: 'cmp_1', rut: '76.543.210-3', code: 'TGR_DEBT_OR_UNPAID', severity: 'WARNING', amountAtRisk: 450000, title: 'Deuda TGR pendiente' }, { companyId: 'cmp_1', rut: '76.543.210-3', code: 'PREVIRED_UNPAID_OR_OVERDUE', severity: 'CRITICAL', amountAtRisk: 380000, title: 'PreviRed impago' }] }) };
+        }
+        if (path === '/api/v1/webhooks' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ items: [{ id: 'wh_1', url: 'https://www.calculolaboral.cl/api/pyme/gateway-webhook', events: ['*'], active: true }] }) };
+        }
+        if (path === '/api/v1/webhooks' && opts.method === 'POST') {
+            const b = JSON.parse(opts.body || '{}');
+            return { ok: true, status: 201, text: async () => JSON.stringify({ id: 'wh_nueva', url: b.url, events: b.events, description: b.description || '', signingSecret: 'whsec_test_secret_123', active: true }) };
+        }
+        if (path === '/api/v1/webhooks/wh_1' && opts.method === 'DELETE') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ deleted: true, id: 'wh_1' }) };
+        }
+        if (path === '/api/v1/webhooks/wh_1/test' && opts.method === 'POST') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ ok: true, delivered: true, statusCode: 200 }) };
+        }
+        if (path === '/api/v1/webhooks/wh_1/deliveries' && opts.method === 'GET') {
+            return { ok: true, status: 200, text: async () => JSON.stringify({ items: [{ id: 'del_1', event: 'webhook.test', status: 'DELIVERED', statusCode: 200, createdAt: '2026-11-19T12:00:00Z' }] }) };
+        }
         return { ok: false, status: 404, text: async () => JSON.stringify({ error: 'Not found' }) };
     });
 
@@ -127,7 +161,12 @@ function montar({ apiKey = 'gw-secret-test-key', rolOverride = null, mockFetch }
             return s.autenticado && rolOverride && rolOverride.rol ? Object.assign({}, s, { rol: rolOverride.rol }) : s;
         }
     });
-    const rutas = crearRutas({ auth: authRol, datos, env: { VERCEL_ENV: 'production' }, siteUrl: SITIO, siiGateway });
+    const estudiosMem = new Map();
+    const estudio = {
+        leer: async (id) => ({ ok: true, datos: estudiosMem.has(id) ? JSON.parse(JSON.stringify(estudiosMem.get(id))) : {} }),
+        guardar: async (id, d) => { estudiosMem.set(id, JSON.parse(JSON.stringify(d || {}))); return { ok: true }; }
+    };
+    const rutas = crearRutas({ auth: authRol, datos, estudio, env: { VERCEL_ENV: 'production' }, siteUrl: SITIO, siiGateway });
 
     async function entrar(correo) {
         await auth.solicitarAcceso({ email: correo, ip: '10.0.0.1' });
@@ -135,7 +174,7 @@ function montar({ apiKey = 'gw-secret-test-key', rolOverride = null, mockFetch }
         const r = await auth.completar({ token, acepto: true, ip: '10.0.0.1' });
         return { cookie: 'cl_pyme=' + r.sesion.token, cuenta: await auth.leerSesion(r.sesion.token) };
     }
-    return { rutas, entrar, llamadasFetch, almacen };
+    return { rutas, entrar, llamadasFetch, almacen, estudiosMem };
 }
 
 caso('sin SII_GATEWAY_API_KEY devuelve 503 controlado sin llamar al gateway ni exponer secretos', async () => {
@@ -357,6 +396,183 @@ caso('sii-acuse valida campos, reenvía PFX_REQUIRED_FOR_ACUSE y envía ERM al g
     assert.strictEqual(okErm.statusCode, 200);
     assert.strictEqual(okErm.json.acuse.estadoContab, 'REGISTRO');
     assert.strictEqual(m.llamadasFetch[1].body.period, '202611');
+});
+
+caso('credenciales PREVIRED_CREDENTIALS guarda y revoca sin filtrar password', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('previred@ejemplo.cl');
+    const bad = await pedir(m.rutas, {
+        query: { ruta: 'sii-credenciales', companyId: 'cmp_1' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { kind: 'PREVIRED_CREDENTIALS', rutUsuario: rutValido(15234567) }
+    });
+    assert.strictEqual(bad.statusCode, 400);
+
+    const okCred = await pedir(m.rutas, {
+        query: { ruta: 'sii-credenciales', companyId: 'cmp_1' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { kind: 'PREVIRED_CREDENTIALS', rutUsuario: rutValido(15234567), password: 'mi-pass-previred-99' }
+    });
+    assert.strictEqual(okCred.statusCode, 200);
+    assert.strictEqual(okCred.json.credential.kind, 'PREVIRED_CREDENTIALS');
+    assert.ok(!JSON.stringify(okCred.json).includes('mi-pass-previred-99'));
+    assert.ok(!JSON.stringify(m.almacen._estado.actividad).includes('mi-pass-previred-99'));
+
+    const del = await pedir(m.rutas, {
+        query: { ruta: 'sii-credenciales', companyId: 'cmp_1', kind: 'PREVIRED_CREDENTIALS', siiEnv: 'PRODUCTION' },
+        metodo: 'DELETE',
+        headers: Object.assign({}, JSON_OK, { cookie })
+    });
+    assert.strictEqual(del.statusCode, 200);
+    assert.strictEqual(del.json.deletedCount, 1);
+});
+
+caso('nuevos jobTypes y endpoints f22, ddjj, tgr, previred, alerts y alerts-all', async () => {
+    const m = montar();
+    const { cookie } = await m.entrar('modulos@ejemplo.cl');
+    for (const jt of ['F22_SUMMARY', 'DDJJ_SUMMARY', 'TGR_DEBT', 'PREVIRED_STATUS']) {
+        const r = await pedir(m.rutas, {
+            query: { ruta: 'sii-sync', companyId: 'cmp_1' },
+            metodo: 'POST',
+            headers: Object.assign({}, JSON_OK, { cookie }),
+            body: { period: '2026-11', jobType: jt }
+        });
+        assert.strictEqual(r.statusCode, 200);
+    }
+    const batchTgr = await pedir(m.rutas, {
+        query: { ruta: 'sii-sync-all' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { period: '2026-11', jobType: 'TGR_DEBT' }
+    });
+    assert.strictEqual(batchTgr.statusCode, 200);
+    assert.strictEqual(m.llamadasFetch[4].body.jobType, 'TGR_DEBT');
+
+    const f22 = await pedir(m.rutas, { query: { ruta: 'sii-datos', companyId: 'cmp_1', tipo: 'f22', anioTributario: '2026' }, headers: { cookie } });
+    assert.strictEqual(f22.statusCode, 200);
+    assert.strictEqual(f22.json.summary.estado, 'OBSERVADO');
+
+    const ddjj = await pedir(m.rutas, { query: { ruta: 'sii-datos', companyId: 'cmp_1', tipo: 'ddjj', anioTributario: '2026' }, headers: { cookie } });
+    assert.strictEqual(ddjj.statusCode, 200);
+    assert.strictEqual(ddjj.json.items[0].codigo, '1887');
+
+    const tgr = await pedir(m.rutas, { query: { ruta: 'sii-datos', companyId: 'cmp_1', tipo: 'tgr', period: '2026-11' }, headers: { cookie } });
+    assert.strictEqual(tgr.statusCode, 200);
+    assert.strictEqual(tgr.json.totalAdeudado, 450000);
+
+    const prev = await pedir(m.rutas, { query: { ruta: 'sii-datos', companyId: 'cmp_1', tipo: 'previred', period: '2026-11' }, headers: { cookie } });
+    assert.strictEqual(prev.statusCode, 200);
+    assert.strictEqual(prev.json.hasLeyBustosRisk, true);
+
+    const al = await pedir(m.rutas, { query: { ruta: 'sii-datos', companyId: 'cmp_1', tipo: 'alerts', period: '2026-11' }, headers: { cookie } });
+    assert.strictEqual(al.statusCode, 200);
+    assert.strictEqual(al.json.totalAlerts, 1);
+
+    const allAl = await pedir(m.rutas, { query: { ruta: 'sii-datos', tipo: 'alerts-all', period: '2026-11' }, headers: { cookie } });
+    assert.strictEqual(allAl.statusCode, 200);
+    assert.strictEqual(allAl.json.totalAlerts, 2);
+});
+
+caso('sii-webhooks CRUD, test, entregas y permiso de lectura', async () => {
+    const m = montar();
+    const { cookie, cuenta } = await m.entrar('wh@ejemplo.cl');
+
+    const lista = await pedir(m.rutas, { query: { ruta: 'sii-webhooks' }, headers: { cookie } });
+    assert.strictEqual(lista.statusCode, 200);
+    assert.strictEqual(lista.json.items.length, 1);
+
+    const creado = await pedir(m.rutas, {
+        query: { ruta: 'sii-webhooks' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { url: 'https://www.calculolaboral.cl/api/pyme/gateway-webhook', events: ['sync.completed', 'tgr.debt_detected'], description: 'Estudio' }
+    });
+    assert.strictEqual(creado.statusCode, 200);
+    assert.strictEqual(creado.json.webhook.signingSecret, 'whsec_test_secret_123');
+    assert.strictEqual(m.estudiosMem.get(cuenta.cuentaId).gatewayWebhookConfig.signingSecret, 'whsec_test_secret_123');
+
+    const prueba = await pedir(m.rutas, {
+        query: { ruta: 'sii-webhooks', action: 'test', webhookId: 'wh_1' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { webhookId: 'wh_1' }
+    });
+    assert.strictEqual(prueba.statusCode, 200);
+    assert.strictEqual(prueba.json.test.delivered, true);
+
+    const ent = await pedir(m.rutas, { query: { ruta: 'sii-webhooks', webhookId: 'wh_1', deliveries: '1' }, headers: { cookie } });
+    assert.strictEqual(ent.statusCode, 200);
+    assert.strictEqual(ent.json.items[0].event, 'webhook.test');
+
+    const del = await pedir(m.rutas, { query: { ruta: 'sii-webhooks', webhookId: 'wh_1' }, metodo: 'DELETE', headers: Object.assign({}, JSON_OK, { cookie }) });
+    assert.strictEqual(del.statusCode, 200);
+    assert.strictEqual(del.json.deleted, true);
+
+    const mLec = montar({ rolOverride: { rol: 'lectura' } });
+    const sesL = await mLec.entrar('lecwh@ejemplo.cl');
+    const forb = await pedir(mLec.rutas, {
+        query: { ruta: 'sii-webhooks' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie: sesL.cookie }),
+        body: { url: 'https://www.calculolaboral.cl/api/pyme/gateway-webhook', events: ['*'] }
+    });
+    assert.strictEqual(forb.statusCode, 403);
+});
+
+caso('gateway-webhook verifica HMAC-SHA256, rechaza firma inválida/expirada y guarda máx 25 avisos', async () => {
+    const m = montar();
+    const { cookie, cuenta } = await m.entrar('receptor@ejemplo.cl');
+    const creado = await pedir(m.rutas, {
+        query: { ruta: 'sii-webhooks' },
+        metodo: 'POST',
+        headers: Object.assign({}, JSON_OK, { cookie }),
+        body: { url: 'https://www.calculolaboral.cl/api/pyme/gateway-webhook', events: ['*'] }
+    });
+    assert.strictEqual(creado.statusCode, 200);
+    const secret = 'whsec_test_secret_123';
+
+    const payload = JSON.stringify({ externalAccountId: cuenta.cuentaId, companyId: 'cmp_1', severity: 'CRITICAL', title: 'Deuda PreviRed detectada' });
+    const ahora = Math.floor(Date.now() / 1000);
+    const firmaOk = 't=' + ahora + ',v1=' + crypto.createHmac('sha256', secret).update(ahora + '.' + payload).digest('hex');
+
+    // Firma alterada -> 401
+    const mala = await pedir(m.rutas, {
+        query: { ruta: 'gateway-webhook' },
+        metodo: 'POST',
+        headers: { 'content-type': 'application/json', 'x-sii-signature': 't=' + ahora + ',v1=' + '0'.repeat(64), 'x-sii-event': 'previred.overdue_detected', 'x-sii-delivery': 'del_bad' },
+        body: JSON.parse(payload)
+    });
+    assert.strictEqual(mala.statusCode, 401);
+
+    // Timestamp expirado (>5 min) -> 401
+    const viejoTs = ahora - 400;
+    const firmaVieja = 't=' + viejoTs + ',v1=' + crypto.createHmac('sha256', secret).update(viejoTs + '.' + payload).digest('hex');
+    const exp = await pedir(m.rutas, {
+        query: { ruta: 'gateway-webhook' },
+        metodo: 'POST',
+        headers: { 'content-type': 'application/json', 'x-sii-signature': firmaVieja, 'x-sii-event': 'previred.overdue_detected', 'x-sii-delivery': 'del_old' },
+        body: JSON.parse(payload)
+    });
+    assert.strictEqual(exp.statusCode, 401);
+
+    // 27 entregas válidas -> 200 y tope de 25 en estudio.gatewayWebhooks.ultimosAvisos
+    for (let i = 0; i < 27; i++) {
+        const bodyObj = { externalAccountId: cuenta.cuentaId, companyId: 'cmp_1', severity: 'CRITICAL', title: 'Aviso #' + i };
+        const raw = JSON.stringify(bodyObj);
+        const sig = 't=' + ahora + ',v1=' + crypto.createHmac('sha256', secret).update(ahora + '.' + raw).digest('hex');
+        const req = { method: 'POST', query: { ruta: 'gateway-webhook' }, headers: { 'content-type': 'application/json', 'x-sii-signature': sig, 'x-sii-event': 'tgr.debt_detected', 'x-sii-delivery': 'del_' + i }, rawBody: raw, body: bodyObj };
+        const res = { statusCode: 0, headers: {}, cuerpo: '', setHeader(k, v) { this.headers[k.toLowerCase()] = v; }, end(c) { this.cuerpo = c || ''; } };
+        await m.rutas(req, res);
+        assert.strictEqual(res.statusCode, 200);
+        assert.strictEqual(JSON.parse(res.cuerpo).received, true);
+    }
+    const rec = await pedir(m.rutas, { query: { ruta: 'sii-webhooks', recibidos: '1' }, headers: { cookie } });
+    assert.strictEqual(rec.statusCode, 200);
+    assert.strictEqual(rec.json.receptor.configurado, true);
+    assert.strictEqual(rec.json.receptor.ultimosAvisos.length, 25);
+    assert.strictEqual(rec.json.receptor.ultimosAvisos[0].deliveryId, 'del_26');
 });
 
 cola.then(() => {

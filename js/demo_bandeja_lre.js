@@ -136,6 +136,14 @@
         return true;
     }
 
+    function previredCeldaHtml(nombre) {
+        var st = (window.CLDemoSii && window.CLDemoSii.estadoPreviredCliente)
+            ? window.CLDemoSii.estadoPreviredCliente(nombre)
+            : null;
+        if (!st) return '<span class="sello sello-guardada">Sin conectar</span>';
+        return '<span class="sello ' + esc(st.selloCls || 'sello-guardada') + '">' + esc(st.badgeCorto || st.selloTexto || 'Sin consultar') + '</span>';
+    }
+
     function filaHtml(c, est) {
         var obligatoria = c.trabajadores >= 5;
         var estado = est ? est.estado : 'pendiente';
@@ -158,6 +166,7 @@
             '<select class="lre-estado-select" data-lre-cliente="' + esc(c.nombre) + '" aria-label="Estado LRE de ' + esc(c.nombre) + '">' + opciones + '</select>' +
             (fechaISO ? '<span class="lre-fecha-fila">Marcado <input type="date" class="lre-fecha-input" data-lre-fecha="' + esc(c.nombre) + '" value="' + esc(fechaISO) + '" aria-label="Fecha de marca LRE de ' + esc(c.nombre) + '"></span>' : '') +
             '</div></td>' +
+            '<td data-l="PreviRed (sync)">' + previredCeldaHtml(c.nombre) + '</td>' +
             '<td data-l="Acciones"><div class="lre-acciones-celda">' +
             (estado === 'pendiente' ? '<button type="button" class="btn btn-chico" data-lre-avanzar="' + esc(c.nombre) + '" data-lre-destino="enviado">Marcar enviado</button>' : '') +
             (estado === 'enviado' ? '<button type="button" class="btn btn-chico btn-primario" data-lre-avanzar="' + esc(c.nombre) + '" data-lre-destino="cargado">Confirmar OK</button>' : '') +

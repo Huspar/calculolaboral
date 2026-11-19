@@ -6,6 +6,7 @@
  */
 'use strict';
 
+const crypto = require('crypto');
 const RutDefecto = require('../../js/rut_cl');
 
 const DEFAULT_URL = 'https://connect.calculolaboral.cl';
@@ -13,7 +14,11 @@ const TIMEOUT_MS = 15000;
 const MAX_LIMIT = 2000;
 const MAX_PAGINAS = 10;
 
-const JOB_TYPES = ['RCV_COMPRAS', 'RCV_VENTAS', 'BHE_EMITIDAS', 'BHE_RECIBIDAS', 'F29_SUMMARY', 'FULL_SYNC'];
+const JOB_TYPES = ['RCV_COMPRAS', 'RCV_VENTAS', 'BHE_EMITIDAS', 'BHE_RECIBIDAS', 'F29_SUMMARY', 'F22_SUMMARY', 'DDJJ_SUMMARY', 'TGR_DEBT', 'PREVIRED_STATUS', 'FULL_SYNC'];
+const CREDENTIAL_KINDS = ['CLAVE_TRIBUTARIA', 'PFX_CERTIFICATE', 'PREVIRED_CREDENTIALS'];
+const ESTADOS_TGR = ['IMPAGO', 'MOROSO', 'CONVENIO', 'PAGADO', 'SIN_DEUDA'];
+const ESTADOS_PREVIRED = ['PAGADO', 'DECLARADO_NO_PAGADO', 'ATRASADO', 'SIN_MOVIMIENTO'];
+const WEBHOOK_EVENTS = ['*', 'sync.completed', 'sync.failed', 'rcv.acuse_expiring', 'f29.due_alert', 'tgr.debt_detected', 'previred.overdue_detected', 'webhook.test'];
 const OPERACIONES_RCV = ['COMPRA', 'VENTA'];
 const ESTADOS_CONTAB = ['REGISTRO', 'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO'];
 const DIRECCIONES_BHE = ['EMITIDA', 'RECIBIDA', 'TERCEROS'];
@@ -182,8 +187,18 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
             if (b.certMetadata && typeof b.certMetadata === 'object' && !Array.isArray(b.certMetadata)) {
                 payload.certMetadata = b.certMetadata;
             }
+        } else if (kind === 'PREVIRED_CREDENTIALS') {
+            const rutUsuarioRaw = typeof b.rutUsuario === 'string' ? b.rutUsuario.trim() : '';
+            const password = typeof b.password === 'string' ? b.password : '';
+            if (!Rut.valido(rutUsuarioRaw)) {
+                return { ok: false, estado: 400, codigo: 'rut_usuario_invalido', error: 'Ingresa un RUT válido de usuario PreviRed.' };
+            }
+            if (!password.trim()) {
+                return { ok: false, estado: 400, codigo: 'password_requerida', error: 'Ingresa la clave de PreviRed.' };
+            }
+            payload = { kind, siiEnv, rutUsuario: Rut.formatear(rutUsuarioRaw), password };
         } else {
-            return { ok: false, estado: 400, codigo: 'tipo_credencial_invalido', error: 'El tipo de credencial debe ser CLAVE_TRIBUTARIA o PFX_CERTIFICATE.' };
+            return { ok: false, estado: 400, codigo: 'tipo_credencial_invalido', error: 'El tipo de credencial debe ser CLAVE_TRIBUTARIA, PFX_CERTIFICATE o PREVIRED_CREDENTIALS.' };
         }
 
         const r = await pedir(cuentaId, 'POST', '/api/v1/companies/' + encodeURIComponent(companyId.trim()) + '/credentials', payload);
@@ -209,7 +224,7 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
         const params = [];
         if (kind) {
-            if (kind !== 'CLAVE_TRIBUTARIA' && kind !== 'PFX_CERTIFICATE') {
+            if (CREDENTIAL_KINDS.indexOf(kind) < 0) {
                 return { ok: false, estado: 400, codigo: 'tipo_credencial_invalido', error: 'Tipo de credencial inválido.' };
             }
             params.push('kind=' + encodeURIComponent(kind));
@@ -244,12 +259,19 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         return { ok: true, estado: r.estado, job: r.data };
     }
 
-    async function sincronizarTodas(cuentaId, { period } = {}) {
-        let payload = {};
+    async function sincronizarTodas(cuentaId, { period, jobType } = {}) {
+        const payload = {};
         if (period !== undefined && period !== null && String(period).trim() !== '') {
             const per = normalizarPeriodo(period);
             if (!per) return { ok: false, estado: 400, codigo: 'periodo_invalido', error: 'Indica un período válido (YYYY-MM).' };
-            payload = { period: per };
+            payload.period = per;
+        }
+        if (jobType !== undefined && jobType !== null && String(jobType).trim() !== '') {
+            const tipo = String(jobType).trim();
+            if (JOB_TYPES.indexOf(tipo) < 0) {
+                return { ok: false, estado: 400, codigo: 'job_type_invalido', error: 'Tipo de sincronización no válido.' };
+            }
+            payload.jobType = tipo;
         }
         const r = await pedir(cuentaId, 'POST', '/api/v1/accounting/sync-all', payload);
         if (!r.ok) return r;
@@ -437,6 +459,238 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         return Object.assign({ ok: true, revoked: true }, r.data || { id: tokenId.trim() });
     }
 
+
+    function normalizarAnio(v) {
+        if (v === undefined || v === null || String(v).trim() === '') return '';
+        const s = String(v).trim();
+        return /^20\d{2}$/.test(s) ? s : null;
+    }
+
+    async function obtenerF22(cuentaId, companyId, opts = {}) {
+        if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
+        const anio = normalizarAnio(opts.anioTributario);
+        if (anio === null) return { ok: false, estado: 400, codigo: 'anio_invalido', error: 'Año tributario inválido (ej. 2026).' };
+        const params = ['amountFormat=number'];
+        if (anio) params.push('anioTributario=' + anio);
+        const r = await pedir(cuentaId, 'GET', '/api/v1/accounting/' + encodeURIComponent(companyId.trim()) + '/f22?' + params.join('&'));
+        if (!r.ok) {
+            if (r.estado === 404 || r.codigo === 'F22_NOT_SYNCED') {
+                return { ok: true, synced: false, codigo: 'F22_NOT_SYNCED', summary: null };
+            }
+            return r;
+        }
+        const d = r.data || {};
+        return {
+            ok: true,
+            synced: Boolean(d.summary),
+            companyId: d.companyId || companyId.trim(),
+            rut: d.rut || '',
+            source: d.source || 'MIRROR_DB',
+            summary: d.summary || null
+        };
+    }
+
+    async function obtenerDdjj(cuentaId, companyId, opts = {}) {
+        if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
+        const anio = normalizarAnio(opts.anioTributario);
+        if (anio === null) return { ok: false, estado: 400, codigo: 'anio_invalido', error: 'Año tributario inválido (ej. 2026).' };
+        const params = ['amountFormat=number'];
+        if (anio) params.push('anioTributario=' + anio);
+        const r = await pedir(cuentaId, 'GET', '/api/v1/accounting/' + encodeURIComponent(companyId.trim()) + '/ddjj?' + params.join('&'));
+        if (!r.ok) {
+            if (r.estado === 404) return { ok: true, synced: false, totalCount: 0, items: [] };
+            return r;
+        }
+        const d = r.data || {};
+        const items = Array.isArray(d.items) ? d.items : [];
+        return {
+            ok: true,
+            synced: true,
+            companyId: d.companyId || companyId.trim(),
+            rut: d.rut || '',
+            source: d.source || 'MIRROR_DB',
+            totalCount: Number(d.totalCount) || items.length,
+            items
+        };
+    }
+
+    async function obtenerTgr(cuentaId, companyId, opts = {}) {
+        if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
+        const params = ['amountFormat=number'];
+        if (opts.period !== undefined && opts.period !== null && String(opts.period).trim() !== '') {
+            const per = normalizarPeriodo(opts.period);
+            if (!per) return { ok: false, estado: 400, codigo: 'periodo_invalido', error: 'Indica un período válido (YYYY-MM).' };
+            params.push('period=' + per);
+        }
+        if (opts.estadoPago) {
+            const estP = String(opts.estadoPago).trim().toUpperCase();
+            if (ESTADOS_TGR.indexOf(estP) < 0) return { ok: false, estado: 400, codigo: 'estado_tgr_invalido', error: 'Estado TGR inválido.' };
+            params.push('estadoPago=' + encodeURIComponent(estP));
+        }
+        const r = await pedir(cuentaId, 'GET', '/api/v1/accounting/' + encodeURIComponent(companyId.trim()) + '/tgr?' + params.join('&'));
+        if (!r.ok) {
+            if (r.estado === 404) return { ok: true, synced: false, totalCount: 0, totalAdeudado: 0, totalMultasIntereses: 0, items: [] };
+            return r;
+        }
+        const d = r.data || {};
+        const items = Array.isArray(d.items) ? d.items : [];
+        return {
+            ok: true,
+            synced: true,
+            companyId: d.companyId || companyId.trim(),
+            rut: d.rut || '',
+            source: d.source || 'MIRROR_DB',
+            totalCount: Number(d.totalCount) || items.length,
+            totalAdeudado: Number(d.totalAdeudado) || 0,
+            totalMultasIntereses: Number(d.totalMultasIntereses) || 0,
+            items
+        };
+    }
+
+    async function obtenerPrevired(cuentaId, companyId, opts = {}) {
+        if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
+        const params = ['amountFormat=number'];
+        if (opts.period !== undefined && opts.period !== null && String(opts.period).trim() !== '') {
+            const per = normalizarPeriodo(opts.period);
+            if (!per) return { ok: false, estado: 400, codigo: 'periodo_invalido', error: 'Indica un período válido (YYYY-MM).' };
+            params.push('period=' + per);
+        }
+        if (opts.estado) {
+            const est = String(opts.estado).trim().toUpperCase();
+            if (ESTADOS_PREVIRED.indexOf(est) < 0) return { ok: false, estado: 400, codigo: 'estado_previred_invalido', error: 'Estado PreviRed inválido.' };
+            params.push('estado=' + encodeURIComponent(est));
+        }
+        const r = await pedir(cuentaId, 'GET', '/api/v1/accounting/' + encodeURIComponent(companyId.trim()) + '/previred?' + params.join('&'));
+        if (!r.ok) {
+            if (r.estado === 404) return { ok: true, synced: false, totalCount: 0, totalDeudaEstimada: 0, hasLeyBustosRisk: false, items: [] };
+            return r;
+        }
+        const d = r.data || {};
+        const items = Array.isArray(d.items) ? d.items : [];
+        return {
+            ok: true,
+            synced: true,
+            companyId: d.companyId || companyId.trim(),
+            rut: d.rut || '',
+            source: d.source || 'MIRROR_DB',
+            totalCount: Number(d.totalCount) || items.length,
+            totalDeudaEstimada: Number(d.totalDeudaEstimada) || 0,
+            hasLeyBustosRisk: Boolean(d.hasLeyBustosRisk),
+            items
+        };
+    }
+
+    async function obtenerAlertas(cuentaId, companyId, opts = {}) {
+        if (!idValido(companyId)) return { ok: false, estado: 400, codigo: 'company_invalida', error: 'Identificador de empresa inválido.' };
+        let qs = '';
+        if (opts.period !== undefined && opts.period !== null && String(opts.period).trim() !== '') {
+            const per = normalizarPeriodo(opts.period);
+            if (!per) return { ok: false, estado: 400, codigo: 'periodo_invalido', error: 'Indica un período válido (YYYY-MM).' };
+            qs = '?period=' + per;
+        }
+        const r = await pedir(cuentaId, 'GET', '/api/v1/accounting/' + encodeURIComponent(companyId.trim()) + '/alerts' + qs);
+        if (!r.ok) return r;
+        const d = r.data || {};
+        const alerts = Array.isArray(d.alerts) ? d.alerts : [];
+        return {
+            ok: true,
+            companyId: d.companyId || companyId.trim(),
+            rut: d.rut || '',
+            period: d.period || '',
+            totalAlerts: Number(d.totalAlerts) || alerts.length,
+            alerts
+        };
+    }
+
+    async function obtenerAlertasEstudio(cuentaId, opts = {}) {
+        let qs = '';
+        if (opts.period !== undefined && opts.period !== null && String(opts.period).trim() !== '') {
+            const per = normalizarPeriodo(opts.period);
+            if (!per) return { ok: false, estado: 400, codigo: 'periodo_invalido', error: 'Indica un período válido (YYYY-MM).' };
+            qs = '?period=' + per;
+        }
+        const r = await pedir(cuentaId, 'GET', '/api/v1/accounting/alerts' + qs);
+        if (!r.ok) return r;
+        const d = r.data || {};
+        const alerts = Array.isArray(d.alerts) ? d.alerts : [];
+        return {
+            ok: true,
+            period: d.period || '',
+            externalAccountId: d.externalAccountId || String(cuentaId),
+            totalAlerts: Number(d.totalAlerts) || alerts.length,
+            alerts
+        };
+    }
+
+    function urlWebhookValida(rawUrl) {
+        try {
+            const u = new URL(String(rawUrl || '').trim());
+            if (u.protocol !== 'https:') return null;
+            const host = u.hostname.toLowerCase();
+            if (!host || host === 'localhost' || host.endsWith('.local') || /^127\.0\.0\.1$|^0\.0\.0\.0$|^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[01])\./.test(host)) {
+                return null;
+            }
+            return u.toString();
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async function listarWebhooks(cuentaId) {
+        const r = await pedir(cuentaId, 'GET', '/api/v1/webhooks');
+        if (!r.ok) return r;
+        const items = r.data && Array.isArray(r.data.items) ? r.data.items : [];
+        return { ok: true, items };
+    }
+
+    async function crearWebhook(cuentaId, entrada) {
+        const b = entrada && typeof entrada === 'object' ? entrada : {};
+        const url = urlWebhookValida(b.url);
+        if (!url) {
+            return { ok: false, estado: 400, codigo: 'webhook_url_invalida', error: 'Ingresa una URL pública válida con HTTPS.' };
+        }
+        const rawEv = Array.isArray(b.events) ? b.events : [];
+        const events = rawEv.map(x => String(x || '').trim()).filter((x, i, a) => x && WEBHOOK_EVENTS.indexOf(x) >= 0 && a.indexOf(x) === i);
+        if (!events.length) {
+            return { ok: false, estado: 400, codigo: 'webhook_eventos_invalidos', error: 'Selecciona al menos un evento válido para el webhook.' };
+        }
+        const payload = { url, events };
+        if (typeof b.description === 'string' && b.description.trim()) {
+            payload.description = b.description.trim().slice(0, 160);
+        }
+        const r = await pedir(cuentaId, 'POST', '/api/v1/webhooks', payload);
+        if (!r.ok) return r;
+        return { ok: true, estado: r.estado, webhook: r.data };
+    }
+
+    async function eliminarWebhook(cuentaId, webhookId) {
+        if (!idValido(webhookId)) {
+            return { ok: false, estado: 400, codigo: 'webhook_invalido', error: 'Identificador de webhook inválido.' };
+        }
+        const r = await pedir(cuentaId, 'DELETE', '/api/v1/webhooks/' + encodeURIComponent(webhookId.trim()));
+        if (!r.ok) return r;
+        return Object.assign({ ok: true, deleted: true }, r.data || { id: webhookId.trim() });
+    }
+
+    async function probarWebhook(cuentaId, webhookId) {
+        if (!idValido(webhookId)) {
+            return { ok: false, estado: 400, codigo: 'webhook_invalido', error: 'Identificador de webhook inválido.' };
+        }
+        const r = await pedir(cuentaId, 'POST', '/api/v1/webhooks/' + encodeURIComponent(webhookId.trim()) + '/test', {});
+        if (!r.ok) return r;
+        return { ok: true, test: r.data };
+    }
+
+    async function entregasWebhook(cuentaId, webhookId) {
+        if (!idValido(webhookId)) {
+            return { ok: false, estado: 400, codigo: 'webhook_invalido', error: 'Identificador de webhook inválido.' };
+        }
+        const r = await pedir(cuentaId, 'GET', '/api/v1/webhooks/' + encodeURIComponent(webhookId.trim()) + '/deliveries');
+        if (!r.ok) return r;
+        const items = r.data && Array.isArray(r.data.items) ? r.data.items : (Array.isArray(r.data) ? r.data : []);
+        return { ok: true, items };
+    }
+
     /** Limpieza en cascada al eliminar la cuenta en CalculoLaboral (Ley 21.719). */
     async function desconectarCuenta(cuentaId) {
         if (!config().configured) return { ok: true, skipped: true, deletedCompanies: 0 };
@@ -469,10 +723,48 @@ function crear({ env = process.env, fetchFn = globalThis.fetch, Rut = RutDefecto
         enviarAcuseRcv,
         listarTokensMcp,
         crearTokenMcp,
+        obtenerF22,
+        obtenerDdjj,
+        obtenerTgr,
+        obtenerPrevired,
+        obtenerAlertas,
+        obtenerAlertasEstudio,
+        listarWebhooks,
+        crearWebhook,
+        eliminarWebhook,
+        probarWebhook,
+        entregasWebhook,
         revocarTokenMcp,
         desconectarCuenta,
         normalizarPeriodo
     };
 }
 
-module.exports = { crear, normalizarPeriodo, idValido };
+function verificarFirmaWebhook({ rawBody, signatureHeader, secret, ahoraSeg, toleranciaSeg = 300 } = {}) {
+    if (!secret || typeof secret !== 'string') return { ok: false, motivo: 'sin_secreto' };
+    if (typeof signatureHeader !== 'string' || !signatureHeader.trim()) return { ok: false, motivo: 'sin_firma' };
+    const partes = {};
+    signatureHeader.split(',').forEach(seg => {
+        const idx = seg.indexOf('=');
+        if (idx > 0) partes[seg.slice(0, idx).trim()] = seg.slice(idx + 1).trim();
+    });
+    const ts = Number(partes.t);
+    const sig = String(partes.v1 || '').toLowerCase();
+    if (!Number.isInteger(ts) || ts <= 0 || !/^[0-9a-f]{64}$/.test(sig)) {
+        return { ok: false, motivo: 'formato_invalido' };
+    }
+    const ahora = Number.isFinite(ahoraSeg) ? ahoraSeg : Math.floor(Date.now() / 1000);
+    if (Math.abs(ahora - ts) > toleranciaSeg) {
+        return { ok: false, motivo: 'firma_expirada' };
+    }
+    const cuerpo = Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : String(rawBody == null ? '' : rawBody);
+    const esperado = crypto.createHmac('sha256', secret).update(String(ts) + '.' + cuerpo, 'utf8').digest('hex');
+    const a = Buffer.from(sig, 'hex');
+    const b = Buffer.from(esperado, 'hex');
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+        return { ok: false, motivo: 'firma_no_coincide' };
+    }
+    return { ok: true, timestamp: ts };
+}
+
+module.exports = { crear, normalizarPeriodo, idValido, verificarFirmaWebhook, WEBHOOK_EVENTS };
