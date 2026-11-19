@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.18.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.19.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -2568,24 +2568,24 @@
 
 <!-- Modal Equipo del estudio y compartición -->
 <dialog class="app-dialogo app-dialogo-medio" id="dlg-equipo-estudio" aria-labelledby="equipo-titulo">
-  <div class="sii-dlg-cabeza">
+  <div class="midt-cabeza">
     <div>
       <h2 id="equipo-titulo">Equipo del estudio y sincronización</h2>
-      <p class="texto-ayuda" style="margin:2px 0 0">Comparte tu cartera, nóminas y cierres mensuales en la nube con tu equipo (hasta 5 usuarios).</p>
+      <p class="midt-sub">Comparte tu cartera, nóminas y cierres mensuales en la nube con tu equipo (hasta 5 usuarios).</p>
     </div>
-    <span class="sello sello-emitida" id="equipo-cupo-badge">0 / 5 cupos</span>
-    <button type="button" class="app-icono-btn" id="btn-cerrar-equipo-dlg" aria-label="Cerrar equipo del estudio">
-      <span class="material-icons" aria-hidden="true">close</span>
-    </button>
+    <div class="equipo-dlg-cabeza-der">
+      <span class="sello sello-emitida" id="equipo-cupo-badge">0 / 5 cupos</span>
+      <button type="button" class="app-icono-btn" id="btn-cerrar-equipo-dlg" aria-label="Cerrar equipo del estudio">
+        <span class="material-icons" aria-hidden="true">close</span>
+      </button>
+    </div>
   </div>
-  <div class="sii-dlg-cuerpo">
-    <div id="equipo-dlg-sin-sesion" class="sii-banner-estado" hidden>
-      <span class="material-icons" aria-hidden="true">cloud_off</span>
+  <div class="dialogo-cuerpo">
+    <div id="equipo-dlg-sin-sesion" class="sii-sin-sesion-aviso" hidden>
+      <p><strong>Inicia sesión para compartir y respaldar en la nube.</strong> Mientras tanto, tu trabajo sigue guardado en este navegador y puedes abrir otros estudios donde ya te invitaron.</p>
       <div>
-        <strong>Inicia sesión para compartir y respaldar en la nube</strong>
-        <p class="texto-ayuda" style="margin:2px 0 0">Mientras tanto, tu trabajo sigue guardado en este navegador y puedes abrir otros estudios donde ya te invitaron.</p>
+        <button type="button" class="btn btn-primario btn-chico" id="btn-equipo-ir-sesion">Iniciar sesión</button>
       </div>
-      <button type="button" class="btn btn-primario btn-chico" id="btn-equipo-ir-sesion">Iniciar sesión</button>
     </div>
 
     <form id="form-equipo-invitar" class="equipo-inv-form">

@@ -3688,12 +3688,35 @@
     color: var(--ink);
     background: var(--surface);
 }
+#dlg-equipo-estudio.app-dialogo-medio {
+    width: min(710px, calc(100vw - 32px));
+}
+.equipo-dlg-cabeza-der {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+#equipo-cupo-badge {
+    white-space: nowrap;
+}
+.equipo-inv-accion .btn {
+    min-height: 40px;
+}
 .equipo-inv-form {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(130px, 0.8fr) auto;
-    gap: 10px;
+    grid-template-columns: minmax(160px, 1fr) minmax(270px, 1.35fr) auto;
+    gap: 12px;
     align-items: end;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
+}
+@media screen and (max-width: 710px) {
+    .equipo-inv-form {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #dlg-equipo-estudio .midt-cabeza {
+        align-items: flex-start;
+    }
 }
 
 /* 5. Buzón de Documentos en /portal-estudio */
