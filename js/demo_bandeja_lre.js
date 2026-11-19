@@ -82,6 +82,29 @@
         return rut || '';
     }
 
+    // Cruce Previred-LRE: el contador ya generó el archivo Previred del período
+    // (señal de cotizaciones por pagar/pagadas) pero la bandeja sigue sin LRE declarado.
+    function previredGeneradoDe(nombre, per) {
+        var k = String(nombre || '').trim().toLowerCase() + '::' + per;
+        var st = leerTodoAlmacen()[k];
+        return !!(st && st.previredGenerado);
+    }
+
+    function esCruce(nombre, per, estado) {
+        if (estado !== 'pendiente' && estado !== 'enviado') return false;
+        return previredGeneradoDe(nombre, per);
+    }
+
+    function registrarPreviredGenerado() {
+        var nombre = (window.CLSuiteSiiBridge && window.CLSuiteSiiBridge.clienteNombre)
+            ? window.CLSuiteSiiBridge.clienteNombre() : '';
+        if (!nombre || !window.CLSuiteSiiBridge || !window.CLSuiteSiiBridge.guardarEstadoParaCliente) return;
+        window.CLSuiteSiiBridge.guardarEstadoParaCliente(nombre, periodoActual(), function (est) {
+            est.previredGenerado = hoyIso();
+        });
+        pintar();
+    }
+
     function csvNombreEsperado(nombre, per) {
         var rut = rutDe(nombre);
         if (!rut) return 'RUT pendiente';
@@ -118,16 +141,19 @@
         var estado = est ? est.estado : 'pendiente';
         var fechaISO = est && est.fecha ? String(est.fecha).slice(0, 10) : '';
         var rut = rutDe(c.nombre);
+        var cruce = esCruce(c.nombre, periodoActual(), estado);
         var opciones = Object.keys(B.ESTADOS).map(function (k) {
             return '<option value="' + k + '"' + (k === estado ? ' selected' : '') + '>' + B.ESTADOS[k].etiqueta + '</option>';
         }).join('');
-        return '<tr>' +
+        return '<tr' + (cruce ? ' class="lre-fila-cruce"' : '') + '>' +
             '<td data-l="Empresa"><strong>' + esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip">En uso</span>' : '') +
             '<span class="lre-rut mono">' + (rut ? esc(rut) : 'Sin RUT') + '</span></td>' +
             '<td data-l="Dotación">' + (c.trabajadores
                 ? c.trabajadores + ' trab. <span class="' + (obligatoria ? 'lre-dot-obligatoria' : 'lre-dot-opcional') + '">' + (obligatoria ? 'Obligatoria' : 'Opcional (<5)') + '</span>'
                 : '<span class="texto-ayuda">Sin nómina</span>') + '</td>' +
-            '<td data-l="Archivo CSV"><code class="mono lre-csv-nombre">' + esc(csvNombreEsperado(c.nombre, periodoActual())) + '</code></td>' +
+            '<td data-l="Archivo CSV"><code class="mono lre-csv-nombre">' + esc(csvNombreEsperado(c.nombre, periodoActual())) + '</code>' +
+            (cruce ? '<span class="lre-cruce-chip" role="status"><span class="material-icons" aria-hidden="true">sync_problem</span> Previred listo y LRE sin declarar</span>' : '') +
+            '</td>' +
             '<td data-l="Estado LRE"><div class="lre-estado-celda">' +
             '<select class="lre-estado-select" data-lre-cliente="' + esc(c.nombre) + '" aria-label="Estado LRE de ' + esc(c.nombre) + '">' + opciones + '</select>' +
             (fechaISO ? '<span class="lre-fecha-fila">Marcado <input type="date" class="lre-fecha-input" data-lre-fecha="' + esc(c.nombre) + '" value="' + esc(fechaISO) + '" aria-label="Fecha de marca LRE de ' + esc(c.nombre) + '"></span>' : '') +
@@ -166,6 +192,10 @@
         var obligatoriasSinOk = lista.filter(function (c) {
             return c.trabajadores >= 5 && (!est[c.nombre] || est[c.nombre].estado !== 'cargado');
         }).length;
+        var cruces = lista.filter(function (c) {
+            var estado = est[c.nombre] ? est[c.nombre].estado : 'pendiente';
+            return esCruce(c.nombre, per, estado);
+        }).length;
         var strip = 'ok';
         var selloHtml = '';
         if (rest === null) {
@@ -186,6 +216,10 @@
         } else {
             strip = 'err';
             selloHtml = '<span class="sello sello-riesgo">Vencido hace ' + Math.abs(rest) + ' días hábiles</span>';
+        }
+        if (cruces > 0) {
+            selloHtml += '<span class="sello lre-cruce-chip"><span class="material-icons" aria-hidden="true">sync_problem</span>' +
+                cruces + (cruces === 1 ? ' empresa' : ' empresas') + ' con Previred listo y LRE sin declarar</span>';
         }
         banner.className = 'suite-preval-strip ' + strip;
         banner.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">' +
@@ -467,6 +501,19 @@
         // Aviso discreto al generar el CSV desde el botón "Libro LRE" de Liquidaciones.
         if ($('btn-lre-liq')) {
             $('btn-lre-liq').addEventListener('click', function () { setTimeout(postDescargaLiq, 60); });
+        }
+
+        // Cruce Previred-LRE: registrar que el archivo Previred del período quedó listo
+        // (el generador escribe "Archivo Previred listo" en #warnings-liq al tener éxito).
+        if ($('btn-previred-liq')) {
+            $('btn-previred-liq').addEventListener('click', function () {
+                setTimeout(function () {
+                    var caja = $('warnings-liq');
+                    if (caja && /Archivo Previred listo/i.test(caja.textContent || '')) {
+                        registrarPreviredGenerado();
+                    }
+                }, 250);
+            });
         }
         var stripLiq = $('liq-lre-post-strip');
         if (stripLiq) {

@@ -3803,6 +3803,22 @@
     font-weight: 600;
 }
 .lre-csv-nombre { font-size: 12px; }
+.lre-cruce-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    color: var(--amber-ink);
+    font-size: 11.5px;
+    font-weight: 600;
+}
+.lre-cruce-chip .material-icons { font-size: 14px; color: var(--amber-icon); flex-shrink: 0; }
+#lre-plazo-banner .lre-cruce-chip { margin-top: 0; }
+.lre-fila-cruce td { border-left: 3px solid var(--amber); }
 .lre-estado-celda {
     display: flex;
     flex-direction: column;
