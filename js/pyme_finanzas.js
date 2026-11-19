@@ -214,8 +214,23 @@
         return parsearCartolaFilas(filas, periodoFallback);
     }
 
+    function esCotizacion(doc) {
+        return !!(doc && doc.tipoDoc === 'cotizacion');
+    }
+
+    function normalizarEnlacePago(raw) {
+        var s = String(raw || '').trim();
+        if (!s || /\s/.test(s)) return { ok: !s, url: '', error: s ? 'El enlace de pago no puede tener espacios.' : '' };
+        if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+        if (!/^https?:\/\/[^\s/.]+\.[^\s]+$/i.test(s)) {
+            return { ok: false, url: s, error: 'Ingresa una URL válida (por ejemplo https://mpago.la/...).' };
+        }
+        return { ok: true, url: s, error: '' };
+    }
+
     function estadoVencimiento(doc, hoyIso) {
         if (!doc) return { codigo: 'al_dia', etiqueta: 'Al día', dias: 0 };
+        if (esCotizacion(doc)) return { codigo: 'cotizacion', etiqueta: 'Cotización', dias: 0 };
         if (doc.pagada) return { codigo: 'pagada', etiqueta: doc.tipoDoc === 'cxp' ? 'Pagada' : 'Cobrada', dias: 0 };
         var dias = diasEntre(hoyIso, doc.vencimiento || doc.fecha);
         if (dias < 0) return { codigo: 'vencida', etiqueta: 'Vencida (' + Math.abs(dias) + ' d)', dias: dias };
@@ -303,9 +318,12 @@
         var folio = (doc && doc.folio) ? doc.folio : 'S/N';
         var monto = pesos(doc && doc.monto);
         var vence = (doc && doc.vencimiento) ? doc.vencimiento.split('-').reverse().join('-') : '';
+        var esCot = esCotizacion(doc);
         var lineas = [
             'Estimados ' + cliente + ', junto con saludar, les escribimos de ' + empNombre + (empRut ? ' (RUT ' + empRut + ')' : '') + '.',
-            'Les recordamos el pago de la Factura N° ' + folio + ' por ' + monto + (vence ? ', con vencimiento el ' + vence : '') + '.'
+            esCot
+                ? 'Les compartimos la Cotización N° ' + folio + ' por ' + monto + (vence ? ', válida hasta el ' + vence : '') + '.'
+                : 'Les recordamos el pago de la Factura N° ' + folio + ' por ' + monto + (vence ? ', con vencimiento el ' + vence : '') + '.'
         ];
         if (cuentaCobro && cuentaCobro.banco && cuentaCobro.numeroCuenta) {
             lineas.push(
@@ -316,7 +334,16 @@
                 (cuentaCobro.correo ? ' · ' + cuentaCobro.correo : '') + '.'
             );
         }
-        lineas.push('Si el pago ya fue realizado, agradecemos enviarnos el comprobante para conciliarlo. Muchas gracias.');
+        var enlace = cuentaCobro && cuentaCobro.enlacePago ? String(cuentaCobro.enlacePago).trim() : '';
+        if (enlace) {
+            var normL = normalizarEnlacePago(enlace);
+            if (normL.ok && normL.url) {
+                lineas.push('Pagar en línea: ' + normL.url);
+            }
+        }
+        lineas.push(esCot
+            ? 'Quedamos atentos a su confirmación para avanzar. Muchas gracias.'
+            : 'Si el pago ya fue realizado, agradecemos enviarnos el comprobante para conciliarlo. Muchas gracias.');
         return lineas.join('\n\n');
     }
 
@@ -407,7 +434,7 @@
 
     function sugerirConciliacion(movimientos, contexto) {
         contexto = contexto || {};
-        var cobranzas = (contexto.cobranzas || []).filter(function (c) { return !c.pagada; });
+        var cobranzas = (contexto.cobranzas || []).filter(function (c) { return !c.pagada && !esCotizacion(c); });
         var pagos = (contexto.pagos || []).filter(function (p) { return !p.pagada; });
         var ob = contexto.obligacionesMes || {};
 
@@ -511,7 +538,7 @@
     function explicarDiferenciaConciliacion(datos) {
         datos = datos || {};
         var movs = datos.movimientos || [];
-        var cxc = datos.cobranzas || [];
+        var cxc = (datos.cobranzas || []).filter(function (c) { return !esCotizacion(c); });
         var cxp = datos.pagos || [];
         var saldoCartola = datos.ultimoSaldoCartola !== null && datos.ultimoSaldoCartola !== undefined
             ? entero(datos.ultimoSaldoCartola)
@@ -570,6 +597,7 @@
             return mapa[key];
         }
         (cobranzas || []).forEach(function (c) {
+            if (esCotizacion(c)) return;
             var p = asegurar(c.proyecto);
             var m = entero(c.monto);
             p.ingresos += m;
@@ -645,7 +673,7 @@
         datos = datos || {};
         var periodo = datos.periodo || '2026-10';
         var saldoHoy = entero(datos.saldoBancoHoy);
-        var cobranzasPend = (datos.cobranzas || []).filter(function (c) { return !c.pagada; });
+        var cobranzasPend = (datos.cobranzas || []).filter(function (c) { return !c.pagada && !esCotizacion(c); });
         var pagosPend = (datos.pagos || []).filter(function (p) { return !p.pagada; });
 
         var porEntrar = cobranzasPend.reduce(function (s, c) { return s + entero(c.monto); }, 0);
@@ -810,6 +838,7 @@
             banco: 'BancoEstado',
             tipoCuenta: 'corriente',
             numeroCuenta: '6250014892',
+            enlacePago: '',
             correo: 'pagos@losaromos.cl'
         };
 
@@ -1041,7 +1070,7 @@
             if (!raiz[k]) {
                 raiz[k] = {
                     estudio: { nombreEstudio: '', contadorNombre: '', correo: '', telefono: '' },
-                    cuentaCobro: { banco: '', tipoCuenta: 'corriente', numeroCuenta: '', correo: '' },
+                    cuentaCobro: { banco: '', tipoCuenta: 'corriente', numeroCuenta: '', correo: '', enlacePago: '' },
                     regimen: '14D3',
                     proveedoresBanco: {},
                     periodos: {}
@@ -1142,7 +1171,7 @@
             if (!app.getEstado()) return;
             var p = app.getPeriodo();
             var ctx = datosPeriodoActual(p);
-            var cxcPend = (ctx.per.cobranzas || []).filter(function (c) { return !c.pagada; }).length;
+            var cxcPend = (ctx.per.cobranzas || []).filter(function (c) { return !c.pagada && !esCotizacion(c); }).length;
             var cxpPend = (ctx.per.pagos || []).filter(function (x) { return !x.pagada; }).length;
             var movSin = (ctx.per.movimientos || []).filter(function (m) { return !m.conciliadoCon; }).length;
             var puente = puenteDePeriodo(p);
@@ -1184,7 +1213,7 @@
             var items = [];
 
             var cobVencidas = (ctx.per.cobranzas || []).filter(function (c) {
-                return estadoVencimiento(c, hoy).codigo === 'vencida';
+                return !esCotizacion(c) && estadoVencimiento(c, hoy).codigo === 'vencida';
             });
             if (cobVencidas.length) {
                 var totVenc = cobVencidas.reduce(function (s, c) { return s + entero(c.monto); }, 0);
@@ -1278,7 +1307,7 @@
                 var per = leerPeriodoSoloLectura(d.emp, pm);
                 var lab = app.resumenLaboralMes(pm);
                 var ob = per ? obligacionesDelMes(pm) : { sueldosLiquidos: 0, previred: 0, f29Total: 0 };
-                var cxcSum = per ? (per.cobranzas || []).reduce(function (s, c) { return s + entero(c.monto); }, 0) : 0;
+                var cxcSum = per ? (per.cobranzas || []).filter(function (c) { return !esCotizacion(c); }).reduce(function (s, c) { return s + entero(c.monto); }, 0) : 0;
                 var cxpSum = per ? (per.pagos || []).reduce(function (s, pg) { return s + entero(pg.monto); }, 0) : 0;
                 var histRem = per && per.remuneracionesHistoricas ? per.remuneracionesHistoricas : null;
                 var sueldos = ob.sueldosLiquidos || (histRem ? entero(histRem.sueldos) : entero(lab && lab.liquido));
@@ -1382,7 +1411,7 @@
             var flujo = calcularFlujoCaja({
                 periodo: p,
                 saldoBancoHoy: saldoBanco,
-                cobranzas: ctx.per.cobranzas,
+                cobranzas: (ctx.per.cobranzas || []).filter(function (c) { return !esCotizacion(c); }),
                 pagos: ctx.per.pagos,
                 obligacionesMes: obligacionesDelMes(p)
             });
@@ -1434,6 +1463,62 @@
         }
 
         // ---------------- 2. COBRANZAS ----------------
+        function imprimirDocumentoCobro(doc) {
+            if (!doc || typeof window === 'undefined' || !window.CLPrint) return;
+            var ctx = datosPeriodoActual();
+            var emp = ctx.emp || {};
+            var cta = emp.cuentaCobro || {};
+            var escP = window.CLPrint.esc;
+            var esCot = esCotizacion(doc);
+            var folioTxt = doc.folio || 'S/N';
+            var fechaEm = (doc.fecha || '').split('-').reverse().join('-') || '-';
+            var fechaVence = (doc.vencimiento || '').split('-').reverse().join('-') || '-';
+            var empRut = emp.rut ? (Rut() ? Rut().formatear(emp.rut) : emp.rut) : '';
+            var neto = entero(doc.neto) > 0 ? entero(doc.neto) : (doc.exento ? entero(doc.monto) : Math.round(entero(doc.monto) / 1.19));
+            var iva = doc.exento ? 0 : Math.max(0, entero(doc.monto) - neto);
+
+            var pagoHtml = '';
+            if ((cta.banco && cta.numeroCuenta) || cta.enlacePago) {
+                var partes = [];
+                if (cta.banco && cta.numeroCuenta) {
+                    partes.push('Transferencia: <strong>' + escP(cta.banco) + '</strong> · ' +
+                        escP(TIPOS_CUENTA[cta.tipoCuenta] || cta.tipoCuenta || 'Cuenta corriente') +
+                        ' N° <span class="mono">' + escP(cta.numeroCuenta) + '</span>' +
+                        (empRut ? ' · RUT ' + escP(empRut) : '') +
+                        (cta.correo ? ' · ' + escP(cta.correo) : ''));
+                }
+                if (cta.enlacePago) {
+                    partes.push('Pagar en línea: <span class="mono">' + escP(cta.enlacePago) + '</span>');
+                }
+                pagoHtml = '<div class="clr-note"><b class="t">Medios de pago</b>' + partes.join('<br>') + '</div>';
+            }
+
+            var html = window.CLPrint.header({
+                doctype: (esCot ? 'Cotización N° ' : 'Aviso de cobro · Factura N° ') + folioTxt,
+                date: window.CLPrint.fechaHoy(),
+                folio: (esCot ? 'COT-' : 'COB-') + folioTxt
+            }) +
+                '<h1 class="clr-title">' + escP(esCot ? 'Cotización: ' : 'Detalle de cobro: ') + escP(doc.razonSocial) + '</h1>' +
+                '<p class="clr-sub">Emitido el <strong>' + escP(fechaEm) + '</strong> · ' +
+                    escP(esCot ? 'Válida hasta ' : 'Vencimiento ') + '<strong>' + escP(fechaVence) + '</strong>' +
+                    (doc.rut ? ' · RUT cliente <span class="mono">' + escP(doc.rut) + '</span>' : '') + '</p>' +
+                '<p class="clr-cite">' + escP(emp.razonSocial || 'Empresa') + (empRut ? ' · RUT ' + escP(empRut) : '') +
+                    (esCot ? ' · Propuesta comercial sin valor tributario ante el SII' : ' · Documento de cobro referencial') + '</p>' +
+                '<div class="clr-sec"><div class="clr-h">Resumen de montos (CLP)</div>' +
+                '<table class="clr-t"><tbody>' +
+                '<tr><td class="k">' + escP(doc.exento ? 'Monto exento' : 'Monto Neto') + '</td><td class="v">' + escP(pesos(neto)) + '</td></tr>' +
+                (doc.exento ? '' : '<tr><td class="k">IVA (19%)</td><td class="v">' + escP(pesos(iva)) + '</td></tr>') +
+                '<tr class="sum"><td class="k">' + escP(esCot ? 'Total cotización' : 'Total factura') + '</td><td class="v">' + escP(pesos(doc.monto)) + '</td></tr>' +
+                '</tbody></table></div>' +
+                '<div class="clr-total"><div class="lbl">' + escP(esCot ? 'Total cotizado' : 'Total por pagar') +
+                    '<small>' + escP(doc.proyecto ? 'Proyecto: ' + doc.proyecto : 'Gestión comercial') + '</small></div>' +
+                    '<div class="amt">' + escP(pesos(doc.monto)) + '</div></div>' +
+                pagoHtml +
+                '<footer class="clr-foot"><span class="brand">' + escP(emp.razonSocial || 'CálculoLaboral') + '</span> · Generado en calculolaboral.cl/app</footer>';
+
+            window.CLPrint.imprimir({ html: html });
+        }
+
         function dibujarCobranzas() {
             actualizarInsigniasYBanner();
             var p = app.getPeriodo();
@@ -1447,8 +1532,9 @@
             $('cob-btn-rcv').disabled = cerrado;
             if (cerrado) $('cob-form-panel').hidden = true;
 
-            var totalPend = 0, totalVencido = 0, totalPronto = 0, totalCobrado = 0;
+            var totalPend = 0, totalVencido = 0, totalPronto = 0, totalCobrado = 0, cntCot = 0;
             todas.forEach(function (c) {
+                if (esCotizacion(c)) { cntCot++; return; }
                 var st = estadoVencimiento(c, hoy);
                 if (st.codigo === 'pagada') totalCobrado += entero(c.monto);
                 else {
@@ -1458,8 +1544,12 @@
                 }
             });
 
+            var elCntCot = $('cob-cnt-cot');
+            if (elCntCot) elCntCot.textContent = String(cntCot);
+
             $('cob-kpis').innerHTML =
-                '<div class="fin-kpi"><span class="fin-kpi-label">Total por cobrar</span><strong class="fin-kpi-val mono">' + pesos(totalPend) + '</strong></div>' +
+                '<div class="fin-kpi"><span class="fin-kpi-label">Total por cobrar</span><strong class="fin-kpi-val mono">' + pesos(totalPend) + '</strong>' +
+                    (cntCot > 0 ? '<small class="cob-kpi-sub">Solo facturas y cuentas por cobrar</small>' : '') + '</div>' +
                 '<div class="fin-kpi"><span class="fin-kpi-label">Vencido hoy</span><strong class="fin-kpi-val mono ' + (totalVencido > 0 ? 'riesgo' : '') + '">' + pesos(totalVencido) + '</strong></div>' +
                 '<div class="fin-kpi"><span class="fin-kpi-label">Vence en 7 días</span><strong class="fin-kpi-val mono">' + pesos(totalPronto) + '</strong></div>' +
                 '<div class="fin-kpi"><span class="fin-kpi-label">Cobrado en el mes</span><strong class="fin-kpi-val mono ok">' + pesos(totalCobrado) + '</strong></div>';
@@ -1471,8 +1561,11 @@
             });
 
             var filtradas = todas.filter(function (c) {
+                var esCot = esCotizacion(c);
                 var st = estadoVencimiento(c, hoy).codigo;
+                if (ui.filtroCobranzas === 'cotizaciones') return esCot;
                 if (ui.filtroCobranzas === 'todas') return true;
+                if (esCot) return false;
                 if (ui.filtroCobranzas === 'vencidas') return st === 'vencida';
                 if (ui.filtroCobranzas === 'por_vencer') return st === 'por_vencer';
                 if (ui.filtroCobranzas === 'al_dia') return st === 'al_dia';
@@ -1480,28 +1573,55 @@
                 return true;
             });
 
+            if (ui.filtroCobranzas === 'todas') {
+                filtradas = filtradas.slice().sort(function (a, b) {
+                    return (esCotizacion(a) ? 1 : 0) - (esCotizacion(b) ? 1 : 0);
+                });
+            }
+
             var tbody = $('cob-filas');
             var cards = $('cob-cards');
             if (!filtradas.length) {
-                tbody.innerHTML = '<tr><td colspan="6" class="vacio">No hay facturas en esta vista. Importa el archivo RCV de Ventas del SII o agrega una cuenta por cobrar.</td></tr>';
-                if (cards) cards.innerHTML = '<div class="fin-card-item"><p class="texto-ayuda" style="margin:0">No hay facturas en esta vista. Importa el RCV de Ventas del SII o agrega una cuenta por cobrar.</p></div>';
+                var vacioMsg = ui.filtroCobranzas === 'cotizaciones'
+                    ? 'No hay cotizaciones en este período. Crea una con "Nueva cuenta por cobrar" eligiendo Cotización.'
+                    : 'No hay facturas en esta vista. Importa el archivo RCV de Ventas del SII o agrega una cuenta por cobrar.';
+                tbody.innerHTML = '<tr><td colspan="6" class="vacio">' + esc(vacioMsg) + '</td></tr>';
+                if (cards) cards.innerHTML = '<div class="fin-card-item"><p class="texto-ayuda" style="margin:0">' + esc(vacioMsg) + '</p></div>';
                 return;
             }
 
             tbody.innerHTML = filtradas.map(function (c) {
+                var esCot = esCotizacion(c);
                 var st = estadoVencimiento(c, hoy);
-                var cls = st.codigo === 'pagada' ? 'sello-emitida' : st.codigo === 'vencida' ? 'sello-riesgo' : st.codigo === 'por_vencer' ? 'sello-preparada' : 'sello-guardada';
-                var acciones = c.pagada
-                    ? (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn-texto" data-cob-accion="desmarcar" data-id="' + esc(c.id) + '">Reabrir</button>')
-                    : '<div class="acciones-pila acciones-fila">' +
+                var cls = esCot ? 'sello-guardada' : (st.codigo === 'pagada' ? 'sello-emitida' : st.codigo === 'vencida' ? 'sello-riesgo' : st.codigo === 'por_vencer' ? 'sello-preparada' : 'sello-guardada');
+                var estadoHtml = esCot
+                    ? '<span class="sello sello-guardada">Cotización</span><span class="cob-estado-sub">Sin deuda · No suma a caja</span>'
+                    : '<span class="sello ' + cls + '">' + esc(st.etiqueta) + '</span>';
+                var docLabel = (esCot ? 'Cotización ' : 'Factura ') + esc(c.folio);
+                var acciones;
+                if (esCot) {
+                    acciones = '<div class="acciones-pila acciones-fila">' +
+                        (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn btn-primario btn-chico" data-cob-pasar="' + esc(c.id) + '">Pasar a cobro</button>') +
+                        '<button type="button" class="btn btn-chico" data-cob-pdf="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir PDF</button>' +
+                        (cerrado ? '' : '<button type="button" class="btn-peligro-texto" data-cob-eliminar="' + esc(c.id) + '" aria-label="Eliminar cotización">Eliminar</button>') +
+                      '</div>';
+                } else if (c.pagada) {
+                    acciones = '<div class="acciones-pila acciones-fila">' +
+                        '<button type="button" class="btn btn-chico" data-cob-pdf="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir PDF</button>' +
+                        (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn-texto" data-cob-accion="desmarcar" data-id="' + esc(c.id) + '">Reabrir</button>') +
+                      '</div>';
+                } else {
+                    acciones = '<div class="acciones-pila acciones-fila">' +
                         '<button type="button" class="btn btn-chico" data-cob-accion="cobrar" data-id="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">send</span>Cobrar</button>' +
+                        '<button type="button" class="btn btn-chico" data-cob-pdf="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir PDF</button>' +
                         (cerrado ? '' : '<button type="button" class="btn-texto" data-cob-accion="pagada" data-id="' + esc(c.id) + '">Marcar cobrada</button>') +
                       '</div>';
+                }
                 return '<tr>' +
                     '<td class="celda-nombre"><strong>' + esc(c.razonSocial) + '</strong><span class="mono">' + esc(c.rut || 'Sin RUT') + '</span></td>' +
-                    '<td class="mono">Factura ' + esc(c.folio) + '</td>' +
+                    '<td class="mono">' + docLabel + '</td>' +
                     '<td class="fecha">' + esc(c.vencimiento) + '</td>' +
-                    '<td><span class="sello ' + cls + '">' + esc(st.etiqueta) + '</span></td>' +
+                    '<td>' + estadoHtml + '</td>' +
                     '<td class="num">' + pesos(c.monto) + '</td>' +
                     '<td class="celda-acciones">' + acciones + '</td>' +
                     '</tr>';
@@ -1509,15 +1629,28 @@
 
             if (cards) {
                 cards.innerHTML = filtradas.map(function (c) {
+                    var esCot = esCotizacion(c);
                     var st = estadoVencimiento(c, hoy);
-                    var cls = st.codigo === 'pagada' ? 'sello-emitida' : st.codigo === 'vencida' ? 'sello-riesgo' : st.codigo === 'por_vencer' ? 'sello-preparada' : 'sello-guardada';
-                    var estCls = st.codigo === 'pagada' ? 'estado-activo' : st.codigo === 'vencida' ? 'estado-vencida' : st.codigo === 'por_vencer' ? 'estado-aviso' : '';
-                    var pie = c.pagada
-                        ? (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn btn-chico" data-cob-accion="desmarcar" data-id="' + esc(c.id) + '">Reabrir</button>')
-                        : '<button type="button" class="btn btn-chico btn-whatsapp" data-cob-accion="cobrar" data-id="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">send</span>Cobrar por WhatsApp</button>' +
-                          (cerrado ? '' : '<button type="button" class="btn btn-chico" data-cob-accion="pagada" data-id="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">check</span>Cobrada</button>');
+                    var cls = esCot ? 'sello-guardada' : (st.codigo === 'pagada' ? 'sello-emitida' : st.codigo === 'vencida' ? 'sello-riesgo' : st.codigo === 'por_vencer' ? 'sello-preparada' : 'sello-guardada');
+                    var estCls = esCot ? 'es-cotizacion' : (st.codigo === 'pagada' ? 'estado-activo' : st.codigo === 'vencida' ? 'estado-vencida' : st.codigo === 'por_vencer' ? 'estado-aviso' : '');
+                    var pie;
+                    if (esCot) {
+                        pie = (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn btn-primario btn-chico" data-cob-pasar="' + esc(c.id) + '">Pasar a cobro</button>') +
+                            '<button type="button" class="btn btn-chico" data-cob-pdf="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir PDF</button>' +
+                            (cerrado ? '' : '<button type="button" class="btn btn-chico" data-cob-eliminar="' + esc(c.id) + '" aria-label="Eliminar cotización">Eliminar</button>');
+                    } else if (c.pagada) {
+                        pie = '<button type="button" class="btn btn-chico" data-cob-pdf="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir PDF</button>' +
+                            (cerrado ? '<span class="texto-ayuda">Protegida</span>' : '<button type="button" class="btn btn-chico" data-cob-accion="desmarcar" data-id="' + esc(c.id) + '">Reabrir</button>');
+                    } else {
+                        pie = '<button type="button" class="btn btn-chico btn-whatsapp" data-cob-accion="cobrar" data-id="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">send</span>Cobrar por WhatsApp</button>' +
+                            '<button type="button" class="btn btn-chico" data-cob-pdf="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">print</span>Imprimir PDF</button>' +
+                            (cerrado ? '' : '<button type="button" class="btn btn-chico" data-cob-accion="pagada" data-id="' + esc(c.id) + '"><span class="material-icons" aria-hidden="true">check</span>Cobrada</button>');
+                    }
+                    var docLabel = (esCot ? 'Cotización ' : 'Factura ') + esc(c.folio);
+                    var venceLabel = (esCot ? 'Válida hasta: ' : 'Vence: ') + esc(c.vencimiento);
                     return '<div class="fin-card-item ' + estCls + '">' +
-                        '<div class="fin-card-head"><div class="fin-card-id"><span class="mono fin-folio">Factura ' + esc(c.folio) + '</span><span class="fin-fecha">Vence: ' + esc(c.vencimiento) + '</span></div><span class="sello ' + cls + '">' + esc(st.etiqueta) + '</span></div>' +
+                        '<div class="fin-card-head"><div class="fin-card-id"><span class="mono fin-folio">' + docLabel + '</span><span class="fin-fecha">' + venceLabel + '</span></div>' +
+                        '<div><span class="sello ' + cls + '">' + esc(st.etiqueta) + '</span>' + (esCot ? '<span class="cob-estado-sub">Sin deuda · No suma a caja</span>' : '') + '</div></div>' +
                         '<div class="fin-card-cuerpo"><p class="fin-card-empresa">' + esc(c.razonSocial) + '</p><p class="fin-card-rut mono">' + esc(c.rut || 'Sin RUT') + '</p>' +
                         '<div class="fin-card-monto-wrap"><span class="fin-card-lbl">Monto</span><span class="fin-card-val mono">' + pesos(c.monto) + '</span></div></div>' +
                         '<div class="fin-card-pie">' + pie + '</div></div>';
@@ -2177,11 +2310,13 @@
             if (!doc) return;
             ui.cobroDocActivo = doc;
             var dlg = $('pm-cobro-dlg');
-            $('pm-cobro-titulo').textContent = 'Cobrar Factura ' + doc.folio + ' · ' + doc.razonSocial;
+            $('pm-cobro-titulo').textContent = (esCotizacion(doc) ? 'Enviar Cotización ' : 'Cobrar Factura ') + doc.folio + ' · ' + doc.razonSocial;
             $('pm-cobro-tel').value = doc.telefono || '';
             $('pm-cobro-banco').value = ctx.emp.cuentaCobro.banco || '';
             $('pm-cobro-tipo').value = ctx.emp.cuentaCobro.tipoCuenta || 'corriente';
             $('pm-cobro-num').value = ctx.emp.cuentaCobro.numeroCuenta || '';
+            if ($('pm-cobro-enlace')) $('pm-cobro-enlace').value = ctx.emp.cuentaCobro.enlacePago || '';
+            if ($('pm-cobro-copiado')) $('pm-cobro-copiado').textContent = '';
             actualizarTextoModalCobro();
             if (dlg && dlg.showModal) dlg.showModal();
         }
@@ -2189,11 +2324,17 @@
         function actualizarTextoModalCobro() {
             if (!ui.cobroDocActivo) return;
             var est = app.getEstado();
+            var rawEnlace = $('pm-cobro-enlace') ? $('pm-cobro-enlace').value.trim() : '';
+            var normE = normalizarEnlacePago(rawEnlace);
             var cta = {
                 banco: $('pm-cobro-banco').value.trim(),
                 tipoCuenta: $('pm-cobro-tipo').value,
-                numeroCuenta: $('pm-cobro-num').value.trim()
+                numeroCuenta: $('pm-cobro-num').value.trim(),
+                enlacePago: normE.ok ? normE.url : ''
             };
+            if ($('pm-cobro-copiado')) {
+                $('pm-cobro-copiado').textContent = (!normE.ok && rawEnlace) ? normE.error : '';
+            }
             var msg = mensajeCobranza(ui.cobroDocActivo, est && est.empresa, cta);
             $('pm-cobro-texto').value = msg;
             var tel = $('pm-cobro-tel').value.replace(/[^\d]/g, '');
@@ -2377,9 +2518,31 @@
             });
 
             // Cobranzas
+            function setTipoDocCob(tipo) {
+                var esCot = tipo === 'cotizacion';
+                if ($('cob-f-tipo')) $('cob-f-tipo').value = esCot ? 'cotizacion' : 'factura';
+                if ($('cob-f-tipo-factura')) {
+                    $('cob-f-tipo-factura').classList.toggle('activo', !esCot);
+                    $('cob-f-tipo-factura').setAttribute('aria-checked', !esCot ? 'true' : 'false');
+                }
+                if ($('cob-f-tipo-cotizacion')) {
+                    $('cob-f-tipo-cotizacion').classList.toggle('activo', esCot);
+                    $('cob-f-tipo-cotizacion').setAttribute('aria-checked', esCot ? 'true' : 'false');
+                }
+                if ($('cob-cot-nota')) $('cob-cot-nota').hidden = !esCot;
+                if ($('cob-form-titulo')) $('cob-form-titulo').textContent = esCot ? 'Crear cotización' : 'Registrar cuenta por cobrar';
+                if ($('cob-f-folio-lbl')) $('cob-f-folio-lbl').textContent = esCot ? 'N° Cotización' : 'N° Factura / Folio';
+                if ($('cob-f-folio')) $('cob-f-folio').placeholder = esCot ? 'COT-001' : '1120';
+                if ($('cob-f-vence-lbl')) $('cob-f-vence-lbl').textContent = esCot ? 'Válida hasta' : 'Fecha vencimiento';
+                if ($('cob-form-submit')) $('cob-form-submit').textContent = esCot ? 'Guardar cotización' : 'Guardar factura';
+            }
+            if ($('cob-f-tipo-factura')) $('cob-f-tipo-factura').addEventListener('click', function () { setTipoDocCob('factura'); });
+            if ($('cob-f-tipo-cotizacion')) $('cob-f-tipo-cotizacion').addEventListener('click', function () { setTipoDocCob('cotizacion'); });
+
             $('cob-btn-nueva').addEventListener('click', function () {
                 $('cob-form-panel').hidden = !$('cob-form-panel').hidden;
                 if (!$('cob-form-panel').hidden) {
+                    setTipoDocCob('factura');
                     resetDesgloseCob();
                     $('cob-f-fecha').value = app.hoyIso();
                     $('cob-f-vence').value = sumarDias(app.hoyIso(), 30);
@@ -2390,6 +2553,7 @@
             $('cob-form').addEventListener('submit', function (e) {
                 e.preventDefault();
                 if (estaCerrado()) return;
+                var tipoDoc = $('cob-f-tipo') && $('cob-f-tipo').value === 'cotizacion' ? 'cotizacion' : 'factura';
                 var razon = $('cob-f-razon').value.trim();
                 var monto = entero($('cob-f-monto').value);
                 var exento = !!($('cob-f-exento') && $('cob-f-exento').checked);
@@ -2404,12 +2568,14 @@
                 }
                 $('cob-form-err').hidden = true;
                 var rutRaw = $('cob-f-rut').value.trim();
+                var folioDef = tipoDoc === 'cotizacion' ? ('COT-' + String(Date.now()).slice(-4)) : 'S/N';
                 mutarPeriodoActual(function (per) {
                     per.cobranzas.unshift({
-                        id: 'cxc-man-' + Date.now(),
+                        id: (tipoDoc === 'cotizacion' ? 'cot-man-' : 'cxc-man-') + Date.now(),
+                        tipoDoc: tipoDoc,
                         rut: Rut() && rutRaw ? Rut().formatear(rutRaw) : rutRaw,
                         razonSocial: razon,
-                        folio: $('cob-f-folio').value.trim() || 'S/N',
+                        folio: $('cob-f-folio').value.trim() || folioDef,
                         tipoDte: exento ? 34 : 33,
                         fecha: $('cob-f-fecha').value || app.hoyIso(),
                         vencimiento: $('cob-f-vence').value || sumarDias(app.hoyIso(), 30),
@@ -2425,6 +2591,7 @@
                     });
                 });
                 this.reset();
+                setTipoDocCob('factura');
                 resetDesgloseCob();
                 $('cob-form-panel').hidden = true;
                 dibujarCobranzas();
@@ -2454,6 +2621,37 @@
             document.addEventListener('click', function (e) {
                 var bf = e.target.closest('[data-cob-filtro]');
                 if (bf) { ui.filtroCobranzas = bf.getAttribute('data-cob-filtro'); dibujarCobranzas(); return; }
+                var bp = e.target.closest('[data-cob-pasar]');
+                if (bp && !estaCerrado()) {
+                    var pid = bp.getAttribute('data-cob-pasar');
+                    mutarPeriodoActual(function (per) {
+                        var d = per.cobranzas.filter(function (c) { return c.id === pid; })[0];
+                        if (d) { d.tipoDoc = 'factura'; d.pagada = false; }
+                    });
+                    if ($('cob-estado-msg')) {
+                        $('cob-estado-msg').textContent = 'Cotización pasada a cuenta por cobrar.';
+                        $('cob-estado-msg').hidden = false;
+                    }
+                    dibujarCobranzas();
+                    return;
+                }
+                var be = e.target.closest('[data-cob-eliminar]');
+                if (be && !estaCerrado()) {
+                    var eid = be.getAttribute('data-cob-eliminar');
+                    mutarPeriodoActual(function (per) {
+                        per.cobranzas = (per.cobranzas || []).filter(function (c) { return c.id !== eid; });
+                    });
+                    dibujarCobranzas();
+                    return;
+                }
+                var bpdf = e.target.closest('[data-cob-pdf]');
+                if (bpdf) {
+                    var pdfId = bpdf.getAttribute('data-cob-pdf');
+                    var ctxP = datosPeriodoActual();
+                    var docP = (ctxP.per.cobranzas || []).filter(function (c) { return c.id === pdfId; })[0];
+                    if (docP) imprimirDocumentoCobro(docP);
+                    return;
+                }
                 var ba = e.target.closest('[data-cob-accion]');
                 if (ba) {
                     var id = ba.getAttribute('data-id'), acc = ba.getAttribute('data-cob-accion');
@@ -2475,28 +2673,40 @@
             });
 
             // Modal cobro WhatsApp / copiar
-            ['pm-cobro-tel', 'pm-cobro-banco', 'pm-cobro-tipo', 'pm-cobro-num'].forEach(function (id) {
-                $(id).addEventListener('input', actualizarTextoModalCobro);
-                $(id).addEventListener('change', actualizarTextoModalCobro);
-            });
-            $('pm-cobro-copiar').addEventListener('click', function () {
+            function persistirCuentaCobroModal() {
+                var rawEnlace = $('pm-cobro-enlace') ? $('pm-cobro-enlace').value.trim() : '';
+                var normE = normalizarEnlacePago(rawEnlace);
                 mutarPeriodoActual(function (per, emp) {
                     emp.cuentaCobro = {
                         banco: $('pm-cobro-banco').value.trim(),
                         tipoCuenta: $('pm-cobro-tipo').value,
                         numeroCuenta: $('pm-cobro-num').value.trim(),
-                        correo: emp.cuentaCobro.correo || ''
+                        correo: (emp.cuentaCobro && emp.cuentaCobro.correo) || '',
+                        enlacePago: normE.ok ? normE.url : ((emp.cuentaCobro && emp.cuentaCobro.enlacePago) || '')
                     };
                     if (ui.cobroDocActivo) ui.cobroDocActivo.telefono = $('pm-cobro-tel').value.trim();
                 });
+            }
+            ['pm-cobro-tel', 'pm-cobro-banco', 'pm-cobro-tipo', 'pm-cobro-num', 'pm-cobro-enlace'].forEach(function (id) {
+                var el = $(id);
+                if (!el) return;
+                el.addEventListener('input', actualizarTextoModalCobro);
+                el.addEventListener('change', actualizarTextoModalCobro);
+            });
+            $('pm-cobro-copiar').addEventListener('click', function () {
+                persistirCuentaCobroModal();
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText($('pm-cobro-texto').value).catch(function () {});
                 }
                 $('pm-cobro-copiado').textContent = 'Mensaje copiado al portapapeles.';
             });
+            if ($('pm-cobro-wa')) {
+                $('pm-cobro-wa').addEventListener('click', function () { persistirCuentaCobroModal(); });
+            }
             if ($('pm-cobro-registrar')) {
                 $('pm-cobro-registrar').addEventListener('click', function () {
                     if (!ui.cobroDocActivo) return;
+                    persistirCuentaCobroModal();
                     registrarCorreoSimulado(
                         'Cobranza',
                         ui.cobroDocActivo.razonSocial,
@@ -2772,7 +2982,8 @@
                         banco: $('mc-cobro-banco').value,
                         tipoCuenta: $('mc-cobro-tipo').value,
                         numeroCuenta: $('mc-cobro-numero').value.trim(),
-                        correo: $('mc-cobro-correo').value.trim()
+                        correo: $('mc-cobro-correo').value.trim(),
+                        enlacePago: (emp.cuentaCobro && emp.cuentaCobro.enlacePago) || ''
                     };
                     per.puenteLocal.regimen = emp.regimen;
                     per.puenteLocal.estudio = emp.estudio;

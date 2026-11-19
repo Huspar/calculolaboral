@@ -240,4 +240,19 @@ caso('resumenPorProyecto agrupa ingresos, gastos y margen por centro de costo', 
     assert.strictEqual(ev.porCobrar, 1190000);
 });
 
+caso('cotizaciones se excluyen de flujo de caja y proyectos, y mensajeCobranza incluye enlacePago opcional', () => {
+    const cot = { id: 'cot-1', tipoDoc: 'cotizacion', folio: 'COT-001', razonSocial: 'Cliente Demo', monto: 500000, vencimiento: '2026-11-30', pagada: false, proyecto: 'Ventas' };
+    const fac = { id: 'fac-1', tipoDoc: 'factura', folio: '101', razonSocial: 'Cliente Real', monto: 200000, vencimiento: '2026-11-25', pagada: false, proyecto: 'Ventas' };
+    assert.strictEqual(FIN.estadoVencimiento(cot, '2026-12-10').codigo, 'cotizacion');
+    const flujo = FIN.calcularFlujoCaja({ saldoBancoHoy: 1000000, cobranzas: [cot, fac], pagos: [], obligacionesMes: {} });
+    assert.strictEqual(flujo.porEntrarMes, 200000);
+    assert.strictEqual(flujo.facturasPorCobrar, 1);
+    const proys = FIN.resumenPorProyecto([cot, fac], []);
+    assert.strictEqual(proys.length, 1);
+    assert.strictEqual(proys[0].porCobrar, 200000);
+    const msg = FIN.mensajeCobranza(fac, { razonSocial: 'Mi Pyme' }, { enlacePago: 'https://mpago.la/demo123' });
+    assert.ok(msg.includes('Pagar en línea: https://mpago.la/demo123'));
+    assert.ok(!/\u2014/.test(msg));
+});
+
 console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : ''));

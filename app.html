@@ -30,7 +30,7 @@ gtag('js', new Date());
     gtag('config', 'G-9Y03F1WB8J', Object.assign({ send_page_view: false }, esInterno ? { traffic_type: 'internal' } : {}));
 })();
 </script>
-<link rel="stylesheet" href="/assets/css/app.css?v=1.37.0">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
 </head>
 <body class="app-body">
@@ -1443,13 +1443,22 @@ gtag('js', new Date());
 </div>
 
 <div class="panel" id="cob-form-panel" hidden style="margin-bottom:16px">
-<div class="panel-head"><h2>Registrar cuenta por cobrar</h2></div>
+<div class="panel-head"><h2 id="cob-form-titulo">Registrar cuenta por cobrar</h2></div>
 <form id="cob-form" class="panel-cuerpo fin-form-grid" novalidate>
+<div class="lq-field fin-span-all">
+<span class="lq-label-texto" id="cob-f-tipo-lbl">Tipo de documento</span>
+<div class="segmento" role="radiogroup" aria-labelledby="cob-f-tipo-lbl" id="cob-f-tipo-grupo">
+<button type="button" class="seg-btn activo" id="cob-f-tipo-factura" data-cob-tipo="factura" role="radio" aria-checked="true">Factura / Por cobrar</button>
+<button type="button" class="seg-btn" id="cob-f-tipo-cotizacion" data-cob-tipo="cotizacion" role="radio" aria-checked="false">Cotización (no suma deuda)</button>
+</div>
+<input type="hidden" id="cob-f-tipo" name="tipoDoc" value="factura">
+<p class="cob-cot-aviso" id="cob-cot-nota" hidden>Las cotizaciones no suman deuda ni flujo de caja hasta pasarlas a cobro.</p>
+</div>
 <div class="lq-field"><label for="cob-f-razon">Cliente / Razón social</label><input id="cob-f-razon" type="text" maxlength="120" required></div>
 <div class="lq-field"><label for="cob-f-rut">RUT cliente</label><input id="cob-f-rut" type="text" data-tipo="rut" maxlength="15" placeholder="76.123.456-7"></div>
-<div class="lq-field"><label for="cob-f-folio">N° Factura / Folio</label><input id="cob-f-folio" type="text" maxlength="20" placeholder="1120"></div>
+<div class="lq-field"><label id="cob-f-folio-lbl" for="cob-f-folio">N° Factura / Folio</label><input id="cob-f-folio" type="text" maxlength="20" placeholder="1120"></div>
 <div class="lq-field"><label for="cob-f-fecha">Fecha emisión</label><input id="cob-f-fecha" type="date"></div>
-<div class="lq-field"><label for="cob-f-vence">Fecha vencimiento</label><input id="cob-f-vence" type="date"></div>
+<div class="lq-field"><label id="cob-f-vence-lbl" for="cob-f-vence">Fecha vencimiento</label><input id="cob-f-vence" type="date"></div>
 <div class="lq-field"><label for="cob-f-tel">WhatsApp contacto (opcional)</label><input id="cob-f-tel" type="text" maxlength="20" placeholder="+56991234567"></div>
 <div class="lq-field"><label for="cob-f-proyecto">Proyecto / Centro de costo</label><select id="cob-f-proyecto"></select></div>
 <div class="fin-desglose-widget" id="cob-desglose">
@@ -1465,10 +1474,11 @@ gtag('js', new Date());
 <p class="fin-desglose-nota" id="cob-desglose-nota">Ingresa el Neto o el Total: recalculamos el 19% de IVA al instante.</p>
 </div>
 <p id="cob-form-err" class="pm-error fin-span-all" role="alert" hidden></p>
-<div class="form-acciones fin-span-all"><button type="button" class="btn" id="cob-form-cancelar">Cancelar</button><button type="submit" class="btn btn-primario">Guardar factura</button></div>
+<div class="form-acciones fin-span-all"><button type="button" class="btn" id="cob-form-cancelar">Cancelar</button><button type="submit" class="btn btn-primario" id="cob-form-submit">Guardar factura</button></div>
 </form>
 </div>
 
+<p id="cob-estado-msg" class="lq-estado lq-estado-ok" role="status" hidden style="margin:0 0 12px"></p>
 <div class="fin-kpis fin-kpis-4" id="cob-kpis"></div>
 
 <div class="fin-filtros" role="toolbar" aria-label="Filtrar cuentas por cobrar">
@@ -1477,6 +1487,7 @@ gtag('js', new Date());
 <button type="button" class="fin-chip" data-cob-filtro="por_vencer" aria-pressed="false">Por vencer (7 días)</button>
 <button type="button" class="fin-chip" data-cob-filtro="al_dia" aria-pressed="false">Al día</button>
 <button type="button" class="fin-chip" data-cob-filtro="pagadas" aria-pressed="false">Cobradas</button>
+<button type="button" class="fin-chip" data-cob-filtro="cotizaciones" aria-pressed="false">Cotizaciones <span class="fin-chip-cnt" id="cob-cnt-cot">0</span></button>
 </div>
 
 <div class="panel tabla-financiera-escritorio">
@@ -1792,6 +1803,11 @@ gtag('js', new Date());
 <div class="lq-field"><label for="pm-cobro-banco">Banco para recibir transferencia</label><select id="pm-cobro-banco"></select></div>
 <div class="lq-field"><label for="pm-cobro-tipo">Tipo de cuenta</label><select id="pm-cobro-tipo"><option value="corriente">Cuenta corriente</option><option value="vista">Cuenta vista / RUT</option><option value="ahorro">Cuenta de ahorro</option></select></div>
 <div class="lq-field"><label for="pm-cobro-num">N° de cuenta</label><input id="pm-cobro-num" type="text" maxlength="22"></div>
+<div class="lq-field fin-span-all">
+<label for="pm-cobro-enlace">Enlace de pago (opcional)</label>
+<input id="pm-cobro-enlace" type="url" maxlength="300" inputmode="url" placeholder="https://link.mercadopago.cl/... o URL de pago">
+<small class="lq-ayuda" id="pm-cobro-enlace-ayuda">Opcional: se guarda como enlace predeterminado de tu empresa y se suma al mensaje.</small>
+</div>
 </div>
 <div class="lq-field" style="margin-top:10px">
 <label for="pm-cobro-texto">Mensaje formal listo para enviar</label>
@@ -1911,7 +1927,8 @@ gtag('js', new Date());
 <script src="/js/contadores_f29.js?v=1.0.0"></script>
 <script src="/js/kit_zip_engine.js?v=1.0.0"></script>
 <script src="/js/finiquito_docx.js?v=1.3.0"></script>
-<script src="/js/pyme_finanzas.js?v=1.4.3"></script>
+<script src="/js/print_brand.js?v=1.3.0"></script>
+<script src="/js/pyme_finanzas.js?v=1.4.4"></script>
 <script src="/js/pyme_cumplimiento.js?v=1.0.0"></script>
 <script src="/js/pyme_datos_ley.js?v=1.5.0"></script>
 <script src="/js/pyme_equipo_ui.js?v=1.1.0"></script>
