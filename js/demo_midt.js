@@ -164,6 +164,11 @@
         if ($('midt-lre-tot-descuentos')) $('midt-lre-tot-descuentos').textContent = money(tot.descuentos);
         if ($('midt-lre-tot-liquido')) $('midt-lre-tot-liquido').textContent = money(tot.liquido);
 
+        // Bandeja LRE: estado actual de la empresa activa dentro del modal.
+        if (window.CLDemoBandejaLre && typeof window.CLDemoBandejaLre.pintarBarraModal === 'function') {
+            window.CLDemoBandejaLre.pintarBarraModal();
+        }
+
         return tot;
     }
 
@@ -203,6 +208,10 @@
         document.body.removeChild(a);
         setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
         if (D && D.avisar) D.avisar('Archivo ' + s.nombreArchivo + ' descargado con el formato exacto de Mi DT.');
+        // Bandeja LRE (js/demo_bandeja_lre.js): confirmación manual de estado tras descargar.
+        if (window.CLDemoBandejaLre && typeof window.CLDemoBandejaLre.postDescargaModal === 'function') {
+            window.CLDemoBandejaLre.postDescargaModal(s.nombreArchivo);
+        }
     }
 
     async function copiar(texto, okMsg) {

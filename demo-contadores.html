@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.16.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.17.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -308,6 +308,7 @@
             <div class="segmento" aria-label="Tipo de documento laboral">
               <label><input type="radio" name="modo" value="finiquitos"><span>Finiquitos</span></label>
               <label><input type="radio" name="modo" value="liquidaciones" checked><span>Liquidaciones</span></label>
+              <label><input type="radio" name="modo" value="bandeja-lre"><span>Bandeja LRE (Mi DT) <em class="lre-tab-badge" id="lre-tab-badge" hidden>0</em></span></label>
             </div>
           </div>
         </div>
@@ -543,6 +544,7 @@
                   </div>
                 </div>
               </section>
+              <div id="liq-lre-post-strip" class="suite-preval-strip ok" hidden role="status" aria-live="polite"></div>
               <div class="acciones-liq-bloques">
                 <div class="acciones-liq-grupo">
                   <span class="acciones-liq-etiqueta">Entregables oficiales</span>
@@ -550,6 +552,8 @@
                   <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred <span class="preval-btn-badge" id="badge-err-previred" hidden>0</span></button>
                   <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE <span class="preval-btn-badge" id="badge-err-lre" hidden>0</span></button>
                   <button class="btn" type="button" id="btn-midt-lre-guia"><span class="material-icons" aria-hidden="true">checklist</span>Guía subir LRE a Mi DT</button>
+                  <button class="btn" type="button" id="btn-liq-ir-bandeja-lre"><span class="material-icons" aria-hidden="true">fact_check</span>Bandeja LRE cartera</button>
+                  <span class="sello sello-guardada" id="liq-lre-estado-pill">LRE: Pendiente de subir</span>
                 </div>
                 <div class="acciones-liq-grupo">
                   <span class="acciones-liq-etiqueta">Contabilidad y cierre</span>
@@ -561,6 +565,61 @@
                 </div>
               </div>
               <div class="preval-botones-aviso" id="preval-botones-aviso" hidden role="status" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Bandeja LRE (Mi DT) por empresa -->
+        <div id="pane-bandeja-lre" hidden>
+          <div class="suite-preval-strip" id="lre-plazo-banner" role="status" aria-live="polite"></div>
+          <div class="panel" style="margin-top:14px">
+            <div class="panel-head">
+              <h2>Estado LRE de la cartera</h2>
+              <span class="texto-ayuda">Marca a mano el estado de cada empresa después de subir el CSV en midt.dirtrab.cl. Sin conexión automática: nada sale de este navegador.</span>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="fin-kpis fin-kpis-4">
+                <div class="fin-kpi"><span class="fin-kpi-label">Empresas en cartera</span><span class="fin-kpi-val" id="lre-k-total">0</span><span class="texto-ayuda" id="lre-k-obligatorias" style="display:block;margin:2px 0 0">0 con 5+ trab.</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Pendientes de subir</span><span class="fin-kpi-val mono" id="lre-k-pendientes">0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Cargadas (OK)</span><span class="fin-kpi-val mono ok" id="lre-k-ok">0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Observadas / Rectificar</span><span class="fin-kpi-val mono" id="lre-k-alerta">0</span></div>
+              </div>
+              <div class="lre-bandeja-toolbar">
+                <div class="fin-filtros" id="lre-filtros" role="tablist" aria-label="Filtrar empresas por estado LRE">
+                  <button type="button" class="fin-chip activo" data-lre-filtro="todas" role="tab" aria-selected="true">Todas</button>
+                  <button type="button" class="fin-chip" data-lre-filtro="pendiente" role="tab" aria-selected="false">Pendientes</button>
+                  <button type="button" class="fin-chip" data-lre-filtro="enviado" role="tab" aria-selected="false">En trámite (Enviado)</button>
+                  <button type="button" class="fin-chip" data-lre-filtro="alerta" role="tab" aria-selected="false">Observado / Rectificar</button>
+                  <button type="button" class="fin-chip" data-lre-filtro="cargado" role="tab" aria-selected="false">Cargado (OK)</button>
+                </div>
+                <div class="lre-bandeja-controles">
+                  <input type="search" id="lre-bandeja-buscar" placeholder="Buscar empresa o RUT" aria-label="Buscar empresa en bandeja LRE">
+                  <label class="pm-check"><input type="checkbox" id="lre-filtro-obligatorias"> Solo obligatorias (5+ trab.)</label>
+                </div>
+              </div>
+              <div class="tabla-wrap tabla-contable-wrap">
+                <table class="tabla" id="tabla-bandeja-lre">
+                  <thead>
+                    <tr>
+                      <th scope="col">Empresa / RUT</th>
+                      <th scope="col">Dotación</th>
+                      <th scope="col">Archivo CSV</th>
+                      <th scope="col">Estado LRE (manual)</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-bandeja-lre"></tbody>
+                </table>
+              </div>
+              <div class="demo-vacio" id="lre-bandeja-vacio" hidden>
+                <p class="demo-vacio-t">Aún no tienes empresas guardadas para este período</p>
+                <p class="texto-ayuda">Agrega clientes en Cartera de Clientes o calcula una nómina en Liquidaciones para iniciar el seguimiento LRE.</p>
+                <div class="form-acciones"><button class="btn btn-chico" type="button" id="btn-lre-ir-cartera">Ir a Cartera de Clientes</button></div>
+              </div>
+              <div class="demo-vacio" id="lre-bandeja-sin-filtro" hidden>
+                <p class="demo-vacio-t">Ninguna empresa coincide con el filtro seleccionado</p>
+                <div class="form-acciones"><button class="btn btn-chico" type="button" id="btn-lre-mostrar-todas">Mostrar todas</button></div>
+              </div>
             </div>
           </div>
         </div>
@@ -2596,6 +2655,7 @@
       <span class="sello sello-emitida" id="midt-lre-sello">Listo para Mi DT</span>
       <ul class="preval-lista-hallazgos" id="midt-lre-errores-lista" hidden style="margin-top:8px"></ul>
     </div>
+    <div class="midt-lre-bandeja-barra" id="midt-lre-bandeja-barra" role="status" aria-live="polite"></div>
 
     <div class="midt-lre-control-box" id="midt-lre-control-box">
       <div class="mcp-copiar-fila" style="margin-bottom:8px">
@@ -2640,6 +2700,7 @@
       <button type="button" class="btn btn-primario btn-chico" id="btn-midt-descargar-lre">
         <span class="material-icons" aria-hidden="true">description</span>Descargar CSV LRE exacto
       </button>
+      <div class="midt-lre-post-descarga" id="midt-lre-post-descarga" role="status" aria-live="polite" hidden></div>
     </div>
 
     <div class="mcp-paso">
@@ -2687,7 +2748,7 @@
 <script src="/js/liquidacion_valores.js?v=1.4.0"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/pyme_excel.js?v=2.0.1"></script>
-<script src="/js/demo_comun.js?v=1.8.0"></script>
+<script src="/js/demo_comun.js?v=1.9.0"></script>
 <script src="/js/demo_contadores.js?v=1.6.0"></script>
 <script src="/js/previred_generador.js?v=1.5.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
@@ -2713,7 +2774,10 @@
 <script src="/js/demo_sii.js?v=1.3.0"></script>
 <script src="/js/demo_mcp.js?v=1.0.0"></script>
 <script src="/js/demo_portal_estudio.js?v=1.1.0"></script>
-<script src="/js/demo_midt.js?v=1.0.0"></script>
+<script src="/js/demo_midt.js?v=1.1.0"></script>
+<script src="/js/feriados_cl.js?v=1.0.0"></script>
+<script src="/js/bandeja_lre.js?v=1.0.0"></script>
+<script src="/js/demo_bandeja_lre.js?v=1.0.0"></script>
 <script>
 // Manejo del menú móvil y selector de mes (paridad visual con /app)
 (function () {

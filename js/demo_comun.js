@@ -243,7 +243,8 @@
         var radios = Array.prototype.slice.call(document.querySelectorAll('input[name="modo"]'));
         var panes = {
             finiquitos: [document.getElementById('pane-finiquitos'), document.getElementById('results-fin')],
-            liquidaciones: [document.getElementById('pane-liquidaciones'), document.getElementById('results-liq')]
+            liquidaciones: [document.getElementById('pane-liquidaciones'), document.getElementById('results-liq')],
+            'bandeja-lre': [document.getElementById('pane-bandeja-lre')]
         };
 
         function aplicar(modo) {
@@ -281,6 +282,9 @@
                 var mes = p.length === 2 ? MESES[parseInt(p[1], 10) - 1] : '';
                 topCtx.textContent = mes ? mes + ' ' + p[0] : 'Período';
                 if (topCtxL) topCtxL.textContent = 'Período';
+            } else if (modo === 'bandeja-lre') {
+                topCtx.textContent = 'Bandeja LRE';
+                if (topCtxL) topCtxL.textContent = 'Mi DT';
             } else {
                 topCtx.textContent = 'Finiquitos';
                 if (topCtxL) topCtxL.textContent = 'Modo';
@@ -314,6 +318,10 @@
         // sin parámetros la página abre en Liquidaciones, que es el uso diario del contador.
         if (/[?&]demo=1/.test(location.search) && !/[?&]tab=liq/.test(location.search)) {
             radios.forEach(function (r) { r.checked = r.value === 'finiquitos'; });
+        }
+        // Enlace directo a la bandeja LRE: ?tab=lre
+        if (/[?&]tab=lre/.test(location.search)) {
+            radios.forEach(function (r) { r.checked = r.value === 'bandeja-lre'; });
         }
         var activo = radios.filter(function (r) { return r.checked; })[0];
         aplicar(activo ? activo.value : 'finiquitos');

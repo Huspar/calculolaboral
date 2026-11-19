@@ -3720,6 +3720,211 @@
     background: var(--surface-2);
 }
 
+/* ==========================================================================
+   7. BANDEJA LRE POR EMPRESA (#pane-bandeja-lre · Ola 4)
+   Seguimiento manual del Libro de Remuneraciones Electrónico en Mi DT.
+   Arquitectura: Shared/diseno-arquitectura-bandeja-lre-2026-11-19.md
+   ========================================================================== */
+.sello-lre-enviado {
+    background: var(--forest-50);
+    color: var(--forest-700);
+    border-color: var(--forest-100);
+}
+.lre-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 17px;
+    height: 17px;
+    margin-left: 5px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--amber);
+    color: var(--forest-deep);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1;
+}
+#lre-plazo-banner { margin: 12px 0 0; }
+#lre-plazo-banner .texto-ayuda { font-size: 12px; }
+.suite-preval-strip-der { display: inline-flex; align-items: center; gap: 8px; }
+.lre-bandeja-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 14px;
+    margin-bottom: 12px;
+}
+.lre-bandeja-controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+.lre-bandeja-controles input[type="search"],
+.lre-bandeja-controles input[type="text"] {
+    width: 220px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    font-size: 13px;
+}
+.lre-bandeja-controles .pm-check { font-size: 12.5px; color: var(--muted); }
+.lre-rut {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+.lre-dot-obligatoria {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    color: var(--forest-700);
+    font-size: 11px;
+    font-weight: 600;
+}
+.lre-dot-opcional {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+}
+.lre-csv-nombre { font-size: 12px; }
+.lre-estado-celda {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 176px;
+}
+.lre-estado-select {
+    height: 34px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.lre-fecha-fila {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--muted);
+}
+.lre-fecha-input {
+    height: 28px;
+    width: auto;
+    padding: 0 6px;
+    font-size: 11.5px;
+}
+.lre-acciones-celda {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+}
+#lre-k-pendientes.amarillo { color: var(--amber-ink); }
+#lre-k-alerta.rojo { color: var(--risk-ink); }
+.midt-lre-bandeja-barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    color: var(--forest-700);
+    font-size: 12.5px;
+}
+.midt-lre-post-descarga {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 12px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--forest-50);
+    border: 1px solid var(--forest-100);
+    color: var(--forest);
+    font-size: 13px;
+}
+.midt-lre-post-descarga[hidden] { display: none; }
+#liq-lre-post-strip[hidden] { display: none; }
+.lre-post-botones {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+@media screen and (max-width: 700px) {
+    #suite-remuneraciones .segmento { flex-wrap: wrap; }
+    #suite-remuneraciones .segmento label { min-height: 44px; }
+    #lre-plazo-banner .suite-preval-strip-der { width: 100%; }
+    #tabla-bandeja-lre thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+    #tbody-bandeja-lre tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--line);
+    }
+    #tbody-bandeja-lre td[data-l] {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 4px;
+        height: auto;
+        padding: 0;
+        border: 0;
+        text-align: left;
+    }
+    #tbody-bandeja-lre td[data-l]::before {
+        content: attr(data-l);
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--muted);
+    }
+    .lre-bandeja-controles,
+    .lre-bandeja-controles input[type="search"],
+    .lre-bandeja-controles input[type="text"],
+    .lre-estado-celda,
+    .lre-estado-select,
+    .lre-acciones-celda,
+    .lre-acciones-celda .btn,
+    .midt-lre-post-descarga .btn {
+        width: 100%;
+        min-height: 44px;
+        font-size: 16px;
+    }
+    .lre-acciones-celda .btn {
+        font-size: 14px;
+        justify-content: center;
+    }
+    .lre-fecha-input { height: 34px; }
+}
+
 @media screen and (max-width: 1080px) {
     #cuenta-estado { display: none; }
 }
