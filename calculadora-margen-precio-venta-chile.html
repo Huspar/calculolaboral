@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Margen y Precio de Venta Pyme (Chile, con IVA 19%) · Cálculo Laboral</title>
+    <meta name="description" content="Calcula el precio de venta neto y con IVA (19%) según tu margen deseado o recargo sobre costo (markup), y evita confundir margen con ganancia sobre costo.">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="canonical" href="https://calculolaboral.cl/calculadora-margen-precio-venta-chile">
+
+    <meta property="og:title" content="Calculadora de Margen y Precio de Venta Pyme (Chile, con IVA 19%) · Cálculo Laboral">
+    <meta property="og:description" content="Calcula el precio de venta neto y con IVA (19%) según tu margen deseado o recargo sobre costo (markup), y evita confundir margen con ganancia sobre costo.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/calculadora-margen-precio-venta-chile">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Calculadora de Margen y Precio de Venta Pyme (Chile, con IVA 19%) · Cálculo Laboral">
+    <meta name="twitter:description" content="Calcula el precio de venta neto y con IVA (19%) según tu margen deseado o recargo sobre costo (markup), y evita confundir margen con ganancia sobre costo.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://calculolaboral.cl/calculadora-margen-precio-venta-chile#app",
+          "name": "Calculadora de Margen y Precio de Venta · Cálculo Laboral",
+          "url": "https://calculolaboral.cl/calculadora-margen-precio-venta-chile",
+          "description": "Calculadora gratuita para pymes en Chile: distingue margen sobre venta de markup sobre costo e incluye IVA 19% débito y crédito.",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "es-CL",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
+          "publisher": { "@id": "https://calculolaboral.cl/#organization" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+            { "@type": "ListItem", "position": 2, "name": "Asistente Pyme", "item": "https://calculolaboral.cl/asistente-laboral-pyme" },
+            { "@type": "ListItem", "position": 3, "name": "Calculadora de Margen y Precio de Venta", "item": "https://calculolaboral.cl/calculadora-margen-precio-venta-chile" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+                        "@type": "Question",
+                        "name": "¿Cuál es la diferencia entre margen y markup (recargo sobre el costo)?",
+                        "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "El markup se aplica sobre el costo (por ejemplo, costo $10.000 + 30% = $13.000 neto). El margen se mide sobre el precio de venta final: para ganar un 30% real sobre la venta, el precio neto debe ser $10.000 / (1 - 0,30) = $14.286."
+                        }
+            },
+            {
+                        "@type": "Question",
+                        "name": "¿Debo calcular mi margen con o sin IVA?",
+                        "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "El margen real de tu negocio se calcula sobre valores netos (sin IVA), porque el 19% de IVA que cobras al vender no es utilidad tuya: se compensa con el IVA crédito de tus compras y la diferencia se entera en el F29."
+                        }
+            },
+            {
+                        "@type": "Question",
+                        "name": "¿Cómo fijo el precio final al público con boleta?",
+                        "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Primero calcula el precio de venta neto según el margen deseado y luego multiplícalo por 1,19 para obtener el precio de venta con IVA incluido."
+                        }
+            }
+]
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+
+    <script>
+    window.addEventListener('load', function () {
+        var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+        if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+    });
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        try {
+            if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+            if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+            if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+        } catch (e) {}
+        gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+    </script>
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.4.0">
+    <style>
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #F8FAF9;
+            color: #111827;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        main.site-container { min-width: 0; }
+        .font-mono-num {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-variant-numeric: tabular-nums;
+        }
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+            pointer-events: none;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu,
+        .nav-dropdown-group:focus-within .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.28);
+        }
+        .btn-yellow-pill:hover { background-color: var(--teal-yellow-hover); transform: translateY(-1px); }
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #1E293B !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 10px 18px;
+            font-size: 13.5px;
+            min-height: 44px;
+            border: 1.5px solid #CBD5E1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover { border-color: var(--teal-forest); color: var(--teal-forest) !important; background-color: #F8FAF9; }
+        .btn-yellow-pill.hidden, .btn-outline-pill.hidden { display: none !important; }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex, .btn-outline-pill.md\:inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex, .btn-outline-pill.lg\:inline-flex { display: inline-flex !important; }
+        }
+        .teal-footer-curve {
+            background-color: var(--teal-forest);
+            color: #FFFFFF;
+            border-top-left-radius: 48px;
+        }
+        .teal-footer-curve .footer-inner-container { max-width: 1240px; margin-left: auto; margin-right: auto; }
+        @media (min-width: 1024px) {
+            .teal-footer-curve { border-top-left-radius: 96px; }
+            .teal-footer-curve .footer-inner-container { padding-left: 5rem !important; padding-right: 2rem !important; }
+        }
+        @media (min-width: 1200px) and (max-width: 1439px) {
+            .teal-footer-curve .footer-inner-container { padding-left: 3.5rem !important; padding-right: 2rem !important; }
+        }
+        .site-container,
+        .max-w-\[1240px\],
+        [class*="max-w-[1240px]"] {
+            max-width: 1240px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .f29-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
+            background: #F1F5F9;
+            padding: 5px;
+            border-radius: 16px;
+            border: 1px solid #E2E8F0;
+        }
+        .f29-tab {
+            min-height: 44px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            padding: 8px 12px;
+            transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .f29-tab[aria-selected="true"] {
+            background: #FFFFFF;
+            color: #00382E;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+        }
+        .f29-tab:focus-visible { outline: 2px solid #00382E; outline-offset: 2px; }
+        .f29-chip {
+            min-height: 44px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12.5px;
+            font-weight: 600;
+            background: #FFFFFF;
+            color: #1E293B;
+            border: 1px solid #CBD5E1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .f29-chip:hover { border-color: #00382E; background: #F1F7F5; color: #00382E; }
+        .f29-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            background: #FFFFFF;
+        }
+        .f29-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+        .f29-table th, .f29-table td {
+            padding: 11px 16px;
+            border-bottom: 1px solid #F1F5F9;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .f29-table thead th {
+            background: #F4F7F6;
+            color: #00382E;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+        .f29-table td.num {
+            text-align: right;
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            color: #0F172A;
+            white-space: nowrap;
+        }
+        .f29-table tr.is-subtotal td, .f29-table tr.is-subtotal th {
+            background: #F8FAF9;
+            font-weight: 800;
+            color: #00382E;
+        }
+        .f29-table tr.is-total td, .f29-table tr.is-total th {
+            background: #ECF5F2;
+            font-weight: 800;
+            color: #00382E;
+            border-bottom: 0;
+        }
+        .f29-code {
+            display: inline-block;
+            min-width: 44px;
+            text-align: center;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: #ECF5F2;
+            color: #00382E;
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .drop-box {
+            border: 1.5px dashed #94A3B8;
+            border-radius: 16px;
+            padding: 14px;
+            background: #F8FAFC;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+        .drop-box.is-loaded {
+            border-color: #00382E;
+            border-style: solid;
+            background: #ECF5F2;
+        }
+        .min-h-\[44px\] { min-height: 44px; }
+        .min-w-\[44px\] { min-width: 44px; }
+        .f29-layout { display: flex; flex-direction: column; gap: 2rem; align-items: flex-start; margin-bottom: 3.5rem; }
+        .f29-sidebar { width: 100%; }
+        @media (min-width: 1024px) {
+            .f29-layout { flex-direction: row; }
+            .f29-sidebar { flex: 0 0 440px; width: 440px; }
+        }
+        .f29-kpi-label { color: #A7F3D0; }
+        .f29-total-val { color: #FFB703; }
+        .f29-file::file-selector-button {
+            min-height: 44px; padding: 0 14px; margin-right: 12px; border: 0; border-radius: 9999px;
+            background-color: #00382E; color: #FFFFFF; font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+        .f29-file::file-selector-button:hover { background-color: #002820; }
+        #btn-rcv-ejemplo { background-color: #ECF5F2; color: #00382E; border-color: rgba(0, 56, 46, 0.35); font-weight: 700; }
+        #btn-f29-copiar, #btn-f29-csv { background-color: #FFFFFF; color: #00382E; }
+        #btn-f29-xlsx { background-color: #FFB703; color: #111827; }
+        #print-section { display: none; }
+        [hidden] { display: none !important; }
+    </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
+<link rel="stylesheet" href="/assets/css/promo-asistente.css?v=1.0.1">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Ticker -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Margen vs. Markup Pyme · Precio Neto y con IVA 19% incluido</span>
+            </div>
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
+                <span class="text-white/50">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$72.440</strong></span>
+                <span class="text-white/50">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm shrink-0" style="background-color: #00382E;">
+                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700" aria-label="Menú principal">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">Simulador Finiquito</a>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">payments</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Sueldo Líquido</div><div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, salud e IUSC.</div></div>
+                                </a>
+                                <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">percent</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Impuesto Único</div><div class="text-xs text-slate-500 mt-0.5">Tabla SII y cálculo mensual.</div></div>
+                                </a>
+                                <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">receipt_long</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Calculadora F29</div><div class="text-xs text-slate-600 mt-0.5">IVA, PPM, honorarios y RCV.</div></div>
+                                </a>
+                                <a href="balance-8-columnas-rli-propyme-excel" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">table_chart</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Balance 8 Columnas y RLI</div><div class="text-xs text-slate-500 mt-0.5">ProPyme 14 D N°3 y Excel.</div></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+                            <div class="space-y-1">
+                                <a href="como-generar-archivo-previred-lre-f29-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Archivo Previred, LRE y F29</a>
+                                <a href="carpeta-laboral-empresa-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Carpeta Laboral de Empresa</a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Checklist Fiscalización DT</a>
+                                <a href="suite-contadores" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Suite Contadores</a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">Ver todas las guías →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <a href="suite-contadores" class="hidden md:inline-flex btn-yellow-pill !py-2 !px-5 !text-xs">Suite Contadores</a>
+                    <a href="para-empleadores" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">Portal Empleadores</a>
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 min-w-[44px] min-h-[44px] text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer inline-flex items-center justify-center" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-2">
+            <a href="finiquito_calculator" class="flex items-center min-h-[44px] text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="calculadora-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Calculadora F29</a>
+            <a href="balance-8-columnas-rli-propyme-excel" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Balance 8 Columnas y RLI</a>
+            <a href="impuesto-unico-segunda-categoria" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Impuesto Único</a>
+            <a href="como-generar-archivo-previred-lre-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Guía Previred, LRE y F29</a>
+            <a href="blog" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Blog de Guías</a>
+            <div class="pt-2">
+                <a href="suite-contadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Suite Contadores</a>
+            </div>
+        </div>
+    </header>
+    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+        <nav class="flex flex-wrap items-center gap-2 text-xs text-slate-600 mb-4" aria-label="Breadcrumb">
+            <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <a href="asistente-laboral-pyme" class="hover:text-[#00382E] transition-colors">Asistente Pyme</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <span class="text-slate-900 font-semibold">Margen y Precio de Venta</span>
+        </nav>
+
+        <header class="mb-7 max-w-4xl">
+            <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                Calculadora de margen y precio de venta con IVA para pymes<span class="text-[#FFB703]">.</span>
+            </h1>
+            <p class="cl-meta">Actualizado 2026 · Separa margen real sobre venta, recargo sobre costo (markup) e IVA 19% en Chile</p>
+            <p class="text-sm sm:text-base text-slate-700 max-w-2xl mt-2 leading-relaxed">
+                Calcula a cuánto vender tus productos o servicios (Neto y con IVA 19%) sin comerte el margen por confundir recargo sobre costo con margen sobre venta.
+            </p>
+        </header>
+
+        <nav class="cl-calcnav no-print" aria-label="Calculadoras comerciales y tributarias">
+            <div class="cl-calcnav-track">
+                <a href="calculadora-iva-chile">Calculadora IVA 19%</a>
+                <a href="calculadora-boleta-honorarios-chile">Boleta Honorarios 15,25%</a>
+                <a href="calculadora-margen-precio-venta-chile" aria-current="page">Margen y Precio</a>
+                <a href="calculadora-f29-chile">Calculadora F29</a>
+                <a href="calculadora-costo-empresa-chile">Costo empresa</a>
+                <a href="impuesto-unico-segunda-categoria">Impuesto Único</a>
+                <a href="sueldo_liquido">Sueldo líquido</a>
+            </div>
+        </nav>
+
+        <section aria-labelledby="calc-mar-heading" class="f29-layout">
+            <div class="f29-sidebar bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-5">
+                <div class="pb-3 border-b border-slate-100">
+                    <h2 id="calc-mar-heading" class="text-lg font-bold text-slate-900 m-0">Costos y objetivo</h2>
+                    <p class="text-xs text-slate-600 mt-1 mb-0">El cálculo de utilidad se hace en base neta para no mezclar el IVA.</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200" role="tablist" aria-label="Método de cálculo">
+                    <button type="button" role="tab" id="tab-mar-margen" class="f29-tab text-xs" aria-selected="true">Por Margen %</button>
+                    <button type="button" role="tab" id="tab-mar-markup" class="f29-tab text-xs" aria-selected="false">Por Recargo %</button>
+                    <button type="button" role="tab" id="tab-mar-precio" class="f29-tab text-xs" aria-selected="false">Según precio</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label for="mar-costo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Costo unitario</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                            <input type="text" id="mar-costo" value="10.000" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="mar-costo-tipo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tipo de costo</label>
+                        <select id="mar-costo-tipo" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <option value="neto" selected>Neto (sin IVA)</option>
+                            <option value="bruto">Con IVA (crédito)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="mar-pct-wrap">
+                    <label for="mar-pct" id="mar-pct-lbl" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Margen deseado sobre la venta (%)</label>
+                    <input type="number" id="mar-pct" value="30" min="0" max="99.9" step="0.5" class="w-full min-h-[44px] px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                    <div class="flex flex-wrap gap-2 mt-2.5" aria-label="Porcentajes rápidos">
+                        <button type="button" class="f29-chip" data-mar-preset="20">20%</button>
+                        <button type="button" class="f29-chip" data-mar-preset="30">30%</button>
+                        <button type="button" class="f29-chip" data-mar-preset="40">40%</button>
+                        <button type="button" class="f29-chip" data-mar-preset="50">50%</button>
+                    </div>
+                </div>
+
+                <div id="mar-precio-wrap" hidden class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label for="mar-precio-in" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tu precio de venta</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                            <input type="text" id="mar-precio-in" value="17.850" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-7 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="mar-precio-tipo" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ese precio es</label>
+                        <select id="mar-precio-tipo" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <option value="bruto" selected>Con IVA (19%)</option>
+                            <option value="neto">Neto (sin IVA)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-end">
+                    <div>
+                        <label for="mar-unidades" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Unidades al mes (opcional)</label>
+                        <input type="number" id="mar-unidades" value="100" min="1" max="999999" step="1" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                    </div>
+                    <label for="mar-exento" class="flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer text-xs font-semibold text-slate-800">
+                        <input type="checkbox" id="mar-exento" class="w-4 h-4 accent-[#00382E]">
+                        <span>Operación exenta de IVA</span>
+                    </label>
+                </div>
+
+                <div id="mar-alerta" hidden class="p-3 rounded-2xl bg-amber-50 border border-amber-300 text-xs text-amber-950 font-medium" role="alert"></div>
+            </div>
+
+            <div class="flex-1 min-w-0 w-full space-y-6">
+                <div class="rounded-3xl p-6 sm:p-8 text-white shadow-lg" style="background-color: #00382E;" aria-live="polite">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p class="f29-kpi-label text-xs font-bold uppercase tracking-wider mb-1" id="mar-res-kicker">Precio de venta al público (IVA incluido)</p>
+                            <div class="f29-total-val text-4xl sm:text-5xl font-extrabold font-mono-num tracking-tight" id="mar-res-principal">$17.000</div>
+                            <p class="text-xs text-slate-200 mt-1.5 mb-0" id="mar-res-sub">Precio Neto $14.286 + IVA $2.714 · Utilidad $4.286 por unidad</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 no-print">
+                            <button type="button" id="btn-mar-copiar" class="min-h-[44px] px-4 py-2 rounded-full bg-white text-[#00382E] font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-slate-100">
+                                <span class="material-icons text-sm" aria-hidden="true">content_copy</span>
+                                <span id="btn-mar-copiar-txt">Copiar resumen</span>
+                            </button>
+                            <button type="button" id="btn-mar-imprimir" class="min-h-[44px] px-4 py-2 rounded-full border border-white/30 text-white font-semibold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-white/10">
+                                <span class="material-icons text-sm" aria-hidden="true">print</span>
+                                <span>Imprimir PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-white/15">
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Precio Neto</div>
+                            <div class="text-lg font-bold font-mono-num text-white mt-0.5" id="mar-kpi-neto">$14.286</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Utilidad / u.</div>
+                            <div class="text-lg font-bold font-mono-num text-white mt-0.5" id="mar-kpi-util">$4.286</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Margen real</div>
+                            <div class="text-lg font-bold font-mono-num text-[#FFB703] mt-0.5" id="mar-kpi-margen">30,0%</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Markup s/ costo</div>
+                            <div class="text-lg font-bold font-mono-num text-white mt-0.5" id="mar-kpi-markup">42,9%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="f29-table-wrap">
+                    <div class="px-5 py-4 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
+                        <h3 class="text-sm sm:text-base font-bold text-slate-900 m-0">Desglose unitario y proyección mensual</h3>
+                        <span class="text-xs text-slate-600" id="mar-tabla-meta">100 unidades/mes</span>
+                    </div>
+                    <table class="f29-table">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th style="text-align: right;">Por unidad</th>
+                                <th style="text-align: right;" id="mar-col-mes">Mes (100 u.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mar-tabla-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <div class="cl-reading">
+            <article class="cl-article">
+                <section>
+                    <h2>Por qué no debes confundir margen con recargo (markup)</h2>
+                    <p>Es el error más común al poner precios en una pyme: si un producto te cuesta <strong>$10.000 netos</strong> y le sumas 30% (<strong>$13.000 netos</strong>), ese 30% es un <em>recargo sobre el costo (markup)</em>, no tu margen real sobre la venta ($3.000 / $13.000 = <strong>23,1% de margen</strong>). Si luego das un descuento del 25%, vendes a pérdida.</p>
+                    <ul>
+                        <li><strong>Margen sobre venta:</strong> <code>(Precio Neto - Costo Neto) / Precio Neto</code>. Es el porcentaje que realmente queda de cada peso vendido antes de gastos fijos.</li>
+                        <li><strong>IVA aparte:</strong> el 19% de IVA que cobras en la venta (débito fiscal) compensa el IVA que pagaste en tu compra (crédito fiscal); solo la diferencia se declara en tu <a href="calculadora-f29-chile">Formulario 29</a>.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Preguntas frecuentes</h2>
+                    <h3>¿Este margen ya descuenta sueldos o arriendo?</h3>
+                    <p>No: calcula el <strong>margen bruto directo</strong> sobre el costo del producto o servicio. Para revisar cuánto cuesta tu equipo mes a mes con cotizaciones e impuestos, usa la <a href="calculadora-costo-empresa-chile">Calculadora de Costo Empresa</a> o controla tus ventas y costos fijos en <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a>.</p>
+                </section>
+
+<!-- cl-asistente:inicio (lo genera tools/promo_asistente.js: no editar a mano) -->
+<aside class="cl-asistente no-print" aria-labelledby="cl-asistente-t">
+<div class="cl-asistente-cuerpo">
+<p class="cl-asistente-kicker">Asistente Laboral Pyme · Piloto gratuito hasta el 31 de diciembre</p>
+<p class="cl-asistente-titulo" id="cl-asistente-t">Controla tus ventas, cobranzas y flujo de caja mensual</p>
+<p>En el asistente registras lo que vendes, sigues facturas vencidas con recordatorio por WhatsApp y concilias tus movimientos bancarios.</p>
+</div>
+<div class="cl-asistente-acciones">
+<a class="cl-asistente-btn" href="asistente-laboral-pyme" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="calculadora-margen-precio-venta-chile-bloque">Conocer el Asistente Laboral Pyme</a>
+<a class="cl-asistente-link" href="app/ejemplo" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="calculadora-margen-precio-venta-chile-ejemplo">Ver un ejemplo, sin cuenta</a>
+</div>
+</aside>
+<!-- cl-asistente:fin -->
+                <section class="cl-sources" aria-labelledby="fuentes-titulo">
+                    <h2 id="fuentes-titulo">Fuentes y referencias normativas</h2>
+                    <ul>
+                        <li>Decreto Ley N° 825 sobre Impuesto a las Ventas y Servicios (art. 14 y arts. 20–23 sobre débito y crédito fiscal).</li>
+                        <li>Criterio contable general para determinación de margen bruto comercial en base neta.</li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+                                <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                                </svg>
+                            </div>
+                            <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+                        </a>
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
+                            Plataforma independiente con herramientas laborales y tributarias actualizadas para trabajadores, pymes y contadores en Chile (2026).
+                        </p>
+                        <div class="pt-1 text-xs font-mono-num text-white/60">Versión 2.6 · Actualizada Noviembre 2026</div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Calculadoras</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="impuesto-unico-segunda-categoria" class="text-white/80 hover:text-[#FFB703] transition-colors">Impuesto Único</a></li>
+                            <li><a href="calculadora-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Calculadora F29</a></li>
+                            <li><a href="balance-8-columnas-rli-propyme-excel" class="text-white/80 hover:text-[#FFB703] transition-colors">Balance 8 Columnas</a></li>
+                            <li><a href="liquidacion-de-sueldo" class="text-white/80 hover:text-[#FFB703] transition-colors">Liquidación de Sueldo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Guías Legales</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Guía Previred, LRE y F29</a></li>
+                            <li><a href="carpeta-laboral-empresa-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carpeta Laboral Empresa</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Para Empresas</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
+                            <li><a href="asistente-laboral-pyme" class="text-white/80 hover:text-[#FFB703] transition-colors">Asistente Laboral Pyme</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/60 text-center md:text-left">
+                    <div>&copy; 2026 Cálculo Laboral Chile. Herramienta referencial basada en normativa tributaria y laboral vigente.</div>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a href="terminos" class="hover:text-white transition-colors">Términos</a>
+                        <span>·</span>
+                        <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
+                        <span>·</span>
+                        <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/constants.js?v=2.1.3"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/print_brand.js?v=1.3.0"></script>
+    <script>
+    (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+        var modo = 'margen';
+
+        var parseCLP = function (v) {
+            var digits = String(v || '').replace(/[^0-9]/g, '');
+            return digits ? parseInt(digits, 10) : 0;
+        };
+        var fmt = function (n) {
+            var val = Math.abs(Math.round(Number(n) || 0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return (n < 0 ? '-' : '') + '$' + val;
+        };
+        var fmtPct = function (n) { return Number(n || 0).toFixed(1).replace('.', ',') + '%'; };
+
+        function calcular() {
+            var costoIn = parseCLP($('mar-costo').value);
+            var costoTipo = $('mar-costo-tipo').value;
+            var exento = $('mar-exento').checked;
+            var tasa = exento ? 0 : 0.19;
+            var unid = Math.max(1, Math.min(999999, Math.round(Number($('mar-unidades').value) || 1)));
+
+            var costoNeto = (!exento && costoTipo === 'bruto') ? Math.round(costoIn / 1.19) : costoIn;
+            var ivaCredito = (!exento && costoTipo === 'bruto') ? (costoIn - costoNeto) : (exento ? 0 : Math.round(costoNeto * 0.19));
+
+            var pctIn = Number($('mar-pct').value) || 0;
+            var alerta = $('mar-alerta');
+            alerta.hidden = true;
+            alerta.textContent = '';
+
+            var precioNeto = 0;
+            if (modo === 'margen') {
+                if (pctIn >= 100) {
+                    alerta.hidden = false;
+                    alerta.textContent = 'El margen sobre la venta debe ser menor a 100% (un margen de 100% implicaría costo cero).';
+                    pctIn = 99;
+                } else if (pctIn < 0) {
+                    pctIn = 0;
+                }
+                precioNeto = pctIn >= 100 ? costoNeto : Math.round(costoNeto / (1 - (pctIn / 100)));
+            } else if (modo === 'markup') {
+                if (pctIn < 0) pctIn = 0;
+                precioNeto = Math.round(costoNeto * (1 + (pctIn / 100)));
+            } else {
+                var pIn = parseCLP($('mar-precio-in').value);
+                var pTipo = $('mar-precio-tipo').value;
+                precioNeto = (!exento && pTipo === 'bruto') ? Math.round(pIn / 1.19) : pIn;
+            }
+
+            var ivaDebito = exento ? 0 : Math.round(precioNeto * tasa);
+            var precioBruto = (modo === 'precio' && !exento && $('mar-precio-tipo').value === 'bruto')
+                ? parseCLP($('mar-precio-in').value)
+                : (precioNeto + ivaDebito);
+            if (modo === 'precio' && !exento && $('mar-precio-tipo').value === 'bruto') {
+                ivaDebito = precioBruto - precioNeto;
+            }
+
+            var util = precioNeto - costoNeto;
+            var margenReal = precioNeto > 0 ? (util / precioNeto) * 100 : 0;
+            var markupReal = costoNeto > 0 ? (util / costoNeto) * 100 : 0;
+            var ivaNetoUnit = ivaDebito - ivaCredito;
+
+            if (util < 0) {
+                alerta.hidden = false;
+                alerta.textContent = 'Atención: con este precio estás vendiendo bajo costo (' + fmt(util) + ' por unidad).';
+            }
+
+            $('mar-res-kicker').textContent = exento ? 'Precio de venta sugerido (Exento de IVA)' : 'Precio de venta al público (IVA 19% incluido)';
+            $('mar-res-principal').textContent = fmt(precioBruto);
+            $('mar-res-sub').textContent = (exento ? 'Operación exenta' : 'Precio Neto ' + fmt(precioNeto) + ' + IVA ' + fmt(ivaDebito)) + ' · Utilidad ' + fmt(util) + ' por unidad';
+            $('mar-kpi-neto').textContent = fmt(precioNeto);
+            $('mar-kpi-util').textContent = fmt(util);
+            $('mar-kpi-margen').textContent = fmtPct(margenReal);
+            $('mar-kpi-markup').textContent = fmtPct(markupReal);
+            $('mar-tabla-meta').textContent = unid + (unid === 1 ? ' unidad/mes' : ' unidades/mes');
+            $('mar-col-mes').textContent = 'Mes (' + unid + ' u.)';
+
+            $('mar-tabla-body').innerHTML =
+                '<tr><td>Costo neto del producto</td><td class="num">' + fmt(costoNeto) + '</td><td class="num">' + fmt(costoNeto * unid) + '</td></tr>' +
+                '<tr><td>Precio de venta neto</td><td class="num">' + fmt(precioNeto) + '</td><td class="num">' + fmt(precioNeto * unid) + '</td></tr>' +
+                (exento ? '' : '<tr><td>IVA débito venta (19%)</td><td class="num">' + fmt(ivaDebito) + '</td><td class="num">' + fmt(ivaDebito * unid) + '</td></tr>') +
+                (exento ? '' : '<tr><td>IVA crédito compra (referencial)</td><td class="num">' + fmt(ivaCredito) + '</td><td class="num">' + fmt(ivaCredito * unid) + '</td></tr>') +
+                (exento ? '' : '<tr><td>IVA neto a declarar (débito - crédito)</td><td class="num">' + fmt(ivaNetoUnit) + '</td><td class="num">' + fmt(ivaNetoUnit * unid) + '</td></tr>') +
+                '<tr class="is-subtotal"><td>Utilidad bruta (antes de gastos fijos)</td><td class="num">' + fmt(util) + '</td><td class="num">' + fmt(util * unid) + '</td></tr>' +
+                '<tr class="is-total"><td>Precio final al cliente</td><td class="num">' + fmt(precioBruto) + '</td><td class="num">' + fmt(precioBruto * unid) + '</td></tr>';
+
+            return {
+                costoNeto: costoNeto, ivaCredito: ivaCredito, precioNeto: precioNeto,
+                ivaDebito: ivaDebito, precioBruto: precioBruto, ivaNetoUnit: ivaNetoUnit,
+                util: util, margenReal: margenReal, markupReal: markupReal, unid: unid, exento: exento
+            };
+        }
+
+        function setModo(m) {
+            modo = m;
+            $('tab-mar-margen').setAttribute('aria-selected', m === 'margen' ? 'true' : 'false');
+            $('tab-mar-markup').setAttribute('aria-selected', m === 'markup' ? 'true' : 'false');
+            $('tab-mar-precio').setAttribute('aria-selected', m === 'precio' ? 'true' : 'false');
+            $('mar-pct-wrap').hidden = (m === 'precio');
+            $('mar-precio-wrap').hidden = (m !== 'precio');
+            if (m === 'margen') $('mar-pct-lbl').textContent = 'Margen deseado sobre la venta (%)';
+            if (m === 'markup') $('mar-pct-lbl').textContent = 'Recargo sobre el costo / Markup (%)';
+            calcular();
+        }
+
+        $('tab-mar-margen').addEventListener('click', function () { setModo('margen'); });
+        $('tab-mar-markup').addEventListener('click', function () { setModo('markup'); });
+        $('tab-mar-precio').addEventListener('click', function () { setModo('precio'); });
+
+        ['mar-costo', 'mar-precio-in'].forEach(function (id) {
+            $(id).addEventListener('input', function () {
+                var raw = parseCLP(this.value);
+                this.value = raw ? raw.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+                calcular();
+            });
+        });
+        ['mar-costo-tipo', 'mar-precio-tipo', 'mar-exento'].forEach(function (id) {
+            $(id).addEventListener('change', calcular);
+        });
+        ['mar-pct', 'mar-unidades'].forEach(function (id) {
+            $(id).addEventListener('input', calcular);
+        });
+        document.querySelectorAll('[data-mar-preset]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                $('mar-pct').value = this.getAttribute('data-mar-preset');
+                calcular();
+            });
+        });
+
+        $('btn-mar-copiar').addEventListener('click', function () {
+            var r = calcular();
+            var txt = [
+                'Cálculo de Margen y Precio de Venta Pyme',
+                'Costo neto: ' + fmt(r.costoNeto),
+                'Precio venta neto: ' + fmt(r.precioNeto),
+                'Precio venta final' + (r.exento ? ' (Exento): ' : ' (IVA 19% incluido): ') + fmt(r.precioBruto),
+                'Utilidad bruta por unidad: ' + fmt(r.util),
+                'Margen real sobre venta: ' + fmtPct(r.margenReal) + ' | Markup sobre costo: ' + fmtPct(r.markupReal),
+                'Calculado en https://calculolaboral.cl/calculadora-margen-precio-venta-chile'
+            ].join('\n');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(txt).catch(function () {});
+            }
+            $('btn-mar-copiar-txt').textContent = '¡Copiado!';
+            setTimeout(function () { $('btn-mar-copiar-txt').textContent = 'Copiar resumen'; }, 1800);
+        });
+
+        if (window.CLPrint) {
+            CLPrint.conectarImpresion('btn-mar-imprimir', function () {
+                var r = calcular();
+                var esc = CLPrint.esc;
+                var html = CLPrint.header({
+                    doctype: 'Análisis de Margen y Precio',
+                    date: CLPrint.fechaHoy(),
+                    folio: CLPrint.folio('MAR')
+                }) +
+                    '<h1 class="clr-title">Cálculo de Margen y Precio de Venta</h1>' +
+                    '<p class="clr-sub">Proyección mensual para <strong>' + esc(r.unid) + '</strong> ' + (r.unid === 1 ? 'unidad' : 'unidades') + ' · Margen real: <strong>' + esc(fmtPct(r.margenReal)) + '</strong> · Markup sobre costo: <strong>' + esc(fmtPct(r.markupReal)) + '</strong></p>' +
+                    '<p class="clr-cite">Base neta comercial · D.L. N° 825 (IVA 19%)</p>' +
+                    '<div class="clr-sec"><div class="clr-h">Detalle unitario y mensual (CLP)</div>' +
+                    '<table class="clr-t"><thead><tr><th>Concepto</th><th style="text-align:right">Por unidad</th><th style="text-align:right">Mes (' + esc(r.unid) + ' u.)</th></tr></thead><tbody>' +
+                    '<tr><td class="k">Costo neto</td><td class="v">' + esc(fmt(r.costoNeto)) + '</td><td class="v">' + esc(fmt(r.costoNeto * r.unid)) + '</td></tr>' +
+                    '<tr><td class="k">Precio de venta neto</td><td class="v">' + esc(fmt(r.precioNeto)) + '</td><td class="v">' + esc(fmt(r.precioNeto * r.unid)) + '</td></tr>' +
+                    (r.exento ? '' : '<tr><td class="k">IVA débito venta (19%)</td><td class="v">' + esc(fmt(r.ivaDebito)) + '</td><td class="v">' + esc(fmt(r.ivaDebito * r.unid)) + '</td></tr>') +
+                    (r.exento ? '' : '<tr><td class="k">IVA neto a enterar (débito - crédito)</td><td class="v">' + esc(fmt(r.ivaNetoUnit)) + '</td><td class="v">' + esc(fmt(r.ivaNetoUnit * r.unid)) + '</td></tr>') +
+                    '<tr class="sum"><td class="k">Utilidad bruta</td><td class="v">' + esc(fmt(r.util)) + '</td><td class="v">' + esc(fmt(r.util * r.unid)) + '</td></tr>' +
+                    '</tbody></table></div>' +
+                    '<div class="clr-total"><div class="lbl">Precio final de venta' + esc(r.exento ? ' (Exento)' : ' (IVA incluido)') + '<small>Utilidad bruta mensual estimada (' + esc(r.unid) + ' u.): ' + esc(fmt(r.util * r.unid)) + '</small></div><div class="amt">' + esc(fmt(r.precioBruto)) + '</div></div>' +
+                    '<footer class="clr-foot"><span class="brand">CálculoLaboral · calculolaboral.cl/calculadora-margen-precio-venta-chile</span> · Documento referencial de fijación de precios.</footer>';
+                return { html: html };
+            });
+        }
+        calcular();
+    })();
+    </script>
+    <script src="/js/origen.js?v=1.0.0" defer></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
+<script src="/js/medir_promo.js?v=1.0.0" defer></script>
+</body>
+</html>

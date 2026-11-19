@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IVA Chile 19% (Neto, IVA y Total) · Cálculo Laboral</title>
+    <meta name="description" content="Calcula el 19% de IVA en Chile: pasa de valor neto a total con IVA incluido, o quita el IVA de un precio bruto en un clic. Con informe PDF imprimible.">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="canonical" href="https://calculolaboral.cl/calculadora-iva-chile">
+
+    <meta property="og:title" content="Calculadora de IVA Chile 19% (Neto, IVA y Total) · Cálculo Laboral">
+    <meta property="og:description" content="Calcula el 19% de IVA en Chile: pasa de valor neto a total con IVA incluido, o quita el IVA de un precio bruto en un clic. Con informe PDF imprimible.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/calculadora-iva-chile">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Calculadora de IVA Chile 19% (Neto, IVA y Total) · Cálculo Laboral">
+    <meta name="twitter:description" content="Calcula el 19% de IVA en Chile: pasa de valor neto a total con IVA incluido, o quita el IVA de un precio bruto en un clic. Con informe PDF imprimible.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://calculolaboral.cl/calculadora-iva-chile#app",
+          "name": "Calculadora de IVA Chile 19% · Cálculo Laboral",
+          "url": "https://calculolaboral.cl/calculadora-iva-chile",
+          "description": "Calculadora gratuita en Chile para obtener monto neto, IVA (19%) y total con IVA incluido para facturas y boletas.",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "es-CL",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" },
+          "publisher": { "@id": "https://calculolaboral.cl/#organization" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+            { "@type": "ListItem", "position": 2, "name": "Asistente Pyme", "item": "https://calculolaboral.cl/asistente-laboral-pyme" },
+            { "@type": "ListItem", "position": 3, "name": "Calculadora de IVA Chile 19%", "item": "https://calculolaboral.cl/calculadora-iva-chile" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+                        "@type": "Question",
+                        "name": "¿Cómo se calcula el IVA del 19% en Chile?",
+                        "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Para agregar IVA a un monto neto, multiplica el neto por 0,19 para obtener el IVA y por 1,19 para obtener el total. Para quitar el IVA de un precio con IVA incluido, divide el total por 1,19 y obtienes el neto; la diferencia es el IVA."
+                        }
+            },
+            {
+                        "@type": "Question",
+                        "name": "¿Cómo sacar el neto de una boleta o precio con IVA incluido?",
+                        "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Divide el precio final por 1,19 y redondea al peso. Por ejemplo, si el total es $119.000, el neto es $100.000 y el IVA es $19.000."
+                        }
+            },
+            {
+                        "@type": "Question",
+                        "name": "¿Qué diferencia hay entre Factura y Boleta electrónica?",
+                        "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "En la factura electrónica (DTE 33) se detallan por separado el neto, el 19% de IVA y el total, permitiendo al comprador empresa usar el IVA crédito fiscal. En la boleta electrónica (DTE 39) se informa el precio final con IVA incluido."
+                        }
+            }
+]
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+
+    <script>
+    window.addEventListener('load', function () {
+        var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+        if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+    });
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        try {
+            if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+            if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+            if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+        } catch (e) {}
+        gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+    </script>
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.4.0">
+    <style>
+        :root {
+            --teal-forest: #00382E;
+            --teal-forest-hover: #002820;
+            --teal-forest-deep: #00261F;
+            --teal-yellow: #FFB703;
+            --teal-yellow-hover: #FFAA00;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #F8FAF9;
+            color: #111827;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        main.site-container { min-width: 0; }
+        .font-mono-num {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-variant-numeric: tabular-nums;
+        }
+        .nav-dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+            pointer-events: none;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-menu,
+        .nav-dropdown-group:focus-within .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }
+        .btn-yellow-pill {
+            background-color: var(--teal-yellow);
+            color: #111827 !important;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-size: 14px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.28);
+        }
+        .btn-yellow-pill:hover { background-color: var(--teal-yellow-hover); transform: translateY(-1px); }
+        .btn-outline-pill {
+            background-color: #FFFFFF;
+            color: #1E293B !important;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 10px 18px;
+            font-size: 13.5px;
+            min-height: 44px;
+            border: 1.5px solid #CBD5E1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s var(--ease-spring);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn-outline-pill:hover { border-color: var(--teal-forest); color: var(--teal-forest) !important; background-color: #F8FAF9; }
+        .btn-yellow-pill.hidden, .btn-outline-pill.hidden { display: none !important; }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex, .btn-outline-pill.md\:inline-flex { display: inline-flex !important; }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex, .btn-outline-pill.lg\:inline-flex { display: inline-flex !important; }
+        }
+        .teal-footer-curve {
+            background-color: var(--teal-forest);
+            color: #FFFFFF;
+            border-top-left-radius: 48px;
+        }
+        .teal-footer-curve .footer-inner-container { max-width: 1240px; margin-left: auto; margin-right: auto; }
+        @media (min-width: 1024px) {
+            .teal-footer-curve { border-top-left-radius: 96px; }
+            .teal-footer-curve .footer-inner-container { padding-left: 5rem !important; padding-right: 2rem !important; }
+        }
+        @media (min-width: 1200px) and (max-width: 1439px) {
+            .teal-footer-curve .footer-inner-container { padding-left: 3.5rem !important; padding-right: 2rem !important; }
+        }
+        .site-container,
+        .max-w-\[1240px\],
+        [class*="max-w-[1240px]"] {
+            max-width: 1240px !important;
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .f29-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
+            background: #F1F5F9;
+            padding: 5px;
+            border-radius: 16px;
+            border: 1px solid #E2E8F0;
+        }
+        .f29-tab {
+            min-height: 44px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            padding: 8px 12px;
+            transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .f29-tab[aria-selected="true"] {
+            background: #FFFFFF;
+            color: #00382E;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+        }
+        .f29-tab:focus-visible { outline: 2px solid #00382E; outline-offset: 2px; }
+        .f29-chip {
+            min-height: 44px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12.5px;
+            font-weight: 600;
+            background: #FFFFFF;
+            color: #1E293B;
+            border: 1px solid #CBD5E1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .f29-chip:hover { border-color: #00382E; background: #F1F7F5; color: #00382E; }
+        .f29-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            background: #FFFFFF;
+        }
+        .f29-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+        .f29-table th, .f29-table td {
+            padding: 11px 16px;
+            border-bottom: 1px solid #F1F5F9;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .f29-table thead th {
+            background: #F4F7F6;
+            color: #00382E;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+        .f29-table td.num {
+            text-align: right;
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            color: #0F172A;
+            white-space: nowrap;
+        }
+        .f29-table tr.is-subtotal td, .f29-table tr.is-subtotal th {
+            background: #F8FAF9;
+            font-weight: 800;
+            color: #00382E;
+        }
+        .f29-table tr.is-total td, .f29-table tr.is-total th {
+            background: #ECF5F2;
+            font-weight: 800;
+            color: #00382E;
+            border-bottom: 0;
+        }
+        .f29-code {
+            display: inline-block;
+            min-width: 44px;
+            text-align: center;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: #ECF5F2;
+            color: #00382E;
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .drop-box {
+            border: 1.5px dashed #94A3B8;
+            border-radius: 16px;
+            padding: 14px;
+            background: #F8FAFC;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+        .drop-box.is-loaded {
+            border-color: #00382E;
+            border-style: solid;
+            background: #ECF5F2;
+        }
+        .min-h-\[44px\] { min-height: 44px; }
+        .min-w-\[44px\] { min-width: 44px; }
+        .f29-layout { display: flex; flex-direction: column; gap: 2rem; align-items: flex-start; margin-bottom: 3.5rem; }
+        .f29-sidebar { width: 100%; }
+        @media (min-width: 1024px) {
+            .f29-layout { flex-direction: row; }
+            .f29-sidebar { flex: 0 0 440px; width: 440px; }
+        }
+        .f29-kpi-label { color: #A7F3D0; }
+        .f29-total-val { color: #FFB703; }
+        .f29-file::file-selector-button {
+            min-height: 44px; padding: 0 14px; margin-right: 12px; border: 0; border-radius: 9999px;
+            background-color: #00382E; color: #FFFFFF; font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+        .f29-file::file-selector-button:hover { background-color: #002820; }
+        #btn-rcv-ejemplo { background-color: #ECF5F2; color: #00382E; border-color: rgba(0, 56, 46, 0.35); font-weight: 700; }
+        #btn-f29-copiar, #btn-f29-csv { background-color: #FFFFFF; color: #00382E; }
+        #btn-f29-xlsx { background-color: #FFB703; color: #111827; }
+        #print-section { display: none; }
+        [hidden] { display: none !important; }
+    </style>
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
+<link rel="stylesheet" href="/assets/css/promo-asistente.css?v=1.0.1">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Ticker -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">IVA Chile 19% (D.L. 825) · De Neto a Total o de Total a Neto sin registro</span>
+            </div>
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
+                <span class="text-white/50">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$72.440</strong></span>
+                <span class="text-white/50">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm shrink-0" style="background-color: #00382E;">
+                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M30 84h40M38 79h24"></path>
+                            <path d="M50 22v57"></path>
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700" aria-label="Menú principal">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">Simulador Finiquito</a>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">payments</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Sueldo Líquido</div><div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, salud e IUSC.</div></div>
+                                </a>
+                                <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">percent</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Impuesto Único</div><div class="text-xs text-slate-500 mt-0.5">Tabla SII y cálculo mensual.</div></div>
+                                </a>
+                                <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">receipt_long</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Calculadora F29</div><div class="text-xs text-slate-600 mt-0.5">IVA, PPM, honorarios y RCV.</div></div>
+                                </a>
+                                <a href="balance-8-columnas-rli-propyme-excel" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0"><span class="material-icons text-lg" aria-hidden="true">table_chart</span></div>
+                                    <div><div class="font-bold text-xs text-slate-900">Balance 8 Columnas y RLI</div><div class="text-xs text-slate-500 mt-0.5">ProPyme 14 D N°3 y Excel.</div></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 min-h-[44px] hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+                            <div class="space-y-1">
+                                <a href="como-generar-archivo-previred-lre-f29-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Archivo Previred, LRE y F29</a>
+                                <a href="carpeta-laboral-empresa-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Carpeta Laboral de Empresa</a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Checklist Fiscalización DT</a>
+                                <a href="suite-contadores" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">Suite Contadores</a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">Ver todas las guías →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <a href="suite-contadores" class="hidden md:inline-flex btn-yellow-pill !py-2 !px-5 !text-xs">Suite Contadores</a>
+                    <a href="para-empleadores" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">Portal Empleadores</a>
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 min-w-[44px] min-h-[44px] text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer inline-flex items-center justify-center" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-2">
+            <a href="finiquito_calculator" class="flex items-center min-h-[44px] text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="calculadora-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Calculadora F29</a>
+            <a href="balance-8-columnas-rli-propyme-excel" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Balance 8 Columnas y RLI</a>
+            <a href="impuesto-unico-segunda-categoria" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Impuesto Único</a>
+            <a href="como-generar-archivo-previred-lre-f29-chile" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Guía Previred, LRE y F29</a>
+            <a href="blog" class="flex items-center min-h-[44px] text-sm font-semibold text-slate-700">Blog de Guías</a>
+            <div class="pt-2">
+                <a href="suite-contadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Suite Contadores</a>
+            </div>
+        </div>
+    </header>
+    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+        <nav class="flex flex-wrap items-center gap-2 text-xs text-slate-600 mb-4" aria-label="Breadcrumb">
+            <a href="./" class="hover:text-[#00382E] transition-colors font-medium">Inicio</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <a href="asistente-laboral-pyme" class="hover:text-[#00382E] transition-colors">Asistente Pyme</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <span class="text-slate-900 font-semibold">Calculadora de IVA 19%</span>
+        </nav>
+
+        <header class="mb-7 max-w-4xl">
+            <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                Calculadora de IVA Chile (19%): neto, IVA y total al instante<span class="text-[#FFB703]">.</span>
+            </h1>
+            <p class="cl-meta">Actualizado 2026 · Tasa general 19% (art. 14 D.L. N° 825) · Válida para Facturas (DTE 33) y Boletas (DTE 39)</p>
+            <p class="text-sm sm:text-base text-slate-700 max-w-2xl mt-2 leading-relaxed">
+                Agrega el 19% de IVA a un precio neto para cotizar o facturar, o quita el IVA de un monto bruto para saber cuánto corresponde realmente a venta neta e impuesto.
+            </p>
+        </header>
+
+        <nav class="cl-calcnav no-print" aria-label="Calculadoras comerciales y tributarias">
+            <div class="cl-calcnav-track">
+                <a href="calculadora-iva-chile" aria-current="page">Calculadora IVA 19%</a>
+                <a href="calculadora-boleta-honorarios-chile">Boleta Honorarios 15,25%</a>
+                <a href="calculadora-margen-precio-venta-chile">Margen y Precio</a>
+                <a href="calculadora-f29-chile">Calculadora F29</a>
+                <a href="calculadora-costo-empresa-chile">Costo empresa</a>
+                <a href="impuesto-unico-segunda-categoria">Impuesto Único</a>
+                <a href="sueldo_liquido">Sueldo líquido</a>
+            </div>
+        </nav>
+
+        <section aria-labelledby="calc-iva-heading" class="f29-layout">
+            <div class="f29-sidebar bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-5">
+                <div class="pb-3 border-b border-slate-100">
+                    <h2 id="calc-iva-heading" class="text-lg font-bold text-slate-900 m-0">Datos de la operación</h2>
+                    <p class="text-xs text-slate-600 mt-1 mb-0">Elige si ingresas el monto neto o el precio final con IVA.</p>
+                </div>
+
+                <div class="f29-tabs" role="tablist" aria-label="Sentido del cálculo de IVA">
+                    <button type="button" role="tab" id="tab-iva-neto" class="f29-tab" aria-selected="true">Tengo el Neto (+19%)</button>
+                    <button type="button" role="tab" id="tab-iva-bruto" class="f29-tab" aria-selected="false">Tengo el Total (/ 1,19)</button>
+                </div>
+
+                <div>
+                    <label for="iva-monto" id="iva-monto-lbl" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Monto Neto (sin IVA)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-600 font-bold text-sm">$</span>
+                        <input type="text" id="iva-monto" value="100.000" inputmode="numeric" autocomplete="off" class="w-full min-h-[44px] pl-8 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2.5" aria-label="Montos rápidos">
+                        <button type="button" class="f29-chip" data-iva-preset="50000">$50.000</button>
+                        <button type="button" class="f29-chip" data-iva-preset="100000">$100.000</button>
+                        <button type="button" class="f29-chip" data-iva-preset="500000">$500.000</button>
+                        <button type="button" class="f29-chip" data-iva-preset="1000000">$1.000.000</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label for="iva-cantidad" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Cantidad / unidades</label>
+                        <input type="number" id="iva-cantidad" value="1" min="1" max="999999" step="1" class="w-full min-h-[44px] px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono-num font-bold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                    </div>
+                    <div>
+                        <label for="iva-doc" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Documento tributario</label>
+                        <select id="iva-doc" class="w-full min-h-[44px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00382E]">
+                            <option value="factura">Factura (DTE 33)</option>
+                            <option value="boleta">Boleta (DTE 39)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <p id="iva-doc-nota" class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-2xl p-3 m-0 leading-relaxed">
+                    En Factura Electrónica (DTE 33) se informan por separado el monto Neto, el IVA (19%) y el Total.
+                </p>
+            </div>
+
+            <div class="flex-1 min-w-0 w-full space-y-6">
+                <div class="rounded-3xl p-6 sm:p-8 text-white shadow-lg" style="background-color: #00382E;" aria-live="polite">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p class="f29-kpi-label text-xs font-bold uppercase tracking-wider mb-1" id="iva-res-kicker">Total con IVA incluido (19%)</p>
+                            <div class="f29-total-val text-4xl sm:text-5xl font-extrabold font-mono-num tracking-tight" id="iva-res-principal">$119.000</div>
+                            <p class="text-xs text-slate-200 mt-1.5 mb-0" id="iva-res-sub">Neto $100.000 + IVA $19.000 · 1 unidad</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 no-print">
+                            <button type="button" id="btn-iva-copiar" class="min-h-[44px] px-4 py-2 rounded-full bg-white text-[#00382E] font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-slate-100">
+                                <span class="material-icons text-sm" aria-hidden="true">content_copy</span>
+                                <span id="btn-iva-copiar-txt">Copiar resumen</span>
+                            </button>
+                            <button type="button" id="btn-iva-imprimir" class="min-h-[44px] px-4 py-2 rounded-full border border-white/30 text-white font-semibold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:bg-white/10">
+                                <span class="material-icons text-sm" aria-hidden="true">print</span>
+                                <span>Imprimir PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-5 border-t border-white/15">
+                        <div class="rounded-2xl bg-white/10 p-3.5">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Valor Neto</div>
+                            <div class="text-xl font-bold font-mono-num text-white mt-0.5" id="iva-kpi-neto">$100.000</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3.5">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">IVA (19%)</div>
+                            <div class="text-xl font-bold font-mono-num text-white mt-0.5" id="iva-kpi-imp">$19.000</div>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-3.5">
+                            <div class="f29-kpi-label text-[11px] uppercase tracking-wider font-semibold">Total Bruto</div>
+                            <div class="text-xl font-bold font-mono-num text-[#FFB703] mt-0.5" id="iva-kpi-total">$119.000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="f29-table-wrap">
+                    <div class="px-5 py-4 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
+                        <h3 class="text-sm sm:text-base font-bold text-slate-900 m-0">Desglose de la operación</h3>
+                        <span class="text-xs text-slate-600" id="iva-tabla-meta">Base tasa 19% vigente en Chile</span>
+                    </div>
+                    <table class="f29-table">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th style="text-align: right;">Por unidad</th>
+                                <th style="text-align: right;">Total operación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="iva-tabla-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <div class="cl-reading">
+            <article class="cl-article">
+                <section>
+                    <h2>Cómo calcular el IVA del 19% sin errores de redondeo</h2>
+                    <p>En Chile, la tasa general del Impuesto al Valor Agregado es del <strong>19%</strong> sobre el precio neto (artículo 14 del D.L. N° 825). Cuando vendes con <strong>Factura Electrónica</strong>, partes del valor neto y sumas el 19%. Cuando vendes al público con <strong>Boleta Electrónica</strong>, el precio exhibido ya incluye el IVA.</p>
+                    <ul>
+                        <li><strong>De Neto a Total:</strong> multiplica el neto por <code>0,19</code> y redondéalo al peso más cercano para el IVA; luego suma ambos valores.</li>
+                        <li><strong>De Total con IVA a Neto:</strong> divide el total por <code>1,19</code> y redondéalo al peso; el IVA será <code>Total - Neto</code> para que la suma cuadre exactamente al peso con tu documento.</li>
+                    </ul>
+                    <p>Para llevar el cruce mensual de todas tus facturas de compra y venta, revisa la <a href="calculadora-f29-chile">Calculadora F29 con lector de RCV</a> o fija tus precios de venta con la <a href="calculadora-margen-precio-venta-chile">Calculadora de margen y precio con IVA</a>.</p>
+                </section>
+
+                <section>
+                    <h2>Preguntas frecuentes sobre el IVA en Chile</h2>
+                    <h3>¿El IVA que cobro en mis ventas es ganancia del negocio?</h3>
+                    <p>No. El IVA débito fiscal que cobras a tus clientes lo declaras y enteras al Fisco en el <a href="calculadora-f29-chile">Formulario 29</a>, descontando el IVA crédito fiscal de tus compras del giro respaldadas con factura.</p>
+                    <h3>¿Cuándo se usa Neto y cuándo Total al cotizar?</h3>
+                    <p>Si le vendes a empresas (B2B), es costumbre cotizar en valores <strong>netos + IVA</strong> porque tu cliente recupera el IVA crédito. Si vendes a consumidor final (B2C), la Ley del Consumidor exige informar el <strong>precio final con IVA incluido</strong>.</p>
+                </section>
+
+<!-- cl-asistente:inicio (lo genera tools/promo_asistente.js: no editar a mano) -->
+<aside class="cl-asistente no-print" aria-labelledby="cl-asistente-t">
+<div class="cl-asistente-cuerpo">
+<p class="cl-asistente-kicker">Asistente Laboral Pyme · Piloto gratuito hasta el 31 de diciembre</p>
+<p class="cl-asistente-titulo" id="cl-asistente-t">Lleva tus facturas, IVA y cobranzas en un solo lugar</p>
+<p>En el asistente cargas tu Registro de Ventas del SII, controlas facturas por cobrar y ves tu flujo de caja del mes junto a tus liquidaciones.</p>
+</div>
+<div class="cl-asistente-acciones">
+<a class="cl-asistente-btn" href="asistente-laboral-pyme" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="calculadora-iva-chile-bloque">Conocer el Asistente Laboral Pyme</a>
+<a class="cl-asistente-link" href="app/ejemplo" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="calculadora-iva-chile-ejemplo">Ver un ejemplo, sin cuenta</a>
+</div>
+</aside>
+<!-- cl-asistente:fin -->
+                <section class="cl-sources" aria-labelledby="fuentes-titulo">
+                    <h2 id="fuentes-titulo">Fuentes y referencias normativas</h2>
+                    <ul>
+                        <li>Decreto Ley N° 825 sobre Impuesto a las Ventas y Servicios (art. 14, tasa general de IVA 19%).</li>
+                        <li>Servicio de Impuestos Internos (SII) · Emisión de Factura Electrónica (DTE 33) y Boleta de Ventas y Servicios Electrónica (DTE 39).</li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+                                <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                                </svg>
+                            </div>
+                            <span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+                        </a>
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">
+                            Plataforma independiente con herramientas laborales y tributarias actualizadas para trabajadores, pymes y contadores en Chile (2026).
+                        </p>
+                        <div class="pt-1 text-xs font-mono-num text-white/60">Versión 2.6 · Actualizada Noviembre 2026</div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Calculadoras</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703] transition-colors">Sueldo Líquido</a></li>
+                            <li><a href="impuesto-unico-segunda-categoria" class="text-white/80 hover:text-[#FFB703] transition-colors">Impuesto Único</a></li>
+                            <li><a href="calculadora-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Calculadora F29</a></li>
+                            <li><a href="balance-8-columnas-rli-propyme-excel" class="text-white/80 hover:text-[#FFB703] transition-colors">Balance 8 Columnas</a></li>
+                            <li><a href="liquidacion-de-sueldo" class="text-white/80 hover:text-[#FFB703] transition-colors">Liquidación de Sueldo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Guías Legales</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Guía Previred, LRE y F29</a></li>
+                            <li><a href="carpeta-laboral-empresa-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carpeta Laboral Empresa</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
+                            <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/70 uppercase tracking-wider mb-0">Para Empresas</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
+                            <li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
+                            <li><a href="asistente-laboral-pyme" class="text-white/80 hover:text-[#FFB703] transition-colors">Asistente Laboral Pyme</a></li>
+                            <li><a href="kit-cumplimiento-ley-datos-personales-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Kit Ley 21.719 Datos</a></li>
+                            <li><a href="sobre-nosotros" class="text-white/80 hover:text-[#FFB703] transition-colors">Sobre Nosotros</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703] transition-colors">Contacto Directo</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/60 text-center md:text-left">
+                    <div>&copy; 2026 Cálculo Laboral Chile. Herramienta referencial basada en normativa tributaria y laboral vigente.</div>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a href="terminos" class="hover:text-white transition-colors">Términos</a>
+                        <span>·</span>
+                        <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
+                        <span>·</span>
+                        <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/constants.js?v=2.1.3"></script>
+    <script src="/js/indicators.js?v=2.9.2"></script>
+    <script src="/js/print_brand.js?v=1.3.0"></script>
+    <script>
+    (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+        var TASA = 0.19;
+        var modo = 'neto';
+
+        var parseCLP = function (v) {
+            var digits = String(v || '').replace(/[^0-9]/g, '');
+            return digits ? parseInt(digits, 10) : 0;
+        };
+        var fmt = function (n) {
+            var val = Math.abs(Math.round(Number(n) || 0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return (n < 0 ? '-' : '') + '$' + val;
+        };
+
+        function calcular() {
+            var monto = parseCLP($('iva-monto').value);
+            var cant = Math.max(1, Math.min(999999, Math.round(Number($('iva-cantidad').value) || 1)));
+            var doc = $('iva-doc').value;
+            var netoU, ivaU, totalU;
+
+            if (modo === 'neto') {
+                netoU = monto;
+                ivaU = Math.round(netoU * TASA);
+                totalU = netoU + ivaU;
+                $('iva-res-kicker').textContent = 'Total con IVA incluido (19%)';
+                $('iva-res-principal').textContent = fmt(totalU * cant);
+            } else {
+                totalU = monto;
+                netoU = Math.round(totalU / (1 + TASA));
+                ivaU = totalU - netoU;
+                $('iva-res-kicker').textContent = 'Valor Neto (sin IVA 19%)';
+                $('iva-res-principal').textContent = fmt(netoU * cant);
+            }
+
+            var netoT = netoU * cant, ivaT = ivaU * cant, totalT = totalU * cant;
+            $('iva-kpi-neto').textContent = fmt(netoT);
+            $('iva-kpi-imp').textContent = fmt(ivaT);
+            $('iva-kpi-total').textContent = fmt(totalT);
+            $('iva-res-sub').textContent = 'Neto ' + fmt(netoT) + ' + IVA ' + fmt(ivaT) + ' · ' + cant + (cant === 1 ? ' unidad' : ' unidades');
+
+            $('iva-doc-nota').textContent = doc === 'boleta'
+                ? 'En Boleta Electrónica (DTE 39) al público se muestra el total final (' + fmt(totalT) + '), con el 19% de IVA ya incluido.'
+                : 'En Factura Electrónica (DTE 33) se detallan por separado Neto (' + fmt(netoT) + '), IVA 19% (' + fmt(ivaT) + ') y Total (' + fmt(totalT) + ').';
+
+            $('iva-tabla-body').innerHTML =
+                '<tr><td>Valor Neto (afecto)</td><td class="num">' + fmt(netoU) + '</td><td class="num">' + fmt(netoT) + '</td></tr>' +
+                '<tr><td>IVA 19% (D.L. 825)</td><td class="num">' + fmt(ivaU) + '</td><td class="num">' + fmt(ivaT) + '</td></tr>' +
+                '<tr class="is-total"><td>Total con IVA incluido</td><td class="num">' + fmt(totalU) + '</td><td class="num">' + fmt(totalT) + '</td></tr>';
+
+            return { modo: modo, cant: cant, doc: doc, netoU: netoU, ivaU: ivaU, totalU: totalU, netoT: netoT, ivaT: ivaT, totalT: totalT };
+        }
+
+        function setModo(m) {
+            modo = m;
+            $('tab-iva-neto').setAttribute('aria-selected', m === 'neto' ? 'true' : 'false');
+            $('tab-iva-bruto').setAttribute('aria-selected', m === 'bruto' ? 'true' : 'false');
+            $('iva-monto-lbl').textContent = m === 'neto' ? 'Monto Neto (sin IVA)' : 'Monto Total (IVA incluido)';
+            calcular();
+        }
+
+        $('tab-iva-neto').addEventListener('click', function () { setModo('neto'); });
+        $('tab-iva-bruto').addEventListener('click', function () { setModo('bruto'); });
+        $('iva-monto').addEventListener('input', function () {
+            var raw = parseCLP(this.value);
+            this.value = raw ? raw.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+            calcular();
+        });
+        $('iva-cantidad').addEventListener('input', calcular);
+        $('iva-doc').addEventListener('change', calcular);
+        document.querySelectorAll('[data-iva-preset]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var v = parseInt(this.getAttribute('data-iva-preset'), 10);
+                $('iva-monto').value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                calcular();
+            });
+        });
+
+        $('btn-iva-copiar').addEventListener('click', function () {
+            var r = calcular();
+            var txt = [
+                'Cálculo de IVA Chile (19%)',
+                'Cantidad: ' + r.cant,
+                'Neto: ' + fmt(r.netoT),
+                'IVA (19%): ' + fmt(r.ivaT),
+                'Total con IVA: ' + fmt(r.totalT),
+                'Calculado en https://calculolaboral.cl/calculadora-iva-chile'
+            ].join('\n');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(txt).catch(function () {});
+            }
+            $('btn-iva-copiar-txt').textContent = '¡Copiado!';
+            setTimeout(function () { $('btn-iva-copiar-txt').textContent = 'Copiar resumen'; }, 1800);
+        });
+
+        if (window.CLPrint) {
+            CLPrint.conectarImpresion('btn-iva-imprimir', function () {
+                var r = calcular();
+                var esc = CLPrint.esc;
+                var docNom = r.doc === 'boleta' ? 'Boleta Electrónica (DTE 39)' : 'Factura Electrónica (DTE 33)';
+                var sent = r.modo === 'neto' ? 'De Neto a Total (+19%)' : 'De Total a Neto (/ 1,19)';
+                var html = CLPrint.header({
+                    doctype: 'Detalle de IVA 19%',
+                    date: CLPrint.fechaHoy(),
+                    folio: CLPrint.folio('IVA')
+                }) +
+                    '<h1 class="clr-title">Cálculo de IVA Chile (19%)</h1>' +
+                    '<p class="clr-sub">Modo: <strong>' + esc(sent) + '</strong> · Documento referencial: <strong>' + esc(docNom) + '</strong> · Cantidad: <strong>' + esc(r.cant) + '</strong></p>' +
+                    '<p class="clr-cite">Decreto Ley N° 825 sobre Impuesto a las Ventas y Servicios (art. 14)</p>' +
+                    '<div class="clr-sec"><div class="clr-h">Desglose de valores en pesos chilenos (CLP)</div>' +
+                    '<table class="clr-t"><thead><tr><th>Concepto</th><th style="text-align:right">Por unidad</th><th style="text-align:right">Total (' + esc(r.cant) + ' u.)</th></tr></thead><tbody>' +
+                    '<tr><td class="k">Monto Neto (sin IVA)</td><td class="v">' + esc(fmt(r.netoU)) + '</td><td class="v">' + esc(fmt(r.netoT)) + '</td></tr>' +
+                    '<tr><td class="k">IVA 19%</td><td class="v">' + esc(fmt(r.ivaU)) + '</td><td class="v">' + esc(fmt(r.ivaT)) + '</td></tr>' +
+                    '<tr class="sum"><td class="k">Total con IVA incluido</td><td class="v">' + esc(fmt(r.totalU)) + '</td><td class="v">' + esc(fmt(r.totalT)) + '</td></tr>' +
+                    '</tbody></table></div>' +
+                    '<div class="clr-total"><div class="lbl">Total documento con IVA<small>Neto ' + esc(fmt(r.netoT)) + ' + IVA ' + esc(fmt(r.ivaT)) + '</small></div><div class="amt">' + esc(fmt(r.totalT)) + '</div></div>' +
+                    '<footer class="clr-foot"><span class="brand">CálculoLaboral · calculolaboral.cl/calculadora-iva-chile</span> · Documento referencial para cotizaciones y revisión previa al SII.</footer>';
+                return { html: html };
+            });
+        }
+        calcular();
+    })();
+    </script>
+    <script src="/js/origen.js?v=1.0.0" defer></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
+<script src="/js/medir_promo.js?v=1.0.0" defer></script>
+</body>
+</html>
