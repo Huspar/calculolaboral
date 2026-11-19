@@ -987,7 +987,7 @@ body { overflow-x: hidden; }
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 no-print">
-                            <button type="button" onclick="window.print()" class="btn-yellow-pill w-full !text-xs !py-2.5">
+                            <button type="button" id="cp-btn-print" class="btn-yellow-pill w-full !text-xs !py-2.5">
                                 <span class="material-icons text-base" aria-hidden="true">print</span>
                                 <span>Imprimir o Guardar PDF</span>
                             </button>
@@ -1141,8 +1141,10 @@ body { overflow-x: hidden; }
     <script src="/js/constants.js?v=2.2.0"></script>
     <script src="/js/indicators.js?v=2.10.0"></script>
     <script src="/js/casa_particular_logic.js?v=1.0.0"></script>
+    <script src="/js/print_brand.js?v=1.3.0"></script>
     <script>
     (function() {
+        var ultimo = null;
         function parseCLP(str) {
             var n = parseInt(String(str || '').replace(/[^0-9]/g, ''), 10);
             return isNaN(n) ? 0 : n;
@@ -1201,6 +1203,7 @@ body { overflow-x: hidden; }
                 isExtremeZone: document.getElementById('cp-extreme-zone').checked,
                 ufValue: uf
             });
+            ultimo = res;
 
             if (!res.valid) {
                 document.getElementById('cp-res-employer').textContent = '$0';
@@ -1276,6 +1279,85 @@ body { overflow-x: hidden; }
             var msg = 'Simulé el finiquito de casa particular en Cálculo Laboral:\n- Pago empleador: ' + emp + '\n- Retiro AFP (1,11%): ' + afp + '\n- Total combinado: ' + tot + '\nhttps://calculolaboral.cl/finiquito-trabajadora-casa-particular-chile';
             window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
         });
+        // ---------- Informe imprimible (identidad CálculoLaboral · js/print_brand.js) ----------
+        var CAUSALES_TXT = {
+            '161_2': 'Art. 161 inc. 2°: desahucio escrito del empleador',
+            '159_2': 'Art. 159 N° 2: renuncia voluntaria de la trabajadora',
+            '159_1': 'Art. 159 N° 1: mutuo acuerdo de las partes',
+            '159_4': 'Art. 159 N° 4 o 5: vencimiento del plazo o conclusión del trabajo',
+            '148': 'Art. 148: fallecimiento del empleador o término del hogar',
+            '160': 'Art. 160: término por causal disciplinaria'
+        };
+        function modalidadTxt(m) { return m === 'puertas_adentro' ? 'Puertas adentro (habitación en el hogar)' : 'Puertas afuera'; }
+        function fechaTxt(iso) {
+            if (!iso) return '—';
+            var p = String(iso).split('-');
+            return p.length === 3 ? (p[2] + '-' + p[1] + '-' + p[0]) : String(iso);
+        }
+        function buildCasaParticularPrintHtml() {
+            if (!window.CLPrint || !ultimo || !ultimo.valid) return '';
+            var res = ultimo, esc = CLPrint.esc, fmt = fmtCLP;
+            var eco = res.economics, emp = res.employerPayments, afpI = res.afpIndemnity, st = res.serviceTime;
+            var adentro = res.modalidad === 'puertas_adentro';
+            var html = CLPrint.header({
+                doctype: 'Informe de finiquito · Casa particular',
+                date: CLPrint.fechaHoy(),
+                folio: CLPrint.folio('CASA')
+            }) +
+                '<h1 class="clr-title">Simulación de finiquito · Trabajadora de casa particular</h1>' +
+                '<p class="clr-sub">' + esc(modalidadTxt(res.modalidad)) + ' · ' + esc(CAUSALES_TXT[res.causal] || res.causal) + '</p>' +
+                '<p class="clr-cite">Arts. 146 a 150, 161 inc. 2° y 163 inc. 5° Código del Trabajo · Ley 21.269 (AFC)</p>' +
+                '<div class="clr-ind">' +
+                    '<span>Antigüedad: <b>' + st.years + ' años ' + st.months + ' meses ' + st.days + ' días</b></span>' +
+                    '<span>UF: <b class="mono">' + fmt(res.ufValue) + '</b></span>' +
+                    '<span>Sueldo base: <b class="mono">' + fmt(eco.baseSalary) + '</b></span>' +
+                '</div>' +
+                '<div class="clr-sec"><div class="clr-grid">' +
+                    '<div><div class="clr-h">Antecedentes del contrato</div><table class="clr-t">' +
+                        '<tr><td class="k">Fecha de inicio</td><td class="v mono">' + fechaTxt(document.getElementById('cp-start').value) + '</td></tr>' +
+                        '<tr><td class="k">Fecha de término</td><td class="v mono">' + fechaTxt(document.getElementById('cp-end').value) + '</td></tr>' +
+                        '<tr><td class="k">Aviso previo de 30 días</td><td class="v">' + (document.getElementById('cp-notice-given').checked ? 'Entregado (copia a la IT)' : 'No entregado') + '</td></tr>' +
+                        '<tr><td class="k">Zona extrema (feriado 20/12)</td><td class="v">' + (document.getElementById('cp-extreme-zone').checked ? 'Sí' : 'No') + '</td></tr>' +
+                    '</table></div>' +
+                    '<div><div class="clr-h">Remuneración considerada</div><table class="clr-t">' +
+                        '<tr><td class="k">Sueldo base</td><td class="v">' + fmt(eco.baseSalary) + '</td></tr>' +
+                        '<tr><td class="k">Gratificación pactada</td><td class="v">' + fmt(eco.agreedGratification) + '</td></tr>' +
+                        '<tr><td class="k">Movilización / colación</td><td class="v">' + fmt(eco.nonTaxableAssignments) + '</td></tr>' +
+                        '<tr><td class="k">Imponible (tope 60 UF: ' + fmt(eco.afpCap60UF) + ')' + (eco.isCapped60UF ? '<span class="n">Sobre el tope: el aporte AFP se calcula sobre ' + fmt(eco.cappedBase60UF) + '</span>' : '') + '</td><td class="v">' + fmt(eco.remuneracionImponible) + '</td></tr>' +
+                        '<tr><td class="k">Base devengada (días y aviso)</td><td class="v">' + fmt(eco.remuneracionDevengada) + '</td></tr>' +
+                    '</table></div>' +
+                '</div></div>' +
+                '<div class="clr-sec"><div class="clr-h">1 · Pago del empleador en el finiquito</div><table class="clr-t">' +
+                    '<tr><td class="k">Días trabajados pendientes (' + emp.daysWorked + ' días)</td><td class="v">' + fmt(emp.pendingPayTotal) + '</td></tr>' +
+                    '<tr><td class="k">Feriado proporcional (' + emp.vacation.businessDays + ' hábiles / ' + emp.vacation.calendarDays + ' corridos · ' + fmt(emp.vacation.dailySalary) + '/día)</td><td class="v">' + fmt(emp.vacation.total) + '</td></tr>' +
+                    (adentro ? '<tr><td class="k">Días libres Art. 150 d) pendientes (' + emp.pendingRestDays + ' días)</td><td class="v">' + fmt(emp.pendingRestDaysPay) + '</td></tr>' : '') +
+                    '<tr><td class="k">' + (emp.noticeApplies ? 'Indemnización sustitutiva de aviso previo (Art. 161 inc. 2°)' : 'Aviso previo (no aplica: causal distinta o aviso entregado)') + '</td><td class="v">' + fmt(emp.noticeAmount) + '</td></tr>' +
+                    '<tr><td class="k">Descuento AFC de la trabajadora (Ley 21.269: 0%)</td><td class="v">$0</td></tr>' +
+                    '<tr class="sum"><td class="k">Total a pagar por el empleador</td><td class="v">' + fmt(emp.total) + '</td></tr>' +
+                '</table></div>' +
+                '<div class="clr-sec"><div class="clr-h">2 · Retiro cuenta AFP a todo evento (Art. 163 inc. 5°)</div><table class="clr-t">' +
+                    '<tr><td class="k">Origen del monto' + (afpI.usingReportedBalance ? '<span class="n">Saldo informado en cartola AFP</span>' : '<span class="n">Estimación: la AFP suma rentabilidad y descuenta comisión</span>') + '</td><td class="v">' + (afpI.usingReportedBalance ? 'Cartola AFP' : 'Estimado 1,11%') + '</td></tr>' +
+                    '<tr><td class="k">Meses aforados' + (afpI.monthsTotal > afpI.monthsCapped ? '<span class="n">Tope legal: 11 años (132 meses)</span>' : '') + '</td><td class="v mono">' + afpI.monthsCapped + '</td></tr>' +
+                    '<tr><td class="k">Aporte mensual estimado (1,11%)' + (afpI.monthsBeforeOct2020 > 0 ? '<span class="n">Incluye ' + afpI.monthsBeforeOct2020 + ' meses al 4,11% previo a oct-2020</span>' : '') + '</td><td class="v">' + fmt(afpI.monthlyContributionCurrent) + '</td></tr>' +
+                    '<tr class="sum"><td class="k">Retiro estimado en el finiquito (lo paga la AFP)</td><td class="v">' + fmt(afpI.displayTotal) + '</td></tr>' +
+                '</table></div>' +
+                '<div class="clr-total">' +
+                    '<div class="lbl">Total global estimado (empleador + retiro AFP)<small>El retiro AFP no lo paga el empleador: lo entrega la AFP con el finiquito o la renuncia.</small></div>' +
+                    '<div class="amt">' + fmt(res.grandCombinedTotal) + '</div>' +
+                '</div>' +
+                '<div class="clr-note"><b class="t">Reglas del régimen especial</b>' +
+                    'Aporte mensual del empleador: 4,11% (' + fmt(res.monthlyEmployerCost.afc3Percent) + ' AFC 3,0% + ' + fmt(res.monthlyEmployerCost.afp111Percent) + ' AFP 1,11%). Feriado: 1,25 días hábiles por mes de servicio (20/12 en zona extrema). Gratificación legal: no obligatoria cuando el empleador es persona natural sin fines de lucro (Art. 47 CT).' +
+                '</div>' +
+                '<footer class="clr-foot"><span class="brand">CálculoLaboral · calculolaboral.cl/finiquito-trabajadora-casa-particular-chile</span> · Informe referencial de simulación. No reemplaza el finiquito firmado ni asesoría legal; el monto AFP definitivo lo determina la AFP.</footer>';
+            return {
+                html: html,
+                css: '.clr-t tr { break-inside: avoid; page-break-inside: avoid; } .clr-grid { break-inside: avoid; page-break-inside: avoid; }'
+            };
+        }
+        if (window.CLPrint) {
+            CLPrint.conectarImpresion('cp-btn-print', buildCasaParticularPrintHtml);
+        }
+
         document.addEventListener('indicatorsUpdated', render);
         setDefaults('puertas_afuera');
     })();
