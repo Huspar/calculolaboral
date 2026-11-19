@@ -820,6 +820,18 @@
 .suite-btn-importar {
     width: 100%;
     justify-content: center;
+    height: 34px;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.92);
+    border-radius: 6px;
+}
+.app-side .suite-btn-importar:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #FFFFFF;
 }
 .suite-puente-texto {
     margin: 2px 0 0;
@@ -1762,9 +1774,33 @@
     gap: 8px;
     align-items: center;
 }
+.torre-alta-grid #torre-nuevo-nombre {
+    width: auto;
+    flex: 1 1 210px;
+    min-width: 170px;
+}
 .torre-input-rut {
     width: 140px;
     font-family: var(--mono);
+}
+.torre-alta-grid .torre-select-regimen {
+    width: auto;
+    flex: 0 0 auto;
+}
+#suite-torre .tabla-contable {
+    font-size: 12.5px;
+    min-width: 0;
+}
+#suite-torre .tabla-contable th,
+#suite-torre .tabla-contable td {
+    padding: 8px 6px;
+}
+#suite-torre .tabla-contable th:nth-child(2),
+#suite-torre .tabla-contable td:nth-child(2) {
+    white-space: nowrap;
+}
+#suite-torre .tabla-contable td:last-child {
+    white-space: nowrap;
 }
 .torre-select-regimen {
     height: 38px;
@@ -3612,6 +3648,20 @@
     cursor: pointer;
 }
 .cloud-sync-pill .material-icons { font-size: 15px; }
+.app-cuenta #btn-equipo-estudio .material-icons,
+.app-cuenta .cloud-sync-pill .material-icons {
+    display: inline-flex;
+}
+.suite-cliente-nombre {
+    max-width: 170px;
+}
+.suite-cliente-picker {
+    gap: 6px;
+}
+.suite-ctx-select {
+    max-width: 175px;
+    min-width: 140px;
+}
 .cloud-sync-pill.ok { background: var(--forest-50); border-color: var(--forest-100); color: var(--forest-700); }
 .cloud-sync-pill.sync { background: var(--amber-bg); border-color: var(--amber-line); color: var(--amber-ink); }
 .cloud-sync-pill.err { background: var(--risk-bg); border-color: var(--risk-line); color: var(--risk-ink); }
@@ -3716,6 +3766,9 @@
     .btn-icono-chico { min-width: 44px; min-height: 44px; }
 }
 @media screen and (max-width: 640px) {
+    .torre-alta-grid #torre-nuevo-nombre {
+        width: 100%;
+    }
     .app-top {
         padding: 0 10px;
         gap: 6px;
