@@ -443,7 +443,7 @@ window.addEventListener('load', function () {
             padding: 1.75rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             gap: 1.5rem;
         }
         @media (min-width: 640px) {
@@ -494,6 +494,22 @@ window.addEventListener('load', function () {
             transition: background-color 0.2s;
         }
         .audience-btn:hover { background-color: #002820; }
+
+        /* Publicidad: chip visible junto al título de la tarjeta patrocinada.
+           Un texto gris pequeño en la esquina no distingue una oferta pagada de una herramienta propia. */
+        .cl-chip-pub {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.75rem;
+            border-radius: 9999px;
+            background-color: #FFF7E0;
+            border: 1px solid #E8C56A;
+            color: #7A5A00;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
 
         /* Sección abogados: sobria, tipo documento. Casos como filas con filete y formulario en una sola tarjeta */
         .cla-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
@@ -626,7 +642,7 @@ window.addEventListener('load', function () {
             margin-right: auto !important;
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/polish.css?v=1.7.0">
+    <link rel="stylesheet" href="/assets/css/polish.css?v=1.8.0">
 <link rel="stylesheet" href="/assets/css/promo-asistente.css?v=1.0.1">
 </head>
 <body>
@@ -873,7 +889,7 @@ window.addEventListener('load', function () {
 
                 <!-- Header Right CTAs (TealHQ Pill Style) -->
                 <div class="flex items-center gap-2">
-                    <a href="para-empleadores" class="hidden md:inline-flex btn-yellow-pill !py-2.5 !px-5 !text-xs !shadow-xs">
+                    <a href="para-empleadores" class="hidden md:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">
                         Portal Empleadores
                     </a>
                     <a href="contacto" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">
@@ -901,7 +917,7 @@ window.addEventListener('load', function () {
             <a href="generador-contrato-trabajo-chile" class="block text-sm font-semibold text-slate-700">Generador de Contrato</a>
             <a href="blog" class="block text-sm font-semibold text-slate-700">Blog de Guías Laborales</a>
             <div class="pt-2">
-                <a href="para-empleadores" class="btn-yellow-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
+                <a href="para-empleadores" class="btn-outline-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
             </div>
         </div>
     </header>
@@ -933,7 +949,7 @@ window.addEventListener('load', function () {
         .clf-cta-t { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .clf-btn-o { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1.3rem; border-radius: 9999px; border: 2px solid #D1D5DB; background: #FFFFFF; color: #1F2937; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: border-color 0.2s; }
         .clf-btn-o:hover { border-color: #111827; }
-        .clf-btn-o b { font-family: 'Geist Mono', monospace; font-size: 0.72rem; background: #D1FAE5; color: #065F46; padding: 2px 8px; border-radius: 9999px; }
+        .clf-btn-o b { font-family: 'Geist Mono', monospace; font-size: 0.8rem; background: #D1FAE5; color: #065F46; padding: 2px 9px; border-radius: 9999px; }
         .clf-trust { display: flex; flex-wrap: wrap; gap: 0.375rem 1rem; margin: 0; padding: 0; list-style: none; font-size: 0.78rem; font-weight: 500; color: #6B7280; }
         .clf-trust li { display: inline-flex; align-items: center; gap: 0.3rem; }
         .clf-trust .material-icons { font-size: 1rem; color: #059669; }
@@ -1017,6 +1033,19 @@ window.addEventListener('load', function () {
         @media (max-width: 1023px) {
             .clf-fan .clf-card:not(.is-active) { opacity: 0; visibility: hidden; pointer-events: none; }
         }
+        /* Escritorio: las alas del abanico se desvanecen antes del borde del área de tarjetas,
+           para que la silueta se lea como profundidad y no como un corte. La tarjeta activa
+           (±125px del centro) queda siempre nítida. */
+        @media (min-width: 1024px) {
+            .clf-fan {
+                -webkit-mask-image: linear-gradient(to right, transparent 0, transparent calc(50% - 255px), #000 calc(50% - 190px), #000 calc(50% + 190px), transparent calc(50% + 255px), transparent 100%);
+                mask-image: linear-gradient(to right, transparent 0, transparent calc(50% - 255px), #000 calc(50% - 190px), #000 calc(50% + 190px), transparent calc(50% + 255px), transparent 100%);
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: 100% 100%;
+                mask-size: 100% 100%;
+            }
+        }
         @media (max-width: 639px) {
             header .h-14 { height: 3.125rem; }
             .clf-hero { padding: 1.125rem 0 1.5rem; }
@@ -1032,7 +1061,7 @@ window.addEventListener('load', function () {
 
             <div class="clf-left">
             <div class="clf-copy">
-                <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional en Chile.</span></h1>
+                <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional</span> <span class="cl-mark">en Chile.</span></h1>
                 <p class="clf-lead">Calculadoras y herramientas para trabajadores y pymes, al día con la normativa 2026. Elige una y calcula en menos de un minuto.</p>
             </div>
 
@@ -1945,9 +1974,9 @@ window.addEventListener('load', function () {
                 <!-- Partner Card 1: Banco Itaú -->
                 <div class="step-card reveal-on-scroll delay-100 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
                     <div>
-                        <div class="flex items-center justify-between gap-2 mb-5">
+                        <div class="flex items-center justify-between gap-2 mb-5" style="flex-wrap: wrap;">
                             <span class="text-sm font-semibold text-forest-700">Cuenta para recibir tu sueldo</span>
-                            <span class="text-xs font-semibold text-gray-500">Patrocinado · Banco Itaú</span>
+                            <span class="cl-chip-pub">Publicidad · Banco Itaú</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">
@@ -1993,9 +2022,9 @@ window.addEventListener('load', function () {
                 <!-- Partner Card 2: Abakos Chile -->
                 <div class="step-card reveal-on-scroll delay-200 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
                     <div>
-                        <div class="flex items-center justify-between gap-2 mb-5">
+                        <div class="flex items-center justify-between gap-2 mb-5" style="flex-wrap: wrap;">
                             <span class="text-sm font-semibold text-forest-700">Préstamos para emergencias</span>
-                            <span class="text-xs font-semibold text-gray-500">Patrocinado · Abakos Chile</span>
+                            <span class="cl-chip-pub">Publicidad · Abakos Chile</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">

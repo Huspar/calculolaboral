@@ -133,13 +133,17 @@ article li a:not([class*="btn"]):not([class*="pill"]):hover,
  * documento legal. El texto siempre es visible; solo el trazo se dibuja. */
 
 .cl-mark {
-    padding: 0 0.08em;
-    margin: 0 -0.08em;
+    padding: 0 0.16em;
+    margin: 0 -0.16em;
     background-image: linear-gradient(transparent 60%, rgba(255, 183, 3, 0.55) 60%, rgba(255, 183, 3, 0.55) 90%, transparent 90%);
     background-repeat: no-repeat;
     background-size: 100% 100%;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
+    /* Cada segmento marcado se mantiene entero en una linea: un trazo partido a mitad
+       de palabra o suelto sobre una palabra sola se lee como error de renderizado.
+       El padding solapa los trazos de segmentos contiguos sobre la misma linea. */
+    white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -927,6 +931,15 @@ button[aria-label="Abrir menú"] {
     justify-content: center;
     min-width: 44px;
     min-height: 44px;
+}
+
+/* En escritorio la navegacion completa ya esta visible: la hamburguesa es un control
+ * redundante. La regla tactil de arriba gana a .lg:hidden por especificidad, asi que
+ * se oculta aqui con la misma especificidad elevada. */
+@media (min-width: 1024px) {
+    header button[aria-label="Abrir menú"] {
+        display: none;
+    }
 }
 
 @media (pointer: coarse) {
