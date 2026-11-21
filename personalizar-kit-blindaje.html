@@ -94,7 +94,22 @@ gtag('js', new Date());
             background-color: #00382E; color: #FFFFFF !important; border-color: #00382E;
         }
         .doc-item[aria-selected="true"] span { color: #E2E8F0 !important; }
-    </style>
+            /* Footer curvo verde (#00382E) - regla faltante */
+        .teal-footer-curve {
+            background-color: #00382E;
+            color: #FFFFFF;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        @media (min-width: 1024px) {
+            .teal-footer-curve {
+                border-top-left-radius: 96px;
+                border-top-right-radius: 0px;
+            }
+        }
+</style>
 </head>
 <body class="min-h-screen flex flex-col">
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">

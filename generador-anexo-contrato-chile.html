@@ -276,7 +276,45 @@ window.addEventListener('load', function () {
                 margin: 0 !important;
             }
         }
-    </style>
+            /* Footer curvo verde (#00382E) - regla faltante */
+        .teal-footer-curve {
+            background-color: #00382E;
+            color: #FFFFFF;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .teal-footer-curve .footer-inner-container {
+            max-width: 1240px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            .teal-footer-curve {
+                border-top-left-radius: 96px;
+                border-top-right-radius: 0px;
+            }
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 5rem !important;
+                padding-right: 2rem !important;
+            }
+        }
+        @media (min-width: 1200px) and (max-width: 1439px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 3.5rem !important;
+                padding-right: 2rem !important;
+            }
+        }
+        @media (min-width: 1440px) {
+            .teal-footer-curve .footer-inner-container {
+                padding-left: 2rem !important;
+                padding-right: 2rem !important;
+            }
+        }
+</style>
 
     <script type="application/ld+json">
     {
