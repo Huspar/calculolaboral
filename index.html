@@ -188,39 +188,17 @@ window.addEventListener('load', function () {
             background-color: #F8FAF9;
         }
 
-        /* Fluid Motion & Scroll Reveals (GPU-accelerated) */
-        .reveal-on-scroll {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .reveal-on-scroll.is-revealed {
-            opacity: 1 !important;
-            transform: none !important;
-        }
-
         /* Micro-shadow fallbacks */
         .shadow-2xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04); }
         .shadow-xs { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.05); }
-        .delay-100 { transition-delay: 0.1s; }
-        .delay-200 { transition-delay: 0.2s; }
-        .delay-300 { transition-delay: 0.3s; }
-        .delay-400 { transition-delay: 0.4s; }
 
-        /* Step Card Kinetic Hover Physics */
+        /* Card hover: quiet border and neutral shadow step */
         .step-card {
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+            transition: border-color 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
         }
         .step-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 35px -12px rgba(0, 56, 46, 0.08);
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.08);
             border-color: #CBD5E1;
-        }
-        .step-badge {
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .step-card:hover .step-badge {
-            transform: scale(1.1) rotate(3deg);
         }
 
 
@@ -282,19 +260,18 @@ window.addEventListener('load', function () {
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s var(--ease-spring);
+            transition: background-color 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-spring), transform 0.15s var(--ease-spring);
             text-decoration: none;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 183, 3, 0.35);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
         .btn-yellow-pill:hover {
             background-color: #FFAA00;
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(255, 183, 3, 0.45);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         .btn-yellow-pill:active {
-            transform: translateY(1px) scale(0.98);
+            transform: scale(0.98);
         }
 
         .btn-dark-pill {
@@ -308,20 +285,19 @@ window.addEventListener('load', function () {
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s var(--ease-spring);
+            transition: background-color 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-spring), transform 0.15s var(--ease-spring);
             text-decoration: none;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 56, 46, 0.25);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
         .btn-dark-pill:hover {
             background-color: var(--teal-forest-hover);
-            transform: translateY(-1.5px);
-            box-shadow: 0 8px 20px rgba(0, 56, 46, 0.35);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
             color: #FFFFFF !important;
         }
         .btn-dark-pill:active {
-            transform: translateY(1px) scale(0.98);
+            transform: scale(0.98);
         }
 
         .btn-outline-pill {
@@ -336,7 +312,7 @@ window.addEventListener('load', function () {
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s var(--ease-spring);
+            transition: background-color 0.2s var(--ease-spring), border-color 0.2s var(--ease-spring), color 0.2s var(--ease-spring), transform 0.15s var(--ease-spring);
             text-decoration: none;
             cursor: pointer;
         }
@@ -344,7 +320,6 @@ window.addEventListener('load', function () {
             border-color: #9CA3AF;
             background-color: #F9FAFB;
             color: #111827 !important;
-            transform: translateY(-1px);
         }
 
         .btn-yellow-pill.hidden,
@@ -373,7 +348,7 @@ window.addEventListener('load', function () {
             border-radius: 9999px;
             font-size: 13px;
             font-weight: 700;
-            transition: all 0.2s var(--ease-spring);
+            transition: background-color 0.2s var(--ease-spring), border-color 0.2s var(--ease-spring), color 0.2s var(--ease-spring);
             cursor: pointer;
             border: 1.5px solid #CBD5E1;
             background-color: #FFFFFF;
@@ -391,7 +366,7 @@ window.addEventListener('load', function () {
             background-color: #00382E !important;
             border-color: #00382E !important;
             color: #FFFFFF !important;
-            box-shadow: 0 4px 14px rgba(0, 56, 46, 0.22);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
         }
 
 
@@ -781,12 +756,12 @@ window.addEventListener('load', function () {
                                 </a>
 
                                 <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                                    <div class="w-9 h-9 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
                                         <span class="material-icons text-lg" aria-hidden="true">receipt</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Calculadora F29</div>
-                                        <div class="text-xs text-slate-500 mt-0.5">IVA, PPM, honorarios y RCV del SII.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">IVA, PPM, honorarios y RCV del SII</div>
                                     </div>
                                 </a>
 
@@ -855,7 +830,7 @@ window.addEventListener('load', function () {
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Para Contadores</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Previred 105 campos, LRE y F29.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Previred 105 campos, LRE y F29</div>
                                     </div>
                                 </a>
                             </div>
@@ -957,7 +932,7 @@ window.addEventListener('load', function () {
     <!-- SECTION 1: PORTADA CON ABANICO DE CALCULADORAS (js/home_fan.js) -->
     <style>
         /* Portada: texto + abanico de calculadoras (js/home_fan.js). Clases propias: el CSS precompilado de Tailwind no trae las nuevas. */
-        .clf-hero { padding: 2rem 0 2.5rem; overflow-x: clip; background: radial-gradient(1100px 550px at 50% -30px, rgba(255, 183, 3, 0.08), rgba(0, 56, 46, 0.02) 65%, transparent 100%); }
+        .clf-hero { padding: 2rem 0 2.5rem; overflow-x: clip; }
         .clf-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "fan" "actions"; gap: 1.25rem; }
         .clf-left { display: contents; }
         .clf-copy { grid-area: copy; order: 1; display: grid; gap: 0.875rem; justify-items: start; min-width: 0; }
@@ -981,7 +956,7 @@ window.addEventListener('load', function () {
             position: absolute; left: 50%; top: 22px; width: 226px; height: auto; min-height: 296px; margin-left: -113px;
             display: flex; flex-direction: column; gap: 0.6rem; padding: 1rem;
             background: #FFFFFF; color: #111827; text-decoration: none; text-align: left;
-            border: 1px solid #E2E8F0; border-radius: 18px;
+            border: 1px solid #E2E8F0; border-radius: 16px;
             box-shadow: 0 1px 2px rgba(0, 38, 31, 0.06), 0 10px 24px rgba(0, 38, 31, 0.08);
             transform-origin: 50% 140%;
             transform: rotate(calc(var(--o, 0) * var(--step) * var(--spread)));
@@ -1082,7 +1057,7 @@ window.addEventListener('load', function () {
 
             <div class="clf-left">
             <div class="clf-copy">
-                <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional</span> <span class="cl-mark">en Chile.</span></h1>
+                <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional</span> <span class="cl-mark">en Chile</span></h1>
                 <p class="clf-lead">Calculadoras y herramientas para trabajadores y pymes, al día con la normativa 2026. Elige una y calcula en menos de un minuto.</p>
             </div>
 
@@ -1152,7 +1127,7 @@ window.addEventListener('load', function () {
                     <a class="clf-card clf-all clf-o3" href="#calculadoras" data-fan="todas" data-name="Ver todas" draggable="false" style="--o: -3; z-index: 17;">
                         <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">apps</span></span></span>
                         <span class="clf-k">Catálogo</span>
-                        <span class="clf-n">Las 14 herramientas</span>
+                        <span class="clf-n">Las 15 herramientas</span>
                         <ul class="clf-list"><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>Anexo Ley 40 horas</li><li>y 3 más</li></ul>
                         
                         <span class="clf-go">Ver todas<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
@@ -1189,7 +1164,7 @@ window.addEventListener('load', function () {
                     <button type="button" id="clf-next" aria-label="Calculadora siguiente"><span class="material-icons" aria-hidden="true">chevron_right</span></button>
                 </div>
                 <div class="clf-dots" id="clf-dots"><button type="button" aria-label="Finiquito" aria-current="true"></button><button type="button" aria-label="Sueldo líquido" aria-current="false"></button><button type="button" aria-label="Sueldo part-time" aria-current="false"></button><button type="button" aria-label="Vacaciones" aria-current="false"></button><button type="button" aria-label="Seguro de cesantía" aria-current="false"></button><button type="button" aria-label="Ver todas" aria-current="false"></button><button type="button" aria-label="Horas extras" aria-current="false"></button><button type="button" aria-label="Despido injustificado" aria-current="false"></button></div>
-                <p class="clf-hint">Pasa el mouse o toca una tarjeta para traerla al frente.</p>
+                <p class="clf-hint">Pasa el mouse o toca una tarjeta para traerla al frente</p>
             </div>
 
         </div>
@@ -1226,10 +1201,10 @@ window.addEventListener('load', function () {
             <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
                 
                 <!-- CARD 1: Finiquito Legal Completo -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">calculate</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
@@ -1253,10 +1228,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 2: Simulador Despido Injustificado -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-rose-200/70 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-rose-200/70 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">gavel</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-rose-100/80 text-rose-800">
@@ -1280,10 +1255,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 3: Seguro de Cesantía AFC -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">account_balance_wallet</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-100/80 text-amber-800">
@@ -1307,10 +1282,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 4: Calculadora Sueldo Líquido -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">payments</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
@@ -1334,10 +1309,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 5: Horas Extras 42h -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">schedule</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
@@ -1361,10 +1336,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 6: Vacaciones Proporcionales -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">beach_access</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
@@ -1390,13 +1365,13 @@ window.addEventListener('load', function () {
             </div>
 
             <!-- Additional 9 Tools (Collapsible / Expandable) -->
-            <div id="extra-catalog-tools" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 mt-3.5 sm:mt-4 transition-all">
+            <div id="extra-catalog-tools" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 mt-3.5 sm:mt-4 transition-colors">
 
                 <!-- CARD 7: Sueldo Part-Time -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-500 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-600 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">work_outline</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
@@ -1420,10 +1395,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 8: Despido Art. 160 -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-400 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-400 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">warning_amber</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-rose-100/80 text-rose-800">
@@ -1447,10 +1422,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 9: Carta de Renuncia Voluntaria -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">draw</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
@@ -1474,10 +1449,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 10: Generador Finiquito Word/PDF -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">description</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
@@ -1501,10 +1476,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 11: Generador Anexo 40 Horas -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="pyme">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">history_edu</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
@@ -1528,10 +1503,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 12: Kit Blindaje Laboral Pymes -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-600 transition-all group" data-category="pyme">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-forest-600 transition-colors group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center flex-shrink-0">
                                 <span class="material-icons text-lg" aria-hidden="true">verified_user</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
@@ -1555,10 +1530,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 13: Kit Ley 21.719 Protección Datos -->
-                <div class="catalog-card reveal-on-scroll bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-all group" data-category="pyme">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-colors group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shadow-2xs">
                                 <span class="material-icons text-lg" aria-hidden="true">security</span>
                             </div>
                             <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100/80 text-rose-900">
@@ -1582,10 +1557,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 14: Portal Empleadores (Pymes) -->
-                <div class="catalog-card reveal-on-scroll delay-100 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-700 transition-all group" data-category="pyme">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-700 transition-colors group" data-category="pyme">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center shadow-2xs">
                                 <span class="material-icons text-lg" aria-hidden="true">storefront</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-900">
@@ -1609,10 +1584,10 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- CARD 15: Finiquito Trabajadora de Casa Particular -->
-                <div class="catalog-card reveal-on-scroll delay-200 bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-all group" data-category="trabajador">
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="trabajador">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center shadow-2xs">
                                 <span class="material-icons text-lg" aria-hidden="true">home</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-900">
@@ -1639,7 +1614,7 @@ window.addEventListener('load', function () {
 
             <!-- Expandable Catalog Toggle Button (Option 1) -->
             <div class="mt-8 text-center" id="catalog-toggle-wrapper">
-                <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer">
+                <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-colors cursor-pointer">
                     <span id="toggle-catalog-text">Mostrar las 15 herramientas y kits (9 más)</span>
                     <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon" aria-hidden="true">keyboard_arrow_down</span>
                 </button>
@@ -1652,7 +1627,7 @@ window.addEventListener('load', function () {
     <section id="section-audiences" class="py-10 sm:py-12 bg-gray-50 border-t border-b border-gray-200/90">
         <div class="site-container px-4 sm:px-6">
 
-            <div class="reveal-on-scroll cl-sec-head">
+            <div class="cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                     Diseñado para ambas partes de la relación laboral
                 </h2>
@@ -1664,7 +1639,7 @@ window.addEventListener('load', function () {
             <div class="audience-grid">
 
                 <!-- Trabajadores y personas -->
-                <div class="reveal-on-scroll audience-card">
+                <div class="audience-card">
                     <div>
                         <p class="audience-meta"><span class="material-icons" aria-hidden="true">shield</span>Para trabajadores y personas · Gratis y sin registro</p>
                         <h3 class="font-extrabold text-xl sm:text-2xl text-gray-900 tracking-tight leading-snug">
@@ -1686,7 +1661,7 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- Pymes y empleadores -->
-                <div class="reveal-on-scroll audience-card">
+                <div class="audience-card">
                     <div>
                         <p class="audience-meta"><span class="material-icons" aria-hidden="true">storefront</span>Para pymes y empleadores · Normativa 2026</p>
                         <h3 class="font-extrabold text-xl sm:text-2xl text-gray-900 tracking-tight leading-snug">
@@ -1721,8 +1696,8 @@ window.addEventListener('load', function () {
         <div class="site-container px-4 sm:px-6">
             <aside class="cl-asistente cl-asistente-grande no-print" aria-labelledby="cl-asistente-t">
                 <div class="cl-asistente-cuerpo">
-                    <p class="cl-asistente-kicker">Nuevo · Piloto gratuito hasta el 31 de diciembre de 2026</p>
                     <h2 class="cl-asistente-titulo" id="cl-asistente-t">Asistente Laboral Pyme: tus trabajadores, liquidaciones y plazos en un solo lugar</h2>
+                    <p class="cl-asistente-kicker">Piloto gratuito hasta el 31 de diciembre de 2026</p>
                     <p>Para pymes y emprendedores, hasta 50 trabajadores. Guardas una vez los datos de tu empresa y de cada persona, preparas las liquidaciones del mes, emites contratos, anexos y finiquitos, y ves qué plazos tienes encima. Durante el piloto es gratis; a cambio te pedimos tu opinión.</p>
                     <ul class="cl-asistente-lista">
                         <li>Liquidaciones del mes con gratificación, horas extra y semana corrida</li>
@@ -1743,7 +1718,7 @@ window.addEventListener('load', function () {
     <section id="abogados-laborales" class="py-14 sm:py-20 bg-white border-t border-b border-gray-200/90 scroll-mt-12">
         <div class="site-container px-4 sm:px-6">
 
-            <div class="reveal-on-scroll cl-sec-head">
+            <div class="cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                     ¿Cuándo necesitas un abogado laboral para tu caso?
                 </h2>
@@ -1843,7 +1818,7 @@ window.addEventListener('load', function () {
                             <input type="checkbox" id="lawyer-consent" name="consentimiento" required>
                             <span>Autorizo el tratamiento confidencial de mis datos y su remisión a un abogado laboralista colaborador para la evaluación preliminar de mi caso según la <a href="privacidad" target="_blank" rel="noopener">Política de Privacidad</a>.</span>
                         </label>
-                        <button type="submit" id="lawyer-submit-btn" class="w-full py-3.5 px-6 rounded-full font-extrabold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer" style="background-color: var(--teal-yellow) !important; color: #111827 !important;">
+                        <button type="submit" id="lawyer-submit-btn" class="w-full py-3.5 px-6 rounded-full font-extrabold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer" style="background-color: var(--teal-yellow) !important; color: #111827 !important;">
                             <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">gavel</span>
                             <span style="color: #111827 !important;">Enviar antecedentes para revisión legal</span>
                         </button>
@@ -1884,7 +1859,7 @@ window.addEventListener('load', function () {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 text-left">
                 
                 <!-- Guide Card 1: Reclamar Despido Injustificado DT -->
-                <div class="step-card reveal-on-scroll delay-100 bg-white p-7 sm:p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-all">
+                <div class="step-card bg-white p-7 sm:p-8 rounded-2xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-colors">
                     <div>
                         <figure class="cl-card-cover"><img src="/assets/covers/reclamar-despido.svg" alt="Balanza de la justicia y mazo" width="800" height="450" class="cl-cover" loading="lazy" decoding="async"></figure>
                         <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
@@ -1905,7 +1880,7 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- Guide Card 2: Carta de Renuncia Voluntaria -->
-                <div class="step-card reveal-on-scroll delay-200 bg-white p-7 sm:p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-all">
+                <div class="step-card bg-white p-7 sm:p-8 rounded-2xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-colors">
                     <div>
                         <figure class="cl-card-cover"><img src="/assets/covers/renuncia-voluntaria.svg" alt="Puerta de salida con carta de renuncia" width="800" height="450" class="cl-cover" loading="lazy" decoding="async"></figure>
                         <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
@@ -1926,7 +1901,7 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- Guide Card 3: Despido Art. 161 & Restitución AFC -->
-                <div class="step-card reveal-on-scroll delay-300 bg-white p-7 sm:p-8 rounded-3xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-all">
+                <div class="step-card bg-white p-7 sm:p-8 rounded-2xl border border-gray-200/90 shadow-2xs flex flex-col justify-between hover:shadow-md hover:border-gray-300 transition-colors">
                     <div>
                         <figure class="cl-card-cover"><img src="/assets/covers/despido-161.svg" alt="Edificio de empresa y carta de despido sellada" width="800" height="450" class="cl-cover" loading="lazy" decoding="async"></figure>
                         <h3 class="font-bold text-xl text-gray-950 mb-3 tracking-tight">
@@ -1949,7 +1924,7 @@ window.addEventListener('load', function () {
             </div>
 
             <!-- Link to All Guides in Blog -->
-            <div class="reveal-on-scroll text-center mb-12">
+            <div class="text-center mb-12">
                 <a href="blog" class="inline-flex items-center gap-2 text-sm font-bold text-emerald-800 hover:text-emerald-950 hover:underline">
                     <span>Ver todas las guías, jurisprudencia y dictámenes DT en el blog</span>
                     <span class="material-icons text-base" aria-hidden="true">arrow_forward</span>
@@ -1957,7 +1932,7 @@ window.addEventListener('load', function () {
             </div>
 
             <!-- Wide Action Banner (TealHQ Dark Pine Forest) -->
-            <div style="background-color: var(--teal-forest);" class="reveal-on-scroll delay-200 rounded-3xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl text-left">
+            <div style="background-color: var(--teal-forest);" class="rounded-2xl p-8 sm:p-12 text-white flex flex-col lg:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-xl text-left">
                 <div class="space-y-3.5 max-w-xl">
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                         ¿Tienes una pyme? Genera finiquitos y anexos de 40 horas basados en el Código del Trabajo
@@ -1981,7 +1956,7 @@ window.addEventListener('load', function () {
     <section class="py-12 sm:py-16 bg-warm-surface border-t border-gray-200/90">
         <div class="site-container px-4 sm:px-6">
             
-            <div class="reveal-on-scroll cl-sec-head">
+            <div class="cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                     Herramientas para gestionar tu dinero
                 </h2>
@@ -1993,7 +1968,7 @@ window.addEventListener('load', function () {
             <div class="partner-grid text-left mb-4">
                 
                 <!-- Partner Card 1: Banco Itaú -->
-                <div class="step-card reveal-on-scroll delay-100 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
+                <div class="step-card bg-white rounded-2xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-colors">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-5" style="flex-wrap: wrap;">
                             <span class="text-sm font-semibold text-forest-700">Cuenta para recibir tu sueldo</span>
@@ -2002,7 +1977,7 @@ window.addEventListener('load', function () {
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">
                             <div class="sm:col-span-5 flex justify-center">
-                                <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-amber-300 transition-all shadow-xs group">
+                                <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-amber-300 transition-colors shadow-xs group">
                                     <img src="/assets/itau-cuenta-corriente-app.jpg" alt="Banco Itaú - Plan Cuenta Corriente $0 costo de mantención" width="300" height="250" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover" loading="lazy">
                                 </a>
                             </div>
@@ -2033,7 +2008,7 @@ window.addEventListener('load', function () {
 
                     <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <span class="text-xs text-gray-500 font-medium">Sujeto a evaluación de antecedentes comerciales</span>
-                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-forest-800 hover:bg-forest-900 active:scale-95" style="background-color: #00382E !important; color: #ffffff !important;">
+                        <a href="/itau" target="_blank" rel="sponsored nofollow noopener" data-partner="itau_cuenta_corriente" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-colors text-white bg-forest-800 hover:bg-forest-900 active:scale-95" style="background-color: #00382E !important; color: #ffffff !important;">
                             <span style="color: #ffffff !important;">Ver requisitos y abrir cuenta</span>
                             <span class="material-icons text-sm" style="color: #ffffff !important;" aria-hidden="true">arrow_forward</span>
                         </a>
@@ -2041,7 +2016,7 @@ window.addEventListener('load', function () {
                 </div>
 
                 <!-- Partner Card 2: Abakos Chile -->
-                <div class="step-card reveal-on-scroll delay-200 bg-white rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-all">
+                <div class="step-card bg-white rounded-2xl border border-gray-200/90 shadow-2xs hover:shadow-md p-6 sm:p-7 flex flex-col justify-between transition-colors">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-5" style="flex-wrap: wrap;">
                             <span class="text-sm font-semibold text-forest-700">Préstamos para emergencias</span>
@@ -2050,7 +2025,7 @@ window.addEventListener('load', function () {
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center mb-5">
                             <div class="sm:col-span-5 flex justify-center">
-                                <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-forest-300 transition-all shadow-xs group">
+                                <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_img" class="block overflow-hidden rounded-2xl border border-gray-200 hover:border-forest-300 transition-colors shadow-xs group">
                                     <img src="/assets/abakos-emergencias-app.jpg" alt="Abakos Chile - Apaga tus emergencias financieras con préstamos online" width="270" height="270" class="w-full max-w-[180px] sm:max-w-none h-auto object-cover" loading="lazy">
                                 </a>
                             </div>
@@ -2081,7 +2056,7 @@ window.addEventListener('load', function () {
 
                     <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <span class="text-xs text-gray-500 font-medium">Respuesta rápida desde cualquier punto de Chile</span>
-                        <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all text-white bg-forest-600 hover:bg-forest-700 active:scale-95" style="background-color: #0F5E4F !important; color: #ffffff !important;">
+                        <a href="/abakos-emergencias" target="_blank" rel="sponsored nofollow noopener" data-partner="abakos_emergencias" data-placement="home_v2_partner_btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-colors text-white bg-forest-600 hover:bg-forest-700 active:scale-95" style="background-color: #0F5E4F !important; color: #ffffff !important;">
                             <span style="color: #ffffff !important;">Simular préstamo online</span>
                             <span class="material-icons text-sm" style="color: #ffffff !important;" aria-hidden="true">arrow_forward</span>
                         </a>
@@ -2097,7 +2072,7 @@ window.addEventListener('load', function () {
     <section class="section-py bg-warm-surface border-t border-gray-200/90">
         <div class="site-container max-w-[850px] px-4 sm:px-6">
             
-            <div class="reveal-on-scroll cl-sec-head">
+            <div class="cl-sec-head">
                 <h2 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold mb-3">
                     Preguntas frecuentes
                 </h2>
@@ -2105,7 +2080,7 @@ window.addEventListener('load', function () {
             </div>
 
             <div class="space-y-4 text-left">
-                <details class="reveal-on-scroll delay-100 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-colors hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿El empleador puede obligarme a firmar el finiquito si no estoy de acuerdo?</span>
                         <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0" aria-hidden="true">expand_more</span>
@@ -2116,7 +2091,7 @@ window.addEventListener('load', function () {
                 </details>
 
 
-                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-colors hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Es legal que me descuenten el aporte patronal de la AFC?</span>
                         <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0" aria-hidden="true">expand_more</span>
@@ -2126,7 +2101,7 @@ window.addEventListener('load', function () {
                     </p>
                 </details>
 
-                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-colors hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Puedo cobrar el dinero de inmediato en la notaría y reclamar después?</span>
                         <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0" aria-hidden="true">expand_more</span>
@@ -2136,7 +2111,7 @@ window.addEventListener('load', function () {
                     </p>
                 </details>
 
-                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-colors hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Cómo se calcula el sueldo líquido en Chile?</span>
                         <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0" aria-hidden="true">expand_more</span>
@@ -2146,7 +2121,7 @@ window.addEventListener('load', function () {
                     </p>
                 </details>
 
-                <details class="reveal-on-scroll delay-200 group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all hover:border-gray-300 shadow-2xs">
+                <details class="group bg-white border border-gray-200/90 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-colors hover:border-gray-300 shadow-2xs">
                     <summary class="flex justify-between items-center font-bold text-gray-950 text-base sm:text-lg gap-4">
                         <span>¿Cuáles son las comisiones de las AFP vigentes en 2026?</span>
                         <span class="material-icons text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0" aria-hidden="true">expand_more</span>
