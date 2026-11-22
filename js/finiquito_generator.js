@@ -14,7 +14,7 @@
         activeTab: 'datos' // 'datos', 'remuneracion', 'descuentos'
     };
 
-    // Pago del generador ($12.990 CLP) por la API de Flow
+    // Pago del generador ($9.990 CLP) por la API de Flow
     // Flow: Webpay Plus, Servipag, Mach y tarjetas
     // El pago se crea en el servidor (/api/checkout, producto 'finiquito') y Flow lo confirma;
     // el desbloqueo llega firmado en la URL de retorno (ver js/checkout_consent.js).
@@ -491,7 +491,7 @@
                         </div>
                         <button type="button" id="btn-watermark-unlock" class="stamp-cta">
                             <span class="material-icons text-sm" aria-hidden="true">lock_open</span>
-                            <span>Desbloquear Word + PDF ($12.990)</span>
+                            <span>Desbloquear Word + PDF ($9.990)</span>
                         </button>
                     </div>
                 </div>

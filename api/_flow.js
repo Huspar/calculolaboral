@@ -74,7 +74,7 @@ const PRODUCTS = {
     // el pago confirmado entrega un desbloqueo firmado por UNLOCK_HOURS.
     finiquito: {
         code: 'GF',
-        amount: 12990,
+        amount: 9990,
         subject: 'Finiquito para Notaría (Word + PDF)',
         page: '/generador-finiquito-chile',
         unlock: true

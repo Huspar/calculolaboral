@@ -109,7 +109,7 @@
                 ? 'Emite el comprobante de sueldo completo en PDF con haberes, AFP, salud e impuesto listo para firma o respaldo.'
                 : 'Genera el borrador completo de finiquito para revisar y llevar a firma ante notario o ministro de fe.') + '</p>' +
             '<a class="cl-pdfnext__cta" href="' + (esSueldo ? '/generador-liquidacion-sueldo' : '/generador-finiquito-chile') + '" style="color:#ffffff !important;">' +
-                (esSueldo ? 'Crear liquidación de sueldo ($2.990)' : 'Generar finiquito para notaría ($12.990)') +
+                (esSueldo ? 'Crear liquidación de sueldo ($2.990)' : 'Generar finiquito para notaría ($9.990)') +
             '</a>' +
             (esSueldo ? '' : '<a class="cl-pdfnext__sec" href="/pack-cartas-despido-chile">¿También necesitas la carta de despido? Pack ($9.990)</a>') +
             '<div class="cl-pdfnext__ad">' + adLink.label +

@@ -222,7 +222,7 @@ module.exports = async (req, res) => {
         <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">Estimado(a) empleador(a) de ${escapeHtml(cleanEmpresa)},</p>
         
         <p style="font-size: 14px; color: #334155; margin: 0 0 18px;">
-            Confirmamos la recepción de tu pago de <strong>$12.990 CLP</strong> por el <strong>Finiquito para Notaría</strong>. Adjunto va el finiquito en <strong>Word (.${wordExt}) editable</strong>. El PDF lo guardas desde la página con el botón «Imprimir o guardar PDF».
+            Confirmamos la recepción de tu pago de <strong>$9.990 CLP</strong> por el <strong>Finiquito para Notaría</strong>. Adjunto va el finiquito en <strong>Word (.${wordExt}) editable</strong>. El PDF lo guardas desde la página con el botón «Imprimir o guardar PDF».
         </p>
 
         <!-- Tarjeta de Resumen del Documento -->
@@ -273,7 +273,7 @@ module.exports = async (req, res) => {
 </body>
 </html>`;
 
-        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $12.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.${wordExt} editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a editarlo o descargarlo durante 48 horas desde el pago, en el mismo navegador donde llenaste los datos:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
+        const buyerText = `Hola,\n\nMuchas gracias por tu compra. Confirmamos tu pago de $9.990 CLP por el finiquito para notaría de ${cleanTrabajador} (RUT ${cleanTrabajadorRut}).\n\nAdjunto a este correo encontrarás el archivo Word (.${wordExt} editable): ${filenameSafe}.\n\nPara firmar en Notaría lleva:\n1. 3 copias impresas de este finiquito.\n2. Cédulas de identidad vigentes.\n3. Planillas de cotizaciones pagadas (Previred / Ley Bustos).\n4. Comprobante de pago.\n\nPuedes volver a editarlo o descargarlo durante 48 horas desde el pago, en el mismo navegador donde llenaste los datos:\n${relink}\n\nEs un modelo de referencia basado en el Artículo 177 del Código del Trabajo; no constituye asesoría legal.\n\nEquipo de Cálculo Laboral Chile\nhttps://calculolaboral.cl`;
 
         // Helper para enviar emails con Resend API
         async function sendResend(to, subject, html, text, attachments = []) {

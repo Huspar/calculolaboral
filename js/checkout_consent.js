@@ -208,7 +208,7 @@
         blindaje: { item_id: 'blindaje', item_name: 'Kit Blindaje Laboral Pyme 2026', price: 19990 },
         datos: { item_id: 'datos', item_name: 'Kit Ley 21.719 Protección de Datos 2026', price: 29990 },
         despido: { item_id: 'despido', item_name: 'Pack Cartas de Despido por Causal 2026', price: 9990 },
-        finiquito: { item_id: 'finiquito', item_name: 'Finiquito para Notaría (Word + PDF)', price: 12990 },
+        finiquito: { item_id: 'finiquito', item_name: 'Finiquito para Notaría (Word + PDF)', price: 9990 },
         contrato: { item_id: 'contrato', item_name: 'Contrato de Trabajo a la Medida (Word + PDF)', price: 12990 },
         informe: { item_id: 'informe', item_name: 'Informe Ejecutivo de Costo Empresa (PDF)', price: 4990 },
         liquidacion: { item_id: 'liquidacion', item_name: 'Liquidación de Sueldo en PDF', price: 2990 },
