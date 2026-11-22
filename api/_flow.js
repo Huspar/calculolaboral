@@ -133,6 +133,23 @@ const PRODUCTS = {
         subject: 'Pack Asesora del Hogar al dia (Contrato + 1a Liquidacion)',
         page: '/pack-asesora-del-hogar-chile',
         unlock: true
+    },
+    // Monitor Tributario y Previsional: servicio con activacion manual mientras corre
+    // la validacion con RUT reales. El periodo pagado corre desde que la empresa queda
+    // conectada; Jhon coordina la activacion por correo (aviso en la pagina y en terminos).
+    monitor12: {
+        code: 'MON12',
+        amount: 79900,
+        subject: 'Monitor Tributario y Previsional 12 meses (precio de lanzamiento)',
+        page: '/monitor-tributario-previsional',
+        acceso: true
+    },
+    monitor1: {
+        code: 'MON1',
+        amount: 9990,
+        subject: 'Monitor Tributario y Previsional 1 mes',
+        page: '/monitor-tributario-previsional',
+        acceso: true
     }
 };
 // Pase Pyme: acceso al Asistente Laboral Pyme por `dias` desde la confirmacion del pago. No es descarga ni desbloqueo de generador:
@@ -357,9 +374,37 @@ async function notifyOwner(pay, lead) {
     }, `notify-${pay.order}`);
 }
 
-/** Entrega segun el producto: kit por correo o desbloqueo del generador. */
+/** Entrega segun el producto: kit por correo, desbloqueo del generador o cupo del Monitor. */
 function deliver(pay, extra) {
+    if (PRODUCTS[pay.product].acceso) return deliverAcceso(pay, extra);
     return PRODUCTS[pay.product].unlock ? deliverUnlock(pay, extra) : deliverKit(pay, extra);
+}
+
+/** Monitor: comprobante del cupo comprado; la activacion se coordina por correo. */
+async function deliverAcceso(pay, extra) {
+    const p = PRODUCTS[pay.product];
+    const paseBlock = renderPaseBlock(pay, extra);
+    const o = pay.optional || {};
+    const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
+<div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+  <p style="margin:0 0 20px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:#00382E">Laboral</span></p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Confirmamos tu pago de <strong>$${p.amount.toLocaleString('es-CL')}</strong> por <strong>${escapeHtml(p.subject)}</strong> (orden Flow ${escapeHtml(pay.order)}).</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Con esto reservas tu cupo y tu <strong>precio de lanzamiento</strong> del Monitor Tributario y Previsional. Como la conexión automática está en validación con empresas reales, te escribiremos a este correo para coordinar la conexión de tu empresa: el período que pagaste corre desde ese día.</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Mientras tanto ya puedes usar el <a href="${SITE_URL}/monitor-tributario-previsional" style="color:#00382E;font-weight:700">chequeo gratuito</a> y activar las alertas del día 1, 13 y 20 sin costo.</p>
+  ${paseBlock}
+  <p style="margin:0 0 16px;font-size:12px;color:#475569">El Monitor es un servicio referencial: revisa plazos y estados a partir de datos del SII, la TGR y PreviRed, y no reemplaza a tu contador ni a los organismos. Si prefieres no esperar la activación, puedes pedir el reembolso total respondiendo este correo, en cualquier momento antes de que tu empresa quede conectada.</p>
+  <p style="margin:0;font-size:13px;color:#64748b">¿Dudas? Responde este correo.</p>
+</div></body></html>`;
+
+    await sendEmail({
+        to: [pay.email],
+        reply_to: 'contacto@calculolaboral.cl',
+        subject: `Pago confirmado: ${p.subject}`,
+        html
+    }, `monitor-${pay.order}`);
+    await notifyOwner(pay, 'Venta confirmada por Flow: Monitor reservado. Coordinar la conexión de la empresa por correo y registrar el período desde la activación.' +
+        (o.empresa ? ` Empresa: ${o.empresa}.` : ''));
 }
 
 /** Envia el kit al comprador (adjunto + enlace) y avisa la venta al dueño. */
@@ -411,6 +456,6 @@ function readToken(req) {
 }
 
 module.exports = {
-    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliver, deliverPase, notifyOwner, sendEmail,
+    PRODUCTS, SITE_URL, createPayment, paymentStatus, deliver, deliverPase, deliverAcceso, notifyOwner, sendEmail,
     downloadQuery, signUnlock, verifyDownload, readToken, escapeHtml
 };

@@ -109,6 +109,25 @@ window.addEventListener('load', function () {
         .btn-yellow-pill { background-color: #FFB703; color: #111827 !important; font-weight: 700; border-radius: 9999px; padding: 12px 24px; font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border: none; cursor: pointer; }
         .btn-dark-pill { background-color: #00382E; color: #FFFFFF !important; font-weight: 700; border-radius: 9999px; padding: 12px 24px; font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border: none; cursor: pointer; }
         .btn-outline-pill { background-color: #FFFFFF; color: #374151 !important; font-weight: 600; border-radius: 9999px; padding: 10px 20px; font-size: 13.5px; min-height: 44px; border: 1.5px solid #D1D5DB; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; cursor: pointer; }
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
         .nav-dropdown-menu { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px); transition: opacity .2s ease, transform .2s ease; }
         .nav-dropdown-group:hover .nav-dropdown-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
         .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }
@@ -497,12 +516,12 @@ window.addEventListener('load', function () {
                     <li class="flex items-start gap-2"><span class="material-icons text-sm text-[#00382E]" aria-hidden="true">receipt_long</span><span><strong>F29:</strong> contraste del formulario declarado contra tu RCV antes del vencimiento.</span></li>
                 </ul>
                 <p class="text-xs text-slate-500 mt-4 mb-0">
-                    Durante la validación el acceso es con cupos y se coordina por correo; el precio y la facturación se publicarán acá cuando abra a todo público. Tú decides si conectar la empresa y puedes desconectarla cuando quieras.
+                    La conexión se coordina por correo y tú decides si conectar la empresa (y desconectarla cuando quieras). Los planes están justo abajo: el período que pagas corre desde que tu empresa queda conectada.
                 </p>
             </div>
             <form id="mon-form-acceso" class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-xs space-y-3" novalidate>
                 <h3 class="text-lg font-extrabold text-slate-900 m-0">Pedir cupo de acceso anticipado</h3>
-                <p class="text-xs text-slate-500 mt-1 mb-2">No pedimos claves en este formulario: solo coordinamos la validación contigo.</p>
+                <p class="text-xs text-slate-500 mt-1 mb-2">No pedimos claves en este formulario: coordinamos la conexión contigo, sin compromiso.</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label for="acc-nombre" class="block text-xs font-bold text-slate-700 mb-1">Tu nombre</label>
@@ -534,6 +553,56 @@ window.addEventListener('load', function () {
                 </button>
                 <p id="mon-acceso-status" class="text-xs font-semibold m-0" role="status"></p>
             </form>
+        </section>
+
+        <!-- Planes del Monitor -->
+        <section id="planes-monitor" aria-labelledby="planes-monitor-t" class="mt-10">
+            <h2 id="planes-monitor-t" class="text-xl sm:text-2xl font-extrabold text-slate-900 m-0 mb-4">Planes del Monitor (precio de lanzamiento)</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
+                <div class="bg-white rounded-3xl border-2 border-emerald-300/80 p-6 shadow-xs flex flex-col">
+                    <h3 class="text-lg font-extrabold text-slate-900 m-0">Anual · precio de lanzamiento</h3>
+                    <p class="m-0 mt-3"><span class="text-3xl font-extrabold font-mono-num text-[#00382E]">$79.900</span> <span class="text-xs font-bold text-slate-500">+ IVA/año por empresa</span></p>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">Aprox. $6.660/mes · 12 meses de sincronización automática con alertas incluidas</p>
+                    <ul class="text-xs text-slate-700 space-y-1.5 list-none p-0 m-0 mb-5">
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>Acuse RCV de 8 días, cotizaciones Previred, F29 y deudas TGR revisados automáticamente.</span></li>
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>Alertas del día 1, 13 y 20 para tu correo.</span></li>
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>Mantiene el precio de lanzamiento durante todo el año pagado.</span></li>
+                    </ul>
+                    <button type="button" id="btn-mon-anual" class="btn-dark-pill w-full mt-auto">
+                        <span class="material-icons text-base" aria-hidden="true">verified</span>
+                        <span>Pagar 12 meses con Flow</span>
+                    </button>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs flex flex-col">
+                    <h3 class="text-lg font-extrabold text-slate-900 m-0">Mensual sin permanencia</h3>
+                    <p class="m-0 mt-3"><span class="text-3xl font-extrabold font-mono-num text-slate-900">$9.900</span> <span class="text-xs font-bold text-slate-500">+ IVA/mes</span></p>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">Pagas mes a mes cuando quieras · sin cargos automáticos</p>
+                    <ul class="text-xs text-slate-700 space-y-1.5 list-none p-0 m-0 mb-5">
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>Mismo alcance que el plan anual, un mes a la vez.</span></li>
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>Te avisamos por correo cerca del fin de tu mes, y sigues solo si quieres.</span></li>
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>Una cuota por empresa, sin paquetes mínimos.</span></li>
+                    </ul>
+                    <button type="button" id="btn-mon-mensual" class="btn-yellow-pill w-full mt-auto">
+                        <span class="material-icons text-base" aria-hidden="true">calendar_month</span>
+                        <span>Pagar 1 mes con Flow</span>
+                    </button>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs flex flex-col">
+                    <h3 class="text-lg font-extrabold text-slate-900 m-0">¿Tu contador usa la Suite?</h3>
+                    <p class="text-sm text-slate-700 leading-relaxed mt-3 mb-4">
+                        El Monitor viene <strong>incluido</strong> en los planes <strong>Estudio</strong> y <strong>Estudio ilimitado</strong> de la Suite Contadores, sin costo extra por empresa cliente.
+                    </p>
+                    <ul class="text-xs text-slate-700 space-y-1.5 list-none p-0 m-0 mb-5">
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>Si tu estudio tiene uno de esos planes, pídele activar tu empresa.</span></li>
+                        <li class="flex items-start gap-1.5"><span class="material-icons text-sm text-emerald-700" aria-hidden="true">check</span><span>El chequeo y las alertas son gratis para todos, sin importar el plan.</span></li>
+                    </ul>
+                    <a href="suite-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="planes-monitor" class="btn-outline-pill w-full mt-auto justify-center">Ver planes de la Suite</a>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 mt-4 mb-0 max-w-4xl">
+                Validación en curso: comprando hoy reservas tu cupo y tu precio de lanzamiento; coordinamos la conexión de tu empresa por correo y el período pagado corre desde ese día. Reembolso total dentro de 14 días corridos desde el pago o, si tu empresa aún no está conectada, en cualquier momento antes de la activación (<a href="terminos#monitor" class="font-semibold text-[#00382E] underline">condiciones</a>). El Monitor es referencial y no reemplaza a tu contador ni al SII, la TGR o PreviRed.
+            </p>
+            <p id="mon-compra-status" class="text-xs font-semibold m-0 mt-3" role="status" aria-live="polite"></p>
         </section>
 
         <!-- Plazos de referencia -->
@@ -650,8 +719,8 @@ window.addEventListener('load', function () {
         </div>
     </footer>
 
-    <script src="/js/monitor_web.js?v=1.0.0" defer></script>
-    <script src="/js/medir_promo.js?v=1.0.0" defer></script>
+    <script src="/js/monitor_web.js?v=1.1.0" defer></script>
+    <script src="/js/checkout_consent.js?v=1.1.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
 </body>

@@ -64,6 +64,14 @@
         '<li>Si no quedas conforme, puedes pedir el reembolso total dentro de 14 días corridos desde la compra, escribiendo a contacto@calculolaboral.cl.</li>' +
         '<li>Los documentos son modelos de referencia basados en la normativa vigente; no han sido revisados por un abogado y no reemplazan su asesoría.</li>';
     var LEAD_SERVICIO = 'Estás comprando un pase de acceso al Asistente Laboral Pyme.';
+    // Monitor Tributario y Previsional: servicio con activacion coordinada (mientras corre la validacion)
+    var LISTA_MONITOR = '' +
+        '<li>Compras el Monitor Tributario y Previsional para una empresa: la revisión automática de acuse RCV, cotizaciones Previred, F29 y deudas TGR, con las alertas del día 1, 13 y 20 incluidas.</li>' +
+        '<li>La conexión automática está en validación con empresas reales: tu pago reserva el cupo y el precio de lanzamiento, y el período que compraste corre desde que activamos tu empresa (te escribimos a este correo para coordinarla).</li>' +
+        '<li>Sin cargos automáticos: el plan mensual se paga mes a mes solo cuando tú lo decidas.</li>' +
+        '<li>Puedes pedir el reembolso total dentro de 14 días corridos desde el pago o, si tu empresa aún no está conectada, en cualquier momento antes de la activación, escribiendo a contacto@calculolaboral.cl.</li>' +
+        '<li>El Monitor es referencial: no reemplaza a tu contador ni a los organismos (SII, TGR, PreviRed).</li>';
+    var LEAD_MONITOR = 'Estás comprando el Monitor Tributario y Previsional (conexión automática en validación).';
     var EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 
     function build() {
@@ -143,6 +151,24 @@
      * Muestra el aviso; si el comprador acepta, ejecuta onAccept(correo).
      * opciones: { onCancel: function, askEmail: boolean (pide el correo en el aviso) }
      */
+    function textoLista(variante) {
+        if (variante === 'monitor') return LISTA_MONITOR;
+        if (variante === 'servicio') return LISTA_SERVICIO;
+        return listaProducto;
+    }
+
+    function textoLead(variante) {
+        if (variante === 'monitor') return LEAD_MONITOR;
+        if (variante === 'servicio') return LEAD_SERVICIO;
+        return leadProducto;
+    }
+
+    function enlaceTerminos(variante) {
+        if (variante === 'monitor') return '/terminos#monitor';
+        if (variante === 'servicio') return '/terminos#asistente-pyme';
+        return TERMS_URL;
+    }
+
     function confirm(onAccept, options) {
         options = options || {};
         if (!dialog) build();
@@ -150,6 +176,8 @@
             // Navegadores sin <dialog>: confirmacion nativa con el mismo contenido
             var ok = window.confirm(options.variante === 'servicio'
                 ? 'Estás comprando un pase de acceso al Asistente Laboral Pyme por los días del producto, desde que se confirma el pago. No se renueva solo. Puedes pedir el reembolso total dentro de 14 días corridos desde la compra. ¿Aceptas los Términos y condiciones y continúas al pago?'
+                : options.variante === 'monitor'
+                ? 'Estás comprando el Monitor Tributario y Previsional (conexión automática en validación; tu período corre desde que activamos tu empresa). Reembolso total dentro de 14 días corridos o antes de la activación. ¿Aceptas los Términos y condiciones y continúas al pago?'
                 : 'Producto digital de entrega inmediata: no aplica el derecho a retracto ' +
                 '(art. 3 bis letra b, Ley 19.496). ¿Aceptas los Términos y condiciones y continúas al pago?');
             var mail = options.askEmail ? (window.prompt('Correo para el comprobante:') || '').trim() : '';
@@ -158,9 +186,9 @@
             return;
         }
         pending = { onAccept: onAccept, onCancel: options.onCancel, askEmail: !!options.askEmail };
-        listEl.innerHTML = options.variante === 'servicio' ? LISTA_SERVICIO : listaProducto;
-        dialog.querySelector('.clc-check a').setAttribute('href', options.variante === 'servicio' ? '/terminos#asistente-pyme' : TERMS_URL);
-        leadEl.textContent = options.variante === 'servicio' ? LEAD_SERVICIO : leadProducto;
+        listEl.innerHTML = textoLista(options.variante);
+        dialog.querySelector('.clc-check a').setAttribute('href', enlaceTerminos(options.variante));
+        leadEl.textContent = textoLead(options.variante);
         emailWrap.hidden = !options.askEmail;
         if (options.defaultEmail && !emailInput.value) emailInput.value = options.defaultEmail;
         emailInput.removeAttribute('aria-invalid');
@@ -217,7 +245,9 @@
         anexo: { item_id: 'anexo', item_name: 'Anexo de Contrato de Trabajo (Word + PDF)', price: 7990 },
         casahogar: { item_id: 'casahogar', item_name: 'Pack Asesora del Hogar al dia (Contrato + 1a Liquidacion)', price: 14990 },
         pyme3: { item_id: 'pyme3', item_name: 'Pase Pyme 3 meses', price: 19990 },
-        pyme12: { item_id: 'pyme12', item_name: 'Pase Pyme 12 meses', price: 59990 }
+        pyme12: { item_id: 'pyme12', item_name: 'Pase Pyme 12 meses', price: 59990 },
+        monitor12: { item_id: 'monitor12', item_name: 'Monitor Tributario y Previsional 12 meses', price: 79900 },
+        monitor1: { item_id: 'monitor1', item_name: 'Monitor Tributario y Previsional 1 mes', price: 9990 }
     };
 
     function track(eventName, product, extra) {

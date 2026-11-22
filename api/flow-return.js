@@ -23,7 +23,10 @@ module.exports = async (req, res) => {
         }
         if (pay.paid) {
             // Kits: pagina de descarga. Generadores: vuelven a su pagina con el desbloqueo firmado.
-            const dest = PRODUCTS[pay.product].unlock ? PRODUCTS[pay.product].page : '/compra-exitosa';
+            // Monitor: vuelve a su pagina con el aviso de cupo reservado.
+            const p = PRODUCTS[pay.product];
+            if (p.acceso) return redirect(res, `${p.page}?pago=ok&o=${encodeURIComponent(pay.order)}`);
+            const dest = p.unlock ? p.page : '/compra-exitosa';
             return redirect(res, `${dest}?${downloadQuery(pay.product, pay.order)}`);
         }
         if (pay.pending) {

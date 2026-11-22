@@ -101,6 +101,25 @@ window.addEventListener('load', function () {
         .btn-yellow-pill { background-color: #FFB703; color: #111827 !important; font-weight: 700; border-radius: 9999px; padding: 12px 24px; font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border: none; cursor: pointer; }
         .btn-dark-pill { background-color: #00382E; color: #FFFFFF !important; font-weight: 700; border-radius: 9999px; padding: 12px 24px; font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border: none; cursor: pointer; }
         .btn-outline-pill { background-color: #FFFFFF; color: #374151 !important; font-weight: 600; border-radius: 9999px; padding: 10px 20px; font-size: 13.5px; min-height: 44px; border: 1.5px solid #D1D5DB; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; cursor: pointer; }
+        .btn-yellow-pill.hidden,
+        .btn-dark-pill.hidden,
+        .btn-outline-pill.hidden {
+            display: none !important;
+        }
+        @media (min-width: 768px) {
+            .btn-yellow-pill.md\:inline-flex,
+            .btn-dark-pill.md\:inline-flex,
+            .btn-outline-pill.md\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .btn-yellow-pill.lg\:inline-flex,
+            .btn-dark-pill.lg\:inline-flex,
+            .btn-outline-pill.lg\:inline-flex {
+                display: inline-flex !important;
+            }
+        }
         .nav-dropdown-menu { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px); transition: opacity .2s ease, transform .2s ease; }
         .nav-dropdown-group:hover .nav-dropdown-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
         .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }

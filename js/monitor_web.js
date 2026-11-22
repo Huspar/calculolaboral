@@ -208,20 +208,24 @@
     function iniciar() {
         if (!doc.getElementById('mon-preguntas')) return;
 
-        // Aviso tras confirmar o darse de baja desde el correo
-        var m = /[?&]alertas=(confirmado|baja|error)/.exec(doc.location.search);
-        if (m) {
-            var banner = doc.getElementById('mon-alerta-banner');
-            if (banner) {
-                var textos = {
-                    confirmado: 'Confirmado: ya recibes las alertas del día 1, 13 y 20 de cada mes.',
-                    baja: 'Listo: quitamos tu correo de las alertas y no te escribiremos más.',
-                    error: 'El enlace ya no es válido. Si quieres recibir las alertas, inscríbete otra vez desde el formulario.'
-                };
-                banner.textContent = textos[m[1]];
-                banner.className = 'p-3.5 rounded-2xl border text-sm font-semibold mb-6 ' +
-                    (m[1] === 'baja' ? 'bg-slate-100 border-slate-300 text-slate-700' : m[1] === 'error' ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-emerald-50 border-emerald-200 text-emerald-900');
-            }
+        // Aviso tras confirmar o darse de baja desde el correo, o volver de Flow
+        var banner = doc.getElementById('mon-alerta-banner');
+        var mAlerta = /[?&]alertas=(confirmado|baja|error)/.exec(doc.location.search);
+        var mPago = /[?&]pago=(ok|rechazado)/.exec(doc.location.search);
+        if (banner && (mAlerta || mPago)) {
+            var textos = {
+                confirmado: 'Confirmado: ya recibes las alertas del día 1, 13 y 20 de cada mes.',
+                baja: 'Listo: quitamos tu correo de las alertas y no te escribiremos más.',
+                error: 'El enlace ya no es válido. Si quieres recibir las alertas, inscríbete otra vez desde el formulario.',
+                pago_ok: 'Pago confirmado: reservamos tu cupo y tu precio de lanzamiento del Monitor. Te escribiremos a tu correo para coordinar la conexión de tu empresa.',
+                pago_rechazado: 'El pago no se completó. Cuando quieras, inténtalo de nuevo desde los planes.'
+            };
+            var clave = mAlerta ? mAlerta[1] : ('pago_' + mPago[1]);
+            banner.textContent = textos[clave];
+            banner.className = 'p-3.5 rounded-2xl border text-sm font-semibold mb-6 ' +
+                (clave === 'baja' ? 'bg-slate-100 border-slate-300 text-slate-700'
+                : clave === 'error' || clave === 'pago_rechazado' ? 'bg-rose-50 border-rose-200 text-rose-900'
+                : 'bg-emerald-50 border-emerald-200 text-emerald-900');
         }
 
         render();
@@ -286,6 +290,32 @@
                 });
             });
         }
+
+        // Compra de planes: anual (monitor12) y mensual (monitor1) via Flow.
+        // El aviso previo, el correo del comprador y el embudo GA4 los maneja checkout_consent.js.
+        function comprarPlan(producto) {
+            if (!(window.CLCheckout && window.CLCheckout.buyKit)) return;
+            var nombre = doc.getElementById('acc-nombre');
+            var empresa = doc.getElementById('acc-empresa');
+            var estado = doc.getElementById('mon-compra-status');
+            window.CLCheckout.buyKit(producto, {
+                nombre: nombre ? nombre.value.trim() : '',
+                empresa: empresa ? empresa.value.trim() : ''
+            }, {
+                askEmail: true,
+                variante: 'monitor',
+                onError: function (mensaje) {
+                    if (estado) {
+                        estado.textContent = mensaje;
+                        estado.className = 'text-xs font-semibold m-0 mt-3 text-rose-700';
+                    }
+                }
+            });
+        }
+        var btnAnual = doc.getElementById('btn-mon-anual');
+        if (btnAnual) btnAnual.addEventListener('click', function () { comprarPlan('monitor12'); });
+        var btnMensual = doc.getElementById('btn-mon-mensual');
+        if (btnMensual) btnMensual.addEventListener('click', function () { comprarPlan('monitor1'); });
     }
 
     if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', iniciar);
