@@ -82,7 +82,7 @@ function crear({ almacen, productos, flow, venta, ahora, piloto }) {
     const CORREO_OK = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
     const KIT_GRATIS_DIAS = 60;
     const KIT_PRODUCTO_PASE = 'pyme12';
-    const PRODUCTOS_CORTESIA = new Set(['blindaje', 'datos', 'despido', 'finiquito', 'contrato', 'informe', 'liquidacion', 'anexo']);
+    const PRODUCTOS_CORTESIA = new Set(['blindaje', 'datos', 'despido', 'finiquito', 'contrato', 'informe', 'liquidacion', 'liquidacion5', 'anexo']);
 
     /** Registra 60 dias de pase pyme12 por compra de cualquier kit o documento (anclado al fin del piloto si sigue activo). */
     async function otorgarPorKit(pay) {

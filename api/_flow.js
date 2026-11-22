@@ -101,6 +101,14 @@ const PRODUCTS = {
         page: '/generador-liquidacion-sueldo',
         unlock: true
     },
+    // Pack de 5 liquidaciones: mismo desbloqueo firmado; el reparto de los creditos ocurre en el navegador
+    liquidacion5: {
+        code: 'GL5',
+        amount: 9990,
+        subject: 'Pack 5 Liquidaciones de Sueldo en PDF',
+        page: '/generador-liquidacion-sueldo',
+        unlock: true
+    },
     anexo: {
         code: 'GA',
         amount: 7990,

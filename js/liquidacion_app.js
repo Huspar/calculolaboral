@@ -1,7 +1,9 @@
 /*
- * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.4.0)
+ * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.5.0)
  * Datos en localStorage (nunca se envían al servidor), vista previa en vivo, respaldo en JSON y cobro con
  * CLCheckout.buyKit('liquidacion'). El pago desbloquea por 48 h la liquidación de ese trabajador y ese mes.
+ * v1.5.0: pack 'liquidacion5' (5 créditos por $9.990): CLCheckout.buyKit('liquidacion5') firma la orden
+ * y el navegador reparte los créditos, uno por trabajador y mes, dentro de las 48 horas del pago.
  * La UF y la UTM del mes se consultan a la API (liquidacion_valores.js); el resto viene de liquidacion_parametros.js.
  * Requiere: liquidacion_parametros.js, liquidacion_valores.js, liquidacion_engine.js, liquidacion_documento.js y checkout_consent.js (antes que este archivo).
  */
@@ -22,7 +24,11 @@
     var KEY_PAGOS = 'cl_liq_pagos';
     var KEY_PEND = 'cl_liq_pendiente';
     var PRODUCTO = 'liquidacion';
+    var PRODUCTO_PACK = 'liquidacion5';
+    var PACK_N = 5;
     var PRECIO = '$2.990';
+    var PRECIO_PACK = '$9.990';
+    var KEY_PACKS = 'cl_liq_packs';
     var MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     var PERIODOS = P.periodos().slice().reverse();
     var AFPS = Object.keys(P.VIGENCIAS[P.VIGENCIAS.length - 1].afp);
@@ -121,6 +127,30 @@
         Object.keys(todos).forEach(function (o) { if (todos[o] && todos[o].expiresAt > ahora) vigentes[o] = todos[o]; });
         return vigentes;
     }
+    // Packs de 5: creditos guardados en el navegador, cada uno se vincula a un trabajador y mes al descargar
+    function packs() {
+        var todos = leer(KEY_PACKS, {}), vigentes = {}, ahora = Date.now();
+        Object.keys(todos).forEach(function (o) { if (todos[o] && todos[o].expiresAt > ahora && todos[o].restantes > 0) vigentes[o] = todos[o]; });
+        return vigentes;
+    }
+    function packDisponible() {
+        var lista = packs(), o = Object.keys(lista)[0];
+        return o ? lista[o] : null;
+    }
+    function consumirPack(destino) {
+        if (!destino || !destino.rut || !destino.periodo) return null;
+        var todosPacks = leer(KEY_PACKS, {});
+        var o = Object.keys(todosPacks).find(function (k) { return todosPacks[k].expiresAt > Date.now() && todosPacks[k].restantes > 0; });
+        if (!o) return null;
+        var pack = todosPacks[o], pagosTodos = pagos(), clave = o + '-' + (PACK_N - pack.restantes);
+        if (!pagosTodos[clave]) {
+            pack.restantes -= 1;
+            escribir(KEY_PACKS, todosPacks);
+            pagosTodos[clave] = { rut: destino.rut, periodo: destino.periodo, id: destino.id || '', expiresAt: pack.expiresAt };
+            escribir(KEY_PAGOS, pagosTodos);
+        }
+        return pagosTodos[clave];
+    }
     function pagoActual() {
         var t = trabajador(), rut = limpiarRut(t.rut), lista = pagos();
         var o = Object.keys(lista).find(function (k) { return lista[k].rut === rut && lista[k].periodo === S.periodo; });
@@ -128,7 +158,19 @@
     }
     function registrarPago(u) {
         var pend = leer(KEY_PEND, null);
-        if (!u || !pend) return null;
+        if (!u) return null;
+        if (u.p === PRODUCTO_PACK) {
+            var packsTodos = leer(KEY_PACKS, {});
+            if (!packsTodos[u.o]) {
+                packsTodos[u.o] = { restantes: PACK_N, expiresAt: u.expiresAt };
+                escribir(KEY_PACKS, packsTodos);
+            }
+            if (!pend) return null; // el pack queda guardado; se usa con el boton de descarga
+            var gasto = consumirPack({ rut: pend.rut, periodo: pend.periodo, id: pend.id });
+            try { localStorage.removeItem(KEY_PEND); } catch (e) {}
+            return gasto;
+        }
+        if (!pend) return null;
         var todos = pagos();
         if (!todos[u.o]) todos[u.o] = { rut: pend.rut, periodo: pend.periodo, id: pend.id, expiresAt: u.expiresAt };
         escribir(KEY_PAGOS, todos);
@@ -484,6 +526,15 @@
             estado.textContent = ejemplo ? 'Completa el formulario: la vista previa se actualiza mientras escribes.' : (listo ? 'Revisa la vista previa antes de pagar.' : '');
             estado.className = 'lq-estado';
         }
+        var pk = packDisponible();
+        if (pk && !pago) {
+            estado.textContent = 'Tu pack tiene ' + pk.restantes + (pk.restantes === 1 ? ' liquidación' : ' liquidaciones') + ' por usar: revisa la vista previa y pulsa «Descargar PDF».';
+            estado.className = 'lq-estado lq-estado-ok';
+        } else if (pk && pago) {
+            estado.innerHTML += ' <strong>Te quedan ' + pk.restantes + (pk.restantes === 1 ? ' liquidación' : ' liquidaciones') + ' del pack.</strong>';
+        }
+        var packTxt = $('lq-comp-pack-txt');
+        if (packTxt) packTxt.textContent = pk ? ('Quedan ' + pk.restantes + ' en tu pack') : ('Pack de 5 · ' + PRECIO_PACK);
     }
 
     $('lq-avisos').addEventListener('click', function (e) {
@@ -508,6 +559,10 @@
     btn.addEventListener('click', function () {
         if (btn.disabled) return;
         if (pagoActual()) { imprimir(); return; }
+        if (packDisponible()) {
+            var t = trabajador();
+            if (consumirPack({ rut: limpiarRut(t.rut), periodo: S.periodo, id: t.id })) { render(); imprimir(); return; }
+        }
         if (!window.CLCheckout) { window.alert('No pudimos iniciar el pago. Recarga la página e intenta de nuevo.'); return; }
         escribir(KEY, S);
         var t = trabajador();
@@ -551,6 +606,26 @@
         }
     }
     window.LqComprar = intentarDescarga;
+
+    // ---------- pack de 5 liquidaciones ($9.990) ----------
+    function comprarPack() {
+        if (pagoActual() || packDisponible()) { intentarDescarga(); return; } // ya cubierto o con creditos: usar
+        if (btn.disabled) { intentarDescarga(); return; }
+        if (!window.CLCheckout) { window.alert('No pudimos iniciar el pago. Recarga la página e intenta de nuevo.'); return; }
+        escribir(KEY, S);
+        var t = trabajador();
+        escribir(KEY_PEND, { id: t.id, rut: limpiarRut(t.rut), periodo: S.periodo });
+        var original = btnTxt.textContent;
+        window.CLCheckout.buyKit(PRODUCTO_PACK, {
+            nombre: String(S.empresa.razonSocial || '').slice(0, 80),
+            empresa: String(S.empresa.razonSocial || '').slice(0, 100)
+        }, {
+            askEmail: true,
+            onAccept: function () { btn.disabled = true; btnTxt.textContent = 'Conectando con Flow…'; },
+            onError: function (msg) { btn.disabled = false; btnTxt.textContent = original; window.alert(msg); }
+        });
+    }
+    window.LqComprarPack = comprarPack;
 
     // ---------- barra fija de compra (solo móvil) ----------
     if (barra && barraBtn) {
@@ -609,8 +684,8 @@
     var q = new URLSearchParams(window.location.search);
     if (window.CLCheckout) {
         window.CLCheckout.track('view_item', PRODUCTO);
-        var vieneDeFlow = q.get('p') === PRODUCTO && q.has('sig');
-        window.CLCheckout.unlockFromUrl(PRODUCTO).then(function (u) {
+        var vieneDeFlow = (q.get('p') === PRODUCTO || q.get('p') === PRODUCTO_PACK) && q.has('sig');
+        function procesarUnlock(u) {
             if (!vieneDeFlow || !u) return;
             var p = registrarPago(u);
             if (p) {
@@ -622,7 +697,9 @@
             }
             render();
             estado.scrollIntoView({ block: 'center' });
-        });
+        }
+        window.CLCheckout.unlockFromUrl(PRODUCTO).then(procesarUnlock);
+        window.CLCheckout.unlockFromUrl(PRODUCTO_PACK).then(procesarUnlock);
     }
     if (q.get('pago') === 'rechazado') {
         estado.textContent = 'El pago no se completó y no se hizo ningún cargo. Tus datos siguen guardados.';
