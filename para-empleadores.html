@@ -463,7 +463,7 @@ body { overflow-x: hidden; }
     <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
     <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-14 sm:h-20">
                 
                 <!-- Brand Logo: Official CálculoLaboral Brand Logo -->
                 <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
@@ -511,7 +511,7 @@ body { overflow-x: hidden; }
                             <div class="grid grid-cols-2 gap-2">
                                 <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">calculate</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">calculate</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
@@ -521,7 +521,7 @@ body { overflow-x: hidden; }
 
                                 <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">payments</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">payments</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
@@ -531,7 +531,7 @@ body { overflow-x: hidden; }
 
                                 <a href="gratificacion-legal-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">redeem</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">redeem</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Gratificación Legal</div>
@@ -541,7 +541,7 @@ body { overflow-x: hidden; }
 
                                 <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">receipt_long</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">receipt_long</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Impuesto Único</div>
@@ -551,7 +551,7 @@ body { overflow-x: hidden; }
 
                                 <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">gavel</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">gavel</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
@@ -561,7 +561,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">schedule</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">schedule</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
@@ -569,9 +569,19 @@ body { overflow-x: hidden; }
                                     </div>
                                 </a>
 
+                                <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">receipt</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Calculadora F29</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">IVA, PPM, honorarios y RCV del SII</div>
+                                    </div>
+                                </a>
+
                                 <a href="calculadora-vacaciones" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">beach_access</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">beach_access</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
@@ -581,7 +591,7 @@ body { overflow-x: hidden; }
 
                                 <a href="simulador-seguro-cesantia-afc" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">account_balance_wallet</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">account_balance_wallet</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
@@ -591,7 +601,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-despido-articulo-160" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">gavel</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">gavel</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Art. 160</div>
@@ -601,7 +611,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-sueldo-part-time" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">schedule</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">schedule</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Part-Time</div>
@@ -611,7 +621,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-costo-empresa-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">business_center</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">business_center</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Costo Empresa</div>
@@ -621,7 +631,7 @@ body { overflow-x: hidden; }
 
                                 <a href="generador-contrato-trabajo-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">description</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">description</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Generador de Contrato</div>
@@ -630,11 +640,11 @@ body { overflow-x: hidden; }
                                 </a>
                                 <a href="suite-contadores" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">business_center</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">business_center</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Para Contadores</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Previred 105 campos, LRE y F29.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Previred 105 campos, LRE y F29</div>
                                     </div>
                                 </a>
                             </div>
@@ -673,6 +683,9 @@ body { overflow-x: hidden; }
                                 <a href="ley-40-horas-chile-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
                                     Ley 40 Horas (42 Horas en 2026)
                                 </a>
+                                <a href="aguinaldo-navidad-cierre-laboral-diciembre-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cierre de Diciembre 2026 (Aguinaldo)
+                                </a>
                                 <div class="pt-2 border-t border-slate-100 mt-2">
                                     <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">
                                         Ver todas las guías en el Blog →
@@ -695,7 +708,7 @@ body { overflow-x: hidden; }
                     
                     <!-- Mobile Hamburger -->
                     <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Abrir menú">
-                        <span class="material-icons text-2xl">menu</span>
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
                     </button>
                 </div>
 
@@ -754,7 +767,7 @@ body { overflow-x: hidden; }
 
             <nav class="cl-quicklinks" aria-label="Recursos gratuitos para empleadores">
 
-                <span>Gratis:</span> <a href="guia-ley-21719-proteccion-datos-personales-chile">Guía Ley 21.719 Pymes</a> <a href="generador-anexo-40-horas">Generador Anexo 40 Horas (Gratis)</a> <a href="carpeta-laboral-empresa-chile">Carpeta Laboral Empresa</a> <a href="checklist-fiscalizacion-dt-pymes-chile">Checklist 10 Documentos DT</a> <a href="calculadora-costo-empresa-chile">Calculadora Costo Empresa</a> <a href="reconsideracion-multas-dt-art-511">Rebaja Multas Art. 511</a>
+                <span>Gratis:</span> <a href="checklist-fiscalizacion-dt-pymes-chile">Checklist 10 Documentos DT</a> <a href="generador-anexo-40-horas">Generador Anexo 40 Horas (Gratis)</a> <a href="carpeta-laboral-empresa-chile">Carpeta Laboral Empresa</a> <a href="calculadora-costo-empresa-chile">Calculadora Costo Empresa</a> <a href="reconsideracion-multas-dt-art-511">Rebaja Multas Art. 511</a> <a href="guia-ley-21719-proteccion-datos-personales-chile">Guía Ley 21.719</a>
 
             </nav>
         </section>
@@ -786,150 +799,6 @@ body { overflow-x: hidden; }
                             <a href="app/ejemplo" class="btn-outline-pill justify-center whitespace-nowrap text-sm !py-3 !px-6" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="empleadores-ejemplo">Ver un ejemplo sin cuenta</a>
                         </div>
                         <a href="asistente-laboral-pyme" class="inline-flex items-center gap-1 text-sm font-semibold underline" style="color: #00382E;" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="empleadores-conocer">Conocer todo lo que hace el asistente<span class="material-icons text-sm" aria-hidden="true">arrow_forward</span></a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PROTAGONIST SHOWCASE BANNER: Kit Ley 21.719 -->
-        <section class="mb-16">
-            <div class="rounded-3xl bg-white border-2 border-slate-200/90 shadow-xl shadow-slate-200/50 p-6 sm:p-8 md:p-10 relative overflow-hidden transition-all">
-                <div class="absolute -top-24 -right-24 w-64 h-64 sm:w-96 sm:h-96 rounded-full bg-emerald-100/40 blur-3xl pointer-events-none -z-0"></div>
-                <div class="absolute -bottom-24 -left-24 w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-amber-50/50 blur-3xl pointer-events-none -z-0"></div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center relative z-10">
-                    <!-- Left Column: Legal Content -->
-                    <div class="lg:col-span-7 space-y-4">
-                        
-                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight m-0">
-                            Kit de Cumplimiento Ley 21.719: <span class="text-emerald-800">prepárate</span> antes de que rija la ley
-                        </h2>
-                        <p class="cl-meta">Rige desde el 1 de diciembre de 2026 · Ley 21.719 · <a href="checklist-ley-21719-1-diciembre-2026" class="underline font-semibold text-emerald-800 hover:text-emerald-900">Ver checklist práctico para el 1 de diciembre</a></p>
-
-                        <p class="text-sm sm:text-[15px] text-slate-600 leading-relaxed m-0">
-                            Obtén <strong>7 instrumentos editables</strong> para prepararte ante la nueva Agencia de Protección de Datos Personales (APDP) y la Dirección del Trabajo (DT), listos para completar:
-                        </p>
-
-                        <!-- Deliverables List with Clean Badges -->
-                        <div class="space-y-2.5 pt-2">
-                            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-slate-300 transition-colors">
-                                <span class="material-icons text-emerald-600 text-base mt-0.5 shrink-0">check_circle</span>
-                                <div class="text-xs sm:text-[13px] text-slate-700">
-                                    <strong class="text-slate-900 font-bold">1. Anexo Laboral de Datos Personales:</strong> Cláusula para cada trabajador: remuneraciones, licencias médicas y control de asistencia biométrico, según la Res. Ex. 38/2024 de la DT.
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-slate-300 transition-colors">
-                                <span class="material-icons text-emerald-600 text-base mt-0.5 shrink-0">check_circle</span>
-                                <div class="text-xs sm:text-[13px] text-slate-700">
-                                    <strong class="text-slate-900 font-bold">2. Política de Privacidad:</strong> Redacción integral para sitio web, e-commerce, clientes y cotizaciones comerciales.
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-slate-300 transition-colors">
-                                <span class="material-icons text-emerald-600 text-base mt-0.5 shrink-0">check_circle</span>
-                                <div class="text-xs sm:text-[13px] text-slate-700">
-                                    <strong class="text-slate-900 font-bold">3. Cláusula DPA Encargados:</strong> Anexo para contratos de proveedores de software, TI y contador externo.
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-slate-300 transition-colors">
-                                <span class="material-icons text-emerald-600 text-base mt-0.5 shrink-0">check_circle</span>
-                                <div class="text-xs sm:text-[13px] text-slate-700">
-                                    <strong class="text-slate-900 font-bold">4. Registro RAT en Excel:</strong> Matriz formulada con categorías de datos, bases de licitud y medidas técnicas de seguridad.
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-slate-300 transition-colors">
-                                <span class="material-icons text-emerald-600 text-base mt-0.5 shrink-0">check_circle</span>
-                                <div class="text-xs sm:text-[13px] text-slate-700">
-                                    <strong class="text-slate-900 font-bold">5. Protocolo de Brechas (72 hrs):</strong> Guía de acción y notificación ante filtraciones de datos.
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-slate-300 transition-colors">
-                                <span class="material-icons text-emerald-600 text-base mt-0.5 shrink-0">check_circle</span>
-                                <div class="text-xs sm:text-[13px] text-slate-700">
-                                    <strong class="text-slate-900 font-bold">6. Formulario de Derechos ARCOP:</strong> Formato para recibir y responder solicitudes de acceso, rectificación, cancelación y oposición.
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-slate-300 transition-colors">
-                                <span class="material-icons text-emerald-600 text-base mt-0.5 shrink-0">check_circle</span>
-                                <div class="text-xs sm:text-[13px] text-slate-700">
-                                    <strong class="text-slate-900 font-bold">7. Guía de Autodiagnóstico DPO:</strong> Test para saber si tu pyme debe nombrar un Delegado de Protección de Datos.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Product Showcase & Checkout Card -->
-                    <div class="lg:col-span-5 flex flex-col justify-center">
-                        <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-6 sm:p-7 space-y-6 shadow-sm">
-                            
-                            <!-- Visual Deliverables Mockup Card -->
-                            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs space-y-3">
-                                <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block text-center">Contenido del Kit Incluido</span>
-                                
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-100 text-emerald-900 text-xs font-semibold">
-                                        <span class="material-icons text-emerald-700 text-lg">description</span>
-                                        <div>
-                                            <div class="font-bold leading-tight">4 Formatos</div>
-                                            <div class="text-xs text-emerald-700 font-normal">Word (.docx)</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-2 p-2.5 rounded-lg bg-amber-50/70 border border-amber-100 text-amber-900 text-xs font-semibold">
-                                        <span class="material-icons text-amber-600 text-lg">table_view</span>
-                                        <div>
-                                            <div class="font-bold leading-tight">1 Matriz RAT</div>
-                                            <div class="text-xs text-amber-700 font-normal">Excel (.xlsx)</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-center gap-1.5 pt-1 text-xs font-medium text-slate-600">
-                                    <span class="material-icons text-emerald-700 text-sm">verified</span>
-                                    <span>Conforme a <strong>Ley 21.719</strong> & <strong>DT Chile</strong></span>
-                                </div>
-                            </div>
-
-                            <!-- Pricing & Checkout -->
-                            <div class="space-y-4 text-center">
-                                <div class="space-y-1">
-                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Descarga Inmediata y Definitiva</span>
-                                    <div class="flex items-baseline justify-center gap-2">
-                                        <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono-num tracking-tight">$29.990</span>
-                                        <span class="text-xs text-slate-500 font-mono-num">CLP</span>
-                                    </div>
-                                    <span class="inline-flex items-center gap-1 text-xs text-emerald-800 font-bold bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full">
-                                        <span class="material-icons text-[13px]">check</span>
-                                        Pago único • Sin suscripciones mensuales
-                                    </span>
-                                </div>
-
-                                <a href="kit-cumplimiento-ley-datos-personales-chile" class="btn-yellow-pill w-full !py-4 !text-sm">
-                                    <span class="material-icons text-base" style="color: #111827 !important;">download</span>
-                                    <span style="color: #111827 !important;">Descargar Kit Ley 21.719</span>
-                                </a>
-
-                                <div class="pt-1 flex flex-col items-center gap-1">
-                                    <p class="text-xs text-slate-500 m-0 flex items-center justify-center gap-1">
-                                        <span class="material-icons text-xs text-slate-600">lock</span>
-                                        Pago Seguro con Webpay Plus, Débito, Crédito y Flow
-                                    </p>
-                                    <a href="personalizar-kit-datos" class="inline-flex items-center gap-1 text-xs text-emerald-800 hover:text-emerald-950 font-semibold hover:underline pt-1">
-                                        <span class="material-icons text-xs">tune</span>
-                                        <span>Probar personalizador web con datos de tu empresa</span>
-                                    </a>
-                                    <a href="guia-ley-21719-proteccion-datos-personales-chile" class="inline-flex items-center gap-1 text-xs text-emerald-800 hover:text-emerald-950 font-semibold hover:underline pt-0.5">
-                                        <span>¿Aún tienes dudas? Lee nuestra guía explicativa</span>
-                                        <span class="text-xs">→</span>
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1019,48 +888,7 @@ body { overflow-x: hidden; }
                 <p class="cl-group-desc">Descarga inmediata en Word y PDF, sin suscripción.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Tool 1: Kit Ley 21.719 Datos Personales (PROTAGONISTA) -->
-                <div class="rounded-2xl bg-white border-2 border-forest-800 shadow-xl overflow-hidden flex flex-col justify-between relative ring-4 ring-forest-800/10 hover:shadow-2xl transition-all">
-                    <div class="p-5 space-y-3">
-                        <div class="flex items-center justify-between gap-1">
-                            <span class="cl-recommend">Recomendado</span>
-                            <span class="text-xs text-rose-700 font-extrabold font-mono whitespace-nowrap">Multa 20.000 UTM</span>
-                        </div>
-                        <h3 class="text-lg font-extrabold text-slate-900 leading-snug">Kit Ley 21.719 Datos Personales</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            Instrumentos clave para prepararte ante la nueva Agencia (APDP): Anexo Trabajadores (biometría y salud), Política Web, DPA Proveedores y RAT en Excel.
-                        </p>
-                        <ul class="space-y-1.5 text-xs text-slate-700">
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check_circle</span>
-                                <span>Anexo Trabajadores (Res. 38 DT)</span>
-                            </li>
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check_circle</span>
-                                <span>Registro RAT en Excel formulado</span>
-                            </li>
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check_circle</span>
-                                <span>Cláusula DPA para proveedores</span>
-                            </li>
-                            <li class="flex items-center gap-1.5">
-                                <span class="material-icons text-emerald-600 text-xs">check_circle</span>
-                                <span>Protocolo Brechas 72h + ARCOP</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="p-5 bg-forest-50/60 border-t border-forest-100">
-                        <div class="flex items-baseline justify-between mb-2">
-                            <span class="text-base font-extrabold text-slate-900 font-mono-num">$29.990 CLP</span>
-                        </div>
-                        <a href="kit-cumplimiento-ley-datos-personales-chile" class="btn-yellow-pill w-full !py-2.5 !text-xs tracking-wide">
-                            <span style="color: #111827 !important;">Obtener Kit Ley 21.719</span>
-                            <span class="material-icons text-sm" style="color: #111827 !important;">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Tool 2: Kit Blindaje Laboral Pyme -->
+                <!-- Tool 1: Kit Blindaje Laboral Pyme -->
                 <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
                     <div class="p-5 space-y-3">
                         <div class="flex items-center justify-between">
@@ -1101,6 +929,53 @@ body { overflow-x: hidden; }
                         <div class="mt-2 text-center">
                             <a href="personalizar-kit-blindaje" class="inline-flex items-center gap-1 text-xs text-emerald-800 hover:text-emerald-950 font-semibold hover:underline">
                                 <span>Probar personalizador web con tus datos</span>
+                                <span class="text-xs">→</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 2: Kit Ley 21.719 Datos Personales (Prórroga 2027) -->
+                <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
+                    <div class="p-5 space-y-3">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="cl-tag">Datos · Prórroga Oct 2027</span>
+                            <span class="text-xs text-slate-600 font-mono font-medium">Word + Excel</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 leading-snug">Kit Ley 21.719 Datos Personales</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Instrumentos para preparar con tiempo la adecuación a la Ley 21.719 (prórroga aprobada por el Congreso al 15 oct 2027): Anexo Trabajadores, Política Web, DPA y RAT.
+                        </p>
+                        <ul class="space-y-1.5 text-xs text-slate-700">
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-slate-700 text-xs">check</span>
+                                <span>Anexo Trabajadores (Res. 38 DT)</span>
+                            </li>
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-slate-700 text-xs">check</span>
+                                <span>Registro RAT en Excel formulado</span>
+                            </li>
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-slate-700 text-xs">check</span>
+                                <span>Cláusula DPA para proveedores</span>
+                            </li>
+                            <li class="flex items-center gap-1.5">
+                                <span class="material-icons text-slate-700 text-xs">check</span>
+                                <span>Protocolo Brechas 72h + ARCOP</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-5 bg-slate-50 border-t border-slate-100">
+                        <div class="flex items-baseline justify-between mb-2">
+                            <span class="text-base font-bold text-slate-900 font-mono-num">$29.990 CLP</span>
+                        </div>
+                        <a href="kit-cumplimiento-ley-datos-personales-chile" class="btn-outline-pill w-full !py-2.5 !text-xs">
+                            <span>Ver Kit Ley 21.719 ($29.990)</span>
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </a>
+                        <div class="mt-2 text-center">
+                            <a href="personalizar-kit-datos" class="inline-flex items-center gap-1 text-xs text-emerald-800 hover:text-emerald-950 font-semibold hover:underline">
+                                <span>Probar personalizador web</span>
                                 <span class="text-xs">→</span>
                             </a>
                         </div>
@@ -1529,7 +1404,7 @@ body { overflow-x: hidden; }
                         ¿Necesitas cubrir datos personales y obligaciones laborales a la vez?
                     </h3>
                     <p class="text-xs sm:text-sm text-slate-700 leading-relaxed m-0">
-                        El <a href="kit-cumplimiento-ley-datos-personales-chile" class="font-bold text-emerald-900 underline">Kit Ley 21.719 ($29.990)</a> cubre políticas, cláusulas y matrices exigibles desde el 1 de diciembre de 2026; el <a href="kit-cumplimiento-laboral-pymes" class="font-bold text-emerald-900 underline">Kit de Blindaje Laboral Pyme ($19.990)</a> cubre Ley Karin, jornada 40 horas y carpeta DT. Ambos son pago único, sin suscripciones.
+                        El <a href="kit-cumplimiento-ley-datos-personales-chile" class="font-bold text-emerald-900 underline">Kit Ley 21.719 ($29.990)</a> reúne políticas, cláusulas y matrices para anticipar la adecuación (prórroga aprobada por el Congreso al 15 de octubre de 2027, pendiente de publicación); el <a href="kit-cumplimiento-laboral-pymes" class="font-bold text-emerald-900 underline">Kit de Blindaje Laboral Pyme ($19.990)</a> cubre Ley Karin, jornada 40 horas y carpeta DT vigentes hoy. Ambos son pago único, sin suscripciones.
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-2.5 shrink-0">

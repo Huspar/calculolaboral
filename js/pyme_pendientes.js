@@ -209,7 +209,7 @@
             var sinAnexoDatos = activos.filter(function (t) { return !t.anexoDatosEntrega; });
             if (sinAnexoDatos.length) {
                 agregar('anexo-datos', 'aviso', plural(sinAnexoDatos.length, 'trabajador', 'trabajadores') + ' sin anexo de datos personales (Ley 21.719)',
-                    'Emite y firma el anexo de uso de datos laborales con ' + sinAnexoDatos.map(function (t) { return t.nombre; }).join(', ') + ' antes de la vigencia de la Ley 21.719 (1 de diciembre de 2026).',
+                    'Emite y firma el anexo de uso de datos laborales con ' + sinAnexoDatos.map(function (t) { return t.nombre; }).join(', ') + ' para anticipar la vigencia de la Ley 21.719 (prórroga aprobada al 15 de octubre de 2027).',
                     { tipo: 'datos-personales', tab: 'trabajadores' });
             }
         }

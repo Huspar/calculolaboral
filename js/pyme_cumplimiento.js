@@ -523,7 +523,7 @@
             '<h2>2. Detalle por trabajador activo</h2>' +
             '<table><thead><tr><th>Trabajador</th><th>Contrato / Mi DT</th><th>Ley Karin</th><th>IRL (ex ODI)</th><th>Anexo Datos</th><th>Correo firma simple</th></tr></thead><tbody>' + (filasTrab || '<tr><td colspan="6">Sin trabajadores activos</td></tr>') + '</tbody></table>' +
             '<h2>3. Anexo separado: Protección de Datos Personales (Ley N° 21.719)</h2>' +
-            '<p class="meta">Nota normativa: la Ley N° 21.719 (vigente desde el 1-dic-2026) es fiscalizada por la <strong>Agencia de Protección de Datos Personales</strong>, no por la Dirección del Trabajo. Se adjunta solo como respaldo ordenado de cumplimiento empresarial.</p>' +
+            '<p class="meta">Nota normativa: la Ley N° 21.719 (prórroga aprobada por el Congreso al 15-oct-2027, pendiente de publicación) es fiscalizada por la <strong>Agencia de Protección de Datos Personales</strong>, no por la Dirección del Trabajo. Se adjunta solo como respaldo ordenado de cumplimiento empresarial.</p>' +
             '<table><thead><tr><th>Control</th><th>Estado</th><th>Detalle</th></tr></thead><tbody>' + filasPriv + '</tbody></table>' +
             (evalDt.cumplimientoDt.carpetaLinkNotas ? '<p><strong>Notas de ubicación de respaldos:</strong> ' + escHtml(evalDt.cumplimientoDt.carpetaLinkNotas) + '</p>' : '') +
             '<p class="nota">Documento auxiliar generado en Asistente Laboral Pyme (calculolaboral.cl). No reemplaza asesoría jurídica ni la certificación oficial de sistemas ante la DT.</p>' +

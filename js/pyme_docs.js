@@ -57,7 +57,7 @@
         { id: 'carta_159_4', grupo: 'termino', titulo: 'Carta de término por vencimiento del plazo fijo (art. 159 N°4)', descripcion: 'Comunica el término de un contrato a plazo fijo e informa el estado de las cotizaciones.' },
         { id: 'carta_161', grupo: 'termino', titulo: 'Carta de término por necesidades de la empresa (art. 161)', descripcion: 'Con los hechos, las indemnizaciones, el estado de las cotizaciones y la copia a la Inspección.' },
         { id: 'amonestacion', grupo: 'relacion', titulo: 'Amonestación escrita', descripcion: 'Deja constancia de un incumplimiento y de la obligación que se incumplió.' },
-        { id: 'anexo_datos', grupo: 'contratacion', titulo: 'Anexo de protección de datos personales', descripcion: 'Anexo al contrato sobre el tratamiento de los datos del trabajador (Ley 21.719, rige desde el 1-dic-2026).' },
+        { id: 'anexo_datos', grupo: 'contratacion', titulo: 'Anexo de protección de datos personales', descripcion: 'Anexo al contrato sobre el tratamiento de los datos del trabajador (Ley 21.719; prórroga al 15-oct-2027 aprobada por el Congreso, pendiente de publicación).' },
         { id: 'constancia_rihs_irl', grupo: 'contratacion', titulo: 'Constancia de entrega RIHS/RIOHS, IRL y Protocolo Ley Karin', descripcion: 'Comprobante conjunto de recepción del Reglamento Interno (RIHS DS 44 / RIOHS art. 153), Información de Riesgos Laborales (IRL ex ODI) y Protocolo Ley Karin (art. 211-A CT).' },
         { id: 'consentimiento_firma', grupo: 'contratacion', titulo: 'Consentimiento de documentación y firma electrónica simple', descripcion: 'Autorización del trabajador para recibir y suscribir documentos laborales por medios electrónicos en su correo personal (Ley 19.799 y criterios del Dictamen 789/15 DT).' },
         { id: 'finiquito', grupo: 'termino', titulo: 'Finiquito', descripcion: 'Con el feriado pendiente y proporcional calculado desde el registro de vacaciones, las indemnizaciones si corresponden y los descuentos. Se firma ante ministro de fe.' }
@@ -936,7 +936,7 @@
         var e = ctx.empresa, t = ctx.t, n = 0;
         function clausula(titulo, texto) { var o = ORDINALES[n++]; return '<p class="dc-p"><strong>CLÁUSULA ' + o + ': ' + esc(titulo) + '.</strong></p>' + (Array.isArray(texto) ? texto.map(function (x) { return '<p class="dc-p">' + esc(x) + '</p>'; }).join('') : '<p class="dc-p">' + esc(texto) + '</p>'); }
         var cl = [];
-        cl.push(clausula('Antecedentes y marco normativo', 'Las partes declaran que la Ley N° 21.719 modifica la Ley N° 19.628 sobre protección y tratamiento de los datos personales (vigente desde el 1 de diciembre de 2026) y que, conforme al artículo 154 ter del Código del Trabajo, el Empleador debe mantener reserva de toda la información y datos privados del Trabajador a que tenga acceso con ocasión de la relación laboral. Las partes dejan constancia de que este contrato no otorga consentimiento universal para fines ajenos al vínculo de trabajo.'));
+        cl.push(clausula('Antecedentes y marco normativo', 'Las partes declaran que la Ley N° 21.719 modifica la Ley N° 19.628 sobre protección y tratamiento de los datos personales (entrada en vigencia prorrogada al 15 de octubre de 2027 según proyecto despachado por el Congreso, pendiente de promulgación y publicación en el Diario Oficial) y que, conforme al artículo 154 ter del Código del Trabajo, el Empleador debe mantener reserva de toda la información y datos privados del Trabajador a que tenga acceso con ocasión de la relación laboral. Las partes dejan constancia de que este contrato no otorga consentimiento universal para fines ajenos al vínculo de trabajo.'));
         cl.push(clausula('Categorías de datos y finalidad del tratamiento', [
             'De conformidad con el artículo 16 letra e) de la Ley N° 19.628 (tratamiento necesario para obligaciones laborales y de seguridad social) y el artículo 13 del mismo cuerpo legal, el Empleador tratará los datos estrictamente necesarios para:',
             'Gestión de la relación laboral: confección y pago de remuneraciones y liquidaciones de sueldo, transferencias bancarias, retenciones judiciales, pago de cotizaciones previsionales y gestión de finiquitos.',
@@ -958,7 +958,7 @@
             cl.join('') +
             '<p class="dc-p">Para constancia, se firma el presente anexo en dos ejemplares del mismo tenor y fecha, quedando uno en poder de cada parte.</p>' +
             '<div class="dc-firmas">' + firmaEmpleador(e) + firmaTrabajador(t, 'Trabajador · titular de los datos') + '</div>' +
-            '<p class="dc-copia">La Ley N° 21.719 rige desde el 1 de diciembre de 2026.</p>';
+            '<p class="dc-copia">Entrada en vigencia de la Ley N° 21.719 prorrogada al 15 de octubre de 2027 (proyecto despachado por el Congreso, pendiente de promulgación y publicación en el Diario Oficial).</p>';
         return envolver(e, 'Anexo de contrato de trabajo · Tratamiento y protección de datos personales', cuerpo, pagada);
     }
 

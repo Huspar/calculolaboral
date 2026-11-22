@@ -55,7 +55,7 @@ const PRODUCTS = {
             'Abre primero <strong>0_MANUAL_DE_USO_GUIA_RAPIDA_PYMES.pdf</strong>.',
             'Reemplaza los campos entre corchetes con los datos de tu empresa.'
         ],
-        note: 'La Ley 21.719 rige desde el 1 de diciembre de 2026. Si la Agencia de Protección de Datos dicta normas que cambien estos documentos antes del 31 de diciembre de 2027, te enviaremos la versión actualizada sin costo a este correo.'
+        note: 'La Ley 21.719 prorrogó su entrada en vigencia al 15 de octubre de 2027 (proyecto despachado por el Congreso, pendiente de publicación en el Diario Oficial). Si la Agencia de Protección de Datos dicta normas que cambien estos documentos antes del 31 de diciembre de 2027, te enviaremos la versión actualizada sin costo a este correo.'
     },
     despido: {
         code: 'PD',

@@ -773,7 +773,7 @@ body { overflow-x: hidden; }
     <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
     <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-14 sm:h-20">
                 
                 <!-- Brand Logo: Official CálculoLaboral Brand Logo -->
                 <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
@@ -821,7 +821,7 @@ body { overflow-x: hidden; }
                             <div class="grid grid-cols-2 gap-2">
                                 <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">calculate</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">calculate</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
@@ -831,7 +831,7 @@ body { overflow-x: hidden; }
 
                                 <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">payments</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">payments</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
@@ -841,7 +841,7 @@ body { overflow-x: hidden; }
 
                                 <a href="gratificacion-legal-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">redeem</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">redeem</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Gratificación Legal</div>
@@ -851,7 +851,7 @@ body { overflow-x: hidden; }
 
                                 <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">receipt_long</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">receipt_long</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Impuesto Único</div>
@@ -861,7 +861,7 @@ body { overflow-x: hidden; }
 
                                 <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">gavel</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">gavel</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
@@ -871,7 +871,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">schedule</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">schedule</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
@@ -879,9 +879,19 @@ body { overflow-x: hidden; }
                                     </div>
                                 </a>
 
+                                <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">receipt</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Calculadora F29</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">IVA, PPM, honorarios y RCV del SII</div>
+                                    </div>
+                                </a>
+
                                 <a href="calculadora-vacaciones" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">beach_access</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">beach_access</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
@@ -891,7 +901,7 @@ body { overflow-x: hidden; }
 
                                 <a href="simulador-seguro-cesantia-afc" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">account_balance_wallet</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">account_balance_wallet</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
@@ -901,7 +911,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-despido-articulo-160" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">gavel</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">gavel</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Despido Art. 160</div>
@@ -911,7 +921,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-sueldo-part-time" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">schedule</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">schedule</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Sueldo Part-Time</div>
@@ -921,7 +931,7 @@ body { overflow-x: hidden; }
 
                                 <a href="calculadora-costo-empresa-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">business_center</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">business_center</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Costo Empresa</div>
@@ -931,7 +941,7 @@ body { overflow-x: hidden; }
 
                                 <a href="generador-contrato-trabajo-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">description</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">description</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Generador de Contrato</div>
@@ -940,11 +950,11 @@ body { overflow-x: hidden; }
                                 </a>
                                 <a href="suite-contadores" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                                     <div class="w-9 h-9 rounded-full bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0">
-                                        <span class="material-icons text-lg">business_center</span>
+                                        <span class="material-icons text-lg" aria-hidden="true">business_center</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-xs text-slate-900">Para Contadores</div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5">Previred 105 campos, LRE y F29.</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Previred 105 campos, LRE y F29</div>
                                     </div>
                                 </a>
                             </div>
@@ -983,6 +993,9 @@ body { overflow-x: hidden; }
                                 <a href="ley-40-horas-chile-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
                                     Ley 40 Horas (42 Horas en 2026)
                                 </a>
+                                <a href="aguinaldo-navidad-cierre-laboral-diciembre-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cierre de Diciembre 2026 (Aguinaldo)
+                                </a>
                                 <div class="pt-2 border-t border-slate-100 mt-2">
                                     <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">
                                         Ver todas las guías en el Blog →
@@ -1005,7 +1018,7 @@ body { overflow-x: hidden; }
                     
                     <!-- Mobile Hamburger -->
                     <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Abrir menú">
-                        <span class="material-icons text-2xl">menu</span>
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
                     </button>
                 </div>
 
@@ -1161,7 +1174,7 @@ body { overflow-x: hidden; }
                         <strong>Aceptación antes del pago:</strong> Antes de ser dirigido a la pasarela de pago, el Usuario debe marcar una casilla en la que declara conocer que el producto es digital, de entrega inmediata y sin derecho a retracto, y que acepta estos Términos y condiciones. Para el Pase Pyme, el aviso describe en cambio el servicio y el reembolso de la sección 12.
                     </p>
                     <p class="text-slate-600 text-sm sm:text-sm leading-relaxed mt-3">
-                        <strong>Actualizaciones del Kit Ley 21.719:</strong> La Ley N° 21.719 rige desde el 1 de diciembre de 2026. Si antes del 31 de diciembre de 2027 la Agencia de Protección de Datos Personales dicta normas o instrucciones que cambien lo que deben contener los documentos del kit, Cálculo Laboral enviará sin costo la versión actualizada al correo electrónico informado en la compra.
+                        <strong>Actualizaciones del Kit Ley 21.719:</strong> La Ley N° 21.719 prorrogó su entrada en vigencia al 15 de octubre de 2027 (proyecto despachado por el Congreso Nacional, pendiente de promulgación y publicación en el Diario Oficial). Si antes del 31 de diciembre de 2027 la Agencia de Protección de Datos Personales dicta normas o instrucciones que cambien lo que deben contener los documentos del kit, Cálculo Laboral enviará sin costo la versión actualizada al correo electrónico informado en la compra.
                     </p>
                 </section>
 
