@@ -1186,13 +1186,13 @@ window.addEventListener('load', function () {
                 <!-- Interactive Filter Controls -->
                 <div class="mt-6 flex flex-wrap items-center justify-start gap-2">
                     <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter">
-                        Todas las herramientas (36)
+                        Todas las herramientas (37)
                     </button>
                     <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn">
                         Trabajadores y personas (14)
                     </button>
                     <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn">
-                        Pymes, empleadores y contadores (22)
+                        Pymes, empleadores y contadores (23)
                     </button>
                 </div>
             </div>
@@ -2015,6 +2015,33 @@ window.addEventListener('load', function () {
                     </div>
                 </div>
 
+                <!-- CARD 30b: Conciliación Bancaria CSV/Excel -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">compare_arrows</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
+                                Sin claves banco
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-900 transition-colors leading-snug">
+                            Conciliación bancaria CSV/Excel y flujo
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Cruza tu cartola bancaria contra RCV del SII, Previred y F29 y proyecta tu caja mensual.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">CSV y .xlsx</span>
+                        <a href="conciliacion-bancaria-cartola-excel" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Conciliar cartola</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- CARD 31: Carpeta Laboral de Empresa -->
                 <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
                     <div>
@@ -2182,7 +2209,7 @@ window.addEventListener('load', function () {
             <!-- Expandable Catalog Toggle Button (Option 1) -->
             <div class="mt-8 text-center" id="catalog-toggle-wrapper">
                 <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-colors cursor-pointer">
-                    <span id="toggle-catalog-text">Mostrar las 36 herramientas y generadores (30 más)</span>
+                    <span id="toggle-catalog-text">Mostrar las 37 herramientas y generadores (31 más)</span>
                     <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon" aria-hidden="true">keyboard_arrow_down</span>
                 </button>
             </div>
@@ -2852,7 +2879,7 @@ window.addEventListener('load', function () {
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_up';
             } else {
                 if (extraContainer) extraContainer.classList.add('hidden');
-                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 36 herramientas y generadores (30 más)';
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 37 herramientas y generadores (31 más)';
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_down';
                 
                 const catSection = document.getElementById('calculadoras');

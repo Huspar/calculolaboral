@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conciliación Bancaria CSV/Excel y Flujo de Caja Pyme Chile 2026 | Cálculo Laboral</title>
+    <meta name="description" content="Cruza gratis tu cartola bancaria CSV o Excel contra el RCV del SII, Previred y F29 sin entregar claves del banco. Proyecta el flujo de caja mensual de tu pyme y exporta a Excel.">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="canonical" href="https://calculolaboral.cl/conciliacion-bancaria-cartola-excel">
+
+    <meta property="og:title" content="Conciliación Bancaria CSV/Excel y Flujo de Caja Pyme Chile">
+    <meta property="og:description" content="Concilia movimientos de cartola contra facturas RCV del SII, sueldos, Previred y F29 en tu navegador sin claves bancarias.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculolaboral.cl/conciliacion-bancaria-cartola-excel">
+    <meta property="og:image" content="https://calculolaboral.cl/assets/og/default.png">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Cálculo Laboral">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Conciliación Bancaria CSV/Excel y Flujo de Caja Pyme Chile">
+    <meta name="twitter:description" content="Cruza cartolas CSV o Excel contra RCV del SII, Previred y F29 sin pedir claves de tu banco.">
+    <meta name="twitter:image" content="https://calculolaboral.cl/assets/og/default.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "Conciliación Bancaria CSV/Excel y Flujo de Caja Pyme",
+          "url": "https://calculolaboral.cl/conciliacion-bancaria-cartola-excel",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "es-CL",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CLP" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+            { "@type": "ListItem", "position": 2, "name": "Para Empleadores", "item": "https://calculolaboral.cl/para-empleadores" },
+            { "@type": "ListItem", "position": 3, "name": "Conciliación Bancaria y Flujo de Caja", "item": "https://calculolaboral.cl/conciliacion-bancaria-cartola-excel" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Pide la clave o coordenadas de mi banco?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Todo el cruce de movimientos funciona localmente en tu navegador a partir de la cartola CSV o Excel (.xlsx/.xls) que descargas desde tu banco y tus archivos CSV del RCV."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué movimientos cruza automáticamente?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Empareja abonos contra facturas por cobrar del RCV de Ventas, cargos contra facturas por pagar del RCV de Compras, y egresos bancarios contra sueldos líquidos, cotizaciones Previred (día 13) y Formulario 29 (día 20)."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+
+    <script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        try {
+            if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+            if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+            if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+        } catch (e) {}
+        gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+    </script>
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.5.0">
+    <style>
+        :root { --teal-forest: #00382E; --teal-yellow: #FFB703; }
+        body { font-family: 'Geist', sans-serif; background-color: #F8FAF9; color: #1E293B; overflow-x: hidden; max-width: 100vw; }
+        .site-container { max-width: 1240px; margin-left: auto; margin-right: auto; }
+        .font-mono-num { font-family: 'Geist Mono', monospace; font-variant-numeric: tabular-nums; }
+        .btn-yellow-pill { background-color: #FFB703; color: #111827 !important; font-weight: 700; border-radius: 9999px; padding: 12px 24px; font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border: none; cursor: pointer; }
+        .btn-dark-pill { background-color: #00382E; color: #FFFFFF !important; font-weight: 700; border-radius: 9999px; padding: 12px 24px; font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border: none; cursor: pointer; }
+        .btn-outline-pill { background-color: #FFFFFF; color: #374151 !important; font-weight: 600; border-radius: 9999px; padding: 10px 20px; font-size: 13.5px; min-height: 44px; border: 1.5px solid #D1D5DB; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; cursor: pointer; }
+        .nav-dropdown-menu { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px); transition: opacity .2s ease, transform .2s ease; }
+        .nav-dropdown-group:hover .nav-dropdown-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+        .teal-footer-curve { background-color: #00382E; color: #FFFFFF; border-top-left-radius: 40px; border-top-right-radius: 40px; position: relative; overflow: hidden; }
+        .teal-footer-curve .footer-inner-container { max-width: 1240px; margin-left: auto; margin-right: auto; padding-left: 1.5rem; padding-right: 1.5rem; }
+        @media (min-width: 1024px) {
+            .teal-footer-curve { border-top-left-radius: 96px; border-top-right-radius: 0; }
+            .teal-footer-curve .footer-inner-container { padding-left: 5rem !important; padding-right: 2rem !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs no-print">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20 gap-4">
+                <a href="./" class="flex items-center gap-2.5 shrink-0">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm shrink-0" style="background-color: #FFB703;">
+                        <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-lg sm:text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1 text-sm font-medium text-slate-700" aria-label="Menú principal">
+                    <a href="asistente-laboral-pyme" class="px-3.5 py-2 hover:text-[#00382E]">Asistente Pyme</a>
+                    <a href="suite-contadores" class="px-3.5 py-2 hover:text-[#00382E]">Suite Contadores</a>
+                    <a href="calculadora-f29-chile" class="px-3.5 py-2 hover:text-[#00382E]">Calculadora F29</a>
+                    <a href="balance-8-columnas-rli-propyme-excel" class="px-3.5 py-2 hover:text-[#00382E]">Balance 8 Col.</a>
+                    <a href="blog" class="px-3.5 py-2 hover:text-[#00382E]">Blog</a>
+                </nav>
+
+                <div class="flex items-center gap-2.5">
+                    <a href="para-empleadores" class="hidden md:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">Portal Empleadores</a>
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 rounded-xl cursor-pointer" style="min-width:44px;min-height:44px;" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-2">
+            <a href="asistente-laboral-pyme" class="block py-2 text-sm font-bold text-[#00382E]">Asistente Laboral Pyme</a>
+            <a href="suite-contadores" class="block py-2 text-sm font-semibold text-slate-700">Suite Contadores</a>
+            <a href="calculadora-f29-chile" class="block py-2 text-sm font-semibold text-slate-700">Calculadora F29</a>
+            <a href="para-empleadores" class="btn-outline-pill w-full !text-xs justify-center">Portal Empleadores</a>
+        </div>
+    </header>
+
+    <main class="site-container flex-grow flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+        <nav class="flex items-center gap-2 text-xs text-slate-600 mb-4" aria-label="Breadcrumb">
+            <a href="./" class="hover:text-[#00382E] font-medium">Inicio</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <a href="para-empleadores" class="hover:text-[#00382E] font-medium">Para Empleadores</a>
+            <span class="material-icons text-xs" aria-hidden="true">chevron_right</span>
+            <span class="text-slate-900 font-semibold">Conciliación Bancaria y Flujo de Caja</span>
+        </nav>
+
+        <div class="max-w-3xl mb-8">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 shadow-2xs mb-4 text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                Procesamiento local en tu navegador · Cero claves bancarias · CSV y Excel (.xlsx/.xls)
+            </div>
+            <h1 style="color: var(--teal-forest);" class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">
+                Conciliación Bancaria CSV/Excel y Flujo de Caja Pyme
+            </h1>
+            <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                Sube o pega tu cartola bancaria junto al RCV del SII para detectar pagos recibidos, facturas pendientes, Previred (día 13), F29 (día 20) y tu proyección real de caja sin compartir credenciales de tu banco.
+            </p>
+        </div>
+
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Panel de carga -->
+            <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                    <h2 class="text-base font-bold text-slate-900 m-0">1. Carga tu cartola y RCV</h2>
+                    <button type="button" id="btn-conc-ejemplo" class="btn-outline-pill !py-2 !px-3.5 !text-xs">
+                        Cargar ejemplo real
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="conc-periodo" class="block text-xs font-bold text-slate-700 mb-1">Período</label>
+                        <select id="conc-periodo" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white">
+                            <option value="2026-11" selected>Noviembre 2026</option>
+                            <option value="2026-10">Octubre 2026</option>
+                            <option value="2026-12">Diciembre 2026</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="conc-saldo-hoy" class="block text-xs font-bold text-slate-700 mb-1">Saldo banco actual (opcional)</label>
+                        <input id="conc-saldo-hoy" type="number" min="0" placeholder="Desde cartola" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white font-mono-num">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-1">
+                        <label for="conc-cartola-txt" class="text-xs font-bold text-slate-700">Cartola bancaria (CSV o Excel .xlsx)</label>
+                        <label for="conc-file-cartola" class="text-xs font-bold text-[#00382E] underline cursor-pointer">Subir archivo</label>
+                        <input id="conc-file-cartola" type="file" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only">
+                    </div>
+                    <textarea id="conc-cartola-txt" rows="4" placeholder="Fecha;Descripcion;Cargo;Abono;Saldo..." class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-mono-num bg-slate-50"></textarea>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-1">
+                        <label for="conc-rcv-ventas-txt" class="text-xs font-bold text-slate-700">RCV Ventas SII (opcional)</label>
+                        <label for="conc-file-ventas" class="text-xs font-bold text-[#00382E] underline cursor-pointer">Subir CSV/Excel</label>
+                        <input id="conc-file-ventas" type="file" accept=".csv,.txt,.xlsx,.xls" class="sr-only">
+                    </div>
+                    <textarea id="conc-rcv-ventas-txt" rows="2" placeholder="Pega o sube tu CSV de RCV Ventas del SII..." class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-mono-num bg-slate-50"></textarea>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-1">
+                        <label for="conc-rcv-compras-txt" class="text-xs font-bold text-slate-700">RCV Compras SII (opcional)</label>
+                        <label for="conc-file-compras" class="text-xs font-bold text-[#00382E] underline cursor-pointer">Subir CSV/Excel</label>
+                        <input id="conc-file-compras" type="file" accept=".csv,.txt,.xlsx,.xls" class="sr-only">
+                    </div>
+                    <textarea id="conc-rcv-compras-txt" rows="2" placeholder="Pega o sube tu CSV de RCV Compras del SII..." class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-mono-num bg-slate-50"></textarea>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 pt-1">
+                    <div>
+                        <label for="conc-ob-sueldos" class="block text-[11px] font-bold text-slate-700 mb-1">Sueldos líq.</label>
+                        <input id="conc-ob-sueldos" type="number" min="0" value="0" class="w-full min-h-[44px] px-2.5 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono-num">
+                    </div>
+                    <div>
+                        <label for="conc-ob-previred" class="block text-[11px] font-bold text-slate-700 mb-1">Previred (día 13)</label>
+                        <input id="conc-ob-previred" type="number" min="0" value="0" class="w-full min-h-[44px] px-2.5 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono-num">
+                    </div>
+                    <div>
+                        <label for="conc-ob-f29" class="block text-[11px] font-bold text-slate-700 mb-1">F29 (día 20)</label>
+                        <input id="conc-ob-f29" type="number" min="0" value="0" class="w-full min-h-[44px] px-2.5 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono-num">
+                    </div>
+                </div>
+
+                <button type="button" id="btn-conc-calcular" class="btn-yellow-pill w-full">
+                    <span class="material-icons text-base" aria-hidden="true">compare_arrows</span>
+                    <span>Conciliar movimientos y calcular flujo</span>
+                </button>
+            </div>
+
+            <!-- Resultados -->
+            <div class="lg:col-span-7 space-y-5">
+                <div id="conc-error-box" class="hidden p-4 rounded-2xl bg-rose-50 border border-rose-200 text-sm font-semibold text-rose-900"></div>
+
+                <div id="conc-resultados-wrap" class="space-y-5">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+                            <span class="block text-[11px] font-bold uppercase text-slate-600">Total abonos</span>
+                            <strong id="kpi-abonos" class="text-lg font-extrabold font-mono-num text-emerald-800">$0</strong>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+                            <span class="block text-[11px] font-bold uppercase text-slate-600">Total cargos</span>
+                            <strong id="kpi-cargos" class="text-lg font-extrabold font-mono-num text-rose-800">$0</strong>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+                            <span class="block text-[11px] font-bold uppercase text-slate-600">Conciliados</span>
+                            <strong id="kpi-conciliados" class="text-lg font-extrabold font-mono-num text-[#00382E]">0 / 0</strong>
+                        </div>
+                        <div class="rounded-2xl p-4 text-white" style="background-color: #00382E;">
+                            <span class="block text-[11px] font-bold uppercase text-white/80">Caja proyectada</span>
+                            <strong id="kpi-caja-proy" class="text-lg font-extrabold font-mono-num text-[#FFB703]">$0</strong>
+                            <span id="kpi-holgura" class="block text-[11px] text-white/80 mt-0.5"></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <h2 class="text-base font-bold text-slate-900 m-0">Movimientos de cartola vs RCV y obligaciones</h2>
+                            <button type="button" id="btn-conc-xlsx" class="btn-outline-pill !py-2 !px-4 !text-xs">
+                                <span class="material-icons text-sm" aria-hidden="true">download</span>
+                                <span>Exportar Excel (.xlsx)</span>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 text-[11px] font-bold uppercase text-slate-600 border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Fecha</th>
+                                        <th class="p-3">Descripción banco</th>
+                                        <th class="p-3 text-right">Monto</th>
+                                        <th class="p-3">Cruce RCV / Gasto</th>
+                                        <th class="p-3">Estado</th>
+                                        <th class="p-3 text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="conc-tabla-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-3">
+                        <h3 class="text-sm font-bold text-slate-900 m-0">Compromisos pendientes y vencimientos del flujo</h3>
+                        <ul id="conc-compromisos-lista" class="list-none p-0 m-0"></ul>
+                    </div>
+
+                    <!-- CTA puente a /app/conciliacion y /app/flujo-caja -->
+                    <aside class="rounded-3xl p-5 sm:p-6 border space-y-3" style="background-color:#EEF6F3;border-color:rgba(0,56,46,.2);">
+                        <p class="text-xs font-extrabold uppercase tracking-wider text-[#00382E] m-0">Asistente Laboral Pyme · Flujo y Conciliación mensual</p>
+                        <h3 class="text-lg font-extrabold text-slate-900 m-0">Guarda tus cartolas, cobranzas (CxC) y calendario Previred / F29 mes a mes</h3>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed m-0">
+                            En el Asistente Pyme no necesitas volver a subir archivos cada semana: conservas tu historial cifrado, concilias pagos de clientes en 1 clic sin entregar claves bancarias y cruzas automáticamente tus liquidaciones y F29.
+                        </p>
+                        <div class="flex flex-wrap gap-2.5 pt-1">
+                            <a href="asistente-laboral-pyme" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="conciliacion-pyme-cta" class="btn-dark-pill !text-xs">
+                                <span>Conocer el Asistente Pyme (piloto gratis)</span>
+                                <span class="material-icons text-sm" aria-hidden="true">arrow_forward</span>
+                            </a>
+                            <a href="app/ejemplo" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="conciliacion-pyme-ejemplo" class="btn-outline-pill !text-xs">
+                                <span>Ver demo en /app</span>
+                            </a>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-12 pt-8 border-t border-slate-200 max-w-4xl space-y-4">
+            <h2 class="text-xl font-extrabold text-slate-900">Por qué conciliar sin entregar credenciales bancarias</h2>
+            <p class="text-sm text-slate-700 leading-relaxed">
+                Exportar la cartola en CSV o Excel desde BancoEstado, Banco de Chile, Santander, BCI o Scotiabank toma menos de un minuto y evita exponer claves bancarias a terceros. Este simulador ejecuta todo el emparejamiento dentro de tu navegador y te permite detectar rápidamente abonos de clientes sin factura asociada o pagos pendientes de proveedores, Previred y F29.
+            </p>
+        </section>
+
+        <section class="mt-8 pt-6 border-t border-slate-200 max-w-4xl" aria-labelledby="relacionados-titulo">
+            <h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Herramientas relacionadas</h2>
+            <ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
+                <li><a href="calculadora-f29-chile" class="font-semibold text-[#00382E] underline">Calculadora Formulario 29 (F29) con RCV SII</a></li>
+                <li><a href="balance-8-columnas-rli-propyme-excel" class="font-semibold text-[#00382E] underline">Simulador Balance 8 Columnas y RLI ProPyme</a></li>
+                <li><a href="suite-contadores" class="font-semibold text-[#00382E] underline">Suite Contadores multicliente</a></li>
+                <li><a href="asistente-laboral-pyme" class="font-semibold text-[#00382E] underline">Asistente Laboral Pyme (/app)</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="no-print mt-16">
+        <div class="teal-footer-curve">
+            <div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
+                    <div class="space-y-4">
+                        <a href="./" class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+                                <svg class="w-5 h-5" style="color: #00382E;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+                                    <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path><path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                                    <path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+                                </svg>
+                            </div>
+                            <span class="font-bold text-xl tracking-tight text-white">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+                        </a>
+                        <p class="text-sm text-white/75 leading-relaxed max-w-xs">Herramientas laborales y tributarias actualizadas para trabajadores, pymes y estudios contables en Chile (2026).</p>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Calculadoras</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold">Finiquito Legal</a></li>
+                            <li><a href="sueldo_liquido" class="text-white/80 hover:text-[#FFB703]">Sueldo Líquido</a></li>
+                            <li><a href="calculadora-f29-chile" class="text-white/80 hover:text-[#FFB703]">Calculadora F29</a></li>
+                            <li><a href="conciliacion-bancaria-cartola-excel" class="text-white/80 hover:text-[#FFB703]">Conciliación Bancaria</a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Guías Legales</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="como-generar-archivo-previred-lre-f29-chile" class="text-white/80 hover:text-[#FFB703]">Guía Previred, LRE y F29</a></li>
+                            <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703]">Checklist Fiscalización DT</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías -></a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
+                        <ul class="space-y-2 text-xs">
+                            <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703]">Portal Empleadores</a></li>
+                            <li><a href="asistente-laboral-pyme" class="text-white/80 hover:text-[#FFB703]">Asistente Laboral Pyme</a></li>
+                            <li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703]">Suite Contadores</a></li>
+                            <li><a href="contacto" class="text-white/80 hover:text-[#FFB703]">Contacto Directo</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50">
+                    <div>&copy; 2026 Cálculo Laboral Chile. Modelo referencial sin asesoría contable ni tributaria.</div>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a href="terminos" class="hover:text-white">Términos</a><span>·</span>
+                        <a href="privacidad" class="hover:text-white">Privacidad</a><span>·</span>
+                        <a href="disclaimer" class="hover:text-white">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/rut_cl.js?v=1.0.0"></script>
+    <script src="/js/contadores_f29.js?v=1.0.0"></script>
+    <script src="/js/contadores_importadores.js?v=1.0.0"></script>
+    <script src="/js/pyme_excel.js?v=2.0.0"></script>
+    <script src="/js/pyme_finanzas.js?v=1.0.0"></script>
+    <script src="/js/medir_promo.js?v=1.0.0" defer></script>
+    <script src="/js/conciliacion_web.js?v=1.0.0" defer></script>
+    <script src="/js/origen.js?v=1.0.0" defer></script>
+    <script src="/js/motion.js?v=1.0.0" defer></script>
+</body>
+</html>
