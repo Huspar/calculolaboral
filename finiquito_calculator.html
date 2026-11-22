@@ -1056,6 +1056,16 @@ window.addEventListener('load', function () {
                                 <span class="material-icons text-base text-emerald-600">share</span>
                                 <span>Compartir cálculo por WhatsApp</span>
                             </button>
+
+                            <button type="button" id="btn-carta-reserva" class="btn-outline-pill w-full !py-2.5 !text-xs">
+                                <span class="material-icons text-base text-emerald-700">gavel</span>
+                                <span>Informe + Carta de Reserva de Derechos ($2.490)</span>
+                            </button>
+                            <button type="button" id="btn-descargar-carta" class="hidden btn-dark-pill w-full !py-2.5 !text-xs">
+                                <span class="material-icons text-base">download</span>
+                                <span>Descargar Informe + Carta (pagada)</span>
+                            </button>
+                            <p id="carta-reserva-estado" class="hidden text-xs text-emerald-700 font-semibold text-center leading-relaxed"></p>
                         </div>
 
                         <!-- Legal Technical Note -->
@@ -1435,6 +1445,45 @@ window.addEventListener('load', function () {
             </div>
         </section>
 
+        <!-- Modal: datos para la Carta de Reserva de Derechos ($2.490) -->
+        <div id="carta-form-overlay" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm overflow-y-auto p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="carta-form-titulo">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-lg mx-auto my-8 p-6 sm:p-8 space-y-3.5">
+                <div class="text-center space-y-1.5">
+                    <p class="text-xs font-bold uppercase tracking-wider text-[#00382E]">Para llevar a la notaría o Mi DT</p>
+                    <h3 id="carta-form-titulo" class="text-xl font-extrabold text-slate-900 tracking-tight">Informe + Glosa y Carta de Reserva</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Una carta aparte no basta si firmas el finiquito sin reserva (Art. 177 CT). Descarga en un PDF tu informe de cálculo, la glosa exacta para copiar en el finiquito (o Mi DT) y una carta anexa opcional.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="sm:col-span-2">
+                        <label for="carta-nombre" class="block text-xs font-bold text-slate-700 mb-1">Tu nombre completo</label>
+                        <input type="text" id="carta-nombre" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none" placeholder="Ej: Valentina Morales">
+                    </div>
+                    <div>
+                        <label for="carta-rut" class="block text-xs font-bold text-slate-700 mb-1">Tu RUT</label>
+                        <input type="text" id="carta-rut" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none font-mono-num" placeholder="12.345.678-5">
+                    </div>
+                    <div>
+                        <label for="carta-ciudad" class="block text-xs font-bold text-slate-700 mb-1">Ciudad (para la fecha)</label>
+                        <input type="text" id="carta-ciudad" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none" placeholder="Santiago">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="carta-empleador" class="block text-xs font-bold text-slate-700 mb-1">Nombre o razón social del empleador <span class="font-normal text-slate-400">(opcional)</span></label>
+                        <input type="text" id="carta-empleador" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none" placeholder="Comercial Los Aromos SpA">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="carta-rut-empleador" class="block text-xs font-bold text-slate-700 mb-1">RUT del empleador <span class="font-normal text-slate-400">(opcional)</span></label>
+                        <input type="text" id="carta-rut-empleador" class="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#00382E] outline-none font-mono-num" placeholder="76.123.456-7">
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="button" id="carta-cancelar" class="btn-outline-pill flex-1 !py-2.5 !text-xs">Volver</button>
+                    <button type="button" id="carta-pagar" class="btn-yellow-pill flex-1 !py-2.5 !text-xs">Continuar al pago · $2.490</button>
+                </div>
+                <p class="text-xs text-slate-500 text-center leading-relaxed">Pago único con Flow. El documento se arma en tu navegador con tus datos y puedes volver a descargarlo durante 48 horas. Es un modelo de referencia y no constituye asesoría legal.</p>
+                <p id="carta-form-error" class="hidden text-xs font-semibold text-rose-600 text-center"></p>
+            </div>
+        </div>
+
     <section class="mt-10 pt-6 border-t border-slate-200 no-print" aria-labelledby="relacionados-titulo">
 <h2 id="relacionados-titulo" class="text-lg font-bold text-slate-900 mb-3">Te puede servir</h2>
 <ul class="grid gap-2 sm:grid-cols-2 text-sm text-slate-700 list-none p-0 m-0">
@@ -1572,7 +1621,7 @@ window.addEventListener('load', function () {
     <script src="/js/constants.js?v=2.2.0"></script>
     <script src="/js/indicators.js?v=2.10.0"></script>
     <script src="/js/print_brand.js?v=1.2.0"></script>
-    <script src="/js/pdf_generator.js?v=3.3.0"></script>
+    <script src="/js/pdf_generator.js?v=3.4.0"></script>
     <script src="/js/validation.js?v=2.9.0"></script>
     <script src="/js/logic.js?v=2.1.0"></script>
     <script src="/js/ui.js?v=3.1.0"></script>
@@ -1709,7 +1758,158 @@ window.addEventListener('load', function () {
             }
         });
     </script>
-    <script src="/js/checkout_consent.js?v=1.4.0" defer></script>
+
+    <!-- Informe + Carta de Reserva de Derechos ($2.490): compra, desbloqueo y descarga -->
+    <script>
+    (function () {
+        'use strict';
+        var PRODUCTO = 'finiquito_reserva';
+        var KEY_DATOS = 'cl_carta_datos';
+
+        function $(id) { return document.getElementById(id); }
+        function leer(k, def) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? def : v; } catch (e) { return def; } }
+        function escribir(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+        function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var overlay = $('carta-form-overlay');
+            var btnAbrir = $('btn-carta-reserva');
+            var btnPagar = $('carta-pagar');
+            var btnCancelar = $('carta-cancelar');
+            var btnDescargar = $('btn-descargar-carta');
+            var errEl = $('carta-form-error');
+            var estadoEl = $('carta-reserva-estado');
+            if (!overlay || !btnAbrir || !btnPagar) return;
+
+            function mostrarError(msg) {
+                if (!errEl) return;
+                errEl.textContent = msg;
+                errEl.classList.remove('hidden');
+            }
+            function ocultarError() {
+                if (!errEl) return;
+                errEl.textContent = '';
+                errEl.classList.add('hidden');
+            }
+
+            function abrirForm() {
+                var d = leer(KEY_DATOS, {});
+                $('carta-nombre').value = d.nombre || '';
+                $('carta-rut').value = d.rut || '';
+                $('carta-ciudad').value = d.ciudad || '';
+                $('carta-empleador').value = d.empleador || '';
+                $('carta-rut-empleador').value = d.rutEmpleador || '';
+                ocultarError();
+                overlay.classList.remove('hidden');
+                $('carta-nombre').focus();
+            }
+            function cerrarForm() {
+                overlay.classList.add('hidden');
+                btnAbrir.focus();
+            }
+            btnAbrir.addEventListener('click', abrirForm);
+            if (btnCancelar) btnCancelar.addEventListener('click', cerrarForm);
+            overlay.addEventListener('click', function (e) { if (e.target === overlay) cerrarForm(); });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !overlay.classList.contains('hidden')) cerrarForm();
+            });
+
+            function validar() {
+                var nombre = $('carta-nombre').value.trim();
+                var rut = $('carta-rut').value.trim().replace(/\s/g, '');
+                var ciudad = $('carta-ciudad').value.trim();
+                if (nombre.length < 3) return 'Escribe tu nombre completo como aparecer\u00e1 en la carta.';
+                if (!/^[\d.]{7,}[-]?[\dkK]?$/.test(rut)) return 'Escribe tu RUT con el formato 12.345.678-5.';
+                if (!ciudad) return 'Escribe tu ciudad (para la fecha de la carta).';
+                return null;
+            }
+
+            btnPagar.addEventListener('click', function () {
+                var error = validar();
+                if (error) { mostrarError(error); return; }
+                escribir(KEY_DATOS, {
+                    nombre: $('carta-nombre').value.trim(),
+                    rut: $('carta-rut').value.trim(),
+                    ciudad: $('carta-ciudad').value.trim(),
+                    empleador: $('carta-empleador').value.trim(),
+                    rutEmpleador: $('carta-rut-empleador').value.trim()
+                });
+                overlay.classList.add('hidden');
+                if (!window.CLCheckout) { window.alert('No pudimos iniciar el pago. Recarga la p\u00e1gina e intenta de nuevo.'); return; }
+                window.CLCheckout.buyKit(PRODUCTO, { nombre: $('carta-nombre').value.trim().slice(0, 80) }, { askEmail: true });
+            });
+
+            // ---------- glosa y carta de reserva (conforme a dictamen de Normativa: Art. 177 CT y ORD. 1315/26) ----------
+            function formatFechaChile(iso) {
+                if (!iso) return '';
+                var dt = new Date(iso + 'T12:00:00');
+                if (isNaN(dt.getTime())) return '';
+                return dt.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+
+            function cartaHtml() {
+                var d = leer(KEY_DATOS, {});
+                var desglose = String(window.resultadoDesgloseLead || '');
+                var causalEl = $('cause');
+                var causalSelect = causalEl && causalEl.options && causalEl.selectedIndex >= 0 ? causalEl.options[causalEl.selectedIndex].text : '';
+                var causal = (desglose.match(/Causal:\s*([^|]+)/) || [, ''])[1].trim() || causalSelect || 'la causal invocada';
+                var endDateVal = ($('endDate') && $('endDate').value) ? $('endDate').value : '';
+                var fechaTermino = formatFechaChile(endDateVal) || 'la fecha de t\u00e9rmino indicada en el finiquito';
+                var fecha = new Date().toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+                var empleador = d.empleador || 'Mi ex empleador';
+                var rutEmpleador = d.rutEmpleador ? 'RUT: ' + esc(d.rutEmpleador) + '<br>' : '';
+                var glosa = 'Firmo con reserva de derechos conforme al art\u00edculo 177 del C\u00f3digo del Trabajo. Me reservo expresamente el derecho de demandar ante los Juzgados de Letras del Trabajo (y de reclamar o conciliar ante la Direcci\u00f3n del Trabajo, lo que suspende el plazo) la impugnaci\u00f3n de la causal invocada (' + esc(causal) + ') por despido injustificado, indebido o improcedente (Art. 168 CT); diferencias en la indemnizaci\u00f3n por a\u00f1os de servicio, indemnizaci\u00f3n sustitutiva de aviso previo y base de c\u00e1lculo del Art. 172 CT; la restituci\u00f3n del descuento del aporte del empleador al Seguro de Cesant\u00eda (Art. 13 Ley 19.728); el pago de feriado legal y proporcional, remuneraciones pendientes, horas extraordinarias, bonos o gratificaciones adeudadas; y la nulidad del despido por cotizaciones previsionales impagas (Art. 162 inc. 5\u00b0 CT). T\u00e9rmino del contrato: ' + esc(fechaTermino) + '.';
+                return '' +
+                '<div style="max-width: 17.5cm; margin: 0 auto; padding: 0.4cm 0.3cm; color:#111827; line-height:1.52; font-size: 11.5px;">' +
+                '<div style="border: 1.5pt solid #00382E; background: #F8FAF9; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px;">' +
+                '<p style="margin:0 0 4px; font-size: 11.5px; font-weight: 800; color: #00382E; text-transform: uppercase; letter-spacing: 0.03em;">A. Glosa exacta para copiar en el finiquito (o en Mi DT)</p>' +
+                '<p style="margin:0 0 8px; font-size: 10.5px; color: #334155;">Copia este texto de pu\u00f1o y letra en el propio finiquito (original y <strong>todas las copias</strong>) antes de firmar ante ministro de fe, o p\u00e9galo en la casilla de reserva de Mi DT. Es un acto unilateral que no requiere permiso del empleador y no impide el pago inmediato de las sumas no disputadas (Art. 177 CT y DT ORD. N.\u00b0 1315/26).</p>' +
+                '<p style="margin:0; padding: 9px 11px; background: #ffffff; border: 0.75pt solid #cbd5e1; border-radius: 4px; font-size: 11px; color: #0f172a;">\u201c' + glosa + '\u201d</p>' +
+                '</div>' +
+                '<p style="margin:0 0 10px; font-size: 10.5px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.03em;">B. Carta anexa opcional (no sustituye estampar la reserva en el finiquito)</p>' +
+                '<p style="text-align:right; margin:0 0 14px;">' + esc(d.ciudad || '') + ', ' + esc(fecha) + '</p>' +
+                '<p style="margin:0 0 2px;">Se\u00f1or(es)</p>' +
+                '<p style="margin:0; font-weight:700;">' + esc(empleador) + '</p>' +
+                '<p style="margin:0 0 2px;">' + rutEmpleador + '</p>' +
+                '<p style="margin:0 0 14px;">Presente</p>' +
+                '<p style="margin:0 0 10px;">De mi mayor consideraci\u00f3n:</p>' +
+                '<p style="margin:0 0 10px;">Por la presente, yo, <strong>' + esc(d.nombre || '') + '</strong>, c\u00e9dula de identidad N.\u00ba ' + esc(d.rut || '') + ', en mi calidad de ex trabajador(a) de ' + esc(empleador) + ', respecto del t\u00e9rmino de mi contrato de trabajo ocurrido con fecha <strong>' + esc(fechaTermino) + '</strong>, dejo constancia de que:</p>' +
+                '<p style="margin:0 0 8px;"><strong>1.</strong> FIRMO EL FINIQUITO CON RESERVA DE DERECHOS (Art. 177 CT): la firma del finiquito y la recepci\u00f3n de las sumas no disputadas que en \u00e9l se indiquen NO implican aceptaci\u00f3n de la causal invocada (' + esc(causal) + ') ni renuncia a las acciones legales que me correspondan.</p>' +
+                '<p style="margin:0 0 8px;"><strong>2.</strong> Me reservo expresamente el derecho de demandar, dentro de los plazos legales, ante los Juzgados de Letras del Trabajo (sin perjuicio de reclamar o conciliar ante la Direcci\u00f3n del Trabajo, lo que suspende el plazo): (a) la impugnaci\u00f3n de la causal invocada por despido injustificado, indebido o improcedente (Art. 168 CT); (b) diferencias en indemnizaci\u00f3n por a\u00f1os de servicio, indemnizaci\u00f3n sustitutiva de aviso previo y base de c\u00e1lculo (Art. 172 CT); (c) la restituci\u00f3n del descuento del aporte del empleador al Seguro de Cesant\u00eda (Art. 13 Ley 19.728); (d) feriado legal y proporcional, remuneraciones pendientes, horas extraordinarias, bonos o gratificaciones adeudadas; y (e) nulidad del despido por cotizaciones previsionales impagas (Art. 162 inc. 5\u00b0 CT).</p>' +
+                '<p style="margin:0 0 16px;"><strong>3.</strong> Esta reserva es unilateral, no requiere consentimiento del empleador ni impide el pago inmediato de los montos no disputados (Art. 177 CT y DT ORD. N.\u00b0 1315/26). Esta carta complementa la reserva estampada en el propio finiquito y no la reemplaza.</p>' +
+                '<p style="margin:0 0 24px;">Sin otro particular, saluda atentamente,</p>' +
+                '<p style="margin:44px 0 3px; border-top:1px solid #94a3b8; padding-top:4px; max-width:8cm;">' + esc(d.nombre || '') + '</p>' +
+                '<p style="margin:0 0 16px;">RUT: ' + esc(d.rut || '') + '</p>' +
+                '<footer class="clr-foot">Documento de referencia basado en el C\u00f3digo del Trabajo y doctrina administrativa de la Direcci\u00f3n del Trabajo; no constituye asesor\u00eda legal. <span class="brand">calculolaboral.cl</span></footer>' +
+                '</div>';
+            }
+
+            function paqueteHtml() {
+                var informe = (typeof window.CLFiniquitoInformeBody === 'function') ? window.CLFiniquitoInformeBody() : '';
+                var carta = '<div style="page-break-before: always; break-before: page;">' + cartaHtml() + '</div>';
+                return informe ? (informe + carta) : cartaHtml();
+            }
+
+            function activarDescarga() {
+                if (btnDescargar) btnDescargar.classList.remove('hidden');
+                btnAbrir.classList.add('hidden');
+                if (estadoEl) {
+                    estadoEl.textContent = 'Compra confirmada: descarga tu informe y carta desde este navegador durante 48 horas.';
+                    estadoEl.classList.remove('hidden');
+                }
+            }
+
+            if (btnDescargar) btnDescargar.addEventListener('click', function () {
+                if (window.CLPrint) window.CLPrint.imprimir({ html: paqueteHtml(), css: 'body { background: #ffffff; }' });
+            });
+
+            if (window.CLCheckout) {
+                window.CLCheckout.unlockFromUrl(PRODUCTO).then(function (u) { if (u) activarDescarga(); });
+            }
+        });
+    })();
+    </script>
+    <script src="/js/checkout_consent.js?v=1.5.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
     <script src="/js/lead_abogado.js?v=1.0.2" defer></script>

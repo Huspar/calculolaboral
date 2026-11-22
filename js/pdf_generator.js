@@ -423,7 +423,8 @@
     }
 
     // 8. COMPILE FINIQUITO REPORT
-    function compileFiniquitoReport(dateString) {
+    function compileFiniquitoBody(dateString, opts) {
+        const o = opts || {};
         const folio = window.CLPrint ? CLPrint.folio('FIN') : '';
         const $ = (id) => document.getElementById(id);
 
@@ -464,7 +465,7 @@
         const item = (title, note, amount, cls = '') => `<tr><td><b>${title}</b><span class="n">${note}</span></td><td class="v ${cls}">${amount}</td></tr>`;
         const hasAfc = afcAmount !== '$0' && afcAmount !== '0' && afcAmount !== '';
 
-        return wrapReport(`
+        return `
             ${headerHTML('Simulación de finiquito', dateString, folio)}
             <h1 class="clr-title">Liquidación estimada de finiquito</h1>
             <p class="clr-sub">Desglose de indemnizaciones y haberes a la fecha de término del contrato.</p>
@@ -523,11 +524,20 @@
                 <div><b>3. Firma el finiquito de la empresa.</b> Este informe es tu respaldo; el documento válido lo extiende el empleador ante ministro de fe.</div>
             </div>
 
-            ${sponsorHTML('¿Dónde recibir el pago de tu finiquito?', 'Cuenta Corriente Itaú con mantención mensual $0, apertura 100% online. Requisitos: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000.')}
+            ${o.sinAviso ? '' : sponsorHTML('¿Dónde recibir el pago de tu finiquito?', 'Cuenta Corriente Itaú con mantención mensual $0, apertura 100% online. Requisitos: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000.')}
 
             <footer class="clr-foot">Simulación referencial conforme a la normativa de la Dirección del Trabajo. No constituye asesoría legal ni reemplaza el finiquito firmado por las partes. <span class="brand">calculolaboral.cl</span></footer>
-        `);
+        `;
     }
+
+    function compileFiniquitoReport(dateString) {
+        return wrapReport(compileFiniquitoBody(dateString, {}));
+    }
+
+    window.CLFiniquitoInformeBody = function () {
+        const d = new Date().toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+        return compileFiniquitoBody(d, { sinAviso: true });
+    };
 
     // 9. COMPILE SUELDO REPORT
     function compileSueldoReport(dateString) {

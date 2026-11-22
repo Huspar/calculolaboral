@@ -93,6 +93,15 @@ const PRODUCTS = {
         page: '/calculadora-costo-empresa-chile',
         unlock: true
     },
+    // Producto B2C para el trabajador de finiquito: informe + carta de reserva de derechos
+    // (el comprador es el trabajador; el documento se arma en el navegador tras el desbloqueo)
+    finiquito_reserva: {
+        code: 'FR',
+        amount: 2490,
+        subject: 'Informe Finiquito + Carta de Reserva de Derechos (PDF)',
+        page: '/finiquito_calculator',
+        unlock: true
+    },
     // El desbloqueo cubre la liquidación de un trabajador y un mes; el navegador asocia la orden a ese RUT y período
     liquidacion: {
         code: 'GL',

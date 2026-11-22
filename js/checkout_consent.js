@@ -211,6 +211,7 @@
         finiquito: { item_id: 'finiquito', item_name: 'Finiquito para Notaría (Word + PDF)', price: 9990 },
         contrato: { item_id: 'contrato', item_name: 'Contrato de Trabajo a la Medida (Word + PDF)', price: 12990 },
         informe: { item_id: 'informe', item_name: 'Informe Ejecutivo de Costo Empresa (PDF)', price: 4990 },
+        finiquito_reserva: { item_id: 'finiquito_reserva', item_name: 'Informe Finiquito + Carta de Reserva de Derechos (PDF)', price: 2490 },
         liquidacion: { item_id: 'liquidacion', item_name: 'Liquidación de Sueldo en PDF', price: 2990 },
         liquidacion5: { item_id: 'liquidacion5', item_name: 'Pack 5 Liquidaciones de Sueldo en PDF', price: 9990 },
         anexo: { item_id: 'anexo', item_name: 'Anexo de Contrato de Trabajo (Word + PDF)', price: 7990 },

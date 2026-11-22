@@ -454,4 +454,11 @@ caso('otorgarPorKit aplica también a otros kits (blindaje) y generadores (liqui
     assert.strictEqual(rOtro.ok, false);
 });
 
+caso('comprar un pase durante el piloto ancla la vigencia pagada al fin del piloto (31-dic)', async () => {
+    const m = montar({ conPiloto: true, fecha: '2026-11-22T15:00:00Z' }), { cuenta } = await m.entrar('piloto@ejemplo.cl');
+    const r = await m.pase.confirmar(pago('pyme3', cuenta.cuentaId));
+    assert.ok(r.ok && !r.repetido);
+    assert.strictEqual(r.vence, Date.parse(Pi.VENCE) + 92 * DIA);
+});
+
 pendientes.then(() => console.log('\n' + ok + ' pruebas correctas' + (process.exitCode ? ' (hay fallas)' : '')));

@@ -3518,10 +3518,22 @@ function dibujarEquipo() {
             $('pm-pase-opciones').innerHTML = '';
             return;
         }
-        $('pm-pase-incluye').hidden = !!lim.piloto;
+        $('pm-pase-incluye').hidden = !!lim.piloto && !ventaPase();
         if (lim.piloto) {
             $('pm-pase-estado').textContent = 'Estás en el piloto gratuito: hasta el ' + fechaVence(lim.paseVence) + ' tienes lo mismo que el Pase de 12 meses, sin pagar.';
-            $('pm-pase-opciones').innerHTML = '<p class="texto-ayuda">Hasta ' + lim.maxActivos + ' trabajadores activos, liquidaciones y documentos sin marca de agua, y los documentos en Word. Al terminar, la cuenta vuelve a las funciones gratuitas y tus datos se conservan. Nos ayudas mucho si nos cuentas qué funciona, qué no y qué te falta.</p><div style="margin-top:12px"><button type="button" class="btn" data-abrir-opinion="cuenta"><span class="material-icons" aria-hidden="true">chat</span>Contar mi opinión</button></div>';
+            var bloquePiloto = '<p class="texto-ayuda">Hasta ' + lim.maxActivos + ' trabajadores activos, liquidaciones y documentos sin marca de agua, y los documentos en Word. Al terminar, la cuenta vuelve a las funciones gratuitas y tus datos se conservan. Nos ayudas mucho si nos cuentas qué funciona, qué no y qué te falta.</p><div style="margin-top:12px"><button type="button" class="btn" data-abrir-opinion="cuenta"><span class="material-icons" aria-hidden="true">chat</span>Contar mi opinión</button></div>';
+            if (!ventaPase()) {
+                $('pm-pase-opciones').innerHTML = bloquePiloto;
+                return;
+            }
+            $('pm-pase-opciones').innerHTML = bloquePiloto +
+                '<p class="texto-ayuda" style="margin-top:16px">El piloto gratuito termina el 31 de diciembre de 2026. Si quieres asegurar tu Pase Pyme desde ahora, la vigencia pagada corre desde el 1 de enero de 2027 (con reembolso total dentro de 14 días corridos).</p>' +
+                cat.map(function (p) {
+                    return '<div class="pm-pase-op"><div><strong>Pase de ' + esc(NOMBRE_PASE[p.id] || p.titulo) + '</strong>' +
+                        '<span class="pm-pase-precio">' + pesos(p.monto) + '</span>' +
+                        '<span class="pm-pase-mes">Equivale a ' + pesos(p.porMes) + ' al mes</span></div>' +
+                        '<button type="button" class="btn" data-comprar="' + esc(p.id) + '"><span class="material-icons" aria-hidden="true">shopping_cart</span>Asegurar ' + esc(NOMBRE_PASE[p.id] || p.titulo) + '</button></div>';
+                }).join('');
             return;
         }
         $('pm-pase-estado').textContent = vigente

@@ -61,7 +61,8 @@ function crear({ almacen, productos, flow, venta, ahora, piloto }) {
         if (typeof cuentaId !== 'string' || !UUID.test(cuentaId)) return { ok: false, motivo: 'sin_cuenta' };
         const cuenta = await almacen.buscarCuentaPorId(cuentaId);
         if (!cuenta) return { ok: false, motivo: 'cuenta_inexistente' };
-        const nuevo = await almacen.registrarPase({ cuentaId, producto: pay.product, ordenFlow: pay.order, dias: p.dias, ahoraIso: iso() });
+        const venceDesdeIso = piloto && piloto.activo() ? piloto.vence() : null;
+        const nuevo = await almacen.registrarPase({ cuentaId, producto: pay.product, ordenFlow: pay.order, dias: p.dias, ahoraIso: iso(), venceDesdeIso });
         if (nuevo) return { ok: true, vence: nuevo.vence, email: cuenta.email, repetido: false };
         const previo = await almacen.paseDeOrden(pay.order);
         return { ok: true, vence: previo ? previo.vence : null, email: cuenta.email, repetido: true };
