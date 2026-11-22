@@ -28,8 +28,10 @@ const PRODUCTS = {
         amount: 19990,
         subject: 'Kit Blindaje Laboral Pyme 2026',
         filename: 'Kit_Blindaje_Laboral_Pyme_2026.zip',
-        // require con ruta fija: Vercel solo empaqueta lo que puede rastrear
-        zip: () => require('./assets/kit-base64.js'),
+        // require con ruta fija: Vercel solo empaqueta lo que puede rastrear.
+        // Los base64 viven en api/_assets (la carpeta con "_" no crea funciones serverless:
+        // el plan Hobby limita cada despliegue a 12).
+        zip: () => require('./_assets/kit-base64.js'),
         page: '/kit-cumplimiento-laboral-pymes',
         personalizer: '/personalizar-kit-blindaje',
         intro: '21 documentos en Word (.docx editable), Excel Matriz DT y Ley Karin (5 hojas) y el manual de uso en PDF.',
@@ -44,7 +46,7 @@ const PRODUCTS = {
         amount: 29990,
         subject: 'Kit Ley 21.719 Protección de Datos 2026',
         filename: 'Kit_Ley_21719_Proteccion_Datos_Pyme_2026.zip',
-        zip: () => require('./assets/kit-datos-base64.js'),
+        zip: () => require('./_assets/kit-datos-base64.js'),
         page: '/kit-cumplimiento-ley-datos-personales-chile',
         personalizer: '/personalizar-kit-datos',
         intro: '7 instrumentos en Word y Excel editables y el manual de uso (PDF y Word).',
@@ -60,7 +62,7 @@ const PRODUCTS = {
         amount: 9990,
         subject: 'Pack Cartas de Despido por Causal 2026',
         filename: 'Pack_Cartas_Despido_por_Causal_Chile_2026.zip',
-        zip: () => require('./assets/pack-despido-base64.js'),
+        zip: () => require('./_assets/pack-despido-base64.js'),
         page: '/pack-cartas-despido-chile',
         personalizer: '/personalizar-kit-despido',
         intro: '22 documentos en Word (.docx editable) más Excel de Control de Plazos Art. 162 y Ley Bustos (4 hojas).',
