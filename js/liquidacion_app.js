@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.3.0)
+ * CalculoLaboral · interfaz del generador de liquidaciones de sueldo (v1.4.0)
  * Datos en localStorage (nunca se envían al servidor), vista previa en vivo, respaldo en JSON y cobro con
  * CLCheckout.buyKit('liquidacion'). El pago desbloquea por 48 h la liquidación de ese trabajador y ese mes.
  * La UF y la UTM del mes se consultan a la API (liquidacion_valores.js); el resto viene de liquidacion_parametros.js.
@@ -43,6 +43,9 @@
     var btn = $('lq-descargar');
     var btnTxt = $('lq-descargar-txt');
     var estado = $('lq-estado');
+    var barra = $('lq-barra-compra');
+    var barraBtn = $('lq-barra-btn');
+    var barraTxt = $('lq-barra-txt');
     var ultimo = null;
 
     // ---------- almacenamiento ----------
@@ -469,6 +472,7 @@
         btn.disabled = !listo;
         if (pago) {
             btnTxt.textContent = 'Descargar PDF';
+            if (barraTxt) barraTxt.textContent = 'Descargar PDF';
             var vence = new Date(pago.expiresAt);
             estado.innerHTML = '<span class="material-icons" aria-hidden="true">check_circle</span> Pagada. Puedes corregir y descargar hasta el ' +
                 vence.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' }) + ' a las ' +
@@ -476,6 +480,7 @@
             estado.className = 'lq-estado lq-estado-ok';
         } else {
             btnTxt.textContent = 'Descargar PDF · ' + PRECIO;
+            if (barraTxt) barraTxt.textContent = 'Descargar PDF · ' + PRECIO;
             estado.textContent = ejemplo ? 'Completa el formulario: la vista previa se actualiza mientras escribes.' : (listo ? 'Revisa la vista previa antes de pagar.' : '');
             estado.className = 'lq-estado';
         }
@@ -517,6 +522,53 @@
             onError: function (msg) { btn.disabled = false; btnTxt.textContent = original; window.alert(msg); }
         });
     });
+
+    // ---------- intento de compra con feedback (el botón deshabilitado no dispara clic) ----------
+    function irACampo(id) {
+        var el = $(id);
+        if (!el) return;
+        el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        if (el.matches && el.matches('input, select')) el.focus({ preventScroll: true });
+    }
+    function intentarDescarga() {
+        if (!btn.disabled) { btn.click(); return; }
+        var val = VAL[S.periodo];
+        if (val && val.estado === 'cargando') {
+            estado.textContent = 'Espera unos segundos: estamos consultando la UF y la UTM del mes para habilitar la descarga.';
+            estado.className = 'lq-estado lq-estado-error';
+            irACampo('lq-estado');
+            return;
+        }
+        var falta = faltantes();
+        if (falta.length) {
+            estado.textContent = 'Para comprar falta completar: ' + falta.map(function (f) { return f[1]; }).join(', ') + '.';
+            estado.className = 'lq-estado lq-estado-error';
+            irACampo(falta[0][0]);
+        } else {
+            estado.textContent = 'Completa el formulario y la descarga queda habilitada.';
+            estado.className = 'lq-estado lq-estado-error';
+            irACampo('lq-estado');
+        }
+    }
+    window.LqComprar = intentarDescarga;
+
+    // ---------- barra fija de compra (solo móvil) ----------
+    if (barra && barraBtn) {
+        barraBtn.addEventListener('click', intentarDescarga);
+        if ('IntersectionObserver' in window) {
+            var compraVisible = false, previaVisible = false;
+            var evaluarBarra = function () { barra.hidden = !(previaVisible && !compraVisible); };
+            new IntersectionObserver(function (es) {
+                compraVisible = es[es.length - 1].isIntersecting; evaluarBarra();
+            }, { threshold: 0.05 }).observe($('lq-actions') || btn);
+            new IntersectionObserver(function (es) {
+                previaVisible = es[es.length - 1].isIntersecting; evaluarBarra();
+            }, { threshold: 0.05 }).observe(doc);
+            evaluarBarra();
+        } else {
+            barra.hidden = true;
+        }
+    }
 
     // ---------- valores del mes (tabla informativa) ----------
     function tablaValores() {
