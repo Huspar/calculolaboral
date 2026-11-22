@@ -368,7 +368,13 @@
   </url>
   <url>
     <loc>https://calculolaboral.cl/calculadora-boleta-honorarios-chile</loc>
-    <lastmod>2026-11-19</lastmod>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://calculolaboral.cl/calculadora-dj-1887-chile</loc>
+    <lastmod>2026-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
