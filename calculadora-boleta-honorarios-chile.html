@@ -590,6 +590,107 @@
             </div>
         </section>
 
+        <!-- Fase 1 Revisor Anual BHE, PPM y Renta para independientes -->
+        <section id="revisor-anual-bhe" aria-labelledby="rev-bhe-heading" class="mt-10 bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-xs space-y-5">
+            <div class="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-slate-100">
+                <div class="max-w-2xl">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#00382E] text-xs font-bold mb-2">Operación Renta Independientes · Ley 21.133</span>
+                    <h2 id="rev-bhe-heading" class="text-xl sm:text-2xl font-extrabold text-slate-900 m-0">Revisor anual de Boletas (BHE), PPM y devolución de renta</h2>
+                    <p class="text-xs sm:text-sm text-slate-600 mt-1 mb-0">Sube tu archivo BHE de sii.cl (.csv o .xlsx) o ingresa tus totales anuales para simular cotizaciones previsionales obligatorias, gastos Art. 50 LIR e Impuesto Global Complementario.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <label for="rev-file-bhe" class="min-h-[44px] px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-800 font-semibold text-xs inline-flex items-center gap-1.5 cursor-pointer hover:border-[#00382E]">
+                        <span class="material-icons text-sm" aria-hidden="true">upload_file</span>
+                        <span>Subir Registro BHE (.csv / .xlsx)</span>
+                    </label>
+                    <input id="rev-file-bhe" type="file" accept=".csv,.txt,.xlsx,.xls" class="sr-only">
+                    <button type="button" id="btn-rev-ejemplo" class="min-h-[44px] px-4 py-2 rounded-full bg-slate-100 text-slate-800 font-semibold text-xs cursor-pointer border-0 hover:bg-slate-200">Cargar ejemplo anual</button>
+                </div>
+            </div>
+
+            <p id="rev-bhe-status" class="text-xs font-semibold text-emerald-800 m-0"></p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label for="rev-anio-comercial" class="block text-xs font-bold text-slate-700 mb-1">Año comercial / Operación Renta</label>
+                        <select id="rev-anio-comercial" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm bg-slate-50">
+                            <option value="2026" selected>Comercial 2026 -> AT 2027 (cob. 90%)</option>
+                            <option value="2025">Comercial 2025 -> AT 2026 (cob. 80%)</option>
+                            <option value="2027">Comercial 2027 -> AT 2028 (cob. 100%)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="rev-cobertura" class="block text-xs font-bold text-slate-700 mb-1">Cobertura previsional Ley 21.133</label>
+                        <select id="rev-cobertura" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm bg-slate-50">
+                            <option value="parcial" selected>Cobertura parcial (90% en AT 2027)</option>
+                            <option value="total">Cobertura total (100% Salud y AFP)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="rev-bruto-ret" class="block text-xs font-bold text-slate-700 mb-1">Bruto anual con retención empresa ($)</label>
+                        <input id="rev-bruto-ret" type="number" min="0" value="14400000" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm font-mono-num bg-white">
+                    </div>
+                    <div>
+                        <label for="rev-bruto-sin" class="block text-xs font-bold text-slate-700 mb-1">Bruto anual sin retención / particulares ($)</label>
+                        <input id="rev-bruto-sin" type="number" min="0" value="0" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm font-mono-num bg-white">
+                    </div>
+                    <div>
+                        <label for="rev-ret-real" class="block text-xs font-bold text-slate-700 mb-1">Retención acumulada sii.cl (opcional $)</label>
+                        <input id="rev-ret-real" type="number" min="0" placeholder="Auto según tasa" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm font-mono-num bg-white">
+                    </div>
+                    <div>
+                        <label for="rev-ppm" class="block text-xs font-bold text-slate-700 mb-1">PPM pagados en el año ($)</label>
+                        <input id="rev-ppm" type="number" min="0" value="0" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm font-mono-num bg-white">
+                    </div>
+                    <div>
+                        <label for="rev-gastos" class="block text-xs font-bold text-slate-700 mb-1">Régimen de gastos (Art. 50 LIR)</label>
+                        <select id="rev-gastos" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm bg-slate-50">
+                            <option value="presuntos" selected>Gastos presuntos (30%, tope 15 UTA)</option>
+                            <option value="efectivos">Gastos efectivos respaldados</option>
+                        </select>
+                    </div>
+                    <div id="wrap-rev-gastos-efectivos" class="hidden">
+                        <label for="rev-gastos-efectivos" class="block text-xs font-bold text-slate-700 mb-1">Gastos efectivos del año ($)</label>
+                        <input id="rev-gastos-efectivos" type="number" min="0" value="0" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm font-mono-num bg-white">
+                    </div>
+                    <div>
+                        <label for="rev-sueldos-dep" class="block text-xs font-bold text-slate-700 mb-1">Sueldo líquido/tributable dependiente paralelo ($)</label>
+                        <input id="rev-sueldos-dep" type="number" min="0" value="0" class="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 text-sm font-mono-num bg-white">
+                    </div>
+                    <div class="sm:col-span-2 pt-1">
+                        <label class="flex items-start gap-2.5 text-xs text-slate-700 cursor-pointer">
+                            <input id="rev-exento" type="checkbox" class="mt-0.5 w-4 h-4 accent-[#00382E]">
+                            <span>Exento de cotización obligatoria (hombre >=55 o mujer >=50 años al 01-01-2018, pensionado vejez/invalidez o régimen Capredena/Dipreca/IPS).</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-4">
+                    <div class="rounded-2xl p-5 text-white" style="background-color: #00382E;" aria-live="polite">
+                        <p id="rev-kpi-titulo" class="text-xs font-bold uppercase tracking-wider text-white/80 m-0">Resultado estimado F22</p>
+                        <div id="rev-kpi-saldo" class="text-3xl sm:text-4xl font-extrabold font-mono-num text-[#FFB703] mt-1">$0</div>
+                        <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/15 text-xs">
+                            <div><span class="block text-white/75">Retenciones + PPM</span><strong id="rev-kpi-cred" class="font-mono-num text-sm">$0</strong></div>
+                            <div><span class="block text-white/75">Cotiz. Ley 21.133</span><strong id="rev-kpi-cot" class="font-mono-num text-sm">$0</strong></div>
+                            <div><span class="block text-white/75">IGC Art. 52</span><strong id="rev-kpi-igc" class="font-mono-num text-sm">$0</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50 space-y-2 text-xs">
+                        <div class="font-bold text-slate-900">Desglose prelación previsional (Art. 92 DL 3.500) y renta</div>
+                        <div class="flex justify-between"><span>1. SIS (~1,79% sobre base 80%):</span><strong id="rev-det-sis" class="font-mono-num">$0</strong></div>
+                        <div class="flex justify-between"><span>2. Seguro Ley 16.744 + SANNA (0,93%):</span><strong id="rev-det-atep" class="font-mono-num">$0</strong></div>
+                        <div class="flex justify-between"><span>3. Salud (7% con cobertura parcial/total):</span><strong id="rev-det-salud" class="font-mono-num">$0</strong></div>
+                        <div class="flex justify-between"><span>4. AFP (10,58% ref. Modelo con cobertura):</span><strong id="rev-det-afp" class="font-mono-num">$0</strong></div>
+                        <div class="flex justify-between pt-2 border-t border-slate-200"><span>Base Imponible IGC (Art. 50/52 LIR):</span><strong id="rev-det-base-igc" class="font-mono-num">$0</strong></div>
+                    </div>
+
+                    <p id="rev-aviso-normativo" class="text-xs text-amber-950 bg-amber-50 border border-amber-200 rounded-2xl p-3 m-0 leading-relaxed"></p>
+                </div>
+            </div>
+        </section>
+
         <div class="cl-reading">
             <article class="cl-article">
                 <section>
@@ -709,6 +810,9 @@
     <script src="/js/constants.js?v=2.1.3"></script>
     <script src="/js/indicators.js?v=2.9.2"></script>
     <script src="/js/pyme_honorarios.js?v=1.0.0"></script>
+    <script src="/js/contadores_importadores.js?v=1.0.0"></script>
+    <script src="/js/pyme_excel.js?v=2.0.0"></script>
+    <script src="/js/honorarios_renta.js?v=1.0.0" defer></script>
     <script src="/js/print_brand.js?v=1.3.0"></script>
     <script>
     (function () {
