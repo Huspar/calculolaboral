@@ -393,7 +393,7 @@
                 nombre: name,
                 correo: email,
                 telefono: '',
-                tipo: 'LeadMagnet',
+                tipo: 'AnexoChecklist',
                 fuente: 'Generador Anexo 40 Horas - Checklist Pyme',
                 detalle: `Empresa: ${elements.companyName?.value || 'No informada'}, Modalidad: ${elements.modality?.value || '5x2'}`,
                 monto_calculado: '0'

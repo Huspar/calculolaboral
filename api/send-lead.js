@@ -22,7 +22,7 @@ const ALLOWED_ORIGINS = new Set([
     'http://localhost:5500'
 ]);
 
-const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'Despido', 'CartaDespido', 'ProtocoloKarin', 'InformePDF', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Demanda Despido Injustificado', 'Despido Art. 160', 'Otro']);
+const TIPO_ALLOWED = new Set(['Finiquito', 'Sueldo Liquido', 'Sueldo Líquido', 'Contacto', 'LeadMagnet', 'AnexoChecklist', 'Despido', 'CartaDespido', 'ProtocoloKarin', 'InformePDF', 'Consulta Legal', 'Pyme', 'Multa DT', 'Kit Laboral', 'Demanda Despido Injustificado', 'Despido Art. 160', 'Otro']);
 
 // Leads para abogados: basta un teléfono/WhatsApp válido, el correo es opcional
 const TIPO_ABOGADO = new Set(['Consulta Legal', 'Despido', 'Demanda Despido Injustificado', 'Despido Art. 160']);
@@ -326,8 +326,29 @@ module.exports = async (req, res) => {
                     <a href="${GUIDE_URL}" style="background: #00382E; color: #ffffff !important; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Descargar la guía (PDF)</a>
                 </p>
                 <p style="margin: 16px 0 0; font-size: 13px; color: #475569;">El enlace de descarga funciona en cualquier dispositivo. Puedes compartir la guía con quien quieras. Es material informativo y no constituye asesoría financiera ni legal.</p>
+                <p style="margin: 20px 0 6px; font-size: 13px;"><strong>Mientras decides qué hacer con tu plata:</strong></p>
+                <ul style="margin: 0 0 14px; padding-left: 20px; font-size: 13px; color: #334155;">
+                    <li style="margin-bottom: 6px;"><a href="https://calculolaboral.cl/finiquito_calculator" style="color: #00382E; font-weight: 600;">Recalcula tu finiquito con tus datos reales (gratis)</a>.</li>
+                    <li style="margin-bottom: 6px;">¿Necesitas el documento para firmar ante ministro de fe? <a href="https://calculolaboral.cl/generador-finiquito-chile?utm_source=guia-finiquito&amp;utm_medium=email" style="color: #00382E; font-weight: 600;">Generador de Finiquito para Notaría ($9.990)</a>.</li>
+                    <li style="margin-bottom: 6px;">¿Despido sin aviso, justificación dudosa o pago incompleto? <a href="https://calculolaboral.cl/finiquito_calculator#revision-caso" style="color: #00382E; font-weight: 600;">Envía tu caso para una revisión legal confidencial</a>.</li>
+                </ul>
             `;
             userHtml = buildEmailHtml({ title: 'Tu guía está lista 📘', intro: userIntro, body: userBody });
+            userText = buildEmailText({ intro: userIntro, body: userBody });
+        } else if (cleanTipo === 'AnexoChecklist') {
+            // AnexoChecklist: lo que promete el formulario del generador de Anexo 40 Horas
+            // (antes enviaba por error la guia del finiquito, que es para trabajadores)
+            userSubject = 'Tu Anexo de Jornada 42 horas y el Checklist Preventivo de la DT';
+            const userIntro = `Hola ${safeName}, gracias por solicitar el material. Aquí tienes los enlaces para dejar tu pyme lista antes de una fiscalización.`;
+            const userBody = `
+                <ul style="margin: 0 0 14px; padding-left: 20px; font-size: 13px; color: #334155;">
+                    <li style="margin-bottom: 6px;"><a href="https://calculolaboral.cl/generador-anexo-40-horas" style="color: #00382E; font-weight: 600;">Generar el Anexo de Jornada 42 horas en Word (gratis)</a>: complétalo con los datos de tu empresa y descárgalo listo para firmar (Ley 21.561).</li>
+                    <li style="margin-bottom: 6px;"><a href="https://calculolaboral.cl/checklist-fiscalizacion-dt-pymes-chile" style="color: #00382E; font-weight: 600;">Checklist Preventivo de la Dirección del Trabajo (gratis)</a>: los 10 documentos que revisa una fiscalización y cómo tenerlos al día.</li>
+                    <li style="margin-bottom: 6px;">Para el resto del cumplimiento: <a href="https://calculolaboral.cl/kit-cumplimiento-laboral-pymes" style="color: #00382E; font-weight: 600;">Kit Blindaje Laboral Pyme ($19.990)</a> con 21 modelos en Word y protocolo Ley Karin.</li>
+                </ul>
+                <p style="margin: 0 0 12px; font-size: 12px; color: #475569;">Si el anexo no descargó en la página, vuelve a generarlo desde el primer enlace: el archivo Word se arma en tu navegador con los datos que ya completaste.</p>
+            `;
+            userHtml = buildEmailHtml({ title: 'Tu material para la fiscalización', intro: userIntro, body: userBody });
             userText = buildEmailText({ intro: userIntro, body: userBody });
         } else if (cleanTipo === 'CartaDespido') {
             userSubject = 'Tus Modelos de Carta de Despido 2026 (Word .docx)';
@@ -426,12 +447,19 @@ module.exports = async (req, res) => {
                     ${esSueldo ? '¿Dónde recibirás tu sueldo?' : '¿Dónde recibirás tu pago?'} Abre una Cuenta Corriente Itaú 100% online, con mantención mensual $0. Requisitos de Itaú: mayor de 21 años, 6 meses de antigüedad laboral y renta líquida mensual desde $800.000. Sujeto a evaluación de antecedentes comerciales.<br>
                     <a href="https://calculolaboral.cl/itau-correo" style="color: #00382E; font-weight: bold;">Ver la cuenta corriente</a>${esSueldo ? '' : ' · ¿Necesitas liquidez mientras esperas el pago? <a href="https://calculolaboral.cl/abakos-emergencias" style="color: #00382E; font-weight: 600;">Simula con Abakos</a>'}
                 </div>`;
+            const regaloGuia = esSueldo ? '' : `
+                <div style="background: #e8f0ee; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin: 0 0 16px;">
+                    <p style="margin: 0 0 8px; font-size: 13px;"><strong>📘 De regalo: la guía «Qué hago con mi finiquito» (gratis)</strong></p>
+                    <p style="margin: 0 0 10px; font-size: 12.5px; color: #334155;">Qué hacer con el dinero: 3 escenarios comparados y un plan de 90 días para que la plata no se evapore mientras encuentras tu próximo trabajo.</p>
+                    <p style="margin: 0;"><a href="${GUIDE_URL}" style="background: #00382E; color: #ffffff !important; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 13px;">Descargar la guía (PDF)</a></p>
+                </div>`;
             const userBody = `
                 ${resultado}
                 <p style="margin: 0 0 12px; font-size: 13px; color: #475569;">Es una estimación referencial. El valor definitivo depende de tus antecedentes, de tu contrato y de lo que acuerdes con tu empleador.</p>
                 ${esSueldo ? '' : '<p style="margin: 0 0 12px; font-size: 13px; color: #475569;">Recuerda que, para tener poder liberatorio, el finiquito debe firmarse ante un ministro de fe (notario, Inspección del Trabajo u otro que indica el Art. 177 del Código del Trabajo).</p>'}
                 <p style="margin: 14px 0 6px;"><strong>Siguientes pasos útiles:</strong></p>
                 <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: #334155;">${siguiente}</ul>
+                ${regaloGuia}
                 ${anuncioHtml}
                 <p style="margin: 12px 0 0; font-size: 12px; color: #475569;">Recibes este correo porque pediste una copia del cálculo en calculolaboral.cl. No te enviaremos otros mensajes por este motivo.</p>
             `;
