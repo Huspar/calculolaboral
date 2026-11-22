@@ -143,6 +143,40 @@ const PREVIRED_TOPES = {
     if (r.empleador !== null) errores.push('sin "empleador" en el mes debe ser null');
     chequear('Motor · costo del empleador (AFP, SIS, seguro social, cesantía y mutual; topes, plazo fijo, 11 años y avisos)', errores);
 }
+{
+    const mesEmp = p => Object.assign(mesDe(p), { empleador: P.vigenciaDe(p).empleador });
+    const emp = (res, clave) => (res.empleador.lineas.find(l => l.clave === clave) || {}).monto;
+    const errores = [];
+    let r = calcular({
+        periodo: '2026-11',
+        trabajador: { sueldoBase: 553553, afp: 'Modelo', salud: 'fonasa', jornadaHoras: 42, contrato: 'indefinido', fechaIngreso: '2026-11-01', casaParticular: true, modalidadCasa: 'puertas_afuera' },
+        mes: { diasTrabajados: 30, gratificacion: 'no' }
+    }, mesEmp('2026-11'));
+    if (r.montos.afc !== 0) errores.push('AFC trabajadora casa particular debe ser 0, obtenido ' + r.montos.afc);
+    if (emp(r, 'indemnizacionCasa') !== Math.round(553553 * 0.0111)) errores.push('indem 1,11%: ' + emp(r, 'indemnizacionCasa'));
+    if (emp(r, 'afc') !== Math.round(553553 * 0.03)) errores.push('AFC empleador 3%: ' + emp(r, 'afc'));
+    if (emp(r, 'sis') !== Math.round(553553 * 0.0179)) errores.push('SIS nov 1,79%: ' + emp(r, 'sis'));
+    r = calcular({
+        periodo: '2026-11',
+        trabajador: { sueldoBase: 600000, afp: 'Uno', salud: 'fonasa', jornadaHoras: 48, contrato: 'indefinido', fechaIngreso: '2026-11-01', casaParticular: true, modalidadCasa: 'puertas_adentro' },
+        mes: { diasTrabajados: 30, gratificacion: 'no' }
+    }, mesEmp('2026-11'));
+    if (r.avisos.some(a => /supera la jornada máxima/.test(a.texto))) errores.push('puertas adentro no debe limitar jornada a 42h');
+    r = calcular({
+        periodo: '2026-11',
+        trabajador: { sueldoBase: 4500000, afp: 'Uno', salud: 'fonasa', jornadaHoras: 42, contrato: 'indefinido', fechaIngreso: '2026-11-01', casaParticular: true, modalidadCasa: 'puertas_afuera' },
+        mes: { diasTrabajados: 30, gratificacion: 'no' }
+    }, mesEmp('2026-11'));
+    if (emp(r, 'indemnizacionCasa') !== Math.round(r.bases.topeIndemCasa * 0.0111)) errores.push('tope 60 UF indem: ' + emp(r, 'indemnizacionCasa'));
+    if (emp(r, 'afc') !== Math.round(4500000 * 0.03)) errores.push('AFC bajo 135,2 UF debe usar 4.500.000: ' + emp(r, 'afc'));
+    r = calcular({
+        periodo: '2026-11',
+        trabajador: { sueldoBase: 600000, afp: 'Uno', salud: 'fonasa', jornadaHoras: 42, contrato: 'indefinido', fechaIngreso: '2014-01-01', casaParticular: true, modalidadCasa: 'puertas_afuera' },
+        mes: { diasTrabajados: 30, gratificacion: 'no' }
+    }, mesEmp('2026-11'));
+    if (emp(r, 'indemnizacionCasa') !== 0) errores.push('11 años cumplidos deben dejar 1,11% en 0: ' + emp(r, 'indemnizacionCasa'));
+    chequear('Motor · casa particular (0% AFC trabajadora, 1,11% tope 60 UF, 3% AFC empleador, puertas adentro)', errores);
+}
 
 // ---------- Parte 2: valores desde la API ----------
 function respuesta(cuerpo, estado = 200) { return { ok: estado === 200, status: estado, json: async () => cuerpo }; }

@@ -215,6 +215,7 @@
         liquidacion: { item_id: 'liquidacion', item_name: 'Liquidación de Sueldo en PDF', price: 2990 },
         liquidacion5: { item_id: 'liquidacion5', item_name: 'Pack 5 Liquidaciones de Sueldo en PDF', price: 9990 },
         anexo: { item_id: 'anexo', item_name: 'Anexo de Contrato de Trabajo (Word + PDF)', price: 7990 },
+        casahogar: { item_id: 'casahogar', item_name: 'Pack Asesora del Hogar al dia (Contrato + 1a Liquidacion)', price: 14990 },
         pyme3: { item_id: 'pyme3', item_name: 'Pase Pyme 3 meses', price: 19990 },
         pyme12: { item_id: 'pyme12', item_name: 'Pase Pyme 12 meses', price: 59990 }
     };

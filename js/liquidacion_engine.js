@@ -1,5 +1,5 @@
 /*
- * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.4.0)
+ * CalculoLaboral · motor del generador de liquidaciones de sueldo (v1.5.0)
  *
  * Función pura: calcular(datos, mes) devuelve las líneas de la liquidación, las bases de cálculo y los avisos.
  * "datos": { trabajador, mes, periodo "AAAA-MM" }. "mes" son los valores oficiales del mes (UF, UTM, ingreso
@@ -43,6 +43,9 @@
     var TASA_AFC_EMPLEADOR = { indefinido: 0.024, plazo: 0.03, once: 0.008 }; // art. 5 Ley 19.728
     var TASA_MUTUAL_BASE = 0.0093;        // 0,90% básica (Ley 16.744) + 0,03% SANNA (Ley 21.010)
     var TASA_MUTUAL_MAX = 0.08;
+    var TASA_INDEM_CASA = 0.0111;         // 1,11% AFP indemnización a todo evento casa particular (art. 163 inc. 5°)
+    var TOPE_INDEM_CASA_UF = 60;          // tope 60 UF para indemnización a todo evento
+    var TASA_AFC_CASA_EMPLEADOR = 0.03;   // 3,0% (2,2% CIC + 0,8% FCS, Ley 21.269)
 
     // Tramos del impuesto único en UTM: [hasta, factor, rebaja]
     var TRAMOS = [
@@ -99,10 +102,12 @@
 
         var dias = Math.min(30, Math.max(0, Math.round(n(m.diasTrabajados))));
         var f = dias / 30;
+        var esCasa = !!t.casaParticular;
+        var puertasAdentro = esCasa && t.modalidadCasa === 'puertas_adentro';
         var JORNADA_MAXIMA = mes.jornadaMaxima || JORNADA_MAXIMA_DEFECTO;
         var jornadaIndicada = n(t.jornadaHoras) || JORNADA_MAXIMA;
-        var jornada = Math.min(JORNADA_MAXIMA, Math.max(1, jornadaIndicada));
-        if (jornadaIndicada > JORNADA_MAXIMA) {
+        var jornada = puertasAdentro ? JORNADA_MAXIMA : Math.min(JORNADA_MAXIMA, Math.max(1, jornadaIndicada));
+        if (!puertasAdentro && jornadaIndicada > JORNADA_MAXIMA) {
             avisos.push({ nivel: 'aviso', texto: 'La jornada indicada (' + jornadaIndicada + ' horas) supera la jornada máxima legal de ese mes (' + JORNADA_MAXIMA + ' horas semanales): se calculó con ' + JORNADA_MAXIMA + '.' });
         }
         var sueldoBase = r(n(t.sueldoBase));
@@ -154,8 +159,10 @@
         // Descuentos legales
         var topeAfp = r(mes.topeAfpUF * mes.uf * f);
         var topeAfc = r(mes.topeAfcUF * mes.uf * f);
+        var topeIndemCasa = r(TOPE_INDEM_CASA_UF * mes.uf * f);
         var baseAfp = Math.min(totalImponible, topeAfp);
         var baseAfc = Math.min(totalImponible, topeAfc);
+        var baseIndemCasa = Math.min(totalImponible, topeIndemCasa);
         var legales = [];
 
         var afp = r(baseAfp * tasaAfp);
@@ -177,9 +184,11 @@
             legales.push({ concepto: 'Salud Fonasa', detalle: '7%', monto: salud7 });
         }
 
-        var antig = indefinido ? estadoAfc11(t.fechaIngreso, datos.periodo) : 'no';
-        var afc = indefinido && antig !== 'cumplidos' ? r(baseAfc * TASA_AFC_TRABAJADOR) : 0;
-        if (indefinido && antig === 'cumplidos') {
+        var antig = !esCasa && indefinido ? estadoAfc11(t.fechaIngreso, datos.periodo) : 'no';
+        var afc = !esCasa && indefinido && antig !== 'cumplidos' ? r(baseAfc * TASA_AFC_TRABAJADOR) : 0;
+        if (esCasa) {
+            legales.push({ concepto: 'Seguro de cesantía (Ley 21.269)', detalle: '0% trabajadora', monto: 0 });
+        } else if (indefinido && antig === 'cumplidos') {
             legales.push({ concepto: 'Seguro de cesantía', detalle: 'Sin descuento: 11 años con el mismo empleador', monto: 0 });
             avisos.push({ nivel: 'info', texto: 'No se descontó el seguro de cesantía del trabajador porque ya cumplió 11 años con este empleador (art. 9 de la Ley 19.728). Si la fecha de ingreso no corresponde a una relación laboral continua, corrígela.' });
         } else if (indefinido) {
@@ -250,12 +259,13 @@
             liquido: liquido,
             bases: {
                 dias: dias, jornada: jornada, uf: mes.uf, utm: mes.utm, imm: mes.imm,
-                topeAfp: topeAfp, topeAfc: topeAfc, baseAfp: baseAfp, baseAfc: baseAfc,
+                topeAfp: topeAfp, topeAfc: topeAfc, topeIndemCasa: topeIndemCasa,
+                baseAfp: baseAfp, baseAfc: baseAfc, baseIndemCasa: baseIndemCasa,
                 rebajaSalud: rebajaSalud, baseTributable: baseTributable, tramo: imp.tramo
             },
             // Montos retenidos al trabajador, para el resumen de lo que se paga en Previred y en el SII
             montos: { afp: afp, salud: saludTotal, afc: afc, impuesto: imp.monto, apv: apv, creditoCCAF: r(n(m.creditoCCAF)) },
-            empleador: mes.empleador ? aportesEmpleador({ totalHaberes: totalHaberes, bases: { baseAfp: baseAfp, baseAfc: baseAfc } }, datos, mes) : null,
+            empleador: mes.empleador ? aportesEmpleador({ totalHaberes: totalHaberes, bases: { dias: dias, baseAfp: baseAfp, baseAfc: baseAfc, baseIndemCasa: baseIndemCasa } }, datos, mes) : null,
             avisos: avisos,
             listo: !avisos.some(function (a) { return a.nivel === 'error'; })
         };
@@ -276,20 +286,39 @@
         var e = mes && mes.empleador;
         if (!e || !res || !res.bases) return null;
         var t = datos.trabajador || {}, b = res.bases, avisos = [];
+        var esCasa = !!t.casaParticular;
         var contrato = t.contrato || 'indefinido';
-        var tasaAfc = contrato !== 'indefinido' ? TASA_AFC_EMPLEADOR.plazo
-            : estadoAfc11(t.fechaIngreso, datos.periodo) === 'cumplidos' ? TASA_AFC_EMPLEADOR.once : TASA_AFC_EMPLEADOR.indefinido;
+        var antig11 = estadoAfc11(t.fechaIngreso, datos.periodo);
+        var tasaAfc = esCasa ? TASA_AFC_CASA_EMPLEADOR
+            : (contrato !== 'indefinido' ? TASA_AFC_EMPLEADOR.plazo
+                : antig11 === 'cumplidos' ? TASA_AFC_EMPLEADOR.once : TASA_AFC_EMPLEADOR.indefinido);
         var tm = Math.round(n(datos.tasaMutual) * 100) / 10000;
         var tasaMutual = tm >= TASA_MUTUAL_BASE && tm <= TASA_MUTUAL_MAX ? tm : TASA_MUTUAL_BASE;
         var lineas = [
             { clave: 'afp', concepto: 'AFP (cargo del empleador)', detalle: pct(e.afp), monto: r(b.baseAfp * e.afp) },
             { clave: 'sis', concepto: 'Seguro de invalidez y sobrevivencia (SIS)', detalle: pct(e.sis), monto: r(b.baseAfp * e.sis) },
             { clave: 'seguroSocial', concepto: 'Seguro social', detalle: pct(e.seguroSocial) + (e.seguroSocialDetalle ? ' (' + e.seguroSocialDetalle + ')' : ''), monto: r(b.baseAfp * e.seguroSocial) },
-            { clave: 'afc', concepto: 'Seguro de cesantía (cargo del empleador)', detalle: pct(tasaAfc), monto: r(b.baseAfc * tasaAfc) },
+            { clave: 'afc', concepto: 'Seguro de cesantía (cargo del empleador)', detalle: esCasa ? '3% (2,2% CIC + 0,8% FCS, Ley 21.269)' : pct(tasaAfc), monto: r(b.baseAfc * tasaAfc) },
             { clave: 'mutual', concepto: 'Mutual o ISL (accidentes del trabajo)', detalle: pct(tasaMutual), monto: r(b.baseAfp * tasaMutual) }
         ];
+        if (esCasa) {
+            var fCasa = (b.dias || 30) / 30;
+            var baseIndem = b.baseIndemCasa != null ? b.baseIndemCasa : Math.min(b.baseAfp, r(TOPE_INDEM_CASA_UF * mes.uf * fCasa));
+            var tasaIndem = antig11 === 'cumplidos' ? 0 : TASA_INDEM_CASA;
+            lineas.splice(4, 0, {
+                clave: 'indemnizacionCasa',
+                concepto: 'Indemnización a todo evento (AFP)',
+                detalle: antig11 === 'cumplidos' ? 'Tope 11 años cumplido (art. 163 CT)' : '1,11% (tope 60 UF, art. 163 CT)',
+                monto: r(baseIndem * tasaIndem)
+            });
+            if (antig11 === 'cumplidos') {
+                avisos.push({ nivel: 'info', texto: 'La trabajadora cumplió 11 años continuos con el mismo empleador: el aporte de 1,11% para indemnización a todo evento se limita a los primeros 11 años (art. 163 inc. 5° CT).' });
+            }
+        }
         if (!tm) {
-            avisos.push({ nivel: 'info', texto: 'Para la mutual o el ISL usamos la tasa mínima de 0,93%. Si tu empresa paga una cotización adicional, indica la tasa total en «Empresa».' });
+            avisos.push({ nivel: 'info', texto: esCasa
+                ? 'Se aplicó la tasa mínima ISL de 0,93% (0,90% Ley 16.744 + 0,03% SANNA). Si pagas una tasa adicional en mutual, ingrésala.'
+                : 'Para la mutual o el ISL usamos la tasa mínima de 0,93%. Si tu empresa paga una cotización adicional, indica la tasa total en «Empresa».' });
         }
         if (e.porConfirmar) {
             avisos.push({ nivel: 'info', texto: 'La tasa del SIS de este mes aún no está publicada: usamos la vigente (' + pct(e.sis) + '). Confírmala en Previred.' });
@@ -302,7 +331,7 @@
         return { lineas: lineas, total: total, costoTotal: (res.totalHaberes || 0) + total, tasaMutual: tasaMutual, avisos: avisos };
     }
 
-    var api = { calcular: calcular, impuestoUnico: impuestoUnico, aportesEmpleador: aportesEmpleador, TOPE_DESCUENTOS_PACTADOS: TOPE_DESCUENTOS_PACTADOS, version: '1.4.0' };
+    var api = { calcular: calcular, impuestoUnico: impuestoUnico, aportesEmpleador: aportesEmpleador, TOPE_DESCUENTOS_PACTADOS: TOPE_DESCUENTOS_PACTADOS, version: '1.5.0' };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLLiquidacionEngine = api;
 })(typeof window !== 'undefined' ? window : this);

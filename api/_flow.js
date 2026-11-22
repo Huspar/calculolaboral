@@ -124,6 +124,13 @@ const PRODUCTS = {
         subject: 'Anexo de Contrato de Trabajo (Word + PDF)',
         page: '/generador-anexo-contrato-chile',
         unlock: true
+    },
+    casahogar: {
+        code: 'CH',
+        amount: 14990,
+        subject: 'Pack Asesora del Hogar al dia (Contrato + 1a Liquidacion)',
+        page: '/pack-asesora-del-hogar-chile',
+        unlock: true
     }
 };
 // Pase Pyme: acceso al Asistente Laboral Pyme por `dias` desde la confirmacion del pago. No es descarga ni desbloqueo de generador:
