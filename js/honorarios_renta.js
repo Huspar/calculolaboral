@@ -119,6 +119,7 @@
             rentaNetaHonorarios: rentaNetaHonorarios,
             baseIgc: baseIgc,
             igc: igc,
+            iuscDependiente: iuscDependiente,
             creditosDisponibles: creditosDisponibles,
             totalCargos: totalCargos,
             saldoFinal: saldoFinal,
@@ -184,6 +185,7 @@
             ppmPagados: doc.getElementById('rev-ppm').value,
             sueldosImponibleDependiente: doc.getElementById('rev-sueldos-dep').value,
             sueldosRentaNetaDependiente: doc.getElementById('rev-sueldos-dep').value,
+            impuestoUnicoDependiente: doc.getElementById('rev-iusc-dep').value,
             tipoGastos: tipoGastos,
             gastosEfectivos: doc.getElementById('rev-gastos-efectivos').value,
             cobertura: doc.getElementById('rev-cobertura').value,
@@ -201,6 +203,7 @@
         set('rev-det-salud', pesos(r.cotizaciones.salud));
         set('rev-det-afp', pesos(r.cotizaciones.afp));
         set('rev-det-base-igc', pesos(r.baseIgc));
+        set('rev-det-iusc', pesos(r.iuscDependiente));
 
         var aviso = doc.getElementById('rev-aviso-normativo');
         if (aviso) {
@@ -212,7 +215,7 @@
 
     doc.addEventListener('DOMContentLoaded', function () {
         if (!doc.getElementById('rev-anio-comercial')) return;
-        ['rev-anio-comercial', 'rev-bruto-ret', 'rev-bruto-sin', 'rev-ret-real', 'rev-ppm', 'rev-sueldos-dep', 'rev-gastos', 'rev-gastos-efectivos', 'rev-cobertura', 'rev-exento'].forEach(function (id) {
+        ['rev-anio-comercial', 'rev-bruto-ret', 'rev-bruto-sin', 'rev-ret-real', 'rev-ppm', 'rev-sueldos-dep', 'rev-iusc-dep', 'rev-gastos', 'rev-gastos-efectivos', 'rev-cobertura', 'rev-exento'].forEach(function (id) {
             var el = doc.getElementById(id);
             if (el) {
                 el.addEventListener('input', actualizarUI);
