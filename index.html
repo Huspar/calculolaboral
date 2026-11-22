@@ -607,6 +607,14 @@ window.addEventListener('load', function () {
                 padding-right: 2rem !important;
             }
         }
+        /* Tap targets legibles en el pie (idea #14): cada enlace tocable mide >= 44 px en movil */
+        @media (max-width: 767px) {
+            .teal-footer-curve a {
+                display: inline-flex;
+                align-items: center;
+                min-height: 44px;
+            }
+        }
 .max-w-4xl {
             max-width: 56rem !important;
             margin-left: auto !important;
