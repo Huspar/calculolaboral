@@ -205,6 +205,70 @@
         }).then(function () { estadoCargando(form, false); });
     }
 
+    // Reloj de vencimientos: dias 13 (Previred por Internet), 20 y 28 (F29), corridos a dia habil.
+    function iniciarReloj() {
+        var cont = doc.getElementById('reloj-vencimientos');
+        var F = typeof window !== 'undefined' ? window.CLFeriados : null;
+        if (!cont || !F) return;
+        var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        var DOS = function (n) { return n < 10 ? '0' + n : String(n); };
+        var FECHAS = [['previred', 13], ['f29', 20], ['f29sinpago', 28]];
+
+        function ahoraSantiago() {
+            return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Santiago' }));
+        }
+
+        function ajustar(y, m, dia) {
+            var base = y + '-' + DOS(m) + '-' + DOS(dia);
+            try {
+                if (F.cubre(y) && !F.esDiaHabil(base)) return F.siguienteDiaHabil(base);
+            } catch (e) { /* sin cobertura del anio: se muestra la fecha sin corrimiento */ }
+            return base;
+        }
+
+        function objetivo(dia) {
+            var ahora = ahoraSantiago();
+            var y = ahora.getFullYear();
+            var m = ahora.getMonth() + 1;
+            var iso = ajustar(y, m, dia);
+            var p = iso.split('-');
+            var f = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 23, 59, 59);
+            if (f.getTime() < ahora.getTime()) {
+                var m2 = m + 1, y2 = y;
+                if (m2 > 12) { m2 = 1; y2 = y + 1; }
+                iso = ajustar(y2, m2, dia);
+                p = iso.split('-');
+                f = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 23, 59, 59);
+            }
+            return { iso: iso, fecha: f, diaOriginal: dia };
+        }
+
+        function pintar() {
+            var ahora = ahoraSantiago();
+            FECHAS.forEach(function (par) {
+                var diasEl = doc.getElementById('reloj-d-' + par[0]);
+                if (!diasEl) return;
+                var o = objetivo(par[1]);
+                var totalMin = Math.max(0, Math.floor((o.fecha.getTime() - ahora.getTime()) / 60000));
+                var d = Math.floor(totalMin / 1440);
+                var h = Math.floor((totalMin % 1440) / 60);
+                var mi = totalMin % 60;
+                diasEl.textContent = String(d);
+                var horasEl = doc.getElementById('reloj-h-' + par[0]);
+                if (horasEl) horasEl.textContent = h + 'h ' + mi + 'm';
+                var fechaEl = doc.getElementById('reloj-fecha-' + par[0]);
+                var p = o.iso.split('-');
+                if (fechaEl) {
+                    var corrido = Number(p[2]) !== o.diaOriginal ? ' (corrido a día hábil)' : '';
+                    fechaEl.textContent = 'Vence el ' + Number(p[2]) + ' de ' + MESES[Number(p[1]) - 1] + corrido;
+                }
+            });
+        }
+
+        pintar();
+        setInterval(pintar, 30000);
+    }
+
     function iniciar() {
         if (!doc.getElementById('mon-preguntas')) return;
 
@@ -316,6 +380,8 @@
         if (btnAnual) btnAnual.addEventListener('click', function () { comprarPlan('monitor12'); });
         var btnMensual = doc.getElementById('btn-mon-mensual');
         if (btnMensual) btnMensual.addEventListener('click', function () { comprarPlan('monitor1'); });
+
+        iniciarReloj();
     }
 
     if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', iniciar);

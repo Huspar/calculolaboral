@@ -640,6 +640,55 @@ window.addEventListener('load', function () {
             <p class="text-xs text-slate-500 mt-4 mb-0">Plazos referenciales según la normativa vigente (nov-2026); revisa tu caso concreto con tu contador o en los sitios del SII, la TGR y PreviRed.</p>
         </section>
 
+        <!-- Reloj de vencimientos -->
+        <section id="reloj-vencimientos" aria-labelledby="reloj-t" class="mt-10">
+            <h2 id="reloj-t" class="text-xl sm:text-2xl font-extrabold text-slate-900 m-0 mb-1">¿Cuánto falta para tu próximo vencimiento?</h2>
+            <p class="text-xs text-slate-500 m-0 mb-4">Fechas en hora de Chile; si caen en fin de semana o feriado, se corren al día hábil siguiente.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs">
+                    <p class="text-xs font-bold text-slate-500 m-0">Cotizaciones Previred (pago por Internet)</p>
+                    <p id="reloj-fecha-previred" class="text-sm font-bold text-slate-900 mt-1 mb-3">—</p>
+                    <div class="flex items-end gap-3">
+                        <div><span id="reloj-d-previred" class="block text-3xl font-extrabold font-mono-num text-[#00382E]">--</span><span class="text-[11px] font-bold text-slate-500">días</span></div>
+                        <span id="reloj-h-previred" class="text-xs font-bold font-mono-num text-slate-600 mb-1">--h --m</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs">
+                    <p class="text-xs font-bold text-slate-500 m-0">F29 con pago (electrónico)</p>
+                    <p id="reloj-fecha-f29" class="text-sm font-bold text-slate-900 mt-1 mb-3">—</p>
+                    <div class="flex items-end gap-3">
+                        <div><span id="reloj-d-f29" class="block text-3xl font-extrabold font-mono-num text-[#00382E]">--</span><span class="text-[11px] font-bold text-slate-500">días</span></div>
+                        <span id="reloj-h-f29" class="text-xs font-bold font-mono-num text-slate-600 mb-1">--h --m</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs">
+                    <p class="text-xs font-bold text-slate-500 m-0">F29 sin pago y sin movimiento</p>
+                    <p id="reloj-fecha-f29sinpago" class="text-sm font-bold text-slate-900 mt-1 mb-3">—</p>
+                    <div class="flex items-end gap-3">
+                        <div><span id="reloj-d-f29sinpago" class="block text-3xl font-extrabold font-mono-num text-[#00382E]">--</span><span class="text-[11px] font-bold text-slate-500">días</span></div>
+                        <span id="reloj-h-f29sinpago" class="text-xs font-bold font-mono-num text-slate-600 mb-1">--h --m</span>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 mt-3 mb-0">El plazo general del F29 (sin documentos electrónicos) es el día 12; quien declara y paga en línea vence el día 20, y la declaración sin pago por Internet, el 28.</p>
+        </section>
+
+        <!-- IVA proyectado del mes -->
+        <section id="iva-proyectado" aria-labelledby="iva-t" class="mt-8 bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="flex-1">
+                    <h2 id="iva-t" class="text-lg font-extrabold text-slate-900 m-0">¿Cuánto vas a pagar de IVA este mes?</h2>
+                    <p class="text-xs text-slate-600 leading-relaxed mt-1 mb-0">
+                        Sube el CSV de tu RCV del mes a la calculadora F29 y proyecta el IVA, los PPM y las retenciones antes del vencimiento. Con el Monitor conectado, ese número se actualizará solo (validación en curso).
+                    </p>
+                </div>
+                <a href="calculadora-f29-chile" data-cta="calculadora-f29" data-cta-name="Calculadora F29" data-cta-slot="monitor-iva" class="btn-dark-pill shrink-0 !py-2 !px-5">
+                    <span class="material-icons text-base" aria-hidden="true">trending_up</span>
+                    <span>Proyectar mi IVA con el RCV</span>
+                </a>
+            </div>
+        </section>
+
         <section class="mt-12 pt-8 border-t border-slate-200 max-w-4xl space-y-4">
             <h2 class="text-xl font-extrabold text-slate-900">Por qué un monitor y no solo recordatorios</h2>
             <p class="text-sm text-slate-700 leading-relaxed">
@@ -715,7 +764,8 @@ window.addEventListener('load', function () {
         </div>
     </footer>
 
-    <script src="/js/monitor_web.js?v=1.1.0" defer></script>
+    <script src="/js/feriados_cl.js?v=1.0.0" defer></script>
+    <script src="/js/monitor_web.js?v=1.2.0" defer></script>
     <script src="/js/checkout_consent.js?v=1.1.0" defer></script>
     <script src="/js/origen.js?v=1.0.0" defer></script>
     <script src="/js/motion.js?v=1.0.0" defer></script>
