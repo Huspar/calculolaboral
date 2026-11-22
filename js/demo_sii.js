@@ -1784,6 +1784,25 @@
         revisarSesionYGateway();
     });
 
+    function alertasParaCliente(nombreCliente) {
+        var objetivo = String(nombreCliente || '').trim().toLowerCase();
+        var items = Array.isArray(alertasState.items) ? alertasState.items : [];
+        return items.filter(function (a) {
+            if (!objetivo) return true;
+            var empNom = String(a.razonSocial || resolverNombrePorCompany(a.companyId, a.rut) || '').trim().toLowerCase();
+            return empNom === objetivo;
+        }).map(function (a) {
+            var meta = Sii.metaModuloAlerta(a);
+            return {
+                modulo: meta.modulo,
+                severity: String(a.severity || 'INFO').toUpperCase(),
+                title: a.title || meta.textoDefecto,
+                detail: a.detail || '',
+                amountAtRisk: Number(a.amountAtRisk || 0) || 0
+            };
+        });
+    }
+
     window.CLDemoSii = {
         rutDeCliente: rutDeCliente,
         guardarRutCliente: guardarRutCliente,
@@ -1795,6 +1814,7 @@
         sincronizarCarteraCompleta: sincronizarCarteraCompleta,
         revisarSesionYGateway: revisarSesionYGateway,
         estadoPreviredCliente: estadoPreviredCliente,
-        cargarAlertasEstudio: cargarAlertasEstudio
+        cargarAlertasEstudio: cargarAlertasEstudio,
+        alertasParaCliente: alertasParaCliente
     };
 })();

@@ -837,12 +837,27 @@
         actualizarPreviewUtmCard();
     }
 
+    // Reconocimiento simple de facturas de supermercado (cód. 761/762 F29) para el lote de acuses
+    var RE_SUPER = /supermercado|hipermercado|lider|jumbo|unimarc|santa[\s_]?isabel|tottus|smu|rendic|cencosud|walmart|ekono|acuenta|ok[\s_]?market|mayorista[\s_]?10|alvi/i;
+    var loteCorriendo = false;
+    var loteContexto = '';
+
     function pintarAuditoriaComprasF29(m) {
+        var ctxActual = clienteClave() + '::' + periodoActual();
+        if (loteContexto !== ctxActual) {
+            loteContexto = ctxActual;
+            if (!loteCorriendo && $('acuse-lote-estado') && $('acuse-lote-texto')) {
+                $('acuse-lote-estado').hidden = true;
+                $('acuse-lote-texto').textContent = '';
+                $('acuse-lote-texto').setAttribute('data-modo', '');
+            }
+        }
         var panel = $('f29-auditoria-compras');
         if (!panel) return;
         var est = m.estado || {};
         var bloqueado = !!est.cerradoTributario;
         var pendientes = Array.isArray(est.comprasPendientesAcuse) ? est.comprasPendientesAcuse : [];
+        var decs = est.acuseDecisiones || {};
         var fRes = (m.f29 && m.f29.resumen) || {};
         var superCant = fRes.comprasSupermercadoCantOrig || 0;
         var superIva = fRes.comprasSupermercadoIvaOrig || 0;
@@ -856,9 +871,28 @@
             if ($('txt-acuse-urgentes')) $('txt-acuse-urgentes').textContent = urgentes + ' por vencer';
         }
 
+        // Lote (Ley 19.983): candidatos sin decision previa; supermercados solo si se marcan
+        var sinDecision = pendientes.filter(function (p) { return !decs[p.id]; });
+        var haySuper = sinDecision.some(function (p) { return RE_SUPER.test(p.razonSocial || ''); });
+        var chkSup = $('f29-acuse-lote-super');
+        var loteCandidatos = sinDecision.filter(function (p) {
+            if (haySuper && RE_SUPER.test(p.razonSocial || '')) return !!(chkSup && chkSup.checked);
+            return true;
+        });
+        if ($('f29-acuse-lote-super-wrap')) {
+            $('f29-acuse-lote-super-wrap').hidden = !(haySuper && sinDecision.length > 0 && !bloqueado);
+        }
+        if ($('btn-acuse-lote')) {
+            $('btn-acuse-lote').hidden = loteCandidatos.length === 0 || bloqueado;
+        }
+        if ($('acuse-lote-cant')) $('acuse-lote-cant').textContent = loteCandidatos.length;
+        if (!loteCorriendo && $('acuse-lote-estado') && $('acuse-lote-texto') &&
+            $('acuse-lote-texto').getAttribute('data-modo') !== 'resultado') {
+            $('acuse-lote-estado').hidden = true;
+        }
+
         var tbody = $('tbody-f29-acuse-compras');
         if (tbody) {
-            var decs = est.acuseDecisiones || {};
             tbody.innerHTML = pendientes.length
                 ? pendientes.map(function (p) {
                     var selloCls = p.estadoPlazo === 'critico' ? 'sello-riesgo' : (p.estadoPlazo === 'tacito' ? 'sello-guardada' : 'sello-emitida');
@@ -984,8 +1018,12 @@
             '<div class="f29-sem-grid">' + cardsHtml + '</div>';
     }
 
-    function generarTextoWhatsapp(m) {
+    function generarTextoWhatsapp(m, opts) {
         if (!Pro || !m) return '';
+        var o = opts || {};
+        var est = m.estado || {};
+        var tieneDatos = Boolean((m.compras && m.compras.documentos && m.compras.documentos.length) ||
+            (m.ventas && m.ventas.documentos && m.ventas.documentos.length));
         return Pro.generarResumenWhatsappCliente({
             cliente: clienteNombre(),
             periodo: m.periodo,
@@ -995,7 +1033,11 @@
             flujo: m.flujo,
             nomina: m.nomina,
             auditoria: m.auditoria,
-            estudio: leerMembrete()
+            estudio: leerMembrete(),
+            cerradoTributario: Boolean(est.cerradoTributario),
+            tieneDatos: tieneDatos,
+            incluirRecordatorio: o.incluirRecordatorio !== undefined ? Boolean(o.incluirRecordatorio) : true,
+            portalUrl: o.portalUrl || ''
         });
     }
 
@@ -1674,10 +1716,13 @@
             var reg = st && st.regimen ? st.regimen : '14D3';
             var cerrado = !!(st && st.cerradoTributario);
             var f29Total = 0;
+            var f29Listo = false;
             if (k === clienteClave()) {
                 f29Total = m.f29.codigos[91] || 0;
                 cerrado = !!m.estado.cerradoTributario;
                 reg = m.estado.regimen;
+                f29Listo = !!((m.compras && m.compras.documentos && m.compras.documentos.length) ||
+                    (m.ventas && m.ventas.documentos && m.ventas.documentos.length));
             } else if (st && F29) {
                 var v = st.ventasRows ? F29.parsearRcv(st.ventasRows, 'ventas') : F29.parsearRcv(st.ventasCsv || '', 'ventas');
                 var c = st.comprasRows ? F29.parsearRcv(st.comprasRows, 'compras') : F29.parsearRcv(st.comprasCsv || '', 'compras');
@@ -1697,6 +1742,7 @@
                         : ''
                 });
                 f29Total = f.codigos[91] || 0;
+                f29Listo = !!(st.ventasRows || st.ventasCsv || st.comprasRows || st.comprasCsv);
             }
             return {
                 key: k,
@@ -1705,6 +1751,7 @@
                 regimen: reg,
                 cerrado: cerrado,
                 f29Total: f29Total,
+                f29Listo: f29Listo,
                 esActivo: k === clienteClave()
             };
         });
@@ -1719,12 +1766,19 @@
 
         var tbody = $('tbody-torre-clientes');
         if (tbody) {
+            var decsAct = (m.estado && m.estado.acuseDecisiones) || {};
+            var pendAct = (m.estado && Array.isArray(m.estado.comprasPendientesAcuse))
+                ? m.estado.comprasPendientesAcuse.filter(function (p) { return !decsAct[p.id]; }).length
+                : 0;
             tbody.innerHTML = lista.map(function (c) {
                 var rutTxt = (window.CLDemoSii && window.CLDemoSii.rutDeCliente) ? window.CLDemoSii.rutDeCliente(c.nombre) : '';
                 var siiCell = (window.CLDemoSii && window.CLDemoSii.celdaTorre)
                     ? window.CLDemoSii.celdaTorre(c, rutTxt)
                     : '<span class="sello sello-guardada">Modo CSV</span>';
                 var esSyncActiva = (window.CLDemoSii && window.CLDemoSii.filaActivaSync && window.CLDemoSii.filaActivaSync(c, rutTxt));
+                var estF29 = c.cerrado
+                    ? { txt: 'Declarado', cls: 'sello-activo' }
+                    : (c.f29Listo ? { txt: 'Borrador listo', cls: 'sello-preparada' } : { txt: 'Sin declarar', cls: 'sello-guardada' });
                 return '<tr' + (esSyncActiva ? ' class="fila-sii-activa"' : '') + '>' +
                     '<td><strong>' + D.esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip">En uso</span>' : '') + '</td>' +
                     '<td class="mono">' + (rutTxt ? D.esc(rutTxt) : '<span class="texto-ayuda">Sin RUT</span>') + '</td>' +
@@ -1732,10 +1786,15 @@
                     '<td>' + siiCell + '</td>' +
                     '<td class="mono num">' + c.trabajadores + '</td>' +
                     '<td class="mono num">' + D.money(c.f29Total) + '</td>' +
+                    '<td><span class="sello ' + estF29.cls + '">' + estF29.txt + '</span>' +
+                        (c.esActivo && pendAct > 0 ? '<a class="torre-acuse-link" href="#f29" data-torre-ir-f29="1">' + pendAct + ' acuses pendientes</a>' : '') +
+                    '</td>' +
                     '<td><span class="app-nav-chip ' + (c.cerrado ? '' : 'abierto') + '">' + (c.cerrado ? 'Cerrado' : 'Abierto') + '</span></td>' +
                     '<td class="num"><div class="torre-acciones-celda">' +
                     '<button type="button" class="btn btn-chico" data-torre-sync-id="' + D.esc((window.CLDemoSii && window.CLDemoSii.estadoConexionCliente && window.CLDemoSii.estadoConexionCliente(c.nombre).companyId) || c.nombre) + '" data-torre-sync-nombre="' + D.esc(c.nombre) + '">Sincronizar</button>' +
                     '<button type="button" class="btn btn-chico" data-torre-trabajar="' + D.esc(c.nombre) + '">' + (c.esActivo ? 'Activo' : 'Trabajar') + '</button>' +
+                    '<button type="button" class="btn btn-chico" data-torre-resumen="' + D.esc(c.nombre) + '">Enviar resumen</button>' +
+                    '<button type="button" class="btn btn-chico" data-torre-informe="' + D.esc(c.nombre) + '"><span class="material-icons" style="font-size:14px;vertical-align:-2px" aria-hidden="true">picture_as_pdf</span> Informe PDF</button>' +
                     '</div></td>' +
                     '</tr>';
             }).join('');
@@ -2165,7 +2224,8 @@
         cambiarACliente: cambiarACliente,
         cambiarModulo: cambiarModulo,
         calcularModelo: calcularModelo,
-        refrescarTodo: refrescarTodo
+        refrescarTodo: refrescarTodo,
+        generarTextoWhatsapp: function (opts) { return generarTextoWhatsapp(calcularModelo(), opts); }
     };
 
     // ------------------------------------------------------------- Exportaciones e Impresion
@@ -2822,6 +2882,140 @@
                 refrescarTodo();
                 D.avisar('Crédito de supermercados acreditado con giro (cód. 761/762 incluido en cód. 537).');
             });
+        }
+
+        // ---- Acuse en lote (Ley 19.983): confirmación inline, progreso y resultado ----
+        function candidatosLote() {
+            var est = leerEstadoActual();
+            var pendientes = Array.isArray(est.comprasPendientesAcuse) ? est.comprasPendientesAcuse : [];
+            var decs = est.acuseDecisiones || {};
+            var chkSup = $('f29-acuse-lote-super');
+            var incluirSuper = !!(chkSup && chkSup.checked);
+            return pendientes.filter(function (p) {
+                if (decs[p.id]) return false;
+                if (RE_SUPER.test(p.razonSocial || '')) return incluirSuper;
+                return true;
+            });
+        }
+
+        function estadoLote(texto, modo) {
+            var box = $('acuse-lote-estado');
+            if (!box) return;
+            box.hidden = !texto;
+            if ($('acuse-lote-texto')) {
+                $('acuse-lote-texto').innerHTML = texto || '';
+                $('acuse-lote-texto').setAttribute('data-modo', modo || '');
+            }
+            if ($('btn-acuse-lote-confirmar')) $('btn-acuse-lote-confirmar').hidden = modo !== 'confirmar';
+            if ($('btn-acuse-lote-cancelar')) $('btn-acuse-lote-cancelar').hidden = modo !== 'confirmar';
+            if ($('btn-acuse-lote-reintentar')) $('btn-acuse-lote-reintentar').hidden = modo !== 'reintentar';
+        }
+
+        function textoConfirmacionLote(lista, enviaSii) {
+            var iva = lista.reduce(function (s, p) { return s + (p.iva || 0); }, 0);
+            return 'Se ' + (enviaSii
+                ? 'enviará acuse de recibo (Ley 19.983) al SII'
+                : 'guardarán marcas locales de aceptación (ERM) para ejecutar en sii.cl') +
+                ' para <strong class="mono">' + lista.length + '</strong> factura(s) pendiente(s) por <strong class="mono">' + D.money(iva) + '</strong> de IVA. ' +
+                (enviaSii ? 'Esta acción queda registrada en el SII y es irreversible.' : 'No se envía nada al SII desde esta vista.');
+        }
+
+        async function correrLote(soloFallidas) {
+            if (loteCorriendo) return;
+            var est0 = leerEstadoActual();
+            var pend0 = Array.isArray(est0.comprasPendientesAcuse) ? est0.comprasPendientesAcuse : [];
+            var decs0 = est0.acuseDecisiones || {};
+            var lista = soloFallidas
+                ? pend0.filter(function (p) { return decs0[p.id] && decs0[p.id].modo === 'error'; })
+                : candidatosLote();
+            if (!lista.length) { estadoLote('', null); return; }
+            var omitidas = soloFallidas ? 0 : Math.max(0, pend0.filter(function (p) { return !decs0[p.id]; }).length - lista.length);
+            var st = (window.CLDemoSii && window.CLDemoSii.estadoConexionCliente)
+                ? window.CLDemoSii.estadoConexionCliente(clienteNombre())
+                : {};
+            var enviaSii = !!(st.autenticado && st.gatewayConfigured && st.companyId && st.tienePfx);
+            var apiSii = enviaSii && window.CLSii ? window.CLSii.crearClienteApi() : null;
+            loteCorriendo = true;
+            if ($('btn-acuse-lote')) $('btn-acuse-lote').disabled = true;
+            var ok = 0, errores = 0;
+            for (var i = 0; i < lista.length; i++) {
+                (function () {
+                    var p = lista[i];
+                    estadoLote('Procesando ' + (i + 1) + ' de ' + lista.length + ' facturas...', 'progreso');
+                    guardarEstadoActual(function (est) {
+                        est.acuseDecisiones = est.acuseDecisiones || {};
+                        est.acuseDecisiones[p.id] = { modo: 'enviando', accion: 'ERM' };
+                    });
+                })();
+                try {
+                    if (enviaSii) {
+                        var resp = await apiSii.enviarAcuseRcv(st.companyId, {
+                            tipoDoc: Number(lista[i].tipoDoc) || 33,
+                            folio: Number(lista[i].folio),
+                            rutEmisor: lista[i].rut,
+                            accion: 'ERM',
+                            period: periodoActual()
+                        });
+                        var ac = (resp && resp.acuse) || {};
+                        (function () {
+                            var p = lista[i];
+                            guardarEstadoActual(function (est) {
+                                est.acuseDecisiones[p.id] = {
+                                    modo: 'sii', accion: 'ERM',
+                                    estadoContab: ac.estadoContab || 'REGISTRO',
+                                    fechaAcuse: ac.fechaAcuse || new Date().toISOString()
+                                };
+                            });
+                        })();
+                    } else {
+                        (function () {
+                            var p = lista[i];
+                            guardarEstadoActual(function (est) {
+                                est.acuseDecisiones[p.id] = { modo: 'local', accion: 'ERM' };
+                            });
+                        })();
+                    }
+                    ok++;
+                } catch (errLote) {
+                    (function () {
+                        var p = lista[i];
+                        guardarEstadoActual(function (est) {
+                            est.acuseDecisiones[p.id] = { modo: 'error', accion: 'ERM', error: (errLote && errLote.message) || 'Error al enviar' };
+                        });
+                    })();
+                    errores++;
+                }
+            }
+            loteCorriendo = false;
+            if ($('btn-acuse-lote')) $('btn-acuse-lote').disabled = false;
+            refrescarTodo();
+            estadoLote('<strong class="mono">Aceptadas: ' + ok + ' · Omitidas/reclamadas: ' + omitidas + ' · Con error: ' + errores + '</strong>' +
+                (enviaSii ? '' : ' (marcas locales; ejecútalas en sii.cl)'), errores > 0 ? 'reintentar' : 'resultado');
+        }
+
+        if ($('btn-acuse-lote')) {
+            $('btn-acuse-lote').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                var lista = candidatosLote();
+                if (!lista.length) return;
+                var st = (window.CLDemoSii && window.CLDemoSii.estadoConexionCliente)
+                    ? window.CLDemoSii.estadoConexionCliente(clienteNombre())
+                    : {};
+                var enviaSii = !!(st.autenticado && st.gatewayConfigured && st.companyId && st.tienePfx);
+                estadoLote(textoConfirmacionLote(lista, enviaSii), 'confirmar');
+            });
+        }
+        if ($('btn-acuse-lote-cancelar')) {
+            $('btn-acuse-lote-cancelar').addEventListener('click', function () { estadoLote('', null); });
+        }
+        if ($('btn-acuse-lote-confirmar')) {
+            $('btn-acuse-lote-confirmar').addEventListener('click', function () { correrLote(false); });
+        }
+        if ($('btn-acuse-lote-reintentar')) {
+            $('btn-acuse-lote-reintentar').addEventListener('click', function () { correrLote(true); });
+        }
+        if ($('f29-acuse-lote-super')) {
+            $('f29-acuse-lote-super').addEventListener('change', function () { refrescarTodo(); });
         }
 
         // Botones F29
@@ -3686,11 +3880,52 @@
         }
         if ($('tbody-torre-clientes')) {
             $('tbody-torre-clientes').addEventListener('click', function (ev) {
+                var linkF29 = ev.target.closest('[data-torre-ir-f29]');
+                if (linkF29) {
+                    ev.preventDefault();
+                    cambiarModulo('f29');
+                    setTimeout(function () {
+                        var pAc = $('f29-auditoria-compras');
+                        if (pAc && pAc.scrollIntoView) pAc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 60);
+                    return;
+                }
                 var btn = ev.target.closest('[data-torre-trabajar]');
-                if (!btn) return;
-                cambiarACliente(btn.getAttribute('data-torre-trabajar'));
-                refrescarTodo();
-                D.avisar('Trabajando con ' + btn.getAttribute('data-torre-trabajar') + '.');
+                if (btn) {
+                    cambiarACliente(btn.getAttribute('data-torre-trabajar'));
+                    refrescarTodo();
+                    D.avisar('Trabajando con ' + btn.getAttribute('data-torre-trabajar') + '.');
+                    return;
+                }
+                var btnRes = ev.target.closest('[data-torre-resumen]');
+                if (btnRes) {
+                    var nomR = btnRes.getAttribute('data-torre-resumen');
+                    if (nomR !== clienteNombre()) {
+                        cambiarACliente(nomR);
+                        refrescarTodo();
+                        D.avisar('Trabajando con ' + nomR + '.');
+                    }
+                    if (window.CLDemoPortalEstudio && window.CLDemoPortalEstudio.abrirDialogoPortal) {
+                        window.CLDemoPortalEstudio.abrirDialogoPortal();
+                    }
+                    return;
+                }
+                var btnInf = ev.target.closest('[data-torre-informe]');
+                if (btnInf) {
+                    var nomI = btnInf.getAttribute('data-torre-informe');
+                    var correr = function () {
+                        imprimirInformeSituacion(($('rep-informe-corte') && $('rep-informe-corte').value) || 'diario');
+                    };
+                    if (nomI !== clienteNombre()) {
+                        cambiarACliente(nomI);
+                        refrescarTodo();
+                        D.avisar('Trabajando con ' + nomI + '. Informe en preparación.');
+                        setTimeout(correr, 150);
+                    } else {
+                        correr();
+                    }
+                    return;
+                }
             });
         }
 
@@ -4236,6 +4471,73 @@
                 imprimirHtmlModulo('Resumen Mensual para el Cliente', m.f29.regimenNombre, html, 'Incluye F29 borrador, resultados del período y base tributaria.');
             });
         }
+        // Informe de Situación Tributaria del Cliente (corte diario/semanal)
+        function imprimirInformeSituacion(corte) {
+            var m = calcularModelo();
+            var est = m.estado || {};
+            var decs = est.acuseDecisiones || {};
+            var pend = Array.isArray(est.comprasPendientesAcuse) ? est.comprasPendientesAcuse : [];
+            var sinDec = pend.filter(function (p) { return !decs[p.id]; });
+            var urgentes = sinDec.filter(function (p) { return p.estadoPlazo === 'critico'; }).length;
+            var ivaPend = sinDec.reduce(function (s, p) { return s + (p.iva || 0); }, 0);
+            var cerrado = !!est.cerradoTributario;
+            var tieneDatos = !!((m.compras && m.compras.documentos && m.compras.documentos.length) ||
+                (m.ventas && m.ventas.documentos && m.ventas.documentos.length));
+            var ahora = new Date();
+            var hoyTxt = (D && D.hoy) ? D.hoy() : ahora.toLocaleDateString('es-CL');
+            var horaTxt = ahora.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+            var rutCli = (window.CLDemoSii && window.CLDemoSii.rutDeCliente && window.CLDemoSii.rutDeCliente(clienteNombre())) ||
+                ($('liq-rut-empresa') && $('liq-rut-empresa').value.trim()) || 'Sin RUT registrado';
+            var corteTxt = (corte === 'semanal'
+                ? 'Situación tributaria al ' + hoyTxt + ' ' + horaTxt + ' · corte semanal (semana en curso)'
+                : 'Situación tributaria al ' + hoyTxt + ' ' + horaTxt + ' · corte diario');
+            var alertas = [];
+            if (window.CLDemoSii && window.CLDemoSii.alertasParaCliente) {
+                window.CLDemoSii.alertasParaCliente(clienteNombre()).forEach(function (al) {
+                    var det = al.title + (al.detail ? ' — ' + al.detail : '') +
+                        (al.amountAtRisk > 0 ? ' (En riesgo: ' + D.money(al.amountAtRisk) + ')' : '');
+                    alertas.push({ origen: al.modulo || 'SII', detalle: det });
+                });
+            }
+            if (sinDec.length) {
+                alertas.push({
+                    origen: 'RCV / Ley 19.983',
+                    detalle: sinDec.length + ' factura(s) de compra pendiente(s) de acuse' +
+                        (urgentes ? '; ' + urgentes + ' vencen en <= 48 h' : '') + ' · IVA involucrado ' + D.money(ivaPend)
+                });
+            }
+            (est.bheAlertas || []).slice(0, 3).forEach(function (a) {
+                alertas.push({ origen: 'BHE / SII', detalle: String((a && a.mensaje) || a) });
+            });
+            if (!alertas.length) {
+                alertas.push({ origen: 'Suite', detalle: 'Sin alertas activas para este período con los datos cargados.' });
+            }
+            var html = '<div class="print-data">' +
+                '<div><b>Razón Social:</b> ' + D.esc(clienteNombre()) + '</div>' +
+                '<div><b>RUT Empresa:</b> ' + D.esc(rutCli) + '</div>' +
+                '<div><b>Régimen Tributario SII:</b> ' + D.esc(m.f29.regimenNombre) + '</div>' +
+                '<div><b>Estado F29 del período:</b> ' + (cerrado ? 'Declarado' : (tieneDatos ? 'Pendiente de declaración (borrador listo)' : 'Sin declarar')) + '</div>' +
+                '<div><b>Monto F29 (cód. 91):</b> ' + D.money(m.f29.codigos[91]) + '</div>' +
+                '<div><b>IVA débito (cód. 538) / crédito (cód. 537):</b> ' + D.money(m.f29.codigos[538]) + ' / ' + D.money(m.f29.codigos[537]) + '</div>' +
+                '<div><b>RCV Acuses (Ley 19.983):</b> ' + sinDec.length + ' pendiente(s)' + (urgentes ? ' (' + urgentes + ' <= 48 h)' : '') + '</div>' +
+                '<div><b>Vencimiento F29:</b> día 20 (facturador electrónico con pago por Internet; día 12 regla general / día 28 sin pago; si es inhábil, siguiente día hábil)</div>' +
+                '</div>' +
+                '<table class="print-table"><thead><tr><th>Origen</th><th>Alertas activas del período (TGR / PreviRed / SII)</th></tr></thead><tbody>' +
+                alertas.map(function (a) { return '<tr><td>' + D.esc(a.origen) + '</td><td>' + D.esc(a.detalle) + '</td></tr>'; }).join('') +
+                '</tbody></table>';
+            imprimirHtmlModulo(
+                'Informe de Situación Tributaria del Cliente',
+                corteTxt,
+                html,
+                'Documento de trabajo generado con datos cargados en la suite; no reemplaza comprobantes oficiales del SII, la TGR ni PreviRed.'
+            );
+        }
+        if ($('btn-rep-informe')) {
+            $('btn-rep-informe').addEventListener('click', function () {
+                imprimirInformeSituacion(($('rep-informe-corte') && $('rep-informe-corte').value) || 'diario');
+            });
+        }
+
         if ($('btn-rep-f29')) {
             $('btn-rep-f29').addEventListener('click', function () {
                 if ($('btn-f29-pdf')) $('btn-f29-pdf').click();

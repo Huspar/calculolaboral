@@ -872,15 +872,31 @@
           <div class="panel-head">
             <div>
               <h2>Auditoría Preventiva de Compras RCV (Ley 19.983)</h2>
-              <p class="panel-ayuda">Monitorea el plazo de 8 días corridos desde la recepción en el SII para reclamar facturas pendientes y revisa crédito de supermercados (cód. 761).</p>
+              <p class="panel-ayuda">Monitorea el plazo de 8 días corridos desde la recepción en SII para facturas a crédito (las al contado no requieren acuse) y revisa supermercados (cód. 761 F29).</p>
             </div>
             <div class="f29-auditoria-badges">
               <span class="sello sello-riesgo" id="badge-acuse-urgentes" hidden>
                 <span class="material-icons" aria-hidden="true">warning</span><span id="txt-acuse-urgentes">0 por vencer</span>
               </span>
+              <label class="acuse-lote-check" id="f29-acuse-lote-super-wrap" hidden>
+                <input type="checkbox" id="f29-acuse-lote-super">
+                <span>Incluir supermercados y similares (cód. 761 F29)</span>
+              </label>
+              <button type="button" class="btn btn-primario btn-chico" id="btn-acuse-lote" hidden>
+                <span class="material-icons" aria-hidden="true">done_all</span>
+                Aceptar pendientes en lote (<span id="acuse-lote-cant">0</span>)
+              </button>
             </div>
           </div>
           <div class="panel-cuerpo">
+            <div class="acuse-lote-estado" id="acuse-lote-estado" hidden>
+              <div class="acuse-lote-texto" id="acuse-lote-texto"></div>
+              <div class="acuse-lote-acciones">
+                <button type="button" class="btn btn-primario btn-chico" id="btn-acuse-lote-confirmar" hidden>Confirmar lote</button>
+                <button type="button" class="btn btn-chico" id="btn-acuse-lote-cancelar" hidden>Cancelar</button>
+                <button type="button" class="btn btn-chico" id="btn-acuse-lote-reintentar" hidden>Reintentar fallidas</button>
+              </div>
+            </div>
             <div class="f29-acuse-grid" id="f29-acuse-bloque">
               <div class="tabla-contable-wrap">
                 <table class="tabla-contable compacta">
@@ -1777,6 +1793,7 @@
                     <th scope="col">Conexión SII</th>
                     <th scope="col" class="num">Trabajadores</th>
                     <th scope="col" class="num">F29 cód. 91</th>
+                    <th scope="col">F29 del período</th>
                     <th scope="col">Estado cierre</th>
                     <th scope="col" class="num">Acción</th>
                   </tr>
@@ -2218,6 +2235,14 @@
                 <button type="button" class="btn" id="btn-rep-resumen"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Resumen Ejecutivo Mensual del Cliente (F29 + P&amp;L)</button>
                 <button type="button" class="btn" id="btn-rep-whatsapp"><span class="material-icons" aria-hidden="true">chat</span>Copiar resumen ejecutivo WhatsApp cliente</button>
                 <button type="button" class="btn" id="btn-rep-f29"><span class="material-icons" aria-hidden="true">print</span>Borrador Formulario 29 con Membrete</button>
+                <div class="suite-reportes-corte" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                  <label class="texto-ayuda" for="rep-informe-corte" style="margin:0;font-weight:700;">Corte del informe:</label>
+                  <select id="rep-informe-corte" class="lq-select" style="max-width:170px;">
+                    <option value="diario" selected>Corte diario</option>
+                    <option value="semanal">Corte semanal</option>
+                  </select>
+                  <button type="button" class="btn" id="btn-rep-informe"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Informe Situación Tributaria del Cliente (PDF)</button>
+                </div>
               </div>
               <div class="suite-wa-preview" id="rep-whatsapp-preview" hidden>
                 <div class="suite-wa-head">
@@ -2805,6 +2830,26 @@
       <button type="button" class="btn-texto" id="btn-portal-ir-membrete">Editar membrete</button>
     </div>
 
+    <div class="portal-resumen-f29" id="portal-resumen-f29">
+      <div class="portal-resumen-f29-head">
+        <strong>Resumen mensual F29 del período</strong>
+        <span class="texto-ayuda mono" id="portal-f29-periodo">—</span>
+      </div>
+      <div class="portal-resumen-f29-grid">
+        <div><span class="acuse-lbl">Estado</span><strong id="portal-f29-estado">—</strong></div>
+        <div><span class="acuse-lbl">Monto F29 (cód. 91)</span><strong class="mono" id="portal-f29-monto">—</strong></div>
+        <div><span class="acuse-lbl">IVA débito / crédito</span><strong class="mono" id="portal-f29-iva">—</strong></div>
+        <div><span class="acuse-lbl">Vencimiento</span><strong class="mono">día 20 (electrónico; día 12 general / 28 sin pago)</strong></div>
+      </div>
+      <div id="portal-f29-aviso" class="portal-f29-aviso" hidden>
+        F29 aún no declarado: se incluirá aviso de vencimiento (día 20 facturador electrónico con pago por Internet; día 12 general / día 28 sin pago) en el Portal y en el mensaje.
+      </div>
+      <label class="portal-f29-recordar-row" id="portal-f29-recordar-wrap" hidden>
+        <input type="checkbox" id="portal-f29-recordar" checked>
+        <span>Incluir recordatorio de declaración y pago</span>
+      </label>
+    </div>
+
     <div id="portal-dlg-sin-sesion" class="sii-sin-sesion-aviso" hidden>
       <p><strong>Inicia sesión en tu estudio para emitir enlaces públicos temporales.</strong> Mientras tanto, puedes usar Vista previa Marca Blanca para revisar cómo lo verá tu cliente con los datos actuales.</p>
       <div>
@@ -2817,7 +2862,7 @@
       <label class="portal-switch-row" for="portal-opt-f29">
         <span>
           <strong>Resumen F29 y vencimientos</strong>
-          <span class="texto-ayuda">Total cód. 91, vencimiento día 20, estado de cierre y plazos próximos.</span>
+          <span class="texto-ayuda">Total cód. 91, vencimientos (día 12 / 20 / 28), estado de cierre y plazos próximos.</span>
         </span>
         <input type="checkbox" id="portal-opt-f29" checked>
       </label>
@@ -2856,6 +2901,9 @@
         </button>
         <button type="submit" class="btn btn-primario" id="btn-portal-generar">
           <span class="material-icons" aria-hidden="true">link</span>Generar enlace seguro
+        </button>
+        <button type="button" class="btn" id="btn-portal-copiar-resumen">
+          <span class="material-icons" aria-hidden="true">content_copy</span>Copiar resumen + enlace
         </button>
       </div>
     </form>

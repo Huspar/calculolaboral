@@ -2388,6 +2388,72 @@
     gap: 8px;
     flex-wrap: wrap;
 }
+.acuse-lote-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft, #475569);
+}
+.acuse-lote-check input { accent-color: var(--bosque, #00382E); }
+.acuse-lote-estado {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--amber-bg, #FFFBEB);
+    border: 1px solid var(--amber-line, #FDE68A);
+    border-radius: var(--radius-sm, 10px);
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+.acuse-lote-estado[hidden] { display: none; }
+.acuse-lote-acciones { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.acuse-lote-texto strong.mono { font-weight: 700; }
+.torre-acuse-link {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bosque, #00382E);
+    text-decoration: underline;
+}
+.portal-resumen-f29 {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: var(--surface, #F8FAF9);
+    border: 1px solid var(--linea, #E2E8F0);
+    border-radius: var(--radius-sm, 10px);
+}
+.portal-resumen-f29-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+.portal-resumen-f29-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+}
+.portal-resumen-f29-grid .acuse-lbl { display: block; font-size: 11px; font-weight: 700; color: var(--ink-soft, #64748b); }
+.portal-f29-aviso {
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--amber-line, #FDE68A);
+    background: var(--amber-bg, #FFFBEB);
+    border-radius: 8px;
+    font-size: 12px;
+}
+.portal-f29-recordar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 12.5px;
+    cursor: pointer;
+}
 .f29-alerta-supermercado {
     display: grid;
     grid-template-columns: 24px minmax(0, 1fr) auto;
@@ -4308,6 +4374,9 @@
 }
 
 @media screen and (max-width: 768px) {
+    .torre-acciones-celda {
+        justify-content: flex-start;
+    }
     #torre-alertas-tabla-wrap,
     #ddjj-sii-estado-panel .tabla-contable-wrap,
     .wh-lista-wrap .tabla-contable-wrap {

@@ -104,7 +104,8 @@
             snap.f29 = {
                 ivaDeterminado: Math.round(Number(cods[89]) || 0),
                 retenciones: Math.round((Number(cods[48]) || 0) + (Number(cods[151]) || 0)),
-                ppm: Math.round(Number(cods[115]) || 0),
+                ppm: Math.round(Number(cods[62]) || 0),
+                ppmTasa: Number(cods[115]) || 0,
                 totalPagar: Math.round(Number(cods[91]) || 0),
                 remanente: Math.round(Number(cods[77]) || 0),
                 postergadoIva: Boolean(cods[756]),
@@ -171,6 +172,78 @@
         var d = new Date(iso);
         if (isNaN(d.getTime())) return String(iso);
         return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function pintarResumenF29() {
+        var br = window.CLSuiteSiiBridge;
+        var m = br && br.calcularModelo ? br.calcularModelo() : null;
+        if (!m || !m.f29 || !m.f29.codigos) return;
+        var est = m.estado || {};
+        var cerrado = !!est.cerradoTributario;
+        var tieneDatos = !!((m.compras && m.compras.documentos && m.compras.documentos.length) ||
+            (m.ventas && m.ventas.documentos && m.ventas.documentos.length));
+        var fmt = function (n) { return '$' + Number(n || 0).toLocaleString('es-CL'); };
+        if ($('portal-f29-periodo')) $('portal-f29-periodo').textContent = 'Período ' + m.periodo;
+        if ($('portal-f29-estado')) {
+            $('portal-f29-estado').textContent = cerrado
+                ? 'Declarado'
+                : (tieneDatos ? 'Pendiente de declaración' : 'Sin datos cargados');
+        }
+        if ($('portal-f29-monto')) $('portal-f29-monto').textContent = fmt(m.f29.codigos[91]);
+        if ($('portal-f29-iva')) {
+            $('portal-f29-iva').textContent = fmt(m.f29.codigos[538]) + ' / ' + fmt(m.f29.codigos[537]);
+        }
+        var noDeclarado = !cerrado && tieneDatos;
+        if ($('portal-f29-aviso')) $('portal-f29-aviso').hidden = !noDeclarado;
+        if ($('portal-f29-recordar-wrap')) $('portal-f29-recordar-wrap').hidden = !noDeclarado;
+    }
+
+    function textoResumenF29(conRecordatorio, enlace) {
+        var br = window.CLSuiteSiiBridge;
+        if (br && br.generarTextoWhatsapp) {
+            var completo = br.generarTextoWhatsapp({
+                incluirRecordatorio: !!conRecordatorio,
+                portalUrl: enlace || ''
+            });
+            if (completo) return completo;
+        }
+        var m = br && br.calcularModelo ? br.calcularModelo() : null;
+        var cliNom = (br && br.clienteNombre && br.clienteNombre()) || 'tu empresa';
+        if (!m || !m.f29 || !m.f29.codigos) return '';
+        var est = m.estado || {};
+        var cerrado = !!est.cerradoTributario;
+        var fmt = function (n) { return '$' + Number(n || 0).toLocaleString('es-CL'); };
+        var lineas = [
+            'Resumen ' + cliNom + ' · Período ' + m.periodo,
+            'F29 del período: ' + (cerrado ? 'Declarado' : 'Pendiente de declaración') + ' · Total cód. 91: ' + fmt(m.f29.codigos[91]),
+            'IVA débito ' + fmt(m.f29.codigos[538]) + ' / crédito ' + fmt(m.f29.codigos[537])
+        ];
+        if (conRecordatorio && !cerrado) {
+            lineas.push('Recordatorio: declara y paga tu F29 en sii.cl dentro del plazo mensual (día 20 para facturador electrónico con pago por Internet; día 12 regla general / día 28 sin pago; si es inhábil, siguiente día hábil).');
+        }
+        if (enlace) lineas.push('Portal del cliente: ' + enlace);
+        var est1 = leerIdentidadEstudio();
+        lineas.push('— ' + (est1 && est1.nombre ? est1.nombre : 'Tu estudio contable'));
+        return lineas.join('\n');
+    }
+
+    async function copiarResumenYEnlace() {
+        var enlace = $('portal-enlace-url') ? $('portal-enlace-url').textContent.trim() : '';
+        if (!enlace) {
+            feedback('Genera primero el enlace del Portal; después copio el resumen con el link.', 'error');
+            return;
+        }
+        var recordar = !($('portal-f29-recordar-wrap') && $('portal-f29-recordar-wrap').hidden) &&
+            $('portal-f29-recordar') && $('portal-f29-recordar').checked;
+        var texto = textoResumenF29(!!recordar, enlace);
+        if (!texto) { feedback('No hay datos calculados para el resumen.', 'error'); return; }
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(texto);
+            feedback('Resumen con enlace copiado, listo para WhatsApp o correo.', 'ok');
+            if (D && D.avisar) D.avisar('Resumen + enlace copiados al portapapeles.');
+        } catch (e) {
+            feedback('No pudimos copiar; selecciona el texto en la vista previa.', 'error');
+        }
     }
 
     function limpiarEnlaceTemporal() {
@@ -346,6 +419,7 @@
         limpiarEnlaceTemporal();
         feedback('');
         pintarCabeceraModal();
+        pintarResumenF29();
         if (typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
         else dlg.setAttribute('open', 'open');
         await cargarSesionYEnlaces();
@@ -461,6 +535,7 @@
         if ($('btn-portal-vista-previa')) $('btn-portal-vista-previa').addEventListener('click', abrirVistaPrevia);
         if ($('form-portal-estudio')) $('form-portal-estudio').addEventListener('submit', generarEnlace);
         if ($('btn-portal-copiar-url')) $('btn-portal-copiar-url').addEventListener('click', copiarEnlace);
+        if ($('btn-portal-copiar-resumen')) $('btn-portal-copiar-resumen').addEventListener('click', copiarResumenYEnlace);
 
         if ($('tbody-portal-enlaces')) {
             $('tbody-portal-enlaces').addEventListener('click', function (ev) {

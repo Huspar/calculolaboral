@@ -362,6 +362,12 @@
         var periodoLbl = formatearPeriodoCorto(e.periodo || f29.periodo);
         var regNombre = String(e.regimenNombre || f29.regimenNombre || 'ProPyme General (14 D3)').trim();
 
+        var cerrado = Boolean(e.cerradoTributario);
+        var tieneDatos = e.tieneDatos !== undefined ? Boolean(e.tieneDatos) : (num(c[538]) > 0 || num(c[537]) > 0 || num(c[91]) > 0);
+        var estadoF29 = cerrado
+            ? 'Declarado'
+            : (tieneDatos ? 'Pendiente de declaración (borrador listo)' : 'Sin declarar');
+
         var retenciones = num(c[48]) + num(c[151]);
         var ivaLinea = num(c[89]) > 0
             ? ('- IVA determinado a pagar (cód. 89): ' + money(c[89]))
@@ -371,7 +377,8 @@
             '*Resumen Mensual · ' + periodoLbl + '*',
             'Cliente: ' + cliente + ' · ' + regNombre,
             '',
-            '*1. Formulario 29 (vence día 20)*',
+            '*1. Formulario 29 (vence día 20 electrónico · 12 general · 28 sin pago)*',
+            '- Estado del período: ' + estadoF29,
             '- Débito fiscal ventas (cód. 538): ' + money(c[538]),
             '- Crédito fiscal compras (cód. 537): ' + money(c[537]),
             ivaLinea,
@@ -379,6 +386,9 @@
             '- PPM obligatorio (' + num(c[115]).toLocaleString('es-CL', { maximumFractionDigits: 3 }) + '%): ' + money(c[62]),
             '*Total F29 a pagar (cód. 91): ' + money(c[91]) + '*'
         ];
+        if (!cerrado && (e.incluirRecordatorio === true || (e.cerradoTributario === false && e.incluirRecordatorio !== false))) {
+            lineas.push('- Recordatorio: declara y paga tu F29 en sii.cl dentro del plazo mensual (día 20 para facturador electrónico con pago por Internet; día 12 regla general / día 28 sin pago; si es inhábil, siguiente día hábil).');
+        }
 
         var previredComp = flujo ? num(flujo.compromisoPreviredDia13) : (nomina ? num(nomina.totalPrevired || nomina.totalImposiciones) : 0);
         if (pnl || flujo || previredComp > 0) {
@@ -405,6 +415,12 @@
         relevantes.slice(0, 2).forEach(function (h) {
             lineas.push('- [' + h.codigoSii + '] ' + h.titulo);
         });
+
+        var portalUrl = String(e.portalUrl || '').trim();
+        if (portalUrl) {
+            lineas.push('');
+            lineas.push('Portal del cliente: ' + portalUrl);
+        }
 
         var firmaEstudio = String(estudio.estudio || '').trim();
         var firmaResp = String(estudio.contador || '').trim();
