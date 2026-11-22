@@ -2231,12 +2231,39 @@ window.addEventListener('load', function () {
                     </div>
                 </div>
 
+                <!-- CARD 38: Monitor Tributario y Previsional -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">notifications_active</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-100/80 text-amber-800">
+                                Alertas día 1·13·20
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-amber-900 transition-colors leading-snug">
+                            Monitor Tributario y Previsional
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Chequeo de acuse RCV 8 días, Previred, F29 y deudas TGR, con alertas al correo cada mes.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Gratis + opt-in</span>
+                        <a href="monitor-tributario-previsional" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Hacer el chequeo</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Expandable Catalog Toggle Button (Option 1) -->
             <div class="mt-8 text-center" id="catalog-toggle-wrapper">
                 <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-colors cursor-pointer">
-                    <span id="toggle-catalog-text">Mostrar las 38 herramientas y generadores (32 más)</span>
+                    <span id="toggle-catalog-text">Mostrar las 39 herramientas y generadores (33 más)</span>
                     <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon" aria-hidden="true">keyboard_arrow_down</span>
                 </button>
             </div>
@@ -2906,7 +2933,7 @@ window.addEventListener('load', function () {
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_up';
             } else {
                 if (extraContainer) extraContainer.classList.add('hidden');
-                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 38 herramientas y generadores (32 más)';
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 39 herramientas y generadores (33 más)';
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_down';
                 
                 const catSection = document.getElementById('calculadoras');

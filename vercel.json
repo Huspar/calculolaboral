@@ -1,7 +1,8 @@
 {
   "cleanUrls": true,
   "crons": [
-    { "path": "/api/pyme/avisos-cron", "schedule": "0 12 * * *" }
+    { "path": "/api/pyme/avisos-cron", "schedule": "0 12 * * *" },
+    { "path": "/api/alertas-cron", "schedule": "0 12 * * *" }
   ],
   "trailingSlash": false,
   "redirects": [
