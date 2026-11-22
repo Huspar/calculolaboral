@@ -146,7 +146,7 @@ window.addEventListener('load', function () {
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
     
     <!-- Precompiled Base CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css?v=3.4.0">
+    <link rel="stylesheet" href="/assets/css/style.css?v=3.5.0">
     
     <!-- Exact TealHQ Design Tokens & Interaction Rules -->
     <style>
@@ -1186,13 +1186,13 @@ window.addEventListener('load', function () {
                 <!-- Interactive Filter Controls -->
                 <div class="mt-6 flex flex-wrap items-center justify-start gap-2">
                     <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter">
-                        Todas las herramientas (15)
+                        Todas las herramientas (36)
                     </button>
                     <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn">
-                        Trabajadores (10)
+                        Trabajadores y personas (14)
                     </button>
                     <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn">
-                        Pymes y empleadores (5)
+                        Pymes, empleadores y contadores (22)
                     </button>
                 </div>
             </div>
@@ -1591,7 +1591,7 @@ window.addEventListener('load', function () {
                                 <span class="material-icons text-lg" aria-hidden="true">home</span>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-900">
-                                Nuevo 2026
+                                Casa particular
                             </span>
                         </div>
                         <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-950 transition-colors leading-snug">
@@ -1610,12 +1610,579 @@ window.addEventListener('load', function () {
                     </div>
                 </div>
 
+                <!-- CARD 16: Impuesto Único 2a Categoría -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">receipt_long</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
+                                Tabla UTM 2026
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Impuesto Único de Segunda Categoría
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Tabla vigente en UTM y cálculo por tramos desde sueldo bruto o renta tributable.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 43 N°1 LIR</span>
+                        <a href="impuesto-unico-segunda-categoria" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Calcular tramo</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 17: Gratificación Legal -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">redeem</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
+                                Tope 4,75 IMM
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-900 transition-colors leading-snug">
+                            Calculadora de gratificación legal
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Calcula el 25% mensual con tope de $219.115 (Art. 50) o reparto sobre utilidades (Art. 47).
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Arts. 47 y 50 CT</span>
+                        <a href="gratificacion-legal-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Calcular gratificación</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 18: Boleta de Honorarios -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-amber-500 transition-colors group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">request_quote</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-100/80 text-amber-800">
+                                Retención 15,25%
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-amber-900 transition-colors leading-snug">
+                            Calculadora boleta de honorarios 2026
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Convierte monto bruto a líquido o calcula el bruto exacto que debes emitir con tasa 15,25%.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Ley 21.133 / SII</span>
+                        <a href="calculadora-boleta-honorarios-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Calcular boleta</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 19: Qué hacer si no te pagan el finiquito -->
+                <div class="catalog-card bg-white rounded-xl border border-rose-200/70 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-colors group" data-category="trabajador">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">fact_check</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-rose-100/80 text-rose-800">
+                                Reajuste Art. 63
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-rose-900 transition-colors leading-snug">
+                            Si no te pagan el finiquito (5 pasos)
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Reajustes e intereses por atraso (Art. 63 CT), reclamo DT y guía de reserva de derechos.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Arts. 63 y 177 CT</span>
+                        <a href="que-hacer-si-no-te-pagan-el-finiquito" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Revisar pasos</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 20: Generador de Contrato de Trabajo -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">assignment</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
+                                Word + PDF
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Generador de contrato de trabajo
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Contratos indefinidos, plazo fijo y por obra en Word editable con menciones mínimas Art. 10.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">$12.990 · Art. 10 CT</span>
+                        <a href="generador-contrato-trabajo-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Crear contrato</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 21: Generador de Anexo de Contrato -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">edit_document</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
+                                Word + PDF
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Generador de anexo de contrato
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            6 bloques combinables: sueldo, cargo, jornada 42h, prórroga plazo fijo o teletrabajo.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">$7.990 · Art. 11 CT</span>
+                        <a href="generador-anexo-contrato-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Crear anexo</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 22: Generador de Liquidación de Sueldo -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">receipt</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
+                                PDF listo
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Generador de liquidación de sueldo
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Emite liquidaciones mensuales en PDF con UF, UTM, AFP, salud, AFC e IUSC vigentes 2026.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">$2.990 · Art. 54 CT</span>
+                        <a href="generador-liquidacion-sueldo" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Crear liquidación</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 23: Pack Asesora del Hogar al día -->
+                <div class="catalog-card bg-white rounded-xl border border-amber-300/80 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">home_work</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-100 text-amber-900">
+                                Nuevo 2026
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-900 transition-colors leading-snug">
+                            Pack Asesora del Hogar al día
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Contrato Puertas Afuera/Adentro en Word + 1a liquidación (0% AFC trabajadora), Previred y ficha Mi DT.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">$14.990 · Arts. 146-152</span>
+                        <a href="pack-asesora-del-hogar-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Armar pack</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 24: Pack Cartas de Despido -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-800 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">mark_email_read</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-900">
+                                22 documentos
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Pack de cartas de despido por causal
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            16 cartas editables en Word (Arts. 159, 160 y 161), 6 apoyos y planilla Excel de plazos Ley Bustos.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">$9.990 · Art. 162 CT</span>
+                        <a href="pack-cartas-despido-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Ver pack despido</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 25: Carta de Despido Gratis -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">mail_outline</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
+                                Gratis en Word
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Cartas de despido en Word (modelo base)
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Plantillas gratuitas para causales Arts. 159, 160 y 161 con guía de plazos y registro DT.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 162 CT</span>
+                        <a href="carta-de-despido-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Abrir plantilla</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 26: Calculadora Costo Empresa -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">business_center</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
+                                Ley 21.735
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Calculadora de costo empresa 2026
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Estima cuánto cuesta contratar: sueldo, gratificación, 3,5% Ley 21.735, SIS, AFC y mutual.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Aportes empleador</span>
+                        <a href="calculadora-costo-empresa-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Calcular costo</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 27: Calculadora F29 -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">account_balance</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
+                                SII y RCV CSV
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-900 transition-colors leading-snug">
+                            Calculadora Formulario 29 (F29)
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Simulador F29 con IVA débito/crédito, remanente, BHE 15,25%, PPM ProPyme y lector CSV RCV.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Mensual SII</span>
+                        <a href="calculadora-f29-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Simular F29</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 28: Calculadora de IVA 19% -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">percent</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-slate-100 text-slate-800">
+                                Neto y Bruto
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Calculadora de IVA Chile (19%)
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Desglosa neto, IVA y total en segundos para facturas afectas y boletas de venta.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">IVA 19% Chile</span>
+                        <a href="calculadora-iva-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Calcular IVA</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 29: Calculadora de Margen y Precio de Venta -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">sell</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-slate-100 text-slate-800">
+                                Con IVA 19%
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Calculadora de margen y precio de venta
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Calcula margen real sobre venta, markup sobre costo y precio final con IVA para pymes.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Precios Pyme</span>
+                        <a href="calculadora-margen-precio-venta-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Calcular margen</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 30: Balance 8 Columnas y RLI ProPyme -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">table_chart</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100/80 text-emerald-800">
+                                Excel gratis
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-900 transition-colors leading-snug">
+                            Balance 8 Columnas y RLI ProPyme
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Simulador tributario de 8 columnas y determinación base RLI Art. 14 D N°3 exportable a Excel.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 14 D N°3 LIR</span>
+                        <a href="balance-8-columnas-rli-propyme-excel" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Abrir simulador</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 31: Carpeta Laboral de Empresa -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-forest-50 text-forest-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">folder_shared</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-forest-100/80 text-forest-800">
+                                Imprimible + CSV
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Checklist carpeta laboral por trabajador
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Lista interactiva de respaldo documental ante fiscalización de la Inspección del Trabajo.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Orden DT</span>
+                        <a href="carpeta-laboral-empresa-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Abrir checklist</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 32: Checklist Fiscalización DT -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">checklist</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-100/80 text-amber-800">
+                                Autodiagnóstico
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-amber-900 transition-colors leading-snug">
+                            Checklist fiscalización DT pymes
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Revisa qué documentos exige la DT en terreno y conoce las multas referenciales en UTM.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Art. 506 CT</span>
+                        <a href="checklist-fiscalizacion-dt-pymes-chile" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Revisar checklist</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 33: Checklist Ley 21.719 -->
+                <div class="catalog-card bg-white rounded-xl border border-rose-200/70 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-rose-500 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">privacy_tip</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-rose-100/80 text-rose-800">
+                                Dic 2026
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-rose-900 transition-colors leading-snug">
+                            Checklist diagnóstico Ley 21.719
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Evalúa el cumplimiento de datos personales de tu pyme antes del 1 de diciembre de 2026.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Datos Personales</span>
+                        <a href="checklist-ley-21719-1-diciembre-2026" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Hacer diagnóstico</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 34: Reconsideración Multas DT -->
+                <div class="catalog-card bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-600 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">policy</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-slate-100 text-slate-800">
+                                Arts. 511 y 512
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-forest-900 transition-colors leading-snug">
+                            Reconsideración de multas DT
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Asistente de plazos y borrador de solicitud administrativa de rebaja o reconsideración.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Defensa Pyme</span>
+                        <a href="reconsideracion-multas-dt-art-511" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Abrir asistente</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 35: Asistente Laboral Pyme -->
+                <div class="catalog-card bg-white rounded-xl border border-emerald-300/80 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-700 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">groups</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100 text-emerald-900">
+                                Piloto gratis
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-950 transition-colors leading-snug">
+                            Asistente Laboral Pyme
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Liquidaciones en lote, contratos, anexos, finiquitos, Ley Karin y firma simple hasta 50 trabajadores.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Gratis hasta 31-dic</span>
+                        <a href="asistente-laboral-pyme" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="inicio-catalogo" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Conocer asistente</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD 36: Suite Contadores -->
+                <div class="catalog-card bg-white rounded-xl border border-emerald-300/80 p-4 sm:p-5 flex flex-col justify-between hover:shadow-sm hover:border-emerald-700 transition-colors group" data-category="pyme">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0">
+                                <span class="material-icons text-lg" aria-hidden="true">account_tree</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-100 text-emerald-900">
+                                Estudios contables
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-sm sm:text-base text-gray-950 group-hover:text-emerald-950 transition-colors leading-snug">
+                            Suite Contadores (demo y planes)
+                        </h3>
+                        <p class="text-xs text-gray-500 leading-snug mt-1 font-sans line-clamp-2">
+                            Previred 105 campos, LRE 147 col., F29, BHE, conciliación, Balance 8 col. y DDJJ multicliente.
+                        </p>
+                    </div>
+                    <div class="pt-2.5 mt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-mono-num text-gray-500 font-semibold">Desde $149.900 + IVA/año</span>
+                        <a href="suite-contadores" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="inicio-catalogo" class="inline-flex items-center gap-1 text-xs font-bold text-forest-700 group-hover:text-forest-950 transition-colors">
+                            <span>Ver Suite</span>
+                            <span class="material-icons text-xs group-hover:translate-x-0.5 transition-transform" aria-hidden="true">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Expandable Catalog Toggle Button (Option 1) -->
             <div class="mt-8 text-center" id="catalog-toggle-wrapper">
                 <button type="button" id="btn-toggle-catalog" onclick="toggleFullCatalog()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-white border-2 border-gray-300 hover:border-gray-900 text-gray-800 font-bold text-sm shadow-xs hover:shadow-md transition-colors cursor-pointer">
-                    <span id="toggle-catalog-text">Mostrar las 15 herramientas y kits (9 más)</span>
+                    <span id="toggle-catalog-text">Mostrar las 36 herramientas y generadores (30 más)</span>
                     <span class="material-icons text-base transition-transform duration-200" id="toggle-catalog-icon" aria-hidden="true">keyboard_arrow_down</span>
                 </button>
             </div>
@@ -1650,12 +2217,17 @@ window.addEventListener('load', function () {
                         </p>
                         <ul class="audience-list">
                             <li><a href="finiquito_calculator" class="audience-row"><span><b>Finiquito legal con tope de 90 UF por año</b><small>Años de servicio, mes de aviso sustitutivo y feriado proporcional hábil.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
-                            <li><a href="simulador-despido-injustificado-chile" class="audience-row"><span><b>Despido injustificado (Art. 168 CT)</b><small>Recargo legal del +30% y recuperación total del descuento patronal AFC.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
-                            <li><div class="audience-row"><span><b>Reserva notarial manuscrita</b><small>Fórmula jurídica para estampar en tu finiquito y cobrar en el acto sin renunciar a reclamar.</small></span></div></li>
+                            <li><a href="simulador-despido-injustificado-chile" class="audience-row"><span><b>Despido injustificado (Art. 168 CT)</b><small>Recargo legal de 30%, 50%, 80% o hasta el doble según causal y devolución patronal AFC.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="que-hacer-si-no-te-pagan-el-finiquito" class="audience-row"><span><b>¿No te pagan el finiquito? + Reserva de derechos</b><small>Calcula reajuste e intereses por atraso (Art. 63 CT) y revisa la fórmula de reserva notarial.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="sueldo_liquido" class="audience-row"><span><b>Calculadora de sueldo líquido y gratificación legal</b><small>Descuentos 2026 de AFP, Fonasa/Isapre, AFC (0,6%), Impuesto Único y tope Art. 50.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="simulador-seguro-cesantia-afc" class="audience-row"><span><b>Seguro de Cesantía AFC (giros mensuales)</b><small>Tabla de pagos decrecientes (70% al 35%) desde Cuenta Individual o Fondo Solidario.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="calculadora-horas-extras" class="audience-row"><span><b>Horas extras 42h, vacaciones y sueldo part-time</b><small>Factor 50% Ley 21.561, días hábiles de feriado y jornada parcial hasta 30 horas.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="calculadora-boleta-honorarios-chile" class="audience-row"><span><b>Boleta de honorarios 2026 (retención 15,25%)</b><small>Calcula cuánto recibes líquido o qué monto bruto emitir según tasa SII vigente.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="carta-de-renuncia-chile" class="audience-row"><span><b>Carta de renuncia voluntaria y finiquito casa particular</b><small>Redacta gratis tu carta Art. 159 N°2 o calcula indemnización a todo evento 4,11% AFP.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                         </ul>
                     </div>
                     <a href="#calculadoras" onclick="filterCatalog('trabajador', document.querySelectorAll('.catalog-filter-btn')[1])" class="audience-btn">
-                        <span>Ver 9 herramientas para trabajadores</span>
+                        <span>Ver las 14 herramientas para trabajadores</span>
                         <span class="material-icons text-base" aria-hidden="true">arrow_forward</span>
                     </a>
                 </div>
@@ -1671,13 +2243,14 @@ window.addEventListener('load', function () {
                             Cartas defectuosas o contratos desactualizados exponen a tu pyme a multas de hasta 60 UTM y demandas con recargo del 30%.
                         </p>
                         <ul class="audience-list">
+                            <li><a href="generador-contrato-trabajo-chile" class="audience-row"><span><b>Generador de contrato de trabajo (Word + PDF)</b><small>Indefinido, plazo fijo o por obra con menciones Art. 10, Art. 22 y teletrabajo.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                             <li><a href="generador-liquidacion-sueldo" class="audience-row"><span><b>Generador de liquidación de sueldo en PDF</b><small>Cálculo legal 2026 con AFP, salud, AFC, impuesto único y respaldo listo para firmar.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                             <li><a href="generador-finiquito-chile" class="audience-row"><span><b>Generador de finiquito en Word y PDF</b><small>Modelo con cálculo de indemnizaciones, declaración de cotizaciones (Ley Bustos) y ratificación ante ministro de fe.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                             <li><a href="generador-anexo-contrato-chile" class="audience-row"><span><b>Generador de anexo de contrato (Word + PDF)</b><small>Cambio de sueldo, cargo, jornada 42h, prórroga de plazo fijo o pacto de teletrabajo.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
-                            <li><a href="generador-anexo-40-horas" class="audience-row"><span><b>Anexo de contrato Ley 40 horas (42 h en 2026)</b><small>Modelo en Word para formalizar por escrito la jornada reducida sin contingencias.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
-                            <li><a href="kit-cumplimiento-laboral-pymes" class="audience-row"><span><b>Kit Blindaje Laboral</b><small>Protocolo Ley Karin, anexos de jornada y checklist de fiscalización DT.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="pack-asesora-del-hogar-chile" class="audience-row"><span><b>Pack Asesora del Hogar al día (Contrato + Liquidación)</b><small>Puertas afuera 42h o adentro, 0% AFC trabajadora, desglose Previred y guía Mi DT.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="kit-cumplimiento-laboral-pymes" class="audience-row"><span><b>Kit Blindaje Laboral y Pack Cartas de Despido</b><small>Protocolo Ley Karin, anexos de jornada, 16 cartas por causal y checklist DT.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                             <li><a href="asistente-laboral-pyme" class="audience-row" data-cta="asistente-pyme" data-cta-name="Asistente Laboral Pyme" data-cta-slot="inicio-tarjeta"><span><b>Asistente Laboral Pyme · piloto gratuito</b><small>Liquidaciones, documentos y plazos de tus trabajadores en un solo lugar.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
-                            <li><a href="suite-contadores" class="audience-row" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="inicio-tarjeta"><span><b>Suite Contadores · acceso anticipado</b><small>Remuneraciones en lote, Previred 105 campos, LRE, Formulario 29 con RCV SII y Balance 8 columnas.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
+                            <li><a href="suite-contadores" class="audience-row" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="inicio-tarjeta"><span><b>Suite Contadores · planes desde $149.900 + IVA/año</b><small>Remuneraciones en lote, Previred 105 campos, LRE, Formulario 29 con RCV SII y Balance 8 columnas.</small></span><span class="material-icons" aria-hidden="true">arrow_forward</span></a></li>
                         </ul>
                     </div>
                     <a href="para-empleadores" class="audience-btn">
@@ -2279,7 +2852,7 @@ window.addEventListener('load', function () {
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_up';
             } else {
                 if (extraContainer) extraContainer.classList.add('hidden');
-                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 15 herramientas y kits (9 más)';
+                if (toggleBtnText) toggleBtnText.innerText = 'Mostrar las 36 herramientas y generadores (30 más)';
                 if (toggleBtnIcon) toggleBtnIcon.innerText = 'keyboard_arrow_down';
                 
                 const catSection = document.getElementById('calculadoras');
