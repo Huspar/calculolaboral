@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" fill="#EEF6F3"/>
+  <rect x="64" y="54" width="672" height="342" rx="28" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+  <rect x="64" y="54" width="672" height="74" rx="28" fill="#00382E"/>
+  <rect x="64" y="100" width="672" height="28" fill="#00382E"/>
+  <text x="102" y="102" fill="#FFB703" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" letter-spacing="1">CALENDARIO DDJJ AT 2027</text>
+  <text x="530" y="102" fill="#E2E8F0" font-family="ui-monospace, monospace" font-size="18" font-weight="700">RES. EX. 135</text>
+  <rect x="102" y="156" width="184" height="96" rx="16" fill="#F8FAF9" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="122" y="190" fill="#64748B" font-family="ui-monospace, monospace" font-size="14" font-weight="700">16 MAR 2027</text>
+  <text x="122" y="220" fill="#0F172A" font-family="system-ui, sans-serif" font-size="20" font-weight="800">F1948 S.A.</text>
+  <rect x="308" y="156" width="184" height="96" rx="16" fill="#FFF8E6" stroke="#FFB703" stroke-width="2"/>
+  <text x="328" y="190" fill="#92400E" font-family="ui-monospace, monospace" font-size="14" font-weight="700">29 MAR 2027</text>
+  <text x="328" y="220" fill="#00382E" font-family="system-ui, sans-serif" font-size="20" font-weight="800">1887 · 1879</text>
+  <rect x="514" y="156" width="184" height="96" rx="16" fill="#F8FAF9" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="534" y="190" fill="#64748B" font-family="ui-monospace, monospace" font-size="14" font-weight="700">30 JUN 2027</text>
+  <text x="534" y="220" fill="#0F172A" font-family="system-ui, sans-serif" font-size="20" font-weight="800">1847 · 1926</text>
+  <rect x="102" y="276" width="596" height="86" rx="16" fill="#F8FAF9" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="126" y="312" fill="#00382E" font-family="system-ui, sans-serif" font-size="18" font-weight="800">Buscador por código DJ + Recordatorio .ics sin registro</text>
+  <text x="126" y="340" fill="#475569" font-family="system-ui, sans-serif" font-size="15" font-weight="500">Incluye cambios de formato Res. Ex. SII N° 116 (1879, 1887, 1926, 1944, 1945, 1951, 1956)</text>
+</svg>
